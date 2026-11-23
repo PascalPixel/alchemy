@@ -62,7 +62,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *sprites;
+  u8 *motes;
   struct BattleCamera *camera;
   struct MotionObject *target;
   struct ScreenPoint caster;
@@ -76,7 +76,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->battleSheet;
+  motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   if (args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -87,7 +87,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
-  // Default: set for real below, at the trail's last segment.
+  // The skull's place, set at the trail's last segment.
   endX = 0;
   endY = 0;
   // DEAD: nothing reads the copy; the ROM keeps the stores.
@@ -97,8 +97,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   PUPPET_TARGET_COPY.velocityX = target->scaleX;
   PUPPET_TARGET_COPY.velocityY = target->scaleY;
   Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
-  // DEAD: Fire Puppet draws none of these sprites; the ROM keeps the load.
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  // DEAD: Fire Puppet draws none of these motes; the ROM keeps the load.
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GHOST_SKULL_TEXTURE,
                              work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   // The ghost takes the Mercury Djinn's blues.
@@ -279,13 +279,13 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
-  u8 *sprites;
+  u8 *motes;
   s32 i;
 
   heap = Ram_HeapSlots;
   work = (struct BattleEffectWork *)heap->battleEffect;
   canvas = heap->battleCanvas;
-  sprites = heap->battleSheet;
+  motes = heap->battleSheet;
 
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -296,7 +296,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SLASH_FLAME_SHEET, work->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
@@ -387,8 +387,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
-                           FIXED_INTEGER_PART(mote->x),
+          EFFECT_DRAW_MOTE(draw[0], canvas, motes, FIXED_INTEGER_PART(mote->x),
                            FIXED_INTEGER_PART(mote->y), size);
           if (i & 1)
             Particle_AdvanceWithGravity2D(mote, 60, -toFIXED(1) / 8);

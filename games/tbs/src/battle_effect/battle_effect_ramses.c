@@ -4,7 +4,7 @@
 
 #include "battle_effect_internal.h"
 
-#define RAMSES_FRAMES 320
+#define RAMSES_FRAMES 320         ///< A or B cuts it short
 #define RAMSES_STRIKE_FRAME 260   ///< the fist strikes the targets
 #define RAMSES_ROCKS 6            ///< rocks that fall and bounce
 #define RAMSES_FIRST_PUFF 6       ///< the first puff in work->particles

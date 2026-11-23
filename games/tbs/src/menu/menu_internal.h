@@ -221,6 +221,12 @@ enum DjinnTutorialStep {
   DJINN_TUTORIAL_OFF = 0,
   /// Giving a Djinni and setting it: "To give your Djinni to someone else..."
   DJINN_TUTORIAL_GIVE = 1,
+  /// "After choosing who will take the Djinni, you can set it."
+  DJINN_TUTORIAL_SET_AFTER_GIVE = 6,
+  /// "Setting a Djinni changes your attributes and maybe even your class."
+  DJINN_TUTORIAL_SET_CHANGES = 10,
+  /// "When your class changes, the Psynergy you can use may also change."
+  DJINN_TUTORIAL_CLASS_PSYNERGY = 11,
   /// The Djinn's powers: "Each Djinni has different powers."
   DJINN_TUTORIAL_POWERS = 14,
   /// Recovery after a summon: "After a Djinni has been used to summon..."

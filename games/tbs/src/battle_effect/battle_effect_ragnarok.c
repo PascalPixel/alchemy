@@ -29,9 +29,9 @@
 #define RAGNAROK_FRAMES 80
 #define BLADE_SWING_FRAMES 10 ///< the blade comes down
 #define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
-#define BLADE_LAST_FRAME 39
+#define BLADE_LAST_FRAME 39   ///< the blade is gone after it
 #define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
-#define RESULT_FRAME 40
+#define RESULT_FRAME 40       ///< the damage is shown
 
 /// A huge flaming blade swings down over the targets and light bursts over
 /// them twice.

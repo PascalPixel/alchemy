@@ -12,6 +12,7 @@
 /// in memory order.
 #define ID_NUMBER 0x68736D53
 
+/// The sound work, through the pointer the BIOS keeps at the end of IWRAM.
 #define SOUND_INFO_PTR (*(struct SoundInfo **)0x03007FF0)
 
 /// The PCM buffer's size in samples, one byte each; pret calls it
@@ -613,6 +614,8 @@ void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 mask, s32 value);
 void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 mask, u32 value);
 void ClearModM(struct MusicPlayerTrack *track);
 
+/// The driver's tables: its music players, every sound by number, and the
+/// routines of its track commands and of their extensions.
 extern const struct MusicPlayer gMPlayTable[];
 extern const struct Song gSongTable[];
 extern MPlayFunc gMPlayJumpTable[36];

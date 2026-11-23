@@ -6,6 +6,7 @@
 
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
+/// The trail picture's size, in pixels.
 #define DRAGON_CLOUD_TRAIL_WIDTH 24
 #define DRAGON_CLOUD_TRAIL_HEIGHT 39
 #define DRAGON_CLOUD_TRAIL_PICTURE_BYTES                                       \

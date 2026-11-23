@@ -33,7 +33,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   // seventh enemy unit and gives NULL. No caller passes it.
   if (unitId > FIRST_ENEMY_UNIT + 6)
     return 0;
-  if (index > 242)
+  if (index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
     return 0;
   unit = Unit_Get(unitId);
   Iwram_ClearWords(unit, BATTLE_UNIT_SIZE);

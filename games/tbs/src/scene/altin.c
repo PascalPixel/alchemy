@@ -89,6 +89,7 @@ extern struct MapGridCellAnimation gAltin_Doors[];
 #define ALTIN_COOK_LAST_POT_X 380
 #endif
 
+/// The overlay's two scenes: the village, and its inn, shops and houses.
 #define MAP_ALTIN_VILLAGE (SCENE_ALTIN)
 #define MAP_ALTIN_HOUSES (SCENE_COTTAGE_ROOMS_D)
 

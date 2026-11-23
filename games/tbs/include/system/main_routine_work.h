@@ -235,6 +235,8 @@ extern struct MainRoutineWork gMainRoutineWork;
 /// The eight characters' units, which follow it (Unit_Get).
 extern struct Unit gCharacterUnits[8];
 
+/// Says what kind of battle comes next (a BATTLE_TYPE_), as an event or a
+/// battle trigger does before starting one.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
     gMainRoutineWork.battleType = (mode);                                      \

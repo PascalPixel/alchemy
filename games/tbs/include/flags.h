@@ -26,6 +26,9 @@
 /// fled Djinni battle, and the Djinni's actor stays away until the scene
 /// is entered normally again, which clears it.
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
+/// The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that Scene_Arrive
+/// clears on every arrival: the 80 hiding flags and the 16 after them.
+#define FLAG_ARRIVAL_CLEARED_LAST 0xdf
 /// The system flags, after the party's and the Djinn's: what the field,
 /// battles and menus keep about their own working, shared with the scenes
 /// that set or test them, rather than the story's progress.

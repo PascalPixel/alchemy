@@ -17,7 +17,7 @@
 #define DJINN_ENTRY_MEMBER 0xf00  ///< the party member holding it
 #define DJINN_ENTRY_IS_SET 0x8000 ///< set; an unset one is drawn in colour 2
 
-#define DJINN_ELEMENTS 4
+#define DJINN_ELEMENTS 4 ///< Venus, Mercury, Mars and Jupiter (enum Element)
 #define DJINN_LIST_MEMBERS 8 ///< list columns: one per party member
 #define DJINN_LIST_ROWS 10   ///< entries one party member's list holds
 

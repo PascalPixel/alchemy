@@ -461,9 +461,13 @@ void Actor_LiftTargetBlock(s16 *table);
 /// pillars' paths (copied from spare cells off the screen), so that the pillar
 /// can slide along them; MagmaRock_FinishPushingPillar puts them back.
 void MagmaRock_StartPushingPillar(void) {
-  // XXX: what the upper layer's walls along the pillars' paths stop while no
-  // pillar moves; walking the leader along the slide's pillars before and after
-  // a push would settle it.
+  // On the slide the overhead layer's closed cells there, as probed, are
+  // columns 15 and 17 of rows 20 to 23, the upper pillar's cell (15, 22)
+  // among them, and columns 14, 16 and 18 of rows 23 to 26, the lower
+  // pillar's (16, 25) among them; the copies rewrite map.txt's (78, 21) to
+  // (81, 26).
+  // XXX: what they stop while no pillar moves; walking the leader along the
+  // slide's pillars before and after a push would settle it.
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 

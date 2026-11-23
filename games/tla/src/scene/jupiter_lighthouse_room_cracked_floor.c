@@ -75,7 +75,11 @@ enum {
   ENTRANCE_CRACKED_TILES_FROM_ABOVE
 };
 
-void JupiterLighthouse_OpenDoor(s32 value);
+/// How JupiterLighthouse_OpenDoor opens the door: at once, as the room is set
+/// up, or grinding open with a sound.
+enum { DOOR_OPEN_AT_ONCE, DOOR_GRINDS_OPEN };
+
+void JupiterLighthouse_OpenDoor(s32 how);
 void JupiterLighthouse_CheckBlockOnCell(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 s32 gWhirlwindRiding BSS_DATA;
@@ -110,7 +114,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 void JupiterLighthouse_CloseDoor(void);
-void JupiterLighthouse_LoadPalettes(s32 value);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 
 /// A cracked tile of the room under a grounded leader: as it gives way the
 /// party falls to the hall below.
@@ -129,9 +133,10 @@ void JupiterLighthouse_StepOnSingleCrackedTile(s32 value) {
         JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_NORTH);
 }
 
-/// Opens the door, with its sound and a step of its frames in mode 1.
-void JupiterLighthouse_OpenDoor(s32 mode) {
-  if (mode == 1) {
+/// Opens the door, at once or grinding open through a frame between shut and
+/// open.
+void JupiterLighthouse_OpenDoor(s32 how) {
+  if (how == DOOR_GRINDS_OPEN) {
     Event_PlaySound(SE_IMPACT);
     MapGrid_CopyCellsLayered(84, 36, 2, 3, 78, 40);
     System_Wait(6);
@@ -157,7 +162,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
       FIELD_CELL(actor->x.fixed) == DOOR_BUTTON_CELL_X &&
       FIELD_CELL(actor->z.fixed) == DOOR_BUTTON_CELL_Z) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
-    JupiterLighthouse_OpenDoor(1);
+    JupiterLighthouse_OpenDoor(DOOR_GRINDS_OPEN);
   }
 }
 
@@ -165,7 +170,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_DOOR_BUTTON_HELD)) {
     Event_SetFlag(FLAG_DOOR_BUTTON_HELD);
-    JupiterLighthouse_OpenDoor(1);
+    JupiterLighthouse_OpenDoor(DOOR_GRINDS_OPEN);
   }
 }
 
@@ -185,12 +190,10 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame (gPaletteCycleFrame).
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
-
-s32 __modsi3();
 
 /// Sets up the rooms as the party enters: the window in, the door as the
 /// pillar or the button leaves it, and the cracked tiles of the room entered:
@@ -203,10 +206,10 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_SHORTCUT_PILLAR, 72, 600);
-    JupiterLighthouse_OpenDoor(0);
+    JupiterLighthouse_OpenDoor(DOOR_OPEN_AT_ONCE);
   }
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
-    JupiterLighthouse_OpenDoor(0);
+    JupiterLighthouse_OpenDoor(DOOR_OPEN_AT_ONCE);
   if ((u16)(gMainRoutineWork.entrance - ENTRANCE_CRACKED_TILES_FROM_BELOW) <=
       ENTRANCE_CRACKED_TILES_FROM_ABOVE - ENTRANCE_CRACKED_TILES_FROM_BELOW) {
     CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
@@ -280,10 +283,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -300,8 +299,6 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
-
-void JupiterLighthouse_StepOnButton(void);
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
@@ -344,8 +341,9 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), 21},
-    {TRIGGER_EXIT, 2, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), 22},
+    // Once Isaac and Ivan have fallen, the stairs up lead to the beacon's floor.
+    {TRIGGER_EXIT, 1, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_AERIE_BEACON_A},
+    {TRIGGER_EXIT, 2, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_AERIE_BEACON_B},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -390,8 +388,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect_move.c"
 
 #undef FLAG_DOOR_BUTTON_HELD
-// The rooms' copy of the effect spawner, and the cracked tiles, found, cracked
-// and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -415,18 +411,9 @@ struct CellTargetEntry;
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The cracked tiles' steps and landings.
-
-void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
-void JupiterLighthouse_StepOffButton(void);
-extern u32 gFieldEffect_ShortScript[];
-extern u32 gFieldEffect_MediumScript[];
-extern u32 gFieldEffect_LongScript[];
-void JupiterLighthouse_FinishMovingBlock(void);
 
 #include "shared/cracked_tile_drop_in.h"
 
-void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
 #include "shared/cracked_tile_step.h"

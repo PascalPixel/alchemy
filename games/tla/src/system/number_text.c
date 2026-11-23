@@ -1,3 +1,6 @@
+/// @file
+/// The digits the number text is written with.
+
 #include "types.h"
 
 /// The digits String_FormatHex writes, one per nibble.

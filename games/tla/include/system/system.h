@@ -236,9 +236,9 @@ extern const u8 Decompress_HalfwordLz[];
 /// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 
-// XXX: typed as struct SoundInfo *, transferCountdown's volatile read is not
-// combined and the frame wait's registers move; whether the driver's own
-// struct is right to make it volatile would settle the type.
+// XXX: why the frame wait reads the sound driver's work as bytes rather than
+// through struct SoundInfo, whose transferCountdown is volatile; whether the
+// driver's own struct should make that member volatile would settle the type.
 /// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
 /// gSoundInfo, whose bytes the frame wait reads.
 extern u8 *gSoundInfoPointer;

@@ -27,7 +27,7 @@ extern struct Trigger gLemurianShip_Triggers[];
 extern struct Trigger gLemurianShip_CabinTriggers[];
 extern struct Trigger gLemurianShip_TwoJellyRoomTriggers[];
 extern struct Trigger gLemurianShip_SixJellyRoomTriggers[];
-extern struct Trigger gLemurianShip_SevenJellyRoomTriggers[];
+extern struct Trigger gLemurianShip_PipeRoomTriggers[];
 extern struct Trigger gLemurianShip_LowerDeckTriggers[];
 extern u32 gLemurianShip_PiersToPedestal[];
 extern u32 gLemurianShip_ShebaStepsUp[];
@@ -38,7 +38,7 @@ void LemurianShip_SetUpStairRoom(void);
 void LemurianShip_SetUpSixJellyRoom(void);
 
 void LemurianShip_SetUpLedgeRoom(void);
-void LemurianShip_SetUpSevenJellyRoom(void);
+void LemurianShip_SetUpPipeRoom(void);
 void LemurianShip_SetUpHold(void);
 void LemurianShip_SetUpPillarRoom(void);
 void LemurianShip_SetUpEngineRoom(void);

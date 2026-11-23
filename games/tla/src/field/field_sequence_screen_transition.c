@@ -35,7 +35,8 @@ void FieldEffect_StartWindowHBlankDma(void) {
   u16 *scanlineData = work->pages[work->page];
   volatile u16 *dma0 = REG_DMA0;
 
-  // Stop the previous transfer before priming the first line's registers.
+  // Stop the previous transfer before priming the first line's registers;
+  // dma0[5] is the channel's control, REG_DMA0CNT_H.
   dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma0[5] &= ~DMA_ENABLE;
   (void)dma0[5];
@@ -117,7 +118,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
   switch (state->mode) {
   case WINDOW_TRANSITION_BARS:
     *scanlineData++ = TRANSITION_SHOW_ALL;
-    *scanlineData++ = 1;
+    *scanlineData++ = WINOUT_WIN01_BG0;
     value = state->value;
     if (value & TRANSITION_OPEN)
       value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
@@ -152,6 +153,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
             scanlineData += 2;
           }
         } else {
+          // A slant: the left edge goes from x0 to x1 and the right from y0
+          // to y1 over the span's lines, held in radiusSquaredFixed and delta,
+          // left and right.
           radiusSquaredFixed = span->x0;
           left = span->y0;
           delta = span->x1;
@@ -171,11 +175,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_NOISE:
     value = state->value - 1;
     if (value & TRANSITION_OPEN) {
-      *scanlineData++ = 1;
+      *scanlineData++ = WININ_WIN0_BG0;
       *scanlineData++ = TRANSITION_SHOW_ALL;
     } else {
       *scanlineData++ = TRANSITION_SHOW_ALL;
-      *scanlineData++ = 1;
+      *scanlineData++ = WINOUT_WIN01_BG0;
     }
     // Each line's window runs from the left edge to 16 pixels per step of
     // progress plus up to 15 at random.
@@ -192,9 +196,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_CIRCLE:
     value = state->value;
     *scanlineData++ = TRANSITION_SHOW_ALL;
-    *scanlineData++ = 1;
+    *scanlineData++ = WINOUT_WIN01_BG0;
     if ((u32)value > TRANSITION_OPEN) {
-      *scanlineData++ = 1;
+      *scanlineData++ = WININ_WIN0_BG0;
       *scanlineData++ = TRANSITION_SHOW_ALL;
       value = TRANSITION_CLOSED - value;
     }
@@ -224,11 +228,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
   case WINDOW_TRANSITION_INTERLACED_WIPE:
     value = state->value;
     if (value & TRANSITION_OPEN) {
-      *scanlineData++ = 1;
+      *scanlineData++ = WININ_WIN0_BG0;
       *scanlineData++ = TRANSITION_SHOW_ALL;
     } else {
       *scanlineData++ = TRANSITION_SHOW_ALL;
-      *scanlineData++ = 1;
+      *scanlineData++ = WINOUT_WIN01_BG0;
     }
     // Even lines' windows grow from the left edge and odd lines' from the
     // right, across the screen over TRANSITION_OPEN steps.
@@ -629,7 +633,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   }
 }
 
-/// Returns 1 while ScreenTransition_UpdateScanline is the VCount handler.
+/// Returns 1 while ScreenTransition_UpdateScanline is the HBlank handler, that
+/// is, while a centre-line transition runs.
 s32 ScreenTransition_IsScanlineActive(void) {
   s32 other =
       (s32)gIrqHandlers[IRQ_HBLANK] ^ (s32)ScreenTransition_UpdateScanline;
@@ -859,13 +864,14 @@ void ScreenTransition_FillTilemapAndColorTile(s32 color) {
              BG_SCREEN_BLOCK(4),
              DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(u16));
   if (color != -1) {
+    // A row of eight pixels is a word of eight nibbles; a tile is eight rows.
     u32 pattern = 0;
-    s32 remainingWords;
+    s32 i;
     u32 *tile;
-    for (remainingWords = 0; remainingWords < 8; remainingWords++)
+    for (i = 0; i < 8; i++)
       pattern = (pattern << 4) | color;
     tile = work->solidTile;
-    for (remainingWords = 0; remainingWords < 8; remainingWords++)
+    for (i = 0; i < 8; i++)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
             DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);

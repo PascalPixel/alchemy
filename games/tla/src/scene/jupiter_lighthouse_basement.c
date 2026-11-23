@@ -316,9 +316,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
 
-#include "shared/palette_cycle_step_at.h"
+#include "shared/palette_cycle_step.h"
 
-#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
 /// Lifts an actor 32 pixels over its ground as a platform others may stand on,

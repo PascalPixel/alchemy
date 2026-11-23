@@ -129,7 +129,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 
 extern u16 gPushKinds[PUSH_KINDS];
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void PaletteCycle_StepAt(void);
+void PaletteCycle_Step(void);
 
 extern s32 gPaletteCycleFrame;
 /// Sets the counter, its value built as a word.
@@ -309,9 +309,8 @@ void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/palette_cycle_set_pauses_in_events.h"
 
-#include "shared/palette_cycle_step_at.h"
+#include "shared/palette_cycle_step.h"
 
-#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"

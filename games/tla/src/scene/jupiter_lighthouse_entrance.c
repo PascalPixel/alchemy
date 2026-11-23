@@ -215,11 +215,10 @@ static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
 
-#include "shared/palette_cycle_step_at.h"
+#include "shared/palette_cycle_step.h"
 
 void MapGrid_SetCellHeight();
 
-#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"

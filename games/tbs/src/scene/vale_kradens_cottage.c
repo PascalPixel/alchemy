@@ -406,21 +406,26 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
     Event_Wait(10);
+    // "Wait, everyone!"
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_Wait(10);
+    // "I still don't know how accurate the things they said were..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
+    // "We can do nothing until we confirm what they told me."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     // Jenna asks what to do; Kraden means to go and confirm it.
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 10);
+    // "Then what should we do?"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 6);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(6);
+    // "Well, we go confirm it."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // The three start; Garet asks whether he means Sol Sanctum itself, and
     // Jenna thinks it impossible.
@@ -429,14 +434,17 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_Jump(ACTOR_JENNA, 2, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
+    // "...Do you mean we should go into Sol Sanctum ourselves?"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 6);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(16);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 40);
+    // "Isn't that impossible?"
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
+    // "Why would it be?"
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
@@ -446,6 +454,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "Just because climbing Mt. Aleph is forbidden?"
     Event_OpenMessage(ACTOR_KRADEN, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(MsgValeKradenWeOnlyCheckThe);

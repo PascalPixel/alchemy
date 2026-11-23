@@ -412,11 +412,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(PsynergyTest),
-    SCENE_EXIT(20, PsynergyTest, 2),
-    SCENE_EXITS_END,
-};
+#include "../scene/shared/psynergy_test_exits.c"
 
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS,

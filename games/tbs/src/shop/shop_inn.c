@@ -7,10 +7,10 @@
 /// The innkeeper's lines, in message order from MsgInnWelcome.
 enum InnMessageId {
   INN_MESSAGE_WELCOME = MSGNO(MsgInnWelcome),
-  INN_MESSAGE_STAY_COMPLETE,
+  INN_MESSAGE_ENJOY_YOUR_STAY,
   INN_MESSAGE_NOT_ENOUGH_COINS,
-  INN_MESSAGE_GOODBYE,
-  INN_MESSAGE_REST_COMPLETE,
+  INN_MESSAGE_COME_AGAIN,
+  INN_MESSAGE_SLEPT_WELL,
 };
 
 /// The coins a night costs each living guest, by inn: Vale, Vault, Bilibin,
@@ -24,7 +24,7 @@ static const s8 sInnPricesPerGuest[12] = {
 };
 // clang-format on
 
-/// Returns the night's price: the inn's price per guest times the party party
+/// Returns the night's price: the inn's price per guest times the party
 /// members still standing.
 s32 Inn_RoomPrice(s32 innId) {
   struct ShopWork *shop = gMenuWork;
@@ -42,54 +42,59 @@ s32 Inn_RoomPrice(s32 innId) {
 /// Runs an inn's counter: the innkeeper names the price, and on Yes the party
 /// sleeps. actorId is the innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 actorId) {
-  struct InnWork *state;
+  struct ShopWork *inn;
   struct Actor *innkeeper;
   struct Window *innkeeperWindow;
   u32 roomPrice;
   s32 messageBase;
 
   Shop_InitializeWork();
-  state = gMenuWork;
-  state->active = 1;
-  // Xian's inn has lines of its own, as far past the other inns' as the
-  // warriors' shops' are past the weapon shop's (warriorShop).
+  inn = gMenuWork;
+  // The innkeeper's lines are given as they are, as a weapon shop's are
+  // (Shop_ShowKeeperMessage); Xian's inn has lines of its own, as far past the
+  // other inns' as the warriors' shops' are past the weapon shop's.
+  inn->shopType = SHOP_TYPE_WEAPONS;
   if (innId == INN_XIAN)
-    state->specialActive = 1;
+    inn->warriorShop = 1;
 
   innkeeper = Actor_GetByIdFar(actorId);
-  state->resourceId =
-      ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
-  innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
+  inn->keeperGraphics = innkeeper->sprite->entries[0]->animationId;
+  innkeeperWindow = Portrait_OpenWindowFar(inn->keeperGraphics, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
   MessageArgument_PushFar(roomPrice, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgInnWelcome;
+  // "Welcome to our inn. It's (the price) coins for a room. Would you like to
+  // stay?" These are the inns' lines; Xian's says its own.
   Shop_ShowKeeperMessage(messageBase);
-  state->window =
+  inn->moneyWindow =
       Window_CreateFar(0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
 
   if (Shop_AskYesNo(0) != 0) {
+    // "Please come again."
     Shop_ShowKeeperMessage(messageBase +
-                           (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
-    Window_CloseFar(state->window, 2);
+                           (INN_MESSAGE_COME_AGAIN - INN_MESSAGE_WELCOME));
+    Window_CloseFar(inn->moneyWindow, 2);
   } else if (roomPrice > gMainRoutineWork.holdings.coins) {
+    // "I'm afraid you don't have enough."
     Shop_ShowKeeperMessage(
         messageBase + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-    Window_CloseFar(state->window, 2);
+    Window_CloseFar(inn->moneyWindow, 2);
   } else {
-    Window_CloseFar(state->window, 2);
+    Window_CloseFar(inn->moneyWindow, 2);
+    // "Please enjoy your stay."
     Shop_ShowKeeperMessage(messageBase +
-                           (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
+                           (INN_MESSAGE_ENJOY_YOUR_STAY - INN_MESSAGE_WELCOME));
     Window_CloseFar(innkeeperWindow, 2);
     Inn_PlaySleep(roomPrice);
 
     innkeeper = Actor_GetByIdFar(actorId);
-    state->resourceId =
-        ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
-    innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
+    inn->keeperGraphics = innkeeper->sprite->entries[0]->animationId;
+    innkeeperWindow = Portrait_OpenWindowFar(inn->keeperGraphics, 0, 0, 0);
+    // "I hope you slept well. Have a nice trip!"
     Shop_ShowKeeperMessage(messageBase +
-                           (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
+                           (INN_MESSAGE_SLEPT_WELL - INN_MESSAGE_WELCOME));
   }
 
   Window_CloseFar(innkeeperWindow, 2);

@@ -15,20 +15,14 @@
 /// IWRAM code, loads the window graphics and the sound driver, then enters
 /// MainRoutine_Run and never returns.
 void System_Initialize(void) {
-  {
-    volatile u16 *dma0 = REG_DMA0;
-
-    // DMA0CNT_H: drop the HBlank repeat timing, then the enable bit
-    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma0[5] &= ~DMA_ENABLE;
-    dma0[5];
-  }
+  Dma0_Stop();
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   // Clear IWRAM up to the heap's end (the stacks above it are in use), then
   // install the resident IWRAM code before any service can use its work blocks
   Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
+  // UB: count and its padding are cleared as one word.
 #ifdef UBFIX
   gIoWriteQueue.count = 0;
   gIoWriteQueue.pad = 0;
@@ -55,7 +49,7 @@ void System_Initialize(void) {
   gOamCopyEnabled = 1;
   gSleepDisabled = 0;
   wait(10);
-  MainRoutine_RunFar(0);
+  MainRoutine_RunFar(GAME_START_TITLE);
 }
 
 /// Unused: waits out frames forever; the frame loop still runs the
@@ -95,24 +89,12 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-/// Unused: reserved empty export A in the System far-call table; no source
-/// caller.
+/// Unused: five empty exports of the System far-call table, which nothing
+/// calls.
 UNUSED void Stub_ReservedNoOpA(void) {}
-
-/// Unused: reserved empty export B in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpB(void) {}
-
-/// Unused: reserved empty export C in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpC(void) {}
-
-/// Unused: reserved empty export D in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpD(void) {}
-
-/// Unused: reserved empty export E in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpE(void) {}
 
 /// An exported stub that ignores its arguments and reports 0.
@@ -143,7 +125,6 @@ void System_CopyBuildStamp(void) {
 void Stub_NoOpHook(s32 unused) {}
 
 /// Returns the ROM address of resource `index` from the resource directory.
-/// Called throughout the game before decoding a resource.
 void *Resource_GetTableEntry(s32 index) {
   return Resource_DirectoryTable[index];
 }
@@ -252,8 +233,8 @@ void System_InstallIwramAndIrqs(void) {
   // Keep interrupts masked while replacing both the dispatcher and its table.
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
-  // 5120 bytes of resident code and data
-  Dma_Set(IwramResident_Rom, iwram, DMA_COPY_WORDS(1280), REG_DMA3);
+  // 5,120 bytes of resident code and data.
+  Dma_Set(IwramResident_Rom, iwram, DMA_COPY_WORDS(5120 / 4), REG_DMA3);
   gIrqVector = iwram;
   Dma_Set(gDefaultIrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
           REG_DMA3);

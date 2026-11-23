@@ -23,10 +23,16 @@
 /// Latin-1.
 #define TEXT_PAST_FONT_CODE 64
 
+/// The colour of Mind Read's text, which has no shadow.
+#define MIND_READ_TEXT_COLOR 8
+/// The colour of a glyph's shadow, a pixel right of and below it.
+#define GLYPH_SHADOW_COLOR 1
+
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
-/// over a shadow, or with an outline when WindowWork.outline is 1.
+/// over a shadow, or outlined in TEXT_STYLE_OUTLINED. Returns the pixels the
+/// pair takes.
 s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   // 24 rows, of which the top 16 are packed.
   u8 pixels[24 * GLYPH_BUFFER_WIDTH];
@@ -49,12 +55,11 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   secondIndex = GLYPH_PAIR_SECOND(code);
   code = GLYPH_PAIR_FIRST(code);
   Iwram_ClearWords(pixels, sizeof(pixels));
-  // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
   if (work->mindRead != 0) {
     shadowColour = 0;
-    colour = 8;
+    colour = MIND_READ_TEXT_COLOR;
   } else {
-    shadowColour = 1;
+    shadowColour = GLYPH_SHADOW_COLOR;
     colour = work->colour;
   }
   firstIndex = code - TEXT_SPACE;
@@ -104,8 +109,8 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 
 #else
 /// Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
-/// text colour over a shadow, or with an outline when WindowWork.outline is 1,
-/// with the kana mark in the code's top two bits above its top right.
+/// text colour over a shadow, or outlined in TEXT_STYLE_OUTLINED, with the kana
+/// mark in the code's top two bits above its top right. Returns its width.
 s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   u8 pixels[GLYPH_BUFFER_WIDTH * GLYPH_BUFFER_WIDTH];
   struct WindowWork *work;
@@ -145,9 +150,9 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   Iwram_ClearWords(pixels, sizeof(pixels));
   if (work->mindRead != 0) {
     shadowColour = 0;
-    colour = 8;
+    colour = MIND_READ_TEXT_COLOR;
   } else {
-    shadowColour = 1;
+    shadowColour = GLYPH_SHADOW_COLOR;
     colour = work->colour;
   }
   if (work->outline == TEXT_STYLE_OUTLINED) {
@@ -160,7 +165,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 2), colour);
     if (markGlyph != 0) {
-      pixel = pixels + 7;
+      pixel = pixels + GLYPH_PIXEL(7, 0);
       Iwram_ExpandBitRuns(markGlyph, pixel, colour);
       Iwram_ExpandBitRuns(markGlyph, pixel + 1, colour);
     }
@@ -171,7 +176,7 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
       Iwram_ExpandBitRuns(markGlyph, pixels + GLYPH_PIXEL(8, 1), shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
     if (markGlyph != 0) {
-      pixel = pixels + 7;
+      pixel = pixels + GLYPH_PIXEL(7, 0);
       Iwram_ExpandBitRuns(markGlyph, pixel, colour);
     }
   }
@@ -290,15 +295,14 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       break;
 #endif
     // Colour, style, line spacing and new lines take effect; the other control
-    // codes are skipped with their operands, as are codes 11, 12 and 14, which
-    // no message uses.
+    // codes are skipped with their operands.
     if (code <= TEXT_END_ALT) {
       switch (code) {
       case TEXT_COLOR:
         work->colour = *text;
         text++;
         break;
-      case TEXT_OUTLINE:
+      case TEXT_STYLE:
         work->outline = *text;
         text++;
         break;
@@ -306,21 +310,21 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         work->lineSpacing = *text;
         text++;
         break;
-      case TEXT_COLORS_RESET:
+      case TEXT_RESET_STYLE:
         Text_ResetStyle();
         break;
       case TEXT_NEWLINE:
         x = lineStartX;
         y += TEXT_LINE_HEIGHT;
         break;
-      case 14:
+      case TEXT_UNUSED_14:
       case TEXT_WINDOW_STATE:
       case TEXT_ACTOR_NAME_START:
         text++;
         // Skip the second operand too.
         // Fall through.
-      case 11:
-      case 12:
+      case TEXT_UNUSED_11:
+      case TEXT_UNUSED_12:
       case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
       case TEXT_ARTICLE_CLASS:
@@ -373,19 +377,19 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   }
 }
 
-/// Draws a string of 16-bit character codes straight into the UI tilemap, as
-/// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
-/// both the work block's copy and VRAM.
+/// Unused: draws a string of 16-bit character codes as tiles in a window at
+/// tile (offsetX, offsetY) of its interior, as Text_DrawMessageAsTiles draws a
+/// message; a NULL string draws the decoded text in WindowWork.textBuffer.
 UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
                                            const struct Window *window,
                                            s32 offsetX, s32 offsetY) {
-  struct WindowWork *canvas = WINDOW_WORK;
+  struct WindowWork *work = WINDOW_WORK;
   u32 cell;
 
   if (buffer == NULL) {
-    buffer = canvas->textBuffer;
-    canvas->textBuffer[canvas->textBufferEnd] = 0;
-    canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+    buffer = work->textBuffer;
+    work->textBuffer[work->textBufferEnd] = 0;
+    work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
   cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
@@ -396,7 +400,7 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
 
     cell *= 2;
     dst = (s32)WINDOW_TILEMAP_VRAM + cell;
-    src = (s32)canvas->tilemap + cell;
+    src = (s32)work->tilemap + cell;
 
     Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst,
                            (s32)WINDOW_TILEMAP_VRAM);
@@ -428,18 +432,18 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           x = lineStartX;
           y++;
           break;
-        case 14:
+        case TEXT_UNUSED_14:
         case TEXT_WINDOW_STATE:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.
           // Fall through.
-        case TEXT_COLORS_RESET:
+        case TEXT_RESET_STYLE:
         case TEXT_COLOR:
-        case TEXT_OUTLINE:
+        case TEXT_STYLE:
         case TEXT_LINE_SPACING:
-        case 11:
-        case 12:
+        case TEXT_UNUSED_11:
+        case TEXT_UNUSED_12:
         case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
         case TEXT_ARTICLE_CLASS:

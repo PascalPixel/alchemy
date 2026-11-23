@@ -1,5 +1,6 @@
 /// @file
-/// The area name notice, the Psynergy shortcut picker and heap block 19.
+/// The area name shown on entering an area, the debug Psynergy shortcut picker
+/// and the unused selection workspace.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -18,11 +19,11 @@
 struct TimedNoticeWork {
   u8 fieldWork[560];     ///< the field work's other fields
   struct Window *window; ///< the notice's window; it may since have closed
-  u16 countdown;         ///< frames left to show it, from 90
+  u16 countdown;         ///< frames left to show it
 };
 
-/// Shows the area's name in a window near the top of the screen for 90 frames.
-/// The field work owns the window and countdown until a task closes it.
+/// Shows the area's name in a window centred in the screen's top ten rows, for
+/// AREA_NAME_WINDOW_FRAMES; a per-frame task closes it.
 void AreaNameWindow_Show(void) {
   struct TimedNoticeWork *notice;
   s32 height;
@@ -37,7 +38,7 @@ void AreaNameWindow_Show(void) {
   y = 8;
   areaMessage =
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance) +
-      RENDER_RESOURCE_BASE;
+      MsgDebugAreaName;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (10 - height) >> 1;
@@ -57,7 +58,7 @@ void AreaNameWindow_Update(void) {
   // Adding (u16)-1 takes one off in 16 bits.
   notice->countdown = (framesLeft = notice->countdown + (u16)-1);
   if (framesLeft == 0) {
-    Window_Close(notice->window, 2);
+    Window_Close(notice->window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
   }
 }
@@ -68,7 +69,7 @@ void AreaNameWindow_Hide(void) {
 
   window = ((struct TimedNoticeWork *)gFieldWork)->window;
   if (window != NULL && window->flags != 0) {
-    Window_Close(window, 2);
+    Window_Close(window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
   }
 }
@@ -79,7 +80,7 @@ s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   return 0;
 }
 
-/// Returns 1.
+/// Returns 1; the overlays reach it through the far-call table.
 s32 Item_ReturnTrue(void) { return 1; }
 
 /// Steps the window hue one step: back when keys contains LEFT, on otherwise.
@@ -105,7 +106,7 @@ struct AbilityListEntry {
 /// SHORTCUT_MEMBER_SHIFT | Psynergy).
 void Debug_SelectShortcuts(void) {
   struct AbilityListEntry *list;
-  struct Window *win;
+  struct Window *picks;
   struct Window *title;
   struct Window *info;
   struct WindowSprite *cursor;
@@ -136,7 +137,7 @@ void Debug_SelectShortcuts(void) {
   count = Party_ListPsynergy(list);
   if (count != 0) {
     Menu_FindShortcutEntries(&first, &second, list);
-    win = Window_Create(4, 6, 20, 7, WINDOW_FLAG_INSTANT);
+    picks = Window_Create(4, 6, 20, 7, WINDOW_FLAG_INSTANT);
     title = Window_Create(4, 3, 20, 3, WINDOW_FLAG_INSTANT);
     info = Window_Create(4, 14, 20, 5, WINDOW_FLAG_INSTANT);
     // VramCache_FindFreeEntry reports no free entry as VRAM_CACHE_ENTRY_COUNT,
@@ -145,7 +146,7 @@ void Debug_SelectShortcuts(void) {
     slot = VramCache_FindFreeEntry();
     if (slot != 0) {
       VramCache_Load(slot, 128, gPointingHandTiles);
-      cursor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, win, 0, 0);
+      cursor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, picks, 0, 0);
     }
     // The picker borrows the status panel's labels: "HP/Max" over it,
     // "Status" over the picks, "Attack" and "Defense" (the two messages before
@@ -162,21 +163,21 @@ void Debug_SelectShortcuts(void) {
         first = (first + count) % count;
         second = (second + count) % count;
         row = (row + 2) % 2;
-        y = (row << 4) + (win->y << 3) + 28;
+        y = (row << 4) + (picks->y << 3) + 28;
         cursor->y = y;
         cursor->oam.y = y;
-        WindowSprite_RedrawSavedRect(win);
-        Window_DrawDividerLine(win, 1, 2, 17, 2);
-        Text_DrawMessageAsTiles(MsgPanelStatusLabel, win, 48, 0);
-        Text_DrawMessageAsTiles(list[first].ability + MsgAbilityName, win, 56,
+        WindowSprite_RedrawSavedRect(picks);
+        Window_DrawDividerLine(picks, 1, 2, 17, 2);
+        Text_DrawMessageAsTiles(MsgPanelStatusLabel, picks, 48, 0);
+        Text_DrawMessageAsTiles(list[first].ability + MsgAbilityName, picks, 56,
                                 16);
-        Text_DrawMessageAsTiles(list[second].ability + MsgAbilityName, win, 56,
-                                32);
-        Text_DrawMessageAsTiles(MsgPanelStatusLabel - 2, win, 16, 16);
-        Text_DrawMessageAsTiles(MsgPanelStatusLabel - 1, win, 16, 32);
-        Text_DrawMessageAsTiles(list[first].member + MsgCharacterName, win, 104,
-                                16);
-        Text_DrawMessageAsTiles(list[second].member + MsgCharacterName, win,
+        Text_DrawMessageAsTiles(list[second].ability + MsgAbilityName, picks,
+                                56, 32);
+        Text_DrawMessageAsTiles(MsgPanelStatusLabel - 2, picks, 16, 16);
+        Text_DrawMessageAsTiles(MsgPanelStatusLabel - 1, picks, 16, 32);
+        Text_DrawMessageAsTiles(list[first].member + MsgCharacterName, picks,
+                                104, 16);
+        Text_DrawMessageAsTiles(list[second].member + MsgCharacterName, picks,
                                 104, 32);
         WindowSprite_RedrawSavedRect(info);
         Text_DrawMessageAsTiles(MsgPsynergyNeedMorePp, info, 0, 16);
@@ -234,7 +235,7 @@ void Debug_SelectShortcuts(void) {
         (list[first].member << SHORTCUT_MEMBER_SHIFT) | list[first].ability;
     gMainRoutineWork.secondShortcut =
         (list[second].member << SHORTCUT_MEMBER_SHIFT) | list[second].ability;
-    Window_Close(win, 1);
+    Window_Close(picks, 1);
     Window_Close(title, 1);
     Window_Close(info, 1);
     wait(1);
@@ -305,7 +306,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   }
 }
 
-/// Runs the Psynergy shortcut picker.
+/// Runs the debug Psynergy shortcut picker (Debug_SelectShortcuts).
 void Menu_RunSelectionHook(void) { Debug_SelectShortcuts(); }
 
 /// The work block of HEAP_SLOT_SELECTION_WORKSPACE (gSelectionWorkspace): two
@@ -327,8 +328,8 @@ struct SelectionWorkspace {
 
 STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 4100);
 
-/// Allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears its two
-/// flags. Nothing calls it.
+/// Unused: allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears
+/// its two flags.
 UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
 
@@ -338,21 +339,21 @@ UNUSED void Menu_AllocateSelectionWorkspace(void) {
   work->secondActive = 0;
 }
 
-/// Closes the window of HEAP_SLOT_SELECTION_WORKSPACE's work block, frees the
-/// VRAM cache entries its flags mark and frees the block. Nothing calls it.
+/// Unused: closes the window of HEAP_SLOT_SELECTION_WORKSPACE's work block,
+/// frees the VRAM cache entries its flags mark and frees the block.
 UNUSED void Menu_ReleaseSelectionWorkspace(void) {
-  struct SelectionWorkspace *state;
+  struct SelectionWorkspace *work;
 
-  state = *(struct SelectionWorkspace **)gSelectionWorkspace;
-  Window_Close(state->window, 0);
-  while (Window_IsClosed(state->window) == 0) {
+  work = *(struct SelectionWorkspace **)gSelectionWorkspace;
+  Window_Close(work->window, 0);
+  while (Window_IsClosed(work->window) == 0) {
     wait(1);
   }
-  if (state->firstActive != 0) {
-    VramCache_FreeEntry(state->firstResource);
+  if (work->firstActive != 0) {
+    VramCache_FreeEntry(work->firstResource);
   }
-  if (state->secondActive != 0) {
-    VramCache_FreeEntry(state->secondResource);
+  if (work->secondActive != 0) {
+    VramCache_FreeEntry(work->secondResource);
   }
   HeapSlot_Release(HEAP_SLOT_SELECTION_WORKSPACE);
 }

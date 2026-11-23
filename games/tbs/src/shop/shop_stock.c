@@ -18,9 +18,9 @@ static const s16 sGameTicketCreditCosts[30] = {
     8000, 8000, 8000, 8000, 8000,
 };
 
-/// Gift items, terminated by 0; no function reads this table. They are the
-/// Long Sword to the Muramasa, the Short Sword, Mint, the Demon Axe, Asura's
-/// Armor, the Cotton Shirt, the Travel Vest, Herb, Nut and an unused row.
+/// Unused: a list of items ended by 0, which nothing reads: the Long Sword to
+/// the Muramasa, the Short Sword, Mint, the Demon Axe, Asura's Armor, the Cotton
+/// Shirt, the Travel Vest, Herb, Nut and the id after the Water of Life.
 const s16 gShop_GiftItemIds[21] = {
     ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_CLAYMORE, ITEM_GREAT_SWORD, ITEM_SHAMSHIR,
     ITEM_SILVER_BLADE, ITEM_MASAMUNE, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
@@ -48,14 +48,17 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
   creditCost = sGameTicketCreditCosts[gMainRoutineWork.holdings.shopGifts];
   memberIndex = 0;
 
-  // Gifts spend accumulated shop credit; they do not debit the party's coins.
+  // A ticket is paid for by the coins already spent, which it uses up; the
+  // party's coins are left alone.
   if (creditCost > gMainRoutineWork.holdings.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
   MessageArgument_PushFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
   messageBase = MsgTokenGift;
+  // "Let me give you this Game Ticket as a token of my gratitude."
   Shop_ShowKeeperMessageHidingCursor(messageBase);
   MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
+  // "So who gets this Game Ticket?"
   Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
 
   while (1) {
@@ -70,21 +73,25 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
       Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
     }
     if ((gKeysPressed & KEY_A) != 0) {
-      // Probe capacity before the keeper's confirmation; the gift is committed
-      // only after that line finishes.
+      // The ticket goes into the pack to see that it fits, and comes out
+      // again until the shopkeeper has handed it over.
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
         MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
+          // "Your pack is full, (the member). Who will you give this to?"
           Shop_ShowKeeperMessage(MsgPackFull);
         else
+          // "You can't carry any more of this item, (the member), so who gets
+          // it?"
           Shop_ShowKeeperMessage(MsgCannotCarryItem);
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
       Sound_PlayFar(SE_SHOP_PURCHASE);
+      // "Then here you go!"
       Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
@@ -92,6 +99,7 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
+      // "What! You don't want it?"
       Shop_ShowKeeperMessageHidingCursor(MsgDontWantIt);
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
@@ -130,163 +138,198 @@ enum {
 // clang-format off
 /// Every shop's stock, a row by stock row: its items, artifacts and type.
 static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
+    // SHOP_STOCK_ROW_EMPTY: sells nothing
     {0},
+    // Vale's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_LONG_SWORD, ITEM_SHORT_SWORD, ITEM_MACE, ITEM_WOODEN_STICK,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Vale's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_COTTON_SHIRT, ITEM_TRAVEL_VEST, ITEM_ONE_PIECE_DRESS, ITEM_WOODEN_SHIELD,
         ITEM_PADDED_GLOVES, ITEM_LEATHER_CAP,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Vale's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE,
     },
+    // Vault's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_LONG_SWORD, ITEM_SHORT_SWORD, ITEM_BATTLE_AXE, ITEM_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_MAGIC_ROD,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Vault's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_TRAVEL_VEST, ITEM_WOODEN_SHIELD, ITEM_PADDED_GLOVES, ITEM_LEATHER_ARMLET,
         ITEM_LEATHER_CAP, ITEM_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Vault's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE,
     },
+    // Bilibin's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_HUNTERS_SWORD, ITEM_BATTLE_AXE,
         ITEM_HEAVY_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_WITCHS_WAND,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Bilibin's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_LEATHER_ARMOR, ITEM_TRAVEL_VEST, ITEM_TRAVEL_ROBE, ITEM_BRONZE_SHIELD, ITEM_LEATHER_GLOVES,
         ITEM_LEATHER_ARMLET, ITEM_OPEN_HELM, ITEM_WOODEN_CAP, ITEM_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Bilibin's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Imil's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_BROAD_SWORD, ITEM_HUNTERS_SWORD, ITEM_BATTLE_AXE, ITEM_HEAVY_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_BLESSED_ANKH,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Imil's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_LEATHER_ARMOR, ITEM_ADEPTS_CLOTHES, ITEM_BRONZE_SHIELD, ITEM_LEATHER_GLOVES, ITEM_LEATHER_ARMLET,
         ITEM_OPEN_HELM, ITEM_WOODEN_CAP, ITEM_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Imil's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Kolima's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_BROAD_SWORD, ITEM_HUNTERS_SWORD, ITEM_BROAD_AXE, ITEM_HEAVY_MACE,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Kolima's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_LEATHER_ARMOR, ITEM_ADEPTS_CLOTHES, ITEM_BRONZE_SHIELD, ITEM_LEATHER_GLOVES, ITEM_ARMLET,
         ITEM_BRONZE_HELM, ITEM_WOODEN_CAP,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Kolima's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Xian's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_BROAD_SWORD, ITEM_BATTLE_RAPIER, ITEM_BROAD_AXE, ITEM_BATTLE_MACE,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Xian's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_ADEPTS_CLOTHES, ITEM_SILK_ROBE, ITEM_IRON_SHIELD, ITEM_ARMLET,
         ITEM_BRONZE_HELM, ITEM_WOODEN_CAP, ITEM_SILVER_CIRCLET,
         [SHOP_STOCK_ARTIFACTS] = ITEM_CHINA_DRESS,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Xian's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Altin's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_CLAYMORE, ITEM_BATTLE_RAPIER, ITEM_BROAD_AXE, ITEM_BATTLE_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_PSYNERGY_ROD,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Altin's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_CHAIN_MAIL, ITEM_ADEPTS_CLOTHES, ITEM_SILK_ROBE,
         ITEM_IRON_SHIELD, ITEM_GAUNTLETS, ITEM_ARMLET, ITEM_IRON_HELM, ITEM_SILVER_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Altin's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Kalay's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_CLAYMORE, ITEM_BATTLE_RAPIER, ITEM_GREAT_AXE, ITEM_BATTLE_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_FROST_WAND,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Kalay's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_CHAIN_MAIL, ITEM_JERKIN, ITEM_IRON_SHIELD,
         ITEM_GAUNTLETS, ITEM_HEAVY_ARMLET, ITEM_IRON_HELM, ITEM_MAIL_CAP, ITEM_SILVER_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Kalay's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Lunpa's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
     },
+    // Tolbi's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_GREAT_SWORD, ITEM_MASTER_RAPIER, ITEM_GREAT_AXE, ITEM_WAR_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_ANGELIC_ANKH,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Tolbi's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_ARMORED_SHELL, ITEM_SILVER_VEST, ITEM_JERKIN, ITEM_KNIGHTS_SHIELD, ITEM_GAUNTLETS,
         ITEM_HEAVY_ARMLET, ITEM_STEEL_HELM, ITEM_MAIL_CAP, ITEM_GUARDIAN_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Tolbi's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_VIAL, ITEM_WATER_OF_LIFE,
     },
+    // Lunpa's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_GREAT_SWORD, ITEM_MASTER_RAPIER, ITEM_GREAT_AXE, ITEM_WAR_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SHAMSHIR, ITEM_NINJA_BLADE, ITEM_DRAGON_AXE, ITEM_DEMONIC_STAFF,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Lunpa's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_PLATE_MAIL, ITEM_SILVER_ARMLET, ITEM_SILVER_HELM, ITEM_PLATINUM_CIRCLET,
         [SHOP_STOCK_ARTIFACTS] = ITEM_BLESSED_ROBE, ITEM_WAR_GLOVES,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Suhalla's shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_VIAL, ITEM_POTION, ITEM_WATER_OF_LIFE,
         ITEM_PSY_CRYSTAL,
     },
+    // Lalivero's weapon shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_GREAT_SWORD, ITEM_MASTER_RAPIER, ITEM_GREAT_AXE, ITEM_WAR_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SILVER_BLADE, ITEM_SWIFT_SWORD, ITEM_RIGHTEOUS_MACE,
         ITEM_CRYSTAL_ROD,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
+    // Lalivero's armor shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_STEEL_ARMOR, ITEM_KNIGHTS_HELM, ITEM_PLATINUM_CIRCLET,
         [SHOP_STOCK_ARTIFACTS] = ITEM_MAGICAL_CASSOCK, ITEM_MIRRORED_SHIELD, ITEM_SPIRIT_ARMLET,
         ITEM_JEWELED_CROWN,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
+    // Lalivero's item shop
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR,
         ITEM_SACRED_FEATHER,

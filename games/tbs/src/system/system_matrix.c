@@ -356,7 +356,9 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
 
 /// Reads three word-aligned coordinates from `point`, transforms them by
 /// gCurrentMatrix and projects them to the screen: screen[0] and screen[1] are
-/// its pixel position and screen[2] its whole-unit depth.
+/// its pixel position and screen[2] its whole-unit depth. Returns the scale the
+/// point is drawn at, in 16.16, or 0 when it lies outside the projection's
+/// depth range and the screen position is not written.
 s32 Matrix_ProjectPoint(const void *point, s32 *screen) {
   struct Projection *projection;
   s32 depth;

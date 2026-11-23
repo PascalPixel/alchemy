@@ -1,11 +1,12 @@
 /// @file
-/// The item picker: which party member's item to drop when every bag is full.
+/// The item picker: which party member's item to drop when every pack is full.
 // Part of shop.c.
 
 #include "shop_internal.h"
 
-/// Lets the player choose a party member, then one of its items that may be
-/// dropped. Holds the shop's work block while it runs.
+/// Lets the player choose a party member, then one of their items that may be
+/// dropped, in the selling screen without its shopkeeper. Returns 0 with the
+/// choice in selectedUnit and selectedSlot, or -1 for B with both -1.
 s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   struct ShopWork *shop;
   struct WindowSprite *cursorAnchor;
@@ -21,13 +22,13 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
-                                        partyWindow, 0, result);
+                                        partyWindow, 0, 0);
   cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  cursorAnchor->kind = result;
+  cursorAnchor->kind = WINDOW_SPRITE_GLYPH;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-  Menu_CreatePartyFiguresFar(partyWindow, 2, 0, 8, result);
+  Menu_CreatePartyFiguresFar(partyWindow, 2, 0, 8, 0);
 
   while (1) {
     if (redraw != 0) {
@@ -90,33 +91,34 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   return result;
 }
 
-/// The sale value line's label, number and coin word, placed for each
-/// language's words; Japanese names its coins with a different message.
+/// Where the line under the item draws "Price", the stack's sale value and the
+/// coins word, in pixels, and how far back from MsgPriceHeading the coins word
+/// is: MsgCoins, or in Japanese the message just before.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_ITALIAN
-#define SHOP_USE_PRICE_LABEL_X 8
-#define SHOP_USE_PRICE_NUMBER_X 40
-#define SHOP_USE_COIN_LABEL_X 80
-#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#define ITEM_PICKER_PRICE_LABEL_X 8
+#define ITEM_PICKER_PRICE_NUMBER_X 40
+#define ITEM_PICKER_COINS_LABEL_X 80
+#define ITEM_PICKER_COINS_MESSAGE_OFFSET 5
 #elif LANGUAGE == LANGUAGE_GERMAN
-#define SHOP_USE_PRICE_LABEL_X 0
-#define SHOP_USE_PRICE_NUMBER_X 32
-#define SHOP_USE_COIN_LABEL_X 72
-#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#define ITEM_PICKER_PRICE_LABEL_X 0
+#define ITEM_PICKER_PRICE_NUMBER_X 32
+#define ITEM_PICKER_COINS_LABEL_X 72
+#define ITEM_PICKER_COINS_MESSAGE_OFFSET 5
 #elif LANGUAGE == LANGUAGE_SPANISH
-#define SHOP_USE_PRICE_LABEL_X 8
-#define SHOP_USE_PRICE_NUMBER_X 40
-#define SHOP_USE_COIN_LABEL_X 88
-#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#define ITEM_PICKER_PRICE_LABEL_X 8
+#define ITEM_PICKER_PRICE_NUMBER_X 40
+#define ITEM_PICKER_COINS_LABEL_X 88
+#define ITEM_PICKER_COINS_MESSAGE_OFFSET 5
 #elif LANGUAGE == LANGUAGE_FRENCH
-#define SHOP_USE_PRICE_LABEL_X 8
-#define SHOP_USE_PRICE_NUMBER_X 32
-#define SHOP_USE_COIN_LABEL_X 72
-#define SHOP_USE_COIN_MESSAGE_OFFSET 5
+#define ITEM_PICKER_PRICE_LABEL_X 8
+#define ITEM_PICKER_PRICE_NUMBER_X 32
+#define ITEM_PICKER_COINS_LABEL_X 72
+#define ITEM_PICKER_COINS_MESSAGE_OFFSET 5
 #else
-#define SHOP_USE_PRICE_LABEL_X 8
-#define SHOP_USE_PRICE_NUMBER_X 40
-#define SHOP_USE_COIN_LABEL_X 80
-#define SHOP_USE_COIN_MESSAGE_OFFSET 1
+#define ITEM_PICKER_PRICE_LABEL_X 8
+#define ITEM_PICKER_PRICE_NUMBER_X 40
+#define ITEM_PICKER_COINS_LABEL_X 80
+#define ITEM_PICKER_COINS_MESSAGE_OFFSET 1
 #endif
 
 /// Lets the player choose one of the party member's items to drop, refusing an
@@ -125,7 +127,6 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
 /// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled.
 s32 ItemPicker_SelectItem(s32 unitId) {
   struct ShopWork *shop = gMenuWork;
-
   struct Window *descriptionWindow;
   struct Window *priceWindow;
   struct Unit *unit;
@@ -172,17 +173,19 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 
     if ((gKeysPressed & KEY_A) != 0) {
       discardStatus = Inventory_CheckDiscardFar(unitId, slot);
-      if (discardStatus == 0) {
+      if (discardStatus == INVENTORY_DISCARD_ALLOWED) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         selectionResult = slot;
         break;
       }
       // BUG: default code selects the error using selectionResult, still zero.
-      if (discardStatus == -4) {
-        Message_OpenWindowFar(MsgCannotDropIt, 8, 1, 2);
+      if (discardStatus == INVENTORY_DISCARD_INDISPENSABLE) {
+        // "You can't drop it!"
+        Message_OpenWindowFar(MsgCannotDropIt, 8, 1, MESSAGE_WINDOW_UNREAD);
       } else if (SHOP_CANNOT_REMOVE_STATUS(discardStatus, selectionResult) ==
-                 -3) {
-        Message_OpenWindowFar(MsgCannotRemoveIt, 8, 1, 2);
+                 INVENTORY_DISCARD_STUCK) {
+        // "You can't remove it!"
+        Message_OpenWindowFar(MsgCannotRemoveIt, 8, 1, MESSAGE_WINDOW_UNREAD);
       }
       Sound_PlayFar(SE_MENU_CANCEL);
       while (Message_AllTypedFar() == 0)
@@ -250,9 +253,9 @@ void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot) {
     Text_DrawMessageAsTilesFar(itemId + MsgItemName, window, 0, 0);
 
     discardStatus = Inventory_CheckDiscardFar(unitId, slot);
-    if (discardStatus == -4) {
+    if (discardStatus == INVENTORY_DISCARD_INDISPENSABLE) {
       Text_DrawMessageAsTilesFar(MsgCannotDrop, window, SHOP_ITEM_NOTE_X, 8);
-    } else if (discardStatus == -3) {
+    } else if (discardStatus == INVENTORY_DISCARD_STUCK) {
       Text_DrawMessageAsTilesFar(MsgCannotRemove, window, SHOP_ITEM_NOTE_X, 8);
     } else {
       s32 unitSalePrice;
@@ -262,16 +265,17 @@ void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot) {
       stackSalePrice = quantity * unitSalePrice;
 
       Text_DrawMessageAsTilesFar(MsgPriceHeading, window,
-                                 SHOP_USE_PRICE_LABEL_X, 8);
+                                 ITEM_PICKER_PRICE_LABEL_X, 8);
       Text_DrawNumberInWindowFar(stackSalePrice, 5, window,
-                                 SHOP_USE_PRICE_NUMBER_X, 8);
-      Text_DrawMessageAsTilesFar(MsgPriceHeading - SHOP_USE_COIN_MESSAGE_OFFSET,
-                                 window, SHOP_USE_COIN_LABEL_X, 8);
+                                 ITEM_PICKER_PRICE_NUMBER_X, 8);
+      Text_DrawMessageAsTilesFar(MsgPriceHeading -
+                                     ITEM_PICKER_COINS_MESSAGE_OFFSET,
+                                 window, ITEM_PICKER_COINS_LABEL_X, 8);
     }
   }
 }
 
-#undef SHOP_USE_PRICE_LABEL_X
-#undef SHOP_USE_PRICE_NUMBER_X
-#undef SHOP_USE_COIN_LABEL_X
-#undef SHOP_USE_COIN_MESSAGE_OFFSET
+#undef ITEM_PICKER_PRICE_LABEL_X
+#undef ITEM_PICKER_PRICE_NUMBER_X
+#undef ITEM_PICKER_COINS_LABEL_X
+#undef ITEM_PICKER_COINS_MESSAGE_OFFSET

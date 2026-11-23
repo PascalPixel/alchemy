@@ -16,12 +16,11 @@
 #define WINDOW_PAD_X (WINDOW_BORDER_WIDTH + 3)
 #define WINDOW_PAD_Y 15
 
-/// Sizes a window for decoded text no and moves (*windowX, *windowY) so the
-/// window fits on the screen. flags: bit 0 measures every page
-/// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
-/// *windowWidth and *windowHeight as given, in tiles, instead of measuring.
-/// In the Japanese and English releases, while a mind-read window is open, a
-/// measured window is 2 tiles wider and kept off the screen's last column.
+/// Sizes a window for the decoded text at entryIndex, as flags (WINDOW_FIT_)
+/// ask, and moves (*windowX, *windowY) so the window fits on the screen;
+/// spacing receives each line's extra gap between characters. In the Japanese
+/// and English releases, under Mind Read, a measured window is 2 tiles wider
+/// and kept off the screen's last column.
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
@@ -43,8 +42,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   y = *windowY;
   rightLimit = DISPLAY_TILE_WIDTH;
 
-  if (!(flags & 2)) {
-    if (flags & 1)
+  if (!(flags & WINDOW_FIT_GIVEN_SIZE)) {
+    if (flags & WINDOW_FIT_ALL_PAGES)
       Text_MeasureAllPages(entryIndex, windowWidth, windowHeight, spacing);
     else
       Text_MeasureDecoded(entryIndex, windowWidth, windowHeight, spacing);
@@ -54,7 +53,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     return;
 
   // Pixels to tiles, with room for the border and a margin.
-  if (!(flags & 2)) {
+  if (!(flags & WINDOW_FIT_GIVEN_SIZE)) {
     *windowWidth = (*windowWidth + WINDOW_PAD_X) >> 3;
     *windowHeight = (*windowHeight + WINDOW_PAD_Y) >> 3;
 #if !TBS_PATCH_2
@@ -102,10 +101,11 @@ void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
   Text_MeasureDecoded(Message_Decode(message, 0), (u32 *)x, (u32 *)y, 0);
 }
 
-/// Sizes the window for message no's first page.
+/// Sizes and places a window for a message's first page.
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
-/// Sizes the window for all of message no's pages (Text_MeasureAllPages).
-DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAllPages, 1)
+/// Sizes and places a window for all of a message's pages.
+DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAllPages,
+                               WINDOW_FIT_ALL_PAGES)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in
@@ -121,8 +121,8 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 code;
   u32 glyph;
   u32 lineIndex;
-  u16 lineSpacingCounts[4];
-  u16 lineWidths[4];
+  u16 lineSpacingCounts[MESSAGE_LINE_COUNT];
+  u16 lineWidths[MESSAGE_LINE_COUNT];
   s32 gap;
   u32 style;
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -200,7 +200,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       lineWidths[lines] = lineWidth;
       if (width < lineWidth)
         width = lineWidth;
-      if (lines < 3)
+      if (lines < MESSAGE_LINE_COUNT - 1)
         lines++;
       count = 0;
       lineWidth = 0;
@@ -213,7 +213,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       work->outline = TEXT_STYLE_PLAIN;
       goto done;
 #endif
-    case 14:
+    case TEXT_UNUSED_14:
     case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
@@ -224,7 +224,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
-    case TEXT_OUTLINE:
+    case TEXT_STYLE:
       work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
@@ -287,8 +287,8 @@ done:
 void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                           u16 *spacing) {
   u32 pageHeights[16];
-  u16 lineSpacingCounts[4];
-  u16 lineWidths[4];
+  u16 lineSpacingCounts[MESSAGE_LINE_COUNT];
+  u16 lineWidths[MESSAGE_LINE_COUNT];
   struct WindowWork *work;
   u32 maxWidth;
   u32 line;
@@ -381,7 +381,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       lineWidths[line] = width;
       if (page == 0 && maxWidth < width)
         maxWidth = width;
-      if (line < 3)
+      if (line < MESSAGE_LINE_COUNT - 1)
         line++;
       count = 0;
       width = 0;
@@ -414,7 +414,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #endif
       page++;
       break;
-    case 14:
+    case TEXT_UNUSED_14:
     case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
@@ -425,19 +425,16 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
-    case TEXT_OUTLINE:
+    case TEXT_STYLE:
       work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
   }
 done:
-  // Under Mind Read the pages measure 2 pixels wider in Japanese, English,
-  // Spanish and Italian: patch 2 drops Mind Read's padding from the
-  // first-page measure, Window_FitOnScreen and the pen (window_typing.c) in
-  // German, French, Spanish and Italian alike, and patch 4 puts the widening
-  // back here rather than keeping an older copy: this function has the patch 3
-  // outline reset at a page break too.
+  // Under Mind Read the pages measure 2 pixels wider. Patch 2 (German on)
+  // dropped Mind Read's widening from the first-page measure, the fit and the
+  // pen; patch 4 (Spanish and Italian) puts it back here alone.
 #if !TBS_PATCH_2 || TBS_PATCH_4
   if (work->mindRead != 0)
     maxWidth += 2;

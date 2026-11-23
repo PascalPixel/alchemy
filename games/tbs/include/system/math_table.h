@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_MATH_TABLE_H
 #define ALCHEMY_MATH_TABLE_H
 
+/// @file
+/// The trigonometry tables (system/math_table.c): the sine of a quarter turn
+/// and the tangents Trig_Atan searches.
+
 #include "types.h"
 
 extern const u16 gMath_SinQuarter[256];

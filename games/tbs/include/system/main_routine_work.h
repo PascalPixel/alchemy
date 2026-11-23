@@ -182,16 +182,21 @@ struct MainRoutineWork {
   s32 encounterSteps; ///< the encounter count, reset with a new area
   u16 pendingItem;    ///< given on returning to the field if the party has room
   s16 sceneType;      ///< the current scene's variant from its row in gScenes
-  s16 retreatScene;   ///< where Retreat goes; the area's first
-                      ///< entrance
-  s16 retreatEntrance; ///< where Retreat goes; the area's first
-                       ///< entrance
+  /// Where Retreat goes: the scene and entrance the party came into the area
+  /// by.
+  ///@{
+  s16 retreatScene;
+  s16 retreatEntrance;
+  ///@}
   FIXED avoidDistance; ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
-  s8 pausedPose;       ///< Halt: the stopped actor's first animation param
-  s16 haltedActor;     ///< Halt: the stopped actor; -1 for none
-  s16 cloaked;         ///< 1 under Cloak, which prevents battles
-  u32 pausedUpdate;    ///< Halt: the stopped actor's update; not read by name
+  /// Halt: the stopped actor's sprite colour mode, which Halt flickers and
+  /// puts back when the actor resumes.
+  s8 pausedPose;
+  s16 haltedActor; ///< Halt: the stopped actor; -1 for none
+  s16 cloaked;     ///< 1 under Cloak, which prevents battles
+  /// Halt: the stopped actor's per-frame update, put back when it resumes.
+  u32 pausedUpdate;
   u8 unusedAfterHalt[80];
   /// The Battle Arena's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by

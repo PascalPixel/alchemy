@@ -85,9 +85,9 @@ UNUSED s32 Task_Find(TaskFunc func) {
   return result;
 }
 
-/// Adds a task running `func` with priority `order`, or gives a task already
+/// Adds a task running `func` with priority `priority`, or gives a task already
 /// running it the new priority, and re-sorts the table.
-s32 Task_Add(TaskFunc func, s32 order) {
+s32 Task_Add(TaskFunc func, s32 priority) {
   u32 savedInterruptState;
   s32 index;
   struct Task *task;
@@ -104,7 +104,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
   // Update an existing task before looking for an unused task slot.
   for (i = 0; i < TASK_COUNT; i++, task++) {
     if (task->func == (u32)func) {
-      task->priority = order;
+      task->priority = priority;
       index = i;
       break;
     }
@@ -114,7 +114,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
     for (i = 0; i < TASK_COUNT; i++, task++) {
       if (task->func == 0) {
         task->func = (u32)func;
-        task->priority = order;
+        task->priority = priority;
         task->flags = 0;
         index = i;
         break;

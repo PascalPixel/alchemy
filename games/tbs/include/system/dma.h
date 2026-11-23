@@ -52,6 +52,22 @@ struct DmaRegisters {
                 CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4));             \
   }
 
+/// The halfword of a channel's REG_DMA0-style halfword view that holds its
+/// control (DMAxCNT_H): source, destination, count, then control.
+#define DMA_CONTROL_HALFWORD 5
+
+/// Stops DMA 0, which a scene may have left repeating each HBlank for a line
+/// effect: drops its start timing and repeat, then its enable, and reads the
+/// control back.
+#define Dma0_Stop()                                                            \
+  {                                                                            \
+    volatile u16 *dma0_ = REG_DMA0;                                            \
+                                                                               \
+    dma0_[DMA_CONTROL_HALFWORD] &= ~DMA_START_TIMING_DRQ_REPEAT;               \
+    dma0_[DMA_CONTROL_HALFWORD] &= ~DMA_ENABLE;                                \
+    dma0_[DMA_CONTROL_HALFWORD];                                               \
+  }
+
 /// Starts a DMA transfer: stores the source, destination and control words
 /// into `channel`'s registers with one stmia.
 CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc "

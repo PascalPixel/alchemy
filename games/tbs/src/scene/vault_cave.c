@@ -29,10 +29,10 @@
 ///   room of six puddles, where drops of water fall from the ceiling one at a
 ///   time. Frost freezes a puddle into a tall ice pillar whose top Isaac can
 ///   leap across, and frozen pillars make a way over the room; a drop landing
-///   on one stops on its top. The walkthrough's
-///   advice is to freeze all but the far east one. Up on the room's ledge,
-///   Whirlwind blows away the ivy over the way to the Vambrace's chest
-///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, kept while the party stays in the cave).
+///   on one stops on its top. The walkthrough's advice is to freeze all but
+///   the far east one. Up on the room's ledge, Whirlwind blows away the ivy
+///   over the way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
+///   kept while the party stays in the cave).
 /// - SceneId_VaultCaveMouth leads out to the cave mouth
 ///   (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches, Isaac
 ///   must get the lower burning torch north onto the fire crest below the
@@ -309,7 +309,7 @@ static void VaultCave_PushPillarAhead(void) {
          (s16)gPushedActor_DirectionSteps[direction]) >>
         4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
-  if (beyond != NULL && (beyond->collisionFlags & 1)) {
+  if (beyond != NULL && (beyond->collisionFlags & ACTOR_SOLID)) {
     return;
   }
   pillar->layer = 2;
@@ -638,6 +638,7 @@ static void VaultCave_RunRumble(void) {
   MapGrid_SetShake(3, 3, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Sound_Play(SE_RUSH);
+  // The water churns, its layer drifting by 0.04 to 0.07 of a pixel a frame.
   for (frame = 0; frame < 480; frame++) {
     u32 scrollDrift = Random_Below(2048);
 
@@ -647,11 +648,11 @@ static void VaultCave_RunRumble(void) {
   fadeLevel = 6;
   lowFadeLevel = 6;
   frame = 0;
-  // The pool's blend is built as a colour is, lowFadeLevel, fadeLevel and its
-  // first value in RGB's three fields: REG_BLDALPHA takes lowFadeLevel as the
-  // water's weight and 24, above full, as the floor's. The recording of the
-  // switch shows the floor coming through at full and the water's blue then
-  // thinning away over it in four steps, one every 20 frames.
+  // The water fades off the floor in four steps, one every 20 frames. The
+  // blend is packed as if it were a colour, the levels in RGB's three fields:
+  // REG_BLDALPHA reads lowFadeLevel as the water's weight and the first level,
+  // in the blue field, as the floor's, 24, above full; the green field falls
+  // in unused bits.
   upperFadeBits = fadeLevel << BLUE_SHIFT;
   for (; frame <= 69; frame++) {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, upperFadeBits |
@@ -786,7 +787,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
 static void VaultCave_UpdateFrostControlledFallingActors(void) {
   s32 fallingIndex;
   struct Actor *fallingActor;
-  s32 stateValue;
+  s32 frozen;
 
   fallingActor = Actor_Get(ACTOR_FIRST_WATER_DROP);
   if (fallingActor->paused == 0) {
@@ -796,12 +797,13 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
           Actor_Get(gVaultCave_SelectedDrop + ACTOR_FIRST_WATER_DROP);
       fallingActor->gravity = toFIXED(1) / 25;
     }
-    // Each actor's paired Frost flag selects its reset height.
+    // A drop goes back up once it reaches its puddle, or the top of the ice
+    // pillar 32 pixels up when the puddle is frozen.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_WATER_DROP));
-      stateValue = GameFlag_Get(
+      frozen = GameFlag_Get(
           (fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
-      if (stateValue != 0) {
+      if (frozen != 0) {
         if (fallingActor->velocityY <= 0) {
           if (fallingActor->y.fixed >= toFIXED(33)) {
             continue;
@@ -817,8 +819,9 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
             continue;
           }
         }
-        fallingActor->gravity = stateValue;
-        fallingActor->velocityY = stateValue;
+        // Both stop: frozen is 0 here.
+        fallingActor->gravity = frozen;
+        fallingActor->velocityY = frozen;
         fallingActor->y.fixed = toFIXED(255);
         Sound_Play(SE_DRIP);
       }

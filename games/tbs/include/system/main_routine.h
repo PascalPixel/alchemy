@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_MAIN_ROUTINE_H
 #define ALCHEMY_MAIN_ROUTINE_H
 
+/// @file
+/// The main routine, which runs the game's sequences one after another, and
+/// the scene changes between them.
+
 #include "types.h"
 
 /// MainRoutine_Run's mode: where the game starts.
@@ -10,6 +14,7 @@ enum GameStart {
   GAME_START_DEBUG_FILE_SCREEN = 2 ///< in debug mode, the File Screen
 };
 
+// system/main_routine.c documents each.
 void Scene_TakeExit(s32 exitId);
 void Scene_ReturnFromSequence(s32 result);
 s32 Scene_GetArea(s32 sceneId);

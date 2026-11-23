@@ -23,7 +23,7 @@
 
 /// Reads a 16-bit register or memory location into a variable. The variable
 /// is reached through its address, so a halfword one lives in the frame and
-/// is read back from there after each call. The name is ours, The Lost Age's.
+/// is read back from there after each call. The Lost Age has the same macro.
 #define Io_Read16(reg, variable) (*(variable) = *(reg))
 
 #endif

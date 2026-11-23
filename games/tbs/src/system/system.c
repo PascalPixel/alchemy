@@ -10,20 +10,16 @@
 /// README.md in this folder gives the words and prefixes the parts use. Where
 /// to start:
 ///
-///   Power-up        system_start_up.c: System_Initialize
-///   Frames          system_frame.c: wait(), System_VBlankHandler,
-///                   Irq_SetHandler; system_task.c:
-///                   Task_Add
-///   Screen          system_screen_fade.c: ScreenFade_Start; system_oam.c:
-///   Oam_BuildBuffer;
-///                   system_vram_cache.c: VramCache_Load
-///   Memory          system_heap.c: HeapSlot_Alloc, Heap_Alloc
-///   3D              system_matrix.c: Matrix_RotateTranslate,
-///                   Matrix_ProjectPoint
-///   Saving          system_save.c: Save_WritePart,
-///                   Save_ReadPart
-///   Link cable      system_serial.c: Serial_Initialize,
-///                   Serial_ExchangePayloads
+/// - power-up: System_Initialize (system_start_up.c);
+/// - frames: wait(), System_VBlankHandler and Irq_SetHandler
+///   (system_frame.c), Task_Add (system_task.c);
+/// - the screen: ScreenFade_Start (system_screen_fade.c), Oam_BuildBuffer
+///   (system_oam.c), VramCache_Load (system_vram_cache.c);
+/// - memory: HeapSlot_Alloc and Heap_Alloc (system_heap.c);
+/// - 3D: Matrix_RotateTranslate and Matrix_ProjectPoint (system_matrix.c);
+/// - saving: Save_WritePart and Save_ReadPart (system_save.c);
+/// - the link cable: Serial_Initialize and Serial_ExchangePayloads
+///   (system_serial.c).
 
 #include "system_internal.h"
 

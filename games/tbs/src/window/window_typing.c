@@ -4,10 +4,17 @@
 
 #include "window_internal.h"
 
-/// The battle message canvas: 30 columns of 4 tiles.
+/// The battle message canvas: 30 columns of four tiles, each column 32 pixel
+/// rows of a word each.
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
+
+/// A message waiting for a button holds its countdown here, set again each
+/// frame and counted down once, so it reads below MESSAGE_KEY_WAIT_STARTED
+/// only on the wait's first frame.
+#define MESSAGE_KEY_WAIT 919
+#define MESSAGE_KEY_WAIT_STARTED 900
 
 /// Scrolls the battle message canvas up by 6 pixel rows per step, below its top
 /// 8 rows, and clears the rows this uncovers.
@@ -28,14 +35,14 @@ void Text_ScrollCanvasUp(s32 step) {
 
 /// What Message_Type reports.
 enum {
-  CHANNEL_STEP_RUNNING = 0, ///< the text goes on next frame
-  CHANNEL_STEP_ENDED = 8,   ///< the text has ended; the window stays open
-  CHANNEL_STEP_CLOSE = 9,   ///< the text is dismissed: close the window
+  TYPING_GOES_ON = 0,       ///< the text goes on next frame
+  TYPING_ENDED = 8,         ///< the text has ended; the window stays open
+  TYPING_CLOSES_WINDOW = 9, ///< the text is dismissed: close the window
 };
 
 /// The per-frame message update: each message whose window is fully open runs
 /// its window animation or types more text, and on the text's end marks the
-/// window done (state 1) or closes it.
+/// window typed (WINDOW_TYPED) or closes it.
 void Message_UpdateAll(void) {
   struct Message *message = WINDOW_WORK->messages;
   s32 messageIndex = 0;
@@ -59,10 +66,10 @@ void Message_UpdateAll(void) {
         } else {
           step = Message_Type(message);
           switch (step) {
-          case CHANNEL_STEP_ENDED:
-            message->window->state = 1;
+          case TYPING_ENDED:
+            message->window->state = WINDOW_TYPED;
             break;
-          case CHANNEL_STEP_CLOSE: {
+          case TYPING_CLOSES_WINDOW: {
             struct Window *window = message->window;
 
             Window_Close(window, window->flags & WINDOW_FLAG_INSTANT);
@@ -74,7 +81,7 @@ void Message_UpdateAll(void) {
             message->colour = pending;
             message->outline = pending;
             message->lineSpacing = pending;
-            message->window->state = 1;
+            message->window->state = WINDOW_TYPED;
             break;
           }
           }
@@ -83,7 +90,7 @@ void Message_UpdateAll(void) {
     }
     messageIndex++;
     message++;
-  } while (messageIndex != 3);
+  } while (messageIndex != MESSAGE_COUNT);
 }
 
 /// Types one frame's share of a message's text: runs control codes (new line,
@@ -127,12 +134,12 @@ s32 Message_Type(struct Message *message) {
   if (message->transition != 0) {
     Text_ScrollCanvasUp(1);
     message->transition = (s16)message->transition - 1;
-    return CHANNEL_STEP_RUNNING;
+    return TYPING_GOES_ON;
   }
   // With no button held, wait out the delay after the last glyph.
   if (gKeysHeld == 0 && message->glyphDelay != 0) {
     message->glyphDelay--;
-    return CHANNEL_STEP_RUNNING;
+    return TYPING_GOES_ON;
   }
 
   // Run control codes and draw characters until this frame's share is done.
@@ -144,45 +151,43 @@ s32 Message_Type(struct Message *message) {
     if (code < TEXT_COMMANDS) {
       switch (code) {
       case TEXT_NEWLINE:
-        // Canvas lines are 13 pixels apart, and from the second line on the
-        // canvas scrolls up instead; other windows' lines are 15 apart.
+        // On a canvas the text scrolls up from the second line on.
         message->x = message->startX;
         if (message->window->flags & WINDOW_FLAG_TEXT_CANVAS) {
-          if (message->y >= 13 << 8) {
+          if (message->y >= BATTLE_MESSAGE_LINE_HEIGHT << 8) {
             Text_StartCanvasScroll(message);
             glyphsLeft = 1;
           } else {
-            message->y += 13 << 8;
+            message->y += BATTLE_MESSAGE_LINE_HEIGHT << 8;
           }
         } else {
-          message->y += 15 << 8;
-          if (message->line <= 2)
+          message->y += TEXT_LINE_HEIGHT << 8;
+          if (message->line < MESSAGE_LINE_COUNT - 1)
             message->line++;
         }
         break;
 
       case TEXT_PAGE:
-        // The countdown only holds the message on this code while it waits: it
-        // is set to 919 each frame and counted down once, so it is below 900
-        // only on the wait's first frame.
-        if (work->mindRead != 0 && message->countdown < 900)
+        // Under Mind Read a press from before the wait does not count.
+        if (work->mindRead != 0 &&
+            message->countdown < MESSAGE_KEY_WAIT_STARTED)
           gKeysPressedLatch = 0;
-        message->countdown = 919;
+        message->countdown = MESSAGE_KEY_WAIT;
         if (Text_CheckTextDismissed(message) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
           // corner.
-          struct Window *side = message->window;
+          struct Window *arrowWindow = message->window;
 
 #if TBS_PATCH_1
-          if (side->width == 0 || side->height == 0 ||
+          if (arrowWindow->width == 0 || arrowWindow->height == 0 ||
               work->pageArrowShown != 0)
             break;
 #else
           if (work->pageArrowShown != 0)
             break;
 #endif
-          Glyph_Draw(side, 1, side->width * 4 - 8, side->height * 8 - 16,
-                     GLYPH_DRAW_PAGE_ARROW);
+          Glyph_Draw(arrowWindow, 1, arrowWindow->width * 4 - 8,
+                     arrowWindow->height * 8 - 16, GLYPH_DRAW_PAGE_ARROW);
           work->pageArrowShown = 1;
           break;
         }
@@ -216,10 +221,10 @@ s32 Message_Type(struct Message *message) {
             if (!(window->flags & WINDOW_FLAG_FIXED_X)) {
               // Shift the window by a quarter of the change in width (tiles),
               // part way to keeping its centre, which a half would keep; then
-              // fit it on the screen again at its new size (flags 2).
+              // fit it on the screen again at its new size.
               x += (s32)(oldWidth - newWidth) / 4;
               Window_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
-                                 message->spacing, 2);
+                                 message->spacing, WINDOW_FIT_GIVEN_SIZE);
             }
             window->x = x;
             window->y = y;
@@ -246,11 +251,12 @@ s32 Message_Type(struct Message *message) {
 
       case TEXT_WAIT_KEY:
         // The same hold as a page break's.
-        if (work->mindRead != 0 && message->countdown < 900)
+        if (work->mindRead != 0 &&
+            message->countdown < MESSAGE_KEY_WAIT_STARTED)
           gKeysPressedLatch = 0;
         if (Text_CheckTextDismissed(message) != 0)
-          return CHANNEL_STEP_CLOSE;
-        message->countdown = 919;
+          return TYPING_CLOSES_WINDOW;
+        message->countdown = MESSAGE_KEY_WAIT;
         break;
 
       case TEXT_PAUSE_SHORT:
@@ -279,7 +285,7 @@ s32 Message_Type(struct Message *message) {
         Message_ApplyStyle(message);
         break;
 
-      case TEXT_OUTLINE:
+      case TEXT_STYLE:
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         message->outline = work->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
@@ -291,7 +297,7 @@ s32 Message_Type(struct Message *message) {
         Message_ApplyStyle(message);
         break;
 
-      case TEXT_COLORS_RESET:
+      case TEXT_RESET_STYLE:
         message->colour = TEXT_DEFAULT_COLOR;
         message->outline = TEXT_STYLE_PLAIN;
         message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
@@ -311,7 +317,7 @@ s32 Message_Type(struct Message *message) {
       case TEXT_END:
       case TEXT_END_ALT:
         message->ended = 1;
-        return CHANNEL_STEP_ENDED;
+        return TYPING_ENDED;
       }
 
       // Outside battle a control code ends this frame's typing.
@@ -402,7 +408,7 @@ s32 Message_Type(struct Message *message) {
       // window.
 #if LANGUAGE == LANGUAGE_JAPANESE
       else
-        return CHANNEL_STEP_CLOSE;
+        return TYPING_CLOSES_WINDOW;
 #endif
       // Outside battle a space ends this frame's typing.
       if (code == TEXT_SPACE && work->battleMode == WINDOW_FIELD)
@@ -418,9 +424,11 @@ s32 Message_Type(struct Message *message) {
     message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
   } while (--glyphsLeft != 0);
 
-  return CHANNEL_STEP_RUNNING;
+  return TYPING_GOES_ON;
 }
 
 #undef CANVAS_COLUMNS
 #undef CANVAS_COLUMN_WORDS
 #undef CANVAS_KEPT_ROWS
+#undef MESSAGE_KEY_WAIT
+#undef MESSAGE_KEY_WAIT_STARTED

@@ -6,7 +6,7 @@
 
 /// Advances the game's random number generator (the C library's classic
 /// linear congruential one), stores the new seed and returns its bits 8 to
-/// 23, 0 to 65535. Called throughout the game.
+/// 23, 0 to 65535.
 u32 Random16(void) {
   enum { MULTIPLIER = 1103515245, INCREMENT = 12345 };
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;

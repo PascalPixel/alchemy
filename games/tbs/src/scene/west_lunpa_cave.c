@@ -40,8 +40,9 @@
 /// as the party comes down the passage into the first chamber (cell
 /// (11, 29)), Bunza steps out further up the passage behind them and Hammet
 /// knows him (WestLunpaCave_HammetFindsBunza). They all talk in the first
-/// chamber (Reunion_Converse), and Isaac's answers decide whether the party
-/// rides home to Kalay in Bunza's wagon or stays behind (WagonChoice_Run).
+/// chamber (WestLunpaCave_HoldReunion), and Isaac's answers decide whether the
+/// party rides home to Kalay in Bunza's wagon or stays behind
+/// (WestLunpaCave_AskAboutWagon).
 ///
 /// Riding leaves by WEST_LUNPA_CAVE_BY_WAGON to
 /// WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure. If
@@ -63,11 +64,11 @@
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
-extern const struct SceneEntrance gCaveEntrances[];
-extern const u32 gCaveExits[];
-extern const struct ActorPlacement gCaveNoActorPlacements[];
-extern const struct ActorPlacement gCaveActorPlacements[];
-extern const struct Trigger gCaveTriggers[];
+extern const struct SceneEntrance gWestLunpaCave_Entrances[];
+extern const u32 gWestLunpaCave_Exits[];
+extern const struct ActorPlacement gWestLunpaCave_NoActorPlacements[];
+extern const struct ActorPlacement gWestLunpaCave_ActorPlacements[];
+extern const struct Trigger gWestLunpaCave_Triggers[];
 
 /// The cells the cave's triggers answer: the two ways out, the two switches
 /// and the spot where Bunza is seen.
@@ -79,8 +80,8 @@ enum WestLunpaCaveCellBehavior {
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 };
 
-/// The cave's actors, numbered in the order of gCaveActorPlacements.
-enum CaveActorId {
+/// The cave's actors, numbered in the order of gWestLunpaCave_ActorPlacements.
+enum WestLunpaCaveActorId {
   /// Placed at the map's top-left corner, off every part of the cave the
   /// screen shows, so the player never sees it
   /// (WestLunpaCave_UnusedFreezePuddle).
@@ -117,7 +118,8 @@ enum RecognitionMessage {
   RECOGNITION_BUNZA_NAMES_HAMMET
 };
 
-/// The reunion's talk in the first chamber (Reunion_Converse), in order.
+/// The reunion's talk in the first chamber (WestLunpaCave_HoldReunion), in
+/// order.
 enum ReunionMessage {
   REUNION_BUNZA_ASKS_ABOUT_RELEASE,
   REUNION_HAMMET_CREDITS_IVAN,
@@ -174,7 +176,7 @@ enum PlanMessage {
   PLAN_BUNZA_IS_UNSUSPECTED
 };
 
-/// The lines before the wagon question (WagonChoice_Run).
+/// The lines before the wagon question (WestLunpaCave_AskAboutWagon).
 enum WagonMessage { WAGON_BUNZA_LEADS_THE_WAY, WAGON_GARET_ASKS_TO_RIDE };
 
 /// Ivan, confused by Isaac's answers, and Garet asking the wagon question
@@ -191,7 +193,7 @@ enum WarningMessage {
   WARNING_MIA_ASKS_ABOUT_BUSINESS
 };
 
-/// The lines as the party stays behind (Party_StaysBehind).
+/// The lines as the party stays behind (WestLunpaCave_StayBehind).
 enum FarewellMessage {
   FAREWELL_GARET_STAYS,
   FAREWELL_MIA_STAYS,
@@ -204,7 +206,7 @@ enum FarewellMessage {
   FAREWELL_GARET_MOVES_ON
 };
 
-/// The lines as the party rides the wagon (Party_RidesWagon).
+/// The lines as the party rides the wagon (WestLunpaCave_RideWagon).
 enum DepartureMessage {
   DEPARTURE_GARET_HEADS_FOR_KALAY,
   DEPARTURE_IVAN_THINKS_OF_LAYANA,
@@ -216,53 +218,50 @@ enum DepartureMessage {
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 /// The lowering switch has lowered the gate.
 #define FLAG_WEST_LUNPA_CAVE_GATE_LOWERED FLAG_SCENE_TEMP_01
+/// The gate is raised, by the raising switch or the ice pillar under it.
 #define FLAG_WEST_LUNPA_CAVE_GATE_RAISED FLAG_SCENE_TEMP_02
 /// The north puddle is frozen into a pillar.
 #define FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 /// The puddle in the first chamber is frozen into a pillar.
 #define FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
-static void Reunion_Converse(void);
-static void WagonChoice_Run(void);
+static void WestLunpaCave_HoldReunion(void);
+static void WestLunpaCave_AskAboutWagon(void);
 static u8 WestLunpaCave_LeaderAnswersYes(void);
 static u8 WestLunpaCave_GaretAsksIfNotRiding(void);
 static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void);
-static u8 Party_ConfirmsStaying(void);
+static u8 WestLunpaCave_ConfirmStaying(void);
 static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void);
 static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void);
 static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void);
 static u8 WestLunpaCave_BunzaCannotWait(void);
 static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void);
-static void Party_StaysBehind(void);
-static void Party_RidesWagon(void);
+static void WestLunpaCave_StayBehind(void);
+static void WestLunpaCave_RideWagon(void);
 
-// The cave's scene flags, the state of its gate puzzle:
-// FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate puddle is frozen, propping
-// the gate open. FLAG_WEST_LUNPA_CAVE_GATE_LOWERED: the lowering switch has
-// lowered the gate. FLAG_WEST_LUNPA_CAVE_GATE_RAISED: the gate is raised.
-// FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN: the north puddle is frozen into a
-// pillar. FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen
-// into a pillar.
-
-const struct SceneEntrance *Scene_GetEntrances(void) { return gCaveEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gWestLunpaCave_Entrances;
+}
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// The ways out: to the World Map, to Lunpa, and away in Bunza's wagon.
-const u32 *Scene_GetExits(void) { return gCaveExits; }
+const u32 *Scene_GetExits(void) { return gWestLunpaCave_Exits; }
 
 /// The puddles, and Bunza, Hammet and the party for the reunion, kept off
 /// the stage until it plays.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_WEST_LUNPA_CAVE) {
-    return gCaveActorPlacements;
+    return gWestLunpaCave_ActorPlacements;
   }
-  return gCaveNoActorPlacements;
+  return gWestLunpaCave_NoActorPlacements;
 }
 
 /// The cave's events: its ways out, the two switches, Frost on each puddle and
 /// the spot where Bunza is seen.
-const struct Trigger *Scene_GetTriggers(void) { return gCaveTriggers; }
+const struct Trigger *Scene_GetTriggers(void) {
+  return gWestLunpaCave_Triggers;
+}
 
 /// Unused: Frost on the fourth puddle, at the map's top-left corner (cell
 /// (0, 0)) where the screen never goes, would freeze it, and no flag would
@@ -526,7 +525,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Event_WaitTransitionFrames();
     Event_Wait(20);
     Event_End();
-    Reunion_Converse();
+    WestLunpaCave_HoldReunion();
   }
 }
 
@@ -534,7 +533,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
 /// that Dodonpa never meant to free Hammet and that Ivan and his friends came
 /// to the rescue, tells how he came to be hiding in the cave, and offers them
 /// all a ride to Kalay in his wagon.
-static void Reunion_Converse(void) {
+static void WestLunpaCave_HoldReunion(void) {
   s32 reunion;
   s32 messageBase;
 
@@ -826,13 +825,13 @@ static void Reunion_Converse(void) {
   Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_NOD);
   Event_Wait(60);
-  WagonChoice_Run();
+  WestLunpaCave_AskAboutWagon();
 }
 
 /// Garet asks whether they should ride in the wagon too, and the questions go
 /// on until Isaac's answers settle it: the party rides to Kalay, or stays
 /// behind to finish its business in Lunpa (the walkthrough's No, Yes, Yes).
-static void WagonChoice_Run(void) {
+static void WestLunpaCave_AskAboutWagon(void) {
   s32 wagon;
   s32 insisted;
   s32 confusion;
@@ -885,12 +884,12 @@ ask_to_ride:
     Event_OpenMessage(ACTOR_GARET, 0);
     goto ask_to_ride;
   ride:
-    Party_RidesWagon();
+    WestLunpaCave_RideWagon();
     return;
   }
 stay:
-  Party_ConfirmsStaying();
-  Party_StaysBehind();
+  WestLunpaCave_ConfirmStaying();
+  WestLunpaCave_StayBehind();
 }
 
 /// The yes-or-no menu answers 0 for Yes; this turns that into true or false.
@@ -915,7 +914,7 @@ static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void) {
 }
 
 /// A step before the party stays that shows nothing and always agrees.
-static u8 Party_ConfirmsStaying(void) { return TRUE; }
+static u8 WestLunpaCave_ConfirmStaying(void) { return TRUE; }
 
 /// Bunza asks, "Do you have any unfinished business?"
 static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
@@ -926,7 +925,7 @@ static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
 }
 
 /// Garet asks, "Don't startle me! You don't have anything left to do, do
-/// you?" WagonChoice_Run takes the answer.
+/// you?" WestLunpaCave_AskAboutWagon takes the answer.
 static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
   Event_SetMessageId(MsgLunpaGaretChecksNothingLeft);
   // "Don't startle me! You don't have anything left to do, do you?"
@@ -978,7 +977,7 @@ static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
 /// Hammet lets Ivan go, and Hammet and Bunza walk off south out of the cave.
 /// The others sigh after them, hope they reach Kalay safely, and fall in
 /// behind Isaac again.
-static void Party_StaysBehind(void) {
+static void WestLunpaCave_StayBehind(void) {
   s32 farewell;
 
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -1067,7 +1066,7 @@ static void Party_StaysBehind(void) {
 /// The party rides: Garet says on to Kalay, Ivan and Hammet look forward to
 /// seeing Lady Layana, and everyone walks out of the cave to the south,
 /// where the World Map plays the wagon's departure.
-static void Party_RidesWagon(void) {
+static void WestLunpaCave_RideWagon(void) {
   s32 departure;
 
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
@@ -1168,7 +1167,7 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
-const struct SceneEntrance gCaveEntrances[] = {
+const struct SceneEntrance gWestLunpaCave_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { WEST_LUNPA_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 168, 0, 632, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
     { WEST_LUNPA_CAVE_FROM_LUNPA, CONDITION_ALWAYS, 552, 0, 328, FACING_NORTH, 0, 88, 56, 648, 648, 0 },
@@ -1176,7 +1175,7 @@ const struct SceneEntrance gCaveEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-const u32 gCaveExits[] = {
+const u32 gWestLunpaCave_Exits[] = {
     SCENE_EXITS(WestLunpaCave),
     SCENE_EXIT(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
     SCENE_EXIT(WEST_LUNPA_CAVE_TO_LUNPA, Lunpa, LUNPA_FROM_WEST_LUNPA_CAVE),
@@ -1184,11 +1183,11 @@ const u32 gCaveExits[] = {
     SCENE_EXITS_END,
 };
 
-const struct ActorPlacement gCaveNoActorPlacements[] = {
+const struct ActorPlacement gWestLunpaCave_NoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ActorPlacement gCaveActorPlacements[] = {
+const struct ActorPlacement gWestLunpaCave_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       136, 0, 520, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -1205,11 +1204,11 @@ const struct ActorPlacement gCaveActorPlacements[] = {
 };
 
 /// Unused: an empty trigger table nothing returns.
-const struct Trigger gCaveNoTriggers[] = {
+const struct Trigger gWestLunpaCave_NoTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-const struct Trigger gCaveTriggers[] = {
+const struct Trigger gWestLunpaCave_Triggers[] = {
     { TRIGGER_EXIT, CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
     { TRIGGER_EXIT, CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
     { TRIGGER_STEP, CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,

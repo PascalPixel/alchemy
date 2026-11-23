@@ -48,7 +48,6 @@ void Shop_InitializeWork(void) {
   shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopWork));
   Field_EndBusyAndRevealFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
-  // The hand cursor's glides take 12 frames until a screen changes it
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
@@ -101,7 +100,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 
   if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)
     stockRow = SHOP_STOCK_ROW_EMPTY;
-  // Seed this place's artifact stock before creating the shop UI.
+  // A shop's artifacts join the world's stock the first time it opens.
   ShopStock_AddArtifacts(stockRow);
   Shop_InitializeWork();
   shop = gMenuWork;
@@ -125,38 +124,48 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   anchor =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   anchor->motion = WINDOW_SPRITE_MOTION_STILL;
-  anchor->kind = 0;
+  // The hand's icon is the shop's, freed by Shop_ReleaseWork, not the sprite's.
+  anchor->kind = WINDOW_SPRITE_GLYPH;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;
+  // The lines are quoted as a weapon shop words them; "Come in! Welcome! Take
+  // a look at our fine weapons."
   Shop_ShowKeeperMessage(MsgWeaponShopWelcome);
   while (1) {
     action = Menu_SelectShopCommandFar(action);
     shop->action = action;
     if (action == SHOP_ACTION_BUY) {
       shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
+      // "What would you like?"
       Shop_ShowKeeperMessage(MsgWhatWouldYouLike);
       Shop_SelectBuy();
     } else if (action == SHOP_ACTION_SELL) {
+      // "What do you want to sell?"
       Shop_ShowKeeperMessage(MsgWhatToSell);
       Shop_ChooseMember();
     } else if (action == SHOP_ACTION_ARTIFACTS) {
       if (Shop_ListAvailableArtifacts() != 0) {
+        // "You must be a connoisseur if those caught your eye."
         Shop_ShowKeeperMessage(MsgConnoisseur);
         Shop_SelectBuy();
       } else {
+        // "Sorry, but we're out of stock. Come back later, OK?"
         Shop_ShowKeeperMessage(MsgOutOfStock);
         wait(1);
       }
     } else if (action == SHOP_ACTION_REPAIR) {
+      // "You should fix damaged weapons before they break."
       Shop_ShowKeeperMessage(MsgFixDamaged);
       Shop_RunRepairMemberChoice();
     } else {
       break;
     }
     MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
+    // "Anything else today?"
     Shop_ShowKeeperMessage(MsgAnythingElse);
   }
+  // "Feel free to drop in anytime."
   Shop_ShowKeeperMessage(MsgShopFarewell);
   Window_CloseFar(window, 2);
   Shop_ReleaseWork();
@@ -195,19 +204,20 @@ s32 Shop_OpenDebugShop(s32 unused) {
   return 0;
 }
 
-/// Waits one frame at a time until the sound driver has finished the last
-/// command.
+/// Waits a frame at a time while a jingle holds back the music, as the inn's
+/// does through the night.
 void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
     wait(1);
   }
 }
 
-/// Shows a shopkeeper's line, given as the weapon shop's, and waits for its
-/// window; the other shops say their own.
+/// Shows a shopkeeper's line and waits until it is typed out. The line is given
+/// as a weapon shop's: an armor or item shop says its own, the same distance
+/// on in the text, and a warriors' shop its own beyond that.
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopWork *shop = gMenuWork;
-  s32 portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  s32 voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   s32 resolvedMessage = messageId;
   s8 shopType;
 
@@ -221,8 +231,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   if ((s8)shop->warriorShop != 0)
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        MESSAGE_WINDOW_VOICE(portraitResource) |
-                            MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -231,7 +241,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
 /// Shows a shopkeeper's line as Shop_ShowKeeperMessage does, hiding the hand
 /// cursor while it shows and putting back its motion after.
 void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
-  s32 portraitResource;
+  s32 voice;
   s32 resolvedMessage;
   s8 shopType;
   s8 warriorShop;
@@ -243,7 +253,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   cursorSlot = &shop->cursor.anchor;
   savedCursorMode = (*cursorSlot)->motion;
   resolvedMessage = messageId;
-  portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
+  voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   shopType = shop->shopType;
   if (shopType == SHOP_TYPE_ARMOR) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
@@ -258,8 +268,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        MESSAGE_WINDOW_VOICE(portraitResource) |
-                            MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }

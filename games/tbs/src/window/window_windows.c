@@ -199,8 +199,8 @@ void WindowSystem_UploadTilemap(void) {
 /// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
 /// and frees the text tiles it showed.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowWork *canvas = WINDOW_WORK;
-  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)canvas->tilemap);
+  struct WindowWork *work = WINDOW_WORK;
+  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)work->tilemap);
   s32 tile;
   u32 bottom;
   u32 row;
@@ -215,8 +215,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
     width = DISPLAY_TILE_WIDTH;
   if (height <= 1)
     height = 2;
-  if (height > 30)
-    height = 30;
+  // The height is held to the screen's width, not its height.
+  if (height > DISPLAY_TILE_WIDTH)
+    height = DISPLAY_TILE_WIDTH;
 
   // Free the text tiles while the tilemap still names them.
   Window_ClearTextTilesInRect(x, y, width, height);
@@ -224,7 +225,8 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   for (row = 0; row < height; row++) {
     u32 column;
 
-    if (canvas->battleMode != 0) {
+    // In battle the screen's bottom three rows erase to the command panel.
+    if (work->battleMode != 0) {
       if ((y + row) > 16)
         tile = WINDOW_TILE_COMMAND_PANEL;
       else
@@ -235,12 +237,12 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
     }
     cursor += BG_SCREEN_WIDTH - width;
   }
-  canvas->dirty = 1;
+  work->dirty = 1;
 }
 
 /// Draws a window at its full size: its border, and for a text canvas window
-/// the canvas, filled with colour 4 under a border when the window is bordered
-/// and transparent otherwise.
+/// the canvas, filled with the window background under a border when the
+/// window is bordered and transparent otherwise.
 void Window_DrawOpened(struct Window *window) {
   u32 flags;
   u32 value;
@@ -259,7 +261,6 @@ void Window_DrawOpened(struct Window *window) {
   x = window->x;
   y = window->y;
   width = window->width;
-  // Canvas windows need both pixel storage and their tilemap rectangle.
   if (WINDOW_FLAG_TEXT_CANVAS & flags) {
     if (WINDOW_FLAG_BORDERED_CANVAS & flags) {
       Window_DrawBorder(x, y, width, height);
@@ -293,17 +294,15 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     }
   }
   if (found != 0) {
-    // Reset the slot before applying the caller's canvas and anchor flags.
     found->y = y;
     found->width = width;
     found->height = height;
     found->x = x;
     found->sprites.head = NULL;
-    found->state = 0;
+    found->state = WINDOW_TYPING;
     found->sprites.tailLink = &slot->sprites.head;
     found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
-    // Every new window starts the shared text style afresh.
     Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;
@@ -543,7 +542,8 @@ struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
 }
 
 /// Starts a message typing the decoded text at entry into the battle message
-/// window.
+/// window, on its next line unless keepPosition is set, and returns it, or
+/// NULL when no message is free.
 struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
                                        s32 keepPosition) {
   struct Message *message;
@@ -554,15 +554,15 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
   message = WINDOW_WORK->messages;
   selected = 0;
   for (index = 0; index != MESSAGE_COUNT; message++, index++) {
-    if (message->window == 0 || message->window->state != 0) {
+    if (message->window == 0 || message->window->state != WINDOW_TYPING) {
       selected = message;
       break;
     }
   }
 
   if (selected != 0) {
-    // Positions are in 1/256 pixel: the first line is 10 pixels down, the
-    // second 13 pixels below it, and after the second the text scrolls up.
+    // Positions are in 1/256 pixel: the first line is 10 pixels down and 3 in,
+    // the second a line below it, and after the second the text scrolls up.
     if (selected->window == 0) {
       selected->y = 10 << 8;
       selected->window = window;
@@ -570,8 +570,8 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
     } else if (keepPosition == 0) {
       if (selected->y == 0) {
         selected->y = 10 << 8;
-      } else if (selected->y < 13 << 8) {
-        selected->y += 13 << 8;
+      } else if (selected->y < BATTLE_MESSAGE_LINE_HEIGHT << 8) {
+        selected->y += BATTLE_MESSAGE_LINE_HEIGHT << 8;
       } else {
         Text_StartCanvasScroll(selected);
       }
@@ -579,8 +579,8 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
     }
 
     selected->startX = 3 << 8;
-    selected->window->state = 0;
-    // Start the next text run without retaining the previous run's style.
+    selected->window->state = WINDOW_TYPING;
+    // The new text starts in the default style.
     selected->colour = TEXT_DEFAULT_COLOR;
     selected->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     selected->textIndex = entry;
@@ -602,7 +602,7 @@ s32 Text_ClearCanvas(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
-/// Fills the text canvas with the window background colour (4).
+/// Fills the text canvas with the window background colour.
 s32 Text_FillCanvasBackground(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
                          TEXT_CANVAS_BACKGROUND_WORD);
@@ -616,7 +616,7 @@ void Message_ResetIdle(void) {
   s32 i;
 
   for (i = 0; i != MESSAGE_COUNT; message++, i++) {
-    if (message->window == 0 || message->window->state != 0) {
+    if (message->window == 0 || message->window->state != WINDOW_TYPING) {
       selection = message;
       break;
     }
@@ -634,8 +634,8 @@ void Message_ResetIdle(void) {
   }
 }
 
-/// Copies the message's text colour, outline and line spacing into the shared
-/// glyph renderer before that message draws its next character.
+/// Sets the colour, style and line spacing glyphs are drawn in to the
+/// message's.
 void Message_ApplyStyle(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
 

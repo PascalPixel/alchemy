@@ -2,20 +2,17 @@
 #define ALCHEMY_SYSTEM_CALL_H
 
 /// @file
-/// The system call layer: one typed inline for each of the thirteen main-image
-/// routines below that the scene, menu and debug overlays import; every overlay
-/// call of them goes through it.
+/// The system call layer: an inline for each of the thirteen main-image
+/// routines below that the scene, menu and debug overlays import, which every
+/// overlay call of them goes through.
 ///
-/// An overlay writes `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline
-/// calls Task_Add, which resolves to the overlay's import stub. Main-image
-/// code calls the routines as ordinary functions; only the shared
-/// scene/shared/scroll_initialize_hblank_dma.c, which field/event_commands.c
-/// includes as lemurian_ship.c does, reaches the layer there, as
-/// LuckyDice_Run's two decodes do through a tagged wrapper. event_inline.h
-/// includes this layer; rooms without the event command layer use it directly.
-
-// Passing arguments through inline parameters rematerializes constants at each
-// call.
+/// An overlay writes `Task_AddFrame(func, TASK_PASS_FRAME)`, and the inline
+/// calls Task_Add through the overlay's import stub. Main-image code calls the
+/// routines by their own names, except in
+/// scene/shared/scroll_initialize_hblank_dma.c, which
+/// field/event_commands_line_scroll.c includes as lemurian_ship.c does.
+/// event_inline.h includes this layer; a room without the event commands
+/// includes it itself.
 
 #include "types.h"
 #include "field/event_commands.h"
@@ -34,6 +31,8 @@ static inline s32 Task_AddFrame(TaskFunc func, s32 priority) {
   return Task_Add(func, priority);
 }
 
+/// The overlays' names for the routines they import, each the routine
+/// itself.
 static inline void FieldMenuArrow_Create(struct MenuSprite *cursor, s32 *slot) {
   MenuArrow_Create(cursor, slot);
 }

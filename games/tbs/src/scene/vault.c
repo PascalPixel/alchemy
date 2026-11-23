@@ -845,8 +845,8 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
-  // A still actor on the well that shows nothing (vault_revisit.c's open
-  // questions).
+  // A hidden crate on the well, the one vault_revisit.c places too, where what
+  // it is for is asked.
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   actor->timer = VILLAGER_IS_BOY;
@@ -1111,9 +1111,11 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_WAIT(240),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
+    // Unused: past the route's end, a solid stroll round her spot that no
+    // actor is given.
     SC_SPEED(0.4),
     SC_ACCELERATION(0.2),
-    SC_SET(SW_COLLISION, 129),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_SET(SW_RADIUS, toFIXED(40)),
     SC_LABEL(1),
     SC_ANIMATION(ANIM_WALK),

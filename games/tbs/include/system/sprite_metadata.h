@@ -27,8 +27,8 @@ struct AnimationMetadata {
   /// Pixels; half of it is a battle unit's radius, and can be an
   /// actor's radius (Actor.radius).
   u8 boxY;
-  u8 pictureCodec; ///< SpriteAnimation.mode: 1 tagged LZ, 3 LZ, anything else
-                   ///< raw
+  u8 pictureCodec; ///< an enum SpritePictureCodec, copied to
+                   ///< SpriteAnimation.mode
   /// The picture pointers; null takes them from the sprite picture cache slot
   /// holding the animation (SpritePictureCache_FindByTag).
   void **pictures;
@@ -38,16 +38,15 @@ struct AnimationMetadata {
 STATIC_ASSERT(sizeof(struct AnimationMetadata) == 20);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, scale) == 2);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animationCount) == 5);
-/// Every sprite animation's metadata, by number (graphics/sprite/sprites.s).
-extern struct AnimationMetadata gSprite_AnimationMetadata[];
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxX) == 8);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, boxY) == 9);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictureCodec) == 10);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, pictures) == 12);
 STATIC_ASSERT(offsetof(struct AnimationMetadata, animation) == 16);
 
-struct AnimationMetadata;
+/// Every sprite animation's metadata, by number (graphics/sprite/sprites.s).
+extern struct AnimationMetadata gSprite_AnimationMetadata[];
 
-struct AnimationMetadata *Resource_GetMetadataRecord(u32 number);
+struct AnimationMetadata *Resource_GetMetadataRecord(u32 descriptorId);
 
 #endif

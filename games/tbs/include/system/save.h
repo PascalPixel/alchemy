@@ -106,6 +106,7 @@ STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
 #define START_DMA(source_, destination_, control_)                             \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
+/// Waits until `channel`'s transfer is done.
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA_BUSY) != 0) {
   }

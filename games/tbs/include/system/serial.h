@@ -35,13 +35,6 @@ STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
 STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
 STATIC_ASSERT(offsetof(struct SerialPacket, reservedTail) == 28);
 
-/// The serial data registers read as two words or four halfwords; no code
-/// names this union.
-union SerialDataRegisters {
-  u32 words[2];
-  u16 halfwords[4];
-};
-
 /// SerialWork.phase.
 enum SerialPhase {
   SERIAL_PHASE_SEARCHING = 0, ///< looking for the partner
@@ -172,9 +165,6 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, flags) == 2);
 STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
-/// The link cable's runtime, as the transfer code reaches it.
-#define SERIAL_RUNTIME (&gSerialWork)
-
 /// This console's block transfer state, sent to the partners each VBlank.
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialWork gSerialWork;
@@ -184,26 +174,25 @@ extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
 /// The bytes the send in progress has left to send.
 // volatile: Serial_StartSend sets it while Serial_StepBlockTransfer, which the
-// VBlank handler runs, counts it down, so it is no device.
+// VBlank handler runs, counts it down.
 extern volatile u16 gSerialSendSize;
 /// Where the receive in progress writes, 0 when none is running.
 extern s32 gSerialReceiveDestination;
 /// The bytes the receive in progress has taken so far.
 // volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
-// up while the link code outside the interrupt polls it, so it is no device.
+// up while the link code outside the interrupt polls it.
 extern volatile u16 gSerialReceivedSize;
 extern struct SerialTransferState gSerialPeerPayloads[4];
 /// The number of the block being sent or received, from 0 at each transfer.
 // volatile: Serial_StartSend and Serial_StartReceive reset it while
-// Serial_StepBlockTransfer, which the VBlank handler runs, steps it, so it is
-// no device.
+// Serial_StepBlockTransfer, which the VBlank handler runs, steps it.
 extern volatile u8 gSerialBlockNumber;
 /// Cleared as the link starts and as the Battle Arena trades parties; nothing
 /// reads it.
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 // volatile: the VBlank handler writes it while Serial_WaitForStatusMask and the
-// link screens poll it, so it is no device.
+// link screens poll it.
 extern volatile u16 gLinkStatus;
 
 /// Adds LINK_STATUS_ERROR to a link status once a transfer has failed.

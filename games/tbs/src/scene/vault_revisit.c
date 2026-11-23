@@ -356,10 +356,10 @@ static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
 /// that must have been great! If he has not asked about the jail yet, he asks
 /// aloud instead, then wanders off again.
 static void VaultRevisit_ReadMindOnJailKey(void) {
-  s32 requestHeard;
+  s32 askedAboutJail;
 
-  requestHeard = Event_GetFlag(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
-  if (requestHeard == 0) {
+  askedAboutJail = Event_GetFlag(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
+  if (askedAboutJail == 0) {
     Event_Start();
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
     Actor_SetAnimation(ACTOR_STRONGMAN_ON_WATCH, ANIM_STAND);

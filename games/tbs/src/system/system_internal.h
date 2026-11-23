@@ -20,6 +20,7 @@
 #include "system/io_write.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
+#include "system/main_routine.h"
 #include "system/math_table.h"
 #include "system/number_text.h"
 #include "system/projection.h"

@@ -106,14 +106,22 @@ enum {
   TEXT_PAUSE_LONG = 4,    ///< a 60-frame pause
   TEXT_PAUSE_SHORT = 5,   ///< a 20-frame pause a button can cut short
   TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
-  TEXT_COLORS_RESET =
-      7, ///< TEXT_DEFAULT_COLOR, style 0 and TEXT_DEFAULT_LINE_SPACING again
+  /// TEXT_DEFAULT_COLOR, TEXT_STYLE_PLAIN and TEXT_DEFAULT_LINE_SPACING again
+  /// (the catalogs' reset_text_style).
+  TEXT_RESET_STYLE = 7,
   TEXT_COLOR = 8, ///< the next entry is the text colour
   /// The next entry is the text style (enum TextStyle).
-  TEXT_OUTLINE = 9,
+  TEXT_STYLE = 9,
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
   TEXT_LINE_SPACING = 10,
+  // XXX (no evidence): what codes 11 and 12 (one operand) and 14 (two) are
+  // for, which drawing and measuring skip with their operands; no message of
+  // The Broken Seal uses them and neither game's decoder names them, so
+  // nothing the game shows settles it.
+  TEXT_UNUSED_11 = 11,
+  TEXT_UNUSED_12 = 12,
+  TEXT_UNUSED_14 = 14,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
@@ -126,10 +134,6 @@ enum {
   /// MESSAGE_ARTICLE_CLASS as Message_DecodeRaw keeps it outside Japanese, at
   /// the head of an item or class name: drawing skips it and its class.
   TEXT_ARTICLE_CLASS = 29,
-  // XXX (no evidence): what codes 11 and 12 (one operand) and 14 (two) are
-  // for, which drawing and measuring skip with their operands; no message of
-  // The Broken Seal uses them and neither game's decoder names them, so
-  // nothing the game shows settles it.
   TEXT_END_ALT = 30, ///< ends the text as TEXT_END does
   /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
@@ -157,7 +161,7 @@ enum SelectionIconGroup {
   SELECTION_ICON_CHOSEN = 1 ///< the five icons already chosen; any nonzero
 };
 
-/// The style of sprite text (WindowWork.outline, set by TEXT_OUTLINE): its
+/// The style of sprite text (WindowWork.outline, set by TEXT_STYLE): its
 /// glyphs outlined, or a motion of the glyph sprites (Glyph_Draw).
 enum TextStyle {
   TEXT_STYLE_PLAIN = 0,
@@ -180,6 +184,60 @@ enum TextStyle {
 /// frame grows by a tile and its text sprites pulse, for the message's
 /// countdown.
 #define WINDOW_ANIMATION_SWELL 4
+
+/// A window's Window.state while a message types into it, and once its text
+/// has ended.
+enum {
+  WINDOW_TYPING = 0,
+  WINDOW_TYPED = 1,
+};
+
+/// The pixels between a battle message's lines: the first line is 10 pixels
+/// down its canvas, the second this far below it, and the text then scrolls
+/// up a line at a time.
+#define BATTLE_MESSAGE_LINE_HEIGHT 13
+
+/// How Window_FitOnScreen sizes a window (its flags).
+enum {
+  /// Measure every page and take the widest and tallest (Text_MeasureAllPages)
+  /// rather than the first page alone.
+  WINDOW_FIT_ALL_PAGES = 1,
+  /// Take the width and height given, in tiles, instead of measuring.
+  WINDOW_FIT_GIVEN_SIZE = 2,
+};
+
+/// The icon frames of gIcon_BasePointerTable (graphics/ui/marks.s) an icon is
+/// drawn over.
+enum IconFrame {
+  ICON_FRAME_COMMAND = 0,
+  ICON_FRAME_COMMAND_RED = 1,
+  ICON_FRAME_ITEM = 2, ///< under items and Psynergy alike
+};
+
+/// The marks of gIcon_MarkPointers drawn over an item's icon.
+enum IconMark {
+  ICON_MARK_EQUIPPED = 0, ///< the green E of an equipped item
+  ICON_MARK_BROKEN = 1,   ///< the red cross
+  ICON_MARK_CURSED = 2,   ///< the white skull of a cursed item worn
+};
+
+/// gIcon_DigitPointers' first tens digit, 1: the digits 0 to 9 come before it.
+#define ICON_DIGIT_TENS_FIRST 10
+
+/// A sprite cell's affine field (OAM attribute 0's bits 8 and 9) and its shape
+/// field, as the window and selection sprites set them.
+enum {
+  SPRITE_AFFINE_OFF = 0,
+  SPRITE_AFFINE_ON = 1,
+  /// Affine in a box twice its size: the sprite stands 8 pixels up and left of
+  /// its plain place for a 16x16 sprite, 16 for a 32x32 one.
+  SPRITE_AFFINE_DOUBLE_SIZE = 3,
+};
+enum {
+  SPRITE_SHAPE_SQUARE = 0, ///< size 0 is 8x8, 1 16x16, 2 32x32
+  SPRITE_SHAPE_WIDE = 1,
+  SPRITE_SHAPE_TALL = 2, ///< size 0 is 8x16
+};
 
 /// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
 /// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built

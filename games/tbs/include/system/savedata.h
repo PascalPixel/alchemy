@@ -2,7 +2,8 @@
 #define ALCHEMY_SAVEDATA_H
 
 /// @file
-/// The save data's signature and header template, and the link test words.
+/// The save sectors' signature and header template, and the link test's
+/// strings (system/savedata.c).
 
 #include "types.h"
 

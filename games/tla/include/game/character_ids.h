@@ -1,6 +1,10 @@
-// Character numbers, with each character's Japanese name
-#ifndef CHARACTER_IDS_H
-#define CHARACTER_IDS_H
+#ifndef ALCHEMY_CHARACTER_IDS_H
+#define ALCHEMY_CHARACTER_IDS_H
+
+/// @file
+/// The eight playable characters' ids, with each one's Japanese name: one for
+/// each row of gCharacter_DefinitionTable in order. Unit ids below
+/// ENEMY_ID_FIRST are these, and so are the characters' sprites.
 
 #define ISAAC 0 ///< Robin
 #define GARET 1 ///< Jerald
@@ -10,14 +14,5 @@
 #define JENNA 5 ///< Jasmine
 #define SHEBA 6 ///< Sheba
 #define PIERS 7 ///< Picard
-
-/// The childhood sprites, shown while FLAG_CHILDHOOD is set; the eight party
-/// members' sprites share their character numbers
-#define ISAAC_CHILD 18
-#define GARET_CHILD 19
-
-/// Portrait numbers
-#define FACE_ISAAC_CHILD 56
-#define FACE_GARET_CHILD 57
 
 #endif

@@ -28,8 +28,8 @@ struct CharacterDefinition {
   u16 agi[GROWTH_POINTS];
   u8 luck[GROWTH_POINTS];
   ///@}
-  /// Added to ten times the Djinn set in each element to give the
-  /// character's element levels.
+  /// The character's own level in each element before any Djinn, in tenths
+  /// of a level (54 is level 5.4); each Djinni set adds a whole level.
   u8 elementBonus[4];
   u8 startingLevel;      ///< the level a new game raises the character to
   u8 paddingBeforeItems; ///< padding
@@ -154,6 +154,8 @@ STATIC_ASSERT(sizeof(struct EnemyElementPreset) == 24);
 /// Battle_AwardSpoils reports each gain that is not zero.
 struct LevelUpResult {
   s16 level;
+  /// Set to -1 and read by nothing: the battle finds an ability learned by
+  /// comparing the unit's Psynergy before and after.
   u16 ability;
   u16 hp;
   u16 pp;

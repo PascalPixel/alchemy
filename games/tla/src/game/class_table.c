@@ -1794,7 +1794,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 36},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
     // Conjurer
     {
@@ -1823,7 +1823,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 36},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
     // Dark Mage
     {
@@ -1852,7 +1852,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 36},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
     // ?
     {0},
@@ -1895,7 +1895,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Wanderer
     {
@@ -1924,7 +1924,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Ascetic
     {
@@ -1953,7 +1953,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Water Monk
     {
@@ -1982,7 +1982,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Guru
     {
@@ -2011,7 +2011,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // ?
     {0},
@@ -2049,7 +2049,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Wanderer
     {
@@ -2077,7 +2077,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Ascetic
     {
@@ -2105,7 +2105,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Fire Monk
     {
@@ -2133,7 +2133,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Guru
     {
@@ -2161,7 +2161,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // ?
     {0},
@@ -2200,7 +2200,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Bard
     {
@@ -2229,7 +2229,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // Warlock
     {
@@ -2258,7 +2258,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION, 75},
+        .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
     },
     // ?
     {0},
@@ -3363,7 +3363,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
     // Crypt Lord
     {
@@ -3391,7 +3391,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
     // Necrolyte
     {
@@ -3419,7 +3419,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
     // Necromage
     {
@@ -3447,7 +3447,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN, 85},
+        .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
     },
 };
 // clang-format on

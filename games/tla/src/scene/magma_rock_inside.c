@@ -668,7 +668,7 @@ void MagmaRockInside_PlayBurst(u16 value) {
   FieldPsynergy_End();
 }
 
-extern s32 gMagmaRockInside_EmberScript[];
+extern u32 gMagmaRock_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -686,7 +686,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
     return;
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 2;
-  options.script = gMagmaRockInside_EmberScript;
+  options.script = gMagmaRock_EmberScript;
   if ((frame & 15) == 0)
     Actor_PlaySoundInView(actor, SE_WHOOSH);
   randomZ = Random16() & 15;
@@ -765,7 +765,7 @@ void MagmaRockInside_DriftAndSlow(struct Actor *actor) {
   actor->riseBaseY = dz;
 }
 
-extern s32 gMagmaRockInside_EmberScript[];
+extern u32 gMagmaRock_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -849,7 +849,7 @@ end:
       options.priority = 1;
       options.update =
           (void (*)(union FieldObject *))MagmaRockInside_DriftAndSlow;
-      options.script = gMagmaRockInside_EmberScript;
+      options.script = gMagmaRock_EmberScript;
       FieldEffect_Spawn(position[0], position[1], position[2],
                         ((Random16() & 31) - 16) << 13,
                         ((Random16() & 31) - 16) << 13, bit,
@@ -1003,7 +1003,7 @@ void MagmaRockInside_LeapOverLava(void) {
   Event_End();
 }
 
-extern s32 gMagmaRockInside_FlameEmberScript[];
+extern s32 gMagmaRock_FlameEmberScript[];
 
 /// The bursts of flame, 8 frames apart, as a statue's fireball strikes a great
 /// stone face.
@@ -1029,7 +1029,7 @@ void MagmaRockInside_RaiseLava(void) {
 
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 1;
-  options.script = gMagmaRockInside_FlameEmberScript;
+  options.script = gMagmaRock_FlameEmberScript;
   options.startScaleX = FIXED_ONE * 9 / 5;
   options.startScaleY = FIXED_ONE * 9 / 5;
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE) {
@@ -1092,7 +1092,7 @@ void MagmaRockInside_RaiseLava(void) {
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 1;
   options.palette = SPRITE_COLOR_RED_TINT;
-  options.script = gMagmaRockInside_EmberScript;
+  options.script = gMagmaRock_EmberScript;
   if (frame != 0) {
     MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
     Event_Wait(30);
@@ -1278,7 +1278,7 @@ void MagmaRockInside_DrainLava(void) {
     options.type = SPRITE_FLAME_PUFF;
     options.priority = 2;
     options.palette = SPRITE_COLOR_RED_TINT;
-    options.script = gMagmaRockInside_EmberScript;
+    options.script = gMagmaRock_EmberScript;
     for (row = 0; row != 10; row++) {
       for (j = 0; j != 6; j++) {
         u32 random = Random16();
@@ -1362,7 +1362,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *actor) {
     config.type = SPRITE_FLAME_PUFF;
     config.priority = 2;
     config.palette = SPRITE_COLOR_RED_TINT;
-    config.script = gMagmaRockInside_EmberScript;
+    config.script = gMagmaRock_EmberScript;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       toFIXED(1) / 16, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
@@ -1371,7 +1371,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *actor) {
   }
 }
 
-extern s32 gMagmaRockInside_FlameEmberScript[];
+extern s32 gMagmaRock_FlameEmberScript[];
 
 /// Throws a rock or flame up out of the lava where the ember stone lies, to
 /// land at (x, z) in pixels, smoking as it flies (MagmaRockInside_SmokeEmber).
@@ -1405,7 +1405,7 @@ void MagmaRockInside_ReleaseRocks(void) {
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 2;
   options.palette = SPRITE_COLOR_RED_TINT;
-  options.script = gMagmaRockInside_FlameEmberScript;
+  options.script = gMagmaRock_FlameEmberScript;
   options.startScaleY = FIXED_ONE * 3 / 2;
   options.startScaleX = FIXED_ONE * 3 / 2;
   position[1] = 0;
@@ -2952,25 +2952,7 @@ extern u32 gFieldEffect_LongScript[];
 
 #include "shared/push_leader_steps.c"
 
-/// An ember's actor script.
-s32 gMagmaRockInside_EmberScript[] = {
-    SC_ANIMATION(2),
-    SC_WAIT(18),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-/// A flame ember's actor script.
-s32 gMagmaRockInside_FlameEmberScript[] = {
-    SC_ANIMATION(3),
-    SC_WAIT(23),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/magma_rock_ember_scripts.c"
 
 /// The Lucky Medal chest room's lava platform: round a rectangle, for as long
 /// as the lava flows.

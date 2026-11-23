@@ -2500,25 +2500,7 @@ void MagmaRock_StartFallingRocks(void) {
 
 #include "shared/push_leader_steps.c"
 
-/// An ember's actor script.
-u32 gMagmaRock_EmberScript[] = {
-    SC_ANIMATION(2),
-    SC_WAIT(18),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-/// A flame ember's actor script.
-s32 gMagmaRock_FlameEmberScript[] = {
-    SC_ANIMATION(3),
-    SC_WAIT(23),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/magma_rock_ember_scripts.c"
 
 /// The pillars Move pushes on the slide, ended by -1.
 s16 gMagmaRock_SlidePillars[] = {

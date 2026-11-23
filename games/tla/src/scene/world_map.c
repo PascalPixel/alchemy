@@ -2741,13 +2741,7 @@ s32 gWorldMap_SparkScript[] = {
     SC_RELEASE,
 };
 
-u32 gWorldMap_ParticleScript[] = {
-    SC_WAIT(39),
-    SC_SET(SW_X, 0),
-    SC_SET(SW_Z, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/world_map_particle_script.c"
 
 u32 gWorldMap_GlowColorModes[] = {
     0, 9, 0, 6,

@@ -900,13 +900,7 @@ s32 gWorldMap_SparkScript[] = {
 };
 
 // clang-format off
-u32 gWorldMap_ParticleScript[] = {
-    SC_WAIT(39),
-    SC_SET(SW_X, 0),
-    SC_SET(SW_Z, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/world_map_particle_script.c"
 
 u32 gStaffCredit_GlowColorModes[] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_BLUE_TINT, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GREY,

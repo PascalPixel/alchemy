@@ -95,6 +95,9 @@ extern struct Trigger gGatewayCaveTriggers[];
 /// numbers of the exits they lead to.
 enum SuhallaGateCellBehavior { CELL_BEHAVIOR_SUHALLA_GATE_APPROACH = 10 };
 
+/// SPRITE_SOLDIER's animation lying on his side, held (soldier.tsv).
+enum { SOLDIER_ANIMATION_LIE_WOUNDED = 5 };
+
 /// Where Retreat leads out of the checkpoint house: from patch 3 the
 /// checkpoint, before it the scene the party is in.
 #if TBS_PATCH_3
@@ -367,9 +370,8 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   // "They had strange powers... We were no match for them."
   Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 20);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 20);
-  // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
-  // has heard the wounded soldiers in Suhalla he adds that they must find
-  // Sheba, then track down the monsters that did this.
+  // The party answers Iodem, who, once he has heard the wounded soldiers in
+  // Suhalla, adds that they must find Sheba, then track down the monsters.
   // "It must have been Felix!"
   // Yes: "Yeah... No one else is capable of this."
   // No: "Don't you know the work of your own foe's hand? Who else..."
@@ -382,6 +384,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
     // "After we find Sheba, we must track down the monsters that..."
     Event_ShowMessageThenWait(ACTOR_IODEM, 0, 10);
   } else {
+    // Skips "After we find Sheba...".
     gFieldWork->message += 1;
   }
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH_SOUTHWEST, 10);
@@ -446,14 +449,19 @@ static void SuhallaGate_TalkToEastGuard(void) {
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgSuhallaWantGoBabi);
+    // "Do you want to go to Babi Lighthouse?"
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
 
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      // Yes: "Show me your travel papers, and I'll let you pass!"
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_SHAKE_HEAD);
+      // "What! You don't have travel papers? Then I cannot let you pass!"
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       gFieldWork->message += 2;
+      // No: "Hmmph! You don't want to see Babi Lighthouse? You're a strange
+      // one!"
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     }
   }
@@ -510,9 +518,9 @@ static void SuhallaGate_SoldierVanishes(void) {
   Event_End();
 }
 
-// How the wounded soldiers lie: animation argument 5, the west guard
-// mirrored. In the Spanish, French and Italian editions each script first
-// turns collision off and runs on into the one after it.
+// How the wounded soldiers lie, the west guard mirrored to lie the other way.
+// In the Spanish, French and Italian editions each script first turns collision
+// off and runs on into the one after it.
 #if TBS_PATCH_3
 s32 gSuhallaGateWoundedNoCollision[] = {
     SC_SET(SW_COLLISION, 0),
@@ -520,7 +528,7 @@ s32 gSuhallaGateWoundedNoCollision[] = {
 #endif
 
 s32 gSuhallaGateWounded[] = {
-    SC_ANIMATION(5),
+    SC_ANIMATION(SOLDIER_ANIMATION_LIE_WOUNDED),
     SC_END,
 };
 
@@ -532,7 +540,7 @@ s32 gSuhallaGateWoundedFlippedNoCollision[] = {
 
 s32 gSuhallaGateWoundedFlipped[] = {
     SC_SET(SW_SCALE_X, -FIXED_ONE),
-    SC_ANIMATION(5),
+    SC_ANIMATION(SOLDIER_ANIMATION_LIE_WOUNDED),
     SC_END,
 };
 

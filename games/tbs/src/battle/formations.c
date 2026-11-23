@@ -1,12 +1,13 @@
 /// @file
-/// The 380 enemy formations, by formation id, and the enemies whose level
-/// follows the party's.
+/// The 380 enemy formations, by formation id, and the enemies a monster battle
+/// never draws.
 
 #include "battle/formations.h"
 #include "enemy_ids.h"
 #include "battle/battle.h"
 
 // clang-format off
+/// A row of {0} is a formation with no enemies in it.
 struct Formation gFormations[] = {
     {0},
     {
@@ -1402,7 +1403,7 @@ struct Formation gFormations[] = {
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [FORMATION_FUSION_DRAGON] = {
         .memberIds = {ENEMY_ROW(ENEMY_FUSION_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},

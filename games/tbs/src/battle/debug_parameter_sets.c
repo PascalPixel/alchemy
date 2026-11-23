@@ -9,6 +9,7 @@
 
 // clang-format off
 struct DebugParameterSetRow gDebug_ParameterSets[] = {
+    // Set 0
     {
         .unitId = ISAAC,
         .level = 35,
@@ -39,6 +40,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 1
     {
         .unitId = ISAAC,
         .level = 3,
@@ -55,6 +57,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 2
     {
         .unitId = ISAAC,
         .level = 6,
@@ -79,6 +82,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 3
     {
         .unitId = ISAAC,
         .level = 11,
@@ -109,6 +113,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 4
     {
         .unitId = ISAAC,
         .level = 15,
@@ -139,6 +144,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 5
     {
         .unitId = ISAAC,
         .level = 18,
@@ -169,6 +175,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 6
     {
         .unitId = ISAAC,
         .level = 20,
@@ -199,6 +206,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 7
     {
         .unitId = ISAAC,
         .level = 35,
@@ -229,6 +237,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 8
     {
         .unitId = ISAAC,
         .level = 35,
@@ -259,6 +268,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 9
     {
         .unitId = ISAAC,
         .level = 35,
@@ -289,6 +299,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 10
     {
         .unitId = ISAAC,
         .level = 1,
@@ -310,6 +321,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 11
     {
         .unitId = ISAAC,
         .level = 2,
@@ -331,6 +343,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 12
     {
         .unitId = ISAAC,
         .level = 3,
@@ -346,6 +359,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 13
     {
         .unitId = ISAAC,
         .level = 4,
@@ -367,6 +381,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 14
     {
         .unitId = ISAAC,
         .level = 5,
@@ -389,6 +404,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 15
     {
         .unitId = ISAAC,
         .level = 1,
@@ -415,6 +431,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 16
     {
         .unitId = ISAAC,
         .level = 1,
@@ -441,6 +458,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 17
     {
         .unitId = GARET,
         .level = 30,
@@ -471,6 +489,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 18
     {
         .unitId = ISAAC,
         .level = 1,
@@ -497,6 +516,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 19
     {
         .unitId = ISAAC,
         .level = 1,
@@ -523,6 +543,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 20
     {
         .unitId = ISAAC,
         .level = 6,
@@ -547,6 +568,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 21
     {
         .unitId = ISAAC,
         .level = 7,
@@ -571,6 +593,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 22
     {
         .unitId = ISAAC,
         .level = 8,
@@ -595,6 +618,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 23
     {
         .unitId = ISAAC,
         .level = 9,
@@ -619,6 +643,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 24
     {
         .unitId = ISAAC,
         .level = 9,
@@ -643,6 +668,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 25
     {
         .unitId = ISAAC,
         .level = 10,
@@ -673,6 +699,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 26
     {
         .unitId = ISAAC,
         .level = 10,
@@ -703,6 +730,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 27
     {
         .unitId = ISAAC,
         .level = 10,
@@ -733,6 +761,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 28
     {
         .unitId = ISAAC,
         .level = 10,
@@ -763,6 +792,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 29
     {
         .unitId = ISAAC,
         .level = 1,
@@ -789,6 +819,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 30
     {
         .unitId = ISAAC,
         .level = 11,
@@ -819,6 +850,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 31
     {
         .unitId = ISAAC,
         .level = 11,
@@ -849,6 +881,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 32
     {
         .unitId = ISAAC,
         .level = 12,
@@ -879,6 +912,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 33
     {
         .unitId = ISAAC,
         .level = 13,
@@ -909,6 +943,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 34
     {
         .unitId = ISAAC,
         .level = 14,
@@ -939,6 +974,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 35
     {
         .unitId = ISAAC,
         .level = 1,
@@ -965,6 +1001,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 36
     {
         .unitId = ISAAC,
         .level = 15,
@@ -995,6 +1032,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 37
     {
         .unitId = ISAAC,
         .level = 15,
@@ -1025,6 +1063,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 38
     {
         .unitId = ISAAC,
         .level = 15,
@@ -1055,6 +1094,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 39
     {
         .unitId = ISAAC,
         .level = 15,
@@ -1085,6 +1125,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 40
     {
         .unitId = ISAAC,
         .level = 15,
@@ -1115,6 +1156,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 41
     {
         .unitId = ISAAC,
         .level = 15,
@@ -1145,6 +1187,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 42
     {
         .unitId = ISAAC,
         .level = 16,
@@ -1175,6 +1218,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 43
     {
         .unitId = ISAAC,
         .level = 17,
@@ -1205,6 +1249,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 44
     {
         .unitId = ISAAC,
         .level = 17,
@@ -1235,6 +1280,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 45
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1261,6 +1307,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 46
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1287,6 +1334,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 47
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1313,6 +1361,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 48
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1339,6 +1388,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 49
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1365,6 +1415,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 50
     {
         .unitId = ISAAC,
         .level = 17,
@@ -1395,6 +1446,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 51
     {
         .unitId = ISAAC,
         .level = 18,
@@ -1425,6 +1477,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 52
     {
         .unitId = ISAAC,
         .level = 18,
@@ -1435,6 +1488,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 53
     {
         .unitId = ISAAC,
         .level = 19,
@@ -1445,6 +1499,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 54
     {
         .unitId = ISAAC,
         .level = 19,
@@ -1455,6 +1510,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 55
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1481,6 +1537,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 56
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1507,6 +1564,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 57
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1533,6 +1591,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 58
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1559,6 +1618,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 59
     {
         .unitId = ISAAC,
         .level = 1,
@@ -1585,6 +1645,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 60
     {
         .unitId = ISAAC,
         .level = 20,
@@ -1615,6 +1676,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 61
     {
         .unitId = ISAAC,
         .level = 20,
@@ -1645,6 +1707,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 62
     {
         .unitId = ISAAC,
         .level = 21,
@@ -1675,6 +1738,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 63
     {
         .unitId = ISAAC,
         .level = 22,
@@ -1705,6 +1769,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 64
     {
         .unitId = ISAAC,
         .level = 23,
@@ -1735,6 +1800,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 65
     {
         .unitId = ISAAC,
         .level = 24,
@@ -1765,6 +1831,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 66
     {
         .unitId = ISAAC,
         .level = 25,
@@ -1795,6 +1862,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 67
     {
         .unitId = ISAAC,
         .level = 27,
@@ -1825,6 +1893,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 68
     {
         .unitId = ISAAC,
         .level = 28,
@@ -1855,6 +1924,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 69
     {
         .unitId = ISAAC,
         .level = 29,
@@ -1885,6 +1955,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 70
     {
         .unitId = ISAAC,
         .level = 33,
@@ -1915,6 +1986,7 @@ struct DebugParameterSetRow gDebug_ParameterSets[] = {
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },
+    // Set 71, empty
     {
         .unitId = DEBUG_PARAMETER_SET_END,
     },

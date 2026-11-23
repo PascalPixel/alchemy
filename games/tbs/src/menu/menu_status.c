@@ -2182,9 +2182,8 @@ void ItemMenu_ResetCategory(void) {
 }
 
 /// Loads each enabled status's icon into its category resource slot: kind is
-/// the icon's number in gIcon_MiscIconPointers, the number the battle Status
-/// screen gives the same status (OWNER_CONDITION_DOWNED,
-/// OWNER_CONDITION_POISON, _DEADLY_POISON, _CURSED_ITEM and _HAUNT).
+/// the icon's number in gIcon_MiscIconPointers, which the battle Status screen
+/// shows for the same status.
 s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 index;
@@ -2194,22 +2193,22 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
       s32 kind;
       switch (index) {
       case CHARACTER_DOWN:
-        kind = 16;
+        kind = OWNER_CONDITION_DOWNED;
         break;
       case CHARACTER_POISON:
-        kind = 1;
+        kind = OWNER_CONDITION_POISON;
         break;
       case CHARACTER_VENOM:
-        kind = 2;
+        kind = OWNER_CONDITION_DEADLY_POISON;
         break;
       case CHARACTER_CURSE:
-        kind = 15;
+        kind = OWNER_CONDITION_CURSED_ITEM;
         break;
       case CHARACTER_HAUNT:
-        kind = 7;
+        kind = OWNER_CONDITION_HAUNT;
         break;
       default:
-        kind = 0;
+        kind = OWNER_CONDITION_NORMAL;
         break;
       }
       Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN, kind,

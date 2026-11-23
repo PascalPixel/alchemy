@@ -108,6 +108,16 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+/// The lines of Ivan's joining (LogRoomsA_IvanJoinsRodSearch), counted from
+/// MsgVaultThankHelpBelieve, where the event moves on to a new one.
+enum IvanJoiningMessage {
+  IVAN_JOINING_ISAAC_CLASPS_HANDS = 5,
+  IVAN_JOINING_GARET_FEELS_MIND_READ = 6,
+  IVAN_JOINING_GARET_CLASPS_HANDS = 13,
+  IVAN_JOINING_GARET_READS_MIND = 14,
+  IVAN_JOINING_IVAN_WILL_READ_TOWN = 22
+};
+
 /// Each stop links to up to three others, with a heading for each connection.
 /// A connection's stopIndex when there is none.
 enum { LOG_STOP_NONE = 255 };
@@ -1142,8 +1152,10 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 10);
   Actor_WalkToAndWait(ACTOR_IVAN, 384, 408);
   Event_Wait(10);
-  FieldMessage_Show(MsgVaultThankHelpBelieve + 5, 1);
-  Event_SetMessageId(MsgVaultThankHelpBelieve + 6);
+  FieldMessage_Show(MsgVaultThankHelpBelieve + IVAN_JOINING_ISAAC_CLASPS_HANDS,
+                    1);
+  Event_SetMessageId(MsgVaultThankHelpBelieve +
+                     IVAN_JOINING_GARET_FEELS_MIND_READ);
   Actor_FaceEachOther(ACTOR_IVAN, ACTOR_GARET, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1196,8 +1208,9 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   // Ivan and Garet clasp hands, and Garet reads Isaac's mind.
-  FieldMessage_Show(MsgVaultThankHelpBelieve + 13, 1);
-  Event_SetMessageId(MsgVaultThankHelpBelieve + 14);
+  FieldMessage_Show(MsgVaultThankHelpBelieve + IVAN_JOINING_GARET_CLASPS_HANDS,
+                    1);
+  Event_SetMessageId(MsgVaultThankHelpBelieve + IVAN_JOINING_GARET_READS_MIND);
   Actor_FaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1249,7 +1262,8 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
   // "Ivan joined your party!", then he will read the townspeople's minds.
   Event_AddPartyMember(IVAN, 1);
-  Event_SetMessageId(MsgVaultThankHelpBelieve + 22);
+  Event_SetMessageId(MsgVaultThankHelpBelieve +
+                     IVAN_JOINING_IVAN_WILL_READ_TOWN);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   // "Let me read the minds of the townspeople to find the rod."
   Event_ShowMessage(ACTOR_IVAN, 0);

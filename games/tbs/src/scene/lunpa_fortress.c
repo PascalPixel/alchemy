@@ -363,6 +363,129 @@ enum {
   GROUND_FLOOR_DOOR_FLAG = FLAG_AREA_TEMP_5A
 };
 
+/// Hammet's reunion with Ivan in his cell and Dodonpa's interruption
+/// (LunpaFortress_FindHammet), in order. The scene shows its own
+/// MsgLunpaDodonpaPulledLever in place of REUNION_DODONPA_PULLS_LEVER.
+enum ReunionMessage {
+  REUNION_HAMMET_ASKS_IF_TIME_TO_EAT,
+  REUNION_HAMMET_ASKS_WHO,
+  REUNION_IVAN_NAMES_HAMMET,
+  REUNION_HAMMET_KNOWS_IVAN,
+  REUNION_HAMMET_ASKS_ABOUT_FRIENDS,
+  REUNION_HAMMET_SEES_JOURNEY_BEGUN,
+  REUNION_IVAN_COMES_TO_SAVE_HAMMET,
+  REUNION_HAMMET_WARNS_OF_RISK,
+  REUNION_DODONPA_HALTS_PARTY,
+  REUNION_HAMMET_NAMES_DODONPA,
+  REUNION_DODONPA_INTERRUPTS,
+  REUNION_DODONPA_MOCKS_IVAN,
+  REUNION_DODONPA_SCORNS_CHILD,
+  REUNION_DODONPA_MARVELS_AT_KIDS,
+  REUNION_GARET_TAUNTS_DODONPA,
+  REUNION_IVAN_ACCUSES_DODONPA,
+  REUNION_HAMMET_LEARNS_OF_EXTORTION,
+  REUNION_MIA_TAKES_HAMMET_HOME,
+  REUNION_DODONPA_REFUSES,
+  REUNION_DODONPA_CALLS_HAMMET_MONEY_TREE,
+  REUNION_GARET_CALLS_DODONPA_SCOUNDREL,
+  REUNION_DODONPA_KEEPS_HAMMET,
+  REUNION_DODONPA_PULLS_LEVER,
+  REUNION_DODONPA_SPRINGS_TRAP
+};
+
+/// The talk over Dodonpa pinned under his beaten monster
+/// (LunpaFortress_DonpaJudgesDodonpa), in order.
+enum AftermathMessage {
+  AFTERMATH_DODONPA_CRIES_OUT,
+  AFTERMATH_GARET_ASKS_HOW_DODONPA_WAS_TRAPPED,
+  AFTERMATH_HAMMET_TELLS_OF_TRICK,
+  AFTERMATH_HAMMET_EXPLAINS_TRICK,
+  AFTERMATH_DODONPA_BOASTS,
+  AFTERMATH_IVAN_CALLS_DODONPA_SNAKE,
+  AFTERMATH_MIA_CALLS_DODONPA_ROTTEN,
+  AFTERMATH_DODONPA_APOLOGIZES,
+  AFTERMATH_GARET_REPEATS_DEMAND,
+  AFTERMATH_IVAN_DOUBTS_STRENGTH,
+  AFTERMATH_MIA_ASKS_TO_MOVE_MONSTER,
+  AFTERMATH_MIA_ASKS_HAMMET,
+  AFTERMATH_HAMMET_WILL_TRY
+};
+
+/// The party's debate over Dodonpa's punishment, until Donpa arrives
+/// (LunpaFortress_DonpaJudgesDodonpa), in order.
+enum PunishmentMessage {
+  PUNISHMENT_GARET_FREES_DODONPA,
+  PUNISHMENT_DODONPA_CANNOT_STAND,
+  PUNISHMENT_MIA_ASKS_ABOUT_LEG,
+  PUNISHMENT_DODONPA_WILL_STAND,
+  PUNISHMENT_IVAN_IS_RELIEVED,
+  PUNISHMENT_GARET_QUESTIONS_RELIEF,
+  PUNISHMENT_GARET_RECALLS_ATTACK,
+  PUNISHMENT_HAMMET_FORGIVES,
+  PUNISHMENT_GARET_RECALLS_KIDNAPPING,
+  PUNISHMENT_HAMMET_REMEMBERS,
+  PUNISHMENT_GARET_LOSES_PATIENCE,
+  PUNISHMENT_IVAN_POINTS_TO_SAFETY,
+  PUNISHMENT_GARET_DOUBTS_REFORM,
+  PUNISHMENT_MIA_WONDERS,
+  PUNISHMENT_MIA_ASKS_DODONPA,
+  PUNISHMENT_HAMMET_DEFENDS_DODONPA,
+  PUNISHMENT_GARET_DISTRUSTS_DODONPA,
+  PUNISHMENT_IVAN_ASKS_GARET,
+  PUNISHMENT_GARET_WANTS_DODONPA_LOCKED_UP,
+  PUNISHMENT_DODONPA_PLEADS,
+  PUNISHMENT_MIA_SCOLDS_DODONPA,
+  PUNISHMENT_IVAN_ASKS_TO_LOCK_DODONPA_UP,
+  PUNISHMENT_DONPA_APPROVES,
+  PUNISHMENT_DONPA_LEAVES_DODONPA
+};
+
+/// Donpa's judgment of his son and his request to the party
+/// (LunpaFortress_DonpaJudgesDodonpa), in order.
+enum JudgmentMessage {
+  JUDGMENT_DODONPA_CALLS_FATHER,
+  JUDGMENT_DONPA_PITIES_DODONPA,
+  JUDGMENT_DONPA_RECALLS_WARNING,
+  JUDGMENT_DONPA_DEMANDS_AMENDS,
+  JUDGMENT_DONPA_REGRETS_SPOILING,
+  JUDGMENT_DODONPA_BLAMES_DONPA,
+  JUDGMENT_DONPA_WILL_PUNISH,
+  JUDGMENT_DODONPA_DOUBTS_DONPA,
+  JUDGMENT_DONPA_INSISTS,
+  JUDGMENT_DONPA_SENTENCES_DODONPA,
+  JUDGMENT_DONPA_ASKS_ABOUT_TROUBLE,
+  JUDGMENT_HAMMET_DENIES_TROUBLE,
+  JUDGMENT_DONPA_APOLOGIZES,
+  JUDGMENT_HAMMET_DECLINES_APOLOGY,
+  JUDGMENT_DONPA_ASKS_FORGIVENESS,
+  JUDGMENT_DONPA_HAS_REQUEST,
+  JUDGMENT_HAMMET_ASKS_ABOUT_REQUEST,
+  JUDGMENT_DONPA_ASKS_PARTY_TO_LEAVE,
+  JUDGMENT_GARET_QUESTIONS_SECRECY,
+  JUDGMENT_IVAN_QUESTIONS_SNEAKING,
+  JUDGMENT_DONPA_WARNS_OF_HENCHMEN,
+  JUDGMENT_DONPA_IS_ASHAMED,
+  JUDGMENT_DONPA_WARNS_OF_ATTACK,
+  JUDGMENT_DONPA_FEARS_CELL_CHECK,
+  JUDGMENT_HAMMET_FORESEES_RELEASE,
+  JUDGMENT_DONPA_FORESEES_REVENGE,
+  JUDGMENT_GARET_AGREES,
+  JUDGMENT_MIA_FEARS_FOR_KALAY,
+  JUDGMENT_DONPA_URGES_HASTE,
+  JUDGMENT_IVAN_ASKS_IF_NOW,
+  JUDGMENT_DONPA_SPREAD_RUMORS,
+  JUDGMENT_HAMMET_ASKS_ABOUT_RUMORS,
+  JUDGMENT_DONPA_TELLS_RUMOR,
+  JUDGMENT_GARET_ASKS_WHY,
+  JUDGMENT_DONPA_EXPLAINS_RUMOR,
+  JUDGMENT_MIA_PRAISES_DONPA,
+  JUDGMENT_DONPA_OFFERS_HELP,
+  JUDGMENT_IVAN_URGES_ESCAPE,
+  JUDGMENT_DONPA_HURRIES_PARTY,
+  JUDGMENT_DONPA_PROMISES_CHANGE,
+  JUDGMENT_DODONPA_PROMISES_TO_BEHAVE
+};
+
 /// The map layers the dark halls show (MapGrid_SetShownLayers): the ground,
 /// the walls, and MAPGRID_LAYER_OVERHEAD with the circles of light over them.
 #define LUNPA_FORTRESS_PASSAGE_LAYERS                                          \
@@ -1953,7 +2076,7 @@ static void LunpaFortress_FindHammet(void) {
     Event_Wait(30);
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
     messageBase = MsgLunpaTimeEat;
-    Event_SetMessageId(messageBase);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_ASKS_IF_TIME_TO_EAT);
     // "Is it time to eat?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -1961,7 +2084,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
     Actor_Jump(ACTOR_TOADONPA_HAMMET, 4, 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
-    Event_SetMessageId(messageBase + 1);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_ASKS_WHO);
     // "...Who are you?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -1972,14 +2095,14 @@ static void LunpaFortress_FindHammet(void) {
     Actor_WalkTo(ACTOR_IVAN, 464, 192);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Event_Wait(30);
-    Event_SetMessageId(messageBase + 2);
+    Event_SetMessageId(messageBase + REUNION_IVAN_NAMES_HAMMET);
     // "Hammet..."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
     Event_Wait(110);
     Sound_Play(MUS_WIND_ADEPTS);
-    Event_SetMessageId(messageBase + 3);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_KNOWS_IVAN);
     // "Ivan, is that you?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Event_Wait(30);
@@ -1999,7 +2122,7 @@ static void LunpaFortress_FindHammet(void) {
     Event_Wait(30);
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_IVAN, 0);
     Event_Wait(20);
-    Event_SetMessageId(messageBase + 4);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_ASKS_ABOUT_FRIENDS);
     // "These people... Are they friends of yours?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Event_Wait(40);
@@ -2007,7 +2130,7 @@ static void LunpaFortress_FindHammet(void) {
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Event_Wait(120);
-    Event_SetMessageId(messageBase + 5);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_SEES_JOURNEY_BEGUN);
     // "Then it would appear your journey has begun, Ivan."
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Event_Wait(25);
@@ -2019,19 +2142,19 @@ static void LunpaFortress_FindHammet(void) {
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceEachOther(ACTOR_IVAN, ACTOR_TOADONPA_HAMMET, 0);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 6);
+    Event_SetMessageId(messageBase + REUNION_IVAN_COMES_TO_SAVE_HAMMET);
     // "I am a little late, but I have come to save you."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_SHAKE_HEAD);
     Event_Wait(80);
-    Event_SetMessageId(messageBase + 7);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_WARNS_OF_RISK);
     // "You shouldn't have risked yourself, Ivan."
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
     Actor_SetPosition(ACTOR_TOADONPA_DODONPA, 456, 320);
     Sound_Play(MUS_SILENCE);
-    Event_SetMessageId(messageBase + 8);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_HALTS_PARTY);
     // "Hold it right there!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2059,17 +2182,17 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 9);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_NAMES_DODONPA);
     // "Dodonpa!"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Actor_FaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_HAMMET, 0);
-    Event_SetMessageId(messageBase + 10);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_INTERRUPTS);
     // "Sorry to interrupt your teary little reunion, Hammet!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(60);
     Actor_FaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_IVAN, 0);
     Event_Wait(30);
-    Event_SetMessageId(messageBase + 11);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_MOCKS_IVAN);
     // "This must be your little rat, Ivan-you always did claim he'd..."
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
@@ -2081,31 +2204,31 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 12);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_SCORNS_CHILD);
     // "Look at him. He's just a child!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_Wait(60);
     Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_SHAKE_HEAD);
-    Event_SetMessageId(messageBase + 13);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_MARVELS_AT_KIDS);
     // "But to think these kids could get this far!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Actor_WalkTo(ACTOR_GARET, 456, 248);
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-    Event_SetMessageId(messageBase + 14);
+    Event_SetMessageId(messageBase + REUNION_GARET_TAUNTS_DODONPA);
     // "Hey, yeah! If we're just kids, what does that make your..."
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_WalkTo(ACTOR_IVAN, 472, 216);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
     Event_Wait(10);
-    Event_SetMessageId(messageBase + 15);
+    Event_SetMessageId(messageBase + REUNION_IVAN_ACCUSES_DODONPA);
     // "What kind of scum takes ransom money and then doesn't free..."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 16);
+    Event_SetMessageId(messageBase + REUNION_HAMMET_LEARNS_OF_EXTORTION);
     // "I see. So, you've been extorting money from Layana, have you?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Actor_WalkTo(ACTOR_MIA, 440, 216);
@@ -2113,11 +2236,11 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(10);
-    Event_SetMessageId(messageBase + 17);
+    Event_SetMessageId(messageBase + REUNION_MIA_TAKES_HAMMET_HOME);
     // "Now that we've found Hammet, we'll be taking him home!"
     Event_ShowMessage(ACTOR_MIA, 0);
     Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_SHAKE_HEAD);
-    Event_SetMessageId(messageBase + 18);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_REFUSES);
     // "I'm afraid I can't let you do that."
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -2126,18 +2249,18 @@ static void LunpaFortress_FindHammet(void) {
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 19);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_CALLS_HAMMET_MONEY_TREE);
     // "Hammet is what I like to call my little money tree."
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 20);
+    Event_SetMessageId(messageBase + REUNION_GARET_CALLS_DODONPA_SCOUNDREL);
     // "You dirty scoundrel!"
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
     Event_Wait(60);
-    Event_SetMessageId(messageBase + 21);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_KEEPS_HAMMET);
     // "Name-calling won't help you! I'm not giving Hammet up!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Actor_WalkTo(ACTOR_TOADONPA_DODONPA, 456, 280);
@@ -2153,7 +2276,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_BOSS, 0);
     LunpaFortress_ActivateLeverTrap();
     Sound_Play(MUS_BATTLING_A_POWERFUL_FOE);
-    Event_SetMessageId(messageBase + 23);
+    Event_SetMessageId(messageBase + REUNION_DODONPA_SPRINGS_TRAP);
     // "This little trap here marks the end of your good fortune!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(60);
@@ -2222,11 +2345,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
 
   // The fallen monster has pinned Dodonpa; decide whether to help him.
   aftermathMessage = MsgLunpaUhnnGetOff;
-  Event_SetMessageId(aftermathMessage);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_DODONPA_CRIES_OUT);
   // "Uhnn! Get it off me!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_SetMessageId(aftermathMessage + 1);
+  Event_SetMessageId(aftermathMessage +
+                     AFTERMATH_GARET_ASKS_HOW_DODONPA_WAS_TRAPPED);
   // "How did Dodonpa get trapped under the monster?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 1);
@@ -2235,7 +2359,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(60);
   Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(60);
-  Event_SetMessageId(aftermathMessage + 2);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_HAMMET_TELLS_OF_TRICK);
   // "He tried to pull another dirty trick on you!"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2246,12 +2370,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 512, 232);
   Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_SHAKE_HEAD);
   Event_Wait(60);
-  Event_SetMessageId(aftermathMessage + 3);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_HAMMET_EXPLAINS_TRICK);
   // "When Dodonpa saw his monster was losing, he tried to get..."
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(15);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_SetMessageId(aftermathMessage + 4);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_DODONPA_BOASTS);
   // "Just a second longer, and you'd have been history!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2259,34 +2383,34 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_SetMessageId(aftermathMessage + 5);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_IVAN_CALLS_DODONPA_SNAKE);
   // "You dirty snake!"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
-  Event_SetMessageId(aftermathMessage + 6);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_MIA_CALLS_DODONPA_ROTTEN);
   // "Dodonpa, you are rotten to the core!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 65);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
   Event_Wait(100);
-  Event_SetMessageId(aftermathMessage + 7);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_DODONPA_APOLOGIZES);
   // "Yeah, OK! I'm sorry! Now, get this thing off of me!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
-  Event_SetMessageId(aftermathMessage + 8);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_GARET_REPEATS_DEMAND);
   // "'Get this thing off of me'!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(30);
-  Event_SetMessageId(aftermathMessage + 9);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_IVAN_DOUBTS_STRENGTH);
   // "I don't know. That thing looks awfully heavy for us kids to..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-  Event_SetMessageId(aftermathMessage + 10);
+  Event_SetMessageId(aftermathMessage + AFTERMATH_MIA_ASKS_TO_MOVE_MONSTER);
   // "What should we do, Isaac? Should we try to move it?"
   Event_OpenMessage(ACTOR_MIA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -2296,7 +2420,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(60);
   } else {
-    Event_SetMessageId(aftermathMessage + 11);
+    Event_SetMessageId(aftermathMessage + AFTERMATH_MIA_ASKS_HAMMET);
     // "I agree. What do you think, Hammet?"
     Event_ShowMessage(ACTOR_MIA, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2311,7 +2435,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Actor_SetAnimationAndWait(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
     Event_Wait(30);
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessageId(aftermathMessage + 12);
+    Event_SetMessageId(aftermathMessage + AFTERMATH_HAMMET_WILL_TRY);
     // "I think we have to try, at least."
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Event_Wait(60);
@@ -2417,7 +2541,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(60);
   // Debate Dodonpa's punishment before his father arrives.
   punishmentMessage = MsgLunpaAbleGet;
-  Event_SetMessageId(punishmentMessage);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_FREES_DODONPA);
   // "There. You should be able to get up now!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE_HEAD_DOWN);
@@ -2425,7 +2549,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
-  Event_SetMessageId(punishmentMessage + 1);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_DODONPA_CANNOT_STAND);
   // "I... I can't."
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(20);
@@ -2434,7 +2558,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
-  Event_SetMessageId(punishmentMessage + 2);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_MIA_ASKS_ABOUT_LEG);
   // "Did you break your leg or something?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
@@ -2442,12 +2566,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE_SLUMP);
   Event_Wait(70);
-  Event_SetMessageId(punishmentMessage + 3);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_DODONPA_WILL_STAND);
   // "It's not broken... I should be able to stand after a bit."
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Event_SetMessageId(punishmentMessage + 4);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_IVAN_IS_RELIEVED);
   // "Thank goodness..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
@@ -2455,7 +2579,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_GARET, 440, 208);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Event_SetMessageId(punishmentMessage + 5);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_QUESTIONS_RELIEF);
   // "What do you mean, 'thank goodness'!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
@@ -2468,51 +2592,51 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 75);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_SetMessageId(punishmentMessage + 6);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_RECALLS_ATTACK);
   // "Didn't he just try to kill us?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
-  Event_SetMessageId(punishmentMessage + 7);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_HAMMET_FORGIVES);
   // "Can't we just forgive and forget?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_WalkTo(ACTOR_GARET, 448, 208);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
-  Event_SetMessageId(punishmentMessage + 8);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_RECALLS_KIDNAPPING);
   // "Dodonpa kidnapped you, remember!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_Wait(60);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(60);
-  Event_SetMessageId(punishmentMessage + 9);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_HAMMET_REMEMBERS);
   // "Oh, that's right..."
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(60);
-  Event_SetMessageId(punishmentMessage + 10);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_LOSES_PATIENCE);
   // "Get a grip, you guys!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(30);
-  Event_SetMessageId(punishmentMessage + 11);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_IVAN_POINTS_TO_SAFETY);
   // "But Hammet is safe now, isn't he?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_MIA, 0);
   Event_Wait(20);
-  Event_SetMessageId(punishmentMessage + 12);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_DOUBTS_REFORM);
   // "Yeah, but do you really think Dodonpa will reform if Hammet..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Actor_FaceActor(ACTOR_MIA, ACTOR_GARET, 0);
-  Event_SetMessageId(punishmentMessage + 13);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_MIA_WONDERS);
   // "Hmm... I wonder..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
-  Event_SetMessageId(punishmentMessage + 14);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_MIA_ASKS_DODONPA);
   // "How about it, Dodonpa?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2525,20 +2649,20 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(120);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_Wait(60);
-  Event_SetMessageId(punishmentMessage + 15);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_HAMMET_DEFENDS_DODONPA);
   // "He already said he wouldn't do anything!"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 110);
   Actor_WalkTo(ACTOR_GARET, 456, 212);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
-  Event_SetMessageId(punishmentMessage + 16);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_GARET_DISTRUSTS_DODONPA);
   // "Of course, he's going to say that! He wants us to forgive him!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_SetMessageId(punishmentMessage + 17);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_IVAN_ASKS_GARET);
   // "What do you think we should do with him, Garet?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
@@ -2554,21 +2678,23 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
-  Event_SetMessageId(punishmentMessage + 18);
+  Event_SetMessageId(punishmentMessage +
+                     PUNISHMENT_GARET_WANTS_DODONPA_LOCKED_UP);
   // "We should lock him up here, just like he did to Hammet."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Event_Wait(70);
-  Event_SetMessageId(punishmentMessage + 19);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_DODONPA_PLEADS);
   // "No! How can you be so cruel!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Event_SetMessageId(punishmentMessage + 20);
+  Event_SetMessageId(punishmentMessage + PUNISHMENT_MIA_SCOLDS_DODONPA);
   // "Oh? And yet you have no problem being that cruel to Hammet!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(80);
-  Event_SetMessageId(punishmentMessage + 21);
+  Event_SetMessageId(punishmentMessage +
+                     PUNISHMENT_IVAN_ASKS_TO_LOCK_DODONPA_UP);
   // "What should we do, Isaac? Should we lock Dodonpa up?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -2579,12 +2705,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetSpeed(ACTOR_TOADONPA_DONPA, 0.5);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Sound_Play(MUS_SILENCE);
-    Event_SetMessageId(punishmentMessage + 22);
+    Event_SetMessageId(punishmentMessage + PUNISHMENT_DONPA_APPROVES);
     // "Serves the little punk right!"
     Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   } else {
     Sound_Play(MUS_SILENCE);
-    Event_SetMessageId(punishmentMessage + 23);
+    Event_SetMessageId(punishmentMessage + PUNISHMENT_DONPA_LEAVES_DODONPA);
     // "Just leave him here like this for a while!"
     Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   }
@@ -2600,14 +2726,14 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Sound_Play(MUS_COLOSSEUM);
   // Donpa takes charge and orders his son to remain imprisoned.
   donpaMessage = MsgLunpaDad;
-  Event_SetMessageId(donpaMessage);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DODONPA_CALLS_FATHER);
   // "Dad!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 456, 280);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 440, 256);
   FieldCamera_MoveTo(456, CAMERA_KEEP, 224, 1);
-  Event_SetMessageId(donpaMessage + 1);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_PITIES_DODONPA);
   // "Dodonpa... You pitiful wretch."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
@@ -2615,12 +2741,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
   Event_Wait(89);
-  Event_SetMessageId(donpaMessage + 2);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_RECALLS_WARNING);
   // "I always told you that if you did evil to others... others..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_RunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-  Event_SetMessageId(donpaMessage + 3);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_DEMANDS_AMENDS);
   // "You must right all of the misdeeds you've done!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -2629,31 +2755,31 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 4);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_REGRETS_SPOILING);
   // "I feel bad for spoiling you. Look at the trouble it has..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-  Event_SetMessageId(donpaMessage + 5);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DODONPA_BLAMES_DONPA);
   // "See! It's all your fault that all this happened!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 6);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_WILL_PUNISH);
   // "Yes, which is why this is going to hurt you more than it..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Event_SetMessageId(donpaMessage + 7);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DODONPA_DOUBTS_DONPA);
   // "You're not serious, are you, Dad?"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  Event_SetMessageId(donpaMessage + 8);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_INSISTS);
   // "I most certainly am!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-  Event_SetMessageId(donpaMessage + 9);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_SENTENCES_DODONPA);
   // "You're going to spend some time here thinking about all that..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Event_Wait(20);
@@ -2666,26 +2792,26 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
-  Event_SetMessageId(donpaMessage + 10);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_ASKS_ABOUT_TROUBLE);
   // "Dodonpa has caused you all sorts of trouble, hasn't he?"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-  Event_SetMessageId(donpaMessage + 11);
+  Event_SetMessageId(donpaMessage + JUDGMENT_HAMMET_DENIES_TROUBLE);
   // "No, not at all!"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 12);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_APOLOGIZES);
   // "I must apologize deeply for all of this."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Event_SetMessageId(donpaMessage + 13);
+  Event_SetMessageId(donpaMessage + JUDGMENT_HAMMET_DECLINES_APOLOGY);
   // "Thank you, Donpa, but you do not need to apologize."
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  Event_SetMessageId(donpaMessage + 14);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_ASKS_FORGIVENESS);
   // "Then you forgive me?"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
@@ -2699,11 +2825,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(120);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 180);
-  Event_SetMessageId(donpaMessage + 15);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_HAS_REQUEST);
   // "I am sorry about the trouble, but I do have one request."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Event_SetMessageId(donpaMessage + 16);
+  Event_SetMessageId(donpaMessage + JUDGMENT_HAMMET_ASKS_ABOUT_REQUEST);
   // "A request?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -2716,7 +2842,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DONPA, 0);
   Event_Wait(60);
-  Event_SetMessageId(donpaMessage + 17);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_ASKS_PARTY_TO_LEAVE);
   // "I don't know how you got in here, but please leave by the..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2724,17 +2850,17 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(100);
-  Event_SetMessageId(donpaMessage + 18);
+  Event_SetMessageId(donpaMessage + JUDGMENT_GARET_QUESTIONS_SECRECY);
   // "Huh? Donpa, didn't you just say you're going to lock up Dodonpa?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(60);
-  Event_SetMessageId(donpaMessage + 19);
+  Event_SetMessageId(donpaMessage + JUDGMENT_IVAN_QUESTIONS_SNEAKING);
   // "So we shouldn't have to sneak around, should we?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_IVAN, 0);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 20);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_WARNS_OF_HENCHMEN);
   // "Some of Dodonpa's henchmen are still loyal to him."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2744,11 +2870,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(120);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
   Event_Wait(120);
-  Event_SetMessageId(donpaMessage + 21);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_IS_ASHAMED);
   // "I'm ashamed to say it, but they won't listen to any of my..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 90);
-  Event_SetMessageId(donpaMessage + 22);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_WARNS_OF_ATTACK);
   // "This new gang of thieves will attack Hammet if they find him..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2759,83 +2885,83 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
   Event_Wait(120);
-  Event_SetMessageId(donpaMessage + 23);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_FEARS_CELL_CHECK);
   // "And they may come to check his cell, right?"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   60);
-  Event_SetMessageId(donpaMessage + 24);
+  Event_SetMessageId(donpaMessage + JUDGMENT_HAMMET_FORESEES_RELEASE);
   // "I see. Then they'd free Dodonpa, wouldn't they?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DONPA, 1);
   Event_Wait(50);
-  Event_SetMessageId(donpaMessage + 25);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_FORESEES_REVENGE);
   // "And then he'd head straight for Kalay seeking his revenge!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Event_Wait(70);
-  Event_SetMessageId(donpaMessage + 26);
+  Event_SetMessageId(donpaMessage + JUDGMENT_GARET_AGREES);
   // "I see. Yes, you're right."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_SetMessageId(donpaMessage + 27);
+  Event_SetMessageId(donpaMessage + JUDGMENT_MIA_FEARS_FOR_KALAY);
   // "It would be terrible if Kalay were attacked."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 28);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_URGES_HASTE);
   // "That's why you must go while you still can!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 90);
-  Event_SetMessageId(donpaMessage + 29);
+  Event_SetMessageId(donpaMessage + JUDGMENT_IVAN_ASKS_IF_NOW);
   // "You mean immediately?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 30);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_SPREAD_RUMORS);
   // "I heard of your intrusion, so I spread some rumors through..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_Wait(60);
-  Event_SetMessageId(donpaMessage + 31);
+  Event_SetMessageId(donpaMessage + JUDGMENT_HAMMET_ASKS_ABOUT_RUMORS);
   // "Rumors?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 32);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_TELLS_RUMOR);
   // "I said brigands had snuck in to kidnap Hammet, but failed..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  Event_SetMessageId(donpaMessage + 33);
+  Event_SetMessageId(donpaMessage + JUDGMENT_GARET_ASKS_WHY);
   // "Why in the world did you do that?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
-  Event_SetMessageId(donpaMessage + 34);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_EXPLAINS_RUMOR);
   // "Now, they won't let anyone down here at all. Plus, many of..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  Event_SetMessageId(donpaMessage + 35);
+  Event_SetMessageId(donpaMessage + JUDGMENT_MIA_PRAISES_DONPA);
   // "Donpa, you are a shrewd one!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-  Event_SetMessageId(donpaMessage + 36);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_OFFERS_HELP);
   // "I just thought I'd try to help however I could..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(100);
-  Event_SetMessageId(donpaMessage + 37);
+  Event_SetMessageId(donpaMessage + JUDGMENT_IVAN_URGES_ESCAPE);
   // "With Dodonpa's henchmen gone, this is our chance to escape,..."
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    Event_SetMessageId(donpaMessage + 38);
+    Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_HURRIES_PARTY);
     // "Why did I even bother asking? Let's get a move on!"
     Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   }
@@ -2883,11 +3009,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(20);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(20);
-  Event_SetMessageId(donpaMessage + 39);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DONPA_PROMISES_CHANGE);
   // "The next time you meet Dodonpa, he will be a changed man."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_RunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_SetMessageId(donpaMessage + 40);
+  Event_SetMessageId(donpaMessage + JUDGMENT_DODONPA_PROMISES_TO_BEHAVE);
   // "I get it already! I won't do anything wrong! Come on, let me go!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);

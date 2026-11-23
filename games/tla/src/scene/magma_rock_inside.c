@@ -336,7 +336,7 @@ void MagmaRockInside_WaitForLanding(struct Actor *actor);
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
-s32 MagmaRockInside_FindStatue(u16 *table);
+s32 Statue_FindUnderBurst(u16 *table);
 
 s32 Position_FlatDistance(FIXED *from, FIXED *to);
 
@@ -736,36 +736,9 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
       &options);
 }
 
-/// A statue's update while Burst is cast at it: it blinks red on the frames
-/// its mask picks.
-void MagmaRockInside_FlashStatue(struct Actor *actor) {
-  if (gFrameCount & actor->flashMask)
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
-  else
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
-}
+#include "shared/statue_flash_under_burst.h"
 
-/// Looks up the cell Burst is cast at in an (actor, cell, value) table ended by
-/// ACTOR_LIST_END: on a match, makes the row's statue the target and returns
-/// its value.
-s32 MagmaRockInside_FindStatue(u16 *table) {
-  struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
-  s32 result = 0;
-  s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(watch->x),
-                                   FIELD_CELL(watch->z)) >>
-             8;
-  u32 id;
-
-  for (; *table != ACTOR_LIST_END; result = *table++) {
-    id = *table++;
-    if (cell == *table++) {
-      watch->child = Actor_Get(id);
-      result = *table;
-      break;
-    }
-  }
-  return result;
-}
+#include "shared/statue_find_under_burst.h"
 
 /// Nothing visible happens as Felix starts casting Burst at a fire-spitting
 /// statue; the game finishes what the field still had pending, so that the
@@ -777,7 +750,7 @@ void MagmaRockInside_ResolveBeforeBurst(void) {
 extern s16 gMagmaRockInside_Statues[];
 extern s16 gMagmaRockInside_CrackedPillarsStatues[];
 
-void MagmaRockInside_FlashStatue(struct Actor *actor);
+void Statue_FlashUnderBurst(struct Actor *actor);
 
 /// As Felix casts Burst at the small statue beside a great stone face, the
 /// statue blinks red, slowly through the small explosions and faster at the
@@ -800,18 +773,18 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *actor;
 
-    MagmaRockInside_FindStatue(table);
+    Statue_FindUnderBurst(table);
     actor = watch->child;
     actor->flashMask = 4;
-    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *actor;
 
-    MagmaRockInside_FindStatue(table);
+    Statue_FindUnderBurst(table);
     actor = watch->child;
     actor->flashMask = 2;
-    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
 }
 
@@ -3188,7 +3161,7 @@ s16 gMagmaRockInside_FuryPillars[] = {
 };
 
 /// The cracked pillars' room's three statues, as (actor, the cell Burst is cast
-/// at, unused) rows ended by -1 (MagmaRockInside_FindStatue).
+/// at, unused) rows ended by -1 (Statue_FindUnderBurst).
 s16 gMagmaRockInside_CrackedPillarsStatues[] = {
     ACTOR_STATUE, CELL_STATUE, -1,
     ACTOR_LOWER_WEST_STATUE, CELL_LOWER_WEST_STATUE, -1,

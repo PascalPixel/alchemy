@@ -761,14 +761,7 @@ void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   *flags = 0;
 }
 
-/// The update of a statue Burst is going off at: it blinks red on the frames
-/// its mask picks.
-void MagmaRock_FlashStatue(struct Actor *actor) {
-  if (gFrameCount & actor->flashMask)
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
-  else
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
-}
+#include "shared/statue_flash_under_burst.h"
 
 /// The update of a statue Burst has woken, counting down from 1,024 while no
 /// menu, Psynergy or item is in use: it blinks red quickly, then slowly from
@@ -795,27 +788,7 @@ void MagmaRock_WarnStatue(struct Actor *actor) {
     actor->timer--;
 }
 
-/// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by ACTOR_LIST_END: on a match, makes the row's actor the target and
-/// returns its value.
-s32 MagmaRock_FindStatue(u16 *table) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-  s32 result = 0;
-  s32 code = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(work->x),
-                                   FIELD_CELL(work->z)) >>
-             8;
-  s32 id;
-
-  for (; *table != ACTOR_LIST_END; result = *table++) {
-    id = *table++;
-    if (code == *table++) {
-      work->child = Actor_Get(id);
-      result = *table;
-      break;
-    }
-  }
-  return result;
-}
+#include "shared/statue_find_under_burst.h"
 
 /// Looks up the cell at (x, z) in an (actor, cell, value) table ended by
 /// ACTOR_LIST_END and returns the value of its row.
@@ -839,8 +812,8 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
 
 /// Felix casts Burst at one of the yellow statues, and it glows red while the
 /// explosions go off round it, blinking faster at the last blast. The game
-/// finds the statue by its cell in the room's table (MagmaRock_FindStatue) and
-/// blinks it (MagmaRock_FlashStatue), every fourth frame while the explosions
+/// finds the statue by its cell in the room's table (Statue_FindUnderBurst) and
+/// blinks it (Statue_FlashUnderBurst), every fourth frame while the explosions
 /// shake the ground (BURST_STAGE_SMALL_BLAST) and every other one at the last
 /// blast (BURST_STAGE_GREAT_BLAST).
 /// The statue then fires (MagmaRock_FireStatue) or lights
@@ -865,18 +838,18 @@ void MagmaRock_TargetStatue(s32 stage) {
   if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *target;
 
-    MagmaRock_FindStatue(table);
+    Statue_FindUnderBurst(table);
     target = work->child;
     target->flashMask = 4;
-    target->update = (ObjectUpdate)MagmaRock_FlashStatue;
+    target->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *target;
 
-    MagmaRock_FindStatue(table);
+    Statue_FindUnderBurst(table);
     target = work->child;
     target->flashMask = 2;
-    target->update = (ObjectUpdate)MagmaRock_FlashStatue;
+    target->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
 }
 
@@ -2550,7 +2523,7 @@ s16 gMagmaRock_SlidePillars[] = {
     ACTOR_SLIDE_PILLAR_A, ACTOR_SLIDE_PILLAR_B, -1,
 };
 
-/// The slide's statues (MagmaRock_FindStatue): each row a statue, the cell
+/// The slide's statues (Statue_FindUnderBurst): each row a statue, the cell
 /// Burst finds it by and the cap its flame column raises (-1 for none), ended
 /// by -1.
 s16 gMagmaRock_SlideStatues[] = {

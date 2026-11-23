@@ -250,7 +250,7 @@ struct Actor {
       u8 stepsLeft;                ///< its steps left before it is released
     };
     /// An actor that blinks, as Magma Rock's statues and blasted wall do
-    /// (MagmaRock_FlashStatue).
+    /// (Statue_FlashUnderBurst).
     struct {
       u8 unusedBeforeFlashMask[3]; ///< refused, frozen and riseCounter
       u8 flashMask; ///< its sprite flashes while gFrameCount & this is set

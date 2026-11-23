@@ -21,15 +21,16 @@
 /// Task: updates the field Psynergy sprites.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
-/// Prepares the work of the field Psynergy for ability (HEAP_SLOT_FIELD_EFFECT)
-/// and loads its spark tiles.
+/// Prepares the work of the field Psynergy for abilityId
+/// (HEAP_SLOT_FIELD_EFFECT) and loads its spark tiles; mode is where it runs,
+/// an enum ActorSystemMode.
 void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
-  struct FieldWork *ev = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct FieldEffectWork *effectWork;
   s32 running;
 
-  running = ev->psynergyActing;
+  running = fieldWork->psynergyActing;
   if (running == 0) {
     effectWork = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
     Dma_Fill32(running, effectWork, sizeof *effectWork);
@@ -38,7 +39,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   }
   effectWork->action = abilityId;
   effectWork->fieldPsynergy = Ability_Get(abilityId)->fieldPsynergy;
-  running = ev->psynergyActing;
+  running = fieldWork->psynergyActing;
   if (running != 0)
     return;
   effectWork->freeBlocks = VRAM_BLOCK_COUNT - VramCache_CountFreeBlocks();
@@ -59,17 +60,18 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   // Every field Psynergy but Reveal itself pauses Reveal's countdown (running
   // is 0 here) until FieldPsynergy_End lets it run again.
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
-    ev->effectTimerRunning = running;
+    fieldWork->effectTimerRunning = running;
   effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load(effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
   Task_Add(FieldEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
 
-/// Records the caster and the target of a field Psynergy.
+/// Records the caster and the target of a field Psynergy, and where it takes
+/// place: on the target, or 16 pixels in front of the caster with none.
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
-  s32 dir;
+  s32 facing;
   struct FieldEffectWork *effectWork;
 
   effectWork = gFieldEffectWork;
@@ -78,18 +80,18 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->secondActorId = targetId;
   effectWork->mainActor = user;
   target = Actor_Lookup((s16)targetId);
-  dir = FACING_NEAREST_CARDINAL(user->facing);
+  facing = FACING_NEAREST_CARDINAL(user->facing);
   effectWork->child = target;
-  effectWork->angle = dir;
+  effectWork->angle = facing;
   if (target != NULL) {
     // Keep the target's motion and colours, to restore them later.
     effectWork->savedCallback = target->update;
     effectWork->savedScript = (const s32 *)target->script;
     {
-      struct Sprite *animation = target->sprite;
-      u8 pal = animation->entries[0]->colorMode;
+      struct Sprite *sprite = target->sprite;
+      u8 colorMode = sprite->entries[0]->colorMode;
 
-      effectWork->savedPalette = pal;
+      effectWork->savedPalette = colorMode;
     }
     effectWork->x = target->x.fixed;
     effectWork->z = target->z.fixed;
@@ -99,11 +101,11 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->x = user->x.fixed;
   effectWork->z = user->z.fixed;
   effectWork->y = user->y.fixed;
-  Vector_AddPolarOffset(toFIXED(16), dir, &effectWork->x);
+  Vector_AddPolarOffset(toFIXED(16), facing, &effectWork->x);
 }
 
-/// Stops the caster's update routine and restores its colours (sprite param
-/// 0), then waits a frame.
+/// Stops the caster's update routine and restores its colours, then waits a
+/// frame.
 void FieldPsynergy_StopCasterUpdate(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *user = effectWork->mainActor;
@@ -113,10 +115,6 @@ void FieldPsynergy_StopCasterUpdate(void) {
   wait(1);
 }
 
-/// The actors the end of a field Psynergy searches for its effects still
-/// moving.
-#define SETUP_OBJECT_SLOTS (gActors)
-
 /// Ends a field Psynergy: frees the field effect sprites still in use and,
 /// unless another is being resolved, waits (at most END_ARC_WAIT_FRAMES) for
 /// the swelling arcs to end, stops the slot task, releases its tiles,
@@ -124,13 +122,13 @@ void FieldPsynergy_StopCasterUpdate(void) {
 /// work.
 void FieldPsynergy_End(void) {
   struct FieldEffectWork *effectWork;
-  struct FieldWork *runtime;
+  struct FieldWork *fieldWork;
   struct MapGridScrollWork *grid;
   struct FieldParticle *effectSlot;
   s32 i;
 
   effectWork = gFieldEffectWork;
-  runtime = gFieldWork;
+  fieldWork = gFieldWork;
   grid = gMapGridWork[0];
   for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
     effectSlot = &effectWork->particles[i];
@@ -140,7 +138,7 @@ void FieldPsynergy_End(void) {
 
   // While Field_UsePsynergy resolves a field Psynergy (psynergyActing), a
   // cleanup from inside it frees only the slots; the rest waits for its own.
-  if (runtime->psynergyActing == 0) {
+  if (fieldWork->psynergyActing == 0) {
     s32 waited = 0;
     void (*firstActiveUpdate)(struct Actor *) =
         FieldEffect_UpdateScaledArcActorB;
@@ -149,7 +147,7 @@ void FieldPsynergy_End(void) {
     s32 active;
 
     do {
-      struct Actor *slot = SETUP_OBJECT_SLOTS;
+      struct Actor *slot = gActors;
 
       active = 0;
       i = 0;
@@ -170,14 +168,14 @@ void FieldPsynergy_End(void) {
       }
     } while (active != 0 && waited < END_ARC_WAIT_FRAMES);
 
-    runtime->castStarted = 0;
+    fieldWork->castStarted = 0;
     Task_Remove(FieldEffect_UpdateAllEffectSlots);
     VramCache_FreeEntry(effectWork->tileSlot);
     grid->shakeX = effectWork->savedShakeX;
     grid->shakeY = effectWork->savedShakeY;
     grid->shakeDecay = effectWork->savedShakeDecay;
     if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
-      runtime->effectTimerRunning = 1;
+      fieldWork->effectTimerRunning = 1;
     Scene_PlayQueuedMusic();
     HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
   }
@@ -189,10 +187,10 @@ void FieldPsynergy_StartCast(void) {
   s32 ability;
   struct Actor *caster;
   struct FieldEffectWork *effectWork;
-  void *renderState;
+  void *fieldWork;
 
   effectWork = *(void **)Ram_FieldEffectWork;
-  renderState = *(void **)Ram_FieldWork;
+  fieldWork = *(void **)Ram_FieldWork;
   caster = effectWork->mainActor;
   ability = (s16)effectWork->action;
   Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_START);
@@ -207,7 +205,7 @@ void FieldPsynergy_StartCast(void) {
   if (effectWork->active != 0) {
     Actor_SetOthersPaused(caster, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
-    // The mode branches currently show the same message.
+    // On the World Map and off it alike, the same announcement.
     if ((s8)effectWork->mode != 0) {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     } else {
@@ -223,49 +221,49 @@ void FieldPsynergy_StartCast(void) {
   } else {
     FieldPsynergy_StopCasterUpdate();
   }
-  ((struct FieldWork *)renderState)->castStarted = 1;
+  ((struct FieldWork *)fieldWork)->castStarted = 1;
 }
 
 /// Saves the palettes for the Psynergy and fades them toward one of the eight
 /// cast colours (gFieldEffect_TargetColors), picked by the frame counter or
 /// forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 frames.
 void FieldPsynergy_FadeToCastColor(void) {
-  struct FieldWork *field;
-  struct PaletteFade *work;
-  s32 no;
+  struct FieldWork *fieldWork;
+  struct PaletteFade *fade;
+  s32 tint;
 
-  // Save the colours the buffer moves toward into the field work: the sprite
-  // half and, unless Reveal is active, the BG half.
-  field = gFieldWork;
-  work = gPaletteFadeWork;
-  Dma_Set(&work->target[FADE_HALF_CHANNELS],
-          &field->savedFadeTarget[FADE_HALF_CHANNELS],
+  // Save the colours the buffer moves toward into the fieldWork fade: the
+  // sprite half and, unless Reveal is active, the BG half.
+  fieldWork = gFieldWork;
+  fade = gPaletteFadeWork;
+  Dma_Set(&fade->target[FADE_HALF_CHANNELS],
+          &fieldWork->savedFadeTarget[FADE_HALF_CHANNELS],
           DMA_COPY_WORDS(FADE_HALF_CHANNELS / 2), REG_DMA3);
-  if (field->revealActive == 0)
-    Dma_Set(work->target, field->savedFadeTarget,
+  if (fieldWork->revealActive == 0)
+    Dma_Set(fade->target, fieldWork->savedFadeTarget,
             DMA_COPY_WORDS(FADE_HALF_CHANNELS / 2), REG_DMA3);
-  Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
+  Dma_Set(fade->target, fade->current, DMA_COPY_WORDS(sizeof fade->current / 4),
           REG_DMA3);
 
   // Of the forcing flags, the highest one set wins.
-  no = gFrameCount & 7;
+  tint = gFrameCount & 7;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(0)))
-    no = 0;
+    tint = 0;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(1)))
-    no = 1;
+    tint = 1;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(2)))
-    no = 2;
+    tint = 2;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(3)))
-    no = 3;
+    tint = 3;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(4)))
-    no = 4;
+    tint = 4;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(5)))
-    no = 5;
+    tint = 5;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(6)))
-    no = 6;
+    tint = 6;
   if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(7)))
-    no = 7;
-  PaletteFade_SetTarget(gFieldEffect_TargetColors[no], 1);
+    tint = 7;
+  PaletteFade_SetTarget(gFieldEffect_TargetColors[tint], PALETTES_BG);
   PaletteFade_StartInterpolation(8);
 }
 
@@ -276,11 +274,11 @@ void FieldPsynergy_FadeFromCastColor(void) {
   struct FieldWork *work = gFieldWork;
   s32 savedPalettes = (s32)work->savedFadeTarget;
 
-  PaletteFade_SetTarget(savedPalettes, 2);
+  PaletteFade_SetTarget(savedPalettes, PALETTES_OBJECTS);
   if (work->revealActive != 0) {
-    PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   } else {
-    PaletteFade_SetTarget(savedPalettes, 1);
+    PaletteFade_SetTarget(savedPalettes, PALETTES_BG);
   }
   PaletteFade_StartInterpolation(8);
 }
@@ -289,13 +287,13 @@ void FieldPsynergy_FadeFromCastColor(void) {
 /// screen's x and y and y becomes 0.
 void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
-  struct FieldWork *event = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
 
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (fieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #else
-  struct FieldWork **eventCell = (struct FieldWork **)&gFieldWork;
+  struct FieldWork **fieldWorkSlot = (struct FieldWork **)&gFieldWork;
 
-  if ((*eventCell)->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if ((*fieldWorkSlot)->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #endif
     s32 result[3];
 
@@ -310,7 +308,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     // UB: gMapGridWork's heap slot, reached by stepping back from
     // gFieldWork's.
     struct MapGridScrollWork *state =
-        *(struct MapGridScrollWork **)((u8 *)eventCell -
+        *(struct MapGridScrollWork **)((u8 *)fieldWorkSlot -
                                        (HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID) *
                                            sizeof(void *));
 #endif
@@ -326,9 +324,6 @@ void Camera_WorldToScreen(struct Vector3 *position) {
   }
 }
 
-// From here on positions are passed in each function's own structures.
-
-#undef SETUP_OBJECT_SLOTS
 #undef END_ARC_WAIT_FRAMES
 #undef ANIM_CAST_PSYNERGY_START
 #undef ANIM_CAST_PSYNERGY_END

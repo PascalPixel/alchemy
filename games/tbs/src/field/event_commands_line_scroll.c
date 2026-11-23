@@ -64,9 +64,9 @@ void LineScroll_BuildPage(void) {
       row[scanline * 6 + 4] = x1;
     }
   } else {
-    u16 a = x3;
-    u16 b = x2;
-    u16 c = x1;
+    u16 scroll3 = x3;
+    u16 scroll2 = x2;
+    u16 scroll1 = x1;
 
     amplitude = work->ampX;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
@@ -74,11 +74,11 @@ void LineScroll_BuildPage(void) {
                                               (LINE_SCROLL_WAVE_ENTRIES - 1)],
                          amplitude) /
              LINE_SCROLL_WAVE_SCALE;
-      *row = a + wave;
+      *row = scroll3 + wave;
       row += 2;
-      *row = b + wave;
+      *row = scroll2 + wave;
       row += 2;
-      *row = c + wave;
+      *row = scroll1 + wave;
       row += 2;
       phase += step;
     }
@@ -93,9 +93,9 @@ void LineScroll_BuildPage(void) {
       row[scanline * 6 + 4] = y1;
     }
   } else {
-    u16 a = y3;
-    u16 b = y2;
-    u16 c = y1;
+    u16 scroll3 = y3;
+    u16 scroll2 = y2;
+    u16 scroll1 = y1;
 
     amplitude = work->ampY;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
@@ -103,11 +103,11 @@ void LineScroll_BuildPage(void) {
                                               (LINE_SCROLL_WAVE_ENTRIES - 1)],
                          amplitude) /
              LINE_SCROLL_WAVE_SCALE;
-      *row = a + wave;
+      *row = scroll3 + wave;
       row += 2;
-      *row = b + wave;
+      *row = scroll2 + wave;
       row += 2;
-      *row = c + wave;
+      *row = scroll1 + wave;
       row += 2;
       phase += step;
     }

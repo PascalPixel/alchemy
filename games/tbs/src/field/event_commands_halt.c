@@ -1,5 +1,6 @@
 /// @file
-/// Halt.
+/// Halt: a stopwatch flies out to the target, ticks and bursts into sparkles,
+/// and the target stands frozen, its colours flickering.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -148,8 +149,8 @@ void FieldPsynergy_Halt(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Per-frame update of a paused actor: gives its sprite one of the table's
-/// eight params at random.
+/// Per-frame update of a halted actor: gives its sprite one of eight colour
+/// modes (gFieldEffect_RandomChildValues) at random, so it flickers.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   void *object = (void *)actor;
   const s8 *table = gFieldEffect_RandomChildValues;
@@ -157,8 +158,8 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   Actor_SetSpriteColorModeFar(object, table[(u32)(random * 8) >> 16]);
 }
 
-/// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gMainRoutineWork.
+/// Halts actorId, keeping its per-frame update and, if it is animated, its
+/// first animation's colour mode in gMainRoutineWork.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnimation *entry;
@@ -179,15 +180,16 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   }
 }
 
-/// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
+/// Resumes actorId with the update and colour mode FieldPsynergy_HaltActor
+/// kept.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != NULL) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
-      struct MainRoutineWork *state = &gMainRoutineWork;
-      actor->update = (void (*)(struct Actor *))state->pausedUpdate;
-      state->pausedUpdate = 0;
-      Actor_SetSpriteColorModeFar(actor, state->pausedPose);
+      struct MainRoutineWork *mainWork = &gMainRoutineWork;
+      actor->update = (void (*)(struct Actor *))mainWork->pausedUpdate;
+      mainWork->pausedUpdate = 0;
+      Actor_SetSpriteColorModeFar(actor, mainWork->pausedPose);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);

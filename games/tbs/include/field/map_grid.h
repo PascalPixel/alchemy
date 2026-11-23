@@ -36,6 +36,8 @@ enum CellBehavior {
   CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED = 249,
   /// Ground that hurts the party over time: the Lamakan Desert's sand.
   CELL_BEHAVIOR_DESERT_SAND = 250,
+  /// Ground Cloak keeps the leader hidden on; stepping off it ends Cloak.
+  CELL_BEHAVIOR_CLOAK = 251,
   /// 252 to 254: cells the leader pushes against (Field_RunPushCell).
   CELL_BEHAVIOR_LEDGE = 252,        ///< jumped down with Down held
   CELL_BEHAVIOR_CLIMB = 253,        ///< climbed up or down with Up or Down held

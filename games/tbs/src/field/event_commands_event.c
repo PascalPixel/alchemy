@@ -37,14 +37,14 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
 
   if (gDebugMode != 0) {
     if (gKeysPressed & KEY_L) {
-      runtime->fastForward = 0;
+      fieldWork->fastForward = 0;
     }
     if (gKeysPressed & KEY_R) {
-      runtime->fastForward = -1;
+      fieldWork->fastForward = -1;
     }
   }
 }
@@ -81,29 +81,29 @@ void Leader_StopMoving(void) {
 /// message and timing state, and starts the debug fast-forward task with the
 /// leader as the message speaker.
 void Event_Start(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
 
   AreaNameWindow_HideFar();
   Leader_StopMoving();
-  // Keep the event reset's signed halfword read.
-  if ((s16)runtime->busy != 0) {
+  // A raised or step trigger still marked running is ended first.
+  if ((s16)fieldWork->busy != 0) {
     Field_EndBusyAndReveal();
   }
   // Every event starts with no name window and normal waits.
-  runtime->choiceMessage = 0;
-  runtime->choiceWidth = 0;
-  runtime->transitionFrames = MAP_TRANSITION_FRAMES;
-  runtime->fastForward = 0;
-  runtime->unusedAfterMessage = -1;
-  runtime->unusedBeforeCamera[0] = -1;
-  runtime->unusedBeforeCamera[1] = -1;
+  fieldWork->choiceMessage = 0;
+  fieldWork->choiceWidth = 0;
+  fieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  fieldWork->fastForward = 0;
+  fieldWork->unusedAfterMessage = -1;
+  fieldWork->unusedBeforeCamera[0] = -1;
+  fieldWork->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
   // clears it, nothing in either game's source names it or reads it by its
   // number, and no other code of tbs-en's build loads that number for a flag.
   GameFlag_ClearFar(0x132);
-  runtime->speaker = gMainRoutineWork.leaderActorId;
-  runtime->messageWindow = 0;
+  fieldWork->speaker = gMainRoutineWork.leaderActorId;
+  fieldWork->messageWindow = 0;
 }
 
 /// Ends an event: stops the debug fast-forward task, gives the camera back to
@@ -135,7 +135,7 @@ void Event_AppendActorPlacements(struct ActorPlacement *table) {
 }
 
 /// Sets the scene's trigger table, which the field checks as the leader moves:
-/// writes work->events. Altin Peak's event calls it.
+/// Altin Peak's event calls it.
 void Event_SetTriggers(const struct Trigger *triggers) {
   struct FieldWork *work = gFieldWork;
 
@@ -161,7 +161,9 @@ void Event_AddPartyMemberPair(s32 first, s32 second) {
 }
 
 /// Checks an L or R button shortcut, packed as a field Psynergy use is: the
-/// party member (ACT_UNIT) and the Psynergy (ABILITY_ID).
+/// party member (ACT_UNIT) and the Psynergy (ABILITY_ID). Returns 0 when it can
+/// be cast, -1 for no such character, -2 when they are out of the party and -3
+/// when they do not know the Psynergy.
 s32 Party_CheckShortcut(u32 shortcut) {
   s32 member = ACT_UNIT(shortcut);
   s32 ability = ABILITY_ID(shortcut);
@@ -238,8 +240,9 @@ s32 Party_CheckItemLimit(s32 item) {
   return 0;
 }
 
-/// Gives item to the first party member with
-/// room for it and says so.
+/// Gives item to the first party member with room for it and says so; when
+/// every bag is full the player picks something to drop. Returns who got it,
+/// or -1.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct FieldWork *work;
   s32 savedMessage;
@@ -359,7 +362,7 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
     s32 frames = 0;
     u8 *animationNumber = &actor->sprite->lastNo;
 
-    for (; frames <= 89; frames++) {
+    for (; frames < 90; frames++) {
       wait(1);
       if (animation != *animationNumber) {
         break;
@@ -372,9 +375,10 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// still asked below them.
 #define YES_NO_BELOW_LAST_ROW 15
 
-/// Once the message on screen has been
-/// read, asks yes or no below it, or above it when the message windows reach
-/// past YES_NO_BELOW_LAST_ROW, unless forceBottom is set.
+/// Once the message on screen has been read, asks yes or no below it, or above
+/// it when the message windows reach past YES_NO_BELOW_LAST_ROW, unless
+/// forceBottom is set; the actor then nods for yes or shakes its head for no.
+/// Returns 0 for yes.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
   s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
@@ -431,7 +435,8 @@ s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
 /// the player to read it.
 void Party_LearnAbility(s32 unit, s32 ability) {
-  // Declared without parameters: unit and ability pass through in r0 and r1.
+  // Unit_LearnPsynergyFar is declared without parameters: it learns this
+  // routine's own unit and ability, passed on unchanged.
   Unit_LearnPsynergyFar();
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
@@ -440,26 +445,24 @@ void Party_LearnAbility(s32 unit, s32 ability) {
                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
-/// Starts the event's screen transition and
-/// sets work->transitionActive.
+/// Starts the event's screen transition, as FieldWork.transition and
+/// transitionFrames give it.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
 
-  ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
-  runtime->transitionActive = 1;
+  ScreenTransition_Start(fieldWork->transition, fieldWork->transitionFrames);
+  fieldWork->transitionActive = 1;
 }
 
-/// Finishes the event's screen transition and
-/// clears work->transitionActive.
+/// Finishes the event's screen transition.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
 
-  ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
-  runtime->transitionActive = 0;
+  ScreenTransition_Finish(fieldWork->transition, fieldWork->transitionFrames);
+  fieldWork->transitionActive = 0;
 }
 
-/// Waits as long as the transition runs
-/// (work->transitionFrames). Events reach it.
+/// Waits as long as the event's screen transition runs.
 void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene: raises the
@@ -474,17 +477,17 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 /// Makes the event leave and records scene and entrance as the restart
 /// point.
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
-  struct FieldWork *state = gFieldWork;
-  state->exit = EXIT_KEEP_DESTINATION;
+  struct FieldWork *fieldWork = gFieldWork;
+  fieldWork->exit = EXIT_KEEP_DESTINATION;
   gMainRoutineWork.restartScene = sceneId;
   gMainRoutineWork.restartEntrance = entrance;
 }
 
-/// Sets the field's exit request
-/// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
+/// Sets the field's exit request, which ends the scene: an exit kind, or
+/// EXIT_KEEP_DESTINATION for gMainRoutineWork's next and entrance.
 void Event_SetExitRequest(u16 request) {
-  struct FieldWork *state = gFieldWork;
-  state->exit = request;
+  struct FieldWork *fieldWork = gFieldWork;
+  fieldWork->exit = request;
 }
 
 #undef GIFT_RECEIVED_MESSAGE

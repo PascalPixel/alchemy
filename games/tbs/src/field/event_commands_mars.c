@@ -1,5 +1,7 @@
 /// @file
-/// A Mars Djinni joining the party.
+/// A Mars Djinni joining the party, and the first of the Venus Djinni's
+/// routines, linked after it: its shrinking, its falling motes and its rising
+/// particles.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -143,17 +145,17 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
 /// VENUS_PARTICLE_LAST_RISE and freed once it arrives.
 void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   struct Vector3 position;
-  struct Actor *source;
+  struct Actor *leader;
   s32 state;
   u32 random;
 
-  source = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {
-    position.x = source->x.fixed;
-    position.y = source->y.fixed;
-    position.z = source->z.fixed;
+    position.x = leader->x.fixed;
+    position.y = leader->y.fixed;
+    position.z = leader->z.fixed;
 
     random = Random16() * 10 + toFIXED(10);
     Vector_AddPolarOffset(random, Random16(), &position);

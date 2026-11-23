@@ -102,11 +102,11 @@ struct Actor *Actor_GetById(s32 actorId);
 void Actor_SetSpeedParameters(u32 actorId, FIXED speedLimit,
                               FIXED acceleration);
 
-void Actor_SetMovementTypeById(u32 actorId, s32 action);
+void Actor_SetMovementTypeById(u32 actorId, s32 movement);
 void Actor_Stop(u32 actorId);
 void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
 void Actor_WaitForScriptEndById(u32 actorId);
-void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action);
+void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 movement);
 void Actor_SetDestinationById(u32 actorId, s32 x, s32 z);
 void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z);
 void Actor_WalkToById(u32 actorId, s32 x, s32 z);
@@ -215,10 +215,10 @@ enum AttachedEffectFlag {
   ATTACHED_EFFECT_IN_FRONT = 0x100
 };
 void FieldEffect_SetAttached(s32 actorId, s32 flags);
-s32 Actor_ClearChildAndCollisionFlags(void *obj);
+s32 Actor_ClearChildAndCollisionFlags(struct Actor *actor);
 s32 Actor_MoveTowardTarget(struct Actor *actor);
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor);
-void Actor_SetMovementType(struct Actor *actor, s32 action);
+void Actor_SetMovementType(struct Actor *actor, s32 movement);
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite);
 s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
@@ -229,7 +229,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused);
 void Exit_PrepareAnimation(s32 animation);
 void Exit_StartStairsUp(void);
 void Exit_StartStairsDown(void);
-void Entrance_EndArrivalAnimation(s32 animation);
+void Entrance_PlayArrivalAnimation(s32 animation);
 s32 Entrance_PlayArrival(void);
 
 void LineScroll_ArmDma(void);
@@ -252,7 +252,7 @@ struct FieldParticle;
 
 void Actor_MoveHalfwayTowardTarget(struct Actor *actor);
 void Djinn_RunBattleStartHop(s32 djinniId);
-void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
+void Djinn_JoinParty(s32 actorId, s32 element, s32 djinn);
 void Djinn_RestoreActorAfterBattle(void);
 // Declared without a prototype: FieldSequence_Run calls it with one argument
 // and with two.
@@ -287,7 +287,8 @@ s32 VramCache_CountFreeBlocks(void);
 struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
                                           struct Sprite *sharedSprite);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value);
+void Actor_SetOthersPaused(struct Actor *except, s32 paused,
+                           s32 animationSpeed);
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor);
 void FieldEffect_UpdateScaledArcActorB(struct Actor *actor);
 void FieldEffect_SpawnScaledArcActors(struct Actor *watched);
@@ -303,7 +304,7 @@ void FieldPsynergy_FadeToCastColor(void);
 void FieldPsynergy_FadeFromCastColor(void);
 void Camera_WorldToScreen(struct Vector3 *position);
 
-void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
+void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId);
 void FieldPsynergy_StopMindReadWave(void);
 void FieldPsynergy_UpdateMindReadWave(void);
 void FieldEffect_ArmBg0HBlankDma(void);

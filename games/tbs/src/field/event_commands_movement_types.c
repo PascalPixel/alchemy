@@ -18,10 +18,11 @@
 #define FACING_TARGET_ANGLE (TRIG_TURN * 3 / 16)
 
 /// The SC_CALL routine of MOVEMENT_TYPE_RESET_ACTION: clears an actor's sprite
-/// flags and its collision flags, so nothing collides with it.
-s32 Actor_ClearChildAndCollisionFlags(void *obj) {
-  Actor_SetSpriteFlagsFar(obj, 0);
-  ((struct Actor *)obj)->collisionFlags = 0;
+/// flags, so it has no shadow, and its collision flags, so nothing collides
+/// with it.
+s32 Actor_ClearChildAndCollisionFlags(struct Actor *actor) {
+  Actor_SetSpriteFlagsFar(actor, 0);
+  actor->collisionFlags = 0;
   return 0;
 }
 
@@ -94,34 +95,34 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
 
 /// Starts an actor's movement type: an enum MovementType, or any other value as
 /// the actor script to run itself.
-void Actor_SetMovementType(struct Actor *actor, s32 action) {
-  switch (action) {
+void Actor_SetMovementType(struct Actor *actor, s32 movement) {
+  switch (movement) {
   case MOVEMENT_TYPE_STAND:
-    action = (s32)gMovementType_StandScript;
+    movement = (s32)gMovementType_StandScript;
     break;
   case MOVEMENT_TYPE_WANDER:
-    action = (s32)gMovementType_WanderScript;
+    movement = (s32)gMovementType_WanderScript;
     break;
   case MOVEMENT_TYPE_WANDER_NEAR:
-    action = (s32)gMovementType_WanderNearScript;
+    movement = (s32)gMovementType_WanderNearScript;
     break;
   case MOVEMENT_TYPE_WANDER_CLOSE:
-    action = (s32)gMovementType_WanderCloseScript;
+    movement = (s32)gMovementType_WanderCloseScript;
     break;
   case MOVEMENT_TYPE_FOLLOW_WATCHED:
-    action = (s32)gMovementType_FollowWatchedScript;
+    movement = (s32)gMovementType_FollowWatchedScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
     actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-    action = (s32)gMovementType_FaceLeaderScript;
+    movement = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:
-    action = (s32)gMovementType_ResetActionScript;
+    movement = (s32)gMovementType_ResetActionScript;
     break;
   default:
     break;
   }
-  Actor_StartScriptFar(actor, (const s32 *)action);
+  Actor_StartScriptFar(actor, (const s32 *)movement);
 }
 
 /// Finds the nearest animated actor to self within FACING_TARGET_REACH pixels

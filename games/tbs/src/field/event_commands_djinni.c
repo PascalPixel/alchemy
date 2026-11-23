@@ -1,6 +1,6 @@
 /// @file
-/// A Djinni's hop before its battle, joining the party, the field effect
-/// sprites.
+/// A Djinni's hop before its battle, a Djinni joining the party, and the
+/// field effect sprites the joining lights are drawn with.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -121,8 +121,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
 /// A Djinni joins the party: djinn (0 to 19) of element goes to the party
 /// member with the fewest Djinn, or to no one and only its flag while
-/// FLAG_DJINN_LESSON is set.
-void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
+/// FLAG_DJINN_LESSON is set. Its actor, actorId (-1 for none), plays its
+/// element's joining and leaves the scene.
+void Djinn_JoinParty(s32 actorId, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
 
@@ -137,22 +138,22 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   if (owner >= 0) {
     Event_Start();
     WorldMap_Freeze();
-    if (slot != -1) {
+    if (actorId != -1) {
       // On the World Map the actors far from the view are removed while
       // the Djinni's joining plays and placed again after it.
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
         Actor_ClearOutOfBounds();
 
       if (element == ELEMENT_VENUS)
-        Djinn_RunVenusJoinEffect(slot);
+        Djinn_RunVenusJoinEffect(actorId);
       else if (element == ELEMENT_MERCURY)
-        Djinn_RunMercuryJoinEffect(slot);
+        Djinn_RunMercuryJoinEffect(actorId);
       else if (element == ELEMENT_MARS)
-        Djinn_RunMarsJoinEffect(slot);
+        Djinn_RunMarsJoinEffect(actorId);
       else if (element == ELEMENT_JUPITER)
-        Djinn_RunJupiterJoinEffect(slot);
+        Djinn_RunJupiterJoinEffect(actorId);
 
-      work->actors[slot] = 0;
+      work->actors[actorId] = 0;
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
         Actor_Respawn();
     }
@@ -174,9 +175,9 @@ void Djinn_RestoreActorAfterBattle(void) {
   u32 event = gMainRoutineWork.pendingDjinni & DJINN_PENDING_EVENT_MASK;
   s32 id;
 
-  // Kind 0 is a Djinni battle; a mimic chest's event (CONDITION_FLAG_SET) is
-  // skipped.
-  if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
+  // Only a Djinni battle; a mimic chest's is skipped.
+  if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0 &&
+      flags == PENDING_DJINNI_BATTLE) {
     flags = event & DJINN_NO_HOP;
     event &= DJINN_PENDING_BATTLE_EVENT_MASK;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
@@ -214,39 +215,42 @@ void Djinn_RestoreActorAfterBattle(void) {
   }
 }
 
-/// Settles a pending Djinni battle as a scene loads, from the battle's result
-/// in sequenceResult (the enemies defeated, BATTLE_OUTCOME_FLED when the party
-/// fled, BATTLE_OUTCOME_LOST when it lost).
+/// Settles a pending Djinni or mimic battle as a scene loads, from the battle's
+/// result in sequenceResult (the enemies defeated, BATTLE_OUTCOME_FLED when the
+/// party fled, BATTLE_OUTCOME_LOST when it lost): with shown 0, before the
+/// scene shows, a lost or fled Djinni hides again and a beaten mimic's flag is
+/// set; once it shows, a beaten Djinni joins the party.
 void Djinn_ResolvePending(s32 shown) {
-  struct MainRoutineWork *st = &gMainRoutineWork;
-  s32 kind = st->pendingDjinni & DJINN_PENDING_KIND_MASK;
-  s32 flag = st->pendingDjinni & DJINN_PENDING_EVENT_MASK;
+  struct MainRoutineWork *mainWork = &gMainRoutineWork;
+  s32 kind = mainWork->pendingDjinni & DJINN_PENDING_KIND_MASK;
+  s32 flag = mainWork->pendingDjinni & DJINN_PENDING_EVENT_MASK;
 
   if (shown == 0) {
-    if (kind == 0) {
+    if (kind == PENDING_DJINNI_BATTLE) {
       flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
       // Won: the event waits for the call once the scene is shown.
-      if (st->sequenceResult > 0 && st->sequenceResult != BATTLE_OUTCOME_FLED)
+      if (mainWork->sequenceResult > 0 &&
+          mainWork->sequenceResult != BATTLE_OUTCOME_FLED)
         return;
       GameFlag_SetFar(flag -
                       (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
-      st->pendingDjinni = kind;
-    } else if (kind == CONDITION_FLAG_SET) {
-      if (st->sequenceResult == 1)
+      mainWork->pendingDjinni = kind;
+    } else if (kind == PENDING_MIMIC_CHEST) {
+      if (mainWork->sequenceResult == 1)
         GameFlag_SetFar(flag);
-      st->pendingDjinni = shown;
+      mainWork->pendingDjinni = shown;
     }
     return;
   }
-  if (kind == 0) {
+  if (kind == PENDING_DJINNI_BATTLE) {
     flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT) {
       flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
-      if (st->sequenceResult > 0) {
+      if (mainWork->sequenceResult > 0) {
         s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinni / DJINN_PER_ELEMENT;
         s32 index = djinni % DJINN_PER_ELEMENT;

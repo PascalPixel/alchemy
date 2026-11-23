@@ -1,5 +1,6 @@
 /// @file
-/// World map graphics: a palette and five tilesets for each of its two looks.
+/// World map graphics: a palette and five tilesets for each of its two looks,
+/// the second the snowfield's (WorldMap_LoadGraphics).
 
 #include "resource_ids.h"
 #include "types.h"

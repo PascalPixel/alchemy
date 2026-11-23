@@ -51,8 +51,14 @@ struct FieldParticle {
   s8 render;       ///< nonzero: drawn each frame
   s8 active;       ///< nonzero while the sprite is in use
   u8 randomValue;  ///< random when filled
-  /// bits: 2 z also lifts the sprite (set when it is filled)
-  u8 flags;
+  u8 flags;        ///< FieldParticleFlag bits
+};
+
+/// FieldParticle.flags bits.
+enum FieldParticleFlag {
+  /// Its z also lifts the sprite up the screen, from 508 pixels down; set when
+  /// it is filled (FieldParticle_Initialize).
+  FIELD_PARTICLE_LIFTED_BY_Z = 0x04
 };
 
 STATIC_ASSERT(sizeof(struct FieldParticle) == 72);

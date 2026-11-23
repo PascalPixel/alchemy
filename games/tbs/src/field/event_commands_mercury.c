@@ -4,24 +4,26 @@
 
 #include "event_commands_internal.h"
 
-#define MERCURY_PARTICLE_MAX 24  ///< droplets (one a field effect sprite)
+#define MERCURY_DROPLETS 24      ///< droplets (one a field effect sprite)
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
+
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 /// bounces twice and hops three times ever higher, then rises 120 pixels out of
-/// sight trailing eight afterimages.
+/// sight trailing eight afterimages; the leader raises its arms as droplets
+/// rain round it.
 void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *copy;
   struct Actor *previous;
-  struct Sprite *resource;
+  struct Sprite *sharedSprite;
   struct FieldEffectWork *effectWork;
   struct Actor **cursor;
   struct Actor **list;
   struct FieldParticle *effect;
   s8 *slotState;
-  s32 kind;
+  s32 spriteId;
   s32 i;
-  s32 resourceId;
+  s32 sharedSlot;
   struct Actor *copies[MERCURY_AFTERIMAGE_MAX];
   struct Vector3 position;
 
@@ -29,7 +31,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   if (djinni == NULL)
     return;
 
-  // Tint the screen blue (red 4, green 4, blue 16).
+  // Tint the screen blue.
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
@@ -54,12 +56,12 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   // Eight afterimages of the same sprite at 15/16 size, each closing half
   // the distance to the one before it every frame, sharing one VRAM cache
   // entry, as in Djinn_RunBattleStartHop.
-  kind = djinni->sprite->entries[0]->animationId;
-  resource = NULL;
+  spriteId = djinni->sprite->entries[0]->animationId;
+  sharedSprite = NULL;
   previous = djinni;
   cursor = copies;
   for (i = 0; i < MERCURY_AFTERIMAGE_MAX; i++) {
-    copy = Actor_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
+    copy = Actor_CreateFar(spriteId, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
@@ -73,7 +75,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
       Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
-      resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
+      sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->watchedActor = previous;
       previous = copy;
     }
@@ -82,7 +84,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
   // afterimages, and free their shared VRAM cache entry
   // (VRAM_CACHE_ENTRY_COUNT is none).
-  resourceId = resource->slot;
+  sharedSlot = sharedSprite->slot;
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
   for (i = 0; i < 15; i++) {
@@ -92,9 +94,9 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Actor_ReleaseFar(djinni);
   list = copies;
   for (i = 0; i < MERCURY_AFTERIMAGE_MAX; i++)
-    Actor_ReleaseFar((*list++));
-  if (resourceId != VRAM_CACHE_ENTRY_COUNT)
-    VramCache_FreeEntry(resourceId);
+    Actor_ReleaseFar(*list++);
+  if (sharedSlot != VRAM_CACHE_ENTRY_COUNT)
+    VramCache_FreeEntry(sharedSlot);
   wait(10);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
@@ -110,7 +112,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   effect = effectWork->particles;
-  i = MERCURY_PARTICLE_MAX - 1;
+  i = MERCURY_DROPLETS - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRandomTargetParticle);
@@ -132,5 +134,5 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-#undef MERCURY_PARTICLE_MAX
+#undef MERCURY_DROPLETS
 #undef MERCURY_AFTERIMAGE_MAX

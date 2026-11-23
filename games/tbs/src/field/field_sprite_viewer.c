@@ -1,19 +1,21 @@
 /// @file
-/// A debug sprite viewer.
+/// The debug sprite viewer: one sprite shown once for each way it can face,
+/// in a ring, with up to four sprite animations laid over it and the keys to
+/// change each one's sprite, animation, priority and colour mode.
 // Part of field.c.
 
 #include "field_internal.h"
 
 enum {
-  /// The sprite copies and their ring positions; a facing kind places 4, 6, 8
-  /// or 10 of them (SpriteViewer_BuildProbeRing).
-  UI_SPRITE_VIEWER_COPY_COUNT = 10,
-  UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
-  UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
+  /// The copies of the sprite and their places on the ring; a facing kind
+  /// uses 4, 6, 8 or 10 of them (SpriteViewer_BuildProbeRing).
+  SPRITE_VIEWER_COPY_COUNT = 10,
+  SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
+  SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
   /// A sprite animation priority above 3, which Sprite_ComposePicture skips.
-  UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
+  SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
   /// The sprites with an image L and R step over while Start is held.
-  UI_SPRITE_VIEWER_FAST_STEP = 10
+  SPRITE_VIEWER_FAST_STEP = 10
 };
 
 /// An angle's bits: shifted up and back down, a value keeps only them.
@@ -21,19 +23,19 @@ enum {
 
 /// What left and right choose for L and R to change on the selected sprite
 /// animation.
-enum UiSpriteViewerEditMode {
-  UI_SPRITE_VIEWER_EDIT_ANIMATION,
-  UI_SPRITE_VIEWER_EDIT_SPRITE,
-  UI_SPRITE_VIEWER_EDIT_PRIORITY,
-  UI_SPRITE_VIEWER_EDIT_COLOR,
-  UI_SPRITE_VIEWER_EDIT_COUNT
+enum SpriteViewerEditMode {
+  SPRITE_VIEWER_EDIT_ANIMATION,
+  SPRITE_VIEWER_EDIT_SPRITE,
+  SPRITE_VIEWER_EDIT_PRIORITY,
+  SPRITE_VIEWER_EDIT_COLOR,
+  SPRITE_VIEWER_EDIT_COUNT
 };
 
 /// One sprite animation the sprite viewer edits.
-struct UiSpriteViewerLayer {
-  s16 spriteId;       ///< metadata record selected for this layer
-  s16 animationIndex; ///< animation script selected from that metadata
-  u8 enabled;         ///< zero hides it by a priority above the drawing range
+struct SpriteViewerLayer {
+  s16 spriteId;       ///< the animation id (the sprite number) it shows
+  s16 animationIndex; ///< which of that sprite's animations plays
+  u8 enabled;         ///< shown; hidden by a priority above the drawn range
   s8 priority;        ///< drawing order, 0 to 3
   s8 colorMode;       ///< SpriteColorMode; the viewer cycles through 0 to 15
 };
@@ -41,7 +43,7 @@ struct UiSpriteViewerLayer {
 /// A debug sprite viewer, which never returns. It shows a sprite (with up to
 /// three more sprite animations) once for each of its facings, in a ring.
 void SpriteViewer_Run(void) {
-  struct UiSpriteViewerLayer layers[ANIM_LAYER_COUNT];
+  struct SpriteViewerLayer layers[ANIM_LAYER_COUNT];
   struct AnimationMetadata *spriteMetadata;
   struct Sprite *sprites;
   volatile s32 fillWord;
@@ -62,11 +64,12 @@ void SpriteViewer_Run(void) {
   // The ring's center, in pixels.
   x = 144;
   y = 96;
-  editMode = UI_SPRITE_VIEWER_EDIT_SPRITE;
+  editMode = SPRITE_VIEWER_EDIT_SPRITE;
   shadowsEnabled = 1;
   selectedLayer = 0;
   ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE,
-                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+                             SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+  // A sprite animation in SPRITE_COLOR_FILL is painted in colour 3.
   gDecodeFillByte = 3;
 
   // Only the ring's first word is cleared; SpriteViewer_BuildProbeRing fills
@@ -83,10 +86,10 @@ void SpriteViewer_Run(void) {
     layers[i].spriteId = spriteId;
   }
   layers[0].enabled = 1;
+  // Any nonzero value turns the debug mode on.
   gDebugMode = 2;
-  // Only BG0 and the sprites are shown.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  // A green backdrop.
+  // A green backdrop behind BG0 and the sprites, the only layers shown.
   PLTT_BACKDROP = RGB(0, 15, 0);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   ScreenFade_FromBlack(1);
@@ -97,7 +100,7 @@ restart:
   Heap_Initialize();
   Task_ResetAll();
   ring = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE,
-                             UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+                             SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
   ActorSystem_Initialize(ACTOR_SYSTEM_MAP);
   // With no map loaded, the map cell buffer holds sprite animation 0's
@@ -113,7 +116,7 @@ restart:
 
   // Ten copies of the sprite; for a two-part sprite every other copy
   // shows its second part, number + 1, from sprite picture cache 1.
-  for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
+  for (i = 0; i < SPRITE_VIEWER_COPY_COUNT; i++) {
     struct Sprite *sprite;
     s32 part = 0;
 
@@ -136,16 +139,14 @@ restart:
     if (layers[i].enabled != 0) {
       SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
     } else {
-      SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
+      SpriteViewer_SetGridColumnPriority(i, SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
     SpriteViewer_StartStaggeredAnimations(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
   // positions.
-
   SpriteViewer_BuildProbeRing(x, y, ring);
-  // Order TASK_PASS_FRAME, where the field camera runs.
   Task_Add(SpriteViewer_PlaceRing, TASK_PASS_FRAME);
 
 next:
@@ -153,8 +154,9 @@ next:
   heldKeys = &gKeysHeld;
   repeatedKeys = &gKeysRepeat;
   for (;;) {
-    // Start held: the direction pad moves the ring a pixel a frame.
-
+    // Start held: the direction pad moves the ring a pixel a frame; else up
+    // and down choose a sprite animation and left and right what L and R
+    // change on it.
     if ((*heldKeys & KEY_START) != 0) {
       if ((*heldKeys & KEY_LEFT) != 0) {
         x--;
@@ -180,11 +182,11 @@ next:
         selectedLayer = (selectedLayer + 1) & (ANIM_LAYER_COUNT - 1);
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        editMode = (editMode - 1) & (UI_SPRITE_VIEWER_EDIT_COUNT - 1);
+        editMode = (editMode - 1) & (SPRITE_VIEWER_EDIT_COUNT - 1);
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
         editMode++;
-        editMode &= UI_SPRITE_VIEWER_EDIT_COUNT - 1;
+        editMode &= SPRITE_VIEWER_EDIT_COUNT - 1;
       }
     }
 
@@ -193,7 +195,7 @@ next:
     if ((gKeysPressed & KEY_START) != 0) {
       sprites = gSprites;
       shadowsEnabled ^= 1;
-      for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
+      for (i = 0; i < SPRITE_VIEWER_COPY_COUNT; i++) {
         sprites->flags = shadowsEnabled;
         sprites++;
       }
@@ -202,7 +204,7 @@ next:
     switch (editMode) {
     // The animation: sprite animation 1 follows sprite animation 0's and is not
     // edited on its own; 0 to 99.
-    case UI_SPRITE_VIEWER_EDIT_ANIMATION:
+    case SPRITE_VIEWER_EDIT_ANIMATION:
       if (selectedLayer == 1) {
         break;
       }
@@ -221,9 +223,9 @@ next:
       }
       layers[selectedLayer].animationIndex++;
       if (layers[selectedLayer].animationIndex >=
-          UI_SPRITE_VIEWER_ANIMATION_LIMIT) {
+          SPRITE_VIEWER_ANIMATION_LIMIT) {
         layers[selectedLayer].animationIndex =
-            UI_SPRITE_VIEWER_ANIMATION_LIMIT - 1;
+            SPRITE_VIEWER_ANIMATION_LIMIT - 1;
       }
       if (selectedLayer == 0) {
         layers[1].animationIndex = layers[0].animationIndex;
@@ -232,11 +234,11 @@ next:
 
     // The sprite number: one sprite with an image at a time, or ten
     // with Start held.
-    case UI_SPRITE_VIEWER_EDIT_SPRITE:
+    case SPRITE_VIEWER_EDIT_SPRITE:
       changed = 0;
       spriteSteps = 1;
       if ((*heldKeys & KEY_START) != 0) {
-        spriteSteps = UI_SPRITE_VIEWER_FAST_STEP;
+        spriteSteps = SPRITE_VIEWER_FAST_STEP;
       }
       if ((*repeatedKeys & KEY_L) != 0) {
         for (i = 0; i < spriteSteps; i++) {
@@ -277,7 +279,7 @@ next:
       goto next;
 
     // The sprite animation's draw priority, 0 to 3 and wrapping.
-    case UI_SPRITE_VIEWER_EDIT_PRIORITY:
+    case SPRITE_VIEWER_EDIT_PRIORITY:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
         layers[selectedLayer].priority--;
@@ -305,7 +307,7 @@ next:
     // The draw parameter (SpriteColorMode), 0 to 15 and wrapping;
     // SPRITE_COLOR_HIDDEN is the value Sprite_SetAnimationColorModes
     // leaves alone.
-    case UI_SPRITE_VIEWER_EDIT_COLOR:
+    case SPRITE_VIEWER_EDIT_COLOR:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
         layers[selectedLayer].colorMode--;
@@ -337,7 +339,7 @@ next:
     // A, editing the animation: restart the selected sprite animation (sprite
     // animation 0 also restarts sprite animation 1, which follows it).
     if ((*repeatedKeys & KEY_A) != 0) {
-      if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
+      if (editMode == SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
           if (layers[selectedLayer].enabled != 0) {
             SpriteViewer_StartStaggeredAnimations(
@@ -351,10 +353,10 @@ next:
         }
       } else if (selectedLayer != 0) {
         layers[selectedLayer].enabled ^= 1;
-        SpriteViewer_SetGridColumnPriority(
-            selectedLayer, layers[selectedLayer].enabled != 0
-                               ? layers[selectedLayer].priority
-                               : UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
+        SpriteViewer_SetGridColumnPriority(selectedLayer,
+                                           layers[selectedLayer].enabled != 0
+                                               ? layers[selectedLayer].priority
+                                               : SPRITE_VIEWER_HIDDEN_PRIORITY);
         goto next;
       }
     }
@@ -383,11 +385,11 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
     // Past either end, jump to just beyond the other, so the next step
     // lands on 511 or 0.
     if (spriteId < 0) {
-      spriteId = UI_SPRITE_VIEWER_SPRITE_LIMIT;
+      spriteId = SPRITE_VIEWER_SPRITE_LIMIT;
       continue;
     }
     {
-      s32 spriteLimit = UI_SPRITE_VIEWER_SPRITE_LIMIT;
+      s32 spriteLimit = SPRITE_VIEWER_SPRITE_LIMIT;
       if (spriteId >= spriteLimit) {
         spriteId = -1;
         continue;
@@ -399,7 +401,8 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
   }
 }
 
-/// Lays out the sprite viewer's ring around pixel (x, z): one position per
+/// Lays out the sprite viewer's ring around (centerX, centerY), in pixels: one
+/// position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
 /// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite).
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
@@ -411,7 +414,6 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   u8 facingKind;
 
   angle = 0;
-  // Select the viewer sprite's formation; headings wrap as 16-bit turns.
   facingKind = gSprites->entries[0]->kind;
   // With B held the ring starts at an angle that turns with the frame
   // counter, a full turn every 256 frames.
@@ -431,7 +433,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
       angle = (s16)(angle + DEGtoANG(60));
     }
-    for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
+    for (; facingIndex < SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
   case ANIM_FACING_FIVE_PICTURES:
@@ -449,12 +451,12 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
       angle = (s16)(angle + DEGtoANG(45));
     }
-    for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
+    for (; facingIndex < SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
   case ANIM_FACING_FOUR_PICTURES:
   case ANIM_FACING_SIX_PICTURES:
-    for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
+    for (facingIndex = 0; facingIndex < SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
       angle = (u32)angle << ANGLE_BITS;
       positions->x = toFIXED(centerX);
@@ -511,22 +513,21 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
       angle = (s16)(angle + DEGtoANG(90));
     }
-    for (facingIndex = 4; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
-         facingIndex++)
+    for (facingIndex = 4; facingIndex < SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
     break;
   }
 }
 
-/// Defines name(slot, value), which sets field of entry slot (0-3) in each of
-/// the first ten sprites to value.
-#define UI_DEFINE_SET_GRID_COLUMN(name, field)                                 \
+/// Defines name(layerIndex, value), which sets `field` of sprite animation
+/// layerIndex (0 to 3) of each of the viewer's ten sprites to value.
+#define SPRITE_VIEWER_DEFINE_SET_LAYER(name, field)                            \
   void name(s32 layerIndex, s32 value) {                                       \
     struct Sprite *spriteGroup = gSprites;                                     \
     s32 spriteIndex;                                                           \
                                                                                \
     layerIndex &= ANIM_LAYER_COUNT - 1;                                        \
-    for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;           \
+    for (spriteIndex = 0; spriteIndex < SPRITE_VIEWER_COPY_COUNT;              \
          spriteIndex++) {                                                      \
       spriteGroup->entries[layerIndex]->field = value;                         \
       spriteGroup++;                                                           \
@@ -536,8 +537,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 /// Sets the colour mode (SpriteColorMode, the sprite animation's draw
 /// parameter) or the priority of one sprite animation of the viewer's ten
 /// sprites.
-UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnColorMode, colorMode)
-UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
+SPRITE_VIEWER_DEFINE_SET_LAYER(SpriteViewer_SetGridColumnColorMode, colorMode)
+SPRITE_VIEWER_DEFINE_SET_LAYER(SpriteViewer_SetGridColumnPriority, priority)
 
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
 /// each one a frame (16 timer units) behind the last, so the copies are
@@ -572,7 +573,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex) {
     }
     spriteIndex++;
     spriteGroup++;
-  } while (spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT);
+  } while (spriteIndex < SPRITE_VIEWER_COPY_COUNT);
 }
 
 /// Sets spriteId on layerIndex of each of the viewer's ten sprites. Resets each
@@ -584,8 +585,7 @@ void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   // DEAD: the sprite's metadata looked up and not used; the ROM keeps the call.
   Resource_GetMetadataRecordFar(spriteId);
   layerIndex &= ANIM_LAYER_COUNT - 1;
-  for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;
-       spriteIndex++) {
+  for (spriteIndex = 0; spriteIndex < SPRITE_VIEWER_COPY_COUNT; spriteIndex++) {
     struct SpriteAnimation *entry = spriteGroup->entries[layerIndex];
 
     entry->animationId = spriteId;
@@ -628,7 +628,7 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_SIX_PICTURES:
     angle = 0;
     step = DEGtoANG(36);
-    count = UI_SPRITE_VIEWER_COPY_COUNT;
+    count = SPRITE_VIEWER_COPY_COUNT;
     break;
   // The two parts at each place face the same way; the second place faces
   // half a turn from the first.
@@ -657,5 +657,5 @@ void SpriteViewer_PlaceRing(void) {
   }
 }
 
-#undef UI_DEFINE_SET_GRID_COLUMN
+#undef SPRITE_VIEWER_DEFINE_SET_LAYER
 #undef ANGLE_BITS

@@ -278,13 +278,13 @@ FIXED Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
                                         CURVE_FULL_STEPS - 1]]);
 }
 
-/// Flat, as Terrain_GetFlatHeight.
+/// Flat, as Terrain_GetFlatHeight, for TERRAIN_FLAT_B.
 FIXED Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-/// Flat, as Terrain_GetFlatHeight.
+/// Flat, as Terrain_GetFlatHeight, for TERRAIN_FLAT_C.
 FIXED Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
@@ -329,14 +329,14 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
 #endif
 }
 
-/// Returns the terrain kind of a layer's cell at (x, y) in 16.16 pixels: the
-/// low four bits of the first byte of the cell's shape.
+/// Returns the terrain kind (enum TerrainKind) of a layer's cell at (x, y) in
+/// 16.16 pixels.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct MapGridCell *cells;
   s32 cellX;
   s32 cellY;
-  u32 heightAttributeIndex;
+  u32 shape;
 
   x = FIXEDtoINT(x);
   y = FIXEDtoINT(y);
@@ -348,13 +348,11 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y) {
   cellY = y / MAPGRID_CELL_PIXELS;
   cells += cellX + cellY * MAPGRID_SIZE;
   // The kind byte of the cell's four-byte shape.
-  heightAttributeIndex = cells->shape;
-  return *(Ram_MapGridShapes + heightAttributeIndex * 4) &
-         MAPGRID_SHAPE_KIND_MASK;
+  shape = cells->shape;
+  return *(Ram_MapGridShapes + shape * 4) & MAPGRID_SHAPE_KIND_MASK;
 }
 
-/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
-/// shift by 20 takes 16.16 pixels straight to 16-pixel cells.
+/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
 s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
   struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
@@ -563,39 +561,38 @@ s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
 
 /// Returns the world map's battle environment at position from
 /// gWorldMap_BattleEnvironments, and stores the block's encounter region in
-/// terrainKind.
-s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
-                                  s32 *terrainKind) {
+/// *region.
+s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position, s32 *region) {
   s32 collisionKind = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
-  s32 behaviorBank = 0;
-  u32 cellPictureX;
+  s32 environmentBank = 0;
+  u32 blockX;
   u32 index;
-  u32 *cellPictureWord;
+  u32 *blockWord;
 
   // The bias rounds a negative coordinate towards zero, as division would.
   if (x < 0)
     x += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
-  cellPictureX = (x >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1);
+  blockX = (x >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1);
   y = position->y;
   if (y < 0)
     y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
 
-  index = cellPictureX +
-          ((y >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1)) *
-              WORLD_MAP_BLOCKS_ACROSS;
-  cellPictureWord = gCellPictures + index;
+  index =
+      blockX + ((y >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1)) *
+                   WORLD_MAP_BLOCKS_ACROSS;
+  blockWord = gCellPictures + index;
   // Bit 31 of the block word selects the second bank; the snowfield the
   // third, whatever bit 31 says.
-  if (((u8 *)cellPictureWord)[3] & WORLD_MAP_BLOCK_SECOND_BANK)
-    behaviorBank = WORLD_MAP_ENVIRONMENT_BANK;
+  if (((u8 *)blockWord)[3] & WORLD_MAP_BLOCK_SECOND_BANK)
+    environmentBank = WORLD_MAP_ENVIRONMENT_BANK;
 
-  *terrainKind = WORLD_MAP_BLOCK_REGION(*cellPictureWord);
-  if (*terrainKind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
-    behaviorBank = 2 * WORLD_MAP_ENVIRONMENT_BANK;
+  *region = WORLD_MAP_BLOCK_REGION(*blockWord);
+  if (*region == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
+    environmentBank = 2 * WORLD_MAP_ENVIRONMENT_BANK;
 
-  return gWorldMap_BattleEnvironments[behaviorBank + collisionKind];
+  return gWorldMap_BattleEnvironments[environmentBank + collisionKind];
 }
 
 #undef WORLD_MAP_LOWER_COLLISION_MAP

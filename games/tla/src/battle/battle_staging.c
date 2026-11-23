@@ -1,6 +1,7 @@
 /// @file
-/// An action played: its targets gathered, the action dispatched, and the
-/// actors' entries it runs.
+/// Playing one action of a turn: the staging its ability calls for (an attack,
+/// a cast, a summon over a faded field, a flight), and the extra strikes that
+/// Daedalus, Megaera and Iris add.
 // Part of battle.c.
 
 #include "battle_internal.h"
@@ -205,7 +206,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   }
   if (result == 0) {
     switch (battle->plan.staging) {
-    case 0:
+    case 0: // an ability with no staging plays nothing
       break;
     case STAGING_MESSAGES:
       BattleStaging_RunActorEntries(&battle->plan, 0);
@@ -377,23 +378,24 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 /// 1 when the party got away.
 s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
-  struct BattleBackgroundWork *presentation = Ram_HeapSlots->battleBackground;
-  u32 aid = plan->unitId;
-  struct BattleWork *scene = Ram_HeapSlots->battleWork;
-  // Default: 0 until the party branch copies completed.
-  s32 partyMode = 0;
+  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
+  u32 unitId = plan->unitId;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  s32 escaped = 0;
 
   completed = 0;
-  presentation->targetYaw = YAW_PARTY_ACTION;
-  presentation->busy = 1;
+  view->targetYaw = YAW_PARTY_ACTION;
+  view->busy = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
-  if (aid <= ALLY_MAX) {
-    partyMode = completed;
-    if (scene->firstStrike != FIRST_STRIKE_ENEMIES)
-      partyMode = 1;
+  if (unitId <= ALLY_MAX) {
+    // The roll was made as the commands were gathered: a failed one handed the
+    // enemies the turn as if they had struck first.
+    escaped = completed;
+    if (battle->firstStrike != FIRST_STRIKE_ENEMIES)
+      escaped = 1;
 
-    if (!partyMode) {
+    if (!escaped) {
       BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
       BattleMessage_WaitForAdvance();
     } else {
@@ -413,11 +415,11 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
       completed = 1;
     }
   } else if ((Random_Below(10)) <= 6) {
-    s16 event[2];
+    s16 runner[2];
 
-    event[0] = plan->unitId;
-    event[1] = BATTLE_UNIT_LIST_END;
-    BattleMotion_SetupEscapeObject(event[0]);
+    runner[0] = plan->unitId;
+    runner[1] = BATTLE_UNIT_LIST_END;
+    BattleMotion_SetupEscapeObject(runner[0]);
     wait(8);
     BattleObject_RemoveFromLists(plan->unitId);
     BattleObject_MarkForRelease(plan->unitId);
@@ -426,7 +428,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
     BattleMessage_WaitForAdvance();
   }
 
-  presentation->busy = 0;
+  view->busy = 0;
   return completed;
 }
 
@@ -572,7 +574,11 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
-    if (!(mode & STAGING_NO_CAST) && units[i] == actor && work.kind == 3)
+    // Gaia's caster stays out of the fade back in. XXX: a summon's kind 3 is
+    // Kirin, which this skips too; staging Kirin would show whether that is
+    // meant.
+    if (!(mode & STAGING_NO_CAST) && units[i] == actor &&
+        work.kind == BATTLE_EFFECT_GAIA)
       continue;
     unit = units[i];
     if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
@@ -589,8 +595,9 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-/// Clears the highlights, applies each target's effect and runs the events.
-/// With no targets, only waits for the message to advance.
+/// Plays an action with no battle effect (STAGING_MESSAGES): each target's
+/// outcome is applied and its messages shown in turn. With no targets, it only
+/// waits for the message to advance.
 UNREAD_RESULT BattleStaging_RunActorEntries(struct BattlePlan *plan,
                                             s32 unused) {
   s32 targetIndex;

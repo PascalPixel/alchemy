@@ -310,7 +310,7 @@ UNUSED void MarsLighthouseEntrance_StartBlazeOnStatue(void) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-#include "shared/map_cell_get.h"
+#include "../field/map_cell_get.c"
 
 #include "shared/map_cell_set.c"
 
@@ -343,7 +343,7 @@ void Map_CopyPalette(s32 scene, s32 a1);
 s32 FieldEffect_StartBlankOverlay();
 s32 Weather_StartRain();
 
-s32 MapCell_Get();
+s32 MapCell_GetAttributes();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
@@ -358,8 +358,8 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *actor) {
   cone = actor;
   x = FIELD_CELL(cone->x.fixed);
   z = FIELD_CELL(cone->z.fixed);
-  groundCell = MapCell_Get(0, x, z);
-  upperCell = MapCell_Get(2, x, z);
+  groundCell = MapCell_GetAttributes(0, x, z);
+  upperCell = MapCell_GetAttributes(2, x, z);
   layer = &cone->layer;
   height = CELL_HEIGHT_STEPS(
       Map_GetTerrainHeight(cone->layer, cone->x.fixed, cone->z.fixed));

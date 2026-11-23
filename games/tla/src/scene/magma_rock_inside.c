@@ -334,7 +334,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids);
 
 void MagmaRockInside_WaitForLanding(struct Actor *actor);
 
-s32 MapCell_Get(u32 layer, s32 x, s32 y);
+s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
 s32 MagmaRockInside_FindStatue(u16 *table);
 
@@ -464,7 +464,7 @@ void MagmaRockInside_WaitForLanding(struct Actor *actor) {
   }
 }
 
-#include "shared/map_cell_get.h"
+#include "../field/map_cell_get.c"
 
 #include "shared/map_cell_set.c"
 
@@ -484,8 +484,8 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
     actor = Actor_Get(*ids);
     blocked = &actor->riseEnabled;
     *blocked = 0;
-    if (MapCell_Get(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
-                    FIELD_CELL(actor->z.fixed)) &
+    if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
+                              FIELD_CELL(actor->z.fixed)) &
         MAP_CELL_CLIMBABLE) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
@@ -785,8 +785,8 @@ void MagmaRockInside_FlashStatue(struct Actor *actor) {
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
-  s32 cell = MapCell_Get(MAPGRID_LAYER_GROUND, FIELD_CELL(watch->x),
-                         FIELD_CELL(watch->z)) >>
+  s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(watch->x),
+                                   FIELD_CELL(watch->z)) >>
              8;
   u32 id;
 
@@ -906,9 +906,10 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
   position[2] = flame->z.fixed;
   for (;;) {
     position[0] += step;
-    cell = MapCell_Get(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(position[0]),
-                       FIELD_CELL(position[2] - position[1])) >>
-           8;
+    cell =
+        MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(position[0]),
+                              FIELD_CELL(position[2] - position[1])) >>
+        8;
     if (cell == CELL_BEHAVIOR_MAGMA_ROCK_FIRE_EDGE ||
         cell == CELL_BEHAVIOR_MAGMA_ROCK_LAVA_FALL)
       goto end;
@@ -1752,7 +1753,7 @@ void MagmaRockInside_TrackStepCell(void) {
   if (gMainRoutineWork.next != SCENE_MAGMA_ROCK_INSIDE_BLAZE_TABLET)
     return;
   work = Ram_HeapSlots->fieldWork;
-  value = MapCell_Get(MAPGRID_LAYER_OVERHEAD, x, z) >> 8;
+  value = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, x, z) >> 8;
   if (value != 0) {
     trigger = value + STEP_CELL_TRIGGER_BASE;
     work->raisedTrigger = trigger;
@@ -1873,8 +1874,9 @@ void MagmaRockInside_StepOnMarker(void) {
   s32 cell, row = 54;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  cell = MapCell_Get(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(leader->x.fixed),
-                     FIELD_CELL(leader->z.fixed));
+  cell =
+      MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(leader->x.fixed),
+                            FIELD_CELL(leader->z.fixed));
   trigger = &work->raisedTrigger;
   // The marker's row: 54 for the first, four rows up for each after it.
   row -= (*trigger - (STEP_CELL_TRIGGER_BASE + 1)) << 2;

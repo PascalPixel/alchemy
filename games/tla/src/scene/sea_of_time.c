@@ -68,7 +68,7 @@ void FieldCamera_WaitForArrival(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-s32 MapCell_Get(u32 layer, s32 x, s32 y);
+s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value);
 s32 Position_FlatDistance(FIXED *a, FIXED *b);
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
@@ -116,7 +116,7 @@ s32 SeaOfTime_ResetAnimationFrame(struct Actor *actor) {
   return 1;
 }
 
-#include "shared/map_cell_get.h"
+#include "../field/map_cell_get.c"
 
 #include "shared/map_cell_set.c"
 
@@ -299,8 +299,8 @@ void SeaOfTime_CircleSwirl(void) {
       actor->z.fixed += toFIXED(0.2);
     else
       actor->z.fixed -= toFIXED(0.2);
-    if (MapCell_Get(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center[0]),
-                    FIELD_CELL(center[2])) >>
+    if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center[0]),
+                              FIELD_CELL(center[2])) >>
             8 ==
         CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
       turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
@@ -401,8 +401,8 @@ void SeaOfTime_RideCurrent(void) {
     else
       actor->z.fixed -= toFIXED(1) / 2;
   }
-  if (MapCell_Get(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center.x),
-                  FIELD_CELL(center.z)) >>
+  if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center.x),
+                            FIELD_CELL(center.z)) >>
           8 ==
       CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
     turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
@@ -509,8 +509,8 @@ void SeaOfTime_FollowChannel(void) {
   actor->acceleration = toFIXED(4);
   targetZ = 0;
   targetX = 0;
-  if (MapCell_Get(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
-                  z + (dx < 0 ? -dx : dx)) >>
+  if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
+                            z + (dx < 0 ? -dx : dx)) >>
           8 ==
       work->stepTrigger) {
     targetX = (dz < 0 ? -dz : dz) * toFIXED(15);
@@ -518,7 +518,8 @@ void SeaOfTime_FollowChannel(void) {
   }
   targetX += FIELD_CELL_ORIGIN(x);
   targetZ += FIELD_CELL_ORIGIN(z);
-  while (MapCell_Get(MAPGRID_LAYER_MIDDLE, x, z) >> 8 == work->stepTrigger) {
+  while (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, x, z) >> 8 ==
+         work->stepTrigger) {
     x += dx;
     z += dz;
     targetX += FIELD_CELL_ORIGIN(dx);
@@ -616,10 +617,11 @@ void SeaOfTime_CountLaps(void) {
   u32 *frame;
   u32 *stamp;
 
-  index = (MapCell_Get(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
-                       FIELD_CELL(actor->z.fixed)) >>
-           8) -
-          1;
+  index =
+      (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed)) >>
+       8) -
+      1;
   frame = &gFrameCount;
   stamp = &gSeaOfTime_LastLapFrame;
 

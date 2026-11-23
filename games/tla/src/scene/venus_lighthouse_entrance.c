@@ -171,9 +171,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Talking to the soldier in front of the three in a row, before the ambush:
 /// the screen turns blue, a column of water rises under him and throws him
 /// up off the top of the screen, as Alex's Psynergy does in the ambush, and
-/// the colours come back. XXX: whether Jenna can reach him before stepping
-/// below the door starts the ambush; a play from the lighthouse door would
-/// settle it.
+/// the colours come back. The player never gets to talk to him: the soldiers
+/// stand south of the plaza, and the only way down to them is the path
+/// between the bushes, which the cells below the door, (21, 15) to (25, 15),
+/// span from side to side; stepping there starts the ambush, after which they
+/// are gone. Walking Jenna down either side stair from the lighthouse door
+/// reaches the plaza without starting it, and the bushes stop her there.
 void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
   Field_StartColorTransition(8, RGB(4, 4, 16));
   BattleEffect_StartArcEffect();
@@ -197,8 +200,8 @@ void VenusLighthouseEntrance_KickUpDust(struct Actor *actor) {
 
 /// Talking to the soldier captain, before the ambush: he dashes off
 /// north-east a few steps and back again, kicking up a trail of dust with a
-/// scuffing sound. XXX: whether Jenna can reach him before stepping below the
-/// door starts the ambush; a play from the lighthouse door would settle it.
+/// scuffing sound. The player never gets to talk to him, for the reason given
+/// at VenusLighthouseEntrance_BlastActorWithPsynergy.
 void VenusLighthouseEntrance_RunAndKickUpDust(s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
 

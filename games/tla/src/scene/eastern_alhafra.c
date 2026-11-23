@@ -510,12 +510,12 @@ void PushTarget_Push(struct PushTarget target);
 
 /// Felix walks into the log lying across the sail's west pole from its west
 /// end (cells (19, 27) to (19, 31)). Once the rock under the log has sunk,
-/// pushing it south rolls it off the pole into the water, the camera watching
-/// it splash down, and the way along the pole is open. Before that, or pushing
-/// north, he only shoves it along.
-// XXX: what a shove of the log before the rock has sunk looks like, and the
-// roll itself; a recording of Felix walking into the log (the recorder runs
-// out of time on it) would settle both.
+/// pushing it south: the camera pans down the pole, the log rolls south off it
+/// and drops into the water with a splash, where it floats by the ship's
+/// stern, and the camera comes back to Felix, the way along the pole open.
+/// Pushing it north instead takes the ordinary push (PushTarget_Push).
+/// Nothing visible happens when he walks into it, from the north or the south,
+/// before the rock has sunk: the log does not move.
 void EasternAlhafra_RollLog(void) {
   struct Actor *log;
   struct Actor *rock;

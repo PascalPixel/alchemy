@@ -124,11 +124,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Nothing visible happens as Felix walks over cells (8, 52) to (12, 52), on
-/// the path by the boat dock; the game stops the view scrolling north of the
-/// dock's stretch of shore, so the shore above stays out of sight.
-// XXX: whether the view stops as Felix walks down to the dock or up from it;
-// a recording of the walk across both rows would settle it.
+/// Felix walks north across the boat dock towards the gangway, over cells
+/// (8, 52) to (12, 52): the game stops the view scrolling north. Setting out
+/// from the dock's south edge, the view follows him only a step or so (some
+/// 18 pixels) and then stays put, and he climbs the screen until he steps
+/// onto the gangway; walking back south, the view comes back down with him.
 void AncientLemuria_KeepCameraSouth(void) {
   ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
 }

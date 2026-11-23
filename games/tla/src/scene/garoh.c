@@ -886,17 +886,22 @@ void Garoh_SinkFourthPillarOnCell(void) {
 /// (11, 29): slid one cell west, onto cell (10, 29), it drops off the ledge and
 /// sinks into the ground with a whoosh and a ring of dust until its top is
 /// level with the ledge, so that Felix can walk west off the ledge onto it.
-// XXX: where the step onto the first pillar's top leads on to, and what the
-// other sunk pillars open; a recording of Felix walking on from its top (west
-// or south, the recorder's walk stopped there) would settle it.
+/// From the ledge its top is a dead end: holding west or south there takes him
+/// no further, and he can only step back east onto the ledge. The second
+/// pillar's top is the same (Garoh_PlaceSecondPillar).
+// XXX: what the fourth pillar's sunk top gives; the recorder could not reach
+// it with the first two placed first (the leader cannot walk near the second
+// pillar's spot), so a recording of Move on it would settle it.
 void Garoh_PlaceFirstPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_SinkFirstPillarOnCell();
 }
 
 /// Move on the second stone pillar, east of the first at cell (14, 28): slid
-/// one cell east, onto cell (15, 28), it sinks into the ground with a whoosh
-/// and a ring of dust.
+/// one cell east, onto cell (15, 28), it drops off its ledge onto the path
+/// below and sinks into the ground with a whoosh and a ring of dust until its
+/// top is level with the ledge. Felix can walk east onto its top, but holding
+/// east or south there takes him no further.
 void Garoh_PlaceSecondPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_SinkSecondPillarOnCell();
@@ -958,13 +963,10 @@ void Garoh_HideCaveEntrance(void) {
   MapGrid_CopyCellAttributes(22, 10, 1, 1, 22, 11);
 }
 
-/// Nothing visible happens when Reveal wears off on the path up to the
-/// village: the game only checks whether it is night in Garoh, and does
+/// Reveal wearing off on the path up to the village: at night the path's dark
+/// colours, there before the cast, come back exactly as they were. This row
+/// plays no part in it: it only checks whether it is night in Garoh, and does
 /// nothing with the answer.
-// XXX: whether the path's night colours come back after Reveal there; a
-// render casting Reveal on the path at night would settle it (staged with
-// FLAG_GAROH_NIGHT set, the path still showed its day colours before the cast,
-// the flag not set in time for Garoh_InitializeHypnosSwordChest).
 s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
 /// Reveal wearing off on the way up brings back the evening's or the night's

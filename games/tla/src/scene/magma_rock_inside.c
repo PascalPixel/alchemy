@@ -431,11 +431,11 @@ void MagmaRockInside_FightFury(void) {
 }
 
 /// Talking to the Mars Djinni in the entrance hall's south (it stands at cell
-/// (18, 31)) makes it join the party. It is the Djinni the text calls
-/// "Fire19", kept for one of The Broken Seal's Mars Djinn the party never
-/// found there; the walkthrough says such a Djinni may wait here.
-// XXX: which Djinni's name and picture the player meets; a save carried over
-// from The Broken Seal, missing a Mars Djinni, would settle it.
+/// (18, 31)) makes it join the party. It is always the Djinni the text calls
+/// "Fire19" (DJINNI_FIRE19), wearing the Mars Djinni's sprite, and it stands
+/// there only while that Djinni has not joined (its FLAG_DJINNI); it is kept
+/// for one of The Broken Seal's Mars Djinn the party never found there, and
+/// the walkthrough says such a Djinni may wait here.
 void MagmaRockInside_MeetDjinni(void) {
   Djinn_JoinParty(ACTOR_FIRE19, DJINNI_FIRE19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_FIRE19));
@@ -1836,10 +1836,10 @@ void MagmaRockInside_StampOtherStepCell(void) {
   }
 }
 
-/// A stone post fades into view at (x, z), in pixels, in the line of stepping
-/// stones that leads to the Blaze tablet, drawn through an object window, and
-/// the cell under it is walled off.
-void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
+/// The stepping stone at (x, z), in pixels, in the line of stepping stones that
+/// leads to the Blaze tablet, glows white with a drip and fades away into the
+/// lava (an object window over it, blended out), and its cell is walled off.
+void MagmaRockInside_FadeStoneAway(s32 x, s32 z) {
   struct Actor *actor;
   s32 i;
   s32 cellZ;
@@ -1874,16 +1874,14 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   REG_DISPCNT &= ~DISPCNT_OBJWIN_ON;
 }
 
-/// Each time Felix steps on from one of the numbered stones in the line of
-/// stepping stones running north from the Blaze tablet room's entrance to the
-/// tablet (column 16 of the map), a stone post fades in behind him with a
-/// drip, walling off the way he came: the first at the entrance's own
-/// walkway, the next ones two cells further north each. Retreat is barred in
-/// this room too, so the party leaves by the way Blaze opens
-/// (MagmaRockInside_GrowTabletFlame). The flags keep the posts raised.
-// XXX: which stones the upper layer numbers, and which number the walkway's
-// post answers; a recording of the walk from the entrance to the tablet would
-// settle it.
+/// Felix walks north from the Blaze tablet room's entrance along the line of
+/// stepping stones to the tablet's platform (column 16 of the map): on every
+/// second stone, the stone he has just stepped off glows white with a drip and
+/// fades away into the lava, so there is no way back. Five go in all, the
+/// first the stone just north of the entrance's walkway, the last the stone
+/// just below the tablet's platform. Retreat is barred in this room too, so
+/// the party leaves by the way Blaze opens (MagmaRockInside_GrowTabletFlame).
+/// The flags keep the stones gone.
 void MagmaRockInside_StepOnMarker(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader;
@@ -1899,12 +1897,12 @@ void MagmaRockInside_StepOnMarker(void) {
   cell >>= 8;
   if (cell != 1 && cell != 7) {
     MagmaRockInside_StampStepCell();
-    MagmaRockInside_OpenFlamePassage(264, row * 8 + 10);
+    MagmaRockInside_FadeStoneAway(264, row * 8 + 10);
     if (!Event_GetFlag(FLAG_ANY_MARKER_LIT))
       Event_SetFlag(FLAG_ANY_MARKER_LIT);
     Event_SetFlag(FLAG_MARKER_LIT(*trigger - STEP_CELL_TRIGGER_BASE));
   } else if (Event_GetFlag(FLAG_ANY_MARKER_LIT)) {
-    MagmaRockInside_OpenFlamePassage(264, row * 8 + 10);
+    MagmaRockInside_FadeStoneAway(264, row * 8 + 10);
   }
 }
 

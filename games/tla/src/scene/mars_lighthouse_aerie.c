@@ -2738,8 +2738,12 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
 /// Felix! Go! Once the beacon has been ignited, you can mourn..." Felix walks
 /// to the spot south-west of them, (480, 348).
 // XXX: where the cells that set it off lie on screen (map.txt behaviour 20, at
-// (45, 53) and (46, 53) in the map's grid); a recording from the beacon's
-// entrance with Felix walking about would settle it.
+// (45, 53) and (46, 53) in the map's grid). They, and the beacon's own cells
+// (behaviours 22 and 23, at (44, 45) to (51, 49)), lie outside the camera box
+// all the scene's entrances share (x 176 to 848, z 32 to 560): the room drawn
+// whole with them outlined shows none of them, though a cell inside it,
+// (30, 21), shows. A recording in the room where the three lie dying, reached
+// as the story reaches it, would settle it.
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

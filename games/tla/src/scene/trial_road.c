@@ -1655,11 +1655,13 @@ DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_RevealPoolTiles, 33, 35)
 /// hidden again.
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 
-/// Stepping on the cell in front of the last stage's doorway at the summit
-/// during the race, cell (13, 19) or (18, 19), redraws the doorway with the
-/// sound of a door opening. XXX: whether it shows the doorway shutting behind
-/// Felix and stops its stairs leading back down, as the copied cells suggest; a
-/// render of the summit reached by the race would settle it.
+/// Felix comes out of the last stage's doorway at the summit during the race
+/// and steps on the cell in front of it, cell (13, 19) on the left path or
+/// (18, 19) on the right: with the sound of a door, the dark doorway behind
+/// him shuts, a closed green door like the other path's. The game also gives
+/// cell (77, 18) (or (82, 18) on the right) the walking rules of the cell
+/// beside it. Coming back to the summit while the race is on, the door is
+/// shut again, without the sound.
 void TrialRoad_OpenSummitGate(s32 sound) {
   if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     if (gTrialRoadState->mirrored == 0) {
@@ -1675,12 +1677,13 @@ void TrialRoad_OpenSummitGate(s32 sound) {
   Event_SetFlag(FLAG_SCENE_TEMP_83);
 }
 
-/// At the summit during the race, cell (13, 16) on the left path or (18, 16)
-/// on the right brings on Moapa: he speaks according to who arrived first,
-/// and the battle with him and his knights begins, chosen by how many doors
-/// he reached first. XXX: where those cells show on screen, three rows north
-/// of the doorways in the map; a render of the summit reached by the race
-/// would settle it.
+/// At the summit during the race, stepping onto the top of the peak, cell
+/// (13, 16) on the left path or (18, 16) on the right, either side of the
+/// round tile in the middle of the top, brings on Moapa: he speaks according
+/// to who arrived first, and the battle with him and his knights begins,
+/// chosen by how many doors he reached first. (The doorways below, cells
+/// (13, 19) and (18, 19), are the two dark openings in the cliff under the
+/// top.)
 void TrialRoad_ChallengeMoapa(void) {
   s32 count = Event_GetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE);
 

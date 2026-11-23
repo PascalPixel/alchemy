@@ -1479,10 +1479,12 @@ enum { TABLET_RISE_PIXELS = 20 };
 /// 24), and the ground shakes and the slate rises from the floor west of it,
 /// in two rings of dust, unless it has risen already.
 void GaiaRockInside_RaiseSandTablet(void) {
-  // XXX: play may never reach this. The scene after the battle
-  // (Scene_Initialize, entrance 10) raises the slate itself, and later visits
-  // come by entrance 9, whose table lacks this trigger; a way back into the
-  // lair by entrances 10 to 12 once the Serpent is slain would settle it.
+  // Play never reaches this with the slate still down: only the lair's
+  // entrances 10 to 12 use this table. The arrival after the battle won
+  // (Scene_Initialize, entrance 10) raises the slate itself; the arrivals
+  // after a battle lost (11 and 12) send the party on to the restart point
+  // before the player has control; and later visits come by entrance 9,
+  // whose table lacks this trigger.
   struct Actor *person;
   struct Actor *actor;
   u16 level;

@@ -881,9 +881,9 @@ void ApojiiIslands_EnterSeaOfTimeIsletHouse(void) {
 /// grass beyond.
 /// The field's `Field_TryJumpForward` makes the jump. The second cell is one of
 /// the weeds' cells, and walking north into weeds anywhere in the village tries
-/// the same jump.
-// XXX: whether walking north into a clump of weeds away from the stream ever
-// jumps; a render of Felix walking north into one would settle it.
+/// the same jump; away from the stream it starts nothing: walking north into
+/// the weeds by the hut, cell (26, 19), or at (11, 16), Felix only walks on,
+/// with no jump.
 void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
 /// A splash at the actor's feet, on its sprite's priority.

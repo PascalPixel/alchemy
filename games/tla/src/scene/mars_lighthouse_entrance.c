@@ -1911,87 +1911,12 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
 #undef CELL_PUSH_SLOT_ENTRY
 void Teleport_PlayWhirl(void);
 
-/// Felix lands from the floor above in a puff of dust.
-void MarsLighthouseEntrance_LandFromCrack(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct EffectOptions options;
-  struct Vector3 velocity;
-  u32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Camera_SetBounds(-1, -1, -1, 0);
-  MapGrid_CenterOnFollowedPoint();
-  System_Wait(1);
-  leader->y.fixed = toFIXED(130);
-  leader->gravity = toFIXED(1) / 2;
-  leader->bounce = 0;
-  leader->motionFlags = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  FieldEvent_Wait(24);
-  options.palette = 7;
-  options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = FIXED_ONE * 16 / 25;
-  options.startScaleY = FIXED_ONE * 16 / 25;
-  for (i = 0; i <= DUST_RING_PUFFS; i++) {
-    s32 angle = i * (TRIG_TURN / DUST_RING_PUFFS);
-
-    velocity.x = Trig_Cos(angle);
-    velocity.y = 0;
-    velocity.z = Math_Sin(angle);
-    velocity.x += velocity.x >> 1;
-    velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - toFIXED(3) / 8;
-    velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - toFIXED(3) / 16;
-    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                      velocity.x, velocity.y, velocity.z,
-                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                          EFFECT_USE_PALETTE | 1,
-                      &options);
-  }
-  Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
-  MapGrid_SetShake(5, 5, 1);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = toFIXED(1);
-  leader->bounce = FIXED_ONE / 4;
-  FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Event_End();
-}
+#include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 #include "shared/cracked_tile_step.h"
 
-void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 dx = FieldGameFlag_GetByte(gCrackedTiles.flagByte);
-  s32 dz = FieldGameFlag_GetByte(gCrackedTiles.flagByte + 8);
-
-  if (dx != 0 || dz != 0) {
-    struct Actor *marker;
-
-    GameFlag_SetByte(gCrackedTiles.flagByte, 0);
-    GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = FIELD_CELL_CENTER(dx + x);
-    leader->z.fixed = FIELD_CELL_CENTER(dz + z);
-    marker = work->camera;
-    marker->x.fixed = leader->x.fixed;
-    marker->z.fixed = leader->z.fixed;
-    MapGrid_CenterOnFollowedPoint();
-    MarsLighthouseEntrance_LandFromCrack();
-    gFieldWork->transition = effect;
-  }
-}
+#include "shared/cracked_tile_place_landing.h"
 
 #include "shared/teleport_shimmer.c"
 

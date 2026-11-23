@@ -2503,17 +2503,7 @@ s32 gProx_EnterDoorScript[] = {
     SC_END,
 };
 
-s16 gSlideOnIce_SteerAngles[] = {
-    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), -DEGtoANG(45), -DEGtoANG(135), -DEGtoANG(90),
-    DEGtoANG(90), DEGtoANG(45), DEGtoANG(135), DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
-    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), -1, -1, -DEGtoANG(90),
-    DEGtoANG(90), -1, -1, DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
-};
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), 0, -DEGtoANG(180), -DEGtoANG(90),
-    DEGtoANG(90), 0, -DEGtoANG(180), DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
-};
+#include "shared/slide_on_ice_angles.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

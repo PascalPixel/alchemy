@@ -239,7 +239,7 @@ void MarsLighthouseRoomF_ShootFireballAtWall(void);
 struct EffectOptions;
 struct LightOam;
 
-extern s16 gMarsLighthouseRoomF_JumpAnglesByKey[];
+extern s16 gSlideOnIce_SteerAngles[];
 
 void MarsLighthouseRoomF_MeltPuddle(s32 id);
 
@@ -1007,7 +1007,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
 
     Actor_Get(gMainRoutineWork.leaderActorId);
     keys = &gInput.held;
-    table = gMarsLighthouseRoomF_JumpAnglesByKey;
+    table = &gSlideOnIce_SteerAngles[16];
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 0xf) << 1));
     if (angle != -1) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -2013,20 +2013,7 @@ s32 gMarsLighthouseRoomF_FireballDrop[] = {
 
 #include "shared/field_effect_duration_scripts.c"
 
-s16 gSlideOnIce_SteerAngles[] = {
-    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), -DEGtoANG(45), -DEGtoANG(135), -DEGtoANG(90),
-    DEGtoANG(90), DEGtoANG(45), DEGtoANG(135), DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
-};
-
-s16 gMarsLighthouseRoomF_JumpAnglesByKey[] = {
-    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), -1, -1, -DEGtoANG(90),
-    DEGtoANG(90), -1, -1, DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
-};
-
-s16 gSlideOnIce_AnglesByKey[] = {
-    -1, 0, -DEGtoANG(180), -1, -DEGtoANG(90), 0, -DEGtoANG(180), -DEGtoANG(90),
-    DEGtoANG(90), 0, -DEGtoANG(180), DEGtoANG(90), -1, 0, -DEGtoANG(180), -1,
-};
+#include "shared/slide_on_ice_angles.c"
 
 #include "shared/push_kinds.c"
 

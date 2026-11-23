@@ -32,12 +32,12 @@
 #define CLIMB_STEP_IS_CLEAR(actor, probe, angle)                               \
   (SET_CLIMB_STEP(probe, actor, angle), !MapGrid_CheckCollision(actor, probe))
 
-/// SCRIPT_COMMAND_KEYS, the leader's control on a climbable wall: moves it 8
-/// pixels at a time by the direction pad, up and down changing its height
-/// rather than its depth, reaching east or west as it goes and clinging while
-/// the pad is not held. Refuses a step into a wall, from or onto a cell that is
-/// not MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low (down), and
-/// records the held keys in the field work. Returns 1.
+/// SC_KEYS (LEADER_MOVEMENT_KEYS), the leader's control on a climbable wall:
+/// moves it 8 pixels at a time by the direction pad, up and down changing its
+/// height rather than its depth, reaching east or west as it goes and clinging
+/// while the pad is not held. Refuses a step into a wall, from or onto a cell
+/// that is not MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low
+/// (down), and records the held keys in the field work. Returns 1.
 s32 Actor_MoveByKeys(struct Actor *actor) {
   struct FieldPosition position;
   struct MapCell *sourceCell;
@@ -79,9 +79,9 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
     position.z = actor->z.fixed;
     map = Ram_HeapSlots->mapGrid;
     sourceCell = &map->layers[actor->layer].cells[Actor_GetCellIndexFar(actor)];
-    destinationCell =
-        &map->layers[actor->layer].cells[position.x / toFIXED(16) +
-                                         (position.z / toFIXED(16)) * 128];
+    destinationCell = &map->layers[actor->layer]
+                           .cells[position.x / toFIXED(16) +
+                                  (position.z / toFIXED(16)) * MAPGRID_SIZE];
     if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
         !(sourceCell->attributeB & MAP_CELL_CLIMBABLE) ||
         !(destinationCell->attributeB & MAP_CELL_CLIMBABLE)) {
@@ -125,8 +125,9 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   return 1;
 }
 
-/// SCRIPT_COMMAND_ROPE, the leader's control on a tied rope (render mode 3):
-/// the pad moves it from node to node along the rope, a half cell a step.
+/// SC_ROPE (LEADER_MOVEMENT_ROPE), the leader crossing a tied rope hand over
+/// hand: the pad moves him from node to node along it, a half cell a step, and
+/// sets the rope swinging.
 s32 Actor_CrossRope(struct Actor *actor) {
   struct FieldPosition position;
   s32 collisionFlags;
@@ -183,7 +184,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
         s32 distance =
             Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-        if (distance <= 1024 && bestDistance > distance) {
+        if (distance <= 32 * 32 && bestDistance > distance) {
           bestDistance = distance;
           best = node;
         }
@@ -256,7 +257,8 @@ static inline void TurnToward(struct Actor *actor, u16 angle) {
   actor->facing += delta;
 }
 
-/// Script command 0x1d, Actor_CrossRope on a tightrope (render mode 4).
+/// SC_TIGHTROPE (LEADER_MOVEMENT_TIGHTROPE): Actor_CrossRope on a tightrope,
+/// which the leader walks, the rope wobbling under him.
 s32 Actor_CrossTightrope(struct Actor *actor) {
   struct FieldPosition position;
   s32 collisionFlags;
@@ -272,7 +274,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
   struct FieldWork *work;
 
   sprite = actor->sprite;
-  animation = 1;
+  animation = ANIM_STAND;
   collisionFlags = 0;
   actor->speedLimit = toFIXED(1) / 2;
   actor->acceleration = toFIXED(1) / 2;
@@ -303,7 +305,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
           s32 distance =
               Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
-          if (distance <= 1024 && bestDistance > distance) {
+          if (distance <= 32 * 32 && bestDistance > distance) {
             bestDistance = distance;
             best = point;
           }
@@ -338,9 +340,9 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
     work->heldKeys = gInput.held;
   }
   if (collisionFlags == 0)
-    animation = 2;
+    animation = ANIM_WALK;
   Actor_SelectAnimation(actor, animation);
-  Actor_SetAnimationSpeed(actor, 8);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL / 2);
   sprite->offsetY = 4;
   if (collisionFlags != 0) {
     actor->targetX = ACTOR_NO_TARGET;
@@ -406,8 +408,9 @@ s32 Sand_CheckEndKeys(struct Actor *actor) {
   return 0;
 }
 
-/// Script command 0x1e (control mode 5): the leader turned to sand by the Sand
-/// Psynergy, moved by the direction pad on a field map.
+/// SC_SAND (LEADER_MOVEMENT_SAND): the leader turned to sand by the Sand
+/// Psynergy, moved by the direction pad on a field map, leaving puffs of sand;
+/// up against a face, or down at a drop, he climbs it as sand.
 s32 Actor_MoveAsSand(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -509,7 +512,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       actor->velocityY = -actor->velocityZ;
       actor->velocityZ = 0;
     }
-    // Every 16th frame, a bit of rubble drops beside the climber.
+    // Every 16th frame, a grain of sand drops beside the climber.
     if ((gFrameCount & 15) == 0) {
       SET_POSITION(&spawn, actor->x.fixed - Random16() * 6 + toFIXED(3),
                    actor->y.fixed, actor->z.fixed);
@@ -673,7 +676,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->groundHeight = actor->groundHeight;
         sprite = effect->sprite;
         Actor_StartScript(effect, gActor_WakeScript);
-        effect->priorityFlags = 8;
+        effect->priorityFlags = ACTOR_PRIORITY_OWN_DEPTH;
         effect->wakeFrames = 100;
         effect->motionFlags = 0;
         Sound_PlayFar(SE_SAND_MOVE);
@@ -702,8 +705,8 @@ done:
   return 1;
 }
 
-/// Script command 0x22 (control mode 9): the leader as sand on the world map
-/// (the Sand Psynergy). Moves the object on the world map by the direction pad
+/// SC_WORLD_SAND (LEADER_MOVEMENT_WORLD_SAND): the leader as sand on the world
+/// map (the Sand Psynergy). Moves him on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
 /// the event work and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
@@ -820,7 +823,7 @@ update_object:
       actor->facing += difference;
     }
     actor->wakeTimer = 0;
-    actor->userValue = 2;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     Actor_SetMoveTarget(actor, position.x, position.y, position.z);
     speed = Math_SqrtFX(Iwram_MulFX(actor->velocityX, actor->velocityX) +
@@ -860,7 +863,7 @@ update_object:
       ripple->groundHeight = actor->groundHeight;
       rippleSprite = ripple->sprite;
       Actor_StartScript(ripple, gActor_WakeScript);
-      ripple->priorityFlags = 8;
+      ripple->priorityFlags = ACTOR_PRIORITY_OWN_DEPTH;
       ripple->wakeFrames = 100;
       ripple->motionFlags = 0;
       if (rippleSprite != NULL) {

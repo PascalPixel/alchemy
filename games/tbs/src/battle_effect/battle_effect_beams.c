@@ -118,6 +118,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       break;
     }
   }
+  // A monster's slash takes the Mars Djinni's colours, the party's the
+  // crescent's.
   if (work->args->user > PIERS)
     Iwram_CopyWords(BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
@@ -269,12 +271,12 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 velocityY;
   s32 velocityZ;
   s32 acceleration;
-  s32 strength;
+  s32 gravity;
   BlitterPair draw;
   struct Actor *actor;
   struct Actor *target;
   struct BattleWork *battle;
-  s32 big;
+  s32 gathers;
   s32 half;
   s32 frame;
   s32 i;
@@ -284,11 +286,11 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   // DEAD: never true, as only kinds from EFFECT_RANGE_RING_AND_SPARK reach
-  // this runner (BattleEffect_RunByIdRange), so big stays 1; the ROM keeps the
-  // compare and the store.
-  big = 1;
+  // this runner (BattleEffect_RunByIdRange), so gathers stays 1; the ROM keeps
+  // the compare and the store.
+  gathers = 1;
   if (args->kind < EFFECT_RANGE_RING_AND_SPARK)
-    big = 0;
+    gathers = 0;
   work->args = args;
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
                                         CRITICAL_HIT_ZOOM);
@@ -325,6 +327,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_CRESCENT_SHEET, Ram_MapGridCellBuffer, 1,
                              1);
+  // A monster's crescent takes the Mars Djinni's colours.
   if (work->args->user > PIERS)
     Iwram_CopyWords(BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
@@ -339,7 +342,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   // The gathering.
-  if (big == 1) {
+  if (gathers == 1) {
     actor = GetBattleObjectSlotFar(work->args->user)->actor;
     for (i = 0; i != CRITICAL_HIT_MOTES; i++) {
       struct Particle *mote = &work->particles[i];
@@ -352,7 +355,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     velocityX = actor->velocityX;
     velocityY = actor->velocityY;
     velocityZ = actor->velocityZ;
-    strength = actor->gravity;
+    gravity = actor->gravity;
     acceleration = actor->acceleration;
     SET_VELOCITY(actor, 0, 0, 0);
     actor->acceleration = 0;
@@ -396,7 +399,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
     SET_VELOCITY(actor, velocityX, velocityY, velocityZ);
     actor->acceleration = acceleration;
-    actor->gravity = strength;
+    actor->gravity = gravity;
   }
 
   // The strike.

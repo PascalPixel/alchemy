@@ -34,10 +34,6 @@
 #define BLUE_RAMP_FRAMES 27
 #define BLUE_RAMP_LAST_ROW 248
 
-// Bind and Luff spin a shrinking triangle onto the first target and stand a
-// rune there. The triangle's corners are projected onto the canvas and each
-// edge is stamped with flares.
-
 /// Turns the screen into shades of blue, top down, with a ragged edge; nothing
 /// calls it.
 UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
@@ -104,7 +100,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 }
 
 /// A triangle of light spins and shrinks onto the first target, changing colour
-/// and leaving a fading trail, then a rune stands on the target.
+/// and leaving a fading trail, then a rune stands on the target. The triangle's
+/// corners are projected onto the canvas and each edge is stamped with flares.
 ///
 /// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
@@ -195,6 +192,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
+    // Only the first target's triangle is drawn, though the frames are counted
+    // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
@@ -327,6 +326,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
+    // Only the first target's triangle is drawn, though the frames are counted
+    // for every target.
     for (member = 0; member != 1; member++) {
       memberFrame = frame - member * 8;
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
@@ -391,6 +392,11 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+#undef BIND_FLARE_PICTURES
+#undef BIND_DJINNI_PICTURE
+#undef BIND_SLOTS_PER_TARGET
+#undef BIND_EDGE_FLARES
+#undef BIND_RUNE_FRAME
 #undef BIND_DJINNI_SWAY
 #undef TRIANGLE_STRIKE_LEAP_FRAMES
 #undef BLUE_RAMP_PALETTE

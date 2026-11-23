@@ -355,7 +355,9 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   }
 }
 
-/// Opens the canvas layer with the canvas repeated across a wrapping map.
+/// Opens the canvas layer on a 256-pixel map that wraps: the canvas fills the
+/// left half of the map's top rows, and the right half repeats the canvas's
+/// first tile.
 void BattleEffect_StartTiledCanvas(s32 bgControl) {
   s32 row;
   s32 column;
@@ -427,13 +429,13 @@ void BattleEffect_EndCanvasLayer(void) {
 /// colours back.
 void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
-  s32 *flag;
+  s32 *secondMode;
 
-  flag = &((struct BattleBackgroundWork *)HEAP_SLOT_BLOCK(
-               HEAP_SLOT_BATTLE_BACKGROUND))
-              ->secondMode;
+  secondMode = &((struct BattleBackgroundWork *)HEAP_SLOT_BLOCK(
+                     HEAP_SLOT_BATTLE_BACKGROUND))
+                    ->secondMode;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  *flag = BATTLE_BACKGROUND_FIXED;
+  *secondMode = BATTLE_BACKGROUND_FIXED;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                                               DISPCNT_OBJ_ON);
@@ -515,7 +517,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
 }
 
 /// Draws a line on the canvas, keeping the brighter colour where it crosses
-/// what is drawn.
+/// what is drawn; the line's ends are clipped to the canvas's rows only.
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color) {
   s32 dx = x1 - x0;

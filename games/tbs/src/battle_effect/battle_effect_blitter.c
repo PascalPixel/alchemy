@@ -47,7 +47,7 @@
 /// The template walk, written once and expanded twice: first to count the
 /// words, then to write them.
 #define BLITTER_WALK()                                                         \
-  /* Block 1, the prologue (the file's opening comment). */                    \
+  /* Block 1, the prologue (blitter_fragments.s describes the registers). */   \
   COPY(3);                                                                     \
   if (mode == COMPOSITE_ADDITIVE) {                                            \
     COPY_FROM(BattleEffect_Mask, 3);                                           \

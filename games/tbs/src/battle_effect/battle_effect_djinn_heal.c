@@ -44,7 +44,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 point[3];
   struct ScreenPoint view;
-  BlitterPair callbacks;
+  BlitterPair draw;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -54,7 +54,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, callbacks);
+  BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
   {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
     struct Actor *goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
@@ -125,7 +125,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         size = DJINN_HEAL_MOTE_SIZE_MAX -
                (screen.depth - DJINN_HEAL_MOTE_DEPTH_NEAR) /
                    DJINN_HEAL_MOTE_DEPTH_STEP;
-        EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
+        EFFECT_DRAW_MOTE(draw[0], canvas, sheet, screen.x, screen.y, size);
         Particle_AdvanceWithGravity3D(spark, 60, 0);
         if (frame > i + 30) {
           s32 dx = -spark->x >> 8;
@@ -143,9 +143,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame * (TRIG_TURN / 64)) * 4), 0);
       Projection_Point(djinniPoint, &screen);
       screen.x >>= 1;
-      callbacks[1](canvas, work->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
-                   screen.y - MERCURY_SMALL_DJINNI_HEIGHT / 2,
-                   SMALL_DJINNI_WIDTH, MERCURY_SMALL_DJINNI_HEIGHT);
+      draw[1](canvas, work->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
+              screen.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+              MERCURY_SMALL_DJINNI_HEIGHT);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -168,9 +168,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                target[2] + Trig_Sin(frame * (TRIG_TURN / 32)) * 40);
     Projection_Point(point, &view);
     view.x >>= 1;
-    callbacks[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
-                 view.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
-                 MERCURY_SMALL_DJINNI_HEIGHT);
+    draw[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
+            view.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+            MERCURY_SMALL_DJINNI_HEIGHT);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *object =
           GetBattleObjectSlotFar(work->args->targets[member])->actor;
@@ -215,8 +215,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                 u32 edge = gBattleEffect_SparkleSizes[pictureIndex];
                 u32 half = edge >> 1;
 
-                callbacks[1](canvas, picture, view.x - half, view.y - half,
-                             edge, edge);
+                draw[1](canvas, picture, view.x - half, view.y - half, edge,
+                        edge);
               }
               spark->x -= spark->x / distance;
               spark->y -= spark->y / distance;
@@ -231,16 +231,17 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Every VBlank turns the camera at least half the delta, so it keeps turning on
-// VBlanks that end no frame of the effect.
-// XXX (no evidence): whether that is meant to keep the turn smooth when an
-// effect's frame runs long; the code shows the effect, not the reason.
-/// Turns the battle camera's yaw by the effect's delta.
+/// Turns the battle camera by the effect's delta each VBlank: the whole delta
+/// on the VBlank after one of the effect's frames ends, half of it on the
+/// others, so the camera keeps turning while a frame runs long.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 *phase = &work->cameraPhase;
 
+  // XXX (no evidence): whether the half turns are meant to keep the turn
+  // smooth when an effect's frame runs long; the code shows the effect, not
+  // the reason.
   if (*phase == CAMERA_PHASE_FRAME_DONE) {
     camera->yaw += work->cameraDelta;
     *phase = CAMERA_PHASE_IDLE;

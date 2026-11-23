@@ -1,5 +1,6 @@
 /// @file
-/// Display, scroll and window HBlank DMA helpers.
+/// The display every effect starts from, the timed scroll of BG1 and BG2 the
+/// summons' skies use, and the line-by-line feed of window 0's edges.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"

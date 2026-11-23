@@ -280,7 +280,9 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Decompresses a resource that may open with a palette.
+/// Decompresses resource `id` into `dst`. A sheet opens with its palette: a
+/// nonzero `copyPalette` copies it into the first BG colours, and a nonzero
+/// `skipPalette` steps over it to the pictures.
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette) {
   u8 *data = Resource_GetTableEntry(id);
@@ -435,8 +437,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sheet;
   BlitterPair blitters;
-  struct Particle *step;
-  struct Particle *mote;
+  struct Particle *flame;
+  struct Particle *ember;
   s32 index;
   s32 frame;
   s32 i;
@@ -456,28 +458,28 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
   // Nine flames spread out along the ground, alternately left and right.
   index = 0;
-  step = work->particles;
+  flame = work->particles;
   for (; index != MARS_FLAMES; index++) {
     s32 angle = index * (TRIG_TURN / 32);
 
-    step->x = FIXEDtoINT(Trig_Sin(angle) * MARS_ROW_REACH);
-    step->y = FIXEDtoINT(Trig_Cos(angle) * 4) + MARS_ROW_Y;
+    flame->x = FIXEDtoINT(Trig_Sin(angle) * MARS_ROW_REACH);
+    flame->y = FIXEDtoINT(Trig_Cos(angle) * 4) + MARS_ROW_Y;
     if (index & 1)
-      step->x = MARS_ROW_X - step->x;
+      flame->x = MARS_ROW_X - flame->x;
     else
-      step->x += MARS_ROW_X;
-    step->variant = -(index * 2);
+      flame->x += MARS_ROW_X;
+    flame->variant = -(index * 2);
     for (i = 0; i != MARS_EMBERS_PER_FLAME; i++) {
-      mote = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
-      mote->x = INTtoFIXED(((Random16() & 15) + step->x) - 8);
-      mote->y = INTtoFIXED((Random16() & 7) + 96);
-      mote->velocityX = ((Random16() & 127) - 64) << 11;
-      mote->velocityY = ((Random16() & 127) - 64) << 10;
-      mote->z = Random16() & TRIG_ANGLE_MASK;
+      ember = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
+      ember->x = INTtoFIXED(((Random16() & 15) + flame->x) - 8);
+      ember->y = INTtoFIXED((Random16() & 7) + 96);
+      ember->velocityX = ((Random16() & 127) - 64) << 11;
+      ember->velocityY = ((Random16() & 127) - 64) << 10;
+      ember->z = Random16() & TRIG_ANGLE_MASK; // its sway's angle
       // DEAD: nothing reads velocityZ; the ROM keeps the store.
-      mote->velocityZ = Random16() & 0xffff;
+      ember->velocityZ = Random16() & 0xffff;
     }
-    step++;
+    flame++;
   }
 
   Sound_PlayFar(SE_WHOOSH);
@@ -512,9 +514,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     }
     if (frame > 31) {
       for (index = 0; index != MARS_FLAMES; index++) {
-        step = &work->particles[index];
-        if (step->variant >= 0 && step->variant < MARS_FLAME_LIFE) {
-          s32 picture = step->variant / 8;
+        flame = &work->particles[index];
+        if (flame->variant >= 0 && flame->variant < MARS_FLAME_LIFE) {
+          s32 picture = flame->variant / 8;
           u32 width;
 
           // UB: width is assigned in one argument and read in another.
@@ -522,37 +524,37 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
           width = gBattleEffect_PuffArcPictureWidths[picture];
           blitters[0](canvas,
                       work->sheet + gBattleEffect_PuffArcPictures[picture],
-                      step->x - (width >> 1),
-                      step->y + gBattleEffect_PuffArcPictureBiasY[picture],
+                      flame->x - (width >> 1),
+                      flame->y + gBattleEffect_PuffArcPictureBiasY[picture],
                       width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
           blitters[0](
               canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
-              step->x -
+              flame->x -
                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
-              step->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
+              flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
               gBattleEffect_PuffArcPictureHeights[picture]);
 #endif
         }
-        step->variant++;
+        flame->variant++;
       }
     }
     // Embers rise from the flames, swaying.
     for (index = 0; index != MARS_FLAMES * MARS_EMBERS_PER_FLAME; index++) {
-      step = &PARTICLES[index];
+      ember = &PARTICLES[index];
       if (frame >= (index / MARS_EMBERS_PER_FLAME) * 2 + 40) {
         s32 size;
         s32 x;
 
         size = (index & 1) + 3;
-        x = FIXEDtoINT(step->x) + FIXEDtoINT(Trig_Sin(step->z) * 4);
-        EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, FIXEDtoINT(step->y),
+        x = FIXEDtoINT(ember->x) + FIXEDtoINT(Trig_Sin(ember->z) * 4);
+        EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, FIXEDtoINT(ember->y),
                          size);
-        Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE,
+        Particle_AdvanceWithGravity2D(ember, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
-        step->z += TRIG_TURN / 32;
-        if (step->z > TRIG_ANGLE_MASK)
-          step->z -= TRIG_TURN - 1;
+        ember->z += TRIG_TURN / 32;
+        if (ember->z > TRIG_ANGLE_MASK)
+          ember->z -= TRIG_TURN - 1;
       }
     }
 

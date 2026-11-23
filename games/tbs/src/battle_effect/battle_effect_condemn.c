@@ -182,6 +182,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                             REAPER_SHEET_SWUNG,
                             CONDEMN_PICTURE_X(pictureColumn, 1),
                             CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
+        // Two frames each: the white flash, the swung crescent, then the
+        // crescent fading in four pictures.
         if (frame >= 88 && frame <= 89) {
           Iwram_FillWords(canvas, CANVAS_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));

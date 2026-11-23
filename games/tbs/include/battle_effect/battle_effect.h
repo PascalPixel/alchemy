@@ -451,7 +451,7 @@ void BattleEffect_SetupBlendedDisplay(void);
 #define TINT_KEEP (-1)
 void BattleEffect_TintBattler(s32 actorId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames);
-void BattleEffect_InitializeTilemapAndFlushQueue(void);
+void BattleEffect_OpenAndCloseTiledCanvas(void);
 
 // battle_effect_cybele.c
 void BattleEffect_RunCybele(struct BattleEffectParams *args);

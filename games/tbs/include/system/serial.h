@@ -177,10 +177,12 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
+/// What the send in progress sends from, 0 when none is running.
 extern s32 gSerialSendSource;
 // volatile: Serial_StartSend sets it while Serial_StepBlockTransfer, which the
 // VBlank handler runs, counts it down, so it is no device.
 extern volatile u16 gSerialSendSize;
+/// Where the receive in progress writes, 0 when none is running.
 extern s32 gSerialReceiveDestination;
 // volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
 // up while the link code outside the interrupt polls it, so it is no device.

@@ -2488,12 +2488,12 @@ void PaletteCycle_Step(void) {
 
 /// When Felix falls into the sea among E Tundaria Islet's drifting icebergs, he
 /// sinks out of sight, and the islet starts again on its south shore, where the
-/// party lands from the World Map.
+/// party lands from the World Map. The icebergs' drift (Islets_DriftIcebergs)
+/// raises this the moment his height falls below -12 pixels, that is, once he
+/// is down at the sea, whose cells lie at -16, off the icebergs and the shore;
+/// the icebergs then hold still.
 void Islets_SinkInSea(void) {
   struct Actor *leader;
-
-  // XXX: how Felix comes to fall into the sea, stepping off an iceberg as it
-  // drifts or missing a jump; a recording of him riding the icebergs.
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2519,9 +2519,11 @@ void Islets_JumpForward(void) {
   // whole round of the icebergs' drift, Felix sees them drift out and back
   // below but none comes to rest under the shore, and he does not jump.
   // XXX: the jump onto an iceberg from E Tundaria Islet's shore is still read
-  // from the map's jump cells, not seen; a recording from another of the
-  // shore's jump cells, or with the icebergs held still by Reveal where one
-  // lies below, would settle it.
+  // from the map, not seen. Cell (16, 16) is the only jump cell (behaviour 11)
+  // on the south shore's cells (2, 12) to (22, 24), and pushing south on it
+  // again (down:600) ended at once with nothing run. A recording of the push at
+  // the moment an iceberg lies two cells south, or with the icebergs held still
+  // by Reveal where one lies below, would settle it.
   Field_TryJumpForward();
   return;
 }

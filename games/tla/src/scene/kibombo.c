@@ -160,6 +160,7 @@ u8 gKibombo_UnusedBeforeFireColors[4] BSS_DATA;
 /// The signal fire's four colours as the village has them, which its flicker
 /// brightens and dims.
 s16 gKibombo_FireColors[4] BSS_DATA;
+
 struct Actor *gKibombo_BlackCrystal BSS_DATA;
 
 /// A background colour's place in BG_PLTT: colour `color` of 16-colour palette

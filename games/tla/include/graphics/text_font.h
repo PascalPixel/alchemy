@@ -10,6 +10,7 @@
 #define KANJI_WIDTH 10
 /// The Japanese font's kanji, from KANJI_FIRST_CODE on.
 extern const u8 gFont_KanjiGlyphs[];
+
 extern const u16 gFont_MarkGlyphCodes[];
 
 /// The marks a kana is drawn with: their character codes.

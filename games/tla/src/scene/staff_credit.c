@@ -81,6 +81,7 @@ u16 gStaffCredit_BlendLevel BSS_DATA;
 u16 gStaffCredit_BlendSteady BSS_DATA;
 /// The actors the World Map has placed (world_map_objects.c).
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
+
 u16 gStaffCredit_TransitionBlend BSS_DATA;
 s16 gGauge_Shown BSS_DATA ALIGNED(4);
 s16 gGauge_Vram BSS_DATA;

@@ -215,6 +215,7 @@ s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
 /// The party members hidden as the ship first takes off, -1 for none.
 s32 gWorldMap_HiddenMembers[8] BSS_DATA;
+
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
 u16 gWorldMapBlend BSS_DATA;
 s16 gGauge_Shown BSS_DATA ALIGNED(4);

@@ -219,7 +219,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-struct Actor *Whirlwind_SpawnUpper(struct Actor *source);
+struct Actor *Whirlwind_Spawn(struct Actor *source);
 
 /// Felix walks into the west whirlwind's path, on the walkway towards the left
 /// tower at cells (13, 9) to (20, 9): a whirlwind blows out at him, catches him
@@ -228,7 +228,7 @@ struct Actor *Whirlwind_SpawnUpper(struct Actor *source);
 /// already carrying him.
 void JupiterLighthouse_RideUpperWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
-    Whirlwind_SpawnUpper(Actor_Get(ACTOR_WEST_UPPER_GUST));
+    Whirlwind_Spawn(Actor_Get(ACTOR_WEST_UPPER_GUST));
     gWhirlwindRiding = 1;
   }
 }
@@ -249,7 +249,7 @@ void JupiterLighthouse_RideWhirlwind(void) {
       party->movementMode = LEADER_MOVEMENT_NONE;
       actor->speedLimit = 0;
       actor->acceleration = 0;
-      Whirlwind_SpawnUpper(Actor_Get(ACTOR_EAST_UPPER_GUST));
+      Whirlwind_Spawn(Actor_Get(ACTOR_EAST_UPPER_GUST));
       gWhirlwindRiding = 1;
     }
   }
@@ -1890,7 +1890,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-#include "shared/whirlwind_spawn_upper.h"
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks.h"
 

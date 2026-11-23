@@ -1411,35 +1411,7 @@ extern s32 gWhirlwindEndScript[];
 
 #include "shared/whirlwind_update.h"
 
-/// Unused here: a whirlwind starts from a gust.
-UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct Actor *actor;
-
-  Event_PlaySound(SE_WHIRLWIND);
-  position.x =
-      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
-  position.z =
-      source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
-  actor = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                            position.z);
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetSpriteFlags(actor, 0);
-  actor->motionFlags = 0;
-  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  actor->facing = source->facing;
-  actor->timer = 0;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
-  actor->update = Whirlwind_Update;
-  actor->speedLimit = toFIXED(3) / 2;
-  options.priority = 1;
-  options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
-  return actor;
-}
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks_b.h"
 

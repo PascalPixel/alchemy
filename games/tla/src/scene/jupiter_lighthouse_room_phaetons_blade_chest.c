@@ -128,7 +128,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 s32 CrackedTile_Step();
-struct Actor *Whirlwind_SpawnUpper();
+struct Actor *Whirlwind_Spawn();
 
 /// Nothing visible happens when Felix starts to Hover; while he floats, the
 /// Hover hall's stairs down between the statues, cell (34, 17), are walled
@@ -166,7 +166,7 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
       actor->y.fixed = 0;
       actor->facing = FACING_EAST;
     }
-    Whirlwind_SpawnUpper(actor);
+    Whirlwind_Spawn(actor);
     gWhirlwindRiding = 1;
   }
 }
@@ -201,7 +201,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
       actor->y.fixed = toFIXED(32);
       actor->facing = FACING_EAST;
     }
-    motion = Whirlwind_SpawnUpper(actor);
+    motion = Whirlwind_Spawn(actor);
     if (motion != NULL)
       motion->speedLimit = toFIXED(1);
     gWhirlwindRiding = 1;
@@ -359,7 +359,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-#include "shared/whirlwind_spawn_upper.h"
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks.h"
 

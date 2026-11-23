@@ -234,7 +234,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-#include "shared/whirlwind_spawn_upper.h"
+#include "shared/whirlwind_spawn.h"
 
 // Unused: nothing in the entrance sets Actor_EmitRisingSparks as an update.
 #include "shared/actor_emit_rising_sparks.h"

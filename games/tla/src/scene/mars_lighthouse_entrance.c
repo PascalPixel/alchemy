@@ -1212,8 +1212,12 @@ void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *actor) {
   actor->update = (ObjectUpdate)MarsLighthouseEntrance_FlingIceCone;
 }
 
-/// Each frame, while a fireball carries Felix, his slide on the ice is
-/// stopped.
+/// Nothing visible happens of itself. In the Valkyrie Mail rooms the dragon
+/// face's fireball hits Felix on the ice and he sits blinking on it, red, as
+/// it carries him east across the ice to the hole at its end, where "!" shows
+/// over him and he falls through to the room below; each frame of that ride
+/// the game holds his own slide on the ice stopped, so that only the fireball
+/// moves him.
 void MarsLighthouseEntrance_StopSlideWhileRiding(void) {
   if (Ride_IsActive())
     Leader_SetSlideStopped(1);

@@ -1,17 +1,18 @@
 /// @file
-/// The area name notice, and removing an item from the inventory.
+/// The window that shows the area's name, and removing an item from the party's
+/// inventory.
 // Part of window.c.
 
 #include "window_internal.h"
 #include "field/field_work.h"
 
-#define TIMED_NOTICE_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
+#define FIELD_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
 void AreaNameWindow_Update(void);
 
 /// Shows the area's name in a window near the top of the screen for
-/// AREA_NAME_WINDOW_FRAMES. The field work owns the window and countdown until
-/// a task closes it.
+/// AREA_NAME_WINDOW_FRAMES, kept in the field work until AreaNameWindow_Update
+/// closes it.
 void AreaNameWindow_Show(void) {
   struct FieldWork *work;
   s32 height;
@@ -22,7 +23,7 @@ void AreaNameWindow_Show(void) {
   struct Window *nameWindow;
   struct MainRoutineWork *state;
 
-  work = TIMED_NOTICE_WORK;
+  work = FIELD_WORK;
   state = &gMainRoutineWork;
   x = 8;
   y = 8;
@@ -43,7 +44,7 @@ void AreaNameWindow_Update(void) {
   struct FieldWork *work;
   u16 framesLeft;
 
-  work = TIMED_NOTICE_WORK;
+  work = FIELD_WORK;
   work->noticeFrames = framesLeft = work->noticeFrames - 1;
   if (framesLeft == 0) {
     Window_Close(work->noticeWindow, WINDOW_FLAG_INSTANT);
@@ -55,7 +56,7 @@ void AreaNameWindow_Update(void) {
 void AreaNameWindow_Hide(void) {
   struct Window *window;
 
-  window = TIMED_NOTICE_WORK->noticeWindow;
+  window = FIELD_WORK->noticeWindow;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
@@ -70,4 +71,4 @@ s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   return 0;
 }
 
-#undef TIMED_NOTICE_WORK
+#undef FIELD_WORK

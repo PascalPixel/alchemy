@@ -101,7 +101,7 @@ void SelectionMenu_Create(void) {
   screen->records[SELECTION_RECORD_HAND].scale = 0;
   screen->records[SELECTION_RECORD_LARGE_ICON].kind = ICON_KIND_NONE;
   visual = &screen->records[SELECTION_RECORD_HAND].sprite;
-  visual->mode = 0;
+  visual->mode = OBJ_MODE_NORMAL;
   visual->mosaic = 0;
   visual->colors = 1;
   visual->affine = 0;
@@ -299,12 +299,12 @@ void SelectionMenu_Draw(void) {
     if (node->scale != 0) {
       if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
         if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
-          sprite->mode = 1;
+          sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
         } else {
-          sprite->mode = 0;
+          sprite->mode = OBJ_MODE_NORMAL;
         }
         if (node->kind == ICON_KIND_COMMAND) {
-          sprite->mode = 1;
+          sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
         }
       }
       Oam_AddSpriteAtDepth((s32 *)sprite, depth);
@@ -315,7 +315,7 @@ void SelectionMenu_Draw(void) {
   if (largeIcon->kind != ICON_KIND_NONE) {
     node = SelectionMenu_GetCursorNode(state);
     largeSprite = &largeIcon->sprite;
-    largeSprite->mode = 0;
+    largeSprite->mode = OBJ_MODE_NORMAL;
     largeSprite->affine = 0;
     largeSprite->matrix = 0;
     largeSprite->mosaic = 0;
@@ -340,7 +340,7 @@ void SelectionMenu_Draw(void) {
       largeIcon->scale = largeIcon->scale + largeIcon->scaleStep;
     }
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
-      largeSprite->mode = 1;
+      largeSprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
     }
     Oam_AddSpriteAtDepth((s32 *)largeSprite, OAM_DEPTH_WINDOW + 8);
   }
@@ -372,12 +372,12 @@ void SelectionMenu_Draw(void) {
     }
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
       if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
-        sprite->mode = 1;
+        sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
       } else {
-        sprite->mode = 0;
+        sprite->mode = OBJ_MODE_NORMAL;
       }
       if (node->kind == ICON_KIND_COMMAND) {
-        sprite->mode = 1;
+        sprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
       }
     }
     Oam_AddSpriteAtDepth((s32 *)sprite, OAM_DEPTH_WINDOW);
@@ -411,9 +411,9 @@ void SelectionMenu_Draw(void) {
     cursorEntry->x = cursor->x - 4;
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
       if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
-        cursorEntry->mode = 1;
+        cursorEntry->mode = OBJ_MODE_SEMI_TRANSPARENT;
       } else {
-        cursorEntry->mode = 0;
+        cursorEntry->mode = OBJ_MODE_NORMAL;
       }
     }
     Oam_AddSpriteAtDepth((s32 *)cursorEntry, OAM_DEPTH_WINDOW + 8);
@@ -453,9 +453,9 @@ void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side) {
       VramCache_Load(state->records[side].slot, ARROW_FRAME_BYTES, tmp);
   if (GameFlag_Get(FLAG_IN_BATTLE)) {
     if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND)
-      arrow->mode = 1;
+      arrow->mode = OBJ_MODE_SEMI_TRANSPARENT;
     else
-      arrow->mode = 0;
+      arrow->mode = OBJ_MODE_NORMAL;
   }
   Oam_AddSpriteAtDepth(arrow, OAM_DEPTH_WINDOW - 2);
   if (state->records[side].base != 0)
@@ -618,7 +618,7 @@ void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 side) {
                                                ARROW_FRAME_BYTES, arrowTiles);
     state->records[side].y = state->baseY;
     state->records[side].base = 0;
-    arrow->mode = 0;
+    arrow->mode = OBJ_MODE_NORMAL;
     arrow->mosaic = 0;
     arrow->colors = 1;
     arrow->affine = 0;
@@ -1178,7 +1178,7 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   node->scaleEnd = Q_8_8(1);
 
   sprite = &node->sprite;
-  sprite->mode = 0;
+  sprite->mode = OBJ_MODE_NORMAL;
   sprite->colors = 0;
   sprite->mosaic = 0;
 
@@ -1259,7 +1259,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   other->scale = Q_8_8(1);
   other->scaleEnd = Q_8_8(1);
   sprite = &other->sprite;
-  sprite->mode = 0;
+  sprite->mode = OBJ_MODE_NORMAL;
   sprite->colors = 0;
   sprite->mosaic = 0;
   sprite->size = 1;
@@ -1313,7 +1313,7 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 
   *slot = cacheSlot;
   sprite->oam.f.tile = VramCache_Load(cacheSlot, ARROW_FRAME_BYTES, data);
-  sprite->oam.f.mode = 0;
+  sprite->oam.f.mode = OBJ_MODE_NORMAL;
   sprite->oam.f.mosaic = 0;
   sprite->oam.f.colors = 1;
   sprite->oam.f.affine = 0;

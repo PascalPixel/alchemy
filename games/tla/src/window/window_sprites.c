@@ -616,7 +616,7 @@ void WindowSprite_UpdateAll(void) {
           sprite->tile = VramCache_Load(work->glyphResource,
                                         PAGE_ARROW_FRAME_BYTES, tiles);
           output->index = sprite->tile;
-          sprite->mode = 0;
+          sprite->mode = OBJ_MODE_NORMAL;
           sprite->mosaic = 0;
           sprite->colors = 1;
           sprite->size = 0;

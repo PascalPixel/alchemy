@@ -258,7 +258,8 @@ UNUSED s32 DebugMenu_Run(s32 index) {
 // room.
 
 /// Preset 0, "Jupiter": Felix holds the Red Key and the Blue Key. To the
-/// Jupiter Lighthouse's room of locked doors.
+/// Jupiter Lighthouse's room of locked doors, at its entrance 4 (216x408 on
+/// the map), in sight of a red door.
 void DebugWarp_Jupiter(void) {
   Inventory_AddItemFar(FELIX, ITEM_RED_KEY);
   Inventory_AddItemFar(FELIX, ITEM_BLUE_KEY);

@@ -1467,6 +1467,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldEvent_Wait(5);
+  // "Water's strength, huh? That sounds like my sort of thing, doesn't it?"
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
@@ -1483,6 +1484,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_WalkToAndWait(ACTOR_PIERS, 264, 168);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   FieldEvent_Wait(20);
+  // "{actor_name:8} tried to touch the stone slate."
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
   AquaRockInside_PiersLearnsParch(ACTOR_PARCH_TABLET, ACTOR_PIERS);
   Party_LearnAbility(PIERS, ABILITY_PARCH);

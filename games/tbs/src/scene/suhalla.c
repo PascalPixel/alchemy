@@ -341,15 +341,14 @@ struct ActorPlacement gSuhallaActorPlacementsLater[] = {
     { SCENE_TABLE_END },
 };
 
-/// The cell each door's opening is drawn at, by cell behavior.
+/// The cell each door's opening is drawn at, by cell behavior; then a door
+/// opening, and a wide door opening.
 s16 gSuhallaDoorCells[][2] = {
     { 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };
-
 u16 gSuhallaDoorOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(25, 0, 1, 2, 8), MAPGRID_ANIMATION_STEP(26, 0, 1, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gSuhallaWideDoorOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(26, 2, 2, 2, 8), MAPGRID_ANIMATION_STEP(28, 2, 2, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };

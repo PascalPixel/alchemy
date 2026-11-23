@@ -4,8 +4,8 @@
 
 #include "game_internal.h"
 
-// Slots are four-byte entries, read as halfwords; UBFIX reads each entry
-// through its own type.
+/// Slots are four-byte entries, read as halfwords; UBFIX reads each entry
+/// through its own type.
 #ifdef UBFIX
 #define PSYNERGY_ACTION_AT(slots, index) ((slots)[index].encodedAction)
 #else

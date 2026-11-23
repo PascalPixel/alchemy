@@ -24,6 +24,8 @@
 #define OPERAND_VALUE(stored) ((stored) + (u32)(u16)-1)
 
 #if LANGUAGE != LANGUAGE_JAPANESE
+/// The article classes a name can take in each European language, and the bits
+/// of its class.
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define ARTICLE_KINDS 11
 #define ARTICLE_KIND_MASK 15

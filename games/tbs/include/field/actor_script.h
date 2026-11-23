@@ -80,8 +80,8 @@ enum ActorScriptCommand {
 /// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) SCRIPT_COMMAND_MOVE_LOCAL, (a), (b)
-// Wander to random points base to base + range pixels away, within limit
-// pixels of home; SC_WANDER_HOME heads home when outside it.
+/// Wander to random points base to base + range pixels away, within limit
+/// pixels of home; SC_WANDER_HOME heads home when outside it.
 #define SC_WANDER(base, range, limit)                                          \
   SCRIPT_COMMAND_WANDER, toFIXED(base), toFIXED(range), toFIXED(limit)
 #define SC_WANDER_HOME(base, range, limit)                                     \
@@ -97,7 +97,7 @@ enum ActorScriptCommand {
 #define SC_IFNOT(to)                                                           \
   SCRIPT_COMMAND_IFNOT, (to)      ///< Branch if the result is false.
 #define SC_END SCRIPT_COMMAND_END ///< Return to the main script.
-// Test game flag f for SC_IF; ON, OFF and REV then set, clear or flip it.
+/// Test game flag f for SC_IF; ON, OFF and REV then set, clear or flip it.
 #define SC_FLAG_CHECK(f) SCRIPT_COMMAND_FLAG_CHECK, (f)
 #define SC_FLAG_ON(f) SCRIPT_COMMAND_FLAG_ON, (f)
 #define SC_FLAG_OFF(f) SCRIPT_COMMAND_FLAG_OFF, (f)

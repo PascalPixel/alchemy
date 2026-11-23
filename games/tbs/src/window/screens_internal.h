@@ -58,6 +58,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
 // Edition-specific text and window layout values: places and widths in tiles,
 // except where a note says pixels.
+/// The column of the old HP and PP in the Djinni preview.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_VITALS_X 4
 #else
@@ -69,6 +70,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define NUMBER_TEXT_FOUR_PLACES 7
 #define NUMBER_TEXT_THREE_PLACES 8
 
+/// Where the Djinni preview's old stats start in their number text, and their
+/// column.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_STAT_DIGIT_OFFSET NUMBER_TEXT_FOUR_PLACES
 #define DJINN_PREVIEW_STAT_X 4
@@ -77,24 +80,25 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define DJINN_PREVIEW_STAT_X 6
 #endif
 
+/// The x of the preview's ":Psynergy Gained" prompt, in pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_HELP_X 40
 #else
 #define DJINN_PREVIEW_HELP_X 24
 #endif
 
-// The two UI tiles of the PP label before a Psynergy's cost in the lists.
+/// The two UI tiles of the PP label before a Psynergy's cost in the lists.
 #define PSYNERGY_COST_FIRST_TILE WINDOW_TILE_PP_LABEL
 #define PSYNERGY_COST_SECOND_TILE WINDOW_TILE_PP_LABEL_END
 
-// The Status screen's level label, after the party member's name, in pixels.
+/// The Status screen's level label, after the party member's name, in pixels.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define OWNER_STATUS_LEVEL_X 51
 #else
 #define OWNER_STATUS_LEVEL_X 56
 #endif
 
-// The summon list's window.
+/// The summon list's window.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_MENU_WINDOW_X 13
 #define SUMMON_MENU_WINDOW_WIDTH 17
@@ -103,37 +107,39 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define SUMMON_MENU_WINDOW_WIDTH 14
 #endif
 
-// While a party member's commands are chosen (Battle_CollectPartyCommands): the
-// screen x of the party member's portrait sprite, in pixels.
+/// While a party member's commands are chosen (Battle_CollectPartyCommands):
+/// the screen x of the party member's portrait sprite, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_CLASS_ICON_X 0
 #else
 #define BATTLE_CLASS_ICON_X 4
 #endif
 
-// Where "Attack" is written in its window once chosen, in pixels.
+/// Where "Attack" is written in its window once chosen, in pixels.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define BATTLE_COMMAND_NAME_X 14
 #else
 #define BATTLE_COMMAND_NAME_X 16
 #endif
 
-// The screen x of the chosen command's icon, in pixels, while the summon
-// list is open.
+/// The screen x of the chosen command's icon, in pixels, while the summon
+/// list is open.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_ICON_X 80
 #else
 #define BATTLE_SUMMON_ICON_X 104
 #endif
 
-// The chosen summon's window, and the columns of its first Djinn cost: the
-// element icon, then the count.
+/// The chosen summon's window, and the columns of its first Djinn cost: the
+/// element icon, then the count.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_WINDOW_WIDTH 17
 #else
 #define BATTLE_SUMMON_WINDOW_WIDTH 14
 #endif
 
+/// The tile columns of a summon's first Djinn cost in the battle's summon
+/// command: its element icon, then its count.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_ELEMENT_COLUMN 13
 #define BATTLE_SUMMON_COST_COLUMN 14
@@ -161,7 +167,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
     ((u32 *)(sprite))[2] = 0;                                                  \
   } while (0)
 
-// The chosen item's window.
+/// The chosen item's window.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define BATTLE_ITEM_WINDOW_WIDTH 16
@@ -169,9 +175,9 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_ITEM_WINDOW_WIDTH 15
 #endif
 
-// The password level menu (IconMenu_ChooseSendOption,
-// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
-// and, outside the Japanese edition, the explanation window under it.
+/// The password level menu (IconMenu_ChooseSendOption,
+/// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
+/// and, outside the Japanese edition, the explanation window under it.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define PASSWORD_LEVEL_WINDOW_X 7
@@ -187,6 +193,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
+/// The password level menu's explanation window ("The data stored in your
+/// password depends on which level you select:"), in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define PASSWORD_HELP_WINDOW_X 1
 #define PASSWORD_HELP_WINDOW_WIDTH 28
@@ -195,9 +203,9 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PASSWORD_HELP_WINDOW_WIDTH 25
 #endif
 
-// The transfer method menu (IconMenu_ChooseSendOption,
-// RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"), the
-// heading's x in it in pixels, and the help window.
+/// The transfer method menu (IconMenu_ChooseSendOption,
+/// RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"),
+/// the heading's x in it in pixels, and the help window.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_METHOD_WINDOW_X 6
 #define TRANSFER_METHOD_WINDOW_WIDTH 18
@@ -212,12 +220,14 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_METHOD_WINDOW_WIDTH 13
 #endif
 
+/// The x of "Transfer Method" in its heading window, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define TRANSFER_METHOD_LABEL_X 2
 #else
 #define TRANSFER_METHOD_LABEL_X 0
 #endif
 
+/// The transfer method menu's help window, in tiles.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_SPANISH ||            \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TRANSFER_HELP_WINDOW_X 1
@@ -230,8 +240,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_HELP_WINDOW_WIDTH 21
 #endif
 
-// The width inside the border of the name window under the shop's commands
-// and the Sanctum's services.
+/// The width inside the border of the name window under the shop's commands
+/// and the Sanctum's services.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_COMMAND_LABEL_WIDTH 8
 #elif LANGUAGE != LANGUAGE_JAPANESE
@@ -240,15 +250,16 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define SHOP_COMMAND_LABEL_WIDTH 6
 #endif
 
+/// The width of the Sanctum's service label window, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SANCTUM_SERVICE_LABEL_WIDTH 10
 #else
 #define SANCTUM_SERVICE_LABEL_WIDTH 8
 #endif
 
-// The battle menus' message buffers, in halfwords, and the copier that fills
-// them: the Japanese edition decodes the message (Message_DecodeRaw), the
-// others copy its text (Message_CopyExpanded).
+/// The battle menus' message buffers, in halfwords, and the copier that fills
+/// them: the Japanese edition decodes the message (Message_DecodeRaw), the
+/// others copy its text (Message_CopyExpanded).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
 #define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded
@@ -357,6 +368,8 @@ extern const u8 gDjinnMenu_BlinkTile[32];
 #define DJINN_MENU_ARROW_TILE 808
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
+/// Where each element's Djinn stand in the battle Djinn menu's icon window, a
+/// two-by-two grid of tiles.
 extern const u8 gDjinnMenu_ElementXOffsets[4];
 extern const u8 gDjinnMenu_ElementYOffsets[4];
 

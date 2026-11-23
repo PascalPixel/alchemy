@@ -297,6 +297,8 @@ static void Scene_HopLeaderBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void Imil_SlideActorAcrossIce(void);
 
+/// Set while the floor's fade overlay follows the leader
+/// (FuchinFallsCave_FadeOverlayFollowsLeader).
 s32 gImilFuchinFalls_TrackLeader;
 
 /// EffectOptions cut after its scales: the caller's frame holds only these 24
@@ -2035,12 +2037,15 @@ tail:
 // clang-format off
 #include "shared/ice_key_headings.c"
 
+/// The way the leader slides on the ice for each combination of held
+/// directions (DPAD_INDEX); a diagonal slides east or west.
 s16 gImilFuchinFalls_SlideHeadings[] = {
     KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
     FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
     FACING_EAST, FACING_EAST,
 };
 
+/// The Dragon's Eye's icon on the little table, until the party takes it.
 struct Actor *gImilFuchinFalls_DragonsEye = NULL;
 
 struct SceneEntrance gImilFuchinFalls_NoEntrances[] = {

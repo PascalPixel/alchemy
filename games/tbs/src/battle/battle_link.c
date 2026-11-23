@@ -4,8 +4,8 @@
 
 #include "battle_internal.h"
 
-// The longest "Enemy" label the opponent's names take before them; the
-// European editions also put a space after it.
+/// The longest "Enemy" label the opponent's names take before them; the
+/// European editions also put a space after it.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define NAME_LIMIT 7

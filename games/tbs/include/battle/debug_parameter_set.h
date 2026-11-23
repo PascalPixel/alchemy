@@ -20,6 +20,7 @@ struct DebugParameterSetRow {
   u16 unused;                    ///< 0 in every row
 };
 
+/// The party member of the row that ends a parameter set.
 #define DEBUG_PARAMETER_SET_END -1
 
 /// The debug menu's parameter sets (debug_parameter_sets.c).

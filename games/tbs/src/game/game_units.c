@@ -705,6 +705,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
     Unit_UpdateGauges(unit);                                                   \
   }
 
+/// Sets the unit's HP, clamped to 0 and its maximum, and recomputes its gauges.
 UNIT_DEFINE_SET(Unit_SetHp, hp, hpMax)
 /// Unused: only its unnamed entry in the game bank's far-call table refers to
 /// it.
@@ -726,6 +727,8 @@ UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
     return unit->field;                                                        \
   }
 
+/// Called as the field heals or hurts the whole party, in battle, and by the
+/// debug menu.
 UNIT_DEFINE_ADD(s32, Unit_AddHp, hp, hpMax)
 /// Called when Psynergy is used in the field, in battle and from the menu, by
 /// PP recovery at the end of a battle turn, and by the debug menu.

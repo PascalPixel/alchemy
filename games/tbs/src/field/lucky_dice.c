@@ -87,10 +87,10 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 /// Unused: the reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 
-// Lucky Dice's layout, fitted to each language's text: the coins window at the
-// top and its label, the help window (Throw / Quit) and the winnings window at
-// the bottom with their text, in tiles for windows and pixels within them, and
-// the centre of the result lettering in sprite x, which wraps at 512.
+/// Lucky Dice's layout, fitted to each language's text: the coins window at the
+/// top and its label, the help window (Throw / Quit) and the winnings window at
+/// the bottom with their text, in tiles for windows and pixels within them, and
+/// the centre of the result lettering in sprite x, which wraps at 512.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH
 #define DICE_COINS_WINDOW_X 17
@@ -106,6 +106,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 #define DICE_WINNINGS_WINDOW_WIDTH 10
 #endif
 
+/// The x of the coins window's label, in pixels.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define DICE_COINS_LABEL_X 56
 #elif LANGUAGE == LANGUAGE_FRENCH
@@ -114,6 +115,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 #define DICE_COINS_LABEL_X 48
 #endif
 
+/// The help window (Throw / Quit), in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH
 #define DICE_HELP_WINDOW_X 20
 #define DICE_HELP_WINDOW_WIDTH 10
@@ -128,6 +130,8 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 #define DICE_HELP_WINDOW_WIDTH 7
 #endif
 
+/// The winnings window, in tiles, its number and coins label in pixels, and the
+/// centre of the result lettering in sprite x.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_WINNINGS_WINDOW_X 9
 #define DICE_WINNINGS_NUMBER_X 48
@@ -208,6 +212,8 @@ const u8 gLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 /// z (16.16 pixels) exceeds, -32767 taking the rest.
 const s16 gLuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 
+/// The dice, the faces of each, and the sprites of a throw: the two dice, then
+/// their shadows.
 #define DICE_COUNT 2
 #define DICE_FACE_COUNT 6
 #define DICE_RESULT_COUNT 4

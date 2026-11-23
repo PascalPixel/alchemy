@@ -354,13 +354,15 @@ enum PsynergyEventTarget {
   ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY_ANYWHERE |           \
    TRIGGER_PSYNERGY)
 
-// Using an item (one byte) on a cell behavior, or on an actor, as
-// Field_FindItemTrigger reads them.
+/// Using an item (one byte) on a cell behavior, or on an actor, as
+/// Field_FindItemTrigger reads them.
 #define TRIGGER_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (TRIGGER_ITEM | (item) << 8)
 #define USE_ITEM_ON_ACTOR(item)                                                \
   (TRIGGER_ITEM | TRIGGER_ITEM_ON_ACTOR | (item) << 8)
 
+/// An examine trigger: the leader presses A at `target` (enum ExamineTarget)
+/// ahead, when it is no actor.
 #define EXAMINE_TRIGGER(target) (TRIGGER_EXAMINE | (target) << 4)
 /// An examine trigger searched while facing the given way, as a counter is
 /// searched across.

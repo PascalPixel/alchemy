@@ -127,7 +127,11 @@ void Unit_GaugeNoOp(void);
 void Unit_RecalculateGauges(s32 unitId);
 void Unit_SetHp(struct Unit *unit, s32 hp);
 void Unit_SetPp(struct Unit *unit, s32 pp);
+/// Adds delta to unit unitId's HP, kept from 0 to its maximum, and returns
+/// the new HP.
 s32 Unit_AddHp(s32 unitId, s32 delta);
+/// Adds delta to unit unitId's PP, kept from 0 to its maximum, and returns
+/// the new PP.
 s16 Unit_AddPp(s32 unitId, s32 delta);
 s32 Party_AdjustShopCredit(s32 amount);
 s32 Party_AdjustShopGifts(s32 amount);

@@ -4,6 +4,8 @@
 
 #include "screens_internal.h"
 
+/// How the transfer method's help is drawn ("Use a password to..." and "Use a
+/// Game Link cable to connect..."), and where its lines go, in pixels.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_MODE_DRAW_HELP Text_DrawMessageAsTiles
 #define TRANSFER_PASSWORD_HELP_X 32
@@ -19,6 +21,7 @@
 #define TRANSFER_CABLE_HELP_FIRST_Y 4
 #define TRANSFER_CABLE_HELP_LAST_Y 28
 #endif
+/// The y of the cable help's second line, in pixels, in every edition.
 #define TRANSFER_CABLE_HELP_SECOND_Y 16
 
 /// The icon menus' bottom row, in tiles, where most of them stand; a Yes or No
@@ -444,10 +447,11 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   return result;
 }
 
+/// The width of the field command menu's label window, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define ANIMATE_ENTRIES_ROW 7
+#define FIELD_COMMAND_LABEL_WIDTH 7
 #else
-#define ANIMATE_ENTRIES_ROW 5
+#define FIELD_COMMAND_LABEL_WIDTH 5
 #endif
 
 /// Opens the field command menu and animates from start to the command's icon.
@@ -459,7 +463,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_AddIcon(COMMAND_ICON_DJINN);
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, ANIMATE_ENTRIES_ROW, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_COMMAND_LABEL_WIDTH, 0);
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
   PartyStatus_CloseWithMenu();
@@ -525,6 +529,8 @@ s32 FileList_SelectAction(void) {
   return result;
 }
 
+/// The x of the list of what a password level carries, and the right edge of
+/// the area cleared for it, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define MODE_LABEL_X 18
 #define MODE_LABEL_RIGHT 144
@@ -578,6 +584,7 @@ void Menu_DrawModeLabel(void) {
   }
 }
 
+/// The x of the password transfer's help lines, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define PASSWORD_HELP_X 16
 #else
@@ -804,8 +811,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
   return selection;
 }
 
-// The width of the label window under Coins and Lucky Medals, fitted to each
-// language's text.
+/// The width of the label window under Coins and Lucky Medals, fitted to each
+/// language's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAIR_WIDTH 7
 #elif LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN

@@ -113,6 +113,8 @@ void FieldPsynergy_StopCasterUpdate(void) {
   wait(1);
 }
 
+/// The actors the end of a field Psynergy searches for its effects still
+/// moving.
 #define SETUP_OBJECT_SLOTS (gActors)
 
 /// Ends a field Psynergy: frees the field effect sprites still in use and,

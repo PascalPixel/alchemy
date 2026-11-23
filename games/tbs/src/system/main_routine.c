@@ -291,6 +291,7 @@ void Scene_LoadOverlay(s32 unused) {
   Overlay_Load(table[gMainRoutineWork.next].resourceId, &gOverlayArea);
 }
 
+/// The scene id's row of gScenes.
 #define MAP_HEADER(id) (&gScenes[id])
 
 /// FLAG_AREA_VISITED has a flag for each of 128 areas.

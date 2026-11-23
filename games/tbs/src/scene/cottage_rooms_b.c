@@ -724,6 +724,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
 /// on the stormy night.
 static inline void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
+/// Writes the candle glow's blend weights.
 static inline void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Downstairs in Isaac's house on the stormy night, Kyle comes in at the front

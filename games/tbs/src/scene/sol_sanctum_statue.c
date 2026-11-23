@@ -98,8 +98,8 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 /// Set once Kraden has explained the statue puzzle's trap.
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED FLAG_AREA_TEMP_0B
 
-// The third patch draws the back row of drifting sprites 6 pixels below the
-// other two rather than 8.
+/// The third patch draws the back row of drifting sprites 6 pixels below the
+/// other two rather than 8.
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
 #else
@@ -1360,6 +1360,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
+/// Copies a seal's cell copy (struct CellCopy) onto the map.
 #define COPY_CELLS(copy)                                                       \
   MapGrid_CopyCellsTo((copy).sourceX, (copy).sourceY, (copy).destinationX,     \
                       (copy).destinationY, (copy).width, (copy).height)
@@ -1672,4 +1673,5 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The clouds' scroll, SCROLL_OFFSET_STEP more each frame.
 s32 gSolSanctumStatue_ScrollOffset = 0;

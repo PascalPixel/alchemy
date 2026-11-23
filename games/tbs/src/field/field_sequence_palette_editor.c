@@ -4,8 +4,8 @@
 
 #include "field_sequence_internal.h"
 
-// The palettes, as plain halfwords, and where the editor draws: from column
-// 13 of row 1 of screen block 4.
+/// The palettes, as plain halfwords, and where the editor draws: from column
+/// 13 of row 1 of screen block 4.
 #define EDITOR_PALETTE ((u16 *)PLTT)
 #define EDITOR_MAP ((u16 *)BG_SCREEN_BLOCK(4) + BG_SCREEN_WIDTH + 13)
 /// The swatch sheet's tiles, from tile 208 of character block 0: colour n is

@@ -2822,6 +2822,7 @@ static void ValePrologue_CycleActorPalettes(struct Actor *actor) {
   }
 }
 
+/// The sound the rings of light play here (psynergy_rings.c).
 #define PSYNERGY_RINGS_SOUND SE_JUMP
 #include "shared/psynergy_rings.c"
 

@@ -4,7 +4,7 @@
 /// The kinds of weapon a party member's attack shows, and how
 /// gBattleUnit_WeaponKinds packs one with its item.
 
-// gBattleUnit_WeaponKinds: a weapon's item id with its kind above it.
+/// gBattleUnit_WeaponKinds: a weapon's item id with its kind above it.
 #define WEAPON_ITEM_MASK 0x1ff
 #define WEAPON_KIND_SHIFT 9
 

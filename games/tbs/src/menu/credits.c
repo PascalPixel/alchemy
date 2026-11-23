@@ -20,7 +20,7 @@
 #include "system/ram_code.h"
 #include "system/system.h"
 
-// Credits text uses six 32-pixel sprites across each 192-pixel line.
+/// Credits text uses six 32-pixel sprites across each 192-pixel line.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6
@@ -304,6 +304,7 @@ extern s16 gCreditsLastLinePosition __asm__("gFlash");
 /// 0 until the text ends, then -1, in the low half of gProgramFlashSector.
 extern s16 gCreditsEndOfText __asm__("gProgramFlashSector");
 
+/// The three cells, as the credits read them.
 #define SCROLL_OBJECTS gCreditsScrollObjects
 #define CREDITS_LAST_LINE_POSITION gCreditsLastLinePosition
 #define CREDITS_END_OF_TEXT gCreditsEndOfText
@@ -315,6 +316,8 @@ extern s16 gCreditsEndOfText __asm__("gProgramFlashSector");
 
 static const u8 sBlankCreditLine[] = "";
 
+/// The staff roll's headings whose wording the Japanese edition and the others
+/// spell differently.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define CREDITS_STAFF_TITLE "OUGON NO TAIYO STAFF"
 #define CREDITS_FACES_SUBTITLE "& Faces"

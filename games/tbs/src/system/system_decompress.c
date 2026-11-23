@@ -39,8 +39,8 @@ RESOURCE_DEFINE_DECODE(Decompress_MoveToFrontLz,
 RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
                        Decompress_ByteLzCodeSize)
 
-// Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
-// ramp.
+/// Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
+/// ramp.
 #define PALETTE_FADE_DEFINE_SHADE_BY(name, kernel, size)                       \
   void name(u8 *buffer, u32 amount, u8 *backup, u32 bytes) {                   \
     u32 words = (u32)size >> 2;                                                \

@@ -1035,6 +1035,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_End();
 }
 
+/// Shows the event's next message at speaker, then waits frames.
 static void KolimaForestEntrance_ShowMessageAndWait(s32 speaker, s32 frames) {
   Event_ShowMessage(speaker, 0);
   Event_Wait(frames);

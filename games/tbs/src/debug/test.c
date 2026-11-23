@@ -50,7 +50,8 @@ extern s32 gMenuTest_FillLetter;
 
 /// The level Scene_Initialize raises Garet, Mia and Ivan to.
 #define DEBUG_PARTY_LEVEL 30
-// Isaac's, which the international editions raised.
+/// The level Scene_Initialize raises Isaac to, higher in the international
+/// editions.
 #if TBS_PATCH_1
 #define DEBUG_ISAAC_LEVEL 50
 #else

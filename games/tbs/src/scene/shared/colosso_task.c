@@ -67,6 +67,9 @@ static inline void Dma_Wait(volatile u32 *dma) {
     ;
 }
 
+/// The lettering's script as it runs: the frames its wait has left, its glide's
+/// target and frames, its layout mode and parameter, its position (8.8 pixels)
+/// and the script itself.
 extern s16 gColosso_LetteringTimer;
 extern s16 gColosso_ModeMoveTarget;
 extern s16 gColosso_ModeMoveDuration;

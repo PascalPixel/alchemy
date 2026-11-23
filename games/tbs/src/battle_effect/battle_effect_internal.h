@@ -310,6 +310,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define REAPER_SHEET_SWUNG_HEIGHT 69
 #define REAPER_SHEET_CRESCENT_WIDTH 128
 #define REAPER_SHEET_CRESCENT_HEIGHT 91
+/// Where each of the reaper's pictures begins in its sheet, in bytes.
 enum ReaperSheetPicture {
   REAPER_SHEET_RAISED = 0,
   REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
@@ -325,6 +326,7 @@ enum ReaperSheetPicture {
 #define RED_CRESCENT_FADE_C_HEIGHT 29
 #define RED_CRESCENT_FADE_D_WIDTH 76
 #define RED_CRESCENT_FADE_D_HEIGHT 25
+/// Where each picture of the fading red crescent begins in its sheet, in bytes.
 enum RedCrescentPicture {
   RED_CRESCENT_FADE_A = 0,
   RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +

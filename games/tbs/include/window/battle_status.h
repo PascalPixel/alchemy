@@ -97,6 +97,9 @@ extern const u8 gBattleStatusScreen_HpString[];
 extern const u8 gBattleStatusScreen_SlashString[];
 extern const u8 gBattleStatusScreen_PpString[];
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+/// The Spanish and Italian editions' labels for a cartridge set to another
+/// language: the level's `Niv` (French) and `Nv.` (Spanish), and HP's `KP`
+/// (German) and `PV` (French and Spanish).
 extern const u8 gBattleStatusScreen_NivString[];
 extern const u8 gBattleStatusScreen_NvString[];
 extern const u8 gBattleStatusScreen_KpString[];

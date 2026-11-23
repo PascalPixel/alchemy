@@ -4,7 +4,7 @@
 
 #include "window_internal.h"
 
-// A new line in tile text advances by a space's width: tile text is one line.
+/// A new line in tile text advances by a space's width: tile text is one line.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define TILE_TEXT_NEWLINE_WIDTH gFont_GlyphWidths[0]
 #else

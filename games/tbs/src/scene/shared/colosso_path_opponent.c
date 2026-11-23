@@ -100,6 +100,7 @@ static void Colosso_UpdatePathOpponent(void) {
   }
 }
 
+/// The gauge's packed tiles, decoded as it first shows.
 extern u8 gColosso_GaugeGraphics[];
 
 /// The gauge's sprite palette.

@@ -149,6 +149,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 // What Mind Read's wave uses: BG0's line scroll, the hue cycle and BG
 // WINDOW_PALETTE.
 
+/// The grey Mind Read writes over the window palette's white, and its black and
+/// the colours after it.
 #define MIND_READ_GREY RGB(28, 28, 28)
 
 /// Task: restarts the HBlank DMA that writes BG0's horizontal

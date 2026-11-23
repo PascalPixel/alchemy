@@ -14,6 +14,7 @@
   {lines, 0, leftFrom, leftTo, rightFrom, rightTo}
 
 // clang-format off
+/// One shape for each step of the transition before the screen is open.
 struct TransitionShape gScreenTransition_Shapes[TRANSITION_OPEN] = {
     {1, TRANSITION_SHOW_ALL, {SPAN_FILL(160, 255, 255)}},
     {1, TRANSITION_SHOW_ALL, {SPAN_SLOPE(80, 120, 120, 134, 120), SPAN_FILL(80, 255, 255)}},

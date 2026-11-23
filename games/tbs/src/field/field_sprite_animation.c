@@ -8,6 +8,8 @@
 /// to pick its OAM shape and size with one switch.
 #define SPRITE_SIZE_KEY(width, height) (((width) << 8) + (height))
 
+/// The field sprites' shadow size, OAM priority, picture cache limits and
+/// basic colours.
 enum {
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or

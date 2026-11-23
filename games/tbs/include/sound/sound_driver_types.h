@@ -18,9 +18,9 @@
 /// PCM_DMA_BUF_SIZE.
 #define SOUND_PCM_BUFFER_SIZE 1584
 
-// A sound mode word, as m4aSoundMode and a song header's mode byte take it,
-// under pret's names (include/gba/m4a_internal.h); a zero field leaves its
-// setting unchanged.
+/// A sound mode word, as m4aSoundMode and a song header's mode byte take it,
+/// under pret's names (include/gba/m4a_internal.h); a zero field leaves its
+/// setting unchanged.
 #define SOUND_MODE_REVERB_VAL 0x0000007F ///< the reverb level
 #define SOUND_MODE_REVERB_SET 0x00000080 ///< sets the reverb level
 #define SOUND_MODE_MAXCHN 0x00000F00     ///< PCM notes in use
@@ -165,6 +165,8 @@ enum SoundModulationTarget {
 /// the song, so it can go on, and a fade in.
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
+/// A fade's volume at full (MusicPlayerInfo.fadeVolume), and the step it
+/// moves by at each of its periods.
 #define SOUND_FADE_FULL_VOLUME 256
 #define SOUND_FADE_STEP 16
 

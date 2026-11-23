@@ -65,6 +65,7 @@ enum RockRoomsRoom {
   ROOM_TEMPLE_SECOND_ENTRANCE
 };
 
+/// A doorway's exit, its cells carrying its room's number.
 #define ROOM_DOOR(room) {TRIGGER_EXIT, (room), CONDITION_ALWAYS, (room)}
 
 /// The cells the rooms' examine triggers answer. A doorway's cells carry the

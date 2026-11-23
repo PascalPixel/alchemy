@@ -95,6 +95,8 @@ extern struct Trigger gGatewayCaveTriggers[];
 /// numbers of the exits they lead to.
 enum SuhallaGateCellBehavior { CELL_BEHAVIOR_SUHALLA_GATE_APPROACH = 10 };
 
+/// Where Retreat leads out of the checkpoint house: from patch 3 the
+/// checkpoint, before it the scene the party is in.
 #if TBS_PATCH_3
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) (SCENE_SUHALLA_GATE_CHECKPOINT)
 #else

@@ -432,6 +432,8 @@ s32 DebugBrowser_Icons(void) {
   return 0;
 }
 
+/// The message of the portrait browser's first label, which the German,
+/// French, Spanish and Italian editions point at other messages.
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
 #define DEBUG_GLYPH_NAME MsgDebugGlyphName
 #elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH

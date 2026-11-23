@@ -266,9 +266,9 @@ enum {
 #define TOLBI_SPRING_CENTER_X toFIXED(120)
 #define TOLBI_SPRING_CENTER_Z toFIXED(71)
 
-// The window of the party's coins and Lucky Medals, and the menu of what to
-// toss, in window cells, with the counts' x in pixels: the European editions'
-// longer words widen both and move the counts right.
+/// The window of the party's coins and Lucky Medals, and the menu of what to
+/// toss, in window cells, with the counts' x in pixels: the European editions'
+/// longer words widen both and move the counts right.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
 #define TOLBI_SPRING_COUNT_WIDTH 17
 #else
@@ -1081,8 +1081,10 @@ static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   }
 }
 
+/// The coin or Lucky Medal in flight.
 static struct SpringTossMotion sToss ALIGNED(16);
 
+/// What is tossed: a coin, or SPRING_TOSS_MEDAL for a Lucky Medal.
 static s32 sTossKind;
 
 /// Three words nothing refers to.
@@ -1090,8 +1092,11 @@ static s32 sTossKind;
 /// Removing them would move the obstacle state.
 static s32 sTossUnused[3] UNUSED;
 
+/// The two crabs and two turtles moving in the spring.
 static struct SpringObstacle sObstacles[4];
 
+/// The frames since the toss, whether it has come to rest, and the ring it
+/// rests in, 0 the innermost and 4 outside them all.
 static s32 sTossFrame;
 static s32 sTossEnded;
 static s32 sTossResult;
@@ -1772,6 +1777,8 @@ const u16 gTolbiSpring_AlphaSteps[] = {
     BLEND_ALPHA(3, 13), BLEND_ALPHA(2, 14), BLEND_ALPHA(1, 15), BLEND_ALPHA(0, 16),
 };
 
+/// The prizes a Lucky Medal can win, SPRING_MEDAL_PRIZES_PER_RING to a ring,
+/// one drawn by its weight.
 const u32 gTolbiSpring_PrizeItems[] = {
     ITEM_ASSASSIN_BLADE, ITEM_EARTH_SHIELD, ITEM_SPIRIT_ARMOR, ITEM_ADEPTS_HELM, ITEM_BURNING_AXE,
     ITEM_COCKTAIL_DRESS, ITEM_GLITTERING_TIARA, ITEM_GUARDIAN_ARMLET, ITEM_GRIEVOUS_MACE,
@@ -1779,32 +1786,33 @@ const u32 gTolbiSpring_PrizeItems[] = {
     ITEM_WATER_OF_LIFE,
 };
 
+/// The coins a tossed coin wins, by the ring it rests in.
 const u16 gTolbiSpring_CoinPrizes[] = {
     20, 10, 2, 1, 0, 0,
 };
 
+/// What Lucky Wheels wins, three items to each of its LUCKY_WHEELS_KINDS kinds.
 const u32 gTolbiSpring_LuckyWheelsPrizeItems[] = {
     ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT, ITEM_RUNNING_SHIRT, ITEM_HYPER_BOOTS, ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
     ITEM_ADEPT_RING, ITEM_WAR_RING, ITEM_SLEEP_RING, ITEM_POTION, ITEM_VIAL, ITEM_NUT,
     ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
+/// The crabs' animation for each speed, and the turtles'.
 const u8 gTolbiSpring_SliderFrames[] = {
     0, 1, 9,
 };
-
 const u8 gTolbiSpring_CircleFrames[] = {
     0, 3, 4,
 };
 
+/// Where each obstacle starts, in pixels, and its heading.
 const u8 gTolbiSpring_ActorPixelX[] = {
     80, 160, 80, 72,
 };
-
 const u8 gTolbiSpring_ActorPixelZ[] = {
     32, 104, 68, 72,
 };
-
 const u16 gTolbiSpring_ActorHeadings[] = {
     FACING_EAST, 1, FACING_EAST, FACING_WEST,
 };

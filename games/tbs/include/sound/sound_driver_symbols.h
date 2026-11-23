@@ -85,8 +85,8 @@ extern u16 gMusicPlayerLastSound[8];
 /// at 1 until the jingle's player stops, then 0.
 extern u8 gBgmRestoreDelay;
 
-// The music's volume and its combined tempo and pitch, each ramped toward its
-// target by its step each VBlank, in 8.8 fixed point (BGM_UNITY_SCALE 1.0).
+/// The music's volume and its combined tempo and pitch, each ramped toward its
+/// target by its step each VBlank, in 8.8 fixed point (BGM_UNITY_SCALE 1.0).
 extern u16 gBgmVolume;
 extern u16 gBgmVolumeTarget;
 extern u16 gBgmVolumeStep;

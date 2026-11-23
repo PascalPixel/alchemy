@@ -5,7 +5,7 @@
 
 #include "battle_internal.h"
 
-// The value Select picks in the debug value editor.
+/// The value Select picks in the debug value editor.
 #if TBS_PATCH_1
 #define DEBUG_VALUE_SELECT 399
 #else

@@ -4,8 +4,8 @@
 
 #include "window_internal.h"
 
-// Pixels added to the page arrow's and the sprite glyphs' screen y, which
-// differ by language.
+/// Pixels added to the page arrow's and the sprite glyphs' screen y, which
+/// differ by language.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ARROW_Y_OFFSET 1
 #define GLYPH_SPRITE_Y_OFFSET 0
@@ -333,6 +333,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #endif
 
+/// The windows' tilemap, a 32-tile-wide screen block, 20 rows of it in use.
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 

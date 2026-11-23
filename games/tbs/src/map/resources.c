@@ -194,5 +194,5 @@ const struct MapResources gMaps[] = {
 };
 // clang-format on
 
-// Unused: four words after the table, which nothing reads.
+/// Unused: four words after the table, which nothing reads.
 const u32 gMapsTail[] = {0, 3, 7, 9};

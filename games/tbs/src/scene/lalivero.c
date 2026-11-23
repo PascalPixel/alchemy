@@ -1141,15 +1141,15 @@ struct ActorPlacement gLaliveroActorPlacementsAfterLighthouse[] = {
     { SCENE_TABLE_END },
 };
 
+/// The cell of each door by its cell behaviour, and a door opening and the
+/// Sanctum's gate opening.
 s16 gLaliveroDoorCells[][2] = {
     { 0, 0 }, { 4, 9 }, { 9, 11 }, { 12, 8 }, { 18, 8 }, { 22, 8 }, { 26, 7 }, { 4, 18 },
     { 0, 0 }, { 22, 15 }, { 27, 18 }, { 0, 0 },
 };
-
 u16 gLaliveroDoorOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(33, 0, 1, 2, 8), MAPGRID_ANIMATION_STEP(34, 0, 1, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gLaliveroGateOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(34, 2, 2, 2, 8), MAPGRID_ANIMATION_STEP(36, 2, 2, 2, 1), MAPGRID_ANIMATION_STEPS_END,
 };

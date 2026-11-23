@@ -354,8 +354,8 @@ void Title_LoadIntroBackgrounds(void) {
 #define TITLE_PROMPT_HOLD_FRAMES (60 * FRAMES_PER_SECOND)
 #define TITLE_HOLD_FRAMES (5 * FRAMES_PER_SECOND)
 
-// The "Press Start" prompt: its tile count, rows and sprites, and where it
-// stands, by edition.
+/// The "Press Start" prompt: its tile count, rows and sprites, and where it
+/// stands, by edition.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define PROMPT_TILES 8
 #else

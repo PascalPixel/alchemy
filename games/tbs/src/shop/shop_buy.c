@@ -565,8 +565,8 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   return selectedQuantity;
 }
 
-// The quantity window's count and the coins word after its total, in pixels:
-// German and French move both 8 left, Spanish the coins word 8 right.
+/// The quantity window's count and the coins word after its total, in pixels:
+/// German and French move both 8 left, Spanish the coins word 8 right.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_QUANTITY_NUMBER_X 64
 #define SHOP_QUANTITY_COIN_LABEL_X 128

@@ -146,10 +146,10 @@ enum StatusPanelKind {
 /// part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
-// The information side's text: outside Japanese it is drawn character by
-// character into the window's tiles, so clearing it redraws the empty window;
-// the Japanese edition decodes it into the text canvas (Text_DrawMessage), so
-// clearing it releases the canvas's window sprites.
+/// The information side's text: outside Japanese it is drawn character by
+/// character into the window's tiles, so clearing it redraws the empty window;
+/// the Japanese edition decodes it into the text canvas (Text_DrawMessage), so
+/// clearing it releases the canvas's window sprites.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define MENU_RESET_DESCRIPTION_WINDOW WindowSprite_RedrawSavedRectFar
 #define MENU_DRAW_DESCRIPTION Text_DrawMessageAsTilesFar
@@ -158,7 +158,8 @@ enum StatusPanelKind {
 #define MENU_DRAW_DESCRIPTION Text_DrawMessageFar
 #endif
 
-// Status labels use the Latin font's pixel positions or the Japanese tile grid.
+/// Status labels use the Latin font's pixel positions or the Japanese tile
+/// grid.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define MENU_DRAW_STATUS_LABEL Text_DrawStringInWindowFar
 #else

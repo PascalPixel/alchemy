@@ -124,8 +124,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 }
 
 #define DRAIN_MOTES_PER_TARGET 128
-#define DRAIN_DRAWN 32 ///< motes drawn for each target
-#define DRAIN_MOTE_SIZE 6
+#define DRAIN_DRAWN 32    ///< motes drawn for each target
+#define DRAIN_MOTE_SIZE 6 ///< a mote's size in pixels
 /// Drain runs DRAIN_TARGET_FRAMES a target and then this many; the user glows
 /// from DRAIN_GLOW_FRAME until DRAIN_GLOW_END_FRAMES before the end.
 #define DRAIN_END_FRAMES 72

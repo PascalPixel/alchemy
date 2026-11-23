@@ -128,6 +128,7 @@ enum {
 };
 
 // clang-format off
+/// Every shop's stock, a row by stock row: its items, artifacts and type.
 static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
     {0},
     {

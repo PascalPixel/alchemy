@@ -204,6 +204,7 @@ enum {
   KID_TALKING = 2, ///< set while the party talks to this child
 };
 
+/// How the town's jar is searched: from patch 1 only facing north.
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \
   (EXAMINE_TRIGGER(EXAMINE_JAR) | TRIGGER_FLAG_FACING | FACING_NORTH)

@@ -10,7 +10,7 @@
 #error multiple game editions selected
 #endif
 
-// Compile-time language selectors, independent of gameplay revisions.
+/// Compile-time language selectors, independent of gameplay revisions.
 #define LANGUAGE_JAPANESE 0
 #define LANGUAGE_ENGLISH 1
 #define LANGUAGE_GERMAN 2
@@ -18,6 +18,7 @@
 #define LANGUAGE_FRENCH 4
 #define LANGUAGE_ITALIAN 5
 
+/// The edition's language, from the TBS_EDITION_ the build defines.
 #if defined(TBS_EDITION_EN)
 #define LANGUAGE LANGUAGE_ENGLISH
 #elif defined(TBS_EDITION_DE)

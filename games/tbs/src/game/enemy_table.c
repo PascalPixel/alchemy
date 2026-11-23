@@ -8,6 +8,7 @@
 #include "game/game.h"
 
 // clang-format off
+/// The enemies, by enemy id less ENEMY_ID_FIRST.
 const struct EnemyDefinition gEnemy_Definitions[] = {
     // ???
     {

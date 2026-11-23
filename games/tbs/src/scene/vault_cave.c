@@ -104,6 +104,7 @@ static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct Actor *source);
 
+/// The map cell a 16.16 coordinate lies in.
 #define TILE(position) ((position) / toFIXED(16))
 
 /// The cell behaviors of the cells the events answer.
@@ -1037,8 +1038,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The cave keeps its pushed-actor steps with its read-only data, though they
-// are not const: the pushes read the step again after each call.
+/// The cave keeps its pushed-actor steps with its read-only data, though they
+/// are not const: the pushes read the step again after each call.
 #define PUSHED_ACTOR_TABLES_READ_ONLY
 #include "shared/pushed_actor_direction_steps.c"
 // clang-format off
@@ -1281,6 +1282,7 @@ struct Trigger gVaultCaveMouth_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
+/// The frame of the 191-frame beat at which each timed drop falls.
 u32 gVaultCave_ScheduleFrames[] = {
     20, 80, 115, 170,
 };
@@ -1289,9 +1291,9 @@ u32 gVaultCave_ScheduleFrames[] = {
 /// The frame of the drops' 191-frame beat, and the timed drop that falls next
 /// when it reaches that drop's frame in gVaultCave_ScheduleFrames.
 s32 gVaultCave_ScheduleTimer = 0;
-
 s32 gVaultCave_ScheduleIndex = 0;
 
+/// The frames counted for the random drops, one picked every 64 frames, and
+/// the one picked, from the first of the six.
 s32 gVaultCave_DropFrames = 0;
-
 s32 gVaultCave_SelectedDrop = 0;

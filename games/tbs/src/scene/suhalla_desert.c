@@ -192,6 +192,7 @@ enum {
 static void SuhallaDesert_SetUpFirstMapStorms(void);
 static void SuhallaDesert_SetUpSecondMapStorms(void);
 
+/// The colour Reveal pulses, as it was before Reveal, put back as it ends.
 static u16 sSuhallaDesertSavedColor;
 
 /// The colour Reveal pulses, the last of BG palette 12.

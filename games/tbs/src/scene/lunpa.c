@@ -95,6 +95,7 @@ enum { GATE_EXIT_THIRD = 3 };
 /// The first of the rooms in RockRooms that Lunpa's doors lead into.
 enum { ROOM_ENTRANCE_FIRST = 1 };
 
+/// The RockRooms entrance a door's exit leads to.
 #define ROOM_ENTRANCE(exit) ((exit) - LUNPA_TO_FIRST_HOME + ROOM_ENTRANCE_FIRST)
 
 /// The cell behaviors Lunpa's triggers answer.
@@ -208,6 +209,7 @@ enum { ANIM_SPRAWLED = 19 };
 /// How high the ice pillar's top is, and a cell: 16 pixels each.
 enum { PILLAR_TOP_HEIGHT = toFIXED(16), CELL_SIZE = toFIXED(16) };
 
+/// The treasure spot of the town's Psynergy Stone.
 enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
 
 extern struct MapGridCellAnimation gLunpaDoors[];
@@ -1131,6 +1133,8 @@ s32 Scene_Initialize(void) {
 
 #include "shared/actor_orbit.c"
 
+/// An entrance of the town, with its camera free, and of the Fortress gates,
+/// its camera kept in their bounds.
 #define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \
   {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, -1, -1, -1, -1, 0}
 #define GATE_ENTRANCE(entrance, x, z, facing)                                  \
@@ -1164,6 +1168,7 @@ struct SceneEntrance gGateEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// A door's exit into its room of RockRooms.
 #define ROOM_EXIT(exit) SCENE_EXIT((exit), RockRooms, ROOM_ENTRANCE(exit))
 
 u32 gLunpaExits[] = {
@@ -1236,15 +1241,18 @@ struct ActorPlacement gGateActorPlacements[] = {
 };
 // clang-format on
 
+/// A trigger for talking to an actor, for Mind Read on it, and for walking
+/// north into a door.
 #define TALK(actorId, value)                                                   \
   {TRIGGER_TALK, (actorId), CONDITION_ALWAYS, (value)}
 #define MIND_READ(actorId, value)                                              \
   {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), (actorId), CONDITION_ALWAYS, (value)}
-
 #define DOOR(trigger)                                                          \
   {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), (trigger), CONDITION_ALWAYS,       \
    EVENT(Lunpa_EnterDoor)}
 
+/// The roads out of town and the doors, which every one of the town's trigger
+/// tables holds.
 #define LUNPA_ROADS_AND_DOORS                                                  \
   {TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_WORLD_MAP_ROAD, CONDITION_ALWAYS,         \
    LUNPA_TO_WORLD_MAP},                                                        \
@@ -1265,6 +1273,8 @@ struct ActorPlacement gGateActorPlacements[] = {
         EVENT(Lunpa_EnterHiddenPassage)                                        \
   }
 
+/// The hidden puddle and what Reveal shows, which the town's trigger tables
+/// share.
 #define LUNPA_SECRETS                                                          \
   {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_HIDDEN_PUDDLE,                      \
    FLAG_LUNPA_PUDDLE_FROZEN, EVENT(Lunpa_FreezeHiddenPuddle)},                 \
@@ -1388,6 +1398,7 @@ struct Trigger gGateTriggers[] = {
 };
 // clang-format on
 
+/// Each door's opening, as a map grid animation.
 u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
     {MAPGRID_ANIMATION_STEP(38, 35, 2, 2, 5),
      MAPGRID_ANIMATION_STEP(40, 35, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END},

@@ -594,8 +594,11 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
   return node;
 }
 
+/// The selection row's mode that only B leaves: the cursor stays and A chooses
+/// nothing.
 #define SELECTION_FIXED 999
 
+/// The selection row's status while it scrolls, and once it shows.
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 

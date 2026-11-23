@@ -14,14 +14,14 @@
 /// nine, where the list's other reads take PSYNERGY_ABILITY_MASK's fourteen.
 #define ABILITY_DESCRIPTION_MASK 0x1ff
 
-// The German, Spanish, French and Italian Psynergy menus save the window
-// tiles they draw over and restore them after.
+/// The German, Spanish, French and Italian Psynergy menus save the window
+/// tiles they draw over and restore them after.
 #if TBS_PATCH_2
 #define PSYNERGY_PROMPT_TILES BG_CHAR_BLOCK(1)
 #define PSYNERGY_PROMPT_TILES_SIZE 8192
 #endif
 
-// The highlight over the Psynergy list's rows.
+/// The highlight over the Psynergy list's rows.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define PSYNERGY_DETAIL_ROW_X 0
 #define PSYNERGY_DETAIL_ROW_WIDTH 15
@@ -30,7 +30,7 @@
 #define PSYNERGY_DETAIL_ROW_WIDTH 14
 #endif
 
-// The Psynergy list's page icons, "PP" label, names and hand cursor.
+/// The Psynergy list's page icons, "PP" label, names and hand cursor.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define PSYNERGY_PAGE_ICONS_X 112
 #define PSYNERGY_PP_LABEL_X 96

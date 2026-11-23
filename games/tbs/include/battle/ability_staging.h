@@ -51,9 +51,9 @@ enum BattleStaging {
   STAGING_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
 
-// BattleActionRun.battleEffect: the effect kind in the low twelve bits and
-// its strength (a double or triple blow) above them; then how the effect is
-// staged.
+/// BattleActionRun.battleEffect: the effect kind in the low twelve bits and
+/// its strength (a double or triple blow) above them; then how the effect is
+/// staged.
 #define EFFECT_ID_MASK 0xfff
 #define EFFECT_VARIANT_MASK 0x3000
 #define EFFECT_VARIANT_SHIFT 12

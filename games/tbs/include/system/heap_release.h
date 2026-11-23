@@ -14,6 +14,8 @@ void HeapSlot_Release(s32 slot);
 /// its pool, as HeapSlot_Release does.
 void Heap_Release(void *buffer);
 
+/// Takes `size` bytes from another pool through its allocator, such as
+/// Heap_AllocEwram.
 static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
                                                s32 size) {
   return allocate(size);

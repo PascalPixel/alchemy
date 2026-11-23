@@ -14,33 +14,26 @@ const u8 gAnimationFacing_OnePicture[16] = {
     0, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), 0,
     MIRRORED(0), MIRRORED(0), MIRRORED(0), 0, 0, 0, 0, MIRRORED(0),
 };
-
 const u8 gAnimationFacing_FrontBackSwapped[8] = {
     MIRRORED(0), MIRRORED(0), 0, 0, 1, 1, MIRRORED(1), MIRRORED(1),
 };
-
 const u8 gAnimationFacing_FrontBack[8] = {
     0, 0, MIRRORED(0), MIRRORED(0), 1, 1, MIRRORED(1), MIRRORED(1),
 };
-
 const u8 gAnimationFacing_ThreePictures[16] = {
     1, 1, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(1), MIRRORED(1),
     MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), 2, 2, 2, 1,
 };
-
 const u8 gAnimationFacing_FivePictures[16] = {
     1, 0, 0, 3, 3, MIRRORED(0), MIRRORED(0), MIRRORED(1),
     MIRRORED(1), MIRRORED(2), MIRRORED(2), 4, 4, 2, 2, 1,
 };
-
 const u8 gAnimationFacing_EightPictures[8] = {
     2, 1, 0, 7, 6, 5, 4, 3,
 };
-
 const u8 gAnimationFacing_EightPicturesMirrored[8] = {
     1, 0, 3, MIRRORED(5), MIRRORED(6), MIRRORED(7), 4, 2,
 };
-
 const u8 gAnimationFacing_FourPictures[64] = {
     1, 1, 1, 1, 1, 1, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -51,7 +44,6 @@ const u8 gAnimationFacing_FourPictures[64] = {
     3, 3, 3, 3, 3, 3, 3, 3,
     3, 2, 2, 2, 2, 2, 2, 1,
 };
-
 const u8 gAnimationFacing_SixPictures[64] = {
     1, 1, 1, 1, 1, 1, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 4,

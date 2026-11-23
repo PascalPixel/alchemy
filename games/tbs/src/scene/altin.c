@@ -81,6 +81,8 @@ extern struct Trigger gAltin_Triggers[];
 extern struct Trigger gCottageRoomsD_Triggers[];
 extern struct MapGridCellAnimation gAltin_Doors[];
 
+/// The x of the easternmost pot the cook from Xian walks to and nods over, 4
+/// pixels further west from patch 3.
 #if !TBS_PATCH_3
 #define ALTIN_COOK_LAST_POT_X 384
 #else
@@ -259,6 +261,7 @@ enum {
       CELL_BEHAVIOR_ALTIN_FIRST_DOOR
 };
 
+/// The frames from one of the water beast's hops to the next.
 #define WATER_BEAST_HOP_PERIOD 60
 /// The map column the stone statue stands in once moved, at (360, 168).
 #define STONE_STATUE_MOVED_COLUMN 22
@@ -1427,37 +1430,31 @@ u16 gAltin_SanctumDoorCells[] = {
     MAPGRID_ANIMATION_STEP(40, 35, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gAltin_SouthwestDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gAltin_SoutheastDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gAltin_EastDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gAltin_NorthwestDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gAltin_NorthAndWestDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 33, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 33, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gAltin_NortheastDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 5),

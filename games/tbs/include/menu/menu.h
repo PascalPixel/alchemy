@@ -157,9 +157,9 @@ struct PsynergyEntry;
 struct Window;
 struct WindowSprite;
 
-// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
-// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
-// type, ending with LIST_ORDER_END.
+/// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
+/// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
+/// type, ending with LIST_ORDER_END.
 #define LIST_ORDER_TYPE_MASK 0x7f
 #define LIST_ORDER_EQUIPPED 0x80
 #define LIST_ORDER_END 255
@@ -238,6 +238,7 @@ void WindowPalette_SetLowHpTextColor(void);
 void DjinnFigures_ReleaseTopRow(void);
 void DjinnFigures_ReleaseBottomRow(void);
 
+/// The rows a page of the Psynergy and item lists holds.
 #define LIST_PAGE_SIZE 5
 
 /// The y of the menus' row of party portraits, and of the chosen member's,

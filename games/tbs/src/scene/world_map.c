@@ -1725,6 +1725,7 @@ static void WorldMap_MeetFlint(void) {
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
 }
 
+/// Iodem's actor on the world map, set as he comes out to meet the party.
 s32 gWorldMapIodem;
 
 /// Brings Bunza's wagon to a stop and lets Isaac step down, after Hammet's
@@ -2110,6 +2111,8 @@ enum {
   QUAKE_DUST_DEPTH = 30
 };
 
+/// The second weight of the lighthouse transition's blend (BLEND_ALPHA), which
+/// the picture's weight flickers over.
 u16 gWorldMapBlend;
 
 /// Queues one picture of the lighthouse transition, a whole tile map, into

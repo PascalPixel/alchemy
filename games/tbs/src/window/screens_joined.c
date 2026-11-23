@@ -15,6 +15,8 @@
   Message_Start(window, entry, x, y, spacing)
 #endif
 
+/// The window of the talk choices ("Descriptions", "Cheer", "Nothing"), in
+/// tiles.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TALK_WINDOW_X 7

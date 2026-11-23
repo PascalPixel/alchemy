@@ -319,6 +319,7 @@ struct RockPuzzle {
   s8 chosenLight;
 };
 
+/// The rock puzzle's bytes in the cave's state.
 #define ROCK_PUZZLE ((struct RockPuzzle *)&CAVE_STATE(CAVE_PUZZLE))
 
 /// The puzzle's states. The leftmost rock is turned, then the rightmost, which
@@ -330,6 +331,7 @@ enum {
   PUZZLE_SOLVED = 99
 };
 
+/// The ring of lights.
 struct LightWheel gAltmillerCave_LightWheelState
     __attribute__((nocommon)) ALIGNED(4);
 
@@ -2286,6 +2288,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 
 #include "shared/pushed_actor_tables.c"
 
+/// The ring of lights, as the cave's code reaches it.
 struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 
 struct SceneEntrance gAltmillerCave_Entrances[] = {

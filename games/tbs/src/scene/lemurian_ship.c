@@ -99,6 +99,8 @@ extern s32 gMiaBoardsShip[];
 #define CURTAIN_BOTTOM_Y 136
 #define CURTAIN_START_GAP 48
 
+/// The frames from the curtains starting to close to the ship sailing west: 30
+/// from patch 3, 80 before.
 #if TBS_PATCH_3
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30
 #else
@@ -983,32 +985,31 @@ struct Trigger gLemurianShipTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Black Orb's glow: whether it shows, its phase in frames, its strength
+/// (BLDALPHA's first weight, a step weaker every 40 frames down to 4) and the
+/// frames into that step.
 s32 gOrbGlowActive = 0;
-
 s32 gOrbGlowPhase = 0;
-
 s32 gOrbGlowStrength = 16;
-
 s32 gOrbGlowFadeFrames = 0;
 
+/// Set while spray flies about the rising ship.
 s32 gSprayActive = 0;
 
+/// The raised ship's swell: whether it runs, its phase in frames, the hull's
+/// and deck's layer heights it rocks about, and the height on the deck of each
+/// of the party (16.16 pixels), SHIP_NOT_ON_DECK for one not on it.
 s32 gSwellActive = 0;
-
 s32 gSwellPhase = 0;
-
 s32 gShipHullY = 0;
-
 s32 gShipDeckY = 0;
-
 s32 gLeaderDeckY = SHIP_NOT_ON_DECK;
-
 s32 gGaretDeckY = SHIP_NOT_ON_DECK;
-
 s32 gMiaDeckY = SHIP_NOT_ON_DECK;
-
 s32 gIvanDeckY = SHIP_NOT_ON_DECK;
 
+/// The frames into the glow's run along the risen ship's hull,
+/// SHIP_GLOW_STEP_FRAMES for each of its SHIP_GLOW_COLORS colours.
 u16 gShipGlowStep = 0;
 
 s32 gLeaderBoardsShip[] = {

@@ -18,9 +18,9 @@ extern s16 gTitleRevealFrame;
 /// English and Japanese editions, 120 in the others.
 extern struct TitleSprite gTitleSprites[];
 
-// The Golden Sun logo the Title and the File Screen show: an 8-bit
-// background on BG2, its map in screen block 6 and its tiles from tile 416 of
-// character block 0.
+/// The Golden Sun logo the Title and the File Screen show: an 8-bit
+/// background on BG2, its map in screen block 6 and its tiles from tile 416 of
+/// character block 0.
 #define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
 #define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
 #define LOGO_FIRST_TILE 416

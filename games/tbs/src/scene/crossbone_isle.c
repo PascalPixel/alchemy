@@ -2229,6 +2229,8 @@ static void CrossboneIsle_RideLogIEast(void) {
 
 #include "shared/field_effect_duration_scripts.c"
 
+/// A floor's side-room door opening with a rumble, a column of two cells at a
+/// time.
 u16 gCrossboneIsle_DoorOpens[] = {
     MAPGRID_ANIMATION_STEP(58, 23, 1, 2, 5), MAPGRID_ANIMATION_STEP(59, 23, 1, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };

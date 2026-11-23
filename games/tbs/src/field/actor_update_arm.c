@@ -23,7 +23,7 @@
 #define IwramRatioMulQ14                                                       \
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
-// Far-call stubs copied to RAM together with this code (actor_update_far.s).
+/// Far-call stubs copied to RAM together with this code (actor_update_far.s).
 s32 Trig_AtanFarArm(s32 z, s32 x);
 s32 Iwram_SqrtFarArm(s32 value);
 s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);

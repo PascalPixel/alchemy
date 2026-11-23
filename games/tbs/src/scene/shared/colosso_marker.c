@@ -119,10 +119,9 @@ void Actor_ResetMotionFields(s32 actorId) {
   o->targetZ = ACTOR_NO_TARGET;
 }
 
-// The guide's pointer: one 16x16 sprite centred on a point of the screen,
-// shown for MARKER_SHOWN_FRAMES of every MARKER_BLINK_FRAMES, that can glide
-// from point to point.
-
+/// The guide's pointer: one 16x16 sprite centred on a point of the screen,
+/// shown for MARKER_SHOWN_FRAMES of every MARKER_BLINK_FRAMES, that can glide
+/// from point to point.
 #define MARKER_SHOWN_FRAMES 13
 #define MARKER_BLINK_FRAMES 20
 
@@ -133,6 +132,9 @@ static void Colosso_EnsureMarkerSlot(void) {
   }
 }
 
+/// The pointer's glide: its steps and the step it is on, where it is now, where
+/// the glide started and where it ends (screen pixels), its blink counter and
+/// its flip.
 extern s16 gColosso_MarkerSteps;
 extern s16 gColosso_MarkerStep;
 extern s16 gColosso_MarkerX;

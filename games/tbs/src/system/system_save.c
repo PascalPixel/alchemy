@@ -7,6 +7,7 @@
 
 // Saving.
 
+/// The save code's timer, retries, sectors and checksum.
 enum {
   SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
   SAVE_FLASH_IDENTIFY_ATTEMPTS = 8, ///< tries, a frame apart

@@ -90,8 +90,8 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot) {
   return result;
 }
 
-// The sale value line's label, number and coin word, placed for each
-// language's words; Japanese names its coins with a different message.
+/// The sale value line's label, number and coin word, placed for each
+/// language's words; Japanese names its coins with a different message.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_USE_PRICE_LABEL_X 8
 #define SHOP_USE_PRICE_NUMBER_X 40

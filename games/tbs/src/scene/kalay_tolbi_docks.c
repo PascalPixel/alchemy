@@ -1075,12 +1075,12 @@ static void KalayTolbiDocks_PassengersBlameTourGuide(void) {
   Event_End();
 }
 
+/// The docks' cottage doors opening, at Kalay Docks and at Tolbi Docks.
 u16 gKalayTolbiDocks_KalayDoorCells[] = {
     MAPGRID_ANIMATION_STEP(98, 84, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(98, 82, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gKalayTolbiDocks_TolbiDoorCells[] = {
     MAPGRID_ANIMATION_STEP(92, 9, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(92, 7, 2, 2, 5),

@@ -341,8 +341,8 @@
 #define FLAG_GONDOWAN_CAVE_STUMP_MOVED 0x9a2
 /// GondowanCave's stone pillar has dropped into its place for good.
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
-// GondowanCaveRiver's two chests, whose examine triggers every scene of the
-// overlay carries.
+/// GondowanCaveRiver's two chests, whose examine triggers every scene of the
+/// overlay carries.
 #define FLAG_GONDOWAN_CAVE_APPLE 0xfa0
 #define FLAG_GONDOWAN_CAVE_LUCKY_MEDAL 0xfa1
 
@@ -654,7 +654,7 @@
 // Lamakan Desert
 /// The Manticore, on the third scene, is beaten.
 #define FLAG_LAMAKAN_MANTICORE_BEATEN 0x90a
-// The desert's chests, set once each is opened.
+/// The desert's chests, set once each is opened.
 #define FLAG_LAMAKAN_DESERT_VULCAN_AXE 0xf7b
 #define FLAG_LAMAKAN_DESERT_LUCKY_PEPPER 0xf7c
 #define FLAG_LAMAKAN_DESERT_777_COINS 0xf7d
@@ -863,7 +863,7 @@
 /// into the house sets it even once Iodem has reached Babi Lighthouse, when
 /// the event no longer plays; Suhalla Desert and Suhalla Gate read it.
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
-// The village's chest and jars.
+/// The village's chest and jars.
 #define FLAG_SUHALLA_CHEST_HARD_NUT 0xfad
 #define FLAG_SUHALLA_JAR_LUCKY_MEDAL 0xfae
 #define FLAG_SUHALLA_JAR_COINS 0xfaf
@@ -896,7 +896,7 @@
 /// Douse has stopped the sandstorm that chases the party in the second scene,
 /// for good.
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED 0x9b7
-// The desert's chests, set once each is opened or its mimic beaten.
+/// The desert's chests, set once each is opened or its mimic beaten.
 #define FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET 0xfb1
 #define FLAG_SUHALLA_DESERT_LUCKY_MEDAL 0xfb2
 #define FLAG_SUHALLA_DESERT_COOKIE 0xfb3
@@ -1137,8 +1137,8 @@
 #define FLAG_READ_THOUGHTS_ABOUT_DORA 0x81c
 /// Isaac visited Dora in her sickbed and she got up.
 #define FLAG_VISITED_SICK_DORA 0x81e
-// The containers, set once each is searched; the last three hold their finds
-// only once the party is back from Kalay.
+/// The containers, set once each is searched; the last three hold their finds
+/// only once the party is back from Kalay.
 #define FLAG_VALE_WOODEN_BOX_HERB 0xf47
 /// A jar's 5 coins.
 #define FLAG_VALE_JAR_COINS 0xf48
@@ -1156,7 +1156,7 @@
 /// Back from Kalay, Garet has surprised his family at home on the party's
 /// first visit to his house, and Ivan and Mia have introduced themselves.
 #define FLAG_GARET_CAME_HOME 0x81d
-// The houses' containers, set once each is searched (not on the stormy night)
+/// The houses' containers, set once each is searched (not on the stormy night)
 #define FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE 0xf42
 #define FLAG_COTTAGE_ROOMS_A_JAR_6_COINS 0xf43
 #define FLAG_COTTAGE_ROOMS_A_JAR_2_COINS 0xf44
@@ -1200,13 +1200,13 @@
 /// A wooden box's Nut.
 #define FLAG_VAULT_BOX_NUT 0xf4a
 
-// Vault rooms: their containers, set once each is searched
+/// Vault rooms: their containers, set once each is searched
 #define FLAG_LOG_ROOMS_A_JAR_COINS 0xf4b
 #define FLAG_LOG_ROOMS_A_BARREL_COINS 0xf4c
 #define FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB 0xf4d
 #define FLAG_LOG_ROOMS_A_BOX_MINT 0xf4e
 
-// Vault cave: its switches, and its chests, set once each is opened
+/// Vault cave: its switches, and its chests, set once each is opened
 #define FLAG_VAULT_CAVE_SWITCH_FLIPPED 0x9a8
 /// The southern pillar rests on its switch in VaultCaveVambrace, and the way
 /// is open.
@@ -1218,7 +1218,7 @@
 #define FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN 0xef3
 #define FLAG_VAULT_CAVE_VAMBRACE_CHEST 0xfc4
 
-// Lunpa's hidden room (StoneRooms): its chests, set once each is opened
+/// Lunpa's hidden room (StoneRooms): its chests, set once each is opened
 #define FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE 0xf8c
 #define FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB 0xf8d
 #define FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL 0xf8e
@@ -1228,7 +1228,7 @@
 /// Xian: set once the jar's Lucky Medal is taken.
 #define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e
 
-// Xian rooms: set once each find is taken.
+/// Xian rooms: set once each find is taken.
 #define FLAG_LACQUER_ROOMS_B_ELIXIR_BARREL 0xf6f
 #define FLAG_LACQUER_ROOMS_B_SLEEP_BOMB_JAR 0xf70
 
@@ -1539,10 +1539,10 @@
 /// Buried, found by searching.
 #define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf
 
-// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
-// Scene_Arrive clears them on every ordinary entry, and each
-// scene keeps its own puzzle and event states in them. A scene says beside its
-// uses what each one holds there.
+/// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
+/// Scene_Arrive clears them on every ordinary entry, and each
+/// scene keeps its own puzzle and event states in them. A scene says beside its
+/// uses what each one holds there.
 #define FLAG_SCENE_TEMP_00 0x200
 #define FLAG_SCENE_TEMP_01 0x201
 #define FLAG_SCENE_TEMP_02 0x202
@@ -1800,11 +1800,11 @@
 #define FLAG_SCENE_TEMP_FE 0x2fe
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
-// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF:
-// Scene_Arrive clears them whenever the party enters a different
-// area, so they keep what should last while the party is
-// anywhere inside one area, such as where Fuchin Falls Cave's logs
-// float. A scene says beside its uses what each one holds there.
+/// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF:
+/// Scene_Arrive clears them whenever the party enters a different
+/// area, so they keep what should last while the party is
+/// anywhere inside one area, such as where Fuchin Falls Cave's logs
+/// float. A scene says beside its uses what each one holds there.
 #define FLAG_AREA_TEMP_00 0x300
 #define FLAG_AREA_TEMP_01 0x301
 #define FLAG_AREA_TEMP_02 0x302

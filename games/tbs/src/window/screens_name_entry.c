@@ -11,8 +11,8 @@
 UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
-// The keyboard's keys for the kana voicing marks (TEXT_MARK_VOICED and
-// TEXT_MARK_SEMIVOICED), as its tilemap's low bytes hold them.
+/// The keyboard's keys for the kana voicing marks (TEXT_MARK_VOICED and
+/// TEXT_MARK_SEMIVOICED), as its tilemap's low bytes hold them.
 #define NAME_VOICED_KEY 254
 #define NAME_SEMIVOICED_KEY 255
 
@@ -142,9 +142,9 @@ void NameEntry_LoadCaretTiles(s32 slot) {
   VramCache_Load(slot, 2 * 2 * TILE_SIZE_4BPP, gNameEntry_CaretTiles);
 }
 
-// The name entry screen: a keyboard window of letter keys, with a column of
-// command keys on its right (Delete and End, and in Japanese the keyboard
-// switch), the name above it and the character's portrait.
+/// The name entry screen: a keyboard window of letter keys, with a column of
+/// command keys on its right (Delete and End, and in Japanese the keyboard
+/// switch), the name above it and the character's portrait.
 #define NAME_COMMAND_COLUMN 18 ///< the keyboard column of the command keys
 #define NAME_LAST_LETTER_COLUMN 16
 /// The keyboard's last row, where the command column has End, and the row of
@@ -219,15 +219,15 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
   Text_DrawString(text, window, 0, -2);
 }
 
-// The width of the window showing the name, in tiles.
+/// The width of the window showing the name, in tiles.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define NAME_LABEL_WIDTH 9
 #else
 #define NAME_LABEL_WIDTH 8
 #endif
 
-// Whether the edition draws the Delete and End key labels as text over the
-// keyboard, and how wide its End key is, in tiles.
+/// Whether the edition draws the Delete and End key labels as text over the
+/// keyboard, and how wide its End key is, in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH
 #define NAME_KEY_LABELS 1

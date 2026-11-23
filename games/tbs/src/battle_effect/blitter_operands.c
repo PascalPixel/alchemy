@@ -12,6 +12,7 @@
 #define ARM_IMMEDIATE_BIT(n)                                                   \
   ((n) < 8 ? 1 << (n) : (12 - ((n) - 8) / 2) << 8 | 1 << ((n) & 1))
 
+/// ARM_IMMEDIATE_BIT of each bit number in turn.
 #define ARM_IMMEDIATE_POWERS                                                   \
   ARM_IMMEDIATE_BIT(0), ARM_IMMEDIATE_BIT(1), ARM_IMMEDIATE_BIT(2),            \
       ARM_IMMEDIATE_BIT(3), ARM_IMMEDIATE_BIT(4), ARM_IMMEDIATE_BIT(5),        \

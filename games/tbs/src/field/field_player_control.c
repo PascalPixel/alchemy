@@ -4,7 +4,9 @@
 
 #include "field_internal.h"
 
-// What differs by edition.
+/// On the world map, the keys whose R and L open the world picture and the
+/// zoomed map (newly pressed from patch 1, held before), and how far ahead of
+/// the leader each step is probed, in pixels.
 #if TBS_PATCH_1
 #define FIELD_SHORTCUT_KEYS gKeysPressed
 #define WORLD_MAP_PROBE_RADIUS toFIXED(7)
@@ -13,8 +15,8 @@
 #define WORLD_MAP_PROBE_RADIUS toFIXED(8)
 #endif
 
-// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
-// point: the top 16 bits are whole pixels, so toFIXED(1) is one pixel.
+/// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
+/// point: the top 16 bits are whole pixels, so toFIXED(1) is one pixel.
 #define FIELD_WALK_SPEED toFIXED(1)      ///< 1 pixel a frame
 #define FIELD_RUN_SPEED (toFIXED(3) / 2) ///< 1.5, with a dash key held
 #define FIELD_ACCELERATION                                                     \

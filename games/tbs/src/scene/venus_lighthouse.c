@@ -263,6 +263,9 @@ enum VenusLighthouseCellBehavior {
   ((s32 (*)(void))VenusLighthouse_ArriveThroughSparkPassage)
 #endif
 
+/// The cells of row 34 that take row 35's behaviours as Isaac drops through
+/// the first floor's hole: their first column and their width, wider from
+/// patch 3.
 #if TBS_PATCH_3
 #define VENUS_DESCENT_COLLISION_X 33
 #define VENUS_DESCENT_COLLISION_WIDTH 7
@@ -441,12 +444,14 @@ enum VenusTrack {
 /// VenusLighthouse_RestoreScriptedChildValues can draw the actor in that mode
 /// again after a battle.
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
+/// The tag VENUS_COLOR_MARK puts above the colour mode.
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
 static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
                                                          s32 z, u32 width,
                                                          u32 height, s32 value);
 
+/// Sets bits in a byte of flags.
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
@@ -3281,6 +3286,7 @@ static void VenusLighthouse_EmitWestPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(432, 32);
 }
 
+/// The east slide's puffs.
 static void VenusLighthouse_EmitEastPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(560, 44);
 }
@@ -3630,15 +3636,12 @@ struct SwitchCell gVenusFourthFloorSockets[] = {
 u8 gVenusTracksMovingWest[] = {
     VENUS_TRACK_NORTH_EAST, VENUS_TRACK_WEST_EAST, VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_END,
 };
-
 u8 gVenusTracksMovingEast[] = {
     VENUS_TRACK_NORTH_WEST, VENUS_TRACK_WEST_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END,
 };
-
 u8 gVenusTracksMovingNorth[] = {
     VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_SOUTH_EAST, VENUS_TRACK_SOUTH_WEST, VENUS_TRACK_END,
 };
-
 u8 gVenusTracksMovingSouth[] = {
     VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_NORTH_WEST, VENUS_TRACK_NORTH_EAST, VENUS_TRACK_END,
 };
@@ -4063,11 +4066,9 @@ s32 gVenusFourthFloorLightNorthwestToGate[] = {
 u16 gVenusSecondFloorGateCells[] = {
     MAPGRID_ANIMATION_STEP(124, 50, 1, 2, 6), MAPGRID_ANIMATION_STEP(124, 47, 1, 2, 6), MAPGRID_ANIMATION_STEP(124, 44, 1, 2, 6), MAPGRID_ANIMATION_STEP(124, 41, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVenusThirdFloorGateCells[] = {
     MAPGRID_ANIMATION_STEP(117, 59, 1, 2, 6), MAPGRID_ANIMATION_STEP(115, 59, 1, 2, 6), MAPGRID_ANIMATION_STEP(113, 59, 1, 2, 6), MAPGRID_ANIMATION_STEP(111, 59, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVenusFourthFloorGateCells[] = {
     MAPGRID_ANIMATION_STEP(96, 58, 1, 2, 6), MAPGRID_ANIMATION_STEP(95, 58, 1, 2, 6), MAPGRID_ANIMATION_STEP(96, 56, 1, 2, 6), MAPGRID_ANIMATION_STEP(95, 56, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
@@ -4660,27 +4661,26 @@ const u8 *gVenusThirdFloorSocketTracks[] = {
     gVenusThirdFloorTrackLists + 12,
 };
 
+/// Each third-floor socket's light scripts, by the index of the piece it has
+/// routed.
 s32 *gVenusThirdFloorNorthwestPaths[] = {
     gVenusThirdFloorLightNorthwestToGate,
     gVenusThirdFloorLightNorthwestToSouthwest,
     gVenusLightGoesOut,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusThirdFloorNortheastPaths[] = {
     gVenusThirdFloorLightNortheastToNorthwest,
     gVenusThirdFloorLightNortheastToSoutheast,
     gVenusLightGoesOut,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusThirdFloorSouthwestPaths[] = {
     gVenusThirdFloorLightSouthwestToGate,
     gVenusThirdFloorLightSouthwestToNorthwest,
     gVenusThirdFloorLightSouthwestToGate,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusThirdFloorSoutheastPaths[] = {
     gVenusThirdFloorLightSoutheastToSouthwest,
     gVenusThirdFloorLightSoutheastToNortheast,
@@ -4704,41 +4704,36 @@ const u8 *gVenusFourthFloorSocketTracks[] = {
     gVenusFourthFloorTrackLists + 12, gVenusFourthFloorTrackLists + 14,
 };
 
+/// Each fourth-floor socket's light scripts, by the index of the piece it has
+/// routed.
 s32 *gVenusFourthFloorNorthwestPaths[] = {
     gVenusFourthFloorLightNorthwestToGate,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorNortheastPaths[] = {
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorWestPaths[] = {
     gVenusFourthFloorLightWestToNorthwest,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorEastPaths[] = {
     gVenusFourthFloorLightEastToNortheast,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorFarWestPaths[] = {
     gVenusFourthFloorLightFarWestToWest,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorMiddlePaths[] = {
     gVenusFourthFloorLightMiddleToEast,
     gVenusFourthFloorLightMiddleToWest,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorSouthwestPaths[] = {
     gVenusFourthFloorLightSouthwestToFarWest,
     gVenusLightGoesOut,
 };
-
 s32 *gVenusFourthFloorSoutheastPaths[] = {
     gVenusFourthFloorLightSoutheastToMiddle,
     gVenusLightGoesOut,

@@ -6,20 +6,20 @@
 
 #include "version.h"
 
-// Lunpa Fortress's guard room fades in after its battle through a window
-// transition: the ellipse around the leader (WINDOW_TRANSITION_LEADER) in
-// Japanese, random bars (WINDOW_TRANSITION_BARS) in the others.
+/// Lunpa Fortress's guard room fades in after its battle through a window
+/// transition: the ellipse around the leader (WINDOW_TRANSITION_LEADER) in
+/// Japanese, random bars (WINDOW_TRANSITION_BARS) in the others.
 #if !TBS_PATCH_1
 #define LUNPA_RETURN_TRANSITION_VARIANT 9
 #else
 #define LUNPA_RETURN_TRANSITION_VARIANT 0
 #endif
 
-// The window renderer's work (struct WindowWork) is laid out anew outside
-// Japanese: 8 windows instead of 12, and a text ring of 512 codes instead of
-// 256. With it change the debug menus' columns, two icon menus' widths, and
-// the first enemy name suffix's character code (65 in Japanese, which has 26
-// suffixes; 49 in the others, which have 9).
+/// The window renderer's work (struct WindowWork) is laid out anew outside
+/// Japanese: 8 windows instead of 12, and a text ring of 512 codes instead of
+/// 256. With it change the debug menus' columns, two icon menus' widths, and
+/// the first enemy name suffix's character code (65 in Japanese, which has 26
+/// suffixes; 49 in the others, which have 9).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TEXT_BUFFER_MASK 0xFF
 #define WINDOW_COUNT 12
@@ -38,11 +38,13 @@
 #define LIST_MARKER_CHAR 49
 #endif
 
+/// The y of the debug scene menu's first row, in pixels, where its arrow
+/// points.
 #define MENU_TEXT_Y 60
 
-// The European editions' Colosso lettering keeps 192 bytes of palettes
-// before its tiles instead of 160, and the Battle Arena's opponent names take
-// up to 8 letters of prefix, then a space, instead of 5.
+/// The European editions' Colosso lettering keeps 192 bytes of palettes
+/// before its tiles instead of 160, and the Battle Arena's opponent names take
+/// up to 8 letters of prefix, then a space, instead of 5.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define COLOSSO_PALETTE_BYTES 192
@@ -52,8 +54,8 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-// The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
-// European editions, and where the number sits in it.
+/// The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
+/// European editions, and where the number sits in it.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TICKET_COUNTER_WINDOW_X 18
@@ -69,9 +71,9 @@
 #endif
 #endif
 
-// The menus' layout: the shop's sell and repair price window, the help line
-// under the item and Psynergy menus, and the Status menu's switch help, page
-// rows and row count, which the localized editions widen or rearrange.
+/// The menus' layout: the shop's sell and repair price window, the help line
+/// under the item and Psynergy menus, and the Status menu's switch help, page
+/// rows and row count, which the localized editions widen or rearrange.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_LIST_X 16
 #define SHOP_LIST_WIDTH 14
@@ -95,8 +97,8 @@
 #define MENU_ROW_COUNT 8
 #endif
 
-// The shop's buying screen: the price window's width. The coins window's is
-// SHOP_MONEY_WINDOW_WIDTH (shop_internal.h).
+/// The shop's buying screen: the price window's width. The coins window's is
+/// SHOP_MONEY_WINDOW_WIDTH (shop_internal.h).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_PRICE_WIDTH 14
 #elif LANGUAGE == LANGUAGE_GERMAN
@@ -105,7 +107,7 @@
 #define SHOP_PRICE_WIDTH 15
 #endif
 
-// The window that announces a Djinni joining, wider in Italian.
+/// The window that announces a Djinni joining, wider in Italian.
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define DJINN_JOIN_X 1
 #define DJINN_JOIN_WIDTH 28
@@ -114,7 +116,7 @@
 #define DJINN_JOIN_WIDTH 26
 #endif
 
-// The options screen's layout: its window, sliders, icons and setting columns.
+/// The options screen's layout: its window, sliders, icons and setting columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define OPTION_WINDOW_X 2
 #define OPTION_WINDOW_WIDTH 26
@@ -137,7 +139,7 @@
 #endif
 #endif
 
-// Where the item menu puts its "in stock" label after the count.
+/// Where the item menu puts its "in stock" label after the count.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define STOCK_LABEL_X 32
 #elif LANGUAGE == LANGUAGE_SPANISH
@@ -148,7 +150,7 @@
 #define STOCK_LABEL_X 24
 #endif
 
-// Lucky Wheels: its title's letters and where they start (nine in Spanish).
+/// Lucky Wheels: its title's letters and where they start (nine in Spanish).
 #if LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_TITLE_LETTERS 9
 #define LUCKY_WHEELS_TITLE_X 8
@@ -157,7 +159,7 @@
 #define LUCKY_WHEELS_TITLE_X 24
 #endif
 
-// Lucky Wheels' help window, and the VRAM its jackpot and title tiles use.
+/// Lucky Wheels' help window, and the VRAM its jackpot and title tiles use.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_HELP_WINDOW_X 2
 #define LUCKY_WHEELS_HELP_WINDOW_WIDTH 26
@@ -173,9 +175,9 @@
 #define LUCKY_WHEELS_JACKPOT_TILES                                             \
   (OBJ_VRAM0 + LUCKY_WHEELS_TITLE_TILES * TILE_SIZE_4BPP)
 
-// Lucky Wheels' prompt windows (stop, all held, start, hold, release, choose
-// the reels to hold), placed and sized for each language's words. Japanese
-// shows hold and release in one window.
+/// Lucky Wheels' prompt windows (stop, all held, start, hold, release, choose
+/// the reels to hold), placed and sized for each language's words. Japanese
+/// shows hold and release in one window.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_STOP_X 23
 #define LUCKY_WHEELS_STOP_WIDTH 7
@@ -237,10 +239,10 @@
 #define LUCKY_WHEELS_CHOOSE_HELD_X 3
 #define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 24
 #endif
-// Lucky Wheels' count of Game Tickets left after the bet takes three digits
-// from the French release on, one tile further left so that it ends where the
-// two did, and the hold hint no longer follows the fourth and last spin, after
-// which no wheel can be held. Neither is about words, so both are updates.
+/// Lucky Wheels' count of Game Tickets left after the bet takes three digits
+/// from the French release on, one tile further left so that it ends where the
+/// two did, and the hold hint no longer follows the fourth and last spin, after
+/// which no wheel can be held. Neither is about words, so both are updates.
 #if TBS_PATCH_3
 #define LUCKY_WHEELS_COIN_DIGITS 3
 #define LUCKY_WHEELS_COIN_X 56
@@ -251,8 +253,8 @@
 #define LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN 0
 #endif
 
-// The first area name message, for the area name shown on entering a new
-// area (AreaNameWindow_Show).
+/// The first area name message, for the area name shown on entering a new
+/// area (AreaNameWindow_Show).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RENDER_RESOURCE_BASE 2516
 #elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||           \
@@ -262,7 +264,7 @@
 #define RENDER_RESOURCE_BASE 2459
 #endif
 
-// The Status menu's Psynergy list: its range icon tiles, rows and columns.
+/// The Status menu's Psynergy list: its range icon tiles, rows and columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RANGE_ICON_TILE WINDOW_TILE(512)
 #define LIST_FIRST_ROW 1
@@ -283,7 +285,7 @@
 #define LIST_EMPTY_Y 17
 #endif
 
-// Where the save screen's file list puts the leader's name.
+/// Where the save screen's file list puts the leader's name.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_LIST_NAME_X 6

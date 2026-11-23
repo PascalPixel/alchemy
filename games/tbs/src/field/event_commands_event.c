@@ -4,17 +4,17 @@
 
 #include "event_commands_internal.h"
 
-// When a gift goes to another party member, `<leader> gave <item> to <member>.`
-// follows `<leader> got <item>.`; it is MsgGaveItemToMember, the next
-// message, in every edition.
+/// When a gift goes to another party member, `<leader> gave <item> to
+/// <member>.` follows `<leader> got <item>.`; it is MsgGaveItemToMember, the
+/// next message, in every edition.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
 #else
 #define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
 #endif
 
-// Japanese and English show it zooming open and waiting for the jingle; from
-// patch 2 it only zooms open.
+/// Japanese and English show it zooming open and waiting for the jingle; from
+/// patch 2 it only zooms open.
 #if TBS_PATCH_2
 #define GIFT_RECEIVED_MESSAGE_MODE FIELD_MESSAGE_ZOOM
 #else

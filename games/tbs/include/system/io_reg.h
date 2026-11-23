@@ -319,8 +319,8 @@ enum DisplayControl {
 #define RCNT_SIO_MODE 0x0000
 #define RCNT_GPIO_MODE 0x8000 ///< the port as general-purpose pins
 
-// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
-// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
+/// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+/// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
 #define DMA_DEST_INC 0x0000    ///< destination steps up
 #define DMA_DEST_DEC 0x0020    ///< destination steps down
 #define DMA_DEST_FIXED 0x0040  ///< destination stays, as for a register
@@ -346,10 +346,10 @@ enum DisplayControl {
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
   (DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT)
 
-// DMA control words: copy n words or halfwords at once, fill n words from one
-// fixed source word, or one halfword or word each HBlank to a register reloaded
-// every line (a scanline table that drives a window edge, a scroll or an affine
-// register).
+/// DMA control words: copy n words or halfwords at once, fill n words from one
+/// fixed source word, or one halfword or word each HBlank to a register
+/// reloaded every line (a scanline table that drives a window edge, a scroll or
+/// an affine register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
 #define DMA_FILL_HALFWORDS(n) ((DMA_ENABLE | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))

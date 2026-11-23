@@ -41,10 +41,10 @@ extern u32 gIncreaseItemAndLevel_Exits[];
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 
-// Edition-specific text and window layout values: outside Japanese the item
-// browser's details window is 28 tiles wide rather than 13, and its
-// MsgItemPlainName line is drawn as tiles (Text_DrawMessageAsTiles)
-// rather than into the window's canvas (Text_DrawMessage).
+/// Edition-specific text and window layout values: outside Japanese the item
+/// browser's details window is 28 tiles wide rather than 13, and its
+/// MsgItemPlainName line is drawn as tiles (Text_DrawMessageAsTiles)
+/// rather than into the window's canvas (Text_DrawMessage).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_DEBUG_DETAILS_WIDTH 28
 #define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessageAsTiles
@@ -57,8 +57,8 @@ extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 #define BROWSER_ROW_STEP 10     ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30    ///< R and L move thirty.
 
-// ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
-// changed (Scene_Initialize).
+/// ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
+/// changed (Scene_Initialize).
 #if TBS_PATCH_1
 #define LEVEL_EDITOR_SCALE (FIXED_ONE * 8 / 5)
 #else

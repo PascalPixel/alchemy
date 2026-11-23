@@ -167,6 +167,8 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 228);
 
 #define gBattleMenuWork                                                        \
   (*(struct BattleMenuWork **)&gHeapSlots[HEAP_SLOT_BATTLE_MENU])
+/// The animated cursor's frames, 16 by 16 at a byte a pixel
+/// (graphics/ui/sprite_cursors/spin).
 extern const u8 gMenu_AnimatedCursorTiles[];
 
 #endif

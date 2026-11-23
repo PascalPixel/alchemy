@@ -121,16 +121,16 @@ enum {
 // Edition-specific text and window layout values. Window positions and sizes
 // are in tiles, text positions in pixels.
 
-// The shop's Yes/No menu (shop_run.c): one column further left in German.
+/// The shop's Yes/No menu (shop_run.c): one column further left in German.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_CONFIRM_MENU_X 6
 #else
 #define SHOP_CONFIRM_MENU_X 7
 #endif
 
-// An item's price and the word after it in the price window that the buy,
-// sell and repair lists share (Shop_DrawItemPrice, shop_buy.c), in pixels:
-// French moves both 8 left, Spanish the word 8 right.
+/// An item's price and the word after it in the price window that the buy,
+/// sell and repair lists share (Shop_DrawItemPrice, shop_buy.c), in pixels:
+/// French moves both 8 left, Spanish the word 8 right.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_PRICE_NUMBER_X 24
 #define SHOP_PRICE_LABEL_X 64
@@ -142,9 +142,9 @@ enum {
 #define SHOP_PRICE_LABEL_X 72
 #endif
 
-// Where the item grid (Shop_DrawMemberItems, shop_sell.c), shared by the sell,
-// repair and drop screens and the equip prompt, writes MsgNoItems for a party
-// member with no items, in pixels.
+/// Where the item grid (Shop_DrawMemberItems, shop_sell.c), shared by the sell,
+/// repair and drop screens and the equip prompt, writes MsgNoItems for a party
+/// member with no items, in pixels.
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12
@@ -153,9 +153,9 @@ enum {
 #define SHOP_EMPTY_GRID_Y 20
 #endif
 
-// Outside Japan the coins window (ShopWork.moneyWindow) is a tile wider, and
-// every counter's item description (Shop_DrawMessage, shop_buy.c) is drawn as
-// tiles (Text_DrawMessageAsTilesFar) rather than into a text canvas.
+/// Outside Japan the coins window (ShopWork.moneyWindow) is a tile wider, and
+/// every counter's item description (Shop_DrawMessage, shop_buy.c) is drawn as
+/// tiles (Text_DrawMessageAsTilesFar) rather than into a text canvas.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_MONEY_WINDOW_WIDTH 12
 #define SHOP_DRAW_MESSAGE Text_DrawMessageAsTilesFar
@@ -164,8 +164,8 @@ enum {
 #define SHOP_DRAW_MESSAGE Text_DrawMessageFar
 #endif
 
-// The sanctum's fee window (shop_sanctum.c), wider for the German and French
-// text.
+/// The sanctum's fee window (shop_sanctum.c), wider for the German and French
+/// text.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define SANCTUM_PRICE_WINDOW_X 0
 #define SANCTUM_PRICE_WINDOW_WIDTH 30
@@ -177,8 +177,8 @@ enum {
 #define SANCTUM_PRICE_WINDOW_WIDTH 23
 #endif
 
-// The item picker's small window (shop_item_picker.c): two tiles wider, and two
-// further left, outside Japan.
+/// The item picker's small window (shop_item_picker.c): two tiles wider, and
+/// two further left, outside Japan.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_PICKER_WINDOW_X 14
 #define ITEM_PICKER_WINDOW_WIDTH 16
@@ -187,15 +187,16 @@ enum {
 #define ITEM_PICKER_WINDOW_WIDTH 14
 #endif
 
-// The x of the note below an item's name, in pixels: shop_buy.c and
-// shop_item_picker.c both draw it.
+/// The x of the note below an item's name, in pixels: shop_buy.c and
+/// shop_item_picker.c both draw it.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_ITEM_NOTE_X 0
 #else
 #define SHOP_ITEM_NOTE_X 8
 #endif
 
-// The quantity cursor's x, in pixels: shop_buy.c and shop_sell.c both place it.
+/// The quantity cursor's x, in pixels: shop_buy.c and shop_sell.c both place
+/// it.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_QUANTITY_CURSOR_X 120
 #else

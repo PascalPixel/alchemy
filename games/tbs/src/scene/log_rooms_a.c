@@ -3337,10 +3337,11 @@ static void LogRoomsA_StartActorStops(void) {
 }
 
 // clang-format off
-// A missing edge keeps both sentinel bytes; valid facings use the angle's high
-// byte.
+/// A missing edge keeps both sentinel bytes; valid facings use the angle's high
+/// byte.
 #define NO_CONNECTION {LOG_STOP_NONE, 255, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
+/// The route network's stops, each with its links to the others.
 struct LogRoomsAStop gLogRoomsA_Stops[LOG_STOP_COUNT] = {
     {4, 0, {0},
      {CONNECTION(1, FACING_EAST), CONNECTION(30, FACING_WEST), NO_CONNECTION}},
@@ -4000,7 +4001,6 @@ s32 *gLogRoomsA_LeaderRunsOn[] = {
     gLogRoomsA_SuspectRoundToEastBedFoot, gLogRoomsA_SuspectToMiddleBedFoot,
     gLogRoomsA_SuspectToWestBedFoot,      gLogRoomsA_SuspectRoundToWestBedHead,
 };
-
 s32 *gLogRoomsA_LeaderRunsBack[] = {
     gLogRoomsA_SuspectRoundToWestBedFoot, gLogRoomsA_SuspectToWestBedHead,
     gLogRoomsA_SuspectToMiddleBedHead,    gLogRoomsA_SuspectRoundToEastBedHead,

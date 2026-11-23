@@ -57,6 +57,7 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
+/// Unused: eight bytes before the logs' records that nothing reads.
 u8 gKolimaForestFloodgate_UnusedBeforeRecords[8] BSS_DATA;
 /// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
 struct FloodgateLog *gKolimaForestFloodgate_Logs BSS_DATA;
@@ -692,10 +693,10 @@ struct FloodgateLog gKolimaForestFloodgate_DefaultLogs[] = {
     {-1},
 };
 
+/// For each quarter turn of the way a log is pushed: its rolling animation, and
+/// the leader's step after it in pixels.
 u8 gKolimaForestFloodgate_PushAnimations[] = {2, 2, 3, 3};
-
 s8 gKolimaForestFloodgate_PushStepX[] = {8, 0, -8, 0};
-
 s8 gKolimaForestFloodgate_PushStepZ[] = {0, 8, 0, -8};
 
 struct SceneEntrance gKolimaForestFloodgateEntrances[] = {

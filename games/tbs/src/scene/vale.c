@@ -152,17 +152,17 @@ extern s32 gVale_GuardStepsBeforeTheDoor[];
 extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
 
-// Where Garet lands after his jump once Dora has gone in, at the roof's end
-// (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
-// editions.
+/// Where Garet lands after his jump once Dora has gone in, at the roof's end
+/// (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
+/// editions.
 #if TBS_PATCH_2
 #define VALE_GARET_REUNION_Z 829
 #else
 #define VALE_GARET_REUNION_Z 827
 #endif
 
-// Where Dora stands by the house in the opening and before the party leaves:
-// two pixels further north in the TBS_PATCH_4 editions.
+/// Where Dora stands by the house in the opening and before the party leaves:
+/// two pixels further north in the TBS_PATCH_4 editions.
 #if TBS_PATCH_4
 #define VALE_DORA_Z 887
 #else
@@ -3894,30 +3894,26 @@ struct Trigger gVale_TriggersAfterKalay[] = {
 };
 // clang-format on
 
-// The doors' cell animations, from the layout's cells below the village, each
-// picture shown for two frames; vale_prologue.c has the same four kinds.
-// Each table takes the name of a door it opens. The two of Jenna's
-// grandparents' kind and the west house's show their one open picture twice,
-// where the stormy night's show two.
-
+/// The doors' cell animations, from the layout's cells below the village, each
+/// picture shown for two frames; vale_prologue.c has the same four kinds.
+/// Each table takes the name of a door it opens. The two of Jenna's
+/// grandparents' kind and the west house's show their one open picture twice,
+/// where the stormy night's show two.
 u16 gVale_SanctumDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVale_IsaacsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVale_GrandparentsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVale_WestHouseDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),

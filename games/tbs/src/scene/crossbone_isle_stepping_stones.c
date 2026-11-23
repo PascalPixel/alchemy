@@ -738,8 +738,12 @@ struct PillarSlot {
   s32 flag;
 };
 
+/// The side room's four pillars.
 static struct PillarSlot sPillarSlots[4] ALIGNED(16);
+/// Where a moved pillar stands, tested against the map's collision.
 static struct FieldPosition sProbePosition;
+/// BG1 to BG3's scroll moved down to the stream's other level
+/// (CrossboneIsleSteppingStones_PrepareWaterScroll).
 static struct BgScroll sOtherWaterScroll[3];
 /// The percent chance that a line of the top WATER_DISSOLVE_LINES shows the
 /// other water level: 0 when the water starts to change, then a point higher
@@ -1678,7 +1682,6 @@ s32 gCrossboneIsleSteppingStones_IceShineScript[] = {
 u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[] = {
     MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
@@ -1687,7 +1690,6 @@ u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[] = {
 u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[] = {
     MAPGRID_ANIMATION_STEP(67, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(71, 34, 2, 5, 6), MAPGRID_ANIMATION_STEP(73, 34, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(71, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(67, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(65, 50, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };

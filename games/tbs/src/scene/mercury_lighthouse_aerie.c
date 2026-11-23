@@ -2036,6 +2036,7 @@ struct Trigger gMercuryLighthouseAerieTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The floating platform the leader has landed on, 0 when none.
 s32 gMercuryLighthouseAerie_LandedPlatform = 0;
 
 #include "shared/beacon_spark_script.c"

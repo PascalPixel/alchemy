@@ -203,7 +203,9 @@ s32 Party_AdjustCoins(s32 amount) {
     return value;                                                              \
   }
 
+/// Adds amount to the shop credit, kept from 0 to COIN_MAX.
 PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, holdings.shopCredit, COIN_MAX)
+/// Adds amount to the Game Tickets given, kept from 0 to SHOP_GIFTS_MAX.
 PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, holdings.shopGifts, SHOP_GIFTS_MAX)
 
 /// Writes the summons the party can call to output, in menu order, ending with

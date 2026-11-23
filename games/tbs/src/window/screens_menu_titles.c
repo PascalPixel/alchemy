@@ -117,6 +117,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
   }
 }
 
+/// The range icons' two sets of six, each a pair of tiles (16 words).
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16
@@ -387,9 +388,9 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
-// How the link timer's heading is drawn: Spanish and French at a pixel
-// offset (Text_DrawStringAtOffset), the others one tile a character
-// (Text_DrawStringInWindow).
+/// How the link timer's heading is drawn: Spanish and French at a pixel
+/// offset (Text_DrawStringAtOffset), the others one tile a character
+/// (Text_DrawStringInWindow).
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
 #define LINK_COUNTDOWN_DRAW_HEADING Text_DrawStringAtOffset
 #else

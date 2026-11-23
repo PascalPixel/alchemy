@@ -93,6 +93,7 @@
 #include "text/msg_ids.h"
 
 s32 gColosseumNavampaMatch_SleepFrame BSS_DATA ALIGNED(16);
+/// Unused: twelve bytes after the sleep frame that nothing reads.
 u8 gColosseumNavampaMatch_UnusedAfterSleepFrame[12] BSS_DATA;
 s16 gColosso_MarkerStep BSS_DATA;
 s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
@@ -1949,6 +1950,7 @@ const s8 gColosseumNavampaMatch_WallWedgeCycle[][6] = {
 };
 
 // clang-format off
+/// The way the long log rolls for each eighth of its rider's facing.
 const u16 gColosseumNavampaMatch_FacingAngles[] = {
     0, 0, FACING_SOUTH, FACING_WEST, FACING_WEST, FACING_WEST, FACING_NORTH, 0,
 };
@@ -2077,8 +2079,10 @@ struct ActorPlacement gColosseumNavampaMatchActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
+/// The Wall Wedge's step in its four-step piston cycle.
 s32 gColosseumNavampaMatch_WallWedgeStep = 0;
 
+/// The frames into the Wall Wedge's step, 0 to 17.
 u32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct Trigger gColosseumNavampaMatchTriggers[] = {

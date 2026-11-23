@@ -477,7 +477,9 @@ s32 Serial_StartReceive(void *destination) {
     }                                                                          \
   }
 
+/// Waits for the send in progress to finish.
 SERIAL_DEFINE_WAIT(Serial_WaitForSend, gSerialSendSource)
+/// Waits for the receive in progress to finish.
 SERIAL_DEFINE_WAIT(Serial_WaitForReceive, gSerialReceiveDestination)
 
 /// Waits until both the send and the receive have finished, giving up after

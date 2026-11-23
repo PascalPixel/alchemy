@@ -57,6 +57,7 @@ void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
     Task_Remove(update);                                                       \
   }
 
+/// Releases the top row's four figures and removes their task.
 DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
                              DjinnFigures_UpdateAllPositions)
 
@@ -216,6 +217,7 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
   return 1;
 }
 
+/// Releases the bottom row's four figures and removes their task.
 DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseBottomRow,
                              DjinnFigures_UpdateBottomRow)
 

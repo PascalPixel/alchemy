@@ -477,20 +477,30 @@ TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtOuranos,
 TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
                                256, 640, 264, 600, 242, 604, 232, 272)
 
+/// The four strokes' phases, which the oars at the sides follow (65,536 to a
+/// turn).
 static u16 sStrokePhase[4] ALIGNED(16);
 
+/// The deck's rocking up and down (65,536 to a turn).
 static s32 sRockAngleY;
 UNUSED static s32 sUnusedAfterRockY; ///< never used; keeps the statics' layout
 
+/// Each oar's angle in its swing (65,536 to a turn).
 static u16 sOarAngle[8];
 
+/// The sea layer's scroll across and down, 16.16 pixels within
+/// TOLBI_SHIP_DECK_SEA_WRAP.
 static s32 sSeaScroll[2];
 
+/// The deck's rocking from side to side (65,536 to a turn).
 static s32 sRockAngleX;
 UNUSED static s32 sUnusedAfterRockX; ///< never used; keeps the statics' layout
 
+/// How fast the sea scrolls across and down, 16.16 pixels a frame.
 static s32 sSeaSpeed[2];
 
+/// The eight oars' strokes (TolbiShipDeck_ChooseOarStrokes) and the z each
+/// swings about, in 16.16.
 // The oar strokes and depths come after the file's other statics, the strokes
 // on a 16-byte boundary.
 static u32 sOarStroke[8] __attribute__((aligned(16)));
@@ -607,9 +617,11 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
     return 1;                                                                  \
   }
 
+/// A monster on deck leaping at Ouranos.
 TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtOuranos, ACTOR_SEA_OURANOS, 264,
                         662, FACING_NORTH_NORTHWEST, FACING_SOUTH_SOUTHWEST,
                         252, 646, 256, 686)
+/// A monster on deck leaping at Sean.
 TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
                         FACING_NORTH_NORTHEAST, FACING_EAST, 184, 672, 202, 692)
 
@@ -2141,6 +2153,7 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
   return 0;
 }
 
+/// The sea's pattern repeats every 32 pixels, where its scroll wraps.
 #define TOLBI_SHIP_DECK_SEA_WRAP toFIXED(32)
 
 /// The task that rocks the deck while under sail.

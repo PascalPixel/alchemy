@@ -42,12 +42,16 @@
    (position) = ((position) + 1) & TEXT_BUFFER_MASK)
 
 // Edition-specific text and window layout values.
+/// The possessives an item's name can take: two in Spanish, four in the other
+/// languages.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define ITEM_POSSESSIVE_TEXT_COUNT 2
 #else
 #define ITEM_POSSESSIVE_TEXT_COUNT 4
 #endif
 
+/// The space written between a message's arguments: a plain space in the
+/// European editions.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TEXT_ARGUMENT_SPACE ' '
@@ -55,6 +59,7 @@
 #define TEXT_ARGUMENT_SPACE 143
 #endif
 
+/// A space's width in sprite text, in pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define WINDOW_SPRITE_SPACE_WIDTH 7
 #else
@@ -67,7 +72,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
-// WindowWork owns three messages, each with four line gaps.
+/// WindowWork owns three messages, each with four line gaps.
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4 ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_COLOR                                                     \
@@ -76,7 +81,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 /// The pixels a line of text takes in a window fitted to it.
 #define TEXT_LINE_HEIGHT 15
 
-// Window animation lengths.
+/// Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
 #define WINDOW_CLOSE_FRAMES 4
 
@@ -140,8 +145,8 @@ enum {
   TEXT_INVERTED_QUESTION_MARK = 191     ///< ¿, outside Japanese
 };
 
-// The kana mark drawn with a character, in the top two bits of its code (the
-// index into gFont_MarkGlyphCodes).
+/// The kana mark drawn with a character, in the top two bits of its code (the
+/// index into gFont_MarkGlyphCodes).
 #define TEXT_CODE_MARK_SHIFT 14
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)

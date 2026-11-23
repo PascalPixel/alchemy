@@ -94,7 +94,7 @@ void Party_EndChildhoodFar(void);
 s32 Djinn_GiveToPartyFar(s32 element, s32 djinn);
 s32 Party_SumDjinnCountsFar(s32 index);
 /// Adds `amount` to the shop credit purchases build up and Game Tickets spend,
-/// kept between 0 and COINS_MAX, and returns the new credit.
+/// kept between 0 and COIN_MAX, and returns the new credit.
 s32 Party_AdjustShopCreditFar(s32 amount);
 /// Adds `amount` to the count of Game Tickets given, which stops at
 /// SHOP_GIFTS_MAX and picks the next ticket's credit cost, and returns the new

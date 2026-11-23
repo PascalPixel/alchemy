@@ -31,7 +31,7 @@
 #define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
 #define BLADE_LAST_FRAME 39
 #define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
-#define RESULTS_FRAME 40
+#define RESULT_FRAME 40
 
 /// A huge flaming blade swings down over the targets and light bursts over
 /// them twice.
@@ -111,7 +111,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     if (frame == 18) {
       Sound_PlayFar(SE_CRASH);
     }
-    if (frame == RESULTS_FRAME) {
+    if (frame == RESULT_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
@@ -272,4 +272,4 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 #undef BLADE_HOLD_FRAME
 #undef BLADE_LAST_FRAME
 #undef FIRST_STRIKE_FRAME
-#undef RESULTS_FRAME
+#undef RESULT_FRAME

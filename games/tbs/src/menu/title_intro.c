@@ -85,11 +85,11 @@ struct IntroWork {
 /// The intro's pictures unpack one after the other: the clouds, 33 rows of
 /// tiles in 16 colours, then the peak, 28 rows in 256 colours, each row a
 /// screen wide.
-#define CLOUDS_ROWS 33
-#define CLOUDS_ROW_BYTES (DISPLAY_TILE_WIDTH * TILE_SIZE_4BPP)
+#define CLOUD_ROWS 33
+#define CLOUD_ROW_BYTES (DISPLAY_TILE_WIDTH * TILE_SIZE_4BPP)
 #define PEAK_ROW_BYTES (DISPLAY_TILE_WIDTH * TILE_SIZE_8BPP)
-#define CLOUDS_ROW(row) (Ram_MapGridCellBuffer + (row) * CLOUDS_ROW_BYTES)
-#define PEAK_ROW(row) (CLOUDS_ROW(CLOUDS_ROWS) + (row) * PEAK_ROW_BYTES)
+#define CLOUD_ROW(row) (Ram_MapGridCellBuffer + (row) * CLOUD_ROW_BYTES)
+#define PEAK_ROW(row) (CLOUD_ROW(CLOUD_ROWS) + (row) * PEAK_ROW_BYTES)
 
 /// Each picture keeps 21 rows of tiles in VRAM, the screen's 20 and the one
 /// coming into view, and its map's 32 rows wrap round them: map row
@@ -97,8 +97,8 @@ struct IntroWork {
 #define INTRO_VRAM_ROWS (DISPLAY_TILE_HEIGHT + 1)
 #define INTRO_FIRST_MAP_ROW (INTRO_SCROLL_START / 8 - 1)
 /// The peak's first tile, after the clouds' in character block 0; it is blank.
-#define PEAK_FIRST_TILE (INTRO_VRAM_ROWS * CLOUDS_ROW_BYTES / TILE_SIZE_8BPP)
-#define CLOUDS_VRAM_ROW(row) INTRO_BACK_TILE((row) * DISPLAY_TILE_WIDTH)
+#define PEAK_FIRST_TILE (INTRO_VRAM_ROWS * CLOUD_ROW_BYTES / TILE_SIZE_8BPP)
+#define CLOUD_VRAM_ROW(row) INTRO_BACK_TILE((row) * DISPLAY_TILE_WIDTH)
 #define PEAK_VRAM_ROW(row)                                                     \
   INTRO_FRONT_TILE(PEAK_FIRST_TILE + (row) * DISPLAY_TILE_WIDTH)
 /// The peak's top stands this many rows down the map, below the clouds' top.
@@ -278,8 +278,8 @@ void Title_LoadIntroBackgrounds(void) {
   BG_PLTT[0] = 0;
   resourceData += BG_PLTT_SIZE;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
-  Dma_Set(CLOUDS_ROW(INTRO_FIRST_MAP_ROW), CLOUDS_VRAM_ROW(0),
-          DMA_COPY_HALFWORDS(INTRO_VRAM_ROWS * CLOUDS_ROW_BYTES / 2), REG_DMA3);
+  Dma_Set(CLOUD_ROW(INTRO_FIRST_MAP_ROW), CLOUD_VRAM_ROW(0),
+          DMA_COPY_HALFWORDS(INTRO_VRAM_ROWS * CLOUD_ROW_BYTES / 2), REG_DMA3);
   Dma_Set(PEAK_ROW(INTRO_FIRST_MAP_ROW - PEAK_MAP_ROW), PEAK_VRAM_ROW(0),
           DMA_COPY_HALFWORDS(INTRO_VRAM_ROWS * PEAK_ROW_BYTES / 2), REG_DMA3);
 
@@ -459,11 +459,11 @@ s32 Title_ShowIntro(s32 prompt) {
         gBgScroll[1].y--;
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
-          Dma_Set(CLOUDS_ROW(INTRO_FIRST_MAP_ROW - 1) -
-                      work->backRows * CLOUDS_ROW_BYTES,
-                  CLOUDS_VRAM_ROW(INTRO_VRAM_ROWS - 1) -
-                      work->backRows * CLOUDS_ROW_BYTES,
-                  DMA_COPY_HALFWORDS(CLOUDS_ROW_BYTES / 2), REG_DMA3);
+          Dma_Set(CLOUD_ROW(INTRO_FIRST_MAP_ROW - 1) -
+                      work->backRows * CLOUD_ROW_BYTES,
+                  CLOUD_VRAM_ROW(INTRO_VRAM_ROWS - 1) -
+                      work->backRows * CLOUD_ROW_BYTES,
+                  DMA_COPY_HALFWORDS(CLOUD_ROW_BYTES / 2), REG_DMA3);
           work->backRows++;
           frameCount = work->frameCount;
         }

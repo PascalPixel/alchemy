@@ -1,11 +1,12 @@
 /// @file
 /// Lemuria's palace. From the city's avenue the party comes into the entrance
 /// hall, whose west door opens on a room of dressers and whose east door opens
-/// on the barracks. The palace's upper door leads to the throne room, where a
-/// guard stops Felix before King Hydros; then the king, Lunpa and Lord
-/// Conservato receive the party and show it two glowing maps, the ancient
-/// world and the one Lunpa had. A bedroom, entered from the top of the city,
-/// has a door to a small room with a painting.
+/// on the barracks. Two stairs at the back of the hall lead up into the throne
+/// room, where a guard stops Felix before King Hydros; then the king, Lunpa and
+/// Lord Conservato receive the party and show it two glowing maps, the ancient
+/// world and the one Lunpa had. Stairs either side of the throne climb to a
+/// room with a painting, whose passage south leads to a bedroom also entered
+/// from the top of the city.
 
 #include "flags.h"
 #include "shared/tables.h"
@@ -65,12 +66,24 @@ enum LemuriaPalaceActorId {
   ACTOR_KRADEN
 };
 
-/// The doors Felix opens by walking into them, by their exits: the entrance
-/// hall's west and east doors, and the door in the north wall of the bedroom.
-enum LemuriaPalaceDoorExit {
-  EXIT_WEST_DOOR = 2,
-  EXIT_EAST_DOOR = 3,
-  EXIT_BEDROOM_DOOR = 16,
+/// The ways between the palace's rooms, each an exit and the entrance beside
+/// it, in pairs: each way leads to its partner's entrance and back. The hall's
+/// doors and the bedroom's open as Felix walks into them.
+enum LemuriaPalaceWay {
+  WAY_HALL_WEST_DOOR = 2,         ///< to the dresser room's door
+  WAY_HALL_EAST_DOOR = 3,         ///< to the barracks' door
+  WAY_HALL_WEST_STAIRS = 4,       ///< up to the throne room's south-west corner
+  WAY_HALL_EAST_STAIRS = 5,       ///< up to the throne room's south-east corner
+  WAY_DRESSER_ROOM_DOOR = 6,      ///< to the hall's west door
+  WAY_BARRACKS_DOOR = 7,          ///< to the hall's east door
+  WAY_THRONE_ROOM_SOUTH_WEST = 8, ///< down the hall's west stairs
+  WAY_THRONE_ROOM_SOUTH_EAST = 9, ///< down the hall's east stairs
+  WAY_THRONE_ROOM_WEST_STAIRS = 11,   ///< up to the painting room's west side
+  WAY_THRONE_ROOM_EAST_STAIRS = 12,   ///< up to the painting room's east side
+  WAY_PAINTING_ROOM_WEST_STAIRS = 13, ///< down to the throne room's west
+  WAY_PAINTING_ROOM_EAST_STAIRS = 14, ///< down to the throne room's east
+  WAY_PAINTING_ROOM_PASSAGE = 15,     ///< south to the bedroom's door
+  WAY_BEDROOM_DOOR = 16,              ///< north to the painting room
 };
 
 /// The cells before the throne where the guard stops Felix
@@ -85,9 +98,16 @@ enum { CELL_BEHAVIOR_BEFORE_THRONE = 20 };
 #define GLOW_COLOR 15
 #define GLOW_STEPS 12
 
+/// What LemuriaPalace_DrawMaps does with the maps' blend each frame.
+enum LemuriaPalaceMapMode {
+  MAP_MODE_HELD,      ///< leaves it as the fades set it
+  MAP_MODE_SHIMMER,   ///< the shown map dims a little and back, now and then
+  MAP_MODE_ALTERNATE, ///< the two maps fade into each other, back and forth
+};
+
 /// The maps' pictures, 64 by 64 pixels of 256 colours each.
 #define MAP_PICTURE_BYTES (64 * 64)
-/// The steps of gLemuriaPalace_MapFadeLevels the shown map flickers through,
+/// The steps of gLemuriaPalace_MapFadeLevels the shown map shimmers through,
 /// eight frames apiece.
 #define MAP_FADE_STEPS 16
 /// The steps of gLemuriaPalace_MapBlendSteps, four frames apiece: the first map
@@ -134,13 +154,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// through. The entrance hall's west door, cell (5, 23), leads to a room of
 /// dressers where an old woman stands; its east door, cell (30, 23), to the
 /// barracks with their beds and barrel; and the door in the north wall of the
-/// bedroom, cell (56, 4), to a small room with a painting.
+/// bedroom, cell (56, 4), to the passage up to the room with a painting.
 void LemuriaPalace_EnterDoor(s32 exit) {
   const struct MapGridCellAnimation *door = gLemuriaPalace_Doors;
 
-  if (exit == EXIT_EAST_DOOR)
+  if (exit == WAY_HALL_EAST_DOOR)
     door++;
-  if (exit == EXIT_BEDROOM_DOOR)
+  if (exit == WAY_BEDROOM_DOOR)
     door = &gLemuriaPalace_BedroomDoor;
   Leader_OpenDoorAndEnter(door, exit, 0);
 }
@@ -176,7 +196,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_VBLANK);
   FieldActor_SetSpritePriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
-  if (gMainRoutineWork.entrance == 6)
+  if (gMainRoutineWork.entrance == WAY_DRESSER_ROOM_DOOR)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag(FLAG_MET_KING_HYDROS)) {
@@ -221,19 +241,20 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
 
 extern u16 gLemuriaPalace_MapBlendSteps[];
 
-/// A task: draws the maps the hall shows, fading between them by the map mode
-/// (1, the fade level by frame; 2, the cross-fade that flickers between them).
+/// A task: draws the two maps floating above the throne room as they are
+/// shown, blending them by gLemuriaPalace_MapMode. Each time the alternation
+/// turns to a map, a chime sounds.
 void LemuriaPalace_DrawMaps(void) {
   struct Vector3 position;
   s8 mode = gLemuriaPalace_MapMode;
 
-  if (mode == 1) {
+  if (mode == MAP_MODE_SHIMMER) {
     s32 level = gLemuriaPalace_MapFadeLevels[(gLemuriaPalace_MapTime >> 3) &
                                              (MAP_FADE_STEPS - 1)];
 
     Io_Write16(level << 8 | (BLEND_WEIGHT_MAX - level), &REG_BLDALPHA);
     gLemuriaPalace_MapTime++;
-  } else if (mode == 2) {
+  } else if (mode == MAP_MODE_ALTERNATE) {
     s32 *time = &gLemuriaPalace_MapTime;
     s32 step = (*time >> 2) % MAP_BLEND_STEPS;
 
@@ -310,7 +331,7 @@ void LemuriaPalace_LoadMaps(void) {
   gLemuriaPalace_FirstMapShown = 0;
   gLemuriaPalace_SecondMapShown = 0;
   gLemuriaPalace_MapTime = 0;
-  gLemuriaPalace_MapMode = 0;
+  gLemuriaPalace_MapMode = MAP_MODE_HELD;
   Task_AddFrame(LemuriaPalace_DrawMaps, TASK_PASS_FRAME);
   Heap_Release(buffer);
 }
@@ -331,41 +352,40 @@ static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
     Blend_WriteAlpha(value);                                                   \
   } while (0)
 
-/// Fades the shown map in over 16 steps of four frames.
+/// Fades the shown map in over 16 steps of four frames, then lets it shimmer.
 void LemuriaPalace_FadeMapsIn(void) {
   s32 i;
 
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
-  gLemuriaPalace_MapMode = 0;
+  gLemuriaPalace_MapMode = MAP_MODE_HELD;
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
     BLEND_SET_ALPHA(BLEND_ALPHA(i, BLEND_WEIGHT_MAX - i));
     System_Wait(4);
   }
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
-  gLemuriaPalace_MapMode = 1;
+  gLemuriaPalace_MapMode = MAP_MODE_SHIMMER;
 }
 
-/// The reverse fade, in steps of three frames.
+/// Fades the shown map out over 16 steps of three frames.
 void LemuriaPalace_FadeMapsOut(void) {
   s32 i;
 
   BLEND_SET_ALPHA(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0));
-  gLemuriaPalace_MapMode = 0;
+  gLemuriaPalace_MapMode = MAP_MODE_HELD;
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
     BLEND_SET_ALPHA((i << 8) | (BLEND_WEIGHT_MAX - i));
     System_Wait(3);
   }
   BLEND_SET_ALPHA(BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
 }
-
-void Event_Start();
+#undef BLEND_SET_ALPHA
 
 /// Felix walks up the throne room towards King Hydros, cells (53, 35) and
 /// (54, 35), the first time: the guard steps in front of him, "You are Lord
 /// Felix, correct?" Answered no, the guard sends the party back. Answered yes,
 /// he steps aside, and King Hydros and his council receive the warriors Piers
 /// spoke of.
-s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
+s32 LemuriaPalace_MeetKingHydros(void) {
   s32 answer, frame, framesLeft;
   struct Actor *target;
 
@@ -382,7 +402,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   if (answer != 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 4);
-    // "Then you have no business here! His Majesty is involved in a most..."
+    // No: "Then you have no business here! His Majesty is involved in a..."
     Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 5);
     Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
     Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
@@ -397,6 +417,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_SetFlag(FLAG_MET_KING_HYDROS);
   Event_SetFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE);
   Party_AddMember(PIERS);
+  // Flattened out of sight until Lunpa brings it out.
   Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = 0;
   Actor_FaceDirection(ACTOR_LUNPA, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_HYDROS, 0.7);
@@ -412,6 +433,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_HYDROS, 3);
   Event_Wait(10);
+  // Yes: past the guard's "Then you have no business here!"
   gFieldWork->message = (gFieldWork->message) + 1;
   // "It would seem the warriors of which you spoke have arrived."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HYDROS, 0, 5);
@@ -666,7 +688,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   LemuriaPalace_FadeMapsOut();
   Event_Wait(10);
   gLemuriaPalace_MapTime = 0;
-  gLemuriaPalace_MapMode = 2;
+  gLemuriaPalace_MapMode = MAP_MODE_ALTERNATE;
   Event_Wait(150);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
@@ -701,6 +723,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Event_Wait(10);
   LemuriaPalace_CastMapSparks(ACTOR_HYDROS);
   Event_PlaySound(SE_HIGH_JUMP);
+  // Waits, two seconds at most, for the alternation to come round to a map.
   for (frame = 0; frame < 120; frame++) {
     wait(1);
     if ((gLemuriaPalace_MapTime >> 2) % (MAP_BLEND_STEPS / 2) == 0)
@@ -826,16 +849,19 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Actor_FaceDirectionAndWait(ACTOR_CONSERVATO, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_CONSERVATO, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "What!? Have you any idea what will happen if you set that evil loose
+  // upon the world again?"
   Event_OpenMessage(ACTOR_CONSERVATO, 0);
   if (!Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     Event_Wait(15);
-    // "You know that it could bring about the destruction of the world,..."
+    // Yes: "You know that it could bring about the destruction of the..."
     Event_ShowMessageThenWait(ACTOR_CONSERVATO, 0, 5);
     gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     Event_Wait(35);
     gFieldWork->message = (gFieldWork->message) + 1;
-    // "When the four beacons are fired, Alchemy will be released, and our..."
+    // No: "When the four beacons are fired, Alchemy will be released, and
+    // our..."
     Event_ShowMessageThenWait(ACTOR_CONSERVATO, 0, 5);
   }
   Actor_FaceDirectionAndWait(ACTOR_CONSERVATO, FACING_WEST);
@@ -1005,6 +1031,7 @@ s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   Actor_RunRepeatedMotion(ACTOR_LUNPA, 2);
   Event_Wait(10);
   Actor_Jump(ACTOR_LUNPA, 4, 20);
+  // What Lunpa brings out grows to its height over 16 frames.
   framesLeft = 15;
   do {
     Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY += FIXED_ONE / 16;
@@ -1196,23 +1223,40 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(LemuriaPalace),
-    SCENE_EXIT_UNLESS(1, Lemuria, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, LemuriaPalace, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LemuriaPalace, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LemuriaPalace, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, LemuriaPalace, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, LemuriaPalace, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, LemuriaPalace, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, LemuriaPalace, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, LemuriaPalace, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, Lemuria, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, LemuriaPalace, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, LemuriaPalace, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, LemuriaPalace, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, LemuriaPalace, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, LemuriaPalace, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, LemuriaPalace, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(17, Lemuria, 17, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_PALACE_TO_LEMURIA_SOUTH, Lemuria,
+                      LEMURIA_FROM_LEMURIA_PALACE_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HALL_WEST_DOOR, LemuriaPalace, WAY_DRESSER_ROOM_DOOR,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HALL_EAST_DOOR, LemuriaPalace, WAY_BARRACKS_DOOR,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HALL_WEST_STAIRS, LemuriaPalace,
+                      WAY_THRONE_ROOM_SOUTH_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HALL_EAST_STAIRS, LemuriaPalace,
+                      WAY_THRONE_ROOM_SOUTH_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_DRESSER_ROOM_DOOR, LemuriaPalace, WAY_HALL_WEST_DOOR,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_BARRACKS_DOOR, LemuriaPalace, WAY_HALL_EAST_DOOR,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_THRONE_ROOM_SOUTH_WEST, LemuriaPalace,
+                      WAY_HALL_WEST_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_THRONE_ROOM_SOUTH_EAST, LemuriaPalace,
+                      WAY_HALL_EAST_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_PALACE_TO_LEMURIA_NORTHEAST, Lemuria,
+                      LEMURIA_FROM_LEMURIA_PALACE_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_THRONE_ROOM_WEST_STAIRS, LemuriaPalace,
+                      WAY_PAINTING_ROOM_WEST_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_THRONE_ROOM_EAST_STAIRS, LemuriaPalace,
+                      WAY_PAINTING_ROOM_EAST_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_PAINTING_ROOM_WEST_STAIRS, LemuriaPalace,
+                      WAY_THRONE_ROOM_WEST_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_PAINTING_ROOM_EAST_STAIRS, LemuriaPalace,
+                      WAY_THRONE_ROOM_EAST_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_PAINTING_ROOM_PASSAGE, LemuriaPalace,
+                      WAY_BEDROOM_DOOR, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_BEDROOM_DOOR, LemuriaPalace,
+                      WAY_PAINTING_ROOM_PASSAGE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_PALACE_TO_LEMURIA_NORTH, Lemuria,
+                      LEMURIA_FROM_LEMURIA_PALACE_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -1236,8 +1280,7 @@ struct ActorPlacement gActorPlacements[] = {
 // clang-format on
 
 // clang-format off
-/// The palace doors' cell animations: a narrow door's, then a wide door's.
-/// How a door opens, as two frames of cells copied over the closed door.
+/// How a palace door opens, as two frames of cells copied over the closed door.
 u16 gLemuriaPalace_DoorOpening[] = {
     MAPGRID_ANIMATION_STEP(1, 52, 1, 2, 6),
     MAPGRID_ANIMATION_STEP(2, 52, 1, 2, 6),
@@ -1260,23 +1303,23 @@ struct MapGridCellAnimation gLemuriaPalace_BedroomDoor = {
     gLemuriaPalace_DoorOpening, 56, 4};
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_WEST_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_EAST_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_BEDROOM_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
-    {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
+    {TRIGGER_EXIT, LEMURIA_PALACE_TO_LEMURIA_SOUTH, CONDITION_ALWAYS, LEMURIA_PALACE_TO_LEMURIA_SOUTH},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), WAY_HALL_WEST_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), WAY_HALL_EAST_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {TRIGGER_EXIT, WAY_HALL_WEST_STAIRS, CONDITION_ALWAYS, WAY_HALL_WEST_STAIRS},
+    {TRIGGER_EXIT, WAY_HALL_EAST_STAIRS, CONDITION_ALWAYS, WAY_HALL_EAST_STAIRS},
+    {TRIGGER_EXIT, WAY_DRESSER_ROOM_DOOR, CONDITION_ALWAYS, WAY_DRESSER_ROOM_DOOR},
+    {TRIGGER_EXIT, WAY_BARRACKS_DOOR, CONDITION_ALWAYS, WAY_BARRACKS_DOOR},
+    {TRIGGER_EXIT, WAY_THRONE_ROOM_SOUTH_WEST, CONDITION_ALWAYS, WAY_THRONE_ROOM_SOUTH_WEST},
+    {TRIGGER_EXIT, WAY_THRONE_ROOM_SOUTH_EAST, CONDITION_ALWAYS, WAY_THRONE_ROOM_SOUTH_EAST},
+    {TRIGGER_EXIT, LEMURIA_PALACE_TO_LEMURIA_NORTHEAST, CONDITION_ALWAYS, LEMURIA_PALACE_TO_LEMURIA_NORTHEAST},
+    {TRIGGER_EXIT, WAY_THRONE_ROOM_WEST_STAIRS, CONDITION_ALWAYS, WAY_THRONE_ROOM_WEST_STAIRS},
+    {TRIGGER_EXIT, WAY_THRONE_ROOM_EAST_STAIRS, CONDITION_ALWAYS, WAY_THRONE_ROOM_EAST_STAIRS},
+    {TRIGGER_EXIT, WAY_PAINTING_ROOM_WEST_STAIRS, CONDITION_ALWAYS, WAY_PAINTING_ROOM_WEST_STAIRS},
+    {TRIGGER_EXIT, WAY_PAINTING_ROOM_EAST_STAIRS, CONDITION_ALWAYS, WAY_PAINTING_ROOM_EAST_STAIRS},
+    {TRIGGER_EXIT, WAY_PAINTING_ROOM_PASSAGE, CONDITION_ALWAYS, WAY_PAINTING_ROOM_PASSAGE},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), WAY_BEDROOM_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {TRIGGER_EXIT, LEMURIA_PALACE_TO_LEMURIA_NORTH, CONDITION_ALWAYS, LEMURIA_PALACE_TO_LEMURIA_NORTH},
     {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_THRONE, FLAG_MET_KING_HYDROS, EVENT(LemuriaPalace_MeetKingHydros)},
     {TRIGGER_TALK, ACTOR_GIRL_WAITING_ON_THE_KING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceLordConservatoSeemedVeryAngry)},
     {TRIGGER_TALK, ACTOR_WOMAN_SHOWING_THE_WAY, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceBothLordConservatoAndKing)},
@@ -1323,7 +1366,6 @@ s16 gLemuriaPalace_GlowColors[] = {
     RGB(0, 16, 26), RGB(0, 18, 27), RGB(0, 20, 28), RGB(0, 22, 29),
 };
 // clang-format on
-#undef BLEND_SET_ALPHA
 
 /// The blend weights the hall's two maps flicker between as one fades into
 /// the other.

@@ -22,10 +22,10 @@ s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
 
 /// Returns 1 for an item that is not a weapon or armor, and for those whether
 /// the character can equip it.
-s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
-  if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE)
+s32 Item_IsCompatibleWithUnit(s32 unitId, s32 itemId) {
+  if (Item_GetEquipmentGroup(itemId) == EQUIPMENT_GROUP_NONE)
     return 1;
-  return Item_CanUnitEquipDirect(unit, item);
+  return Item_CanUnitEquipDirect(unitId, itemId);
 }
 
 /// Returns what kind of thing an item is, an enum EquipmentGroup.
@@ -72,8 +72,7 @@ s32 Inventory_Count(s32 unitId) {
   return count;
 }
 
-/// Returns 1 when the selected character or any party member has a free
-/// inventory slot.
+/// Returns 1 when the leader or any party member has a free inventory slot.
 s32 PartyInventory_HasSpace(void) {
   s16 unitIds[10];
   s32 unitCount;
@@ -104,9 +103,9 @@ s32 PartyInventory_CountFreeSlots(void) {
   return freeSlots;
 }
 
-/// Gives a unit one item, joining its first matching stack (up to 30) or taking
-/// the first free slot. A full matching stack fails immediately, even if
-/// another slot is free.
+/// Gives a unit one item, joining its first matching stack (up to
+/// INVENTORY_STACK_MAX) or taking the first free slot, and returns the slot, or
+/// -1. A full matching stack fails at once, even if another slot is free.
 s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   const struct ItemDefinition *item = Item_GetDirect(itemId);
@@ -173,7 +172,7 @@ s32 Inventory_Find(s32 unitId, s32 itemId) {
   return -1;
 }
 
-/// Returns who carries `itemId`, asking the selected character first, or -1.
+/// Returns who carries `itemId`, asking the leader first, or -1.
 s32 PartyInventory_FindMember(s32 itemId) {
   s16 unitIds[10];
   s32 unitCount;
@@ -194,9 +193,8 @@ s32 PartyInventory_FindMember(s32 itemId) {
 }
 
 /// Equips the item in `slot`, clearing the equipped bit of the item of the same
-/// type it replaces. Psynergy items may coexist. Recomputes the unit's Psynergy
-/// and stats. Returns 0, -1 when the unit cannot equip it, or -2 when the item
-/// it would replace is cursed on.
+/// type it replaces; any number of Psynergy items may be equipped. Recomputes
+/// the unit's Psynergy and stats. Returns an enum InventoryEquipResult.
 s32 Inventory_Equip(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
@@ -205,9 +203,9 @@ s32 Inventory_Equip(s32 unitId, s32 slot) {
   s32 equippedSlot;
 
   if (Item_CanUnitEquipDirect(unitId, inventoryEntry) == 0)
-    return -1;
+    return INVENTORY_EQUIP_REFUSED;
   if (inventoryEntry & INVENTORY_EQUIPPED)
-    return 0;
+    return INVENTORY_EQUIP_DONE;
 
   item = Item_GetDirect(inventoryEntry);
   type = item->type;
@@ -222,7 +220,7 @@ s32 Inventory_Equip(s32 unitId, s32 slot) {
     if (equippedSlot != INVENTORY_SLOTS) {
       item = Item_GetDirect(unit->inventory[equippedSlot]);
       if (item->flags & ITEM_CANNOT_UNEQUIP)
-        return -2;
+        return INVENTORY_EQUIP_STUCK;
       unit->inventory[equippedSlot] &= (u16)~INVENTORY_EQUIPPED;
     }
   }
@@ -230,25 +228,25 @@ s32 Inventory_Equip(s32 unitId, s32 slot) {
   unit->inventory[slot] |= INVENTORY_EQUIPPED;
   Unit_RefreshPsynergy(unitId);
   Unit_Calculate(unitId);
-  return 0;
+  return INVENTORY_EQUIP_DONE;
 }
 
 /// Returns the slot of the equipped item of `type`, or -1.
 s32 Inventory_FindEquipped(s32 unitId, s32 type) {
-  struct Unit *base = Unit_Get(unitId);
-  s32 index;
+  struct Unit *unit = Unit_Get(unitId);
+  s32 slot;
   const struct ItemDefinition *item;
 
-  for (index = 0; index < INVENTORY_SLOTS; index++) {
-    if (base->inventory[index] & INVENTORY_EQUIPPED) {
-      item = Item_GetDirect(base->inventory[index]);
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+    if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
+      item = Item_GetDirect(unit->inventory[slot]);
       if (item->type == type)
         break;
     }
   }
-  if (index == INVENTORY_SLOTS)
-    index = -1;
-  return index;
+  if (slot == INVENTORY_SLOTS)
+    slot = -1;
+  return slot;
 }
 
 /// Returns the definition of the unit's equipped item of `type`, or NULL.
@@ -290,12 +288,12 @@ s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
 /// until something rebuilds it.
 s32 Inventory_Remove(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
-  u16 item = unit->inventory[slot];
+  u16 entry = unit->inventory[slot];
   s32 result = INVENTORY_REMOVE_EMPTY_SLOT;
 
-  if (item != 0) {
-    if (item & INVENTORY_QUANTITY_MASK) {
-      unit->inventory[slot] = item - INVENTORY_QUANTITY_STEP;
+  if (entry != 0) {
+    if (entry & INVENTORY_QUANTITY_MASK) {
+      unit->inventory[slot] = entry - INVENTORY_QUANTITY_STEP;
       result = INVENTORY_REMOVE_ONE;
     } else {
       unit->inventory[slot] = 0;
@@ -307,8 +305,8 @@ s32 Inventory_Remove(s32 unitId, s32 slot) {
   return result;
 }
 
-/// Removes one item as Inventory_Remove does, and puts a rare item back into
-/// circulation (its counter goes up by one) for the shops to sell.
+/// Removes one item as Inventory_Remove does, and gives the shops' Artifacts
+/// one more of it to sell, if they keep a stock of it.
 s32 Inventory_Discard(s32 unitId, s32 slot) {
   s32 item = Unit_Get(unitId)->inventory[slot];
   s32 removalResult = Inventory_Remove(unitId, slot);
@@ -320,24 +318,24 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
   return removalResult;
 }
 
-/// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
-/// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
+/// Returns whether the item in `slot` may be dropped or sold, an enum
+/// InventoryDiscardCheck.
 s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   const struct ItemDefinition *item = Item_GetDirect(itemId);
 
   if (itemId == 0) {
-    return -1;
+    return INVENTORY_DISCARD_EMPTY_SLOT;
   }
   if ((item->flags & ITEM_INDISPENSABLE) != 0) {
-    return -4;
+    return INVENTORY_DISCARD_INDISPENSABLE;
   }
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
       (item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
-    return -3;
+    return INVENTORY_DISCARD_STUCK;
   }
-  return 0;
+  return INVENTORY_DISCARD_ALLOWED;
 }
 
 /// Removes one `itemId` from whoever carries it first; always returns 0.
@@ -381,30 +379,30 @@ s32 Inventory_Repair(s32 unitId, s32 slot) {
   return 0;
 }
 
-/// Returns how the action an item performs when used picks its targets. Only
+/// Returns how the ability an item uses picks its targets. Only
 /// game.s's bare veneer reaches it; nothing calls it by name.
 u8 Item_GetTargetMode(s32 itemId) {
   return Ability_GetDirect(Item_GetDirect(itemId)->abilityId)->targetMode;
 }
 
-/// Adds `delta` to rare item counter `index`, kept between 0 and
-/// ITEM_COUNTER_MAX, and returns the new count (0 for an index from
-/// ITEM_COUNTER_COUNT on).
+/// Adds `delta` to the shops' stock of rare item `index`, kept between 0 and
+/// RARE_ITEM_STOCK_MAX, and returns the new count (0 for an index from
+/// RARE_ITEM_STOCK_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
   s32 counterSlot = index;
   u8 *data = gRareItemStock;
 
   index = 0;
-  if (counterSlot < ITEM_COUNTER_COUNT) {
+  if (counterSlot < RARE_ITEM_STOCK_COUNT) {
     s32 value = data[counterSlot];
 
     value += delta;
 
     if (value < 0) {
       value = 0;
-    } else if (value > ITEM_COUNTER_MAX) {
-      value = ITEM_COUNTER_MAX;
-      index = ITEM_COUNTER_MAX;
+    } else if (value > RARE_ITEM_STOCK_MAX) {
+      value = RARE_ITEM_STOCK_MAX;
+      index = RARE_ITEM_STOCK_MAX;
     } else {
       index = value;
     }
@@ -413,13 +411,11 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
   return index;
 }
 
-/// Adds delta to how many of a rare item the shops may sell, and returns the
-/// new count; ordinary items have none.
+/// Adds delta to how many of an item the shops' Artifacts offer, and returns
+/// the new count; 0 for an item they keep no stock of. A delta of 0 reads it.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
-  // The table holds a rare item's counter number plus one, and 0 for an
-  // ordinary item.
   s32 count = 0;
-  u8 counter = gItem_ArtifactSlotTable[itemId & INVENTORY_ITEM_ID_MASK];
+  u8 counter = gItem_RareItemStockIndex[itemId & INVENTORY_ITEM_ID_MASK];
 
   if (counter != 0)
     count = RareItemStock_Adjust(counter - 1, delta);

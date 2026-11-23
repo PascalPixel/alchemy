@@ -4,7 +4,16 @@
 
 #include "game/game.h"
 
-const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
+const u8 gCharacter_LighthouseGroupTable[] = {
+    [ISAAC] = LIGHTHOUSE_GROUP_VENUS_MARS,
+    [GARET] = LIGHTHOUSE_GROUP_VENUS_MARS,
+    [IVAN] = LIGHTHOUSE_GROUP_MERCURY_JUPITER,
+    [MIA] = LIGHTHOUSE_GROUP_MERCURY_JUPITER,
+    [FELIX] = LIGHTHOUSE_GROUP_VENUS_MARS,
+    [JENNA] = LIGHTHOUSE_GROUP_VENUS_MARS,
+    [SHEBA] = LIGHTHOUSE_GROUP_MERCURY_JUPITER,
+    [PIERS] = LIGHTHOUSE_GROUP_MERCURY_JUPITER,
+};
 
 // clang-format off
 const u32 gCharacter_LevelExpTable[] = {

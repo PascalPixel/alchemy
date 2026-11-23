@@ -29,9 +29,9 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   index = enemyId - ENEMY_ID_FIRST;
   if (unitId < FIRST_ENEMY_UNIT)
     return 0;
-  // BUG: one too many: unit FIRST_ENEMY_UNIT + 6 passes, but Unit_Get has no
-  // seventh enemy unit and gives NULL. No caller passes it.
-  if (unitId > FIRST_ENEMY_UNIT + 6)
+  // BUG: one too many: unit FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE passes, but
+  // Unit_Get has no seventh enemy unit and gives NULL. No caller passes it.
+  if (unitId > FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE)
     return 0;
   if (index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
     return 0;
@@ -77,7 +77,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     }
   }
   unit->aiState = enemy->aiState;
-  unit->classId = 0;
+  unit->classId = CLASS_NONE;
   unit->id = enemyId;
   Unit_CalculateBaseElements(unitId, unit->baseElement);
   Unit_Calculate(unitId);

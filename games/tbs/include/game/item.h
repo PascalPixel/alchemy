@@ -36,6 +36,25 @@ enum InventoryRemoveResult {
   INVENTORY_REMOVE_LAST = 2
 };
 
+/// What Inventory_Equip returns.
+enum InventoryEquipResult {
+  INVENTORY_EQUIP_DONE = 0,     ///< equipped, or it was already
+  INVENTORY_EQUIP_REFUSED = -1, ///< the character cannot equip it
+  /// The item it would replace is cursed on (ITEM_CANNOT_UNEQUIP).
+  INVENTORY_EQUIP_STUCK = -2
+};
+
+/// What Inventory_CheckDiscard returns: whether an item may be dropped or
+/// sold, and why not.
+enum InventoryDiscardCheck {
+  INVENTORY_DISCARD_ALLOWED = 0,
+  INVENTORY_DISCARD_EMPTY_SLOT = -1,
+  /// Equipped and cursed on: the shop shows "Can't remove."
+  INVENTORY_DISCARD_STUCK = -3,
+  /// An important item (ITEM_INDISPENSABLE): the shop shows "Can't drop."
+  INVENTORY_DISCARD_INDISPENSABLE = -4
+};
+
 /// The bits of ItemDefinition.flags.
 enum ItemFlags {
   ITEM_CURSED = 1, ///< equipping it curses the wearer (Unit.curse)
@@ -145,9 +164,9 @@ STATIC_ASSERT(sizeof(struct EquipEffect) == 4);
 STATIC_ASSERT(offsetof(struct EquipEffect, kind) == 0);
 STATIC_ASSERT(offsetof(struct EquipEffect, amount) == 1);
 
-/// The equipMask bit of character `no` (ISAAC to PIERS):
+/// The equipMask bit of `character` (ISAAC to PIERS):
 /// Item_CanUnitEquipDirect reads bit unit->id of the mask.
-#define EQUIP_CHARACTER(no) (1 << (no))
+#define EQUIP_CHARACTER(character) (1 << (character))
 /// Every one of the eight characters' bits.
 #define EQUIP_ALL_CHARACTERS 0xff
 

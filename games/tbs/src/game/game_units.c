@@ -46,7 +46,7 @@ void Game_RestartQuest(void) {
 }
 
 /// Returns the party's Djinn recovery bank, the standby Djinn and their turns
-/// to recover, or for the enemy side a battle unit read as one.
+/// to recover, or for the enemy side the fourth enemy's unit read as one.
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
     return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
@@ -97,28 +97,28 @@ struct Unit *Unit_Get(u32 unitId) {
   return NULL;
 }
 
-/// Returns the definition of enemy selector; enemy ids start past the eight
+/// Returns the definition of enemy `enemyId`; enemy ids start past the eight
 /// characters', so that one id names any unit.
-const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
-  u32 recordIndex = selector - ENEMY_ID_FIRST;
+const struct EnemyDefinition *Enemy_GetDefinition(s32 enemyId) {
+  u32 row = enemyId - ENEMY_ID_FIRST;
 
   // BUG: only rows from ENEMY_ID_MAX are refused, so those from
   // ENEMY_DEFINITION_COUNT (165) to ENEMY_ID_MAX - 1 read the tables after it.
   // BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
-  if (recordIndex >= ENEMY_DEFINITION_COUNT) {
+  if (row >= ENEMY_DEFINITION_COUNT) {
 #else
-  if (recordIndex > ENEMY_ID_MAX - 1U) {
+  if (row > ENEMY_ID_MAX - 1U) {
 #endif
-    recordIndex = 0;
+    row = 0;
   }
-  return &gEnemy_Definitions[recordIndex];
+  return &gEnemy_Definitions[row];
 }
 
-/// Copies `count` bytes from `first` to `second` when `direction` is set, and
-/// from `second` to `first` otherwise.
-void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
-                                 s32 direction) {
+/// Unused: copies `count` bytes from `first` to `second` when `direction` is
+/// set, and from `second` to `first` otherwise.
+UNUSED void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
+                                        s32 direction) {
   s32 i;
 
   if (direction != 0) {
@@ -404,7 +404,7 @@ void Unit_Calculate(s32 unitId) {
   }
 
   statLimit = UNIT_HP_MAX;
-  if (unit->classId)
+  if (unit->classId != CLASS_NONE)
     statLimit = UNIT_CHARACTER_HP_MAX;
 
   previousMaximum = unit->hpMax;
@@ -503,7 +503,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
   Dma_Fill32Cell(zero, 0, gSceneLocalState, sizeof(struct SceneStateView));
   WAIT_DMA();
-  Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
+  Dma_Fill32Cell(zero, 0, gGameFlagBytes, GAME_FLAG_COUNT / 8);
   ((struct SceneStateView *)gSceneLocalState)->actorSnapshot.slots[0] =
       ACTOR_SNAPSHOT_EMPTY;
   Dma_Fill32Cell(zero, 0, gCharacterUnits, sizeof(gCharacterUnits));
@@ -631,23 +631,23 @@ void Party_RestoreHpPp(s32 cureConditions) {
   }
 }
 
-/// Restores the PP of each party member whose element group's lighthouse the
-/// party is inside: Venus or Mars for group 0, Mercury or Jupiter for the
-/// others.
+/// Refills the PP of each party member whose lighthouse group
+/// (gCharacter_LighthouseGroupTable) holds the lighthouse the party is inside.
+/// The aeries of Venus and Mercury Lighthouse call it.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
   u8 unitId;
-  s32 elementGroup;
+  s32 lighthouseGroup;
   s32 restorePp;
   struct Unit *unit;
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     unitId = gMainRoutineWork.party[partyIndex];
-    elementGroup = gCharacter_ElementGroupTable[unitId];
+    lighthouseGroup = gCharacter_LighthouseGroupTable[unitId];
     restorePp = 0;
-    if (elementGroup == 0) {
+    if (lighthouseGroup == LIGHTHOUSE_GROUP_VENUS_MARS) {
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT) ||
           GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT)) {
         restorePp = 1;

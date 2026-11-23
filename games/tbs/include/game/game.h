@@ -14,26 +14,35 @@
 #include "game/enemy_element_preset.h"
 #include "gamepak/far_call.h"
 
+struct AbilityDefinition;
+struct BattleElementStats;
+struct CharacterDefinition;
+struct ClassDefinition;
+struct DjinnDefinition;
+struct DjinnRecoveryTable;
+struct EnemyDefinition;
+struct EnemyElementPreset;
 struct ItemDefinition;
+struct LevelUpResult;
 struct SummonDefinition;
+struct Unit;
 
-/// The 324 items by item id (item_table.c), read through Item_GetDirect
-/// (Item_GetDirect in the overlays).
+/// The 324 items by item id (item_table.c), read through Item_GetDirect.
 extern const struct ItemDefinition gItem_DefinitionTable[];
 /// The 16 summons (summon_table.c) by summon id, the numbers gSummon_OrderList
 /// lists; read through SummonDefinition_Get.
 extern const struct SummonDefinition gSummon_DefinitionTable[];
 
-struct AbilityDefinition;
-struct EnemyDefinition;
-struct EnemyElementPreset;
-
 /// The 519 abilities by ability id (ability_table.c).
 extern const struct AbilityDefinition gAbilityDefinitions[];
-/// Each character's lighthouse group: 0 for Isaac, Garet, Felix and Jenna,
-/// whose PP is restored inside Venus or Mars Lighthouse; 1 for the others,
-/// inside Mercury or Jupiter Lighthouse (Party_RestorePpOfLitElements).
-extern const u8 gCharacter_ElementGroupTable[];
+/// The lighthouses inside which a character's PP is refilled at an aerie
+/// (Party_RestorePpOfLitElements).
+enum LighthouseGroup {
+  LIGHTHOUSE_GROUP_VENUS_MARS,     ///< Isaac, Garet, Felix and Jenna
+  LIGHTHOUSE_GROUP_MERCURY_JUPITER ///< Ivan, Mia, Sheba and Piers
+};
+/// Each character's enum LighthouseGroup.
+extern const u8 gCharacter_LighthouseGroupTable[];
 /// The experience each character needs for levels 1 to 99, 99 words a
 /// character (Unit_GetExperienceForLevel).
 extern const u32 gCharacter_LevelExpTable[];
@@ -73,18 +82,20 @@ extern u8 gGameFlagBytes[];
 /// The party's equipment put aside while the Colosso takes it away: a
 /// sentinel, four 15-slot inventories, the two shortcuts and the party order.
 extern u16 gInventorySnapshot[];
-/// The rare item counters, and the most each counts.
-enum { ITEM_COUNTER_COUNT = 128, ITEM_COUNTER_MAX = 99 };
-/// How many of each rare item the shops may still sell, 0 to ITEM_COUNTER_MAX,
-/// by counter number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
-extern u8 gRareItemStock[ITEM_COUNTER_COUNT];
+/// How many rare items the shops keep a stock of, and the most of each.
+enum { RARE_ITEM_STOCK_COUNT = 128, RARE_ITEM_STOCK_MAX = 99 };
+/// How many of each rare item the shops' Artifacts offer, 0 to
+/// RARE_ITEM_STOCK_MAX, by stock number (gItem_RareItemStockIndex;
+/// RareItemStock_Adjust).
+extern u8 gRareItemStock[RARE_ITEM_STOCK_COUNT];
 /// The 64-byte save stamp, in the first half of the save buffer, that the
 /// Battle Arena writes into the current file alone.
 extern u8 gBattleArenaRecord[];
-/// Each item's rare item counter number plus one, or 0 for an ordinary item
-/// (Item_AdjustCounter).
-extern const u8 gItem_ArtifactSlotTable[];
-/// Each party member's sprite, by character: Felix's is 35.
+/// Each item's place in gRareItemStock plus one, or 0 for an item the shops
+/// keep no stock of (Item_AdjustCounter).
+extern const u8 gItem_RareItemStockIndex[];
+/// Each party member's sprite, by character; Piers, who has none, keeps his
+/// character number.
 extern s16 gCharacter_SpriteTable[];
 /// Each party member's sprite during the prologue (FLAG_CHILDHOOD):
 /// SPRITE_ISAAC_CHILD, SPRITE_GARET_CHILD, SPRITE_FELIX_CHILD and
@@ -96,23 +107,11 @@ extern const u8 gSummon_OrderList[16];
 /// writes it over each summon it has moved to the front.
 #define SUMMON_END 32
 
-struct AbilityDefinition;
-struct BattleElementStats;
-struct Unit;
-struct CharacterDefinition;
-struct ClassDefinition;
-struct DjinnDefinition;
-struct DjinnRecoveryTable;
-struct EnemyDefinition;
-struct ItemDefinition;
-struct LevelUpResult;
-struct SummonDefinition;
-
 void Game_RestartQuest(void);
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
 struct Unit *Unit_Get(u32 unitId);
-const struct EnemyDefinition *Enemy_GetDefinition(s32 selector);
+const struct EnemyDefinition *Enemy_GetDefinition(s32 enemyId);
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction);
 void Unit_Calculate(s32 unitId);
@@ -138,7 +137,7 @@ s32 Party_AdjustShopGifts(s32 amount);
 
 const struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId);
-s32 Item_IsCompatibleWithUnit(s32 unit, s32 item);
+s32 Item_IsCompatibleWithUnit(s32 unitId, s32 itemId);
 s32 Item_GetEquipmentGroup(s32 itemId);
 s32 Inventory_GetQuantity(s32 unitId, s32 slot);
 s32 Inventory_Count(s32 unitId);
@@ -168,10 +167,10 @@ s32 PartyInventory_CountItem(s32 itemId);
 struct AbilityDefinition *Ability_GetDirect(s32 abilityId);
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId);
 s32 Unit_RefreshPsynergy(s32 unitId);
-s32 Unit_LearnPsynergy(s32 stateIndex, s32 value);
+s32 Unit_LearnPsynergy(s32 unitId, s32 abilityId);
 struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
                                         struct LevelUpResult *gains);
-const struct CharacterDefinition *Character_GetDefinition(s32 index);
+const struct CharacterDefinition *Character_GetDefinition(s32 characterId);
 void Party_InitializeCharacters(void);
 void Unit_LevelNoOp(void);
 u32 Unit_GetExperienceForLevel(s32 unitId, s32 level);
@@ -200,7 +199,7 @@ s32 Party_AdjustCoins(s32 amount);
 s32 Summon_ListLearned(u8 *output);
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId);
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement);
-s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
+s32 Unit_GetElementLevels(s32 unitId, const u8 *djinnHeld, s32 output[4]);
 s32 Unit_GetElementLevel(s32 unitId, s32 element);
 s32 Enemy_GetAttackElement(struct Unit *unit);
 UNREAD_RESULT
@@ -209,7 +208,7 @@ s32 Class_Determine(s32 character, const u8 *djinn);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 void Unit_UpdateClass(s32 unitId);
 
-s32 Battle_GetElementMultiplier(s32 input, s32 halve);
+s32 Battle_GetElementMultiplier(s32 difference, s32 halve);
 s32 Battle_Random(void);
 u32 Battle_RandomPercent(void);
 s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
@@ -229,10 +228,10 @@ s32 RollWeaponUnleash(struct Unit *unit);
 s32 Battle_GetEffectBaseSuccessRate(s32 effectId);
 s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId);
 s32 Battle_IsReviveEffect(s32 effectId);
-s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
-                             s32 effectId, s32 successScale);
+s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 element, s32 effectId,
+                             s32 successScale);
 
-const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index);
+const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 djinni);
 s32 Djinn_GiveToParty(s32 element, s32 djinn);
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex);
 s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex);
@@ -243,7 +242,7 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex);
 u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex);
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target);
 s32 DjinnRecovery_CountStandby(u8 *counts);
-s32 Djinn_GetAbilityId(u32 group, u32 index);
+s32 Djinn_GetAbilityId(u32 element, u32 djinni);
 s32 Party_SumDjinnCounts(s32 element);
 
 void Inventory_AddAndEquip(s32 unitId, s32 itemId);

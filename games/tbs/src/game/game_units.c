@@ -102,12 +102,13 @@ struct Unit *Unit_Get(u32 unitId) {
 const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex = selector - ENEMY_ID_FIRST;
 
-  // BUG: only rows past 249 are refused, so those from ENEMY_DEFINITION_COUNT
-  // (165) to 249 read the tables after it. BattleUnit_Set refuses them itself.
+  // BUG: only rows from ENEMY_ID_MAX are refused, so those from
+  // ENEMY_DEFINITION_COUNT (165) to ENEMY_ID_MAX - 1 read the tables after it.
+  // BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
   if (recordIndex >= ENEMY_DEFINITION_COUNT) {
 #else
-  if (recordIndex > 249U) {
+  if (recordIndex > ENEMY_ID_MAX - 1U) {
 #endif
     recordIndex = 0;
   }

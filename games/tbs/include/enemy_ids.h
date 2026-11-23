@@ -9,6 +9,10 @@
 /// party's characters. A formation lists its members by row.
 #define ENEMY_ID_FIRST 8
 
+/// The highest enemy id a battle unit takes; an id past the table's rows takes
+/// its first row.
+#define ENEMY_ID_MAX 250
+
 /// Enemy id `id`'s row of enemy_table.c, as a formation lists its members.
 #define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
 

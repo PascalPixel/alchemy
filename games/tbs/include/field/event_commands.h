@@ -102,11 +102,11 @@ struct Actor *Actor_GetById(s32 actorId);
 void Actor_SetSpeedParameters(u32 actorId, FIXED speedLimit,
                               FIXED acceleration);
 
-void Actor_SetMovementTypeById(u32 actorId, s32 action);
+void Actor_SetMovementTypeById(u32 actorId, s32 movement);
 void Actor_Stop(u32 actorId);
 void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
 void Actor_WaitForScriptEndById(u32 actorId);
-void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action);
+void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 movement);
 void Actor_SetDestinationById(u32 actorId, s32 x, s32 z);
 void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z);
 void Actor_WalkToById(u32 actorId, s32 x, s32 z);
@@ -215,10 +215,10 @@ enum AttachedEffectFlag {
   ATTACHED_EFFECT_IN_FRONT = 0x100
 };
 void FieldEffect_SetAttached(s32 actorId, s32 flags);
-s32 Actor_ClearChildAndCollisionFlags(void *obj);
+s32 Actor_ClearChildAndCollisionFlags(struct Actor *actor);
 s32 Actor_MoveTowardTarget(struct Actor *actor);
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor);
-void Actor_SetMovementType(struct Actor *actor, s32 action);
+void Actor_SetMovementType(struct Actor *actor, s32 movement);
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite);
 s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
@@ -304,7 +304,7 @@ void FieldPsynergy_FadeToCastColor(void);
 void FieldPsynergy_FadeFromCastColor(void);
 void Camera_WorldToScreen(struct Vector3 *position);
 
-void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
+void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId);
 void FieldPsynergy_StopMindReadWave(void);
 void FieldPsynergy_UpdateMindReadWave(void);
 void FieldEffect_ArmBg0HBlankDma(void);

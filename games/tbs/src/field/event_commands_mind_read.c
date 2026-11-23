@@ -30,29 +30,30 @@ struct MindReadWork {
   s8 green;
   s8 blue;
   u16 hue;      ///< hue, 0 to 359 degrees
-  u16 sourceId; ///< the caster
-  u16 targetId;
-  u8 delay;   ///< frames before it starts
-  u8 counter; ///< particle spawn cycle (0 to 60)
+  u16 sourceId; ///< the caster's actor id
+  u16 targetId; ///< the target's actor id
+  u8 delay;     ///< frames before it starts
+  u8 counter;   ///< particle spawn cycle (0 to 60)
 };
 
-/// Starts the wave effect of caster x on target y (actor ids): fades the
+/// Starts the wave effect of casterId on targetId (actor ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldPsynergy_UpdateMindReadWave) after 8 frames.
-void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
+void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId) {
   struct MindReadWork *work;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(struct MindReadWork));
   FieldPsynergy_FadeToCastColor();
-  Dma_Fill32(0, work, 664);
+  Dma_Fill32(0, work, sizeof(struct MindReadWork));
   work->hue = ((u32)(gFrameCount << 1) % (u32)HUE_DEGREES);
   FieldEffect_AdvanceHueCycle();
   // PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
-  PaletteFade_SetTarget(
-      RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
+  PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) |
+                            PALETTE_TINT_CUSTOM,
+                        PALETTES_BG);
   PaletteFade_StartInterpolation(8);
-  work->sourceId = x;
-  work->targetId = y;
+  work->sourceId = casterId;
+  work->targetId = targetId;
   work->delay = 8;
   FieldPsynergy_GreyMindReadPalette();
   Task_Add(FieldPsynergy_UpdateMindReadWave, TASK_PASS_FRAME);
@@ -65,6 +66,7 @@ void FieldPsynergy_StopMindReadWave(void) {
 
   FieldPsynergy_RestoreMindReadPalette();
   Task_Remove(FieldPsynergy_UpdateMindReadWave);
+  // Back to SPRITE_COLOR_NORMAL.
   Actor_SetSpritePalette(Actor_GetById(work->sourceId), 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
@@ -101,11 +103,13 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   work->page ^= 1;
   // Every other frame the tint takes the next hue, in one frame.
   if (work->page != 0) {
-    PaletteFade_SetTarget(
-        RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
+    PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) |
+                              PALETTE_TINT_CUSTOM,
+                          PALETTES_BG);
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
+  // The caster's colours cycle.
   Actor_SetSpritePalette(Actor_GetById(work->sourceId), 0);
 
   if (work->counter == 0 || work->counter == MIND_READ_PARTICLE_GAP ||

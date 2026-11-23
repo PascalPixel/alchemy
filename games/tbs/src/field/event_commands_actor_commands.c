@@ -26,12 +26,12 @@ void Actor_SetSpeedParameters(u32 actorId, FIXED speedLimit,
 
 /// Gives an actor a movement type or actor script (Actor_SetMovementType) and
 /// makes it face where it moves (ACTOR_FACES_MOTION).
-void Actor_SetMovementTypeById(u32 actorId, s32 action) {
+void Actor_SetMovementTypeById(u32 actorId, s32 movement) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->steeringFlags |= ACTOR_FACES_MOTION;
-    Actor_SetMovementType(actor, action);
+    Actor_SetMovementType(actor, movement);
   }
 }
 
@@ -68,12 +68,12 @@ void Actor_WaitForScriptEndById(u32 actorId) {
 /// Starts a movement type or supplied actor script, as
 /// Actor_SetMovementTypeById does, then waits up to 300 frames for its script
 /// to end.
-void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action) {
+void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 movement) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->steeringFlags |= ACTOR_FACES_MOTION;
-    Actor_SetMovementType(actor, action);
+    Actor_SetMovementType(actor, movement);
     Actor_WaitForScriptEndFar(actor);
   }
 }

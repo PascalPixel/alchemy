@@ -15,41 +15,41 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
 /// toward the actor it watches, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
-void FieldEffect_UpdateMoveHand(struct Actor *source) {
+void FieldEffect_UpdateMoveHand(struct Actor *hand) {
   struct Actor *target;
   struct Vector3 position;
-  struct Actor *fragment;
+  struct Actor *sparkle;
   s32 turn;
   s32 radius;
 
-  target = source->watchedActor;
+  target = hand->watchedActor;
   if (target != 0) {
-    FIXED dx = target->x.fixed - source->x.fixed;
-    FIXED dz = target->z.fixed - source->z.fixed;
+    FIXED dx = target->x.fixed - hand->x.fixed;
+    FIXED dz = target->z.fixed - hand->z.fixed;
 
     if (dx != 0 || dz != 0) {
-      turn = (s16)(Trig_Atan(dz, dx) - source->facing);
+      turn = (s16)(Trig_Atan(dz, dx) - hand->facing);
       if (turn > FACING_STEP)
         turn = FACING_STEP;
       if (turn < -FACING_STEP)
         turn = -FACING_STEP;
-      source->facing += turn;
+      hand->facing += turn;
     }
     // ACTOR_FACES_MOTION off: its motion must not undo the turn.
-    source->steeringFlags = 0;
+    hand->steeringFlags = 0;
   }
 
   // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
   // random direction.
-  position.x = source->x.fixed;
-  position.y = source->y.fixed - (Random16() << 4) - toFIXED(8);
-  position.z = source->z.fixed;
+  position.x = hand->x.fixed;
+  position.y = hand->y.fixed - (Random16() << 4) - toFIXED(8);
+  position.z = hand->z.fixed;
   radius = Random16() * 3;
   radius <<= 4;
   Vector_AddPolarOffset(radius, Random16(), &position);
 
-  fragment = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
-  FieldEffect_InitializeFallingFragment(fragment);
+  sparkle = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+  FieldEffect_InitializeFallingFragment(sparkle);
 }
 
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
@@ -59,7 +59,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   struct Vector3 position;
   struct Vector3 beyond;
   struct FieldEffectWork *effectWork;
-  struct Actor *user;
+  struct Actor *caster;
   struct Actor *target;
   struct Actor *pusher;
   struct Actor *hit;
@@ -73,18 +73,18 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   s32 cellZ;
 
   effectWork = gFieldEffectWork;
-  user = effectWork->mainActor;
+  caster = effectWork->mainActor;
   target = effectWork->child;
-  // work->angle is the way the caster faces; the hand's side of the target
-  // is the opposite way, toward the caster.
+  // effectWork->angle is the way the caster faces; the hand's side of the
+  // target is the opposite way, toward the caster.
   angle = effectWork->angle + DEGtoANG(180);
   moved = 0;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  user->watchedActor = target;
-  Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
-  pusher = FieldEffect_SpawnMoveHand(user);
+  caster->watchedActor = target;
+  Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
+  pusher = FieldEffect_SpawnMoveHand(caster);
   if (pusher == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
@@ -105,7 +105,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target->speedLimit = toFIXED(2) / 5;
   target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = moved;
-  target->layer = 2;
+  target->layer = MAPGRID_LAYER_OVERHEAD;
   for (;;) {
     wait(1);
     keys = gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS);
@@ -153,7 +153,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     }
     hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)&position);
     if (hit != NULL) {
-      if (hit != user) {
+      if (hit != caster) {
         Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
@@ -163,8 +163,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       // The push runs into the caster: if the caster stands on the cell the
       // target would move to, it cannot be pushed; if the caster stands on the
       // cell 32 pixels on, the caster moves along when the cell beyond is free.
-      cellX = user->x.fixed & FIELD_CELL_MASK;
-      cellZ = user->z.fixed & FIELD_CELL_MASK;
+      cellX = caster->x.fixed & FIELD_CELL_MASK;
+      cellZ = caster->z.fixed & FIELD_CELL_MASK;
       if (cellX == (position.x & FIELD_CELL_MASK) &&
           cellZ == (position.z & FIELD_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
@@ -175,7 +175,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       if (cellX == (beyond.x & FIELD_CELL_MASK) &&
           cellZ == (beyond.z & FIELD_CELL_MASK)) {
         // The caster can be pushed only onto flat ground.
-        if (MapGrid_GetCellAttributeLowNibbleFar(user->layer, beyond.x,
+        if (MapGrid_GetCellAttributeLowNibbleFar(caster->layer, beyond.x,
                                                  beyond.z) != TERRAIN_FLAT) {
           Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
           if ((gFrameCount & 15) == 0)
@@ -209,9 +209,9 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     if (moved == 1) {
       Actor_GetById(effectWork->firstActorId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
-      user->speedLimit = toFIXED(1) / 5;
-      user->acceleration = toFIXED(1) / 5;
-      Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
+      caster->speedLimit = toFIXED(1) / 5;
+      caster->acceleration = toFIXED(1) / 5;
+      Actor_SetMoveTargetFar(caster, beyond.x, beyond.y, beyond.z);
     }
     // Land exactly on the cell, whatever the braking left.
     Actor_WaitForMoveFar(target);
@@ -281,7 +281,7 @@ next_state:
 }
 
 /// When Move is cast with no target, the hand appears beside the caster for 30
-/// frames and then turns into particles.
+/// frames and then bursts into sparkles.
 void FieldPsynergy_Move(void) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
@@ -309,53 +309,53 @@ void FieldPsynergy_Move(void) {
 
 /// Spawns Move's hand (SPRITE_MOVE_HAND) 16 pixels above the caster, at quarter
 /// size, and moves it 16 pixels the way the caster faces (to the nearest
-/// quarter turn), with 8 particles round it.
+/// quarter turn), with 8 sparkles scattering from it.
 struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
-  struct Actor *parent;
-  struct Actor *child;
+  struct Actor *hand;
+  struct Actor *sparkle;
   s32 angle;
   FIXED radius;
   FIXED speed;
-  s32 fragmentIndex;
+  s32 sparkleIndex;
   u32 spread;
   u32 jitter;
 
   angle = FACING_NEAREST_CARDINAL(caster->facing);
-  parent = Actor_Spawn(SPRITE_MOVE_HAND, caster->x.fixed,
-                       caster->y.fixed + toFIXED(16), caster->z.fixed);
-  if (parent == 0)
+  hand = Actor_Spawn(SPRITE_MOVE_HAND, caster->x.fixed,
+                     caster->y.fixed + toFIXED(16), caster->z.fixed);
+  if (hand == 0)
     return 0;
-  parent->scaleY = FIXED_ONE / 4;
-  parent->scaleX = FIXED_ONE / 4;
-  parent->update = FieldEffect_UpdateMoveHand;
-  parent->speedLimit = toFIXED(2);
-  parent->acceleration = toFIXED(2);
-  parent->motionFlags = 0;
-  Actor_SelectAnimationFar(parent, MOVE_HAND_ANIMATION_GRIP);
-  Actor_SetTargetPositionFromMagnitudeAngle(parent, toFIXED(16), angle);
+  hand->scaleY = FIXED_ONE / 4;
+  hand->scaleX = FIXED_ONE / 4;
+  hand->update = FieldEffect_UpdateMoveHand;
+  hand->speedLimit = toFIXED(2);
+  hand->acceleration = toFIXED(2);
+  hand->motionFlags = 0;
+  Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_GRIP);
+  Actor_SetTargetPositionFromMagnitudeAngle(hand, toFIXED(16), angle);
 
-  // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
+  // Sparkles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
-  for (fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
-    child = Actor_Spawn(SPRITE_SPARKLE, caster->x.fixed,
-                        caster->y.fixed + toFIXED(16), caster->z.fixed);
-    if (child != 0) {
-      Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
+  for (sparkleIndex = 0; sparkleIndex < 8; sparkleIndex++) {
+    sparkle = Actor_Spawn(SPRITE_SPARKLE, caster->x.fixed,
+                          caster->y.fixed + toFIXED(16), caster->z.fixed);
+    if (sparkle != 0) {
+      Actor_StartScriptFar(sparkle, gFieldEffect_FragmentScript);
       speed = Random16() + FIXED_ONE;
-      child->acceleration = toFIXED(1);
-      child->speedLimit = speed;
-      child->motionFlags = ACTOR_FALLS;
-      child->gravity = toFIXED(1) / 50;
+      sparkle->acceleration = toFIXED(1);
+      sparkle->speedLimit = speed;
+      sparkle->motionFlags = ACTOR_FALLS;
+      sparkle->gravity = toFIXED(1) / 50;
       spread = Random16();
-      child->velocityY = spread - Random16();
+      sparkle->velocityY = spread - Random16();
       radius = Random16() * 24 + toFIXED(8);
       jitter = Random16();
       Actor_SetTargetPositionFromMagnitudeAngle(
-          child, radius, ((jitter - Random16()) >> 3) + caster->facing);
+          sparkle, radius, ((jitter - Random16()) >> 3) + caster->facing);
     }
   }
   Sound_PlayFar(SE_ITEM_BREAK);
-  return parent;
+  return hand;
 }
 
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
@@ -380,9 +380,9 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 }
 
 /// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
-/// 1/32 of full size a frame, then bursts into 8 particles and is released.
+/// 1/32 of full size a frame, then bursts into 8 sparkles and is released.
 void UpdateRisingParticleBurst(struct Actor *hand) {
-  struct Actor *child;
+  struct Actor *sparkle;
   s32 i;
   FIXED dist;
   u32 spread;
@@ -396,18 +396,18 @@ void UpdateRisingParticleBurst(struct Actor *hand) {
     wait(1);
   }
   for (i = 0; i < 8; i++) {
-    child = Actor_Spawn(SPRITE_SPARKLE, hand->x.fixed, hand->y.fixed,
-                        hand->z.fixed);
-    if (child != 0) {
-      Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
-      child->speedLimit = Random16() + FIXED_ONE;
-      child->acceleration = FIXED_ONE;
-      child->motionFlags = ACTOR_FALLS;
-      child->gravity = toFIXED(1) / 25;
+    sparkle = Actor_Spawn(SPRITE_SPARKLE, hand->x.fixed, hand->y.fixed,
+                          hand->z.fixed);
+    if (sparkle != 0) {
+      Actor_StartScriptFar(sparkle, gFieldEffect_FragmentScript);
+      sparkle->speedLimit = Random16() + FIXED_ONE;
+      sparkle->acceleration = FIXED_ONE;
+      sparkle->motionFlags = ACTOR_FALLS;
+      sparkle->gravity = toFIXED(1) / 25;
       spread = Random16();
-      child->velocityY = spread - Random16();
+      sparkle->velocityY = spread - Random16();
       dist = Random16() * 24 + toFIXED(8);
-      Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
+      Actor_SetTargetPositionFromMagnitudeAngle(sparkle, dist, Random16());
     }
   }
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);

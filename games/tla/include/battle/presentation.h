@@ -37,7 +37,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode);
 
 s32 DjinnRecovery_CountDownSide(s32 side);
 
-void BattleBackground_SetMode(s32 mode, s32 background, s32 fade);
+void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade);
 
 s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry);
 

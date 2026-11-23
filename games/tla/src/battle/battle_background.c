@@ -66,7 +66,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// A nonzero fade darkens the saved palette by taking fade from each colour
 /// channel, and BATTLE_BACKGROUND_FADE_RESTORE puts it back undarkened; the
 /// background's id is not read.
-void BattleBackground_SetMode(s32 mode, s32 background, s32 fade) {
+void BattleBackground_SetMode(s32 mode, s32 backgroundId, s32 fade) {
   struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
 
   if (background->mode == BATTLE_BACKGROUND_NONE)

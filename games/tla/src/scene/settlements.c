@@ -1062,11 +1062,14 @@ void Settlements_RestoreWallCells(void) {
 // rows 9 on): its closed block over the wall, cells (11, 11) to (20, 14),
 // becomes open ground 96 pixels up at (12, 12) to (19, 14), ringed by closed
 // cells, as the probe of the room with FLAG_ON_WALL set shows.
-// XXX: what the opened cells let Felix do on the wall top. Walking down from
-// cell (12, 9) onto (13, 11), east along the fence to the stones before the
-// crate and south into the fenced square plays frame for frame the same with
-// the crate's flag (FLAG_WALL_CRATE_DROPPED) set; a recording of the crate
-// pushed along the wall, with and without the swap, would settle it.
+// XXX: what the opened cells let Felix do on the wall top. Walking from cell
+// (12, 9) down the stairs and in through the gap in the fenced square's west
+// fence, Felix walks about the square as he does with the crate's flag
+// (FLAG_WALL_CRATE_DROPPED) set; Move cast north at the crate from two cells
+// south of it with south held shows the hand pressing but the crate stays, as
+// it does cast east from the plaza, and staged with the swap made at entry
+// (FLAG_KEEP_PARTY_POSITION and FLAG_ON_WALL) as well. A recording in which
+// the crate moves, with and without the swap, would settle it.
 void Settlements_StepOntoWall(void) {
   if (!Event_GetFlag(FLAG_WALL_CRATE_DROPPED) && !Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);

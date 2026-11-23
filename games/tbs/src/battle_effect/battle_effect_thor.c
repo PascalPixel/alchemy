@@ -141,7 +141,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   struct BattleBackgroundWork *view;
   struct BattleEffectWork *work;
   void *canvas;
-  u8 *sprites;
+  u8 *motes;
   s32 frame;
   /* LEFTOVER(frame): blit[1], the idle half of the pair. */
   BlitterPair blit;
@@ -155,20 +155,21 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
+  // The light fan is loaded twice; the second load changes nothing.
   Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_C,
                              work->sheet + THOR_SPRITE_PICTURES, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
 
   {
     s32 offset;
     for (i = 0, offset = 0; i != DIMMED_COPIES; i++) {
       u8 *src;
-      for (j = 0, src = sprites; j != MOTE_SET_BYTES; j++) {
+      for (j = 0, src = motes; j != MOTE_SET_BYTES; j++) {
         s32 v = *src++;
 
         EFFECT_CAP_LEVEL(v, DIMMED_COPY_CAP(i));
@@ -262,6 +263,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       Matrix_RotateZ(DEGtoANG(180));
       Matrix_RotateX(DEGtoANG(180));
       Matrix_RotateY(sinkFrame * (TRIG_TURN / 16));
+      // As the beam falls the ring swells, 3/32 of its size larger a frame.
       if (frame > 150) {
         SET_VECTOR(scale, frame * 6144 - 889856, scale[0], scale[0]);
         size = 5;
@@ -300,7 +302,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             s32 y = screen[i * 2].y +
                     Iwram_MulFX(j * (screen[i * 2 + 1].y - screen[i * 2].y),
                                 FIXED_ONE / THOR_LINE_MOTES);
-            EFFECT_DRAW_MOTE(blit[0], canvas, sprites, x, y, size);
+            EFFECT_DRAW_MOTE(blit[0], canvas, motes, x, y, size);
           }
         }
       }
@@ -409,7 +411,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              work->sheet + THOR_HAMMER_GLOW_PICTURE, 1, 0);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET),
                   SHEET_PALETTE_BYTES);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, motes, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
     FIXED thorX;
@@ -596,7 +598,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
               s32 x = FIXEDtoINT(spark->x);
               s32 y = FIXEDtoINT(spark->y);
               s32 moteSize = spark->variant / THOR_SPARK_SHRINK_FRAMES + 1;
-              EFFECT_DRAW_MOTE(draw, canvas, sprites, x, y, moteSize);
+              EFFECT_DRAW_MOTE(draw, canvas, motes, x, y, moteSize);
             }
           }
         }

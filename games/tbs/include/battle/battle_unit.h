@@ -377,8 +377,9 @@ struct Unit {
   /// here (BattleAI_ChooseAction).
   struct BattleAIState aiState;
   u32 experience; ///< a character's experience points
-  /// Who the unit is: a character's id (ISAAC to JENNA, below 8) or an
-  /// enemy's id (BattleUnit_Set). The class tables are indexed by classIndex.
+  /// Who the unit is: a character's id (ISAAC to PIERS, below 8) or an
+  /// enemy's id (BattleUnit_Set); gBattleSprites and the enemy tables are
+  /// read by it.
   u8 id;
   /// The character's class, worked out from its Djinn (Unit_UpdateClass);
   /// CLASS_NONE marks an enemy, and code throughout tests it to tell

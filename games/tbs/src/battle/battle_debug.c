@@ -6,11 +6,11 @@
 
 /// The first message of the viewer's second range.
 #if LANGUAGE == LANGUAGE_ENGLISH
-#define DEBUG_SECOND_FORM MsgBecameCursed
+#define DEBUG_SECOND_RANGE_FIRST MsgBecameCursed
 #elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
-#define DEBUG_SECOND_FORM MsgEnd
+#define DEBUG_SECOND_RANGE_FIRST MsgEnd
 #else
-#define DEBUG_SECOND_FORM MsgDebugSecondForm
+#define DEBUG_SECOND_RANGE_FIRST MsgDebugSecondForm
 #endif
 
 /// How far R and L, or Up and Down in the battle test's chooser, step through a
@@ -159,7 +159,7 @@ void DebugBattle_ViewMessages(void) {
         message = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
         messageWindow = Message_OpenWindowFar(index + message, 2, 10, 4);
       } else {
-        message = DEBUG_SECOND_FORM;
+        message = DEBUG_SECOND_RANGE_FIRST;
         messageWindow = Message_OpenWindowFar(index + message, 2, 2, 4);
       }
       wait(10);

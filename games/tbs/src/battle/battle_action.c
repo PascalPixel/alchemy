@@ -12,6 +12,12 @@ enum ActionChance {
   CHANCE_BLOW = 64           ///< any other
 };
 
+/// A party member's plain attack, by the beam it plays (enum BeamKind,
+/// battle_effect_beams.c): one blue slash for Isaac, Garet and Jenna, three
+/// short blue arcs for Ivan and Mia.
+#define ATTACK_BEAM_SLASH 1
+#define ATTACK_BEAM_WAVE 4
+
 /// Battle_RollEffectSuccess's successScale at full strength, in percent.
 #define EFFECT_CHANCE_FULL 100
 
@@ -74,9 +80,6 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   }
   return standbyCount;
 }
-
-/// The most targets an action holds (BATTLE_TARGET_CAPACITY).
-#define TARGET_MAX 14
 
 /// Announces the action and builds it for its targets, paying its PP or Djinn.
 /// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
@@ -198,14 +201,15 @@ s32 BattleActionRun_Build(struct BattleAction *request,
   if (actor->hp == 0)
     return ACTION_NOTHING_TO_SHOW;
 
-  // Debug: hold R to defeat all enemies, or R and Select the whole party.
-  if (BATTLE_AUTO_MODE && GameFlag_GetFar(FLAG_DEBUG_BATTLE_KEYS) &&
-      (BATTLE_OPTIONS & KEY_R)) {
+  // Debug, with FLAG_DEBUG_BATTLE_KEYS set: hold R to defeat all enemies, or
+  // R and Select the whole party.
+  if (gDebugMode && GameFlag_GetFar(FLAG_DEBUG_BATTLE_KEYS) &&
+      (gKeysHeld & KEY_R)) {
     s32 enemy = 1;
     s32 index;
     s32 id;
 
-    if (BATTLE_OPTIONS & KEY_SELECT)
+    if (gKeysHeld & KEY_SELECT)
       enemy = 0;
     for (index = 0;; index++) {
       if (enemy)
@@ -257,9 +261,9 @@ s32 BattleActionRun_Build(struct BattleAction *request,
   {
     s32 index;
 
-    for (index = 0; index < TARGET_MAX; index++)
+    for (index = 0; index < BATTLE_TARGET_CAPACITY; index++)
       plan->targetCritical[index] = 0;
-    for (index = 0; index < TARGET_MAX; index++)
+    for (index = 0; index < BATTLE_TARGET_CAPACITY; index++)
       plan->targetHit[index] = HIT_NOT_ROLLED;
   }
 
@@ -565,8 +569,8 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
-    // An enemy's attack effect comes from its class; a party member's from who
-    // it is.
+    // An enemy's attack effect comes from its battle sprite's row; a party
+    // member's from who it is.
     if (actor->classId == CLASS_NONE) {
       plan->battleEffect =
           BattleSprite_GetAttackEffect(actor->id) | EFFECT_BY_ID_RANGE;
@@ -574,19 +578,19 @@ s32 BattleActionRun_Build(struct BattleAction *request,
       plan->battleEffect = 0;
       switch (actor->id) {
       case ISAAC:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | 1;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
         break;
       case GARET:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | 1;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
         break;
       case IVAN:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | 4;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_WAVE;
         break;
       case MIA:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | 4;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_WAVE;
         break;
       case JENNA:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | 1;
+        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
         break;
       }
     }

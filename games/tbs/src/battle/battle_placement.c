@@ -10,29 +10,31 @@
 
 /// Creates the battle object of a unit at (x, y) on the battlefield: its
 /// sprite, palette, size and weapon, turned to face the centre.
-void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct BattleObject *battleObject, s32 unitId, s32 x,
+                       s32 y) {
   FIXED fixedX;
   FIXED fixedZ;
   s32 palette;
   s32 sprite;
   s32 registeredSprite;
   struct Unit *unit;
-  struct Actor *object;
+  struct Actor *actor;
   s32 facingAngle;
   s32 weaponSprite;
-  u8 classId;
+  u8 characterId;
 
   // Positions are 16.16 fixed point; y is the battlefield's depth.
   fixedX = toFIXED(x);
   fixedZ = toFIXED(y);
-  object = Actor_CreateFar(ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), fixedX,
-                           0, fixedZ);
+  actor = Actor_CreateFar(ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), fixedX,
+                          0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
-  // The sprite: an enemy's from its class, a party member's by character; a
-  // character on the enemy side, a link opponent, takes palette 1.
+  // The sprite: an enemy's from its battle sprite row, a party member's by
+  // character; a character on the enemy side, a link opponent, takes
+  // palette 1.
   if (unit->classId == CLASS_NONE) {
     sprite = BattleSprite_GetSprite(unit->id);
     if (registeredSprite == 0)
@@ -64,127 +66,127 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
 
   // The enemies drawn larger or smaller than their sprites, in 16.16. Bandit
   // and Orc Captain are set to 1.0 again.
-  actor->scale = FIXED_ONE;
+  battleObject->scale = FIXED_ONE;
   switch (unit->id) {
   case ENEMY_KILLER_APE:
-    actor->scale = FIXED_ONE * 8 / 5;
+    battleObject->scale = FIXED_ONE * 8 / 5;
     break;
   case ENEMY_MANTICORE:
-    actor->scale = FIXED_ONE * 31 / 20;
+    battleObject->scale = FIXED_ONE * 31 / 20;
     break;
   case ENEMY_LIVING_STATUE:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_HYDROS_STATUE:
-    actor->scale = FIXED_ONE * 8 / 5;
+    battleObject->scale = FIXED_ONE * 8 / 5;
     break;
   case ENEMY_ANT_LION:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TRET:
-    actor->scale = FIXED_ONE * 9 / 5;
+    battleObject->scale = FIXED_ONE * 9 / 5;
     break;
   case ENEMY_DEADBEARD:
-    actor->scale = FIXED_ONE * 9 / 5;
+    battleObject->scale = FIXED_ONE * 9 / 5;
     break;
   case ENEMY_BANDIT:
-    actor->scale = FIXED_ONE;
+    battleObject->scale = FIXED_ONE;
     break;
   case ENEMY_KRAKEN:
-    actor->scale = FIXED_ONE * 17 / 10;
+    battleObject->scale = FIXED_ONE * 17 / 10;
     break;
   case ENEMY_FUSION_DRAGON:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_MERCURY_LIGHTHOUSE:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_FUCHIN_FALLS_CAVE:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_ALTIN_PEAK:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_VAULT_CAVE:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_CROSSBONE_ISLE:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_ALTMILLER_CAVE:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_SUHALLA_DESERT:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_PIRATE_SHIP:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TROLL:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_CAVE_TROLL:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_BRUTAL_TROLL:
-    actor->scale = FIXED_ONE * 7 / 5;
+    battleObject->scale = FIXED_ONE * 7 / 5;
     break;
   case ENEMY_ORC_CAPTAIN:
-    actor->scale = FIXED_ONE;
+    battleObject->scale = FIXED_ONE;
     break;
   case ENEMY_ORC_LORD:
-    actor->scale = FIXED_ONE * 5 / 4;
+    battleObject->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_LIZARD_FIGHTER:
-    actor->scale = FIXED_ONE * 7 / 5;
+    battleObject->scale = FIXED_ONE * 7 / 5;
     break;
   case ENEMY_LIZARD_KING:
-    actor->scale = FIXED_ONE * 7 / 5;
+    battleObject->scale = FIXED_ONE * 7 / 5;
     break;
   case ENEMY_HOBGOBLIN:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_GRYPHON:
-    actor->scale = FIXED_ONE * 13 / 10;
+    battleObject->scale = FIXED_ONE * 13 / 10;
     break;
   case ENEMY_CHIMERA:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_AZART_IRON_SHIELD:
-    actor->scale = FIXED_ONE * 21 / 20;
+    battleObject->scale = FIXED_ONE * 21 / 20;
     break;
   case ENEMY_AZART_PADDED_GLOVES:
-    actor->scale = FIXED_ONE * 21 / 20;
+    battleObject->scale = FIXED_ONE * 21 / 20;
     break;
   case ENEMY_SATRAGE_CHAIN_MAIL:
-    actor->scale = FIXED_ONE * 11 / 10;
+    battleObject->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_SATRAGE_COTTON_SHIRT:
-    actor->scale = FIXED_ONE * 11 / 10;
+    battleObject->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_NAVAMPA_CLAYMORE:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_NAVAMPA_HUNTERS_SWORD:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_TOADONPA:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TORNADO_LIZARD:
-    actor->scale = FIXED_ONE * 6 / 5;
+    battleObject->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_STORM_LIZARD:
-    actor->scale = FIXED_ONE * 3 / 2;
+    battleObject->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TEMPEST_LIZARD:
-    actor->scale = FIXED_ONE * 31 / 20;
+    battleObject->scale = FIXED_ONE * 31 / 20;
     break;
   case ENEMY_RECLUSE:
-    actor->scale = FIXED_ONE * 5 / 4;
+    battleObject->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_CEREBUS:
-    actor->scale = FIXED_ONE * 5 / 4;
+    battleObject->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_SLIME_SOL_SANCTUM:
   case ENEMY_SLIME_WORLD_MAP:
@@ -200,53 +202,53 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SATUROS_VENUS_LIGHTHOUSE:
   case ENEMY_MYSTERY_WOMAN:
   case ENEMY_MENARDI:
-    actor->scale = FIXED_ONE * 9 / 10;
+    battleObject->scale = FIXED_ONE * 9 / 10;
     break;
   }
 
-  actor->actor = object;
-  actor->anchorX = fixedX;
-  actor->anchorZ = fixedZ;
-  actor->palette = palette;
-  actor->resource = sprite;
+  battleObject->actor = actor;
+  battleObject->anchorX = fixedX;
+  battleObject->anchorZ = fixedZ;
+  battleObject->palette = palette;
+  battleObject->resource = sprite;
   weaponSprite = BattleUnit_GetWeaponSprite(unitId);
-  actor->animation = 0;
-  actor->animationEntry = 0;
-  actor->shadowEntry = 0;
-  actor->active = 0;
-  actor->fading = 0;
-  actor->shadow = SPRITE_BATTLE_SHADOW;
-  classId = unit->id;
-  actor->overlay = weaponSprite;
+  battleObject->animation = 0;
+  battleObject->animationEntry = 0;
+  battleObject->shadowEntry = 0;
+  battleObject->active = 0;
+  battleObject->fading = 0;
+  battleObject->shadow = SPRITE_BATTLE_SHADOW;
+  characterId = unit->id;
+  battleObject->overlay = weaponSprite;
 
   // Isaac and Garet draw a Machete as part of their own sprite, with no
   // weapon overlay.
-  if (classId <= GARET &&
+  if (characterId <= GARET &&
       Inventory_GetEquippedItemFar(unit, EQUIP_WEAPON) == ITEM_MACHETE) {
     if (unit->id == ISAAC) {
       sprite = SPRITE_ISAAC_MACHETE;
-      actor->resource = sprite;
+      battleObject->resource = sprite;
     } else {
       sprite = SPRITE_GARET_MACHETE;
-      actor->resource = sprite;
+      battleObject->resource = sprite;
     }
-    actor->overlay = 0;
+    battleObject->overlay = 0;
   }
 
   // Face the centre of the battlefield; enemies are drawn at 1.3 times their
   // size.
   facingAngle = Trig_Atan(y / 8, x) + DEGtoANG(180);
-  object->facing = facingAngle;
-  object->collisionFlags = ACTOR_SOLID | ACTOR_PUSHABLE;
-  object->motionFlags = ACTOR_FALLS;
+  actor->facing = facingAngle;
+  actor->collisionFlags = ACTOR_SOLID | ACTOR_PUSHABLE;
+  actor->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
-    object->scaleX = FIXED_ONE * 13 / 10;
-    object->scaleY = FIXED_ONE * 13 / 10;
+    actor->scaleX = FIXED_ONE * 13 / 10;
+    actor->scaleY = FIXED_ONE * 13 / 10;
   } else {
-    object->scaleX = FIXED_ONE;
-    object->scaleY = FIXED_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
-  Actor_StartScriptFar(object, gBattleObject_EmptyScript);
+  Actor_StartScriptFar(actor, gBattleObject_EmptyScript);
 }
 
 /// Unused: reads the battlefield position of a party place.
@@ -274,7 +276,7 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 
 /// Lays out count enemies in a column left of the centre, spaced by their size,
 /// from a rough estimate of the column's length.
-void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+void BattlePlacement_LayoutEnemies(u16 *unitIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? ESTIMATED_ENEMY_SPACING : ENEMY_SPACING_SMALL;
   s32 z = ((count - 1) * totalSpacing) / 2;
@@ -287,15 +289,15 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 
     xPositions[index] = ENEMY_COLUMN_X;
     if (index != 0) {
-      struct Unit *actor;
+      struct Unit *unit;
 
       spacing = ENEMY_SPACING_EMPTY;
-      if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-        actor = Unit_GetFar(actorIds[index]);
-        spacing = BattleSprite_IsSmall(actor->id) ? ENEMY_SPACING_SMALL
-                                                  : ENEMY_SPACING_LARGE;
-        // The first place keeps ENEMY_COLUMN_X whatever its class.
-        if (actor->id == ENEMY_FUSION_DRAGON || actor->id == ENEMY_KRAKEN) {
+      if (!IS_PLACEHOLDER_ID(unitIds[index])) {
+        unit = Unit_GetFar(unitIds[index]);
+        spacing = BattleSprite_IsSmall(unit->id) ? ENEMY_SPACING_SMALL
+                                                 : ENEMY_SPACING_LARGE;
+        // The first place keeps ENEMY_COLUMN_X whatever its size.
+        if (unit->id == ENEMY_FUSION_DRAGON || unit->id == ENEMY_KRAKEN) {
           xPositions[index] = ENEMY_COLUMN_NEAR_X;
         }
       }
@@ -303,11 +305,11 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
     z -= spacing / 2;
     zPositions[index] = z;
     spacing = ENEMY_SPACING_EMPTY;
-    if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-      struct Unit *actor = Unit_GetFar(actorIds[index]);
+    if (!IS_PLACEHOLDER_ID(unitIds[index])) {
+      struct Unit *unit = Unit_GetFar(unitIds[index]);
 
-      spacing = BattleSprite_IsSmall(actor->id) ? ENEMY_SPACING_SMALL
-                                                : ENEMY_SPACING_LARGE;
+      spacing = BattleSprite_IsSmall(unit->id) ? ENEMY_SPACING_SMALL
+                                               : ENEMY_SPACING_LARGE;
     }
     z -= spacing / 2;
   }

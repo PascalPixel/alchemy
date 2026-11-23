@@ -73,7 +73,7 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   return count;
 }
 
-/// Turns the camera while L or R is held. Nothing in the source calls it.
+/// Unused: turns the camera while L or R is held.
 DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 
 /// Auto battle: plays one action, a defeated target replaced by a living unit
@@ -195,7 +195,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   u32 sideStart;
   u32 sideCount;
   u32 livingCount;
-  struct Actor *actorRecord;
+  struct Actor *casterActor;
   u32 index;
 
   livingCount = 0;
@@ -213,13 +213,13 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
     // YAW_ENEMY_ACTION.
     view->targetYaw =
-        action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
+        action->unitId > FELIX ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
     view->frames = 60;
   }
   wait(10);
   // A roll nothing uses, which still advances the random number generator.
   Random16();
-  actorRecord = BattleObject_Get(unitId)->actor;
+  casterActor = BattleObject_Get(unitId)->actor;
 
   // The caster's side, taken as the side the target is not on, and the
   // caster's POSE_CAST when its id is among that side's first sideCount ids.
@@ -233,7 +233,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == unitId) {
-      Actor_SelectAnimationFar(actorRecord, POSE_CAST);
+      Actor_SelectAnimationFar(casterActor, POSE_CAST);
     }
   }
 
@@ -355,11 +355,12 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   struct BattleStagingWork work;
   struct BattleBackgroundWork *view = gBattleBackgroundWork;
-  struct Actor *object;
+  struct Actor *userActor;
   s32 targetYaw;
   s32 targetIndex;
 
-  if (action->unitId > 4)
+  // As in AutoBattle_RunAction, Jenna counts as an enemy here.
+  if (action->unitId > FELIX)
     targetYaw = YAW_ENEMY_ACTION;
   else
     targetYaw = YAW_PARTY_ACTION;
@@ -387,9 +388,9 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   // The unit raises its hand (POSE_CAST); then only the first living unit of
   // the target's side takes the effect.
-  object = BattleObject_Get(work.effect.user)->actor;
-  Actor_SelectAnimationFar(object, POSE_CAST);
-  Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
+  userActor = BattleObject_Get(work.effect.user)->actor;
+  Actor_SelectAnimationFar(userActor, POSE_CAST);
+  Actor_SetAnimationSpeedFar(userActor, ANIM_STEP_NORMAL);
   if ((u16)action->target <= ALLY_MAX) {
     work.effect.side = EFFECT_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
@@ -402,14 +403,15 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
 
   // Keep each target's sprite entries' parameters for the effect.
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++) {
-    struct Sprite *animation =
+    struct Sprite *sprite =
         BattleObject_Get(work.effect.targets[targetIndex])->actor->sprite;
     s32 entryIndex;
 
-    for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
+    for (entryIndex = 0; entryIndex != sprite->count - 1; entryIndex++)
       work.savedAnimationParameters[targetIndex][entryIndex] =
-          animation->entries[entryIndex]->colorMode;
+          sprite->entries[entryIndex]->colorMode;
   }
+  // The four elements' pillars in turn, then the blow.
   work.effect.kind = ELEMENT_VENUS;
   work.effect.variant = 0;
   BattleEffect_RunElementPillarFar(&work.effect);
@@ -426,7 +428,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
     BattleEffect_RunByIdRangeFar(&work.effect);
   else
     BattleEffect_RunFromTableFar(&work.effect);
-  Actor_SelectAnimationFar(object, POSE_STANDING);
+  Actor_SelectAnimationFar(userActor, POSE_STANDING);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)
     BattleMotion_ReturnToSpot(work.effect.targets[targetIndex]);
   BattleMotion_ReturnToSpot(work.effect.user);
@@ -493,17 +495,17 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 /// For a unit whose HP has run out: plays its falling effect to the last frame
 /// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
-  struct SpriteAnimation *actorData;
-  struct Sprite *animation;
+  struct SpriteAnimation *entry;
+  struct Sprite *sprite;
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry showing SPRITE_PICTURE_NONE.
-    animation = BattleObject_Get(unitId)->actor->sprite;
-    Sprite_StartAnimationFar(animation, POSE_DAMAGE);
-    actorData = animation->entries[0];
-    actorData->colorMode = SPRITE_COLOR_GREY;
-    actorData->picture = SPRITE_PICTURE_NONE;
+    sprite = BattleObject_Get(unitId)->actor->sprite;
+    Sprite_StartAnimationFar(sprite, POSE_DAMAGE);
+    entry = sprite->entries[0];
+    entry->colorMode = SPRITE_COLOR_GREY;
+    entry->picture = SPRITE_PICTURE_NONE;
     wait(4);
-    SpriteDissolve_RunFar((u8 *)animation);
+    SpriteDissolve_RunFar((u8 *)sprite);
     BattleObject_MarkForRelease(unitId);
   }
 }

@@ -16,8 +16,8 @@ enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 /// private to battle_playback.c.
 enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the effect resumes it
-  BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET =
-      1,                              ///< resolves the next target's commands
+  /// Resolves the next target's commands.
+  BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET = 1,
   BATTLE_PLAYBACK_PHASE_DISPATCH = 2, ///< plays the queued commands in order
   BATTLE_PLAYBACK_PHASE_READY = 4     ///< every target has been played
 };

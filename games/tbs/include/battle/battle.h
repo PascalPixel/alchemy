@@ -252,7 +252,10 @@ s32 BattleUnit_CountDownSleep(s32 unitId);
 /// Pushes a message to show, waiting for the player to read it.
 #define PUSH_MESSAGE(message) BattlePlayback_Push(PLAYBACK_MESSAGE, (message))
 
-/// Moves camera yaw by 512 while L/R is held; two identical functions exist.
+/// Defines a routine that turns the battle camera a 128th of a turn each frame
+/// L or R is held, and centres the background's zoom unless a view holds it.
+/// Two such routines exist, one each in battle_auto_battle.c and
+/// battle_turn.c.
 #define DEFINE_ADJUST_CAMERA(name)                                             \
   void name(void) {                                                            \
     struct BattleCamera *cam = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);              \
@@ -277,14 +280,15 @@ s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
 void BattleUnit_ListAllAndSubmit(void);
 s32 BattleObject_GetPalette(s32 unitId);
-s32 Enemy_HasSpriteRoom(s32 classId);
+s32 Enemy_HasSpriteRoom(s32 enemyId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
 UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId);
 s32 BattleUnit_GetWeaponKind(s32 itemId);
 s32 BattleUnit_GetWeaponSprite(s32 unitId);
-void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y);
+void BattleObject_Make(struct BattleObject *battleObject, s32 unitId, s32 x,
+                       s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);
-void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
+void BattlePlacement_LayoutEnemies(u16 *unitIds, s32 count, s32 *xPositions,
                                    s32 *zPositions);
 s32 Enemy_GetFreeUnitId(void);
 UNREAD_RESULT BattlePlacement_RelayoutEnemies(void);
@@ -319,7 +323,7 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject);
 void BattleMotion_HopBack(s32 unitId);
 void BattleMotion_LeapBack(s32 unitId);
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant);
-void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 travelDivisor,
+void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 frames,
                                  s32 initialVelocityY);
 void BattleMotion_RestartLeap(s32 unitId);
 void BattleMotion_MidpointNoOp();
@@ -392,7 +396,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect);
 UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
                                           s32 slot);
 u32 Ability_IsPsynergy(s32 abilityId);
-UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry);
+UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 acting);
 void Dma_StopAllThenRunHook(void);
 void BattlePlayback_Start(s32 cue);
 s32 BattlePlayback_SchedulePhase(s32 frames);
@@ -470,26 +474,26 @@ s32 ElementGlow_InitializeStarField(s32 mode);
 s32 ElementGlow_End(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
                                 s32 count);
-// The native implicit-int declaration disagrees with the later void definition.
-// A plain prototype keeps EN size but changes its first caller at .text+0x4c62.
+// UB: without UBFIX, ElementGlow_Play's callers see no prototype and take it to
+// return int; it is defined returning nothing.
 #ifdef UBFIX
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant);
 #endif
 void BattleBackground_RestorePalette(void);
 void Irq_RemoveVCountHandler(void);
 
-s32 BattleFormation_AverageLevel(s32 recordId);
+s32 BattleFormation_AverageLevel(s32 formationId);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
 #ifdef UBFIX
 void BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #else
 s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #endif
-s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused);
+s32 BattleEnemy_ClaimNameLetter(s32 enemyId, s32 unused);
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId);
-UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId);
-s32 BattleFormation_GetRandomMember(s32 recordId);
-s32 BattleFormation_BuildEnemyList(s32 recordId);
+UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 enemyId);
+s32 BattleFormation_GetRandomMember(s32 formationId);
+s32 BattleFormation_BuildEnemyList(s32 formationId);
 
 u32 BattleSprite_GetDefeatSound(s32 index);
 s32 BattleSprite_GetSprite(s32 index);

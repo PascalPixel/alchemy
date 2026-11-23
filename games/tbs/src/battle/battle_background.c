@@ -74,12 +74,12 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// Switches the background's display mode, optionally fades its palette by
 /// fade, and rebuilds both its maps.
 void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
-  struct BattleBackgroundWork *transition = gBattleBackgroundWork;
+  struct BattleBackgroundWork *view = gBattleBackgroundWork;
 
-  if (transition->mode == BATTLE_BACKGROUND_NONE) {
+  if (view->mode == BATTLE_BACKGROUND_NONE) {
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   }
-  transition->mode = mode;
+  view->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_HALFWORD);
@@ -130,12 +130,13 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 
 /// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
-  struct BattleAffineHdma *work;
-  struct BattleBackgroundWork *state;
-  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
-  state = gBattleBackgroundWork;
-  Dma_Fill32(0, work, sizeof *work);
-  state->mode = BATTLE_BACKGROUND_NONE;
+  struct BattleAffineHdma *scanlines;
+  struct BattleBackgroundWork *view;
+  scanlines =
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *scanlines);
+  view = gBattleBackgroundWork;
+  Dma_Fill32(0, scanlines, sizeof *scanlines);
+  view->mode = BATTLE_BACKGROUND_NONE;
 }
 
 /// Frees the zoomed background's scanline work.
@@ -267,7 +268,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  FIXED span = BATTLE_CAMERA_DISTANCE;
+  FIXED distance = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is never set, so the scale is whatever it happens to hold; UBFIX
   // takes it as a parameter.
 #ifndef UBFIX
@@ -276,44 +277,44 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
   FIXED scale = INTtoFIXED(zoom) / 100;
-  s32 renderBounds[3];
-  s32 measuredBounds[3];
-  s32 sourceBounds[3];
-  FIXED alpha;
-  FIXED half;
-  FIXED width;
-  u32 result;
+  s32 eyeOffset[3];
+  s32 originOnScreen[3];
+  s32 origin[3];
+  FIXED nearShare;
+  FIXED halfFocal;
+  FIXED focal;
+  u32 nearDepth;
 
   SET_VECTOR(focus, x, depth, y);
-  sourceBounds[0] = 0;
-  alpha = FIXED_ONE * 3 / 4;
-  sourceBounds[1] = 0;
-  sourceBounds[2] = 0;
+  origin[0] = 0;
+  nearShare = FIXED_ONE * 3 / 4;
+  origin[1] = 0;
+  origin[2] = 0;
 
-  result = Iwram_RatioMulQ14(span, alpha);
-  Projection_Set(span, result, span * 2);
+  nearDepth = Iwram_RatioMulQ14(distance, nearShare);
+  Projection_Set(distance, nearDepth, distance * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
   Matrix_RotateY((s16)camera->yaw);
   Matrix_RotateX((s16)camera->pitch);
-  renderBounds[0] = 0;
-  renderBounds[1] = 0;
-  renderBounds[2] = camera->distance;
-  Iwram_TransformVector(renderBounds, (s32 *)camera);
+  eyeOffset[0] = 0;
+  eyeOffset[1] = 0;
+  eyeOffset[2] = camera->distance;
+  Iwram_TransformVector(eyeOffset, (s32 *)camera);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Matrix_Initialize();
   Matrix_SetLookAt(camera->eye, focus);
-  Matrix_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_ProjectPoint(origin, originOnScreen);
 
   BattleCamera_SetRange(
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
-      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
-      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
-  width = half * 2;
-  result = Iwram_RatioMulQ14(width, alpha);
-  Projection_Set(width, result, half * 4);
+      (BATTLE_PROJECTION_CENTER_X - originOnScreen[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
+  halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
+  focal = halfFocal * 2;
+  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  Projection_Set(focal, nearDepth, halfFocal * 4);
 }
 
 /// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
@@ -322,48 +323,48 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
   FIXED scale = INTtoFIXED(zoom) / 100;
-  FIXED renderBounds[3];
-  s32 measuredBounds[3];
-  s32 sourceBounds[3];
-  FIXED span = BATTLE_CAMERA_DISTANCE;
-  FIXED alpha;
-  FIXED half;
-  FIXED width;
-  u32 result;
+  FIXED eyeOffset[3];
+  s32 originOnScreen[3];
+  s32 origin[3];
+  FIXED distance = BATTLE_CAMERA_DISTANCE;
+  FIXED nearShare;
+  FIXED halfFocal;
+  FIXED focal;
+  u32 nearDepth;
 
   SET_VECTOR(focus, x, depth, y);
-  sourceBounds[0] = 0;
-  alpha = FIXED_ONE * 3 / 4;
-  sourceBounds[1] = 0;
-  sourceBounds[2] = 0;
+  origin[0] = 0;
+  nearShare = FIXED_ONE * 3 / 4;
+  origin[1] = 0;
+  origin[2] = 0;
 
   // The eye BATTLE_CAMERA_DISTANCE back from the focus.
-  result = Iwram_RatioMulQ14(span, alpha);
-  Projection_Set(span, result, span * 2);
+  nearDepth = Iwram_RatioMulQ14(distance, nearShare);
+  Projection_Set(distance, nearDepth, distance * 2);
   Matrix_Initialize();
   Matrix_TranslateVector(focus);
   Matrix_RotateY((s16)camera->yaw);
   Matrix_RotateX((s16)camera->pitch);
-  renderBounds[0] = 0;
-  renderBounds[1] = 0;
-  renderBounds[2] = span;
-  Iwram_TransformVector(renderBounds, (s32 *)camera);
+  eyeOffset[0] = 0;
+  eyeOffset[1] = 0;
+  eyeOffset[2] = distance;
+  Iwram_TransformVector(eyeOffset, (s32 *)camera);
   // Where the battlefield's origin falls on the screen moves the plane as much.
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Matrix_Initialize();
   Matrix_SetLookAt(camera->eye, focus);
-  Matrix_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_ProjectPoint(origin, originOnScreen);
 
   BattleCamera_SetRange(
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
-      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
-      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  // The zoom scales the focal length and the far depth.
-  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
-  width = half * 2;
-  result = Iwram_RatioMulQ14(width, alpha);
-  Projection_Set(width, result, half * 4);
+      (BATTLE_PROJECTION_CENTER_X - originOnScreen[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
+  // The zoom scales the focal length and both depths.
+  halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
+  focal = halfFocal * 2;
+  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  Projection_Set(focal, nearDepth, halfFocal * 4);
 }
 
 /// Points the battle camera at the ground between two units, with a zoom in
@@ -466,9 +467,9 @@ UNUSED s32 Battle_AdjustDebugValue(s32 selectedValue) {
 void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(unitId);
   struct Actor *actor;
-  struct Sprite *record;
-  struct Sprite **records;
-  s32 recordIndex;
+  struct Sprite *sprite;
+  struct Sprite **sprites;
+  s32 spriteIndex;
 
   if (slot == 0)
     return;
@@ -477,21 +478,21 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
     return;
   switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
   case ACTOR_SPRITE_ONE: {
-    record = actor->sprite;
-    record->image.objectMode = mode;
-    record->shadow.objectMode = mode;
+    sprite = actor->sprite;
+    sprite->image.objectMode = mode;
+    sprite->shadow.objectMode = mode;
     break;
   }
   case ACTOR_SPRITE_GROUP: {
-    records = (struct Sprite **)actor->sprite;
-    recordIndex = 0;
+    sprites = (struct Sprite **)actor->sprite;
+    spriteIndex = 0;
     do {
-      record = *records++;
-      if (record == 0)
+      sprite = *sprites++;
+      if (sprite == 0)
         break;
-      record->image.objectMode = mode;
-      record->shadow.objectMode = mode;
-    } while (++recordIndex < ACTOR_SPRITE_GROUP_SIZE);
+      sprite->image.objectMode = mode;
+      sprite->shadow.objectMode = mode;
+    } while (++spriteIndex < ACTOR_SPRITE_GROUP_SIZE);
     break;
   }
   }

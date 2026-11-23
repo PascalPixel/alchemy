@@ -9,10 +9,10 @@
 
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
 /// strategy, and a target worth it; if a pick fails after more than
-/// AI_MAX_FAILED_CHOICES have failed before it, the enemy defends. retry is 0
+/// AI_MAX_FAILED_CHOICES have failed before it, the enemy defends. acting is 0
 /// as the turn is built, when only a guard is chosen, and 1 when the enemy
 /// acts.
-UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
+UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 acting) {
   u32 selection;
   struct BattleAIState *selectionMemory;
   const struct EnemyDefinition *enemy;
@@ -69,7 +69,7 @@ UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   // A party member chooses in the menu.
   if (unit->classId != CLASS_NONE)
     return;
-  if (retry != 0 && request->command != COMMAND_ENEMY_ABILITY)
+  if (acting != 0 && request->command != COMMAND_ENEMY_ABILITY)
     return;
 
   enemy = Enemy_GetDefinitionFar(unit->id);
@@ -104,7 +104,7 @@ select_again:
     // It moves on only when the enemy acts, wrapping from 7 to 0 in its three
     // bits.
     selection = selectionMemory->selection;
-    if (retry != 0) {
+    if (acting != 0) {
       selectionMemory->selection = selection + 1;
     }
     break;
@@ -121,7 +121,7 @@ select_again:
   useItem &= itemsAllowed;
   abilityId = enemy->abilities[selection];
   request->command = COMMAND_ENEMY_ABILITY;
-  if (useItem != 0 && retry != 0) {
+  if (useItem != 0 && acting != 0) {
     if (!(INVENTORY_ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
@@ -178,7 +178,7 @@ select_again:
 
     // As the turn is built, only a guard is kept; anything else waits for
     // the enemy's action.
-    if (retry == 0) {
+    if (acting == 0) {
       switch (request->command) {
       case COMMAND_DEFEND:
       case COMMAND_TOTAL_DEFENSE:
@@ -204,7 +204,7 @@ select_again:
     // guard (guards are settled as the turn is built): both pick again.
     command = request->command;
     if ((command == COMMAND_FLEE && (u8)unit->challenge != 0) ||
-        (retry != 0 &&
+        (acting != 0 &&
          (command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE)))
       goto next_candidate;
 
@@ -257,7 +257,7 @@ select_again:
     }
   }
   // As the turn is built, one pick is all.
-  if (retry == 0)
+  if (acting == 0)
     needsChoice = 0;
 next_candidate:
   if (needsChoice != 0 && failedChoices > AI_MAX_FAILED_CHOICES) {

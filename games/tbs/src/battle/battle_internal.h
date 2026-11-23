@@ -38,6 +38,7 @@
 #include "battle/formations.h"
 #include "battle/playback_queue.h"
 #include "battle/range_falloff.h"
+#include "battle/weapon_kind.h"
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "field/field.h"
@@ -145,15 +146,6 @@
 
 /// gLinkStatus: both consoles are connected.
 #define LINK_BOTH_CONNECTED 3
-
-/// The two battle sprites drawn in two parts: the sprite after each is its
-/// second part, which EnemySprite_LoadIntoSlots loads into further
-/// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
-/// actor's second sprite.
-#define SPRITE_WITH_SECOND_PART_A                                              \
-  476 ///< the Kraken's (ENEMY_KRAKEN, battle_sprites.c)
-#define SPRITE_WITH_SECOND_PART_B                                              \
-  483 ///< the Fusion Dragon's (ENEMY_FUSION_DRAGON)
 
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1

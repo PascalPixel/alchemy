@@ -31,14 +31,14 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 /// Each enemy sprite slot owns 16 KB of Ram_EnemySpriteSlots.
 #define ENEMY_SPRITE_SLOT_SIZE (16 * 1024)
 
-/// Returns 1 if an enemy of the class would find room among the enemy sprite
+/// Returns 1 if the enemy would find room among the enemy sprite
 /// slots, two side by side for a large one.
-s32 Enemy_HasSpriteRoom(s32 classId) {
+s32 Enemy_HasSpriteRoom(s32 enemyId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
   s32 spriteSlot;
 
-  needsSingleSlot = BattleSprite_IsSmall(classId);
+  needsSingleSlot = BattleSprite_IsSmall(enemyId);
   battle = gBattleWork;
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
     if (battle->spriteSlots[spriteSlot] != 0)
@@ -71,8 +71,8 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   do {
     s32 slot;
 
-    // A unit with a classIndex is no enemy: nothing is loaded and the
-    // result stays 0.
+    // A unit with a class is a character, no enemy: nothing is loaded and
+    // the result stays 0.
     if (unit->classId != CLASS_NONE)
       continue;
 
@@ -105,8 +105,9 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     if (!needsSingleSlot)
       battle->spriteSlots[slot + 1] = unitId;
 
-    if (sprite != SPRITE_WITH_SECOND_PART_A &&
-        sprite != SPRITE_WITH_SECOND_PART_B)
+    // Only the Kraken and the Fusion Dragon are drawn in two parts, the
+    // second the sprite after the first.
+    if (sprite != SPRITE_BATTLE_KRAKEN && sprite != SPRITE_BATTLE_FUSION_DRAGON)
       break;
   } while (++spritePart <= 1);
 

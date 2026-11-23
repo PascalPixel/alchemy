@@ -93,6 +93,10 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 /// the sync, transfer or wait for the partner's commands under way.
 #define LINK_MAX_MISSED_FRAMES 24
 
+/// BattleWork.challengeFlag's bit: the challenge effect landed on a party
+/// member ("This is no time to be running away!").
+#define BATTLE_CHALLENGED_PARTY 2
+
 /// The battle's own work: its enemies, units and their battle objects, the
 /// turn's actions, the spoils, the background palette, the action under way and
 /// the playback.
@@ -111,7 +115,7 @@ struct BattleWork {
   u32 nameLetterMasks[6];
   /// The letter each enemy in enemyKinds gave out last; -1 for none yet.
   s8 lastNameLetter[6];
-  u8 unusedAfterChannels[2]; ///< no code names it
+  u8 unusedAfterNameLetters[2]; ///< no code names it
   /// The enemyKinds index of the first enemy to fall; 6 for none.
   u16 firstDefeated;
   u16 defeatState;   ///< DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER
@@ -120,13 +124,14 @@ struct BattleWork {
                      ///< staging draws it less PARTY_STATUS_SHOW_PP, names and
                      ///< HP only
   u8 layout; ///< the formation's FORMATION_LAYOUT_; SHUFFLED in a link battle
-  /// bits: 1 a party unit was challenged; nonzero, the party cannot run
+  /// BATTLE_CHALLENGED_PARTY once a party member was challenged; while
+  /// nonzero, the party cannot run.
   u8 challengeFlag;
   u8 isLink;      ///< 1 in a link battle
-  u8 firstStrike; ///< BATTLE_ENCOUNTER_: who strikes first
+  u8 firstStrike; ///< enum BattleFirstStrike: who strikes first
   /// Failed attempts to run; each adds 2000 to the base chance of 5000.
   u8 fleeFailures;
-  u8 unusedAfterEscapes; ///< no code names it
+  u8 unusedAfterFleeFailures; ///< no code names it
   /// For each party unit, its slot as a link opponent's enemy, minus
   /// FIRST_ENEMY_UNIT; 0xff for none.
   u8 opponentSlots[8];

@@ -13,10 +13,10 @@
 
 struct Actor;
 
-/// struct Actor, field for field, as BattleObject_SpawnObjectsForList gives a
-/// battle unit its sprites: the sprite word untyped (void *), and the cursor,
-/// wait and userValue unsigned. Through struct Actor the store of a two-part
-/// enemy's radius moves one instruction earlier.
+/// struct Actor, field for field, as BattleObject_SpawnObjectsForList sees a
+/// battle unit's actor while it gives it its sprites: the sprite word untyped
+/// (void *), and the cursor, wait and userValue unsigned. The plain form reads
+/// the actor through struct Actor.
 struct BattleActor {
   const s32 *script;
   u16 scriptCursor;

@@ -177,8 +177,8 @@ u32 ElementGlow_UploadStarField(void) {
   }
 }
 
-/// The two tasks as the task runner takes them: cast to TaskFunc
-/// where the original's types return a value.
+/// The two tasks as the task runner takes them: without UBFIX they are
+/// declared returning a value, and are cast to TaskFunc.
 #ifdef UBFIX
 #define STAR_FIELD_UPDATE_FUNC ElementGlow_UpdateStarField
 #define STAR_FIELD_UPLOAD_FUNC ElementGlow_UploadStarField

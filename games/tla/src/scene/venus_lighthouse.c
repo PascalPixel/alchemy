@@ -20,6 +20,7 @@
 #include "field/field_coordinate.h"
 #include "field/field_event.h"
 #include "field/field_psynergy_work.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
 #include "field/flag_call.h"
@@ -166,6 +167,9 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
+/// Puts a short-lived effect sprite, dust unless `options` names another, at
+/// a point, moving off at the velocity given and drawn at the leader's
+/// priority: this overlay's own copy of field_effect_spawn.c.
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -204,7 +208,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -436,6 +440,8 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetSpriteColor(Actor_GetById(leader), SPRITE_COLOR_GREY);
   actor->velocityY = toFIXED(4);
   Actor_SetSpeed(leader, 4);
+  // Thrown back off the barrier the way he came, north to z 840 or south to
+  // z 952.
   if (FIELD_CELL(actor->z.fixed) <= 54) {
     Actor_GetById(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
     z = 210;
@@ -465,6 +471,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 z = leader->z.part[0].integer;
 
+  // Off the switch's middle, 8 pixels square from (676, 788).
   if ((u32)(leader->x.part[0].integer - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
@@ -490,25 +497,25 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
 /// The statue Felix moved onto the floor switch, in column 42, sinks in and
 /// holds it down, and the barrier lets the leader by.
 void VenusLighthouse_SinkStatue(void) {
-  struct Actor *obj;
-  FIXED val;
-  s32 a;
-  s32 b;
+  struct Actor *statue;
+  FIXED sunk;
+  s32 width;
+  s32 height;
 
-  obj = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
+  statue = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FIELD_CELL(obj->x.fixed) == 42) {
+  if (FIELD_CELL(statue->x.fixed) == 42) {
     FieldEvent_Wait(30);
     Event_PlaySound(SE_THUMP);
-    obj->motionFlags = 0;
-    val = -toFIXED(2);
-    obj->groundHeight = val;
-    obj->y.fixed = val;
+    statue->motionFlags = 0;
+    sunk = -toFIXED(2);
+    statue->groundHeight = sunk;
+    statue->y.fixed = sunk;
     Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_HELD);
-    a = 3;
-    b = 5;
-    MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
+    width = 3;
+    height = 5;
+    MapGrid_CopyCellsTo(44, 117, 41, 117, width, height);
   }
   Event_End();
 }
@@ -537,42 +544,42 @@ void VenusLighthouse_ReadTrueHeart(void) {
 void VenusLighthouse_HidePaths(void) {
   s32 x;
   s32 y;
-  s32 a;
-  s32 b;
+  s32 wide;
+  s32 narrow;
 
   x = 23;
   y = 8;
   MapGrid_CopyCellAttributes(35, 8, 1, 3, x, y);
-  a = 3;
-  b = 1;
-  MapGrid_CopyCellsTo(35, 8, 23, 8, b, a);
-  MapGrid_CopyCellsTo(99, 8, 87, 8, b, a);
+  wide = 3;
+  narrow = 1;
+  MapGrid_CopyCellsTo(35, 8, 23, 8, narrow, wide);
+  MapGrid_CopyCellsTo(99, 8, 87, 8, narrow, wide);
   x = 46;
   y = 55;
   MapGrid_CopyCellAttributes(57, 55, 3, 3, x, y);
-  MapGrid_CopyCellsTo(57, 55, 46, 55, a, a);
-  MapGrid_CopyCellsTo(121, 55, 110, 55, a, a);
+  MapGrid_CopyCellsTo(57, 55, 46, 55, wide, wide);
+  MapGrid_CopyCellsTo(121, 55, 110, 55, wide, wide);
 }
 
 /// Reveal shows the hidden paths.
 void VenusLighthouse_RevealPaths(void) {
   s32 x;
   s32 y;
-  s32 a;
-  s32 b;
+  s32 wide;
+  s32 narrow;
 
   x = 23;
   y = 8;
   MapGrid_CopyCellAttributes(36, 8, 1, 3, x, y);
-  a = 3;
-  b = 1;
-  MapGrid_CopyCellsTo(36, 8, 23, 8, b, a);
-  MapGrid_CopyCellsTo(100, 8, 87, 8, b, a);
+  wide = 3;
+  narrow = 1;
+  MapGrid_CopyCellsTo(36, 8, 23, 8, narrow, wide);
+  MapGrid_CopyCellsTo(100, 8, 87, 8, narrow, wide);
   x = 46;
   y = 55;
   MapGrid_CopyCellAttributes(53, 55, 3, 3, x, y);
-  MapGrid_CopyCellsTo(53, 55, 46, 55, a, a);
-  MapGrid_CopyCellsTo(117, 55, 110, 55, a, a);
+  MapGrid_CopyCellsTo(53, 55, 46, 55, wide, wide);
+  MapGrid_CopyCellsTo(117, 55, 110, 55, wide, wide);
 }
 
 #define Actor_SetSpriteColor                                                   \
@@ -600,7 +607,8 @@ void VenusLighthouse_FelixMovesStatue(void) {
 // VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS as where the game restarts.
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -641,7 +649,8 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
 
   work = &gMainRoutineWork;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (work->entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     work->restartScene = SCENE_VENUS_LIGHTHOUSE;
     work->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;

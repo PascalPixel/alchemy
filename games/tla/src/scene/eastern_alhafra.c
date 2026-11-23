@@ -672,29 +672,12 @@ void EasternAlhafra_StepByCabinDoor(void) {
   }
 }
 
-/// Felix steps into a door: it opens, he walks through, and the screen fades
-/// as he leaves by the exit given.
-void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
-                                     s32 countdown, s32 unused) {
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(step->steps, step->x, step->y);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
-  FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(countdown);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_End();
-}
+#include "shared/leader_open_door_and_enter.h"
 
 /// Felix walks north into the cabin door at the north end of the ship's deck
 /// (cell (16, 23)); it opens and he goes inside, down into the ship.
 void EasternAlhafra_EnterShip(s32 countdown) {
-  EasternAlhafra_OpenDoorAndEnter(&gEasternAlhafra_ShipDoor, countdown, 0);
+  Leader_OpenDoorAndEnter(&gEasternAlhafra_ShipDoor, countdown, 0);
 }
 
 /// Nothing happens when Felix walks diagonally into the log or the rock under

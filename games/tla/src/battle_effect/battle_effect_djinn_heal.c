@@ -244,7 +244,6 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  // Tear down.
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
@@ -295,11 +294,13 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 /// targets and Zagan's axe falls, striking them four times while the screen
 /// shakes and rings of fire spread. Holding A or B draws only every other
 /// frame.
+///
+/// Abilities: Zagan.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct BattleWork *battle;
   void *canvas;
   struct BattleEffectWork *work;
-  u8 *sprites;
+  u8 *fadedMotes;
   struct BattleBackgroundWork *backdrop;
   s32 savedScroll;
   DrawRectangle *blit;
@@ -307,12 +308,11 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct Point2D velocity;
   s32 skip;
   DrawRectangle blitters[2];
-  struct Scale request;
+  struct Scale zaganScale;
   FIXED placement[4];
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;
-  // Default: set for real below.
   struct Particle *p = NULL;
   u8 *ringPixels;
   s32 size;
@@ -325,13 +325,13 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  sprites = Ram_HeapSlots->battleSheet;
+  fadedMotes = Ram_HeapSlots->battleSheet;
   backdrop = Ram_HeapSlots->battleBackground;
   savedScroll = gBgScroll[1].x;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
-  work->transferMode = 0;
+  work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The battle flashes away as the summons' openings do, stopping while the
@@ -360,7 +360,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
               value = 1;
             }
           }
-          sprites[size * size * j * 2 + i] = value;
+          fadedMotes[size * size * j * 2 + i] = value;
         }
       }
       Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
@@ -551,7 +551,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     }
     if ((u32)frame <= 195) {
       // Zagan.
-      request = gZagan_UnitScale;
+      zaganScale = gZagan_UnitScale;
       placement[3] = 0;
       placement[1] = 0;
       if (!(frame & 1) || !skip) {
@@ -562,7 +562,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
             placement[2] = INTtoFIXED(gZagan_ChargePoints[i][1]) + position.y +
                            toFIXED(16);
             Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
-                                              (s32 *)&request, 0);
+                                              (s32 *)&zaganScale, 0);
           }
         } else {
           for (i = 0; i != ZAGAN_PARTS; i++) {
@@ -570,7 +570,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
             placement[2] = INTtoFIXED(gZagan_GallopPoints[i][1]) + position.y -
                            toFIXED(16);
             Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
-                                              (s32 *)&request, 0);
+                                              (s32 *)&zaganScale, 0);
           }
         }
       }
@@ -688,9 +688,9 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Every VBlank turns the camera at least half the delta, so it keeps turning on
-// VBlanks that end no frame of the effect.
-/// Turns the battle camera's yaw by the effect's delta.
+/// Turns the battle camera's yaw by the effect's delta: every VBlank turns it
+/// at least half the delta, so it keeps turning on VBlanks that end no frame
+/// of the effect.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;

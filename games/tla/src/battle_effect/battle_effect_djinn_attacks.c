@@ -289,13 +289,13 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 /// Decompresses a resource that may open with a palette.
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette) {
-  u8 *data = Resource_GetTableEntry(id);
+  u8 *resource = Resource_GetTableEntry(id);
 
   if (copyPalette != 0)
-    Iwram_CopyWords((void *)BG_PLTT, data, SHEET_PALETTE_BYTES);
+    Iwram_CopyWords((void *)BG_PLTT, resource, SHEET_PALETTE_BYTES);
   if (skipPalette != 0)
-    data += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(data, dst);
+    resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, dst);
 }
 
 #define VENUS_FRAMES 96
@@ -446,7 +446,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sheet;
   BlitterPair blitters;
-  struct Particle *step;
+  struct Particle *particle;
   struct Particle *mote;
   s32 index;
   s32 frame;
@@ -466,20 +466,20 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
   // Nine flames spread out along the ground, alternately left and right.
   index = 0;
-  step = work->particles;
+  particle = work->particles;
   for (; index != MARS_FLAMES; index++) {
     s32 angle = index * (TRIG_TURN / 32);
 
-    step->x = FIXEDtoINT(Trig_Sin(angle) * MARS_ROW_REACH);
-    step->y = FIXEDtoINT(Trig_Cos(angle) * 4) + MARS_ROW_Y;
+    particle->x = FIXEDtoINT(Trig_Sin(angle) * MARS_ROW_REACH);
+    particle->y = FIXEDtoINT(Trig_Cos(angle) * 4) + MARS_ROW_Y;
     if (index & 1)
-      step->x = MARS_ROW_X - step->x;
+      particle->x = MARS_ROW_X - particle->x;
     else
-      step->x += MARS_ROW_X;
-    step->variant = -(index * 2);
+      particle->x += MARS_ROW_X;
+    particle->variant = -(index * 2);
     for (i = 0; i != MARS_EMBERS_PER_FLAME; i++) {
       mote = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
-      mote->x = INTtoFIXED(((Random16() & 15) + step->x) - 8);
+      mote->x = INTtoFIXED(((Random16() & 15) + particle->x) - 8);
       mote->y = INTtoFIXED((Random16() & 7) + 96);
       mote->velocityX = ((Random16() & 127) - 64) << 11;
       mote->velocityY = ((Random16() & 127) - 64) << 10;
@@ -487,7 +487,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       // DEAD: nothing reads velocityZ; the ROM keeps the store.
       mote->velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
-    step++;
+    particle++;
   }
 
   Sound_PlayFar(SE_WHOOSH);
@@ -522,9 +522,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     }
     if (frame > 31) {
       for (index = 0; index != MARS_FLAMES; index++) {
-        step = &work->particles[index];
-        if (step->variant >= 0 && step->variant < MARS_FLAME_LIFE) {
-          s32 picture = step->variant / 8;
+        particle = &work->particles[index];
+        if (particle->variant >= 0 && particle->variant < MARS_FLAME_LIFE) {
+          s32 picture = particle->variant / 8;
           u32 width;
 
           // UB: width is assigned in one argument and read in another.
@@ -532,37 +532,38 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
           width = gBattleEffect_PuffArcPictureWidths[picture];
           blitters[0](canvas,
                       work->sheet + gBattleEffect_PuffArcPictures[picture],
-                      step->x - (width >> 1),
-                      step->y + gBattleEffect_PuffArcPictureBiasY[picture],
+                      particle->x - (width >> 1),
+                      particle->y + gBattleEffect_PuffArcPictureBiasY[picture],
                       width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
           blitters[0](
               canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
-              step->x -
+              particle->x -
                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
-              step->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
+              particle->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
               gBattleEffect_PuffArcPictureHeights[picture]);
 #endif
         }
-        step->variant++;
+        particle->variant++;
       }
     }
     // Embers rise from the flames, swaying.
     for (index = 0; index != MARS_FLAMES * MARS_EMBERS_PER_FLAME; index++) {
-      step = &PARTICLES[index];
+      particle = &PARTICLES[index];
       if (frame >= (index / MARS_EMBERS_PER_FLAME) * 2 + 40) {
         s32 size;
         s32 x;
 
         size = (index & 1) + 3;
-        x = FIXED_INTEGER_PART(step->x) + FIXEDtoINT(Trig_Sin(step->z) * 4);
+        x = FIXED_INTEGER_PART(particle->x) +
+            FIXEDtoINT(Trig_Sin(particle->z) * 4);
         EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x,
-                         FIXED_INTEGER_PART(step->y), size);
-        Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE,
+                         FIXED_INTEGER_PART(particle->y), size);
+        Particle_AdvanceWithGravity2D(particle, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
-        step->z += TRIG_TURN / 32;
-        if (step->z > TRIG_ANGLE_MASK)
-          step->z -= TRIG_TURN - 1;
+        particle->z += TRIG_TURN / 32;
+        if (particle->z > TRIG_ANGLE_MASK)
+          particle->z -= TRIG_TURN - 1;
       }
     }
 

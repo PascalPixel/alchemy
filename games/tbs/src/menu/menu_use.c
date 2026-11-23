@@ -315,7 +315,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-/// Plays the use sound of item's action (Ability_PlayUseAnimation).
+/// Plays the use sound of item's action (Ability_PlayUseAnimation, which, for
+/// all its name, plays only a sound).
 void Item_PlayUseAnimation(u32 item) {
   Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId &
                            PSYNERGY_ABILITY_MASK);
@@ -324,13 +325,13 @@ void Item_PlayUseAnimation(u32 item) {
 /// Plays the sound of action used from the menu, and returns at once: no
 /// animation is drawn and nothing waits.
 void Ability_PlayUseAnimation(s32 action) {
-  s32 animationType;
-  u32 targetType;
+  s32 formula;
+  u32 effect;
   struct AbilityDefinition *actionDefinition;
 
   actionDefinition = Ability_Get(action);
-  animationType = ABILITY_FORMULA_MASK & actionDefinition->flags;
-  switch (animationType) {
+  formula = ABILITY_FORMULA_MASK & actionDefinition->flags;
+  switch (formula) {
   case ABILITY_FORMULA_HEAL_HP:
     // With no break the recovery sound is started twice, both times on music
     // player 2 (gSongTable's row for it), which Sound_Play never swaps for
@@ -342,8 +343,8 @@ void Ability_PlayUseAnimation(s32 action) {
     Sound_PlayReturnOne(SE_RECOVERY);
     return;
   default:
-    targetType = actionDefinition->effect;
-    switch (targetType) {
+    effect = actionDefinition->effect;
+    switch (effect) {
     case ABILITY_EFFECT_REVIVE:
       Sound_PlayReturnOne(MUS_RECOVERING_AFTER_COMBAT);
       return;

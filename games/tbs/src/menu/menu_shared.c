@@ -27,10 +27,11 @@
 #define STATUS_PANEL_LEARN_STATUS_Y 56
 #endif
 
-/// Window_UpdateOrCreate: keep an existing window as it is, without redrawing
-/// its saved rectangle. The low byte of the flags is the window style.
+/// Window_UpdateOrCreate's flags: its own bit, which keeps an existing window
+/// as it is without redrawing its saved rectangle, over the low byte of
+/// WINDOW_FLAG_ flags a new window opens with.
 #define WINDOW_KEEP_EXISTING 0x100
-#define WINDOW_STYLE_MASK 0xff
+#define WINDOW_ATTRS_MASK 0xff
 
 /// Resumes the overlay tasks and tileset animations when a menu closes, and
 /// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
@@ -72,11 +73,13 @@ void Window_InitializeWork(s32 unused) {
   menu->rowCount = 1;
 }
 
-/// Opens the window kept in *handle, or redraws it if it is already open.
+/// Opens the window kept in *handle at tile (x, y), w by h tiles, or, if it is
+/// already open, clears it to its saved rectangle (unless flags has
+/// WINDOW_KEEP_EXISTING). Returns 1 when it opened a new window.
 s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
                           s32 flags) {
   struct Window *window;
-  s32 style;
+  s32 attrs;
 
   window = *handle;
   if (window != 0) {
@@ -86,22 +89,22 @@ s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
     WindowSprite_RedrawSavedRectFar(window);
     return 0;
   }
-  style = flags & WINDOW_STYLE_MASK;
-  *handle = Window_CreateFar(x, y, w, h, style);
+  attrs = flags & WINDOW_ATTRS_MASK;
+  *handle = Window_CreateFar(x, y, w, h, attrs);
   return 1;
 }
 
-/// Closes the window kept in *handle, if any, and clears the handle. style is
-/// passed on to Window_CloseFar and chooses how the window closes.
-void Window_CloseIfOpen(struct Window **handle, s32 style) {
+/// Closes the window kept in *handle, if any, and clears the handle; nonzero
+/// instant closes it at once rather than shrinking it.
+void Window_CloseIfOpen(struct Window **handle, s32 instant) {
   if (*handle != NULL) {
-    Window_CloseFar(*handle, style);
+    Window_CloseFar(*handle, instant);
     *handle = NULL;
   }
 }
 
-/// Draws the status panel of the Item and Psynergy screens for the party party
-/// member `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
+/// Draws the status panel of the Item and Psynergy screens for party member
+/// `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
 /// or the level, the party member's portrait, and below them what mode's panel
 /// kind asks for. slot is the inventory slot of the item the panel is about,
 /// for the equipment and Psynergy item panels.
@@ -123,7 +126,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
     created = Window_UpdateOrCreate(&menu->statusWindow, 0, 5, 13, 12,
-                                    WINDOW_KEEP_EXISTING | 2);
+                                    WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT);
   window = menu->statusWindow;
 
   // The name, then each status the party member has, one row each; the level
@@ -392,7 +395,8 @@ void Text_DrawStatComparison(const struct Unit *after,
 }
 
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
-/// into a free VRAM block.
+/// into a free VRAM block; Icon_CreateWithResourceVariant, with an argument it
+/// ignores.
 UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
                                    s32 y) {
   s32 block;
@@ -455,7 +459,8 @@ struct Window *MenuCursor_Create(void *source) {
   struct WindowSprite *cursor;
 
   menu->auxiliaryWindow = NULL;
-  Window_UpdateOrCreate(&menu->auxiliaryWindow, 0, 0, 13, 5, 2);
+  Window_UpdateOrCreate(&menu->auxiliaryWindow, 0, 0, 13, 5,
+                        WINDOW_FLAG_INSTANT);
   window = menu->auxiliaryWindow;
   cursor =
       (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
@@ -464,6 +469,9 @@ struct Window *MenuCursor_Create(void *source) {
   menu->tabIndex[1] = 0;
   menu->sideIcon[0] = cursor;
   cursor->depth = OAM_DEPTH_FRONT - 1;
+  // No screen ever makes a second marker: sideIcon[1] stays NULL, as the
+  // menu work was cleared, and this store and the screens' others through it
+  // land in the BIOS, which ignores them.
   menu->sideIcon[1]->depth = OAM_DEPTH_FRONT;
   return window;
 }
@@ -719,7 +727,10 @@ void ItemMenu_RefreshEntry(s32 layout) {
   } while (index < INVENTORY_SLOTS);
 }
 
-/// Shows message in the item menu, with the hand cursor hidden meanwhile.
+/// Shows message in the item menu, with the hand cursor hidden meanwhile: in a
+/// small window at tile (x, y) fitted to it, or with y -1 in the description
+/// window along the bottom. With x -1 it stays there for the next screen
+/// (FLAG_MENU_INFO_KEPT); otherwise it waits for A, B or Start.
 void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   struct ItemMenuWork *menu = gMenuWork;
   struct Window *window;
@@ -732,7 +743,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate(&menu->modalWindow, x, y, width, height,
-                              WINDOW_KEEP_EXISTING | 2) == 0)
+                              WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT) == 0)
       Window_SetBounds(menu->modalWindow, x, y, width, height);
     window = menu->modalWindow;
   } else {
@@ -867,7 +878,10 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
 /// between the two page arrows.
 #define PAGE_LABEL_FIRST 49
 
-/// Moves a paged list's cursor and page with the d-pad's repeating keys.
+/// Moves a paged list's cursor and page with the d-pad's repeating keys: Up and
+/// Down move the row and Left and Right turn the page, or, when horizontal is
+/// set, the other way round. Returns 1 when the page turned, 0 when the row
+/// moved and -1 when nothing did.
 s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
                           s32 *page) {
   s32 pages;
@@ -1000,7 +1014,8 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
 
   x -= pageCount;
   if (pageCount > 1) {
-    Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT, x - 1, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT, x - 1, -1,
+                              TILEMAP_ENTRY_PLAIN);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
@@ -1011,7 +1026,8 @@ void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
       x++;
     }
 
-    Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, x, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, x, -1,
+                              TILEMAP_ENTRY_PLAIN);
   }
 }
 
@@ -1188,7 +1204,7 @@ void WindowPalette_SetLowHpTextColor(void) {
 #undef STATUS_PANEL_LEARN_NAME_Y
 #undef STATUS_PANEL_LEARN_STATUS_Y
 #undef WINDOW_KEEP_EXISTING
-#undef WINDOW_STYLE_MASK
+#undef WINDOW_ATTRS_MASK
 #undef NUMBER_PIXELS_PER_DIGIT
 #undef CURSOR_BOB_STEP
 #undef PAGE_LABEL_FIRST

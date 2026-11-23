@@ -11,29 +11,29 @@
 #define FIGURE_START_X 16
 #define TOP_ROW_START_Y 32
 
-/// Replaces the four displayed sprites and starts their projected-position
-/// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
-/// ANIM_WALK, placed each frame by DjinnFigures_UpdateAllPositions.
+/// Puts up the top row, the Status screen's: one walking Djinni figure of each
+/// element (gDjinnFigures_SpriteIds), in place of any figures there, placed
+/// each frame by DjinnFigures_UpdateAllPositions.
 void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation = state->figures[index];
+    struct Sprite *figure = state->figures[index];
 
-    if (animation != NULL) {
-      Sprite_DestroyFar(animation);
+    if (figure != NULL) {
+      Sprite_DestroyFar(figure);
       state->figures[index] = NULL;
     }
   }
 
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
+    struct Sprite *figure = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
-    if (animation != NULL) {
-      Sprite_StartAnimationFar(animation, ANIM_WALK);
+    if (figure != NULL) {
+      Sprite_StartAnimationFar(figure, ANIM_WALK);
     }
-    state->figures[index] = animation;
+    state->figures[index] = figure;
     state->figureX[index] = FIGURE_START_X;
     state->figureY[index] = TOP_ROW_START_Y;
   }
@@ -65,8 +65,8 @@ DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 #define FIGURE_FULL_SCALE ((u32)FIXED_ONE)
 #define FIGURE_ORIGIN_Y toFIXED(482)
 
-/// Projects the four sprites at full scale from their saved row positions.
-/// Task, each frame from DjinnFigures_InitializeTopRow.
+/// Task while the top row is up: places its four figures at full size where
+/// the screen has put them.
 void DjinnFigures_UpdateAllPositions(void) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
@@ -75,18 +75,18 @@ void DjinnFigures_UpdateAllPositions(void) {
 
   index = 0;
   while (1) {
-    struct Sprite *animation = state->figures[index];
+    struct Sprite *figure = state->figures[index];
 
-    if (animation != 0) {
+    if (figure != NULL) {
       u32 vertical = FIGURE_ORIGIN_Y - toFIXED(state->memberY[index]);
-      animation->image.priority = 0;
+      figure->image.priority = 0;
       scale.x = FIGURE_FULL_SCALE;
       scale.y = FIGURE_FULL_SCALE;
       placement.x = toFIXED((s32)state->figureX[index]);
       placement.height = vertical;
       placement.y = toFIXED((s32)state->figureY[index]) + vertical;
       placement.groundHeight = 0;
-      Actor_ApplyProjectedPlacementFar(animation, &placement, &scale,
+      Actor_ApplyProjectedPlacementFar(figure, &placement, &scale,
                                        FACING_SOUTH);
     }
     index += 1;
@@ -95,76 +95,76 @@ void DjinnFigures_UpdateAllPositions(void) {
   }
 }
 
-/// Projects the bottom row using its saved scale or easing toward full size,
-/// facing south, or west for a figure whose y is marked negative
-/// (DjinnFigures_SetSlotPosition).
+/// Task while the bottom row is up: places its figures at their fixed scale or
+/// growing toward full size, facing south, or west for a figure whose y is
+/// marked negative (DjinnFigures_SetSlotPosition).
 void DjinnFigures_UpdateBottomRow(void) {
   struct ItemMenuWork *menu = gMenuWork;
-  s32 figure;
+  s32 index;
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
-  for (figure = 0; figure <= 3; figure++) {
-    struct Sprite *animation = menu->figures[figure];
+  for (index = 0; index <= 3; index++) {
+    struct Sprite *figure = menu->figures[index];
 
-    if (animation != 0) {
-      u32 projectedY = FIGURE_ORIGIN_Y - toFIXED(menu->memberY[figure]);
+    if (figure != NULL) {
+      u32 projectedY = FIGURE_ORIGIN_Y - toFIXED(menu->memberY[index]);
       s32 phase;
       s32 facing;
       /* FAKEMATCH(temporary): rowY, the figure's y read again into a local for
        * the facing's test. */
       s32 rowY;
 
-      animation->image.priority = 0;
+      figure->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
       // closes a third of its gap to full size (FIXED_ONE) each frame.
-      phase = menu->figureScales[figure];
+      phase = menu->figureScales[index];
       if (phase < 0) {
         scale.x = -phase;
         scale.y = -phase;
       } else {
         scale.x = phase + (s32)(FIXED_ONE - phase) / 3;
         scale.y = scale.x;
-        menu->figureScales[figure] = scale.x;
+        menu->figureScales[index] = scale.x;
       }
-      placement.x = toFIXED(menu->figureX[figure]);
+      placement.x = toFIXED(menu->figureX[index]);
       placement.height = projectedY;
-      placement.y = toFIXED(menu->figureY[figure]) + projectedY;
+      placement.y = toFIXED(menu->figureY[index]) + projectedY;
       placement.groundHeight = 0;
-      rowY = menu->figureY[figure];
+      rowY = menu->figureY[index];
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live.
        */
       scale.x = scale.x;
       facing = FACING_WEST;
       if (rowY >= 0)
         facing = FACING_SOUTH;
-      Actor_ApplyProjectedPlacementFar(animation, &placement, &scale, facing);
+      Actor_ApplyProjectedPlacementFar(figure, &placement, &scale, facing);
     }
   }
 }
 
-/// Replaces the bottom row's four sprites and starts its easing task: one
-/// Djinni figure of each element in ANIM_WALK, at full size, parked until the
-/// Djinn menu moves one.
+/// Puts up the bottom row, the Djinn menu's: one walking Djinni figure of each
+/// element at full size, in place of any there, parked below the screen until
+/// the menu moves one.
 void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation = state->figures[index];
+    struct Sprite *figure = state->figures[index];
 
-    if (animation != NULL) {
-      Sprite_DestroyFar(animation);
+    if (figure != NULL) {
+      Sprite_DestroyFar(figure);
       state->figures[index] = NULL;
     }
   }
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
+    struct Sprite *figure = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
-    if (animation != NULL)
-      Sprite_StartAnimationFar(animation, ANIM_WALK);
-    state->figures[index] = animation;
+    if (figure != NULL)
+      Sprite_StartAnimationFar(figure, ANIM_WALK);
+    state->figures[index] = figure;
     state->figureScales[index] = FIXED_ONE;
     state->figureX[index] = FIGURE_START_X;
     state->figureY[index] = MENU_FIGURE_HIDDEN_Y;
@@ -196,10 +196,9 @@ s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase) {
 #endif
 }
 
-/// Replaces one displayed sprite and selects its animation: figure index
-/// becomes the Djinni figure of element resourceKind
-/// (gDjinnFigures_SpriteIds) playing `animation`. Returns 1.
-s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
+/// Makes figure index the Djinni figure of element (gDjinnFigures_SpriteIds)
+/// playing `animation`. Returns 1.
+s32 DjinnFigures_ReplaceSlot(s32 index, s32 element, s32 animation) {
   struct ItemMenuWork *state = gMenuWork;
 
   if (state->figures[index] != NULL) {
@@ -207,8 +206,7 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
     state->figures[index] = NULL;
   }
   {
-    struct Sprite *figure =
-        Sprite_CreateFar(gDjinnFigures_SpriteIds[resourceKind]);
+    struct Sprite *figure = Sprite_CreateFar(gDjinnFigures_SpriteIds[element]);
 
     if (figure != NULL)
       Sprite_StartAnimationFar(figure, animation);

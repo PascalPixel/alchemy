@@ -2,17 +2,19 @@
 #define ALCHEMY_GLYPH_H
 
 /// @file
-/// Font glyphs and their palettes.
+/// The text font's characters, and the buffers and shared palette through
+/// which the icons beside text (commands, items, Psynergy, status) are drawn.
 
 #include "edition.h"
 #include "static_assert.h"
 #include "types.h"
 
-/// A main-font glyph's height: 12 rows of pixels in Japanese.
+/// A main-font character's height in rows of pixels: the Japanese font is 12
+/// tall, the other languages' 15.
 #if LANGUAGE == LANGUAGE_JAPANESE
 enum { FONT_GLYPH_ROWS = 12 };
 #else
-enum { FONT_GLYPH_ROWS = 15 }; ///< 15 in the other languages
+enum { FONT_GLYPH_ROWS = 15 };
 #endif
 
 /// GlyphPalette.slot of an icon colour given no slot yet.
@@ -45,8 +47,8 @@ STATIC_ASSERT(sizeof(struct FontGlyph) == (2 + FONT_GLYPH_ROWS * 2));
 extern const struct FontGlyph gFont_Glyphs[];
 
 /// The buffers an icon (command, item, Psynergy or status) or a portrait is
-/// decoded through, in HEAP_SLOT_GLYPH_TRANSFER for one build: Icon_Decode
-/// unpacks encoded into input, then expands input into tiles.
+/// decoded through, held in HEAP_SLOT_GLYPH_TRANSFER while one icon is drawn:
+/// Icon_Decode unpacks encoded into input, then expands input into tiles.
 typedef struct {
   /// The icon unpacked by Tile_Decompress4bpp; a 256-colour command icon
   /// (ResourceId_CommandIcons) is unpacked here by Decompress_ByteLz and

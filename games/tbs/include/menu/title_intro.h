@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_TITLE_INTRO_H
 #define ALCHEMY_TITLE_INTRO_H
 
+/// @file
+/// The Nintendo and Camelot logos, the intro that scrolls in to the title
+/// picture, and the palette fades they use (menu/title_intro.c).
+
 #include "types.h"
 
 extern const u8 gTitle_FlareColumns[];

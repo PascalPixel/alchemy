@@ -2,8 +2,8 @@
 #define ALCHEMY_PALETTE_BUFFERS_H
 
 /// @file
-/// Palette fades, the battle effect palette buffers and the colour channel
-/// curves.
+/// Palette fades: the colours a fade moves from and to, and the tints (grey,
+/// sepia, dusk and the rest) a scene or the title intro builds a target from.
 
 #include "edition.h"
 #include "static_assert.h"
@@ -21,8 +21,9 @@
 /// background and sprite colours.
 #define PALETTE_FADE_CHANNELS (2 * PALETTE_FADE_BG_COLORS * 3)
 
-/// A palette fade for every palette colour: the source palette, the shown
-/// and target colour channels, their steps, and two pages of packed colours.
+/// The title intro's palette fade, over every BG and sprite colour: the source
+/// palette, the shown and target colour channels, their steps, and two pages
+/// of packed colours.
 struct TitlePaletteFade {
   /// The source palette, RGB555: the BG colours, then the sprite colours.
   u16 palette[PLTT_COLORS];
@@ -38,7 +39,7 @@ struct TitlePaletteFade {
   u8 page;     ///< the packed page queued this frame
   s8 duration; ///< frames; 0 when the colours are not moving
   u8 step;     ///< frames
-  u8 padding;  ///< never named
+  u8 padding;
 };
 
 STATIC_ASSERT(sizeof(struct TitlePaletteFade) == 12292);
@@ -67,7 +68,7 @@ struct PaletteFade {
   u8 page;     ///< the packed page queued this frame
   s8 duration; ///< frames; 0 when the colours are not moving
   s8 step;     ///< frames
-  u8 padding;  ///< never named
+  u8 padding;
 };
 
 STATIC_ASSERT(sizeof(struct PaletteFade) == 10756);
@@ -77,6 +78,9 @@ STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 6272);
 STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 8960);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 10752);
 
+/// The title intro's own copies of the colour channel curves its tints read:
+/// each maps a 5-bit channel to a fade channel shifted up 10 bits, plain,
+/// lighter, or with more contrast.
 extern u16 gTitleIntro_ChannelCurve[32];
 extern u16 gTitleIntro_ChannelCurveLight[32];
 extern u16 gTitleIntro_ChannelCurveContrast[32];
@@ -89,7 +93,8 @@ enum PaletteTint {
   /// Each colour unchanged; the tints after it are numbered on from it.
   PALETTE_TINT_NONE = 0x10000,
   PALETTE_TINT_GRAYSCALE, ///< grey of brightness (2R + 4G + B) / 7
-  /// Brownish grey: the shade (R + G + B) / SEPIA_SHADE_DIVISOR, red at 4
+  /// Brownish grey, as when Ivan reports to Layana in Hammet Palace: the shade
+  /// (R + G + B) / SEPIA_SHADE_DIVISOR, red at 4
   /// times it plus 5, green and blue 3 times plus 5, each held to
   /// SEPIA_LEVEL_MIN to SEPIA_LEVEL_MAX.
   PALETTE_TINT_SEPIA,

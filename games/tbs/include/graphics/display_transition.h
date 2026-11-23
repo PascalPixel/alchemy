@@ -2,25 +2,30 @@
 #define ALCHEMY_DISPLAY_TRANSITION_H
 
 /// @file
-/// The screen transition's frames, windows and state.
+/// The state of a scene change's screen transition: the window edges a window
+/// transition draws line by line, the tile a dissolve fills dot by dot, and the
+/// two lines between which the centre-line transition blanks the screen.
 
 #include "edition.h"
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
-/// The screen transition state as the centre-line transition and the dissolve
-/// read it: the dissolve's tile pixels and the transition's progress.
+/// The screen transition state as the dissolve and the centre-line transition
+/// read it: the same block as ScreenTransitionState, with its solid tile read
+/// a byte (two pixels) at a time.
 struct ScreenTransitionDissolveState {
-  u16 pages[2][322]; ///< ScreenTransitionState's; not named here
+  u16 pages[2][322]; ///< ScreenTransitionState's pages, unread here
   /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
   /// dissolve sets two more each frame and copies the tile to BG character
   /// block 0.
   u8 paletteNibbles[34];
-  /// The progress, moved from start to end over duration frames: bit 5 says
-  /// whether the dissolve fills or clears, the low 5 bits how far it is.
+  /// The progress, moved from start to end over duration frames: the
+  /// TRANSITION_OPEN bit says whether the dissolve fills or clears the tile,
+  /// the bits below it how far it has gone.
   u16 value;
-  /// ScreenTransitionState's centreX to its unused byte; not named here.
+  /// ScreenTransitionState's centre, layers and spare byte; the dissolve
+  /// reads none of them.
   ///@{
   s32 centreX;
   s32 centreY;
@@ -37,12 +42,12 @@ struct ScreenTransitionDissolveState {
   s8 step;     ///< frames
 };
 
-/// The map work's display fields that transitions use: its display control
-/// bits and the lines where the centre-line transition shows and hides the
-/// screen, with the VCount interrupt's copies and phase.
+/// The map grid work as a transition reads it: the display control bits the
+/// scene shows, and the two lines where the centre-line transition blanks the
+/// screen and shows it again, with the HBlank interrupt's copies of them.
 struct ScreenTransitionWin {
-  /// The map work's origin, shake and script (WorldMapView's); no transition
-  /// names them.
+  /// The map grid work's view, shake and script (WorldMapView's); no
+  /// transition reads them.
   ///@{
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
@@ -51,23 +56,25 @@ struct ScreenTransitionWin {
   /// Display control bits ORed into DISPCNT; ScreenTransition_HideBackgrounds
   /// clears those of backgrounds 1 to 3.
   u16 dispcnt;
-  /// The map work's fields from fadeStep to its window rows
-  /// (WorldMapView's); no transition names them.
+  /// The map grid work's fields from fadeStep to its window rows
+  /// (WorldMapView's); no transition reads them.
   u8 viewState[234];
-  /// scanlines: where the screen is hidden, 200 when it is not
+  /// Scanlines: where the screen goes blank, below the screen
+  /// (CENTER_LINE_HIDDEN_FIRST) while it is wholly shown.
   u16 firstLine;
-  /// scanlines: where the screen is shown again, 250 when it is not hidden
+  /// Scanlines: where the screen shows again, CENTER_LINE_HIDDEN_SECOND while
+  /// it is wholly shown.
   u16 secondLine;
-  u16 irqFirstLine;  ///< scanlines; firstLine as the VCount interrupt reads it
-  u16 irqSecondLine; ///< scanlines; secondLine as the VCount interrupt reads it
-  /// The VCount interrupt's phase: 0 waiting for a line above 159, 1 neither
-  /// line passed, 2 the first passed, 3 the second passed first, 9 done.
+  u16 irqFirstLine;  ///< scanlines; firstLine as the HBlank interrupt reads it
+  u16 irqSecondLine; ///< scanlines; secondLine as the HBlank interrupt reads it
+  /// Where the HBlank interrupt is in the frame, an enum
+  /// ScreenTransitionIrqPhase.
   u16 irqPhase;
 };
 
-/// The screen transition state (heap block 31): two pages of window edges for
-/// every line, the dissolve's solid tile, and the transition's mode and
-/// progress.
+/// The screen transition state (HEAP_SLOT_SCREEN_TRANSITION): two pages of
+/// window edges for every line, the dissolve's solid tile, and the
+/// transition's shape and progress.
 struct ScreenTransitionState {
   /// Window edges, two pages: WININ and WINOUT, then a WIN0H and WIN1H pair,
   /// each (left << 8 | right), for each of the 160 lines.
@@ -77,21 +84,24 @@ struct ScreenTransitionState {
   /// The window transition's shape, an enum WindowTransitionMode, which
   /// ScreenTransition_UpdateScanlineTable draws.
   u16 mode;
-  /// The progress, moved from start to end over duration frames: bit 5 says
-  /// whether the transition opens or closes, the low 5 bits how far it is.
+  /// The progress, moved from start to end over duration frames: 0 is the
+  /// screen covered, TRANSITION_OPEN fully open and TRANSITION_CLOSED covered
+  /// again.
   u16 value;
-  /// 16.16 fixed-point pixels: the centre of the ellipse around a point
-  /// (WINDOW_TRANSITION_RIPPLE), set by Reveal.
+  /// 16.16 fixed-point pixels: the centre of Reveal's rippling ellipse
+  /// (WINDOW_TRANSITION_RIPPLE), the leader's place on the map.
   FIXED centreX;
-  FIXED centreY; ///< as centreX: the target's z less its y
-  /// WINOUT, or WININ by mode: 0x3f3f or 63 when a transition starts.
+  FIXED centreY; ///< as centreX: the leader's z less its height
+  /// The layers shown inside the window: WININ, or WINOUT in the modes that
+  /// swap the two.
   s16 mask;
-  /// WININ, or WINOUT by mode: 1 when a transition starts.
+  /// The layers shown outside it, BG0 alone when a transition starts: WINOUT,
+  /// or WININ in the modes that swap the two.
   s16 active;
   u8 unused;
   u8 page;     ///< the pages entry shown; the next is built in the other
   s8 start;    ///< the value's first step
-  s8 end;      ///< the value's last step; 64 hides BG1 to BG3 and sprites
+  s8 end;      ///< the value's last step
   s8 duration; ///< frames; 0 when the value is not moving
   s8 step;     ///< frames
   /// The mode taken when the value reaches its end; 0 ends the transition.

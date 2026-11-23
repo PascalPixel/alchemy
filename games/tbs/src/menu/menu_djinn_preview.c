@@ -23,15 +23,16 @@
 /// saved before it opens and put back after it closes.
 #define DJINN_TUTORIAL_COVERED_ROWS 8
 
-/// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
-/// four stores of its two message steps, in both games. The name is ours.
+/// Shows or hides the menu's cursor around a line of the Djinn tutorial.
 #define DjinnTutorial_SetCursor(menu, value)                                   \
   do {                                                                         \
     (menu)->cursor->motion = (value);                                          \
   } while (0)
 
-/// Previews a give, trade, set or standby change without committing it. It
-/// saves and restores the units before polling for confirmation.
+/// The Djinn menu's preview of a give, trade, set or standby (mode, enum
+/// DjinnCompareOperation): both party members' stats and Psynergy as the change
+/// would leave them, paged with R, the Djinni figures hopping across, and "Is
+/// this OK?". Each unit is changed, measured and put back; nothing is applied.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -74,7 +75,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
   Window_CloseIfOpen(&menu->helpWindow, 1);
-  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
 
   pageCounts[0] = 1;
   pageCounts[1] = 1;
@@ -185,8 +186,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   }
 
   // Open the paired sides only after both units have been restored.
-  Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
-  Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
+  Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
+  Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15,
+                        WINDOW_FLAG_INSTANT);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
 
   if (mode == DJINN_COMPARE_STANDBY) {
@@ -217,9 +219,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
           DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
       menu->helpWindow, 48, row * 8);
-  Window_SetTilemapEntryFar(
-      menu->helpWindow,
-      DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, row, 0);
+  Window_SetTilemapEntryFar(menu->helpWindow,
+                            DJINN_ELEMENT(menu->pairEntries[0]) +
+                                DJINN_ELEMENT_TILE,
+                            5, row, TILEMAP_ENTRY_PLAIN);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
@@ -242,16 +245,17 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
             DJINN_NUMBER(menu->pairEntries[0]) + MsgDjinnName,
         menu->helpWindow, 48, 16);
-    Window_SetTilemapEntryFar(
-        menu->helpWindow,
-        DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, 0);
+    Window_SetTilemapEntryFar(menu->helpWindow,
+                              DJINN_ELEMENT(menu->pairEntries[0]) +
+                                  DJINN_ELEMENT_TILE,
+                              5, 2, TILEMAP_ENTRY_PLAIN);
     Text_SetColorFar(TEXT_COLOR_NORMAL);
     // The blinking down arrow between the two, a tile of BG character block
     // 1, the block after the windows' own.
     Window_SetTilemapEntryFar(
         menu->helpWindow,
         WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_CHANGE_ARROW_TILE), 7,
-        1, 0);
+        1, TILEMAP_ENTRY_PLAIN);
   }
 
   for (;;) {
@@ -294,7 +298,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work->tilemap, size);
           // "Setting a Djinni changes your attributes and maybe even your
           // class."
-          window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
+          window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0,
+                                         MESSAGE_WINDOW_ZOOM);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(2, 96);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
@@ -318,8 +323,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work->tilemap, size);
           // "When your class changes, the Psynergy you can use may also
           // change."
-          window =
-              Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
+          window = Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0,
+                                         MESSAGE_WINDOW_ZOOM);
           DjinnTutorial_SetCursor(menu, ICON_SHOWN);
           MenuCursor_Slide(106, 56);
           gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
@@ -424,13 +429,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           if (index == selectedPages[page]) {
             tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
           }
-          Window_SetTilemapEntryFar(
-              list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
+          Window_SetTilemapEntryFar(list, tile,
+                                    list->width - pageCounts[page] + index - 2,
+                                    -1, TILEMAP_ENTRY_PLAIN);
         }
         Window_SetTilemapEntryFar(list, PAGE_ARROW_LEFT,
-                                  list->width - pageCounts[page] - 3, -1, 0);
+                                  list->width - pageCounts[page] - 3, -1,
+                                  TILEMAP_ENTRY_PLAIN);
         Window_SetTilemapEntryFar(list, PAGE_ARROW_RIGHT, list->width - 2, -1,
-                                  0);
+                                  TILEMAP_ENTRY_PLAIN);
         Window_MarkTilemapRow(work, list->y);
       }
     }
@@ -557,7 +564,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WINDOW_WORK->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
-  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   Window_CloseIfOpen((struct Window **)&menu->window, 1);
   Window_CloseIfOpen(&menu->secondWindow, 1);
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
@@ -625,9 +632,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   if (pageCounts[1] == 0)
     pageCounts[1] = 1;
   leftWindowSlot = (struct Window **)&menu->window;
-  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
+  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
   rightWindowSlot = &menu->secondWindow;
-  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
+  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, WINDOW_FLAG_INSTANT);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   Text_DrawMessageAsTilesFar(MsgCurrentStatus, menu->statusWindow, 0, 0);
@@ -658,12 +665,13 @@ s32 DjinnMenu_ShowMemberStatus(void) {
           tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
         Window_SetTilemapEntryFar(
             window, tile, window->width - pageCounts[side] + pageIndex - 2, -1,
-            0);
+            TILEMAP_ENTRY_PLAIN);
       }
       Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT,
-                                window->width - pageCounts[side] - 3, -1, 0);
+                                window->width - pageCounts[side] - 3, -1,
+                                TILEMAP_ENTRY_PLAIN);
       Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, window->width - 2, -1,
-                                0);
+                                TILEMAP_ENTRY_PLAIN);
       Window_MarkTilemapRow(work, window->y);
     }
     // blink is worked out as the preview's hop step is, and not used; the
@@ -715,7 +723,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WINDOW_WORK->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
-  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   Window_CloseIfOpen(leftWindowSlot, 1);
   Window_CloseIfOpen(rightWindowSlot, 1);
   WindowSprite_RedrawSavedRectFar(menu->listWindow);

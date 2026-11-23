@@ -242,8 +242,10 @@ enum {
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 
-/// Stretches the actor taller and narrower and lets it settle back over six
-/// frames, then pauses 80 to 159 frames before the next.
+/// The heavy breathing of someone worn out: Saturos and Menardi lying hurt
+/// after the first battle, and Isaac as he gets up after Sheba's fall. The
+/// sprite stretches taller and narrower and settles back over six frames,
+/// then keeps still for 80 to 159 frames before the next breath.
 static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
   switch (actor->timer) {
   case 6:
@@ -276,8 +278,8 @@ static s32 VenusLighthouseAerie_PulseActorScale(struct Actor *actor) {
 /// PARTICLE_DRAG_Z-th of its z speed each frame.
 enum { PARTICLE_DRAG_X = 22, PARTICLE_DRAG_Z = 20 };
 
-/// Moves a particle, damps its horizontal velocity and updates its scale and
-/// spin.
+/// A particle of the bursts that fly out of Saturos and Menardi as they draw
+/// on the beacon: it slows as it drifts, turning and shrinking.
 static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
   struct FieldEffect *effect = (struct FieldEffect *)actor;
   s32 velocityX = effect->velocity.x;
@@ -294,8 +296,8 @@ static void VenusLighthouseAerie_UpdateDriftingParticle(struct Actor *actor) {
   effect->sprite->rotation += effect->spin;
 }
 
-/// Turns the falling actor sprite until its rotation leaves the negative
-/// half-turn.
+/// Felix's sprite turns as he dives off the broken aerie after Sheba, until
+/// its angle is out of the negative half-turn.
 static void VenusLighthouseAerie_StepSpriteRotation(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
   u16 rotation = sprite->rotation;
@@ -1380,8 +1382,8 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
 
 #include "shared/event_psynergy.c"
 
-/// Each frame while Sheba reads the party's minds, cycles her colours, with
-/// Psynergy rings.
+/// Sheba glows through changing colours, with rings of Psynergy, each frame
+/// while she reads the party's minds.
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Actor_Get(ACTOR_SHEBA));
 }
@@ -2012,8 +2014,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   GameFlag_Set(FLAG_AERIE_SECOND_BATTLE_BEGUN);
 }
 
-/// Flashes the background white, then gives it back the dark red tint it takes
-/// as Saturos and Menardi gather the beacon's power.
+/// The aerie flashes white and goes back to the dark red it turns while a
+/// thin beam of light rises from the beacon and Saturos and Menardi glow with
+/// its power.
 static void VenusLighthouseAerie_FlashScreen(void) {
   Sound_Play(SE_FALLING_LIGHT);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
@@ -2024,8 +2027,8 @@ static void VenusLighthouseAerie_FlashScreen(void) {
   wait(1);
 }
 
-/// Orbits a particle around the upper beam and keeps its target at that
-/// position.
+/// A sparkle circling the beam of light over the beacon, a thirty-second of a
+/// turn a frame, in a flat ellipse.
 static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *effect) {
   struct Actor *center = Actor_Get(ACTOR_BEAM_BOTTOM);
   u16 angle = effect->timer;
@@ -2038,7 +2041,8 @@ static void VenusLighthouseAerie_UpdateUpperOrbit(struct Actor *effect) {
   effect->timer -= TRIG_TURN / 32;
 }
 
-/// Orbits a particle around the rising beam using its rise counter as a radius.
+/// A sparkle circling the orb of light as it rises out of the beacon, in an
+/// ellipse that widens as the orb climbs.
 static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *actor) {
   struct Actor *anchor = Actor_Get(ACTOR_BEACON_ORB);
   s32 angle = (u16)actor->timer;
@@ -2066,7 +2070,8 @@ static void VenusLighthouseAerie_UpdateRisingOrbit(struct Actor *actor) {
   }
 }
 
-/// Emits rising particles around the upper beam at the current beacon stage.
+/// Sparkles rise around the beam of light over the beacon, more of them and
+/// higher once it has erupted.
 static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -2113,7 +2118,11 @@ static inline s32 Actor_IsParked(struct Actor *actor) {
   return 0;
 }
 
-/// Pulses and slides Saturos and Menardi while their beam flags are active.
+/// Each frame of the fusion: Saturos and Menardi, facing east, flicker in
+/// turn, one shown while the other is hidden, so that they seem to merge.
+/// While FLAG_VENUS_AERIE_FUSION_GROWING is set both glow white and grow to a
+/// quarter larger, and while FLAG_VENUS_AERIE_FUSION_SLIDING is set they slide
+/// together toward the beacon.
 static void VenusLighthouseAerie_UpdateBeamActors(void) {
   struct Actor *saturos;
   struct Actor *menardi;
@@ -3326,7 +3335,8 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
 /// An actor the light lifts rises this many quarter pixels, one a frame.
 enum { RISE_QUARTER_PIXELS = 32 };
 
-/// Raises an enabled actor according to its gated rise counter.
+/// Lifts one of the party, Felix or Sheba off the aerie as the beacon's light
+/// takes them, a quarter pixel a frame up to 8 pixels.
 static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
   if (actor->riseEnabled != 0) {
     u8 counter = actor->riseCounter;
@@ -3343,8 +3353,8 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
   }
 }
 
-/// Emits particles beside the lower beam and attaches each to its source
-/// actor.
+/// Sparkles circle the foot of the beam of light, each on its own flat
+/// ellipse.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -3396,8 +3406,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   sprite->image.priority = center->sprite->image.priority;
 }
 
-/// Moves an attached particle along its horizontal ellipse and preserves its
-/// target.
+/// Moves a sparkle round the foot of the beam on its ellipse.
 static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   struct FieldEffect *effect = (struct FieldEffect *)actor;
   struct Actor *anchor;

@@ -168,7 +168,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 
   pos.groundHeight = 0;
   pos.height = toFIXED(255);
-  // Render_ApplyProjectedPlacement draws each picture 255 pixels above its y,
+  // Render_ApplyProjectedPlacement draws each sprite 255 pixels above its y,
   // while its draw slot and shadow follow y itself.
   switch (formation) {
   case SUMMON_FORMATION_THOR:
@@ -204,7 +204,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
   }
 }
 
-/// The fragment pictures in the sheet, four of 12x24, after the flash.
+/// The fragment pictures in the sprite sheet, four of 12x24, after the flash.
 #define IMPACT_BURST_SHARD_PICTURES 23000
 #define IMPACT_BURST_FRAGMENT_WIDTH 12 ///< each fragment picture's width
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24

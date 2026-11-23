@@ -14,8 +14,8 @@
 
 #define PROCNE_SPRITES 9 ///< Procne's sprites, on gProcne_GridX and _GridY
 
-/// The whirlwind sheet: three whirlwind cels, shown 4 frames each, then the
-/// dust.
+/// The whirlwind sprite sheet: three whirlwind cels, shown 4 frames each, then
+/// the dust.
 #define PROCNE_WHIRLWIND_WIDTH 48
 #define PROCNE_WHIRLWIND_HEIGHT 64
 #define PROCNE_WHIRLWIND_CEL (PROCNE_WHIRLWIND_WIDTH * PROCNE_WHIRLWIND_HEIGHT)

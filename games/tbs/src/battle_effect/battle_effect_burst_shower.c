@@ -4,7 +4,7 @@
 
 #include "battle_effect_internal.h"
 
-/// Where the burst, lightning or face pictures start in the sheet.
+/// Where the burst, lightning or face pictures start in the sprite sheet.
 #define BURST_SHOWER_PICTURES GLINT_SET_BYTES
 /// VioletLightningSheetA's bolts (stored 72x64, drawn 62 tall) and
 /// DemonFaceSheet's face.

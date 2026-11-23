@@ -26,7 +26,7 @@
 /// tornado turns round it every 32.
 #define WHIRLWIND_SWEEP_SWAY 16
 
-/// The tornado pictures, after the six glint pictures in the sheet.
+/// The tornado pictures, after the six glint pictures in the sprite sheet.
 #define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
 #define WHIRLWIND_SECTION_BYTES PICTURE_BYTES(TORNADO_STRIP)
 

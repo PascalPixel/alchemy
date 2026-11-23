@@ -1,6 +1,6 @@
 /// @file
 /// Death Plunge, the blade rain, the element pillar, the element burst and
-/// the shattering picture.
+/// the shattering opening.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -12,7 +12,7 @@
 
 // The element runners, the streaks and the shattering opening are reached from
 // the battle through far calls, not the handler table, and take their own work,
-// canvas and sheet.
+// canvas and sprite sheet.
 
 #define DEATH_PLUNGE_FRAMES 96
 /// The plunge strikes: the target flashes, the user flashes and the damage
@@ -484,16 +484,16 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
    SHATTERING_OPENING_PLOT_PIXEL(x1, y1))
 
 #define SHATTERING_OPENING_FRAMES 128
-#define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the picture breaks
+#define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the screen breaks
 /// How long a flash floats up, its six pictures four frames each and the last
 /// held.
 #define SHATTERING_OPENING_FLASH_FRAMES 40
-#define SHATTERING_OPENING_PIECES 33 ///< pieces the picture breaks into
+#define SHATTERING_OPENING_PIECES 33 ///< pieces the screen breaks into
 #define SHATTERING_OPENING_DISC_X 96 ///< the centre of the opening disc
 #define SHATTERING_OPENING_DISC_Y 60 ///< the centre of the opening disc
 
 /// As a battle opens on the storm at Venus Lighthouse's aerie, the screen turns
-/// white and the picture breaks into pieces that fly apart and fall, while a
+/// white and breaks into pieces that fly apart and fall, while a
 /// grey disc grows over it and the battle background's colours return.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never

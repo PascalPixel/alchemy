@@ -24,7 +24,7 @@ Field_Test0:
 	.balign 4, 0
 @ Tilesets 68 to 75 belong to the test scenes (Field_Test0 to Field_Test7) and
 @ are one blank set: fourteen black palettes, two tiles in colour 1 and three
-@ empty banks. Their sheets are drawn with that black palette, the only one
+@ empty banks. Their tile sheets are drawn with that black palette, the only one
 @ the game pairs them with, as 1-bit images of its first two colours; the
 @ bank with two tiles is drawn two tiles wide, as the layout finder reads it.
 	.global Tileset_Test0Palette

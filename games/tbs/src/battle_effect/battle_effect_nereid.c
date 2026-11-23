@@ -18,7 +18,7 @@
 /// draws.
 #define NEREID_COLUMNS 3
 #define NEREID_DROPS PARTICLE_POOL_COUNT ///< drops of spray in PARTICLES
-#define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
+#define NEREID_COLUMN_PICTURE 1764 ///< the column of water in the sprite sheet
 /// The drops burst up: every free one of the first NEREID_BURST_DROPS as the
 /// columns gather, then NEREID_DROPS_A_FRAME a frame while they rise.
 #define NEREID_BURST_DROPS 256

@@ -11,7 +11,7 @@
   PARTICLE_POOL_COUNT ///< sparks in PARTICLES, shared by every pillar
 
 #define PLASMA_SPACING 8 ///< frames between pillars
-/// The second picture in the sheet, after the first 48x112 one.
+/// The second picture in the sprite sheet, after the first 48x112 one.
 #define PLASMA_SECOND_PICTURE PICTURE_BYTES(LIGHTNING_PILLAR)
 
 /// gPlasma_Columns has seven pillars for each side.

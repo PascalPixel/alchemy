@@ -10,7 +10,7 @@
 /// sweep's wave picture later overwrites the gathering's part of it.
 struct JudgmentWork {
   /// The gathering's pictures: the pink burst, the burst's quarters and the
-  /// tornado sheet.
+  /// tornado sprite sheet.
   u8 sheet[JUDGMENT_SHEET_BYTES];
   /// The dimmed motes, which the gathering's ring of motes steps through as
   /// it fades.
@@ -58,28 +58,28 @@ struct JudgmentWork {
 #define JUDGMENT_SPARK_DEPTH_FAR 900
 #define JUDGMENT_SPARK_DEPTH_NONE 65535
 #define JUDGMENT_SPARK_AMPLITUDE 255
-/// The pink burst's beam picture, at the sheet's start.
+/// The pink burst's beam picture, at the sprite sheet's start.
 #define JUDGMENT_BEAM_WIDTH 24
 #define JUDGMENT_BEAM_HEIGHT 64
 /// The burst's seven quarter pictures (OverlayImageB), after the beam.
 #define JUDGMENT_SHEET_BURST PICTURE_BYTES(JUDGMENT_BEAM)
-/// The tornado sheet, after the burst's seven quarter pictures; its six glint
-/// pictures are the burst's shards (gJudgment_ShardPictures counts from the
-/// sheet's start).
+/// The tornado sprite sheet, after the burst's seven quarter pictures; its six
+/// glint pictures are the burst's shards (gJudgment_ShardPictures counts from
+/// the sprite sheet's start).
 #define JUDGMENT_SHEET_TORNADO                                                 \
   (JUDGMENT_SHEET_BURST + 2 * 4 + 3 * 6 + 4 * 8 + 6 * 12 + 10 * 20 + 11 * 22 + \
    12 * 24)
 /// The explosion's four pictures, loaded over the flares on the sweep's
 /// frame 64.
 #define JUDGMENT_SHEET_EXPLOSION 16384
-/// The two flare pictures, from the crescent sheet the sweep loads.
+/// The two flare pictures, from the crescent sprite sheet the sweep loads.
 #define JUDGMENT_FLARE_WIDTH 24
 #define JUDGMENT_FLARE_HEIGHT 24
 #define JUDGMENT_SHEET_FLARE_A 16384
 #define JUDGMENT_SHEET_FLARE_B                                                 \
   (JUDGMENT_SHEET_FLARE_A + PICTURE_BYTES(JUDGMENT_FLARE))
 /// OverlayImageA's three flash pictures, a byte a pixel, one after another in
-/// the sheet: the small flash, the large flash and the glow.
+/// the sprite sheet: the small flash, the large flash and the glow.
 #define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
 #define JUDGMENT_SHEET_FLASH_SMALL_HEIGHT 17
 #define JUDGMENT_SHEET_FLASH_LARGE_WIDTH 24

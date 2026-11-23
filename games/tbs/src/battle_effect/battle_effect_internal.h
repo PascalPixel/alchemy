@@ -155,7 +155,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The level a canvas darkens the battle background to, a level a frame.
 #define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
-/// A sheet resource opens with its 64 colours, ahead of its compressed
+/// A sprite sheet resource opens with its 64 colours, ahead of its compressed
 /// pictures.
 #define SHEET_PALETTE_COLORS 64
 #define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
@@ -209,8 +209,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
-/// The bytes of a sheet picture, one byte a pixel, from its name's _WIDTH and
-/// _HEIGHT.
+/// The bytes of a sprite sheet picture, one byte a pixel, from its name's
+/// _WIDTH and _HEIGHT.
 #define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
 
 /// Draws picture `name` of `sheet` at its own size, its top left at (x, y).
@@ -226,7 +226,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define DIMMED_COPIES 8
 #define DIMMED_COPY_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
 
-/// The bytes of the six glint pictures that open the tornado sheet.
+/// The bytes of the six glint pictures that open the tornado sprite sheet.
 #define GLINT_SET_BYTES                                                        \
   (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
 
@@ -310,7 +310,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define REAPER_SHEET_SWUNG_HEIGHT 69
 #define REAPER_SHEET_CRESCENT_WIDTH 128
 #define REAPER_SHEET_CRESCENT_HEIGHT 91
-/// Where each of the reaper's pictures begins in its sheet, in bytes.
+/// Where each of the reaper's pictures begins in its sprite sheet, in bytes.
 enum ReaperSheetPicture {
   REAPER_SHEET_RAISED = 0,
   REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
@@ -326,7 +326,8 @@ enum ReaperSheetPicture {
 #define RED_CRESCENT_FADE_C_HEIGHT 29
 #define RED_CRESCENT_FADE_D_WIDTH 76
 #define RED_CRESCENT_FADE_D_HEIGHT 25
-/// Where each picture of the fading red crescent begins in its sheet, in bytes.
+/// Where each picture of the fading red crescent begins in its sprite sheet, in
+/// bytes.
 enum RedCrescentPicture {
   RED_CRESCENT_FADE_A = 0,
   RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +
@@ -367,8 +368,8 @@ enum RedCrescentPicture {
 #define FIRE_STREAK_HEIGHT 72
 #define FIRE_BURST_WIDTH 40
 #define FIRE_BURST_HEIGHT 80
-/// The small Djinn sheets' pictures are SMALL_DJINNI_WIDTH wide; Mercury's and
-/// Venus's are shorter than SMALL_DJINNI_HEIGHT.
+/// The small Djinn sprite sheets' pictures are SMALL_DJINNI_WIDTH wide;
+/// Mercury's and Venus's are shorter than SMALL_DJINNI_HEIGHT.
 #define MERCURY_SMALL_DJINNI_HEIGHT 34
 #define VENUS_SMALL_DJINNI_HEIGHT 38
 /// FireBlobSheet's blobs and CrystalSheet's crystal.
@@ -397,16 +398,17 @@ enum RedCrescentPicture {
 #define RUNE_HALF_WIDTH 24
 #define RUNE_HALF_HEIGHT 48
 
-/// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
-/// and its kind), and the one picture of the small sheets.
+/// A Djinni's picture: each frame of the full Djinn sprite sheets
+/// (VenusDjinnSheet and its kind), and the one picture of the small sprite
+/// sheets.
 #define DJINNI_WIDTH 40
 #define DJINNI_HEIGHT 40
 #define SMALL_DJINNI_WIDTH 20
 #define SMALL_DJINNI_HEIGHT 40
 
-/// The pictures of the sheets several effects share, each sheet's pictures
-/// all one size: SmokeSheet's puffs, FlashBurstSheet's bursts, SkullSheet's
-/// skulls and the tornado strips after TornadoSheet's glints.
+/// The pictures of the sprite sheets several effects share, each sprite sheet's
+/// pictures all one size: SmokeSheet's puffs, FlashBurstSheet's bursts,
+/// SkullSheet's skulls and the tornado strips after TornadoSheet's glints.
 #define SMOKE_PUFF_WIDTH 24
 #define SMOKE_PUFF_HEIGHT 48
 #define FLASH_BURST_WIDTH 32

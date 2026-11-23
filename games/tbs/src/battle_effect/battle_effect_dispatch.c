@@ -16,8 +16,8 @@ void BattleEffect_CallDoNothing(s32 count) {
 // heap blocks they lend an effect. The shared helpers after them manage the
 // scanline window and the targets' sprites.
 
-/// Runs one of the large battle effects, the summons: takes the effect's sheet,
-/// work and canvas, runs it and frees them again.
+/// Runs one of the large battle effects, the summons: takes the effect's sprite
+/// sheet, work and canvas, runs it and frees them again.
 void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
@@ -71,8 +71,8 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sheet,
-/// work and canvas it lends.
+/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
+/// sheet, work and canvas it lends.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   s32 kind;
   struct BattleEffectWork *work;

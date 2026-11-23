@@ -17,8 +17,9 @@
 #define DRAGON_CLOUD_FLAME_WIDTH 24
 #define DRAGON_CLOUD_FLAME_HEIGHT 48
 #define DRAGON_CLOUD_TRAIL_PICTURE (5 * PICTURE_BYTES(DRAGON_CLOUD_FLAME))
-#define DRAGON_CLOUD_PUFF_PICTURES 15360 ///< the puff pictures in the sheet
-#define DRAGON_CLOUD_PUFFS 8             ///< puffs, particles 0 to 7
+#define DRAGON_CLOUD_PUFF_PICTURES                                             \
+  15360                         ///< the puff pictures in the sprite sheet
+#define DRAGON_CLOUD_PUFFS 8    ///< puffs, particles 0 to 7
 #define DRAGON_CLOUD_EMBERS 40  ///< embers, from DRAGON_CLOUD_FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16 ///< flashes, from DRAGON_CLOUD_FIRST_FLASH
 /// The trail's copies of the flame's path, the older ones from

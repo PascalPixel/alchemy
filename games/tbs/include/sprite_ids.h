@@ -97,8 +97,8 @@ enum SpriteId {
   SPRITE_WARRIOR_IN_GOLDEN_HELMET,
   SPRITE_MAN_WITH_LONG_DARK_HAIR,
   SPRITE_PERSON_IN_PURPLE,
-  /// Babi's second sheet, which Altmiller Cave places while he is invisible
-  /// (ACTOR_INVISIBLE_BABI).
+  /// Babi's second sprite sheet, which Altmiller Cave places while he is
+  /// invisible (ACTOR_INVISIBLE_BABI).
   SPRITE_INVISIBLE_BABI,
   SPRITE_YOUNG_MAN_WITH_BLUE_HAIR,
   SPRITE_YOUNG_MAN_WITH_RED_HAIR,

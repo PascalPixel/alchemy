@@ -107,8 +107,8 @@ extern u16 gEncounterZones[];
 /// runs.
 #define gMindReadWork                                                          \
   (*(struct MindReadWork **)&gHeapSlots[HEAP_SLOT_MIND_READ])
-/// The heap slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
-/// the running battle effect's BattleEffectWork first.
+/// The heap slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sprite
+/// sheet: the running battle effect's BattleEffectWork first.
 #define gBattleEffectWork (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_BATTLE_EFFECT])
 /// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133

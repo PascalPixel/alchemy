@@ -16,7 +16,7 @@ enum {
   BOLT_STRIKES       ///< bolts drawn over each other
 };
 
-/// Where the bolt pictures start in the sheet, after the six glints.
+/// Where the bolt pictures start in the sprite sheet, after the six glints.
 #define BOLT_PICTURES GLINT_SET_BYTES
 /// The targets are struck this many frames apart.
 #define BOLT_INTERVAL 8
@@ -51,7 +51,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  // The tornado sheet only for its glints.
+  // The tornado sprite sheet only for its glints.
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + BOLT_PICTURES, 1, 1);

@@ -12,14 +12,15 @@
 #define TITAN_BLADE_FRAMES 102
 /// The sword strikes: the crash, the damage and the canvas filled bright.
 #define TITAN_BLADE_STRIKE_FRAME 60
-#define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
-#define TITAN_BLADE_FLASHES 32          ///< flashes scattered
-#define TITAN_BLADE_RING 16             ///< of which drawn as the ring
-#define TITAN_BLADE_DUST 684 ///< dust slots in PARTICLES, before the sparks
+#define TITAN_BLADE_SWORD_PICTURE                                              \
+  20000                        ///< the sword picture in the sprite sheet
+#define TITAN_BLADE_FLASHES 32 ///< flashes scattered
+#define TITAN_BLADE_RING 16    ///< of which drawn as the ring
+#define TITAN_BLADE_DUST 684   ///< dust slots in PARTICLES, before the sparks
 #define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
-/// The flash pictures in the sheet, after the 34x104 fire pillar.
+/// The flash pictures in the sprite sheet, after the 34x104 fire pillar.
 #define TITAN_BLADE_FLASH_PICTURES PICTURE_BYTES(FIRE_PILLAR)
 /// A flash counts down from TITAN_BLADE_FLASH_START, half a frame later for
 /// each flash, and shows its six pictures over the last of it, three frames

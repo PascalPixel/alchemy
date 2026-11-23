@@ -127,8 +127,8 @@ enum CastingImpact {
 /// Broil's ember streaks.
 #define BROIL_STREAKS 12
 
-/// Asura's sheet: the masked swordsman with his sword low, then swung up, then
-/// the red crescent his stroke leaves.
+/// Asura's sprite sheet: the masked swordsman with his sword low, then swung
+/// up, then the red crescent his stroke leaves.
 #define ASURA_SHEET_LOW_WIDTH 80
 #define ASURA_SHEET_LOW_HEIGHT 96
 #define ASURA_SHEET_SWUNG_WIDTH 80
@@ -310,7 +310,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // Unused: impact mode 100, which this game never dispatches
   // (BattleEffect_RunByIdRange passes only the 36 impacts); The Lost Age's
   // dispatcher reaches it, and its twin of this routine loads the same Mercury
-  // sheet for it.
+  // sprite sheet for it.
   case EFFECT_RANGE_CASTING_IMPACT:
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
@@ -954,7 +954,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         Trig_Sin(frame * (TRIG_TURN / 128));
         sway = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 128)) << 2);
         // targetPos.y is in whole pixels, so the shift leaves 0 for any
-        // target on the screen: the pictures stand at a fixed height.
+        // target on the screen: the sprites stand at a fixed height.
         imageY = FIXEDtoINT(targetPos.y) + sway + 16;
         if (frame <= 3) {
           blitters[0](canvas, work->sheet,

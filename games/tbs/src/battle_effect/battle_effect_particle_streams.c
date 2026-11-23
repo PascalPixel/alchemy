@@ -13,14 +13,14 @@ enum ParticleStreamsMode {
                                ///< fall in the lightning bolt's colours
 };
 
-/// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
-/// where the one before ends: six flames, then three large and three small
-/// glows, each glow brighter at its centre than the one before. The fall draws
-/// only the six and the brightest glow of each size.
+/// The pictures in the flame sprite sheet (ResourceId_FlameSheetB), each
+/// starting where the one before ends: six flames, then three large and three
+/// small glows, each glow brighter at its centre than the one before. The fall
+/// draws only the six and the brightest glow of each size.
 #define PARTICLE_STREAMS_FLAME_SIZE 32
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
-/// Where each picture begins in the particle streams' sheet, in bytes.
+/// Where each picture begins in the particle streams' sprite sheet, in bytes.
 enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
   PARTICLE_STREAMS_FLAMES = 0,
@@ -32,8 +32,8 @@ enum ParticleStreamsSheetPicture {
   PARTICLE_STREAMS_SMALL_GLOW = PARTICLE_STREAMS_LARGE_GLOW +
       PARTICLE_STREAMS_LARGE_GLOW_SIZE * PARTICLE_STREAMS_LARGE_GLOW_SIZE +
       2 * PARTICLE_STREAMS_SMALL_GLOW_SIZE * PARTICLE_STREAMS_SMALL_GLOW_SIZE,
-  /// Past the sheet's end: the backdrop's 160 colours, one a line, that the
-  /// fall writes there.
+  /// Past the sprite sheet's end: the backdrop's 160 colours, one a line, that
+  /// the fall writes there.
   PARTICLE_STREAMS_BACKDROP_LINES = PARTICLE_STREAMS_SMALL_GLOW +
       PARTICLE_STREAMS_SMALL_GLOW_SIZE * PARTICLE_STREAMS_SMALL_GLOW_SIZE
 };
@@ -115,13 +115,13 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// background brightens from PARTICLE_STREAMS_BRIGHTEN_DELAY frames after it.
 #define PARTICLE_STREAMS_FLASH_FRAME 16
 #define PARTICLE_STREAMS_BRIGHTEN_DELAY 20
-/// The blast sheet's flash pictures, each shown two frames.
+/// The blast sprite sheet's flash pictures, each shown two frames.
 #define PARTICLE_STREAMS_FLASH_PICTURES 7
 /// An ember is drawn at size PARTICLE_STREAMS_EMBER_SIZE_MAX at
 /// MOTE_DEPTH_NEAR or nearer, one size smaller every MOTE_DEPTH_STEP farther.
 #define PARTICLE_STREAMS_EMBER_SIZE_MAX 9
 
-/// The mote pictures in the blast sheet, after its seven blast pictures
+/// The mote pictures in the blast sprite sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
 #define PARTICLE_STREAMS_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
 

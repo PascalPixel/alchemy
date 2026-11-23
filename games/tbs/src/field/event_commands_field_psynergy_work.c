@@ -7,9 +7,9 @@
 /// The frames FieldPsynergy_End waits at most for the swelling arcs to end.
 #define END_ARC_WAIT_FRAMES 30
 
-/// The caster's casting animations on the party's sheets: ANIM_CAST_PSYNERGY's
-/// first two pictures, held on the second, and from the second to its last,
-/// held on the last.
+/// The caster's casting animations on the party's sprite sheets:
+/// ANIM_CAST_PSYNERGY's first two pictures, held on the second, and from the
+/// second to its last, held on the last.
 #define ANIM_CAST_PSYNERGY_START 20
 #define ANIM_CAST_PSYNERGY_END 21
 

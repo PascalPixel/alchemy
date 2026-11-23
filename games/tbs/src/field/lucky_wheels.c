@@ -40,8 +40,8 @@
 #define LUCKY_WHEELS_CANVAS_TILES                                              \
   (BG_CHAR_BLOCK(0) + LUCKY_WHEELS_CANVAS_FIRST_TILE * TILE_SIZE_8BPP)
 #define LUCKY_WHEELS_CANVAS_CLEAR_TILE 191
-/// The canvas's first 64 colours, its sparks', from a Djinn sheet's palette and
-/// cycled through others while a win shows.
+/// The canvas's first 64 colours, its sparks', from a Djinn sprite sheet's
+/// palette and cycled through others while a win shows.
 #define LUCKY_WHEELS_SPARK_COLORS 64
 /// The paylines' green on the canvas, colour 64, and its lighter centre.
 #define LUCKY_WHEELS_LINE_COLOR 64
@@ -299,8 +299,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 /// The stop prompt's sound plays this many frames into a spin.
 #define LUCKY_WHEELS_STOP_PROMPT_FRAME 16
 /// Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte
-/// steps (a 256-colour tile is two): the sheet is 32 pixels wide, so a picture
-/// starts at the tile numbered as its row. The six symbols are 16 apart from 0.
+/// steps (a 256-colour tile is two): the sprite sheet is 32 pixels wide, so a
+/// picture starts at the tile numbered as its row. The six symbols are 16 apart
+/// from 0.
 #define LUCKY_WHEELS_LAMP_TILES 96       ///< a wheel's lamp, not held
 #define LUCKY_WHEELS_HELD_LAMP_TILES 128 ///< a held wheel's lamp
 #define LUCKY_WHEELS_CORNER_LIGHT_TILES 224
@@ -448,8 +449,8 @@ const u8 gLuckyWheels_SymbolPrizes[] = {
     [LUCKY_WHEELS_MOON] = LUCKY_WHEELS_PRIZE_ANYTHING,
 };
 
-/// The tile of each title letter, the letter's place in its sheet: jackpot.png
-/// holds `Jackpot!` and jackpot_ja.png `ジャックポト!`.
+/// The tile of each title letter, the letter's place in its sprite sheet:
+/// jackpot.png holds `Jackpot!` and jackpot_ja.png `ジャックポト!`.
 const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     0, 1, 2, 3, 4,

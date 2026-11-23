@@ -225,11 +225,12 @@ extern char ResourceId_RevealMaskE;
 extern char ResourceId_RevealMaskF;
 #define RESOURCE_REVEAL_MASK_F ((s32)&ResourceId_RevealMaskF)
 
-// Battle effect pictures. A sheet holds 64 colours (128 bytes) and then its
-// compressed pictures, which the animation parts load with
+// Battle effect pictures. A sprite sheet holds 64 colours (128 bytes) and then
+// its compressed pictures, which the animation parts load with
 // Resource_LoadAndDecompress; a palette holds colours alone, which a part
-// copies over a shared sheet's to recolour it, and some parts borrow a sheet's
-// colours the same way. Each note names the animations that read it.
+// copies over a shared sprite sheet's to recolour it, and some parts borrow a
+// sprite sheet's colours the same way. Each note names the animations that read
+// it.
 
 extern char ResourceId_LimeColumnSheet; ///< Undead Sword.
 #define RESOURCE_LIME_COLUMN_SHEET ((s32)&ResourceId_LimeColumnSheet)
@@ -263,7 +264,7 @@ extern char ResourceId_BlueFlameSheet;
 /// most summons.
 extern char ResourceId_ParticleSpritesA;
 #define RESOURCE_PARTICLE_SPRITES_A ((s32)&ResourceId_ParticleSpritesA)
-/// A second shared particle sheet: the beams, Bind, Death Plunge,
+/// A second shared particle sprite sheet: the beams, Bind, Death Plunge,
 /// Ice and Douse, the Neptune summon, the stat changes, and Lucky Wheels.
 extern char ResourceId_ParticleSpritesD;
 #define RESOURCE_PARTICLE_SPRITES_D ((s32)&ResourceId_ParticleSpritesD)

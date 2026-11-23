@@ -21,12 +21,12 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define DJINN_ATTACK_DAMAGE_FRAME 56
 
 #define MERCURY_FRAMES 96
-/// The blue flame sheet's flame, after its shaft; Mercury turns both on their
-/// side, and Venus draws the flame as its rising columns.
+/// The blue flame sprite sheet's flame, after its shaft; Mercury turns both on
+/// their side, and Venus draws the flame as its rising columns.
 #define BLUE_FLAME_SHEET_FLAME PICTURE_BYTES(BLUE_FLAME_COLUMN)
 
-/// Mercury's sheet: its Djinni, then the blue flame sheet's two pictures turned
-/// on their side.
+/// Mercury's sprite sheet: its Djinni, then the blue flame sprite sheet's two
+/// pictures turned on their side.
 enum MercurySheetPicture {
   /// The shaft turned; never drawn.
   MERCURY_TURNED_SHAFT = SMALL_DJINNI_WIDTH * MERCURY_SMALL_DJINNI_HEIGHT,
@@ -300,7 +300,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 /// How far the Djinni sways to either side as it drops.
 #define VENUS_DJINNI_SWAY 24
 
-/// Venus's sheet: its Djinni, then the blue flame sheet.
+/// Venus's sprite sheet: its Djinni, then the blue flame sprite sheet.
 enum VenusSheetPicture {
   VENUS_BLUE_FLAME_SHEET = SMALL_DJINNI_WIDTH * VENUS_SMALL_DJINNI_HEIGHT,
   /// 34x65, the flame, drawn upside down as a rising column.

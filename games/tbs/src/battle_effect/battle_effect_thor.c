@@ -35,20 +35,20 @@
 
 /// The glow that flickers about the head of Thor's hammer while his bolts
 /// strike (RESOURCE_VIOLET_MOTE_SHEET's picture, after the second part's
-/// sheet), a quarter drawn four times mirrored.
+/// sprite sheet), a quarter drawn four times mirrored.
 #define THOR_HAMMER_GLOW_PICTURE 24576
 #define THOR_HAMMER_GLOW_PICTURE_WIDTH 12
 #define THOR_HAMMER_GLOW_PICTURE_HEIGHT 24
-/// The light fan, at the first part's sheet start, drawn twice mirrored.
+/// The light fan, at the first part's sprite sheet start, drawn twice mirrored.
 #define THOR_LIGHT_FAN_WIDTH 32
 #define THOR_LIGHT_FAN_HEIGHT 96
-/// The second part's sheet: the pillar of lightning in two pictures, then
-/// the bolts.
+/// The second part's sprite sheet: the pillar of lightning in two pictures,
+/// then the bolts.
 #define THOR_BOLT_WIDTH 72
 #define THOR_BOLT_HEIGHT 72
 
-/// Where Thor keeps its dimmed copies of the mote pictures in its sheet; its
-/// ring darkens through them once the beam has fallen.
+/// Where Thor keeps its dimmed copies of the mote pictures in its sprite sheet;
+/// its ring darkens through them once the beam has fallen.
 #define THOR_DIMMED_MOTES 10000
 
 #define THOR_SPRITES 9 ///< Thor's sprites, in SUMMON_FORMATION_THOR

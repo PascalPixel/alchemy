@@ -4,9 +4,10 @@
 
 #include "battle_effect_internal.h"
 
-#define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
+#define SPIRE_ROCK_WIDTH                                                       \
+  34 ///< the boulder picture, the first in the sprite sheet
 #define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
-/// The shard pictures in the sheet, after the boulder.
+/// The shard pictures in the sprite sheet, after the boulder.
 #define SPIRE_SHARD_PICTURES (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 #define SPIRE_SHARDS 21 ///< shards per rock
 /// The shard shapes, each drawn in SPIRE_SHARD_TUMBLE_PICTURES as it tumbles.

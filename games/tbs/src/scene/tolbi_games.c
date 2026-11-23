@@ -37,9 +37,9 @@
 /// always wins an item, drawn by weight from fifteen prizes, the nearer the
 /// centre the fewer and better (Assassin Blade first, Water of Life last), and
 /// the item won has its weight halved for later tosses. Where the token
-/// settles is measured from TOLBI_SPRING_CENTER_X and _Z; the rings end at
-/// squared distances of 224, 624, 1,088 and 1,680 square pixels, which match
-/// the rings painted on the basin's floor. In the editions before
+/// settles is measured from TOLBI_SPRING_CENTER_X and _Z, against the rings
+/// painted on the basin's floor (TolbiSpring_UpdateTossSimulation). In the
+/// editions before
 /// TBS_PATCH_1 the coin and medal counts show an `=` after each number.
 
 #include "ability_ids.h"
@@ -241,6 +241,16 @@ enum {
 /// gTolbiSpring_LuckyWheelsPrizeItems, or a moon, which wins any kind.
 enum { LUCKY_WHEELS_KINDS = 5, LUCKY_WHEELS_MOON = 5 };
 
+/// The slot machine's report in the holdings' wonPrizes: the kinds won, ended
+/// by LUCKY_WHEELS_PRIZES_END, or LUCKY_WHEELS_PRIZES_AWARDED once the
+/// attendant has handed them over; from LUCKY_WHEELS_LAST_GIVEN on, the item
+/// of each kind she gave last.
+enum {
+  LUCKY_WHEELS_PRIZES_END = -1,
+  LUCKY_WHEELS_PRIZES_AWARDED = -2,
+  LUCKY_WHEELS_LAST_GIVEN = 8
+};
+
 /// The pixels the spring's water sinks before it fades, one every fourth
 /// frame.
 enum { SPRING_WATER_SINK_PIXELS = 16 };
@@ -248,6 +258,14 @@ enum { SPRING_WATER_SINK_PIXELS = 16 };
 /// A medal's prizes (MainRoutineWork's prizeWeights): its ring allows three
 /// more for each ring out from the centre.
 enum { SPRING_MEDAL_PRIZES = 15, SPRING_MEDAL_PRIZES_PER_RING = 3 };
+
+/// The ring a tossed token settles in: 0 the innermost to 3, or outside them
+/// all.
+enum { SPRING_RING_OUTSIDE = 4 };
+
+/// Which way a crab scuttles, in its obstacle's heading; a turtle's heading is
+/// an angle round its ellipse.
+enum { CRAB_HEADING_EAST = 0, CRAB_HEADING_WEST = 1 };
 
 /// The second crab rests this many frames at each end of its run.
 enum { SPRING_CRAB_REST_FRAMES = 30 };
@@ -472,14 +490,15 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
       Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT,
                                SPRITE_COLOR_GRB);
       Actor_SetSpriteColorById(ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
                                SPRITE_COLOR_RBG);
     }
-    // Lucky Dice returns here to report the change in the party's coins.
+    // Back from Lucky Dice, the attendant tells the coins won or lost.
     if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Event_Start();
@@ -515,7 +534,7 @@ s32 Scene_Initialize(void) {
       }
       Event_End();
     }
-    // Lucky Wheels returns item categories for the attendant to award.
+    // Back from the slot machine, the attendant hands over what was won.
     if (gMainRoutineWork.entrance == STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       wonPrizes = gMainRoutineWork.holdings.wonPrizes;
@@ -523,14 +542,15 @@ s32 Scene_Initialize(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(10);
-      if (wonPrizes[0] == -1) {
+      if (wonPrizes[0] == LUCKY_WHEELS_PRIZES_END) {
         TolbiSpring_OfferLuckyWheels(1);
-      } else if (wonPrizes[0] != -2) {
+      } else if (wonPrizes[0] != LUCKY_WHEELS_PRIZES_AWARDED) {
         Event_SetMessageId(MsgTolbiCongratulations);
         // "Congratulations!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-        if (*wonPrizes != -1) {
-          for (prizeIndex = 0; wonPrizes[prizeIndex] != -1; prizeIndex++) {
+        if (*wonPrizes != LUCKY_WHEELS_PRIZES_END) {
+          for (prizeIndex = 0; wonPrizes[prizeIndex] != LUCKY_WHEELS_PRIZES_END;
+               prizeIndex++) {
             if (prizeIndex == 0) {
               Event_SetMessageId(MsgTolbiWonItemGo);
             } else {
@@ -546,7 +566,7 @@ s32 Scene_Initialize(void) {
             Event_Wait(30);
           }
         }
-        gMainRoutineWork.holdings.wonPrizes[0] = -2;
+        gMainRoutineWork.holdings.wonPrizes[0] = LUCKY_WHEELS_PRIZES_AWARDED;
         Event_SetMessageId(MsgTolbiComeAgain);
         // "Come again!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
@@ -942,7 +962,7 @@ prompt:
     }
     result = TolbiSpring_RunToss(choice);
     if (choice == SPRING_TOSS_COIN) {
-      if (result != 4) {
+      if (result != SPRING_RING_OUTSIDE) {
         Party_AdjustCoins(TOLBI_SPRING_COIN_PRIZE(result));
         Sound_Play(MUS_LUCKY);
         MessageArgument_Push(TOLBI_SPRING_COIN_PRIZE(result),
@@ -1022,11 +1042,13 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
     category = Random_Below(LUCKY_WHEELS_KINDS);
   }
 
-  previousVariant = gMainRoutineWork.holdings.wonPrizes[8 + category];
+  previousVariant =
+      gMainRoutineWork.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category];
 
   variant = (previousVariant + (s32)Random_Below(2) + 4) % 3;
 
-  gMainRoutineWork.holdings.wonPrizes[8 + category] = variant;
+  gMainRoutineWork.holdings.wonPrizes[LUCKY_WHEELS_LAST_GIVEN + category] =
+      variant;
 
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
@@ -1096,12 +1118,15 @@ static s32 sTossUnused[3] UNUSED;
 static struct SpringObstacle sObstacles[4];
 
 /// The frames since the toss, whether it has come to rest, and the ring it
-/// rests in, 0 the innermost and 4 outside them all.
+/// rests in.
 static s32 sTossFrame;
 static s32 sTossEnded;
 static s32 sTossResult;
 
-/// Advances the toss, obstacles, collisions and displayed trail each frame.
+/// Each frame of the spring game: the tossed token flies, lands, is drawn
+/// toward the centre by the rings and bounces off the basin's sloping sides;
+/// the crabs and turtles move and knock it away when it comes near; and the
+/// token, its shadow and its trail are drawn.
 static void TolbiSpring_UpdateTossSimulation(void) {
   struct SpringTossMotion *toss;
   struct SpringObstacle *obstacle;
@@ -1206,7 +1231,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
             } else if (distanceSquared <= 1680) {
               sTossResult = 3;
             } else {
-              sTossResult = 4;
+              sTossResult = SPRING_RING_OUTSIDE;
             }
           }
         }
@@ -1332,19 +1357,19 @@ static void TolbiSpring_UpdateTossSimulation(void) {
               ANIM_CRAB_SCUTTLE);
         }
         if (obstacle->pauseOrPhase == 0) {
-          if (obstacle->heading == 0) {
+          if (obstacle->heading == CRAB_HEADING_EAST) {
             obstacle->position.x = obstacle->position.x + motionStep;
           } else {
             obstacle->position.x = obstacle->position.x - motionStep;
           }
           if (obstacle->position.x <= toFIXED(64)) {
-            obstacle->heading = 0;
+            obstacle->heading = CRAB_HEADING_EAST;
             if (index == 1) {
               obstacle->pauseOrPhase = SPRING_CRAB_REST_FRAMES;
             }
           }
           if (obstacle->position.x > (toFIXED(176) - 1)) {
-            obstacle->heading = 1;
+            obstacle->heading = CRAB_HEADING_WEST;
             if (index == 1) {
               obstacle->pauseOrPhase = SPRING_CRAB_REST_FRAMES;
             }
@@ -1415,7 +1440,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
 
         speed = toFIXED(3);
         if (index <= 1) {
-          if (obstacle->heading == 0) {
+          if (obstacle->heading == CRAB_HEADING_EAST) {
             if (toss->velocity.x < speed) {
               toss->velocity.x = speed;
               toss->attractionFrames = toss->attractionFrames - 100;
@@ -1532,7 +1557,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   }
 }
 
-/// Resets four obstacles and schedules the spring simulation.
+/// Puts the crabs and turtles at their starting places, the token out of
+/// sight, and starts the spring game's frames.
 static void TolbiSpring_InitializeTossSimulation(void) {
   struct SpringTossMotion *toss = &sToss;
   s32 obstacleIndex = 0;
@@ -1578,7 +1604,8 @@ static void TolbiSpring_InitializeTossSimulation(void) {
   Task_AddFrame(TolbiSpring_UpdateTossSimulation, TASK_PASS_FRAME + 3);
 }
 
-/// Launches the chosen coin or medal and waits for its final prize ring.
+/// Isaac tosses the chosen coin or medal over his shoulder; returns the ring it
+/// settles in.
 static s32 TolbiSpring_RunToss(s32 tossKind) {
   struct SpringTossMotion *toss;
 
@@ -1631,12 +1658,15 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
 }
 
 const struct SceneEntrance gTolbiSpring_Entrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {TOLBI_SPRING_FROM_TOLBI, CONDITION_ALWAYS, 120, 0, 168, FACING_NORTH, 0,
      -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {10, CONDITION_ALWAYS, 128, 0, 176, FACING_NORTH, 0, 8, 8, 248, 200, 0},
-    {11, CONDITION_ALWAYS, 96, 0, 440, FACING_NORTH, 0, 8, 288, 248, 456, 0},
+    {STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI, CONDITION_ALWAYS, 128, 0, 176,
+     FACING_NORTH, 0, 8, 8, 248, 200, 0},
+    {STUCCO_ROOMS_C_LUCKY_WHEELS_FROM_TOLBI, CONDITION_ALWAYS, 96, 0, 440,
+     FACING_NORTH, 0, 8, 288, 248, 456, 0},
     {STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS, CONDITION_ALWAYS, 144, 0, 390,
      FACING_NORTH, 0, 8, 288, 248, 456, 0},
     {STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, CONDITION_ALWAYS, 120, 0, 152,
@@ -1730,8 +1760,8 @@ const struct ActorPlacement gTolbiSpringActorPlacementsOther[] = {
 };
 
 const struct Trigger gTolbiSpringTriggersOther[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
+    { TRIGGER_EXIT, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI },
+    { TRIGGER_EXIT, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, CONDITION_ALWAYS, STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT(TolbiSpring_TalkToWheelsAttendant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringHmmIWonderIfTheseKids) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(TolbiSpring_OfferLuckyDice) },
@@ -1756,7 +1786,9 @@ const struct Trigger gTolbiSpringTriggersOther[] = {
 };
 
 const struct Trigger gTolbiSpringTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, TOLBI_SPRING_TO_TOLBI },
+    { TRIGGER_EXIT, TOLBI_SPRING_TO_TOLBI, CONDITION_ALWAYS, TOLBI_SPRING_TO_TOLBI },
+    // XXX: gTolbiSpring_Exits has no exit 2 and no entrance 2 is named; whether
+    // a cell of the spring's map carries behavior 2 would settle what it was.
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2 },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_MEDAL_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiTossLuckyMedal) },
     { TRIGGER_TALK, ACTOR_TOLBI_SPRING_COIN_SIGN, CONDITION_ALWAYS, MSGNO(MsgTolbiFaceAwayTolbi) },
@@ -1814,6 +1846,6 @@ const u8 gTolbiSpring_ActorPixelZ[] = {
     32, 104, 68, 72,
 };
 const u16 gTolbiSpring_ActorHeadings[] = {
-    FACING_EAST, 1, FACING_EAST, FACING_WEST,
+    CRAB_HEADING_EAST, CRAB_HEADING_WEST, FACING_EAST, FACING_WEST,
 };
 // clang-format on

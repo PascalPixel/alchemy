@@ -66,16 +66,16 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// follow, without waiting.
 void BattlePlayback_Run(void) {
   u16 selection[8];
-  struct Sprite *records[4];
+  struct Sprite *sprites[4];
   struct BattleWork *battle = gBattleWork;
   struct BattlePlaybackWork *events = &battle->playback;
 
   /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
   /// the last step of a fallen enemy's dissolve.
-  void BattleSprite_ClearTiles(struct Sprite * record, s32 unused) {
-    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramCacheEntries[record->slot].offset;
+  void BattleSprite_ClearTiles(struct Sprite * sprite, s32 unused) {
+    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset;
 
-    Iwram_ClearWords(tiles, record->width * record->height);
+    Iwram_ClearWords(tiles, sprite->width * sprite->height);
   }
 
   // Idle until the effect's blow lands; ready once every target is played.
@@ -174,21 +174,21 @@ void BattlePlayback_Run(void) {
           // down, an enemy keeps its damage pose and falls in PLAY_FELLED.
           case PLAYBACK_DEFEAT: {
             struct Unit *unit;
-            struct Sprite *record;
-            s32 recordIndex;
+            struct Sprite *sprite;
+            s32 spriteIndex;
 
             events->unitId = events->queue.operands[eventIndex];
             BattleEnemy_RecordDefeat(events->unitId, events->flags);
             BattleUnit_ClearStatuses(events->unitId);
             unit = Unit_GetFar(events->unitId);
-            for (recordIndex = 0; (record = GetMotionRecord(
+            for (spriteIndex = 0; (sprite = GetMotionRecord(
                                        BattleObject_Get(events->unitId)->actor,
-                                       recordIndex)) != 0;
-                 recordIndex++) {
+                                       spriteIndex)) != 0;
+                 spriteIndex++) {
               if (unit->side != BATTLE_SIDE_ENEMY)
-                Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
+                Sprite_StartAnimationFar(sprite, POSE_PARTY_HELD);
               else
-                Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
+                Sprite_StartAnimationFar(sprite, POSE_ENEMY_DOWN);
             }
             if (unit->side == BATTLE_SIDE_ENEMY) {
               events->phase = PLAY_FELLED;
@@ -255,9 +255,9 @@ void BattlePlayback_Run(void) {
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = CURSOR_BOB_Y() + window->y * 8 + (offset->y >> 8) + 6;
-      if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
+      if ((gKeysHeld & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 &&
-           (BATTLE_OPTIONS & KEY_ADVANCE))) {
+           (gKeysHeld & KEY_ADVANCE))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
@@ -319,21 +319,21 @@ void BattlePlayback_Run(void) {
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
         // Recolour every layer's first entry and have its picture drawn again.
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
-          struct Sprite *record;
-          s32 recordIndex;
+          struct Sprite *sprite;
+          s32 spriteIndex;
           struct Sprite **slot;
           s32 lastPictureMask;
 
-          for (recordIndex = 0, slot = records,
+          for (spriteIndex = 0, slot = sprites,
               lastPictureMask = SPRITE_PICTURE_NONE;
-               (record = GetMotionRecord(
-                    BattleObject_Get(events->unitId)->actor, recordIndex)) != 0;
-               recordIndex++) {
+               (sprite = GetMotionRecord(
+                    BattleObject_Get(events->unitId)->actor, spriteIndex)) != 0;
+               spriteIndex++) {
             struct SpriteAnimation *child;
             u8 previousPicture;
 
-            *slot++ = record;
-            child = record->entries[0];
+            *slot++ = sprite;
+            child = sprite->entries[0];
             previousPicture = child->picture;
             child->colorMode = colorMode;
             child->picture = previousPicture | lastPictureMask;
@@ -342,44 +342,44 @@ void BattlePlayback_Run(void) {
         events->timer++;
         return;
       }
-      if (events->timer == 4) {
+      if (events->timer == FELLED_DISSOLVE_FIRST_FRAME - 1) {
         BattleObject_RemoveFromLists(events->unitId);
         events->timer++;
         return;
       }
-      if (events->timer > 4) {
+      if (events->timer > FELLED_DISSOLVE_FIRST_FRAME - 1) {
         // The dissolve, four steps a frame.
         struct BattleObject *slot;
-        struct Sprite *record;
+        struct Sprite *sprite;
         s32 count;
         s32 step;
         s32 base;
 
         slot = BattleObject_Get(events->unitId);
         slot->fading = 1;
-        for (count = 0; (record = GetMotionRecord(slot->actor, count)) != 0;
+        for (count = 0; (sprite = GetMotionRecord(slot->actor, count)) != 0;
              count++)
-          records[count] = record;
+          sprites[count] = sprite;
         base = events->timer * 4;
         step = base - FELLED_DISSOLVE_FIRST_FRAME * 4;
         if (step > FELLED_DISSOLVE_STEPS - 1) {
-          s32 recordIndex;
+          s32 spriteIndex;
 
-          for (recordIndex = 0; recordIndex < count; recordIndex++)
-            BattleSprite_ClearTiles(records[recordIndex], 0);
+          for (spriteIndex = 0; spriteIndex < count; spriteIndex++)
+            BattleSprite_ClearTiles(sprites[spriteIndex], 0);
           BattleObject_MarkForRelease(events->unitId);
           events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
           events->timer = 0;
           return;
         }
         {
-          s32 recordIndex;
+          s32 spriteIndex;
 
-          for (recordIndex = 0; recordIndex < count; recordIndex++) {
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], step);
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], step + 1);
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], step + 2);
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], step + 3);
+          for (spriteIndex = 0; spriteIndex < count; spriteIndex++) {
+            SpriteDissolve_StepFar((u8 *)sprites[spriteIndex], step);
+            SpriteDissolve_StepFar((u8 *)sprites[spriteIndex], step + 1);
+            SpriteDissolve_StepFar((u8 *)sprites[spriteIndex], step + 2);
+            SpriteDissolve_StepFar((u8 *)sprites[spriteIndex], step + 3);
           }
         }
         events->timer++;

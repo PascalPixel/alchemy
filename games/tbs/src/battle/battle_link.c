@@ -335,14 +335,14 @@ s32 LinkBattle_SyncTurn(void) {
 /// Records the unit id the link opponent knows each party member by.
 UNREAD_RESULT BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
-  struct BattleWork *battleState = gBattleWork;
+  struct BattleWork *battle = gBattleWork;
   s32 partySize = BattleParty_PrepareMembers(activeMembers);
   s32 memberSlot;
   s32 unitId;
 
   for (memberSlot = 0; memberSlot < partySize; memberSlot++) {
     unitId = activeMembers[memberSlot];
-    battleState->opponentSlots[unitId] = memberSlot - FIRST_ENEMY_UNIT;
+    battle->opponentSlots[unitId] = memberSlot - FIRST_ENEMY_UNIT;
   }
 }
 

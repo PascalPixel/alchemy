@@ -3,8 +3,8 @@
 
 /// @file
 /// How each ability is staged in battle: the staging and effect tables
-/// (ability_staging.c), the values of BattleActionRun.staging and
-/// battleEffect, and the battle's names for two debug and key globals.
+/// (ability_staging.c) and the values of BattleActionRun.staging and
+/// battleEffect.
 
 #include "edition.h"
 #include "battle/battle_action_run.h"
@@ -14,13 +14,6 @@
 #include "gamepak/far_call.h"
 #include "system/frame.h"
 #include "system/input.h"
-
-/// gDebugMode under the battle's name. While it and FLAG_DEBUG_BATTLE_KEYS are
-/// set, holding R as an action is planned defeats every enemy, or with Select
-/// the party (BattleActionRun_Build).
-#define BATTLE_AUTO_MODE gDebugMode
-/// gKeysHeld under the battle's name: the keys held this frame.
-#define BATTLE_OPTIONS gKeysHeld
 
 /// Each ability's staging bits (BattleActionRun.battleEffect), by ability id
 /// 0 to 518 (ability_staging.c).

@@ -1176,12 +1176,12 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
 
     // The target rises to the challenge and won't flee; on the party, no one
-    // may run ("No time to run!").
+    // may run ("This is no time to be running away!").
     case ABILITY_EFFECT_CHALLENGE:
       PUSH_MESSAGE(MsgChallenge);
       target->challenge = 1;
       if (IS_PARTY_UNIT(targetId))
-        battle->challengeFlag |= 2;
+        battle->challengeFlag |= BATTLE_CHALLENGED_PARTY;
       break;
 
     // The target loses its next action (BattleActionRun_Build).

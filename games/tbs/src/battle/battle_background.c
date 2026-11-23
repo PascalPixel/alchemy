@@ -466,9 +466,9 @@ UNUSED s32 Battle_AdjustDebugValue(s32 selectedValue) {
 void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(unitId);
   struct Actor *actor;
-  struct Sprite *record;
-  struct Sprite **records;
-  s32 recordIndex;
+  struct Sprite *sprite;
+  struct Sprite **sprites;
+  s32 spriteIndex;
 
   if (slot == 0)
     return;
@@ -477,21 +477,21 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
     return;
   switch (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
   case ACTOR_SPRITE_ONE: {
-    record = actor->sprite;
-    record->image.objectMode = mode;
-    record->shadow.objectMode = mode;
+    sprite = actor->sprite;
+    sprite->image.objectMode = mode;
+    sprite->shadow.objectMode = mode;
     break;
   }
   case ACTOR_SPRITE_GROUP: {
-    records = (struct Sprite **)actor->sprite;
-    recordIndex = 0;
+    sprites = (struct Sprite **)actor->sprite;
+    spriteIndex = 0;
     do {
-      record = *records++;
-      if (record == 0)
+      sprite = *sprites++;
+      if (sprite == 0)
         break;
-      record->image.objectMode = mode;
-      record->shadow.objectMode = mode;
-    } while (++recordIndex < ACTOR_SPRITE_GROUP_SIZE);
+      sprite->image.objectMode = mode;
+      sprite->shadow.objectMode = mode;
+    } while (++spriteIndex < ACTOR_SPRITE_GROUP_SIZE);
     break;
   }
   }

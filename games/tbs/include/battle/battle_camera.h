@@ -122,6 +122,4 @@ STATIC_ASSERT(sizeof(struct BattleAffineHdma) == 672);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 16);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 32);
 
-struct BattleEffectParams;
-
 #endif

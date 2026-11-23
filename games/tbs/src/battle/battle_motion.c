@@ -80,7 +80,7 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   Actor_SelectAnimationFar(start, POSE_LEAP);
 }
 
-/// Sends a unit's actor back to its spot. Nothing in the source calls it.
+/// Unused: sends a unit's actor back to its spot.
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   struct Actor *actor = battleObject->actor;
 
@@ -175,11 +175,11 @@ void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 frames,
   FIXED x = startX + stepX;
   FIXED z = startZ + stepZ;
   // The distance is taken in 1/256 pixels, so its square fits 32 bits.
-  s32 cellX = stepX >> 8;
-  s32 cellZ = stepZ >> 8;
+  s32 coarseX = stepX >> 8;
+  s32 coarseZ = stepZ >> 8;
   s32 speed;
 
-  speed = Iwram_Sqrt(cellX * cellX + cellZ * cellZ);
+  speed = Iwram_Sqrt(coarseX * coarseX + coarseZ * coarseZ);
   speed = (speed << 8) / frames;
   actor->acceleration = speed;
   actor->speedLimit = speed;
@@ -197,7 +197,7 @@ void BattleMotion_ApproachTarget(s32 unitId, s32 targetId, s32 frames,
   Actor_SelectAnimationFar(actor, POSE_LEAP);
 }
 
-/// Restarts unit id's motion in POSE_LEAP. Nothing in the source calls it.
+/// Unused: restarts unit id's motion in POSE_LEAP.
 void BattleMotion_RestartLeap(s32 unitId) {
   struct Actor *actor;
 
@@ -250,8 +250,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   BattleMotion_MidpointNoOp(&position, toFIXED(1) / 16);
 }
 
-/// Plays the hit flash on unit id's sprite and waits ten frames. Only a
-/// single-sprite actor takes it. Nothing in the source calls it.
+/// Unused: plays the hit flash on unit id's sprite and waits ten frames. Only a
+/// single-sprite actor takes it.
 void BattleMotion_PlayHitFlash(s32 unitId) {
   struct Actor *actor;
   struct SpriteAnimation *effect;
@@ -274,7 +274,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
 /// screen, scaled as its sprite is. Returns 0.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
-  struct Sprite *record = GetMotionRecord(actor, 0);
+  struct Sprite *sprite = GetMotionRecord(actor, 0);
   s32 projectionScale;
   FIXED spriteScale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -283,15 +283,15 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 
   BattleCamera_ApplyTransform();
   projectionScale = Matrix_ProjectPoint(&actor->x.fixed, projected);
-  spriteScale = Iwram_MulFX(projectionScale, record->scale);
+  spriteScale = Iwram_MulFX(projectionScale, sprite->scale);
   projectionScale = Iwram_MulFX(
       spriteScale, FIXEDtoINT((s32)BattleUnit_GetEffectHeight(unitId)));
   projected[1] -= projectionScale;
   return 0;
 }
 
-/// The pixels above a unit where its battle effects play when its class gives
-/// none: a small enemy's, and everyone else's.
+/// The pixels above a unit where its battle effects play when its battle sprite
+/// row gives none: a small enemy's, and everyone else's.
 #define EFFECT_HEIGHT_SMALL 24
 #define EFFECT_HEIGHT_LARGE 48
 
@@ -300,13 +300,13 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 /// scaled as the sprite is. Returns 0.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
-  struct Sprite *record = GetMotionRecord(actor, 0);
+  struct Sprite *sprite = GetMotionRecord(actor, 0);
   s32 projectedHeight;
   FIXED spriteScale;
 
   BattleCamera_ApplyTransform();
   projectedHeight = Matrix_ProjectPoint(&actor->x.fixed, projected);
-  spriteScale = Iwram_MulFX(projectedHeight, record->scale);
+  spriteScale = Iwram_MulFX(projectedHeight, sprite->scale);
   if (BattleSprite_IsSmall(Unit_GetFar(unitId)->id) != 0)
     projectedHeight = Iwram_MulFX(spriteScale, EFFECT_HEIGHT_SMALL);
   else
@@ -316,17 +316,18 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
 }
 
 /// Returns the height above a unit where its battle effects play, in 16.16
-/// pixels: its class's own, else EFFECT_HEIGHT_SMALL for a small enemy and
+/// pixels: its battle sprite row's own, else EFFECT_HEIGHT_SMALL for a small
+/// enemy and
 /// EFFECT_HEIGHT_LARGE for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u32 height;
-  u8 classId;
+  u8 spriteRow;
 
-  classId = Unit_GetFar(unitId)->id;
-  height = toFIXED((u8)BattleSprite_GetEffectHeight(classId));
+  spriteRow = Unit_GetFar(unitId)->id;
+  height = toFIXED((u8)BattleSprite_GetEffectHeight(spriteRow));
   if (height == 0) {
-    classId = Unit_GetFar(unitId)->id;
-    if (BattleSprite_IsSmall(classId) != 0) {
+    spriteRow = Unit_GetFar(unitId)->id;
+    if (BattleSprite_IsSmall(spriteRow) != 0) {
       height = toFIXED(EFFECT_HEIGHT_SMALL);
     } else {
       height = toFIXED(EFFECT_HEIGHT_LARGE);

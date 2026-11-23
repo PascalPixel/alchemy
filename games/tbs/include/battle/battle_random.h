@@ -13,7 +13,7 @@
 extern s32 gBattleRandomSeed;
 
 /// Sets gBattleRandomSeed, as every write to it does: a new battle's 0, the
-/// seed a link turn exchanges and each roll's next seed. The name is ours.
+/// seed a link turn exchanges and each roll's next seed.
 #define Battle_SetRandomSeed(seed)                                             \
   do {                                                                         \
     gBattleRandomSeed = (seed);                                                \

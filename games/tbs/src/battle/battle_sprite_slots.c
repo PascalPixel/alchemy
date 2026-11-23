@@ -105,8 +105,9 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     if (!needsSingleSlot)
       battle->spriteSlots[slot + 1] = unitId;
 
-    if (sprite != SPRITE_WITH_SECOND_PART_A &&
-        sprite != SPRITE_WITH_SECOND_PART_B)
+    // Only the Kraken and the Fusion Dragon are drawn in two parts, the
+    // second the sprite after the first.
+    if (sprite != SPRITE_BATTLE_KRAKEN && sprite != SPRITE_BATTLE_FUSION_DRAGON)
       break;
   } while (++spritePart <= 1);
 

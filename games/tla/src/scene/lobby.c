@@ -153,7 +153,7 @@ enum LobbyCellBehavior {
 enum LobbyRaisedTrigger {
   LOBBY_EVENT_NONE = 0,
   LOBBY_EVENT_PROMPT = 1,      ///< LinkLobby_PromptToParticipate
-  LOBBY_EVENT_DISCONNECTED = 2 ///< LinkLobby_ReportDisconnection
+  LOBBY_EVENT_DISCONNECTED = 2 ///< LinkLobby_ReportLinkDisconnected
 };
 
 /// Frames without a link (LinkLobby_PollPeerReady) or without the partner's
@@ -355,7 +355,7 @@ s32 LinkLobby_PromptToParticipate(void) {
 }
 
 /// The attendant behind the left counter says, "The link was disconnected."
-s32 LinkLobby_ReportDisconnection(void) {
+s32 LinkLobby_ReportLinkDisconnected(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
@@ -1889,6 +1889,6 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_RAISED, LOBBY_EVENT_PROMPT, CONDITION_ALWAYS,
      EVENT(LinkLobby_PromptToParticipate)},
     {TRIGGER_RAISED, LOBBY_EVENT_DISCONNECTED, CONDITION_ALWAYS,
-     EVENT(LinkLobby_ReportDisconnection)},
+     EVENT(LinkLobby_ReportLinkDisconnected)},
     {TRIGGER_TABLE_END},
 };

@@ -590,7 +590,7 @@ s32 GaiaRockInside_SusaThrowsCask(void) {
   actor = Actor_Get(ACTOR_CASK);
   Actor_StartScript(actor, (s32)gGaiaRockInside_CaskThrownScript);
   actor->x.fixed = toFIXED(472);
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL);
   Actor_SetAttachedEffect(ACTOR_SUSA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -970,7 +970,7 @@ void GaiaRockInside_SaveSusa(void) {
     actor->targetZ = z;
   }
   Actor_ResetTargetsAndVelocity(ACTOR_SUSA);
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 5 / 8);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 5 / 8);
   actor->speedLimit = toFIXED(1);
   if (walker->script == gGaiaRockInside_CaskThrownScript ||
       walker->script == gGaiaRockInside_CaskPushedScript) {
@@ -995,7 +995,7 @@ void GaiaRockInside_RestoreSusa(void) {
   if (walker->script == gGaiaRockInside_CaskThrownScript ||
       walker->script == gGaiaRockInside_CaskPushedScript) {
     walker->paused = 0;
-    Actor_SetAnimationSpeed(walker, ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeed(walker, ANIM_STEP_NORMAL);
   }
   Iwram_CopyWordsEntry(actor, &gGaiaRockInside_SavedSusa, sizeof(struct Actor));
   Actor_SetAnimation(ACTOR_SUSA, gGaiaRockInside_SavedSusaAnimation);
@@ -2450,8 +2450,8 @@ s32 Scene_Initialize(void) {
             MapGrid_CopyCellPictureCellsRect(85, 74, 5, 2, width, height);
             susa->paused = 0;
             serpent->paused = 0;
-            Actor_SetAnimationSpeed(susa, ANIMATION_STEP_NORMAL);
-            Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
+            Actor_SetAnimationSpeed(susa, ANIM_STEP_NORMAL);
+            Actor_SetAnimationSpeed(serpent, ANIM_STEP_NORMAL);
             mask = (u8)~ACTOR_FACES_MOTION;
             Actor_GetById(ACTOR_SUSA)->steeringFlags &= mask;
             Actor_WalkTo(ACTOR_SUSA, 456, 360);
@@ -2512,7 +2512,7 @@ s32 Scene_Initialize(void) {
             actor->scaleX = FIXED_ONE * 3 / 8;
             actor->scaleY = FIXED_ONE * 3 / 8;
             Event_Wait(10);
-            Actor_SetAnimationSpeed(serpent, ANIMATION_STEP_NORMAL);
+            Actor_SetAnimationSpeed(serpent, ANIM_STEP_NORMAL);
             Event_Wait(10);
             Sound_Play(SE_IMPACT);
             actor->x.fixed = 0;

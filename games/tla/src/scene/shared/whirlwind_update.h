@@ -14,7 +14,7 @@ void Whirlwind_Update(struct Actor *self) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
-  Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(self, ANIM_STEP_NORMAL);
   /* FAKEMATCH(dead): the timer stepped through its own address; as
    * ++self->timer. */
   if ((++*&self->timer & 31) == 31)

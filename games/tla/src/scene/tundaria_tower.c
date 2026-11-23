@@ -584,7 +584,7 @@ void TundariaTower_JumpDownSlide(void) {
   leader->facing = FACING_NORTH;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId,
-                              ANIMATION_STEP_NORMAL * 3 / 2);
+                              ANIM_STEP_NORMAL * 3 / 2);
   Event_Wait(40);
   MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(19), FIELD_CELL_ORIGIN(57), 0, -12);
   Actor_GetById(gMainRoutineWork.leaderActorId)->bounce = 0;

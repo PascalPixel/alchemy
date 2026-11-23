@@ -501,7 +501,7 @@ void AirsRockInside_DriftMote(struct Actor *actor) {
     TilesetAnim_SuspendAll();
     return;
   }
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL);
   TilesetAnim_ResumeAll();
   if (actor->riseEnabled != 0) {
     if ((gFrameCount & 7) == 0)
@@ -854,7 +854,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(shot, ANIM_STEP_NORMAL);
   if (CELL_CODE(MapCell_GetAttributes(
           MAPGRID_LAYER_OVERHEAD, FIELD_CELL(shot->x.fixed),
           FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
@@ -976,7 +976,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(shot, ANIM_STEP_NORMAL);
   if (CELL_CODE(MapCell_GetAttributes(
           MAPGRID_LAYER_OVERHEAD, FIELD_CELL(shot->x.fixed),
           FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==
@@ -1111,7 +1111,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *actor) {
     Actor_SetAnimationSpeed(actor, 0);
     return;
   }
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL);
   if (actor->timer == 0) {
     if (actor->x.fixed == 0) {
       Actor_Release(actor);

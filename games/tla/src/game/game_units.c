@@ -1003,8 +1003,8 @@ void Party_AddIsaacsParty(void) {
   Party_GiveItemIfMissing(ITEM_CATCH_BEADS, IVAN);
   gMainRoutineWork.coins += gMainRoutineWork.transferredCoins;
 #if TLA_PATCH_4
-  if ((u32)gMainRoutineWork.coins > COINS_MAX)
-    gMainRoutineWork.coins = COINS_MAX;
+  if ((u32)gMainRoutineWork.coins > COIN_MAX)
+    gMainRoutineWork.coins = COIN_MAX;
 #endif
 }
 

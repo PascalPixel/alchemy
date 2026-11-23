@@ -378,7 +378,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
                 (struct Actor *)BattleObject_Get(id)->object, POSE_CAST);
             Actor_SetAnimationSpeedFar(
                 (struct Actor *)BattleObject_Get(id)->object,
-                ANIMATION_STEP_NORMAL * 2);
+                ANIM_STEP_NORMAL * 2);
           }
           element = entry->element;
           Djinn_SetFar(id, element, entry->index);
@@ -505,7 +505,7 @@ void Battle_ProcessTurnEnd(void) {
                                        POSE_CAST);
               Actor_SetAnimationSpeedFar(
                   (struct Actor *)BattleObject_Get(unitId)->object,
-                  ANIMATION_STEP_NORMAL * 2);
+                  ANIM_STEP_NORMAL * 2);
             }
             element = expiredEntry->element;
             Djinn_SetFar(unitId, element, expiredEntry->index);
@@ -856,7 +856,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_CAST);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(unitId)->object,
-            ANIMATION_STEP_NORMAL * 2);
+            ANIM_STEP_NORMAL * 2);
         ElementGlow_Play(unitId, i, GLOW_PILLAR, -1);
         BattlePlayback_WaitForReady();
       }

@@ -165,7 +165,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   scrollSpeed = 0;
   cueTimer = 0;
   user = BattleObject_GetFar(args->user)->object;
-  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
 
   for (frame = 0; frame != STONE_JUSTICE_FRAMES; frame++) {
     EffectPosition_ProjectScaledBattler(args->user, &userPosition);
@@ -274,7 +274,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 

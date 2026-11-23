@@ -1047,27 +1047,27 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_CRAB_A, &obstacle->position.x, 0,
           gLemuriaSpring_CrabColorModes[obstacle->speedMode],
-          ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
+          ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 1:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_CRAB_B, &obstacle->position.x, 0,
           gLemuriaSpring_CrabColorModes[obstacle->speedMode],
-          ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
+          ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 2:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_TURTLE_A, &obstacle->position.x,
           DEGtoANG(180) - obstacle->heading,
           gLemuriaSpring_TurtleColorModes[obstacle->speedMode],
-          ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
+          ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     case 3:
       LemuriaSpring_SetActorAppearance(
           ACTOR_LEMURIA_SPRING_TURTLE_B, &obstacle->position.x,
           TRIG_TURN - 1 - obstacle->heading,
           gLemuriaSpring_TurtleColorModes[obstacle->speedMode],
-          ANIMATION_STEP_NORMAL * (obstacle->speedMode + 1));
+          ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
       break;
     }
     index++;
@@ -1079,20 +1079,15 @@ void LemuriaSpring_UpdateTossSimulation(void) {
 
   if (gLemuriaSpring_TossKind == SPRING_TOSS_MEDAL) {
     LemuriaSpring_SetActorAppearance(ACTOR_LEMURIA_SPRING_MEDAL,
-                                     &toss->trail[0].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[0].x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW,
-                                     &toss->shadow.x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->shadow.x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_MEDAL_TRAIL(1),
-                                     &toss->trail[1].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[1].x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_MEDAL_TRAIL(2),
-                                     &toss->trail[2].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[2].x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_MEDAL_TRAIL(3),
-                                     &toss->trail[3].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[3].x, 0, 0, ANIM_STEP_NORMAL);
     Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(1)),
                           ANIM_TOKEN_GLINT);
     Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_MEDAL_TRAIL(2)),
@@ -1101,20 +1096,15 @@ void LemuriaSpring_UpdateTossSimulation(void) {
                           ANIM_TOKEN_GLINT);
   } else {
     LemuriaSpring_SetActorAppearance(ACTOR_LEMURIA_SPRING_COIN,
-                                     &toss->trail[0].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[0].x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(ACTOR_LEMURIA_SPRING_COIN_SHADOW,
-                                     &toss->shadow.x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->shadow.x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_COIN_TRAIL(1),
-                                     &toss->trail[1].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[1].x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_COIN_TRAIL(2),
-                                     &toss->trail[2].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[2].x, 0, 0, ANIM_STEP_NORMAL);
     LemuriaSpring_SetActorAppearance(LEMURIA_SPRING_COIN_TRAIL(3),
-                                     &toss->trail[3].x, 0, 0,
-                                     ANIMATION_STEP_NORMAL);
+                                     &toss->trail[3].x, 0, 0, ANIM_STEP_NORMAL);
     Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(1)),
                           ANIM_TOKEN_GLINT);
     Actor_SelectAnimation(Actor_GetById(LEMURIA_SPRING_COIN_TRAIL(2)),

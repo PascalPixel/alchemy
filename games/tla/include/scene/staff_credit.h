@@ -27,16 +27,16 @@ static inline void Scene_QueueIoWrite16(u32 address, u32 value) {
 /// One frame of a picture's map: a screen's 20 rows of 32 tiles.
 #define PICTURE_FRAME_SIZE (BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2)
 /// The lighthouse pictures' frames in their buffer: tiles first, then a frame
-/// every PICTURES_FRAME_STRIDE bytes from PICTURES_FIRST_FRAME.
-#define PICTURES_FIRST_FRAME 4224
-#define PICTURES_FRAME_STRIDE 1536
+/// every PICTURE_FRAME_STRIDE bytes from PICTURE_FIRST_FRAME.
+#define PICTURE_FIRST_FRAME 4224
+#define PICTURE_FRAME_STRIDE 1536
 /// Queues frame `frame` of a lighthouse picture, from the caller's buffer, to
 /// the picture layer's map at the next VBlank
 /// (WorldMap_PlayLighthouseTransition and the credits' unused copy of it).
 #define PUSH_PICTURE(frame)                                                    \
   IO_WRITE_QUEUE_PUSH(                                                         \
       PICTURE_MAP,                                                             \
-      (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
+      (u32)(buffer + PICTURE_FIRST_FRAME + (frame) * PICTURE_FRAME_STRIDE),    \
       DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
 /// The PP gauge shown over the leader on the world map: a 32x16 sprite of

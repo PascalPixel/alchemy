@@ -374,9 +374,9 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
 
   actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(actor, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 7 / 4);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL * 7 / 4);
   BattleEffect_RunCanvasBurst(args, CANVAS_BURST_MINE_BALL);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
 }
 
 /// The ball: the work's last particle.

@@ -253,7 +253,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define WAVE_GREEN 6
 #define WAVE_BLUE 23
 /// The frames between the sea's colour steps while the waves run.
-#define WAVES_COLOR_STEP_FRAMES 360
+#define WAVE_COLOR_STEP_FRAMES 360
 /// The background colour whose red pulses while no waves run, between
 /// `PULSE_RED_MIN` and full: colour 15 of background palette 0.
 #define PULSE_COLOR BG_PLTT_COLOR(0, 15)
@@ -689,15 +689,15 @@ void SeaOfTime_CountLaps(void) {
 }
 
 /// The frames the waves run.
-#define WAVES_FRAMES 120
+#define WAVE_FRAMES 120
 
-/// While the waves run, ends them `WAVES_FRAMES` after the sea has gone still,
+/// While the waves run, ends them `WAVE_FRAMES` after the sea has gone still,
 /// and keeps their start, the sea's colour step and the frame count in case
 /// the scene is left and entered again.
 void SeaOfTime_TimeWaves(void) {
   u32 *state = gSceneState;
 
-  if (gFrameCount - gSeaOfTime_WaveStartFrame > WAVES_FRAMES)
+  if (gFrameCount - gSeaOfTime_WaveStartFrame > WAVE_FRAMES)
     gFieldWork->raisedTrigger = RAISED_STOP_WAVES;
   *state++ = gSeaOfTime_WaveStartFrame;
   *state++ = gSeaOfTime_WaveState;
@@ -713,7 +713,7 @@ extern u32 gSeaOfTime_WaveState;
 ///
 /// The sea's colours step toward one colour (`WAVE_RED`, `WAVE_GREEN`,
 /// `WAVE_BLUE`) every 10 frames, and its colour cycle slows to a step every
-/// `WAVES_COLOR_STEP_FRAMES`; `SeaOfTime_TimeWaves` ends them.
+/// `WAVE_COLOR_STEP_FRAMES`; `SeaOfTime_TimeWaves` ends them.
 void SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -763,7 +763,7 @@ void SeaOfTime_StartWaves(void) {
     frame = gFrameCount;
     gSeaOfTime_WaveState += frame & 1;
   } while (changed);
-  gSeaOfTime_WaveState = WAVES_COLOR_STEP_FRAMES;
+  gSeaOfTime_WaveState = WAVE_COLOR_STEP_FRAMES;
   gSeaOfTime_WaveStartFrame = frame;
   Task_Add(SeaOfTime_TimeWaves, TASK_PASS_FRAME);
   Event_End();

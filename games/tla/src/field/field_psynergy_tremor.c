@@ -48,7 +48,7 @@ struct TremorWork {
 };
 
 /// Sets the step of each of a sprite's layers: 0 stops its animation,
-/// ANIMATION_STEP_NORMAL runs it at normal speed.
+/// ANIM_STEP_NORMAL runs it at normal speed.
 void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 
 /// Tremor ("Shake objects left and right.") on the chosen object: sways the
@@ -180,7 +180,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     } while (state != SWAY_DONE);
 
     if (target != NULL && targetSprite != NULL) {
-      Sprite_SetAnimationSpeedFar(targetSprite, ANIMATION_STEP_NORMAL);
+      Sprite_SetAnimationSpeedFar(targetSprite, ANIM_STEP_NORMAL);
       ((struct Sprite *)target->sprite)->dirty = 1;
     }
     ViewMove_End();

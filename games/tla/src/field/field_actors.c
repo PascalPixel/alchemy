@@ -371,7 +371,7 @@ void Actor_SelectAnimation(struct Actor *actor, s32 argument) {
 }
 
 /// Sets the timer step, the animation speed, of an actor's sprite, or of each
-/// sprite of a group (ANIMATION_STEP_NORMAL is normal speed).
+/// sprite of a group (ANIM_STEP_NORMAL is normal speed).
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 value) {
   s32 count;
   struct Sprite *child;

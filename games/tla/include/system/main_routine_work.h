@@ -33,7 +33,7 @@ enum BattleType {
 #define BATTLE_OUTCOME_FLED 999
 
 /// The most coins the party carries, and the most shop credit.
-#define COINS_MAX 999999
+#define COIN_MAX 999999
 
 /// gMainRoutineWork.hazardMode: what advances the hazard count
 /// (Field_UpdateWalking).
@@ -81,7 +81,7 @@ struct MainRoutineWork {
   /// The party's Djinn recovery list (DjinnRecoveryTable from its offers on),
   /// read through Djinn_GetRecoveryTable.
   u8 djinnRecovery[292];
-  s32 shopCredit; ///< shop credit, at most COINS_MAX (Party_AdjustShopCredit)
+  s32 shopCredit; ///< shop credit, at most COIN_MAX (Party_AdjustShopCredit)
   s8 shopGifts;   ///< shop gifts, 0 to SHOP_GIFTS_MAX (Party_AdjustShopGifts)
   /// The weights of the spring game's 15 prizes: three
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a

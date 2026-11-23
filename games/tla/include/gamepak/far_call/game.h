@@ -72,7 +72,7 @@ s32 Item_IsCompatibleWithUnitFar(s32 unit, s32 item);
 /// -1.
 s32 Inventory_FindFar(s32 unitId, s32 item_id);
 /// Adds `amount` to the shop credit purchases build up and Game Tickets spend,
-/// kept between 0 and COINS_MAX, and returns the new credit.
+/// kept between 0 and COIN_MAX, and returns the new credit.
 s32 Party_AdjustShopCreditFar(s32 amount);
 /// Clears the broken mark of the item in `slot`.
 void Inventory_RepairFar(s32 unitId, s32 slot);

@@ -333,7 +333,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_SetSpeed(1);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
     Actor_SetAnimation(ACTOR_ALEX, 12);
-    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL / 2);
+    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIM_STEP_NORMAL / 2);
     gFieldWork->transition = 0;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     REG_BG1CNT &= ~BGCNT_PRIORITY(3);
@@ -395,7 +395,7 @@ s32 Scene_Initialize(void) {
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     // "Wait for me! Please, wait! Wait until I reach the summit of Mt. Aleph!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ALEX, 0);
-    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL * 2);
+    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIM_STEP_NORMAL * 2);
     for (i = 0; i != CLIMB_STEPS; i++) {
       if (i == CLIMB_CAMERA_STEP) {
         FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);

@@ -73,7 +73,7 @@ retry:
   actor->timer = 0;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
   Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
 #if !TLA_PATCH_1
   FieldActor_WaitForMove(actor);
 #else

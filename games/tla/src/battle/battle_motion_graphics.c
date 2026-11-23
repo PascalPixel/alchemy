@@ -176,7 +176,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->unitId)->object;
   Actor_SelectAnimationFar(actor, POSE_CAST);
-  Actor_SetAnimationSpeedFar((struct Actor *)actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)actor, ANIM_STEP_NORMAL);
   IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   Sound_PlayFar(SE_CAST);
   wait(10);
@@ -412,11 +412,10 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
                                     Unit_Get(plan->partnerId)->enemyId)));
     Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObject *)object)->object,
-        ANIMATION_STEP_NORMAL);
+        ANIM_STEP_NORMAL);
   }
   Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object,
-      ANIMATION_STEP_NORMAL);
+      (struct Actor *)BattleObject_Get(work.actor)->object, ANIM_STEP_NORMAL);
 
   if ((u16)work.actors[0] <= ALLY_MAX)
     work.side = EFFECT_SIDE_PARTY;
@@ -547,7 +546,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Actor_SelectAnimationFar(object, *mode);
   }
-  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIM_STEP_NORMAL);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.side = EFFECT_SIDE_PARTY;
   else
@@ -730,7 +729,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   saved = BattleMotion_CallBeast(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, heap->battleWork->actingAnimation);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIM_STEP_NORMAL);
   Sound_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.actor, plan->element, GLOW_STREAKS, 0);

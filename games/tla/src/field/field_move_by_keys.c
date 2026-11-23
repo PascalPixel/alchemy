@@ -158,7 +158,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
     best = (struct RopeNode *)actor->watchedActor;
     animationSpeed = 0;
   } else {
-    animationSpeed = ANIMATION_STEP_NORMAL;
+    animationSpeed = ANIM_STEP_NORMAL;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
     position.x += actor->x.fixed;

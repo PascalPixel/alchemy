@@ -357,7 +357,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                           BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) |
                               BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7),
                           IO_WRITE_HALFWORD);
-      Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 8);
+      Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL * 8);
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));

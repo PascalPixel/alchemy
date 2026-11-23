@@ -1075,7 +1075,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
-  Actor_SetAnimationSpeed(shot, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(shot, ANIM_STEP_NORMAL);
   if (CELL_CODE(
           MapCell_GetAttributes(2, FIELD_CELL(shot->x.fixed),
                                 FIELD_CELL(shot->z.fixed - shot->y.fixed))) ==

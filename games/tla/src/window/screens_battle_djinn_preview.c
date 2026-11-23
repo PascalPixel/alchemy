@@ -139,13 +139,13 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 // column), and starts the prompt under them (MsgBattleAdditionalPsynergyHelp)
 // 16 pixels further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define STATS_WINDOW_WIDTH 21
+#define STAT_WINDOW_WIDTH 21
 #define OLD_VALUE_X 4
 #define OLD_DEFENSE_AGILITY_TEXT 7
 #define OLD_DEFENSE_AGILITY_X 4
 #define PSYNERGY_PROMPT_X 40
 #else
-#define STATS_WINDOW_WIDTH 20
+#define STAT_WINDOW_WIDTH 20
 #define OLD_VALUE_X 5
 #define OLD_DEFENSE_AGILITY_TEXT 8
 #define OLD_DEFENSE_AGILITY_X 6
@@ -220,7 +220,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
   if (window != NULL)
     Window_Close(window, 1);
   if (page == 0)
-    window = Window_Create(0, 8, STATS_WINDOW_WIDTH, 11, 6);
+    window = Window_Create(0, 8, STAT_WINDOW_WIDTH, 11, 6);
   else
     window = Window_Create(0, 5, 21, 14, 6);
   if (window == NULL)
@@ -428,7 +428,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 }
 
 #undef TOTAL_LABEL_X
-#undef STATS_WINDOW_WIDTH
+#undef STAT_WINDOW_WIDTH
 #undef OLD_VALUE_X
 #undef OLD_DEFENSE_AGILITY_TEXT
 #undef OLD_DEFENSE_AGILITY_X

@@ -221,7 +221,7 @@ void FieldPsynergy_StartCast(void) {
     Actor_SetOthersPaused(actor, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgCastAbilityName, work->messageMode);
-    Actor_SetOthersPaused(actor, 0, ANIMATION_STEP_NORMAL);
+    Actor_SetOthersPaused(actor, 0, ANIM_STEP_NORMAL);
     work->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {

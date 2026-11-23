@@ -476,7 +476,7 @@ s32 Scene_TalkToActor(s32 id) {
         }
       }
       object->paused = 0;
-      Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+      Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
     }
     result = 0;
   }

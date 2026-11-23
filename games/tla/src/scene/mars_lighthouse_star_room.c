@@ -100,7 +100,7 @@ enum {
 };
 
 /// Raised by Burst once the ice is gone: the dragons wake.
-#define DRAGONS_WAKE_TRIGGER 20
+#define DRAGON_WAKE_TRIGGER 20
 /// The cells of the ice the dragons sleep in, which Burst breaks.
 #define DRAGON_ICE_TILE 20
 /// The cell before the great dragon head on the north wall, which asks for
@@ -285,7 +285,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
 #if TLA_PATCH_1
     Event_SetFlag(FLAG_DRAGON_ICE_BURST);
 #endif
-    gFieldWork->raisedTrigger = DRAGONS_WAKE_TRIGGER;
+    gFieldWork->raisedTrigger = DRAGON_WAKE_TRIGGER;
   }
   if ((u32)(frame - 97) <= 174 && frame % 30 == 0)
     MarsLighthouseStarRoom_ScatterIceChips(ACTOR_ICE_CRACK);
@@ -1738,7 +1738,7 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
      (u32)(MarsLighthouseStarRoom_EndBlazeOnWestTorch)},
-    {TRIGGER_RAISED, DRAGONS_WAKE_TRIGGER, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, DRAGON_WAKE_TRIGGER, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_WakeFlameDragons)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
      DRAGON_ICE_TILE, IF_FLAG_SET(FLAG_BURST_CAN_BREAK_DRAGON_ICE),

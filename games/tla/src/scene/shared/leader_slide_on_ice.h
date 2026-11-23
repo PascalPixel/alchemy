@@ -71,7 +71,7 @@ top:
   actor->timer = 0;
   FieldActor_SetMoveTargetFX(actor, startX, actor->y.fixed, startZ);
   Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
   FieldActor_WaitForMove(actor);
   actor->update = Actor_SteerByPad;
   for (;;) {

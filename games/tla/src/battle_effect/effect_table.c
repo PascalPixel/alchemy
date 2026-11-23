@@ -92,11 +92,11 @@ const u8 gFalling_IceCounts[] = {16, 46, 20, 52, 32, 80};
 const u8 gFalling_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
 
 /// The streak styles: four signed bytes for each mode.
-const s8 gStreaks_Styles[] = {0,  1, 0, 0, 0,  1, 4, 0, 0, 1,
-                              -1, 1, 1, 1, -1, 1, 1, 1, 4, 0};
+const s8 gStreak_Styles[] = {0,  1, 0, 0, 0,  1, 4, 0, 0, 1,
+                             -1, 1, 1, 1, -1, 1, 1, 1, 4, 0};
 
 /// The struck target's sideways tremble, in pixels, one a frame.
-const s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
+const s8 gStreak_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
 /// The target strike styles, one row a style (enum TargetStrikeStyle), one byte
 /// a column (enum TargetStrikeColumn).
@@ -2335,27 +2335,27 @@ const u8 gTripleChomp_BiteFrames[] = {0, 12, 24};
 
 /// Each breath's length, the frame its burst starts, and the glow's widest size
 /// by variant.
-const u8 gBreaths_Frames[] = {90, 38, 32, 48};
+const u8 gBreath_Frames[] = {90, 38, 32, 48};
 
 /// The burst frames.
-const u8 gBreaths_BurstFrames[] = {56, 0, 0, 0};
+const u8 gBreath_BurstFrames[] = {56, 0, 0, 0};
 
 /// The glow's widest size, by variant.
-const u8 gBreaths_MaxSizes[] = {24, 32, 32, 24};
+const u8 gBreath_MaxSizes[] = {24, 32, 32, 24};
 
 /// The four jaws of variant 2, by breath: their start frames; the tables after
 /// it give their growth and their x from the mouth.
-const u8 gBreaths_RingStarts[] = {56, 58, 60, 61, 8, 12, 16, 20, 0, 2, 4, 5};
+const u8 gBreath_RingStarts[] = {56, 58, 60, 61, 8, 12, 16, 20, 0, 2, 4, 5};
 
 /// How fast each ring grows.
-const u8 gBreaths_RingGrowth[] = {5, 6, 7, 6, 10, 9, 11, 10, 5, 6, 7, 6};
+const u8 gBreath_RingGrowth[] = {5, 6, 7, 6, 10, 9, 11, 10, 5, 6, 7, 6};
 
 /// Each ring's x, in pixels.
-const s8 gBreaths_RingX[] = {-32, -48, -56, -72, -16, -32,
-                             -64, -72, -32, -48, -56, -72};
+const s8 gBreath_RingX[] = {-32, -48, -56, -72, -16, -32,
+                            -64, -72, -32, -48, -56, -72};
 
 /// The frame each breath hits the targets.
-const u8 gBreaths_FlashFrames[] = {56, 14, 6, 56};
+const u8 gBreath_FlashFrames[] = {56, 14, 6, 56};
 
 /// The frame each ring starts on.
 const u8 gTrident_RingStarts[] = {8, 10, 12, 13, 64, 67, 70, 72};

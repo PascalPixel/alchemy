@@ -217,9 +217,9 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
 
   actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(actor, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_AGING_GAS);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
 }
 
 /// The user takes its leap pose and animates fast while the burst shower
@@ -231,9 +231,9 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 
   actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(actor, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
 }
 
 /// The user fires one shot a frame at a point near one of the targets,

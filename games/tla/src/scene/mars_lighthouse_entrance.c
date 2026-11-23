@@ -962,7 +962,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId, value, 0);
   }
   Actor_SelectAnimation(actor, ANIM_LEADER_WALK_BACKWARDS);
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
   System_Wait(30);
   actor->facing = FACING_SOUTH;
   actor->motionFlags = 0;
@@ -1050,7 +1050,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
-  Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL * 3);
   System_Wait(30);
   leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;

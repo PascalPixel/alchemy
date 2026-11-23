@@ -168,7 +168,7 @@ void BattleObject_UpdatePose(s32 id) {
 
   Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, value);
   Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(id)->object,
-                             ANIMATION_STEP_NORMAL - 2 + (id & 3));
+                             ANIM_STEP_NORMAL - 2 + (id & 3));
 }
 
 /// Releases all graphics the object owns and marks it as having none.

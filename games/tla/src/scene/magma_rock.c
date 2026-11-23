@@ -1432,7 +1432,7 @@ void MagmaRock_KnockLeaderOffWall(void) {
                             SPRITE_COLOR_GREY);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
   Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId,
-                              ANIMATION_STEP_NORMAL * 2);
+                              ANIM_STEP_NORMAL * 2);
   options.priority = 1;
   options.palette = SPRITE_COLOR_BLACK;
   options.startScaleX = FIXED_ONE * 4 / 5;

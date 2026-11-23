@@ -973,11 +973,11 @@ void ObjectTable_Snapshot(void);
 
 /// How the charges reached the statue in the middle (GabombaStatue_RunCharges),
 /// which decides how the ceremony outside goes on.
-enum ChargesArrival {
-  CHARGES_TOGETHER = 0,   ///< a blue and a red charge at the same moment
-  CHARGES_BLUE_FIRST = 1, ///< a blue one alone, or before the red
-  CHARGES_RED_FIRST = 2,  ///< a red one alone, or before the blue
-  CHARGES_NONE_ARRIVED = 3
+enum ChargeArrival {
+  CHARGE_ARRIVAL_TOGETHER = 0,   ///< a blue and a red charge at the same moment
+  CHARGE_ARRIVAL_BLUE_FIRST = 1, ///< a blue one alone, or before the red
+  CHARGE_ARRIVAL_RED_FIRST = 2,  ///< a red one alone, or before the blue
+  CHARGE_ARRIVAL_NONE = 3
 };
 
 /// Takes charge id off the map, stopped.
@@ -1054,19 +1054,19 @@ void GabombaStatue_HearTheOffering(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   switch (result) {
-  case CHARGES_NONE_ARRIVED:
+  case CHARGE_ARRIVAL_NONE:
     FieldEvent_SetExitRequest(
         GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_C);
     break;
-  case CHARGES_BLUE_FIRST:
+  case CHARGE_ARRIVAL_BLUE_FIRST:
     FieldEvent_SetExitRequest(
         GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_D);
     break;
-  case CHARGES_RED_FIRST:
+  case CHARGE_ARRIVAL_RED_FIRST:
     FieldEvent_SetExitRequest(
         GABOMBA_STATUE_ARROWS_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH_E);
     break;
-  case CHARGES_TOGETHER:
+  case CHARGE_ARRIVAL_TOGETHER:
     FieldEvent_SetExitRequest(
         GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_FACE_EAST_A_B);
     break;
@@ -1514,7 +1514,7 @@ DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
 /// Each frame: while a menu or Psynergy is up, the cogs and the rope posts
 /// stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
-  s32 step = ANIMATION_STEP_NORMAL;
+  s32 step = ANIM_STEP_NORMAL;
   s32 open = 0;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 i;
@@ -3523,7 +3523,7 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
       break;
   }
   System_Wait(20);
-  result = CHARGES_NONE_ARRIVED;
+  result = CHARGE_ARRIVAL_NONE;
   if (check) {
     // A charge still on the map has arrived; riseBaseY is its running frames,
     // the sooner of each orb's two.
@@ -3556,23 +3556,23 @@ s32 GabombaStatue_RunCharges(s32 first, s32 check) {
       }
     }
     if (blue != 0) {
-      result = CHARGES_BLUE_FIRST;
+      result = CHARGE_ARRIVAL_BLUE_FIRST;
       if (red != 0) {
-        result = CHARGES_TOGETHER;
+        result = CHARGE_ARRIVAL_TOGETHER;
         if (blue != red) {
           if (blue < red) {
             Event_SetFlag(FLAG_GABOMBA_CHARGES_REACHED_APART);
-            result = CHARGES_BLUE_FIRST;
+            result = CHARGE_ARRIVAL_BLUE_FIRST;
           } else {
             Event_SetFlag(FLAG_GABOMBA_CHARGES_REACHED_APART);
-            result = CHARGES_RED_FIRST;
+            result = CHARGE_ARRIVAL_RED_FIRST;
           }
         }
       }
     } else {
       if (red != 0)
-        return CHARGES_RED_FIRST;
-      return CHARGES_NONE_ARRIVED;
+        return CHARGE_ARRIVAL_RED_FIRST;
+      return CHARGE_ARRIVAL_NONE;
     }
   }
   return result;

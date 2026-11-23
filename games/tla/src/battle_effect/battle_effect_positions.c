@@ -469,7 +469,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;

@@ -98,9 +98,9 @@ enum { ANIM_WHITE_BIRD_PERCH = 1, ANIM_WHITE_BIRD_FLAP = 3 };
 /// How the rooms open: the Japanese edition opens them through a shape, the
 /// others from around the leader.
 #if !TLA_PATCH_1
-#define ROOMS_WINDOW_TRANSITION WINDOW_TRANSITION_SHAPE
+#define ROOM_WINDOW_TRANSITION WINDOW_TRANSITION_SHAPE
 #else
-#define ROOMS_WINDOW_TRANSITION WINDOW_TRANSITION_LEADER
+#define ROOM_WINDOW_TRANSITION WINDOW_TRANSITION_LEADER
 #endif
 
 void LemuriaRooms_PiersVisitsUncle(void);
@@ -252,7 +252,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
 
   gFieldWork->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, ROOMS_WINDOW_TRANSITION);
+      SCENE_TRANSITION(TRANSITION_WINDOW, ROOM_WINDOW_TRANSITION);
   Actor_SetSpritePriority(ACTOR_BIRD, 1);
   Actor_SetSpritePriority(ACTOR_OLD_MAN_ON_ALCHEMYS_ABUSE, 2);
   Actor_SetSpritePriority(ACTOR_PIERS_UNCLE, 2);

@@ -140,7 +140,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   }
   EffectPosition_ProjectBattler(args->targets[0], &target);
 
-  for (frame = 0; frame != gBreaths_Frames[mode]; frame++) {
+  for (frame = 0; frame != gBreath_Frames[mode]; frame++) {
     // Frame 0: 32 motes wait around the mouth, each a frame later; the
     // rolling ball sets out from the mouth toward the target.
     if (frame == 0) {
@@ -174,10 +174,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         s32 size = frame - 16;
 
         if (frame > 63)
-          size = gBreaths_MaxSizes[args->variant] - frame + 64;
+          size = gBreath_MaxSizes[args->variant] - frame + 64;
         size = size / 2 * 2;
-        if (size > gBreaths_MaxSizes[args->variant])
-          size = gBreaths_MaxSizes[args->variant];
+        if (size > gBreath_MaxSizes[args->variant])
+          size = gBreath_MaxSizes[args->variant];
         if (size > 0) {
           BattleEffect_DrawShadedCirclesMirrored(work->sheet + BREATH_GLOW,
                                                  size, FIXED_ONE);
@@ -201,9 +201,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 mouthY - size, size, half * 4);
       }
 
-      if (frame >= gBreaths_BurstFrames[mode]) {
+      if (frame >= gBreath_BurstFrames[mode]) {
         // The burst: the motes fly out of the mouth, away from the targets.
-        if (frame == gBreaths_BurstFrames[mode]) {
+        if (frame == gBreath_BurstFrames[mode]) {
           for (i = 0; i != BREATH_MOTE_COUNT; i++) {
             step = &BREATH_MOTES[i];
             step->x = INTtoFIXED(mouthX);
@@ -275,7 +275,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           }
         }
       } else if (mode == BREATH_ROLLING_FLAME &&
-                 frame >= gBreaths_BurstFrames[mode]) {
+                 frame >= gBreath_BurstFrames[mode]) {
         // The ball of dust rolls to the target.
         step = &work->particles[0];
         draw[0](canvas, work->sheet,
@@ -288,7 +288,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         step->variant++;
       }
 
-      if (frame >= gBreaths_BurstFrames[mode]) {
+      if (frame >= gBreath_BurstFrames[mode]) {
         void *vertices;
         struct RenderModel *model;
 
@@ -306,7 +306,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         // Blast Breath's is two, crossed.
         if (mode != BREATH_ROLLING_FLAME) {
           s32 growth = BREATH_FLASH_GROWTH;
-          s32 age = frame - gBreaths_BurstFrames[mode];
+          s32 age = frame - gBreath_BurstFrames[mode];
           s32 scale = age * growth + FIXED_ONE / 2;
           s32 shade = BREATH_FLASH_FULL * 8 - age * 8;
 
@@ -354,10 +354,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_CylinderMesh;
           for (i = 0; i != 4; i++) {
-            s32 start = gBreaths_RingStarts[mode * 4 + i];
+            s32 start = gBreath_RingStarts[mode * 4 + i];
 
             if (frame > start) {
-              s32 scale = (frame - start) * gBreaths_RingGrowth[mode * 4 + i] *
+              s32 scale = (frame - start) * gBreath_RingGrowth[mode * 4 + i] *
                               BREATH_RING_GROWTH +
                           BREATH_RING_START_SCALE;
               s32 shade = (start - frame) * 8 + 56;
@@ -371,20 +371,20 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                   scale /= 2;
                   if (args->side == EFFECT_SIDE_ENEMIES)
                     Matrix_Translate(
-                        INTtoFIXED(mouthX + gBreaths_RingX[mode * 4 + i] - 48),
+                        INTtoFIXED(mouthX + gBreath_RingX[mode * 4 + i] - 48),
                         INTtoFIXED(mouthY - 64), 0);
                   else
                     Matrix_Translate(
-                        INTtoFIXED(mouthX - gBreaths_RingX[mode * 4 + i] - 80),
+                        INTtoFIXED(mouthX - gBreath_RingX[mode * 4 + i] - 80),
                         INTtoFIXED(mouthY - 64), 0);
                 } else {
                   if (args->side == EFFECT_SIDE_ENEMIES)
                     Matrix_Translate(
-                        INTtoFIXED(mouthX + gBreaths_RingX[mode * 4 + i] - 64),
+                        INTtoFIXED(mouthX + gBreath_RingX[mode * 4 + i] - 64),
                         INTtoFIXED(mouthY - 64), 0);
                   else
                     Matrix_Translate(
-                        INTtoFIXED(mouthX - gBreaths_RingX[mode * 4 + i] - 64),
+                        INTtoFIXED(mouthX - gBreath_RingX[mode * 4 + i] - 64),
                         INTtoFIXED(mouthY - 64), 0);
                 }
                 Matrix_Scale(scale, scale, scale);
@@ -448,8 +448,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         }
         for (i = 0; i != args->targetCount; i++) {
-          if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
-              frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
+          if (frame >= i * 4 + gBreath_BurstFrames[mode] &&
+              frame < gBreath_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
             // DEAD: the burst shower's test for BURST_SHOWER_MODE_GREY,
             // copied into these hits; no breath's mode has that value, and
@@ -464,7 +464,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                                           toFIXED(4), toFIXED(2), frame + 100);
           }
         }
-      } else if (frame == gBreaths_FlashFrames[mode]) {
+      } else if (frame == gBreath_FlashFrames[mode]) {
         // The others hit every target at once, and the screen flashes.
         for (i = 0; i != args->targetCount; i++) {
           BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);

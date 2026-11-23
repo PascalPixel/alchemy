@@ -506,7 +506,7 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
           splashSprite->flags = k;
           splashSprite->priority = sprite->priority;
           Sprite_SetAnimationColorModes(splashSprite, SPRITE_COLOR_FILL);
-          Sprite_SetAnimationSpeed(splashSprite, ANIMATION_STEP_NORMAL / 2);
+          Sprite_SetAnimationSpeed(splashSprite, ANIM_STEP_NORMAL / 2);
         }
       }
     }

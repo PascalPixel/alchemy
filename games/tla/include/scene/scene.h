@@ -625,7 +625,7 @@ enum {
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their
 /// puffs land on.
-#define VENTS_MAX 16
+#define VENT_MAX 16
 #define VENT_IDS_MAX 4
 
 /// One vent: whether it blows, the frames to its next puff, its position and
@@ -645,7 +645,7 @@ struct VentEntry {
 struct VentWork {
   s32 counter;
   s32 (*hook)(void);
-  struct VentEntry entries[VENTS_MAX];
+  struct VentEntry entries[VENT_MAX];
   u16 ids[VENT_IDS_MAX];
 };
 

@@ -1553,7 +1553,7 @@ void YampiDesert_UpdateSandFlow(void) {
   here = cells + index;
   ahead = cells + (column + row * MAPGRID_SIZE);
   under = map->layers[1].cells + index;
-  Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL);
   TilesetAnim_ResumeAll();
   if ((u8)(under->collisionCode - CELL_BEHAVIOR_YAMPI_DESERT_FLOW_NORTH) <= 4) {
     if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_SAND)

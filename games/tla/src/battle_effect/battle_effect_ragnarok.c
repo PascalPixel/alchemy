@@ -41,7 +41,7 @@ enum FallingSwordMode {
 #define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
 #define BLADE_LAST_FRAME 39
 #define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
-#define RESULTS_FRAME 40
+#define RESULT_FRAME 40
 
 /// A huge flaming blade swings down over the targets and light bursts over
 /// them twice.
@@ -69,7 +69,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
   EffectPosition_ProjectBattler(args->targets[0], &target);
   if (args->side == EFFECT_SIDE_ENEMIES)
     baseX = target.x / 2 - 24;
@@ -119,7 +119,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       work->shakeFrames = frame;
     if (frame == 18)
       Sound_PlayFar(SE_CRASH);
-    if (frame == RESULTS_FRAME)
+    if (frame == RESULT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // The blade: down 16 pixels a frame from above the canvas, held, then
@@ -250,7 +250,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -270,7 +270,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 #undef BLADE_HOLD_FRAME
 #undef BLADE_LAST_FRAME
 #undef FIRST_STRIKE_FRAME
-#undef RESULTS_FRAME
+#undef RESULT_FRAME
 
 /// Abilities: Titan Blade.
 void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {

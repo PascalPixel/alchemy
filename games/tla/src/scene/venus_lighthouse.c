@@ -245,7 +245,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/actor_find_in_cell.c"
 
-extern u32 gPushedActor_DirectionSteps[];
+extern s32 gPushLeaderSteps[];
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
@@ -265,7 +265,7 @@ UNUSED void PushedActor_AdvancePair(void) {
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   directionIndex = FACING_INDEX(leader->facing);
-  step = gPushedActor_DirectionSteps[directionIndex];
+  step = gPushLeaderSteps[directionIndex];
   targetPosition.x = leader->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = leader->y.fixed;
   step = INTtoFIXED(step);
@@ -274,7 +274,7 @@ UNUSED void PushedActor_AdvancePair(void) {
   if (pillar == 0)
     return;
 
-  step = gPushedActor_DirectionSteps[directionIndex];
+  step = gPushLeaderSteps[directionIndex];
   targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = pillar->y.fixed;
   step = INTtoFIXED(step);
@@ -291,7 +291,7 @@ UNUSED void PushedActor_AdvancePair(void) {
     return;
 
   pillar->layer = 2;
-  step = gPushedActor_DirectionSteps[directionIndex];
+  step = gPushLeaderSteps[directionIndex];
   targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = pillar->y.fixed;
   step = INTtoFIXED(step);
@@ -1267,14 +1267,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_RELEASE,
 };
 
-/// The cell ahead for each of sixteen headings, 16 pixels east-west in the
-/// upper halfword and north-south in the lower (PUSH_STEP).
-u32 gPushedActor_DirectionSteps[] = {
-    PUSH_STEP(16, 0), PUSH_STEP(16, 0), PUSH_STEP(16, 0), PUSH_STEP(0, 16),
-    PUSH_STEP(0, 16), PUSH_STEP(0, 16), PUSH_STEP(0, 16), PUSH_STEP(-16, 0),
-    PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),
-    PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(16, 0),
-};
+#include "shared/push_leader_steps.c"
 // clang-format on
 
 const s32 *gFieldEffect_DurationScripts[] = {

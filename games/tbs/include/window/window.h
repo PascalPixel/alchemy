@@ -148,8 +148,8 @@ struct WindowWork {
   u16 lastMessageStart; ///< where the last decoded message began in textBuffer
   /// VRAM cache slot of the page arrow; NO_GLYPH_RESOURCE when none.
   u16 glyphResource;
-  u16 glyphTiles; ///< first sprite tile of the glyph sheet
-                  ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
+  u16 glyphTiles; ///< first of the sprite tiles letters are drawn into
+                  ///< (VRAM_CACHE_ENTRY_GLYPH_TILES)
   /// Message argument values (MessageArgument_Push).
   u32 argumentValues[8];
   u16 argumentKinds[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a

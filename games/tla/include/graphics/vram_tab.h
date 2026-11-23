@@ -21,7 +21,7 @@ enum VramBlockLimits {
 
 /// The window sprites' glyph tiles (WindowWork.glyphTiles), a cache entry
 /// kept for this one use.
-#define VRAM_CACHE_ENTRY_GLYPH_SHEET 95
+#define VRAM_CACHE_ENTRY_GLYPH_TILES 95
 
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.
 extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];

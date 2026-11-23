@@ -64,7 +64,7 @@ struct OamData {
 /// WindowSprite.kind: what a window sprite owns besides itself, which
 /// WindowSprite_Release frees.
 enum WindowSpriteKind {
-  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph in the window's glyph tiles
   WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
   WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
 };

@@ -7,9 +7,9 @@
 /// The pixels between sprite glyphs at a message's start.
 #define TEXT_DEFAULT_LETTER_SPACING 9
 
-/// The glyph sheet's size in sprite VRAM: the four tiles of a 16x16 glyph for
+/// The glyph tiles' size in sprite VRAM: the four tiles of a 16x16 glyph for
 /// each window sprite.
-#define GLYPH_SHEET_SIZE (WINDOW_SPRITE_COUNT * 4 * TILE_SIZE_4BPP)
+#define GLYPH_TILES_SIZE (WINDOW_SPRITE_COUNT * 4 * TILE_SIZE_4BPP)
 
 /// The tile rows a field message is centred in, from the top of the screen.
 #define FIELD_MESSAGE_TOP_ROWS 12
@@ -277,9 +277,9 @@ void Text_ResetStyle(void) {
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
 
-  // The glyph sheet, reserved with no picture to load.
+  // The glyph tiles, reserved with nothing to load.
   state->glyphTiles =
-      VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, GLYPH_SHEET_SIZE, 0);
+      VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, GLYPH_TILES_SIZE, 0);
   state->letterSpacing = TEXT_DEFAULT_LETTER_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
@@ -296,7 +296,7 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
 
   if (loadGlyphTiles != 0)
     state->glyphTiles =
-        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, GLYPH_SHEET_SIZE, 0);
+        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, GLYPH_TILES_SIZE, 0);
   state->letterSpacing = TEXT_DEFAULT_LETTER_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;

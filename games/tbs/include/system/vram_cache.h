@@ -34,7 +34,7 @@ enum VramCacheFixedEntry {
   /// The fade overlay's solid tiles (FieldEffect_StartFadeOverlay).
   VRAM_CACHE_ENTRY_FADE_OVERLAY = 94,
   /// The window sprites' glyph tiles (WindowWork.glyphTiles).
-  VRAM_CACHE_ENTRY_GLYPH_SHEET = 95
+  VRAM_CACHE_ENTRY_GLYPH_TILES = 95
 };
 
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.

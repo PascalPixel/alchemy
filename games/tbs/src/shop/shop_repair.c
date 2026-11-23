@@ -118,6 +118,7 @@ s32 Shop_SelectRepair(s32 unitId) {
       break;
 
     Shop_RepairItem(unitId, slot);
+    // "Anything else need repairing?"
     Shop_ShowKeeperMessage(MsgRepairAnythingElse);
     if (Inventory_CountFar(unitId) == 0)
       break;
@@ -129,8 +130,8 @@ s32 Shop_SelectRepair(s32 unitId) {
 
 /// Repairs the item in `slot`: refuses one that cannot break, is not broken or
 /// is equipped and cursed on, or that the coins do not cover; asks, then takes
-/// the item away for the smith's three hammer blows, gives it back mended,
-/// charges the price and offers to equip it.
+/// the item away while three clangs sound, gives it back mended, charges the
+/// price and offers to equip it.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);
@@ -145,29 +146,35 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   useType = item->useType;
   if (useType != ITEM_USE_MAY_BREAK) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    // "Sorry, but we don't handle (item)s."
     Shop_ShowKeeperMessageHidingCursor(MsgCannotRepairKind);
     return;
   }
   if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    // "Huh? That (item) isn't damaged at all."
     Shop_ShowKeeperMessageHidingCursor(MsgNotDamaged);
     return;
   }
   // useType is ITEM_USE_MAY_BREAK here, so this tests ITEM_CANNOT_UNEQUIP.
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    // "This (item) won't come off. Bring it back after you get it off."
     Shop_ShowKeeperMessageHidingCursor(MsgCursedWontComeOff);
     return;
   }
   if (repairCost > gMainRoutineWork.holdings.coins) {
+    // "Uh-oh, you don't seem to have enough money."
     Shop_ShowKeeperMessageHidingCursor(MsgNotEnoughMoney);
     return;
   }
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
   MessageArgument_PushFar(repairCost, MESSAGE_ARGUMENT_NUMBER);
   messageBase = MsgShopRepairConfirm;
+  // "I'll fix your (item) for (price) coins, OK?"
   Shop_ShowKeeperMessageHidingCursor(messageBase);
   if (Shop_AskYesNo(0) != 0) {
+    // "Changed your mind? Whatever you say!"
     Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
     return;
   }
@@ -176,10 +183,11 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   unit->inventory[slot] = 0;
   Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  // "Yes, sir! I'll take your (item), then."
   Shop_ShowKeeperMessageHidingCursor(messageBase + 2);
   Message_CloseFinishedWindowsFar();
-  // The hammer blows are 110 frames apart; the item stays hidden throughout,
-  // 360 frames (six seconds) from the first wait to the last.
+  // Six seconds of work: three clangs 110 frames apart, then the menu's
+  // confirm sound.
   wait(10);
   Sound_PlayFar(SE_BELL);
   wait(110);
@@ -189,13 +197,13 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   wait(110);
   Sound_PlayFar(SE_MENU_CONFIRM);
   wait(20);
-  // Restore the entry, repair it, charge the fee and offer equipment changes.
   unit->inventory[slot] = savedEntry;
   Inventory_RepairFar(unitId, slot);
   Party_AdjustCoinsFar(-repairCost);
   Shop_DrawMoney();
   Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  // "I've repaired your (item). Here it is."
   Shop_ShowKeeperMessageHidingCursor(messageBase + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);

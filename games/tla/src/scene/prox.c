@@ -283,7 +283,7 @@ void Prox_MercuryDjinniJoins(void) {
                   DJINNI_INDEX(DJINNI_WATER19));
 }
 
-#include "shared/distance.c"
+#include "shared/position_distance.h"
 
 #undef FIELD_AT
 
@@ -418,8 +418,7 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
   }
   targetPos = &target->x.fixed;
   objectPos = &actor->x.fixed;
-  if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
-      force != 0) {
+  if (Position_Distance(targetPos, objectPos) < range || force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *objectPos);
     u32 left = (angle - FACING_STEP) & HEADING_SECTOR_MASK;
@@ -455,8 +454,8 @@ s32 Prox_PlayChase(struct Actor *actor) {
   struct Actor *target;
 
   target = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (SceneActor_CalculateFixedPointDistance(
-          &target->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
+  if (Position_Distance(&target->x.fixed, &actor->x.fixed) <=
+      CHASE_STOP_RANGE) {
     actor->paused = flag;
     Actor_SelectAnimation(actor, ANIM_WALK);
     return 0;

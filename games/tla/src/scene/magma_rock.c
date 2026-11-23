@@ -332,7 +332,7 @@ UNUSED struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z,
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-#include "shared/distance.c"
+#include "shared/position_distance.h"
 
 #include "../field/actor_find_in_cell.c"
 

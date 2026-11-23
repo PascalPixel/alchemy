@@ -3369,12 +3369,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
 void Actor_PlaceOnActor(s32 id, s32 owner);
 #include "shared/pillar_restore.h"
 
-/// Moves the actor to the target's place and the target out of sight.
-void TrialRoad_TakePlaceOf(struct Actor *actor, struct Actor *target) {
-  Actor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
-                                  target->z.fixed);
-  Actor_SetPositionAndResetMotion(target, 0, 0, 0);
-}
+#include "shared/actor_take_place_of.h"
 
 /// A cracked pillar stepped on flashes the first time and gives way under
 /// Felix the second, as Magma Rock's trap floor does.
@@ -3407,7 +3402,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       Event_Start();
       if (!GameFlag_Get(flag)) {
         Actor_SelectAnimation(partner, 1);
-        TrialRoad_TakePlaceOf(partner, trap);
+        Actor_TakePlaceOf(partner, trap);
         wait(1);
         Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
@@ -3420,14 +3415,14 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
         Dust_Scatter(0);
-        TrialRoad_TakePlaceOf(trap, partner);
+        Actor_TakePlaceOf(trap, partner);
         wait(1);
         GameFlag_Set(flag);
       } else {
         second = flag + 1;
         if (!GameFlag_Get(second)) {
           Actor_SelectAnimation(partner, 0);
-          TrialRoad_TakePlaceOf(partner, trap);
+          Actor_TakePlaceOf(partner, trap);
           motion = &leader->motionFlags;
           wait(1);
           *motion = 0;

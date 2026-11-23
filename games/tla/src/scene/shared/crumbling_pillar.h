@@ -240,12 +240,7 @@ void CrumblingPillar_PlaceWithStandIns(u16 *list) {
   System_Wait(10);
 }
 
-/// Puts actor where target stands, at rest, and target out of sight.
-void Actor_TakePlaceOf(struct Actor *actor, struct Actor *target) {
-  FieldActor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
-                                       target->z.fixed);
-  FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
-}
+#include "actor_take_place_of.h"
 
 /// As CrumblingPillar_Step, in a room whose pillars share one sprite: the
 /// stand-in takes the pillar's place to crack or give way, and a cracked pillar

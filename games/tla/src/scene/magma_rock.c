@@ -2300,12 +2300,7 @@ void Actor_PlaceOnActor(s32 id, s32 owner);
 
 #include "shared/pillar_restore.h"
 
-/// Puts an actor where another stands and moves the other away.
-void MagmaRock_TakePlaceOf(struct Actor *actor, struct Actor *source) {
-  FieldActor_SetPositionAndResetMotion(actor, source->x.fixed, source->y.fixed,
-                                       source->z.fixed);
-  FieldActor_SetPositionAndResetMotion(source, 0, 0, 0);
-}
+#include "shared/actor_take_place_of.h"
 
 /// Unused: stepping onto a crumbling floor: the first time it shakes and
 /// cracks, the second time it gives way with the leader.
@@ -2338,7 +2333,7 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
       Event_Start();
       if (!Event_GetFlag(flag)) {
         Actor_SelectAnimation(actor8, 1);
-        MagmaRock_TakePlaceOf(actor8, target);
+        Actor_TakePlaceOf(actor8, target);
         wait(1);
         Event_PlaySound(SE_CHEST_CLOSE);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
@@ -2351,14 +2346,14 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
         Dust_Scatter(0);
-        MagmaRock_TakePlaceOf(target, actor8);
+        Actor_TakePlaceOf(target, actor8);
         wait(1);
         Event_SetFlag(flag);
       } else if (!Event_GetFlag(flag + 1)) {
         u8 *flags;
 
         Actor_SelectAnimation(actor8, 0);
-        MagmaRock_TakePlaceOf(actor8, target);
+        Actor_TakePlaceOf(actor8, target);
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;

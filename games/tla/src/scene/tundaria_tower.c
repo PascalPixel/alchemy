@@ -1376,12 +1376,7 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   wait(10);
 }
 
-/// Moves the actor to the target's place and the target out of sight.
-void TundariaTower_TakePlaceOf(struct Actor *actor, struct Actor *target) {
-  Actor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
-                                  target->z.fixed);
-  Actor_SetPositionAndResetMotion(target, 0, 0, 0);
-}
+#include "shared/actor_take_place_of.h"
 
 /// Unused: Magma Rock's trap floor: a listed pillar stepped on flashes the
 /// first time and gives way under the leader the second.
@@ -1414,7 +1409,7 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
       Event_Start();
       if (!GameFlag_Get(flag)) {
         Actor_SelectAnimation(partner, 1);
-        TundariaTower_TakePlaceOf(partner, trap);
+        Actor_TakePlaceOf(partner, trap);
         wait(1);
         Sound_Play(SE_CHEST_CLOSE);
         Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
@@ -1427,14 +1422,14 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
         TundariaTower_ScatterDust(0);
-        TundariaTower_TakePlaceOf(trap, partner);
+        Actor_TakePlaceOf(trap, partner);
         wait(1);
         GameFlag_Set(flag);
       } else {
         second = flag + 1;
         if (!GameFlag_Get(second)) {
           Actor_SelectAnimation(partner, 0);
-          TundariaTower_TakePlaceOf(partner, trap);
+          Actor_TakePlaceOf(partner, trap);
           motion = &leader->motionFlags;
           wait(1);
           *motion = 0;

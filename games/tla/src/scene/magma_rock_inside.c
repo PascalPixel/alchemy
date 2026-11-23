@@ -2843,12 +2843,7 @@ UNUSED void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
 // it copy actor 9's visual attributes.
 #include "shared/pillar_restore.h"
 
-/// Puts an actor where another stands and moves the other away.
-void MagmaRockInside_TakePlaceOf(struct Actor *actor, struct Actor *target) {
-  FieldActor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
-                                       target->z.fixed);
-  FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
-}
+#include "shared/actor_take_place_of.h"
 
 /// Unused: stepping onto a crumbling floor, as on Magma Rock's outside: the
 /// first time it shakes and cracks, the second time it gives way with the
@@ -2883,7 +2878,7 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
       Event_Start();
       if (!Event_GetFlag(flag)) {
         Actor_SelectAnimation(partner, 1);
-        MagmaRockInside_TakePlaceOf(partner, trap);
+        Actor_TakePlaceOf(partner, trap);
         wait(1);
         Event_PlaySound(SE_CHEST_CLOSE);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
@@ -2896,14 +2891,14 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
         Dust_Scatter(0);
-        MagmaRockInside_TakePlaceOf(trap, partner);
+        Actor_TakePlaceOf(trap, partner);
         wait(1);
         Event_SetFlag(flag);
       } else {
         second = flag + 1;
         if (!Event_GetFlag(second)) {
           Actor_SelectAnimation(partner, 0);
-          MagmaRockInside_TakePlaceOf(partner, trap);
+          Actor_TakePlaceOf(partner, trap);
           wait(1);
           leader->motionFlags = 0;
           Event_PlaySound(SE_PUSH);

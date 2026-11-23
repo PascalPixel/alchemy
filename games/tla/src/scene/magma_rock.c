@@ -1016,10 +1016,12 @@ hit:
 /// a fireball straight ahead: on the slide's statues' ledge and the high west
 /// level at the cracked pillar beyond it, which the fireball's blast breaks,
 /// and on the top at the great fire. The fireball's flight is
-/// MagmaRock_FireFromStatue's.
+/// MagmaRock_FireFromStatue's. On the low east level both statues face west:
+/// the upper one's fireball meets the cracked pillar at cell (42, 39), and the
+/// lower one's, from cell (52, 40), the level's second cracked pillar, at
+/// (760, 648) on the same level (the placement table's seventh actor), and
+/// explodes on it as Burst does.
 void MagmaRock_FireStatue(void) {
-  // XXX: what the low east level's lower statue (cell (52, 40)) fires at; Burst
-  // on it in a render of that level would settle it.
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor;
 
@@ -1060,8 +1062,12 @@ void MagmaRock_IgniteStatue(void) {
 /// (BURST_STAGE_GREAT_BLAST), which moves the target out of the scene; the
 /// stump is the pillar's animation from PILLAR_CRUMBLE_FRAME.
 void MagmaRock_BurstStatue(s32 stage, s32 frame) {
-  // XXX: what the rows that run this on a statue that spits fire show; a render
-  // of a fireball landing on such a statue would settle it.
+  // XXX: what the rows that run this on a statue that spits fire show. They
+  // come after the MagmaRock_TargetStatue rows, which take Felix's own Burst,
+  // so they answer as a fireball explodes (FLAG_FIRE_BURST_PLAYING). Burst
+  // staged on the low east level's statues from cells (53, 40) and (49, 39)
+  // ran past four minutes in the recorder; a render of a fireball landing on
+  // such a statue would settle it.
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (frame == 0)

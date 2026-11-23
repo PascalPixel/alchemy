@@ -172,6 +172,7 @@ s32 FieldSequence_Run(s32 entrance) {
               Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
               MessageArgument_PushFar(work->fallenOwners[i],
                                       MESSAGE_ARGUMENT_ACTOR);
+              // "[member]'s strength is exhausted..."
               FieldMessage_ShowFar(MsgFieldStrengthExhausted,
                                    FIELD_MESSAGE_ZOOM);
             }
@@ -189,6 +190,7 @@ s32 FieldSequence_Run(s32 entrance) {
                 Actor_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
               Sound_PlayFar(MUS_DEFEATED);
+              // "Isaac's party has been annihilated..."
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
               vitals = Unit_GetFar(gMainRoutineWork.leaderActorId);
@@ -342,6 +344,7 @@ s32 FieldSequence_Run(s32 entrance) {
               PauseMenu_RunFar(0);
               system->suspended = 0;
             } else {
+              // "The Pause menu is not available now."
               FieldMessage_ShowFar(MsgFieldPauseUnavailable,
                                    FIELD_MESSAGE_ZOOM);
             }

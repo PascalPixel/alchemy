@@ -32,10 +32,12 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Where Psynergy has no effect.
   if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA)) {
+    // "[Psynergy]!!! ...Nothing happened."
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP && abilityId == ABILITY_REVEAL) {
+    // "Reveal!!! ...Nothing happened."
     PSYNERGY_MESSAGE(userId, ABILITY_REVEAL, MsgNothingHappened);
     return 0;
   }
@@ -43,10 +45,12 @@ s32 Field_UsePsynergy(u32 code) {
   // Retreat: ask, then go back to where the party entered this area.
   if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_GetFar(FLAG_RETREAT_BLOCKED)) {
+      // "Retreat... It doesn't work here."
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
     MessageArgument_PushFar(ABILITY_RETREAT, MESSAGE_ARGUMENT_ABILITY);
+    // "Use Retreat?" Yes: the party retreats; No: nothing more.
     FieldMessage_ShowFar(MsgUseAbilityConfirm, FIELD_MESSAGE_ZOOM |
                                                    FIELD_MESSAGE_KEEP_OPEN |
                                                    FIELD_MESSAGE_LOWER);
@@ -73,6 +77,7 @@ s32 Field_UsePsynergy(u32 code) {
   if (userId <= ALLY_MAX) {
     ppCost = Ability_Get(abilityId)->ppCost;
     if (Unit_GetFar(userId)->pp < ppCost) {
+      // "[Psynergy]... Not enough PP."
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its exit back (the scene and
       // entrance it chose stay in the main routine's work).

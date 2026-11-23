@@ -296,10 +296,10 @@ void Scene_LeaveByExit(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-extern s16 gMarsLighthouseAerie_FadeSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
-extern u16 gMarsLighthouseAerie_FadeOrder[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
@@ -310,9 +310,9 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   struct Actor *actor;
   s32 i;
 
-  Palette_SetColorsFade(gMarsLighthouseAerie_FadeSlots, gTeleportCircle_Colors,
+  Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
                         gTeleportCircle_ShimmerColors,
-                        gMarsLighthouseAerie_FadeOrder);
+                        gTeleportCircle_ShimmerSlots);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   for (i = ACTOR_FIRST_PLATFORM; i <= ACTOR_LAST_PLATFORM; i++) {
@@ -3110,17 +3110,8 @@ s32 gMarsLighthouseAerie_RisingRingTiles[] = {
     0xebe90000, 0x0000e9eb, 0xe9000000, 0x000000e9,
 };
 
-s16 gMarsLighthouseAerie_FadeSlots[] = {
-    137, 138, 139, 140, 141, 142, 143, -1,
-};
-
-#include "shared/teleport_circle_colors.c"
-
-u16 gMarsLighthouseAerie_FadeOrder[] ALIGNED(4) = {
-    142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,
-    140, 141, 142, 137, 138, 139, 139, 140, 141, 142, 137, 138,
-    138, 139, 140, 141, 142, 137, 137, 138, 139, 140, 141, 142,
-};
+#define TELEPORT_CIRCLE_FIRST_ENTRY 137
+#include "shared/teleport_circle_palette.c"
 
 s32 gMarsLighthouseAerie_BeaconFireScript[] = {
     SC_LABEL(1),
@@ -3330,6 +3321,7 @@ s32 gMarsLighthouseAerie_IsaacTurnScript[] = {
     SC_END,
 };
 
+// The same script as gMarsLighthouseAerie_GaretReadyScript, under another name.
 s32 gMarsLighthouseAerie_GaretTurnScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(560, 0, 280),
@@ -3550,16 +3542,5 @@ s32 gMarsLighthouseAerie_BeaconFlameScript[] = {
     SC_RELEASE,
 };
 
-u32 gOrb_RisingScript[] = {
-    SC_SET(SW_SCALE_X, toFIXED(0.8)),
-    SC_SET(SW_SCALE_Y, toFIXED(0.8)),
-    SC_ANIMATION(1),
-    SC_LABEL(1),
-    SC_ADD(SW_Y, toFIXED(1)),
-    SC_WAIT(1),
-    SC_LOOP(16, SC_TO(1)),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/orb_rising_script.c"
 // clang-format on

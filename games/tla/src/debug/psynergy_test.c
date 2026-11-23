@@ -110,7 +110,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 options);
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y);
 
-extern u32 gPsynergyTest_RingTiles[];
+extern u32 gLightRing_Tiles[];
 struct SparkleWork gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
 struct SparkleWork gPsynergyTest_TargetRings BSS_DATA ALIGNED(16);
 
@@ -732,58 +732,7 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
 }
 
 // clang-format off
-/// The rings' tiles: half a ring of light, 32 by 16 pixels of 16 colours,
-/// which PsynergyTest_UpdateRings draws twice, the second flipped, for the
-/// whole ring. Each word is a row of a tile's eight pixels, a hex digit each,
-/// the leftmost in the lowest digit; only the first eight tiles are loaded.
-u32 gPsynergyTest_RingTiles[] = {
-    0, 0, 0, 0,
-    0, 0, 0x70000000, 0xf7700000,
-    0, 0, 0, 0,
-    0x77770000, 0xffff7770, 0xfffffff7, 0x7777ffff,
-    0, 0, 0, 0,
-    0x00007777, 0x0777ffff, 0x7fffffff, 0xffff7777,
-    0, 0, 0, 0,
-    0, 0, 0x00000007, 0x0000077f,
-    0xfff70000, 0xffff7000, 0x7ffff700, 0x07ffff70,
-    0x007fff70, 0x007ffff7, 0x0007fff7, 0x0007fff7,
-    0x000077ff, 0x00000077, 0, 0,
-    0, 0, 0, 0,
-    0xff770000, 0x77000000, 0, 0,
-    0, 0, 0, 0,
-    0x00007fff, 0x0007ffff, 0x007ffff7, 0x07ffff70,
-    0x07fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000,
-    // Unused: the same half ring outlined in colour 4.
-    0, 0, 0, 0,
-    0, 0, 0x40000000, 0xf4400000,
-    0, 0, 0, 0,
-    0x44440000, 0xffff4440, 0xfffffff4, 0x4444ffff,
-    0, 0, 0, 0,
-    0x00004444, 0x0444ffff, 0x4fffffff, 0xffff4444,
-    0, 0, 0, 0,
-    0, 0, 0x00000004, 0x0000044f,
-    0xfff40000, 0xffff4000, 0x4ffff400, 0x04ffff40,
-    0x004fff40, 0x004ffff4, 0x0004fff4, 0x0004fff4,
-    0x000044ff, 0x00000044, 0, 0,
-    0, 0, 0, 0,
-    0xff440000, 0x44000000, 0, 0,
-    0, 0, 0, 0,
-    0x00004fff, 0x0004ffff, 0x004ffff4, 0x04ffff40,
-    0x04fff400, 0x4ffff400, 0x4fff4000, 0x4fff4000,
-    // Unused: three 8 by 8 sparkles of 256 colours, two words a row.
-    0xe9000000, 0x000000e9, 0xeb000000, 0x000000eb,
-    0xedeb0000, 0x0000ebed, 0xeeedebe9, 0xe9ebedee,
-    0xeeedebe9, 0xe9ebedee, 0xedeb0000, 0x0000ebed,
-    0xeb000000, 0x000000eb, 0xe9000000, 0x000000e9,
-    0x0000e900, 0x00e90000, 0x00ebe9e9, 0xe9e9eb00,
-    0xedebeb00, 0x00ebebed, 0xefed0000, 0x0000edef,
-    0xefed0000, 0x0000edef, 0xedebeb00, 0x00ebebed,
-    0x00ebe9e9, 0xe9e9eb00, 0x0000e900, 0x00e90000,
-    0xe9000000, 0x000000e9, 0xebe90000, 0x0000e9eb,
-    0xedebe900, 0x00e9ebed, 0xeeedebe9, 0xe9ebedee,
-    0xeeedebe9, 0xe9ebedee, 0xedebe900, 0x00e9ebed,
-    0xebe90000, 0x0000e9eb, 0xe9000000, 0x000000e9,
-};
+#include "../scene/shared/light_ring_tiles.c"
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 64, 0, 56, FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -798,11 +747,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {
-    SCENE_EXITS(PsynergyTest),
-    SCENE_EXIT(20, PsynergyTest, 2),
-    SCENE_EXITS_END,
-};
+#include "../scene/shared/psynergy_test_exits.c"
 
 // clang-format on
 
@@ -988,7 +933,7 @@ void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work) {
   s32 offset;
 
   work->vramEntry = VramCache_FindFreeEntry();
-  Vram_Load(work->vramEntry, 8 * TILE_SIZE_4BPP, gPsynergyTest_RingTiles);
+  Vram_Load(work->vramEntry, 8 * TILE_SIZE_4BPP, gLightRing_Tiles);
   work->nextPair = 0;
   work->heights[0] = RING_NOT_STARTED;
   work->heights[1] = RING_NOT_STARTED;

@@ -2546,13 +2546,13 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
 
 #include "shared/actor_emit_bubbles.h"
 
-extern u32 gAirsRockInside_TabletRiseScript[];
+extern u32 gLesson_TabletRiseScript[];
 extern u32 gAirsRockInside_RisingSparkScript[];
 extern s32 gAirsRockInside_OrbitingSparkScript[];
-extern u32 gAirsRockInside_ShebaRiseScript[];
-extern s32 gAirsRockInside_SeekingSparkScript[];
-extern s32 gAirsRockInside_TabletSettleScript[];
-extern s32 gAirsRockInside_ShebaSettleScript[];
+extern u32 gLesson_AdeptRiseScript[];
+extern s32 gLesson_SeekingSparkScript[];
+extern s32 gLesson_TabletSettleScript[];
+extern s32 gLesson_AdeptSettleScript[];
 
 /// The sparks that rise from the tablet as it lifts.
 enum { TABLET_SPARKS = 16 };
@@ -2587,7 +2587,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
   tablet->motionFlags = 0;
   tablet->acceleration = toFIXED(1) / 5;
   tablet->speedLimit = toFIXED(1) / 5;
-  Actor_SetMovementTypeById(tabletId, gAirsRockInside_TabletRiseScript);
+  Actor_SetMovementTypeById(tabletId, gLesson_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   FieldEvent_Wait(45);
   Actor_ConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
@@ -2643,7 +2643,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
       sheba->motionFlags = 0;
       sheba->acceleration = toFIXED(1) / 5;
       sheba->speedLimit = toFIXED(1) / 5;
-      Actor_SetMovementTypeById(shebaId, gAirsRockInside_ShebaRiseScript);
+      Actor_SetMovementTypeById(shebaId, gLesson_AdeptRiseScript);
     }
     wait(ORBITING_SPARK_FRAMES);
   }
@@ -2667,7 +2667,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    Actor_StartScript(spark, gAirsRockInside_SeekingSparkScript);
+    Actor_StartScript(spark, gLesson_SeekingSparkScript);
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
@@ -2680,8 +2680,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
   Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
-  Actor_SetMovementTypeById(tabletId, gAirsRockInside_TabletSettleScript);
-  Actor_SetMovementTypeById(shebaId, gAirsRockInside_ShebaSettleScript);
+  Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
+  Actor_SetMovementTypeById(shebaId, gLesson_AdeptSettleScript);
   sheba->update = Actor_EmitBubbles;
   wait(120);
   sheba->update = 0;
@@ -3588,43 +3588,9 @@ s32 gAirsRockInside_OrbitingSparkScript[] = {
     SC_END,
 };
 
-s32 gAirsRockInside_SeekingSparkScript[] = {
-    SC_CALL(Orbit_Update),
-    SC_CALL(Actor_AimAtWatched),
-    SC_CALL(Actor_StepToWatched),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/lesson_seeking_spark_script.c"
 
-u32 gAirsRockInside_TabletRiseScript[] = {
-    SC_MOVE_BY(0, 24, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
-
-u32 gAirsRockInside_ShebaRiseScript[] = {
-    SC_MOVE_BY(0, 16, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
-
-s32 gAirsRockInside_TabletSettleScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -24, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 0),
-    SC_END,
-};
-
-s32 gAirsRockInside_ShebaSettleScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -16, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 3),
-    SC_END,
-};
+#include "shared/lesson_scripts.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

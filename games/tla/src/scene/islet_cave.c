@@ -371,10 +371,10 @@ void IsletCave_OpenDoorAndEnter(void) {
   Event_End();
 }
 
-extern u16 gIsletCave_PaletteSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
-extern u16 gIsletCave_CycleSlots[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 extern s32 gIsletCave_TremorTargetScript[];
 
 /// Sets up the map being entered: in the halls, the logs where the party left
@@ -389,8 +389,9 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_ISLET_CAVE_HALLS) {
     IsletCave_PlaceLogs();
-    Palette_SetColorsFade(gIsletCave_PaletteSlots, gTeleportCircle_Colors,
-                          gTeleportCircle_ShimmerColors, gIsletCave_CycleSlots);
+    Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
+                          gTeleportCircle_ShimmerColors,
+                          gTeleportCircle_ShimmerSlots);
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
@@ -874,14 +875,8 @@ void IsletCave_RideFirstLogWest(void);
 void IsletCave_RideThirdLogWest(void);
 
 // clang-format off
-u16 gIsletCave_PaletteSlots[] = {9, 10, 11, 12, 13, 14, 15, 65535};
-
-#include "shared/teleport_circle_colors.c"
-
-u16 gIsletCave_CycleSlots[] = {                                                               
-      14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
-      11, 12, 13, 14, 9, 10, 10, 11, 12, 13, 14, 9, 9, 10, 11, 12, 13, 14,  
-  };
+#define TELEPORT_CIRCLE_FIRST_ENTRY 9
+#include "shared/teleport_circle_palette.c"
 
 u32 gIsletCave_SentinelScript[] = {
     SC_SET(SW_SCALE_Y, FIXED_ONE * 13 / 10),

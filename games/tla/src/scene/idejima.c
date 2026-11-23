@@ -114,7 +114,7 @@ enum IdejimaActorId {
   ACTOR_NARRATOR
 };
 
-extern struct SceneEntrance gIdejimaEntrances[];
+extern struct SceneEntrance gSceneEntrances[];
 extern u32 gIdejimaExits[];
 extern struct Trigger gIdejimaEvents[];
 extern struct Trigger gIdejimaEventsFromDoor[];
@@ -159,9 +159,7 @@ void Actor_PlaceOnActor();
 /// Counts the answer just given (Event_CountAnswerFar).
 void Idejima_CountAnswer();
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gIdejimaEntrances;
-}
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
@@ -2039,10 +2037,7 @@ u32 gIdejima_GoAfterAlexScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gIdejimaEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 // clang-format off
 u32 gIdejimaExits[] = {

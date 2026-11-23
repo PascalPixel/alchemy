@@ -283,7 +283,7 @@ void Prox_MercuryDjinniJoins(void) {
                   DJINNI_INDEX(DJINNI_WATER19));
 }
 
-#include "shared/distance.c"
+#include "shared/position_distance.h"
 
 #undef FIELD_AT
 
@@ -304,7 +304,7 @@ extern struct Trigger gProx_CavesTriggers[];
 extern s32 gProx_KradenStepsUpToPuelle[];
 
 extern s32 gProx_StepBackFromPuelle[];
-extern s32 gProx_EnterDoorScript[];
+extern s32 gLeader_WalkThroughDoorScript[];
 
 /// Sets up the lower village: after the ending, its three children play chase
 /// outside the igloo.
@@ -418,8 +418,7 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
   }
   targetPos = &target->x.fixed;
   objectPos = &actor->x.fixed;
-  if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
-      force != 0) {
+  if (Position_Distance(targetPos, objectPos) < range || force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *objectPos);
     u32 left = (angle - FACING_STEP) & HEADING_SECTOR_MASK;
@@ -455,8 +454,8 @@ s32 Prox_PlayChase(struct Actor *actor) {
   struct Actor *target;
 
   target = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (SceneActor_CalculateFixedPointDistance(
-          &target->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
+  if (Position_Distance(&target->x.fixed, &actor->x.fixed) <=
+      CHASE_STOP_RANGE) {
     actor->paused = flag;
     Actor_SelectAnimation(actor, ANIM_WALK);
     return 0;
@@ -1335,7 +1334,8 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
     FieldActor_WaitForMove(actor);
     actor->facing = FACING_NORTH;
   }
-  Actor_SetScript(gMainRoutineWork.leaderActorId, gProx_EnterDoorScript);
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
+                  gLeader_WalkThroughDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -2474,14 +2474,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Unused: stops the falling rocks and frees their tiles and work.
-UNUSED void Prox_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);
@@ -2493,15 +2486,7 @@ extern u32 gFieldEffect_LongScript[];
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-s32 gProx_EnterDoorScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -toFIXED(0.5)),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+#include "shared/leader_walk_through_door_script.c"
 
 #include "shared/slide_on_ice_angles.c"
 
@@ -3155,6 +3140,7 @@ s32 gProx_JennaRunsAhead[] = {
     SC_END,
 };
 
+// The same script as gProx_ThirdParentWalksSouth, under another name.
 s32 gProx_GaretRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),

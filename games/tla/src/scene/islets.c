@@ -321,7 +321,7 @@ extern struct ActorPlacement gIslets_EastTundariaActorPlacements[];
 extern struct ActorPlacement gIslets_NorthOseniaActorPlacements[];
 extern struct ActorPlacement gIslets_SoutheastAngaraActorPlacements[];
 extern struct ActorPlacement gIslets_SeaOfTimeActorPlacements[];
-extern s32 gIslets_EnterDoorScript[];
+extern s32 gLeader_WalkThroughDoorScript[];
 extern struct IsletsDoor gIslets_Doors[];
 extern u16 gPushKinds[];
 
@@ -1866,7 +1866,7 @@ void Islets_OpenDoorAndEnter(void) {
   index--;
   MapGrid_AnimateCells(gIslets_Doors[index].frames, gIslets_Doors[index].x,
                        gIslets_Doors[index].z);
-  Actor_SetScript(party->leaderActorId, gIslets_EnterDoorScript);
+  Actor_SetScript(party->leaderActorId, gLeader_WalkThroughDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1912,7 +1912,7 @@ void Islets_EnterDoor(void) {
       actor->y.fixed, actor->z.fixed);
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
-  Actor_SetScript(party->leaderActorId, gIslets_EnterDoorScript);
+  Actor_SetScript(party->leaderActorId, gLeader_WalkThroughDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -2407,32 +2407,7 @@ void Islets_InitializeSeaOfTime(void) {
 /// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with its four
-/// entries cleared.
-void PaletteCycle_Initialize(void) {
-  struct PaletteCycleWork *paletteCycles;
-  struct PaletteCycle *cycle;
-  u16 cycleIndex;
-  u16 colorIndex;
-
-  paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
-                                      sizeof(struct PaletteCycleWork));
-  cycle = paletteCycles->entries;
-  for (cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
-       cycleIndex++) {
-    cycle->source = 0;
-    cycle->position = 0;
-    cycle->timer = 0;
-    cycle->delay = 0;
-    cycle->count = 0;
-    for (colorIndex = 0; colorIndex != ARRAY_COUNT(cycle->colors);
-         colorIndex++) {
-      cycle->colors[colorIndex] = 0;
-    }
-    cycle++;
-  }
-  paletteCycles->count = 0;
-}
+#include "../field/palette_cycle_initialize.c"
 
 #include "../field/palqueue_add.c"
 
@@ -2576,15 +2551,7 @@ struct ActionScript gIslets_SpinScript = {{
     SC_END,
 }};
 
-s32 gIslets_EnterDoorScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, toFIXED(-0.5)),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+#include "shared/leader_walk_through_door_script.c"
 
 #include "shared/push_kinds.c"
 

@@ -129,13 +129,7 @@ struct IceWallWork {
   struct IceShard shards[ICE_SHARD_COUNT];
 };
 
-/// The ship's script call: drops its sprite's shadow and puts it on the middle
-/// layer.
-s32 NorthernReaches_DropShipShadow(struct Actor *actor) {
-  ((struct FieldSprite *)actor->sprite)->flags = 0;
-  actor->layer = MAPGRID_LAYER_MIDDLE;
-  return 1;
-}
+#include "shared/ship_drop_shadow.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -529,7 +523,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
 }
 
 s32 gNorthernReaches_ShipAtRest[] = {
-    SC_CALL((s32)NorthernReaches_DropShipShadow),
+    SC_CALL((s32)Ship_DropShadow),
     SC_ANIMATION(7),
     SC_END,
 };

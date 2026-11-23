@@ -315,7 +315,7 @@ enum {
 enum { VENT_BESIDE_WEST_PILLAR = 2, VENT_BESIDE_EAST_PILLAR = 8 };
 
 void Vent_Bounce(struct Actor *actor);
-extern u32 gTaopoSwamp_PuffRises[];
+extern u32 gRubble_BurstScript[];
 extern s32 gTaopoSwamp_SparkleFrame;
 void BlendScript_Suspend(void);
 void TaopoSwamp_SparkleStarDust(void);
@@ -2152,13 +2152,7 @@ void Vent_Puff(s32 *position, s32 base) {
 
 #include "shared/vents_start.h"
 
-/// Whether vent index is blowing now.
-s32 Vent_IsBlowing(s32 index) {
-  struct VentWork *work;
-
-  work = VENT_WORK;
-  return VENT_AT(work, index)->entries[0].active;
-}
+#include "shared/vent_is_blowing.h"
 
 /// Starts or stops vent index's gust.
 void Vent_SetBlowing(s32 index, s32 blowing) {
@@ -2173,13 +2167,7 @@ s32 Vent_GetCounter(void) { return VENT_WORK->counter; }
 
 #include "shared/vent_advance_counter.h"
 
-/// Sets the speed of vent index's gust, in 16.16 pixels a frame.
-void Vent_SetGust(s32 index, s32 value) {
-  struct VentWork *work;
-
-  work = VENT_WORK;
-  VENT_AT(work, index)->entries[0].value = value;
-}
+#include "shared/vent_set_gust.h"
 
 #include "shared/vent_set_id.h"
 #undef DEFINE_TAOPO_SWAMP_FREEZE_SPOT
@@ -2276,10 +2264,7 @@ u32 gTaopoSwamp_SplashFades[] = {
     SC_RELEASE,
 };
 
-u32 gTaopoSwamp_PuffRises[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
-};
+#include "shared/rubble_burst_script.c"
 
 #include "shared/scene_entrances_default.c"
 

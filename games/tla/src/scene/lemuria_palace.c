@@ -128,24 +128,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// A palace door opens and Felix walks through it, lined up with it, as the
-/// screen closes.
-void LemuriaPalace_OpenDoorAndEnter(const struct MapGridCellAnimation *door,
-                                    s32 exit, s32 unused) {
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(door->steps, door->x, door->y);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
-  FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(exit);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_End();
-}
+#include "shared/leader_open_door_and_enter.h"
 
 /// Felix walks north into one of the palace's doors: it opens and he goes
 /// through. The entrance hall's west door, cell (5, 23), leads to a room of
@@ -159,7 +142,7 @@ void LemuriaPalace_EnterDoor(s32 exit) {
     door++;
   if (exit == EXIT_BEDROOM_DOOR)
     door = &gLemuriaPalace_BedroomDoor;
-  LemuriaPalace_OpenDoorAndEnter(door, exit, 0);
+  Leader_OpenDoorAndEnter(door, exit, 0);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }

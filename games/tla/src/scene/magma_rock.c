@@ -332,7 +332,7 @@ UNUSED struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z,
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-#include "shared/distance.c"
+#include "shared/position_distance.h"
 
 #include "../field/actor_find_in_cell.c"
 
@@ -1065,7 +1065,7 @@ void MagmaRock_BurstStatue(s32 stage, s32 frame) {
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
-    MagmaRock_EndFallingRocks();
+    Rock_EndFalling();
   if (frame == PILLAR_CRUMBLE_FRAME)
     Actor_SelectAnimation(work->child, 3);
 }
@@ -1676,7 +1676,7 @@ void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
     MapGrid_CopyCellsTo(0, 96, 42, 81, 5, last);
   }
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
-    MagmaRock_EndFallingRocks();
+    Rock_EndFalling();
 }
 
 extern struct Trigger gMagmaRock_Triggers[];
@@ -2394,7 +2394,7 @@ void MagmaRock_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gMagmaRock_DustScript);
+      Actor_StartScript(effect, gRubble_BurstScript);
       angle = i * (TRIG_TURN / DUST_RING_PUFFS);
       effect->velocity.x = Trig_Cos(angle);
       effect->velocity.y = 0;
@@ -2493,39 +2493,14 @@ void MagmaRock_StartFallingRocks(void) {
   Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Ends the falling rocks: removes their task and frees their picture and work.
-void MagmaRock_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
 #include "shared/push_leader_steps.c"
 
-/// An ember's actor script.
-u32 gMagmaRock_EmberScript[] = {
-    SC_ANIMATION(2),
-    SC_WAIT(18),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-/// A flame ember's actor script.
-s32 gMagmaRock_FlameEmberScript[] = {
-    SC_ANIMATION(3),
-    SC_WAIT(23),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/magma_rock_ember_scripts.c"
 
 /// The pillars Move pushes on the slide, ended by -1.
 s16 gMagmaRock_SlidePillars[] = {
@@ -2603,17 +2578,9 @@ s16 gMagmaRock_StatueStatues[] = {
     -1, 0,
 };
 
-/// A scattered dust cloud's actor script: it lasts 33 frames.
-u32 gDust_ScatterScript[] = {                                                               
-      SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/rubble_spray_script.c"
 
-/// A dust cloud's actor script: it lasts 44 frames.
-u32 gMagmaRock_DustScript[] = {                                                               
-      SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/rubble_burst_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

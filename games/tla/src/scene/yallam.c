@@ -179,7 +179,7 @@ s32 Yallam_HideShadow(struct Actor *actor) {
   return 0;
 }
 
-#include "shared/distance.c"
+#include "shared/position_distance.h"
 
 void Yallam_RunSongPath(s32 id);
 void Yallam_ShowSongGame(void);
@@ -209,7 +209,6 @@ enum {
 struct SongRunnerState gYallam_SavedSongGame[5] BSS_DATA ALIGNED(16);
 extern struct MapGridCellAnimation gYallam_Doors[];
 
-s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
                             s32 range, s32 force);
 void Yallam_UpdateSongGame(void);
@@ -231,8 +230,7 @@ s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
   }
   targetPos = &target->x.fixed;
   actorPos = &actor->x.fixed;
-  if (SceneActor_CalculateFixedPointDistance(targetPos, actorPos) < range ||
-      force != 0) {
+  if (Position_Distance(targetPos, actorPos) < range || force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *actorPos);
     u32 left = FACING_SIXTEENTH(angle - FACING_STEP);
@@ -266,8 +264,8 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  if (SceneActor_CalculateFixedPointDistance(
-          &leader->x.fixed, &actor->x.fixed) <= LEADER_WALK_ON_RANGE) {
+  if (Position_Distance(&leader->x.fixed, &actor->x.fixed) <=
+      LEADER_WALK_ON_RANGE) {
     actor->paused = 0;
     Actor_SelectAnimation(actor, ANIM_WALK);
     return 0;

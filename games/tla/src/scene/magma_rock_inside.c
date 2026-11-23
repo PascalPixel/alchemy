@@ -352,9 +352,9 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Dust_Scatter(s32 spread);
 void Leader_SetCellShapeAt(s32 heightOffset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
-extern u32 gDust_ScatterScript[];
+extern u32 gRubble_SprayScript[];
 
-extern s32 gMagmaRockInside_DustScript[];
+extern u32 gRubble_BurstScript[];
 
 /// Decompresses a tagged LZ resource through the overlay's import.
 void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
@@ -383,30 +383,7 @@ extern s32 gPushLeaderSteps[];
 
 #include "shared/block_push_onto.h"
 
-extern struct MapCell gMapGridCellBuffer[];
-
-/// Sets the collision code of each cell in a layer rectangle to value.
-/// Layers 3 and above use the shared buffer.
-s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
-                                     u32 height, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cells;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cells = map->layers[layer].cells;
-  else
-    cells = gMapGridCellBuffer;
-  cells += x + (y << 7);
-  for (x = 0; x < height; x++) {
-    struct MapCell *cell = cells + (x << 7);
-
-    for (y = 0; y < width; y++, cell++)
-      cell->collisionCode = value;
-  }
-  return 0;
-}
+#include "../field/map_cell_fill_byte.c"
 
 /// Talking to Fury, the Mars Djinni on the ledge just west of the north doorway
 /// into its room's east hall, starts a battle with it.
@@ -691,7 +668,7 @@ void MagmaRockInside_PlayBurst(u16 value) {
   FieldPsynergy_End();
 }
 
-extern s32 gMagmaRockInside_EmberScript[];
+extern u32 gMagmaRock_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -709,7 +686,7 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
     return;
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 2;
-  options.script = gMagmaRockInside_EmberScript;
+  options.script = gMagmaRock_EmberScript;
   if ((frame & 15) == 0)
     Actor_PlaySoundInView(actor, SE_WHOOSH);
   randomZ = Random16() & 15;
@@ -788,7 +765,7 @@ void MagmaRockInside_DriftAndSlow(struct Actor *actor) {
   actor->riseBaseY = dz;
 }
 
-extern s32 gMagmaRockInside_EmberScript[];
+extern u32 gMagmaRock_EmberScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -872,7 +849,7 @@ end:
       options.priority = 1;
       options.update =
           (void (*)(union FieldObject *))MagmaRockInside_DriftAndSlow;
-      options.script = gMagmaRockInside_EmberScript;
+      options.script = gMagmaRock_EmberScript;
       FieldEffect_Spawn(position[0], position[1], position[2],
                         ((Random16() & 31) - 16) << 13,
                         ((Random16() & 31) - 16) << 13, bit,
@@ -912,7 +889,7 @@ hit:
   Event_End();
 }
 
-void MagmaRockInside_EndFallingRocks(void);
+void Rock_EndFalling(void);
 
 /// Once Felix's Burst on the small statue beside a great stone face is over,
 /// the statue flashes white and spits a fireball the way it faces. In the
@@ -969,7 +946,7 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (cue == PSYNERGY_EVENT_LAST_FRAME)
-    MagmaRockInside_EndFallingRocks();
+    Rock_EndFalling();
   if (cue == CRACKED_PILLAR_CRUMBLE_FRAME)
     Actor_SelectAnimation(work->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
@@ -1026,7 +1003,7 @@ void MagmaRockInside_LeapOverLava(void) {
   Event_End();
 }
 
-extern s32 gMagmaRockInside_FlameEmberScript[];
+extern s32 gMagmaRock_FlameEmberScript[];
 
 /// The bursts of flame, 8 frames apart, as a statue's fireball strikes a great
 /// stone face.
@@ -1052,7 +1029,7 @@ void MagmaRockInside_RaiseLava(void) {
 
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 1;
-  options.script = gMagmaRockInside_FlameEmberScript;
+  options.script = gMagmaRock_FlameEmberScript;
   options.startScaleX = FIXED_ONE * 9 / 5;
   options.startScaleY = FIXED_ONE * 9 / 5;
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE) {
@@ -1115,7 +1092,7 @@ void MagmaRockInside_RaiseLava(void) {
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 1;
   options.palette = SPRITE_COLOR_RED_TINT;
-  options.script = gMagmaRockInside_EmberScript;
+  options.script = gMagmaRock_EmberScript;
   if (frame != 0) {
     MapGrid_CopyCellsTo(68, 70, srcX, srcZ, 3, 6);
     Event_Wait(30);
@@ -1301,7 +1278,7 @@ void MagmaRockInside_DrainLava(void) {
     options.type = SPRITE_FLAME_PUFF;
     options.priority = 2;
     options.palette = SPRITE_COLOR_RED_TINT;
-    options.script = gMagmaRockInside_EmberScript;
+    options.script = gMagmaRock_EmberScript;
     for (row = 0; row != 10; row++) {
       for (j = 0; j != 6; j++) {
         u32 random = Random16();
@@ -1385,7 +1362,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *actor) {
     config.type = SPRITE_FLAME_PUFF;
     config.priority = 2;
     config.palette = SPRITE_COLOR_RED_TINT;
-    config.script = gMagmaRockInside_EmberScript;
+    config.script = gMagmaRock_EmberScript;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       toFIXED(1) / 16, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
@@ -1394,7 +1371,7 @@ void MagmaRockInside_SmokeEmber(struct Actor *actor) {
   }
 }
 
-extern s32 gMagmaRockInside_FlameEmberScript[];
+extern s32 gMagmaRock_FlameEmberScript[];
 
 /// Throws a rock or flame up out of the lava where the ember stone lies, to
 /// land at (x, z) in pixels, smoking as it flies (MagmaRockInside_SmokeEmber).
@@ -1428,7 +1405,7 @@ void MagmaRockInside_ReleaseRocks(void) {
   options.type = SPRITE_FLAME_PUFF;
   options.priority = 2;
   options.palette = SPRITE_COLOR_RED_TINT;
-  options.script = gMagmaRockInside_FlameEmberScript;
+  options.script = gMagmaRock_FlameEmberScript;
   options.startScaleY = FIXED_ONE * 3 / 2;
   options.startScaleX = FIXED_ONE * 3 / 2;
   position[1] = 0;
@@ -1995,13 +1972,13 @@ void MagmaRockInside_TrailSparks(struct Actor *actor) {
                     &options);
 }
 
-extern s32 gMagmaRockInside_TabletRiseScript[];
+extern u32 gLesson_TabletRiseScript[];
 extern s32 gMagmaRockInside_RisingSparkScript[];
 extern s32 gMagmaRockInside_CirclingSparkScript[];
-extern s32 gMagmaRockInside_JennaRiseScript[];
+extern u32 gLesson_AdeptRiseScript[];
 extern s32 gMagmaRockInside_OrbitScript[];
-extern s32 gMagmaRockInside_TabletSettleScript[];
-extern s32 gMagmaRockInside_JennaSettleScript[];
+extern s32 gLesson_TabletSettleScript[];
+extern s32 gLesson_AdeptSettleScript[];
 
 /// The Blaze tablet's lesson: the music fades, the ground shakes and the
 /// screen takes on a warm tint as the tablet lifts, blinking and shooting
@@ -2022,7 +1999,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
    * touches. */
   s32 unused[3];
 
-  script = gMagmaRockInside_JennaRiseScript;
+  script = gLesson_AdeptRiseScript;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
@@ -2037,7 +2014,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   tablet->motionFlags = 0;
   tablet->acceleration = toFIXED(1) / 5;
   tablet->speedLimit = toFIXED(1) / 5;
-  Actor_SetScript(tabletId, gMagmaRockInside_TabletRiseScript);
+  Actor_SetScript(tabletId, gLesson_TabletRiseScript);
   Event_PlaySound(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_SetSpriteColorById(tabletId, SPRITE_COLOR_BLINK);
@@ -2135,8 +2112,8 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   Event_PlaySound(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
-  Actor_SetScript(tabletId, gMagmaRockInside_TabletSettleScript);
-  Actor_SetScript(learnerId, gMagmaRockInside_JennaSettleScript);
+  Actor_SetScript(tabletId, gLesson_TabletSettleScript);
+  Actor_SetScript(learnerId, gLesson_AdeptSettleScript);
   learner->update = (ObjectUpdate)MagmaRockInside_TrailSparks;
   wait(120);
   learner->update = NULL;
@@ -2878,7 +2855,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gMagmaRockInside_DustScript);
+      Actor_StartScript(effect, gRubble_BurstScript);
       effect->velocity.x = Trig_Cos(i * FACING_STEP);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i * FACING_STEP);
@@ -2966,14 +2943,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Ends the falling rocks: removes their task and frees their picture and work.
-void MagmaRockInside_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 extern u32 gFieldEffect_LongScript[];
 
@@ -2982,25 +2952,7 @@ extern u32 gFieldEffect_LongScript[];
 
 #include "shared/push_leader_steps.c"
 
-/// An ember's actor script.
-s32 gMagmaRockInside_EmberScript[] = {
-    SC_ANIMATION(2),
-    SC_WAIT(18),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
-
-/// A flame ember's actor script.
-s32 gMagmaRockInside_FlameEmberScript[] = {
-    SC_ANIMATION(3),
-    SC_WAIT(23),
-    SC_POSITION_ORIGIN,
-    SC_WAIT(1),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/magma_rock_ember_scripts.c"
 
 /// The Lucky Medal chest room's lava platform: round a rectangle, for as long
 /// as the lava flows.
@@ -3195,51 +3147,11 @@ s32 gMagmaRockInside_OrbitScript[] = {
       SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
   };
 
-/// The Blaze tablet's actor script as it lifts in the lesson (MagmaRockInside_LearnBlaze).
-s32 gMagmaRockInside_TabletRiseScript[] = {                                                               
-      SC_MOVE_BY(0, 24, 0),                                            
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 4),                                                    
-      SC_END,                                                                  
-  };
+#include "shared/lesson_scripts.c"
 
-/// Jenna's actor script as the sparks circle in to her (MagmaRockInside_LearnBlaze).
-s32 gMagmaRockInside_JennaRiseScript[] = {                                                               
-      SC_MOVE_BY(0, 16, 0),                                            
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 4),                                                    
-      SC_END,                                                                  
-  };
+#include "shared/rubble_spray_script.c"
 
-/// The Blaze tablet's actor script as the lesson ends: it settles back.
-s32 gMagmaRockInside_TabletSettleScript[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, -24, 0),                                           
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 0),                                                   
-      SC_END,                                                                  
-  };
-
-/// Jenna's actor script as the lesson ends: she settles back.
-s32 gMagmaRockInside_JennaSettleScript[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, -16, 0),                                           
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 3),                                                   
-      SC_END,                                                                  
-  };
-
-/// A piece of rubble's actor script: it lasts 33 frames.
-u32 gDust_ScatterScript[] = {                                                               
-      SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
-
-/// A dust cloud's actor script: it lasts 44 frames.
-s32 gMagmaRockInside_DustScript[] = {                                                               
-      SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/rubble_burst_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

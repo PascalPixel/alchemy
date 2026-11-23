@@ -974,57 +974,7 @@ done:
   return 1;
 }
 
-/// This overlay's copy of Window_SetTextTileRect (window/screens_name_entry.c):
-/// ORs all of `palette` into the palette number of each entry of a rectangle
-/// of a window's tilemap, clipped to the screen, after clearing only the bit
-/// in which WINDOW_PALETTE and HIGHLIGHT_PALETTE differ.
-void Clear_DrawGridCell(const struct Window *window, s32 x, s32 y, s32 width,
-                        s32 height, u32 palette) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-
-  x += (s16)window->x + 1;
-  y += (s16)window->y + 1;
-  palette = BG_TILE_PALETTE(palette);
-  if (x < 0) {
-    width += x;
-    x = 0;
-  }
-  if (x + width > DISPLAY_TILE_WIDTH - 1) {
-    width = DISPLAY_TILE_WIDTH - x;
-  }
-  if (y < 0) {
-    height += y;
-    y = 0;
-  }
-  // BUG: tests the bottom against the screen's width, as
-  // Window_SetTextTileRect does.
-#ifdef BUGFIX
-  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
-#else
-  if (y + height > DISPLAY_TILE_WIDTH - 1) {
-#endif
-    height = DISPLAY_TILE_HEIGHT - y;
-  }
-  if (width > 0 && height > 0) {
-    do {
-      u16 *cell = &work->tilemap[y][x];
-      s32 remaining = width;
-
-      while (remaining != 0) {
-        u32 entry = *cell;
-
-        entry &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
-        entry |= palette;
-        remaining--;
-        *cell = entry;
-        cell++;
-      }
-      height--;
-      y++;
-    } while (height != 0);
-    work->dirty = 1;
-  }
-}
+#include "../window/screens_set_text_tile_rect.c"
 
 extern u8 gClear_FourthPasswordRow[];
 
@@ -1225,8 +1175,8 @@ s32 Clear_EnterPassword(void) {
     action = -1;
     if (state == 2)
       state = 1;
-    Clear_DrawGridCell(window, drawColumn, drawRow, drawMode, height,
-                       WINDOW_PALETTE);
+    Window_SetTextTileRect(window, drawColumn, drawRow, drawMode, height,
+                           WINDOW_PALETTE);
     if (state == 0) {
       if (gInput.repeat & KEY_RIGHT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
@@ -1273,8 +1223,8 @@ s32 Clear_EnterPassword(void) {
       drawColumn++;
     if (column > SIDE_COLUMN - 1)
       drawColumn++;
-    Clear_DrawGridCell(window, drawColumn, row, drawMode, height,
-                       HIGHLIGHT_PALETTE);
+    Window_SetTextTileRect(window, drawColumn, row, drawMode, height,
+                           HIGHLIGHT_PALETTE);
     {
       s32 x = ((s16)window->x + column) * 8 - 8;
       s32 y = ((s16)window->y + row) * 8 + 11;
@@ -2052,10 +2002,7 @@ u16 gClear_ImportedFlags[] = {
 };
 // clang-format on
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_mapless.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS_END,
@@ -2143,6 +2090,7 @@ LATE_DATA u16 gClear_PasswordFlags[] = {
     FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
+// The same list as gClear_ImportedKeyItems, under another name.
 LATE_DATA u16 gClear_PasswordKeyItems[] = {
     ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP, ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
     ITEM_HALT_GEM, ITEM_CLOAK_BALL, ITEM_CARRY_STONE, ITEM_CATCH_BEADS,

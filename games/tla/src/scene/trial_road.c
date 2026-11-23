@@ -3498,7 +3498,7 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   to->bits = bits;
 }
 
-extern s32 gDust_ScatterScript[];
+extern u32 gRubble_SprayScript[];
 
 void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -3521,7 +3521,7 @@ void Dust_Scatter(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript((struct Actor *)effect, gDust_ScatterScript);
+      Actor_StartScript((struct Actor *)effect, gRubble_SprayScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -3541,7 +3541,7 @@ void Dust_Scatter(s32 spread) {
   }
 }
 
-extern s32 gTrialRoad_DustScript[];
+extern u32 gRubble_BurstScript[];
 /// The clouds of dust MagmaRockInside_SpawnDustRing throws out in a ring.
 #define DUST_RING_PIECES 17
 
@@ -3563,7 +3563,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript((struct Actor *)effect, gTrialRoad_DustScript);
+      Actor_StartScript((struct Actor *)effect, gRubble_BurstScript);
       effect->velocity.x = Trig_Cos(i * (TRIG_TURN / 16));
       effect->velocity.y = 0;
       effect->velocity.z = Trig_Sin(i * (TRIG_TURN / 16));
@@ -4016,6 +4016,7 @@ s8 gTrialRoad_RulesTreasureStages[] = {
     6, 7,
 };
 
+// The same table as gTrialRoad_RulesTreasureStages, under another name.
 s8 gTrialRoad_TreasureStages[] = {
     0, 1, 2, 3, 4, 4, 4, 5,
     6, 7,
@@ -4146,15 +4147,10 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef MARKER
 
 // clang-format off
-LATE_DATA s32 gDust_ScatterScript[] = {
-    SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_RELEASE,
-};
+#define RUBBLE_SCRIPT_SECTION LATE_DATA
+#include "shared/rubble_spray_script.c"
 
-LATE_DATA s32 gTrialRoad_DustScript[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
-};
+#include "shared/rubble_burst_script.c"
 // clang-format on
 
 void TrialRoad_FightGasp(void);

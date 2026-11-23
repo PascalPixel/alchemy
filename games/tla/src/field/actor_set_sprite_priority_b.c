@@ -5,6 +5,7 @@
 #include "field/field_event.h"
 #include "field/field.h"
 
+// The same routine as Scene_SetActorSpritePriority, under another name.
 /// Fixes the priority of the actor's sprite and its shadow, which then no
 /// longer follows the map cell under it (clears ACTOR_PRIORITY_AUTOMATIC).
 void Actor_SetSpritePriorityB(struct Actor *actor, s32 priority) {

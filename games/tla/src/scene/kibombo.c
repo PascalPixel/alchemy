@@ -148,7 +148,7 @@ void Kibombo_ClimbDownLadder(s32 x, s32 z);
 void Kibombo_OpenCeremonyScene(void);
 void Kibombo_CrowdCheers(void);
 
-extern s32 gKibombo_EnterDoorScript[];
+extern s32 gLeader_WalkThroughDoorScript[];
 extern u32 gKibombo_KradenMeetsPiersScript[];
 extern u32 gKibombo_JennaMeetsPiersScript[];
 extern s32 gKibombo_ShebaMeetsPiersScript[];
@@ -2555,7 +2555,7 @@ void Kibombo_EnterDoor(void) {
   if (GameFlag_Get(FLAG_KIBOMBO_FIRES_FLICKER))
     Kibombo_StopFireFlicker();
   Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,
-                            gKibombo_EnterDoorScript);
+                            gLeader_WalkThroughDoorScript);
   wait(12);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -3785,15 +3785,7 @@ u32 gKibombo_EmberScript[] = {
     SC_RELEASE,
 };
 
-s32 gKibombo_EnterDoorScript[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, toFIXED(-0.5)),                                                   
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
-      SC_WAIT(1),                                                              
-      SC_LOOP(24, SC_TOP),                                                     
-      SC_END,                                                                  
-  };
+#include "shared/leader_walk_through_door_script.c"
 
 u32 gKibombo_KradenMeetsPiersScript[] = {                                                               
       SC_ANIMATION(2),   SC_MOVE(98, 0, 408),                         

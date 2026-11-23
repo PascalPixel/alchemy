@@ -851,6 +851,7 @@ u32 gIzumo_ThirdDanceScript[] = {
       SC_END,                                                                  
   };
 
+// The same script as gIzumo_FirstDanceScript, under another name.
 u32 gIzumo_FourthDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                
@@ -880,6 +881,7 @@ u32 gIzumo_FourthDanceScript[] = {
       SC_END,                                                                  
   };
 
+// The same script as gIzumo_SecondDanceScript, under another name.
 u32 gIzumo_FifthDanceScript[] = {                                                               
       SC_SET(SW_COLLISION, 129),                                               
       SC_ACCELERATION(0.2),                                                

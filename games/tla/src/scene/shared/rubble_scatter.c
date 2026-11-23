@@ -18,7 +18,7 @@ void Dust_Scatter(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gDust_ScatterScript);
+      Actor_StartScript(effect, gRubble_SprayScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {

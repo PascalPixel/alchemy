@@ -215,7 +215,7 @@ void EasternAlhafra_PlaceClearedDebris(void);
 void Rock_Spawn(s32, s32, s32, s32);
 
 void EasternAlhafra_StartFallingRocks(void);
-void EasternAlhafra_EndFallingRocks(void);
+void Rock_EndFalling(void);
 
 void EasternAlhafra_AskIfFinished(void);
 void EasternAlhafra_WorkersSeeBlockGone(void);
@@ -294,7 +294,7 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 frame) {
   if (mode == 3)
     Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
-    EasternAlhafra_EndFallingRocks();
+    Rock_EndFalling();
 }
 
 /// Felix Pounds the stake on the cliff top east of the sail: it sinks into the
@@ -672,29 +672,12 @@ void EasternAlhafra_StepByCabinDoor(void) {
   }
 }
 
-/// Felix steps into a door: it opens, he walks through, and the screen fades
-/// as he leaves by the exit given.
-void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
-                                     s32 countdown, s32 unused) {
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(step->steps, step->x, step->y);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
-  FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(countdown);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_End();
-}
+#include "shared/leader_open_door_and_enter.h"
 
 /// Felix walks north into the cabin door at the north end of the ship's deck
 /// (cell (16, 23)); it opens and he goes inside, down into the ship.
 void EasternAlhafra_EnterShip(s32 countdown) {
-  EasternAlhafra_OpenDoorAndEnter(&gEasternAlhafra_ShipDoor, countdown, 0);
+  Leader_OpenDoorAndEnter(&gEasternAlhafra_ShipDoor, countdown, 0);
 }
 
 /// Nothing happens when Felix walks diagonally into the log or the rock under
@@ -2503,14 +2486,7 @@ void EasternAlhafra_StartFallingRocks(void) {
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Stops the falling rocks and frees their tiles and work.
-void EasternAlhafra_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 extern s8 gPushFootprints[][4];
 

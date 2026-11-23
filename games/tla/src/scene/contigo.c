@@ -395,12 +395,12 @@ void Contigo_InitializeVillage(void);
 void Contigo_InitializeGeoglyph(void);
 void Contigo_InitializeShops(void);
 void Contigo_InitializeLuckyDice(void);
-extern u16 gContigo_PaletteSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
-extern u16 gContigo_CycleSlots[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 extern s32 gContigo_ShiverScript[];
-extern u32 gContigo_SparkleTiles[];
+extern u32 gLightRing_Tiles[];
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -2591,8 +2591,9 @@ void Contigo_InitializeVillage(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
-  Palette_SetColorsFade(gContigo_PaletteSlots, gTeleportCircle_Colors,
-                        gTeleportCircle_ShimmerColors, gContigo_CycleSlots);
+  Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
+                        gTeleportCircle_ShimmerColors,
+                        gTeleportCircle_ShimmerSlots);
 }
 
 /// Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings'
@@ -2866,7 +2867,7 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work) {
   s32 col;
 
   work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 256, gContigo_SparkleTiles);
+  VramCache_Load(work->vramEntry, 256, gLightRing_Tiles);
   work->nextPair = 0;
   work->heights[0] = RING_NOT_STARTED;
   work->heights[1] = RING_NOT_STARTED;
@@ -2891,58 +2892,7 @@ void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work) {
 void Contigo_StopSparkle(struct Actor *actor) { actor->riseCounter = 1; }
 
 // clang-format off
-/// The sparkle's picture at 4 bits a pixel, eight rows of a tile to every two
-/// lines: a white arc, half a ring 32 by 16, which Contigo_StartSparkle loads
-/// for its four sprites. Unused: the arc again in colour 4, and three 8 by 8
-/// sparkles at 8 bits a pixel (a four-pointed star, a cross and a diamond).
-u32 gContigo_SparkleTiles[] = {
-    0, 0, 0, 0,
-    0, 0, 0x70000000, 0xf7700000,
-    0, 0, 0, 0,
-    0x77770000, 0xffff7770, 0xfffffff7, 0x7777ffff,
-    0, 0, 0, 0,
-    0x00007777, 0x0777ffff, 0x7fffffff, 0xffff7777,
-    0, 0, 0, 0,
-    0, 0, 0x00000007, 0x0000077f,
-    0xfff70000, 0xffff7000, 0x7ffff700, 0x07ffff70,
-    0x007fff70, 0x007ffff7, 0x0007fff7, 0x0007fff7,
-    0x000077ff, 0x00000077, 0, 0,
-    0, 0, 0, 0,
-    0xff770000, 0x77000000, 0, 0,
-    0, 0, 0, 0,
-    0x00007fff, 0x0007ffff, 0x007ffff7, 0x07ffff70,
-    0x07fff700, 0x7ffff700, 0x7fff7000, 0x7fff7000,
-    // Unused: the arc in colour 4.
-    0, 0, 0, 0,
-    0, 0, 0x40000000, 0xf4400000,
-    0, 0, 0, 0,
-    0x44440000, 0xffff4440, 0xfffffff4, 0x4444ffff,
-    0, 0, 0, 0,
-    0x00004444, 0x0444ffff, 0x4fffffff, 0xffff4444,
-    0, 0, 0, 0,
-    0, 0, 0x00000004, 0x0000044f,
-    0xfff40000, 0xffff4000, 0x4ffff400, 0x04ffff40,
-    0x004fff40, 0x004ffff4, 0x0004fff4, 0x0004fff4,
-    0x000044ff, 0x00000044, 0, 0,
-    0, 0, 0, 0,
-    0xff440000, 0x44000000, 0, 0,
-    0, 0, 0, 0,
-    0x00004fff, 0x0004ffff, 0x004ffff4, 0x04ffff40,
-    0x04fff400, 0x4ffff400, 0x4fff4000, 0x4fff4000,
-    // Unused: the three sparkles, two words a row.
-    0xe9000000, 0x000000e9, 0xeb000000, 0x000000eb,
-    0xedeb0000, 0x0000ebed, 0xeeedebe9, 0xe9ebedee,
-    0xeeedebe9, 0xe9ebedee, 0xedeb0000, 0x0000ebed,
-    0xeb000000, 0x000000eb, 0xe9000000, 0x000000e9,
-    0x0000e900, 0x00e90000, 0x00ebe9e9, 0xe9e9eb00,
-    0xedebeb00, 0x00ebebed, 0xefed0000, 0x0000edef,
-    0xefed0000, 0x0000edef, 0xedebeb00, 0x00ebebed,
-    0x00ebe9e9, 0xe9e9eb00, 0x0000e900, 0x00e90000,
-    0xe9000000, 0x000000e9, 0xebe90000, 0x0000e9eb,
-    0xedebe900, 0x00e9ebed, 0xeeedebe9, 0xe9ebedee,
-    0xeeedebe9, 0xe9ebedee, 0xedebe900, 0x00e9ebed,
-    0xebe90000, 0x0000e9eb, 0xe9000000, 0x000000e9,
-};
+#include "shared/light_ring_tiles.c"
 
 #include "shared/field_effect_duration_scripts.c"
 
@@ -2964,23 +2914,8 @@ s32 gContigo_EnterSanctumDoorScript[] = {
     SC_END,
 };
 
-/// The Teleport circle's colours (shared/teleport_shimmer.c): their slots, the
-/// colours they rest at, the shimmer's colours, and the slots each step of the
-/// shimmer paints those into, so that the colours run round the circle.
-u16 gContigo_PaletteSlots[] = {
-    89, 90, 91, 92, 93, 94, 95, PALETTE_LIST_END,
-};
-
-#include "shared/teleport_circle_colors.c"
-
-u16 gContigo_CycleSlots[] = {
-    94, 89, 90, 91, 92, 93,
-    93, 94, 89, 90, 91, 92,
-    92, 93, 94, 89, 90, 91,
-    91, 92, 93, 94, 89, 90,
-    90, 91, 92, 93, 94, 89,
-    89, 90, 91, 92, 93, 94,
-};
+#define TELEPORT_CIRCLE_FIRST_ENTRY 89
+#include "shared/teleport_circle_palette.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_ShortScript,

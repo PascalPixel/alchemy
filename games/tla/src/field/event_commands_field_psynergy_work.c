@@ -75,6 +75,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
   }
 }
 
+// The same routine as FieldEffect_UpdateAllSlots (event_commands_djinni.c),
+// under another name.
 /// A task: updates the scene's 24 effect slots.
 void BattleEffect_UpdateAllEffectSlots(void) {
   struct FieldEffectWork *scene;

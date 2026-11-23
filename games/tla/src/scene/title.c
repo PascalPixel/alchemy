@@ -311,10 +311,7 @@ static void Title_LoadBackground(void) {
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_mapless.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS_END,

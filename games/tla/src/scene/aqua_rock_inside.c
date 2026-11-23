@@ -153,7 +153,7 @@ extern u32 gWaterDropScript[];
 extern const u8 gAquaRockInside_PillarTiles[];
 /// The splashes' tiles, compressed.
 extern const u8 gAquaRockInside_SplashTiles[];
-extern u32 gTaopoSwamp_PuffRises[];
+extern u32 gRubble_BurstScript[];
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
@@ -1286,13 +1286,13 @@ void AquaRockInside_ParchLastPool(void) {
 
 #include "shared/actor_emit_bubbles.h"
 
-extern u32 gAquaRockInside_TabletRiseScript[];
+extern u32 gLesson_TabletRiseScript[];
 extern u32 gAquaRockInside_TabletGlowScript[];
 extern s32 gAquaRockInside_SpiralSparkScript[];
-extern u32 gAquaRockInside_PiersRiseScript[];
-extern s32 gAquaRockInside_SwirlingSparkScript[];
-extern s32 gAquaRockInside_TabletSettleScript[];
-extern s32 gAquaRockInside_PiersSettleScript[];
+extern u32 gLesson_AdeptRiseScript[];
+extern s32 gLesson_SeekingSparkScript[];
+extern s32 gLesson_TabletSettleScript[];
+extern s32 gLesson_AdeptSettleScript[];
 
 /// The tablet (`firstId`) rises and glows, sparks gather on Piers (`secondId`)
 /// and he learns Parch in a flash.
@@ -1309,7 +1309,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
    * touches. */
   s32 unused[3];
 
-  script = gAquaRockInside_PiersRiseScript;
+  script = gLesson_AdeptRiseScript;
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
@@ -1324,7 +1324,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   first->motionFlags = 0;
   first->acceleration = toFIXED(1) / 5;
   first->speedLimit = toFIXED(1) / 5;
-  Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletRiseScript);
+  Actor_SetMovementTypeById(firstId, gLesson_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(firstId, SPRITE_COLOR_BLINK);
@@ -1405,7 +1405,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
     Actor_SelectAnimation(swirl, 7);
     Actor_SetSpriteFlags(swirl, 0);
     Actor_SetBlendMode(swirl, 1);
-    Actor_StartScript(swirl, gAquaRockInside_SwirlingSparkScript);
+    Actor_StartScript(swirl, gLesson_SeekingSparkScript);
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
@@ -1418,8 +1418,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
-  Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletSettleScript);
-  Actor_SetMovementTypeById(secondId, gAquaRockInside_PiersSettleScript);
+  Actor_SetMovementTypeById(firstId, gLesson_TabletSettleScript);
+  Actor_SetMovementTypeById(secondId, gLesson_AdeptSettleScript);
   second->update = Actor_EmitBubbles;
   wait(120);
   second->update = 0;
@@ -2546,13 +2546,7 @@ void Vent_Puff(s32 *position, s32 base) {
 
 #include "shared/vents_start.h"
 
-/// Unused: whether vent index is blowing now.
-UNUSED s32 Vent_IsBlowing(s32 index) {
-  struct VentWork *work;
-
-  work = VENT_WORK;
-  return VENT_AT(work, index)->entries[0].active;
-}
+#include "shared/vent_is_blowing.h"
 
 /// Starts or stops vent index's gust.
 s32 Vent_SetBlowing(s32 index, s32 blowing) {
@@ -2567,13 +2561,7 @@ s32 Vent_GetCounter(void) { return VENT_WORK->counter; }
 
 #include "shared/vent_advance_counter.h"
 
-/// Unused: sets the speed of vent index's gust, in 16.16 pixels a frame.
-UNUSED void Vent_SetGust(s32 index, s32 value) {
-  struct VentWork *work;
-
-  work = VENT_WORK;
-  VENT_AT(work, index)->entries[0].value = value;
-}
+#include "shared/vent_set_gust.h"
 
 #include "shared/vent_set_id.h"
 
@@ -2605,48 +2593,9 @@ s32 gAquaRockInside_SpiralSparkScript[] = {
     SC_END,
 };
 
-/// A glowing spark swirling round Piers.
-s32 gAquaRockInside_SwirlingSparkScript[] = {
-    SC_CALL(Orbit_Update),
-    SC_CALL(Actor_AimAtWatched),
-    SC_CALL(Actor_StepToWatched),
-    SC_RELEASE,
-    SC_END,
-};
+#include "shared/lesson_seeking_spark_script.c"
 
-/// The Parch tablet rising.
-u32 gAquaRockInside_TabletRiseScript[] = {
-    SC_MOVE_BY(0, 24, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
-
-/// Piers rising as he learns Parch.
-u32 gAquaRockInside_PiersRiseScript[] = {
-    SC_MOVE_BY(0, 16, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
-
-/// The Parch tablet settling.
-s32 gAquaRockInside_TabletSettleScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -24, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 0),
-    SC_END,
-};
-
-/// Piers settling after he learns Parch.
-s32 gAquaRockInside_PiersSettleScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -16, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 3),
-    SC_END,
-};
+#include "shared/lesson_scripts.c"
 
 /// A splash's script at the foot of the waterfall.
 u32 gAquaRockInside_SplashScript[] = {
@@ -2693,11 +2642,8 @@ u32 gWaterDropScript[] = {
 #undef SET_BG1CNT_PRIORITY
 
 // clang-format off
-/// A vent's puff's rise.
-LATE_DATA u32 gTaopoSwamp_PuffRises[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
-};
+#define RUBBLE_SCRIPT_SECTION LATE_DATA
+#include "shared/rubble_burst_script.c"
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

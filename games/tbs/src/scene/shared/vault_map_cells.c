@@ -7,6 +7,8 @@
 
 STATIC_ASSERT(VAULT_TO_SANCTUM == VAULT_REVISIT_TO_SANCTUM);
 
+/// The door's half-open and open pictures among the map's cells, by column,
+/// each half two cells square.
 enum {
   VAULT_DOOR_OPENING_COLUMN = 42,
   VAULT_DOOR_OPEN_COLUMN = 40,

@@ -94,8 +94,11 @@ enum CaveActorId {
   ACTOR_HAMMET
 };
 
+/// The sprite priority the gate's puddle takes once the gate has come down.
 enum { GATE_PILLAR_PRIORITY = 3 };
 
+/// The party's lines as Bunza steps out behind them
+/// (WestLunpaCave_HammetFindsBunza), in order.
 enum SightingMessage {
   SIGHTING_GARET_SAW_SOMEONE,
   SIGHTING_MIA_SAW_SOMETHING,
@@ -104,6 +107,8 @@ enum SightingMessage {
   SIGHTING_GARET_ASKS_WHAT_ELSE
 };
 
+/// Hammet and Bunza recognizing each other (WestLunpaCave_HammetFindsBunza),
+/// in order.
 enum RecognitionMessage {
   RECOGNITION_HAMMET_CALLS_OUT,
   RECOGNITION_HAMMET_NAMES_BUNZA,
@@ -111,6 +116,7 @@ enum RecognitionMessage {
   RECOGNITION_BUNZA_NAMES_HAMMET
 };
 
+/// The reunion's talk in the first chamber (Reunion_Converse), in order.
 enum ReunionMessage {
   REUNION_BUNZA_ASKS_ABOUT_RELEASE,
   REUNION_HAMMET_CREDITS_IVAN,
@@ -155,7 +161,8 @@ enum ReunionMessage {
   REUNION_BUNZA_AGREES_NOT_TO_FIGHT
 };
 
-enum TurnMessage {
+/// Hammet asking Bunza's plan, and Bunza's wagon to Kalay, in order.
+enum PlanMessage {
   PLAN_HAMMET_ASKS_PLAN,
   PLAN_BUNZA_HAS_WAGON,
   PLAN_MIA_ASKS_ABOUT_WAGON,
@@ -166,19 +173,24 @@ enum TurnMessage {
   PLAN_BUNZA_IS_UNSUSPECTED
 };
 
+/// The lines before the wagon question (WagonChoice_Run).
 enum WagonMessage { WAGON_BUNZA_LEADS_THE_WAY, WAGON_GARET_ASKS_TO_RIDE };
 
+/// Ivan, confused by Isaac's answers, and Garet asking the wagon question
+/// again.
 enum ConfusionMessage {
   CONFUSION_IVAN_IS_CONFUSED,
   CONFUSION_GARET_ASKS_AGAIN
 };
 
+/// The lines of WestLunpaCave_BunzaCannotWait.
 enum WarningMessage {
   WARNING_IVAN_ASKS_IF_STAYING,
   WARNING_BUNZA_CANNOT_WAIT,
   WARNING_MIA_ASKS_ABOUT_BUSINESS
 };
 
+/// The lines as the party stays behind (Party_StaysBehind).
 enum FarewellMessage {
   FAREWELL_GARET_STAYS,
   FAREWELL_MIA_STAYS,
@@ -191,6 +203,7 @@ enum FarewellMessage {
   FAREWELL_GARET_MOVES_ON
 };
 
+/// The lines as the party rides the wagon (Party_RidesWagon).
 enum DepartureMessage {
   DEPARTURE_GARET_HEADS_FOR_KALAY,
   DEPARTURE_IVAN_THINKS_OF_LAYANA,

@@ -76,6 +76,7 @@ extern u32 gGomaCavePillar_Exits[];
 extern struct ActorPlacement gGomaCavePillar_ActorPlacements[];
 extern struct Trigger gGomaCavePillar_Triggers[];
 
+/// The two axes a dust fragment moves along (GomaCavePillar_UpdateFragment).
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
 /// The room's actors, numbered in the order of

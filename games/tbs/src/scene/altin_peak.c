@@ -248,6 +248,7 @@ enum {
   ACTOR_FIRST_WATER_BEAST
 };
 
+/// The lake room, the second water beast's.
 enum {
   ACTOR_SECOND_WATER_BEAST = ACTOR_CART + 1,
   ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER

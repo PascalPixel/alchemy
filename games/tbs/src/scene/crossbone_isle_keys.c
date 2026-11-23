@@ -247,6 +247,8 @@ enum CrossboneIsleBaneCellBehavior {
   CELL_BEHAVIOR_BANE_EAST_OF_FIRST_PILLAR = 70
 };
 
+/// What CrossboneIsleKeys_OpenBlueDoor is given: the door's number in the low
+/// byte, and PASSAGE_PLAY_OPENING to play its opening.
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
 /// The Demon Axe chest's examine trigger, a treasure spot the code places

@@ -157,6 +157,7 @@ enum {
   ACTOR_RED_ROCK
 };
 
+/// The lights, one of each colour.
 enum { LIGHT_COUNT = 5 };
 
 /// The palette a light or rock is drawn in, as its child value. They are the

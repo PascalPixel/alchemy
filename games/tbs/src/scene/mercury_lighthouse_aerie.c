@@ -167,6 +167,8 @@ enum {
   FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_53
 };
 
+/// The aerie's Psynergy Stone. It is an area temp flag, so it refills once the
+/// party has been to another area.
 enum { FLAG_PSYNERGY_STONE = FLAG_AREA_TEMP_50 };
 
 static void MercuryLighthouseAerie_PartyArrives(void);

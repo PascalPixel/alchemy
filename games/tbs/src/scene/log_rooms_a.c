@@ -128,6 +128,7 @@ enum { LOG_STOP_NONE = 255 };
 /// to the inn's loft.
 #define CRATE_MOVED_COLUMN 42
 
+/// One of a stop's links: the stop it leads to and the heading toward it.
 struct LogRoomsAStopConnection {
   u8 stopIndex; ///< the stop it leads to, or LOG_STOP_NONE
   u8 facing;    ///< the heading toward it, a facing's high byte

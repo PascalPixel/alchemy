@@ -72,9 +72,6 @@
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-/// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
-/// lifts.
-
 /// The lift room's actors (SceneId_KandoreanTempleLifts), numbering the rows of
 /// gKandoreanTemple_LiftRoomPlacements.
 enum KandoreanTempleLiftRoomActorId {
@@ -487,9 +484,10 @@ extern struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[];
 extern struct ActorPlacement gKandoreanTemple_VentRoomPlacements[];
 extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
 
-/// The current room's actors. Once the party has met Poi, the gate's meditating
-/// students no longer turn to talk, and in Poi's room two of the tested
-/// students stand elsewhere.
+/// The current room's actors. Once the party has met Poi, the gate's three
+/// students, no longer meditating, turn to the party when spoken to; in Poi's
+/// room the first and third tested students turn too, and the second stands
+/// elsewhere.
 void *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
@@ -503,18 +501,32 @@ void *Scene_GetActorPlacements(void) {
     return gKandoreanTemple_FogRoomPlacements;
   if (scene == SCENE_KANDOREAN_TEMPLE_GATE) {
     if (GameFlag_Get(FLAG_MET_POI)) {
-      gKandoreanTemple_GatePlacements[3].talkFacing = 0;
-      gKandoreanTemple_GatePlacements[4].talkFacing = 0;
-      gKandoreanTemple_GatePlacements[5].talkFacing = 0;
+      gKandoreanTemple_GatePlacements[ACTOR_STUDENT_WARY_OF_OUTSIDERS -
+                                      ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY;
+      gKandoreanTemple_GatePlacements[ACTOR_STUDENT_ON_THE_FAILED_TEST -
+                                      ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY;
+      gKandoreanTemple_GatePlacements[ACTOR_STUDENT_WHO_WOULD_BE_A_MONK -
+                                      ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY;
     }
     return gKandoreanTemple_GatePlacements;
   }
   if (scene == SCENE_KANDOREAN_TEMPLE_POI) {
     if (GameFlag_Get(FLAG_MET_POI)) {
-      gKandoreanTemple_PoisRoomPlacements[5].talkFacing = 3;
-      gKandoreanTemple_PoisRoomPlacements[6].x = toFIXED(368);
-      gKandoreanTemple_PoisRoomPlacements[6].z = toFIXED(694);
-      gKandoreanTemple_PoisRoomPlacements[7].talkFacing = 1;
+      gKandoreanTemple_PoisRoomPlacements[ACTOR_FIRST_TESTED_STUDENT -
+                                          ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY_THEN_WATCH;
+      gKandoreanTemple_PoisRoomPlacements[ACTOR_SECOND_TESTED_STUDENT -
+                                          ACTOR_FIRST_PLACED]
+          .x = toFIXED(368);
+      gKandoreanTemple_PoisRoomPlacements[ACTOR_SECOND_TESTED_STUDENT -
+                                          ACTOR_FIRST_PLACED]
+          .z = toFIXED(694);
+      gKandoreanTemple_PoisRoomPlacements[ACTOR_THIRD_TESTED_STUDENT -
+                                          ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY_AND_BACK;
     }
     return gKandoreanTemple_PoisRoomPlacements;
   }
@@ -843,7 +855,7 @@ void KandoreanTemple_BlowStreamSteam(void) {
   }
 }
 
-/// Shows the leader's sprite flags again.
+/// Gives the leader its shadow back.
 void KandoreanTemple_ShowLeader(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId),
                        SPRITE_FLAG_SHADOW);
@@ -1917,8 +1929,8 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
   Event_End();
 }
 
-/// Examining the Lash Pebble in Poi's room: Poi gives the party Lash and tells
-/// how to use it.
+/// Examining the Lash Pebble on Poi's table: Poi gives the party Lash, tells
+/// how to use it and crosses the north rope back to the upper hall.
 void KandoreanTemple_ReceiveLash(void) {
   s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
   struct Actor *actor;
@@ -1955,6 +1967,8 @@ void KandoreanTemple_ReceiveLash(void) {
   Actor_SetAnimation(ACTOR_POI, ANIM_SHAKE_HEAD);
   // "I hope that someday, my students will be worthy of this honor, too."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
+  // Poi hops onto the north rope, slides back across it tilted, hops off its
+  // east end and walks back into the upper hall.
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(424, 0, 400, 1);
   actor = Actor_GetById(ACTOR_POI);
@@ -2041,38 +2055,27 @@ void KandoreanTemple_FightChestbeaters(void) {
   Event_End();
 }
 
-/// Felix casts Cyclone over the first of the five clumps of weeds in the
-/// courtyard before the temple, at cells (13, 14) to (14, 15): leaves whirl up
-/// and the clump is gone.
-void KandoreanTemple_CycloneFirstPatch(void) {
+/// Felix casts Cyclone over one of the five clumps of weeds in the courtyard
+/// before the temple: leaves whirl up and the clump is gone. The first covers
+/// cells (13, 14) to (14, 15); the others one cell each, (15, 16), (14, 18),
+/// (20, 18) and (27, 15).
+void KandoreanTemple_CycloneFirstClump(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 2, 2, 73, 14, 1);
 }
 
-/// Felix casts Cyclone over the second of the five clumps of weeds in the
-/// courtyard before the temple, at cell (15, 16): leaves whirl up and the clump
-/// is gone.
-void KandoreanTemple_CycloneSecondPatch(void) {
+void KandoreanTemple_CycloneSecondClump(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 75, 16, 1);
 }
 
-/// Felix casts Cyclone over the third of the five clumps of weeds in the
-/// courtyard before the temple, at cell (14, 18): leaves whirl up and the clump
-/// is gone.
-void KandoreanTemple_CycloneThirdPatch(void) {
+void KandoreanTemple_CycloneThirdClump(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 74, 18, 1);
 }
 
-/// Felix casts Cyclone over the fourth of the five clumps of weeds in the
-/// courtyard before the temple, at cell (20, 18): leaves whirl up and the clump
-/// is gone.
-void KandoreanTemple_CycloneFourthPatch(void) {
+void KandoreanTemple_CycloneFourthClump(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 80, 18, 1);
 }
 
-/// Felix casts Cyclone over the fifth of the five clumps of weeds in the
-/// courtyard before the temple, at cell (27, 15): leaves whirl up and the clump
-/// is gone.
-void KandoreanTemple_CycloneFifthPatch(void) {
+void KandoreanTemple_CycloneFifthClump(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 87, 15, 1);
 }
 
@@ -2404,9 +2407,9 @@ void KandoreanTemple_ArriveOnWestVent(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-/// One step of a steam column sinking back under its cover: the leader, the
-/// cover and the camera go down, and each of the column's five pieces shrinks,
-/// the top fastest.
+// One step of a steam column sinking back under its cover: the leader, the
+// cover and the camera go down, and each of the column's five pieces shrinks,
+// the top fastest.
 #define SINK_COVER(top, upper, middle, lower, foot)                            \
   do {                                                                         \
     leader->y.fixed += -toFIXED(27) / 4;                                       \
@@ -2614,12 +2617,14 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     leader->motionFlags = 0;                                                   \
     FieldActor_SetPositionAndResetMotion(                                      \
         Actor_GetById(gMainRoutineWork.leaderActorId), toFIXED(x),             \
-        toFIXED(-20), toFIXED(z));                                             \
+        toFIXED(LIFT_SUNK_HEIGHT), toFIXED(z));                                \
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);    \
     FieldActor_SetPositionAndResetMotion(Actor_GetById(liftId), toFIXED(x),    \
-                                         toFIXED(-20), toFIXED(liftZ));        \
+                                         toFIXED(LIFT_SUNK_HEIGHT),            \
+                                         toFIXED(liftZ));                      \
     FieldActor_SetPositionAndResetMotion(Actor_GetById(columnId), toFIXED(x),  \
-                                         toFIXED(-20), toFIXED(z));            \
+                                         toFIXED(LIFT_SUNK_HEIGHT),            \
+                                         toFIXED(z));                          \
     Actor_SetSpritePriority(liftId, 2);                                        \
     Actor_SetSpritePriority(columnId, 3);                                      \
     {                                                                          \
@@ -2642,7 +2647,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       wait(1);                                                                 \
     } while (first->y.fixed < 0);                                              \
     MapGrid_CopyCellAttributes(0, 0, 1, 1, cellX, cellZ);                      \
-    timer = 2000;                                                              \
+    timer = LIFT_RISEN;                                                        \
     gFieldWork->transition = SCENE_TRANSITION(                                 \
         TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);                 \
     Event_End();                                                               \
@@ -2674,7 +2679,7 @@ void KandoreanTemple_RideWestLiftDown(void) {
     KandoreanTemple_ShrinkColumn(ACTOR_WEST_LIFT_COLUMN, toFIXED(0.3),
                                  toFIXED(0.3));
     wait(1);
-  } while (actor->y.fixed > -toFIXED(20));
+  } while (actor->y.fixed > toFIXED(LIFT_SUNK_HEIGHT));
   Actor_SetPosition(ACTOR_WEST_LIFT_COLUMN, 0, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2697,7 +2702,7 @@ void KandoreanTemple_RideEastLiftDown(void) {
     KandoreanTemple_ShrinkColumn(ACTOR_EAST_LIFT_COLUMN, toFIXED(0.3),
                                  toFIXED(0.3));
     wait(1);
-  } while (actor->y.fixed > -toFIXED(20));
+  } while (actor->y.fixed > toFIXED(LIFT_SUNK_HEIGHT));
   Actor_SetPosition(ACTOR_EAST_LIFT_COLUMN, 0, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2753,7 +2758,7 @@ void KandoreanTemple_StartFogRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 }
 
-/// A student sits meditating, his first ellipsis after base frames and up to
+/// A student sits meditating, his first ellipsis after delay frames and up to
 /// 400 more.
 void KandoreanTemple_StartMeditating(s32 id, s32 delay) {
   struct Actor *actor = Actor_GetById(id);
@@ -3714,22 +3719,22 @@ struct ActorPlacement gKandoreanTemple_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[] = {                                             
-      {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},                
-      {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},                
-      {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 2, 3},                
-      {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 3},                
-      {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 2},                
-      {SPRITE_STEAM_VENT, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
-      {SPRITE_STEAM_VENT, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
-      {SPRITE_STEAM_VENT, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
-      {SPRITE_STEAM_VENT, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},                  
-      {SCENE_TABLE_END},                                                       
-  };
+struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[] = {
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
+};
 
 struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[] = {
-    {SPRITE_SIGNAL_FIRE, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
-    {SPRITE_SIGNAL_FIRE, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_SIGNAL_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_SIGNAL_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHESTBEATER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 328, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHESTBEATER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 296, 0, 140, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3738,9 +3743,9 @@ struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[] = {
 };
 
 struct ActorPlacement gKandoreanTemple_VentRoomPlacements[] = {
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
-    {SPRITE_STEAM_VENT, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_STEAM_VENT, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_EAST, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STEAM_VENT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3755,8 +3760,8 @@ struct ActorPlacement gKandoreanTemple_VentRoomPlacements[] = {
 };
 
 struct ActorPlacement gKandoreanTemple_FogRoomPlacements[] = {
-    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
-    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     ACTOR_PLACEMENT(SPRITE_BALD_BOY_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 340, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_FOG), MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
@@ -3909,19 +3914,19 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
      CONDITION_ALWAYS, EVENT(KandoreanTemple_FindTheHiddenPassage)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_FIRST_WEED_CLUMP, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_CycloneFirstPatch)},
+     EVENT(KandoreanTemple_CycloneFirstClump)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_SECOND_WEED_CLUMP, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_CycloneSecondPatch)},
+     EVENT(KandoreanTemple_CycloneSecondClump)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_THIRD_WEED_CLUMP, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_CycloneThirdPatch)},
+     EVENT(KandoreanTemple_CycloneThirdClump)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_FOURTH_WEED_CLUMP, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_CycloneFourthPatch)},
+     EVENT(KandoreanTemple_CycloneFourthClump)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_FIFTH_WEED_CLUMP, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_CycloneFifthPatch)},
+     EVENT(KandoreanTemple_CycloneFifthClump)},
     {TRIGGER_TALK, ACTOR_STUDENT_ASKING_ABOUT_POI, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_AskAboutPoi)},
     {TRIGGER_TALK, ACTOR_STUDENT_ON_GUARD_DUTY, CONDITION_ALWAYS,

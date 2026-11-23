@@ -165,7 +165,7 @@ extern struct ActorPlacement gWorldMapActorPlacementsJennaAndKradenAdrift[];
 extern struct ActorPlacement gWorldMapActorPlacementsFromClear[];
 extern struct ActorPlacement gWorldMapActorPlacementsBeforeShebasFall[];
 extern struct Trigger gWorldTriggers[];
-extern u32 gWorldMapPassengerRowValues[];
+extern u32 gTolbiShip_PassengerRowValues[];
 extern s32 gIslandWakeScript[];
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
@@ -2395,7 +2395,7 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
   }
   for (offset = 0; offset < 9; offset++) {
     if (GameFlag_Get(flagBase + offset) != 0)
-      return gWorldMapPassengerRowValues[offset];
+      return gTolbiShip_PassengerRowValues[offset];
   }
   return 0;
 }
@@ -3669,12 +3669,7 @@ struct Trigger gWorldTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// Each passenger's rowing value, the World Map's copy of
-/// gTolbiShipMast_PassengerRowValues (tolbi_ship_mast.c).
-u32 gWorldMapPassengerRowValues[] = {
-    7, 5, 8, 4, 9, 12, 6, 3,
-    0,
-};
+#include "shared/tolbi_ship_rowing.c"
 // clang-format on
 
 s32 gIslandWakeScript[] = {

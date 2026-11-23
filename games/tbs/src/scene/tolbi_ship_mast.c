@@ -44,7 +44,7 @@
 ///   leads below or to the deck.
 /// - Land. At TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO the seven birds
 ///   (ACTOR_FIRST_BIRD) fly away before "Land ho!". The rowing values of the
-///   passengers chosen to row (gTolbiShipMast_PassengerRowValues) decide where
+///   passengers chosen to row (gTolbiShip_PassengerRowValues) decide where
 ///   the ship comes in. The balance is those at the first and third seats less
 ///   those at the second and fourth. A balance of exactly 11 takes
 ///   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
@@ -101,7 +101,7 @@ extern struct ActorPlacement gTolbiShipMast_FirstAttackActorPlacements[];
 extern struct ActorPlacement gTolbiShipMast_BirdActorPlacements[];
 extern struct ActorPlacement gTolbiShipMast_LandingActorPlacements[];
 extern struct Trigger gTolbiShipMast_Triggers[];
-extern u32 gTolbiShipMast_PassengerRowValues[];
+extern u32 gTolbiShip_PassengerRowValues[];
 
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
@@ -879,7 +879,7 @@ static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
   }
   for (passenger = 0; passenger <= 8; passenger++) {
     if (GameFlag_Get(firstFlag + passenger) != 0)
-      return gTolbiShipMast_PassengerRowValues[passenger];
+      return gTolbiShip_PassengerRowValues[passenger];
   }
   return 0;
 }
@@ -1059,10 +1059,5 @@ struct Trigger gTolbiShipMast_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// Each passenger's rowing value, in the order of enum TolbiShipPassenger
-/// (ship_rooms.c).
-u32 gTolbiShipMast_PassengerRowValues[] = {
-    7, 5, 8, 4, 9, 12, 6, 3,
-    0,
-};
+#include "shared/tolbi_ship_rowing.c"
 // clang-format on

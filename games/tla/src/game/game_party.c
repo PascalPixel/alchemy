@@ -19,7 +19,7 @@
 
 /// Fills a battle unit with an enemy: its stats, its name with its suffix, its
 /// items, rewards and elements. A Djinni fought is put on the party's side
-/// (README.md, "The unit"). Returns 0 for an id out of range.
+/// (this folder's README.md, "The unit"). Returns 0 for an id out of range.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
@@ -82,7 +82,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     }
   }
   unit->aiState = (struct BattleAIState){0};
-  unit->classId = 0;
+  unit->classId = CLASS_NONE;
   unit->enemyId = enemyId;
   Unit_CalculateBaseElements(unitId, unit->baseElement);
   Unit_Calculate(unitId);
@@ -143,7 +143,8 @@ s32 Party_RemoveMember(s32 unitId) {
   return Party_CountMembers();
 }
 
-/// Writes the party members to unitIds and returns how many there are.
+/// Writes the party members to `unitIds`, ended by BATTLE_UNIT_LIST_END, and
+/// returns how many there are.
 s32 Party_ListMembers(s16 *unitIds) {
   s32 count = 0;
 
@@ -178,8 +179,8 @@ s32 Party_AdjustCoins(s32 amount) {
   return value;
 }
 
-/// Each adds amount to a counter, kept between 0 and max, and returns the new
-/// value: the shop credit and the Game Tickets given.
+/// Each adds `amount` to a counter, kept between 0 and `max`, and returns the
+/// new value: the shop credit and the Game Tickets given.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
@@ -198,8 +199,8 @@ s32 Party_AdjustCoins(s32 amount) {
 PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, COIN_MAX)
 PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, SHOP_GIFTS_MAX)
 
-/// Writes the summons the party can call to output, in menu order, ending with
-/// SUMMON_END, and returns how many.
+/// Writes the summons the party can call to `output`, in menu order, ending
+/// with SUMMON_END, and returns how many.
 s32 Summon_ListLearned(u8 *output) {
   const u8 *summon = gSummon_OrderList;
   const u8 *last = &gSummon_OrderList[SUMMON_COUNT - 1];

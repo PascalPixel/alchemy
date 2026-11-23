@@ -75,11 +75,11 @@ enum IdejimaEntrance {
   ENTRANCE_FROM_DOOR_AGAIN = 3,
   /// Back onto the island from the world map, at its west edge.
   ENTRANCE_BACK_FROM_WORLD_MAP = 4,
-  /// The story's three scenes before the shore, each played on arriving by
-  /// its own entrance (Scene_Initialize).
+  /// Two of the story's three scenes before the shore, each played on arriving
+  /// by its own entrance (Scene_Initialize); the third is the title's
+  /// IDEJIMA_RIDE_THE_TIDAL_WAVE.
   ENTRANCE_BREAK_AWAY = 11,
-  ENTRANCE_FIND_FELIX_AND_SHEBA = 12,
-  ENTRANCE_RIDE_THE_TIDAL_WAVE = 13
+  ENTRANCE_FIND_FELIX_AND_SHEBA = 12
 };
 
 /// The unseen door, which leads back out at ENTRANCE_FROM_DOOR_AGAIN.
@@ -1781,7 +1781,7 @@ s32 Scene_Initialize(void) {
   case ENTRANCE_FIND_FELIX_AND_SHEBA:
     Idejima_FindFelixAndSheba();
     break;
-  case ENTRANCE_RIDE_THE_TIDAL_WAVE:
+  case IDEJIMA_RIDE_THE_TIDAL_WAVE:
     Idejima_RideTheTidalWave();
     break;
   }

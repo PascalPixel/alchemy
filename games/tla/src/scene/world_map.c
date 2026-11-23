@@ -423,7 +423,6 @@ extern struct ActorPlacement gWorldMap_DriftingIdejimaPlacements[];
 /// The story's scenes the world map plays on arrival that no other scene's exit
 /// leads to; the others it tests by scene_exits.h's names.
 enum WorldMapEntrance {
-  WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
   WORLD_MAP_PIERS_DJINN = 70,
   WORLD_MAP_BANDIT_BEATEN = 73, ///< after the battle with the bandit
   WORLD_MAP_BANDIT_LOST = 74,

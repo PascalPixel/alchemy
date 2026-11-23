@@ -146,9 +146,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
                         0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Event_Wait(10);
-    // The world map's view of Air's Rock (world_map.c's
-    // WORLD_MAP_ALHAFRA_MANOR_VIEW).
-    Event_SetDestination(SCENE_WORLD_MAP, 67);
+    Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_ALHAFRA_MANOR_VIEW);
   } else {
     Event_SetMessageId(msg + 2);
     Event_ShowMessageAndWait(actor, 0);

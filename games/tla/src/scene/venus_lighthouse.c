@@ -63,8 +63,6 @@ enum VenusLighthouseCellBehavior {
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOOR_SWITCH = 46
 };
 
-/// The entrance the prologue opens on (gVenusLighthouseOpeningActorPlacements).
-enum { ENTRANCE_OPENING = 99 };
 /// The stairs down at the south of the floor switch's room, where the prologue
 /// opens, to the room of the spiral pillars, as The Broken Seal names them:
 /// Jenna, Kraden and Alex leave by its exit, and from patch 1 the game restarts
@@ -76,9 +74,9 @@ enum {
 
 /// The scene's actors, numbering the rows of gActorPlacements: The Broken
 /// Seal's ground floor's, with Kraden and Alex in place of Garet and its three
-/// scholars set aside in the corner. At ENTRANCE_OPENING Felix and Jenna are
-/// placed as the first two rows of gVenusLighthouseOpeningActorPlacements and
-/// keep their own ids.
+/// scholars set aside in the corner. At VENUS_LIGHTHOUSE_FROM_TITLE Felix and
+/// Jenna are placed as the first two rows of
+/// gVenusLighthouseOpeningActorPlacements and keep their own ids.
 enum VenusLighthouseActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_ALEX,
@@ -395,7 +393,7 @@ s32 VenusLighthouse_ClearScriptedSpriteFlags(void *actor) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_OPENING)
+  if (gMainRoutineWork.entrance == VENUS_LIGHTHOUSE_FROM_TITLE)
     return gVenusLighthouseOpeningActorPlacements;
   return gActorPlacements;
 }
@@ -603,7 +601,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
+  if (gMainRoutineWork.entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
@@ -644,7 +642,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (work->entrance == ENTRANCE_OPENING) {
+  if (work->entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     work->restartScene = SCENE_VENUS_LIGHTHOUSE;
     work->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
     Event_Start();

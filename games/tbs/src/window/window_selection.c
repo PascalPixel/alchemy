@@ -223,7 +223,8 @@ void SelectionMenu_Draw(void) {
   struct SelectionSprite *cursorEntry =
       &state->records[SELECTION_RECORD_HAND].sprite;
   struct SelectionNode *cursor = &state->records[SELECTION_RECORD_HAND];
-  struct SelectionNode *transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
+  struct SelectionNode *largeIcon =
+      &state->records[SELECTION_RECORD_LARGE_ICON];
   struct SelectionNode *node;
   struct SelectionSprite *sprite;
   struct SelectionSprite *commandSprite;
@@ -290,9 +291,9 @@ void SelectionMenu_Draw(void) {
     entryIndex++;
   }
   // The selected command's large icon owns a separate cached tile block.
-  if (transfer->kind != ICON_KIND_NONE) {
+  if (largeIcon->kind != ICON_KIND_NONE) {
     node = SelectionMenu_GetCursorNode(state);
-    commandSprite = &transfer->sprite;
+    commandSprite = &largeIcon->sprite;
     commandSprite->mode = OBJ_MODE_NORMAL;
     commandSprite->affine = SPRITE_AFFINE_OFF;
     commandSprite->matrix = 0;
@@ -301,22 +302,22 @@ void SelectionMenu_Draw(void) {
     commandSprite->size = 2;
     commandSprite->shape = SPRITE_SHAPE_SQUARE;
     commandSprite->priority = 0;
-    commandSprite->tile = transfer->tile;
+    commandSprite->tile = largeIcon->tile;
     // A 32x32 sprite (size 2) over the icon, bobbing by half the cursor's
     // bob; while it zooms in, the double-size area moves it 16 up and left,
     // wrapped as the 9-bit x and the 8-bit y wrap.
     commandSprite->x = node->x - 4;
     commandSprite->y =
         node->y + (gMenuCursor_BobOffsets[(gVBlankCount >> 1) & 15] >> 1) - 4;
-    if (transfer->scale != transfer->scaleEnd) {
-      state->transform.scaleX = transfer->scale;
-      state->transform.scaleY = transfer->scale;
+    if (largeIcon->scale != largeIcon->scaleEnd) {
+      state->transform.scaleX = largeIcon->scale;
+      state->transform.scaleY = largeIcon->scale;
       state->transform.angle = 0;
       commandSprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
       commandSprite->affine = SPRITE_AFFINE_DOUBLE_SIZE;
       commandSprite->x += (u16)-16;
       commandSprite->y += (u8)-16;
-      transfer->scale += transfer->scaleStep;
+      largeIcon->scale += largeIcon->scaleStep;
     }
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       commandSprite->mode = OBJ_MODE_SEMI_TRANSPARENT;
@@ -761,7 +762,7 @@ UNUSED void Menu_MoveSelectionBackward(struct SelectionMenuWork *screen) {
 void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
   struct SelectionNode *node;
   u32 entryIndex;
-  s32 y;
+  s32 x;
   u32 end;
 
   SelectionMenu_RedrawIcon(state, state->cursorIndex);
@@ -801,13 +802,13 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
       state->cursorIndex = 0;
       state->top = 0;
       node = state->head;
-      y = node->x + SELECTION_ICON_SPACING;
+      x = node->x + SELECTION_ICON_SPACING;
       node = node->next;
       while (node != NULL) {
-        node->targetX = y;
+        node->targetX = x;
         node->dx = 12;
         node = node->next;
-        y += SELECTION_ICON_SPACING;
+        x += SELECTION_ICON_SPACING;
       }
       state->records[SELECTION_ARROW_RIGHT].kind = TRUE;
     } else if (state->cursorIndex == SELECTION_LAST_PLACE &&
@@ -1322,7 +1323,7 @@ void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 void SelectionMenu_LoadLargeIcon(void) {
   struct SelectionMenuWork *state = gSelectionMenuWork;
   struct SelectionNode *selected = SelectionMenu_GetCursorNode(state);
-  struct SelectionNode *transfer;
+  struct SelectionNode *largeIcon;
   GlyphTransfer *buffer;
   u8 *table;
   void *resource;
@@ -1332,7 +1333,7 @@ void SelectionMenu_LoadLargeIcon(void) {
     return;
 
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  transfer = &state->records[SELECTION_RECORD_LARGE_ICON];
+  largeIcon = &state->records[SELECTION_RECORD_LARGE_ICON];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.
   table = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
@@ -1343,14 +1344,14 @@ void SelectionMenu_LoadLargeIcon(void) {
   }
   Decompress_ByteLz(resource, buffer);
 
-  if (transfer->kind == ICON_KIND_NONE)
-    transfer->slot = VramCache_FindFreeEntry();
-  transfer->tile = VramCache_Load(transfer->slot, 32 * 32, buffer);
-  transfer->kind = ICON_KIND_COMMAND;
-  transfer->base = resourceId;
-  transfer->scale = LARGE_ICON_ZOOM_STEP;
-  transfer->scaleStep = LARGE_ICON_ZOOM_STEP;
-  transfer->scaleEnd = 6 * LARGE_ICON_ZOOM_STEP;
+  if (largeIcon->kind == ICON_KIND_NONE)
+    largeIcon->slot = VramCache_FindFreeEntry();
+  largeIcon->tile = VramCache_Load(largeIcon->slot, 32 * 32, buffer);
+  largeIcon->kind = ICON_KIND_COMMAND;
+  largeIcon->base = resourceId;
+  largeIcon->scale = LARGE_ICON_ZOOM_STEP;
+  largeIcon->scaleStep = LARGE_ICON_ZOOM_STEP;
+  largeIcon->scaleEnd = 6 * LARGE_ICON_ZOOM_STEP;
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 

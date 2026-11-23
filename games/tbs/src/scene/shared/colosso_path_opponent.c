@@ -18,24 +18,29 @@ struct ColossoRaceWork {
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 29040);
 
-/// The opponent's task.
+/// The opponent's task, each frame. Playing, it puts him on the next point of
+/// his path, turning at most FACING_STEP a frame to face the way he runs and
+/// standing once he has kept still three frames; at the path's end he walks to
+/// the first prize, or the second when Isaac is there first, and holds it up.
+/// Recording, it keeps the recorded actor's place each frame, and once the
+/// path is full (two minutes) plays it back on the opponent.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
-  struct PathRecorder *rec = (struct PathRecorder *)gSceneLocalState;
+  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
   struct Actor *actor;
-  s32 x, z, d;
+  s32 x, z, turn;
   u16 *itemActorId;
 
-  actor = Actor_GetById(rec->actorId);
+  actor = Actor_GetById(recorder->actorId);
   if (actor == NULL) {
     return;
   }
-  if (rec->mode == PATH_RECORDER_PLAY) {
-    x = work->path[(s16)rec->pathIndex++];
-    z = work->path[(s16)rec->pathIndex++];
+  if (recorder->mode == PATH_RECORDER_PLAY) {
+    x = work->path[(s16)recorder->pathIndex++];
+    z = work->path[(s16)recorder->pathIndex++];
     if (x == 0 && z == 0) {
-      FIXED fz;
-      rec->mode = PATH_RECORDER_FINISHED;
+      FIXED finishZ;
+      recorder->mode = PATH_RECORDER_FINISHED;
       Actor_SelectAnimation(actor, ANIM_STAND);
       if (work->gauge.finishX < actor->x.fixed) {
         x = work->gauge.finishX + toFIXED(12);
@@ -43,59 +48,59 @@ static void Colosso_UpdatePathOpponent(void) {
         x = work->gauge.finishX - toFIXED(12);
       }
       if (GameFlag_Get(FLAG_ARENA_REACHED)) {
-        fz = work->gauge.finishZ + toFIXED(16);
+        finishZ = work->gauge.finishZ + toFIXED(16);
         itemActorId = &work->gauge.finishItemActorIdB;
       } else {
-        fz = work->gauge.finishZ - toFIXED(16);
+        finishZ = work->gauge.finishZ - toFIXED(16);
         itemActorId = &work->gauge.finishItemActorIdA;
       }
       actor->timer = *itemActorId;
       actor->acceleration = toFIXED(1) / 4;
       actor->speedLimit = toFIXED(1);
-      FieldActor_SetMoveTargetFX(actor, x, 0, fz);
+      FieldActor_SetMoveTargetFX(actor, x, 0, finishZ);
       GameFlag_Set(FLAG_ARENA_REACHED);
       Actor_StartScript(actor, gColosso_OpponentFinishScript);
       return;
     }
-    x <<= 16;
-    z <<= 16;
-    if (rec->mirror != 0) {
+    x = INTtoFIXED(x);
+    z = INTtoFIXED(z);
+    if (recorder->mirror != 0) {
       x = work->gauge.finishX * 2 - x;
     }
     if (actor->x.fixed != x || actor->z.fixed != z) {
       {
         u16 angle = Trig_Atan(z - actor->z.fixed, x - actor->x.fixed);
-        d = (s16)(angle - actor->facing);
+        turn = (s16)(angle - actor->facing);
       }
-      if (d > FACING_STEP) {
-        d = FACING_STEP;
+      if (turn > FACING_STEP) {
+        turn = FACING_STEP;
       }
-      if (d < -FACING_STEP) {
-        d = -FACING_STEP;
+      if (turn < -FACING_STEP) {
+        turn = -FACING_STEP;
       }
-      actor->facing += d;
+      actor->facing += turn;
       actor->x.fixed = x;
       actor->z.fixed = z;
-      rec->still = 0;
+      recorder->still = 0;
     } else {
-      rec->still++;
+      recorder->still++;
     }
-    if (rec->still > 2) {
+    if (recorder->still > 2) {
       Actor_SelectAnimation(actor, ANIM_STAND);
     } else {
       Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
     }
-  } else if (rec->mode == PATH_RECORDER_RECORD) {
+  } else if (recorder->mode == PATH_RECORDER_RECORD) {
     x = actor->x.part[0].integer;
     z = actor->z.part[0].integer;
-    work->path[(s16)rec->pathIndex++] = x;
-    work->path[(s16)rec->pathIndex++] = z;
-    if ((s16)rec->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {
-      work->path[(s16)rec->pathIndex++] = 0;
-      work->path[(s16)rec->pathIndex] = 0;
-      rec->actorId = work->gauge.opponentActorId;
-      rec->pathIndex = 0;
-      rec->mode = PATH_RECORDER_PLAY;
+    work->path[(s16)recorder->pathIndex++] = x;
+    work->path[(s16)recorder->pathIndex++] = z;
+    if ((s16)recorder->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {
+      work->path[(s16)recorder->pathIndex++] = 0;
+      work->path[(s16)recorder->pathIndex] = 0;
+      recorder->actorId = work->gauge.opponentActorId;
+      recorder->pathIndex = 0;
+      recorder->mode = PATH_RECORDER_PLAY;
     }
   }
 }

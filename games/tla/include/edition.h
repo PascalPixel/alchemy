@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_EDITION_H
 #define ALCHEMY_EDITION_H
 
+/// @file
+/// Which of the six editions is being built, and its language.
+
 #if (defined(TLA_EDITION_JA) + defined(TLA_EDITION_EN) +                       \
      defined(TLA_EDITION_DE) + defined(TLA_EDITION_ES) +                       \
      defined(TLA_EDITION_FR) + defined(TLA_EDITION_IT)) > 1

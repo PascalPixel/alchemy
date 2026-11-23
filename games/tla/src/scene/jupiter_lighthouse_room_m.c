@@ -343,11 +343,13 @@ void JupiterLighthouse_FlashSky(void) {
 extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
 /// Nothing visible happens as Felix starts to push the energy block, by
-/// walking into it or with Move. The cell under it is lowered a little
-/// (`MapGrid_SetCellHeight`) for the push.
+/// walking into it or with Move. The cell the block stands on is kept at its
+/// top, 48 pixels down, a step above the walkway 64 pixels down (cell (60, 15)
+/// as the room is entered); as the push starts the game sets that cell back to
+/// the walkway's 64 pixels down, so the cell the block leaves is plain walkway
+/// again. Where the block stops, JupiterLighthouse_FinishMovingBlock raises its
+/// new cell to 48 pixels down.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
-  // XXX: what lowering the energy block's cell changes for the push; a
-  // recording of the block pushed off its cell would settle it.
   struct Actor *actor = Actor_Get(id);
 
   Call4(MapGrid_SetCellHeight, actor->x.fixed, actor->z.fixed, 0, -8);

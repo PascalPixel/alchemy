@@ -7,6 +7,10 @@
 #include "sound/sound_driver_symbols.h"
 #include "system/ram_buffer.h"
 
+/// The word a soft reset leaves in gCartridgeResetMarker: a date, 4 July 1967,
+/// its digits packed four bits each.
+#define CARTRIDGE_RESET_MARK 0x19670704
+
 /// DISPSTAT's low byte: its flags and interrupt enables, without the VCount
 /// line above them.
 #define DISPSTAT_FLAGS 0xff
@@ -50,8 +54,8 @@ void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 }
 
 /// Waits for the next VBlank; outside the sound test it first runs the music
-/// ramps and the sound driver's VBlank update, rendering the mix itself when
-/// the driver does not.
+/// ramps and the sound driver's VBlank update, and mixes this VBlank's sound
+/// when the driver is free.
 void System_WaitForFrameInterrupt(void) {
   u32 saved;
   u8 *sound;
@@ -95,15 +99,15 @@ enum {
 };
 
 /// The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it
-/// runs to 227.
-#define VBLANK_LINES 68
+/// runs to DISPLAY_TOTAL_LINES - 1.
+#define VBLANK_LINES (DISPLAY_TOTAL_LINES - DISPLAY_HEIGHT)
 
 /// Restarts the cartridge: marks gCartridgeResetMarker, stops direct sound and
 /// jumps to the cartridge's start with interrupts off. `entry` is the caller's
 /// local for the start address.
 #define System_Reset(entry)                                                    \
   {                                                                            \
-    gCartridgeResetMarker = 0x19670704;                                        \
+    gCartridgeResetMarker = CARTRIDGE_RESET_MARK;                              \
     Sound_SuspendDirectSoundFar();                                             \
     (entry) = Cart_Start;                                                      \
     Io_Write16(0, &REG_IME);                                                   \
@@ -267,8 +271,9 @@ void wait(s32 frames) {
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gInput.repeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank, as The Broken Seal's twin does. When the
-/// repeat timer has run out, the held keys repeat into gInput.repeat.
+/// Turns the keys the VBlank handler read into repeats, once a frame after
+/// VBlank. When the repeat timer has run out, the held keys repeat into
+/// gInput.repeat.
 /// gInput.direction is the same keys with at most one D-pad direction: of
 /// several held directions it keeps the one added last (previousDirection
 /// remembers it), and with all four it keeps none. Last, the keys newly held
@@ -464,6 +469,7 @@ void Input_HandleKeyInterrupt(void) {
   }
 }
 
+#undef CARTRIDGE_RESET_MARK
 #undef VBLANK_LINES
 #undef DISPSTAT_FLAGS
 #undef KEY_WORD_BITS

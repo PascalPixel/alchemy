@@ -253,7 +253,8 @@ extern u8 *gSoundInfoPointer;
 s32 SoundDriver_EnterVBlankUpdate(void);
 
 /// The resident mixer in IWRAM, which the frame wait runs after
-/// SoundDriver_EnterVBlankUpdate returns 0.
+/// SoundDriver_EnterVBlankUpdate returns 0. It never reads its argument; the
+/// callers pass 8.
 void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
 /// The VBlank handler's sound step, as m4aSoundVSync: counts down the PCM

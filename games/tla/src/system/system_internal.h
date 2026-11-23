@@ -2,9 +2,9 @@
 #define ALCHEMY_SYSTEM_INTERNAL_H
 
 /// @file
-/// What every part of the System object shares: its includes and the one
-/// variable two parts declare. system.c includes it before the parts, and each
-/// part includes it too, so that a part read on its own still resolves.
+/// What every part of the System object shares: its includes. system.c
+/// includes it before the parts, and each part includes it too, so that a part
+/// read on its own still resolves.
 
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -46,6 +46,8 @@
 #include "system/matrix.h"
 #include "graphics/vram_tab.h"
 
-extern u8 gDebugTextEnabled;
+/// The screen block of the debug text's map, which the link test also draws
+/// on.
+#define DEBUG_TEXT_SCREEN_BLOCK 4
 
 #endif

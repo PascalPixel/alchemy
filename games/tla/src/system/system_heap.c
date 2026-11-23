@@ -30,23 +30,23 @@ s32 Heap_GetRemainingEwram(void) {
   return EWRAM_END - (s32)work->nextEwram;
 }
 
-/// Returns heap slot `kind`'s block, first allocating `size` bytes for it
+/// Returns heap slot `slot`'s block, first allocating `size` bytes for it
 /// (rounded up to words), from IWRAM when they fit and EWRAM otherwise.
-void *HeapSlot_Alloc(s32 kind, s32 size) {
+void *HeapSlot_Alloc(s32 slot, s32 size) {
   struct HeapSlots *work;
   s32 alignedSize;
   u32 address;
   u32 nextAddress;
   u32 next;
-  u32 cachedAddress;
+  u32 block;
 
   work = Ram_HeapSlots;
-  cachedAddress = (u32)HEAP_SLOT(work, kind);
-  if (cachedAddress == 0) {
-    cachedAddress = (u32)work->nextIwram;
+  block = (u32)HEAP_SLOT(work, slot);
+  if (block == 0) {
+    block = (u32)work->nextIwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
-    next = cachedAddress + alignedSize;
-    // A block ending exactly at the pool's end is refused too
+    next = block + alignedSize;
+    // A block ending exactly at the pool's end is refused too.
     if (next >= (u32)Ram_IwramHeapEnd) {
       address = (u32)work->nextEwram;
       nextAddress = address + alignedSize;
@@ -54,29 +54,29 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
         return NULL;
       }
       work->nextEwram = (void *)nextAddress;
-      HEAP_SLOT(work, kind) = (void *)address;
+      HEAP_SLOT(work, slot) = (void *)address;
       return (void *)address;
     }
     work->nextIwram = (void *)next;
-    HEAP_SLOT(work, kind) = (void *)cachedAddress;
-    return (void *)cachedAddress;
+    HEAP_SLOT(work, slot) = (void *)block;
+    return (void *)block;
   }
-  return (void *)cachedAddress;
+  return (void *)block;
 }
 
 /// As HeapSlot_Alloc, but tries EWRAM first, for blocks that need
 /// room more than speed: the battle, shop and save work, among others.
-void *HeapSlot_AllocEwram(s32 kind, s32 size) {
+void *HeapSlot_AllocEwram(s32 slot, s32 size) {
   struct HeapSlots *work;
   u32 alignedSize;
   u32 next;
   u32 address;
   u32 nextAddress;
-  u32 cachedAddress;
+  u32 block;
 
   work = Ram_HeapSlots;
-  cachedAddress = (u32)HEAP_SLOT(work, kind);
-  if (cachedAddress == 0) {
+  block = (u32)HEAP_SLOT(work, slot);
+  if (block == 0) {
     alignedSize = (u32)size + 3;
     address = (u32)work->nextEwram;
     alignedSize = (alignedSize >> 2) * 4;
@@ -88,14 +88,14 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
         return NULL;
       }
       work->nextIwram = (void *)nextAddress;
-      HEAP_SLOT(work, kind) = (void *)address;
+      HEAP_SLOT(work, slot) = (void *)address;
       return (void *)address;
     }
     work->nextEwram = (void *)next;
-    HEAP_SLOT(work, kind) = (void *)address;
+    HEAP_SLOT(work, slot) = (void *)address;
     return (void *)address;
   }
-  return (void *)cachedAddress;
+  return (void *)block;
 }
 
 /// Fills the free space of both heaps, from each pool's next address to its

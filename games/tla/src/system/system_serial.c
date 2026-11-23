@@ -700,7 +700,8 @@ void SerialTest_Run(void) {
   Serial_Initialize();
   // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
   remaining = LINK_TEST_TILES - 1;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
+  tile = (u16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) +
+         16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
   value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
                 (LINK_TEST_TILE + LINK_TEST_TILES - 1));
   do {

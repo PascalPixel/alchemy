@@ -8,7 +8,7 @@ void StoneHead_Place(s32 id, s32 x, s32 y, s32 z) {
   s32 cellX = x / toFIXED(16);
   s32 cellZ = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
 
-  cell += cellX + (cellZ << 7);
+  cell += cellX + cellZ * MAPGRID_SIZE;
   cell->collisionCode = CELL_BEHAVIOR_WALL;
   actor->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
   actor->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);

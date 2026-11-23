@@ -24,7 +24,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
     cell = map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;
-  cell += x + (z << 7);
+  cell += x + z * MAPGRID_SIZE;
   old = (cell->collisionCode << 8) | cell->attributeB;
   cell->collisionCode = value >> 8;
   cell->attributeB = value;

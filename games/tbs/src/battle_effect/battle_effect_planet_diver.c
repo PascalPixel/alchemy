@@ -4,7 +4,8 @@
 
 #include "battle_effect_internal.h"
 
-/// One chip of the impact, over a particle's entry with its velocities moved.
+/// One chip of Planet Diver's impact. Chips are kept in particle-sized slots,
+/// but with their own layout: the x velocity where a particle keeps z.
 struct ImpactChip {
   FIXED x;             ///< canvas position, 16.16 fixed point
   FIXED y;             ///< canvas position, 16.16; the ground is y 112
@@ -32,25 +33,25 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct BattleEffectWork *work;
   void *canvas;
-  u8 *sprites;
+  u8 *motes;
   struct Actor *target;
-  FIXED dx;
-  struct Actor *actor;
-  u8 *palette;
+  FIXED stepX;
+  struct Actor *user;
+  u8 *resource;
   s32 frame;
   s32 i;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
-                      sprites);
-  palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
+                      motes);
+  resource = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -61,12 +62,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
-  actor = GetBattleObjectSlotFar(work->args->user)->actor;
+  user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  if (actor->x.fixed > 0)
-    dx = -toFIXED(15);
+  if (user->x.fixed > 0)
+    stepX = -toFIXED(15);
   else
-    dx = toFIXED(15);
+    stepX = toFIXED(15);
 
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -96,32 +97,32 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     }
     // The user leaps, heading out past its own position.
     if (frame == 4) {
-      actor->velocityY = toFIXED(20);
-      actor->acceleration = toFIXED(1);
-      actor->speedLimit = toFIXED(3);
-      actor->gravity = BATTLE_UNIT_GRAVITY;
-      actor->steeringFlags = 0;
-      actor->snapToTarget = 0;
-      Actor_SetMoveTargetFar(actor, actor->x.fixed * 3, 0, actor->z.fixed);
-      Actor_SelectAnimationFar(actor, POSE_LEAP);
+      user->velocityY = toFIXED(20);
+      user->acceleration = toFIXED(1);
+      user->speedLimit = toFIXED(3);
+      user->gravity = BATTLE_UNIT_GRAVITY;
+      user->steeringFlags = 0;
+      user->snapToTarget = 0;
+      Actor_SetMoveTargetFar(user, user->x.fixed * 3, 0, user->z.fixed);
+      Actor_SelectAnimationFar(user, POSE_LEAP);
       work->shakeFrames = 4;
       Sound_PlayFar(SE_WHOOSH);
     }
     if (frame == 16) {
-      palette = Resource_GetTableEntry(RESOURCE_FLAMEBALL_SHEET);
-      Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-      palette += SHEET_PALETTE_BYTES;
-      Decompress_TaggedLz(palette, work->sheet);
-      actor->gravity = 0;
-      actor->velocityX = 0;
-      actor->velocityY = 0;
-      actor->z.fixed = target->z.fixed;
-      Actor_StartIdleFar(actor);
+      resource = Resource_GetTableEntry(RESOURCE_FLAMEBALL_SHEET);
+      Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+      resource += SHEET_PALETTE_BYTES;
+      Decompress_TaggedLz(resource, work->sheet);
+      user->gravity = 0;
+      user->velocityX = 0;
+      user->velocityY = 0;
+      user->z.fixed = target->z.fixed;
+      Actor_StartIdleFar(user);
     }
     if (frame > 17) {
-      if (actor->y.fixed > 0) {
-        actor->x.fixed += dx;
-        actor->y.fixed -= toFIXED(8);
+      if (user->y.fixed > 0) {
+        user->x.fixed += stepX;
+        user->y.fixed -= toFIXED(8);
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
         // On EFFECT_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
@@ -139,8 +140,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
           screenPosition.y += 8;
         }
       }
-      if (actor->y.fixed < 0) {
-        actor->y.fixed = 0;
+      if (user->y.fixed < 0) {
+        user->y.fixed = 0;
         // Chips fly off the landing.
         for (i = 0; i != PLANET_DIVER_CHIPS; i++) {
           struct ImpactChip *chip = &PLANET_DIVER_IMPACT_CHIPS[i];
@@ -180,7 +181,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         } else if ((chip->x >= 0 && chip->x < toFIXED(127)) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, FIXEDtoINT(chip->x),
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, motes, FIXEDtoINT(chip->x),
                            FIXEDtoINT(chip->y), size);
         }
       }
@@ -198,7 +199,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 #define HAUNT_SKULLS 8 ///< skulls drawn around each target
 #define HAUNT_SLOTS 64 ///< particles reserved for each target
 
-/// Skulls close in on each target in turn.
+/// The view ripples as skulls close in on each target in turn.
 ///
 /// Abilities: Haunt.
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
@@ -208,7 +209,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   BlitterPair draw;
-  u8 *palette;
+  u8 *resource;
   s32 i;
   s32 k;
 
@@ -216,12 +217,12 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  palette = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  resource = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet);
+  resource = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -325,7 +326,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  void *palette;
+  void *resource;
   BlitterPair draw;
   s32 point[3];
   struct ScreenPoint screen;
@@ -337,9 +338,9 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
-  palette = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz((u8 *)palette + SHEET_PALETTE_BYTES, work->sheet);
+  resource = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  Decompress_TaggedLz((u8 *)resource + SHEET_PALETTE_BYTES, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -393,19 +394,21 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
         for (i = 0; i != ORBITING_SPIRALS; i++) {
           s32 x;
           s32 y;
-          s32 half;
+          s32 phase;
 
           spin = frame * (TRIG_TURN / 128) + i * (TRIG_TURN / ORBITING_SPIRALS);
           x = (screen.x +
                FIXEDtoINT(Trig_Sin(spin) * ORBITING_SPIRALS_RADIUS)) +
               offsetX;
           y = screen.y + FIXEDtoINT(Trig_Cos(spin) * ORBITING_SPIRALS_RADIUS);
-          half = frame / 16;
-          draw[half & 1](canvas,
-                         work->sheet +
-                             (frame / 4 - half * 4) * PICTURE_BYTES(SPIRAL),
-                         x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
-                         SPIRAL_WIDTH, SPIRAL_HEIGHT);
+          // Each spiral turns through its four pictures, mirrored every other 16
+          // frames.
+          phase = frame / 16;
+          draw[phase & 1](canvas,
+                          work->sheet +
+                              (frame / 4 - phase * 4) * PICTURE_BYTES(SPIRAL),
+                          x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
+                          SPIRAL_WIDTH, SPIRAL_HEIGHT);
         }
       }
     }

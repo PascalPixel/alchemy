@@ -207,15 +207,15 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
       puff = &work->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
         if (puff->variant < ICE_PUFF_FRAMES) {
-          s32 image = puff->variant / 2;
-          s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
-          s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
+          s32 picture = puff->variant / 2;
+          s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[picture] >> 1);
+          s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[picture] >> 1);
 
           ((DrawRectangle)
                draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
-              canvas, sparkles + gBattleEffect_SparklePictures[image], x, y,
-              gBattleEffect_SparkleSizes[image],
-              gBattleEffect_SparkleSizes[image]);
+              canvas, sparkles + gBattleEffect_SparklePictures[picture], x, y,
+              gBattleEffect_SparkleSizes[picture],
+              gBattleEffect_SparkleSizes[picture]);
         }
         if (puff->variant > -1)
           puff->variant--;

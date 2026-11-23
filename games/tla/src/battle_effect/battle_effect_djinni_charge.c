@@ -1,12 +1,10 @@
 /// @file
-/// Core and Cannon: a Mars Djinni charging the target.
+/// Core and Cannon, a Mars Djinni charging the target, and the entries of Rime
+/// and Haze.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
-
-struct MeshTriangle;
-struct StripQuad;
 
 #define DJINNI_CHARGE_DJINNI_PICTURE 4096 ///< the small Mars Djinni
 
@@ -53,6 +51,8 @@ struct StripQuad;
 /// swells, strikes it seven times, throwing debris, and turns into a glowing
 /// orb that burns out; in Cannon it shoots straight in, a cone of blast
 /// trailing from it, and strikes once in a burst of flame and debris.
+///
+/// Abilities: Core, Cannon.
 void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   u8 *mesh;
   u8 *projected;
@@ -64,7 +64,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   BlitterPair blit;
   s32 frame;
   struct BattleCamera *camera;
-  u8 *sprites;
+  u8 *motes;
   s32 focus[3];
   struct ScreenPoint screen;
   struct ScreenPoint debris;
@@ -80,7 +80,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  sprites = Ram_HeapSlots->battleSheet;
+  motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
@@ -113,7 +113,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     work->particles[DJINNI_CHARGE_START].x = focus[0];
     work->particles[DJINNI_CHARGE_START].y = focus[1];
     work->particles[DJINNI_CHARGE_START].z = focus[2];
-    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
                                work->sheet + DJINNI_CHARGE_DJINNI_PICTURE, 1,
                                1);
@@ -345,7 +345,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         EffectPosition_ProjectPoint(&work->particles[i], &debris);
         size >>= 3;
         size += 2;
-        blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
+        blit[0](canvas, motes + gBattleEffect_MotePictures[size - 1],
                 debris.x / 2 - size / 2, debris.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(&work->particles[i], 62,
                                       gDjinniCharge_DebrisGravity[i & 3]);
@@ -466,13 +466,18 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// Rime's Djinni rises over the targets while its seal spins and shrinks onto
+/// the target (BattleEffect_RunDjinniSign).
+///
 /// Abilities: Rime.
 void BattleEffect_RunRime(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniSign(args, DJINNI_SIGN_RIME);
 }
 
+/// Haze's Djinni rises over the targets while sixteen stars bloom and fade
+/// (BattleEffect_RunDjinniSign).
+///
 /// Abilities: Haze.
 void BattleEffect_RunHaze(struct BattleEffectParams *args) {
   BattleEffect_RunDjinniSign(args, DJINNI_SIGN_HAZE);
 }
-#undef BLITTER

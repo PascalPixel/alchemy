@@ -1,5 +1,5 @@
 /// @file
-/// Smoke Bomb and Blast.
+/// Smoke Bomb and Blast, and the routine that creates an effect's sprites.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -29,7 +29,7 @@ void BattleEffect_RunBlast(struct BattleEffectParams *args) {
 }
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define ERUPTION_FIELD_MOTE_PICTURES 12800
+#define ERUPTION_MOTE_PICTURES 12800
 
 /// The puffs of smoke given a start, of which the variant's count in
 /// gEruption_Counts are thrown.
@@ -139,7 +139,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                 work->sheet +
                     (gBattleEffect_MotePictures[size - 1] +
                      (i & 1) * MOTE_SET_BYTES) +
-                    ERUPTION_FIELD_MOTE_PICTURES,
+                    ERUPTION_MOTE_PICTURES,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(mote, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
@@ -202,22 +202,23 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the effect's sprites in its work block: entryCount sprites of one
-/// resource, each showing its own animation at the given priority.
-void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
+/// Creates the effect's sprites in its work block: count sprites of spriteId,
+/// the nth showing its animation n, all at the given priority.
+void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  s32 entryIndex = 0;
+  s32 i = 0;
 
-  if (entryCount == 0)
+  if (count == 0)
     return;
-  for (; entryIndex != entryCount; entryIndex++) {
-    struct FieldSprite *sprite = (struct FieldSprite *)Sprite_CreateFar(source);
+  for (; i != count; i++) {
+    struct FieldSprite *sprite =
+        (struct FieldSprite *)Sprite_CreateFar(spriteId);
 
-    work->sprites[entryIndex] = sprite;
+    work->sprites[i] = sprite;
     if (sprite != NULL) {
       sprite->flags = 0;
-      Sprite_StartAnimationFar(sprite, entryIndex);
-      ((struct FieldSprite *)work->sprites[entryIndex])->priority = priority;
+      Sprite_StartAnimationFar(sprite, i);
+      ((struct FieldSprite *)work->sprites[i])->priority = priority;
     }
   }
 }
@@ -225,7 +226,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
 /// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.
 void BattleEffect_DoNothing(void) {}
 
-#undef ERUPTION_FIELD_MOTE_PICTURES
+#undef ERUPTION_MOTE_PICTURES
 #undef ERUPTION_PUFFS
 #undef ERUPTION_PUFF_FRAMES
 #undef ERUPTION_MOTE_LARGEST

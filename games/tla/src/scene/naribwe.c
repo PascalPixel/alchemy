@@ -24,6 +24,7 @@
 #include "field/sprite.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/map_grid.h"
 
 /// The villager has asked where the party comes from.
 #define FLAG_ASKED_WHERE_FROM 0x85e
@@ -39,7 +40,7 @@
 #define FLAG_NARIBWE_ROPE_TIED FLAG_SCENE_TEMP_02
 
 /// Naribwe, by the rows of the village's placements (the same before and
-/// after the return from Kibombo); the last row goes to Isaac's party slot.
+/// after the return from Kibombo).
 enum NaribweActorId {
   /// The fire in the ring of stones in the middle of the village.
   ACTOR_BONFIRE = ACTOR_FIRST_PLACED,
@@ -95,28 +96,21 @@ enum NaribweActorId {
 
 extern u32 gSceneExits[];
 
-/// A door of Naribwe: how it opens, drawn over its cells, and where.
-struct WarpEntry {
-  const void *script;
-  u16 x;
-  u16 z;
-};
-
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_End(void);
 void Actor_DisableById(s32 id);
 void Rope_Initialize(void);
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void Shop_Run(s32 a, s32 b);
-void Sanctum_Run(s32 a);
+void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
+void Shop_Run(s32 stockRow, s32 keeper);
+void Sanctum_Run(s32 keeper);
 
 extern struct ActorPlacement gNaribwe_Placements[];
 extern struct ActorPlacement gNaribwe_FireLitPlacements[];
 extern struct ActorPlacement gNaribwe_PlacementsOnReturn[];
 extern struct Trigger gNaribwe_Triggers[];
 extern struct Trigger gNaribwe_TriggersOnReturn[];
-extern struct WarpEntry gNaribwe_Doors[];
+extern struct MapGridCellAnimation gNaribwe_Doors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -341,8 +335,8 @@ void Naribwe_EnterDoor(void) {
   index = *trigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
-  MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
-                       gNaribwe_Doors[index].z);
+  MapGrid_AnimateCells(gNaribwe_Doors[index].steps, gNaribwe_Doors[index].x,
+                       gNaribwe_Doors[index].y);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -414,7 +408,7 @@ extern s32 gNaribwe_BrazierBurns[];
 extern s32 gNaribwe_HoldOverBrazier[];
 
 extern s32 gNaribwe_WeedsAnimation[];
-extern s16 gNaribwe_DoorOpening[];
+extern u16 gNaribwe_DoorOpening[];
 
 /// The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
@@ -508,14 +502,16 @@ s32 gNaribwe_WeedsAnimation[] = {
     SC_END,
 };
 
-/// How the inn's and the fortune-teller's doors open.
-s16 gNaribwe_DoorOpening[] = {
-    8, 42, 1, 2, 6, -1,
+/// How the inn's and the fortune-teller's doors open: the open door's cells
+/// are copied over the closed one's, and held six frames.
+u16 gNaribwe_DoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(8, 42, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The inn's door and the fortune-teller's, which open as the party walks
-/// through.
-struct WarpEntry gNaribwe_Doors[] = {
+/// through, and the cells their opening is drawn at, by exit.
+struct MapGridCellAnimation gNaribwe_Doors[] = {
     {gNaribwe_DoorOpening, 18, 51},
     {gNaribwe_DoorOpening, 21, 34},
 };

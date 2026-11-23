@@ -566,16 +566,17 @@ s32 Yallam_HasArrived(struct Actor *actor) {
 }
 
 /// One step of a runner's path round the meadow's rings in the song game, by
-/// its step counter, stopping or going on by the game's mode.
+/// its step counter, stopping or going on by the game's mode. Each verse of
+/// the songs ends at a step the singing waits for (Yallam_ShowSongGame).
 void Yallam_RunSongPath(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
-  u8 s = actor->riseCounter;
+  u8 state = actor->riseCounter;
   s16 *timer;
 
-  if (s == RUNNER_HALTED)
+  if (state == RUNNER_HALTED)
     return;
   timer = &actor->timer;
-  switch (s) {
+  switch (state) {
   case RUNNER_GOING:
     Actor_SelectAnimation(actor, ANIM_WALK);
     break;
@@ -590,6 +591,8 @@ void Yallam_RunSongPath(s32 actorId) {
     return;
   }
   switch (*timer) {
+  // The stars song: north past the twins and two swirls, then twice round
+  // the trunk.
   case 0:
     /* FAKEMATCH(barrier): an empty asm that clobbers r5; as no asm. */
     asm("" : : : "r5");
@@ -660,6 +663,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 344, 824);
     (*timer)++;
     return;
+  // East, then three to the north.
   case 34:
     Actor_SetSpeedAndAcceleration(actorId, 1.8, 1.8);
     Actor_SetDestination(actorId, 364, 820);
@@ -677,6 +681,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 392, 744);
     (*timer)++;
     return;
+  // Thrice round, then north to the stars.
   case 42:
     Actor_SetSpeedAndAcceleration(actorId, 1.2, 1.2);
     Actor_SetDestination(actorId, 372, 740);
@@ -810,6 +815,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 392, 664);
     (*timer)++;
     return;
+  // The moon song's opening line.
   case 108:
     Actor_SetDestination(actorId, 372, 668);
     (*timer)++;
@@ -822,6 +828,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 320, 680);
     (*timer)++;
     return;
+  // West from the stars past three swirls, then twice round.
   case 114:
     Actor_SetDestination(actorId, 316, 692);
     (*timer)++;
@@ -894,6 +901,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 296, 696);
     (*timer)++;
     return;
+  // South, then one swirl west.
   case 150:
     Actor_SetDestination(actorId, 296, 728);
     (*timer)++;
@@ -902,6 +910,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 272, 728);
     (*timer)++;
     return;
+  // Thrice round, then south to the moon.
   case 154:
     Actor_SetDestination(actorId, 268, 740);
     (*timer)++;
@@ -1026,10 +1035,12 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 248, 792);
     (*timer)++;
     return;
+  // The sun song's opening line.
   case 216:
     Actor_SetDestination(actorId, 248, 840);
     (*timer)++;
     return;
+  // South from the moon through two swirls, then twice round.
   case 218:
     Actor_SetDestination(actorId, 228, 844);
     (*timer)++;
@@ -1103,6 +1114,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 224, 856);
     (*timer)++;
     return;
+  // West, then six to the north.
   case 254:
     Actor_SetSpeedAndAcceleration(actorId, 1.8, 1.8);
     Actor_SetDestination(actorId, 200, 856);
@@ -1112,6 +1124,7 @@ void Yallam_RunSongPath(s32 actorId) {
     Actor_SetDestination(actorId, 200, 744);
     (*timer)++;
     return;
+  // Thrice round, then north to the sun.
   case 258:
     Actor_SetSpeedAndAcceleration(actorId, 1.2, 1.2);
     Actor_SetDestination(actorId, 180, 740);
@@ -1417,37 +1430,37 @@ void Yallam_RunSongPath(s32 actorId) {
 
 /// A task: sets every runner's mode from the lead child's and moves them on.
 void Yallam_UpdateSongGame(void) {
-  struct Actor *a = Actor_Get(ACTOR_SONG_LEADER);
-  struct Actor *b = Actor_Get(ACTOR_GAME_CHILD);
-  struct Actor *c = Actor_Get(ACTOR_CIRCLES_CHILD);
-  struct Actor *d = Actor_Get(ACTOR_STORY_CHILD);
+  struct Actor *songLeader = Actor_Get(ACTOR_SONG_LEADER);
+  struct Actor *gameChild = Actor_Get(ACTOR_GAME_CHILD);
+  struct Actor *circlesChild = Actor_Get(ACTOR_CIRCLES_CHILD);
+  struct Actor *storyChild = Actor_Get(ACTOR_STORY_CHILD);
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 value = (s16)a->userValue;
+  s32 command = (s16)songLeader->userValue;
 
-  switch (value) {
+  switch (command) {
   case SONG_GAME_GO:
-    a->riseCounter = RUNNER_GOING;
-    b->riseCounter = RUNNER_GOING;
-    c->riseCounter = RUNNER_GOING;
-    d->riseCounter = RUNNER_GOING;
+    songLeader->riseCounter = RUNNER_GOING;
+    gameChild->riseCounter = RUNNER_GOING;
+    circlesChild->riseCounter = RUNNER_GOING;
+    storyChild->riseCounter = RUNNER_GOING;
     leader->riseCounter = RUNNER_GOING;
     break;
   case SONG_GAME_HALT:
-    a->riseCounter = RUNNER_HALTING;
-    b->riseCounter = RUNNER_HALTING;
-    c->riseCounter = RUNNER_HALTING;
-    d->riseCounter = RUNNER_HALTING;
+    songLeader->riseCounter = RUNNER_HALTING;
+    gameChild->riseCounter = RUNNER_HALTING;
+    circlesChild->riseCounter = RUNNER_HALTING;
+    storyChild->riseCounter = RUNNER_HALTING;
     leader->riseCounter = RUNNER_HALTING;
     break;
   case SONG_GAME_HALT_AND_STAND:
-    a->riseCounter = RUNNER_HALTING_TO_STAND;
-    b->riseCounter = RUNNER_HALTING_TO_STAND;
-    c->riseCounter = RUNNER_HALTING_TO_STAND;
-    d->riseCounter = RUNNER_HALTING_TO_STAND;
+    songLeader->riseCounter = RUNNER_HALTING_TO_STAND;
+    gameChild->riseCounter = RUNNER_HALTING_TO_STAND;
+    circlesChild->riseCounter = RUNNER_HALTING_TO_STAND;
+    storyChild->riseCounter = RUNNER_HALTING_TO_STAND;
     leader->riseCounter = RUNNER_HALTING_TO_STAND;
     break;
   }
-  a->userValue = 0;
+  songLeader->userValue = 0;
   Yallam_RunSongPath(ACTOR_SONG_LEADER);
   Yallam_RunSongPath(ACTOR_GAME_CHILD);
   Yallam_RunSongPath(ACTOR_CIRCLES_CHILD);

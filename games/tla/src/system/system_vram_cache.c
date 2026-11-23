@@ -105,58 +105,58 @@ s32 VramCache_FreeBlocks(s32 id) {
   return 0;
 }
 
-/// Frees cache entry `no` and the VRAM it holds; returns -1 for an entry out of
+/// Frees cache entry `id` and the VRAM it holds; returns -1 for an entry out of
 /// range.
-s32 VramCache_FreeEntry(u32 no) {
-  struct VramCacheEntry *entry = &gVramCacheEntries[no];
+s32 VramCache_FreeEntry(u32 id) {
+  struct VramCacheEntry *entry = &gVramCacheEntries[id];
 
-  if (no >= VRAM_CACHE_ENTRY_COUNT)
+  if (id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->offset != VRAM_CACHE_OFFSET_FREE) {
-    VramCache_FreeBlocks(no);
+    VramCache_FreeBlocks(id);
     entry->offset |= VRAM_CACHE_OFFSET_FREE;
     entry->size = 0;
   }
   return 0;
 }
 
-/// Gives back entry `no`'s blocks but keeps the entry taken, with size 1, so a
+/// Gives back entry `id`'s blocks but keeps the entry taken, with size 1, so a
 /// later VramCache_Load can refill it.
-s32 VramCache_ReleaseVram(u32 no) {
-  struct VramCacheEntry *entry = &gVramCacheEntries[no];
+s32 VramCache_ReleaseVram(u32 id) {
+  struct VramCacheEntry *entry = &gVramCacheEntries[id];
 
-  if (no >= VRAM_CACHE_ENTRY_COUNT)
+  if (id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
-    VramCache_FreeBlocks(no);
+    VramCache_FreeBlocks(id);
     entry->size = 1;
   }
   return 0;
 }
 
-/// Loads size bytes from src into the object VRAM of cache entry no, reusing
-/// its blocks when the size is unchanged (src 0 loads nothing, -1 clears);
-/// returns the tile number, or 0 when it does not fit.
-s32 VramCache_Load(u32 no, u32 size, const void *src) {
+/// Loads `size` bytes from `src` into the sprite VRAM of cache entry `id`,
+/// reusing its blocks when the size is unchanged (`src` 0 loads nothing, -1
+/// clears); returns the first sprite tile number, or 0 when it does not fit.
+s32 VramCache_Load(u32 id, u32 size, const void *src) {
   struct VramCacheEntry *entry;
   s32 offset;
   void *dst;
 
-  entry = &gVramCacheEntries[no];
-  if (no >= VRAM_CACHE_ENTRY_COUNT)
+  entry = &gVramCacheEntries[id];
+  if (id >= VRAM_CACHE_ENTRY_COUNT)
     return 0;
   if (size > VRAM_CACHE_LOAD_MAX)
     return 0;
   // A same-size upload keeps its existing VRAM run.
   if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     if (entry->size != size) {
-      VramCache_FreeEntry(no);
-      offset = VramCache_AllocateBlocks(no, size);
+      VramCache_FreeEntry(id);
+      offset = VramCache_AllocateBlocks(id, size);
     } else {
       offset = entry->offset;
     }
   } else {
-    offset = VramCache_AllocateBlocks(no, size);
+    offset = VramCache_AllocateBlocks(id, size);
   }
 
   if (offset != -1) {
@@ -193,33 +193,33 @@ void VramCache_Reset(void) {
 /// Returns the first free cache entry, or VRAM_CACHE_ENTRY_COUNT when all are
 /// in use.
 s32 VramCache_FindFreeEntry(void) {
-  s32 ret = VRAM_CACHE_ENTRY_COUNT;
-  s32 no;
+  s32 found = VRAM_CACHE_ENTRY_COUNT;
+  s32 id;
   struct VramCacheEntry *entry = gVramCacheEntries;
 
-  for (no = 0; no < VRAM_CACHE_ENTRY_COUNT; no++, entry++) {
+  for (id = 0; id < VRAM_CACHE_ENTRY_COUNT; id++, entry++) {
     if (entry->offset == VRAM_CACHE_OFFSET_FREE) {
-      ret = no;
+      found = id;
       break;
     }
   }
-  return ret;
+  return found;
 }
 
 /// Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
 /// its number.
 s32 VramCache_AllocEntry(s32 size) {
-  s32 no;
+  s32 id;
 
-  no = VramCache_FindFreeEntry();
-  VramCache_Load(no, size, 0);
-  return no;
+  id = VramCache_FindFreeEntry();
+  VramCache_Load(id, size, 0);
+  return id;
 }
 
-/// Copies `src` again into entry `no`'s VRAM, keeping its size. Returns the
+/// Copies `src` again into entry `id`'s VRAM, keeping its size. Returns the
 /// first sprite tile number.
-s32 VramCache_Reload(s32 no, s32 src) {
-  return VramCache_Load(no, gVramCacheEntries[no].size, (const void *)src);
+s32 VramCache_Reload(s32 id, s32 src) {
+  return VramCache_Load(id, gVramCacheEntries[id].size, (const void *)src);
 }
 
 /// Takes the next of the OBJ_AFFINE_MATRIX_COUNT sprite affine matrices and

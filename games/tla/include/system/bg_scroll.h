@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BG_SCROLL_H
 #define ALCHEMY_BG_SCROLL_H
 
+/// @file
+/// The four backgrounds' scroll offsets, written to the hardware each VBlank.
+
 #include "types.h"
 
 /// A background's hardware scroll offsets.

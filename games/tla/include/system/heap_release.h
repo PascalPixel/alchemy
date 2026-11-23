@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_HEAP_RELEASE_H
 #define ALCHEMY_HEAP_RELEASE_H
 
+/// @file
+/// The heap's allocators and releases (system/system_heap.c).
+
 #include "edition.h"
 #include "types.h"
 
@@ -21,8 +24,6 @@ void Heap_Initialize(void);
 /// Heap_AllocEwram), with no heap slot.
 static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
                                                s32 size) {
-  // The size passes through the inline's parameter and is built again at the
-  // call, not shared with its other uses.
   return allocate(size);
 }
 

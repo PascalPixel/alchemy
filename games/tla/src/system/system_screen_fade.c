@@ -5,19 +5,13 @@
 #include "system_internal.h"
 
 enum {
-  /// The layers the screen fades take: all but BG0.
+  /// The layers the four plain fades take: all but BG0.
   FADE_GAME_LAYERS = BLDCNT_TGT1_ALL & ~BLDCNT_TGT1_BG0,
-  FADE_LAYER_MASK = BLDCNT_TGT1_ALL,
-  FADE_BRIGHTEN = BLDCNT_EFFECT_LIGHTEN,
-  FADE_DARKEN = BLDCNT_EFFECT_DARKEN,
-  FADE_LEVEL_MAX = 16 ///< BLDY's strongest level: all white or all black.
+  FADE_LAYER_MASK = BLDCNT_TGT1_ALL, ///< the layers a fade can take
+  /// BLDY's strongest level: all white or all black; 0 leaves the screen as
+  /// drawn.
+  FADE_LEVEL_MAX = 16
 };
-
-// ScreenFade_Update advances the fade each VBlank.
-// BLDY 0 leaves brightness unchanged; 16 produces solid white or black.
-//   gScreenFadeToWhite: 0 fades to black; 1 fades to white.
-//   gScreenFadeLayers: BLDCNT target layers (the four helpers below use
-//   FADE_GAME_LAYERS). gScreenFadeVBlanksLeft: VBlanks left.
 
 /// Steps the screen fade once a VBlank, called from the VBlank handler: sets
 /// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
@@ -50,8 +44,7 @@ void ScreenFade_Update(void) {
   }
 }
 
-/// Fades out to black.
-/// vblanks: fade duration in VBlanks.
+/// Fades out to black over `vblanks` VBlanks.
 void ScreenFade_ToBlack(s32 vblanks) {
   gScreenFadeToWhite = 0;
   gScreenFadeLayers = FADE_GAME_LAYERS;
@@ -91,14 +84,12 @@ void ScreenFade_FromWhite(s32 vblanks) {
   gScreenFadeVBlanksLeft = gScreenFadeVBlanks;
 }
 
-/// Starts a fade of any layers by setting the gBlend globals ScreenFade_Update
-/// steps. Reached through the far-call table.
-///   bright  : 0 toward black, 1 toward white
-///   layer   : the BLDCNT layers to fade (low six bits)
-///   start   : the starting brightness; above 16, the current target
-///   target  : the brightness to end at
-///   vblanks : how long the fade takes, in VBlanks; with 0 nothing is
-///             written, but `target` still becomes the current target
+/// Starts a fade of any layers, toward white when `bright` is 1 and toward
+/// black when 0, from level `start` (above FADE_LEVEL_MAX: the level the last
+/// fade ended at) to `target` over `vblanks` VBlanks; `layer` holds the BLDCNT
+/// target layers. With `vblanks` 0 nothing is written, but `target` still
+/// becomes the level a later fade starts from. Reached through the far-call
+/// table.
 void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target,
                       s32 vblanks) {
   gScreenFadeToWhite = bright;

@@ -185,8 +185,6 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
 void Islets_SetDeckBlocksByHeight(void);
 
-struct Actor;
-
 /// An actor script copied whole into the event that runs it
 /// (gIslets_SpinScript).
 struct ActionScript {
@@ -208,51 +206,51 @@ void Actor_DisableById(s32 actorId);
 /// West Indra Islet: the sailor on his boat, his two sons, one pacing the
 /// pier, and the dog that trades.
 enum {
-  ACTOR_SAILOR = 8,
-  ACTOR_SAILORS_SON = 9,
-  ACTOR_SAILORS_OTHER_SON = 10,
-  ACTOR_DOG = 11
+  ACTOR_SAILOR = ACTOR_FIRST_PLACED,
+  ACTOR_SAILORS_SON,
+  ACTOR_SAILORS_OTHER_SON,
+  ACTOR_DOG
 };
 /// E Tundaria Islet: the man in the green vest who walks by the hut, Pengus
 /// and Pengulina, the log pushed into the channel, the drifting icebergs and
 /// the healer.
 enum {
-  ACTOR_MAN_IN_GREEN_VEST = 8,
-  ACTOR_PENGUS = 9,
-  ACTOR_LOG = 10,
+  ACTOR_MAN_IN_GREEN_VEST = ACTOR_FIRST_PLACED,
+  ACTOR_PENGUS,
+  ACTOR_LOG,
   /// The eight icebergs that drift across the water (Islets_DriftIcebergs).
-  ACTOR_FIRST_ICEBERG = 11,
-  ACTOR_LAST_ICEBERG = 18,
-  ACTOR_PENGULINA = 19,
-  ACTOR_PRETTY_STONE_ICON = 20, ///< shows the Pretty Stone over the leader
-  ACTOR_HEALER = 21
+  ACTOR_FIRST_ICEBERG,
+  ACTOR_LAST_ICEBERG = ACTOR_FIRST_ICEBERG + 7,
+  ACTOR_PENGULINA,
+  ACTOR_PRETTY_STONE_ICON, ///< shows the Pretty Stone over the leader
+  ACTOR_HEALER
 };
 /// N Osenia Islet: the young man who dreams of crossing the Sea of Time and
 /// his father, the cow, and a blue orb drawn hidden.
 enum {
-  ACTOR_SON_ON_THE_SEA_OF_FOG = 8,
-  ACTOR_FOG_DREAMER = 9,
-  ACTOR_COW = 10,
-  ACTOR_BLUE_ORB = 11
+  ACTOR_SON_ON_THE_SEA_OF_FOG = ACTOR_FIRST_PLACED,
+  ACTOR_FOG_DREAMER,
+  ACTOR_COW,
+  ACTOR_BLUE_ORB
 };
 /// SE Angara Islet: the two treasure hunters, the bird that trades, the two
 /// crates pushed off their ledges, and the puddle.
 enum {
-  ACTOR_TREASURE_HUNTER = 8,
-  ACTOR_TREASURE_HUNTERS_PARTNER = 9,
-  ACTOR_BIRD = 10,
+  ACTOR_TREASURE_HUNTER = ACTOR_FIRST_PLACED,
+  ACTOR_TREASURE_HUNTERS_PARTNER,
+  ACTOR_BIRD,
   /// An unseen marker the setup parks at the map's corner (0, 0).
-  ACTOR_UNSEEN_MARKER = 11,
-  ACTOR_CRATE_A = 12,
-  ACTOR_CRATE_B = 13,
+  ACTOR_UNSEEN_MARKER,
+  ACTOR_CRATE_A,
+  ACTOR_CRATE_B,
   ACTOR_PUDDLE ///< frozen into an ice pillar by Frost (Islets_FreezePuddle)
 };
 /// The Sea of Time Islet: the old man in the palm forest, Lonesome George, who
 /// carries the party to his secret spot, the Li'l Turtle the party gives him,
 /// and two unseen blocks on the hut's deck.
 enum {
-  ACTOR_OLD_MAN = 8,
-  ACTOR_LONESOME_GEORGE = 9,
+  ACTOR_OLD_MAN = ACTOR_FIRST_PLACED,
+  ACTOR_LONESOME_GEORGE,
   ACTOR_LIL_TURTLE,
   ACTOR_DECK_BLOCK_A,
   ACTOR_DECK_BLOCK_B
@@ -265,16 +263,9 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "text/msg_ids.h"
-#include "types.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
 #include "field/map_grid.h"
-#include "field/scene_tables.h"
 #include "system/input.h"
-#include "text/msg_ids.h"
 #include "system/frame.h"
-#include "system/vector3.h"
 
 void Actor_StartScript(struct Actor *actor, const void *script);
 void PaletteCycle_Stop(void);
@@ -326,6 +317,13 @@ extern struct IsletsDoor gIslets_Doors[];
 extern u16 gPushKinds[];
 
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value);
+/// The map layers Islets_SetCellCollision writes: the ground the party walks
+/// on, and the upper one a crate stands on when it comes down onto another.
+enum {
+  ISLETS_GROUND_LAYER = 1,
+  ISLETS_UPPER_LAYER = 2,
+  ISLETS_BOTH_LAYERS = ISLETS_GROUND_LAYER | ISLETS_UPPER_LAYER
+};
 void Islets_FinishPushingCrate(void);
 void Islets_SetSonsTargetedByHeight(void);
 void Leader_PushObjectAhead(void);
@@ -406,14 +404,11 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIslets_Triggers;
 }
 
-#include "text/msg_ids.h"
-
 /// Talking to Pengus, the penguin on E Tundaria Islet's east shore: until
 /// Pengulina is home he stops, cries "Pen pen!" and goes back to gazing across
 /// the water at her; after, he answers "Pen pen.", or "Pen pen pen..." while
 /// he chases her round the snow.
 void Islets_TalkToPengus(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
@@ -434,14 +429,12 @@ void Islets_TalkToPengus(void) {
     FieldActor_WatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
   }
   Event_End();
-  return;
 }
 
 /// Mind Read on Pengus: "My darling Pengulina hurt her leg on the far shore and
 /// can't swim back." Once she is home he is happy she is all right, or, while
 /// he chases her round the snow, says nothing beats playing there with her.
 void Islets_MindReadPengus(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
@@ -457,14 +450,12 @@ void Islets_MindReadPengus(void) {
     Event_ShowMessage(ACTOR_PENGUS, 0);
   }
   Event_End();
-  return;
 }
 
 /// Talking to Pengulina, the penguin with the bow: on the far shore she cries
 /// "Pen pen pehnnn!"; once home, "Pen pen.", or "Pen pen pehnnnn." while
 /// Pengus chases her.
 void Islets_TalkToPengulina(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
@@ -481,14 +472,12 @@ void Islets_TalkToPengulina(void) {
     Event_ShowMessage(ACTOR_PENGULINA, 0);
   }
   Event_End();
-  return;
 }
 
 /// Mind Read on Pengulina: "Ohh... My leg... I can't get back to my dearest
 /// Pengus..." Once home she is glad to be back with him, or, while he chases
 /// her, grumbles that he smothers her.
 void Islets_MindReadPengulina(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
@@ -503,7 +492,6 @@ void Islets_MindReadPengulina(void) {
     // "Ohh... My leg... I can't get back to my dearest Pengus..."
     Event_ShowMessage(ACTOR_PENGULINA, 0);
   }
-  return;
 }
 
 #include "shared/leader_is_facing_north.h"
@@ -512,7 +500,6 @@ void Islets_MindReadPengulina(void) {
 /// north, she offers a sanctum's healing; from any other side she says she is
 /// there to tend to travelers.
 void Islets_TalkToHealer(void) {
-
   if (Leader_IsFacingNorth()) {
     Sanctum_Run(ACTOR_HEALER);
   } else {
@@ -523,7 +510,6 @@ void Islets_TalkToHealer(void) {
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_End();
   }
-  return;
 }
 
 /// The treasure hunter by the tent on SE Angara Islet blurts out that they are
@@ -531,7 +517,6 @@ void Islets_TalkToHealer(void) {
 /// "What are you saying!? Idiot!", then hops and swears he said nothing about
 /// it; after that he is too busy to talk.
 void Islets_TalkToTreasureHunters(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (!Event_GetFlag(FLAG_TREASURE_HUNTERS_LET_SLIP)) {
@@ -561,7 +546,6 @@ void Islets_TalkToTreasureHunters(void) {
   Actor_FaceDirection(ACTOR_TREASURE_HUNTERS_PARTNER, FACING_SOUTH_SOUTHWEST,
                       0);
   Event_End();
-  return;
 }
 
 /// The treasure hunter's partner by the tent says how huge the Eastern Sea is,
@@ -575,13 +559,11 @@ void Islets_TalkToTreasureHuntersPartner(void) {
   // "You don't look like much of a sailor. You're not a treasure hunter..."
   Event_ShowMessage(ACTOR_TREASURE_HUNTERS_PARTNER, 0);
   Event_End();
-  return;
 }
 
 /// Talking to the orange bird on SE Angara Islet: "Chirp chirp!" Once it has
 /// traded, it turns to watch Felix.
 void Islets_TalkToBird(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_BIRD_TRADED)) {
@@ -591,7 +573,6 @@ void Islets_TalkToBird(void) {
   // "Chirp chirp!"
   Event_ShowMessage(ACTOR_BIRD, 0);
   Event_End();
-  return;
 }
 
 /// Mind Read on the bird on SE Angara Islet with the Pretty Stone in the party:
@@ -730,7 +711,7 @@ void Islets_TradeWithCow(void) {
         Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
         item = FieldActor_Create(SPRITE_UNSEEN_MARKER, toFIXED(104),
                                  toFIXED(24), toFIXED(160));
-        // Default: the object handed back is set for real in HAND_BACK.
+        // Nothing handed back yet: HAND_BACK sets it.
         given = 0;
         if (item != 0) {
           Actor_SetItemIcon(item, ITEM_RED_CLOTH);
@@ -891,7 +872,7 @@ void Islets_TradeWithDog(void) {
   if (FieldPartyInventory_FindMember(ITEM_MILK) != -1) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     trader = Actor_GetById(ACTOR_DOG);
-    // Default: the trader's zero update stores read it.
+    // No turtle held up yet, and the dog west of Felix until seen otherwise.
     gift = 0;
     right = 0;
     Actor_FaceActor(ACTOR_DOG, gMainRoutineWork.leaderActorId, 0);
@@ -926,16 +907,16 @@ void Islets_TradeWithDog(void) {
     Event_ShowMessage(ACTOR_DOG, 0);
     FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineWork.leaderActorId);
     if (item != 0) {
-      void (*emitSmoke)(void);
+      void (*splash)(void);
       item->collisionFlags = ACTOR_NOT_TARGETED | ACTOR_SOLID;
       FieldActor_SetPositionAndResetMotion(item, toFIXED(104), 0, toFIXED(840));
-      emitSmoke = Actor_EmitWadingSplashes;
+      splash = Actor_EmitWadingSplashes;
       if (right) {
-        leader->update = emitSmoke;
+        leader->update = splash;
         Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 840);
         leader->update = 0;
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-        leader->update = emitSmoke;
+        leader->update = splash;
         STEP(gMainRoutineWork.leaderActorId, 288, 840);
         FieldActor_SetPositionAndResetMotion(item, toFIXED(280), 0,
                                              toFIXED(840));
@@ -943,14 +924,14 @@ void Islets_TradeWithDog(void) {
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.leaderActorId);
         System_Wait(1);
-        trader->update = emitSmoke;
+        trader->update = splash;
         STEP(ACTOR_DOG, 292, 844);
       } else {
-        leader->update = emitSmoke;
+        leader->update = splash;
         Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 840);
         leader->update = 0;
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
-        leader->update = emitSmoke;
+        leader->update = splash;
         STEP(gMainRoutineWork.leaderActorId, 272, 840);
         FieldActor_SetPositionAndResetMotion(item, toFIXED(280), 0,
                                              toFIXED(840));
@@ -958,7 +939,7 @@ void Islets_TradeWithDog(void) {
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.leaderActorId);
         System_Wait(1);
-        trader->update = emitSmoke;
+        trader->update = splash;
         STEP(ACTOR_DOG, 268, 844);
       }
     }
@@ -1167,7 +1148,7 @@ void Islets_GiveTurtle(void) {
                           EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
       leader->update = Actor_EmitWadingSplashes;
-      // Default: SPAWN sets a to the small turtle it creates.
+      // No little turtle yet: SPAWN creates it.
       a = 0;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
       leader->update = 0;
@@ -1540,7 +1521,6 @@ void Islets_JumpDownLedge(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 1);
   Event_End();
-  return;
 }
 
 /// Sand on N Osenia Islet or the Sea of Time Islet: Felix sinks into the
@@ -1565,19 +1545,19 @@ void Islets_RiseFromSand(void) {
   leader->layer = 0;
 }
 
-/// Sets the behaviour of the map cell under a 16.16 position, on the ground
-/// layer (bit 0 of layers), the upper one (bit 1) or both.
+/// Sets the behaviour of the map cell under a 16.16 position, on the layers
+/// given (ISLETS_GROUND_LAYER, ISLETS_UPPER_LAYER or both).
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *lowerCells = map->layers[0].cells;
   struct MapCell *upperCells = map->layers[2].cells;
   s32 index = x / toFIXED(16) + (z / toFIXED(16)) * MAPGRID_SIZE;
 
-  if (layers & 1) {
+  if (layers & ISLETS_GROUND_LAYER) {
     lowerCells += index;
     lowerCells->collisionCode = value;
   }
-  if (layers & 2) {
+  if (layers & ISLETS_UPPER_LAYER) {
     upperCells += index;
     upperCells->collisionCode = value;
   }
@@ -1605,12 +1585,13 @@ void Islets_StartPushingCrate(void) {
   gIslets_SecondCrateZ = z1 = actor->z.fixed;
   if (FIELD_CELL(*x0) == 7 && FIELD_CELL(*z0) == 29 && FIELD_CELL(x1) == 7 &&
       FIELD_CELL(z1) == 28)
-    Islets_SetCellCollision(*x0, *z0, 2, 0);
+    Islets_SetCellCollision(*x0, *z0, ISLETS_UPPER_LAYER, 0);
   if (FIELD_CELL(gIslets_FirstCrateX) == 12 &&
       FIELD_CELL(gIslets_FirstCrateZ) == 25 &&
       FIELD_CELL(gIslets_SecondCrateX) == 12 &&
       FIELD_CELL(gIslets_SecondCrateZ) == 26)
-    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
+    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ,
+                            ISLETS_UPPER_LAYER, 0);
 }
 
 /// A crate Felix has pushed or Moved on SE Angara Islet settles, and one pushed
@@ -1630,27 +1611,29 @@ void Islets_FinishPushingCrate(void) {
 
   if (FIELD_CELL(gIslets_FirstCrateX) == 12 &&
       FIELD_CELL(gIslets_FirstCrateZ) == 24) {
-    Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ, 1,
-                            STEP_TRIGGER_PUSH_CRATE_ON);
-    Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ, 2, 0);
+    Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ,
+                            ISLETS_GROUND_LAYER, STEP_TRIGGER_PUSH_CRATE_ON);
+    Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ,
+                            ISLETS_UPPER_LAYER, 0);
   } else {
     s32 *z = &gIslets_FirstCrateZ;
 
-    Islets_SetCellCollision(gIslets_FirstCrateX, *z, 3, 0);
+    Islets_SetCellCollision(gIslets_FirstCrateX, *z, ISLETS_BOTH_LAYERS, 0);
   }
   if (FIELD_CELL(gIslets_SecondCrateX) == 7 &&
       FIELD_CELL(gIslets_SecondCrateZ) == 27) {
-    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 1,
-                            STEP_TRIGGER_PUSH_CRATE_ON);
-    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
+    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ,
+                            ISLETS_GROUND_LAYER, STEP_TRIGGER_PUSH_CRATE_ON);
+    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ,
+                            ISLETS_UPPER_LAYER, 0);
   } else {
     s32 *z = &gIslets_SecondCrateZ;
 
-    Islets_SetCellCollision(gIslets_SecondCrateX, *z, 3, 0);
+    Islets_SetCellCollision(gIslets_SecondCrateX, *z, ISLETS_BOTH_LAYERS, 0);
   }
-  Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3,
+  Islets_SetCellCollision(first->x.fixed, first->z.fixed, ISLETS_BOTH_LAYERS,
                           CELL_BEHAVIOR_WALL);
-  Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3,
+  Islets_SetCellCollision(second->x.fixed, second->z.fixed, ISLETS_BOTH_LAYERS,
                           CELL_BEHAVIOR_WALL);
   if (!Event_GetFlag(FLAG_CRATE_A_DROPPED) && firstX == 12 && firstZ == 26) {
     both = 0;
@@ -1667,8 +1650,10 @@ void Islets_FinishPushingCrate(void) {
     first->motionFlags = 0;
     Event_SetFlag(FLAG_CRATE_A_DROPPED);
     if (both) {
-      Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
-      Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
+      Islets_SetCellCollision(first->x.fixed, first->z.fixed,
+                              ISLETS_BOTH_LAYERS, 0);
+      Islets_SetCellCollision(second->x.fixed, second->z.fixed,
+                              ISLETS_BOTH_LAYERS, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
       Event_SetFlag(FLAG_CRATES_IN_ONE_CELL);
       first->riseCounter = 1;
@@ -1691,8 +1676,10 @@ void Islets_FinishPushingCrate(void) {
     second->motionFlags = 0;
     Event_SetFlag(FLAG_CRATE_B_DROPPED);
     if (both) {
-      Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
-      Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
+      Islets_SetCellCollision(first->x.fixed, first->z.fixed,
+                              ISLETS_BOTH_LAYERS, 0);
+      Islets_SetCellCollision(second->x.fixed, second->z.fixed,
+                              ISLETS_BOTH_LAYERS, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
       Event_SetFlag(FLAG_CRATES_IN_ONE_CELL);
       first->riseCounter = 1;
@@ -1721,8 +1708,10 @@ void Islets_PushCrateOffLedge(void) {
       FIELD_CELL(gIslets_SecondCrateX) == 7 &&
       FIELD_CELL(gIslets_SecondCrateZ) == 28) {
     first->riseCounter = 0;
-    ((void (*)())Islets_SetCellCollision)(gIslets_FirstCrateX,
-                                          gIslets_FirstCrateZ, 2);
+    // XXX: no behaviour is passed, so the upper cell takes whatever the fourth
+    // argument's register holds; the call's disassembly would settle which.
+    ((void (*)())Islets_SetCellCollision)(
+        gIslets_FirstCrateX, gIslets_FirstCrateZ, ISLETS_UPPER_LAYER);
   }
   Leader_PushObjectAhead();
   Islets_FinishPushingCrate();
@@ -1777,17 +1766,11 @@ void Islets_StepDownOntoIceberg(void) {
 
 /// Nothing visible happens as Reveal takes effect on E Tundaria Islet, but the
 /// icebergs hold still until it fades (Islets_EndReveal).
-void Islets_StartReveal(void) {
-  Event_SetFlag(FLAG_REVEAL_SHOWN);
-  return;
-}
+void Islets_StartReveal(void) { Event_SetFlag(FLAG_REVEAL_SHOWN); }
 
 /// Nothing visible happens as Reveal fades on E Tundaria Islet, but the
 /// icebergs drift again.
-void Islets_EndReveal(void) {
-  Event_ClearFlag(FLAG_REVEAL_SHOWN);
-  return;
-}
+void Islets_EndReveal(void) { Event_ClearFlag(FLAG_REVEAL_SHOWN); }
 
 // The following six are from patch 1.
 #if TLA_PATCH_1
@@ -1800,7 +1783,6 @@ void Islets_EndReveal(void) {
 /// or the menu.
 void Islets_ClearFirstPatch(void) {
   FieldTileCopies_CopyTouchedCells(65, 0, 4, 4, 65, 10, 1);
-  return;
 }
 
 /// Cyclone on the two weeds just east of the cow's fence, in front of N Osenia
@@ -1808,14 +1790,12 @@ void Islets_ClearFirstPatch(void) {
 /// Islets_ClearFirstPatch does.
 void Islets_ClearSecondPatch(void) {
   FieldTileCopies_CopyTouchedCells(65, 0, 2, 2, 71, 10, 1);
-  return;
 }
 
 /// Cyclone on the weed south of the cow's yard, by its fence (cell (8, 15)),
 /// blows it away for good, as Islets_ClearFirstPatch does.
 void Islets_ClearThirdPatch(void) {
   FieldTileCopies_CopyTouchedCells(65, 0, 1, 1, 68, 15, 1);
-  return;
 }
 
 /// Cyclone on the weeds on N Osenia Islet's tilled field, south of the house
@@ -1823,7 +1803,6 @@ void Islets_ClearThirdPatch(void) {
 /// Islets_ClearFirstPatch does.
 void Islets_ClearFourthPatch(void) {
   FieldTileCopies_CopyTouchedCells(65, 0, 2, 3, 75, 20, 1);
-  return;
 }
 
 /// Cyclone on the weeds just east of N Osenia Islet's tilled field (cells
@@ -1831,14 +1810,12 @@ void Islets_ClearFourthPatch(void) {
 /// does.
 void Islets_ClearFifthPatch(void) {
   FieldTileCopies_CopyTouchedCells(65, 0, 4, 1, 78, 22, 1);
-  return;
 }
 
 /// Cyclone on the weed by the fence south-east of N Osenia Islet's tilled field
 /// (cell (19, 23)) blows it away for good, as Islets_ClearFirstPatch does.
 void Islets_ClearSixthPatch(void) {
   FieldTileCopies_CopyTouchedCells(65, 0, 1, 1, 79, 23, 1);
-  return;
 }
 #endif
 
@@ -2319,16 +2296,17 @@ void Islets_InitializeSoutheastAngara(void) {
 
     first->motionFlags = 0;
     second->motionFlags = 0;
-    Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3,
+    Islets_SetCellCollision(first->x.fixed, first->z.fixed, ISLETS_BOTH_LAYERS,
                             CELL_BEHAVIOR_WALL);
-    Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3,
-                            CELL_BEHAVIOR_WALL);
+    Islets_SetCellCollision(second->x.fixed, second->z.fixed,
+                            ISLETS_BOTH_LAYERS, CELL_BEHAVIOR_WALL);
   }
   Actor_DisableById(ACTOR_PUDDLE);
   last = Actor_Get(ACTOR_PUDDLE);
   last->riseCounter = 1;
   last->motionFlags = 0;
-  Islets_SetCellCollision(last->x.fixed, last->z.fixed, 1, CELL_BEHAVIOR_WALL);
+  Islets_SetCellCollision(last->x.fixed, last->z.fixed, ISLETS_GROUND_LAYER,
+                          CELL_BEHAVIOR_WALL);
   if (Event_GetFlag(FLAG_SOUTHEAST_ANGARA_ISLET_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
@@ -2418,20 +2396,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "../field/palqueue_add.c"
 
-#include "text/msg_ids.h"
-
 /// Starts the palette cycles' task, as the surf moves while the party is on the
 /// Sea of Time Islet.
 void PaletteCycle_Start(void) {
   Task_AddFrame(&PaletteCycle_Step, TASK_PASS_FRAME);
-  return;
 }
 
 /// Stops the palette cycles' task; their queue stays for the next start.
-void PaletteCycle_Stop(void) {
-  FieldTask_Remove(PaletteCycle_Step);
-  return;
-}
+void PaletteCycle_Stop(void) { FieldTask_Remove(PaletteCycle_Step); }
 
 /// The palette cycles' task: each queued cycle whose timer has run out rotates
 /// its run of colours one place further, unless Psynergy or a menu is open.
@@ -2489,7 +2461,6 @@ void Islets_SinkInSea(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(EXIT_AFTER_SINKING);
-  return;
 }
 
 /// Walking east off the sailor's boat at West Indra Islet's piers (cell
@@ -2497,10 +2468,7 @@ void Islets_SinkInSea(void) {
 /// south off the shore west of the healer (cell (16, 16)), he jumps down onto
 /// the iceberg below once it has drifted under the shore, and rides it as it
 /// drifts out and back; while it is away, pushing south there does nothing.
-void Islets_JumpForward(void) {
-  Field_TryJumpForward();
-  return;
-}
+void Islets_JumpForward(void) { Field_TryJumpForward(); }
 
 extern s8 gPushRectangles[][4];
 
@@ -2531,17 +2499,6 @@ void Actor_StopAtPushTarget(struct Actor *actor);
 #undef HAND_BACK
 #undef ISLETS_RIDE_TRANSITION
 #undef SPAWN
-#include "text/msg_ids.h"
-
-void Islets_TalkToPengulina(void);
-void Islets_TalkToHealer(void);
-void Islets_TalkToTreasureHuntersPartner(void);
-void Islets_TalkToBird(void);
-void Islets_TradeWithCow(void);
-void Islets_PengusGivesPrettyStone(void);
-void Islets_BirdReturnsToNest(void);
-void Islets_FinishPushingCrate(void);
-void Islets_EnterDoor(void);
 
 struct ActionScript gIslets_SpinScript = {{
     SC_ADD(SW_FACING, FACING_STEP),

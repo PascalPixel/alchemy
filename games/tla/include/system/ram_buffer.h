@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_RAM_BUFFER_H
 #define ALCHEMY_RAM_BUFFER_H
 
+/// @file
+/// EWRAM's and IWRAM's buffers at fixed addresses, named by their address where
+/// a routine reaches them so (FIXED_ADDRESS, with the linked symbol beside it),
+/// and the scene's own state.
+
 #include "system/heap.h"
 #include "types.h"
 
@@ -11,10 +16,8 @@
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_MapScenePoints FIXED_ADDRESS((u8 *), 0x0202e008, gMapScenePoints)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
-/// The cell picture table: each cell picture's top two tile entries, then its
-/// bottom two. MapGrid_RenderCellPictureRow reads it at constant addresses
-/// inside its loop; as the symbol the two table addresses hoist out of the
-/// loop.
+/// The cell picture table (gCellPictures), as MapGrid_RenderCellPictureRow
+/// reads it.
 #define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gCellPictures)
 #define Ram_MapShapeGrid FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid)
 
@@ -28,9 +31,8 @@
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-/// The frame counter at its constant address, as the overlays of Airs Rock,
-/// Atteka Inlet and Ancient Lemuria read it: each test reloads the address,
-/// where the symbol would combine the two loads.
+/// The frame counter, as the overlays of Airs Rock, Atteka Inlet and Ancient
+/// Lemuria read it.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
 /// The map screen's scroll (x, then y, 16.16 pixels).
@@ -58,7 +60,8 @@
 extern u8 gMapShapeGrid[];
 
 /// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
-/// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
+/// 8 bytes, its top two tile entries, then its bottom two. MapGrid_LoadMap
+/// decodes them in.
 extern u32 gCellPictures[];
 
 /// Called once by the next VBlank, which clears it first; the world map sets it
@@ -72,10 +75,7 @@ extern s8 gSceneLocalState[];
 /// its element plus one, or 0 when the party has them all. An element's last
 /// Djinni stands for it in actor placements and Djinni battles.
 #define SCENE_STATE_CHOSEN_DJINN 6480
-
-/// Where gSceneLocalState keeps, by element, the reunion's pick of a Djinni
-/// of The Broken Seal the party lacks, plus one (0 when it lacks none): the
-/// Djinni an element's last Djinn slot stands for (Party_AddIsaacsParty).
-#define SCENE_STATE_REUNION_DJINN 6480
+/// SCENE_STATE_CHOSEN_DJINN under the name Party_AddIsaacsParty writes it by.
+#define SCENE_STATE_REUNION_DJINN SCENE_STATE_CHOSEN_DJINN
 
 #endif

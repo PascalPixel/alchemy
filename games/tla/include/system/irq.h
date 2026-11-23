@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_IRQ_H
 #define ALCHEMY_IRQ_H
 
+/// @file
+/// The interrupt sources, their handler table and the resident IWRAM code the
+/// interrupts enter through.
+
 #include "edition.h"
 #include "types.h"
 
@@ -45,8 +49,8 @@ extern u8 IwramIrqMain[];
 /// An instruction inside the dispatcher (`orr r3, r3, #0x92`), whose value
 /// Dma_StopAllThenRunHook runs as a routine.
 extern const u32 IwramIrqModeWord;
-/// Where the IWRAM-resident code lies in ROM (ld_script.ld), 5,120 bytes copied
-/// to IwramIrqMain at power-on.
+/// Where the IWRAM-resident code lies in ROM (ld_script.ld): 4 KB of it is
+/// copied to IwramIrqMain at power-on.
 extern const u8 IwramResident_Rom[];
 /// The BIOS's interrupt vector, pointed at IwramIrqMain at power-on.
 extern void *gIrqVector;

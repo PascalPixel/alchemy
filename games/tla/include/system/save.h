@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SAVE_H
 #define ALCHEMY_SAVE_H
 
+/// @file
+/// The save in flash: its sectors, parts and summaries, and the save work.
+
 #include "types.h"
 #include "static_assert.h"
 
@@ -36,9 +39,9 @@ struct SaveSummary {
   u32 coins;
   u8 djinn[4];         ///< the party's Djinn of each element
   s8 party[5];         ///< up to four party members, ended by -1
-  s8 sendFlag;         ///< copied from byte 0x22f of gMainRoutineWork
-  s8 flagCount;        ///< how many of game flags 48 to 127 are set
-  s8 reunited;         ///< game flag 34 is set
+  s8 sendFlag;         ///< gMainRoutineWork.sendFlag: the file is cleared
+  s8 flagCount;        ///< the Djinn found: their flags from FLAG_DJINN_FIRST
+  s8 reunited;         ///< FLAG_REUNION is set
   u8 windowHue;        ///< gMainRoutineWork.windowHue
   u8 windowBrightness; ///< gMainRoutineWork.windowBrightness
   u16 frames;          ///< low half of the build stamp saved with the game
@@ -49,8 +52,8 @@ struct SaveSummary {
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 
-/// The save work: which of the 15 flash sectors hold a part, their part
-/// ids and counters, one part's three sectors and the summaries.
+/// The save work: which of the SAVE_SECTOR_COUNT flash sectors hold a part,
+/// their part ids and counters, one part's three sectors and the summaries.
 struct SaveWorkspace {
   u8 occupied[SAVE_SECTOR_COUNT]; ///< 1 for a sector holding the current copy
                                   ///< of a part
@@ -64,7 +67,9 @@ struct SaveWorkspace {
   struct SaveSummary extra;     ///< part 3's summary
   void (*progress)(s32 step);   ///< called between sector writes, if set
   u16 sectorCount;              ///< 0 when a write starts
-  u16 sectorTotal;              ///< 3 or 6 sectors to write
+  /// Sectors to write: a part's, and as many again when an old copy is
+  /// invalidated.
+  u16 sectorTotal;
 };
 
 /// The header of a save sector in flash: its signature, the part it holds,

@@ -155,6 +155,15 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gNaribweRooms_Triggers;
 }
 
+/// The back door between the northwest hut and the west hut, whose own door
+/// opens on the back yard: each way's exit, and the entrance it arrives by.
+enum {
+  NARIBWE_ROOMS_TO_WEST_HUT = 6,
+  NARIBWE_ROOMS_TO_NORTHWEST_HUT = 7,
+  NARIBWE_ROOMS_FROM_NORTHWEST_HUT = 7,
+  NARIBWE_ROOMS_FROM_WEST_HUT = 6
+};
+
 /// Naribwe's shops, as `Shop_Run` numbers them.
 enum { SHOP_NARIBWE_WEAPONS = 14, SHOP_NARIBWE_ARMOR = 15 };
 
@@ -514,7 +523,7 @@ s32 Party_FindOwnerWithAction(s32 item);
 s32 NaribweRooms_FoeAhead(void);
 s32 NaribweRooms_NextPowerToGain(void);
 s32 NaribweRooms_NextPath(void);
-s32 NaribweRooms_ProngsHeld(void);
+s32 NaribweRooms_ProngToSeek(void);
 u8 *NaribweRooms_GetDjinniHint(void);
 
 /// A weapon: the foe that lies beyond it.
@@ -652,7 +661,7 @@ void NaribweRooms_ReadProng(void) {
   FieldEvent_SetMessageId((s32)message);
   // "The object you have placed before me wields a mighty power over a..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-  switch (NaribweRooms_ProngsHeld()) {
+  switch (NaribweRooms_ProngToSeek()) {
   case READING_PRONG_BY_BEACH:
     FieldEvent_SetMessageId((s32)(message + 1));
     // "Near the beach where you washed ashore lie ancient ruins. Seek them..."
@@ -727,7 +736,7 @@ s32 NaribweRooms_NextPath(void) {
 /// Right Prong is missing, the moss-covered ruins while the Left Prong is, the
 /// icy cape's tower while only the Center Prong is, and on once it holds all
 /// three.
-s32 NaribweRooms_ProngsHeld(void) {
+s32 NaribweRooms_ProngToSeek(void) {
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 &&
       (FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1 ||
        FieldPartyInventory_FindMember(ITEM_LEFT_PRONG) != -1))
@@ -1049,8 +1058,10 @@ u32 gSceneExits[] = {
                       NARIBWE_FROM_NARIBWE_ROOMS_SOUTHEAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST, Naribwe,
                       NARIBWE_FROM_NARIBWE_ROOMS_NORTHEAST, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, NaribweRooms, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, NaribweRooms, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_WEST_HUT, NaribweRooms,
+                      NARIBWE_ROOMS_FROM_NORTHWEST_HUT, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NORTHWEST_HUT, NaribweRooms,
+                      NARIBWE_ROOMS_FROM_WEST_HUT, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -1106,8 +1117,10 @@ struct Trigger gNaribweRooms_Triggers[] = {
      NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST},
     {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST, CONDITION_ALWAYS,
      NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_WEST_HUT, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_WEST_HUT},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NORTHWEST_HUT, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NORTHWEST_HUT},
     {TRIGGER_TALK, ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsFortuneTellerLivesAtHighest)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_A_SMALL_VILLAGE, CONDITION_ALWAYS,
@@ -1164,8 +1177,10 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
      NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST},
     {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST, CONDITION_ALWAYS,
      NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_WEST_HUT, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_WEST_HUT},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NORTHWEST_HUT, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NORTHWEST_HUT},
     {TRIGGER_TALK, ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsIGuessThoseWarriorsLearned)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_A_SMALL_VILLAGE, CONDITION_ALWAYS,

@@ -2645,7 +2645,8 @@ void Contigo_InitializeGeoglyph(void) {
 /// cradle, the old man on Hesperia shivers once the ship has its wings, and
 /// the workers resting at the inn are gone after the reunion.
 void Contigo_InitializeShops(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gMainRoutineWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
     if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
         GameFlag_Get(FLAG_REUNION_AT_CONTIGO) == 0)
@@ -2679,7 +2680,8 @@ void Contigo_InitializeLuckyDice(void) {
   s8 *prize;
   s32 item;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Contigo_ShrinkActor(ACTOR_SUPER_LUCKY_DICE_RULES_SIGN);
   Contigo_ShrinkActor(ACTOR_LUCKY_DICE_RULES_SIGN);
   Contigo_ShrinkActor(ACTOR_LUCKY_DICE_PAIRS_SIGN);

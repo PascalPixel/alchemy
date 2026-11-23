@@ -130,6 +130,25 @@ enum YampiDesertCellBehavior {
   CELL_BEHAVIOR_YAMPI_DESERT_RISE = 20
 };
 
+/// The ways between the two parts of the Psynergy Stone's room and of the King
+/// Scorpion's, each part seen through its own camera box: the exit from the
+/// south part into the north and back, and the entrances they arrive by.
+enum YampiDesertRoomPart {
+  EXIT_TO_NORTH_PART = 2,
+  EXIT_TO_SOUTH_PART = 3,
+  ENTRANCE_FROM_NORTH_PART = 2, ///< arriving in the south part
+  ENTRANCE_FROM_SOUTH_PART = 3  ///< arriving in the north part
+};
+
+/// The ways between the small chamber of the cave under the spring, where the
+/// ladder from the spring comes down, and the cave below it.
+enum YampiDesertSpringCaveLevel {
+  SPRING_CAVE_TO_LOWER_CAVE = 2, ///< the chamber's ladder down
+  SPRING_CAVE_TO_CHAMBER = 4,
+  SPRING_CAVE_FROM_CHAMBER = 4,
+  SPRING_CAVE_FROM_LOWER_CAVE = 2
+};
+
 /// The cells the rooms' trigger tables answer, by the behaviour each room's
 /// map gives them.
 enum YampiDesertCell {
@@ -199,9 +218,9 @@ static inline void YampiDesert_PlaceRope(s32 index, s32 flag, s32 post,
   Rope_Place(index, flag, post, otherPost);
 }
 
-/// Scoop's dig at a buried item: the hidden item comes up and its flag
-/// is set.
-static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
+/// Scoop digs up a buried treasure: with `mode` 2, the hidden item comes up at
+/// its home and its flag is set (Actor_ReturnHome).
+static inline void YampiDesert_DigUpTreasure(s32 mode, s32 actorId, s32 flag) {
   Actor_ReturnHome(mode, actorId, flag);
 }
 
@@ -431,8 +450,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Scoop on the sand puddle on the east side of the room north of the spring
 /// (cell (24, 23)) digs up 315 coins: "Felix got 315 coins."
 void YampiDesert_DigUpCoins(s32 mode) {
-  YampiDesert_ReturnHome(mode, ACTOR_HIDDEN_TREASURE,
-                         FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP);
+  YampiDesert_DigUpTreasure(mode, ACTOR_HIDDEN_TREASURE,
+                            FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP);
 }
 
 extern struct Trigger gYampiDesert_Triggers[];
@@ -692,7 +711,8 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
     struct Actor *actor = Actor_GetById(list[0]);
 
     if (GameFlag_Get(list[2])) {
-      struct MapCell *cell = &map->layers[2].cells[Actor_GetCellIndex(actor)];
+      struct MapCell *cell =
+          &map->layers[MAPGRID_LAYER_OVERHEAD].cells[Actor_GetCellIndex(actor)];
 
       cell->collisionCode = CELL_BEHAVIOR_WALL;
     }
@@ -705,7 +725,8 @@ void YampiDesert_OpenStakeCells(u16 *list) {
 
   for (; *list != ACTOR_LIST_END; list += 3) {
     struct MapCell *cell =
-        &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(list[0]))];
+        &map->layers[MAPGRID_LAYER_OVERHEAD]
+             .cells[Actor_GetCellIndex(Actor_GetById(list[0]))];
 
     cell->collisionCode = CELL_BEHAVIOR_SAND;
   }
@@ -719,7 +740,7 @@ void YampiDesert_OpenStakeCells(u16 *list) {
 void YampiDesert_CastSand(void) {
   s16 scene;
 
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST)
     YampiDesert_BlockPoundedStakes(gYampiDesertGuardianRingChestStakes);
@@ -737,7 +758,7 @@ void YampiDesert_EndSand(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 scene;
 
-  leader->layer = 0;
+  leader->layer = MAPGRID_LAYER_GROUND;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST)
     YampiDesert_OpenStakeCells(gYampiDesertGuardianRingChestStakes);
@@ -1049,7 +1070,8 @@ void YampiDesert_OpenGeyser(s32 mode) {
     actor = Actor_GetById(ACTOR_GEYSER);
     MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
     Actor_SetPosition(ACTOR_GEYSER, 232, 200);
-    height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+    height = Map_GetTerrainHeight(MAPGRID_LAYER_GROUND, actor->x.fixed,
+                                  actor->z.fixed);
     actor->y.fixed = height;
     actor->groundHeight = height;
     GameFlag_Set(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP);
@@ -1552,10 +1574,10 @@ void YampiDesert_UpdateSandFlow(void) {
   index = Actor_GetCellIndex(leader);
   column = leader->x.fixed / toFIXED(16);
   row = (leader->z.fixed + toFIXED(4)) / toFIXED(16);
-  cells = map->layers[0].cells;
+  cells = map->layers[MAPGRID_LAYER_GROUND].cells;
   here = cells + index;
   ahead = cells + (column + row * MAPGRID_SIZE);
-  under = map->layers[1].cells + index;
+  under = map->layers[MAPGRID_LAYER_MIDDLE].cells + index;
   Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL);
   TilesetAnim_ResumeAll();
   if ((u8)(under->collisionCode - CELL_BEHAVIOR_YAMPI_DESERT_FLOW_NORTH) <= 4) {
@@ -1654,7 +1676,7 @@ UNUSED void YampiDesert_CheckUpperLevelOnRise(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 index = Actor_GetCellIndex(leader);
-  struct MapCell *cell = map->layers[0].cells + index;
+  struct MapCell *cell = map->layers[MAPGRID_LAYER_GROUND].cells + index;
   struct MainRoutineWork *party;
   FIXED y;
 
@@ -2107,7 +2129,7 @@ void YampiDesert_ClimbRevealedLadder(void) {
 /// spring, Felix climbs down it to the cave below.
 void YampiDesert_ClimbDownSpringCaveLadder(void) {
   YampiDesert_ClimbDownLadder(Actor_GetById(gMainRoutineWork.leaderActorId),
-                              408, 432, 2);
+                              408, 432, SPRING_CAVE_TO_LOWER_CAVE);
 }
 
 void YampiDesert_BurstSand(s32 x, s32 y, s32 z);
@@ -2159,7 +2181,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   YampiDesert_BurstSand(scorpion->x.fixed, scorpion->y.fixed,
                         scorpion->z.fixed);
   Sound_Play(SE_THUMP);
-  Actor_FaceDirectionById(party->leaderActorId, TRIG_TURN * 3 / 4, 0);
+  Actor_FaceDirectionById(party->leaderActorId, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   Sound_Play(SE_BEAST_CRY);
   Actor_SetAnimationById(ACTOR_KING_SCORPION, 3);
@@ -2298,7 +2320,7 @@ void YampiDesert_SetStakeSunk(s32 id) {
 /// it has been stirred.
 void YampiDesert_SetUpPsynergyStone(void) {
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.entrance == 3 ||
+  if (gMainRoutineWork.entrance == ENTRANCE_FROM_SOUTH_PART ||
       gMainRoutineWork.entrance ==
           YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_KING_SCORPION) {
     if (Event_GetFlag(FLAG_YAMPI_DESERT_SCORPION_STIRRED))
@@ -2317,7 +2339,7 @@ void YampiDesert_SetUpPsynergyStone(void) {
   YampiDesert_SetStakeSunk(STAKE(7));
   if (gMainRoutineWork.entrance ==
           YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_BLITZ ||
-      gMainRoutineWork.entrance == 2)
+      gMainRoutineWork.entrance == ENTRANCE_FROM_NORTH_PART)
     Task_Add(YampiDesert_CheckUpperLevelFromLower, TASK_PASS_FRAME);
 }
 
@@ -2340,7 +2362,7 @@ void YampiDesert_SetUpKingScorpion(void) {
   YampiDesert_SetStakeSunk(STAKE(12));
   if (gMainRoutineWork.entrance ==
           YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_PSYNERGY_STONE ||
-      gMainRoutineWork.entrance == 2) {
+      gMainRoutineWork.entrance == ENTRANCE_FROM_NORTH_PART) {
     if (GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_STIRRED) &&
         !GameFlag_Get(FLAG_YAMPI_DESERT_SCORPION_STIRRED_AGAIN))
       YampiDesert_SetUpKingScorpionScorpion();
@@ -2658,38 +2680,38 @@ LATE_DATA u32 gYampiDesert_OtherTravelerLooksAround[] = {
 
 /// The mayor runs ahead to the travelers, and the others follow.
 LATE_DATA u32 gYampiDesert_MayorRunsAhead[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(248, 0, 248),
     SC_SYNC,
     SC_MOVE(248, 0, 280),
     SC_SYNC,
     SC_MOVE(264, 0, 400),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// As gYampiDesert_MayorRunsAhead, for the travelers who follow.
 LATE_DATA u32 gYampiDesert_TravelersFollow[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(240, 0, 280),
     SC_SYNC,
     SC_MOVE(264, 0, 400),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// As gYampiDesert_MayorRunsAhead, for the last travelers, from further back.
 LATE_DATA u32 gYampiDesert_LastTravelersFollow[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(216, 0, 232),
     SC_SYNC,
     SC_MOVE(240, 0, 280),
     SC_SYNC,
     SC_MOVE(264, 0, 400),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -2769,13 +2791,13 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(YAMPI_DESERT_BLITZ_TO_YAMPI_DESERT_PSYNERGY_STONE, YampiDesertPsynergyStone, YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_BLITZ),
     SCENE_EXITS(YampiDesertPsynergyStone),
     SCENE_EXIT(YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_BLITZ, YampiDesertBlitz, YAMPI_DESERT_BLITZ_FROM_YAMPI_DESERT_PSYNERGY_STONE),
-    SCENE_EXIT(2, YampiDesertPsynergyStone, 3),
-    SCENE_EXIT(3, YampiDesertPsynergyStone, 2),
+    SCENE_EXIT(EXIT_TO_NORTH_PART, YampiDesertPsynergyStone, ENTRANCE_FROM_SOUTH_PART),
+    SCENE_EXIT(EXIT_TO_SOUTH_PART, YampiDesertPsynergyStone, ENTRANCE_FROM_NORTH_PART),
     SCENE_EXIT(YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_KING_SCORPION, YampiDesertKingScorpion, YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_PSYNERGY_STONE),
     SCENE_EXITS(YampiDesertKingScorpion),
     SCENE_EXIT(YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_PSYNERGY_STONE, YampiDesertPsynergyStone, YAMPI_DESERT_PSYNERGY_STONE_FROM_YAMPI_DESERT_KING_SCORPION),
-    SCENE_EXIT(2, YampiDesertKingScorpion, 3),
-    SCENE_EXIT(3, YampiDesertKingScorpion, 2),
+    SCENE_EXIT(EXIT_TO_NORTH_PART, YampiDesertKingScorpion, ENTRANCE_FROM_SOUTH_PART),
+    SCENE_EXIT(EXIT_TO_SOUTH_PART, YampiDesertKingScorpion, ENTRANCE_FROM_NORTH_PART),
     SCENE_EXIT(YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_SCORPION_PIT, YampiDesertScorpionPit, YAMPI_DESERT_SCORPION_PIT_FROM_YAMPI_DESERT_KING_SCORPION),
     SCENE_EXITS(YampiDesertCoinsPuddle),
     SCENE_EXIT(YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_SPRING, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_COINS_PUDDLE),
@@ -2795,9 +2817,9 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(YAMPI_DESERT_SCORPION_PIT_TO_YAMPI_DESERT_KING_SCORPION, YampiDesertKingScorpion, YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_SCORPION_PIT),
     SCENE_EXITS(YampiDesertSpringCave),
     SCENE_EXIT(YAMPI_DESERT_SPRING_CAVE_TO_YAMPI_DESERT_SPRING_NORTH, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_SPRING_CAVE_NORTH),
-    SCENE_EXIT(2, YampiDesertSpringCave, 4),
+    SCENE_EXIT(SPRING_CAVE_TO_LOWER_CAVE, YampiDesertSpringCave, SPRING_CAVE_FROM_CHAMBER),
     SCENE_EXIT(YAMPI_DESERT_SPRING_CAVE_TO_YAMPI_DESERT_SPRING_SOUTH, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_SPRING_CAVE_SOUTH),
-    SCENE_EXIT(4, YampiDesertSpringCave, 2),
+    SCENE_EXIT(SPRING_CAVE_TO_CHAMBER, YampiDesertSpringCave, SPRING_CAVE_FROM_LOWER_CAVE),
     SCENE_EXITS(YampiDesertBlowMaceChest),
     SCENE_EXIT(YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_COINS_PUDDLE, YampiDesertCoinsPuddle, YAMPI_DESERT_COINS_PUDDLE_FROM_YAMPI_DESERT_BLOW_MACE_CHEST),
     SCENE_EXIT(YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_SAND_PASS, YampiDesertSandPass, YAMPI_DESERT_SAND_PASS_FROM_YAMPI_DESERT_BLOW_MACE_CHEST),
@@ -2934,8 +2956,8 @@ LATE_DATA struct Trigger gYampiDesert_Triggers[] = {
 
 /// The Guardian Ring chest's room's triggers.
 LATE_DATA struct Trigger gYampiDesertGuardianRingChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, YAMPI_DESERT_GUARDIAN_RING_CHEST_TO_WORLD_MAP, CONDITION_ALWAYS, YAMPI_DESERT_GUARDIAN_RING_CHEST_TO_WORLD_MAP},
+    {TRIGGER_EXIT, YAMPI_DESERT_GUARDIAN_RING_CHEST_TO_YAMPI_DESERT_SPRING, CONDITION_ALWAYS, YAMPI_DESERT_GUARDIAN_RING_CHEST_TO_YAMPI_DESERT_SPRING},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundGuardianRingChestStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundGuardianRingChestStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundGuardianRingChestStake)},
@@ -2949,10 +2971,10 @@ LATE_DATA struct Trigger gYampiDesertGuardianRingChestTriggers[] = {
 
 /// The spring's room's triggers.
 LATE_DATA struct Trigger gYampiDesertSpringTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_GUARDIAN_RING_CHEST, CONDITION_ALWAYS, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_GUARDIAN_RING_CHEST},
+    {TRIGGER_EXIT, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_COINS_PUDDLE, CONDITION_ALWAYS, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_COINS_PUDDLE},
+    {TRIGGER_EXIT, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_SPRING_CAVE_NORTH, CONDITION_ALWAYS, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_SPRING_CAVE_NORTH},
+    {TRIGGER_EXIT, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_BLITZ, CONDITION_ALWAYS, YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_BLITZ},
     {STEP_TRIGGER_WALKING, CELL_AROUND_LADDER_PUDDLE, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbRevealedLadder)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
@@ -2993,8 +3015,8 @@ LATE_DATA struct Trigger gYampiDesertSpringTriggers[] = {
 
 /// Blitz's room's triggers.
 LATE_DATA struct Trigger gYampiDesertBlitzTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, YAMPI_DESERT_BLITZ_TO_YAMPI_DESERT_SPRING, CONDITION_ALWAYS, YAMPI_DESERT_BLITZ_TO_YAMPI_DESERT_SPRING},
+    {TRIGGER_EXIT, YAMPI_DESERT_BLITZ_TO_YAMPI_DESERT_PSYNERGY_STONE, CONDITION_ALWAYS, YAMPI_DESERT_BLITZ_TO_YAMPI_DESERT_PSYNERGY_STONE},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundBlitzStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundBlitzStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundBlitzStake)},
@@ -3016,10 +3038,10 @@ LATE_DATA struct Trigger gYampiDesertBlitzTriggers[] = {
 
 /// The Psynergy Stone's room's triggers.
 LATE_DATA struct Trigger gYampiDesertPsynergyStoneTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_BLITZ, CONDITION_ALWAYS, YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_BLITZ},
+    {TRIGGER_EXIT, EXIT_TO_NORTH_PART, CONDITION_ALWAYS, EXIT_TO_NORTH_PART},
+    {TRIGGER_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
+    {TRIGGER_EXIT, YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_KING_SCORPION, CONDITION_ALWAYS, YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_KING_SCORPION},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundPsynergyStoneStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundPsynergyStoneStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundPsynergyStoneStake)},
@@ -3035,9 +3057,9 @@ LATE_DATA struct Trigger gYampiDesertPsynergyStoneTriggers[] = {
 
 /// The King Scorpion's room's triggers.
 LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_PSYNERGY_STONE, CONDITION_ALWAYS, YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_PSYNERGY_STONE},
+    {TRIGGER_EXIT, EXIT_TO_NORTH_PART, CONDITION_ALWAYS, EXIT_TO_NORTH_PART},
+    {TRIGGER_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundKingScorpionStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundKingScorpionStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundKingScorpionStake)},
@@ -3052,8 +3074,8 @@ LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
 
 /// The triggers of the room north of the spring, with the 315 coins.
 LATE_DATA struct Trigger gYampiDesertCoinsPuddleTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_SPRING, CONDITION_ALWAYS, YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_SPRING},
+    {TRIGGER_EXIT, YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_BLOW_MACE_CHEST, CONDITION_ALWAYS, YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_BLOW_MACE_CHEST},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_COINS_PUDDLE, FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP, EVENT(YampiDesert_DigUpCoins)},
@@ -3062,8 +3084,8 @@ LATE_DATA struct Trigger gYampiDesertCoinsPuddleTriggers[] = {
 
 /// The sand pass's triggers.
 LATE_DATA struct Trigger gYampiDesertSandPassTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_BLOW_MACE_CHEST, CONDITION_ALWAYS, YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_BLOW_MACE_CHEST},
+    {TRIGGER_EXIT, YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST, CONDITION_ALWAYS, YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {TRIGGER_TABLE_END},
@@ -3071,10 +3093,10 @@ LATE_DATA struct Trigger gYampiDesertSandPassTriggers[] = {
 
 /// The Trainer's Whip chest's room's triggers.
 LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_SAND_PASS, CONDITION_ALWAYS, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_SAND_PASS},
+    {TRIGGER_EXIT, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_WORLD_MAP, CONDITION_ALWAYS, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_WORLD_MAP},
+    {TRIGGER_EXIT, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE, CONDITION_ALWAYS, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE},
+    {TRIGGER_EXIT, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST, CONDITION_ALWAYS, YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_YAMPI_DESERT_ROPE_TIED, 0},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
@@ -3088,8 +3110,8 @@ LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
 
 /// The triggers of the room of the hidden Psynergy Stone.
 LATE_DATA struct Trigger gYampiDesertHiddenPsynergyStoneTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST, CONDITION_ALWAYS, YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST},
+    {TRIGGER_EXIT, YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_WORLD_MAP, CONDITION_ALWAYS, YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_WORLD_MAP},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealPsynergyStone)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HidePsynergyStone)},
     {TRIGGER_TABLE_END},
@@ -3105,14 +3127,14 @@ LATE_DATA struct Trigger gYampiDesertScorpionPitTriggers[] = {
 
 /// The triggers of the cave under the spring.
 LATE_DATA struct Trigger gYampiDesertSpringCaveTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, YAMPI_DESERT_SPRING_CAVE_TO_YAMPI_DESERT_SPRING_NORTH, CONDITION_ALWAYS, YAMPI_DESERT_SPRING_CAVE_TO_YAMPI_DESERT_SPRING_NORTH},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbDownSpringCaveLadder)},
     {TRIGGER_TABLE_END},
 };
 
 LATE_DATA struct Trigger gYampiDesertBlowMaceChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_COINS_PUDDLE, CONDITION_ALWAYS, YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_COINS_PUDDLE},
+    {TRIGGER_EXIT, YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_SAND_PASS, CONDITION_ALWAYS, YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_SAND_PASS},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundBlowMaceChestStake)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},

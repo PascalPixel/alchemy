@@ -13,10 +13,6 @@ struct ProjectedPoint {
   s32 z;
 };
 
-// The 3D transform. gCurrentMatrix is MATRIX_WORDS s32 in 16.16 fixed point
-// (1.0 is FIXED_ONE): [0] to [8] a 3x3 rotation, then the translation.
-// Iwram_MultiplyMatrix multiplies the supplied matrix into the current one.
-
 #define MATRIX_DMA (DMA_COPY_WORDS(MATRIX_WORDS)) ///< one matrix
 
 /// Matrix_BuildLookAt's reciprocals divide FIXED_ONE << RECIPROCAL_SHIFT,
@@ -46,9 +42,10 @@ void Matrix_Initialize(void) {
   Matrix_SetCurrentUnit();
 }
 
-/// Resets the save pointer to the start of the workspace.
+/// Empties the matrix stack: the next Matrix_Push saves at the start of its
+/// save area again.
 void Matrix_RewindStack(void) {
-  gMatrixStackTop = Ram_HeapSlots->transformStack;
+  gMatrixStackTop = Ram_HeapSlots->matrixStack;
   gMatrixStackDepth = 0;
 }
 
@@ -92,11 +89,11 @@ void Matrix_ResetUnit(void) {
 /// and Z axes, in that order, with one combined matrix.
 void Matrix_Rotate(s32 *angles) {
   FIXED sinX;
-  s32 cosX;
+  FIXED cosX;
   FIXED sinY;
-  s32 cosY;
+  FIXED cosY;
   FIXED sinZ;
-  s32 cosZ;
+  FIXED cosZ;
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
@@ -141,7 +138,7 @@ static __inline__ void Matrix_StoreUnit(void *matrix) {
 void Matrix_RotateX(s32 angle) {
   MATRIX matrix;
   FIXED sine;
-  s32 cosine;
+  FIXED cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -158,7 +155,7 @@ void Matrix_RotateX(s32 angle) {
 void Matrix_RotateY(s32 angle) {
   MATRIX matrix;
   FIXED sine;
-  s32 cosine;
+  FIXED cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -175,7 +172,7 @@ void Matrix_RotateY(s32 angle) {
 void Matrix_SetRotateY(s32 angle) {
   FIXED *matrix = gCurrentMatrix;
   FIXED sine;
-  s32 cosine;
+  FIXED cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -191,7 +188,7 @@ void Matrix_SetRotateY(s32 angle) {
 void Matrix_RotateZ(s32 angle) {
   MATRIX matrix;
   FIXED sine;
-  s32 cosine;
+  FIXED cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
   Matrix_StoreUnit(matrix);
@@ -275,11 +272,11 @@ void Matrix_ScaleUniform(FIXED scale) {
 /// matrix. Reached through the far-call table.
 void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
   FIXED sinX;
-  s32 cosX;
+  FIXED cosX;
   FIXED sinY;
-  s32 cosY;
+  FIXED cosY;
   FIXED sinZ;
-  s32 cosZ;
+  FIXED cosZ;
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
@@ -309,9 +306,9 @@ void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
 /// `position`, in one matrix.
 void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
   FIXED sinX, cosX, sinY;
-  s32 cosY;
+  FIXED cosY;
   FIXED sinZ;
-  s32 cosZ;
+  FIXED cosZ;
   FIXED axisScale;
   MATRIX matrix;
 
@@ -347,14 +344,13 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Square root of a 16.16 fixed-point value, in 16.16. The square root of
-/// the raw value is the result in 8.8, so the low eight bits are always 0.
+/// Math_SqrtFX written in place, as Matrix_BuildLookAt takes it.
 #define Math_SqrtFX(v) (Iwram_Sqrt(v) << 8)
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
 void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
-  Dot3Fn dot;
+  DotProductRoutine dot;
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
@@ -373,7 +369,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   // Copy the dot-product routine to the stack and call it there.
   mul = Iwram_MulFX;
   /* FAKEMATCH(barrier): an empty asm sets dot to code, clobbers r3, r9. */
-  asm("" : "=r"(dot) : "0"((Dot3Fn)code) : "r3", "r9");
+  asm("" : "=r"(dot) : "0"((DotProductRoutine)code) : "r3", "r9");
   divide = Iwram_UnsignedDivideEntry;
   /* FAKEMATCH(barrier): an empty asm on divide, reads dot, clobbers r1. */
   asm("" : "+r"(divide) : "r"(dot) : "r1");

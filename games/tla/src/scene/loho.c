@@ -8,11 +8,11 @@
 /// its ship. The breach opens the way to Lull, the Jupiter Djinni on the roof
 /// of the Sanctum, and to a Golem Core for Scoop; a second lies under the
 /// boulder Lift raises on the high ground in the north east, and Mythril Silver
-/// is buried in the south west. The
-/// orange-haired woman keeps the shop and the inn, the bearded man in the
-/// Sanctum gives its services from across his altar, and a ladder through a
-/// hatch on a stone platform in the north east leads down into a small room
-/// below.
+/// is buried in the south west. The orange-haired woman keeps the shop and the
+/// inn, whose beds are up its stairs; the bearded man in the Sanctum gives its
+/// services from across his altar; and a ladder through a hatch on a stone
+/// platform in the north east leads down into a small room whose stairs come
+/// up in a house in the south west.
 
 #include "shared/tables.h"
 #include "sprite_ids.h"
@@ -113,6 +113,23 @@ enum LohoCellBehavior {
 
 /// Set once Lift has raised the boulder, this visit.
 #define FLAG_LOHO_BOULDER_LIFTED FLAG_SCENE_TEMP_01
+/// The buried treasures dug up this visit: the Mythril Silver, the Golem Core
+/// behind the wall, and the one under the boulder.
+#define FLAG_LOHO_MYTHRIL_SILVER_DUG FLAG_AREA_TEMP_00
+#define FLAG_LOHO_WALL_GOLEM_CORE_DUG FLAG_AREA_TEMP_01
+#define FLAG_LOHO_BOULDER_GOLEM_CORE_DUG FLAG_AREA_TEMP_02
+/// The orange-haired woman has come up to her counter, so talking to her opens
+/// the shop or the inn.
+#define FLAG_LOHO_SHOPKEEPER_AT_COUNTER FLAG_AREA_TEMP_20
+
+/// The houses' stairs, each an exit and the entrance beside it, in pairs: each
+/// leads to its partner's entrance and back.
+enum LohoRoomsWay {
+  WAY_SHOP_STAIRS = 7,        ///< up from the shop and inn to its bedroom
+  WAY_INN_BEDROOM_STAIRS,     ///< down to the shop and inn
+  WAY_SOUTHWEST_HOUSE_STAIRS, ///< down to the room under the hatch
+  WAY_HATCH_ROOM_STAIRS       ///< up to the house in the south west
+};
 
 extern s32 gLoho_ShopkeeperToEastCounter[];
 extern s32 gLoho_ShopkeeperToSouthCounter[];
@@ -135,10 +152,10 @@ extern s32 gLoho_CannonRises[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_TownTriggers[];
 extern struct Trigger gLoho_RoomsTriggers[];
-extern struct MapGridCellAnimation gLoho_HouseDoor;
+extern struct MapGridCellAnimation gLoho_SanctumDoor;
 extern s32 gLoho_VillagerPaces[];
 
-extern s16 gLoho_DoorOpening[];
+extern u16 gLoho_DoorOpening[];
 
 /// How long the blast throws sparks (EXPLOSION_SPARK_COUNT of them,
 /// scene/scene.h), in frames.
@@ -210,19 +227,22 @@ void Loho_AskWantCannon(s32 actor) {
   s32 msg = (s32)MsgLohoDidYouWantThisCannon;
 
   Event_SetMessageId(msg);
+  // "Did you want this cannon?"
   Event_OpenMessage(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
+    // Yes: "Well, if you can figure out a way to break down this wall, it's..."
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
+    // No: "If we can find someone to do that, we'll give 'im the cannon."
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessage(actor, 0);
 }
 
 /// Felix checks the cannon at the east end of town: "It looks like it's
-/// empty."
+/// empty.", and the field menu opens.
 void Loho_ExamineCannon(void) {
   // "It looks like it's empty."
   FieldMessage_Show((s32)MsgLohoItLooksLikeItsEmpty, 1);
@@ -246,11 +266,15 @@ void Loho_FireCannon(void) {
   s32 *timer;
   s32 tiles, entry, i, zero;
   s32 sheet;
-  u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches. */
+  u8 unused[4];
 
   felix = Actor_GetById(ACTOR_FELIX);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // Felix first walks round to stand south of the cannon, by the side he is
+  // on.
   goto start;
 approach:
   if (north == 0)
@@ -331,10 +355,11 @@ inPlace:
     tiles = VramCache_Load(entry, 1024, buffer);
     Heap_Release(buffer);
   }
+  // Each spark waits up to 31 frames to appear.
   timer = &table->age;
   for (i = 0; i < EXPLOSION_SPARK_COUNT; i++) {
     *timer = -(Random16() << 5 >> 16);
-    timer += 4;
+    timer += sizeof(struct LohoSpark) / sizeof(s32);
   }
   Dma_Set((const void *)(s32)Field_ExplosionPalette,
           (void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
@@ -542,6 +567,8 @@ inPlace:
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
     goto answeredNo;
   Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
+  // Yes: "Well, why don't you let us get that cannon onto your boat for you,
+  // hm?"
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
   gFieldWork->message++;
   goto crewLeaves;
@@ -551,8 +578,12 @@ toWest:
 answeredNo:
   Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_SHAKE_HEAD);
   gFieldWork->message++;
+  // No: "Look, the only way to get here is by boat, and I see a boat right
+  // there!"
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
   Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
+  // "I don't know why I'm offering, but why don't you let us put it aboard
+  // your boat for you?"
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
 crewLeaves:
   Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 24);
@@ -637,21 +668,23 @@ void Loho_MindReadMiner(void) {
 
 /// Felix casts Scoop on the spot below the stone wall in the south west of
 /// town, cell (14, 32): he digs up Mythril Silver.
-void Loho_ScoopFirstTreasure(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_AREA_TEMP_00);
+void Loho_ScoopMythrilSilver(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_LOHO_MYTHRIL_SILVER_DUG);
 }
 
 /// Felix casts Scoop on the spot behind the breached wall north of town, cell
 /// (32, 12): he digs up a Golem Core.
-void Loho_ScoopSecondTreasure(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
+void Loho_ScoopWallGolemCore(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1,
+                      FLAG_LOHO_WALL_GOLEM_CORE_DUG);
 }
 
 /// Felix casts Scoop on the spot under the round boulder on the high ground
 /// in the north east of town, cell (32, 7), once Lift has raised the boulder:
 /// he digs up a Golem Core.
-void Loho_ScoopThirdTreasure(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
+void Loho_ScoopBoulderGolemCore(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2,
+                      FLAG_LOHO_BOULDER_GOLEM_CORE_DUG);
 }
 
 /// Felix casts Lift on the round boulder on the high ground in the north east
@@ -707,7 +740,7 @@ void Loho_TalkToInnkeeper(void) {
 /// ancient wall."
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
+  if (Event_GetFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER)) {
     Shop_Run(SHOP_LOHO, ACTOR_VILLAGER_ON_COMMERCE);
   } else {
     if (Event_GetFlag(FLAG_LOHO_WALL_BREACHED))
@@ -745,7 +778,7 @@ void Loho_TalkAboutCannon(s32 actor) {
 /// counter, and talking to her then opens the shop.
 void Loho_ShopkeeperComesToEastCounter(void) {
   Actor_SetScript(ACTOR_VILLAGER_ON_COMMERCE, gLoho_ShopkeeperToEastCounter);
-  Event_SetFlag(FLAG_AREA_TEMP_20);
+  Event_SetFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER);
 }
 
 /// Felix walks up to the counter in the shop and inn from the south, facing
@@ -753,13 +786,13 @@ void Loho_ShopkeeperComesToEastCounter(void) {
 /// across from him, and talking to her then opens the shop.
 void Loho_ShopkeeperComesToSouthCounter(void) {
   Actor_SetScript(ACTOR_VILLAGER_ON_COMMERCE, gLoho_ShopkeeperToSouthCounter);
-  Event_SetFlag(FLAG_AREA_TEMP_20);
+  Event_SetFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER);
 }
 
 /// Felix steps away from the counter in the shop and inn, onto the cells around
 /// where he stood: the orange-haired woman goes back to her place.
 void Loho_ShopkeeperGoesBack(void) {
-  Event_ClearFlag(FLAG_AREA_TEMP_20);
+  Event_ClearFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER);
   Actor_SetScript(ACTOR_VILLAGER_ON_COMMERCE, gLoho_VillagerReturns);
 }
 
@@ -787,8 +820,8 @@ void Loho_OpenDoorAndEnter(void) {
   }
   trigger = &work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
-  Loho_AnimateCells(gLoho_HouseDoor.steps, gLoho_HouseDoor.x,
-                    gLoho_HouseDoor.y);
+  Loho_AnimateCells(gLoho_SanctumDoor.steps, gLoho_SanctumDoor.x,
+                    gLoho_SanctumDoor.y);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
@@ -817,6 +850,9 @@ void Loho_EnterDoor(void) {
 void Loho_ClimbDownLadder(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
+  // XXX: the ladder's exits are 6, 8 and 9, never 2, and the town unloads as
+  // Felix leaves; what is the first miner moved for? A recording of the
+  // climb with him in view would show whether it is ever seen.
   if (trigger == 2)
     Actor_SetPosition(ACTOR_MINER_WELCOMING_TO_LOHO, 144, 224);
   else
@@ -895,11 +931,11 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_LOHO) {
-    if (!Event_GetFlag(FLAG_AREA_TEMP_00))
+    if (!Event_GetFlag(FLAG_LOHO_MYTHRIL_SILVER_DUG))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_01))
+    if (!Event_GetFlag(FLAG_LOHO_WALL_GOLEM_CORE_DUG))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
-    if (!Event_GetFlag(FLAG_AREA_TEMP_02))
+    if (!Event_GetFlag(FLAG_LOHO_BOULDER_GOLEM_CORE_DUG))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 2, 1);
     Loho_SetUpTown();
   } else {
@@ -924,7 +960,8 @@ s32 Scene_Initialize(void) {
           FIXEDtoINT(Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->x.fixed);
       Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->userValue =
           FIXEDtoINT(Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->z.fixed);
-      Actor_SetScript(ACTOR_MAN_KEEPING_THE_CANNON, 2);
+      // He wanders about the place he now stands, by the wall.
+      Actor_SetScript(ACTOR_MAN_KEEPING_THE_CANNON, MOVEMENT_TYPE_WANDER);
     }
   }
   return 0;
@@ -940,7 +977,7 @@ s32 Scene_PrepareMap(void) {
 // clang-format off
 /// The miner by the cannon walks up to the breached wall.
 s32 gLoho_FirstMinerGoesToWall[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(539, 327),
     SC_SYNC,
     SC_MOVE_XZ(583, 327),
@@ -949,7 +986,7 @@ s32 gLoho_FirstMinerGoesToWall[] = {
     SC_SYNC,
     SC_POSITION_ORIGIN,
     SC_WAIT(150),
-    SC_SET(SW_MOTION, 1),
+    SC_SET(SW_MOTION, ACTOR_FOLLOWS_TERRAIN),
     SC_POSITION(582, 0, 266),
     SC_MOVE(582, 0, 248),
     SC_SYNC,
@@ -957,7 +994,7 @@ s32 gLoho_FirstMinerGoesToWall[] = {
     SC_SYNC,
     SC_MOVE_XZ(570, 278),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_END,
 };
@@ -965,28 +1002,28 @@ s32 gLoho_FirstMinerGoesToWall[] = {
 /// The miner puzzled by the cannon steps up to look at the wall.
 s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(4, 0, -40),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// The man keeping the cannon steps up to look at the wall.
 s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(0, 0, -40),
     SC_SYNC,
     SC_MOVE_XZ(512, 303),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// The miner by the cannon walks back from the wall.
 s32 gLoho_FirstMinerWalksBack[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(570, 0, 248),
     SC_SYNC,
     SC_MOVE(583, 0, 248),
@@ -1007,18 +1044,18 @@ s32 gLoho_FirstMinerFetchesCannon[] = {
     SC_SYNC,
     SC_MOVE_XZ(554, 332),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// The miner by the cannon comes back with it.
 s32 gLoho_FirstMinerReturns[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(472, 331),
     SC_SYNC,
     SC_MOVE_XZ(472, 361),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -1055,10 +1092,10 @@ s32 gLoho_VillagerPaces[] = {
 
 /// The orange-haired woman going back to her place.
 s32 gLoho_VillagerReturns[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(128, 0, 120),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LABEL(1),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_WEST),
@@ -1074,31 +1111,32 @@ s32 gLoho_VillagerReturns[] = {
 
 /// The orange-haired woman stepping up to the counter across from Felix at its
 /// south side.
-s32 gLoho_ShopkeeperToSouthCounter[] = {                                                               
-      SC_SPEED(0.9),                                                
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(128, 0, 144),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_END,                                                                  
-  };
+s32 gLoho_ShopkeeperToSouthCounter[] = {
+    SC_SPEED(0.9),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(128, 0, 144),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
 /// The orange-haired woman stepping over to the counter by Felix at its east
 /// side.
-s32 gLoho_ShopkeeperToEastCounter[] = {                                                               
-      SC_SPEED(0.9),                                                
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(159, 0, 128),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_END,                                                                  
-  };
+s32 gLoho_ShopkeeperToEastCounter[] = {
+    SC_SPEED(0.9),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(159, 0, 128),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
 #include "shared/scene_entrances_default.c"
 
-/// The houses' exit regions.
+/// The houses' exit regions: the top of the ladder up out of the room under
+/// the hatch.
 struct SceneRegion gLoho_Regions[] = {
-    {452, 28, 740, 460, 36, 748, CONDITION_ALWAYS, 6},
+    {452, 28, 740, 460, 36, 748, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_SOUTH},
     {SCENE_TABLE_END},
 };
 
@@ -1120,10 +1158,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_SOUTHWEST, Loho, LOHO_FROM_LOHO_ROOMS_SOUTHWEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_EAST, Loho, LOHO_FROM_LOHO_ROOMS_EAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_SOUTH, Loho, LOHO_FROM_LOHO_ROOMS_SOUTH_A, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, LohoRooms, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, LohoRooms, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, LohoRooms, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, LohoRooms, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_SHOP_STAIRS, LohoRooms, WAY_INN_BEDROOM_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_INN_BEDROOM_STAIRS, LohoRooms, WAY_SHOP_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_SOUTHWEST_HOUSE_STAIRS, LohoRooms, WAY_HATCH_ROOM_STAIRS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HATCH_ROOM_STAIRS, LohoRooms, WAY_SOUTHWEST_HOUSE_STAIRS, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -1219,9 +1257,9 @@ struct Trigger gLoho_TownTriggers[] = {
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLohoThisWellLooksReallyOld))},
     {USE_ITEM_ON_ACTOR(ITEM_MAGMA_BALL), ACTOR_CANNON, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
     {TRIGGER_TALK, ACTOR_LULL, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_MYTHRIL_SILVER_SPOT, FLAG_AREA_TEMP_00, EVENT(Loho_ScoopFirstTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_GOLEM_CORE_SPOT, FLAG_AREA_TEMP_01, EVENT(Loho_ScoopSecondTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_BOULDER_GOLEM_CORE_SPOT, FLAG_AREA_TEMP_02, EVENT(Loho_ScoopThirdTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_MYTHRIL_SILVER_SPOT, FLAG_LOHO_MYTHRIL_SILVER_DUG, EVENT(Loho_ScoopMythrilSilver)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_GOLEM_CORE_SPOT, FLAG_LOHO_WALL_GOLEM_CORE_DUG, EVENT(Loho_ScoopWallGolemCore)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_BOULDER_GOLEM_CORE_SPOT, FLAG_LOHO_BOULDER_GOLEM_CORE_DUG, EVENT(Loho_ScoopBoulderGolemCore)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_LOHO_BOULDER_LIFTED, EVENT(Loho_LiftBoulder)},
     {TRIGGER_TABLE_END},
 };
@@ -1234,18 +1272,18 @@ struct Trigger gLoho_RoomsTriggers[] = {
     {TRIGGER_EXIT, LOHO_ROOMS_TO_LOHO_SOUTHWEST, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_SOUTHWEST},
     {TRIGGER_EXIT, LOHO_ROOMS_TO_LOHO_EAST, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_EAST},
     {TRIGGER_EXIT, LOHO_ROOMS_TO_LOHO_SOUTH, CONDITION_ALWAYS, LOHO_ROOMS_TO_LOHO_SOUTH},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_SOUTH_OF_COUNTER, FLAG_AREA_TEMP_20, EVENT(Loho_ShopkeeperComesToSouthCounter)},
-    {STEP_TRIGGER_FACING(FACING_WEST), CELL_BEHAVIOR_EAST_OF_COUNTER, FLAG_AREA_TEMP_20, EVENT(Loho_ShopkeeperComesToEastCounter)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_NEAR_SOUTH_OF_COUNTER, IF_FLAG_SET(FLAG_AREA_TEMP_20), EVENT(Loho_ShopkeeperGoesBack)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_NEAR_EAST_OF_COUNTER, IF_FLAG_SET(FLAG_AREA_TEMP_20), EVENT(Loho_ShopkeeperGoesBack)},
+    {TRIGGER_EXIT, WAY_SHOP_STAIRS, CONDITION_ALWAYS, WAY_SHOP_STAIRS},
+    {TRIGGER_EXIT, WAY_INN_BEDROOM_STAIRS, CONDITION_ALWAYS, WAY_INN_BEDROOM_STAIRS},
+    {TRIGGER_EXIT, WAY_SOUTHWEST_HOUSE_STAIRS, CONDITION_ALWAYS, WAY_SOUTHWEST_HOUSE_STAIRS},
+    {TRIGGER_EXIT, WAY_HATCH_ROOM_STAIRS, CONDITION_ALWAYS, WAY_HATCH_ROOM_STAIRS},
+    {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_SOUTH_OF_COUNTER, FLAG_LOHO_SHOPKEEPER_AT_COUNTER, EVENT(Loho_ShopkeeperComesToSouthCounter)},
+    {STEP_TRIGGER_FACING(FACING_WEST), CELL_BEHAVIOR_EAST_OF_COUNTER, FLAG_LOHO_SHOPKEEPER_AT_COUNTER, EVENT(Loho_ShopkeeperComesToEastCounter)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_NEAR_SOUTH_OF_COUNTER, IF_FLAG_SET(FLAG_LOHO_SHOPKEEPER_AT_COUNTER), EVENT(Loho_ShopkeeperGoesBack)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_NEAR_EAST_OF_COUNTER, IF_FLAG_SET(FLAG_LOHO_SHOPKEEPER_AT_COUNTER), EVENT(Loho_ShopkeeperGoesBack)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_COMMERCE, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_COMMERCE, FLAG_LOHO_WALL_BREACHED, MSGNO(MsgLohoWheneverSomeoneStrikesGold)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_COMMERCE, IF_FLAG_SET(FLAG_LOHO_WALL_BREACHED), MSGNO(MsgLohoNowWeDontHaveSymbol)},
-    {TRIGGER_TALK, ACTOR_INN_COUNTER, IF_FLAG_SET(FLAG_AREA_TEMP_20), EVENT(Loho_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_COUNTER, IF_FLAG_SET(FLAG_LOHO_SHOPKEEPER_AT_COUNTER), EVENT(Loho_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_BEARDED_MAN_ON_THE_CANNON, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCannon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEARDED_MAN_ON_THE_CANNON, FLAG_LOHO_WALL_BREACHED, MSGNO(MsgLohoIfCannonIsTruly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEARDED_MAN_ON_THE_CANNON, IF_FLAG_SET(FLAG_LOHO_WALL_BREACHED), MSGNO(MsgLohoItWorriesMeToNo)},
@@ -1254,12 +1292,15 @@ struct Trigger gLoho_RoomsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The steps of a house door opening.
-s16 gLoho_DoorOpening[] = {
-    64, 50, 2, 2, 2, 64, 52, 2,
-    2, 2, 64, 54, 2, 2, 2, -1,
+/// How the Sanctum's double door swings open, as three frames of cells copied
+/// over the closed door.
+u16 gLoho_DoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(64, 50, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(64, 52, 2, 2, 2),
+    MAPGRID_ANIMATION_STEP(64, 54, 2, 2, 2),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 // clang-format on
 
-/// A house door's opening, at its place on the map grid.
-struct MapGridCellAnimation gLoho_HouseDoor = {gLoho_DoorOpening, 79, 15};
+/// The Sanctum's door opening, at its place on the map grid.
+struct MapGridCellAnimation gLoho_SanctumDoor = {gLoho_DoorOpening, 79, 15};

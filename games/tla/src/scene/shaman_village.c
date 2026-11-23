@@ -310,7 +310,7 @@ extern u32 gShamanVillage_ReturnToLeaderAtSandScript[];
 void ShamanVillage_SetUpTrialGrounds(void);
 void ShamanVillage_SetUpNorthEnd(void);
 void ShamanVillage_SetUpVillage(void);
-void ShamanVillage_SetUpInn(void);
+void ShamanVillage_SetUpHouses(void);
 void ShamanVillage_SetUpSanctum(void);
 void Party_RestoreHpPp(s32 mode);
 void ShamanVillage_TalkToEastKnight(void);
@@ -638,7 +638,8 @@ void ShamanVillage_BlowAwaySand(void) {
 
           FieldEffect_Spawn(x, 0, INTtoFIXED(472 - (Random16() & 127)),
                             velocity[0], velocity[1], velocity[2],
-                            EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                            EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY |
+                                EFFECT_SCRIPT_MEDIUM,
                             &options);
         }
       }
@@ -703,8 +704,9 @@ void ShamanVillage_BlowAwaySand(void) {
                          gMainRoutineWork.windowBrightness);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
       ~ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
-  Actor_GetById(ACTOR_TWISTER_ROCK)->priorityFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
+  Actor_GetById(ACTOR_TWISTER_ROCK)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   REG_DISPCNT |= DISPCNT_BG2_ON;
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -888,7 +890,7 @@ s32 ShamanVillage_IsFacingCounter(void) {
       (DEGtoANG(135) - 1);
   facing = 1;
   if (turn >= DEGtoANG(90) - 1)
-    facing = FACING_EAST;
+    facing = 0;
   return facing;
 }
 
@@ -899,7 +901,7 @@ void Inn_PlaySleep(s32 roomPrice);
 enum { SHOP_SHAMAN_VILLAGE = 29 };
 
 /// The Shaman Village's inn, as Inn_CheckIn numbers the inns.
-enum { SHAMAN_VILLAGE_HOUSES = 11 };
+enum { SHAMAN_VILLAGE_INN = 11 };
 
 /// Felix talks to the innkeeper across the inn's counter. Before Moapa is
 /// beaten the innkeeper says nothing, and a card on the counter reads "Put ...
@@ -910,7 +912,7 @@ enum { SHAMAN_VILLAGE_HOUSES = 11 };
 void ShamanVillage_TalkToInnkeeper(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     if (ShamanVillage_IsFacingCounter()) {
-      Inn_CheckIn(SHAMAN_VILLAGE_HOUSES, ACTOR_INNKEEPER);
+      Inn_CheckIn(SHAMAN_VILLAGE_INN, ACTOR_INNKEEPER);
     } else {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -922,7 +924,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (ShamanVillage_IsFacingCounter()) {
-      u32 price = Inn_QuoteRoomPrice(SHAMAN_VILLAGE_HOUSES);
+      u32 price = Inn_QuoteRoomPrice(SHAMAN_VILLAGE_INN);
 
       Actor_SetAnimation(ACTOR_INNKEEPER, 5);
       Event_Wait(30);
@@ -962,7 +964,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
 /// Moapa? Incredible!"
 void ShamanVillage_TalkToPriest(void) {
   if (ShamanVillage_IsFacingCounter()) {
-    Sanctum_Run(8);
+    Sanctum_Run(ACTOR_PRIEST);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -1161,6 +1163,7 @@ void ShamanVillage_ExplainTrialRules(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
   }
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTH);
+  // "The rules are simple."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   Actor_FaceDirection(ACTOR_WEST_KNIGHT, FACING_SOUTHEAST, 0);
@@ -1294,8 +1297,8 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetAnimation(ACTOR_WEST_KNIGHT, 2);
   target = ((struct Actor *)Actor_GetById(ACTOR_MOAPA));
   if (target != NULL)
-    Actor_SetDestination(ACTOR_WEST_KNIGHT, ((s16 *)target)[5],
-                         ((s16 *)target)[9]);
+    Actor_SetDestination(ACTOR_WEST_KNIGHT, target->x.part[0].integer,
+                         target->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_WEST_KNIGHT);
   Actor_SetPosition(ACTOR_WEST_KNIGHT, 0, 0);
   Actor_SetAnimation(ACTOR_MOAPA, 3);
@@ -1309,8 +1312,8 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetAnimation(ACTOR_EAST_KNIGHT, 2);
   target = ((struct Actor *)Actor_GetById(ACTOR_MOAPA));
   if (target != NULL)
-    Actor_SetDestination(ACTOR_EAST_KNIGHT, ((s16 *)target)[5],
-                         ((s16 *)target)[9]);
+    Actor_SetDestination(ACTOR_EAST_KNIGHT, target->x.part[0].integer,
+                         target->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_EAST_KNIGHT);
   Actor_SetPosition(ACTOR_EAST_KNIGHT, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
@@ -1367,8 +1370,8 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_SetAnimation(ACTOR_EAST_KNIGHT, 2);
   target = ((struct Actor *)Actor_GetById(ACTOR_MOAPA));
   if (target != NULL)
-    Actor_SetDestination(ACTOR_EAST_KNIGHT, ((s16 *)target)[5],
-                         ((s16 *)target)[9]);
+    Actor_SetDestination(ACTOR_EAST_KNIGHT, target->x.part[0].integer,
+                         target->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_EAST_KNIGHT);
   Actor_SetPosition(ACTOR_EAST_KNIGHT, 0, 0);
   Actor_SetAnimation(ACTOR_MOAPA, 3);
@@ -1382,8 +1385,8 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_SetAnimation(ACTOR_WEST_KNIGHT, 2);
   target = ((struct Actor *)Actor_GetById(ACTOR_MOAPA));
   if (target != NULL)
-    Actor_SetDestination(ACTOR_WEST_KNIGHT, ((s16 *)target)[5],
-                         ((s16 *)target)[9]);
+    Actor_SetDestination(ACTOR_WEST_KNIGHT, target->x.part[0].integer,
+                         target->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_WEST_KNIGHT);
   Actor_SetPosition(ACTOR_WEST_KNIGHT, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHEAST);
@@ -1468,14 +1471,14 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2.4);
   Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->steeringFlags &= ~1;
+      ->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 220);
   Event_Wait(1);
   {
     u8 *flags = &((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
                      ->steeringFlags;
 
-    *flags |= 1;
+    *flags |= ACTOR_FACES_MOTION;
   }
   Actor_SetSpeed(ACTOR_MOAPA, 0.4);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 208);
@@ -1501,11 +1504,11 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.4);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->steeringFlags &= ~1;
+      ->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 264);
   Event_Wait(1);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->steeringFlags |= 1;
+      ->steeringFlags |= ACTOR_FACES_MOTION;
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Who have we here? Strangers in Shaman Village? What is your purpose..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_MOAPA, 0);
@@ -1526,8 +1529,8 @@ void ShamanVillage_MeetMoapa(void) {
 
 #include "shared/drift_spawn.c"
 
-/// The Shaman Village's events after Moapa's house: the rod, the trial's
-/// rules and paths, the race's lettering, and each place's set-up and tables.
+// The Shaman Village's events after Moapa's house: the rod, the trial's rules
+// and paths, the race's lettering, and each place's set-up and tables.
 
 /// The Shaman's Rod's icon, held up over Felix's head.
 struct Actor *ShamanVillage_CreateRodIcon(void) {
@@ -1579,7 +1582,7 @@ void ShamanVillage_ShowShamansRod(void) {
   FieldCamera_MoveTo(120, 40, 246, 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.2);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 264);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   rod = ShamanVillage_CreateRodIcon();
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetSpeed(ACTOR_MOAPA, 2.4);
@@ -1709,6 +1712,7 @@ void ShamanVillage_ShowShamansRod(void) {
     FieldActor_ShowEmote(ACTOR_WEST_KNIGHT, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                          20);
     Actor_FaceDirectionAndWait(ACTOR_WEST_KNIGHT, FACING_EAST);
+    // "The way of the vanishing sand!"
     Event_ShowMessage(ACTOR_WEST_KNIGHT, 0);
     Actor_FaceDirectionAndWait(ACTOR_EAST_KNIGHT, FACING_WEST);
     Actor_SetAnimationAndWait(ACTOR_EAST_KNIGHT, 3);
@@ -1717,8 +1721,10 @@ void ShamanVillage_ShowShamansRod(void) {
     Actor_FaceDirection(ACTOR_EAST_KNIGHT, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_WEST_KNIGHT, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_SOUTH);
+    // "Yes, if you outlanders intend to claim the Hover Jade, you must..."
     Event_ShowMessage(ACTOR_MOAPA, 0);
     Actor_SetAnimation(ACTOR_MOAPA, 3);
+    // "If you people have the courage, follow me!"
     Event_ShowMessage(ACTOR_MOAPA, 0);
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveToFX(toFIXED(180), toFIXED(32), z, 1);
@@ -1757,11 +1763,15 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetPosition(ACTOR_EAST_KNIGHT, 0, 0);
   Actor_SetPosition(ACTOR_WEST_KNIGHT, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  // "If you'd told us there was a test to begin with, we'd have been out..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
+  // "What kind of test is this?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
+  // "I understand that you're a little concerned, but unless you try it..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+  // "Give it your best, Felix!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -1870,6 +1880,7 @@ void ShamanVillage_CheckTrialEntry(void) {
   Event_SetMessageId((s32)MsgShamanMissingShamanRod);
   if (PartyInventory_FindMember(ITEM_SHAMANS_ROD) == -1) {
     FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    // "But what's this? You no longer have the Shaman's Rod? We cannot..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
     ShamanVillage_StepBackFromTrial();
     return;
@@ -1897,10 +1908,12 @@ void ShamanVillage_CheckTrialEntry(void) {
   gFieldWork->message++;
   if (remaining != 0) {
     FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    // "It looks as though you are missing the item you need if you are to..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     gFieldWork->message++;
+    // "Choose the road of your liking. It matters not to us."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
     Actor_WatchAndSetScript(ACTOR_WEST_KNIGHT, gMainRoutineWork.leaderActorId);
     Actor_WatchAndSetScript(ACTOR_EAST_KNIGHT, gMainRoutineWork.leaderActorId);
@@ -2462,6 +2475,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_MOAPA, 4);
   // "It's difficult enough for me. I expect you will find it quite..."
+  // Yes: "You seem confident, but it is your ignorance speaking."
+  // No: "So... You are not as sure of yourselves as you first seemed."
   Event_OpenMessage(ACTOR_MOAPA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -2473,13 +2488,16 @@ void ShamanVillage_ShebaClearsSand(void) {
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimationAndWait(ACTOR_MOAPA, 4);
+    // "You seem confident, but it is your ignorance speaking."
     Event_ShowMessage(ACTOR_MOAPA, 0);
   } else {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimationAndWait(ACTOR_MOAPA, 4);
     gFieldWork->message++;
+    // "So... You are not as sure of yourselves as you first seemed."
     Event_ShowMessage(ACTOR_MOAPA, 0);
     Actor_SetAnimation(ACTOR_MOAPA, 3);
+    // "But I will permit this. Follow me, and I shall explain."
     Event_ShowMessage(ACTOR_MOAPA, 0);
   }
   Actor_WalkToAndWait(ACTOR_MOAPA, 212, 582);
@@ -2623,9 +2641,9 @@ void ShamanVillage_EnterLowerEastHouse(void) {
 }
 
 /// Once Moapa is beaten, Felix walks north into the door of the upper of the
-/// two houses on the village's east side (cell (28, 23)) and goes in; the
-/// walkthrough's way to Aroma climbs its stairs and out to the north-east.
-/// Before, the door is locked.
+/// two houses on the village's east side (cell (28, 23)) and goes in; its
+/// stairs lead up and out to the north-east, on the way to Aroma. Before, the
+/// door is locked.
 void ShamanVillage_EnterUpperEastHouse(void) {
   ShamanVillage_EnterDoor(43, 40, 28, 17, 1, 2);
 }
@@ -2767,7 +2785,7 @@ s32 Scene_Initialize(void) {
   else if (scene == SCENE_SHAMAN_VILLAGE)
     ShamanVillage_SetUpVillage();
   else if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
-    ShamanVillage_SetUpInn();
+    ShamanVillage_SetUpHouses();
   else if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     ShamanVillage_SetUpSanctum();
   return 0;
@@ -2782,7 +2800,7 @@ void ShamanVillage_SetUpTrialGrounds(void) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
     FieldActor_SetSpriteColor(
-        ((struct Actor *)Actor_GetById(ACTOR_TWISTER_ROCK)), 6);
+        ((struct Actor *)Actor_GetById(ACTOR_TWISTER_ROCK)), SPRITE_COLOR_GREY);
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Actor_SetPositionAndFacing(ACTOR_MOAPA, toFIXED(168), toFIXED(568),
                                FACING_SOUTH);
@@ -2951,7 +2969,7 @@ void ShamanVillage_SetUpVillage(void) {
 /// The houses: Moapa and his household as the story leaves them. Brought back
 /// from the battle with Moapa, the party wakes in a bed with its HP and PP
 /// restored and Felix gets up and walks on; the first time sets Moapa beaten.
-void ShamanVillage_SetUpInn(void) {
+void ShamanVillage_SetUpHouses(void) {
   u32 i;
 
   gFieldWork->transition =

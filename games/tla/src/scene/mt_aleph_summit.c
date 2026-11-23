@@ -70,6 +70,11 @@ enum MtAlephSummitAlexLine {
   ALEX_TRYING_TO_ANGER_ME = 12
 };
 
+/// The stretches of the staff credits the summit goes on to (staff_credit.c's
+/// entrances): the opening, which comes back to the Golden Sun forming, and
+/// the one that goes on to the lighthouses' beacons.
+enum { STAFF_CREDIT_OPENING = 0, STAFF_CREDIT_TO_BEACONS = 1 };
+
 #include "../field/field_effect_move.c"
 
 /// The palette fade's three channels of one 16-colour palette.
@@ -260,10 +265,11 @@ void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
     dir.x += dir.x >> 1;
     dir.x += ((Random16() * 3) << 14 >> 16) - toFIXED(3) / 8;
     dir.z += ((Random16() * 3) << 13 >> 16) - toFIXED(3) / 16;
-    FieldEffect_Spawn(
-        actor->x.fixed, actor->y.fixed, actor->z.fixed, dir.x, dir.y, dir.z,
-        EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
-        &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, dir.x,
+                      dir.y, dir.z,
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
+                      &options);
     i++;
   } while (i <= count);
 }
@@ -415,7 +421,7 @@ s32 Scene_Initialize(void) {
       Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(2);
       System_Wait(8);
     }
-    Event_SetDestination(SCENE_STAFF_CREDIT, 1);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_TO_BEACONS);
   } else if (mode == ENTRANCE_ALEX_TAKES_THE_POWER) {
     heap = Ram_HeapSlots;
     fade = heap->paletteFade;
@@ -782,7 +788,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(ACTOR_ALEX, 12);
       }
     }
-    Event_SetDestination(SCENE_STAFF_CREDIT, 0);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_OPENING);
   }
   Heap_Release(buffer);
   return 0;

@@ -1,11 +1,15 @@
 #ifndef ALCHEMY_MAIN_ROUTINE_WORK_H
 #define ALCHEMY_MAIN_ROUTINE_WORK_H
 
+/// @file
+/// gMainRoutineWork, the game's state a save file keeps, and the values its
+/// fields hold.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneVariant).
+/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneType).
 enum SceneType {
   SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
   /// Towns and their rooms, and the prologue's Venus Lighthouse scenes:
@@ -77,7 +81,7 @@ struct MainRoutineWork {
   /// the party's DjinnRecoveryTable, which Djinn_GetRecoveryTable returns from
   /// here, its next word running over coins.
   u32 summonMask;
-  s32 coins; ///< at most 999999 (Party_AdjustCoins)
+  s32 coins; ///< at most COIN_MAX (Party_AdjustCoins)
   /// The party's Djinn recovery list (DjinnRecoveryTable from its offers on),
   /// read through Djinn_GetRecoveryTable.
   u8 djinnRecovery[292];
@@ -120,12 +124,10 @@ struct MainRoutineWork {
   s32 y;
   s32 z;
   s32 heading;
-  u16 layer;       ///< 0 on taking an entrance
-  s16 battleMusic; ///< the battle music chosen for the encounter
-  s16 sceneMusic;  ///< the current scene's field music
-  /// The leader's movement: 0 on foot, 2 climbing, 3 or 4 holding a
-  /// workspace item or node; 7, 8 and 10 set by the world map and others.
-  u8 movementMode;
+  u16 layer;              ///< 0 on taking an entrance
+  s16 battleMusic;        ///< the battle music chosen for the encounter
+  s16 sceneMusic;         ///< the current scene's field music
+  u8 movementMode;        ///< how the leader moves, an enum LeaderMovementMode
   s32 leaderActorId;      ///< the leader
   u8 party[8];            ///< the party in order
   u8 unusedAfterParty[5]; ///< no code names it
@@ -182,11 +184,11 @@ struct MainRoutineWork {
   s32 encounterSteps; ///< reset on entering a new scene group
   /// Cleared with the battle's spoils; no code reads it by name.
   u16 pendingItem;
-  s16 sceneType;       ///< the current scene's variant from its record
+  s16 sceneType;       ///< the current scene's enum SceneType
   s16 retreatScene;    ///< where Retreat goes; the group's first entrance
   s16 retreatEntrance; ///< where Retreat goes; the group's first entrance
   FIXED avoidDistance; ///< distance left of Avoid, 16.16 pixels; 0 when off
-  s8 avoidByItem;      ///< Avoid came from an item (flag 0x145)
+  s8 avoidByItem;      ///< Avoid came from an item (FLAG_ITEM_USE)
   u8 pausedPose;       ///< the paused object's first animation param
   s16 haltedActor;     ///< the object field Psynergy has stopped, -1 for none
   /// Nonzero while the leader is sand (FieldPsynergy_Sand): ending the

@@ -64,6 +64,8 @@ enum {
 
 /// Ways in that no exit reaches.
 enum {
+  /// Unused: the party below the ice wall, which still stands.
+  ENTRANCE_BELOW_ICE_WALL = 2,
   /// Unused: the party below the ice wall, drawn already gone.
   ENTRANCE_ICE_WALL_GONE = 3,
   /// Unused: loads the cannon aboard, hands the ship to the player and enters
@@ -147,7 +149,6 @@ void NorthernReaches_ClearIceWall(void) {
   MapGrid_CopyCellsLayered(47, 9, 9, 4, 25, 9);
   MapGrid_CopyCellsLayered(47, 69, 9, 10, 25, 69);
   MapGrid_CopyCellAttributes(111, 8, 9, 5, 89, 8);
-  return;
 }
 
 /// The ship sails up to the ice wall, cells (90, 11) to (96, 11), before it
@@ -376,6 +377,7 @@ s32 Scene_Initialize(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   if (state->entrance == ENTRANCE_ABOARD_SHIP_WITH_CANNON) {
     Event_SetFlag(FLAG_SHIP_CARRIES_CANNON);
+    // The player steers the ship, actor 8, in place of the leader.
     state->ownerOverride = 1;
     Event_SetDestination(SCENE_NORTHERN_REACHES,
                          NORTHERN_REACHES_FROM_WORLD_MAP_NORTH);
@@ -466,7 +468,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
       Event_PlaySound(SE_CRASH);
     }
     if (frame == 60) {
-      PaletteFade_SetTarget(RGB_WHITE, 0);
+      PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
       PaletteFade_StartInterpolation(90);
       Event_PlaySound(SE_RUMBLE);
     }
@@ -522,6 +524,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
+/// The ship at rest on the sea, without its shadow, on the middle layer.
 s32 gNorthernReaches_ShipAtRest[] = {
     SC_CALL((s32)Ship_DropShadow),
     SC_ANIMATION(7),
@@ -530,7 +533,8 @@ s32 gNorthernReaches_ShipAtRest[] = {
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 470, 0, 192, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_BELOW_ICE_WALL, CONDITION_ALWAYS, 470, 0, 192, FACING_NORTH, 0,
+     -1, -1, -1, -1, 0},
     {ENTRANCE_ICE_WALL_GONE, CONDITION_ALWAYS, 470, 0, 192, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
     {SCENE_TABLE_END},

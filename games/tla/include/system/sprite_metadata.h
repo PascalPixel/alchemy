@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SPRITE_METADATA_H
 #define ALCHEMY_SPRITE_METADATA_H
 
+/// @file
+/// A sprite's animation metadata, its row of gSprite_AnimationMetadata.
+
 #include "types.h"
 #include "static_assert.h"
 #include "edition.h"

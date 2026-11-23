@@ -13,14 +13,7 @@
 /// IWRAM code, loads the window graphics and the sound driver, then enters
 /// MainRoutine_Run and never returns.
 void System_Initialize(void) {
-  {
-    volatile u16 *dma0 = REG_DMA0;
-
-    // DMA0CNT_H: drop the HBlank repeat timing, then the enable bit
-    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma0[5] &= ~DMA_ENABLE;
-    dma0[5];
-  }
+  DMA0_STOP();
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   // Clear IWRAM up to gCartridgeResetMarker; the stacks above it are in use.
   Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
@@ -28,7 +21,7 @@ void System_Initialize(void) {
   System_InstallIwramAndIrqs();
 #ifdef UBFIX
   gIoWriteQueue.count = 0;
-  gIoWriteQueue.pad = 0;
+  gIoWriteQueue.padding = 0;
 #else
   *(u32 *)&gIoWriteQueue.count = 0;
 #endif
@@ -42,7 +35,6 @@ void System_Initialize(void) {
   Irq_SetHandler(IRQ_VBLANK, 1, System_VBlankHandler);
   Irq_SetHandler(IRQ_GAMEPAK, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
-  // Start audio and frame services only after the interrupt handlers are ready.
   Sound_InitializeFar();
   VramCache_Reset();
   Task_ResetAll();
@@ -55,8 +47,7 @@ void System_Initialize(void) {
   MainRoutine_RunFar(GAME_START_TITLE);
 }
 
-/// Unused: waits out frames forever; the frame loop still runs the
-/// tasks.
+/// Unused: lets frames pass forever, the tasks still running each frame.
 UNUSED void System_IdleForever(void) {
   volatile struct InputState *input = &gInput;
 
@@ -94,27 +85,15 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-/// Unused: reserved empty export A in the System far-call table; no source
-/// caller.
+/// Unused: five empty exports the System far-call table reserves; nothing
+/// calls them.
 UNUSED void Stub_ReservedNoOpA(void) {}
-
-/// Unused: reserved empty export B in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpB(void) {}
-
-/// Unused: reserved empty export C in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpC(void) {}
-
-/// Unused: reserved empty export D in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpD(void) {}
-
-/// Unused: reserved empty export E in the System far-call table; no source
-/// caller.
 UNUSED void Stub_ReservedNoOpE(void) {}
 
-/// An exported stub that ignores its arguments and reports 0.
+/// An exported stub that ignores its arguments and returns 0.
 s32 Stub_ReturnZero(s32 resourceId, const u8 *table) { return 0; }
 
 /// Copies the build stamp resource (three words) into gBuildStamp and
@@ -230,7 +209,7 @@ void Overlay_Load(u32 index, void *destination) {
 /// The handler of every interrupt nobody has claimed.
 void Irq_Ignore(void) {}
 
-/// Copies the resident code to IWRAM, points the BIOS interrupt vector
+/// Copies the resident code to IWRAM (4 KB), points the BIOS interrupt vector
 /// (gIrqVector) at its dispatcher, installs the default handler table and
 /// enables the VBlank, keypad and cartridge-removed interrupts.
 void System_InstallIwramAndIrqs(void) {

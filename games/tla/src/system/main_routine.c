@@ -86,7 +86,6 @@ void Scene_TakeExit(s32 exitId) {
         break;
       }
       if (kind == EXIT_ID_ANY || kind == exitId) {
-        // As one condition the two flag tests fold into a range check.
         if (flag != 0) {
           if (flag != -1) {
             if (GameFlag_Get(flag))
@@ -109,20 +108,20 @@ void Scene_TakeExit(s32 exitId) {
 }
 
 /// Chooses where the game continues after a sequence other than the field
-/// sequence (see MainRoutine_Run). result is its result: -1 when the party was
-/// defeated, which revives the leader with 1 HP and returns to the story
-/// battle's defeat point (Event_SetDefeatDestination, defeatScene) or, when
-/// none is set, to the restart point, usually the last Sanctum
-/// (Scene_SetRestartPoint, savedScene); the world map is then told the scene
-/// was left (WorldMap_SetReturnLeavingScene). As The Broken Seal's, with no
-/// childhood healing.
+/// sequence (see MainRoutine_Run). `result` is its result: BATTLE_OUTCOME_LOST
+/// when the party was defeated, which revives the leader with 1 HP and returns
+/// to the story battle's defeat point (Event_SetDefeatDestination,
+/// defeatScene) or, when none is set, to the restart point, usually the last
+/// Sanctum (Scene_SetRestartPoint, restartScene); the world map is then told
+/// the scene was left (WorldMap_SetReturnLeavingScene). As The Broken Seal's,
+/// with no childhood healing.
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s16 sceneId;
   s16 entrance;
 
   gMainRoutineWork.sequenceResult = result;
-  if (result == -1) {
+  if (result == BATTLE_OUTCOME_LOST) {
     // Revive the leader before choosing the restart point.
     unit = Unit_Get(gMainRoutineWork.leaderActorId);
     if (unit->hp == 0) {
@@ -222,17 +221,17 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.entrance = DEBUG_VENUS_LIGHTHOUSE_START;
   } else if (gDebugMode && mode == GAME_START_DEBUG_CLEAR) {
     gMainRoutineWork.next = SCENE_CLEAR;
-    gMainRoutineWork.entrance = 1;
+    gMainRoutineWork.entrance = CLEAR_FROM_TITLE;
   } else if (gDebugMode && mode == GAME_START_DEBUG_MT_ALEPH) {
     gMainRoutineWork.next = SCENE_MT_ALEPH_SUMMIT;
     gMainRoutineWork.entrance = 1;
   } else if (gDebugMode && mode == GAME_START_DEBUG_TITLE) {
     gMainRoutineWork.next = SCENE_TITLE;
-    gMainRoutineWork.entrance = 8;
+    gMainRoutineWork.entrance = TITLE_STORY_CRAWL;
   } else {
     MainRoutineWork_InitializeDefaultsFar();
     gMainRoutineWork.next = SCENE_TITLE;
-    gMainRoutineWork.entrance = 1;
+    gMainRoutineWork.entrance = TITLE_START;
   }
   // The window colours from the options: hue, then brightness.
   WindowColor_ApplyFar(gMainRoutineWork.windowHue,
@@ -250,14 +249,7 @@ void MainRoutine_Run(s32 mode) {
     record = &table[gMainRoutineWork.next];
     entrance = gMainRoutineWork.entrance;
 
-    // Stop DMA 0, which a scene may have left running for an HBlank effect.
-    {
-      volatile u16 *dma0 = REG_DMA0;
-
-      dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-      dma0[5] &= ~DMA_ENABLE;
-      dma0[5];
-    }
+    DMA0_STOP();
     gOamCopyEnabled = 1;
     // Drop the tasks, the HBlank and VCount handlers and every heap block the
     // last scene, battle or minigame left.
@@ -302,7 +294,7 @@ void MainRoutine_Run(s32 mode) {
         Scene_PlayMusic();
     } else if (gMainRoutineWork.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
-      // last opened (field_sequence/run.c).
+      // last opened (field/field_sequence_run.c).
       Sound_PlayFar(gMainRoutineWork.returnMusic);
     } else {
       Scene_PlayMusic();

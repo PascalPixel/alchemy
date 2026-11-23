@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_POINT_H
 #define ALCHEMY_POINT_H
 
+/// @file
+/// A point in 3D space.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"

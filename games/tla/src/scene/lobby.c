@@ -81,7 +81,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// wins and loses, the one who tells the Monster Battle rules and the song
 /// request taker stand at z 376 to 384, below the hall's south wall and past
 /// the camera's box, where the player can neither walk nor see them.
-
 enum LinkLobbyActorId {
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED, ///< arranges every battle
   ACTOR_LINKED_WINS_TELLER,             ///< reports the linked battles won
@@ -160,8 +159,13 @@ enum LobbyRaisedTrigger {
 /// request (LinkLobby_EnterBattle) before the lobby gives the partner up.
 #define LOBBY_PEER_WAIT_FRAMES 25
 
-/// The attendant has asked the player to take part. Every 300th call of
-/// LinkLobby_PromptToParticipate clears it so she asks again.
+/// Frames, five seconds, before the attendant asks the player again to step
+/// into the circle.
+#define LOBBY_PROMPT_REPEAT_FRAMES 300
+
+/// The attendant has asked the player to take part. Every
+/// LOBBY_PROMPT_REPEAT_FRAMES calls of LinkLobby_PromptToParticipate clear it
+/// so she asks again.
 #define FLAG_LINK_LOBBY_ATTENDANT_ASKED FLAG_SCENE_TEMP_00
 /// The linked partner has asked for a battle. Its signature matches and it
 /// stands asked or in the circle.
@@ -314,7 +318,7 @@ s32 LinkLobby_PollPeerReady(void) {
        Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED)) &&
       !Event_GetFlag(FLAG_MONSTER_BATTLE) &&
       !LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
-      gLinkLobby_WaitFrames > 24) {
+      gLinkLobby_WaitFrames >= LOBBY_PEER_WAIT_FRAMES) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     Event_SetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED);
     Event_ClearFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
@@ -336,7 +340,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   if (set != 0) {
     return set;
   }
-  if (++gLinkLobby_CallFrames == 300) {
+  if (++gLinkLobby_CallFrames == LOBBY_PROMPT_REPEAT_FRAMES) {
     gLinkLobby_CallFrames = 0;
     Event_ClearFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
   }
@@ -720,7 +724,7 @@ check:
 
 void TilesetAnim_Resume(s32 layer);
 void TilesetAnim_Pause(s32 layer);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 table, s32 slot);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
 /// Felix steps onto the diamond mark before the arched door to the arena, cell
@@ -732,16 +736,16 @@ s32 LinkLobby_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
   struct Window *window;
-  s32 cnt;
+  s32 framesUnanswered;
   s32 stop;
-  u8 *buf;
+  u8 *savedUnits;
   u16 *table;
   u32 i;
 
   failed = 0;
   window = 0;
   work = Ram_HeapSlots->fieldWork;
-  cnt = 0;
+  framesUnanswered = 0;
   if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -755,6 +759,8 @@ s32 LinkLobby_EnterBattle(void) {
     Event_SetFlag(FLAG_LINK_LOBBY_ENTERING_BATTLE);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
     if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
+      // "Awaiting your opponent..."
+      // Zooms open (MESSAGE_WINDOW_ZOOM).
       window = Message_OpenWindow(MsgLobbyAwaitingYourOpponent, 5, 4, 1);
     while (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
       wait(1);
@@ -765,10 +771,10 @@ s32 LinkLobby_EnterBattle(void) {
         stop = 1;
       if (!LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
           !LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
-        if (++cnt > LOBBY_PEER_WAIT_FRAMES)
+        if (++framesUnanswered > LOBBY_PEER_WAIT_FRAMES)
           stop = 1;
       } else {
-        cnt = 0;
+        framesUnanswered = 0;
       }
       if (stop) {
         work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
@@ -786,7 +792,10 @@ s32 LinkLobby_EnterBattle(void) {
     wait(5);
   }
   if (!failed) {
-    buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
+    // The exchange below receives the opponent's party members and Djinn into
+    // units FIRST_ENEMY_UNIT on; what those units held is kept here meanwhile.
+    savedUnits =
+        HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove(LinkLobby_PollPeerReady);
     TilesetAnim_Resume(5);
     wait(8);
@@ -851,7 +860,7 @@ s32 LinkLobby_EnterBattle(void) {
     // The six units go to the battle's actor sprite slots, where the battle
     // takes them from.
     for (i = 0; i < 6 * BATTLE_UNIT_SIZE; i++)
-      (Ram_MapCellBuffer + 32 * 1024)[i] = buf[i];
+      (Ram_MapCellBuffer + 32 * 1024)[i] = savedUnits[i];
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();
@@ -880,6 +889,9 @@ s32 LinkLobby_ChooseBattleMode(void) {
       // "You do not have an opponent. Would you like to battle a monster?"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
+      // Yes starts a monster series: FLAG_AREA_TEMP_E8's byte, which counts
+      // the victories towards a stronger monster, and LINK_TALLY_MONSTER_STREAK
+      // start at 0.
       if (answer == 0) {
         FieldGameFlag_SetByte(FLAG_AREA_TEMP_E8, 0);
         Event_SetFlag(FLAG_MONSTER_BATTLE);
@@ -1109,8 +1121,6 @@ extern u8 MsgLobbyComeBackWhenYoureReady[];
 #define SONG_REQUEST_SOUNDS 97
 extern u16 gLinkLobby_SongRequestSounds[SONG_REQUEST_SOUNDS];
 
-void Event_Start(void);
-void Event_End(void);
 s32 SoundFlag_Test(s32 song);
 s32 Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void WindowSprite_PrepareForRedraw(s32 window);
@@ -1196,14 +1206,10 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_End();
 }
 
-s32 LinkLobby_PartyContains(s32 id);
-void Serial_RemoveIrqHandlers(void);
 void MapGrid_CenterOnFollowedPoint(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
-void Event_Start(void);
 /// Leaves for an entrance of a scene (Event_SetDestination, through the
 /// overlay's own import row).
 void Import_EventSetDestination(s32 scene, s32 entrance);
@@ -1221,6 +1227,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (Event_GetFlag(FLAG_LINK_LOBBY_LINK_BATTLE_ENDED)) {
+    // DEAD: Felix's own flag is read and dropped; the ROM keeps the call.
     Event_GetFlag(FLAG_LINK_LOBBY_IN_PARTY_FIRST + ACTOR_FELIX);
     base = Event_GetFlag(actor + FLAG_LINK_LOBBY_IN_PARTY_FIRST);
     if (Event_GetFlag(FLAG_LINK_LOBBY_LINK_BATTLE_WON)) {
@@ -1372,12 +1379,6 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-s32 LinkLobby_PartyContains(s32 id);
-void MapGrid_CenterOnFollowedPoint(void);
-void MessageArgument_Push(s32 value, s32 digits);
-void Save_ProcessSelectedFile(void);
-void Event_End(void);
-
 /// Saves and reports the link battle's results.
 s32 LinkLobby_SaveBattleResults(void) {
   Save_ProcessSelectedFile();
@@ -1407,17 +1408,11 @@ void LinkLobby_DrawThreeDigitValue(s32 value) {
   MapGrid_CenterOnFollowedPoint();
 }
 
-void Event_End(void);
-
-s32 LinkLobby_PollPeerReady(void);
-void LinkLobby_InitializeSerial(void);
-void Serial_Initialize(void);
-void TilesetAnim_Pause(s32 entry);
 void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
-void LinkLobby_WriteSlotValue(s32 slot);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
+
 /// Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
 /// up.
 s32 LinkLobby_Initialize(void) {
@@ -1431,7 +1426,7 @@ s32 LinkLobby_Initialize(void) {
   gLinkLobby_WaitFrames = 0;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Sound_LoadReverbCode(2);
+  Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   LinkLobby_DrawThreeDigitValue(
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
@@ -1548,6 +1543,7 @@ s32 LinkLobby_Initialize(void) {
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
+    // FLAG_AREA_TEMP_E8: the linked battle broke off rather than being won.
     if (Event_GetFlag(FLAG_AREA_TEMP_E8)) {
       struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

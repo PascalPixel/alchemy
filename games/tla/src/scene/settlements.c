@@ -62,6 +62,9 @@
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
+/// SW Atteka Islet's background palette whose water colours run down the falls.
+#define FALLS_PALETTE 3
+
 /// Kalt Island's rope across the frozen river, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
 /// Kalt Island: set by a step onto cell (5, 12), the top of the climb on the
@@ -237,9 +240,9 @@ void Settlements_DropCrate(void);
 void Leader_SlideOnIce(void);
 void Leader_StopMoving(void);
 void Event_ResolveAllPendingActions(void);
-void Scene_QueueMusic(s32 a);
+void Scene_QueueMusic(s32 soundId);
 #ifdef MODERN
-void Rope_Lash(s32 a, s32 b, s32 c);
+void Rope_Lash(s32 index, s32 fromId, s32 toId);
 #endif
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
@@ -248,9 +251,9 @@ void Smoke_Drift(struct Actor *actor);
 void Actor_Release(struct Actor *actor);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
-void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
+void Irq_SetHandler(s32 irq, s32 vcount, void (*handler)(void));
 void Event_End(void);
-void ItemDisplay_ShowItem(s32 a, s32 b);
+void ItemDisplay_ShowItem(s32 item, s32 flags);
 
 extern struct SceneRegion gSettlements_HesperiaSettlementHousesRegions[];
 extern struct SceneRegion gSettlements_GondowanSettlementCaveRegions[];
@@ -358,14 +361,15 @@ void Rope_Initialize(void);
 
 void Settlements_StepOntoWall(void);
 
-void FieldEffect_StartBlankOverlay(s32 a);
+void FieldEffect_StartBlankOverlay(s32 actor);
 
 void Actor_PlaceBlocks(const void *data);
 
-/// The falls' water colours as they run, and as the map loads them.
-u16 gSettlements_WaterColors[16] BSS_DATA;
-u16 gSettlements_WaterColorsSaved[16] BSS_DATA;
-u8 gSettlements_UnusedAfterWaterColorsSaved[64] BSS_DATA;
+/// The falls' palette as the map loads it, and as it is shown with its water
+/// colours turned.
+u16 gSettlements_LoadedWaterColors[16] BSS_DATA;
+u16 gSettlements_ShownWaterColors[16] BSS_DATA;
+u8 gSettlements_UnusedAfterShownWaterColors[64] BSS_DATA;
 s32 gSettlements_WaterfallLine BSS_DATA;
 u16 gSettlements_WaterfallScrollAbove BSS_DATA;
 u16 gSettlements_WaterfallScrollBelow BSS_DATA;
@@ -806,7 +810,8 @@ void Settlements_EnterHouse(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(2);
+  // Both houses' doors are their scene's exit 2.
+  FieldEvent_SetExitRequest(HESPERIA_HOUSE_DOOR);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -832,20 +837,20 @@ void Settlements_CycleWaterColors(void) {
     return;
   frame = &gSettlements_WaterColorFrame;
   if (*frame == -1) {
-    u16 *colors = gSettlements_WaterColors;
+    u16 *colors = gSettlements_LoadedWaterColors;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)&BG_PLTT_COLOR(3, 0),
-         sizeof(gSettlements_WaterColors));
-    copy(gSettlements_WaterColorsSaved, colors,
-         sizeof(gSettlements_WaterColors));
+    copy(colors, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
+         sizeof(gSettlements_LoadedWaterColors));
+    copy(gSettlements_ShownWaterColors, colors,
+         sizeof(gSettlements_LoadedWaterColors));
     *frame = 0;
   }
   phase = (*frame / 8) % 4;
   for (i = 0; i < WATER_COLORS; i++)
-    gSettlements_WaterColorsSaved[FIRST_WATER_COLOR +
+    gSettlements_ShownWaterColors[FIRST_WATER_COLOR +
                                   (phase + i) % WATER_COLORS] =
-        gSettlements_WaterColors[FIRST_WATER_COLOR + i];
+        gSettlements_LoadedWaterColors[FIRST_WATER_COLOR + i];
   {
     struct IoWriteQueue *q = &gIoWriteQueue;
     u32 saved;
@@ -856,10 +861,10 @@ void Settlements_CycleWaterColors(void) {
     if (count < IO_WRITE_QUEUE_SIZE) {
       u32 *entry = q->entries[count];
 
-      *entry++ = (u32)gSettlements_WaterColorsSaved;
+      *entry++ = (u32)gSettlements_ShownWaterColors;
       q->count = count + 1;
-      *entry++ = (u32)&BG_PLTT_COLOR(3, 0);
-      *entry = DMA_COPY_WORDS(8);
+      *entry++ = (u32)&BG_PLTT_COLOR(FALLS_PALETTE, 0);
+      *entry = DMA_COPY_WORDS(PALETTE_COLORS / 2);
     }
     IRQ_UNLOCK(saved);
   }
@@ -920,7 +925,7 @@ void Settlements_StartPushingFallsObject(void) {
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
-void Settlements_SplashCrate(s32 id);
+void Settlements_SplashIntoRiver(s32 id);
 
 /// The pillar pushed off the grass into SW Atteka Islet's river (cell
 /// (11, 12)) sinks with a splash until only its top shows, a post like the
@@ -937,7 +942,7 @@ void Settlements_SinkPillar(void) {
       actor->y.fixed -= toFIXED(2);
       Event_Wait(1);
     }
-    Settlements_SplashCrate(ACTOR_PILLAR);
+    Settlements_SplashIntoRiver(ACTOR_PILLAR);
     Actor_SetPosition(ACTOR_PILLAR, 0, 0);
     Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
     Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
@@ -972,7 +977,7 @@ void Settlements_SlideCrateDownFalls(void) {
   if (column == 11 && row == 9) {
     actor->motionFlags = 0;
     SINK(8);
-    Settlements_SplashCrate(ACTOR_FALLS_CRATE);
+    Settlements_SplashIntoRiver(ACTOR_FALLS_CRATE);
     FieldEvent_Wait(20);
     FieldCamera_MoveTo(192, CAMERA_KEEP, 224, 1);
     Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
@@ -983,7 +988,7 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetSpeed(ACTOR_FALLS_CRATE, 2.4);
     Actor_SetDestinationOffset(ACTOR_FALLS_CRATE, 0, 80);
     FieldActor_WaitForMoveById(ACTOR_FALLS_CRATE);
-    Settlements_SplashCrate(ACTOR_FALLS_CRATE);
+    Settlements_SplashIntoRiver(ACTOR_FALLS_CRATE);
     if (!Event_GetFlag(FLAG_PILLAR_SUNK)) {
       FieldEvent_Wait(10);
       Actor_SetSpeed(ACTOR_FALLS_CRATE, 0.8);
@@ -1119,10 +1124,9 @@ extern s32 gSettlements_CrateDropScript[];
 /// Hesperia Settlement's crate pushed off the south edge of the wall drops
 /// with the camera following it and lands in a ring of dust: through the
 /// leftmost gap onto the step at cell (12, 15), from there east to the ground
-/// at cell (13, 15) (the way the walkthrough takes, leaving a step up the wall
-/// to Tinder), at cell (16, 15) the wall's whole height to the ground, or onto
-/// Tinder's ledge at cell (19, 15), where Tinder, not yet met, is gone for
-/// this visit.
+/// at cell (13, 15) (the way to Tinder, leaving a step up the wall), at cell
+/// (16, 15) the wall's whole height to the ground, or onto Tinder's ledge at
+/// cell (19, 15), where Tinder, not yet met, is gone for this visit.
 void Settlements_DropCrate(void) {
   struct Actor *actor;
   s32 column;
@@ -1188,7 +1192,7 @@ void Settlements_BlockCrate(void) {
 extern s32 gSettlements_SmokeScript[];
 
 /// Water splashes up where the pillar or crate goes into the river.
-void Settlements_SplashCrate(s32 id) {
+void Settlements_SplashIntoRiver(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED struct SettlementsVector velocity;
@@ -1239,7 +1243,8 @@ void Settlements_SpawnDustRing(s32 actorId) {
     velocityX += velocityX / 3;
     velocity.x = velocityX;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
-                      velocity.y, velocityZ, EFFECT_USE_UPDATE | 1, &options);
+                      velocity.y, velocityZ,
+                      EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
   }
 }
 
@@ -1345,39 +1350,41 @@ struct SceneRegion gSettlements_GondowanSettlementCaveRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GondowanSettlement),
-    SCENE_EXIT_UNLESS(1, WorldMap, 48, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GondowanSettlementHouses, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GondowanSettlementCave, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GondowanSettlementCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_GONDOWAN_SETTLEMENT, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_TO_GONDOWAN_SETTLEMENT_HOUSES_NORTH, GondowanSettlementHouses, GONDOWAN_SETTLEMENT_HOUSES_FROM_GONDOWAN_SETTLEMENT_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_TO_GONDOWAN_SETTLEMENT_CAVE_A, GondowanSettlementCave, GONDOWAN_SETTLEMENT_CAVE_FROM_GONDOWAN_SETTLEMENT, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_TO_GONDOWAN_SETTLEMENT_CAVE_B, GondowanSettlementCave, GONDOWAN_SETTLEMENT_CAVE_FROM_GONDOWAN_SETTLEMENT, EXIT_FLAG_NONE),
     SCENE_EXITS(GondowanSettlementHouses),
-    SCENE_EXIT_UNLESS(1, GondowanSettlement, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_HOUSES_TO_GONDOWAN_SETTLEMENT_NORTH, GondowanSettlement, GONDOWAN_SETTLEMENT_FROM_GONDOWAN_SETTLEMENT_HOUSES_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS(GondowanSettlementCave),
-    SCENE_EXIT_UNLESS(1, GondowanSettlement, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, HesperiaSettlement, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_CAVE_TO_GONDOWAN_SETTLEMENT, GondowanSettlement, GONDOWAN_SETTLEMENT_FROM_GONDOWAN_SETTLEMENT_CAVE_A, EXIT_FLAG_NONE),
+    // Hesperia Settlement's entrance 4 is where the caves below come up.
+    SCENE_EXIT_UNLESS(GONDOWAN_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT, HesperiaSettlement, 4, EXIT_FLAG_NONE),
     SCENE_EXITS(HesperiaSettlement),
-    SCENE_EXIT_UNLESS(1, WorldMap, 49, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, HesperiaSettlementHouses, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, HesperiaSettlementHouses, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, HesperiaSettlementHouses, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, HesperiaSettlementHouses, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, HesperiaSettlementCave, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_HESPERIA_SETTLEMENT, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_HOUSES_NORTH, HesperiaSettlementHouses, HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_HOUSES_SOUTH_A, HesperiaSettlementHouses, HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_HOUSES_SOUTH_B, HesperiaSettlementHouses, HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_HOUSES_SOUTH_C, HesperiaSettlementHouses, HESPERIA_SETTLEMENT_HOUSES_FROM_HESPERIA_SETTLEMENT_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_TO_HESPERIA_SETTLEMENT_CAVE, HesperiaSettlementCave, HESPERIA_SETTLEMENT_CAVE_FROM_HESPERIA_SETTLEMENT, EXIT_FLAG_NONE),
     SCENE_EXITS(HesperiaSettlementCave),
-    SCENE_EXIT_UNLESS(2, HesperiaSettlement, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_CAVE_TO_HESPERIA_SETTLEMENT, HesperiaSettlement, 4, EXIT_FLAG_NONE),
     SCENE_EXITS(HesperiaSettlementHouses),
-    SCENE_EXIT_UNLESS(11, HesperiaSettlement, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_HOUSES_TO_HESPERIA_SETTLEMENT_NORTH, HesperiaSettlement, HESPERIA_SETTLEMENT_FROM_HESPERIA_SETTLEMENT_HOUSES_NORTH, EXIT_FLAG_NONE),
+    // The stairs between the room with beds and the floor above it.
     SCENE_EXIT_UNLESS(12, HesperiaSettlementHouses, 13, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, HesperiaSettlementHouses, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, HesperiaSettlement, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(HESPERIA_SETTLEMENT_HOUSES_TO_HESPERIA_SETTLEMENT_SOUTH, HesperiaSettlement, HESPERIA_SETTLEMENT_FROM_HESPERIA_SETTLEMENT_HOUSES_SOUTH_A, EXIT_FLAG_NONE),
     SCENE_EXITS(KaltIsland),
-    SCENE_EXIT_UNLESS(1, WorldMap, 50, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, KaltIslandHouses, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(KALT_ISLAND_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KALT_ISLAND, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(KALT_ISLAND_TO_KALT_ISLAND_HOUSES, KaltIslandHouses, KALT_ISLAND_HOUSES_FROM_KALT_ISLAND, EXIT_FLAG_NONE),
     SCENE_EXITS(KaltIslandHouses),
-    SCENE_EXIT_UNLESS(1, KaltIsland, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(KALT_ISLAND_HOUSES_TO_KALT_ISLAND, KaltIsland, KALT_ISLAND_FROM_KALT_ISLAND_HOUSES, EXIT_FLAG_NONE),
     SCENE_EXITS(SwAttekaIslet),
-    SCENE_EXIT_UNLESS(1, WorldMap, 47, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, SwAttekaIsletHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SW_ATTEKA_ISLET_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SW_ATTEKA_ISLET, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SW_ATTEKA_ISLET_TO_SW_ATTEKA_ISLET_HOUSES_NORTH, SwAttekaIsletHouses, SW_ATTEKA_ISLET_HOUSES_FROM_SW_ATTEKA_ISLET_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXITS(SwAttekaIsletHouses),
-    SCENE_EXIT_UNLESS(1, SwAttekaIslet, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SW_ATTEKA_ISLET_HOUSES_TO_SW_ATTEKA_ISLET_NORTH, SwAttekaIslet, SW_ATTEKA_ISLET_FROM_SW_ATTEKA_ISLET_HOUSES_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

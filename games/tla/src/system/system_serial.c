@@ -37,11 +37,11 @@ void Save_SetProgressCallback(void (*progress)(s32 step)) {
 /// its storage, clears the bulk transfer state and sets gSerialExchangeActive,
 /// which starts the per-frame exchange.
 void Serial_Initialize(void) {
-  u32 interruptEnable;
+  u32 savedIme;
   s32 index;
   struct SerialWork *state;
 
-  IRQ_LOCK(interruptEnable);
+  IRQ_LOCK(savedIme);
   // Replace both interrupt handlers before configuring multiplayer transfers.
   Irq_SetHandler(IRQ_SERIAL, 0, Serial_HandleTransferInterrupt);
   Irq_SetHandler(IRQ_TIMER3, 0, Serial_HandleTransferInterrupt);
@@ -85,7 +85,7 @@ void Serial_Initialize(void) {
   gSerialReceiveDestination = 0;
   gSerialReceivedSize = 0;
   LinkBattle_ResetTransferState();
-  IRQ_UNLOCK(interruptEnable);
+  IRQ_UNLOCK(savedIme);
 }
 
 /// Lets the timer start transfers again once a link mode is set, by setting
@@ -222,15 +222,11 @@ s32 Serial_PollStatus(void) {
 /// Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
 /// `receive` and builds the next packet from `send`. Called by the VBlank
 /// handler while gSerialExchangeActive is set, which stores the result in
-/// gLinkStatus. Returns the link status:
-///   bits 0 and 1 : consoles 0 and 1 heard from this frame
-///   0x80         : this console clocks the transfers (LINK_STATUS_CLOCKING)
-///   bits 8 and 9 : consoles 0 and 1 heard from since the link began
-///   0x1000       : the last transfer interrupt found SIOCNT's error bit
-///                  set (LINK_STATUS_ERROR)
-///   0x2000       : SIOCNT's multiplayer id is 2 or more
-/// So LINK_STATUS_HEARD_BOTH is what the block transfer and
-/// Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH) wait for.
+/// gLinkStatus. Returns the link status: in bits 0 and 1 the consoles heard
+/// from this frame (both: LINK_STATUS_HEARD_BOTH, which the block transfer and
+/// Serial_WaitForStatusMask wait for), in bits 8 and 9 those heard from since
+/// the link began, and LINK_STATUS_CLOCKING, LINK_STATUS_ERROR and
+/// LINK_STATUS_EXTRA_CONSOLE.
 s32 Serial_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -280,7 +276,7 @@ void Serial_PrepareSendPacket(void *payload) {
     packet[offsetof(struct SerialPacket, missingMask)] =
         receivedMask ^ currentMask;
     Dma_Set(payload, (void *)(packet + offsetof(struct SerialPacket, payload)),
-            DMA_COPY_WORDS(6), REG_DMA3);
+            DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4), REG_DMA3);
   }
   {
     u16 *halfword;
@@ -342,8 +338,8 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
     // 0xffff.
     if (flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (s16)sum == -1) {
       Dma_Set(gSerialWork.pendingBuffer[i] + 2,
-              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
-              REG_DMA3);
+              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES,
+              DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4), REG_DMA3);
       gSerialWork.currentMask |= 1 << i;
     }
     // Complementing a halfword spoils the sum, so a buffer that comes round
@@ -401,7 +397,6 @@ void Serial_HandleTransferInterrupt(void) {
     u16 *incoming;
 
     // Hand complete packets to the frame code without overwriting its buffers.
-
     if (recv[channel] == SERIAL_IDLE_HALFWORD &&
         gSerialWork.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
       gSerialWork.receiveIndex[channel] = -1;
@@ -449,22 +444,22 @@ u32 Serial_WaitForStatusMask(s32 mask) {
   return SIO_ID_OF(REG_SIOCNT);
 }
 
-/// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
-/// sets the send source, size and block number that Serial_StepBlockTransfer
-/// works from.
+/// Starts sending `size` bytes from `source` to the partner in blocks of
+/// SERIAL_BLOCK_BYTES: sets the send source, size and block number that
+/// Serial_StepBlockTransfer works from.
 s32 Serial_StartSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
-  u32 savedInterruptMaster;
+  u32 savedIme;
 
   if (gSerialSendSource != 0)
     return -1;
-  IRQ_LOCK(savedInterruptMaster);
+  IRQ_LOCK(savedIme);
   state->status = SERIAL_STATUS_RUNNING;
   gSerialSendSource = (s32)source;
   gSerialSendSize = size;
   gSerialBlockNumber = 0;
   state->active = 1;
-  IRQ_UNLOCK(savedInterruptMaster);
+  IRQ_UNLOCK(savedIme);
   return 0;
 }
 
@@ -472,17 +467,17 @@ s32 Serial_StartSend(void *source, s32 size) {
 /// destination and clears the received size.
 s32 Serial_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
-  u32 savedInterruptMaster;
+  u32 savedIme;
 
   if (gSerialReceiveDestination != 0)
     return -1;
-  IRQ_LOCK(savedInterruptMaster);
+  IRQ_LOCK(savedIme);
   state->status = SERIAL_STATUS_RUNNING | 1;
   gSerialReceiveDestination = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
   gSerialBlockNumber = 0;
-  IRQ_UNLOCK(savedInterruptMaster);
+  IRQ_UNLOCK(savedIme);
   return 0;
 }
 
@@ -514,7 +509,7 @@ void Serial_WaitForReceive(void) {
 }
 
 /// Waits until both the send and the receive have finished, giving up after
-/// 600000 frames. Reached through the far-call table.
+/// SERIAL_TRANSFER_TIMEOUT_FRAMES frames. Reached through the far-call table.
 void Serial_WaitForTransfers(void) {
   u32 count;
 
@@ -561,7 +556,7 @@ void LinkBattle_ResetTransferState(void) {
 }
 
 /// Runs each VBlank after the exchange, called by System_VBlankHandler: moves
-/// the bulk transfer on by one 20-byte block each way.
+/// the bulk transfer on by one SERIAL_BLOCK_BYTES block each way.
 void Serial_StepBlockTransfer(void) {
   struct SerialTransferState *peer;
   u32 id;
@@ -570,9 +565,9 @@ void Serial_StepBlockTransfer(void) {
   /* FAKEMATCH(temporary): the 1 kept in a halfword record. */
   struct SerialHalfword one;
 
-  // The partner's payload: of multiplayer ids 0 and 1, the one not ours
+  // The partner's payload: of multiplayer ids 0 and 1, the one not ours.
   id = ~(SIO_ID_OF(REG_SIOCNT)) & 1;
-  one.v = 1;
+  one.value = 1;
   own = &gSerialTransfer;
   peer = &gSerialPeerPayloads[id];
   // Both consoles must have been heard from this frame
@@ -590,7 +585,7 @@ void Serial_StepBlockTransfer(void) {
         case SERIAL_SEND_MORE:
           // A block with more to come: store it and move on
           Dma_Set(peer->payload, (void *)gSerialReceiveDestination,
-                  DMA_COPY_WORDS(5), REG_DMA3);
+                  DMA_COPY_WORDS(SERIAL_BLOCK_BYTES / 4), REG_DMA3);
           gSerialReceiveDestination += SERIAL_BLOCK_BYTES;
           gSerialReceivedSize += SERIAL_BLOCK_BYTES;
           own->status = (own->status + 1) | SERIAL_STATUS_RUNNING;
@@ -598,11 +593,11 @@ void Serial_StepBlockTransfer(void) {
         case SERIAL_SEND_LAST:
           // The last block: store it and report the receive finished
           Dma_Set(peer->payload, (void *)gSerialReceiveDestination,
-                  DMA_COPY_WORDS(5), REG_DMA3);
+                  DMA_COPY_WORDS(SERIAL_BLOCK_BYTES / 4), REG_DMA3);
           gSerialReceivedSize += SERIAL_BLOCK_BYTES;
           own->flags = SERIAL_RECEIVE_DONE;
           own->status = 0;
-          own->active = one.v;
+          own->active = one.value;
           break;
         }
         gSerialBlockNumber =
@@ -611,7 +606,7 @@ void Serial_StepBlockTransfer(void) {
         // Out of step and already asked: bit 7 of active is the request to
         // rewind to the block number in its low bits
         if (own->active & SERIAL_BLOCK_REWIND) {
-          own->active = one.v;
+          own->active = one.value;
         } else if (own->active == 1) {
           own->active = 0;
           gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
@@ -636,8 +631,8 @@ void Serial_StepBlockTransfer(void) {
       }
       // Send the next block, marked as the last when it empties the size
       if (gSerialSendSize != 0) {
-        Dma_Set((void *)gSerialSendSource, own->payload, DMA_COPY_WORDS(5),
-                REG_DMA3);
+        Dma_Set((void *)gSerialSendSource, own->payload,
+                DMA_COPY_WORDS(SERIAL_BLOCK_BYTES / 4), REG_DMA3);
         gSerialSendSize -= SERIAL_BLOCK_BYTES;
         if (gSerialSendSize != 0) {
           own->peerFlags = SERIAL_SEND_MORE;
@@ -700,7 +695,8 @@ void SerialTest_Run(void) {
   Serial_Initialize();
   // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
   remaining = LINK_TEST_TILES - 1;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
+  tile = (u16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) +
+         16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
   value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
                 (LINK_TEST_TILE + LINK_TEST_TILES - 1));
   do {

@@ -97,7 +97,7 @@ struct SpriteAnimation;
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id);
 #ifndef OWN_BattleMotion_ApproachTarget
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelFrames,
-                                 s32 initial_velocity_y);
+                                 s32 initialVelocityY);
 #endif
 void LuckyDice_Run(void);
 /// An empty function, reached only through an unnamed veneer in the object
@@ -125,12 +125,18 @@ s32 Stub_ReturnZero(s32 resourceId, const u8 *table);
 
 struct IoWriteQueue;
 
+/// The routine that carries out `count` queued register writes
+/// (Resource_ExecuteTransferCode, run from a copy on the stack).
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
-/// Keyed callbacks return a value (the target address is left in r0).
+/// A task's routine as the task passes call it: returning a value, where the
+/// task itself returns none (Task_RunPass's UB).
 typedef s32 (*TaskIntFunc)(void);
 
-typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
+/// The dot product of (ax, ay, az) and (bx, by, bz), in 16.16
+/// (RelocatedInnerProduct, run from a copy on the stack).
+typedef s32 (*DotProductRoutine)(s32 ax, s32 bx, s32 ay, s32 by, s32 az,
+                                 s32 bz);
 
 /// Sequence ids above the scene table's rows, as The Broken Seal's
 /// SEQUENCE_ values: the sequences other than the field sequence, which
@@ -150,21 +156,15 @@ enum {
 enum GameStart {
   GAME_START_TITLE = 0,                  ///< the Title, with the work cleared
   GAME_START_DEBUG_VENUS_LIGHTHOUSE = 1, ///< SCENE_VENUS_LIGHTHOUSE_ENTRANCE
-  GAME_START_DEBUG_CLEAR = 2,            ///< SCENE_CLEAR
+  GAME_START_DEBUG_CLEAR = 2,            ///< SCENE_CLEAR, as from the title
   GAME_START_DEBUG_MT_ALEPH = 3,         ///< SCENE_MT_ALEPH_SUMMIT
-  GAME_START_DEBUG_TITLE = 4             ///< SCENE_TITLE from entrance 8
-};
-
-/// The four backgrounds' scroll registers as words, horizontal and vertical
-/// together.
-struct BgScrollRegs {
-  u32 words[4];
+  GAME_START_DEBUG_TITLE = 4 ///< the story crawl (TITLE_STORY_CRAWL)
 };
 
 /// A halfword in a record of its own, which Serial_StepBlockTransfer keeps its
 /// constant 1 in.
 struct SerialHalfword {
-  u16 v;
+  u16 value;
 };
 
 void Window_LoadGraphics(void);
@@ -172,7 +172,7 @@ void DebugText_Clear(void);
 
 void VramCache_Reset(void);
 
-void Matrix_RotateY(s32 ang);
+void Matrix_RotateY(s32 angle);
 
 s32 Trig_Atan(s32 x, s32 y);
 
@@ -188,14 +188,14 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);
 void Matrix_Scale(FIXED x, FIXED y, FIXED z);
-void Matrix_RotateZ(s32 ang);
+void Matrix_RotateZ(s32 angle);
 void Matrix_Pop(void);
 
 void Palette_LoadBasicSpriteColors(void);
 
 void Resource_ReservedNoOp(s32 unused);
 
-void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
+void Vector_AddPolarOffset(FIXED radius, s32 angle, FIXED *position);
 
 void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot);
 
@@ -236,9 +236,9 @@ extern const u8 Decompress_HalfwordLz[];
 /// Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 
-// XXX: typed as struct SoundInfo *, transferCountdown's volatile read is not
-// combined and the frame wait's registers move; whether the driver's own
-// struct is right to make it volatile would settle the type.
+// XXX: why the frame wait reads the sound driver's work as bytes rather than
+// through struct SoundInfo, whose transferCountdown is volatile; whether the
+// driver's own struct should make that member volatile would settle the type.
 /// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
 /// gSoundInfo, whose bytes the frame wait reads.
 extern u8 *gSoundInfoPointer;
@@ -253,7 +253,8 @@ extern u8 *gSoundInfoPointer;
 s32 SoundDriver_EnterVBlankUpdate(void);
 
 /// The resident mixer in IWRAM, which the frame wait runs after
-/// SoundDriver_EnterVBlankUpdate returns 0.
+/// SoundDriver_EnterVBlankUpdate returns 0. It never reads its argument; the
+/// callers pass 8.
 void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
 /// The VBlank handler's sound step, as m4aSoundVSync: counts down the PCM

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_VECTOR3_H
 #define ALCHEMY_VECTOR3_H
 
+/// @file
+/// Three coordinates as one value, and their array view.
+
 #include "types.h"
 #include "static_assert.h"
 

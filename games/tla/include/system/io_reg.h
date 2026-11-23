@@ -339,7 +339,7 @@ enum DisplayControl {
 
 #define OAM ((void *)0x07000000) ///< the sprites' attributes
 /// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
-/// key state (gKeysHeld and the rest) holds them set for a pressed key.
+/// key state (gInput) holds them set for a pressed key.
 enum KeyMask {
   KEY_A = 0x001,
   KEY_B = 0x002,
@@ -416,8 +416,8 @@ enum KeyMask {
 #define REG_IF (*(volatile u16 *)0x04000202) ///< pending; a 1 written clears
 #define REG_WAITCNT (*(volatile u16 *)0x04000204) ///< cartridge wait states
 /// WAITCNT's slowest SRAM wait (bits 1 and 0), 8 cycles: the wait the flash
-/// routines read the chip with;
-/// programming and erasing use the chip's wait[0], then restore it.
+/// routines read the chip with; programming and erasing use the chip's
+/// wait[0], then restore it.
 #define WAITCNT_SRAM_SLOWEST 0x0003
 /// WAITCNT's SRAM wait bits.
 #define WAITCNT_SRAM_MASK 0x0003

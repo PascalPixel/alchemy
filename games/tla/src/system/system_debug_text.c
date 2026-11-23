@@ -11,6 +11,11 @@
 // Debug text: a 32x20-character screen of window font tiles in BG0, written
 // from gDebugTextCursor onwards; characters are tile numbers in WINDOW_PALETTE.
 
+/// The debug text screen's bytes: 32 by 20 entries of a halfword.
+#define DEBUG_TEXT_SCREEN_BYTES (BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2)
+/// The basic sprite palettes, sprite palettes 0 to 13.
+#define BASIC_SPRITE_PALETTES 14
+
 /// The number buffer's hexadecimal: eight digits.
 #define HEX_DIGITS 8
 /// The number buffer's decimal: a sign place and up to ten digits.
@@ -92,9 +97,9 @@ void DebugText_Print(const u8 *text) {
       // The end of the 32 by 20 entry screen wraps to its start.
       do {
         *cursor++ = c | palette;
-        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) +
-                              BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2))
-          cursor = (u16 *)BG_SCREEN_BLOCK(4);
+        if (cursor == (u16 *)(BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) +
+                              DEBUG_TEXT_SCREEN_BYTES))
+          cursor = (u16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK);
         if (++count > DEBUG_TEXT_MAX_LENGTH - 1)
           break;
         c = *text++;
@@ -125,22 +130,23 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
 void DebugText_Clear(void) {
-  Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE_BLANK), BG_SCREEN_BLOCK(4),
-             BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT * 2);
-  gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+  Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE_BLANK),
+             BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK), DEBUG_TEXT_SCREEN_BYTES);
+  gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK);
+  Io_Write16(BGCNT_SCREEN_BASE(DEBUG_TEXT_SCREEN_BLOCK), &REG_BG0CNT);
 }
 
 /// Loads the window font and border tiles into BG character block 0, the window
 /// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
 /// palettes.
 void Window_LoadGraphics(void) {
-  // 2048 words: 8 KB, 256 tiles of 4 bits a pixel
+  // The window font and borders: 256 tiles of 16 colours.
   Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES),
-          (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-  Dma_Set((const void *)gWindow_Palette,
-          (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), DMA_COPY_HALFWORDS(16),
+          (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4),
           REG_DMA3);
+  Dma_Set((const void *)gWindow_Palette,
+          (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
   // The window's background colour, three darker shades and three lighter.
   Io_Write16(RGB(0, 12, 16),
@@ -158,15 +164,17 @@ void Window_LoadGraphics(void) {
   Io_Write16(RGB(0, 15, 22),
              &BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + 6));
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
-          DMA_COPY_HALFWORDS(224), REG_DMA3);
+          DMA_COPY_HALFWORDS(BASIC_SPRITE_PALETTES * PALETTE_COLORS), REG_DMA3);
 }
 
-/// Loads the basic sprite palettes (palettes 0 to 13).
+/// Loads the basic sprite palettes.
 void Palette_LoadBasicSpriteColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
-          DMA_COPY_HALFWORDS(224), REG_DMA3);
+          DMA_COPY_HALFWORDS(BASIC_SPRITE_PALETTES * PALETTE_COLORS), REG_DMA3);
 }
 
+#undef DEBUG_TEXT_SCREEN_BYTES
+#undef BASIC_SPRITE_PALETTES
 #undef HEX_DIGITS
 #undef DECIMAL_DIGITS_MAX
 #undef DEBUG_TEXT_MAX_LENGTH

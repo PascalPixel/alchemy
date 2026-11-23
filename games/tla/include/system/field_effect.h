@@ -12,9 +12,11 @@
 #include "types.h"
 
 /// A field effect: a small object on the field that moves at its velocity and
-/// grows and spins at its rates, run by its script and update hook.
+/// grows and spins at its rates, run by its script and update hook. It lies
+/// over struct Actor; a field marked "Actor's" is the actor's field of that
+/// place and name, which no code reads through this struct.
 struct FieldEffect {
-  /// Actor's script pointer, cursor and facing; not named by this view.
+  /// Actor's script pointer, cursor and facing.
   ///@{
   const s32 *script;
   s16 scriptCursor;
@@ -23,11 +25,11 @@ struct FieldEffect {
   FIXED x;          ///< 16.16 fixed-point pixels
   FIXED y;          ///< 16.16 fixed-point pixels
   FIXED z;          ///< 16.16 fixed-point pixels
-  s32 groundHeight; ///< Actor's; not named by this view
-  FIXED scaleX;     ///< 16.16 fixed point, 0x10000 full size
-  FIXED scaleY;     ///< 16.16 fixed point, 0x10000 full size
-  u16 radius;       ///< Actor's; not named by this view
-  u8 layer;         ///< Actor's; not named by this view
+  s32 groundHeight; ///< Actor's
+  FIXED scaleX;     ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scaleY;     ///< 16.16 fixed point, FIXED_ONE full size
+  u16 radius;       ///< Actor's
+  u8 layer;         ///< Actor's
   /// The spawner clears bit 0 when EFFECT_USE_PRIORITY sets the sprite's
   /// priority.
   u8 priorityFlags;
@@ -37,7 +39,7 @@ struct FieldEffect {
   /// frame; zeroed by the spawner.
   FIXED scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
-  /// Actor's targetX to targetZ; not named by this view.
+  /// Actor's targetX to targetZ.
   ///@{
   s32 targetX;
   s32 targetY;
@@ -47,17 +49,16 @@ struct FieldEffect {
   /// pixels per frame.
   struct Vector3 velocity;
   struct FieldSprite *sprite; ///< the sprite spin turns
-  u8 spriteStorageKind;       ///< Actor's; not named by this view
+  u8 spriteStorageKind;       ///< Actor's
   u8 motionFlags;             ///< zeroed by the spawner
-  /// Actor's arrival axis, last flag test and snap flag; not named by this
-  /// view.
+  /// Actor's arrival axis, last flag test and snap flag.
   ///@{
   u8 arrivalAxis;
   u8 conditionResult;
   u8 snapToTarget;
   ///@}
-  u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
-  /// Actor's steeringFlags to riseEnabled; not named by this view.
+  u8 collisionFlags; ///< Actor's
+  /// Actor's steeringFlags to riseEnabled.
   ///@{
   u8 steeringFlags;
   u8 paused;
@@ -72,7 +73,7 @@ struct FieldEffect {
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; zeroed by the spawner.
   u16 spin;
-  s16 userValue; ///< Actor's; not named by this view
+  s16 userValue; ///< Actor's
   s32 countdown; ///< no code names it
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
@@ -149,10 +150,10 @@ enum EffectDuration {
 struct EffectOptions {
   s32 priority;       ///< the sprite's priority
   s32 palette;        ///< passed to Actor_SetSpriteColor
-  FIXED startScaleX;  ///< 16.16 fixed point, 0x10000 full size
-  FIXED startScaleY;  ///< 16.16 fixed point, 0x10000 full size
-  FIXED targetScaleX; ///< 16.16 fixed point, 0x10000 full size
-  FIXED targetScaleY; ///< 16.16 fixed point, 0x10000 full size
+  FIXED startScaleX;  ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED startScaleY;  ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED targetScaleX; ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED targetScaleY; ///< 16.16 fixed point, FIXED_ONE full size
   s16 type;           ///< the object type to create
   const s32 *script;  ///< the object script, run in mode 1
   u16 rotation;       ///< 1/65536 turns
@@ -164,8 +165,6 @@ STATIC_ASSERT(offsetof(struct EffectOptions, type) == 24);
 STATIC_ASSERT(offsetof(struct EffectOptions, update) == 36);
 
 void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object);
-
-struct EffectOptions;
 
 void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,

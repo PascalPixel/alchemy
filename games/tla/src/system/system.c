@@ -6,28 +6,21 @@
 ///
 /// system_internal.h holds what every part shares (its includes); the code
 /// is in the files under system/, included here in the order it has in the
-/// ROM. Camelot's own files are not recoverable: the ROM shows one object, and
-/// these parts are ours, cut where The Broken Seal's are. Where to start:
-///
-///   Power-up        start_up.c: System_Initialize
-///   Frames          frame.c: wait(), System_VBlankHandler (the VBlank
-///   handler),
-///                   Irq_SetHandler
-///                   task.c: Task_Add
-///   Screen          screen_fade.c: ScreenFade_Start; oam.c:
-///   Oam_AddSpriteAtDepth;
-///                   vram_cache.c: VramCache_Load
-///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
-///   3D              transform.c: Matrix_RotateTranslate,
-///                   Matrix_ProjectPoint
-///   Saving          save.c: Save_ReadPart, Save_InvalidateSector
-///   Link cable      serial.c: Serial_Initialize
+/// ROM, cut where The Broken Seal's parts are. Where to start:
+/// - power-up: System_Initialize (system_start_up.c);
+/// - frames: wait() and the VBlank handler (system_frame.c), tasks
+///   (system_task.c);
+/// - the screen: fades (system_screen_fade.c), sprite depth slots
+///   (system_oam.c), sprite VRAM (system_vram_cache.c);
+/// - memory: the heap (system_heap.c);
+/// - 3D: Matrix_RotateTranslate and Matrix_ProjectPoint (system_matrix.c);
+/// - saving: Save_WritePart and Save_ReadPart (system_save.c);
+/// - the link cable: Serial_Initialize (system_serial.c).
 
 #include "system_internal.h"
 #include "graphics/output.h"
 
-// The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
-// parts").
+// The parts, in ROM order.
 #include "system_start_up.c"
 #include "system_frame.c"
 #include "system_io_write_queue.c"

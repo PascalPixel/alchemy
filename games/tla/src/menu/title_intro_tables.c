@@ -7,8 +7,8 @@
 #include "system/frame.h"
 
 // clang-format off
-/// The prompt's blend level over its pulse of a second, as The Broken Seal
-/// has it.
+/// The "Press Start" prompt's blend weight over the title screen through its
+/// pulse of a second: up over 16 frames, held, and down over the last 16.
 const u8 gTitle_PromptBlendLevels[FRAMES_PER_SECOND] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,

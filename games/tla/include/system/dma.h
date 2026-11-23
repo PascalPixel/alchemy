@@ -17,6 +17,20 @@ struct DmaRegisters {
   u32 control;
 };
 
+/// DMA channel 0's control halfword (DMA0CNT_H) among REG_DMA0's halfwords.
+#define DMA0_CONTROL 5
+
+/// Stops DMA 0, which a scene may have left copying a line each HBlank: drops
+/// its start timing and repeat, then its enable, and reads the control back.
+#define DMA0_STOP()                                                            \
+  {                                                                            \
+    volatile u16 *dma0 = REG_DMA0;                                             \
+                                                                               \
+    dma0[DMA0_CONTROL] &= ~DMA_START_TIMING_DRQ_REPEAT;                        \
+    dma0[DMA0_CONTROL] &= ~DMA_ENABLE;                                         \
+    dma0[DMA0_CONTROL];                                                        \
+  }
+
 /// DMA3, the channel the game copies with, as its three registers.
 #define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
 
@@ -37,11 +51,9 @@ struct DmaRegisters {
             REG_DMA3);                                                         \
   }
 
-/// Dma_Fill32 with the caller's word, a local the function declares at its own
-/// scope: the word takes that place in the frame rather than Dma_Fill32's inner
-/// one, and a function that fills several blocks keeps one word for all of
-/// them, set before each transfer, and forms its address once
-/// (ActorSystem_Initialize's two fills).
+/// Dma_Fill32 through `cell`, a word the caller declares, so that a function
+/// filling several blocks sets one word before each (ActorSystem_Initialize's
+/// two fills).
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \

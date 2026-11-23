@@ -2,8 +2,7 @@
 #define ALCHEMY_HEAP_SLOTS_H
 
 /// @file
-/// What games/tla/src/battle/battle_*.c declare for the files that use it,
-/// written once.
+/// Two EWRAM buffers the battle shares with the field and the link screens.
 
 #include "types.h"
 

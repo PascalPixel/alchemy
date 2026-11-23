@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MATRIX_H
 #define ALCHEMY_MATRIX_H
 
+/// @file
+/// The current 3D matrix, its one-deep stack, and the unit matrix.
+
 #include "edition.h"
 #include "fixed_math.h"
 #include "types.h"
@@ -50,8 +53,8 @@ static __inline__ void Matrix_SetUnit(void *matrix) {
                    : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
-/// The games order the unit-matrix register setup differently before the same
-/// stores.
+/// The unit matrix's three values set up in Matrix_SetCurrentUnit's order,
+/// which differs from Matrix_SetUnit's.
 #define MATRIX_UNIT_REGISTER_SETUP                                             \
   "mov r0, %1\n\tmov r1, #128\n\tlsl r1, r1, #9\n\tmov r2, #0\n\t"             \
   "mov %0, #0\n\tmov r4, #0\n\t"

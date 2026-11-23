@@ -145,7 +145,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor);
 
 void Teleport_ArriveWhirling(void);
 
-extern u16 gYampiDesertCave_CircleCycleSlots[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 
 void FieldEffect_StartBlankOverlay(s32 value);
 
@@ -825,7 +825,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gYampiDesertCave_Triggers;
 }
 
-extern s16 gYampiDesertCave_CircleSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
 
@@ -838,9 +838,9 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
-    Palette_SetColorsFade(gYampiDesertCave_CircleSlots, gTeleportCircle_Colors,
+    Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
                           gTeleportCircle_ShimmerColors,
-                          gYampiDesertCave_CircleCycleSlots);
+                          gTeleportCircle_ShimmerSlots);
     Actor_DisableById(ACTOR_CHEST_ROOM_FIRST_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_SECOND_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_THIRD_LOG);
@@ -969,22 +969,8 @@ s16 gYampiDesertCave_RipplePath[] = {
     99, 37, 0, 0, 95, 33, 0, 0,
 };
 
-/// The background palette entries the Teleport circles are drawn in.
-s16 gYampiDesertCave_CircleSlots[] = {
-    9, 10, 11, 12, 13, 14, 15, -1,
-};
-
-#include "shared/teleport_circle_colors.c"
-
-/// The shimmer's steps: for each, the palette entries its colours go to.
-u16 gYampiDesertCave_CircleCycleSlots[] = {
-    14, 9,  10, 11, 12, 13,
-    13, 14, 9,  10, 11, 12,
-    12, 13, 14, 9,  10, 11,
-    11, 12, 13, 14, 9,  10,
-    10, 11, 12, 13, 14, 9,
-    9,  10, 11, 12, 13, 14,
-};
+#define TELEPORT_CIRCLE_FIRST_ENTRY 9
+#include "shared/teleport_circle_palette.c"
 
 #include "shared/scene_entrances_default.c"
 

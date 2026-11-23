@@ -1224,10 +1224,10 @@ extern u16 gMarsLighthouseEntrance_ValkyrieUpperBeamStops[];
 extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[];
 extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[];
 extern s16 gMarsLighthouseEntrance_ValkyrieIceCones[];
-extern s16 gMarsLighthouseEntrance_FadeSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
-extern u16 gMarsLighthouseEntrance_FadeOrder[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -1418,10 +1418,9 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST &&
       entrance == VALKYRIE_SOUTH_CIRCLE)
     Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
-  Palette_SetColorsFade((s32)gMarsLighthouseEntrance_FadeSlots,
-                        (s32)gTeleportCircle_Colors,
-                        (s32)gTeleportCircle_ShimmerColors,
-                        (s32)gMarsLighthouseEntrance_FadeOrder);
+  Palette_SetColorsFade(
+      (s32)gTeleportCircle_PaletteSlots, (s32)gTeleportCircle_Colors,
+      (s32)gTeleportCircle_ShimmerColors, (s32)gTeleportCircle_ShimmerSlots);
   return 0;
 }
 
@@ -2198,17 +2197,8 @@ s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {
 
 #include "shared/field_effect_duration_scripts.c"
 
-s16 gMarsLighthouseEntrance_FadeSlots[] = {
-    137, 138, 139, 140, 141, 142, 143, -1,
-};
-
-#include "shared/teleport_circle_colors.c"
-
-u16 gMarsLighthouseEntrance_FadeOrder[] ALIGNED(4) = {
-    142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,
-    140, 141, 142, 137, 138, 139, 139, 140, 141, 142, 137, 138,
-    138, 139, 140, 141, 142, 137, 137, 138, 139, 140, 141, 142,
-};
+#define TELEPORT_CIRCLE_FIRST_ENTRY 137
+#include "shared/teleport_circle_palette.c"
 
 s32 gMarsLighthouseEntrance_StatueScript[] = {
     SC_CALL(MarsLighthouseEntrance_SetUpStatue),

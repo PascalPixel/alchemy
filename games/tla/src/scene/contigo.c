@@ -395,10 +395,10 @@ void Contigo_InitializeVillage(void);
 void Contigo_InitializeGeoglyph(void);
 void Contigo_InitializeShops(void);
 void Contigo_InitializeLuckyDice(void);
-extern u16 gContigo_PaletteSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
-extern u16 gContigo_CycleSlots[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 extern s32 gContigo_ShiverScript[];
 extern u32 gLightRing_Tiles[];
 extern u32 gFieldEffect_ShortScript[];
@@ -2591,8 +2591,9 @@ void Contigo_InitializeVillage(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
-  Palette_SetColorsFade(gContigo_PaletteSlots, gTeleportCircle_Colors,
-                        gTeleportCircle_ShimmerColors, gContigo_CycleSlots);
+  Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
+                        gTeleportCircle_ShimmerColors,
+                        gTeleportCircle_ShimmerSlots);
 }
 
 /// Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings'
@@ -2913,23 +2914,8 @@ s32 gContigo_EnterSanctumDoorScript[] = {
     SC_END,
 };
 
-/// The Teleport circle's colours (shared/teleport_shimmer.c): their slots, the
-/// colours they rest at, the shimmer's colours, and the slots each step of the
-/// shimmer paints those into, so that the colours run round the circle.
-u16 gContigo_PaletteSlots[] = {
-    89, 90, 91, 92, 93, 94, 95, PALETTE_LIST_END,
-};
-
-#include "shared/teleport_circle_colors.c"
-
-u16 gContigo_CycleSlots[] = {
-    94, 89, 90, 91, 92, 93,
-    93, 94, 89, 90, 91, 92,
-    92, 93, 94, 89, 90, 91,
-    91, 92, 93, 94, 89, 90,
-    90, 91, 92, 93, 94, 89,
-    89, 90, 91, 92, 93, 94,
-};
+#define TELEPORT_CIRCLE_FIRST_ENTRY 89
+#include "shared/teleport_circle_palette.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_ShortScript,

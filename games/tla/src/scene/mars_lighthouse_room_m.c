@@ -679,10 +679,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 
-extern s16 gMarsLighthouseRoomM_FadeSlots[];
+extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
-extern u16 gMarsLighthouseRoomM_FadeOrder[];
+extern u16 gTeleportCircle_ShimmerSlots[];
 
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -694,8 +694,8 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Palette_SetColorsFade(
-      (s32)gMarsLighthouseRoomM_FadeSlots, (s32)gTeleportCircle_Colors,
-      (s32)gTeleportCircle_ShimmerColors, (s32)gMarsLighthouseRoomM_FadeOrder);
+      (s32)gTeleportCircle_PaletteSlots, (s32)gTeleportCircle_Colors,
+      (s32)gTeleportCircle_ShimmerColors, (s32)gTeleportCircle_ShimmerSlots);
   if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME &&
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
@@ -1374,17 +1374,8 @@ s32 gMarsLighthouseRoomM_StatueScript[] = {
 // clang-format off
 #include "shared/mars_lighthouse_part_scripts.c"
 
-s16 gMarsLighthouseRoomM_FadeSlots[] = {
-    201, 202, 203, 204, 205, 206, 207, -1,
-};
-
-#include "shared/teleport_circle_colors.c"
-
-u16 gMarsLighthouseRoomM_FadeOrder[] ALIGNED(4) = {
-    206, 201, 202, 203, 204, 205, 205, 206, 201, 202, 203, 204,
-    204, 205, 206, 201, 202, 203, 203, 204, 205, 206, 201, 202,
-    202, 203, 204, 205, 206, 201, 201, 202, 203, 204, 205, 206,
-};
+#define TELEPORT_CIRCLE_FIRST_ENTRY 201
+#include "shared/teleport_circle_palette.c"
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

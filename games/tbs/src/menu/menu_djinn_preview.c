@@ -287,7 +287,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           backdrop->tutorialStep += 1;
         }
         break;
-      case 10:
+      case DJINN_TUTORIAL_SET_CHANGES:
         if (backdrop->tutorialTimer == 60) {
           struct Window *window;
 
@@ -307,11 +307,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           work->dirty = 1;
           redraw = 1;
           backdrop->tutorialTimer = 0;
-          backdrop->tutorialStep = 11;
+          backdrop->tutorialStep = DJINN_TUTORIAL_CLASS_PSYNERGY;
           DjinnTutorial_SetCursor(menu, ICON_HIDDEN);
         }
         break;
-      case 11:
+      case DJINN_TUTORIAL_CLASS_PSYNERGY:
         if (backdrop->tutorialTimer == 60) {
           struct Window *window;
 

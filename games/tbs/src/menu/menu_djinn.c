@@ -1239,7 +1239,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           backdrop->tutorialStep = 4;
         }
         break;
-      case 6:
+      case DJINN_TUTORIAL_SET_AFTER_GIVE:
       case 7:
         if (backdrop->tutorialTimer == 60) {
           // "After choosing who will take the Djinni, you can set it."

@@ -1,6 +1,7 @@
 /// @file
-/// Previewing a change before it is made, and the check that keeps the
-/// party's Djinn balanced.
+/// The Djinn menu's preview of a set, standby, give or trade before it is made,
+/// the party member's "Char. Status" page, and the check that keeps the party's
+/// Djinn balanced.
 // Part of menu.c.
 
 #include "menu_internal.h"
@@ -23,19 +24,27 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second);
 #define DJINN_PREVIEW_HOP_DEPTH 12
 #define DJINN_PREVIEW_SLIDE_STEPS 35
 
+/// The Psynergy one page of the preview lists: a row fewer when the change
+/// has its gains and losses to sum up below them.
+#define DJINN_PREVIEW_PSYNERGY_ROWS 6
+
 /// The tilemap rows at the top of the screen that a tutorial message covers,
 /// saved before it opens and put back after it closes.
 #define DJINN_TUTORIAL_COVERED_ROWS 8
 
-/// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
-/// four stores of its two message steps, in both games. The name is ours.
+/// Shows or hides the menu's cursor while a line of the Djinn tutorial points
+/// at the preview.
 #define DjinnTutorial_SetCursor(menu, value)                                   \
   do {                                                                         \
     (menu)->cursor->motion = (value);                                          \
   } while (0)
 
-/// Previews a give, trade, set or standby change without committing it. It
-/// saves and restores the units before polling for confirmation.
+/// Previews a give, trade, set or standby (mode, enum DjinnCompareOperation)
+/// before it is made: each party member's stats and Psynergy as they would be,
+/// the given Djinni hopping across, and "Is this OK?". R turns between both
+/// members' stats and each one's Psynergy, Left and Right their pages. Returns
+/// DJINN_RESULT_CONFIRMED for Yes, DJINN_RESULT_BACK for No or B, and
+/// DJINN_RESULT_START for Start.
 s32 PsynergyList_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -174,10 +183,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Heap_Release(original);
     Heap_Release(diffWork);
   }
-  pageCounts[0] = (pageCounts[0] - 1) / 5 + 1;
+  pageCounts[0] = (pageCounts[0] - 1) / (DJINN_PREVIEW_PSYNERGY_ROWS - 1) + 1;
   if (pageCounts[0] == 0)
     pageCounts[0] = 1;
-  pageCounts[1] = (pageCounts[1] - 1) / 5 + 1;
+  pageCounts[1] = (pageCounts[1] - 1) / (DJINN_PREVIEW_PSYNERGY_ROWS - 1) + 1;
   if (pageCounts[1] == 0)
     pageCounts[1] = 1;
   Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
@@ -421,7 +430,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       if ((frame & 4) != 0) {
         Iwram_CopyWords(tile, gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
       } else {
-        Iwram_FillWords(tile, 32, fill);
+        Iwram_FillWords(tile, TILE_SIZE_4BPP, fill);
       }
     }
 
@@ -514,7 +523,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 tile;
   s32 pageIndex;
   s32 side;
-  s32 blink;
+  s32 hopStep;
 
   menu = Ram_HeapSlots->menuWork;
   redraw = 1;
@@ -537,10 +546,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   pageCounts[1] = pageCounts[0];
   Heap_Release(saved);
   Heap_Release(listedActions);
-  pageCounts[0] = (pageCounts[0] - 1) / 6 + 1;
+  pageCounts[0] = (pageCounts[0] - 1) / DJINN_PREVIEW_PSYNERGY_ROWS + 1;
   if (pageCounts[0] == 0)
     pageCounts[0] = 1;
-  pageCounts[1] = (pageCounts[1] - 1) / 6 + 1;
+  pageCounts[1] = (pageCounts[1] - 1) / DJINN_PREVIEW_PSYNERGY_ROWS + 1;
   if (pageCounts[1] == 0)
     pageCounts[1] = 1;
   leftWindowSlot = &menu->window;
@@ -588,8 +597,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       UiRender_MarkRow(render, window->y);
     }
     frame++;
-    blink = frame % DJINN_PREVIEW_HOP_PERIOD - DJINN_PREVIEW_HOP_DELAY;
-    CLAMP(blink, 0, DJINN_PREVIEW_HOP_FRAMES - 1);
+    // The preview's hop step, which no figure on this page uses.
+    hopStep = frame % DJINN_PREVIEW_HOP_PERIOD - DJINN_PREVIEW_HOP_DELAY;
+    CLAMP(hopStep, 0, DJINN_PREVIEW_HOP_FRAMES - 1);
     DjinnFigures_SetSlotPosition(0, 32, MENU_FIGURE_HIDDEN_Y);
     // DEAD: the test cannot change the result, redraw = 0 alone does the same;
     // the ROM keeps the compare (its twin also steps a phase under it).
@@ -647,13 +657,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 
 s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
-/// Marks recipients that would leave unequal Djinn totals after a direct give.
-/// Returns how many recipients would need a trade instead.
-///
-/// requiresTrade[i] becomes 1 for each other party member i who cannot take one
-/// of sourceMemberColumn's Djinn without two party members' totals differing by
-/// more than one (Djinn_CheckGiveBalance), else 0. The second Djinn chooser
-/// offers such a party member only Trade.
+/// Marks the party members the second Djinn chooser offers only Trade:
+/// requiresTrade[i] becomes 1 for each other party member i who, given one of
+/// sourceMemberColumn's Djinn, would hold two or more more than the giver
+/// (Djinn_CheckGiveBalance), else 0. Returns how many there are.
 s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 tradeCount;
   s32 memberColumn;
@@ -682,8 +689,8 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
 
 void Djinn_CountOwned(u8 *counts);
 
-/// Tests whether a hypothetical give leaves every pair of party members within
-/// one Djinn.
+/// Returns whether column from could give column to a Djinni: not when the
+/// receiver would then hold two or more Djinn more than the giver.
 s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
   s8 counts[16];
   s32 balanced;
@@ -697,9 +704,8 @@ s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
   return balanced;
 }
 
-/// Counts each party member's Djinn across its set and available bitmasks:
-/// writes every party member's total, set or not, into ownedCounts by list
-/// column.
+/// Writes how many Djinn each party member holds, set or not, into
+/// ownedCounts by list column.
 void Djinn_CountOwned(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
   struct Unit *unit;
@@ -712,7 +718,7 @@ void Djinn_CountOwned(u8 *ownedCounts) {
   for (memberIndex = 0; memberIndex < menu->memberCount; memberIndex++) {
     unit = Unit_Get(menu->members[memberIndex]);
     ownedCount = 0;
-    for (element = 0; element <= 3; element++) {
+    for (element = 0; element < ELEMENT_COUNT; element++) {
       for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
         if (unit->djinnSet[element] & (1 << djinnIndex))
           ownedCount++;

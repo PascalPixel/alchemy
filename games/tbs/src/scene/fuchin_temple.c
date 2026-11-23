@@ -207,7 +207,7 @@ enum {
 
 static void FuchinTemple_FeizhiLeavesForHsu(void);
 static void FuchinTemple_FehSeesChi(void);
-static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ);
+static void Scene_HopLeaderBy(s32 dx, s32 dz);
 static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target);
 static void FuchinTemple_FinishMindReadDemonstration(void);
 static void FuchinTemple_SpawnNyunpasParticles(void);
@@ -1635,33 +1635,20 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
 
 /// Unused: hops the leader one map cell north; nothing calls it.
 static UNUSED void FuchinTemple_HopLeaderNorth(void) {
-  FuchinTemple_HopLeaderByOffset(0, -32);
+  Scene_HopLeaderBy(0, -32);
 }
 
 /// Unused: hops the leader one map cell south; nothing calls it.
 static UNUSED void FuchinTemple_HopLeaderSouth(void) {
-  FuchinTemple_HopLeaderByOffset(0, 32);
+  Scene_HopLeaderBy(0, 32);
 }
 
 /// Unused: hops the leader one map cell west; nothing calls it.
 static UNUSED void FuchinTemple_HopLeaderWest(void) {
-  FuchinTemple_HopLeaderByOffset(-32, 0);
+  Scene_HopLeaderBy(-32, 0);
 }
 
-/// Unused: hops the leader by a pixel offset, waiting for the movement to
-/// finish.
-///
-/// Only the three unused hops above call it.
-static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
-  Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, offsetZ);
-  Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
-  Event_End();
-}
+#include "shared/leader_hop.c"
 
 /// Isaac steps from the monk's stump into the falls, cell (10, 21): spray
 /// falls over him and he flickers out of sight as the screen fades, into

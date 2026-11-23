@@ -293,7 +293,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void);
 static void Imil_WalkTowardFever(void);
 static void ImilFuchinFalls_PrepareRoom(void);
 static void ImilFuchinFalls_RebuildLogRoom(void);
-static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
+static void Scene_HopLeaderBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void Imil_SlideActorAcrossIce(void);
 
@@ -1617,15 +1617,15 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
 
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     if (trigger == CELL_BEHAVIOR_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END) {
-      ImilFuchinFalls_HopBy(0, -32);
+      Scene_HopLeaderBy(0, -32);
     } else {
-      ImilFuchinFalls_HopBy(-32, 0);
+      Scene_HopLeaderBy(-32, 0);
     }
   }
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
       trigger == CELL_BEHAVIOR_FUCHIN_FALLS_DRAGONS_EYE_ROOM_STUMP &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
-    ImilFuchinFalls_HopBy(0, 32);
+    Scene_HopLeaderBy(0, 32);
   }
 }
 
@@ -1633,24 +1633,14 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
 /// water: from the middle of the pool onto the stump (cell (17, 22)), or from
 /// the head of the long channel onto the upper crosswise log, when it lies at
 /// the head too.
-static void FuchinFallsCave_HopNorth(void) { ImilFuchinFalls_HopBy(0, -32); }
+static void FuchinFallsCave_HopNorth(void) { Scene_HopLeaderBy(0, -32); }
 
 /// In the Dragon's Eye room, Isaac jumps west from the lower crosswise log
 /// halfway down the long channel onto the stump below the west ledge (cell
 /// (12, 27)), from which he walks on to the stairs down to the Dragon's Eye.
-static void FuchinFallsCave_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
+static void FuchinFallsCave_HopWest(void) { Scene_HopLeaderBy(-32, 0); }
 
-/// Makes the leader leap a distance in pixels, landing with a spring.
-static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
-  Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, dx, dz);
-  Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
-  Event_End();
-}
+#include "shared/leader_hop.c"
 
 /// Puts the Dragon's Eye on the little table in the middle of the round
 /// chamber below the Dragon's Eye room, drawn as its item icon.

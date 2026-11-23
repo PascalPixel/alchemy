@@ -202,6 +202,9 @@ static inline s32 Serial_AddErrorFlag(s32 status) {
   return status;
 }
 
+/// Abandons any send or receive and clears the block transfer's state, with
+/// interrupts held off: what a failed link battle or Battle Arena exchange
+/// does.
 static __inline__ void Serial_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;

@@ -9,6 +9,7 @@
 #include "types.h"
 #include "system/io_reg.h"
 
+/// The most tasks that can run at once.
 enum TaskLimits { TASK_COUNT = 20 };
 
 typedef void (*TaskFunc)(void);

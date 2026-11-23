@@ -67,6 +67,8 @@ static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
 /// negative one. A 16.16 square comes back as 8.8.
 static inline s32 Iwram_Sqrt(s32 value) { return Iwram_SqrtEntry(value); }
 
+/// Transforms a vector of three 16.16 coordinates by gCurrentMatrix into
+/// result.
 static inline s32 Iwram_TransformVector(const void *vector, s32 *result) {
   return Iwram_TransformVectorEntry(vector, result);
 }
@@ -86,6 +88,10 @@ static inline u32 Iwram_UnsignedDivide(u32 dividend, u32 divisor) {
   return Iwram_UnsignedDivideEntry(dividend, divisor);
 }
 
+/// Unpacks a sprite's codec 3 picture straight into its pixels at destination,
+/// where a byte above 223 skips that many less 223 transparent pixels, and
+/// returns null. A picture whose two-byte packed size is 0 is stored unpacked:
+/// it returns the picture after that size, for the caller to draw.
 static inline void *Iwram_Decompress(const void *source, void *destination) {
   return Iwram_DecompressEntry(source, destination);
 }

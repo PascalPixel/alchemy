@@ -13,8 +13,8 @@
 /// The sword strikes: the crash, the damage and the canvas filled bright.
 #define TITAN_BLADE_STRIKE_FRAME 60
 #define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
-#define TITAN_BLADE_FLASHES 32          ///< flashes scattered
-#define TITAN_BLADE_RING 16             ///< of which drawn as the ring
+#define TITAN_BLADE_FLASHES 32          ///< flashes set out
+#define TITAN_BLADE_DRAWN_FLASHES 16    ///< of which drawn, nearest first
 #define TITAN_BLADE_DUST 684 ///< dust slots in PARTICLES, before the sparks
 #define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
@@ -31,7 +31,9 @@
 /// is drawn.
 #define TITAN_BLADE_GROUND_Y 108
 /// The dust rises and the fire pillar scrolls up for 32 frames from frame 32,
-/// sixteen more dust each frame, the pillar's picture 16 pixels a frame.
+/// sixteen more dust each frame, the pillar's picture 16 pixels a frame; the
+/// sword sinks from then until it strikes.
+#define TITAN_BLADE_RISE_START 32
 #define TITAN_BLADE_RISE_FRAMES 32
 #define TITAN_BLADE_DUST_PER_FRAME 16
 #define TITAN_BLADE_PILLAR_SPEED 16
@@ -41,6 +43,22 @@
 #define TITAN_BLADE_SWORD_WIDTH 36
 #define TITAN_BLADE_SWORD_HEIGHT 120
 #define TITAN_BLADE_SWORD_HOLD_TOP 16
+
+/// Lights a dust mote at a random spot of an oval on the ground round the
+/// sword, thrown up and out at a random speed.
+#define TITAN_BLADE_LIGHT_DUST(dust, originX)                                  \
+  {                                                                            \
+    s32 radius;                                                                \
+    s32 angle;                                                                 \
+                                                                               \
+    radius = Random16() & 63;                                                  \
+    angle = Random16() & TRIG_ANGLE_MASK;                                      \
+    (dust)->x = ((Trig_Sin(angle) * radius) >> 3) + (originX);                 \
+    (dust)->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);               \
+    (dust)->velocityX = ((Random16() & 63) - 32) << 14;                        \
+    (dust)->velocityY = (-(Random16() & 63) - 8) << 13;                        \
+    (dust)->variant = 0;                                                       \
+  }
 
 /// A huge gold-hilted sword drops onto the first target and is driven into the
 /// ground amid flashes, golden dust and sparks.
@@ -56,7 +74,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   s32 frame;
   s32 canvasCenterX;
-  s32 step;
+  s32 riseFrame;
   FIXED sparkOriginX;
   s32 i;
 
@@ -94,11 +112,11 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   for (i = 0; i != TITAN_BLADE_FLASHES; i++) {
     struct Particle *flash = &work->particles[i];
 
-    s32 scale = i * 2;
-    s32 ang = Random16() & TRIG_ANGLE_MASK;
+    s32 distance = i * 2;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-    flash->x = Trig_Sin(ang) * scale;
-    flash->y = -(Trig_Cos(ang) * scale);
+    flash->x = Trig_Sin(angle) * distance;
+    flash->y = -(Trig_Cos(angle) * distance);
     flash->variant = i / 2 + TITAN_BLADE_FLASH_START;
   }
 
@@ -111,20 +129,21 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   for (; i != TITAN_BLADE_SPARKS; i++) {
     struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
-    s32 mag;
-    s32 ang;
+    s32 speed;
+    s32 angle;
 
-    mag = (Random16() & 0x1ff) + 32;
-    ang = Random16() & TRIG_ANGLE_MASK;
+    speed = (Random16() & 0x1ff) + 32;
+    angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = sparkOriginX;
     spark->y = toFIXED(88);
-    spark->velocityX = (Trig_Sin(ang) * mag) >> 5;
-    spark->velocityY = -(Trig_Cos(ang) * mag) >> 6;
+    spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
+    spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
     spark->variant = (Random16() & 7) + 32;
   }
 
   for (frame = 0; frame != TITAN_BLADE_FRAMES; frame++) {
-    // The palette fades: the dust and sparks turn from gold to pink and violet.
+    // The colours step from the sword's toward the blast's golds as the dust
+    // rises, then toward the lightning bolt's violets as the sword strikes.
     if (frame >= 25 && frame <= 47) {
       BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
     }
@@ -145,7 +164,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (frame == 4) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 32) {
+    if (frame == TITAN_BLADE_RISE_START) {
       Sound_PlayFar(SE_SCATTER);
     }
     if (frame == TITAN_BLADE_STRIKE_FRAME) {
@@ -153,8 +172,9 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
+    // The flashes light in turn, each further out from the sword.
     if (frame > 55) {
-      for (i = 0; i != TITAN_BLADE_RING; i++) {
+      for (i = 0; i != TITAN_BLADE_DRAWN_FLASHES; i++) {
         struct Particle *flash = &work->particles[i];
 
         s32 x;
@@ -186,41 +206,23 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
         struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
-          s32 mag;
-          s32 ang;
-
-          mag = Random16() & 63;
-          ang = Random16() & TRIG_ANGLE_MASK;
-          dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
-          dust->y = ((Trig_Cos(ang) * mag) >> 2) + toFIXED(96);
-          dust->velocityX = ((Random16() & 63) - 32) << 14;
-          dust->velocityY = (-(Random16() & 63) - 8) << 13;
-          dust->variant = 0;
+          TITAN_BLADE_LIGHT_DUST(dust, sparkOriginX);
         }
       }
     }
 
-    step = frame - 32;
-    if (step >= 0 && step < TITAN_BLADE_RISE_FRAMES) {
-      s32 cnt;
+    riseFrame = frame - TITAN_BLADE_RISE_START;
+    if (riseFrame >= 0 && riseFrame < TITAN_BLADE_RISE_FRAMES) {
+      s32 lit;
 
-      cnt = 0;
+      lit = 0;
       for (i = 0; i != TITAN_BLADE_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
-          s32 mag;
-          s32 ang;
-
-          mag = Random16() & 63;
-          ang = Random16() & TRIG_ANGLE_MASK;
-          dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
-          dust->y = ((Trig_Cos(ang) * mag) >> 2) + toFIXED(96);
-          dust->velocityX = ((Random16() & 63) - 32) << 14;
-          dust->velocityY = (-(Random16() & 63) - 8) << 13;
-          dust->variant = 0;
-          cnt++;
-          if (cnt == TITAN_BLADE_DUST_PER_FRAME) {
+          TITAN_BLADE_LIGHT_DUST(dust, sparkOriginX);
+          lit++;
+          if (lit == TITAN_BLADE_DUST_PER_FRAME) {
             break;
           }
         }
@@ -229,19 +231,20 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
     // The fire pillar stands on the ground, its picture scrolling up and
     // wrapping round.
-    if (step >= 0 && step < TITAN_BLADE_RISE_FRAMES) {
+    if (riseFrame >= 0 && riseFrame < TITAN_BLADE_RISE_FRAMES) {
       s32 phase = frame * TITAN_BLADE_PILLAR_SPEED;
       s32 x = canvasCenterX - FIRE_PILLAR_WIDTH / 2;
       s32 width = FIRE_PILLAR_WIDTH;
       DrawRectangle blit = blitters[0];
-      s32 high = FIRE_PILLAR_HEIGHT;
-      s32 size =
+      s32 height = FIRE_PILLAR_HEIGHT;
+      s32 scroll =
           (phase - TITAN_BLADE_PILLAR_SCROLL_FRAME * TITAN_BLADE_PILLAR_SPEED) %
-          high;
+          height;
 
       blit(canvas, work->sheet, x,
-           TITAN_BLADE_GROUND_Y - FIRE_PILLAR_HEIGHT - size, width, high);
-      blit(canvas, work->sheet, x, TITAN_BLADE_GROUND_Y - size, width, size);
+           TITAN_BLADE_GROUND_Y - FIRE_PILLAR_HEIGHT - scroll, width, height);
+      blit(canvas, work->sheet, x, TITAN_BLADE_GROUND_Y - scroll, width,
+           scroll);
     }
 
     if (frame <= 71) {
@@ -277,27 +280,29 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     // The sword drops in, holds, sinks and plunges.
     if (frame <= 95) {
       s32 x;
-      s32 high;
+      s32 height;
       s32 top;
 
       x = canvasCenterX - TITAN_BLADE_SWORD_WIDTH / 2;
-      high = TITAN_BLADE_SWORD_HEIGHT;
+      height = TITAN_BLADE_SWORD_HEIGHT;
       if (frame > TITAN_BLADE_STRIKE_FRAME) {
         top = frame * 8 - 450;
-      } else if (frame > 32) {
-        top = step / 2 + TITAN_BLADE_SWORD_HOLD_TOP;
+      } else if (frame > TITAN_BLADE_RISE_START) {
+        top = riseFrame / 2 + TITAN_BLADE_SWORD_HOLD_TOP;
       } else if (frame <= 9) {
         // It drops 16 pixels a frame, onto its hold at frame 9.
         top = frame * 16 - 128;
       } else {
         top = TITAN_BLADE_SWORD_HOLD_TOP;
       }
+      // Only what is above the ground is drawn.
       if (top + TITAN_BLADE_SWORD_HEIGHT > TITAN_BLADE_GROUND_Y) {
-        high = high - top - (TITAN_BLADE_SWORD_HEIGHT - TITAN_BLADE_GROUND_Y);
+        height =
+            height - top - (TITAN_BLADE_SWORD_HEIGHT - TITAN_BLADE_GROUND_Y);
       }
-      if (high > 0) {
+      if (height > 0) {
         blitters[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top,
-                    TITAN_BLADE_SWORD_WIDTH, high);
+                    TITAN_BLADE_SWORD_WIDTH, height);
       }
     }
 
@@ -365,7 +370,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 #undef TITAN_BLADE_FRAMES
 #undef TITAN_BLADE_SWORD_PICTURE
 #undef TITAN_BLADE_FLASHES
-#undef TITAN_BLADE_RING
+#undef TITAN_BLADE_DRAWN_FLASHES
 #undef TITAN_BLADE_DUST
 #undef TITAN_BLADE_FIRST_DUST
 #undef TITAN_BLADE_DRAWN_DUST
@@ -375,6 +380,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 #undef TITAN_BLADE_FLASH_SHOWN
 #undef TITAN_BLADE_FLASH_FRAMES
 #undef TITAN_BLADE_GROUND_Y
+#undef TITAN_BLADE_RISE_START
 #undef TITAN_BLADE_RISE_FRAMES
 #undef TITAN_BLADE_DUST_PER_FRAME
 #undef TITAN_BLADE_PILLAR_SPEED
@@ -382,3 +388,4 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 #undef TITAN_BLADE_SWORD_WIDTH
 #undef TITAN_BLADE_SWORD_HEIGHT
 #undef TITAN_BLADE_SWORD_HOLD_TOP
+#undef TITAN_BLADE_LIGHT_DUST

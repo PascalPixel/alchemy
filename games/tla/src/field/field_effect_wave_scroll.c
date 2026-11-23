@@ -1,8 +1,10 @@
 /// @file
-/// Fills BG0's line scroll table with a jittered sine wave and streams it
-/// to BG0HOFS by HBlank DMA 0. Each overlay that has it includes this body
-/// after naming the function (WAVE_SCROLL) and its table of a scroll for each
-/// screen line (WAVE_SCROLL_LINES).
+/// A great whirlwind's sway (Air's Rock, Shaman Village): each screen line of
+/// BG0 is pushed side to side by a jittered sine wave, set line by line by
+/// HBlank DMA 0. Each overlay that has it includes this body after naming the
+/// function (WAVE_SCROLL) and its table of a scroll for each screen line
+/// (WAVE_SCROLL_LINES).
+
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"

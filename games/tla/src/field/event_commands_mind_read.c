@@ -41,8 +41,8 @@
 #define MIND_READ_CYCLE_LAST 60
 #define MIND_READ_PARTICLE_GAP 8
 
-/// Task of the wave effect: once its delay has run out, writes the next page
-/// of line offsets, steps the colour fade and the hue every other frame,
+/// Mind Read's wave each frame: once its delay has run out, writes the next
+/// page of line offsets, steps the colour fade and the hue every other frame,
 /// keeps the caster's colours lit, and three times a cycle sends a particle
 /// (SPRITE_CRESCENT) from the target to the caster, with SE_PSYNERGY_START.
 void FieldPsynergy_UpdateMindReadWave(void) {
@@ -135,7 +135,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   }
 }
 
-/// Applies BG0 line scrolling with HBlank DMA.
+/// Sets Mind Read's ripple going at each VBlank: HBlank DMA 0 gives BG0 the
+/// page of line offsets last written, a line at a time.
 void FieldEffect_ArmBg0HBlankDma(void) {
   struct MindReadWork *work = Ram_HeapSlots->mindRead;
   if (!work->delay) {
@@ -144,7 +145,6 @@ void FieldEffect_ArmBg0HBlankDma(void) {
     dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
     dma[5] &= ~DMA_ENABLE;
     (void)dma[5];
-    // One halfword at each HBlank (repeating, destination reloaded).
     Dma_Set(line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }
@@ -167,7 +167,8 @@ s32 FieldEffect_HueChannelRamp(s16 hue) {
   return level;
 }
 
-/// Advances the hue by four degrees and calculates its colour.
+/// Turns Mind Read's tint four degrees round the colour wheel, and takes the
+/// tint's colour, each channel dimmed to 4 to 11, from the hue before.
 void FieldEffect_AdvanceHueCycle(void) {
   struct MindReadWork *work = Ram_HeapSlots->mindRead;
   s16 r;
@@ -179,7 +180,6 @@ void FieldEffect_AdvanceHueCycle(void) {
   g = FieldEffect_HueChannelRamp(work->hue + HUE_DEGREES / 3);
   b = FieldEffect_HueChannelRamp(work->hue + HUE_DEGREES * 2 / 3);
 
-  // Scale 0-31 down to 4-11.
   work->red = (r / 4 + 4) & RGB_LEVEL_MAX;
   work->green = (g / 4 + 4) & RGB_LEVEL_MAX;
   work->blue = (b / 4 + 4) & RGB_LEVEL_MAX;
@@ -188,8 +188,7 @@ void FieldEffect_AdvanceHueCycle(void) {
     work->hue = 0;
 }
 
-/// Per-frame update: once the actor has arrived (no target left on any axis),
-/// releases it through gBattleEffect_UntargetedObjectScript.
+/// A Mind Read crescent's update: once it has reached the caster, it goes.
 void FieldEffect_ReleaseOnArrival(struct Actor *target) {
   s32 tx;
   s32 ty;
@@ -214,16 +213,14 @@ void Actor_SetSpritePalette(void *object, s32 value) {
   Actor_SetSpriteColorModeFar(object, child);
 }
 
-/// Returns the direction of the d-pad (TRIG_TURN a full turn): right
-/// FACING_EAST, down FACING_SOUTH, left FACING_WEST, up FACING_NORTH; 0xffff
-/// when none or a diagonal is held.
+/// The way the +Control Pad points, in four ways: FACING_EAST to FACING_NORTH,
+/// or DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
   return gFieldEffect_CyclePatternWords[DPAD_INDEX(gInput.held)];
 }
 
-/// Returns the entry of gBattleEffect_EightWayHeadingWords for the direction
-/// pad's keys held.
+/// The way the +Control Pad points, in eight ways, or DPAD_ANGLE_NONE.
 u16 BattleEffect_GetEightWayHeadingWord(void) {
   struct InputState *input = &gInput;
   const u16 *words = gBattleEffect_EightWayHeadingWords;
@@ -518,9 +515,9 @@ void FieldPsynergy_Move(void) {
   UpdateRisingParticleBurst(object);
 }
 
-/// The Broken Seal's FieldEffect_SpawnMoveHand with this game's objects
-/// 278 and 673: spawns the breaking item above object and eight fragments
-/// that scatter from it.
+/// Move's hand appears at a quarter size 16 pixels above the caster, with a
+/// crack and eight sparkles that scatter from it, and sets out 16 pixels the
+/// way the caster faces, to the nearest quarter turn.
 void *FieldEffect_SpawnMoveHand(void *object) {
   struct Actor *source = object;
   struct Actor *parent;
@@ -568,8 +565,8 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   return parent;
 }
 
-/// Raises the object's scale in sixteenths to full size and commits its
-/// position.
+/// Grows a hand to full size at once and waits for it to reach where it is
+/// going.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   FIXED next;
   FIXED scale;
@@ -773,6 +770,13 @@ void FieldPsynergy_EndReveal(void) {
   }
 }
 
+/// What Growth does to its target.
+enum GrowthTargetKind {
+  GROWTH_ON_PLANT,            ///< it grows (its animation 2)
+  GROWTH_ON_SPROUTING_LEAVES, ///< a vine hangs from it
+  GROWTH_ON_ARROW_PLANT       ///< the scene's event makes it point
+};
+
 /// Growth cast on a target: the burst of particles, then the target takes its
 /// grown animation and the underfoot priority, with SE_RECOVERY. Sprouting
 /// leaves (SPRITE_SPROUTING_LEAVES) instead drop five vines round the
@@ -782,18 +786,18 @@ void FieldPsynergy_EndReveal(void) {
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = scene->child;
-  s32 kind = 0;
+  s32 kind = GROWTH_ON_PLANT;
 
   if (target == 0)
     return;
 
   FieldEffect_SpawnBurstParticleField();
   if (Actor_GetSpriteIdFar(target) == SPRITE_SPROUTING_LEAVES)
-    kind = 1;
+    kind = GROWTH_ON_SPROUTING_LEAVES;
   if (Actor_GetSpriteIdFar(target) == SPRITE_ARROW_PLANT)
-    kind = 2;
+    kind = GROWTH_ON_ARROW_PLANT;
 
-  if (kind == 0) {
+  if (kind == GROWTH_ON_PLANT) {
     Actor_SelectAnimationFar(target, 2);
     Actor_SetSpriteFlagsFar(target, 0);
     target->collisionFlags = 0;
@@ -801,7 +805,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
     wait(10);
     Sound_PlayFar(SE_RECOVERY);
     wait(40);
-  } else if (kind == 1) {
+  } else if (kind == GROWTH_ON_SPROUTING_LEAVES) {
     struct BurstParticleVector position;
     s32 n;
 
@@ -831,8 +835,8 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 }
 
 /// When Growth is cast with no target, particles fly out from in front of the
-/// caster, and then five falling actors appear 4 to 10 pixels round the
-/// Psynergy's position.
+/// caster, and then five vine leaves drop 4 to 10 pixels round the Psynergy's
+/// position.
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *state = Ram_HeapSlots->fieldEffectWork;
   struct BurstParticleVector position;
@@ -1385,13 +1389,13 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
   }
 }
 
-/// Runs Frost cast on a target.
+/// Frost cast on a target. A target with a mode set takes only the snowflakes,
+/// and its flash and freezing are left to the scene.
 void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = effectWork->child;
 
   if (target != 0) {
-    // enabled set skips the target's part of FieldPsynergy_Frost.
     if (effectWork->childMode != 0) {
       effectWork->enabled = 1;
     }
@@ -1402,9 +1406,10 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 
 #define FROST_SNOWFLAKES 16 ///< circling the target
 
-/// FROST_SNOWFLAKES particles, one every three frames, orbit points scattered 2
-/// to 6 pixels around the effect; the target then flashes eight times, takes
-/// the orbiting particles' main update and runs its pending event.
+/// FROST_SNOWFLAKES snowflakes, one every three frames, spiral in on points 2
+/// to 6 pixels round the Psynergy's position; a target then flashes white eight
+/// times, freezes (its animation 2, unless its option says otherwise), glints
+/// from then on, and the scene's Frost event runs.
 void FieldPsynergy_Frost(void) {
   struct Vector3 pos;
   struct FieldEffectWork *scene;
@@ -1469,8 +1474,9 @@ void FieldPsynergy_Frost(void) {
     }
 
     target->update = (ObjectUpdate)FieldEffect_UpdateFrostGlint;
-    ev = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 6,
-                                   Scene_SelectPsynergyTarget(6));
+    ev = Scene_FindPsynergyTrigger(
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FROST,
+        Scene_SelectPsynergyTarget(FIELD_PSYNERGY_FROST));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstActorId, scene->secondActorId);
     wait(20);

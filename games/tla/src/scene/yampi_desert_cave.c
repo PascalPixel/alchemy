@@ -538,25 +538,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-/// Places the stakes already sunk: each entry of the list (actor, kind,
-/// flag) loses its collision, and its cell opens. A struct of three halfwords
-/// would be padded to 8 bytes, so the list is read as u16 triples.
-void YampiDesertCave_PlaceStakes(const u16 *list) {
-  const u16 *entry;
-
-  if (list[0] == ACTOR_LIST_END)
-    return;
-  for (entry = list; entry[0] != ACTOR_LIST_END; entry += 3) {
-    u32 id = entry[0];
-    struct Actor *actor = Actor_GetById(id);
-    s16 kind = entry[1];
-    s16 flag = entry[2];
-
-    actor->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(actor, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
-  }
-}
+#include "shared/pillar_place.h"
 
 // Finds the current target's table row and shrinks it.
 #include "shared/pound_sink_target.h"
@@ -947,7 +929,7 @@ s32 Scene_Initialize(void) {
     YampiDesertCave_SetLogCells(ACTOR_CRYSTAL_ROOM_SECOND_LOG);
     YampiDesertCave_SetLogCells(ACTOR_CRYSTAL_ROOM_THIRD_LOG);
     YampiDesertCave_SetLogCells(ACTOR_CRYSTAL_ROOM_FOURTH_LOG);
-    YampiDesertCave_PlaceStakes(gYampiDesertCaveCrystalStakes);
+    Pillar_Place(gYampiDesertCaveCrystalStakes);
     if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_STAKE_POUNDED))
       MapGrid_CopyCellAttributes(48, 12, 1, 1, 46, 12);
     if (Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST))

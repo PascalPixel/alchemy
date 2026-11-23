@@ -1376,6 +1376,7 @@ void GaiaRockInside_ReadSandTablet(void) {
 
 /// The dust's update: it moves by its velocity, slowing a little across the
 /// ground each frame, and grows and spins.
+// The same routine as FieldEffect_AdvanceMotion, under another name.
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX;

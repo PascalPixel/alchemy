@@ -2344,6 +2344,7 @@ void WorldMap_CarryPartyToAquaRock(void) {
 }
 
 /// Turns a placed actor's sprite with the World Map's view and shows it.
+// The same routine as WorldMap_SetIslandTile, under another name.
 s32 WorldMap_SetPlacedActorTile(struct Actor *actor) {
   u16 *yaw = &((struct WorldMapView *)Ram_HeapSlots->mapGrid)->yaw;
   struct FieldSprite *sprite = actor->sprite;

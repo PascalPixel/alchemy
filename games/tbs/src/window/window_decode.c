@@ -98,21 +98,54 @@ enum {
   MESSAGE_END_NOW = 30,
 };
 
+/// How a name argument is written ({argument_item_name:n} and the like, the
+/// catalogs showing the form one above): with or without its article, and
+/// singular or plural.
+enum ArticleForm {
+  ARTICLE_FORM_BARE = 0,    ///< the name alone
+  ARTICLE_FORM_ARTICLE = 1, ///< the name after its article ("a Herb")
+  /// English: the name with its plural ending ("Herbs"); the other European
+  /// languages: the plural name after its article.
+  ARTICLE_FORM_PLURAL = 2,
+  /// ARTICLE_FORM_ARTICLE or ARTICLE_FORM_PLURAL, by the number argument
+  /// written before it.
+  ARTICLE_FORM_BY_NUMBER = 3,
+  /// Outside English: the plural name alone.
+  ARTICLE_FORM_BARE_PLURAL = 4,
+};
+#if LANGUAGE == LANGUAGE_SPANISH
+/// In Spanish, the form's bit asking for the indefinite article rather than
+/// the definite one, above the form.
+#define ARTICLE_FORM_INDEFINITE 8
+#define ARTICLE_FORM_MASK 7
+#endif
+
+/// The state of the text just written, which an article or ending after it
+/// follows: a sentence's end capitalises the next article, and a name ending
+/// in s (in German, s or z) takes a different possessive or plural ending.
+enum {
+  LAST_LETTER_OTHER = 0,
+  LAST_LETTER_S = 1,
+  LAST_LETTER_SENTENCE_END = 2,
+};
+
 // Message_AppendArticleName copies a name into the decoded text at
-// writePosition and returns the position after it.
+// writePosition, as articleForm asks, and returns the position after it. In a
+// Japanese battle message the name is set off by a space on each side, typed
+// at the default line spacing with the spacing 8 after it.
 
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-/// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
-/// the others the class's article (in Spanish, form bit 3 asks for the
-/// indefinite article), capitalised at the start of a sentence.
-u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
+/// The German, Spanish, French and Italian form: the bare forms take no
+/// article, the others the article of the name's class, capitalised at the
+/// start of a sentence.
+u32 Message_AppendArticleName(s32 inBattleMessage, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
-                              s32 *suffix) {
+                              s32 *lastLetter) {
   struct ArticleTable table;
 #if LANGUAGE == LANGUAGE_SPANISH
   struct ArticleTable indefiniteTable;
-  u16 count;
+  u16 form;
   s16 indefinite;
 #endif
   s32 kind;
@@ -120,13 +153,13 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   u16 code;
   s8 *p;
   s8 letter;
-  s32 cnt;
+  s32 letterIndex;
 
 #if LANGUAGE == LANGUAGE_SPANISH
-  count = articleForm & 7;
-  indefinite = articleForm & 8;
+  form = articleForm & ARTICLE_FORM_MASK;
+  indefinite = articleForm & ARTICLE_FORM_INDEFINITE;
 #endif
-  if (mode != 0) {
+  if (inBattleMessage != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
@@ -134,9 +167,10 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   // A name's leading article class (MESSAGE_ARTICLE_CLASS and its
   // operand) is never copied.
 #if LANGUAGE == LANGUAGE_SPANISH
-  if (count == 0 || count == 4) {
+  if (form == ARTICLE_FORM_BARE || form == ARTICLE_FORM_BARE_PLURAL) {
 #else
-  if (articleForm == 0 || articleForm == 4) {
+  if (articleForm == ARTICLE_FORM_BARE ||
+      articleForm == ARTICLE_FORM_BARE_PLURAL) {
 #endif
     head = name[0];
     if (head == MESSAGE_ARTICLE_CLASS)
@@ -160,10 +194,10 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     p = table.text[kind & ARTICLE_KIND_MASK];
 #endif
     // The first letter is capitalised at the start of a sentence.
-    for (cnt = 0; cnt < ARTICLE_MAX_LETTERS; cnt++) {
+    for (letterIndex = 0; letterIndex < ARTICLE_MAX_LETTERS; letterIndex++) {
       if ((letter = *p++) == 0)
         break;
-      if (cnt == 0 && *suffix == 2)
+      if (letterIndex == 0 && *lastLetter == LAST_LETTER_SENTENCE_END)
         letter -= 'a' - 'A';
       TEXT_APPEND(entries, writePosition, letter);
     }
@@ -173,17 +207,17 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     TEXT_APPEND(entries, writePosition, code);
 #if LANGUAGE == LANGUAGE_GERMAN
     if (code == 's' || code == 'S' || code == 'z' || code == 'Z')
-      *suffix = 1;
+      *lastLetter = LAST_LETTER_S;
     else
-      *suffix = 0;
+      *lastLetter = LAST_LETTER_OTHER;
 #elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
     if (code == 's' || code == 'S')
-      *suffix = 1;
+      *lastLetter = LAST_LETTER_S;
     else
-      *suffix = 0;
+      *lastLetter = LAST_LETTER_OTHER;
 #endif
   }
-  if (mode != 0) {
+  if (inBattleMessage != 0) {
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, 8);
     TEXT_APPEND(entries, writePosition, ' ');
@@ -193,26 +227,35 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
 
 #if LANGUAGE == LANGUAGE_ENGLISH
-/// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
-/// name's first letter unless its class says otherwise), and form 2 (or 3 with
-/// several) adds the plural "s" or "es".
-u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
+/// The English article classes Message_AppendArticleName chooses between
+/// (gArticle_Table) when a name's class does not name one.
+enum {
+  ARTICLE_CLASS_NONE = 0,
+  ARTICLE_CLASS_A = 1,
+  ARTICLE_CLASS_AN = 2,
+};
+
+/// The English form: the singular takes "a" or "an" (by the name's first
+/// letter, unless its class names an article), and the plural adds "s", or "es"
+/// after an s.
+u32 Message_AppendArticleName(s32 inBattleMessage, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
-                              s32 *suffix) {
+                              s32 *lastLetter) {
   struct ArticleTable table;
   s32 kind;
   u16 head;
   u16 code;
   u8 *p;
   s8 letter;
-  s32 cnt;
+  s32 letterIndex;
 
-  if (mode != 0) {
+  if (inBattleMessage != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
-  if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
+  if (articleForm == ARTICLE_FORM_ARTICLE ||
+      (articleForm == ARTICLE_FORM_BY_NUMBER && plural == 0)) {
     kind = 0;
     table = gArticle_Table;
     head = name[0];
@@ -221,15 +264,15 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
       kind = name[1] - 1;
       name += 2;
     }
-    if (kind == 0) {
+    if (kind == ARTICLE_CLASS_NONE) {
       if (head == 'A' || head == 'I' || head == 'U' || head == 'E' ||
           head == 'O')
-        kind = 2;
+        kind = ARTICLE_CLASS_AN;
       else
-        kind = 1;
+        kind = ARTICLE_CLASS_A;
     }
     p = table.text[kind & 7];
-    for (cnt = 0; cnt < ARTICLE_MAX_LETTERS; cnt++) {
+    for (letterIndex = 0; letterIndex < ARTICLE_MAX_LETTERS; letterIndex++) {
       if ((letter = *p++) == 0)
         break;
       TEXT_APPEND(entries, writePosition, letter);
@@ -243,17 +286,18 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     code = *name++;
     TEXT_APPEND(entries, writePosition, code);
     if (code == 'S' || code == 's')
-      *suffix = 1;
+      *lastLetter = LAST_LETTER_S;
     else
-      *suffix = 0;
+      *lastLetter = LAST_LETTER_OTHER;
   }
-  if (articleForm == 2 || (articleForm == 3 && plural != 0)) {
-    if (*suffix != 0) {
+  if (articleForm == ARTICLE_FORM_PLURAL ||
+      (articleForm == ARTICLE_FORM_BY_NUMBER && plural != 0)) {
+    if (*lastLetter != LAST_LETTER_OTHER) {
       TEXT_APPEND(entries, writePosition, 'e');
     }
     TEXT_APPEND(entries, writePosition, 's');
   }
-  if (mode != 0) {
+  if (inBattleMessage != 0) {
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, 8);
     TEXT_APPEND(entries, writePosition, ' ');
@@ -309,13 +353,13 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if LANGUAGE == LANGUAGE_ENGLISH
   u32 writePosition = start;
   u32 previousCode;
-  s32 suffix = 0;
+  s32 lastLetter = LAST_LETTER_OTHER;
 #else
 #if LANGUAGE == LANGUAGE_SPANISH
   struct ItemPossessiveTable possessives;
   s32 form;
 #endif
-  s32 suffix = 2;
+  s32 lastLetter = LAST_LETTER_SENTENCE_END;
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
   s32 running = 1;
 #endif
@@ -327,7 +371,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 overflow = 0;
   s32 (*decode)(struct MessageReader *);
   u32 nextPosition;
-  s32 no;
+  s32 articleForm;
   u32 j;
   u32 i;
   s32 value;
@@ -414,7 +458,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_PAGE_BREAK:
             // The message ends at its first page, waiting for a button.
             running = 0;
-            code = 2;
+            code = TEXT_WAIT_KEY;
             break;
           case MESSAGE_PROTAGONIST_NAME:
             break;
@@ -478,15 +522,15 @@ s32 Message_Decode(s32 script, s32 clear) {
               code != TEXT_INVERTED_QUESTION_MARK
 #endif
           ) {
-            suffix = 0;
+            lastLetter = LAST_LETTER_OTHER;
             if (code == '.' || code == '!' || code == '?')
-              suffix = 2;
+              lastLetter = LAST_LETTER_SENTENCE_END;
             if (code == 's' || code == 'S'
 #if LANGUAGE == LANGUAGE_GERMAN
                 || code == 'z' || code == 'Z'
 #endif
             )
-              suffix = 1;
+              lastLetter = LAST_LETTER_S;
           }
 #endif
         } else {
@@ -525,17 +569,18 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + MsgClassName, name,
                               MESSAGE_NAME_HALFWORDS);
-            writePosition = Message_AppendArticleName(
-                0, name, writePosition, entry, no, plural, &suffix);
+            writePosition =
+                Message_AppendArticleName(0, name, writePosition, entry,
+                                          articleForm, plural, &lastLetter);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
 #if LANGUAGE == LANGUAGE_SPANISH
-            form = no & 7;
+            form = articleForm & ARTICLE_FORM_MASK;
 #endif
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             // The argument is an inventory code, the item in its low bits.
@@ -543,9 +588,13 @@ s32 Message_Decode(s32 script, s32 clear) {
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
             argument &= INVENTORY_ITEM_ID_MASK;
 #if LANGUAGE == LANGUAGE_SPANISH
-            if (form == 2 || (form == 3 && plural != 0) || form == 4)
+            if (form == ARTICLE_FORM_PLURAL ||
+                (form == ARTICLE_FORM_BY_NUMBER && plural != 0) ||
+                form == ARTICLE_FORM_BARE_PLURAL)
 #else
-            if (no == 2 || (no == 3 && plural != 0) || no == 4)
+            if (articleForm == ARTICLE_FORM_PLURAL ||
+                (articleForm == ARTICLE_FORM_BY_NUMBER && plural != 0) ||
+                articleForm == ARTICLE_FORM_BARE_PLURAL)
 #endif
               Message_DecodeRaw(argument + MsgItemPluralName, name,
                                 MESSAGE_NAME_HALFWORDS);
@@ -556,8 +605,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             Message_DecodeRaw((argument & INVENTORY_ITEM_ID_MASK) + MsgItemName,
                               name, MESSAGE_NAME_HALFWORDS);
 #endif
-            writePosition = Message_AppendArticleName(
-                0, name, writePosition, entry, no, plural, &suffix);
+            writePosition =
+                Message_AppendArticleName(0, name, writePosition, entry,
+                                          articleForm, plural, &lastLetter);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
@@ -600,10 +650,10 @@ s32 Message_Decode(s32 script, s32 clear) {
               nameOutput++;
             } while (i < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(0, name, writePosition,
-                                                      entry, 0, 0, &suffix);
+                                                      entry, 0, 0, &lastLetter);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
             nameBytes = Unit_GetFar(MessageArgument_Lookup(
                                         MESSAGE_ARGUMENT_ACTOR, clear))
                             ->name;
@@ -615,8 +665,9 @@ s32 Message_Decode(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (j < UNIT_NAME_SIZE);
-            writePosition = Message_AppendArticleName(
-                0, name, writePosition, entry, no, plural, &suffix);
+            writePosition =
+                Message_AppendArticleName(0, name, writePosition, entry,
+                                          articleForm, plural, &lastLetter);
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
@@ -630,7 +681,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               nameOutput++;
             } while (j < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(0, name, writePosition,
-                                                      entry, 0, 0, &suffix);
+                                                      entry, 0, 0, &lastLetter);
             break;
           case MESSAGE_BUTTON_ICON:
             argument = ((decode(&reader) - 1) << 1) + BUTTON_ICON_FIRST_CODE;
@@ -647,8 +698,10 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
 #if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
-            no = decode(&reader) - 1;
-            nameBytes = gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
+            // The operand picks the noun here, not an article form.
+            articleForm = decode(&reader) - 1;
+            nameBytes =
+                gLocalizedWord_CountedNouns[(articleForm & 7) * 2 + plural];
             while (*nameBytes != 0) {
               TEXT_APPEND(entry, writePosition, *nameBytes++);
             }
@@ -675,7 +728,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
 #if LANGUAGE != LANGUAGE_GERMAN && LANGUAGE != LANGUAGE_ITALIAN
             if (plural != 0) {
-              if (suffix != 0) {
+              if (lastLetter != LAST_LETTER_OTHER) {
                 TEXT_APPEND(entry, writePosition, 'e');
               }
               TEXT_APPEND(entry, writePosition, 's');
@@ -700,7 +753,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             for (value = 0; (u32)value < POSSESSIVE_MAX_LETTERS; value++) {
               if ((letter = *word++) == 0)
                 break;
-              if (value == 0 && suffix == 2)
+              if (value == 0 && lastLetter == LAST_LETTER_SENTENCE_END)
                 letter -= 'a' - 'A';
               TEXT_APPEND(entry, writePosition, letter);
             }
@@ -721,23 +774,23 @@ s32 Message_Decode(s32 script, s32 clear) {
             for (i = 0; i < POSSESSIVE_MAX_LETTERS; i++) {
               if ((letter = *word++) == 0)
                 break;
-              if (i == 0 && suffix == 2)
+              if (i == 0 && lastLetter == LAST_LETTER_SENTENCE_END)
                 letter -= 'a' - 'A';
               TEXT_APPEND(entry, writePosition, letter);
             }
-            suffix = 0;
+            lastLetter = LAST_LETTER_OTHER;
             break;
 #endif
           case MESSAGE_POSSESSIVE_SUFFIX:
 #if LANGUAGE == LANGUAGE_GERMAN
-            if (suffix == 1)
+            if (lastLetter == LAST_LETTER_S)
               entry[writePosition] = '\'';
             else
               entry[writePosition] = 's';
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
 #elif LANGUAGE == LANGUAGE_ENGLISH
             TEXT_APPEND(entry, writePosition, '\'');
-            if (suffix == 0) {
+            if (lastLetter == LAST_LETTER_OTHER) {
               TEXT_APPEND(entry, writePosition, 's');
             }
 #endif
@@ -755,9 +808,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             TEXT_APPEND(entry, writePosition, (u16)code);
 #if LANGUAGE == LANGUAGE_ENGLISH
             if (code == 's' || code == 'S')
-              suffix = 1;
+              lastLetter = LAST_LETTER_S;
             else
-              suffix = 0;
+              lastLetter = LAST_LETTER_OTHER;
 #endif
             break;
           }
@@ -791,13 +844,13 @@ s32 Message_Decode(s32 script, s32 clear) {
 #define MYSTERY_PERSON_NAME_CODES 10
 
 /// The Japanese form: Japanese has no articles, so the name is copied as it is.
-extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
+extern __inline__ u32 Message_AppendArticleName(s32 inBattleMessage, u16 *name,
                                                 u32 writePosition, u16 *entries,
                                                 s32 articleForm, s32 plural,
-                                                s32 *suffix) {
+                                                s32 *lastLetter) {
   u16 code;
 
-  if (mode != 0) {
+  if (inBattleMessage != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
@@ -806,7 +859,7 @@ extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,
     code = *name++;
     TEXT_APPEND(entries, writePosition, code);
   }
-  if (mode != 0) {
+  if (inBattleMessage != 0) {
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, 8);
     TEXT_APPEND(entries, writePosition, ' ');
@@ -824,7 +877,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 running = 1;
   u32 writePosition = start;
   u16 *entry = work->textBuffer;
-  u8 mode = work->battleMode & WINDOW_BATTLE_MESSAGE;
+  u8 inBattleMessage = work->battleMode & WINDOW_BATTLE_MESSAGE;
   s32 (*decode)(struct MessageReader *);
   s32 overflow = 0;
   u32 previousCode;
@@ -890,7 +943,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PAGE_BREAK:
             running = 0;
-            code = 2;
+            code = TEXT_WAIT_KEY;
             break;
           case MESSAGE_PROTAGONIST_NAME:
             break;
@@ -922,7 +975,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         if (code >= TEXT_SPACE) {
           // A battle message doubles each space. The ellipsis here is
           // ・・・。.
-          if (mode != 0 && code == ' ') {
+          if (inBattleMessage != 0 && code == ' ') {
             TEXT_APPEND(entry, writePosition, code);
           }
           if (work->haltingSpeech != 0 &&
@@ -964,22 +1017,22 @@ s32 Message_Decode(s32 script, s32 clear) {
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + MsgClassName, name,
                               MESSAGE_NAME_HALFWORDS);
-            writePosition = Message_AppendArticleName(mode, name, writePosition,
-                                                      entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(
+                inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             Message_DecodeRaw((argument & INVENTORY_ITEM_ID_MASK) + MsgItemName,
                               name, MESSAGE_NAME_HALFWORDS);
-            writePosition = Message_AppendArticleName(mode, name, writePosition,
-                                                      entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(
+                inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             Message_DecodeRaw(argument + MsgAbilityName, name,
                               MESSAGE_NAME_HALFWORDS);
-            writePosition = Message_AppendArticleName(mode, name, writePosition,
-                                                      entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(
+                inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
@@ -988,8 +1041,8 @@ s32 Message_Decode(s32 script, s32 clear) {
                     1) +
                     MsgDebugAreaName,
                 name, MESSAGE_NAME_HALFWORDS);
-            writePosition = Message_AppendArticleName(mode, name, writePosition,
-                                                      entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(
+                inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
             nameBytes = Unit_GetFar(gMainRoutineWork.leaderActorId)->name;
@@ -1001,8 +1054,8 @@ s32 Message_Decode(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (i < UNIT_NAME_SIZE);
-            writePosition = Message_AppendArticleName(mode, name, writePosition,
-                                                      entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(
+                inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit = Unit_GetFar(
@@ -1018,7 +1071,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 message++;
               Message_DecodeRaw(message, name, MYSTERY_PERSON_NAME_CODES);
               writePosition = Message_AppendArticleName(
-                  mode, name, writePosition, entry, 0, 0, 0);
+                  inBattleMessage, name, writePosition, entry, 0, 0, 0);
             } else {
               nameBytes = unit->name;
               nameOutput = name;
@@ -1030,7 +1083,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 nameOutput++;
               } while (j < UNIT_NAME_SIZE);
               writePosition = Message_AppendArticleName(
-                  mode, name, writePosition, entry, 0, 0, 0);
+                  inBattleMessage, name, writePosition, entry, 0, 0, 0);
             }
             break;
           case MESSAGE_ACTOR_NAME:
@@ -1044,8 +1097,8 @@ s32 Message_Decode(s32 script, s32 clear) {
               nameBytes++;
               nameOutput++;
             } while (j < UNIT_NAME_SIZE);
-            writePosition = Message_AppendArticleName(mode, name, writePosition,
-                                                      entry, 0, 0, 0);
+            writePosition = Message_AppendArticleName(
+                inBattleMessage, name, writePosition, entry, 0, 0, 0);
             break;
           case -1:
             break;

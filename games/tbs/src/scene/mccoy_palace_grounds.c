@@ -1,4 +1,5 @@
-/// @file The grounds of McCoy's Palace, at the top of Bilibin.
+/// @file
+/// The grounds of McCoy's Palace, at the top of Bilibin.
 ///
 /// The grounds are their own scene, SceneId_McCoyPalaceGrounds, sharing the
 /// area name McCoy's Palace with the palace itself (mccoy_palace.c). Steps
@@ -12,7 +13,7 @@
 /// Talking to the east guard is the way in
 /// (McCoyPalaceGrounds_TalkToEastGuard). He asks whether the party is up to
 /// meeting his lord; on yes the two guards confer, the west guard opens the
-/// door (McCoyPalaceGrounds_OpenGate) and goes in ahead, and walking north into
+/// door (McCoyPalaceGrounds_OpenDoor) and goes in ahead, and walking north into
 /// the doorway takes the party inside (McCoyPalaceGrounds_EnterPalace). After
 /// McCoy has turned it away, the guards only talk.
 ///
@@ -54,8 +55,8 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern u16 gPalaceGateOpenSteps[];
-extern s32 gGuardWatchesParty[];
+extern u16 gMcCoyPalaceGroundsDoorOpenSteps[];
+extern s32 gMcCoyPalaceGroundsGuardWatchesParty[];
 extern struct SceneEntrance gMcCoyPalaceGroundsEntrances[];
 extern u32 gMcCoyPalaceGroundsExits[];
 extern struct ActorPlacement gMcCoyPalaceGroundsNoActorPlacements[];
@@ -74,9 +75,8 @@ enum McCoyPalaceGroundsActorId {
   /// other. "Have you seen the barricade we built on the road to Kolima?"
   ACTOR_NORTH_WORKER,
   /// Lady McCoy, a woman with curly purple hair in a pink dress, at the foot of
-  /// the new palace. Once the curse is lifted she stands at the west edge
-  /// of the yard:
-  /// "Hmph! My palace is not finished!"
+  /// the new palace. Once the curse is lifted she stands at the west edge of
+  /// the yard: "Hmph! My palace is not finished!"
   ACTOR_LADY_MCCOY,
   /// The west guard at the palace door, a soldier in a spiked helmet, who goes
   /// in ahead of the party. "Lord McCoy is so upset about this curse that he
@@ -99,9 +99,9 @@ enum McCoyPalaceGroundsCellBehavior {
 
 /// The grounds' temporary flags.
 enum {
-  /// The palace door stands open (McCoyPalaceGrounds_OpenGate), until the scene
+  /// The palace door stands open (McCoyPalaceGrounds_OpenDoor), until the scene
   /// is left.
-  FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
+  FLAG_DOOR_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
   FLAG_GUARD_ASKED_WHERE_YOU_WERE = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
@@ -113,7 +113,7 @@ enum {
 
 static void McCoyPalaceGrounds_RestoreStory(void);
 static void McCoyPalaceGrounds_GuardsArrestParty(void);
-static void McCoyPalaceGrounds_OpenGate(void);
+static void McCoyPalaceGrounds_OpenDoor(void);
 
 #include "shared/actor_facing.c"
 
@@ -218,7 +218,7 @@ static void McCoyPalaceGrounds_TalkToWestGuard(void) {
 /// grounds.
 static void McCoyPalaceGrounds_TalkToEastGuard(void) {
   Event_Start();
-  // Once admitted, the party only receives the guard's current reminder.
+  // Once the party is let in, the guard only warns it about McCoy.
   if (Event_GetFlag(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     if (GameFlag_Get(FLAG_KEEPING_MCCOY_WAITING) != 0) {
       if (Event_GetFlag(FLAG_GUARD_ASKED_WHERE_YOU_WERE) == 0) {
@@ -240,10 +240,10 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       FieldActor_WatchAndStartScript(
           ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-          gGuardWatchesParty);
+          gMcCoyPalaceGroundsGuardWatchesParty);
     }
   } else {
-    // On the first visit, the guards confer before opening the gate.
+    // On the first visit, the guards confer before opening the door.
     Event_SetMessageId(MsgBilibinLordOnlyMeet);
     // "The lord will only meet with brave and mighty warriors. You..."
     Event_OpenMessage(ACTOR_EAST_GUARD, 0);
@@ -284,13 +284,13 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 252);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
-      McCoyPalaceGrounds_OpenGate();
+      McCoyPalaceGrounds_OpenDoor();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
       FieldActor_WatchAndStartScript(
           ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-          gGuardWatchesParty);
+          gMcCoyPalaceGroundsGuardWatchesParty);
     } else {
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
       Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH_SOUTHEAST, 10);
@@ -304,8 +304,8 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
 /// is shut, Isaac walks through, and the palace's hall appears.
 static void McCoyPalaceGrounds_EnterPalace(void) {
   Event_Start();
-  if (GameFlag_Get(FLAG_GATE_OPEN) == 0) {
-    McCoyPalaceGrounds_OpenGate();
+  if (GameFlag_Get(FLAG_DOOR_OPEN) == 0) {
+    McCoyPalaceGrounds_OpenDoor();
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -339,12 +339,12 @@ s32 Scene_Initialize(void) {
 /// west guard is gone inside and the east guard stands aside, watching Isaac,
 /// until McCoy has turned the party away; then both stand either side of the
 /// door. Once the curse is lifted, Lady McCoy moves to the west edge of the
-/// yard and the worker by
-/// the new palace turns east, and the guards' arrest plays until McCoy has
-/// rewarded the party. The Nut is hung in its tree until it is caught.
+/// yard and the worker by the new palace turns east, and the guards' arrest
+/// plays until McCoy has rewarded the party. The Nut is hung in its tree until
+/// it is caught.
 static void McCoyPalaceGrounds_RestoreStory(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_Clear(FLAG_GATE_OPEN);
+    GameFlag_Clear(FLAG_DOOR_OPEN);
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_FLOATING_NUT);
@@ -357,7 +357,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
         Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
         FieldActor_WatchAndStartScript(
             ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-            gGuardWatchesParty);
+            gMcCoyPalaceGroundsGuardWatchesParty);
       }
     }
   }
@@ -413,7 +413,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   // "The curse of the holy tree... You're the ones who broke it,..."
   Event_OpenMessage(ACTOR_EAST_GUARD, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  // Refusals repeat the accusation until the player acknowledges it.
+  // Each No brings the accusation again, until Isaac says yes.
   while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Event_SetMessageId(MsgBilibinNotTrueWitnesses);
@@ -449,19 +449,20 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
     Actor_Get(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.8);
-  // Escort Isaac through the opened gate before changing to the palace.
+  // The west guard marches Isaac through the door into the palace.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
   Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);
-  McCoyPalaceGrounds_OpenGate();
+  McCoyPalaceGrounds_OpenDoor();
   Event_Wait(40);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 242);
   Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);
@@ -469,10 +470,10 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
 }
 
 /// The palace door swings open with a thump.
-static void McCoyPalaceGrounds_OpenGate(void) {
+static void McCoyPalaceGrounds_OpenDoor(void) {
   Sound_Play(SE_THUMP);
-  MapGrid_PlayMapEdit(gPalaceGateOpenSteps, 52, 11);
-  GameFlag_Set(FLAG_GATE_OPEN);
+  MapGrid_PlayMapEdit(gMcCoyPalaceGroundsDoorOpenSteps, 52, 11);
+  GameFlag_Set(FLAG_DOOR_OPEN);
 }
 
 #include "shared/actor_orbit.c"
@@ -480,12 +481,12 @@ static void McCoyPalaceGrounds_OpenGate(void) {
 // clang-format off
 /// The door's opening, drawn in three steps of 5 frames each from the spare
 /// cells at (34, 25) to (36, 27).
-u16 gPalaceGateOpenSteps[] = {
+u16 gMcCoyPalaceGroundsDoorOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(34, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(35, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(36, 25, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// A guard turns to keep facing Isaac.
-s32 gGuardWatchesParty[] = {
+s32 gMcCoyPalaceGroundsGuardWatchesParty[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

@@ -539,9 +539,9 @@ void Caverns_JumpEastAcrossGap(void) {
   s32 position[3];
   FIXED x;
 
-  // XXX: whether the leap lands Felix on the stone pillar once Move has pushed
-  // it into the gap; a recording of the jump after the Move would settle it,
-  // which the recorder could not stage from the ledge.
+  // Once Move has pushed the stone pillar east into the gap, Felix does not
+  // leap: walking east from the ledge he steps onto the pillar's top, level
+  // with the ledges, and on onto the far ledge by the rope's post.
   x = leader->x.fixed;
   x += toFIXED(32);
   SET_VECTOR(position, x, leader->y.fixed, leader->z.fixed);

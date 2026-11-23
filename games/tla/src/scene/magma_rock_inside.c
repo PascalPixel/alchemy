@@ -117,10 +117,10 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #define FLAG_ROCKS_RELEASED 0x9f8
 #define FLAG_MAGMA_BALL_TAKEN 0x9f9
 #define FLAG_BLAZE_LEARNED 0x9fa
-/// The Blaze tablet's room: a stone on the way to the tablet that the map's
-/// upper layer numbers raises the trigger STEP_CELL_TRIGGER_BASE plus its
-/// number when Felix stops on it, and its flag keeps the stone behind it
-/// raised.
+/// The Blaze tablet's room: the map's upper layer numbers some of the stones
+/// on the way to the tablet; stopping on one raises the trigger
+/// STEP_CELL_TRIGGER_BASE plus its number, and its flag then keeps the stone
+/// behind it gone.
 #define FLAG_ANY_MARKER_LIT FLAG_SCENE_TEMP_00
 #define FLAG_MARKER_LIT(marker) (FLAG_SCENE_TEMP_00 + (marker))
 /// The trigger a numbered stone of the Blaze tablet's room raises, less its
@@ -155,6 +155,14 @@ enum MagmaRockInsideCellBehavior {
   CELL_STEPPING_STONE_A = 80,
   CELL_STEPPING_STONE_B = 81
 };
+
+/// The cracked pillars' room's entrances up to this one open onto its upper
+/// hall, whose lava rises with Fury's room's; the rest onto its lower rooms.
+enum { CRACKED_PILLARS_UPPER_HALL_LAST_ENTRANCE = 7 };
+
+/// The Golem Core room's entrances up to this one open onto its north part,
+/// by the north floor switch; the rest onto its south part.
+enum { GOLEM_CORE_NORTH_LAST_ENTRANCE = 8 };
 
 /// The room past the Lucky Medal's chest: one lava platform.
 enum MagmaRockInsideLuckyMedalChestActorId {
@@ -298,9 +306,6 @@ enum MagmaRockInsideBlazeTabletActorId {
 #include "shared/position_distance.h"
 
 #include "../field/actor_find_in_cell.c"
-
-// Magma Rock's inside: the lava floods and drains, its platforms, statues and
-// pillars, the Blaze tablet and the flames and torches it opens the way with.
 
 struct Actor;
 struct FieldSprite;
@@ -768,17 +773,6 @@ void MagmaRockInside_DriftAndSlow(struct Actor *actor) {
   actor->riseBaseY = dz;
 }
 
-extern u32 gMagmaRock_EmberScript[];
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
-                                                    s32 z) {
-  return (struct Actor *)Import_ActorCreate(kind, x, y, z);
-}
-
 /// The frames a statue's fireball bursts where it lands, throwing out an ember
 /// every other frame.
 enum { FIRE_BURST_FRAMES = 16 };
@@ -789,8 +783,8 @@ enum { FIRE_BURST_FRAMES = 16 };
 /// pillar; against a face it sets the face pouring lava
 /// (MagmaRockInside_RaiseLava); against anything else it plays Burst there.
 void MagmaRockInside_FireFromStatue(struct Actor *source) {
-  struct Actor *flame = Import_ActorCreate_(SPRITE_FLAME_PUFF, source->x.fixed,
-                                            source->y.fixed, source->z.fixed);
+  struct Actor *flame = Create(SPRITE_FLAME_PUFF, source->x.fixed,
+                               source->y.fixed, source->z.fixed);
   struct Actor *other;
   FIXED position[3];
   struct EffectOptions options;
@@ -818,7 +812,7 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
       goto end;
     for (id = ACTOR_FIRST_PLACED; id != FIELD_TREASURE_ACTOR; id++) {
       other = gFieldWork->actors[id];
-      if (other->script == 0)
+      if (other->script == NULL)
         continue;
       if (FIELD_CELL(source->x.fixed) == FIELD_CELL(other->x.fixed) &&
           FIELD_CELL(source->y.fixed) == FIELD_CELL(other->y.fixed) &&
@@ -975,7 +969,7 @@ void MagmaRockInside_LeapOverLava(void) {
   position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   FieldVector_AddPolarOffset(32, angle, position);
   target = Actor_FindInCell(position, leader);
-  if (target == 0)
+  if (target == NULL)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1224,9 +1218,9 @@ void MagmaRockInside_DrainLava(void) {
       open = LAVA_ALREADY_UP;
     Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
     facing = FACING_EAST;
-    MapCell_SetAttributes(0, 15, 13, MAP_CELL_CLIMBABLE);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 15, 13, MAP_CELL_CLIMBABLE);
     FieldActor_SetSpritePriority(ACTOR_ENTRANCE_PILLAR, 3);
-    for (j = 0; j != 7; j++)
+    for (j = 0; j != ACTOR_ENTRANCE_PILLAR - ACTOR_COLUMN_A + 1; j++)
       Actor_SetAnimation(j + ACTOR_COLUMN_A, 1);
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_FURY) {
     srcX = 28;
@@ -1239,12 +1233,12 @@ void MagmaRockInside_DrainLava(void) {
     if (Event_GetFlag(FLAG_FURY_FLOODED))
       open = LAVA_ALREADY_UP;
     Event_ClearFlag(FLAG_FURY_FLOODED);
-    MapCell_SetAttributes(0, 24, 15, MAP_CELL_CLIMBABLE);
-    MapCell_SetAttributes(0, 9, 16, MAP_CELL_CLIMBABLE);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 24, 15, MAP_CELL_CLIMBABLE);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 9, 16, MAP_CELL_CLIMBABLE);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
-    if (gMainRoutineWork.entrance <= 8) {
+    if (gMainRoutineWork.entrance <= GOLEM_CORE_NORTH_LAST_ENTRANCE) {
       srcX = 49;
       row = 75;
       dstX = 113;
@@ -1558,7 +1552,7 @@ void MagmaRockInside_GrowFlame(void) {
     Actor_Release(actor);
     FieldEvent_Wait(1);
     REG_BLDCNT = 0;
-    MapCell_SetAttributes(0, 38, 18, 0);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 38, 18, 0);
     Event_End();
   }
 }
@@ -1628,7 +1622,8 @@ void MagmaRockInside_OpenStairs(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 248, 328);
   FieldEvent_Wait(5);
-  FieldEvent_SetExitRequest(1);
+  FieldEvent_SetExitRequest(
+      MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_INSIDE_BLAZE_TABLET);
   Event_End();
 }
 
@@ -1757,7 +1752,8 @@ void MagmaRockInside_FadeStoneAway(s32 x, s32 z) {
   x >>= 4;
   cellZ = (z >> 4) - 1;
   MapGrid_CopyCellsTo(65, 1, x + 64, cellZ, 1, 2);
-  MapCell_SetAttributes(0, x, cellZ, CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, x, cellZ,
+                        CELL_BEHAVIOR_WALL << 8);
   Actor_Release(actor);
   Event_End();
   REG_BLDCNT = 0;
@@ -1857,7 +1853,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Actor_Release(actor);
   FieldEvent_Wait(1);
   REG_BLDCNT = 0;
-  MapCell_SetAttributes(0, 7, 21, MAP_CELL_JUMP);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 7, 21, MAP_CELL_JUMP);
   Event_End();
 }
 
@@ -2194,7 +2190,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     Actor_SetSpeed(ACTOR_JENNA, 1.2);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
     actor = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (actor != 0)
+    if (actor != NULL)
       Actor_SetDestination(ACTOR_JENNA, actor->x.part[0].integer,
                            actor->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_JENNA);
@@ -2293,8 +2289,8 @@ void MagmaRockInside_SetEntranceFlooded(void) {
   s32 i;
 
   Event_SetFlag(FLAG_ENTRANCE_FLOODED);
-  MapCell_SetAttributes(0, 15, 13, 0);
-  for (i = 0; i != 6; i++)
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 15, 13, 0);
+  for (i = 0; i != ACTOR_COLUMN_F - ACTOR_COLUMN_A + 1; i++)
     Actor_SetAnimation(i + ACTOR_COLUMN_A, 2);
   Actor_SetAnimation(ACTOR_ENTRANCE_PILLAR, 4);
 }
@@ -2305,11 +2301,11 @@ void MagmaRockInside_SetEntranceFlooded(void) {
 void MagmaRockInside_SetFuryFlooded(void) {
   Event_SetFlag(FLAG_FURY_FLOODED);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_FURY) {
-    MapCell_SetAttributes(0, 24, 15, 0);
-    MapCell_SetAttributes(0, 9, 16, 0);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 24, 15, 0);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 9, 16, 0);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else {
-    MapCell_SetAttributes(0, 26, 14, 0);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 26, 14, 0);
   }
 }
 
@@ -2390,7 +2386,7 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
-// Magma Rock's inside: the crumbling pillars and floors of its outside, unused
+// The crumbling pillars and floors of Magma Rock's outside follow, unused
 // here.
 
 void Tightrope_Initialize(void);
@@ -2453,7 +2449,7 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     Actor_GetById(ACTOR_ENTRANCE_PILLAR)->update =
         MagmaRockInside_LayerWithLeader;
-    for (j = 0; j != 6; j++) {
+    for (j = 0; j != ACTOR_COLUMN_F - ACTOR_COLUMN_A + 1; j++) {
       {
         struct Actor *actor = Actor_GetById(j + ACTOR_COLUMN_A);
 
@@ -2498,7 +2494,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_CrackedPillarsStatues);
-    if (gMainRoutineWork.entrance <= 7) {
+    if (gMainRoutineWork.entrance <= CRACKED_PILLARS_UPPER_HALL_LAST_ENTRANCE) {
       MagmaRockInside_StartLavaPlatform(
           ACTOR_WEST_PLATFORM, gMagmaRockInside_CrackedPillarsWestPlatformPath,
           FLAG_FURY_FLOODED);
@@ -2576,8 +2572,8 @@ s32 Scene_Initialize(void) {
     Raise(ACTOR_NORTH_SWITCH_MARKER);
     Raise(ACTOR_SOUTH_SWITCH_MARKER);
     if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED)) {
-      MapCell_SetAttributes(0, 22, 26, 0);
-      MapCell_SetAttributes(0, 25, 26, 0);
+      MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 22, 26, 0);
+      MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 25, 26, 0);
       Actor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
     } else {
       CLOSED_BLEND();
@@ -2610,9 +2606,10 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_EAST_PILLAR_PUSHED))
         Actor_SetAnimation(ACTOR_EAST_PILLAR, 4);
       if (Event_GetFlag(FLAG_NORTH_PILLAR_PUSHED))
-        MapCell_SetAttributes(2, 46, 8, CELL_BEHAVIOR_WALL << 8);
-      MapCell_SetAttributes(0, 10, 45, 0);
-      MapCell_SetAttributes(0, 53, 40, 0);
+        MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, 46, 8,
+                              CELL_BEHAVIOR_WALL << 8);
+      MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 10, 45, 0);
+      MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 53, 40, 0);
     } else {
       CLOSED_BLEND();
       MapGrid_CopyCellsTo(71, 64, 50, 102, 1, 1);
@@ -2640,7 +2637,8 @@ s32 Scene_Initialize(void) {
       Lower(ACTOR_BLOCKING_PILLAR, -toFIXED(PILLAR_SINK_DEPTH));
       Actor_SetAnimation(ACTOR_BLOCKING_PILLAR, 4);
     } else {
-      MapCell_SetAttributes(0, 38, 18, CELL_BEHAVIOR_WALL << 8);
+      MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 38, 18,
+                            CELL_BEHAVIOR_WALL << 8);
     }
     if (Event_GetFlag(FLAG_MAGMA_BALL_TAKEN))
       Actor_SetAnimation(ACTOR_EMBER_STONE, 0);
@@ -2660,7 +2658,7 @@ s32 Scene_Initialize(void) {
         s32 y = 24 - i * 2;
 
         MapGrid_CopyCellsTo(65, 1, 80, y, 1, 2);
-        Call4((void (*)())MapCell_SetAttributes, 0, 16, y,
+        Call4((void (*)())MapCell_SetAttributes, MAPGRID_LAYER_GROUND, 16, y,
               CELL_BEHAVIOR_WALL << 8);
       }
     }
@@ -2670,7 +2668,8 @@ s32 Scene_Initialize(void) {
       Lower(ACTOR_TORCH_PILLAR, -toFIXED(PILLAR_SINK_DEPTH));
       Actor_SetAnimation(ACTOR_TORCH_PILLAR, 4);
     } else {
-      MapCell_SetAttributes(0, 7, 21, CELL_BEHAVIOR_WALL << 8);
+      MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 7, 21,
+                            CELL_BEHAVIOR_WALL << 8);
       Actor_SetPosition(ACTOR_TORCH_FLAME, 0, 0);
     }
     Lower(ACTOR_BLAZE_TABLET, toFIXED(16));
@@ -2746,10 +2745,6 @@ UNUSED void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
 
 #include "shared/pillar_take_out_of_play.c"
 
-// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
-// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
-// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
-// it copy actor 9's visual attributes.
 #include "shared/pillar_restore.h"
 
 #include "shared/actor_take_place_of.h"
@@ -2769,12 +2764,12 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  partner = Actor_GetById(8);
+  partner = Actor_GetById(ACTOR_FIRST_PLACED);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
-  if (trap == 0)
+  if (trap == NULL)
     return;
   while (*table != ACTOR_LIST_END) {
     id = table[0];
@@ -2790,15 +2785,19 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
         Actor_TakePlaceOf(partner, trap);
         wait(1);
         Event_PlaySound(SE_CHEST_CLOSE);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_WHITE);
         wait(2);
         Actor_SelectAnimation(partner, 0);
-        Actor_CopyGraphics(id, 9);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        Actor_CopyGraphics(id, ACTOR_FIRST_PLACED + 1);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_NORMAL);
         wait(2);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_WHITE);
         wait(4);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_NORMAL);
         Dust_Scatter(0);
         Actor_TakePlaceOf(trap, partner);
         wait(1);
@@ -2841,7 +2840,7 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
 #include "../field/field_effect_advance_motion_priority.c"
 
 #undef CLOSED_BLEND
-// Magma Rock's inside: its falling rocks and rubble, and its tables.
+// The falling rocks and rubble, then the rooms' tables.
 
 void Actor_StartScript(struct Actor *actor, const void *data);
 
@@ -2854,13 +2853,13 @@ void MagmaRockInside_SpawnDustRing(void) {
   u32 frame;
   u32 i;
 
-  if (leader == 0)
+  if (leader == NULL)
     return;
   frame = 0;
   for (i = 0; i <= DUST_RING_PUFFS; i++) {
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-    if (effect != 0) {
+    if (effect != NULL) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
@@ -3137,12 +3136,12 @@ s32 gMagmaRockInside_FlameScript[] = {
 };
 
 /// A spark shooting up from the Blaze tablet as it lifts: its actor script.
-s32 gMagmaRockInside_RisingSparkScript[] = {                                                               
-      SC_MOVE_BY(0, 160, 0),                                           
-      SC_SYNC,                                                                 
-      SC_RELEASE,                                                                 
-      SC_END,                                                                  
-  };
+s32 gMagmaRockInside_RisingSparkScript[] = {
+    SC_MOVE_BY(0, 160, 0),
+    SC_SYNC,
+    SC_RELEASE,
+    SC_END,
+};
 
 /// A circling spark's actor script (MagmaRockInside_OrbitParent).
 s32 gMagmaRockInside_CirclingSparkScript[] = {
@@ -3153,10 +3152,15 @@ s32 gMagmaRockInside_CirclingSparkScript[] = {
 
 s32 MagmaRockInside_DriftForSteps(struct Orbit *object);
 
-/// A rising spark's actor script: it circles and drifts for its steps (MagmaRockInside_DriftForSteps).
-s32 gMagmaRockInside_OrbitScript[] = {                                                               
-      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
-  };
+/// A rising spark's actor script: it circles and drifts for its steps
+/// (MagmaRockInside_DriftForSteps).
+s32 gMagmaRockInside_OrbitScript[] = {
+    SC_CALL(Orbit_Update),
+    SC_CALL(Actor_AimAtWatched),
+    SC_CALL(MagmaRockInside_DriftForSteps),
+    SC_RELEASE,
+    SC_END,
+};
 
 #include "shared/lesson_scripts.c"
 
@@ -3378,13 +3382,31 @@ struct ActorPlacement gMagmaRockInside_BlazeTabletPlacements[] = {
 /// The triggers of the Lucky Medal's room.
 struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_WEST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_WEST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_WEST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_WEST_B},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_EAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_EAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_EAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_EAST_B},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_EAST_C,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_ENTRANCE_EAST_C},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_FURY,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_TO_MAGMA_ROCK_INSIDE_FURY},
     {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE_EAST, CONDITION_ALWAYS,
@@ -3394,14 +3416,30 @@ struct Trigger gMagmaRockInside_Triggers[] = {
 
 /// The triggers of the entrance.
 struct Trigger gMagmaRockInside_EntranceTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_WEST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_WEST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_EAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_EAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_EAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_EAST_B},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_EAST_C,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_EAST_C},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_WEST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST_WEST_B},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_STATUE,
+     CONDITION_ALWAYS, MAGMA_ROCK_INSIDE_ENTRANCE_TO_MAGMA_ROCK_STATUE},
     {TRIGGER_STEP, CELL_FLOOR_SWITCH, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_DrainLava)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FIRE19, CONDITION_ALWAYS,
@@ -3426,17 +3464,38 @@ struct Trigger gMagmaRockInside_EntranceTriggers[] = {
 
 /// The triggers of Fury's room.
 struct Trigger gMagmaRockInside_FuryTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_LUCKY_MEDAL_CHEST},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTHEAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTHEAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTHEAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTHEAST_B},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTH,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_FURY_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTH},
     {TRIGGER_STEP, CELL_FLOOR_SWITCH, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_DrainLava)},
     {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE, CONDITION_ALWAYS,
@@ -3463,20 +3522,62 @@ struct Trigger gMagmaRockInside_FuryTriggers[] = {
 
 /// The triggers of the cracked pillars' room.
 struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHEAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHEAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHEAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_NORTHEAST_B},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_WEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_WEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_SOUTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_SOUTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_SOUTH,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_FURY_SOUTH},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_NORTH,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_NORTH},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_EAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_EAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_EAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_EAST_B},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_WEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_WEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_WEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_WEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_SOUTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_SOUTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_CRACKED_PILLARS_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST_B},
     {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING, CELL_CRACKED_PILLAR_A,
@@ -3543,14 +3644,32 @@ struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
 
 /// The triggers of the Golem Core's chest room.
 struct Trigger gMagmaRockInside_GolemCoreChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_NORTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_NORTHWEST},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_SOUTH,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_SOUTH},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_EAST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_B},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, CELL_FLOOR_SWITCH, CONDITION_ALWAYS,
@@ -3566,21 +3685,48 @@ struct Trigger gMagmaRockInside_GolemCoreChestTriggers[] = {
 
 /// The triggers of the Salamander Tail's chest room.
 struct Trigger gMagmaRockInside_SalamanderTailChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_WEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_SOUTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_NORTHWEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_NORTHWEST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_EAST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_EAST},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_A,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_A},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_B,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_EAST_B},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTH,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_CRACKED_PILLARS_NORTH},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_SOUTH,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST_SOUTH},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_EMBER_STONE,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_INSIDE_EMBER_STONE},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
@@ -3618,8 +3764,12 @@ struct Trigger gMagmaRockInside_EmberStoneTriggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST},
+    {TRIGGER_EXIT, MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_SLIDE,
+     CONDITION_ALWAYS, MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_SLIDE},
     {TRIGGER_STEP, CELL_ERUPTION_ISLET, FLAG_ROCKS_RELEASED,
      EVENT(MagmaRockInside_ReleaseRocks)},
     {TRIGGER_EXAMINE, CELL_EMBER_STONE, FLAG_MAGMA_BALL_TAKEN,
@@ -3671,7 +3821,10 @@ s32 gMagmaRockInside_LastStepCell = -1;
 
 /// The triggers of the Blaze tablet's room.
 struct Trigger gMagmaRockInside_BlazeTabletTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT,
+     MAGMA_ROCK_INSIDE_BLAZE_TABLET_TO_MAGMA_ROCK_INSIDE_EMBER_STONE,
+     CONDITION_ALWAYS,
+     MAGMA_ROCK_INSIDE_BLAZE_TABLET_TO_MAGMA_ROCK_INSIDE_EMBER_STONE},
     {TRIGGER_STEP, CELL_STEPPING_STONE_A, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StampStepCell)},
     {TRIGGER_STEP, CELL_STEPPING_STONE_B, CONDITION_ALWAYS,

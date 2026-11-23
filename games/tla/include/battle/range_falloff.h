@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_RANGE_FALLOFF_H
 #define ALCHEMY_RANGE_FALLOFF_H
 
+/// @file
+/// How an ability weakens with each place a target stands from the aimed one,
+/// and the damage and recovery formulas that use it.
+
 #include "types.h"
 #include "edition.h"
 

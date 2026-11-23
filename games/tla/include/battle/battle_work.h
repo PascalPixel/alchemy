@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_WORK_H
 #define ALCHEMY_BATTLE_WORK_H
 
+/// @file
+/// The battle's own work: its units and their places, the turn's actions, the
+/// spoils, the background's palette and the playback of an action's events.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
@@ -42,7 +46,9 @@ struct BattlePlaybackWork {
   s32 unitId;           ///< the unit of the hit or defeat being played
   s16 pendingSound;     ///< hit sound (an SE_ id), played on the next hit
   s16 keepPendingSound; ///< while nonzero, a resumed phase keeps pendingSound
-  s32 flags;            ///< cleared when playback starts
+  /// Set by PLAYBACK_DJINN_BONUS: enemies felled from then on give the Djinn
+  /// bonus, cycling their colours and crying as they fall.
+  s32 flags;
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 368);
@@ -122,9 +128,11 @@ struct BattleWork {
   u8 linkPaused;       ///< set when the link drops
   u8 paddingAfterLink; ///< up to the word arrowTiles starts on
   s32 arrowTiles; ///< resource entry of the advance arrow's tiles; -1 for none
-  s16 partyUnits[7]; ///< ends with 0xff
-  s16 enemyIds[7];   ///< ends with 0xff
-  u8 placement[16];  ///< each unit's index in slots; 0xff for none
+  s16 partyUnits[7]; ///< ends with BATTLE_UNIT_LIST_END
+  s16 enemyIds[7];   ///< ends with BATTLE_UNIT_LIST_END
+  /// Each unit's index in slots, party ids 0 to 7 then the enemies; 255 for
+  /// none (BATTLE_OBJECT_NONE).
+  u8 placement[16];
   struct BattleObject slots[14];
   struct BattleActionRecord
       actions[BATTLE_ACTION_CAPACITY];   ///< the actions chosen for the turn
@@ -173,8 +181,8 @@ struct BattleWork {
   /// its action starts.
   u8 actingAnimation;
   u8 paddingAfterActingAnimation[2]; ///< up to the word aiStates starts on
-  /// The action choice's memory of the enemies that act more than once a
-  /// turn, by AI request.
+  /// The action choice's memory for the enemies that act more than once a
+  /// turn.
   struct BattleAIState aiStates[4];
 };
 
@@ -200,10 +208,5 @@ STATIC_ASSERT(offsetof(struct BattleWork, keepBackdropPalette) == 2151);
 STATIC_ASSERT(offsetof(struct BattleWork, forceField) == 2152);
 STATIC_ASSERT(offsetof(struct BattleWork, aiStates) == 2156);
 STATIC_ASSERT(sizeof(struct BattleWork) == 2172);
-
-struct LinkRuntimeState;
-
-/// The battle's work: heap slot HEAP_SLOT_BATTLE's block under its own name.
-extern struct LinkRuntimeState *gBattleWork;
 
 #endif

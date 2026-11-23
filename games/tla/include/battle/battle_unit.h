@@ -226,7 +226,7 @@ enum AbilityEffect {
 /// An ability's definition, a row of gAbilityDefinitions: its
 /// targeting, kind, element, effect, range, PP cost and power.
 struct AbilityDefinition {
-  u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
+  u8 targetMode; ///< enum AbilityTarget
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 kind (ABILITY_FORMULA_MASK, enum AbilityFormula).
   u8 flags;

@@ -15,7 +15,7 @@
 #include "text/msg_ids.h"
 #include "macros.h"
 
-void BattleObject_Reset(struct BattleObject *actor, s32 keep);
+void BattleObject_Reset(struct BattleObject *battleObject, s32 keep);
 
 /// The sprite slot a called beast borrows, after the six enemy slots.
 #define BEAST_SPRITE_SLOT 7

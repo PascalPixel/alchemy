@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_SUMMON_H
 #define ALCHEMY_BATTLE_SUMMON_H
 
+/// @file
+/// Each enemy's battle sprite and how it attacks and falls, the summons, and
+/// the enemies called into a battle.
+
 #include "static_assert.h"
 
 #include "types.h"
@@ -70,11 +74,11 @@ struct SummonDefinition {
 };
 
 /// Returns a summon's definition, or NULL past the last.
-const struct SummonDefinition *SummonDefinition_Get(s32 summon_id);
+const struct SummonDefinition *SummonDefinition_Get(s32 summonId);
 s32 Enemy_GetFreeUnitId(void);
 s32 Enemy_HasSpriteRoom(s32 classId);
 
-const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
+const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId);
 s32 BattleFormation_GetRandomMember(s32 recordId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId);

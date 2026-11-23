@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_TYPE_H
 #define ALCHEMY_BATTLE_TYPE_H
 
+/// @file
+/// BattlePlan: one action laid out target by target for its staging.
+
 #include "static_assert.h"
 #include "battle/battle_unit.h"
 

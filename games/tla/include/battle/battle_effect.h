@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_H
 #define ALCHEMY_BATTLE_EFFECT_H
 
+/// @file
+/// The battle effects the battle bank calls by name, and the canvas blitters
+/// they draw with.
+
 #include "edition.h"
 #include "fixed_math.h"
 #include "types.h"
@@ -36,10 +40,11 @@ enum {
   COMPOSITE_FLIP_Y = 8,
   COMPOSITE_FLIP = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
-/// BattleEffect_BuildBlitter builds additive for 0, max for 1, transparent for
-/// 2.
+/// How a blitter BattleEffect_BuildBlitter builds lays a picture on the canvas
+/// (its mode): BLITTER_ADDITIVE adds the picture's levels to the canvas's, and
+/// BLITTER_MAX keeps the brighter of the two.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
-s32 BattleEffect_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift,
+s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 
 typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,

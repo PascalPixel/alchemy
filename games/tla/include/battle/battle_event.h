@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EVENT_H
 #define ALCHEMY_BATTLE_EVENT_H
 
+/// @file
+/// The battle event queue: the names, numbers, messages, hits and defeats an
+/// action queues for its playback to show in order.
+
 #include "edition.h"
 #include "static_assert.h"
 

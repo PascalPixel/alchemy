@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_PARAMS_H
 #define ALCHEMY_BATTLE_EFFECT_PARAMS_H
 
+/// @file
+/// The command a battle effect is run with: its kind, its user and its targets.
+
 #include "types.h"
 #include "static_assert.h"
 

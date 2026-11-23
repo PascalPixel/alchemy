@@ -12,14 +12,14 @@
 /// Starts playback of the action's targets when the effect's blow lands, with
 /// cue as the hit's sound (0 keeps the one set); later calls change nothing.
 void BattlePlayback_Start(s32 cue) {
-  struct BattlePlaybackWork *ev;
+  struct BattlePlaybackWork *playback;
 
-  ev = &Ram_HeapSlots->battleWork->events;
-  if (ev->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
-    ev->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
+  playback = &Ram_HeapSlots->battleWork->events;
+  if (playback->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
+    playback->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
-      if (ev->keepPendingSound == 0)
-        ev->pendingSound = cue;
+      if (playback->keepPendingSound == 0)
+        playback->pendingSound = cue;
     }
   }
 }
@@ -28,14 +28,14 @@ void BattlePlayback_Start(s32 cue) {
 /// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattleWork *battle;
-  struct BattlePlaybackWork *ev;
+  struct BattlePlaybackWork *playback;
 
   battle = Ram_HeapSlots->battleWork;
-  ev = &battle->events;
-  ev->queue.count = 0;
-  ev->eventIndex = 0;
-  ev->timer = frames;
-  ev->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
+  playback = &battle->events;
+  playback->queue.count = 0;
+  playback->eventIndex = 0;
+  playback->timer = frames;
+  playback->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
   battle->plan.targetCount = 0;
   return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
@@ -56,7 +56,9 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// A felled enemy's sprite dissolves over field/field.h's DISSOLVE_STEPS,
 /// four a frame.
 #define DISSOLVE_STEPS_PER_FRAME 4
-/// PLAY_FELLED's timer at the dissolve's first frame.
+/// PLAY_FELLED's timer at the frame the grey enemy leaves the lists, and at
+/// the dissolve's first frame.
+#define FELLED_LEAVES_LISTS 4
 #define FELLED_DISSOLVE_START 5
 
 /// The arrow BattlePlayback_Run shows at a message: The Broken Seal's advance
@@ -341,12 +343,12 @@ void BattlePlayback_Run(void) {
         events->timer++;
         return;
       }
-      if (events->timer == 4) {
+      if (events->timer == FELLED_LEAVES_LISTS) {
         BattleObject_RemoveFromLists(events->unitId);
         events->timer++;
         return;
       }
-      if (events->timer > 4) {
+      if (events->timer > FELLED_LEAVES_LISTS) {
         struct BattleObject *slot;
         void *record;
         s32 count;

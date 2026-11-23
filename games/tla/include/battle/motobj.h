@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_MOTION_OBJECT_H
 #define ALCHEMY_MOTION_OBJECT_H
 
+/// @file
+/// The motion object: a battle unit's actor as the battle moves it, and the
+/// sprites it draws.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
@@ -69,7 +73,7 @@ struct MotionObject {
 #define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
 
 void ReleaseBattleObjectRecords(s32 objectId);
-void ResetMotionRecordGroup(void *record_group);
+void ResetMotionRecordGroup(void *recordGroup);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
 
 STATIC_ASSERT(sizeof(struct MotionObject) == 112);
@@ -87,6 +91,6 @@ struct BattleObject *BattleObject_Get(s32 objectId);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get).
 struct BattleObject *BattleObject_GetFar(s32 objectId);
-void *GetMotionRecord(struct MotionObject *object, s32 record_index);
+void *GetMotionRecord(struct MotionObject *object, s32 recordIndex);
 
 #endif

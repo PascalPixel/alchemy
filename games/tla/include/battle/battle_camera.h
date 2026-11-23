@@ -2,8 +2,9 @@
 #define ALCHEMY_BATTLE_CAMERA_H
 
 /// @file
-/// The Lost Age's presentation work, which holds nine actors.
-// The Broken Seal's (games/tbs/include/battle/battle_camera.h) holds eight.
+/// The battle camera, the battle background's modes and scanline work, and the
+/// presentation work an action's staging hands its battle effect.
+// The Broken Seal's presentation work holds eight targets; this one nine.
 
 #include "battle/battle_action.h"
 

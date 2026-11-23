@@ -26,10 +26,10 @@ struct Sprite;
 
 struct ResourceObject *Sprite_Create(s32 resource);
 void Sprite_Destroy(struct Sprite *sprite);
-/// Creates an animated sprite object for animation id, using one of 64 free
-/// objects and a VRAM cache entry.
+/// Creates a sprite for animation `resource`, taking one of the 64 free
+/// sprites and a VRAM cache entry for its tiles.
 struct ResourceObject *Sprite_CreateFar(s32 resource);
-/// Releases an object.
+/// Releases a sprite and, unless it keeps it, its VRAM cache entry.
 void Sprite_DestroyFar(struct Sprite *sprite);
 
 void *Resource_GetTableEntry(s32 resourceId);

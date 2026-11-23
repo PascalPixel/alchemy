@@ -208,8 +208,6 @@ s32 Unit_LearnPsynergy(s32 owner, s32 ability) {
   return index;
 }
 
-struct LevelUpResult;
-
 /// Levels the character up once if it has the experience, and returns gains, or
 /// NULL.
 struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,

@@ -11,13 +11,13 @@
 /// search, and still when nobody has room.
 #define DJINN_COUNT_NONE 999
 
-/// Returns the definition of Djinni `index` of element `group`; anything out of
+/// Returns the definition of Djinni `index` of `element`; anything out of
 /// range gives DJINNI_FLINT's.
-const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
+const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 index) {
   s32 entry = 0;
 
-  if (group < ELEMENT_COUNT && index < DJINN_PER_ELEMENT)
-    entry = group * DJINN_PER_ELEMENT + index;
+  if (element < ELEMENT_COUNT && index < DJINN_PER_ELEMENT)
+    entry = element * DJINN_PER_ELEMENT + index;
   return &gDjinn_DefinitionTable[entry];
 }
 
@@ -209,17 +209,19 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   return -1;
 }
 
-/// Counts the party's Djinn on standby, by element into counts when it is
-/// given.
+/// Counts the party's Djinn on standby, and by element into `counts` when it
+/// is given.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 standbyCount = 0;
-  struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
+  struct DjinnRecoveryTable *recoveryTable =
+      Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY);
   struct DjinnRecoveryEntry *entry = recoveryTable->list.entries;
   s32 entryIndex;
 
   if (counts != 0) {
     u8 *slot;
 
+    // Each element's count starts at 0, Jupiter's first.
     slot = counts + 3;
     *slot = standbyCount;
     slot = counts + 2;
@@ -229,7 +231,7 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
     counts[0] = standbyCount;
   }
   for (entryIndex = 0; entryIndex != recoveryTable->list.count; entryIndex++) {
-    if (entry->turns == -1) {
+    if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {
       if (counts != 0)
         counts[entry->element]++;
       standbyCount++;
@@ -239,25 +241,25 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   return standbyCount;
 }
 
-/// Returns the ability ID used when the Djinni is unleashed.
-u16 Djinn_GetAbilityId(u32 group, u32 index) {
-  return Djinn_GetDefinition(group, index)->abilityId;
+/// Returns the ability the Djinni performs when it is unleashed.
+u16 Djinn_GetAbilityId(u32 element, u32 index) {
+  return Djinn_GetDefinition(element, index)->abilityId;
 }
 
-/// Returns how many Djinn of element `index` the unit holds, or of every
-/// element for -1.
-s32 Owner_SumDjinnCounts(s32 unitId, s32 index) {
+/// Returns how many Djinn of `element` the unit holds, or of every element for
+/// -1.
+s32 Owner_SumDjinnCounts(s32 unitId, s32 element) {
   struct Unit *unit;
   s32 result;
 
   unit = Unit_Get(unitId);
-  if (index == -1) {
+  if (element == -1) {
     result = unit->djinnHeldCounts[0];
     result += unit->djinnHeldCounts[1];
     result += unit->djinnHeldCounts[2];
     result += unit->djinnHeldCounts[3];
   } else {
-    result = unit->djinnHeldCounts[index];
+    result = unit->djinnHeldCounts[element];
   }
   return result;
 }

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_VRAM_TAB_H
 #define ALCHEMY_VRAM_TAB_H
 
+/// @file
+/// The VRAM cache: numbered entries, each holding a run of 64-byte blocks of
+/// sprite VRAM for a sprite or a loaded picture.
+
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"

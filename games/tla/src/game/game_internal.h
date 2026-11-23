@@ -49,8 +49,8 @@
 struct AbilityDefinition *Ability_GetDirect(s32 actionId);
 
 /// Keeps occupied slots in order and clears the unused inventory tail, for
-/// Inventory_ClearSlot and Inventory_Remove (inventory.c) and
-/// InventorySnapshot_Save (snapshot.c). A slot is empty when it is 0.
+/// Inventory_ClearSlot and Inventory_Remove (game_inventory.c) and
+/// InventorySnapshot_Save (game_snapshot.c). A slot is empty when it is 0.
 static inline void Inventory_CompactSlots(s16 *inventory) {
   s32 usedSlots = 0;
   s32 slot;
@@ -66,6 +66,10 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 /// The rare item counters RareItemStock_Adjust keeps (an index from here on
 /// has no stock), and the most one counts.
 enum { ITEM_COUNTER_COUNT = 300, ITEM_COUNTER_MAX = 99 };
+
+/// A character's element group (gCharacter_ElementGroupTable): which two
+/// lighthouses Party_RestorePpOfLitElements restores its PP in.
+enum ElementGroup { ELEMENT_GROUP_VENUS_MARS, ELEMENT_GROUP_MERCURY_JUPITER };
 
 /// The marks on a unit's Psynergy slot of an action its class or an item gives
 /// it, cleared before the class's own are listed again.

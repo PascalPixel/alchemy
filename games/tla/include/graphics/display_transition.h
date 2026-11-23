@@ -9,18 +9,17 @@
 #include "static_assert.h"
 #include "types.h"
 
-/// The screen transition state as the centre-line transition and the dissolve
-/// read it: the dissolve's tile pixels and the transition's progress.
+/// The screen transition state as the dissolve reads it: the solid tile as
+/// bytes, two 4-bit pixels to a byte, so that it can set one pixel at a time.
 struct ScreenTransitionDissolveState {
-  u16 pages[2][322]; ///< ScreenTransitionState's; not named here
-  /// ScreenTransitionState's solidTile, as 4-bit pixels two a byte: the
-  /// dissolve sets two more each frame and copies the tile to BG character
-  /// block 0.
+  u16 pages[2][322]; ///< as ScreenTransitionState's; the dissolve leaves them
+  /// ScreenTransitionState's solidTile and mode: the dissolve sets two more of
+  /// the tile's pixels each frame and copies the tile to BG character block 0.
   u8 paletteNibbles[34];
   /// The progress, moved from start to end over duration frames: bit 5 says
   /// whether the dissolve fills or clears, the low 5 bits how far it is.
   u16 value;
-  /// ScreenTransitionState's centreX to its unused byte; not named here.
+  /// As ScreenTransitionState's; the dissolve leaves them.
   ///@{
   s32 centreX;
   s32 centreY;
@@ -28,8 +27,8 @@ struct ScreenTransitionDissolveState {
   s16 active;
   u8 unused;
   ///@}
-  /// ScreenTransitionState's page: the dissolve flips it each frame and
-  /// never reads it.
+  /// ScreenTransitionState's page: the dissolve flips it each frame, though
+  /// nothing reads it while the dissolve runs.
   u8 ditherToggle;
   s8 start;    ///< the value's first step
   s8 end;      ///< the value's last step
@@ -52,8 +51,11 @@ struct ScreenTransitionState {
   /// by the Reveal effect.
   FIXED centreX;
   FIXED centreY; ///< as centreX: the target's z less its y
-  s16 mask;      ///< a window register value: 0x3f3f when a transition starts
-  s16 active;    ///< a window register value: bit 0 set when one starts
+  /// WININ for the inside of the shape: both windows show every layer.
+  s16 mask;
+  /// WINOUT for the outside: BG0 alone, with the sprite window's layers kept.
+  /// A mode that inverts its shape writes the two the other way round.
+  s16 active;
   u8 unused;
   u8 page;     ///< the pages entry the HBlank DMA copies from
   s8 start;    ///< the value's first step

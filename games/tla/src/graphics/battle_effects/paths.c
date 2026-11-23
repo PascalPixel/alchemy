@@ -1,16 +1,19 @@
 /// @file
-/// The paths two summon effects move along, each step a change of x and y
-/// in pixels: Atalanta's staged particles and Dragon Cloud's streams. Both are
+/// The flight paths of two battle effects: Atalanta's across the screen, and
+/// the flame of Dragon Cloud and Epicenter. Each opens with its start, x and
+/// then y as 16-bit pixels written a byte to a row (high byte, low byte), and
+/// goes on with a change of x and y in pixels for each frame. Both are
 /// resources (ResourceId_StagedParticlePath, ResourceId_DualStreamPath), as
 /// The Broken Seal's are.
 
 #include "types.h"
 
 // clang-format off
-/// Atalanta's staged particles' path (RESOURCE_STAGED_PARTICLE_PATH).
+/// Atalanta's flight while she gathers her shafts, a step a frame
+/// (RESOURCE_STAGED_PARTICLE_PATH).
 const s8 BattleEffect_StagedParticlePath[][2] = {
-    {0, -96},
-    {0, 95},
+    {0, -96}, // starts at x 160
+    {0, 95},  // and y 95
     {-5, -3},
     {-4, -3},
     {-4, -3},
@@ -223,10 +226,11 @@ const s8 BattleEffect_StagedParticlePath[][2] = {
     {8, 6},
 };
 
-/// Dragon Cloud's two streams' path (RESOURCE_DUAL_STREAM_PATH).
+/// The flame's flight from the user, from frame 18 to 58 of Dragon Cloud and
+/// Epicenter (RESOURCE_DUAL_STREAM_PATH).
 const s8 BattleEffect_DualStreamPath[][2] = {
-    {0, 17},
-    {-1, -39},
+    {0, 17},   // starts at x 17
+    {-1, -39}, // and y -39, which the effect moves 16 pixels down
     {6, 5},
     {6, 5},
     {6, 6},

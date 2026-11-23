@@ -1,15 +1,24 @@
 /// @file
-/// Each character's lighthouse group, two lists the game's rules read, and the
-/// experience each character needs for each level.
+/// Each character's element group, what the data transfer from The Broken
+/// Seal copies and hands out, and the experience each character needs for
+/// each level.
 // Part of game.c.
 
 #include "game_internal.h"
 #include "flags.h"
 #include "system/mul_fx.h"
 
-/// Each character's element group, as The Broken Seal has it: 0 for the Venus
-/// and Mars Adepts, 1 for the Jupiter and Mercury ones.
-const u8 gCharacter_ElementGroupTable[] = {0, 0, 1, 1, 0, 0, 1, 1};
+/// Each character's element group, as The Broken Seal has it.
+const u8 gCharacter_ElementGroupTable[] = {
+    [ISAAC] = ELEMENT_GROUP_VENUS_MARS,
+    [GARET] = ELEMENT_GROUP_VENUS_MARS,
+    [IVAN] = ELEMENT_GROUP_MERCURY_JUPITER,
+    [MIA] = ELEMENT_GROUP_MERCURY_JUPITER,
+    [FELIX] = ELEMENT_GROUP_VENUS_MARS,
+    [JENNA] = ELEMENT_GROUP_VENUS_MARS,
+    [SHEBA] = ELEMENT_GROUP_MERCURY_JUPITER,
+    [PIERS] = ELEMENT_GROUP_MERCURY_JUPITER,
+};
 
 /// The six flags of The Broken Seal's save DataTransfer_Apply copies into
 /// FLAG_TRANSFERRED_DODONPA_LOCKED_UP and the five after it, in that order.

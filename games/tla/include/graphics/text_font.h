@@ -1,16 +1,21 @@
-#ifndef GUARD_TEXT_FONT_H
-#define GUARD_TEXT_FONT_H
+#ifndef ALCHEMY_TEXT_FONT_H
+#define ALCHEMY_TEXT_FONT_H
+
+/// @file
+/// The Japanese font's kanji, and the voiced marks drawn over its kana.
 
 #include "edition.h"
 #include "types.h"
 
-/// In Japanese, the glyphs of character codes from 256: KANJI_GLYPH_SIZE bytes
-/// each, drawn KANJI_WIDTH pixels wide.
+/// In Japanese, the glyphs of character codes from KANJI_FIRST_CODE:
+/// KANJI_GLYPH_SIZE bytes each, drawn KANJI_WIDTH pixels wide.
 #define KANJI_GLYPH_SIZE 24
 #define KANJI_WIDTH 10
 /// The Japanese font's kanji, from KANJI_FIRST_CODE on.
 extern const u8 gFont_KanjiGlyphs[];
 
+/// The mark each of a kana's top-bit values stands for (TEXT_MARK_SHIFT): none,
+/// voiced, semi-voiced, none.
 extern const u16 gFont_MarkGlyphCodes[];
 
 /// The marks a kana is drawn with: their character codes.

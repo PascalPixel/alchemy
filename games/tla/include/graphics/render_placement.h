@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_RENDER_PLACEMENT_H
 #define ALCHEMY_RENDER_PLACEMENT_H
 
+/// @file
+/// Where a sprite is drawn and at what scale.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
@@ -34,7 +37,7 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 #endif
 }
 
-/// Horizontal and vertical sprite scale; 0x10000 is the original size.
+/// Horizontal and vertical sprite scale; FIXED_ONE is the original size.
 struct SpriteScale {
   union {
     struct {

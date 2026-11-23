@@ -1,6 +1,7 @@
 /// @file
 /// The equipment put aside for the Trial Road, as The Broken Seal's for the
-/// Colosso: characters 4 to 7's inventories, and giving them back.
+/// Colosso: Felix's, Jenna's, Sheba's and Piers's inventories, and giving them
+/// back.
 // Part of game.c.
 
 #include "game_internal.h"
@@ -29,10 +30,10 @@ s32 Item_RaisesStat(s32 id) {
 /// equipment, put aside while the Trial Road takes it away.
 #define INVENTORY_SNAPSHOT_SENTINEL 26484
 
-/// Saves characters 4 to 7's inventories (Felix's party), the shortcuts and
+/// Saves the inventories of Felix's party (FELIX to PIERS), the shortcuts and
 /// the party order as the leader and Moapa set off on the Trial Road
-/// (ShamanVillage_TakeLeftPath and its twin), then drops every weapon and
-/// piece of armor not equipped (and, from patch 1, every item that raises a
+/// (ShamanVillage_TakeLeftPath and its twin), then drops every weapon, armor,
+/// shield and helm not equipped (and, from patch 1, every item that raises a
 /// stat), sets FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT and restores everyone's HP and
 /// PP. As The Broken Seal's Colosso snapshot; nothing is saved again while a
 /// snapshot is held.
@@ -50,7 +51,7 @@ void InventorySnapshot_Save(void) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
     firstShortcut = gMainRoutineWork.firstShortcut;
     secondShortcut = gMainRoutineWork.secondShortcut;
-    // Save each inventory before dropping its unequipped weapons and armor.
+    // Save each inventory before dropping what the Trial Road takes away.
     for (unitId = FELIX; unitId <= PIERS; unitId++) {
       unit = Unit_Get(unitId);
       for (slot = 0; slot < INVENTORY_SLOTS; slot++)
@@ -58,7 +59,8 @@ void InventorySnapshot_Save(void) {
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
         struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
 
-        // ITEM_TYPE_WEAPON to ITEM_TYPE_HELM, as one unsigned test.
+        // ITEM_TYPE_WEAPON to ITEM_TYPE_HELM, as one unsigned test: boots,
+        // shirts, rings and the rest are kept.
         if ((u8)(item->type - ITEM_TYPE_WEAPON) <=
                 ITEM_TYPE_HELM - ITEM_TYPE_WEAPON &&
             (unit->inventory[slot] & INVENTORY_EQUIPPED) == 0)
@@ -83,6 +85,7 @@ void InventorySnapshot_Save(void) {
   }
   GameFlag_Set(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT);
   Party_RestoreHpPp(1);
+  // `slot` counts the Trial Road's stage item flags here.
   for (slot = FLAG_TRIAL_ROAD_STAGE_ITEM_FIRST;
        slot <= FLAG_TRIAL_ROAD_STAGE_ITEM_LAST; slot++)
     GameFlag_Clear(slot);

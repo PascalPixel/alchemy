@@ -1,14 +1,13 @@
 #ifndef ALCHEMY_PALETTE_BUFFERS_H
 #define ALCHEMY_PALETTE_BUFFERS_H
 
+/// @file
+/// The palette fades, the title's and the field's, and the tints they fade to.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
 #include "system/io_reg.h"
-
-/// @file
-/// Palette fades, the battle effect palette buffers and the colour channel
-/// curves.
 
 /// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
 /// colours.
@@ -43,7 +42,7 @@ struct TitlePaletteFade {
   u8 page;     ///< the packed page queued this frame
   s8 duration; ///< frames; 0 when the colours are not moving
   u8 step;     ///< frames
-  u8 padding;  ///< never named
+  u8 padding;
 };
 
 STATIC_ASSERT(sizeof(struct TitlePaletteFade) == 12292);
@@ -72,7 +71,7 @@ struct PaletteFade {
   u8 page;     ///< the packed page queued this frame
   s8 duration; ///< frames; 0 when the colours are not moving
   s8 step;     ///< frames
-  u8 padding;  ///< never named
+  u8 padding;
 };
 
 STATIC_ASSERT(sizeof(struct PaletteFade) == 10756);
@@ -83,14 +82,14 @@ STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 8960);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 10752);
 
 void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
-                                  s32 half);
+                                  s32 selectedPalettes);
 
 void TitlePaletteFade_Initialize(void);
 void TitlePaletteFade_Update(void);
 void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes);
-void TitlePaletteFade_SetBackdrop(s32 value);
+void TitlePaletteFade_SetBackdrop(s32 color);
 void TitlePaletteFade_Start(s32 frames);
-void TitlePaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
+void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
                                      s32 frames);
 void TitlePaletteFade_Release(void);
 

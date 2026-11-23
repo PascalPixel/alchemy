@@ -173,6 +173,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
         y = y - frame * 2 + 64;
       draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
               DJINNI_WIDTH, DJINNI_HEIGHT);
+      // Added twice in the first frames, it flashes as it appears.
       if (frame <= 3)
         draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
                 DJINNI_WIDTH, DJINNI_HEIGHT);
@@ -262,6 +263,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
+          // Every row of the column, from the top down to the feet, is the
+          // same strip of the column's first picture.
           for (k = 0; k != screenPosition.y; k++) {
             draw[0](canvas, work->sheet + 5, screenPosition.x - width, k, width,
                     1);

@@ -7,9 +7,6 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-// Nereid's drops burst up from the targets, fall back and later rise away; one
-// that falls back into the waves frees its slot.
-
 #define NEREID_FRAMES 124
 /// The columns of water rise among the targets, from the crash to the clatter.
 #define NEREID_COLUMNS_FRAME 32
@@ -164,7 +161,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       // The waves along the bottom.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
-          draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
+          draw[0](canvas, work->sheet,
+                  k * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH,
                   120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 

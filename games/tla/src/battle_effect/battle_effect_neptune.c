@@ -89,8 +89,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 frame;
   s32 flareFrame;
   s32 i;
-  s32 n;
-  s32 s;
+  s32 width;
+  s32 size;
   struct Particle *flareSeed;
   struct Particle *flare;
   struct Particle *burstSeed;
@@ -294,11 +294,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 fy = FIXED_INTEGER_PART(flare->y) + NEPTUNE_FLARES_Y;
           s32 r = (i & 3) + 5;
 
-          s = r * 2;
+          size = r * 2;
           blit[0](canvas,
                   work->sheet + gBattleEffect_FlarePictures[r - 1] +
                       NEPTUNE_FLARE_SHEET,
-                  fx - r, fy - r, s, s);
+                  fx - r, fy - r, size, size);
           flare->x += flare->velocityX;
           flare->y += flare->velocityY;
         }
@@ -347,87 +347,89 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     // The beam runs from the top of the canvas to the burst.
     if (frame > 175) {
-      n = NEPTUNE_BEAM_THIN;
+      width = NEPTUNE_BEAM_THIN;
       if (frame >= NEPTUNE_BURST_FRAME) {
-        n = NEPTUNE_BEAM_FLASH;
+        width = NEPTUNE_BEAM_FLASH;
         if (frame != NEPTUNE_BURST_FRAME + 1 &&
             frame != NEPTUNE_BURST_FRAME + 2)
-          n = NEPTUNE_BEAM_WIDE;
+          width = NEPTUNE_BEAM_WIDE;
       }
-      // DEAD: never true, as n is one of the three widths here; the ROM keeps
-      // the compare and the store.
-      if (n > NEPTUNE_BEAM_FLASH)
-        n = NEPTUNE_BEAM_FLASH;
-      for (i = 0; i != n; i++) {
-        s32 w;
-        s32 d = (i + 1) / 2;
+      // DEAD: never true, as width is one of the three widths here; the ROM
+      // keeps the compare and the store.
+      if (width > NEPTUNE_BEAM_FLASH)
+        width = NEPTUNE_BEAM_FLASH;
+      for (i = 0; i != width; i++) {
+        s32 level;
+        s32 offset = (i + 1) / 2;
 
-        w = n * 2 - d * 4;
-        if (w < NEPTUNE_BEAM_LEVEL_MIN)
-          w = NEPTUNE_BEAM_LEVEL_MIN;
-        if (w > CANVAS_LEVEL_BRIGHTEST)
-          w = CANVAS_LEVEL_BRIGHTEST;
+        level = width * 2 - offset * 4;
+        if (level < NEPTUNE_BEAM_LEVEL_MIN)
+          level = NEPTUNE_BEAM_LEVEL_MIN;
+        if (level > CANVAS_LEVEL_BRIGHTEST)
+          level = CANVAS_LEVEL_BRIGHTEST;
         if (i & 1)
-          d = -d;
-        BattleEffect_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111,
-                                           63 - (d + 1) / 2, w);
+          offset = -offset;
+        BattleEffect_DrawClippedCanvasLine(offset + 48, 0, offset / 2 + 111,
+                                           63 - (offset + 1) / 2, level);
       }
     }
 
     // The flare at the burst grows, then the splash covers it.
     if (flareFrame >= 0 && flareFrame < 40) {
-      s32 z;
+      s32 flareSize;
 
-      z = flareFrame / 2 + 1;
-      if (z > 4)
-        z = 4;
+      flareSize = flareFrame / 2 + 1;
+      if (flareSize > 4)
+        flareSize = 4;
       EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
-                        60, z);
+                        60, flareSize);
     }
     if (frame >= 192 && frame < 200) {
-      s32 z;
+      s32 flareSize;
 
-      z = (frame - 192) / 2 + 3;
-      if (z > 6)
-        z = 6;
+      flareSize = (frame - 192) / 2 + 3;
+      if (flareSize > 6)
+        flareSize = 6;
       EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
-                        60, z);
+                        60, flareSize);
     }
     if (frame > 199) {
-      s32 z;
+      s32 flareSize;
       s32 u = frame - 200;
 
-      z = u / 4 + 5;
-      if (z > 8)
-        z = 8;
+      flareSize = u / 4 + 5;
+      if (flareSize > 8)
+        flareSize = 8;
       EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
-                        60, z);
+                        60, flareSize);
       if (frame <= 213) {
-        z = u / 4 + 1;
-        if (z > 4)
-          z = 4;
+        flareSize = u / 4 + 1;
+        if (flareSize > 4)
+          flareSize = 4;
         EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET,
-                          100, 52, z);
+                          100, 52, flareSize);
       }
     }
     if (frame >= NEPTUNE_BURST_FRAME - 8 && frame < NEPTUNE_BURST_FRAME) {
-      s32 z;
+      s32 picture;
 
-      z = (frame - (NEPTUNE_BURST_FRAME - 8)) / 4;
-      if (z > 2)
-        z = 2;
+      picture = (frame - (NEPTUNE_BURST_FRAME - 8)) / 4;
+      if (picture > 2)
+        picture = 2;
       blit[1](canvas,
-              work->sheet + z * PICTURE_BYTES(WATER_SPLASH) + NEPTUNE_SPLASH,
+              work->sheet + picture * PICTURE_BYTES(WATER_SPLASH) +
+                  NEPTUNE_SPLASH,
               63, 18, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
     if (frame >= NEPTUNE_BURST_FRAME) {
-      s32 z;
+      s32 picture;
 
-      z = (frame - NEPTUNE_BURST_FRAME) / 2 % 4 + 3;
+      picture = (frame - NEPTUNE_BURST_FRAME) / 2 % 4 + 3;
       blit[0](canvas,
-              work->sheet + z * PICTURE_BYTES(WATER_SPLASH) + NEPTUNE_SPLASH,
+              work->sheet + picture * PICTURE_BYTES(WATER_SPLASH) +
+                  NEPTUNE_SPLASH,
               72, 30, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
-      if (z == 5)
+      if (picture == 5)
         blit[0](canvas,
                 work->sheet + NEPTUNE_SPLASH + 2 * PICTURE_BYTES(WATER_SPLASH),
                 66, 22, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);

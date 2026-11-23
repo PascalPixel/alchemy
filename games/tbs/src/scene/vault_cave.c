@@ -75,7 +75,7 @@
 #include "text/msg_ids.h"
 
 extern s32 gPushedActor_DirectionSteps[];
-extern const s32 gVaultCave_PuffScript[];
+extern const s32 gVaultCave_SplashScript[];
 extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gVaultCavePassage_Entrances[];
 extern struct SceneEntrance gVaultCaveVambrace_Entrances[];
@@ -102,7 +102,7 @@ extern s32 gVaultCave_SelectedDrop;
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
-static void VaultCave_SpawnPuffs(struct Actor *source);
+static void VaultCave_SpawnSplash(struct Actor *source);
 
 /// The map cell a 16.16 coordinate lies in.
 #define TILE(position) ((position) / toFIXED(16))
@@ -157,8 +157,8 @@ enum VaultCaveVambraceActorId {
   /// The west torch, which goes onto the fire crest at cell (15, 54).
   ACTOR_SOUTHERN_PILLAR,
   /// The first of six drops of water that fall at random, one every 64 frames
-  /// (VaultCave_UpdateFrostControlledFallingActors). VaultCave_SpawnPuffs also
-  /// uses their sprite for the puffs where one lands.
+  /// (VaultCave_UpdateFrostControlledFallingActors). VaultCave_SpawnSplash also
+  /// uses their sprite for the splash where one lands.
   ACTOR_FIRST_WATER_DROP,
   /// The six puddles under the drops, in their order and in the order of their
   /// flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
@@ -755,7 +755,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
         if (fallingActor->y.fixed < toFIXED(1)) {
-          VaultCave_SpawnPuffs(fallingActor);
+          VaultCave_SpawnSplash(fallingActor);
           fallingActor->y.fixed = toFIXED(255);
           fallingActor->gravity = 0;
           fallingActor->velocityY = 0;
@@ -841,24 +841,24 @@ static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
 }
 
 /// Splashes up to four little drops around a drop of water where it lands.
-static void VaultCave_SpawnPuffs(struct Actor *source) {
-  struct Actor *puff;
-  s32 puffIndex;
+static void VaultCave_SpawnSplash(struct Actor *source) {
+  struct Actor *drop;
+  s32 dropIndex;
 
-  for (puffIndex = 0; puffIndex < 4; puffIndex++) {
-    puff = FieldActor_Create(SPRITE_DROPLET, source->x.fixed, source->y.fixed,
+  for (dropIndex = 0; dropIndex < 4; dropIndex++) {
+    drop = FieldActor_Create(SPRITE_DROPLET, source->x.fixed, source->y.fixed,
                              source->z.fixed);
-    if (puff == NULL)
+    if (drop == NULL)
       break;
-    puff->scaleY = 11 * FIXED_ONE / 20;
-    puff->scaleX = 11 * FIXED_ONE / 20;
-    puff->motionFlags = ACTOR_FALLS;
-    puff->velocityY = -toFIXED(1);
-    puff->speedLimit = Random_Next() + toFIXED(4) / 5;
-    puff->collisionFlags = ACTOR_SOLID;
-    VaultCave_OffsetActorRadially(puff, toFIXED(32), Random_Next());
-    puff->wait = 8;
-    Actor_StartScript(puff, gVaultCave_PuffScript);
+    drop->scaleY = 11 * FIXED_ONE / 20;
+    drop->scaleX = 11 * FIXED_ONE / 20;
+    drop->motionFlags = ACTOR_FALLS;
+    drop->velocityY = -toFIXED(1);
+    drop->speedLimit = Random_Next() + toFIXED(4) / 5;
+    drop->collisionFlags = ACTOR_SOLID;
+    VaultCave_OffsetActorRadially(drop, toFIXED(32), Random_Next());
+    drop->wait = 8;
+    Actor_StartScript(drop, gVaultCave_SplashScript);
   }
 }
 
@@ -1044,7 +1044,7 @@ s32 Scene_Initialize(void) {
 #include "shared/pushed_actor_direction_steps.c"
 // clang-format off
 
-const s32 gVaultCave_PuffScript[] = {
+const s32 gVaultCave_SplashScript[] = {
     SC_RELEASE,
 };
 

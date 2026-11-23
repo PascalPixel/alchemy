@@ -26,8 +26,8 @@
 /// (FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING), the embers fall silently.
 ///
 /// The breaking floor's cells flicker by task until the Wise One holds them.
-/// Ten arcs of light rise at each of the chamber's four corners as the Wise One
-/// tells of the stars (SolSanctumEruption_RaiseElementalArcs). The Wise One
+/// Ten lights rise at each of the chamber's four corners as the Wise One
+/// tells of the stars (SolSanctumEruption_RaiseElementalLights). The Wise One
 /// glows through a cycle of palettes.
 ///
 /// Saturos's group and their hostages leave one by one from the platform where
@@ -78,15 +78,15 @@ s32 gEmberState[EMBER_COUNT] BSS_DATA;
 s32 gEmberTimer BSS_DATA;
 /// Unused: twelve bytes after the ember timer that nothing reads.
 u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
-/// The elemental arcs the chamber throws out: each one's actor, and its age in
-/// frames, 0 for none.
-struct Actor *gArcEffects[12] BSS_DATA;
-s32 gArcEffectTimers[10] BSS_DATA;
+/// The elemental lights the chamber throws out: each one's actor, and its age
+/// in frames, 0 for none.
+struct Actor *gRisingLights[12] BSS_DATA;
+s32 gRisingLightTimers[10] BSS_DATA;
 s32 gEmberMask BSS_DATA;
 s32 gEmberLevel BSS_DATA;
 s32 gEmberLevelTimer BSS_DATA;
 
-extern s32 gEruption_ArcOrigins[];
+extern s32 gEruption_RisingLightOrigins[];
 extern struct SceneEntrance gSolSanctum_StarRoomEntrances[];
 extern u32 gSolSanctumEruption_Exits[];
 extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
@@ -130,8 +130,8 @@ static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate);
 static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate);
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void);
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void);
-static void SolSanctumEruption_RaiseElementalArcs(u32 corner);
-static void SolSanctumEruption_UpdateElementalArcs(void);
+static void SolSanctumEruption_RaiseElementalLights(u32 corner);
+static void SolSanctumEruption_UpdateElementalLights(void);
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z);
 static void SolSanctumEruption_RestoreCornerCellAttributes(void);
 static void SolSanctumEruption_SetPaleTint(s32 enabled, s32 frames,
@@ -144,8 +144,9 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void);
 // - FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING: set as Saturos's group starts to
 //   leave; from then on the embers fall without their sound (SE_GLITTER).
 
-/// The four corners of the chamber where SolSanctumEruption_RaiseElementalArcs
-/// raises lights, in the order the Wise One's event visits them.
+/// The four corners of the chamber where
+/// SolSanctumEruption_RaiseElementalLights raises lights, in the order the Wise
+/// One's event visits them.
 enum SolSanctumEruptionCorner {
   CHAMBER_NORTHWEST = 0,
   CHAMBER_SOUTHWEST = 1,
@@ -166,13 +167,13 @@ enum {
 /// The star the Wise One has the leader take out, lifted above him.
 enum { ACTOR_ELEMENTAL_STAR = 22 };
 
-/// An arc stretches for ELEMENTAL_ARC_STRETCH_FRAMES, narrowing by nine tenths
-/// of its width, then is lifted out of view until it is done with at
-/// ELEMENTAL_ARC_FRAMES.
-#define ELEMENTAL_ARC_STRETCH_FRAMES 8
-#define ELEMENTAL_ARC_FRAMES 14
-#define ELEMENTAL_ARC_SCALE_X_DECREASE                                         \
-  (FIXED_ONE * 9 / 10 / ELEMENTAL_ARC_STRETCH_FRAMES)
+/// A light stretches for ELEMENTAL_LIGHT_STRETCH_FRAMES, narrowing by nine
+/// tenths of its width, then is lifted out of view until it is done with at
+/// ELEMENTAL_LIGHT_FRAMES.
+#define ELEMENTAL_LIGHT_STRETCH_FRAMES 8
+#define ELEMENTAL_LIGHT_FRAMES 14
+#define ELEMENTAL_LIGHT_SCALE_X_DECREASE                                       \
+  (FIXED_ONE * 9 / 10 / ELEMENTAL_LIGHT_STRETCH_FRAMES)
 
 /// gEmberState: free, in flight, then counting frames from its landing, when
 /// it bursts, until it is put away and then freed.
@@ -188,7 +189,7 @@ enum {
 /// launched when the frame count has none of the mask's bits.
 #define EMBER_EVERY(frames) ((frames) - 1)
 #define EMBER_EMISSION_DISABLED 999
-#define ARC_SCAN_STILL_ACTIVE 888
+#define LIGHT_SCAN_STILL_ACTIVE 888
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctum_StarRoomEntrances;
@@ -1276,7 +1277,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // Lights rise at the chamber's first corner. The Wise One: the Elemental
   // Djinn have returned; "Take out the Elemental Star..." Refusing, "Isaac
   // cannot resist."
-  SolSanctumEruption_RaiseElementalArcs(CHAMBER_NORTHWEST);
+  SolSanctumEruption_RaiseElementalLights(CHAMBER_NORTHWEST);
   Actor_RunRepeatedMotion(ACTOR_WISE_ONE, 2);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1348,13 +1349,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   FieldCamera_SetSpeed(4);
   SolSanctumEruption_FadeCameraTo(232, 464);
-  SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHWEST);
+  SolSanctumEruption_RaiseElementalLights(CHAMBER_SOUTHWEST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   SolSanctumEruption_FadeCameraTo(711, 144);
-  SolSanctumEruption_RaiseElementalArcs(CHAMBER_NORTHEAST);
+  SolSanctumEruption_RaiseElementalLights(CHAMBER_NORTHEAST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   SolSanctumEruption_FadeCameraTo(711, 464);
-  SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHEAST);
+  SolSanctumEruption_RaiseElementalLights(CHAMBER_SOUTHEAST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST_SOUTHEAST, 0);
   Actor_SetPosition(ACTOR_GARET, 582, 345);
@@ -1580,13 +1581,13 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   }
 }
 
-/// Stages and raises ten arc effects at one of the four chamber positions.
-static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
+/// Stages and raises ten lights at one of the four chamber positions.
+static void SolSanctumEruption_RaiseElementalLights(u32 corner) {
   void Actor_ShowEmote(s32, s32, s32);
   void PaletteFade_ApplyTarget(s32, s32);
   void Sound_Play(s32);
 
-  u32 arcIndex, clear;
+  u32 lightIndex, clear;
   FIXED x;
   s32 y;
   FIXED z;
@@ -1594,8 +1595,8 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   struct Actor *actor;
   struct Sprite *sprite;
 
-  for (arcIndex = 0; arcIndex < CRYSTAL_COUNT; arcIndex++)
-    Actor_ReleaseById(arcIndex + ACTOR_FIRST_CRYSTAL);
+  for (lightIndex = 0; lightIndex < CRYSTAL_COUNT; lightIndex++)
+    Actor_ReleaseById(lightIndex + ACTOR_FIRST_CRYSTAL);
   switch (corner) {
   case CHAMBER_NORTHWEST:
     PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(18, 14, 14), PALETTES_BG);
@@ -1612,10 +1613,10 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   }
   PaletteFade_StartInterpolation(60);
   Sound_Play(SE_RISING_CHIMES);
-  arcIndex = 0;
-  clear = arcIndex;
-  for (origin = &gEruption_ArcOrigins[0]; arcIndex <= 9;
-       arcIndex++, origin += 2) {
+  lightIndex = 0;
+  clear = lightIndex;
+  for (origin = &gEruption_RisingLightOrigins[0]; lightIndex <= 9;
+       lightIndex++, origin += 2) {
     x = origin[0];
     y = origin[1];
     z = 0;
@@ -1637,9 +1638,9 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
       z = toFIXED(464);
       break;
     }
-    gArcEffectTimers[arcIndex] = clear;
+    gRisingLightTimers[lightIndex] = clear;
     actor = FieldActor_Create(SPRITE_PARTICLE, x, y, z);
-    gArcEffects[arcIndex] = actor;
+    gRisingLights[lightIndex] = actor;
     actor->motionFlags = clear;
     sprite = actor->sprite;
     sprite->flags = clear;
@@ -1652,58 +1653,58 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   }
   wait(20);
-  Task_AddFrame(SolSanctumEruption_UpdateElementalArcs, TASK_PASS_FRAME);
+  Task_AddFrame(SolSanctumEruption_UpdateElementalLights, TASK_PASS_FRAME);
   Sound_Play(SE_GLITTER);
-  gArcEffectTimers[0] = 1;
+  gRisingLightTimers[0] = 1;
   wait(6);
-  gArcEffectTimers[1] = 1;
+  gRisingLightTimers[1] = 1;
   wait(6);
-  gArcEffectTimers[2] = 1;
+  gRisingLightTimers[2] = 1;
   wait(6);
-  gArcEffectTimers[3] = 1;
+  gRisingLightTimers[3] = 1;
   wait(6);
-  gArcEffectTimers[4] = 1;
+  gRisingLightTimers[4] = 1;
   wait(6);
-  gArcEffectTimers[5] = 1;
+  gRisingLightTimers[5] = 1;
   wait(6);
-  gArcEffectTimers[6] = 1;
+  gRisingLightTimers[6] = 1;
   wait(6);
-  gArcEffectTimers[7] = 1;
+  gRisingLightTimers[7] = 1;
   wait(6);
-  gArcEffectTimers[8] = 1;
+  gRisingLightTimers[8] = 1;
   wait(6);
-  gArcEffectTimers[9] = 1;
+  gRisingLightTimers[9] = 1;
   wait(6);
   for (;;) {
-    for (arcIndex = 0; arcIndex <= 9; arcIndex++) {
-      if (gArcEffectTimers[arcIndex] != 0) {
-        arcIndex = ARC_SCAN_STILL_ACTIVE;
+    for (lightIndex = 0; lightIndex <= 9; lightIndex++) {
+      if (gRisingLightTimers[lightIndex] != 0) {
+        lightIndex = LIGHT_SCAN_STILL_ACTIVE;
         break;
       }
     }
-    if (arcIndex != ARC_SCAN_STILL_ACTIVE)
+    if (lightIndex != LIGHT_SCAN_STILL_ACTIVE)
       break;
     wait(1);
   }
   wait(40);
-  Task_Remove(SolSanctumEruption_UpdateElementalArcs);
+  Task_Remove(SolSanctumEruption_UpdateElementalLights);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(40);
 }
 
-/// Stretches each active arc for ELEMENTAL_ARC_STRETCH_FRAMES, then lifts it
-/// out of view.
-static void SolSanctumEruption_UpdateElementalArcs(void) {
-  u32 arcIndex;
+/// Stretches each active light for ELEMENTAL_LIGHT_STRETCH_FRAMES, then lifts
+/// it out of view.
+static void SolSanctumEruption_UpdateElementalLights(void) {
+  u32 lightIndex;
   u32 age;
   struct Actor *actor;
 
-  for (arcIndex = 0; arcIndex <= 9; arcIndex++) {
-    age = gArcEffectTimers[arcIndex];
+  for (lightIndex = 0; lightIndex <= 9; lightIndex++) {
+    age = gRisingLightTimers[lightIndex];
     if (age != 0) {
-      actor = gArcEffects[arcIndex];
-      if (age <= ELEMENTAL_ARC_STRETCH_FRAMES) {
-        actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
+      actor = gRisingLights[lightIndex];
+      if (age <= ELEMENTAL_LIGHT_STRETCH_FRAMES) {
+        actor->scaleX -= ELEMENTAL_LIGHT_SCALE_X_DECREASE;
         actor->scaleY += FIXED_ONE / 2;
         actor->y.fixed += toFIXED(3) / 10;
         actor->targetY += toFIXED(3) / 10;
@@ -1711,10 +1712,10 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
         actor->y.fixed += toFIXED(20);
         actor->targetY += toFIXED(20);
       }
-      age = gArcEffectTimers[arcIndex] + 1;
-      gArcEffectTimers[arcIndex] = age;
-      if (age > ELEMENTAL_ARC_FRAMES) {
-        gArcEffectTimers[arcIndex] = 0;
+      age = gRisingLightTimers[lightIndex] + 1;
+      gRisingLightTimers[lightIndex] = age;
+      if (age > ELEMENTAL_LIGHT_FRAMES) {
+        gRisingLightTimers[lightIndex] = 0;
       }
     }
   }
@@ -1853,7 +1854,7 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
 
 #include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
-s32 gEruption_ArcOriginsHead[] = {
+s32 gEruption_RisingLightOriginsHead[] = {
     SC_SET(SW_VELOCITY_Y, toFIXED(6)),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 2621),
@@ -1866,9 +1867,9 @@ s32 gEruption_ArcOriginsHead[] = {
 };
 
 // clang-format off
-/// Where each of the ten elemental arcs springs from: its x from its
+/// Where each of the ten elemental lights springs from: its x from its
 /// chamber's, and its height, in 16.16 pixels.
-s32 gEruption_ArcOrigins[] = {
+s32 gEruption_RisingLightOrigins[] = {
     -toFIXED(6), 0,
     toFIXED(10), toFIXED(10),
     toFIXED(8), toFIXED(25),

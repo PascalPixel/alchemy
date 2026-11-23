@@ -113,7 +113,7 @@ enum SolSanctumLunaSolRoomsActorId {
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.
-#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED FLAG_SCENE_TEMP_00
+#define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT FLAG_SCENE_TEMP_00
 /// The rooms of Sol and Luna show SOL_SANCTUM_BLUE_TINT, so a return after a
 /// battle keeps it.
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED FLAG_SCENE_TEMP_01
@@ -190,7 +190,7 @@ enum SolSanctumLunaSolRoomsCellBehavior {
 // Scene flags, cleared at every ordinary entrance; one of the three is
 // set at a time, for the colours the rooms show, so a return after a battle
 // keeps them:
-// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED: the plain colours
+// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT: the plain colours
 //   (PALETTE_TINT_NONE);
 // - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED: SOL_SANCTUM_BLUE_TINT;
 // - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED: SOL_SANCTUM_WARM_TINT.
@@ -238,7 +238,7 @@ static void SolSanctumLunaSolRooms_TintSolRoom(void) {
       PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
-      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
         SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms();
@@ -251,11 +251,11 @@ static void SolSanctumLunaSolRooms_TintSolRoom(void) {
       Event_End();
     }
   } else {
-    if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
+    if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT) == 0) {
       Event_Start();
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
-      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       Event_End();
@@ -268,11 +268,11 @@ static void SolSanctumLunaSolRooms_TintSolRoom(void) {
 /// back to plain if they were tinted. Coming from a plain room, nothing
 /// visible happens.
 static void SolSanctumLunaSolRooms_RestorePlainTint(void) {
-  if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED) == 0) {
+  if (Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT) == 0) {
     Event_Start();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(20);
-    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
     Event_End();
@@ -289,12 +289,12 @@ static void SolSanctumLunaSolRooms_TintLunaRoom(void) {
   s32 paletteActive;
 
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
-    paletteActive = Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+    paletteActive = Event_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
     if (paletteActive == 0) {
       Event_Start();
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
-      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       Event_End();
@@ -305,7 +305,7 @@ static void SolSanctumLunaSolRooms_TintLunaRoom(void) {
       PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
-      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
       GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
         SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms();
@@ -323,7 +323,7 @@ static void SolSanctumLunaSolRooms_TintPassageBetweenRooms(void) {
     PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, PALETTES_BG);
     PaletteFade_StartInterpolation(20);
     GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
-    GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+    GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
     GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   }
 }
@@ -813,7 +813,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
-  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
@@ -1298,7 +1298,7 @@ s32 Scene_Initialize(void) {
       wait(1);
     }
   } else {
-    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+    GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) != 0) {
       Actor_SetPosition(ACTOR_KRADEN, 576, 120);
     }
@@ -1473,7 +1473,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   PaletteFade_StartInterpolation(120);
   wait(120);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
-  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(60);

@@ -167,8 +167,9 @@ enum TolbiActorId {
   /// Ember, a Mars Djinni, on the high ground east of the inn until it joins
   /// the party (Tolbi_JoinEmber).
   ACTOR_TOLBI_EMBER = 31,
-  /// The "Missing Person" poster, placed with Babi's sprite (SPRITE_BABI).
-  ACTOR_TOLBI_MISSING_PERSON_POSTER = 32,
+  /// The "Missing Person" the soldiers ask about, placed with Babi's sprite
+  /// (SPRITE_BABI) and kept hidden: the speaker of their portrait window.
+  ACTOR_TOLBI_MISSING_PERSON = 32,
 };
 
 /// The cell behaviors Tolbi's coord and examine triggers answer besides the
@@ -724,13 +725,13 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   firstMsg = MsgTolbiSeenAnyoneWho;
   Event_SetMessageId(firstMsg);
 
-  // The soldiers come up to the party; the poster waits off to the side.
+  // The soldiers come up to the party; the missing person waits off to the
+  // side.
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, 72, 208);
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_B, 56, 208);
-  Actor_SetSpriteColorById(ACTOR_TOLBI_MISSING_PERSON_POSTER,
-                           SPRITE_COLOR_HIDDEN);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_TOLBI_MISSING_PERSON_POSTER), 0);
-  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, 95, 40);
+  Actor_SetSpriteColorById(ACTOR_TOLBI_MISSING_PERSON, SPRITE_COLOR_HIDDEN);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TOLBI_MISSING_PERSON), 0);
+  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON, 95, 40);
   Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 72, 248);
   Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 56, 248);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 64, 264);
@@ -751,14 +752,14 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Event_Wait(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
-  // window showing Babi's portrait. The poster, placed with Babi's sprite,
-  // becomes the speaker so that answering closes that portrait window.
+  // window showing Babi's portrait. The missing person, placed with Babi's
+  // sprite, becomes the speaker so that answering closes that portrait window.
   // "Hey, have you seen anyone who looks like this?"
   Event_OpenMessage(ACTOR_TOLBI_SOLDIER_A, 0);
   Event_Wait(25);
   Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
   Message_OpenWindow((firstMsg + 3), 11, 12, 2);
-  gFieldWork->speaker = ACTOR_TOLBI_MISSING_PERSON_POSTER;
+  gFieldWork->speaker = ACTOR_TOLBI_MISSING_PERSON;
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Event_Wait(20);
@@ -818,7 +819,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   }
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, 0, 0);
   Actor_SetPosition(ACTOR_TOLBI_SOLDIER_B, 0, 0);
-  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, 0, 0);
+  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON, 0, 0);
   GameFlag_Set(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
   Event_End();
 }

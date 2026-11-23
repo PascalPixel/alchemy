@@ -348,7 +348,7 @@ static s32 sShakeShift;
   (Math_RemainderUnsigned(Random_Next(), 20) + 20)
 
 /// The step of gValePrologue_LookAroundScript.
-static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
+static s32 ValePrologue_LookAround(struct Actor *actor) {
   s32 timer = actor->timer;
   s32 countdown = (s16)timer;
 
@@ -3131,9 +3131,9 @@ s32 gValePrologue_GaretGatherPath[] = {
     SC_END,
 };
 
-/// Everyone on the bank looks about (ValePrologue_RerollHeadingOnCountdown).
+/// Everyone on the bank looks about (ValePrologue_LookAround).
 s32 gValePrologue_LookAroundScript[] = {
-    SC_CALL(ValePrologue_RerollHeadingOnCountdown),
+    SC_CALL(ValePrologue_LookAround),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

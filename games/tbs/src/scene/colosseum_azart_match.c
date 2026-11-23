@@ -146,7 +146,7 @@ extern s32 gColosso_PrizeScript[];
 extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
 extern u32 gColosseumAzartMatch_Exits[];
 extern struct ActorPlacement gColosseumAzartMatch_ActorPlacements[];
-extern u32 gColosseumAzartMatch_Countdown;
+extern u32 gColosseumAzartMatch_BridgeTimer;
 extern struct Trigger gColosseumAzartMatch_Triggers[];
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
@@ -265,7 +265,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Advances the bridge animation and the cell behaviors that make it
 /// walkable.
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
-  switch (gColosseumAzartMatch_Countdown) {
+  switch (gColosseumAzartMatch_BridgeTimer) {
   case 66:
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
@@ -287,17 +287,17 @@ static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
     MapGrid_CopyCellsLayered(92, 29, 2, 2, 54, 38);
     Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 12);
     MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
-    gColosseumAzartMatch_Countdown = BRIDGE_CYCLE_FRAMES;
+    gColosseumAzartMatch_BridgeTimer = BRIDGE_CYCLE_FRAMES;
     break;
   }
-  gColosseumAzartMatch_Countdown--;
+  gColosseumAzartMatch_BridgeTimer--;
 }
 
 /// Stops the bridge task and restores its closed frame.
 static void ColosseumAzartMatch_ResetBrokenBridge(void) {
   MapTask task;
 
-  gColosseumAzartMatch_Countdown = 0;
+  gColosseumAzartMatch_BridgeTimer = 0;
   task = ColosseumAzartMatch_UpdateBrokenBridge;
   Task_Remove(task);
   task();
@@ -305,7 +305,7 @@ static void ColosseumAzartMatch_ResetBrokenBridge(void) {
 
 /// Starts the broken bridge opening and closing, over and over.
 static void ColosseumAzartMatch_StartBrokenBridge(void) {
-  gColosseumAzartMatch_Countdown = 66;
+  gColosseumAzartMatch_BridgeTimer = 66;
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
 }
 
@@ -314,7 +314,7 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   s32 i;
 
   wait(10);
-  for (i = 0; i < BRIDGE_CYCLE_FRAMES && gColosseumAzartMatch_Countdown != 22;
+  for (i = 0; i < BRIDGE_CYCLE_FRAMES && gColosseumAzartMatch_BridgeTimer != 22;
        i++)
     wait(1);
 }
@@ -1305,7 +1305,7 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
 };
 
 /// The frames left in the broken bridge's cycle (BRIDGE_CYCLE_FRAMES).
-u32 gColosseumAzartMatch_Countdown = 0;
+u32 gColosseumAzartMatch_BridgeTimer = 0;
 
 struct Trigger gColosseumAzartMatch_Triggers[] = {
     { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrHopAcross) },

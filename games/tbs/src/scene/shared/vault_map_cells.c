@@ -17,7 +17,7 @@ enum {
 
 /// The two square halves are stacked in the source layout and drawn side by
 /// side.
-static inline void Vault_DrawDoorway(s32 sourceColumn) {
+static inline void Vault_DrawSanctumDoor(s32 sourceColumn) {
   MapGrid_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
                       VAULT_DOOR_HALF_SIZE);
   MapGrid_CopyCellsTo(sourceColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE,
@@ -32,9 +32,9 @@ static void Vault_OpenDoorwayAndEnter(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_THUMP);
-  Vault_DrawDoorway(VAULT_DOOR_OPENING_COLUMN);
+  Vault_DrawSanctumDoor(VAULT_DOOR_OPENING_COLUMN);
   Event_Wait(4);
-  Vault_DrawDoorway(VAULT_DOOR_OPEN_COLUMN);
+  Vault_DrawSanctumDoor(VAULT_DOOR_OPEN_COLUMN);
   Event_Wait(4);
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;

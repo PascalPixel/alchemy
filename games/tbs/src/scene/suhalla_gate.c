@@ -79,7 +79,7 @@ extern struct ActorPlacement gSuhallaGateActorPlacementsOther[];
 extern struct ActorPlacement gSuhallaGateDewActorPlacements[];
 extern struct ActorPlacement gSuhallaGateCheckpointActorPlacements[];
 extern struct ActorPlacement
-    gSuhallaGateCheckpointActorPlacementsAfterAudience[];
+    gSuhallaGateCheckpointActorPlacementsAfterColosso[];
 extern struct Trigger gSuhallaGateTriggersOther[];
 extern struct Trigger gSuhallaGateDewTriggers[];
 extern struct Trigger gGatewayCaveTriggers[];
@@ -105,7 +105,7 @@ enum SuhallaGateCellBehavior { CELL_BEHAVIOR_SUHALLA_GATE_APPROACH = 10 };
 
 /// The actors of the gate itself (SuhallaGateCheckpoint), numbered in
 /// the order of gSuhallaGateCheckpointActorPlacements and, after Babi's
-/// audience, of gSuhallaGateCheckpointActorPlacementsAfterAudience.
+/// audience, of gSuhallaGateCheckpointActorPlacementsAfterColosso.
 enum SuhallaGateCheckpointActorId {
   /// The two of Babi's soldiers who keep the gate, standing before Babi's
   /// audience and lying wounded after it. The west guard says only those with
@@ -132,7 +132,7 @@ enum SuhallaGateDewActorId {
   ACTOR_DEW = ACTOR_FIRST_SPROUT + 5,
   /// The eighth placed actor, where the scene places six: Scene_Initialize
   /// stretches it all the same.
-  ACTOR_UNPLACED = ACTOR_FIRST_PLACED + 7
+  ACTOR_EIGHTH_PLACED = ACTOR_FIRST_PLACED + 7
 };
 
 /// Talking to Dew, the Mercury Djinni at the foot of the third slide in the
@@ -167,7 +167,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   }
   if (sceneId == SCENE_SUHALLA_GATE_CHECKPOINT) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-      return gSuhallaGateCheckpointActorPlacementsAfterAudience;
+      return gSuhallaGateCheckpointActorPlacementsAfterColosso;
     }
     return gSuhallaGateCheckpointActorPlacements;
   }
@@ -241,10 +241,10 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIMATION_HALF_GROWN);
     // UB: the scene places only actors up to ACTOR_DEW, so there is no
-    // ACTOR_UNPLACED and Actor_Get returns NULL; the store goes to the BIOS,
-    // which ignores it.
+    // ACTOR_EIGHTH_PLACED and Actor_Get returns NULL; the store goes to the
+    // BIOS, which ignores it.
 #ifndef UBFIX
-    Actor_Get(ACTOR_UNPLACED)->scaleY = 8 * FIXED_ONE / 5;
+    Actor_Get(ACTOR_EIGHTH_PLACED)->scaleY = 8 * FIXED_ONE / 5;
 #endif
     MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
@@ -643,7 +643,7 @@ struct ActorPlacement gSuhallaGateCheckpointActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gSuhallaGateCheckpointActorPlacementsAfterAudience[] = {
+struct ActorPlacement gSuhallaGateCheckpointActorPlacementsAfterColosso[] = {
 #if !TBS_PATCH_3
     ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
         136, 0, 408, FACING_SOUTH, TALK_FACING_PARTY, 0),

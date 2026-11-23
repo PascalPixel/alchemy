@@ -117,9 +117,9 @@ enum MercuryLighthouseEntranceCellBehavior {
   /// The white stone post at the south edge of the goddess's pool, cell
   /// (12, 38).
   CELL_BEHAVIOR_HEART_INSCRIPTION = 1,
-  /// Answered by MercuryLighthouseEntrance_ReturnToDoorway, but no cell of
-  /// the floor has it.
-  CELL_BEHAVIOR_UNUSED_RETURN_TO_DOORWAY = 10,
+  /// Answered by MercuryLighthouseEntrance_UnusedReturnToSixStatues, but no
+  /// cell of the floor has it.
+  CELL_BEHAVIOR_UNUSED_RETURN_TO_SIX_STATUES = 10,
   /// Straight in front of the Lizard Man's doorway, cell (8, 10).
   CELL_BEHAVIOR_BEFORE_LIZARD_MAN = 40,
   /// Beside him in front of the doorway, cells (7, 10) and (9, 10).
@@ -399,7 +399,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 /// It would start the hall of six statues again at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, where Mia goes in
 /// if she has not yet.
-static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
+static void MercuryLighthouseEntrance_UnusedReturnToSixStatues(void) {
   Import_EventSetExitRequest(
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);
 }
@@ -934,7 +934,7 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_RippleAroundLeader) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_ChargeLights) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_UNUSED_RETURN_TO_DOORWAY, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReturnToDoorway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_UNUSED_RETURN_TO_SIX_STATUES, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_UnusedReturnToSixStatues) },
     { TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_LIZARD_MAN, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCenter) },
     { TRIGGER_STEP, CELL_BEHAVIOR_BEHIND_BESIDE_LIZARD_MAN, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCenter) },
     { TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_LIZARD_MAN, FLAG_LIZARD_MAN_STEPPED_ASIDE, EVENT(MercuryLighthouseEntrance_LizardManBlocksLeader) },

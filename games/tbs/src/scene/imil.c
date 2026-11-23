@@ -121,7 +121,7 @@
 
 extern s16 gIce_KeyHeadings[];
 extern s16 gImil_SlideHeadings[];
-extern s32 gImil_ShiverScript[];
+extern s32 gImil_TrembleScript[];
 extern s32 gImil_OldWomanHurryScript[];
 extern s32 gImil_LeaderStepAsideScript[];
 extern s32 gImil_BobScript[];
@@ -306,8 +306,8 @@ static void Imil_MiaSaysFarewellToApprentices(void);
 /// toward it as he goes, until a bank or a block stops him.
 static void Leader_SlideOnIce(void);
 
-/// A sick person shivers: a quick squash, then a pause.
-static s32 Imil_UpdateShiver(struct Actor *actor) {
+/// A sick person trembles: a quick squash, then a pause.
+static s32 Imil_UpdateTremble(struct Actor *actor) {
   switch (actor->timer) {
   case 6:
     actor->scaleX -= FIXED_ONE / 4;
@@ -499,7 +499,7 @@ static void Imil_TalkToOldMan(void) {
     } else {
       Event_Start();
       Actor_Get(ACTOR_OLD_MAN)->timer = 10;
-      Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
+      Actor_SetScript(ACTOR_OLD_MAN, gImil_TrembleScript);
       Event_SetMessageId(MsgMercuryOoohHelpMe);
       // "Oooh... Help me..."
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
@@ -926,7 +926,7 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(ACTOR_OLD_WOMAN, 149, 116);
           Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_EAST;
           Actor_Get(ACTOR_OLD_MAN)->userValue = 0;
-          Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
+          Actor_SetScript(ACTOR_OLD_MAN, gImil_TrembleScript);
         } else {
           Actor_SetMovementTypeById(ACTOR_OLD_WOMAN, 2);
         }
@@ -934,7 +934,7 @@ s32 Scene_Initialize(void) {
     } else if (entrance == ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST) {
       if (!GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_Get(ACTOR_SICK_OLD_MAN)->userValue = 1;
-        Actor_SetScript(ACTOR_SICK_OLD_MAN, gImil_ShiverScript);
+        Actor_SetScript(ACTOR_SICK_OLD_MAN, gImil_TrembleScript);
       }
     } else if (entrance == ICE_ROOMS_HOUSE_NORTHEAST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1669,9 +1669,9 @@ s16 gImil_SlideHeadings[] = {
 
 #include "shared/tremble_script.c"
 
-/// A sick person shivers (Imil_UpdateShiver) for as long as it runs.
-s32 gImil_ShiverScript[] = {
-    SC_CALL(Imil_UpdateShiver),
+/// A sick person trembles (Imil_UpdateTremble) for as long as it runs.
+s32 gImil_TrembleScript[] = {
+    SC_CALL(Imil_UpdateTremble),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 

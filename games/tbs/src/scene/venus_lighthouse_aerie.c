@@ -22,8 +22,8 @@
 /// - The confrontation, when Isaac walks up to the beacon
 ///   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   VenusLighthouseAerie_ConfrontSaturosAndMenardi). The Shaman's Rod is
-///   handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_HOLDER plus
-///   the party member who carried it. The first battle follows
+///   handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_CARRIED_BY
+///   plus the party member who carried it. The first battle follows
 ///   (ENCOUNTER_ZONE_SCRIPTED, slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
 ///   VenusLighthouseAerie_CombineSaturosAndMenardi). Saturos throws the Venus
@@ -162,7 +162,7 @@ enum {
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle. A defeat gives it back.
-#define FLAG_SHAMANS_ROD_HOLDER FLAG_AREA_TEMP_45
+#define FLAG_SHAMANS_ROD_CARRIED_BY FLAG_AREA_TEMP_45
 
 /// Area flags that choose the aerie's field music after each battle.
 ///
@@ -491,11 +491,11 @@ s32 Scene_Initialize(void) {
     break;
   case VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT:
     Event_Start();
-    if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER) != 0) {
+    if (GameFlag_Get(FLAG_SHAMANS_ROD_CARRIED_BY) != 0) {
       Inventory_AddItem(ISAAC, ITEM_SHAMANS_ROD);
-    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER + 1) != 0) {
+    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_CARRIED_BY + 1) != 0) {
       Inventory_AddItem(GARET, ITEM_SHAMANS_ROD);
-    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_HOLDER + 2) != 0) {
+    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_CARRIED_BY + 2) != 0) {
       Inventory_AddItem(IVAN, ITEM_SHAMANS_ROD);
     } else {
       Inventory_AddItem(MIA, ITEM_SHAMANS_ROD);
@@ -1323,7 +1323,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   // "Prepare to experience first-hand the horror of a master Fire Adept!"
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);
   rodHolder = PartyInventory_FindMember(ITEM_SHAMANS_ROD);
-  GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_HOLDER);
+  GameFlag_Set(rodHolder + FLAG_SHAMANS_ROD_CARRIED_BY);
   PartyInventory_Remove(ITEM_SHAMANS_ROD);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;

@@ -39,7 +39,7 @@
 /// words. Searching the barrel beside her, with the Bone on it
 /// (CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL, Vault_FindBone) gives another.
 ///
-/// While Isaac stands beside that Bone, Vault_UpdateBoneProximityFlag sets
+/// While Isaac stands beside that Bone, Vault_UpdateLeaderBesideBoneFlag sets
 /// FLAG_VAULT_LEADER_BESIDE_BONE, which turns her talk row off, so that the A
 /// button there picks the Bone up instead of talking to her.
 ///
@@ -113,7 +113,7 @@ enum {
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 
-#include "shared/vault_bone_proximity_flag.c"
+#include "shared/vault_leader_beside_bone_flag.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsB_Entrances;
@@ -388,7 +388,7 @@ s32 Scene_Initialize(void) {
   } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
     Vault_PlaceItemIcon(ITEM_BONE, toFIXED(568), toFIXED(16), toFIXED(672));
-    Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
+    Task_AddFrame(Vault_UpdateLeaderBesideBoneFlag, TASK_PASS_FRAME);
   }
 
   return 0;

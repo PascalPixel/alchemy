@@ -64,14 +64,14 @@ extern struct Trigger gBattleArenaTriggers[];
 /// asked or in the circle.
 #define FLAG_BATTLE_ARENA_OPPONENT_ASKED FLAG_SCENE_TEMP_01
 /// The player has agreed to a battle.
-#define FLAG_BATTLE_ARENA_PLAYER_AGREED FLAG_SCENE_TEMP_02
+#define FLAG_BATTLE_ARENA_AGREED_TO_BATTLE FLAG_SCENE_TEMP_02
 /// The party is on its way into the battle.
 #define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_SCENE_TEMP_03
 /// ACTOR_PARTY_ORDER_VISITOR has given the linked finals' limit of three
 /// allies, so the next talk explains how to change the party's order.
 #define FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT FLAG_SCENE_TEMP_04
 /// The link was lost and the attendant has yet to say so.
-#define FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED FLAG_SCENE_TEMP_05
+#define FLAG_BATTLE_ARENA_LINK_DISCONNECTED FLAG_SCENE_TEMP_05
 /// The first of eight flags, one per character from Isaac, each set while that
 /// character is in the battle party (Scene_Initialize).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
@@ -153,7 +153,8 @@ enum BattleArenaActorId {
   /// The attendant, who arranges every battle. ACTOR_GREETER calls her the girl
   /// at the counter.
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
-  /// Reports the linked battles won, and answers for ACTOR_DEBUG_HELPER.
+  /// Reports the linked battles won, and answers for
+  /// ACTOR_DEBUG_PARAMETERS_MAN.
   ACTOR_LINKED_WINS_TELLER,
   /// Opens a Sanctum's services (BattleArena_OpenSanctum). The sprite is
   /// SPRITE_MAN_IN_TALL_HAT, the healer of every Sanctum in sanctum.c.
@@ -163,7 +164,7 @@ enum BattleArenaActorId {
   ACTOR_FINALS_VISITOR,
   ACTOR_OLD_MANS_ARENA_VISITOR,
   /// Loads a debug parameter set (BattleArena_ChooseDebugParameterSet).
-  ACTOR_DEBUG_HELPER,
+  ACTOR_DEBUG_PARAMETERS_MAN,
   /// Explains the linked finals' limit of three allies, then the party order.
   ACTOR_PARTY_ORDER_VISITOR,
   ACTOR_COMMAND_TIME_VISITOR,
@@ -389,7 +390,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
           (BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
            BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         GameFlag_Set(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-        if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) {
+        if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
           work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
         }
         result = 1;
@@ -399,7 +400,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
       }
     }
     if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED) &&
-        GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED) &&
+        GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE) &&
         !GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED)) {
       work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
     }
@@ -407,17 +408,17 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
   // LOBBY_PEER_WAIT_FRAMES frames without a link while a linked battle is being
   // arranged: report the link lost.
   if ((Event_GetFlag(FLAG_BATTLE_ARENA_OPPONENT_ASKED) ||
-       GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) &&
+       GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) &&
       !GameFlag_Get(FLAG_MONSTER_BATTLE) &&
       !BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       sBattleArenaWaitFrames >= LOBBY_PEER_WAIT_FRAMES) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
-    GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
+    GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-    GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
-  if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED)) {
+  if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED)) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
   }
   RETURN_UNREAD(result);
@@ -483,7 +484,7 @@ static s32 BattleArena_ReportLinkDisconnected(void) {
   Event_SetMessageId(MsgLobbyLinkDisconnected);
   // "The link was disconnected."
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
-  GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
+  GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
   Event_End();
 #ifdef UBFIX
   return 0;
@@ -855,7 +856,7 @@ static s32 BattleArena_EnterBattle(void) {
   } else {
     if (!GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED))
       return LOBBY_NO_RESULT;
-    if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED))
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED))
       return LOBBY_NO_RESULT;
     Event_Start();
     GameFlag_Set(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
@@ -868,7 +869,7 @@ static s32 BattleArena_EnterBattle(void) {
       cancelEntry = 0;
       if (!GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED))
         cancelEntry = 1;
-      if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED))
+      if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED))
         cancelEntry = 1;
       if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
           !BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
@@ -879,9 +880,9 @@ static s32 BattleArena_EnterBattle(void) {
       }
       if (cancelEntry) {
         work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
-        GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
+        GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-        GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
@@ -940,7 +941,7 @@ static s32 BattleArena_EnterBattle(void) {
         Task_AddFrame((TaskFunc)BattleArena_WatchOpponent, TASK_PASS_FRAME);
         Task_SetFlags((TaskFunc)BattleArena_WatchOpponent, 1);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-        GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
@@ -1025,7 +1026,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         GameFlag_Set(FLAG_MONSTER_BATTLE);
         GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
         GameFlag_Clear(FLAG_LINK_BATTLE);
-        GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+        GameFlag_Set(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
         messageId = messageBase + 7;
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -1046,10 +1047,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
       Event_SetMessageId(MsgLobbyOpponentArrived);
       // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
-      GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+      GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
-    if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_AGREED)) {
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
       messageId = messageBase + 3;
       /* The first branch's answers jump into this block's message tail, and an
        * accepted challenge back into its opening: the listing keeps one copy of
@@ -1085,10 +1086,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
             Event_SetMessageId(messageBase + 4);
           }
           BattleArena_WriteSlotValue(LOBBY_SLOT_ASKED);
-          GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_AGREED);
+          GameFlag_Set(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
           goto open_message;
         } else {
-          GameFlag_Set(FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED);
+          GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
         }
       } else {
         Event_SetMessageId(messageBase);
@@ -1824,7 +1825,7 @@ struct Trigger gBattleArenaTriggers[] = {
      EVENT(BattleArena_TalkToVisitor)},
     {TRIGGER_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
      EVENT(BattleArena_TalkToVisitor)},
-    {TRIGGER_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_DEBUG_PARAMETERS_MAN, CONDITION_ALWAYS,
      EVENT(BattleArena_ChooseDebugParameterSet)},
     {TRIGGER_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
      EVENT(BattleArena_ExplainPartyOrder)},

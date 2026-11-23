@@ -19,8 +19,9 @@
 /// takes it back, deciding they are too young, and his captain sees the party
 /// out. Outside his door the captain is sorry, and lets slip that
 /// the barricade on the way to Kolima may not need a key
-/// (McCoyPalace_CaptainHintsAtBarricade); from then on the people speak as if
-/// the party had been turned away (FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY).
+/// (McCoyPalace_CaptainTalksAboutBarricade); from then on the people speak as
+/// if the party had been turned away
+/// (FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY).
 ///
 /// Once the curse is lifted, the guards on the grounds march the party
 /// straight into McCoy's room, where McCoy thanks it
@@ -184,7 +185,7 @@ enum {
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag);
 static void McCoyPalace_AudienceWithMcCoy(void);
-static void McCoyPalace_CaptainHintsAtBarricade(void);
+static void McCoyPalace_CaptainTalksAboutBarricade(void);
 static void McCoyPalace_McCoyRewardsParty(void);
 static void McCoyPalace_PresentRewardChests(void);
 
@@ -378,7 +379,7 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
 /// McCoy's door opens with `SE_THUMP` and the bedroom doors with
 /// `SE_DOOR_OPEN`, the door's opening being the map's tile animations 1 and 2,
 /// let run for the walk. After the captain has come out of McCoy's door
-/// (McCoyPalace_CaptainHintsAtBarricade) it stands open, so walking back in
+/// (McCoyPalace_CaptainTalksAboutBarricade) it stands open, so walking back in
 /// makes no sound and plays no opening.
 static void McCoyPalace_WalkThroughDoor(void) {
   struct FieldWork *work;
@@ -607,7 +608,7 @@ s32 Scene_Initialize(void) {
     } else if (gMainRoutineWork.entrance ==
                    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM &&
                GameFlag_Get(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
-      McCoyPalace_CaptainHintsAtBarricade();
+      McCoyPalace_CaptainTalksAboutBarricade();
     }
   } else {
     rewardTaken = GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN);
@@ -1163,7 +1164,7 @@ leave:
 /// party and the captain comes out. He is sorry Isaac was rejected, asks him to
 /// promise not to go to Kolima, lets slip "That barricade... You may not need
 /// a key.", and leaves down the red carpet.
-static void McCoyPalace_CaptainHintsAtBarricade(void) {
+static void McCoyPalace_CaptainTalksAboutBarricade(void) {
   Event_Start();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

@@ -268,7 +268,7 @@ enum {
 };
 
 // The scene flag the inn keeps as FLAG_VAULT_LEADER_BESIDE_BONE
-// (shared/vault_bone_proximity_flag.c) once the thieves are jailed means
+// (shared/vault_leader_beside_bone_flag.c) once the thieves are jailed means
 // something else in the guests' room:
 /// The party is cornering the two suspects in the guests' room, so talking to
 /// Ivan or the suspects does nothing.
@@ -2025,7 +2025,7 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
   }
 }
 
-#include "shared/vault_bone_proximity_flag.c"
+#include "shared/vault_leader_beside_bone_flag.c"
 
 /// Arriving in any room of Vault's houses, shops and inn sets the room up for
 /// the story so far, and in the loft plays its events.
@@ -2066,7 +2066,7 @@ s32 Scene_Initialize(void) {
       Actor_SetMovementTypeById(ACTOR_GIRL_AT_THE_INN, MOVEMENT_TYPE_STAND);
       Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
       Vault_PlaceItemIcon(ITEM_BONE, toFIXED(568), toFIXED(16), toFIXED(672));
-      Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
+      Task_AddFrame(Vault_UpdateLeaderBesideBoneFlag, TASK_PASS_FRAME);
     } else if (GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, 0, 0);
     }

@@ -41,11 +41,11 @@
 /// party's actions (YAW_PARTY_ACTION).
 #define BACKGROUND_PAN_X Q_8_8(8)
 
-/// Sets the palette brightness. Level 0 transfers the original colours
-/// unchanged.
+/// Darkens the battle background's palette by level steps of a sixtieth;
+/// level 0 restores its saved colours.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
-  struct BattleWork *screen = Ram_HeapSlots->battleWork;
-  u16 *palette = screen->palette;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  u16 *palette = battle->palette;
   volatile u32 ime;
 
   IRQ_LOCK(ime);
@@ -55,21 +55,23 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
             DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else {
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
-                      screen->brightness =
+                      battle->brightness =
                           FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BACKGROUND_COLORS);
   }
   Irq_Unlock(&ime);
 }
 
-/// Switches the background's display mode, optionally fades its palette by
-/// fade, and rebuilds both its maps.
-void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
-  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
+/// Switches the battle background's display mode and rebuilds both its maps.
+/// A nonzero fade darkens the saved palette by taking fade from each colour
+/// channel, and BATTLE_BACKGROUND_FADE_RESTORE puts it back undarkened; the
+/// background's id is not read.
+void BattleBackground_SetMode(s32 mode, s32 background, s32 fade) {
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
 
-  if (transition->mode == BATTLE_BACKGROUND_NONE)
+  if (background->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
-  transition->mode = mode;
+  background->mode = mode;
 
   if (mode == BATTLE_BACKGROUND_FIXED)
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_HALFWORD);
@@ -143,24 +145,24 @@ void BattleBackground_Free(void) {
 /// darkened by level steps of 1/60 (none when level is negative), its tile
 /// table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
-  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
-  struct BattleWork *session = (struct BattleWork *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
   ModelDecoder decode;
   u16 *palette;
 
   RamCode_Load(decode, Model_DecodeCode, Model_DecodeCodeSize);
   decode(data + BACKGROUND_PALETTE_BYTES, (void *)BG_CHAR_BLOCK(2));
   Heap_Release(decode);
-  palette = session->palette;
+  palette = battle->palette;
   Dma_Set(data, palette, DMA_COPY_WORDS(BACKGROUND_PALETTE_BYTES / 4),
           REG_DMA3);
   if (level >= 0)
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
-                      session->brightness =
+                      battle->brightness =
                           FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BACKGROUND_COLORS);
-  if (session->keepBackdropPalette == 0) {
+  if (battle->keepBackdropPalette == 0) {
     Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
     BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
@@ -173,9 +175,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   Iwram_ClearWordsEntry((void *)(BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
                                  BG_SCREEN_SIZE - BG_SCREEN_WIDTH * 2),
                         BG_SCREEN_WIDTH * 2);
-  if (view->mode == BATTLE_BACKGROUND_NONE)
+  if (background->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
-  view->mode = mode;
+  background->mode = mode;
   if (mode == BATTLE_BACKGROUND_FIXED)
     REG_BG1CNT = BATTLE_BG1CNT;
 }
@@ -185,7 +187,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
 /// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
                            s32 offsetY, FIXED scale) {
-  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
   struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   s32 panX;
@@ -208,11 +210,11 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   }
   if (scanlines == NULL)
     return;
-  if ((view->mode == BATTLE_BACKGROUND_FIXED ||
-       view->secondMode == BATTLE_BACKGROUND_FIXED) &&
-      view->busy == 0)
+  if ((background->mode == BATTLE_BACKGROUND_FIXED ||
+       background->secondMode == BATTLE_BACKGROUND_FIXED) &&
+      background->busy == 0)
     gBgScroll[1].x = panX >> 8;
-  if (view->mode != BATTLE_BACKGROUND_ZOOMED)
+  if (background->mode != BATTLE_BACKGROUND_ZOOMED)
     return;
 
   // The affine parameters: a plain zoom, the reference point moved so the
@@ -258,55 +260,55 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  FIXED span = BATTLE_CAMERA_DISTANCE;
+  FIXED focal = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is never set, so the scale is whatever its register held; UBFIX
   // takes it as a parameter.
 #ifndef UBFIX
   s32 zoom;
 #endif
-  struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
-  s32 *pos = scene->focus;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  s32 *focus = camera->focus;
   FIXED scale = INTtoFIXED(zoom) / 100;
-  s32 renderBounds[3];
-  s32 measuredBounds[3];
-  s32 sourceBounds[3];
-  FIXED alpha;
-  FIXED half;
-  FIXED width;
-  u32 result;
+  s32 eyeOffset[3];
+  s32 originOnScreen[3];
+  s32 origin[3];
+  FIXED nearShare;
+  FIXED halfFocal;
+  FIXED zoomedFocal;
+  u32 nearDepth;
 
-  pos[0] = x;
-  pos[1] = depth;
-  pos[2] = y;
-  sourceBounds[0] = 0;
-  alpha = FIXED_ONE * 3 / 4;
-  sourceBounds[1] = 0;
-  sourceBounds[2] = 0;
+  focus[0] = x;
+  focus[1] = depth;
+  focus[2] = y;
+  origin[0] = 0;
+  nearShare = FIXED_ONE * 3 / 4;
+  origin[1] = 0;
+  origin[2] = 0;
 
-  result = Iwram_RatioMulQ14(span, alpha);
-  Projection_Set(span, result, span * 2);
+  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  Projection_Set(focal, nearDepth, focal * 2);
   Matrix_Initialize();
-  Matrix_TranslateVector(pos);
-  Matrix_RotateY((s16)scene->yaw);
-  Matrix_RotateX((s16)scene->pitch);
-  renderBounds[0] = 0;
-  renderBounds[1] = 0;
-  renderBounds[2] = scene->distance;
-  Iwram_TransformVector(renderBounds, scene->eye);
+  Matrix_TranslateVector(focus);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
+  eyeOffset[0] = 0;
+  eyeOffset[1] = 0;
+  eyeOffset[2] = camera->distance;
+  Iwram_TransformVector(eyeOffset, camera->eye);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Matrix_Initialize();
-  Matrix_SetLookAt(scene->eye, pos);
-  Matrix_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_SetLookAt(camera->eye, focus);
+  Matrix_ProjectPoint(origin, originOnScreen);
 
   BattleCamera_SetRange(
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
-      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
-      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
-  width = half * 2;
-  result = Iwram_RatioMulQ14(width, alpha);
-  Projection_Set(width, result, half * 4);
+      (BATTLE_PROJECTION_CENTER_X - originOnScreen[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
+  halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
+  zoomedFocal = halfFocal * 2;
+  nearDepth = Iwram_RatioMulQ14(zoomedFocal, nearShare);
+  Projection_Set(zoomedFocal, nearDepth, halfFocal * 4);
 }
 
 /// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
@@ -314,50 +316,50 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 /// the screen moves the plane as much, and the zoom scales the focal length
 /// and the far depth.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
-  struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
-  s32 *pos = scene->focus;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  s32 *focus = camera->focus;
   FIXED scale = INTtoFIXED(zoom) / 100;
-  FIXED renderBounds[3];
-  s32 measuredBounds[3];
-  s32 sourceBounds[3];
-  FIXED span = BATTLE_CAMERA_DISTANCE;
-  FIXED alpha;
-  FIXED half;
-  FIXED width;
-  u32 result;
+  FIXED eyeOffset[3];
+  s32 originOnScreen[3];
+  s32 origin[3];
+  FIXED focal = BATTLE_CAMERA_DISTANCE;
+  FIXED nearShare;
+  FIXED halfFocal;
+  FIXED zoomedFocal;
+  u32 nearDepth;
 
-  pos[0] = x;
-  pos[1] = depth;
-  pos[2] = y;
-  sourceBounds[0] = 0;
-  alpha = FIXED_ONE * 3 / 4;
-  sourceBounds[1] = 0;
-  sourceBounds[2] = 0;
+  focus[0] = x;
+  focus[1] = depth;
+  focus[2] = y;
+  origin[0] = 0;
+  nearShare = FIXED_ONE * 3 / 4;
+  origin[1] = 0;
+  origin[2] = 0;
 
-  result = Iwram_RatioMulQ14(span, alpha);
-  Projection_Set(span, result, span * 2);
+  nearDepth = Iwram_RatioMulQ14(focal, nearShare);
+  Projection_Set(focal, nearDepth, focal * 2);
   Matrix_Initialize();
-  Matrix_TranslateVector(pos);
-  Matrix_RotateY((s16)scene->yaw);
-  Matrix_RotateX((s16)scene->pitch);
-  renderBounds[0] = 0;
-  renderBounds[1] = 0;
-  renderBounds[2] = span;
-  Iwram_TransformVector(renderBounds, (s32 *)scene);
+  Matrix_TranslateVector(focus);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
+  eyeOffset[0] = 0;
+  eyeOffset[1] = 0;
+  eyeOffset[2] = focal;
+  Iwram_TransformVector(eyeOffset, (s32 *)camera);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Matrix_Initialize();
-  Matrix_SetLookAt(scene->eye, pos);
-  Matrix_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_SetLookAt(camera->eye, focus);
+  Matrix_ProjectPoint(origin, originOnScreen);
 
   BattleCamera_SetRange(
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
-      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
-      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
-  half = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
-  width = half * 2;
-  result = Iwram_RatioMulQ14(width, alpha);
-  Projection_Set(width, result, half * 4);
+      (BATTLE_PROJECTION_CENTER_X - originOnScreen[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - originOnScreen[1]) << 8, scale);
+  halfFocal = scale * (FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2);
+  zoomedFocal = halfFocal * 2;
+  nearDepth = Iwram_RatioMulQ14(zoomedFocal, nearShare);
+  Projection_Set(zoomedFocal, nearDepth, halfFocal * 4);
 }
 
 /// Points the battle camera at the ground between two units, with a zoom in
@@ -949,7 +951,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct BattlePresentationWork pillarLaunch;
   struct BattlePresentationWork burstLaunch;
   s32 origin[2];
-  struct BattleWork *session = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   volatile u16 *ime;
   struct SparkWork *work;
   s32 frame;
@@ -957,7 +959,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct ScreenPoint *pos;
 
   wait(1);
-  BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, session->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
@@ -977,11 +979,11 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(element);
     for (frame = 0, pos = &starPosition; frame < STAR_FIELD_FRAMES; frame++) {
-      brightness = &session->brightness;
+      brightness = &battle->brightness;
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, BATTLE_BG_PALETTE,
+        ColorBuffer_Scale(battle->palette, BATTLE_BG_PALETTE,
                           *brightness =
                               FIXED_ONE - frame * BACKGROUND_LEVEL_STEP,
                           BATTLE_BACKGROUND_COLORS);

@@ -266,27 +266,27 @@ const u8 gAbilityStaging[] = {
     0, // ?
     0, // ?
     0, // ?
-    0, // {article_class:3}Herb
-    0, // {article_class:2}Nut
-    0, // {article_class:2}Vial
-    0, // {article_class:2}Potion
-    0, // {article_class:5}Soothing Water
-    0, // {article_class:2}Psy Crystal
-    0, // {article_class:2}Antidote
-    0, // {article_class:3}Elixir
-    0, // {article_class:4}Water of Life
-    0, // {article_class:2}Mist Potion
-    0, // {article_class:4}Power Bread
-    0, // {article_class:2}Cookie
-    0, // {article_class:3}Apple
-    0, // {article_class:2}Hard Nut
-    0, // {article_class:2}Mint
-    0, // {article_class:4}Lucky Pepper
+    0, // Herb
+    0, // Nut
+    0, // Vial
+    0, // Potion
+    0, // Soothing Water
+    0, // Psy Crystal
+    0, // Antidote
+    0, // Elixir
+    0, // Water of Life
+    0, // Mist Potion
+    0, // Power Bread
+    0, // Cookie
+    0, // Apple
+    0, // Hard Nut
+    0, // Mint
+    0, // Lucky Pepper
     0, // ?
-    0, // {article_class:2}Smoke Bomb
-    0, // {article_class:2}Sleep Bomb
-    0, // {article_class:3}Adept Ring
-    0, // {article_class:4}Corn
+    0, // Smoke Bomb
+    0, // Sleep Bomb
+    0, // Adept Ring
+    0, // Corn
     0, // ?
     0, // ?
     0, // ?
@@ -1004,27 +1004,27 @@ const u32 gAbilityBattleEffects[] = {
     0, // ?
     0, // ?
     0, // ?
-    BATTLE_EFFECT_PLY, // {article_class:3}Herb
-    BATTLE_EFFECT_PLY, // {article_class:2}Nut
-    BATTLE_EFFECT_PLY, // {article_class:2}Vial
-    BATTLE_EFFECT_PLY, // {article_class:2}Potion
-    BATTLE_EFFECT_PLY, // {article_class:5}Soothing Water
-    BATTLE_EFFECT_PSY_CRYSTAL, // {article_class:2}Psy Crystal
-    BATTLE_EFFECT_CURE_POISON, // {article_class:2}Antidote
-    BATTLE_EFFECT_CURE_POISON | (1 << EFFECT_VARIANT_SHIFT), // {article_class:3}Elixir
-    BATTLE_EFFECT_REVIVE, // {article_class:4}Water of Life
-    BATTLE_EFFECT_WISH | (2 << EFFECT_VARIANT_SHIFT), // {article_class:2}Mist Potion
-    0, // {article_class:4}Power Bread
-    0, // {article_class:2}Cookie
-    0, // {article_class:3}Apple
-    0, // {article_class:2}Hard Nut
-    0, // {article_class:2}Mint
-    0, // {article_class:4}Lucky Pepper
+    BATTLE_EFFECT_PLY, // Herb
+    BATTLE_EFFECT_PLY, // Nut
+    BATTLE_EFFECT_PLY, // Vial
+    BATTLE_EFFECT_PLY, // Potion
+    BATTLE_EFFECT_PLY, // Soothing Water
+    BATTLE_EFFECT_PSY_CRYSTAL, // Psy Crystal
+    BATTLE_EFFECT_CURE_POISON, // Antidote
+    BATTLE_EFFECT_CURE_POISON | (1 << EFFECT_VARIANT_SHIFT), // Elixir
+    BATTLE_EFFECT_REVIVE, // Water of Life
+    BATTLE_EFFECT_WISH | (2 << EFFECT_VARIANT_SHIFT), // Mist Potion
+    0, // Power Bread
+    0, // Cookie
+    0, // Apple
+    0, // Hard Nut
+    0, // Mint
+    0, // Lucky Pepper
     0, // ?
-    BATTLE_EFFECT_SMOKE_BOMB, // {article_class:2}Smoke Bomb
-    BATTLE_EFFECT_SMOKE_BOMB, // {article_class:2}Sleep Bomb
-    BATTLE_EFFECT_PSY_CRYSTAL, // {article_class:3}Adept Ring
-    BATTLE_EFFECT_CURE, // {article_class:4}Corn
+    BATTLE_EFFECT_SMOKE_BOMB, // Smoke Bomb
+    BATTLE_EFFECT_SMOKE_BOMB, // Sleep Bomb
+    BATTLE_EFFECT_PSY_CRYSTAL, // Adept Ring
+    BATTLE_EFFECT_CURE, // Corn
     0, // ?
     0, // ?
     0, // ?

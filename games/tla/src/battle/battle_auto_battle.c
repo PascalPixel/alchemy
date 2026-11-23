@@ -79,18 +79,18 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
 }
 
 /// Unused: turns the battle camera while L or R is held, a 128th of a turn
-/// each frame, and redraws the zoomed background unless a transition holds it.
+/// each frame, and redraws the zoomed background unless a background holds it.
 UNUSED void BattleCamera_AdjustByShoulderKeys(void) {
-  struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *trans = Ram_HeapSlots->battleBackground;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
 
   if ((gInput.held & KEY_L) != 0) {
-    cam->yaw += TRIG_TURN / 128;
+    camera->yaw += TRIG_TURN / 128;
   }
   if ((gInput.held & KEY_R) != 0) {
-    cam->yaw -= TRIG_TURN / 128;
+    camera->yaw -= TRIG_TURN / 128;
   }
-  if (trans->flag == 0) {
+  if (background->flag == 0) {
     BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
@@ -98,7 +98,7 @@ UNUSED void BattleCamera_AdjustByShoulderKeys(void) {
 /// Auto battle: plays one action, a defeated target replaced by a living unit
 /// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
-  struct BattleBackgroundWork *transition;
+  struct BattleBackgroundWork *background;
   s32 unitId;
   s32 yaw;
   struct Unit *actor;
@@ -109,15 +109,15 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
     return -1;
 
   action->target = BattleAbility_ReplaceDefeated(action);
-  transition = Ram_HeapSlots->battleBackground;
-  // Here any unit id above 4 counts as an enemy, Jenna's 5, Sheba's 6 and
-  // Piers's 7 included (character_ids.h).
-  if (action->unitId > 4)
+  background = Ram_HeapSlots->battleBackground;
+  // Here any unit id above Felix's counts as an enemy, Jenna, Sheba and Piers
+  // included.
+  if (action->unitId > FELIX)
     yaw = YAW_ENEMY_ACTION;
   else
     yaw = YAW_PARTY_ACTION;
-  transition->targetYaw = yaw;
-  transition->frames = 60;
+  background->targetYaw = yaw;
+  background->frames = 60;
   MessageArgument_ClearAllFar();
 
   switch (action->command) {
@@ -185,13 +185,14 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
 }
 
 /// Auto battle: shows that a standing unit is defending, "<unit> is
-/// defending!". Returns -1 for an invalid unit id, 0 otherwise.
-s32 AutoBattle_ShowDefend(s16 *script) {
+/// defending!". `action` is the action record, read for its unit id. Returns -1
+/// for an invalid unit id, 0 otherwise.
+s32 AutoBattle_ShowDefend(s16 *action) {
   s32 objectId;
   s32 result;
   struct Unit *unit;
 
-  objectId = *script;
+  objectId = *action;
   unit = Unit_Get(objectId);
   if (BattleObject_IsValidId(objectId) < 0) {
     return -1;
@@ -228,12 +229,12 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     return -1;
 
   {
-    struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
     // An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
     // YAW_ENEMY_ACTION.
-    transition->targetYaw =
-        action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
-    transition->frames = 60;
+    background->targetYaw =
+        action->unitId > FELIX ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
+    background->frames = 60;
   }
   wait(10);
   // A roll nothing uses, which still advances the random number generator.
@@ -316,7 +317,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 /// Unused auto battle attack: "<unit> attacks!", the attacker leaps up to its
 /// target, the blow, and both return. Returns -1 when either id is not a
 /// battle object.
-UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
+UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
 
   // A short wait when the camera already faces the party's side.
@@ -328,11 +329,11 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
     wait(30);
   }
 
-  work.actor = input->unitId;
+  work.actor = action->unitId;
   if (BattleObject_IsValidId(work.actor) < 0)
     return -1;
 
-  work.actors[0] = input->target;
+  work.actors[0] = action->target;
   if (BattleObject_IsValidId(work.actors[0]) < 0)
     return -1;
 
@@ -367,21 +368,21 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 /// unit.
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
-  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
   struct MotionObject *object;
   s32 targetYaw;
   s32 i;
 
-  if (action->unitId > 4)
+  if (action->unitId > FELIX)
     targetYaw = YAW_ENEMY_ACTION;
   else
     targetYaw = YAW_PARTY_ACTION;
-  if (transition->targetYaw == targetYaw) {
-    transition->frames = 40;
+  if (background->targetYaw == targetYaw) {
+    background->frames = 40;
     wait(40);
   } else {
-    transition->targetYaw = targetYaw;
-    transition->frames = 40;
+    background->targetYaw = targetYaw;
+    background->frames = 40;
     wait(40);
   }
   work.kind = action->parameter;

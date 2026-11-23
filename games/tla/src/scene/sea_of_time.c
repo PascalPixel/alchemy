@@ -206,10 +206,13 @@ enum {
 /// The last stretch's north part is reached by entrances 1 to
 /// `NORTH_PART_LAST_ENTRANCE`; the last is where the ship waits after
 /// Poseidon's battle. The north part's way down to the south part, at its west
-/// edge, is its exit 2, and the south part's way back north is its exit 5.
+/// edge, is its exit 2, arriving by entrance 6, and the south part's way back
+/// north is its exit 5, arriving by entrance 2.
 enum {
   NORTH_PART_LAST_ENTRANCE = 4,
+  ENTRANCE_FROM_SOUTH_PART = 2,
   ENTRANCE_AFTER_POSEIDON = 4,
+  ENTRANCE_FROM_NORTH_PART = 6,
   EXIT_TO_SOUTH_PART = 2,
   EXIT_BACK_NORTH = 5
 };
@@ -673,7 +676,9 @@ void SeaOfTime_CountLaps(void) {
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
                         spots.spot[(u16)index].z + z, 0, toFIXED(1.2), phase,
-                        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, &params);
+                        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY |
+                            EFFECT_SCRIPT_MEDIUM,
+                        &params);
     }
   }
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
@@ -790,8 +795,7 @@ void SeaOfTime_StopWaves(void) {
     wait(10);
     changed = 0;
     palette = &BG_PLTT_COLOR(SEA_PALETTE, 0);
-    // i counts palette entries from 1 and j saved colours from 0; the saved
-    // colours are read through a pointer set after i, each pass.
+    // The saved colours are the sea's from colour 1 on.
     for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != SEA_COLORS + 1;
          i++, j++) {
       u16 color = palette[i];
@@ -948,6 +952,9 @@ void SeaOfTime_UpdateWater(struct Actor *actor) {
   }
 }
 
+/// Poseidon's battle, in the story battles' encounter table.
+#define ENCOUNTER_SLOT_POSEIDON 6
+
 /// The Lemurian ship sails up the last stretch to cells (20, 18) to (23, 20),
 /// and Poseidon is met: the ship sails north on its own as the camera rises,
 /// the music stops, the water goes flat and its patterns slowly return, a
@@ -988,8 +995,7 @@ void SeaOfTime_FacePoseidon(void) {
     wait(10);
     changed = 0;
     palette = &BG_PLTT_COLOR(SEA_PALETTE, 0);
-    // i counts palette entries from 1 and j saved colours from 0; the saved
-    // colours are read through a pointer set after i, each pass.
+    // The saved colours are the sea's from colour 1 on.
     for (i = 1, saved = &gSeaOfTime_SavedColors, j = 0; i != SEA_COLORS + 1;
          i++, j++) {
       u16 color = palette[i];
@@ -1081,7 +1087,8 @@ void SeaOfTime_FacePoseidon(void) {
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_TO_LEMURIA,
                                   ENTRANCE_AFTER_POSEIDON);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT, 6);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT,
+                                        ENCOUNTER_SLOT_POSEIDON);
   Event_End();
 }
 
@@ -1243,7 +1250,7 @@ void SeaOfTime_AnimateSea(void) {
 
   Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->paletteFade,
           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   layer->speedY = 0;
   for (i = 0; i != DISPLAY_HEIGHT; i++)
     *line++ =
@@ -1288,7 +1295,7 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   FieldCamera_SetSpeed(6);
   px = FIELD_HALF_CELL_ORIGIN(x) + toFIXED(8);
   pz = FIELD_HALF_CELL_ORIGIN(z) + toFIXED(8);
-  FieldCamera_MoveToFX(px, -1, pz, 1);
+  FieldCamera_MoveToFX(px, CAMERA_KEEP, pz, 1);
   FieldCamera_WaitForArrival();
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(0, 16, 1);
@@ -1495,7 +1502,7 @@ s32 Scene_Initialize(void) {
           Dma_Set((const void *)BG_PLTT, block,
                   DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
         }
-        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       }
       if (gMainRoutineWork.entrance == ENTRANCE_AFTER_POSEIDON &&
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1517,7 +1524,7 @@ s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->paletteFade;
 
   Dma_Fill32(-1, block, PALETTE_FADE_BG_COLORS * sizeof(u16));
-  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   return 0;
 }
 
@@ -1557,16 +1564,30 @@ s32 gSeaOfTime_ShipRests[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(SeaOfTimeSwirls),
-    SCENE_EXIT_UNLESS(1, WorldMap, 42, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, SeaOfTimeSwirls, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LemurianShipTiller, 20, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SEA_OF_TIME_SWIRLS_TO_WORLD_MAP, WorldMap,
+                      WORLD_MAP_FROM_SEA_OF_TIME_SWIRLS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        SEA_OF_TIME_SWIRLS_TO_SEA_OF_TIME_TO_LEMURIA, SeaOfTimeToLemuria,
+        SEA_OF_TIME_TO_LEMURIA_FROM_SEA_OF_TIME_SWIRLS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, SeaOfTimeSwirls, SEA_OF_TIME_SWIRLS_FROM_WORLD_MAP,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        SEA_OF_TIME_SWIRLS_TO_LEMURIAN_SHIP_TILLER, LemurianShipTiller,
+        LEMURIAN_SHIP_TILLER_FROM_SEA_OF_TIME_SWIRLS, EXIT_FLAG_NONE),
     SCENE_EXITS(SeaOfTimeToLemuria),
-    SCENE_EXIT_UNLESS(1, SeaOfTimeSwirls, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, WorldMap, 44, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, WorldMap, 43, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, SeaOfTimeToLemuria, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_SWIRLS, SeaOfTimeSwirls,
+        SEA_OF_TIME_SWIRLS_FROM_SEA_OF_TIME_TO_LEMURIA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_TO_SOUTH_PART, SeaOfTimeToLemuria,
+                      ENTRANCE_FROM_NORTH_PART, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTH, WorldMap,
+                      WORLD_MAP_FROM_SEA_OF_TIME_TO_LEMURIA_NORTH,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTHEAST, WorldMap,
+                      WORLD_MAP_FROM_SEA_OF_TIME_TO_LEMURIA_NORTHEAST,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_BACK_NORTH, SeaOfTimeToLemuria,
+                      ENTRANCE_FROM_SOUTH_PART, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

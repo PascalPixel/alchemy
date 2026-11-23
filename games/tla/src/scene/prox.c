@@ -1244,7 +1244,7 @@ void Prox_MoldHidesInSnow(void) {
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
-  actor = (struct Actor *)((s32)FieldCamera_GetActor());
+  actor = FieldCamera_GetActor();
   actor->y.fixed += toFIXED(2);
   actor = Actor_Get(ACTOR_MOLD);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;

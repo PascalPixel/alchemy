@@ -1095,7 +1095,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
     Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 863);
     Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
     Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -1109,7 +1110,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 /// went.
 static void ColosseumEntrance_ExplainTrial(void) {
   Event_Start();
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1249,7 +1251,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(80);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1386,7 +1389,8 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

@@ -173,6 +173,7 @@ s32 Shop_SelectSell(s32 unitId) {
     quantity = Shop_SelectSellCount(unitId, slot);
     if (quantity != -1)
       Shop_SellItem(unitId, slot, quantity);
+    // "Want to sell anything else?"
     Shop_ShowKeeperMessage(MsgSellAnythingElse);
     if (Inventory_CountFar(unitId) == 0)
       break;
@@ -209,11 +210,11 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
           icon->depth = OAM_DEPTH_FRONT - 3;
         }
         x += 16;
-        if (slot == 4) {
+        if (slot == SHOP_INVENTORY_COLUMNS - 1) {
           x = 8;
           y += 16;
         }
-        if (slot == 9) {
+        if (slot == SHOP_INVENTORY_COLUMNS * 2 - 1) {
           x = 8;
           y += 16;
         }
@@ -241,6 +242,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   // Shop_GetSelectionState is game.s's name for Inventory_GetQuantity
   stackQuantity = Shop_GetSelectionState(unitId, slot);
   if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
+    // "How many will you sell?"
     Shop_ShowKeeperMessage(MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
@@ -255,9 +257,9 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   return result;
 }
 
-/// Sells count of the item in slot, after asking with the offer that fits; an
-/// artifact goes back on the shops' stock. count -1 sells the old equipment the
-/// equip prompt offers.
+/// Sells `count` of the item in `slot`, after the shopkeeper's offer that fits
+/// it and a Yes; whatever the shops keep a stock of goes back on sale. A count
+/// of -1 sells the one old piece of equipment a purchase replaced.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);
@@ -276,15 +278,21 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   total = Shop_SalePrice(unit->inventory[slot]) * count;
   if (total == 0) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    // "Sorry, but we don't buy those."
     Shop_ShowKeeperMessageHidingCursor(MsgWeDoNotBuy);
     return;
   }
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CANNOT_UNEQUIP)) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    // "You can't remove your (item). Come back once it's off."
     Shop_ShowKeeperMessageHidingCursor(MsgCannotSellEquipped);
     return;
   }
+  // "How about (total) coins for your old (item)?", "Your (item) is damaged,
+  // so...maybe (total) coins?", "That comes to (total) coins! Sound good?",
+  // "What rare stuff! How about (total) coins?" or "How about (total) coins
+  // for your (item)?"
   if (sellingReplacedItem)
     message = MsgOldItemSellOffer;
   else if (unit->inventory[slot] & INVENTORY_BROKEN)
@@ -299,6 +307,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   MessageArgument_PushFar(total, MESSAGE_ARGUMENT_NUMBER);
   Shop_ShowKeeperMessageHidingCursor(message);
   if (Shop_AskYesNo(0) != 0) {
+    // "You don't want to let go of it, do you?", or "What? Changed your mind?
+    // Well, too bad for you."
     if (rare || sellingReplacedItem)
       message = MsgKeepIt;
     else
@@ -306,13 +316,13 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     Shop_ShowKeeperMessageHidingCursor(message);
     return;
   }
-  // Discard each item before crediting coins and rebuilding the inventory grid.
   Sound_PlayFar(SE_SHOP_SELL);
   for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);
   Shop_DrawMoney();
   Shop_DrawMemberItems(shop->itemWindow, unitId);
+  // "All right, I'll buy it! Here are your coins.", or "OK! It's a deal!"
   if (rare || sellingReplacedItem)
     message = MsgSold;
   else

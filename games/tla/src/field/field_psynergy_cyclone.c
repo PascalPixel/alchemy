@@ -501,7 +501,7 @@ void Actor_ArriveInRing(s32 actorId) {
     actor->scaleY = actor->scaleX = actor->scaleX + WHIRLWIND_RESIZE_STEP;
     wait(1);
   }
-  Actor_SetSpriteFlagsFar(Actor_GetById(actorId), 1);
+  Actor_SetSpriteFlagsFar(Actor_GetById(actorId), SPRITE_FLAG_SHADOW);
   Event_Wait(10);
   Actor_ReleaseFar(whirlwind);
   actor->update = NULL;

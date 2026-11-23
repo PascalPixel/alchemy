@@ -15,8 +15,9 @@ enum MercuryLighthousePoolBehavior {
   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART = 11,
   /// Out in the water, where ripples spread from the leader.
   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER = 21,
-  /// The pool's rim, which takes the leader's lights.
-  CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM = 31
+  /// A plain stepping square of the pool or the floor at its edge, which takes
+  /// the leader's lights.
+  CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP = 31
 };
 
 /// Published in the scene's slot for the leader's lights while the pillar is

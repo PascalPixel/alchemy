@@ -229,7 +229,7 @@
 /// Kraden has welcomed everyone to it; until then that welcome plays at
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 #define FLAG_SOL_SANCTUM_ENTERED 0x802
-/// In the hall of Sol Sanctum's first relief, Kraden has recalled the hidden
+/// In Sol Sanctum's statue hall, Kraden has recalled the hidden
 /// passage Saturos and Menardi spoke of and the four have agreed to look for
 /// it together; until then his talk plays each time the party enters the hall.
 #define FLAG_SEARCHING_FOR_HIDDEN_PASSAGE 0x804
@@ -716,8 +716,8 @@
 #define FLAG_LUNPA_NUT_CAUGHT 0xfd1
 
 // Lunpa Fortress. From FLAG_LUNPA_FORTRESS_CRATES_MOVED to
-// FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, the fortress's state is cleared
-// whenever the party comes back to the gate below it.
+// FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN, the fortress's state is
+// cleared whenever the party comes back to the gate below it.
 /// The party has seen Hammet's rescue up to Dodonpa's trap; a retry after
 /// losing the battle skips to the trap.
 #define FLAG_LUNPA_FORTRESS_TRAP_SEEN 0x942
@@ -734,15 +734,16 @@
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED 0x947
 /// As FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED, for the second switch.
 #define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED 0x948
-/// The guard in the small room in the middle of LunpaFortressUpperFloor has
-/// been beaten, as a Brigand.
-#define FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN 0x949
+/// The guard in the narrow way north out of LunpaFortressUpperFloor's middle
+/// hall has been beaten, as a Brigand.
+#define FLAG_LUNPA_FORTRESS_MIDDLE_HALL_GUARD_BEATEN 0x949
 /// The three guards who fight together have been beaten.
 #define FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN 0x94a
-/// The east guard has been beaten, as a Brigand.
-#define FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN 0x94b
-/// The west guard has been beaten, as a Brigand.
-#define FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN 0x94c
+/// The guard in the doorway up to Donpa's room has been beaten, as a Brigand.
+#define FLAG_LUNPA_FORTRESS_DONPAS_DOOR_GUARD_BEATEN 0x94b
+/// The guard beside the Cell Key in the Cell Key room has been beaten, as a
+/// Brigand.
+#define FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN 0x94c
 /// Donpa's reward, the Djinni in his room, has joined the party.
 #define FLAG_LUNPA_FORTRESS_REWARD_TAKEN 0x94e
 #define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR 0xfa2
@@ -1334,10 +1335,10 @@
 #define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
 /// The nine floors of Crossbone Isle Cave (CrossboneIsleFirstFloor to
 /// CrossboneIsleNinthFloor): one flag each from these, in room order, for the
-/// monsters at the east door beaten and for the pillar sunk into the floor.
+/// monsters at the east door beaten and for the pillar dropped into the gap.
 #define FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED 0x8c8
-/// The first floor's stone pillar has sunk into the floor, opening the way
-/// on; one flag a floor from this one.
+/// The first floor's stone pillar has dropped into the gap between the
+/// ledges, its top a step across; one flag a floor from this one.
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
 /// Deadbeard has been beaten on the Pirate Ship.
 #define FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1

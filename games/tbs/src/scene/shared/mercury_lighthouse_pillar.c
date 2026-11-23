@@ -5,8 +5,8 @@
 /// (the floor's region, its cell behavior) spends one, and a light comes to
 /// hold the leader up where they land. A hop within the pool with no light left
 /// sinks the leader, who is put back at the heart.
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM takes the lights away, and Retreat
-/// removes the column.
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP takes the lights away, and
+/// Retreat removes the column.
 
 /// A charging spark rises a pixel a frame for this many frames, its scale
 /// following half a turn of sine.
@@ -208,7 +208,7 @@ void MercuryLighthouse_ChargeLights(void) {
   Event_End();
 }
 
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM: the leader loses their lights,
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP: the leader loses their lights,
 /// and the column swells and fades away.
 void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
@@ -235,7 +235,7 @@ void MercuryLighthouse_LoseLights(void) {
 /// Pushing against the pool's edge
 /// (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART,
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER and
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM): the leader hops two cells the
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP): the leader hops two cells the
 /// way the pad points, unless the hop leads into the pool without a light or is
 /// blocked. A hop into the pool spends a light, which flies ahead to the
 /// landing cell; the column shrinks a stage, or goes with the last light.

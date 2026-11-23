@@ -43,7 +43,7 @@
 ///   that" (LogRoomsA_GaretHasNoTimeForMenu).
 /// - In the attic, Move pushes the crate aside (LogRoomsA_CheckCrateMoved,
 ///   FLAG_VAULT_CRATE_MOVED), and the way behind it leads into the loft
-///   (LogRoomsA_ClimbToLoft). Cutting free the young man tied up there brings
+///   (LogRoomsA_EnterLoft). Cutting free the young man tied up there brings
 ///   out the three thieves, who attack (LogRoomsA_FreeVillagerAndFightThieves,
 ///   FLAG_VAULT_THIEVES_ATTACKED). After a loss the thieves gloat over the
 ///   fallen party, which comes to in the Vault Sanctum
@@ -1474,7 +1474,7 @@ static void LogRoomsA_LeaveGuestsRoom(void) {
 
 /// Once the crate is pushed aside, walking east from the inn's attic through
 /// the way behind it (cell (45, 25)) takes the party into the loft.
-static void LogRoomsA_ClimbToLoft(void) {
+static void LogRoomsA_EnterLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
   gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
@@ -3854,8 +3854,8 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { TRIGGER_RAISED, LOG_ROOMS_A_THIEF_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_BOTH_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, FIELD_RAISED_TRIGGER_MENUS, CONDITION_ALWAYS, EVENT(LogRoomsA_GaretHasNoTimeForMenu) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
-    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LOG_ROOMS_A_ROOF_GAP, CONDITION_ALWAYS, EVENT(LogRoomsA_JumpAcrossHoleInAtticFloor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_WAY_IN, CONDITION_ALWAYS, EVENT(LogRoomsA_EnterLoft) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LOG_ROOMS_A_ATTIC_FLOOR_HOLE, CONDITION_ALWAYS, EVENT(LogRoomsA_JumpAcrossHoleInAtticFloor) },
     { TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
     { TRIGGER_TALK, ACTOR_IVAN, CONDITION_ALWAYS, EVENT(LogRoomsA_MeetIvan) },
     { TRIGGER_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
@@ -3915,7 +3915,7 @@ struct Trigger gLogRoomsA_Triggers[] = {
 };
 
 struct Trigger gLogRoomsA_LoftTriggers[] = {
-    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_WAY_OUT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
     { TRIGGER_TALK, ACTOR_TIED_UP_VILLAGER, CONDITION_ALWAYS, EVENT(LogRoomsA_FreeVillagerAndFightThieves) },
     { TRIGGER_TALK, ACTOR_FIRST_CHEST, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyChest) },
     { TRIGGER_TALK, ACTOR_SECOND_CHEST, CONDITION_ALWAYS, EVENT(LogRoomsA_SearchEmptyChest) },
@@ -3934,8 +3934,8 @@ struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, LOG_ROOMS_A_TO_VAULT_NORTHWEST },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, LOG_ROOMS_A_INN_UPSTAIRS_TO_INN },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, LOG_ROOMS_A_INN_TO_INN_UPSTAIRS },
-    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_WAY_IN, CONDITION_ALWAYS, EVENT(LogRoomsA_EnterLoft) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_WAY_OUT, CONDITION_ALWAYS, EVENT(LogRoomsA_LeaveLoft) },
     { TRIGGER_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
     { TRIGGER_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsA_TalkAboutRocks) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, EVENT(LogRoomsA_AskWhetherThievesCameFromLunpa) },

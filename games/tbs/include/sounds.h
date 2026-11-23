@@ -584,13 +584,13 @@ enum SoundId {
   SE_FLAME_FLARE,
   SE_203,
   /// Landing in dust at Babi Lighthouse, the Mercury Lighthouse entrance and
-  /// Venus Lighthouse; the Tret Tree's cocoons and rooms; and the water drops
+  /// Venus Lighthouse; the Tret Tree's leaves and rooms; and the water drops
   /// striking Vault Cave's pillars.
   SE_DUST_PUFF,
   /// Unused: SE_AMBIENT_STREAM's notes ten semitones higher, louder, on another
   /// voice and not held; nothing plays it.
   SE_UNUSED_AMBIENT_STREAM_HIGH,
-  /// Kolima and Kolima Forest cursed as the party watches, and a cocoon stepped
+  /// Kolima and Kolima Forest cursed as the party watches, and a leaf stepped
   /// on in the Tret Tree.
   SE_CURSE_FALL,
   /// Played as Bane gets away a second time on Crossbone Isle.

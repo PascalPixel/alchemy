@@ -25,16 +25,6 @@
 /// bit 31 set, before the scenes that take it.
 #define BATTLE_BACKGROUND(resource) (s32)(0x80000000 + (resource))
 
-/// The bit that marks a song in gEncounter_BattleMusic; encounter keys have it
-/// clear.
-#define ENCOUNTER_BATTLE_MUSIC_MARKER 0x8000
-/// A song's row in gEncounter_BattleMusic, before the encounters that take it:
-/// the song (a MUS_ id) with ENCOUNTER_BATTLE_MUSIC_MARKER set.
-#define ENCOUNTER_BATTLE_MUSIC(song)                                           \
-  (s16)(ENCOUNTER_BATTLE_MUSIC_MARKER | (song))
-/// An encounter's row in gEncounter_BattleMusic: slot of encounter zone.
-#define ENCOUNTER_KEY(zone, slot) (((zone) << 4) + (slot))
-
 // clang-format off
 
 /// The restart point and the ship's mooring by scene, ended by a row of -1.

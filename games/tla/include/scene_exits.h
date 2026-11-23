@@ -113,6 +113,9 @@ enum {
   WORLD_MAP_FROM_PROX_MOLD = 63,
   WORLD_MAP_VENUS_COLLAPSE = 64,
   WORLD_MAP_DRIFT_NORTH = 65,
+  /// The view of Air's Rock from Alhafra's manor, where the man gazing at it
+  /// sends the party.
+  WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
   WORLD_MAP_FIRST_VOYAGE = 68,
   WORLD_MAP_SAIL_TO_DECK = 69,
   WORLD_MAP_FROM_LEMURIAN_SHIP_TILLER_B = 71,
@@ -234,6 +237,8 @@ enum {
 /// SceneId_VenusLighthouse's entrances.
 enum {
   VENUS_LIGHTHOUSE_FROM_VENUS_LIGHTHOUSE_ENTRANCE = 1,
+  /// Where the title's prologue sends Jenna: the game opens here.
+  VENUS_LIGHTHOUSE_FROM_TITLE = 99,
 };
 /// SceneId_VenusLighthouse's exits.
 enum {
@@ -282,6 +287,9 @@ enum {
   IDEJIMA_FROM_WORLD_MAP_SOUTHWEST = 4,
   IDEJIMA_FROM_WORLD_MAP_NORTH_A = 11,
   IDEJIMA_FROM_TITLE = 12,
+  /// Where the title sends Felix after the prologue: Idejima rides the tidal
+  /// wave.
+  IDEJIMA_RIDE_THE_TIDAL_WAVE = 13,
 };
 /// SceneId_Idejima's exits.
 enum {

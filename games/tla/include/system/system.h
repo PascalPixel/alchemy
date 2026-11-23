@@ -96,7 +96,7 @@ s32 _call_via_r3(s32, u8 *, u8, s32);
 struct SpriteAnimation;
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id);
 #ifndef OWN_BattleMotion_ApproachTarget
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travel_divisor,
+void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelFrames,
                                  s32 initial_velocity_y);
 #endif
 void LuckyDice_Run(void);

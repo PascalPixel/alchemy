@@ -374,7 +374,7 @@ void Garoh_OpenDoorAndEnter(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  for (i = ACTOR_FIRST_PLACED; (u32)i <= 63; i++) {
+  for (i = ACTOR_FIRST_PLACED; (u32)i <= ACTOR_COUNT - 1; i++) {
     {
       struct Actor *actor = Actor_Get(i);
 

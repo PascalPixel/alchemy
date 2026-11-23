@@ -442,7 +442,7 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
 
   // The facing rounded to the nearest of east, south, west and north: two
   // sixteenths on, whole quarters kept, and back from sixteenths to a facing.
-  angle = ((angle + 2) & 0xc) << 12;
+  angle = FACING_FROM_INDEX((angle + 2) & 0xc);
   position[0] = actor->x.fixed;
   position[1] = (actor->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = actor->z.fixed;

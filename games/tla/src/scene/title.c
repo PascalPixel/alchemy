@@ -138,8 +138,7 @@ s32 Scene_Initialize(void) {
       FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                              gMainRoutineWork.windowBrightness);
       Party_SetLeaderJenna();
-      // Venus Lighthouse's ENTRANCE_OPENING.
-      Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, 99);
+      Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, VENUS_LIGHTHOUSE_FROM_TITLE);
     }
     if (gMainRoutineWork.entrance == TITLE_FROM_IDEJIMA) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
@@ -147,8 +146,7 @@ s32 Scene_Initialize(void) {
       FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                              gMainRoutineWork.windowBrightness);
       Party_SetLeaderFelix();
-      // Idejima's ENTRANCE_RIDE_THE_TIDAL_WAVE.
-      Event_SetDestination(SCENE_IDEJIMA, 13);
+      Event_SetDestination(SCENE_IDEJIMA, IDEJIMA_RIDE_THE_TIDAL_WAVE);
     }
   }
   Event_PlaySound(SOUND_FADE_OUT_BGM);

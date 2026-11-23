@@ -246,7 +246,7 @@ void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
   Epilogue_ShowLineAt(speaker, x, y, portraitX, portraitY, frames, mode);
 }
 
-void SceneState_SetScrollTarget(u16 value);
+void SceneState_SetScrollTarget(u16 row);
 void EndingPicture_WaitForScroll(void);
 void WindowSystem_InitField(void);
 

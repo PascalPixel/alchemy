@@ -97,9 +97,9 @@ static inline void Field_SetCellBehaviorAt(s32 layer, FIXED x, FIXED y,
 
 /// Changes one 512-pixel tile of the World Map, drawn at once when it's next to
 /// the view (WorldMap_SetWindowCellTile).
-static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
-                                                   s32 py) {
-  WorldMap_SetWindowCellTile(x, y, px, py);
+static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 cellX,
+                                                   s32 cellY) {
+  WorldMap_SetWindowCellTile(x, y, cellX, cellY);
 }
 
 /// Holds the event for frames while the field goes on (Event_Wait).
@@ -292,9 +292,9 @@ static inline void FieldActor_SetItemIcon(struct Actor *actor, s32 item) {
 
 /// Changes one tile of the World Map and draws it
 /// (WorldMap_SetWindowCellTileAndDraw).
-static inline void FieldWorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px,
-                                                          s32 py) {
-  WorldMap_SetWindowCellTileAndDraw(x, y, px, py);
+static inline void
+FieldWorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 cellX, s32 cellY) {
+  WorldMap_SetWindowCellTileAndDraw(x, y, cellX, cellY);
 }
 
 /// Moves the camera onto an actor, to its height too

@@ -472,7 +472,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
         break;
       if (value == (u16)key)
         break;
-      if (value & 0x8000)
+      if (value & ENCOUNTER_BATTLE_MUSIC_MARKER)
         music = value & 0xfff;
     }
   }

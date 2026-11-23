@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "types.h"
 
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travel_divisor,
+void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelFrames,
                                  s32 initial_velocity_y);
 
 #endif

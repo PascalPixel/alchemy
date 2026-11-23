@@ -87,7 +87,7 @@ void BattleEffect_StopMainActor(void);
 struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
-void Field_StartPaletteTransition(s32 mode);
+void Field_StartPaletteTransition(s32 frames);
 void FieldPsynergy_RunHandler(s32 kind);
 void FieldPsynergy_RunExtraHandler(void);
 

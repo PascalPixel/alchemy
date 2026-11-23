@@ -888,7 +888,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 UNUSED void Credits_ReservedNoOp(void) {}
 
 /// Sets the position the credits' scroll moves to.
-void SceneState_SetScrollTarget(u16 value) { gEndingPicture_TargetRow = value; }
+void SceneState_SetScrollTarget(u16 row) { gEndingPicture_TargetRow = row; }
 
 /// Copies 15 columns of a scrolling picture's map into a wrapping 2 KB
 /// tilemap by DMA, 31 rows of 64 bytes each, from the row the position

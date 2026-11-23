@@ -372,7 +372,8 @@ void Actor_WaitForAnimationChange(u32 actorId) {
       if (saved != sprite->lastNo)
         break;
       if (sprite->entries[0] != NULL && sprite->entries[0]->script != NULL &&
-          sprite->entries[0]->script[sprite->entries[0]->scriptOffset] == 241)
+          sprite->entries[0]->script[sprite->entries[0]->scriptOffset] ==
+              ANIMCMD_HOLD)
         break;
     }
   }

@@ -20,6 +20,7 @@
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "field/field_event.h"
+#include "field/field_psynergy_work.h"
 #include "field/field_sequence_event.h"
 #include "field/map_grid.h"
 #include "field/scene_tables.h"
@@ -481,7 +482,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
 
   // The facing rounded to the nearest of east, south, west and north: two
   // sixteenths on, whole quarters kept, and back from sixteenths to a facing.
-  angle = ((angle + 2) & 0xc) << 12;
+  angle = FACING_FROM_INDEX((angle + 2) & 0xc);
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed;
   position[2] = actor->z.fixed;
@@ -739,10 +740,9 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s16 row = gYampiDesertCave_RipplePath[index + 1];
   s32 pz = row * (MAPGRID_CELL_PIXELS / 2);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  // The Scoop's hand, where it digs: the ScoopWork's actor, which only
-  // field_psynergy_scoop.c declares.
+  // The Scoop's hand, where it digs.
   struct Actor *scoopHand =
-      *(struct Actor **)(Ram_HeapSlots->battleEffect + 0x1930);
+      ((struct ScoopWork *)Ram_HeapSlots->battleEffect)->actor;
   s32 x = 0, z = 0;
 
   if (scoopHand != NULL) {

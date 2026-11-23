@@ -36,6 +36,31 @@ struct FieldPsynergyParticle {
 /// (FieldPsynergy_Scoop).
 #define SCOOP_DUG_FRAME 30
 
+/// The particles of dust and sparkles Scoop throws up.
+#define SCOOP_PARTICLE_COUNT 64
+/// The earth that rises as the ground is dug, 32 pixels square in 256 colours.
+#define SCOOP_PICTURE_SIZE 32
+
+/// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
+/// tiles, the picture that ripples as the ground is dug, 64 particles, the
+/// sprite that digs and the one left where it dug, and the stage of the cast.
+struct ScoopWork {
+  u8 tiles[1024];
+  u8 picture[SCOOP_PICTURE_SIZE * SCOOP_PICTURE_SIZE];
+  struct EffectSprite sprites[SCOOP_PARTICLE_COUNT];
+  struct FieldPsynergyParticle particles[SCOOP_PARTICLE_COUNT];
+  struct EffectSprite pictureSprite;
+  s16 phase; ///< the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
+  s16 timer; ///< frames into the stage
+  s16 particleTile;
+  s16 pictureTile;
+  struct Actor *actor; ///< SPRITE_SCOOP_HAND, which digs and sinks as it does
+  struct Actor *other; ///< SPRITE_BROWN_BOULDER (grey where lit), where it digs
+  /// The kind of dig: 2 cast on a target; cast at nothing, 1 one time in
+  /// sixteen (an item turns up), else 0, or 3 where lit is set.
+  s16 mode;
+};
+
 /// The work of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster
 /// and target, where it takes place, the map state it restores, its field
 /// effect sprites and the sprite and stage a lasting Psynergy keeps.

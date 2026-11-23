@@ -7,21 +7,21 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// Fills window 0's per-line edges: from line 8 to line last, slant, the band
+/// Fills window 0's per-line edges: from line 8 to line lastY, slant, the band
 /// the shards and drops fall down, which moves along as the lines go down until
 /// the line before it reaches span, the targets' side; span on the other lines
 /// to the battle view's bottom; nothing below it.
-#define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
+#define FALLING_BUILD_SLANTED_WINDOW(line, i, lastY, slant, span)              \
   for ((i) = 0; (i) != DISPLAY_HEIGHT; (i)++) {                                \
-    if ((i) >= 8 && (i) <= (last))                                             \
+    if ((i) >= 8 && (i) <= (lastY))                                            \
       (line)[i] = (slant);                                                     \
     else if ((i) < BATTLE_VIEW_BOTTOM)                                         \
       (line)[i] = (span);                                                      \
     else                                                                       \
       (line)[i] = WIN_RANGE(1, 0);                                             \
   }
-/// The band from left, as wide as the canvas.
-#define FALLING_BAND(left) WIN_RANGE(left, (left) + CANVAS_SIZE)
+/// The band from leftX, as wide as the canvas.
+#define FALLING_BAND(leftX) WIN_RANGE(leftX, (leftX) + CANVAS_SIZE)
 
 // The falling shards (Ice) and drops of water (Douse) rain diagonally onto the
 // targets' side, seen only through a slanted band of window 0 whose edges an

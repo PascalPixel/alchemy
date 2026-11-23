@@ -166,8 +166,8 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
 }
 
 /// Sends one unit leaping three quarters of the way to another, arriving in
-/// travelDivisor frames.
-void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
+/// travelFrames frames.
+void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelFrames,
                                  s32 initialVelocityY) {
   struct BattleObject *actorSlot = BattleObject_Get(actorId);
   struct BattleObject *targetSlot = BattleObject_Get(targetId);
@@ -192,7 +192,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
     dist = Iwram_Sqrt(sum) << 8;
   else
     dist = 0;
-  dist = dist / travelDivisor;
+  dist = dist / travelFrames;
   object->acceleration = dist;
   object->speedLimit = dist;
   object->snapToTarget = 1;

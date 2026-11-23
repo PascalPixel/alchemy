@@ -522,7 +522,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
 /// Brightens background colours 1 to 63 by a step in each channel, or darkens
 /// them by a negative one.
-void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
+void Palette_BrightenBgEntries(s32 blueDelta, s32 greenDelta, s32 redDelta) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, 1);
   s32 i;
 
@@ -531,9 +531,9 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
     s32 green = RGB_GREEN(*color);
     s32 red = RGB_RED(*color);
 
-    blue += blueStep;
-    green += greenStep;
-    red += redStep;
+    blue += blueDelta;
+    green += greenDelta;
+    red += redDelta;
     if (blue > RGB_LEVEL_MAX)
       blue = RGB_LEVEL_MAX;
     if (green > RGB_LEVEL_MAX)
@@ -552,7 +552,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 
 /// Brightens the battle background's colours, BG palettes 6 to 13, by a step
 /// in each channel, or darkens them by a negative one.
-void Palette_BrightenBattleBg(s32 redStep, s32 greenStep, s32 blueStep) {
+void Palette_BrightenBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
   s32 i;
 
@@ -561,9 +561,9 @@ void Palette_BrightenBattleBg(s32 redStep, s32 greenStep, s32 blueStep) {
     s32 green = RGB_GREEN(*color);
     s32 red = RGB_RED(*color);
 
-    red += redStep;
-    green += greenStep;
-    blue += blueStep;
+    red += redDelta;
+    green += greenDelta;
+    blue += blueDelta;
     if (red > RGB_LEVEL_MAX)
       red = RGB_LEVEL_MAX;
     if (green > RGB_LEVEL_MAX)
@@ -582,7 +582,8 @@ void Palette_BrightenBattleBg(s32 redStep, s32 greenStep, s32 blueStep) {
 
 /// As Palette_BrightenBattleBg, from the battle background's own colours as the
 /// battle keeps them.
-void Palette_BrightenSavedBattleBg(s32 redStep, s32 greenStep, s32 blueStep) {
+void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
+                                   s32 blueDelta) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
   u16 *source = Ram_HeapSlots->battleWork->palette;
   s32 i;
@@ -592,9 +593,9 @@ void Palette_BrightenSavedBattleBg(s32 redStep, s32 greenStep, s32 blueStep) {
     s32 green = RGB_GREEN(*source);
     s32 red = RGB_RED(*source);
 
-    red += redStep;
-    green += greenStep;
-    blue += blueStep;
+    red += redDelta;
+    green += greenDelta;
+    blue += blueDelta;
     if (red > RGB_LEVEL_MAX)
       red = RGB_LEVEL_MAX;
     if (green > RGB_LEVEL_MAX)

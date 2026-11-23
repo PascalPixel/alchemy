@@ -216,12 +216,13 @@ void FieldPsynergy_Blaze(void) {
       if (work->hit != 0) {
         pending = Scene_FindPsynergyTrigger(
             PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS), scene->fieldPsynergy,
-            (s16)(work->hitObject | 0x100));
+            (s16)(work->hitObject | PSYNERGY_TARGET_ACTOR));
         if (pending != NULL)
           Field_RunPsynergyEvent(pending, scene->firstActorId, work->hitObject);
         if (Scene_FindPsynergyTrigger(
                 PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
-                scene->fieldPsynergy, (s16)(work->hitObject | 0x100)) != NULL) {
+                scene->fieldPsynergy,
+                (s16)(work->hitObject | PSYNERGY_TARGET_ACTOR)) != NULL) {
           event->psynergyHitObject = work->hitObject;
           break;
         }

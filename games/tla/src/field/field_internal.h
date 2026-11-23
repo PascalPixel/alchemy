@@ -233,24 +233,6 @@ enum AnimationFacingKind {
 #define FACING_SECTOR(dir, sectors)                                            \
   ((dir) / (TRIG_TURN / (sectors)) % (sectors))
 
-/// Animation script commands.
-enum AnimationCommand {
-  ANIMCMD_END = 239,      ///< blank the layer and stop its script
-  ANIMCMD_SET_KIND = 240, ///< use facing table `arg`
-  ANIMCMD_HOLD = 241,     ///< stay on this command and frame for good
-  ANIMCMD_OFFSET_Y = 242, ///< set the sprite's offsetY to `arg`
-  ANIMCMD_OFFSET_X = 243, ///< set the sprite's offsetX to `arg`
-  /// The commands from here to ANIMCMD_UNUSED_LAST no script uses, skipped
-  /// (ANIMCMD_WAIT lies among them); 251 is not one: it shows as a picture.
-  ANIMCMD_UNUSED_FIRST = ANIMCMD_OFFSET_X + 1,
-  ANIMCMD_WAIT = 245, ///< keep the current frame `arg` frames longer
-  ANIMCMD_UNUSED_LAST = 250,
-  ANIMCMD_SOUND = 252, ///< play sound `arg`
-  ANIMCMD_JUMP = 253,  ///< continue at script position `arg`
-  ANIMCMD_PLAY = 254,  ///< switch to animation `arg`
-  ANIMCMD_BLANK = 255  ///< show nothing for `arg`
-};
-
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
   SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemWork.pictureCaches

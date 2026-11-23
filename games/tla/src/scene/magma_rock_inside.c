@@ -466,25 +466,7 @@ void MagmaRockInside_WaitForLanding(struct Actor *actor) {
 
 #include "shared/map_cell_get.h"
 
-/// Writes a cell's collision code and second attribute byte, value's high and
-/// low bytes, on a layer or the spare cell buffer.
-s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += x + (y << 7);
-  old = (cell->collisionCode << 8) | cell->attributeB;
-  cell->collisionCode = value >> 8;
-  cell->attributeB = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 /// For each pillar of a list ended by ACTOR_LIST_END: clears its mark and,
 /// where it stands on a climbable cell (MAP_CELL_CLIMBABLE, as draining the
@@ -1338,7 +1320,7 @@ void MagmaRockInside_DrainLava(void) {
       open = LAVA_ALREADY_UP;
     Event_ClearFlag(FLAG_ENTRANCE_FLOODED);
     facing = FACING_EAST;
-    MagmaRockInside_SwapCells(0, 15, 13, MAP_CELL_CLIMBABLE);
+    MapCell_SetAttributes(0, 15, 13, MAP_CELL_CLIMBABLE);
     FieldActor_SetSpritePriority(ACTOR_ENTRANCE_PILLAR, 3);
     for (j = 0; j != 7; j++)
       Actor_SetAnimation(j + ACTOR_COLUMN_A, 1);
@@ -1353,8 +1335,8 @@ void MagmaRockInside_DrainLava(void) {
     if (Event_GetFlag(FLAG_FURY_FLOODED))
       open = LAVA_ALREADY_UP;
     Event_ClearFlag(FLAG_FURY_FLOODED);
-    MagmaRockInside_SwapCells(0, 24, 15, MAP_CELL_CLIMBABLE);
-    MagmaRockInside_SwapCells(0, 9, 16, MAP_CELL_CLIMBABLE);
+    MapCell_SetAttributes(0, 24, 15, MAP_CELL_CLIMBABLE);
+    MapCell_SetAttributes(0, 9, 16, MAP_CELL_CLIMBABLE);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else if (gMainRoutineWork.next ==
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
@@ -1668,7 +1650,7 @@ void MagmaRockInside_GrowFlame(void) {
     Actor_Release(actor);
     FieldEvent_Wait(1);
     REG_BLDCNT = 0;
-    MagmaRockInside_SwapCells(0, 38, 18, 0);
+    MapCell_SetAttributes(0, 38, 18, 0);
     Event_End();
   }
 }
@@ -1867,7 +1849,7 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   x >>= 4;
   cellZ = (z >> 4) - 1;
   MapGrid_CopyCellsTo(65, 1, x + 64, cellZ, 1, 2);
-  MagmaRockInside_SwapCells(0, x, cellZ, CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(0, x, cellZ, CELL_BEHAVIOR_WALL << 8);
   Actor_Release(actor);
   Event_End();
   REG_BLDCNT = 0;
@@ -1968,7 +1950,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Actor_Release(actor);
   FieldEvent_Wait(1);
   REG_BLDCNT = 0;
-  MagmaRockInside_SwapCells(0, 7, 21, MAP_CELL_JUMP);
+  MapCell_SetAttributes(0, 7, 21, MAP_CELL_JUMP);
   Event_End();
 }
 
@@ -2401,7 +2383,7 @@ void MagmaRockInside_SetEntranceFlooded(void) {
   s32 i;
 
   Event_SetFlag(FLAG_ENTRANCE_FLOODED);
-  MagmaRockInside_SwapCells(0, 15, 13, 0);
+  MapCell_SetAttributes(0, 15, 13, 0);
   for (i = 0; i != 6; i++)
     Actor_SetAnimation(i + ACTOR_COLUMN_A, 2);
   Actor_SetAnimation(ACTOR_ENTRANCE_PILLAR, 4);
@@ -2413,11 +2395,11 @@ void MagmaRockInside_SetEntranceFlooded(void) {
 void MagmaRockInside_SetFuryFlooded(void) {
   Event_SetFlag(FLAG_FURY_FLOODED);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_FURY) {
-    MagmaRockInside_SwapCells(0, 24, 15, 0);
-    MagmaRockInside_SwapCells(0, 9, 16, 0);
+    MapCell_SetAttributes(0, 24, 15, 0);
+    MapCell_SetAttributes(0, 9, 16, 0);
     Actor_SetAnimation(ACTOR_FURY_PILLAR, 4);
   } else {
-    MagmaRockInside_SwapCells(0, 26, 14, 0);
+    MapCell_SetAttributes(0, 26, 14, 0);
   }
 }
 
@@ -2515,7 +2497,7 @@ extern s16 gMagmaRockInside_Statues[];
 
 void Actor_PlaceBlocks(const u8 *table);
 void Tightrope_Place(s32 a, s32 b, s32 c);
-s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
+s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value);
 
 #define CLOSED_BLEND()                                                         \
   {                                                                            \
@@ -2683,8 +2665,8 @@ s32 Scene_Initialize(void) {
     Raise(ACTOR_NORTH_SWITCH_MARKER);
     Raise(ACTOR_SOUTH_SWITCH_MARKER);
     if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED)) {
-      MagmaRockInside_SwapCells(0, 22, 26, 0);
-      MagmaRockInside_SwapCells(0, 25, 26, 0);
+      MapCell_SetAttributes(0, 22, 26, 0);
+      MapCell_SetAttributes(0, 25, 26, 0);
       Actor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
     } else {
       CLOSED_BLEND();
@@ -2717,9 +2699,9 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_EAST_PILLAR_PUSHED))
         Actor_SetAnimation(ACTOR_EAST_PILLAR, 4);
       if (Event_GetFlag(FLAG_NORTH_PILLAR_PUSHED))
-        MagmaRockInside_SwapCells(2, 46, 8, CELL_BEHAVIOR_WALL << 8);
-      MagmaRockInside_SwapCells(0, 10, 45, 0);
-      MagmaRockInside_SwapCells(0, 53, 40, 0);
+        MapCell_SetAttributes(2, 46, 8, CELL_BEHAVIOR_WALL << 8);
+      MapCell_SetAttributes(0, 10, 45, 0);
+      MapCell_SetAttributes(0, 53, 40, 0);
     } else {
       CLOSED_BLEND();
       MapGrid_CopyCellsTo(71, 64, 50, 102, 1, 1);
@@ -2747,7 +2729,7 @@ s32 Scene_Initialize(void) {
       Lower(ACTOR_BLOCKING_PILLAR, -toFIXED(PILLAR_SINK_DEPTH));
       Actor_SetAnimation(ACTOR_BLOCKING_PILLAR, 4);
     } else {
-      MagmaRockInside_SwapCells(0, 38, 18, CELL_BEHAVIOR_WALL << 8);
+      MapCell_SetAttributes(0, 38, 18, CELL_BEHAVIOR_WALL << 8);
     }
     if (Event_GetFlag(FLAG_MAGMA_BALL_TAKEN))
       Actor_SetAnimation(ACTOR_EMBER_STONE, 0);
@@ -2767,7 +2749,7 @@ s32 Scene_Initialize(void) {
         s32 y = 24 - i * 2;
 
         MapGrid_CopyCellsTo(65, 1, 80, y, 1, 2);
-        Call4((void (*)())MagmaRockInside_SwapCells, 0, 16, y,
+        Call4((void (*)())MapCell_SetAttributes, 0, 16, y,
               CELL_BEHAVIOR_WALL << 8);
       }
     }
@@ -2777,7 +2759,7 @@ s32 Scene_Initialize(void) {
       Lower(ACTOR_TORCH_PILLAR, -toFIXED(PILLAR_SINK_DEPTH));
       Actor_SetAnimation(ACTOR_TORCH_PILLAR, 4);
     } else {
-      MagmaRockInside_SwapCells(0, 7, 21, CELL_BEHAVIOR_WALL << 8);
+      MapCell_SetAttributes(0, 7, 21, CELL_BEHAVIOR_WALL << 8);
       Actor_SetPosition(ACTOR_TORCH_FLAME, 0, 0);
     }
     Lower(ACTOR_BLAZE_TABLET, toFIXED(16));

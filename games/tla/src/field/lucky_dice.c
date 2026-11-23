@@ -40,6 +40,12 @@
 #include "system/matrix.h"
 #include "system/affine.h"
 
+/// The help window's two lines, as messages after MsgLuckyDiceCoins.
+enum LuckyDiceHelpMessage {
+  DICE_HELP_THROW = 10, ///< ":Throw" after its button
+  DICE_HELP_QUIT = 11   ///< ":Quit" after its button
+};
+
 /// What a throw's four numbers make, in the rules' words: "If two numbers match
 /// on either the dice or the table... it's called a pair, and you don't win or
 /// lose anything. Two pair doubles your money. Triple matches triple your
@@ -494,11 +500,10 @@ void LuckyDice_Run(void) {
   window =
       Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
-  // ":Throw" and ":Quit" after their buttons (MsgLuckyDiceThrow and the
-  // message after it), ten and eleven messages after the coins label.
-  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
-  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11, sprites->helpWindow,
-                             0, 8);
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + DICE_HELP_THROW, window,
+                             0, 0);
+  Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + DICE_HELP_QUIT,
+                             sprites->helpWindow, 0, 8);
 
   frame = 0;
   for (;;) {
@@ -636,8 +641,9 @@ void LuckyDice_Run(void) {
         window = Window_CreateFar(DICE_REOPENED_HELP_WINDOW_X, 16,
                                   DICE_REOPENED_HELP_WINDOW_WIDTH, 4, 6);
         sprites->helpWindow = window;
-        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
-        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11,
+        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + DICE_HELP_THROW,
+                                   window, 0, 0);
+        Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + DICE_HELP_QUIT,
                                    sprites->helpWindow, 0, 8);
         resetDice = 1;
       }

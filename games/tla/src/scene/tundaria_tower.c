@@ -466,12 +466,11 @@ void TundariaTower_FreeCenterProng(void) {
 }
 
 /// Searching the ice crystal in the Center Prong's chamber, cell (21, 23),
-/// says "There's something inside the cracked ice...". XXX: once
-/// FLAG_TUNDARIA_TOWER_BURST_BROOCH is set the event also sets the field work's
-/// `fieldMenu`; a render with the flag set and the Brooch given shows no menu
-/// after the message (control returns 15 frames sooner), so what it opens is
-/// unseen; a recording that holds no key after the message and shows the menu
-/// screens would settle it.
+/// says "There's something inside the cracked ice...". Once
+/// FLAG_TUNDARIA_TOWER_BURST_BROOCH is set, the ordinary field menu opens by
+/// itself as the message closes (`fieldMenu`): the party's HP and PP at the
+/// top right and the command icons at the bottom, Psynergy picked, waiting for
+/// the player.
 void TundariaTower_ExamineCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

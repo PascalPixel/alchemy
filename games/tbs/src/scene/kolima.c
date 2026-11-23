@@ -118,7 +118,7 @@ extern struct ActorPlacement gKolimaBridgeActorPlacements[];
 extern struct Trigger gKolimaTriggers[];
 extern struct Trigger gKolimaBridgeTriggers[];
 extern s32 gKolima_GoldenRingsScript[];
-extern s32 gKolima_RegionScript[];
+extern s32 gKolima_SparkleBurstScript[];
 extern s32 gFallingEffectScript[];
 
 /// The puffs of dust the drawbridge throws up where it lands.
@@ -1503,7 +1503,7 @@ static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
         (actor->x.fixed > toFIXED(69) && actor->x.fixed < toFIXED(122) &&
          actor->z.fixed > toFIXED(194) && actor->z.fixed < toFIXED(277))) {
       Sound_Play(SE_DRIP);
-      Actor_StartScript(actor, gKolima_RegionScript);
+      Actor_StartScript(actor, gKolima_SparkleBurstScript);
       gKolima_PendingPose = 1;
     }
   } else {
@@ -1514,7 +1514,7 @@ static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
         (actor->x.fixed > toFIXED(78) && actor->x.fixed < toFIXED(122) &&
          actor->z.fixed > toFIXED(241) && actor->z.fixed < toFIXED(277))) {
       Sound_Play(SE_DRIP);
-      Actor_StartScript(actor, gKolima_RegionScript);
+      Actor_StartScript(actor, gKolima_SparkleBurstScript);
       gKolima_PendingPose = 1;
     }
   }
@@ -1841,12 +1841,7 @@ s32 gKolima_GoldenRingsScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gKolima_RegionScript[] = {
-    SC_SET(SW_SCALE_X, 2 * FIXED_ONE),
-    SC_SET(SW_SCALE_Y, 2 * FIXED_ONE),
-    SC_WAIT(10),
-    SC_RELEASE,
-};
+#include "shared/kolima_sparkle_burst_script.c"
 
 s32 gFallingEffectScript[] = {
     SC_ADD(SW_Y, -toFIXED(2)),

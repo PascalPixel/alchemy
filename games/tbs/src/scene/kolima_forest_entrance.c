@@ -72,7 +72,7 @@ extern u32 gKolimaForestEntrance_Exits[];
 extern struct ActorPlacement gKolimaForestEntrance_ActorPlacements[];
 extern struct Trigger gKolimaForestEntrance_Triggers[];
 extern s32 gKolimaForestEntrance_SparkleScript[];
-extern s32 gKolimaForestEntrance_SparkleBurstScript[];
+extern s32 gKolima_SparkleBurstScript[];
 extern s32 gFallingEffectScript[];
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
@@ -1109,10 +1109,9 @@ static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
   Sound_Play(SE_DRIP);
   // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
-  Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleBurstScript);
+  Actor_StartScript(sparkle, gKolima_SparkleBurstScript);
 #else
-  ((s32 (*)())Actor_StartScript)((s32)sparkle,
-                                 (s32)gKolimaForestEntrance_SparkleBurstScript);
+  ((s32 (*)())Actor_StartScript)((s32)sparkle, (s32)gKolima_SparkleBurstScript);
 #endif
   gKolimaForestEntrance_PsynergyFieldHit = 1;
   return 0;
@@ -1309,13 +1308,7 @@ s32 gKolimaForestEntrance_SparkleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// A sparkle bursts on a field: it doubles in size and is gone.
-s32 gKolimaForestEntrance_SparkleBurstScript[] = {
-    SC_SET(SW_SCALE_X, 2 * FIXED_ONE),
-    SC_SET(SW_SCALE_Y, 2 * FIXED_ONE),
-    SC_WAIT(10),
-    SC_RELEASE,
-};
+#include "shared/kolima_sparkle_burst_script.c"
 
 s32 gFallingEffectScript[] = {
     SC_ADD(SW_Y, -toFIXED(2)),

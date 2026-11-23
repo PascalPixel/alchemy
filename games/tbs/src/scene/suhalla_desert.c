@@ -162,6 +162,14 @@ enum SuhallaDesertCellBehavior {
   CELL_BEHAVIOR_SUHALLA_DESERT_STORM_CHASES = 81
 };
 
+/// The monster a doused storm lets loose, by its slot of
+/// ENCOUNTER_ZONE_SCRIPTED.
+enum {
+  ENCOUNTER_SLOT_TORNADO_LIZARD = 5,
+  ENCOUNTER_SLOT_STORM_LIZARD = 6,  ///< in the storm that gives chase
+  ENCOUNTER_SLOT_TEMPEST_LIZARD = 7 ///< in the great red storm
+};
+
 /// Frames a caught party spins before the storm carries it away.
 enum { SANDSTORM_CAPTURE_FRAMES = 180 };
 
@@ -238,8 +246,8 @@ static void SuhallaDesert_FightFlash(void) {
   Field_RequestDjinnBattle(ACTOR_FLASH, DJINNI_FLASH);
 }
 
-/// A storm's actor placement script: the storm casts no shadow and nothing
-/// bumps into it.
+/// The first step of a storm's actor script: the storm casts no shadow and
+/// nothing bumps into it.
 static s32
 SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
@@ -247,8 +255,10 @@ SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *actor) {
   return 0;
 }
 
-/// A storm's actor placement script, which flips how its sprite is stored.
-static s32 SuhallaDesert_ToggleActorActive(struct Actor *actor) {
+/// The rest of a storm's actor script, run every frame: the storm's sprite is
+/// drawn one frame and not the next (ACTOR_SPRITE_ONE and ACTOR_SPRITE_NONE),
+/// so the whirlwind flickers, half there.
+static s32 SuhallaDesert_FlickerStorm(struct Actor *actor) {
   actor->spriteStorageKind ^= 1;
   return 1;
 }
@@ -599,6 +609,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   actor->speedLimit = toFIXED(3) / 2;
   actor->motionFlags = 0;
   Actor_SetSpriteFlags(actor, 0);
+  // Drawn every other frame, as SuhallaDesert_FlickerStorm draws the others.
   actor->spriteStorageKind ^= 1;
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
     actor->targetX = ACTOR_NO_TARGET;
@@ -680,14 +691,17 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
     }
   }
   FieldGameFlag_SetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT, 0);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED,
+                                        ENCOUNTER_SLOT_TORNADO_LIZARD);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     if (stormId == ACTOR_FOURTH_SANDSTORM) {
-      Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
+      Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED,
+                                            ENCOUNTER_SLOT_TEMPEST_LIZARD);
     } else {
       if (stormId == ACTOR_CHASING_SANDSTORM) {
-        Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
+        Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED,
+                                              ENCOUNTER_SLOT_STORM_LIZARD);
         Actor_Stop(ACTOR_CHASING_SANDSTORM);
         Actor_SetPosition(ACTOR_CHASING_SANDSTORM, 0, 0);
       }
@@ -981,13 +995,13 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gSuhallaDesertStormScript[] = {
     SC_CALL(SuhallaDesert_ClearActorSpriteAndCollisionFlags),
-    SC_CALL(SuhallaDesert_ToggleActorActive),
+    SC_CALL(SuhallaDesert_FlickerStorm),
     SC_END,
 };
 
 s32 gSuhallaDesertFourthStormScript[] = {
     SC_CALL(SuhallaDesert_ClearActorSpriteAndCollisionFlags),
-    SC_CALL(SuhallaDesert_ToggleActorActive),
+    SC_CALL(SuhallaDesert_FlickerStorm),
     SC_END,
 };
 

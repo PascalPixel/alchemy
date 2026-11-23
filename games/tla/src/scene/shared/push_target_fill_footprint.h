@@ -30,15 +30,15 @@ s32 PushTarget_FillFootprint(s32 id) {
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
   x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
   z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
-  mapX = FIELD_CELL(map->layers[1].offsetX);
+  mapX = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
   i = mapX;
-  mapZ = FIELD_CELL(map->layers[1].offsetY);
+  mapZ = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
-  PushedActor_FillGridAttributeRectangle(0, x, z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, x, z, width, height,
-                                         CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, x, z, width,
+                                         height, CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, x, z, width,
+                                         height, CELL_BEHAVIOR_WALL);
   return 1;
 }

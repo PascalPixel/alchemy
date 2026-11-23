@@ -12,7 +12,7 @@
 extern struct MapCell gMapGridCellBuffer[];
 
 /// Replaces a cell's collision code and attributes on a layer, or in the cell
-/// buffer for a layer above 2, and returns the old value.
+/// buffer for a layer past the overhead one, and returns the old value.
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
@@ -20,7 +20,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
 
   if (map == NULL)
     return 0;
-  if (layer <= 2)
+  if (layer <= MAPGRID_LAYER_OVERHEAD)
     cell = map->layers[layer].cells;
   else
     cell = gMapGridCellBuffer;

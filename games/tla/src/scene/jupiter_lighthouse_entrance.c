@@ -9,10 +9,6 @@
 /// basement beneath the lighthouse (JupiterLighthouse_TeleportToBasement).
 /// Weeds also grow in three patches along the path under the front wall, and
 /// Cyclone there uncovers a Mint (JupiterLighthouse_ScatterWeedsOverMint).
-///
-/// The cracked tiles' code is in
-/// jupiter_lighthouse_entrance/, in two parts the shared field effect objects
-/// link between.
 
 #include "shared/tables.h"
 #include "scene/event_layer.h"
@@ -177,19 +173,19 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets up the grounds as the party enters: the fade in, the teleporter's
 /// ring when the party arrives by it, and Contigo's shops as where a defeat
-/// returns to.
-/// Returns 0.
+/// returns to. Returns 0.
 s32 Scene_Initialize(void) {
-  s32 clear;
+  s32 keepPosition;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  clear = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
-  if (clear == 0) {
-    if (gMainRoutineWork.entrance == 4)
+  keepPosition = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
+  if (keepPosition == 0) {
+    if (gMainRoutineWork.entrance ==
+        JUPITER_LIGHTHOUSE_ENTRANCE_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
       Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   }
   gMainRoutineWork.restartScene = SCENE_CONTIGO_SHOPS;
-  gMainRoutineWork.restartEntrance = 6;
+  gMainRoutineWork.restartEntrance = CONTIGO_SHOPS_FROM_CONTIGO_NORTHEAST_A;
   return 0;
 }
 
@@ -210,7 +206,7 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame (gPaletteCycleFrame).
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -240,11 +236,6 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 #include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
-
-// Queues the lit actors' sprites: for each listed actor with a position,
-// projects it from the map's view, skips it off screen, and writes a 16 by 16
-// sprite, or a 32 by 64 one when the big switch is set, at its animation
-// picture and depth.
 
 #include "shared/light_sprites_draw.h"
 
@@ -320,9 +311,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect_move.c"
 
-// The grounds before Jupiter Lighthouse's gates: its copy of the effect
-// spawner, and the cracked tiles, found, cracked and fallen through.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -336,12 +324,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/leader_center_in_cell.h"
 
-// Map_CopyCellsRect through this overlay's import.
-
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
@@ -351,23 +333,6 @@ struct CellTargetEntry;
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The grounds before Jupiter Lighthouse's gates: the cracked tiles' steps and
-// landings.
-
-void GameFlag_SetByte(s32 flag, s32 value);
-void MapGrid_CenterOnFollowedPoint(void);
-
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
-void JupiterLighthouse_ScatterWeedsSouthOfTheTeleporter(void);
-void JupiterLighthouse_ScatterWeedsBelowTheStairs(void);
-void JupiterLighthouse_ScatterEastWeeds(void);
-void JupiterLighthouse_ScatterWeedsOverMint(void);
-void JupiterLighthouse_TeleportToBasement(void);
-extern u32 gFieldEffect_ShortScript[];
-extern u32 gFieldEffect_MediumScript[];
-extern u32 gFieldEffect_LongScript[];
 
 #include "shared/cracked_tile_drop_in.h"
 

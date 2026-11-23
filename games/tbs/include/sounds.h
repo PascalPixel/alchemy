@@ -830,7 +830,8 @@ enum SoundId {
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
   /// leader drops down a ledge or through a hole.
   SE_FALL,
-  /// Unused: a chord held until stopped on the Colosso lettering's sample, under
+  /// Unused: a chord held until stopped on the Colosso lettering's sample,
+  /// under
   /// rising runs on noise voice 23 and on voice 56, a plain square wave here
   /// where The Lost Age has the Sparks sample, and a note of Psynergy sparkle;
   /// nothing plays it, in either game.

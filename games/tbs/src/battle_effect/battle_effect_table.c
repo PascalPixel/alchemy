@@ -8,6 +8,7 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "battle_effect/battle_effect.h"
+#include "field/sprite.h"
 #include "graphics/render_placement.h"
 #include "system/vector3.h"
 
@@ -97,7 +98,8 @@ u8 gFalling_Counts[][4] = {
     [EFFECT_VARIANT_STRONGEST] = {32, 4, 8, 80}, // Deluge
 };
 
-// battle_effect_streaks.c: Falling streak timing and motion rows.
+// battle_effect_streaks.c: Streak volley styles and the struck target's
+// tremble.
 
 /// Each streak style's effect, hit, motion and shake, by the STREAK_
 /// columns (battle_effect_streaks.c).
@@ -272,8 +274,8 @@ struct Vector3 gBind_Vertex[] = {{.x = 0, .y = 24, .z = 0}};
 /// The striking triangle's first vertex, the same.
 struct Vector3 gBind_TriangleStrikeVertex[] = {{.x = 0, .y = 24, .z = 0}};
 
-// battle_effect_stars.c and battle_effect_procne.c: Ring bolt, spinning star
-// and whirlwind comet paths.
+// battle_effect_stars.c and battle_effect_procne.c: The star outlines;
+// Procne's sprite grid, strike frames and comet pictures.
 
 /// The two star points, 48 and 28 pixels up (16.16).
 struct Vector3 gStar_Points[] = {{.x = 0, .y = toFIXED(48), .z = 0},
@@ -288,7 +290,7 @@ u8 gProcne_PictureBiasY[] = {8, 12, 17};
 u16 gProcne_Pictures[] = {13824, 14020, 14476};
 
 // battle_effect_tiamat.c and battle_effect_nereid.c: Tiamat's embers and
-// flames; Nereid's columns.
+// flames; Nereid's columns of water and falling drops.
 
 /// Ember speeds, by ember index & 3: added to a random 0 to 127, in 128ths
 /// of a pixel a frame across and 32nds up.
@@ -303,15 +305,16 @@ u8 gTiamat_FlameWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
 u8 gTiamat_FlameHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
 u8 gTiamat_FlameDrops[] = FLAME_PUFF_PICTURE_BIAS_Y;
 u16 gTiamat_FlamePictures[] = FLAME_PUFF_PICTURES;
-/// Nereid's four columns of fire (NEREID_COLUMN_X, NEREID_COLUMN_Y).
+/// Nereid's four columns of water (NEREID_COLUMN_X, NEREID_COLUMN_Y), drawn
+/// from the fire pillar picture in the water spray's colours.
 u8 gNereid_Columns[][2] = {
-    // the foot of each column of fire: x, y
+    // the foot of each column: x, y
     {16, 104},
     {32, 104},
     {48, 104},
     {64, 104},
 };
-/// Ember gravity while falling, by ember index & 3, in 16.16 pixels a frame
+/// A drop's gravity while falling, by drop index & 3, in 16.16 pixels a frame
 /// each frame: 1/2, 1/4, 1/4 and 1/8.
 s32 gNereid_Gravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
                          toFIXED(1) / 8};
@@ -412,9 +415,12 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
         BattleEffect_RunSpire, // battle_effect_spire.c: Spire
     [BATTLE_EFFECT_GAIA - 1] =
         BattleEffect_RunGaia, // battle_effect_gaia.c: Gaia
-    [BATTLE_EFFECT_GROWTH - 1] = BattleEffect_RunGrowth, // growth.c: Growth
-    [BATTLE_EFFECT_THORN - 1] = BattleEffect_RunThorn,   // growth.c: Thorn
-    [BATTLE_EFFECT_FROST - 1] = BattleEffect_RunFrost,   // frost.c: Frost
+    [BATTLE_EFFECT_GROWTH - 1] =
+        BattleEffect_RunGrowth, // battle_effect_growth.c: Growth
+    [BATTLE_EFFECT_THORN - 1] =
+        BattleEffect_RunThorn, // battle_effect_growth.c: Thorn
+    [BATTLE_EFFECT_FROST - 1] =
+        BattleEffect_RunFrost, // battle_effect_frost.c: Frost
     [BATTLE_EFFECT_ICE - 1] =
         BattleEffect_RunIce, // battle_effect_falling.c: Ice
     [BATTLE_EFFECT_PRISM - 1] =
@@ -432,7 +438,7 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_BLAST - 1] =
         BattleEffect_RunBlast, // battle_effect_eruption.c: Blast
     [BATTLE_EFFECT_NOVA - 1] =
-        BattleEffect_RunNova, // battle_effect_plasma.c: Blast
+        BattleEffect_RunNova, // battle_effect_plasma.c: Nova
     [BATTLE_EFFECT_BOLT - 1] =
         BattleEffect_RunBolt,                      // battle_effect_bolt.c: Bolt
     [BATTLE_EFFECT_RAY - 1] = BattleEffect_RunRay, // battle_effect_ray.c: Ray
@@ -516,7 +522,8 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
     [BATTLE_EFFECT_ANNIHILATION - 1] =
         BattleEffect_RunAnnihilation, // battle_effect_annihilation.c:
                                       // Annihilation
-    [BATTLE_EFFECT_PUNJI - 1] = BattleEffect_RunPunji, // growth.c: Punji
+    [BATTLE_EFFECT_PUNJI - 1] =
+        BattleEffect_RunPunji, // battle_effect_growth.c: Punji
     [BATTLE_EFFECT_CUTTING_EDGE - 1] =
         BattleEffect_RunCuttingEdge, // battle_effect_projectiles.c: Cutting
                                      // Edge
@@ -547,7 +554,8 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
         BattleEffect_RunGranite, // battle_effect_stat_change.c: Granite
     [BATTLE_EFFECT_QUARTZ - 1] =
         BattleEffect_RunRevive, // battle_effect_djinn_beams.c: Revive
-    [BATTLE_EFFECT_VINE - 1] = BattleEffect_RunVine, // growth.c: Vine
+    [BATTLE_EFFECT_VINE - 1] =
+        BattleEffect_RunVine, // battle_effect_growth.c: Vine
     [BATTLE_EFFECT_GROUND - 1] =
         BattleEffect_RunGround, // battle_effect_hail.c: Ground
     [BATTLE_EFFECT_FIZZ - 1] =
@@ -750,7 +758,7 @@ BattleEffectHandler gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1] = {
         BattleEffect_RunDarkBlessing, // battle_effect_burst_shower.c: Dark
                                       // Blessing
     [BATTLE_EFFECT_ACID_BLESSING - 1] =
-        BattleEffect_RunAcidBlessing, // battle_effect_burst_shower.c: Dark
+        BattleEffect_RunAcidBlessing, // battle_effect_burst_shower.c: Acid
                                       // Blessing
     [BATTLE_EFFECT_STORM_BLESSING - 1] =
         BattleEffect_RunStormBlessing, // battle_effect_burst_shower.c: Storm
@@ -851,7 +859,7 @@ u8 gFire_FlareHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
 u8 gFire_FlareBiasY[] = FLAME_PUFF_PICTURE_BIAS_Y;
 u16 gFire_FlarePictures[] = FLAME_PUFF_PICTURES;
 
-// frost.c: Frost's motes, ice mounds and chips.
+// battle_effect_frost.c: Frost's motes, ice mounds and chips.
 
 /// Where each ice mound stands: x, then the y of its foot.
 u8 gFrost_MoundSpots[][2] = {
@@ -901,11 +909,10 @@ u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
 // battle_effect_atalanta.c
 
-/// Staged particle scale: Atalanta's formation sprites keep this
-/// scale, one to one, throughout.
+/// The scale Atalanta's formation sprites keep throughout, one to one.
 struct SpriteScale gAtalanta_UnitScale = {{{FIXED_ONE, FIXED_ONE}}};
 
-// growth.c: Growing vine and pillar geometry.
+// battle_effect_growth.c: Growing vine and pillar geometry.
 
 /// The three column shapes: vine and pillar widths, pictures and height caps.
 u8 gGrowth_VineWidths[] = {21, 28, 19};
@@ -997,7 +1004,9 @@ u8 gHail_PictureHeights[] = {8, 8, 8, 8};
 u16 gHail_Pictures[] = {2308, 2372, 2436, 2500};
 /// The blitter flags a crackle may take, chosen at random: clipped at the
 /// canvas edges, and drawn as is, mirrored across, mirrored down or both.
-u8 gHail_CrackleFlips[] = {3, 7, 11, 15};
+u8 gHail_CrackleFlips[] = {
+    EFFECT_CLIP_BOUNDS, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+    EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP};
 /// The portal (picture 0), its white core (1 and 2) and its crackles (3 to 8)
 /// in the portal sheet: size, where each begins in the sheet, and its offset
 /// from the portal's corner.
@@ -1011,10 +1020,9 @@ u8 gHail_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 // battle_effect_spire.c and battle_effect_thor.c: Storm effect colours and
 // shattering rocks.
 
-/// The colours a target flashes when a bolt strikes it, chosen at random, as
-/// SPRITE_COLOR_ values: white, black, red raised to full, or its colour
-/// channels rotated.
-u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
+/// The colours a target flashes when a bolt strikes it, chosen at random.
+u8 gThor_TargetPalettes[] = {SPRITE_COLOR_WHITE, SPRITE_COLOR_BLACK,
+                             SPRITE_COLOR_RED_TINT, SPRITE_COLOR_GBR};
 /// Flip flags for the crackles of lightning around Thor, chosen at random.
 u8 gThor_CrackleFlips[] = GLINT_FLIPS;
 /// Where each of a rock's 21 shards starts, x then y, before the rock's
@@ -1127,8 +1135,8 @@ u8 gHelmSplitter_ImpactBurstPictureHeights[] = {96, 96, 90, 74, 74, 62, 52, 12};
 u16 gHelmSplitter_ImpactBurstPictures[] = {0,     4608,  9216,  13356,
                                            16020, 18684, 20668, 22020};
 
-// battle_effect_particle_streams.c and battle_effect_ramses.c: Particle stream
-// paths and circling effect geometry.
+// battle_effect_particle_streams.c and battle_effect_ramses.c: The fall's
+// orbiting sparks, fireballs and flashes; Ramses' statue and puffs.
 
 /// The seven sparks that orbit the falling sprite.
 s16 gParticleStreams_OrbitPoints[][3] = {
@@ -1157,8 +1165,8 @@ u8 gRagnarok_StrikeColumns[][3] = {
 /// The flash picture for each three frames at the end of a flash's life.
 u8 gRagnarok_FlashPictures[] = FLASH_FADE_PICTURES;
 
-// battle_effect_judgment.c and battle_effect_titan_blade.c: Falling sword
-// flashes, dust and shockwave debris.
+// battle_effect_judgment.c and battle_effect_titan_blade.c: Titan Blade's
+// flashes and dust; Judgment's burst and its shards.
 
 /// The flash picture for each three frames at the end of a flash's life.
 u8 gTitanBlade_FlashPictures[] = FLASH_FADE_PICTURES;
@@ -1174,15 +1182,15 @@ u16 gJudgment_ShardPictures[] = {2396, 2985, 3698, 4411, 4810, 5146};
 u8 gJudgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gJudgment_ShardHeights[] = {31, 31, 31, 21, 21, 24};
 
-// battle_effect_kirin.c: Sprite row coordinates.
+// battle_effect_kirin.c: Kirin's sprites.
 
-/// Sprite row: pixel offsets of its nine sprites.
+/// Where Kirin's nine sprites stand, in pixels from its corner.
 u8 gKirin_Columns[] = {8, 40, 72, 104, 8, 40, 72, 104, 0};
 u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 
-// battle_effect_neptune.c: Formation sweep coordinates and gravity.
+// battle_effect_neptune.c: Neptune's sprites and its spray's gravity.
 
-/// The formation's eight sprites: pixel offsets, scaled by 1.5 as placed.
+/// Neptune's eight sprites: pixel offsets, scaled by 1.5 as placed.
 u8 gNeptune_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
 u8 gNeptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
 /// Spray gravity, by particle index & 3, in gNereid_Gravity's steps.

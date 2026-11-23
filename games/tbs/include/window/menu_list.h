@@ -93,14 +93,22 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
+/// The sprites BattleMenuWork.icons holds.
+enum BattleMenuIcon {
+  BATTLE_MENU_ICON_COMMAND,  ///< the chosen command's icon, 32x32
+  BATTLE_MENU_ICON_ABILITY,  ///< the chosen Psynergy, summon or item's icon
+  BATTLE_MENU_ICON_PORTRAIT, ///< the party member's portrait
+  BATTLE_MENU_ICON_COUNT
+};
+
 /// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (260 bytes), reached
 /// as gBattleMenuWork.
 struct BattleMenuWork {
   /// The sprites BattleMenu_Update draws each frame: the chosen
   /// command's icon, the chosen ability's icon and the party member's portrait.
-  struct MenuSprite icons[3];
-  u8 iconShown[3]; ///< whether each of icons is drawn
-  u8 padding;      ///< up to the word targetViewOffset starts on
+  struct MenuSprite icons[BATTLE_MENU_ICON_COUNT];
+  u8 iconShown[BATTLE_MENU_ICON_COUNT]; ///< whether each of icons is drawn
+  u8 padding; ///< up to the word targetViewOffset starts on
   /// Where the battle view slides to (BattleCamera_SetCommandView's vertical
   /// offset): -2 or 16 by the target menu's mode, 0 otherwise.
   s32 targetViewOffset;

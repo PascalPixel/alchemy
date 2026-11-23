@@ -287,6 +287,11 @@ enum {
   ((s32)BG_CHAR_BLOCK(0) +                                                     \
    (LIST_TILE_PAGES_LEFT & TILE_NUMBER_MASK) * TILE_SIZE_4BPP)
 
+/// What BattleCommandRow_Run returns besides the command icon chosen.
+#define COMMAND_ROW_CANCELLED -1 ///< B, in a party member's row
+/// L or R in a party member's row: the party's Status screens.
+#define COMMAND_ROW_STATUS -2
+
 /// The two battle command rows BattleCommandRow_Run runs.
 enum CommandRowMode {
   COMMAND_ROW_PARTY = 0, ///< the start of a turn: Fight, Flee and Status
@@ -315,6 +320,18 @@ enum BattleTargetHint {
 };
 
 #define BATTLE_OK 0x80 ///< AbilityDefinition.flags: usable in battle
+
+/// Whether a party member can use an item in battle (Item_CheckBattleUse).
+enum BattleItemUse {
+  BATTLE_ITEM_USABLE = 0,
+  /// "Using this will have no effect.": no item, one that only teaches
+  /// Psynergy while equipped, one with no action, or equipment the party
+  /// member cannot equip.
+  BATTLE_ITEM_NO_EFFECT = 1,
+  /// "Cannot be used during battle.": its action lacks
+  /// ABILITY_USABLE_IN_BATTLE.
+  BATTLE_ITEM_NOT_IN_BATTLE = 2
+};
 
 /// What Save_ScanFileSummaries adds to its count of files when every file is
 /// cleared (its sendFlag set by saving at the game's end).

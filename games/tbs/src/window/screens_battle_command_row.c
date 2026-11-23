@@ -28,7 +28,8 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until a
-/// command is chosen.
+/// command is chosen: returns its icon (enum CommandIcon),
+/// COMMAND_ROW_CANCELLED or COMMAND_ROW_STATUS.
 s32 BattleCommandRow_Run(s32 mode) {
   u8 standbyDjinn[ELEMENT_COUNT];
   struct WindowWork *work;
@@ -271,7 +272,7 @@ s32 BattleCommandRow_Run(s32 mode) {
       }
     }
     if ((keys & KEYS_SHOULDERS) && mode != COMMAND_ROW_PARTY) {
-      command = -2;
+      command = COMMAND_ROW_STATUS;
       break;
     }
     if (keys & KEY_A) {
@@ -280,7 +281,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     }
     if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      command = -1;
+      command = COMMAND_ROW_CANCELLED;
       break;
     }
     if (repeat & (KEY_DOWN | KEY_RIGHT)) {
@@ -404,7 +405,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 i;
   s32 j;
 
-  count = BattleUnit_ListIdsFar(1, 0);
+  count = BattleUnit_ListIdsFar(BATTLE_SIDE_MASK_PARTY, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
   if (ids[0] != BATTLE_UNIT_LIST_END) {

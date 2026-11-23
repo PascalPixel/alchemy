@@ -57,7 +57,7 @@ void BattleMenu_Update(void) {
       BattleCamera_SetCommandViewFar(newOffset);
     }
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < BATTLE_MENU_ICON_COUNT; i++) {
       if (state->iconShown[i] != 0)
         Oam_AddSpriteAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
     }

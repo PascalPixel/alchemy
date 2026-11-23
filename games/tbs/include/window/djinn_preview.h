@@ -8,16 +8,17 @@
 #include "graphics/battle_sprite_id.h"
 #include "graphics/render_input.h"
 
-/// The OAM entry of a window sprite, as the Djinn preview places its stat
-/// arrows (DjinnMenu_DrawStatArrow): from the output's byte 16 on.
+/// The OAM entry of a window sprite (from WindowSprite.link on), as the Djinn
+/// preview places its stat arrows (DjinnMenu_DrawStatArrow).
 struct PreviewSprite {
   u32 link; ///< the output's depth-queue link (WindowSprite.link)
-  /// OAM attributes 0 and 1, written whole as 0x40000400 first.
+  /// OAM attributes 0 and 1, written whole first: a 16x16 semi-transparent
+  /// sprite.
   union {
     u32 word;
     struct {
       unsigned y : 8;     ///< screen pixels
-      unsigned flags : 8; ///< attribute 0's high byte: 0x04, semi-transparent
+      unsigned flags : 8; ///< attribute 0's high byte: its mode and shape
       unsigned x : 9;     ///< screen pixels
       unsigned high : 7;  ///< attribute 1's flip and size bits: 16 by 16
     } bits;

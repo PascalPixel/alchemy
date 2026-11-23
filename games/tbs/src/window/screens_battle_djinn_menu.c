@@ -15,7 +15,7 @@
 #endif
 
 /// The party status window's layout, whose Djinn column the menu blinks.
-#define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
+#define PARTY_STATUS_LAYOUT (*(struct PartyStatusWindow **)gPartyStatusWork)
 
 /// A battle Djinn entry packs a Djinni's DJINN_COMMAND (bits 11..8 its element,
 /// 7..0 its number in the element, DJINN_COMMAND_INDEX), its standby bit and
@@ -511,7 +511,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // the element of a ready standby Djinni under the cursor blinks between
     // HIGHLIGHT_PALETTE and WINDOW_PALETTE every four frames; then the arrow
     // tiles' blink.
-    partyStatus = CURSOR_OWNER;
+    partyStatus = PARTY_STATUS_LAYOUT;
     blinkPhase = gFrameCount & 4;
     iconWindow = partyStatus->window;
     if (partyStatus->flags & PARTY_STATUS_SHOW_DJINN) {
@@ -540,9 +540,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   }
 
   // Leave the Djinn column in WINDOW_PALETTE.
-  if (CURSOR_OWNER->flags & PARTY_STATUS_SHOW_DJINN) {
-    Window_HighlightRect(CURSOR_OWNER->window->x + 1,
-                         CURSOR_OWNER->window->y + 1, 4, 4, WINDOW_PALETTE);
+  if (PARTY_STATUS_LAYOUT->flags & PARTY_STATUS_SHOW_DJINN) {
+    Window_HighlightRect(PARTY_STATUS_LAYOUT->window->x + 1,
+                         PARTY_STATUS_LAYOUT->window->y + 1, 4, 4,
+                         WINDOW_PALETTE);
   }
   // Restore the party strip before releasing the Djinn menu's resources.
   VramCache_FreeEntry(cursorSlot);

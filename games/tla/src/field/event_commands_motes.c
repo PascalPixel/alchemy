@@ -1,5 +1,6 @@
 /// @file
-/// The floating motes and sparkles on the field, and the blends they fade by.
+/// Weather drawn in sprites on the field, and the storm's lightning: floating
+/// motes, rain, rising sparkles, and the flashes of the palettes.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -14,8 +15,9 @@
 
 #define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
 
-/// Starts the 64 floating motes (FieldMotes_Update): loads their tiles and puts
-/// each under the leader with staggered timers, drawn semi-transparent.
+/// Unused: nothing calls FieldMotes_StartFar. Starts the 64 floating motes
+/// (FieldMotes_Update): loads their tiles and puts each under the leader with
+/// staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
   struct WeatherWork *work;
   struct GroundParticle *mote;
@@ -127,7 +129,10 @@ void Weather_StartRain(s32 withCue) {
 /// Weather_StopRainFar.
 void Weather_StopRain(void) { Task_Remove(Weather_UpdateRain); }
 
-/// Task: the sparkles.
+/// The sparkles each frame: now and then a burst of four rises from a random
+/// spot within 128 pixels of the map's focus, each a frame of
+/// gFieldEffect_SparklePictures every two frames and started 4 frames after the
+/// one before; FLAG_WEATHER_HELD holds them where they are.
 void FieldEffect_UpdateSparkles(void) {
   struct WeatherWork *work;
   u32 spawned;
@@ -234,8 +239,10 @@ void FieldEffect_UpdateSparkles(void) {
 
 #define Decompress_ByteLz ((void (*)(const void *, void *))Decompress_ByteLz)
 
-/// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
-/// clears the 32 sparkles.
+/// Unused: nothing calls FieldEffect_InitializeSparklesFar; Aqua Rock and the
+/// Apojii Islands keep their own copy (shared/ground_particles_start.h). Starts
+/// the sparkles (FieldEffect_UpdateSparkles): loads their tiles and lays every
+/// sparkle at the map's top left corner with a staggered timer.
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct WeatherWork);
   struct WeatherWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);

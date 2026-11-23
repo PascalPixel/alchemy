@@ -351,10 +351,10 @@ void MagmaRockInside_SetEntranceFlooded(void);
 void MagmaRockInside_SetFuryFlooded(void);
 void MagmaRockInside_SetLowerRoomsFlooded(void);
 
-extern s32 gMagmaRockInside_CrackedPillarsPlatformPathAB[];
-extern s32 gMagmaRockInside_CrackedPillarsPlatformPathCD[];
-extern s32 gMagmaRockInside_CrackedPillarsPlatformPathEF[];
-extern s32 gMagmaRockInside_CrackedPillarsPlatformPathGH[];
+extern s32 gMagmaRockInside_CrackedPillarsFirstPairPath[];
+extern s32 gMagmaRockInside_CrackedPillarsSecondPairPath[];
+extern s32 gMagmaRockInside_CrackedPillarsThirdPairPath[];
+extern s32 gMagmaRockInside_CrackedPillarsFourthPairPath[];
 
 void FieldEffect_StartBlankOverlay(s32 value);
 
@@ -2428,30 +2428,30 @@ void MagmaRockInside_SetFuryFlooded(void) {
 void MagmaRockInside_SetLowerRoomsFlooded(void) {
   Event_SetFlag(FLAG_LOWER_ROOMS_FLOODED);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
-    s32 *script = gMagmaRockInside_CrackedPillarsPlatformPathAB;
+    s32 *script = gMagmaRockInside_CrackedPillarsFirstPairPath;
 
     MagmaRockInside_StartLavaPlatform(ACTOR_LAVA_PLATFORM_A, script,
                                       FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_B, gMagmaRockInside_CrackedPillarsPlatformPathAB,
+        ACTOR_LAVA_PLATFORM_B, gMagmaRockInside_CrackedPillarsFirstPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_C, gMagmaRockInside_CrackedPillarsPlatformPathCD,
+        ACTOR_LAVA_PLATFORM_C, gMagmaRockInside_CrackedPillarsSecondPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_D, gMagmaRockInside_CrackedPillarsPlatformPathCD,
+        ACTOR_LAVA_PLATFORM_D, gMagmaRockInside_CrackedPillarsSecondPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_E, gMagmaRockInside_CrackedPillarsPlatformPathEF,
+        ACTOR_LAVA_PLATFORM_E, gMagmaRockInside_CrackedPillarsThirdPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_F, gMagmaRockInside_CrackedPillarsPlatformPathEF,
+        ACTOR_LAVA_PLATFORM_F, gMagmaRockInside_CrackedPillarsThirdPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_G, gMagmaRockInside_CrackedPillarsPlatformPathGH,
+        ACTOR_LAVA_PLATFORM_G, gMagmaRockInside_CrackedPillarsFourthPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     MagmaRockInside_StartLavaPlatform(
-        ACTOR_LAVA_PLATFORM_H, gMagmaRockInside_CrackedPillarsPlatformPathGH,
+        ACTOR_LAVA_PLATFORM_H, gMagmaRockInside_CrackedPillarsFourthPairPath,
         FLAG_LOWER_ROOMS_FLOODED);
     if (Actor_Get(ACTOR_LAVA_PLATFORM_B)->scriptCursor == 0) {
       Actor_Get(ACTOR_LAVA_PLATFORM_B)->scriptCursor =
@@ -2645,28 +2645,28 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_LAVA_PLATFORM_G)->retainSpriteCache = 3;
       Actor_GetById(ACTOR_LAVA_PLATFORM_H)->retainSpriteCache = 3;
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_A, gMagmaRockInside_CrackedPillarsPlatformPathAB,
+          ACTOR_LAVA_PLATFORM_A, gMagmaRockInside_CrackedPillarsFirstPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_B, gMagmaRockInside_CrackedPillarsPlatformPathAB,
+          ACTOR_LAVA_PLATFORM_B, gMagmaRockInside_CrackedPillarsFirstPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_C, gMagmaRockInside_CrackedPillarsPlatformPathCD,
+          ACTOR_LAVA_PLATFORM_C, gMagmaRockInside_CrackedPillarsSecondPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_D, gMagmaRockInside_CrackedPillarsPlatformPathCD,
+          ACTOR_LAVA_PLATFORM_D, gMagmaRockInside_CrackedPillarsSecondPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_E, gMagmaRockInside_CrackedPillarsPlatformPathEF,
+          ACTOR_LAVA_PLATFORM_E, gMagmaRockInside_CrackedPillarsThirdPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_F, gMagmaRockInside_CrackedPillarsPlatformPathEF,
+          ACTOR_LAVA_PLATFORM_F, gMagmaRockInside_CrackedPillarsThirdPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_G, gMagmaRockInside_CrackedPillarsPlatformPathGH,
+          ACTOR_LAVA_PLATFORM_G, gMagmaRockInside_CrackedPillarsFourthPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       MagmaRockInside_StartLavaPlatform(
-          ACTOR_LAVA_PLATFORM_H, gMagmaRockInside_CrackedPillarsPlatformPathGH,
+          ACTOR_LAVA_PLATFORM_H, gMagmaRockInside_CrackedPillarsFourthPairPath,
           FLAG_LOWER_ROOMS_FLOODED);
       if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED))
         MagmaRockInside_SetLowerRoomsFlooded();
@@ -3177,7 +3177,7 @@ s32 gMagmaRockInside_CrackedPillarsEastPlatformPath[] = {
 
 /// The cracked pillars' room's lava platforms A and B: one square, B starting
 /// at its third corner (MagmaRockInside_SetLowerRoomsFlooded).
-s32 gMagmaRockInside_CrackedPillarsPlatformPathAB[] = {
+s32 gMagmaRockInside_CrackedPillarsFirstPairPath[] = {
     SC_MOVE(216, 16, 600), SC_SYNC,
     SC_MOVE(280, 16, 600), SC_SYNC,
     SC_MOVE(280, 16, 664), SC_SYNC,
@@ -3187,7 +3187,7 @@ s32 gMagmaRockInside_CrackedPillarsPlatformPathAB[] = {
 };
 
 /// The cracked pillars' room's lava platforms C and D, as A and B.
-s32 gMagmaRockInside_CrackedPillarsPlatformPathCD[] = {
+s32 gMagmaRockInside_CrackedPillarsSecondPairPath[] = {
     SC_MOVE(312, 16, 664), SC_SYNC,
     SC_MOVE(376, 16, 664), SC_SYNC,
     SC_MOVE(376, 16, 600), SC_SYNC,
@@ -3197,7 +3197,7 @@ s32 gMagmaRockInside_CrackedPillarsPlatformPathCD[] = {
 };
 
 /// The cracked pillars' room's lava platforms E and F, as A and B.
-s32 gMagmaRockInside_CrackedPillarsPlatformPathEF[] = {
+s32 gMagmaRockInside_CrackedPillarsThirdPairPath[] = {
     SC_MOVE(440, 16, 600), SC_SYNC,
     SC_MOVE(504, 16, 600), SC_SYNC,
     SC_MOVE(504, 16, 664), SC_SYNC,
@@ -3207,7 +3207,7 @@ s32 gMagmaRockInside_CrackedPillarsPlatformPathEF[] = {
 };
 
 /// The cracked pillars' room's lava platforms G and H, as A and B.
-s32 gMagmaRockInside_CrackedPillarsPlatformPathGH[] = {
+s32 gMagmaRockInside_CrackedPillarsFourthPairPath[] = {
     SC_MOVE(536, 16, 664), SC_SYNC,
     SC_MOVE(600, 16, 664), SC_SYNC,
     SC_MOVE(600, 16, 600), SC_SYNC,

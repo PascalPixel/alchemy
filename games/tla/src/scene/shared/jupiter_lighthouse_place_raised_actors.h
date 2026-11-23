@@ -1,8 +1,8 @@
 #include "jupiter_lighthouse_aerie.h"
 
 /// Puts the aerie's two angels and the well's lid where the archers' arrows
-/// left them (FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED and its right
-/// twin): each energized angel and its archer glow, the angel rises and its
+/// left them (FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT and its right
+/// twin): each shot angel and its archer glow, the angel rises and its
 /// side of the lid lifts; with both, the angels and the lid float over the
 /// well.
 void JupiterLighthouse_PlaceRaisedActors(void) {
@@ -22,7 +22,7 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
   leftAngel->y.fixed = leftAngel->groundHeight;
   rightAngel->motionFlags = 0;
   rightAngel->y.fixed = rightAngel->groundHeight;
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT)) {
     leftAngel->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
     {
       s32 step = ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
@@ -34,7 +34,7 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), SPRITE_COLOR_GBR);
   }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
     rightAngel->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
     {
       s32 step = ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
@@ -46,8 +46,8 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), SPRITE_COLOR_GBR);
     Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), SPRITE_COLOR_GBR);
   }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
-      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT) &&
+      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
     leftAngel->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
     rightAngel->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
     {

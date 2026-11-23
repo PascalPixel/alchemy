@@ -15,7 +15,7 @@
 
 /// The frames the aerie's JupiterLighthouse_RaiseAngels takes to raise an
 /// angel and tilt the lid, and then to lift both angels and the lid off the
-/// well once both are energized.
+/// well once both are shot.
 #define ANGEL_RISE_FRAMES 64
 #define LID_LIFT_FRAMES 256
 
@@ -24,7 +24,7 @@
 /// number alike and JupiterLighthouse_PlaceRaisedActors moves.
 enum {
   /// The angels either side of the lid over the well, and the archer statues
-  /// that energize them.
+  /// that shoot them.
   ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
   ACTOR_RIGHT_ANGEL,
   ACTOR_LEFT_ARCHER,

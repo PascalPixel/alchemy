@@ -912,7 +912,7 @@ s32 Scene_Initialize(void) {
   switch (gMainRoutineWork.entrance) {
   case WORLD_MAP_FROM_GAIA_ROCK_SUSA:
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
-      GameFlag_Set(FLAG_SUSA_REJOICES);
+      GameFlag_Set(FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE);
     break;
   case WORLD_MAP_FROM_MADRA:
   case WORLD_MAP_BANDIT_BEATEN:

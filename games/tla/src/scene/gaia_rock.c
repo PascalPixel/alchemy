@@ -373,7 +373,7 @@ void GaiaRock_SusaAsksAboutTheSerpent(void) {
     FieldActor_StartRepeatedMotion(ACTOR_SUSA, 1);
     FieldEvent_Wait(15);
     Event_AskYesNo(ACTOR_SUSA, 0);
-    Event_SetFlag(FLAG_SUSA_REJOICES);
+    Event_SetFlag(FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE);
     Event_End();
   }
 }
@@ -382,7 +382,7 @@ void GaiaRock_SusaAsksAboutTheSerpent(void) {
 /// the serpent, "If you're going to Izumo, tell my sister that I'm still
 /// alive."; after, he asks again.
 void GaiaRock_TalkToSusa(void) {
-  if (Event_GetFlag(FLAG_SUSA_REJOICES)) {
+  if (Event_GetFlag(FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
     Event_AskYesNo(ACTOR_SUSA, 0);
   } else {
@@ -396,7 +396,7 @@ void GaiaRock_TalkToSusa(void) {
 /// over, but as long as Kushinada's safe, it was worth it." before he has
 /// asked about the serpent, "Kushinada's safe... She's safe!" after.
 void GaiaRock_MindReadSusa(void) {
-  if (Event_GetFlag(FLAG_SUSA_REJOICES)) {
+  if (Event_GetFlag(FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
     // "Kushinada's safe... She's safe! Nothing else matters."
     Event_ShowMessage(ACTOR_SUSA, 0);
@@ -618,7 +618,8 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
     }
-    if (GameFlag_Get(FLAG_SERPENT_SLAIN) && !GameFlag_Get(FLAG_SUSA_REJOICES)) {
+    if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
+        !GameFlag_Get(FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE)) {
       Actor_SetPosition(ACTOR_SUSA, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
@@ -892,7 +893,7 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {TRIGGER_EXIT, GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS},
     {TRIGGER_EXIT, GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR},
     {TRIGGER_EXIT, GAIA_ROCK_SUSA_TO_WORLD_MAP, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_WORLD_MAP},
-    {TRIGGER_STEP, CELL_BEHAVIOR_PAST_SUSA, FLAG_SUSA_REJOICES, EVENT(GaiaRock_SusaAsksAboutTheSerpent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PAST_SUSA, FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE, EVENT(GaiaRock_SusaAsksAboutTheSerpent)},
     {TRIGGER_TALK, ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE, CONDITION_ALWAYS, 0},

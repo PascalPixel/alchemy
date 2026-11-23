@@ -180,7 +180,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// An energized angel rises and tilts the lid away from its side; the second
+/// A shot angel rises and tilts the lid away from its side; the second
 /// of the two then lifts both angels and the lid off the well, to the puzzle's
 /// jingle.
 void JupiterLighthouse_RaiseAngels(s32 mode) {
@@ -236,14 +236,14 @@ void JupiterLighthouse_RaiseAngels(s32 mode) {
 /// The left archer shoots its beam at the left angel, which rises; the second
 /// angel of the two lifts the lid off.
 void JupiterLighthouse_ShootAtLeftAngel(void) {
-  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
+  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   JupiterLighthouse_StartBeam(ACTOR_LEFT_ARCHER, ACTOR_LEFT_ANGEL, BEAM_LEFT);
   FieldEvent_Wait(40);
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED) == 0) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT) == 0) {
     JupiterLighthouse_RaiseAngels(RISE_LEFT_ANGEL);
     FieldEvent_Wait(40);
   } else {
@@ -262,7 +262,7 @@ void JupiterLighthouse_ShootAtLeftAngel(void) {
 /// The right archer shoots its beam at the right angel, which rises; the second
 /// angel of the two lifts the lid off.
 void JupiterLighthouse_ShootAtRightAngel(void) {
-  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
+  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -270,7 +270,7 @@ void JupiterLighthouse_ShootAtRightAngel(void) {
   JupiterLighthouse_StartBeam(ACTOR_RIGHT_ARCHER, ACTOR_RIGHT_ANGEL,
                               BEAM_RIGHT);
   FieldEvent_Wait(40);
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) == 0) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT) == 0) {
     JupiterLighthouse_RaiseAngels(RISE_RIGHT_ANGEL);
     FieldEvent_Wait(40);
   } else {
@@ -308,7 +308,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   if (id == ACTOR_LEFT_PATH_BLOCK) {
     if (FIELD_CELL(actor->x.fixed) == LEFT_GAP_CELL_X &&
         FIELD_CELL(actor->z.fixed) == GAP_CELL_Z) {
-      Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
+      Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT);
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(2);
       i = 0;
@@ -340,7 +340,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   if (id == ACTOR_RIGHT_PATH_BLOCK) {
     if (FIELD_CELL(actor->x.fixed) == RIGHT_GAP_CELL_X &&
         FIELD_CELL(actor->z.fixed) == GAP_CELL_Z) {
-      Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
+      Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT);
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(2);
       i = 0;
@@ -369,8 +369,8 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
                             PATH_BLOCK_TOP_HEIGHT);
     }
   }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
-      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED))
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT) &&
+      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT))
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED);
 }
 
@@ -410,13 +410,13 @@ s32 Scene_Initialize(void) {
 }
 
 /// Lays out the path blocks: gone into their gaps, their paths lit, for each
-/// angel already energized, and glowing where they stand otherwise.
+/// angel already shot, and glowing where they stand otherwise.
 s32 Scene_PrepareMap(void) {
   struct Actor *actor;
 
   Scene_SetArrivalFlags(0);
   LightSprites_InitB();
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT)) {
     Actor_SetPosition(ACTOR_LEFT_PATH_BLOCK, 0, 0);
     MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
     MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75);
@@ -431,7 +431,7 @@ s32 Scene_PrepareMap(void) {
   actor->motionFlags = 0;
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0,
                         PATH_BLOCK_TOP_HEIGHT);
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
     Actor_SetPosition(ACTOR_RIGHT_PATH_BLOCK, 0, 0);
     MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10);
     MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75);

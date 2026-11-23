@@ -1,6 +1,7 @@
-/// Puts actor `id` on actor `sourceId`, to send `value` rolling at `angle`
-/// when its script says.
-void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
+/// Puts actor `id` on actor `sourceId` and starts its script; at the script's
+/// end it launches actor `launchedId` ahead of it, facing `launchFacing`
+/// (Actor_Park).
+void Actor_Attach(s32 sourceId, s32 id, s32 launchedId, s32 launchFacing,
                   const void *script) {
   struct Actor *source = Actor_Get(sourceId);
   struct Actor *actor = Actor_Get(id);
@@ -13,7 +14,7 @@ void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
   Actor_SelectAnimation(actor, 1);
   actor->watchedActor = source;
   actor->timer = 0;
-  actor->userValue = angle;
-  actor->launchedActorId = value;
+  actor->userValue = launchFacing;
+  actor->launchedActorId = launchedId;
   actor->update = Actor_HoldDuringEvent;
 }

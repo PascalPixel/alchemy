@@ -177,8 +177,11 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
     Event_OpenMessage(actorId, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
+      // Yes: "I bet you are! Suhalla is a small village... Ours is the only
+      // shop!..."
       Event_SetMessageId(question + 1);
     } else {
+      // No: "It's really something to have an equipment shop..."
       Event_SetMessageId(question + 2);
     }
     Event_ShowMessage(actorId, 0);
@@ -233,12 +236,15 @@ static void TimberRoomsA_TalkToHealer(s32 actorId) {
 static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Event_SetMessageId(question);
-  // "I suppose you folk were blown here on your way to Babi..."
+  // "I suppose you folk were blown here on your way to Babi Lighthouse?"
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
+    // Yes: "If you follow the northern mountain, you can get back to Tolbi..."
     Event_SetMessageId(question + 1);
   } else {
+    // No: "I set out for Babi Lighthouse to open a business there, but then I
+    // was blown back here again!"
     Event_SetMessageId(question + 2);
   }
   Event_ShowMessage(actorId, 0);
@@ -514,7 +520,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_FaceEachOther(ACTOR_IODEM, ACTOR_PARTY_LEADER, 20);
     Actor_WalkByAndWait(ACTOR_IODEM, -12, 0);
     Event_Wait(20);
-    // Both answers converge on the following line after different waits.
+    // Yes and No each show their own line and step past the other's.
     // "Could these others be the ones you are following, Isaac?"
     Event_OpenMessage(ACTOR_IODEM, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {

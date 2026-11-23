@@ -985,8 +985,14 @@ static void WorldMap_BoardBunzasWagon(void) {
   Event_End();
 }
 
-/// Outside Vault, the first time the party comes to it, Hammet's caravan
-/// leaves.
+/// The first time the party walks onto Vault, Hammet's caravan comes out of
+/// the town: its wagons roll up beside the party, Hammet says they cannot
+/// stay in so dangerous a place, and the caravan heads south to the river,
+/// where his man finds the bridge is down.
+///
+/// While Hammet and his man talk of leaving Ivan behind and of the rod Ivan
+/// will search for, the ground shakes and a rock falls beside them. The party
+/// is then taken into Vault by its south side.
 static void WorldMap_ShowHammetsCaravan(void) {
   struct Actor *actor;
   struct Actor *spriteActor;
@@ -1322,8 +1328,8 @@ static void WorldMap_UpdateFallingRock(void) {
   }
 }
 
-/// A leg of the Tolbi-bound Ship's crossing, in which the ship sails out of
-/// Kalay Docks.
+/// The Tolbi-bound Ship, drawn a quarter larger, sails out of Kalay Docks on
+/// the World Map before the first attack at the mast.
 static void WorldMap_SailToFirstMonsterAttack(void) {
   struct Actor *actor;
 
@@ -1345,7 +1351,9 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
   Event_End();
 }
 
-/// The middle legs of the crossing, with the ship seen from above.
+/// A middle leg of the Karagol Sea crossing: the ship, seen from above, sails
+/// west over open sea with the camera following it, until the screen closes
+/// on the scene `exit` leads to.
 static inline void WorldMap_SailCrossingLeg(s32 exit) {
   struct Actor *actor;
 
@@ -1373,23 +1381,26 @@ static inline void WorldMap_SailCrossingLeg(s32 exit) {
   Event_End();
 }
 
-/// A leg of the Tolbi-bound Ship's crossing.
+/// The ship sails west across the Karagol Sea after the first attack, and
+/// the screen closes for the second attack at the mast.
 static void WorldMap_SailToSecondMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing.
+/// The ship sails on west after the second attack, and the screen closes for
+/// the third.
 static void WorldMap_SailToThirdMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing.
+/// The ship sails on west after the third attack, and the screen closes on
+/// the ship's rooms for the fourth, the Kraken's.
 static void WorldMap_SailToKraken(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_SHIP_ROOMS);
 }
 
-/// The last leg of the Tolbi-bound Ship's crossing, in which the ship sails
-/// west until land is sighted.
+/// After the Kraken, the ship sails west across open sea until the screen
+/// closes on the mast, where land is sighted.
 static void WorldMap_SailUntilLandSighted(void) {
   struct Actor *actor;
 
@@ -1421,7 +1432,8 @@ static void WorldMap_SailUntilLandSighted(void) {
   Event_End();
 }
 
-/// The crossing's last leg, in which the ship sails into Tolbi's harbour.
+/// The ship sails the last stretch along the coast into Tolbi's harbour, and
+/// the scene changes to its deck.
 static void WorldMap_SailIntoTolbi(void) {
   struct Actor *actor;
 
@@ -2110,7 +2122,9 @@ u16 gWorldMapBlend;
 #define LIGHT_BALL_FIRST_TILE 128
 #define LIGHT_BALL_PALETTE 14
 
-/// The ending, on the island Jenna and Kraden are adrift on.
+/// The ending, on the island Jenna and Kraden are adrift on: they lie on its
+/// grass and talk of the Venus beacon, Alex comes to them, and he leads them
+/// to the shore, where Felix and Sheba lie washed up, alive.
 static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
@@ -2247,8 +2261,9 @@ static void WorldMap_ShowEndingEvent(void) {
   Event_SetDestination(SCENE_TITLE, TITLE_FROM_WORLD_MAP);
 }
 
-/// The look back before Sheba's fall, with the view settling on Venus
-/// Lighthouse.
+/// After the beacon is lit, the view settles on Venus Lighthouse on the World
+/// Map, which shakes with a rumble as yellow clouds of dust puff up round it,
+/// before the scene returns to the aerie for Sheba's fall.
 static void WorldMap_ShakeVenusLighthouse(void) {
   Event_Start();
   Sound_Play(SE_RUMBLE);
@@ -2424,7 +2439,10 @@ static void WorldMap_SpawnIslandWake(void) {
 }
 
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east
-/// with its wake under warm colours.
+/// across a darkened sea, trailing a pale wake, as the view closes in on it,
+/// then the screen fades to white.
+///
+/// The darkening is PALETTE_TINT_WARM, applied to the backgrounds only.
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
 

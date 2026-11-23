@@ -1476,16 +1476,16 @@ static void MercuryLighthouse_RecordRowStatues(void) {
 /// (FLAG_PASSAGE_STATUE_MOVED), and the doorway, which leads up to the paths
 /// outside, can be reached.
 ///
-/// The cell (31, 20) takes the behaviour of (29, 20),
-/// CELL_BEHAVIOR_JUMP_FORWARD, a cell the leader jumps across.
+/// The doorway's foot, cell (29, 20), is a jump square on the strip of floor
+/// along the north wall, with a gap at (30, 20) east of it. Cell (31, 20)
+/// takes the same behaviour, CELL_BEHAVIOR_JUMP_FORWARD, so that Isaac,
+/// walking west along the strip from the room's east side, leaps the gap
+/// onto the doorway's foot.
 static void MercuryLighthouse_MoveGapStatueOffDoorway(void) {
   Event_Start();
   if (Actor_Get(ACTOR_GAP_STATUE)->x.fixed / toFIXED(16) == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
-      // XXX: which way Isaac then jumps to reach the doorway; a recording of
-      // the room with the statue moved, walking up from its foot, would
-      // settle it.
       MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
     }
   }

@@ -2733,17 +2733,13 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   return;
 }
 
-/// Before the beacon is lit, Felix walks away west from the three as they lie
-/// dying, and Kraden turns to him: "Do not let your sadness overwhelm you,
-/// Felix! Go! Once the beacon has been ignited, you can mourn..." Felix walks
-/// to the spot south-west of them, (480, 348).
-// XXX: where the cells that set it off lie on screen (map.txt behaviour 20, at
-// (45, 53) and (46, 53) in the map's grid). They, and the beacon's own cells
-// (behaviours 22 and 23, at (44, 45) to (51, 49)), lie outside the camera box
-// all the scene's entrances share (x 176 to 848, z 32 to 560): the room drawn
-// whole with them outlined shows none of them, though a cell inside it,
-// (30, 21), shows. A recording in the room where the three lie dying, reached
-// as the story reaches it, would settle it.
+/// Before the beacon is lit, Felix walks away south from the three as they
+/// lie dying and reaches the head of the broad stairway down from the beacon's
+/// platform on its west half (cells (29, 23) and (30, 23), map.txt's copy of
+/// them at (45, 53) and (46, 53)). Kraden turns to him: "Do not let your
+/// sadness overwhelm you, Felix! Go! Once the beacon has been ignited, you can
+/// mourn as much as you need." and Felix walks back up onto the platform, to
+/// (480, 348), south-west of them.
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2757,12 +2753,11 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_End();
 }
 
-/// Before the beacon is lit, Felix walks away east from the three as they lie
-/// dying, and Kraden turns to him: "Do not let your sadness overwhelm you,
-/// Felix! Go! Once the beacon has been ignited, you can mourn..." Felix walks
-/// to the spot south-east of them, (544, 348).
-// XXX: as for MarsLighthouseAerie_HoldBackFromParents, map.txt behaviour 21,
-// at (49, 53) and (50, 53).
+/// The same at the head of the stairway's east half (cells (33, 23) and
+/// (34, 23), map.txt's copy of them at (49, 53) and (50, 53)): Kraden turns to
+/// him, "Do not let your sadness overwhelm you, Felix! Go! Once the beacon has
+/// been ignited, you can mourn as much as you need. I will protect you.", and
+/// Felix walks back up onto the platform, to (544, 348), south-east of them.
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

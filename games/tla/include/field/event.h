@@ -451,13 +451,15 @@ static inline void Actor_WalkToAndWait(s32 actorId, s32 x, s32 z) {
   Actor_WalkToAndWaitById(actorId, x, z);
 }
 
-/// Has two actors speak at once, each window placed by the event.
-static inline void
-FieldEvent_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
-                                  s32 otherSpeaker, s32 otherX, s32 otherY,
-                                  s32 otherArg, s32 otherExtra, s32 flags) {
-  Event_ShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker, otherX,
-                               otherY, otherArg, otherExtra, flags);
+/// Has two actors speak at once, each window placed by the event
+/// (Event_ShowTwoMessagesAndWait): places in tiles, delay in frames.
+static inline void FieldEvent_ShowTwoMessagesAndWait(
+    s32 first, s32 firstX, s32 firstY, s32 firstPortraitX, s32 firstPortraitY,
+    s32 second, s32 secondX, s32 secondY, s32 secondPortraitX,
+    s32 secondPortraitY, s32 delay) {
+  Event_ShowTwoMessagesAndWait(first, firstX, firstY, firstPortraitX,
+                               firstPortraitY, second, secondX, secondY,
+                               secondPortraitX, secondPortraitY, delay);
 }
 
 /// The field encodes either a movement type or an actor-script address.

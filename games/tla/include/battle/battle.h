@@ -157,8 +157,8 @@ void PaletteFade_StartInterpolation(s32 frames);
 struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
 void PartyStatus_HighlightMembersFar(u16 *);
-void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
-                                    s32 travelDivisor, s32 initialVelocityY);
+void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId, s32 travelFrames,
+                                    s32 initialVelocityY);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleObject_ReleaseSpriteSlots(s32 objectId);
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *slot);

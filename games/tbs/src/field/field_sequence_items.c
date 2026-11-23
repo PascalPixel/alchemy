@@ -6,7 +6,7 @@
 
 /// The function a scene's item trigger may name instead of a message, called
 /// with the item, its user and its inventory slot; its result is not read.
-typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
+typedef s32 (*ItemTriggerCallback)(s32 item, s32 actorId, s32 slot);
 
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item).
@@ -124,7 +124,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       Event_ShowMessageAndWait(nearbyActorId, 0);
       Event_End();
     } else {
-      ((BattleItemCallback)trigger->value)(itemId, actorId, slot);
+      ((ItemTriggerCallback)trigger->value)(itemId, actorId, slot);
     }
     result = 0;
   } else {
@@ -174,7 +174,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       work->psynergyActing = 0;
       FieldPsynergy_End();
 
-      if (Item_GetDirectFar(itemId)->useType & 1)
+      if (Item_GetDirectFar(itemId)->useType & ITEM_USE_CONSUMED)
         GameFlag_SetFar(FLAG_ITEM_USED_UP);
     }
   }

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_KOLIMA_FOREST_BRIDGE_FALLING_EFFECT_H
 #define ALCHEMY_KOLIMA_FOREST_BRIDGE_FALLING_EFFECT_H
 
+/// @file
+/// The dust of Tret's curse that falls about the party in Kolima and at Kolima
+/// Forest's entrance (shared/kolima_forest_bridge_falling_effect.c).
+
 #include "types.h"
 
 /// gFallingEffectState: how the curse dust falls about the point the map view
@@ -16,6 +20,7 @@ enum KolimaCurseDustState {
   KOLIMA_DUST_DRIFTING = 3
 };
 
+/// A task that sends down a speck of curse dust every eighth frame.
 void Kolima_UpdateCurseDust(void);
 
 #endif

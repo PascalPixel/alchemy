@@ -2,7 +2,9 @@
 #define ALCHEMY_ORBIT_H
 
 /// @file
-/// The views of an orbiting scene actor's sprite.
+/// A floating Nut's actor and sprite, seen through the fields its scenes set
+/// (shared/actor_orbit.c and kalay.c): the actor's fields where the Nut keeps
+/// the spot it sways round and how far through the sway it is.
 
 #include "fixed_math.h"
 #include "types.h"

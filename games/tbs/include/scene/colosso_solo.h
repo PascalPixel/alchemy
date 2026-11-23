@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_COLOSSO_SOLO_H
 #define ALCHEMY_COLOSSO_SOLO_H
 
+/// @file
+/// Lending a hand in the three Colosso finals matches (shared/colosso_solo.c):
+/// Garet, Ivan or Mia looks round the stages alone, and the stages' guides
+/// offer them a place to cheer from.
+
 #include "flags.h"
 #include "types.h"
 
@@ -20,14 +25,20 @@ enum ColossoSoloExit {
 /// to the second prize.
 #define FLAG_ARENA_REACHED FLAG_SCENE_TEMP_11
 
+/// Puts Garet, Ivan and Mia back where they chose to cheer.
 void Colosso_PlaceFriendsAtCheeringSpots(void);
 
+/// Makes the character the only party member, the one the player moves.
 void Colosso_ControlCharacterAlone(s32 id);
 
+/// A task: a friend looking round alone takes a place when Psynergy is aimed
+/// at them.
 void Colosso_RaiseTakePlaceOnPsynergy(void);
 
+/// A stage's guide asks a friend looking round alone whether they are done.
 void Colosso_AskDoneCheering(s32 id);
 
+/// Forgets where Garet, Ivan and Mia cheer from.
 void Colosso_ClearCheeringSpots(void);
 
 /// What a stage's guide does next (Colosso_GreetAtStage), and so how
@@ -45,7 +56,9 @@ enum ColossoGuideReply {
   COLOSSO_GUIDE_NOTHING = 3
 };
 
+/// A stage's guide names the stage; returns a ColossoGuideReply.
 s32 Colosso_GreetAtStage(s32 speaker, s32 warrior);
+/// A stage's guide names the stage again after describing it.
 void Colosso_RepeatStageNumber(s32 speaker, s32 warrior);
 // UB: the scenes call this before its definition with no prototype, as a
 // function returning int.

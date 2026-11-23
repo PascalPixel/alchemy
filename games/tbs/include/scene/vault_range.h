@@ -1,10 +1,16 @@
 #ifndef ALCHEMY_VAULT_RANGE_H
 #define ALCHEMY_VAULT_RANGE_H
 
+/// @file
+/// Villagers who walk about and stop when someone is close in front of them,
+/// in Vault and Tolbi (shared/vault_range.c).
+
 #include "types.h"
 
 struct Actor;
 
+/// Stops the actor when the target is nearer than range pixels ahead of it;
+/// returns 1 when it stopped.
 s32 Vault_StopIfFacingNear(struct Actor *actor, struct Actor *target, s32 range,
                            s32 force);
 

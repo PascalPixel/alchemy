@@ -384,11 +384,16 @@ static void ColosseumSatrageMatch_PushBoardWalkPillar(void) {
 /// (32, 77..80)). There it stands walled between open cells (35, 12) and
 /// (35, 14) of column 35; the flag opens it. A walk staged on that layer from
 /// (35, 12) southward stops there without the flag and goes on with it.
-/// XXX: what in the race moves on that layer in column 35, and so what the
-/// opening changes for the player; a race recorded with the flag set, Isaac
-/// climbing The Wall at column 35, would settle it. The recorder cannot put
-/// him on The Wall the way the race does: from the ledge's foot, (36, 17), he
-/// does not climb.
+/// Recorded, that layer is the face of The Wall above the ledge: Isaac put on
+/// it at (35, 12) shows over the pillar's top; without the flag he stays
+/// there, holding south and then west; with it he goes on down past the
+/// pillar to the ledge's height and west behind the chest. Its rows above,
+/// (x, 0..7), are open across, and the vine Growth raises opens column 32, so
+/// a climb up the vine and down column 35 is open on the cells.
+/// XXX: whether the race lets Isaac climb that way, and so whether a player
+/// ever sees the opening; a race recorded with Growth cast and the vine
+/// climbed would settle it. Staged with FLAG_PLANT_GROWN at the vine's foot,
+/// (32, 17), and north held, he stands there and does not climb.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 column;
   s32 row;

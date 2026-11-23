@@ -567,17 +567,16 @@ static inline void TolbiSpring_ShowPrizePicture(s32 sourceColumn,
 }
 
 /// Tolbi Spring gives a Lucky Medal's prize: a roar, Isaac turns to face the
-/// spring, pictures play in its middle to show the prize, he receives it, and
-/// they play back the other way.
+/// spring, and a sea dragon of green-blue scales rises from its north edge,
+/// its long neck stretching south over the rings until its head reaches the
+/// rim before him, the prize held up over his head as he raises his arms;
+/// "Isaac got an Adept's Helm." (or whatever the medal won), and the dragon
+/// draws back north the way it came.
 ///
-/// The pictures are 3 by 8 cells copied over the spring's middle from spare
-/// cells of the map.
+/// The dragon is the pictures: each is 3 by 8 cells copied over the spring's
+/// middle from spare cells of the map, one every 8 frames, the head a step
+/// further south in each as it comes and a step back north in each as it goes.
 static void TolbiSpring_RevealPrize(s32 item) {
-  // XXX: what the pictures show; a recording of a Lucky Medal tossed would
-  // settle it. With medals given (--give), the recorder still never presses A
-  // at the toss, so the run passes its four minutes; the spare cells the
-  // pictures come from, (79..102, 20..36), lie outside the map's bounds, where
-  // no staged walk or probe photo reaches.
   Event_Start();
   Event_Wait(30);
   Sound_Play(SE_BOSS_ROAR);

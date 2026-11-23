@@ -468,14 +468,13 @@ static void Xian_TalkToWaterCarrier(void) {
   Event_End();
 }
 
-/// When Isaac starts casting Frost on the spilled water from north of the
-/// street, the puddle is brought to the front drawing layer before it freezes.
+/// When Isaac casts Frost on the spilled water from north of the street, at
+/// the foot of the cliff, the puddle is brought to the front drawing layer
+/// before it freezes. All this changes on screen is brief: as the ice rises
+/// it is drawn over the left of the Psynergy ring around Isaac rather than
+/// behind it, and a moment later the ice stands as it would without this.
 static void Xian_UpdatePuddlePriority(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // XXX: what this changes on screen; a recording of Frost cast from north of
-  // the street with the water spilled would settle it. The recorder cannot
-  // stage the spill: Xian_TalkToWaterCarrier records her only by the pool,
-  // and played first (--first) it leaves the puddle off stage.
   if (FIELD_CELL(leader->z.fixed) < CARRIER_ROUTE_ROW)
     Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }

@@ -964,15 +964,15 @@ static void TunnelRuins_DouseStartsOnPillar(void) {
       (void (*)(struct Actor *))TunnelRuins_FrostTargetFollowsPillar;
 }
 
-/// Frost on the soaked grey pillar in the Douse pillar's room, once it stands
-/// in map row 10, raises a pillar of ice 32 pixels below it, a square Isaac
-/// can hop onto: the walkthrough's way on to the next room.
-///
-/// XXX: where on screen the ice stands; a recording of Frost cast once Douse
-/// has soaked the pillar would show it. The recorder cannot stage it: played
-/// after TunnelRuins_DouseStartsOnPillar (--first), it finds no ground the
-/// leader can walk to beside the pillar, cell (24, 10), and with --at 24,12
-/// it refuses the Douse row as already played.
+/// Isaac casts Frost on the grey pillar in the Douse pillar's room, once Douse
+/// has filled its top with water and it stands in map row 10: snowflakes
+/// swirl, and a tall column of ice rises from the pillar's top, standing up
+/// the screen over the pit's edge just north of it, where Isaac stands, so
+/// that only his head and shoulders show above it. Its target stands 32
+/// pixels down in the pit at the pillar's spot, and its cell takes the
+/// attributes of map cell (26, 8), a square Isaac can hop onto: the
+/// walkthrough's way on to the next room. Frost cast before Douse has soaked
+/// the pillar finds no target, and nothing happens but the cast.
 static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   s32 column;
   s32 row;

@@ -305,15 +305,14 @@ void GaiaRock_FinishPushingPillar(void) {
       11, 14, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
 
-/// Felix casts Cyclone among the bushes below the cliff east of the cave mouth
-/// (cells (49, 48), (51, 48), (50, 49), (58, 48), (59, 47) and a few more).
-/// Cast at the foot of the handholds there, nothing changes but Cyclone's own
-/// whirl of leaves. The game clears the cells within Cyclone's reach of the
-/// overhead layer's block from the cave mouth east and south, cells (110, 47)
-/// to (123, 58) of map.txt, taking blank ones from the map's spare corner.
-///
-/// XXX: what that block hides is unchecked; a Cyclone cast in the thicket
-/// south-east of the cave mouth, compared before and after, would settle it.
+/// Felix casts Cyclone among the tufts of weeds below the cliff east of the
+/// cave mouth (cells (49, 48), (51, 48), (50, 49), (58, 48), (59, 47) and a few
+/// more), and its whirl of leaves blows away the tufts within its reach: cast
+/// from cell (50, 50), the two either side of the sapling below the cave
+/// mouth; from cell (57, 49), the one just east of Felix. The thick bushes
+/// south of them stay as they were. The game takes each tuft's picture from
+/// the overhead layer's block at cells (110, 64) to (123, 75) of map.txt into
+/// its place, in the block from (110, 47) that the overhead layer shows here.
 void GaiaRock_CycloneClearsWall(void) {
   FieldTileCopies_CopyTouchedCells(110, 64, 14, 12, 110, 47, 1);
 }

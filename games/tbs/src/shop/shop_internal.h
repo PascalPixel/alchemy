@@ -28,7 +28,6 @@
 #include "graphics/battle_sprite_id.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
-#include "shop/inn.h"
 #include "shop/shop.h"
 #include "sound/sound.h"
 #include "system/dma.h"

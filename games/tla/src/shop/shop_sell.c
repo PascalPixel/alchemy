@@ -36,7 +36,7 @@ s32 Shop_ChooseMember(void) {
       MenuCursor_Place(listWindow,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
-      if (redraw == 2) {
+      if (redraw == MENU_GRID_CHANGED_PAGE) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
@@ -64,7 +64,7 @@ s32 Shop_ChooseMember(void) {
       }
       shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
       shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-      redraw = 2;
+      redraw = MENU_GRID_CHANGED_PAGE;
     } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
@@ -109,7 +109,7 @@ s32 Shop_ChooseMember(void) {
 /// inventory ran out or, at the forge, an item was taken.
 s32 Shop_SelectSell(s32 unitId) {
   struct ShopWork *shop;
-  struct Window *nameWindow;
+  struct Window *descriptionWindow;
   struct Window *priceWindow;
   struct Unit *unit;
   s32 inventoryCount;
@@ -127,7 +127,7 @@ s32 Shop_SelectSell(s32 unitId) {
   priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4,
                                  WINDOW_FLAG_INSTANT);
   do {
-    nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+    descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
     shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
     shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
     redraw = 1;
@@ -153,7 +153,7 @@ s32 Shop_SelectSell(s32 unitId) {
           Shop_DrawItemPrice(priceWindow, itemId,
                              Forge_GetItemCondition(itemId),
                              SHOP_PRICE_KIND_FORGE);
-        Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
+        Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
       }
       if (gInput.pressed & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
@@ -223,7 +223,7 @@ s32 Shop_SelectSell(s32 unitId) {
         wait(1);
       }
     }
-    Window_CloseFar(nameWindow, 2);
+    Window_CloseFar(descriptionWindow, 2);
     wait(1);
     if (result != 0)
       break;
@@ -310,8 +310,11 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   return result;
 }
 
-/// Sells count of the item in slot, after asking with the offer that fits.
-/// count -1 sells the old equipment the equip prompt offers.
+/// Sells `count` of the item in `slot` once the player accepts the
+/// shopkeeper's offer, worded for a broken item, for several or for a rare
+/// one. A `count` of -1 is the offer for the equipment a purchase replaced,
+/// and sells one. The shop refuses an item it pays nothing for and one its
+/// wearer cannot take off.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopWork *shop;
 

@@ -27,23 +27,26 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
   unitId = 0;
   creditCost = gShop_GameTicketCreditCosts[gMainRoutineWork.shopGifts];
 
-  // Gifts spend accumulated shop credit; they do not debit the party's coins.
+  // A ticket is paid from the coins spent in shops, not from the party's
+  // coins.
   if (creditCost > gMainRoutineWork.shopCredit)
     return;
   shop->selectedItem = ITEM_GAME_TICKET;
   MessageArgument_PushFar(ITEM_GAME_TICKET, MESSAGE_ARGUMENT_ITEM);
   messageBase = (s32)MsgLetMeGiveYouThis;
+  // "Let me give you this <item> as a token of my gratitude."
   Shop_ShowKeeperMessageHidingCursor(messageBase);
   MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
+  // "So who gets this <item>?"
   Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
-  redraw = 2;
+  redraw = MENU_GRID_CHANGED_PAGE;
   while (1) {
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(window,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
-      if (redraw == 2) {
+      if (redraw == MENU_GRID_CHANGED_PAGE) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
@@ -53,8 +56,8 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
       redraw = 0;
     }
     if (gInput.pressed & KEY_A) {
-      // Probe capacity before the keeper's confirmation; the gift is committed
-      // only after that line finishes.
+      // Try the ticket in the bag to see that it fits; it is given only after
+      // "Then here you go!".
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         Sound_PlayFar(SE_MENU_CANCEL);

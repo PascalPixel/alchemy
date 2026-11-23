@@ -35,11 +35,14 @@ s32 Forge_Run(s32 actorId) {
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   messageBase = (s32)MsgRightWhenI;
+  // "Right when I saw those materials, I had to work!"
   Shop_ShowKeeperMessage(messageBase);
+  // "Which item needs my special attention?"
   Shop_ShowKeeperMessage(messageBase + 1);
   result = Forge_ChooseMember();
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   if (result == -1)
+    // "Aren't you the ones mucking about earlier?"
     Shop_ShowKeeperMessage(messageBase + 2);
   Window_CloseFar(window, 2);
   Shop_ReleaseWork();
@@ -144,7 +147,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
       MenuCursor_Place(partyWindow,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
-      if (redraw == 2) {
+      if (redraw == MENU_GRID_CHANGED_PAGE) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
@@ -165,7 +168,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
       if (itemSlot == -1) {
         shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-        redraw = 2;
+        redraw = MENU_GRID_CHANGED_PAGE;
         continue;
       }
       *selectedUnit = unitId;
@@ -218,7 +221,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
 /// Inventory_CheckUnequip, by the picker's mode). Returns the slot, or -1 when
 /// cancelled.
 s32 ItemPicker_SelectItem(s32 unitId) {
-  struct Window *nameWindow;
+  struct Window *descriptionWindow;
   struct ShopWork *shop;
   struct Window *priceWindow;
   struct Unit *unit;
@@ -239,7 +242,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   priceWindow =
       Window_CreateFar(ITEM_PICKER_PRICE_WINDOW_X, 8,
                        ITEM_PICKER_PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
-  nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+  descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
@@ -257,7 +260,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       MenuCursor_Place(window, column * 16, row * 16 + 8);
       shop->cursorFrames = 3;
       ItemPicker_DrawItem(priceWindow, unitId, slot);
-      Shop_DrawMessage(nameWindow, itemId + (s32)MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
     }
     wait(1);
     if (gInput.pressed & KEY_A) {
@@ -343,7 +346,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       redraw = 1;
     }
   }
-  Window_CloseFar(nameWindow, 2);
+  Window_CloseFar(descriptionWindow, 2);
   Window_CloseFar(priceWindow, 2);
   wait(1);
   return result;

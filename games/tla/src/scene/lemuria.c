@@ -160,30 +160,7 @@ extern u16 gLemuria_WideDoorOpening[];
 /// Rope_Place keeps it tied.
 #define FLAG_LEMURIA_ROPE_TIED 0x962
 
-/// An angle's heading: the sixteenth of a turn it lies in.
-#define HEADING(angle) ((angle) & (TRIG_TURN - FACING_STEP))
-
-/// 1 when `other` is nearer `self` than `range` pixels and lies in the heading
-/// `self` faces or in one either side of it.
-s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
-  s32 result = 0;
-  s32 *to;
-  s32 *from;
-
-  to = &other->x.fixed;
-  from = &self->x.fixed;
-  if (Position_Distance(to, from) < range) {
-    u32 angle = (u16)Trig_Atan(other->z.fixed - self->z.fixed, *to - *from);
-    u32 left = HEADING(angle - FACING_STEP);
-    u32 right = HEADING(angle + FACING_STEP);
-    u32 ahead = HEADING(angle);
-    u32 facing = HEADING(self->facing);
-
-    if (ahead == facing || right == facing || left == facing)
-      result = 1;
-  }
-  return result;
-}
+#include "shared/actor_is_facing_near.h"
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 

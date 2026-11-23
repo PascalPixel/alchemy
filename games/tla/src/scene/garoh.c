@@ -82,11 +82,11 @@ void Garoh_ScatterDustRing(s32 id);
 #include "text/msg_ids.h"
 
 extern struct ActorPlacement gGaroh_VillageDayActorPlacements[];
-extern struct Trigger gGaroh_BlocksTriggers[];
+extern struct Trigger gGaroh_WayUpTriggers[];
 void Garoh_WerewolvesRevealThemselves(void);
 void Garoh_MahaTellsTheLegend(void);
 void Garoh_InitializeVillage(void);
-void Garoh_InitializeBlocks(void);
+void Garoh_InitializeWayUp(void);
 extern u32 gGaroh_WerewolfLookAroundScript[];
 s32 Garoh_MetWerewolves();
 void Garoh_OpenDoorAndEnter(void);
@@ -100,7 +100,7 @@ void Garoh_PlaceFourthPillar(void);
 void Garoh_PlacePushedPillar(void);
 void Garoh_RevealTunnelPassage(void);
 void Garoh_HideCaveEntrance(void);
-void Garoh_RestoreBlocksDark(void);
+void Garoh_RestoreWayUpLight(void);
 void Garoh_HideTunnelPassage(void);
 void Garoh_HideCavePassage(void);
 void Garoh_CrossLowerTwilightLine(void);
@@ -113,7 +113,7 @@ extern s16 gGaroh_WideDoorFrames[];
 extern s16 gGaroh_TallDoorFrames[];
 void Garoh_LashRope(void);
 /// BG2's horizontal offset for each screen line while the path's layer ripples
-/// by night (Garoh_WaveHypnosSwordChestLayer).
+/// by night (Garoh_WavePathLayer).
 u16 gGaroh_WaveLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
 /// The village's people by night and by day (SceneId_Garoh), numbering the
@@ -163,7 +163,7 @@ enum {
 };
 
 /// The stone pillars on the way up to the village (SceneId_GarohWayUp),
-/// numbering the rows of gGaroh_BlocksActorPlacements: Move or a push takes
+/// numbering the rows of gGaroh_WayUpActorPlacements: Move or a push takes
 /// each onto the slot where it sinks.
 enum GarohWayUpActorId {
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
@@ -239,7 +239,7 @@ void Garoh_MatchSecondLayer(void) {
 
 /// By night the second map layer of the path up to the village ripples: each
 /// line is offset by two sines of the frame count, handed to an HBlank DMA.
-void Garoh_WaveHypnosSwordChestLayer(void) {
+void Garoh_WavePathLayer(void) {
   s32 x;
   // The sine routine itself, called at the address Trig_Sin's far call
   // jumps to.
@@ -295,8 +295,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
   }
 }
 
-extern u16 gGaroh_HypnosSwordChestDayColors[];
-extern u16 gGaroh_HypnosSwordChestNightColors[];
+extern u16 gGaroh_PathDayColors[];
+extern u16 gGaroh_PathNightColors[];
 
 /// Writes count colours from first on, from a table of red, green and blue
 /// halfwords, to the BG palette and the palette fade's source.
@@ -313,12 +313,11 @@ extern u16 gGaroh_HypnosSwordChestNightColors[];
   }
 
 /// By day the path's colours: BG palette 1's colours 8 to 15.
-DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestDayColors,
-                          gGaroh_HypnosSwordChestDayColors, 24, 8)
+DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadPathDayColors, gGaroh_PathDayColors, 24, 8)
 
 /// By night the path's colours: BG palette 6's colours 1 to 9.
-DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadHypnosSwordChestNightColors,
-                          gGaroh_HypnosSwordChestNightColors, 97, 9)
+DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadPathNightColors, gGaroh_PathNightColors, 97,
+                          9)
 
 /// A script's call: clears the actor's sprite flags.
 s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *actor) {
@@ -334,14 +333,15 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gGaroh_ActorPlacements[];
 extern struct ActorPlacement gGaroh_VillageActorPlacements[];
-extern struct ActorPlacement gGaroh_BlocksActorPlacements[];
+extern struct ActorPlacement gGaroh_WayUpActorPlacements[];
 extern struct ActorPlacement gGaroh_TunnelsActorPlacements[];
-extern struct ActorPlacement gGaroh_HypnosSwordChestActorPlacements[];
+extern struct ActorPlacement gGaroh_PathActorPlacements[];
 extern struct ActorPlacement gGaroh_WerewolfCaveActorPlacements[];
 
 extern struct MapGridCellAnimation gGaroh_Doors[];
 
-/// Return the table for the current room.
+/// The people of the scene being entered: in the village, the hooded
+/// villagers by night or their faces once Maha has shared the secret.
 const void *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -351,9 +351,9 @@ const void *Scene_GetActorPlacements(void) {
     return gGaroh_VillageActorPlacements;
   }
   if (scene == SCENE_GAROH_PATH)
-    return gGaroh_HypnosSwordChestActorPlacements;
+    return gGaroh_PathActorPlacements;
   if (scene == SCENE_GAROH_WAY_UP)
-    return gGaroh_BlocksActorPlacements;
+    return gGaroh_WayUpActorPlacements;
   if (scene == SCENE_GAROH_TUNNELS)
     return gGaroh_TunnelsActorPlacements;
   if (scene == SCENE_GAROH_WEREWOLF_CAVE)
@@ -394,7 +394,9 @@ void Garoh_OpenDoorAndEnter(void) {
   {
     s32 owner = gMainRoutineWork.leaderActorId;
 
-    if (index == 5)
+    // The sanctum's tall door is entered straight on, the others from the
+    // centre of their cell.
+    if (index == GAROH_TO_GAROH_ROOMS_SANCTUM - 1)
       Actor_SetDestinationOffset(owner, 0, -4);
     else
       Actor_CenterAndWalk(owner, 2, -4);
@@ -512,7 +514,7 @@ void Garoh_LittleWerewolfThanks(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(ACTOR_LITTLE_WEREWOLF);
-  Actor_SetAnimation(ACTOR_LITTLE_WEREWOLF, 1);
+  Actor_SetAnimation(ACTOR_LITTLE_WEREWOLF, ANIM_STAND);
   FieldEvent_Wait(10);
   Actor_FaceActor(ACTOR_LITTLE_WEREWOLF, ACTOR_FELIX, 0);
   if (Event_GetFlag(FLAG_LITTLE_WEREWOLF_THANKED)) {
@@ -533,7 +535,8 @@ void Garoh_LittleWerewolfThanks(void) {
   }
   FieldEvent_ShowMessageThenWait(ACTOR_LITTLE_WEREWOLF, 0, 10);
   Event_SetFlag(FLAG_LITTLE_WEREWOLF_THANKED);
-  Actor_SetScript(ACTOR_LITTLE_WEREWOLF, 2);
+  // Back to running about the village.
+  Actor_SetScript(ACTOR_LITTLE_WEREWOLF, MOVEMENT_TYPE_WANDER);
   Event_End();
 }
 
@@ -610,7 +613,7 @@ void Garoh_WerewolfPeersFromCave(void) {
 extern struct Trigger gGaroh_Triggers[];
 extern struct Trigger gGaroh_VillageTriggers[];
 extern struct Trigger gGaroh_VillageDayTriggers[];
-extern struct Trigger gGaroh_HypnosSwordChestTriggers[];
+extern struct Trigger gGaroh_PathTriggers[];
 extern struct Trigger gGaroh_TunnelsTriggers[];
 extern struct Trigger gGaroh_WerewolfCaveTriggers[];
 
@@ -643,7 +646,8 @@ void Garoh_MeetInTheCave(void) {
   }
 }
 
-/// Return the table for the current room.
+/// The triggers of the scene being entered: in the village, the night's until
+/// Maha has shared the secret and the day's after.
 const void *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -653,9 +657,9 @@ const void *Scene_GetTriggers(void) {
     return gGaroh_VillageTriggers;
   }
   if (scene == SCENE_GAROH_PATH)
-    return gGaroh_HypnosSwordChestTriggers;
+    return gGaroh_PathTriggers;
   if (scene == SCENE_GAROH_WAY_UP)
-    return gGaroh_BlocksTriggers;
+    return gGaroh_WayUpTriggers;
   if (scene == SCENE_GAROH_TUNNELS)
     return gGaroh_TunnelsTriggers;
   if (scene == SCENE_GAROH_WEREWOLF_CAVE)
@@ -675,7 +679,7 @@ void Garoh_HowlAtNight(void) {
   }
 }
 
-void Garoh_InitializeHypnosSwordChest(void);
+void Garoh_InitializePath(void);
 
 /// Sets up the scene being entered: the cave's lamps, and Maha once he has
 /// told the legend; the village by night or day; the path up to the village;
@@ -710,12 +714,12 @@ s32 Scene_Initialize(void) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
       Garoh_InitializeVillage();
     } else if (gMainRoutineWork.next == SCENE_GAROH_PATH) {
-      Garoh_InitializeHypnosSwordChest();
+      Garoh_InitializePath();
     } else if (gMainRoutineWork.next == SCENE_GAROH_WAY_UP) {
-      Garoh_InitializeBlocks();
+      Garoh_InitializeWayUp();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
         gMainRoutineWork.restartScene = SCENE_GAROH_ROOMS_SANCTUM;
-        gMainRoutineWork.restartEntrance = 2;
+        gMainRoutineWork.restartEntrance = GAROH_ROOMS_SANCTUM_FROM_GAROH;
       }
     }
   }
@@ -769,7 +773,7 @@ void Garoh_InitializeVillage(void) {
 
 /// The path up to the village: the tightrope strung, and by night its dark
 /// colours and rippling water, by day its hidden ways open.
-void Garoh_InitializeHypnosSwordChest(void) {
+void Garoh_InitializePath(void) {
   Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_PATH_TIGHTROPE_POST_A, ACTOR_PATH_TIGHTROPE_POST_B);
@@ -782,14 +786,14 @@ void Garoh_InitializeHypnosSwordChest(void) {
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
     PaletteFade_PackTarget();
-    Garoh_LoadHypnosSwordChestNightColors();
+    Garoh_LoadPathNightColors();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
-    Task_AddFrame((s32)Garoh_WaveHypnosSwordChestLayer, TASK_PASS_VBLANK);
+    Task_AddFrame((s32)Garoh_WavePathLayer, TASK_PASS_VBLANK);
   } else {
     MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
     MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
     MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
-    Garoh_LoadHypnosSwordChestDayColors();
+    Garoh_LoadPathDayColors();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Garoh_MatchSecondLayer();
   }
@@ -800,7 +804,7 @@ extern s16 gGaroh_Pillars[];
 /// The way up from the world map: the four stone pillars where they were
 /// left, in the evening's or the night's light once the party has climbed
 /// into it.
-void Garoh_InitializeBlocks(void) {
+void Garoh_InitializeWayUp(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_EVENING))
@@ -975,7 +979,7 @@ s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
 /// Reveal wearing off on the way up brings back the evening's or the night's
 /// light.
-void Garoh_RestoreBlocksDark(void) {
+void Garoh_RestoreWayUpLight(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_EVENING))
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
@@ -1255,7 +1259,7 @@ void Garoh_WerewolfRunsPast(void) {
   FieldCamera_MoveTo(144, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
   werewolf = Actor_Get(ACTOR_WEREWOLF);
-  Actor_SetAnimation(ACTOR_WEREWOLF, 2);
+  Actor_SetAnimation(ACTOR_WEREWOLF, ANIM_WALK);
   // The werewolf lopes down the path in eight bounds at random speeds,
   // weaving from side to side.
   for (i = 0; i <= 7; i++) {
@@ -1275,7 +1279,7 @@ void Garoh_WerewolfRunsPast(void) {
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
   }
-  Actor_SetAnimation(ACTOR_WEREWOLF, 1);
+  Actor_SetAnimation(ACTOR_WEREWOLF, ANIM_STAND);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   Actor_SetScript(ACTOR_WEREWOLF, gGaroh_WerewolfLookAroundScript);
@@ -1286,7 +1290,7 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(ACTOR_WEREWOLF, 1);
-  Actor_SetAnimation(ACTOR_WEREWOLF, 2);
+  Actor_SetAnimation(ACTOR_WEREWOLF, ANIM_WALK);
   x = werewolf->x.fixed;
   z = werewolf->z.fixed;
   toX = toFIXED(128);
@@ -1305,7 +1309,7 @@ void Garoh_WerewolfRunsPast(void) {
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
   }
-  Actor_SetAnimation(ACTOR_WEREWOLF, 1);
+  Actor_SetAnimation(ACTOR_WEREWOLF, ANIM_STAND);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_EAST, 0);
@@ -1423,7 +1427,7 @@ void Garoh_WerewolfRunsPast(void) {
   FieldEvent_Wait(20);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     FieldEvent_Wait(20);
@@ -1704,7 +1708,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldCamera_SetSpeed(1.5);
   // "Do you think we lost him somewhere?"
   Event_OpenMessage(ACTOR_KRADEN, 0);
-  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
@@ -1835,7 +1839,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_RunRepeatedMotion(ACTOR_MAHA, 2);
   FieldEvent_Wait(10);
   Event_OpenMessage(ACTOR_MAHA, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(40);
     Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA, 0, 0);
@@ -1886,7 +1890,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   }
   FieldEvent_Wait(20);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
     FieldEvent_Wait(20);
@@ -1994,7 +1998,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_SHAKE_HEAD, 33);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_SetAnimation(ACTOR_WEREWOLF, 1);
+  Actor_SetAnimation(ACTOR_WEREWOLF, ANIM_STAND);
   FieldActor_Jump(ACTOR_WEREWOLF, 6, 0);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST, 0);
   FieldEvent_Wait(30);
@@ -2037,13 +2041,13 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   FieldEvent_Wait(20);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 8);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN, 8);
-  FieldActor_WatchAndSetScript(ACTOR_JENNA, 8);
-  FieldActor_WatchAndSetScript(ACTOR_SHEBA, 8);
-  FieldActor_WatchAndSetScript(ACTOR_MAHA, 8);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_WEREWOLF);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_WEREWOLF);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_WEREWOLF);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_WEREWOLF);
+  FieldActor_WatchAndSetScript(ACTOR_MAHA, ACTOR_WEREWOLF);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
-    FieldActor_WatchAndSetScript(ACTOR_PIERS, 8);
+    FieldActor_WatchAndSetScript(ACTOR_PIERS, ACTOR_WEREWOLF);
   }
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 376, 208);
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 0, 16);
@@ -2474,7 +2478,7 @@ void Garoh_MahaTellsTheLegend(void) {
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   }
-  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(25);
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
     gFieldWork->message = (gFieldWork->message + 1);
@@ -2512,7 +2516,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_MAHA, 3);
+  Actor_SetAnimation(ACTOR_MAHA, ANIM_NOD);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   }
@@ -2710,7 +2714,7 @@ void Garoh_MahaTellsTheLegend(void) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   }
   FieldEvent_Wait(20);
-  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
     gFieldWork->message = (gFieldWork->message + 1);
@@ -2849,7 +2853,7 @@ u32 gGaroh_WerewolfLookAroundScript[] = {
 };
 
 /// The path's colours by night, BG palette 6's colours 1 to 9.
-u16 gGaroh_HypnosSwordChestNightColors[] = {
+u16 gGaroh_PathNightColors[] = {
     31, 31, 31, 29, 29, 30, 27, 28,
     29, 25, 27, 28, 23, 25, 27, 21,
     24, 26, 15, 18, 19, 10, 12, 13,
@@ -2857,7 +2861,7 @@ u16 gGaroh_HypnosSwordChestNightColors[] = {
 };
 
 /// The path's colours by day, BG palette 1's colours 8 to 15.
-u16 gGaroh_HypnosSwordChestDayColors[] = {
+u16 gGaroh_PathDayColors[] = {
     24, 28, 30, 19, 24, 27, 15, 20,
     25, 11, 16, 23, 7, 12, 21, 3,
     8, 19, 27, 27, 27, 16, 24, 29,
@@ -2884,46 +2888,46 @@ s32 gGaroh_ShrunkSpriteScript[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Garoh),
-    SCENE_EXIT_UNLESS(1, GarohRoomsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GarohRoomsShop, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GarohRoomsHouses, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GarohRoomsHouses, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, GarohRoomsHouses, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, GarohRoomsSanctum, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, GarohTunnels, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, GarohTunnels, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, GarohTunnels, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, GarohPath, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, GarohPath, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, GarohWerewolfCave, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_ROOMS_HOUSES_SOUTH, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_ROOMS_SHOP, GarohRoomsShop, GAROH_ROOMS_SHOP_FROM_GAROH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_ROOMS_HOUSES_NORTHWEST, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHWEST, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_ROOMS_SANCTUM, GarohRoomsSanctum, GAROH_ROOMS_SANCTUM_FROM_GAROH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_TUNNELS_NORTHEAST, GarohTunnels, GAROH_TUNNELS_FROM_GAROH_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_TUNNELS_WEST, GarohTunnels, GAROH_TUNNELS_FROM_GAROH_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_TUNNELS_SOUTH, GarohTunnels, GAROH_TUNNELS_FROM_GAROH_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_PATH_EAST, GarohPath, GAROH_PATH_FROM_GAROH_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_PATH_WEST, GarohPath, GAROH_PATH_FROM_GAROH_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TO_GAROH_WEREWOLF_CAVE, GarohWerewolfCave, GAROH_WEREWOLF_CAVE_FROM_GAROH, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohPath),
-    SCENE_EXIT_UNLESS(1, GarohWayUp, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Garoh, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Garoh, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_PATH_TO_GAROH_WAY_UP, GarohWayUp, GAROH_WAY_UP_FROM_GAROH_PATH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_PATH_TO_GAROH_EAST, Garoh, GAROH_FROM_GAROH_PATH_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_PATH_TO_GAROH_WEST, Garoh, GAROH_FROM_GAROH_PATH_WEST, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohWayUp),
-    SCENE_EXIT_UNLESS(1, WorldMap, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GarohPath, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_WAY_UP_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_GAROH_WAY_UP, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_WAY_UP_TO_GAROH_PATH, GarohPath, GAROH_PATH_FROM_GAROH_WAY_UP, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohTunnels),
-    SCENE_EXIT_UNLESS(1, Garoh, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_WEST, Garoh, GAROH_FROM_GAROH_TUNNELS_WEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohTunnels, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GarohTunnels, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Garoh, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, GarohRoomsShop, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, GarohRoomsShop, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, GarohRoomsHouses, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, GarohRoomsHouses, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_NORTHEAST, Garoh, GAROH_FROM_GAROH_TUNNELS_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_ROOMS_SHOP_WEST, GarohRoomsShop, GAROH_ROOMS_SHOP_FROM_GAROH_TUNNELS_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_ROOMS_SHOP_EAST, GarohRoomsShop, GAROH_ROOMS_SHOP_FROM_GAROH_TUNNELS_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_ROOMS_HOUSES_EAST, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_TUNNELS_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_ROOMS_HOUSES_WEST, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_TUNNELS_WEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, GarohTunnels, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, GarohTunnels, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, Garoh, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_TUNNELS_TO_GAROH_SOUTH, Garoh, GAROH_FROM_GAROH_TUNNELS_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohWerewolfCave),
-    SCENE_EXIT_UNLESS(1, Garoh, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_WEREWOLF_CAVE_TO_GAROH, Garoh, GAROH_FROM_GAROH_WEREWOLF_CAVE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohWerewolfCave, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GarohWerewolfCave, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, GarohWerewolfCave, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, GarohWerewolfCave, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, GarohWerewolfCave, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, GarohWerewolfCave, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, GarohRoomsHouses, 99, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_WEREWOLF_CAVE_TO_GAROH_ROOMS_HOUSES, GarohRoomsHouses, GAROH_ROOMS_HOUSES_FROM_GAROH_WEREWOLF_CAVE, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -2968,7 +2972,7 @@ struct ActorPlacement gGaroh_VillageDayActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaroh_BlocksActorPlacements[] = {
+struct ActorPlacement gGaroh_WayUpActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 392, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -2990,7 +2994,7 @@ struct ActorPlacement gGaroh_TunnelsActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGaroh_HypnosSwordChestActorPlacements[] = {
+struct ActorPlacement gGaroh_PathActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WEREWOLF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -3077,22 +3081,27 @@ struct Trigger gGaroh_VillageTriggers[] = {
      CONDITION_ALWAYS, EVENT(Garoh_EnterOpening)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BY_SANCTUM_DOOR, FLAG_GAROH_MET_WEREWOLVES,
      EVENT(Garoh_WerewolfPeersFromCave)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Garoh_AskIfSawWerewolf)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohGoodEveningForgiveMeFor)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlForDog)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_ABOUT_THE_WEREWOLF, CONDITION_ALWAYS,
+     EVENT(Garoh_AskIfSawWerewolf)},
+    {TRIGGER_TALK, ACTOR_HOODED_VILLAGER, CONDITION_ALWAYS,
+     MSGNO(MsgGarohGoodEveningForgiveMeFor)},
+    {TRIGGER_TALK, ACTOR_HOWLING_VILLAGER, CONDITION_ALWAYS,
+     EVENT(Garoh_HowlForDog)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_WARNING_STRANGERS, CONDITION_ALWAYS,
      MSGNO(MsgGarohYouThereStrangersShouldNot)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Garoh_AskAboutFullMoon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_FULL_MOON, CONDITION_ALWAYS,
+     EVENT(Garoh_AskAboutFullMoon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_VILLAGER_ASKING_ABOUT_THE_WEREWOLF, CONDITION_ALWAYS,
      MSGNO(MsgGarohItsGrimLuckThatBrings)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgGarohSuchGorgeousMoonlightIfOnly)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgGarohWhichOneOfUsWas)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgGarohForeignersOnlyComeHereEn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgGarohTheNightOfTheFull)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOODED_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgGarohSuchGorgeousMoonlightIfOnly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOWLING_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgGarohWhichOneOfUsWas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WARNING_STRANGERS,
+     CONDITION_ALWAYS, MSGNO(MsgGarohForeignersOnlyComeHereEn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_FULL_MOON,
+     CONDITION_ALWAYS, MSGNO(MsgGarohTheNightOfTheFull)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RevealCaveEntrance)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -3124,26 +3133,33 @@ struct Trigger gGaroh_VillageDayTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_FACING(FACING_NORTH), GAROH_TO_GAROH_WEREWOLF_CAVE,
      CONDITION_ALWAYS, EVENT(Garoh_EnterOpening)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohIHearTellFromMaster)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGaroh16)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlOutLoud)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Garoh_AskAboutSecret)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGarohIHeardThereWereOther)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Garoh_LittleWerewolfThanks)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_ABOUT_THE_WEREWOLF, CONDITION_ALWAYS,
+     MSGNO(MsgGarohIHearTellFromMaster)},
+    {TRIGGER_TALK, ACTOR_HOODED_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgGaroh16)},
+    {TRIGGER_TALK, ACTOR_HOWLING_VILLAGER, CONDITION_ALWAYS,
+     EVENT(Garoh_HowlOutLoud)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_WARNING_STRANGERS, CONDITION_ALWAYS,
+     EVENT(Garoh_AskAboutSecret)},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_FULL_MOON, CONDITION_ALWAYS,
+     MSGNO(MsgGarohIHeardThereWereOther)},
+    {TRIGGER_TALK, ACTOR_LITTLE_WEREWOLF, CONDITION_ALWAYS,
+     EVENT(Garoh_LittleWerewolfThanks)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_VILLAGER_ASKING_ABOUT_THE_WEREWOLF, CONDITION_ALWAYS,
      MSGNO(MsgGarohHowCouldTheseOutsidersHave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgGarohIThoughtWedNeverBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgGarohINeverThoughtIdBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgGarohMahaSaidTheseTravelersWere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgGarohIWouldLoveToMeet)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13 | TRIGGER_SUBJECT_OWN_EFFECT,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOODED_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgGarohIThoughtWedNeverBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOWLING_VILLAGER,
+     CONDITION_ALWAYS, MSGNO(MsgGarohINeverThoughtIdBe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WARNING_STRANGERS,
+     CONDITION_ALWAYS, MSGNO(MsgGarohMahaSaidTheseTravelersWere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_FULL_MOON,
+     CONDITION_ALWAYS, MSGNO(MsgGarohIWouldLoveToMeet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_LITTLE_WEREWOLF | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_LITTLE_WEREWOLF_THANKED, EVENT(Garoh_LittleWerewolfThanks)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgGarohMyDadToldMeI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LITTLE_WEREWOLF,
+     CONDITION_ALWAYS, MSGNO(MsgGarohMyDadToldMeI)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RevealCaveEntrance)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -3153,7 +3169,7 @@ struct Trigger gGaroh_VillageDayTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGaroh_HypnosSwordChestTriggers[] = {
+struct Trigger gGaroh_PathTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3166,7 +3182,7 @@ struct Trigger gGaroh_HypnosSwordChestTriggers[] = {
 
 // No end row: the room reads on into the tunnels' table, whose exits and
 // Reveal answer here too.
-struct Trigger gGaroh_BlocksTriggers[] = {
+struct Trigger gGaroh_WayUpTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, CELL_BEHAVIOR_LOWER_TWILIGHT_LINE,
@@ -3192,7 +3208,7 @@ struct Trigger gGaroh_BlocksTriggers[] = {
     {TRIGGER_PUSH, 0, FLAG_FIRST_PILLAR_SUNK, EVENT(Garoh_LiftPushedPillar)},
     {TRIGGER_PUSHED, 0, FLAG_FIRST_PILLAR_SUNK, EVENT(Garoh_PlacePushedPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Garoh_RestoreBlocksDark)},
+     CONDITION_ALWAYS, EVENT(Garoh_RestoreWayUpLight)},
 };
 
 struct Trigger gGaroh_TunnelsTriggers[] = {
@@ -3228,8 +3244,9 @@ struct Trigger gGaroh_WerewolfCaveTriggers[] = {
      EVENT(Garoh_FollowWerewolfIntoCave)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BELOW_MAHA, CONDITION_ALWAYS,
      EVENT(Garoh_MeetInTheCave)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohTakeCareInYourTravels)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MAHA, CONDITION_ALWAYS,
+     MSGNO(MsgGarohTakeCareInYourTravels)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAHA, CONDITION_ALWAYS,
      MSGNO(MsgGarohIWishThatIWere)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RevealCavePassage)},

@@ -40,8 +40,8 @@
 enum { ENTRANCE_WAKE_AT_INN = 99 };
 
 /// The actors of the four houses, numbering the rows of
-/// gGarohRooms_InnActorPlacements.
-enum GarohInnActorId {
+/// gGarohRooms_HousesActorPlacements.
+enum GarohHousesActorId {
   /// The father of the young werewolf who led the party to Maha. His event is
   /// GarohRooms_AskWhatTheWanderersSeek.
   ACTOR_PUPS_FATHER = ACTOR_FIRST_PLACED,
@@ -68,8 +68,8 @@ enum GarohInnActorId {
 };
 
 /// The Item Shopkeeper's house's actors, numbering the rows of
-/// gGarohRooms_HouseActorPlacements.
-enum GarohHouseActorId {
+/// gGarohRooms_ShopActorPlacements.
+enum GarohShopActorId {
   ACTOR_AIRS_ROCK_GUARDIAN = ACTOR_FIRST_PLACED,
   ACTOR_VILLAGER_ON_WHIRLWIND,
   ACTOR_VILLAGER_ON_THE_WIND_STONE,
@@ -95,15 +95,15 @@ enum GarohRoomsCellBehavior {
 };
 
 extern struct ActorPlacement gGarohRooms_NoActorPlacements[];
-extern struct ActorPlacement gGarohRooms_InnActorPlacements[];
-extern struct ActorPlacement gGarohRooms_HouseActorPlacements[];
+extern struct ActorPlacement gGarohRooms_HousesActorPlacements[];
+extern struct ActorPlacement gGarohRooms_ShopActorPlacements[];
 extern struct ActorPlacement gGarohRooms_SanctumActorPlacements[];
 extern struct Trigger gGarohRooms_DoorTriggers[];
-extern struct Trigger gGarohRooms_InnNightTriggers[];
-extern struct Trigger gGarohRooms_HouseNightTriggers[];
+extern struct Trigger gGarohRooms_HousesNightTriggers[];
+extern struct Trigger gGarohRooms_ShopNightTriggers[];
 extern struct Trigger gGarohRooms_SanctumTriggers[];
-extern struct Trigger gGarohRooms_InnMorningTriggers[];
-extern struct Trigger gGarohRooms_HouseMorningTriggers[];
+extern struct Trigger gGarohRooms_HousesMorningTriggers[];
+extern struct Trigger gGarohRooms_ShopMorningTriggers[];
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -131,9 +131,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_GAROH_ROOMS_HOUSES)
-    return gGarohRooms_InnActorPlacements;
+    return gGarohRooms_HousesActorPlacements;
   if (scene == SCENE_GAROH_ROOMS_SHOP)
-    return gGarohRooms_HouseActorPlacements;
+    return gGarohRooms_ShopActorPlacements;
   if (scene == SCENE_GAROH_ROOMS_SANCTUM)
     return gGarohRooms_SanctumActorPlacements;
   return gGarohRooms_NoActorPlacements;
@@ -165,7 +165,6 @@ void GarohRooms_TalkToWeaponsVendor(s32 actor) {
       // "I'm sorry, but on nights of the full moon, we only sell claws and
       // fangs."
       Event_SetMessageId((s32)MsgGarohInteriorsImSorryButOnNights);
-    // "I'm sorry, but on nights of the full moon, we only sell claws and..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -187,7 +186,6 @@ void GarohRooms_TalkToArmorVendor(s32 actor) {
     else
       // "Unfortunate that you should come on a night of the full moon, sir..."
       Event_SetMessageId((s32)MsgGarohInteriorsUnfortunateThatYouShouldCome);
-    // "Unfortunate that you should come on a night of the full moon, sir......"
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -203,9 +201,8 @@ void GarohRooms_TalkToItemShopkeeper(s32 actor) {
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_GAROH_ITEMS, actor);
   } else if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
-    // "I've heard stories about other mountains like our own Air's Rock..."
     Event_SetMessageId((s32)MsgGarohInteriorsIveHeardStoriesAboutOther);
-    // "I've heard stories about other mountains like our own Air's Rock......"
+    // "I've heard stories about other mountains like our own Air's Rock..."
     Event_ShowMessageAndWait(actor, 0);
   } else {
     s32 message = (s32)MsgGarohInteriorsDidYouComeHereFrom;
@@ -242,7 +239,6 @@ void GarohRooms_TalkToInnkeeper(s32 actor) {
     else
       // "A clear night around here always means fair weather on the morrow..."
       Event_SetMessageId((s32)MsgGarohInteriorsAClearNightAroundHere);
-    // "A clear night around here always means fair weather on the morrow......"
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -266,7 +262,6 @@ void GarohRooms_TalkToPriest(void) {
     else
       // "The people here may be different, but they certainly are nice..."
       Event_SetMessageId((s32)MsgGarohInteriorsThePeopleHereMayBe);
-    // "The people here may be different, but they certainly are nice... And..."
     Event_ShowMessageAndWait(ACTOR_PRIEST, 0);
   }
   Actor_FaceDirection(ACTOR_PRIEST, FACING_SOUTH, 0);
@@ -280,14 +275,12 @@ void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  // "Good evening, wanderers! Are you looking for something?"
   message = (s32)MsgGarohInteriorsGoodEveningWanderersAreYou;
   Event_SetMessageId(message);
   // "Good evening, wanderers! Are you looking for something?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    // "Searching for werewolves, eh?"
     Event_SetMessageId(message + 2);
     // "Searching for werewolves, eh?"
     FieldMessage_ShowAtActor(actor, 0);
@@ -321,7 +314,6 @@ void GarohRooms_TalkToDisappointedTraveler(void) {
   else
     // "Zzzz... Zzzz... What a waste... Just a big rock..."
     Event_SetMessageId((s32)MsgGarohInteriorsZzzzZzzzWhatAWaste);
-  // "Zzzz... Zzzz... What a waste... Just a big rock..."
   Event_ShowMessageAndWait(ACTOR_DISAPPOINTED_TRAVELER, 0);
   Event_End();
 }
@@ -338,7 +330,6 @@ void GarohRooms_TalkToStubbornTraveler(void) {
   else
     // "Zzz... Whuzza? Whirlwind? Wind Stone? Zzzzrrrgg..."
     Event_SetMessageId((s32)MsgGarohInteriorsZzzWhuzzaWhirlwindWindStone);
-  // "Zzz... Whuzza? Whirlwind? Wind Stone? Zzzzrrrgg..."
   Event_ShowMessageAndWait(ACTOR_STUBBORN_TRAVELER, 0);
   Event_End();
 }
@@ -355,7 +346,6 @@ void GarohRooms_ReadDisappointedTravelersMind(void) {
   else
     // "...Climbed all over that stupid rock, and for what? Nothing!"
     Event_SetMessageId((s32)MsgGarohInteriorsClimbedAllOverThatStupid);
-  // "...Climbed all over that stupid rock, and for what? Nothing!"
   Event_ShowMessageAndWait(ACTOR_DISAPPOINTED_TRAVELER, 0);
   Event_End();
 }
@@ -372,7 +362,6 @@ void GarohRooms_ReadStubbornTravelersMind(void) {
   else
     // "That rock was huge. How was I supposed to make it spin?"
     Event_SetMessageId((s32)MsgGarohInteriorsThatRockWasHugeHow);
-  // "That rock was huge. How was I supposed to make it spin?"
   Event_ShowMessageAndWait(ACTOR_STUBBORN_TRAVELER, 0);
   Event_End();
 }
@@ -408,18 +397,18 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (shared) {
     scene = party->next;
     if (scene == houses)
-      return gGarohRooms_InnMorningTriggers;
+      return gGarohRooms_HousesMorningTriggers;
     if (scene == SCENE_GAROH_ROOMS_SHOP)
-      return gGarohRooms_HouseMorningTriggers;
+      return gGarohRooms_ShopMorningTriggers;
   } else {
     scene = party->next;
     if (scene == houses) {
       if (party->entrance == ENTRANCE_WAKE_AT_INN)
-        return gGarohRooms_InnMorningTriggers;
-      return gGarohRooms_InnNightTriggers;
+        return gGarohRooms_HousesMorningTriggers;
+      return gGarohRooms_HousesNightTriggers;
     }
     if (scene == SCENE_GAROH_ROOMS_SHOP)
-      return gGarohRooms_HouseNightTriggers;
+      return gGarohRooms_ShopNightTriggers;
   }
   if (scene == SCENE_GAROH_ROOMS_SANCTUM)
     return gGarohRooms_SanctumTriggers;
@@ -523,18 +512,30 @@ void GarohRooms_WakeAtInn(void) {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GarohRoomsHouses),
-    SCENE_EXIT_UNLESS(1, Garoh, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Garoh, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Garoh, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Garoh, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, GarohTunnels, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, GarohTunnels, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_HOUSES_TO_GAROH_SOUTH, Garoh,
+                      GAROH_FROM_GAROH_ROOMS_HOUSES_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_HOUSES_TO_GAROH_NORTHWEST, Garoh,
+                      GAROH_FROM_GAROH_ROOMS_HOUSES_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_HOUSES_TO_GAROH_SOUTHWEST, Garoh,
+                      GAROH_FROM_GAROH_ROOMS_HOUSES_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_HOUSES_TO_GAROH_SOUTHEAST, Garoh,
+                      GAROH_FROM_GAROH_ROOMS_HOUSES_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_HOUSES_TO_GAROH_TUNNELS_EAST, GarohTunnels,
+                      GAROH_TUNNELS_FROM_GAROH_ROOMS_HOUSES_EAST,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_HOUSES_TO_GAROH_TUNNELS_WEST, GarohTunnels,
+                      GAROH_TUNNELS_FROM_GAROH_ROOMS_HOUSES_WEST,
+                      EXIT_FLAG_NONE),
     SCENE_EXITS(GarohRoomsShop),
-    SCENE_EXIT_UNLESS(3, GarohTunnels, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Garoh, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, GarohTunnels, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_SHOP_TO_GAROH_TUNNELS_WEST, GarohTunnels,
+                      GAROH_TUNNELS_FROM_GAROH_ROOMS_SHOP_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_SHOP_TO_GAROH, Garoh,
+                      GAROH_FROM_GAROH_ROOMS_SHOP, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_SHOP_TO_GAROH_TUNNELS_EAST, GarohTunnels,
+                      GAROH_TUNNELS_FROM_GAROH_ROOMS_SHOP_EAST, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohRoomsSanctum),
-    SCENE_EXIT_UNLESS(2, Garoh, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAROH_ROOMS_SANCTUM_TO_GAROH, Garoh,
+                      GAROH_FROM_GAROH_ROOMS_SANCTUM, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -543,7 +544,7 @@ struct ActorPlacement gGarohRooms_NoActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGarohRooms_InnActorPlacements[] = {
+struct ActorPlacement gGarohRooms_HousesActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 336, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 136, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -560,7 +561,7 @@ struct ActorPlacement gGarohRooms_InnActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gGarohRooms_HouseActorPlacements[] = {
+struct ActorPlacement gGarohRooms_ShopActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 372, 0, 406, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 424, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -580,7 +581,7 @@ struct Trigger gGarohRooms_DoorTriggers[] = {
 };
 // clang-format on
 
-struct Trigger gGarohRooms_InnNightTriggers[] = {
+struct Trigger gGarohRooms_HousesNightTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -645,7 +646,7 @@ struct Trigger gGarohRooms_InnNightTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGarohRooms_HouseNightTriggers[] = {
+struct Trigger gGarohRooms_ShopNightTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -683,6 +684,7 @@ struct Trigger gGarohRooms_SanctumTriggers[] = {
      FLAG_GAROH_SECRET_SHARED, MSGNO(MsgGarohInteriors32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRIEST, CONDITION_ALWAYS,
      MSGNO(MsgGarohInteriorsAmITheOnlyOne)},
+    // The same rows again for an actor 9, which the sanctum does not place.
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(GarohRooms_TalkToPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_GAROH_SECRET_SHARED,
      MSGNO(MsgGarohInteriors32)},
@@ -691,7 +693,7 @@ struct Trigger gGarohRooms_SanctumTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGarohRooms_InnMorningTriggers[] = {
+struct Trigger gGarohRooms_HousesMorningTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -758,7 +760,7 @@ struct Trigger gGarohRooms_InnMorningTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gGarohRooms_HouseMorningTriggers[] = {
+struct Trigger gGarohRooms_ShopMorningTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

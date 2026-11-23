@@ -68,7 +68,7 @@
 ///   couple's house once Megan has told the party where Mia went, before
 ///   they have met her. The party finds her at the old man's bedside. She
 ///   heals him with Ply, asks who the party are, and the Mercury Lighthouse
-///   flashes. `Was that... the lighthouse?`
+///   flashes. "Was that... the lighthouse?"
 ///
 ///   She runs out, and the party follows her (FLAG_IMIL_MET_MIA). At the
 ///   lighthouse she goes on with them. Afterwards the old man lies in bed
@@ -903,7 +903,7 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
         MapGrid_CenterOnFollowedPoint();
         wait(1);
-        Actor_SetMovementTypeById(ACTOR_OLD_WOMAN, 2);
+        Actor_SetMovementTypeById(ACTOR_OLD_WOMAN, MOVEMENT_TYPE_WANDER);
         Actor_SetPosition(ACTOR_OLD_MANS_BED, 0, 0);
       } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) &&
                  GameFlag_Get(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
@@ -928,7 +928,7 @@ s32 Scene_Initialize(void) {
           Actor_Get(ACTOR_OLD_MAN)->userValue = 0;
           Actor_SetScript(ACTOR_OLD_MAN, gImil_TrembleScript);
         } else {
-          Actor_SetMovementTypeById(ACTOR_OLD_WOMAN, 2);
+          Actor_SetMovementTypeById(ACTOR_OLD_WOMAN, MOVEMENT_TYPE_WANDER);
         }
       }
     } else if (entrance == ICE_ROOMS_FROM_IMIL_WEST_SOUTHWEST) {
@@ -1027,25 +1027,30 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-  // Mia checks on the old man while the party enters the house.
   Event_SetMessageId(MSGNO(MsgImilHowFeeling));
+  // "How are you feeling?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetScript(ACTOR_OLD_MAN, table);
+  // "Cough... Cough..."
   Event_ShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_SHAKE_HEAD);
+  // "He's been coughing for quite a while, now..."
   Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 20);
+  // "You'll feel better soon."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetScript(ACTOR_OLD_MAN, table);
 
   Imil_MiaCastsPlyOnOldMan();
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "How do you feel now?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
+  // "Much better..."
   Event_ShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
@@ -1053,6 +1058,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "No, Grandpa. You mustn't push yourself too hard!"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Event_Wait(40);
@@ -1063,10 +1069,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
+  // "Thank you, Mia... I can't imagine how this village would ever manage
+  // without you... Cough..."
   Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 10);
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "Don't mention it... You should rest in bed, too, ma'am."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
   Event_Wait(20);
@@ -1081,9 +1090,11 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   FieldCamera_MoveTo(140, CAMERA_KEEP, 198, 1);
   Actor_WaitForScriptEndById(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  // "Who are you?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(10);
+  // "Can I help you?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Sound_Play(SE_PSYNERGY_SPARKLE);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
@@ -1104,14 +1115,18 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_WalkToAndWait(ACTOR_MIA, 202, 198);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+  // "Was that... the lighthouse?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "It can't be..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "Only I can..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Oh, no... Alex!!!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
@@ -1220,6 +1235,7 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
 /// The old man bobs and speaks as Ply ends (its finishCallback).
 static void Imil_OldManBobsAndSpeaks(void) {
   Actor_SetScript(ACTOR_OLD_MAN, gImil_BobScript);
+  // "Cough cough... Cough... Cough... Cough..."
   Event_ShowMessage(ACTOR_OLD_MAN, 0);
 }
 
@@ -1231,28 +1247,28 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
   FieldPsynergy_SetupActorPair(ACTOR_MIA, ACTOR_OLD_MAN);
   effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
   FieldPsynergy_StartCast();
-  FieldPsynergy_RunHandler(1);
+  FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
   FieldPsynergy_StopCasterUpdate();
   FieldPsynergy_End();
 }
 
 /// Readies a chimney's smoke puff: no motion of its own, at sprite priority
 /// 1, tinted blue and half its size.
-static void Imil_InitializeSmoke(struct Actor *work) {
+static void Imil_InitializeSmoke(struct Actor *smoke) {
   struct Sprite *sprite;
 
-  work->motionFlags = 0;
-  work->timer = 0;
-  work->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  smoke->motionFlags = 0;
+  smoke->timer = 0;
+  smoke->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 
-  sprite = work->sprite;
+  sprite = smoke->sprite;
   sprite->image.priority = 1;
 
-  Actor_SetSpriteColor(work, SPRITE_COLOR_BLUE_TINT);
-  Actor_SetSpriteFlags(work, 0);
+  Actor_SetSpriteColor(smoke, SPRITE_COLOR_BLUE_TINT);
+  Actor_SetSpriteFlags(smoke, 0);
 
-  work->scaleX = FIXED_ONE / 2;
-  work->scaleY = FIXED_ONE / 2;
+  smoke->scaleX = FIXED_ONE / 2;
+  smoke->scaleY = FIXED_ONE / 2;
 }
 
 /// A smoke puff's update: it drifts east ever faster, rises half a pixel a
@@ -1423,21 +1439,25 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 2);
   Event_Wait(40);
   Event_SetMessageId(MSGNO(MsgImilMia));
+  // "Mia..."
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Actor_SetAttachedEffect(ACTOR_MEGAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "We were worried that you wouldn't come back!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "I'm so sorry, you two..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_JUSTIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "Mia, we have a problem! The Mercury Lighthouse... It's been lit!"
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST_NORTHEAST, 10);
@@ -1446,6 +1466,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 2);
   Event_Wait(20);
+  // "Mia, you already knew?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
@@ -1455,11 +1476,13 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_ShowEmote(ACTOR_MEGAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_JUSTIN, 1);
   Event_Wait(20);
+  // "What's the matter? You look strange today, Mia."
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 80);
+  // "I... How should I tell you?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MEGAN, FACING_EAST_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_WEST_SOUTHWEST, 40);
@@ -1471,12 +1494,15 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_Wait(1);
   Actor_Get(ACTOR_MEGAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
+  // "You have something to say? What is it?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
+  // "Well, I... Uh..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
+  // "I... I'll be joining Isaac on his quest."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_JUSTIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1485,43 +1511,56 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "It's very hard for me to leave you, but it's the lighthouse."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_JUSTIN, 1);
+  // "You said the world would be in danger if the lighthouse was lit, right?"
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MEGAN, 1);
+  // "Is that why you're leaving? To protect the world?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  // "Yes. That's right..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 80);
   Actor_ShowEmote(ACTOR_JUSTIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MEGAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_JUSTIN, ANIM_SHAKE_HEAD);
+  // "Then there's nothing we can do..."
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_SetAnimation(ACTOR_MEGAN, ANIM_SHAKE_HEAD);
+  // "We won't try to stop you, then. After all, you are trying to protect the
+  // Mercury Clan."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "Yes. I am..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 40);
   Actor_SetAnimationAndWait(ACTOR_JUSTIN, ANIM_NOD);
+  // "As members of the Mercury Clan...we will protect Imil ourselves. So don't
+  // worry, OK?"
   Event_ShowMessageThenWait(ACTOR_JUSTIN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
+  // "I will try hard and learn to heal as well as you, Mia!"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 60);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  // "OK, I'll leave the village in your hands, Megan, Justin..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Actor_SetAnimation(ACTOR_JUSTIN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MEGAN, ANIM_NOD);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
+  // "We can leave without any worries, now."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1676,7 +1715,7 @@ s32 gImil_TrembleScript[] = {
 };
 
 s32 gImil_OldWomanHurryScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(136, 0, 192),
     SC_SYNC,
     SC_MOVE(136, 0, 136),
@@ -1684,17 +1723,18 @@ s32 gImil_OldWomanHurryScript[] = {
     SC_MOVE(149, 0, 116),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_EAST),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gImil_LeaderStepAsideScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(155, 0, 135),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
+    // Unused: past its end, one bob of gImil_BobScript.
     SC_ADD(SW_SCALE_Y, 3 * FIXED_ONE / 8),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 16),
@@ -1731,7 +1771,7 @@ s32 gImil_SparkScript[] = {
 };
 
 s32 gImil_MiaCheckRoomScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(177, 0, 136),
     SC_SYNC,
     SC_MOVE(161, 0, 124),
@@ -1741,12 +1781,12 @@ s32 gImil_MiaCheckRoomScript[] = {
     SC_SYNC,
     SC_MOVE(135, 0, 189),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 s32 gImil_MiaRunOutScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(165, 0, 207),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
@@ -1765,7 +1805,7 @@ s32 gImil_FaceTargetScript[] = {
 };
 
 s32 gImil_FollowMiaOutScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(132, 0, 206),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

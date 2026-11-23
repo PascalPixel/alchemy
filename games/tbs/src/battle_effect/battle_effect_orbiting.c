@@ -143,12 +143,12 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     REG_BG2X = xOffset << 8;
   } while (0);
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    struct Particle *step = &work->particles[i];
+    struct Particle *skull = &work->particles[i];
 
-    step->x = 0;
-    step->y = 0;
-    step->velocityX = 0;
-    step->z = 4;
+    skull->x = 0;
+    skull->y = 0;
+    skull->velocityX = 0;
+    skull->z = 4;
   }
   for (frame = 0; frame != work->args->targetCount * 16 + 64; frame++) {
     EFFECT_FOR_EACH_TARGET(member, work->args) {
@@ -173,17 +173,18 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
         do {
         } while (0);
         for (i = 0; i != 3; i++) {
-          struct Particle *spark = &work->particles[member * 3 + i];
+          // A skull's velocityX is its angle round the target.
+          struct Particle *skull = &work->particles[member * 3 + i];
           s32 x;
           s32 y;
 
           x = screen.x +
               FIXEDtoINT(
-                  (Trig_Sin(spark->velocityX + i * (DEGtoANG(120))) * 8));
+                  (Trig_Sin(skull->velocityX + i * (DEGtoANG(120))) * 8));
           y = screen.y +
               FIXEDtoINT(
-                  (Trig_Cos(spark->velocityX + i * (DEGtoANG(120))) * 8));
-          spark->velocityX += TRIG_TURN / 128;
+                  (Trig_Cos(skull->velocityX + i * (DEGtoANG(120))) * 8));
+          skull->velocityX += TRIG_TURN / 128;
           draw[0](canvas, work->sheet + i * PICTURE_BYTES(SKULL),
                   x - SKULL_WIDTH / 2, y - 28, SKULL_WIDTH, SKULL_HEIGHT);
         }
@@ -255,11 +256,11 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     struct BattleCamera *camera = gBattleCamera;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
-      struct Actor *args;
+      struct Actor *actor;
 
-      args = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, args->x.fixed, toFIXED(20), args->z.fixed);
+      SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
       Matrix_TranslateVector(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *puff;

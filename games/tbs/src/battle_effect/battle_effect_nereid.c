@@ -18,13 +18,26 @@
 /// draws.
 #define NEREID_COLUMNS 3
 #define NEREID_DROPS PARTICLE_POOL_COUNT ///< drops of spray in PARTICLES
-#define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
+#define NEREID_COLUMN_PICTURE                                                  \
+  1764 ///< where the column of water starts in the sheet
 /// The drops burst up: every free one of the first NEREID_BURST_DROPS as the
 /// columns gather, then NEREID_DROPS_A_FRAME a frame while they rise.
 #define NEREID_BURST_DROPS 256
 #define NEREID_DROPS_A_FRAME 16
 /// The canvas line below which a falling drop has sunk into the waves.
 #define NEREID_WAVES_Y 104
+/// Throws a drop up from a random point among the targets.
+#define NEREID_THROW_DROP(drop)                                                \
+  {                                                                            \
+    s32 radius = Random16() & 63;                                              \
+    s32 angle = Random16() & TRIG_ANGLE_MASK;                                  \
+                                                                               \
+    (drop)->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);               \
+    (drop)->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);               \
+    (drop)->velocityX = ((Random16() & 63) - 32) << 14;                        \
+    (drop)->velocityY = (-(Random16() & 63) - 8) << 13;                        \
+    (drop)->variant = 0;                                                       \
+  }
 /// Particles given a place and a delay that nothing reads.
 #define NEREID_UNREAD_FIRST 24
 #define NEREID_UNREAD_COUNT 16
@@ -37,26 +50,26 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BlitterPair draw;
   void *canvas;
   struct BattleEffectWork *work;
-  u8 *graphics;
-  u8 *palette;
+  u8 *motes;
+  u8 *resource;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
 
-  palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_PICTURE);
+  resource = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet);
+  resource = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet + NEREID_COLUMN_PICTURE);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
-                      graphics);
+                      motes);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
@@ -73,7 +86,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     focus.y = toFIXED(88);
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
-    EFFECT_FREE_PARTICLES(k, work->particles, 64);
+    EFFECT_FREE_PARTICLES(k, work->particles, ARRAY_COUNT(work->particles));
     // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
     // reads; the ROM keeps the stores.
     for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
@@ -88,6 +101,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
     for (frame = 0; frame != NEREID_FRAMES; frame++) {
+      // A or B, once the columns rise, skips to the last frames.
       if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > NEREID_COLUMNS_FRAME &&
           frame <= 97)
         frame = 98;
@@ -113,14 +127,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         for (k = 0; k != NEREID_BURST_DROPS; k++) {
           drop = &PARTICLES[k];
           if (drop->variant == -1) {
-            s32 radius = Random16() & 63;
-            s32 angle = Random16() & TRIG_ANGLE_MASK;
-
-            drop->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
-            drop->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
-            drop->velocityX = ((Random16() & 63) - 32) << 14;
-            drop->velocityY = (-(Random16() & 63) - 8) << 13;
-            drop->variant = 0;
+            NEREID_THROW_DROP(drop);
           }
         }
       }
@@ -130,14 +137,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         for (k = 0; k != NEREID_DROPS; k++) {
           drop = &PARTICLES[k];
           if (drop->variant == -1) {
-            s32 radius = Random16() & 63;
-            s32 angle = Random16() & TRIG_ANGLE_MASK;
-
-            drop->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
-            drop->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
-            drop->velocityX = ((Random16() & 63) - 32) << 14;
-            drop->velocityY = (-(Random16() & 63) - 8) << 13;
-            drop->variant = 0;
+            NEREID_THROW_DROP(drop);
             spawned++;
             if (spawned == NEREID_DROPS_A_FRAME)
               break;
@@ -184,7 +184,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           if (drop->velocityY > 0)
             size += 2;
           EFFECT_SWELL_MOTE(size, frame);
-          EFFECT_DRAW_MOTE(draw[drop->velocityY > 0], canvas, graphics,
+          EFFECT_DRAW_MOTE(draw[drop->velocityY > 0], canvas, motes,
                            FIXEDtoINT(drop->x), FIXEDtoINT(drop->y), size);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
@@ -244,3 +244,4 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 #undef NEREID_WAVES_Y
 #undef NEREID_UNREAD_FIRST
 #undef NEREID_UNREAD_COUNT
+#undef NEREID_THROW_DROP

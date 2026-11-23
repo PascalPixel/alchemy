@@ -288,10 +288,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The frames between the sea's colour steps while the waves run.
 #define WAVES_COLOR_STEP_FRAMES 360
 /// The background colour whose red pulses while no waves run, between
-/// `PULSE_RED_MIN` and full.
+/// `PULSE_RED_MIN` and full: colour 15 of background palette 0.
 #define PULSE_COLOR BG_PLTT_COLOR(0, 15)
-// XXX: what on screen this colour lights; a render of the great sea with
-// PULSE_COLOR forced to black would show it.
 #define PULSE_RED_MIN 18
 /// The ripple's sine shifted down to a swing of two pixels each way.
 #define RIPPLE_SHIFT 15

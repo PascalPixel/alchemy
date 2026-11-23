@@ -9,7 +9,7 @@ void Title_UpdateIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);
 s32 Title_ShowIntro(s32 prompt);
 void Title_NoOpPalette(void);
-s32 Title_ShowNintendoLogo(s32 mode);
+s32 Title_ShowNintendoLogo(s32 fadeOut);
 s32 Title_ShowCamelotLogo(void);
 void Title_NoOpColor(void);
 void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
@@ -28,7 +28,7 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes);
 #endif
 void TitlePaletteFade_SetBackdrop(s32 color);
 void TitlePaletteFade_Start(s32 frames);
-s32 TitlePaletteFade_ClampComponent(s32 value);
-s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
+s32 TitlePaletteFade_ClampChannel(s32 value);
+s32 TitlePaletteFade_ClampShiftedChannel(s32 value);
 
 #endif

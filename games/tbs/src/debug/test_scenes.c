@@ -75,6 +75,7 @@ struct SceneEntrance gTest_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// No exits: the headers of Test 0 to Test 3's tables, with none under them.
 u32 gTest_Exits[] = {
     SCENE_EXITS(Test0), SCENE_EXITS(Test1), SCENE_EXITS(Test2),
     SCENE_EXITS(Test3), SCENE_EXITS_END,

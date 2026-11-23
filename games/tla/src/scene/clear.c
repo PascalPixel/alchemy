@@ -690,9 +690,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// The password as entered, a symbol a byte: a Gold password is 260 symbols,
 /// which the Japanese buffer holds exactly, as in The Broken Seal.
-// XXX (no evidence): why the other editions reserve 320, and the Japanese 60
-// bytes after the decoded password; nothing in this game writes or reads past
-// 260 or the decoded bytes, so the bytes show only the space.
+// The other editions reserve 320 symbols for it, and the Japanese 60 bytes
+// after the decoded password; nothing in this game writes or reads past 260
+// symbols or the decoded bytes, so the extra bytes are never used.
 #if TLA_PATCH_1
 #define PASSWORD_BUFFER_SIZE 320
 #else

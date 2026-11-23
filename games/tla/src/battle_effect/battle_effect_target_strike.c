@@ -1,5 +1,7 @@
 /// @file
-/// Monster bites and slashes on one target, and Mad Zephyr.
+/// Monster bites and slashes on one target, and Mad Zephyr; then the unused
+/// Blade Rain, the element pillar the battle raises at a unit's feet, and an
+/// unused fade-in of the battle background.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -123,15 +125,14 @@ void BattleEffect_RunManeater(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MANEATER);
 }
 
-/// Unused: no ability's effect names kind 438, so the player never sees it:
-/// fangs bite the first target once, hard, throwing sparks, in Mars Djinn
-/// colours.
+/// Unused: no ability plays it, so the player never sees it: fangs bite the
+/// first target once, hard, throwing sparks, in Mars Djinn colours.
 void BattleEffect_RunUnusedHeavyBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_HEAVY_BITE);
 }
 
-/// Unused: no ability's effect names kind 439, so the player never sees it:
-/// fangs bite the first target once with a flash and sparks, in orange.
+/// Unused: no ability plays it, so the player never sees it: fangs bite the
+/// first target once with a flash and sparks, in orange.
 void BattleEffect_RunUnusedFlashBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_ORANGE_FLASH_BITE);
 }
@@ -144,8 +145,8 @@ void BattleEffect_RunKillSting(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_STAR_SLASH);
 }
 
-/// Unused: no ability's effect names kind 456, so the player never sees it:
-/// fangs bite the first target once, in blue, with sparks.
+/// Unused: no ability plays it, so the player never sees it: fangs bite the
+/// first target once, in blue, with sparks.
 void BattleEffect_RunUnusedSparkBite(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITE);
 }
@@ -290,25 +291,25 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     target = BattleObject_GetFar(args->targets[k])->object;
     EffectPosition_ProjectBattler(args->targets[k], &ground);
     for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-      struct Particle *step = &work->particles[i];
+      struct Particle *puff = &work->particles[i];
 
-      SET_POSITION(step, INTtoFIXED(ground.x / 2), toFIXED(80), 0);
-      step->velocityX = ((Random16() & 255) - 128) << 9;
-      step->velocityY = ((Random16() & 255) - 128) << 9;
-      step->velocityZ = 0;
-      step->variant = -1;
+      SET_POSITION(puff, INTtoFIXED(ground.x / 2), toFIXED(80), 0);
+      puff->velocityX = ((Random16() & 255) - 128) << 9;
+      puff->velocityY = ((Random16() & 255) - 128) << 9;
+      puff->velocityZ = 0;
+      puff->variant = -1;
     }
 
     // The motes burst from 20 pixels above the target.
     for (i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
-      struct Particle *step =
+      struct Particle *mote =
           &PARTICLES[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
-      SET_POSITION(step, target->x, toFIXED(20), target->z);
-      step->velocityX = ((Random16() & 255) - 128) << 11;
-      step->velocityY = ((Random16() & 255) - 128) << 11;
-      step->velocityZ = ((Random16() & 255) - 128) << 11;
-      step->variant = -1;
+      SET_POSITION(mote, target->x, toFIXED(20), target->z);
+      mote->velocityX = ((Random16() & 255) - 128) << 11;
+      mote->velocityY = ((Random16() & 255) - 128) << 11;
+      mote->velocityZ = ((Random16() & 255) - 128) << 11;
+      mote->variant = -1;
     }
 
     // The sparks fly away from the hit: heavy hits throw them in a fan
@@ -463,7 +464,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
             for (i = 0; i != TARGET_STRIKE_HIT_SPARKS; i++) {
-              struct Particle *step =
+              struct Particle *spark =
                   &TARGET_STRIKE_SPARKS[frame /
                                             (TARGET_STRIKE_VALUE(
                                                  mode,
@@ -472,12 +473,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                             TARGET_STRIKE_HIT_SPARKS +
                                         i];
 
-              step->variant = (Random16() & 15) + 7;
+              spark->variant = (Random16() & 15) + 7;
             }
           }
           if (mode == TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH) {
             for (i = 0; i != 4; i++) {
-              struct Particle *step =
+              struct Particle *puff =
                   &work->particles[frame /
                                        (TARGET_STRIKE_VALUE(
                                             mode,
@@ -486,11 +487,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                        16 +
                                    i];
 
-              step->variant = 0;
+              puff->variant = 0;
             }
           } else {
             for (i = 0; i != 8; i++) {
-              struct Particle *step =
+              struct Particle *puff =
                   &work->particles[frame /
                                        (TARGET_STRIKE_VALUE(
                                             mode,
@@ -499,7 +500,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                        16 +
                                    i];
 
-              step->variant = 0;
+              puff->variant = 0;
             }
           }
         }
@@ -569,7 +570,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
         }
         for (i = 0; i != TARGET_STRIKE_BITE_SPARKS; i++) {
-          struct Particle *step =
+          struct Particle *spark =
               &TARGET_STRIKE_SPARKS[frame /
                                         (TARGET_STRIKE_VALUE(
                                              mode,
@@ -578,10 +579,10 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                         TARGET_STRIKE_BITE_SPARKS +
                                     i];
 
-          step->variant = (Random16() & 15) + 7;
+          spark->variant = (Random16() & 15) + 7;
         }
         for (i = 0; i != 8; i++) {
-          struct Particle *step =
+          struct Particle *puff =
               &work->particles[frame /
                                    (TARGET_STRIKE_VALUE(
                                         mode, TARGET_STRIKE_PICTURE_FRAMES) *
@@ -589,7 +590,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                    16 +
                                i];
 
-          step->variant = 0;
+          puff->variant = 0;
         }
         for (i = 0; i != TARGET_STRIKE_BITE_MOTES; i++)
           PARTICLES[frame /
@@ -648,19 +649,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       // Wisps of smoke rise and spread for SMOKE_PUFF_FRAMES.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-          struct Particle *step = &work->particles[i];
+          struct Particle *puff = &work->particles[i];
 
-          if (step->variant >= 0 && step->variant < SMOKE_PUFF_FRAMES) {
-            s32 picture = step->variant / 4;
+          if (puff->variant >= 0 && puff->variant < SMOKE_PUFF_FRAMES) {
+            s32 picture = puff->variant / 4;
 
             draw[i & 1](canvas,
                         work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                             TARGET_STRIKE_HIT_PICTURES,
-                        FIXED_INTEGER_PART(step->x) - SMOKE_PUFF_WIDTH / 2,
-                        FIXED_INTEGER_PART(step->y) - SMOKE_PUFF_HEIGHT / 2,
+                        FIXED_INTEGER_PART(puff->x) - SMOKE_PUFF_WIDTH / 2,
+                        FIXED_INTEGER_PART(puff->y) - SMOKE_PUFF_HEIGHT / 2,
                         SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 64);
-            step->variant++;
+            Particle_AdvanceWithGravity2D(puff, 62, -toFIXED(1) / 64);
+            puff->variant++;
           }
         }
       }
@@ -668,20 +669,20 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       // Flashes rise twice as fast as smoke.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
         for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-          struct Particle *step = &work->particles[i];
+          struct Particle *flash = &work->particles[i];
 
-          if (step->variant >= 0 &&
-              step->variant < TARGET_STRIKE_FLASH_FRAMES) {
+          if (flash->variant >= 0 &&
+              flash->variant < TARGET_STRIKE_FLASH_FRAMES) {
             draw[0](canvas,
                     work->sheet +
-                        step->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
+                        flash->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
                         TARGET_STRIKE_HIT_PICTURES,
-                    FIXED_INTEGER_PART(step->x) - FLASH_BURST_WIDTH / 2,
-                    FIXED_INTEGER_PART(step->y) - FLASH_BURST_HEIGHT / 2,
+                    FIXED_INTEGER_PART(flash->x) - FLASH_BURST_WIDTH / 2,
+                    FIXED_INTEGER_PART(flash->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 32);
-            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 32);
-            step->variant++;
+            Particle_AdvanceWithGravity2D(flash, 62, -toFIXED(1) / 32);
+            Particle_AdvanceWithGravity2D(flash, 62, -toFIXED(1) / 32);
+            flash->variant++;
           }
         }
       }
@@ -699,26 +700,26 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                    TINT_KEEP, 0);
         for (i = 0; i != TARGET_STRIKE_DRAWN_MOTES; i++) {
-          struct Particle *step = &PARTICLES[i];
+          struct Particle *mote = &PARTICLES[i];
 
-          if (step->variant >= 0) {
-            EffectPosition_ProjectPoint((s32 *)step, &position);
+          if (mote->variant >= 0) {
+            EffectPosition_ProjectPoint((s32 *)mote, &position);
             position.x >>= 1;
             EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y,
                              size);
-            Particle_AdvanceWithGravity3D(step, 60, 0);
-            step->variant++;
-            if (step->variant > TARGET_STRIKE_MOTE_FLIGHT_FRAMES) {
-              s32 dx = (source->x - step->x) >> 8;
-              s32 dy = (source->y - step->y + toFIXED(20)) >> 8;
-              s32 dz = (source->z - step->z) >> 8;
+            Particle_AdvanceWithGravity3D(mote, 60, 0);
+            mote->variant++;
+            if (mote->variant > TARGET_STRIKE_MOTE_FLIGHT_FRAMES) {
+              s32 dx = (source->x - mote->x) >> 8;
+              s32 dy = (source->y - mote->y + toFIXED(20)) >> 8;
+              s32 dz = (source->z - mote->z) >> 8;
 
-              step->velocityX += dx;
-              step->velocityY += dy;
-              step->velocityZ += dz;
+              mote->velocityX += dx;
+              mote->velocityY += dy;
+              mote->velocityZ += dz;
               if ((dx > -(toFIXED(1) / 16) && dx < toFIXED(1) / 16) &&
                   (dz > -(toFIXED(1) / 16) && dz < toFIXED(1) / 16))
-                step->variant = -1;
+                mote->variant = -1;
             }
           }
         }
@@ -727,18 +728,18 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       // Sparks fall away, shrinking.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SPARKS) {
         for (i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++) {
-          struct Particle *step = &TARGET_STRIKE_SPARKS[i];
-          s32 size = step->variant;
+          struct Particle *spark = &TARGET_STRIKE_SPARKS[i];
+          s32 size = spark->variant;
 
           if (size >= 0) {
-            EffectPosition_ProjectPoint((s32 *)step, &position);
+            EffectPosition_ProjectPoint((s32 *)spark, &position);
             position.x >>= 1;
-            Particle_AdvanceWithGravity3D(step, 60, 0);
+            Particle_AdvanceWithGravity3D(spark, 60, 0);
             size >>= 3;
             size++;
             EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y,
                              size);
-            step->variant--;
+            spark->variant--;
           }
         }
       }
@@ -1000,6 +1001,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  // The motes' size grows with the variant, from 1 to 4.
   args->variant++;
   if (args->variant <= 0)
     args->variant = 1;

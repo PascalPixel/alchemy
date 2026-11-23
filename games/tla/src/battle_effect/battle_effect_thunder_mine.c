@@ -339,7 +339,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 #define MEGAERA_SPARK_COUNT 512
 /// Megaera's glints, bolts of lightning and sparkles, in the map cell buffer
 /// from its second 16 KB on.
-#define PICTURES (Ram_MapCellBuffer + 16384)
+#define MEGAERA_PICTURES (Ram_MapCellBuffer + 16384)
 extern const struct Scale gMegaera_UnitScale;
 
 /// Where FlashBurstSheet, LightningBoltSheet and SparkleDots are decoded in the
@@ -384,8 +384,7 @@ extern const struct Scale gMegaera_UnitScale;
 /// Megaera: two swords fall point down among the foes, each with a flash, a
 /// bolt of lightning and a burst of sparks; then the field bursts into flame,
 /// and Megaera swoops in across the foes in a trail of sparkles, and bursts on
-/// them. Holding A or B after frame 10 skips to the
-/// swoop.
+/// them. Holding A or B after frame 10 skips to the swoop.
 void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -395,7 +394,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   struct Point2D position;
   struct Point2D velocity;
   DrawRectangle blitters[2];
-  struct Scale request;
+  struct Scale scale;
   s32 placement[4];
   struct Particle *p;
   u8 *pictures;
@@ -405,7 +404,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
-  pictures = PICTURES;
+  pictures = MEGAERA_PICTURES;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -620,7 +619,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
         k = (p->variant / 2) % 9;
         blitters[0](
             canvas,
-            (PICTURES + MEGAERA_SPARKLE_DOTS_PICTURES) +
+            (MEGAERA_PICTURES + MEGAERA_SPARKLE_DOTS_PICTURES) +
                 gBattleEffect_SparklePictures[k],
             FIXED_INTEGER_PART(p->x) - gBattleEffect_SparkleSizes[k] / 2,
             FIXED_INTEGER_PART(p->y) - gBattleEffect_SparkleSizes[k] / 2,
@@ -658,7 +657,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           s32 t = frame - fallFrame;
           s32 fallY = t * 16 - 16;
 
-          request = gMegaera_UnitScale;
+          scale = gMegaera_UnitScale;
           if (fallY > MEGAERA_SWORD_GROUND_Y - 1) {
             fallY = MEGAERA_SWORD_GROUND_Y;
           }
@@ -667,7 +666,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           placement[0] = INTtoFIXED(column * 2);
           placement[2] = INTtoFIXED(fallY);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
-                                            &request.x, 0);
+                                            &scale.x, 0);
           // The sword's bottom row of tiles; a sprite's tile number counts
           // tiles of 16 colours, even in 256.
           if (t == 9) {
@@ -694,7 +693,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           }
           if (frame >= fallFrame + 10 && frame < fallFrame + 18) {
             blitters[0](canvas,
-                        (PICTURES + MEGAERA_LIGHTNING_BOLT_PICTURES) +
+                        (MEGAERA_PICTURES + MEGAERA_LIGHTNING_BOLT_PICTURES) +
                             (((frame + i) / 4) & 3) *
                                 LIGHTNING_BOLT_PICTURE_BYTES,
                         column - LIGHTNING_BOLT_WIDTH / 2, 0,
@@ -713,8 +712,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
                                       gMegaera_GlintFlips[flip & 3],
                                   gMegaera_GlintModes[args->variant]);
               ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-                  canvas, PICTURES + gBattleEffect_GlintPictures[k], glintX - 4,
-                  glintY + 40, gBattleEffect_GlintPictureWidths[k],
+                  canvas, MEGAERA_PICTURES + gBattleEffect_GlintPictures[k],
+                  glintX - 4, glintY + 40, gBattleEffect_GlintPictureWidths[k],
                   gBattleEffect_GlintPictureHeights[k]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
@@ -758,7 +757,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 }
 
 #define VOID_BEAM_FRAMES 88
-#define BEAM_SEGMENTS 10
+#define VOID_BEAM_SEGMENTS 10
 /// The hexagon of motes is traced eight motes a frame from frame 42,
 /// VOID_BEAM_SIDE_MOTES to a side; the ring behind the caster gains three
 /// motes every two frames up to VOID_BEAM_RING_MOTES, 40 pixels out.
@@ -984,7 +983,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
-        for (i = 0; i != BEAM_SEGMENTS; i++) {
+        for (i = 0; i != VOID_BEAM_SEGMENTS; i++) {
           point[0] = work->particles[0].x + work->particles[0].velocityX * i;
           point[1] = toFIXED(30);
           point[2] = caster->z;
@@ -1040,11 +1039,53 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();
 }
-#undef PICTURES
+#undef MEGAERA_PICTURES
 #undef VOID_BEAM_FRAMES
-#undef BEAM_SEGMENTS
+#undef VOID_BEAM_SEGMENTS
 #undef VOID_BEAM_SIDE_MOTES
 #undef VOID_BEAM_RING_MOTES
 #undef VOID_BEAM_RING_RADIUS
 #undef VOID_BEAM_FIRE_FRAME
 #undef VOID_BEAM_FADE_FRAME
+#undef BALL_LIGHTNING_SPARKS_CLEARED
+#undef BALL_LIGHTNING_SPARK_COUNT
+#undef BALL_LIGHTNING_SPARK_FLOOR
+#undef BALL_LIGHTNING_TORNADO_PICTURES
+#undef BALL_LIGHTNING_BOLT_CELS
+#undef BALL_LIGHTNING_BOLT_PICTURE_COUNT
+#undef BALL_LIGHTNING_BOLT_CEL_WIDTH
+#undef BALL_LIGHTNING_BOLT_CEL_HEIGHT
+#undef BALL_LIGHTNING_BOLT_CEL_INSET
+#undef BALL_LIGHTNING_BOLTS_SET_UP
+#undef BALL_LIGHTNING_BOLTS
+#undef BALL_LIGHTNING_FRAMES
+#undef BALL_LIGHTNING_SIZE
+#undef EARTH_FORCE_BALL_SIZE
+#undef MEGAERA_SPARK_COUNT
+#undef MEGAERA_FLASH_BURST_PICTURES
+#undef MEGAERA_LIGHTNING_BOLT_PICTURES
+#undef MEGAERA_SPARKLE_DOTS_PICTURES
+#undef MEGAERA_FRAMES
+#undef MEGAERA_SWORDS
+#undef MEGAERA_SWORD_GROUND_Y
+#undef MEGAERA_SWORD_POINT_BYTES
+#undef MEGAERA_SPARK_FLOOR
+#undef MEGAERA_BOLT_HEIGHT
+#undef MEGAERA_FIRE_FRAME
+#undef WHIRL_BEAM_WIDTH
+#undef WHIRL_BEAM_HEIGHT
+#undef MEGAERA_BILLOWS_SET_UP
+#undef MEGAERA_BILLOWS
+#undef MEGAERA_BILLOW_FRAMES
+#undef MEGAERA_BILLOW_PICTURES
+#undef MEGAERA_UNREAD_FIRST
+#undef MEGAERA_UNREAD_COUNT
+#undef MEGAERA_SWOOP_FRAME
+#undef MEGAERA_TRAIL_FRAMES
+#undef MEGAERA_SPARKLE_FRAMES
+#undef VOID_BEAM_COMET_B_PICTURES
+#undef VOID_BEAM_RUNE_PICTURES
+#undef VOID_BEAM_BODY
+#undef VOID_BEAM_BODY_SIZE
+#undef VOID_BEAM_COMET_WIDTH
+#undef VOID_BEAM_COMET_HEIGHT

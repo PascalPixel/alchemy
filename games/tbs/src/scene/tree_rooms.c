@@ -103,7 +103,7 @@ extern s32 gTreeRooms_TintIndex;
 /// second roars before it and speaks every line after it.
 enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
-  /// Draws nothing the render shows beyond Tret's face.
+  /// Kept hidden (SPRITE_COLOR_HIDDEN): only a speaker.
   ACTOR_SECOND_TRET
 };
 
@@ -178,72 +178,50 @@ static s16 *sLastLeaf;
 
 #include "shared/field_effect_spawn.c"
 
-/// Set once the west leaf of the pair in the north of the second floor's web,
-/// cell (49, 6), is torn, so that landing on it again breaks it.
+// Each leaf's flag is set once the leaf is torn, so that landing on it again
+// breaks it. Four start torn: Scene_Initialize sets their flags.
+
+/// Second floor, the west of the pair in the north of the web, cell (49, 6).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN FLAG_SCENE_TEMP_00
-/// Set once the east leaf of the pair in the north of the second floor's web,
-/// cell (51, 6), is torn, so that landing on it again breaks it. It is torn
-/// from the start: the setup sets this flag.
+/// Second floor, the east of the pair in the north, cell (51, 6); starts torn.
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN FLAG_SCENE_TEMP_01
-/// Set once the upper of the two leaves down the west side of the second
-/// floor's web, cell (46, 8), is torn, so that landing on it again breaks it.
+/// Second floor, the upper of the two down the west side, cell (46, 8).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN FLAG_SCENE_TEMP_02
-/// Set once the lower of the two leaves down the west side of the second
-/// floor's web, cell (46, 10), is torn, so that landing on it again breaks it.
+/// Second floor, the lower of the two down the west side, cell (46, 10).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN FLAG_SCENE_TEMP_03
-/// Set once the west leaf of the pair in the middle of the second floor's web,
-/// cell (47, 12), is torn, so that landing on it again breaks it.
+/// Second floor, the west of the pair in the middle, cell (47, 12).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN FLAG_SCENE_TEMP_04
-/// Set once the east leaf of the pair in the middle of the second floor's web,
-/// cell (49, 12), is torn, so that landing on it again breaks it.
+/// Second floor, the east of the pair in the middle, cell (49, 12).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN FLAG_SCENE_TEMP_05
-/// Set once the west leaf of the row along the south of the second floor's web,
-/// cell (48, 14), is torn, so that landing on it again breaks it.
+/// Second floor, the west of the row along the south, cell (48, 14).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN FLAG_SCENE_TEMP_06
-/// Set once the middle leaf of the row along the south of the second floor's
-/// web, cell (50, 14), is torn, so that landing on it again breaks it.
+/// Second floor, the middle of the row along the south, cell (50, 14).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN FLAG_SCENE_TEMP_07
-/// Set once the east leaf of the row along the south of the second floor's web,
-/// cell (52, 14), is torn, so that landing on it again breaks it.
+/// Second floor, the east of the row along the south, cell (52, 14).
 #define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN FLAG_SCENE_TEMP_08
-/// Set once the leaf on the third floor's west web, cell (7, 23), is torn, so
-/// that landing on it again breaks it.
+/// Third floor, the leaf on the west web, cell (7, 23).
 #define FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN FLAG_SCENE_TEMP_09
-/// Set once the leaf on the third floor's east web, cell (13, 24), is torn, so
-/// that landing on it again breaks it.
+/// Third floor, the leaf on the east web, cell (13, 24).
 #define FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN FLAG_SCENE_TEMP_0A
-/// Set once the leaf in the middle of the fifth floor's web, the way down to
-/// Tret, cell (50, 26), is torn, so that landing on it again breaks it.
+/// Fifth floor, the centre leaf, the way down to Tret, cell (50, 26).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN FLAG_SCENE_TEMP_0B
-/// Set once the north-west leaf of the fifth floor's web, cell (48, 24), is
-/// torn, so that landing on it again breaks it.
+/// Fifth floor, cell (48, 24).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN FLAG_SCENE_TEMP_0C
-/// Set once the north leaf of the fifth floor's web, cell (50, 24), is torn, so
-/// that landing on it again breaks it. It is torn from the start: the setup
-/// sets this flag.
+/// Fifth floor, cell (50, 24); starts torn.
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN FLAG_SCENE_TEMP_0D
-/// Set once the north-east leaf of the fifth floor's web, cell (52, 24), is
-/// torn, so that landing on it again breaks it.
+/// Fifth floor, cell (52, 24).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN FLAG_SCENE_TEMP_0E
-/// Set once the west leaf of the fifth floor's web, cell (48, 26), is torn, so
-/// that landing on it again breaks it. It is torn from the start: the setup
-/// sets this flag.
+/// Fifth floor, cell (48, 26); starts torn.
 #define FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN FLAG_SCENE_TEMP_0F
-/// Set once the east leaf of the fifth floor's web, cell (52, 26), is torn, so
-/// that landing on it again breaks it.
+/// Fifth floor, cell (52, 26).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN FLAG_SCENE_TEMP_10
-/// Set once the south-west leaf of the fifth floor's web, cell (48, 28), is
-/// torn, so that landing on it again breaks it.
+/// Fifth floor, cell (48, 28).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN FLAG_SCENE_TEMP_11
-/// Set once the south leaf of the fifth floor's web, cell (50, 28), is torn, so
-/// that landing on it again breaks it.
+/// Fifth floor, cell (50, 28).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN FLAG_SCENE_TEMP_12
-/// Set once the south-east leaf of the fifth floor's web, cell (52, 28), is
-/// torn, so that landing on it again breaks it. It is torn from the start: the
-/// setup sets this flag.
+/// Fifth floor, cell (52, 28); starts torn.
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN FLAG_SCENE_TEMP_13
-/// Set once the leaf at the east end of the fifth floor's south row, cell (54,
-/// 28), is torn, so that landing on it again breaks it.
+/// Fifth floor, the east end of the south row, cell (54, 28).
 #define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN FLAG_SCENE_TEMP_14
 
 /// Returns the scene's entrances, where the leaves' falls land among them.
@@ -255,7 +233,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// entrance room to the second floor, from the third floor to the fourth, and,
 /// once Tret is beaten, from Tret's room to the entrance room. Climbing to
 /// between 28 and 36 pixels up one of them takes Isaac through.
-
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTreeRoomsRegions;
 }
@@ -332,173 +309,119 @@ static void TreeRooms_StepOnLeaf(s32 leafFlag, s32 sourceColumn, s32 sourceRow,
 // The leaves' step triggers, one for each leaf: each passes its flag, the
 // column of its torn picture on the spare row and its landing entrance to
 // TreeRooms_StepOnLeaf. The second floor's nine are lettered A to I in the
-// order of their landing entrances, 21 to 29.
+// order of their landing entrances. A leaf on the second floor drops Isaac
+// into the entrance room, on the third to the second floor, and on the fifth
+// to the fourth.
 
-/// Isaac landing on the west leaf of the pair in the north of the second
-/// floor's web (cell (49, 6)) tears it. Landing on it again breaks it, and he
-/// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafA(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 64, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A);
 }
 
-/// The east leaf of the pair in the north of the second floor's web (cell (51,
-/// 6)) is torn from the start, so the first time Isaac lands on it, it breaks
-/// and he falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafB(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 65, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B);
 }
 
-/// Isaac landing on the upper of the two leaves down the west side of the
-/// second floor's web (cell (46, 8)), the one he can jump to from the floor by
-/// the west door, tears it. Landing on it again breaks it, and he falls into
-/// the entrance room below.
+/// The leaf Isaac can jump to from the floor by the west door.
 static void TreeRooms_StepOnSecondFloorLeafC(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 66, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C);
 }
 
-/// Isaac landing on the lower of the two leaves down the west side of the
-/// second floor's web (cell (46, 10)) tears it. Landing on it again breaks it,
-/// and he falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafD(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 67, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D);
 }
 
-/// Isaac landing on the west leaf of the pair in the middle of the second
-/// floor's web (cell (47, 12)) tears it. Landing on it again breaks it, and he
-/// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafE(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 68, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E);
 }
 
-/// Isaac landing on the east leaf of the pair in the middle of the second
-/// floor's web (cell (49, 12)) tears it. Landing on it again breaks it, and he
-/// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafF(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 69, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F);
 }
 
-/// Isaac landing on the west leaf of the row along the south of the second
-/// floor's web (cell (48, 14)) tears it. Landing on it again breaks it, and he
-/// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafG(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 70, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G);
 }
 
-/// Isaac landing on the middle leaf of the row along the south of the second
-/// floor's web (cell (50, 14)) tears it. Landing on it again breaks it, and he
-/// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafH(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 71, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H);
 }
 
-/// Isaac landing on the east leaf of the row along the south of the second
-/// floor's web (cell (52, 14)) tears it. Landing on it again breaks it, and he
-/// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafI(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 72, 35,
                        TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I);
 }
 
-/// Isaac landing on the leaf on the third floor's west web (cell (7, 23)), west
-/// of the Healing Ring's chest, tears it. Landing on it again breaks it, and he
-/// falls to the second floor.
+/// West of the Healing Ring's chest.
 static void TreeRooms_StepOnThirdFloorWestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 73, 35,
                        TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF);
 }
 
-/// Isaac landing on the leaf on the third floor's east web (cell (13, 24)),
-/// east of the Healing Ring's chest and below the vine to the fourth floor,
-/// tears it. Landing on it again breaks it, and he falls to the second floor.
+/// East of the Healing Ring's chest, below the vine to the fourth floor.
 static void TreeRooms_StepOnThirdFloorEastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 74, 35,
                        TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF);
 }
 
-/// Isaac landing on the leaf in the middle of the fifth floor's web (cell (50,
-/// 26)), just south of the torn north leaf, tears it. Landing on it again
-/// breaks it, and he falls all the way down to Tret: through the fourth floor,
-/// the third, the second and the entrance room, into Tret's room at the bottom
-/// of the tree.
+/// The way to Tret: the fall goes on through every room below it
+/// (Scene_Initialize) into Tret's room.
 static void TreeRooms_StepOnFifthFloorCenterLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN, 79, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF);
 }
 
-/// Isaac landing on the north-west leaf of the fifth floor's web (cell (48,
-/// 24)) tears it. Landing on it again breaks it, and he falls to the fourth
-/// floor.
 static void TreeRooms_StepOnFifthFloorNorthwestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN, 75, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF);
 }
 
-/// The north leaf of the fifth floor's web (cell (50, 24)) is torn from the
-/// start, so the first time Isaac lands on it, it breaks and he falls to the
-/// fourth floor.
 static void TreeRooms_StepOnFifthFloorNorthLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 76, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF);
 }
 
-/// Isaac landing on the north-east leaf of the fifth floor's web (cell (52,
-/// 24)), west of the Nut's chest, tears it. Landing on it again breaks it, and
-/// he falls to the fourth floor.
+/// West of the Nut's chest.
 static void TreeRooms_StepOnFifthFloorNortheastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN, 77, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF);
 }
 
-/// The west leaf of the fifth floor's web (cell (48, 26)) is torn from the
-/// start, so the first time Isaac lands on it, it breaks and he falls to the
-/// fourth floor.
 static void TreeRooms_StepOnFifthFloorWestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 78, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF);
 }
 
-/// Isaac landing on the east leaf of the fifth floor's web (cell (52, 26))
-/// tears it. Landing on it again breaks it, and he falls to the fourth floor.
 static void TreeRooms_StepOnFifthFloorEastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 80, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF);
 }
 
-/// Isaac landing on the south-west leaf of the fifth floor's web (cell (48,
-/// 28)) tears it. Landing on it again breaks it, and he falls to the fourth
-/// floor, not straight under it but two cells further north, where the west
-/// leaf's fall lands (cell (28, 26)).
+/// Its fall lands not straight below but where the west leaf's does, two
+/// cells further north (cell (28, 26)).
 static void TreeRooms_StepOnFifthFloorSouthwestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN, 81, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF);
 }
 
-/// Isaac landing on the south leaf of the fifth floor's web (cell (50, 28))
-/// tears it. Landing on it again breaks it, and he falls to the fourth floor.
 static void TreeRooms_StepOnFifthFloorSouthLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 82, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF);
 }
 
-/// The south-east leaf of the fifth floor's web (cell (52, 28)) is torn from
-/// the start, so the first time Isaac lands on it, it breaks and he falls to
-/// the fourth floor.
 static void TreeRooms_StepOnFifthFloorSoutheastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN, 83, 35,
                        TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF);
 }
 
-/// Isaac landing on the leaf at the east end of the fifth floor's south row
-/// (cell (54, 28)), below the Nut's chest, tears it. Landing on it again breaks
-/// it, and he falls to the fourth floor.
+/// Below the Nut's chest.
 static void TreeRooms_StepOnFifthFloorFarSoutheastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN, 84,
                        35, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF);
@@ -564,6 +487,7 @@ static void TreeRooms_FightTret(void) {
   Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
   Event_Wait(20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES);
+  // "You! You hoped to find my kindly self?"
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -574,11 +498,14 @@ static void TreeRooms_FightTret(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
+  // "Fools! You should never have come here, and now, you shall never leave!"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_MIA, 1);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+  // "Your powers protected you in the forest, but now you are in the heart of
+  // my power!"
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -590,6 +517,7 @@ static void TreeRooms_FightTret(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
+  // "Here, you will all become trees, and you'll wither with the rest of us!"
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -660,7 +588,6 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   wait(4);
   MapGrid_CopyCells(26, 35, 1, 4, 10, 40);
   wait(80);
-  // Tret comes to.
   Event_SetMessageId(MsgTretMmmmm);
   // "Oh... Mmmmm..."
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
@@ -676,22 +603,28 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_Wait(60);
   Sound_Play(MUS_FOREST_THEME);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
+  // "What has happened to me?"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  // "Was I... I see... My heart was all but lost in my rage."
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
   Event_Wait(40);
+  // "And you defeated the evil within me?"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
+  // "I thank you. I could not leave this world with so much evil in my heart."
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(40);
+  // "I am free now to leave the world without regret. Good-bye, great
+  // warriors."
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -702,17 +635,19 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  // Garet and Ivan will not let Tret die while they still need his help.
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
+  // "Hey! Wait a minute! We can't let Tret die like this!"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+  // "That's right, Isaac. We still need his help!!"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(40);
+  // "...What?"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -722,8 +657,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
-  // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
-  // not the time to fool around!"
+  // "Why have you not left me to my dying? Do you need something?"
   Event_OpenMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -735,6 +669,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+    // "That's right, Isaac... We have to save everyone in Kolima!"
     Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
   }
   Event_Wait(20);
@@ -742,6 +677,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_SetMessageId(MsgTretTurnedPeopleKolima);
   // "I turned the people of Kolima into trees?"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  // "Hroom! I must release them before they die with the forest!"
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
@@ -774,27 +710,32 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   wait(40);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   Event_Wait(20);
-  // "I can't do it... My power no longer reaches Kolima..." His face sinks
-  // away on "People of Kolima... Forgive me...", and the party resolve to
-  // heal him.
+  // "I can't do it... My power no longer reaches Kolima..."
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
+  // "People of Kolima... Forgive me..."
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  // "Tret's too weak! He doesn't have the power to save Kolima."
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
+  // "No! We have to heal him! We can't let the people of Kolima die with the
+  // forest!"
   Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+  // "Every life in Kolima depends on us!"
   Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+  // "We have to restore Tret and save the people of Kolima!"
   Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 10);
   if (hasMia != 0) {
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
+    // "Let's go, Isaac."
     Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_MIA), 0, 10);
   }
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1166,7 +1107,6 @@ static void TreeRooms_SpawnSwirlSparks(void) {
         spark->update = TreeRooms_UpdateSwirlSpark;
       }
     }
-    // Each wave also plays the closing sound.
     // fall through
   case 44:
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);

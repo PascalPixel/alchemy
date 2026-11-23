@@ -2417,7 +2417,7 @@ void WorldMap_UpdateTransitionBlend(void) {
     Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend | BLEND_WEIGHT_MAX);
 }
 
-static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
+static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }
 

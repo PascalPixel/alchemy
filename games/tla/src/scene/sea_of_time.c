@@ -154,7 +154,7 @@ enum {
   FLAG_ROCK_C_CLEARED,
   FLAG_ROCK_D_CLEARED,
   FLAG_ROCK_E_CLEARED,
-  FLAG_LAST_ROCK_CLEARED
+  FLAG_ROCK_SOUTH_CLEARED
 };
 
 /// Set while the waves run, from the stars over a trunk until the sea's
@@ -1130,7 +1130,8 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
 /// Felix casts Grind on the rock in the last stretch's south part, on cells
 /// (44, 42) to (45, 43), and it is gone for good.
-DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, ACTOR_ROCK_A, FLAG_LAST_ROCK_CLEARED)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindSouthRock, ACTOR_ROCK_A,
+                  FLAG_ROCK_SOUTH_CLEARED)
 
 #define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \
   void name(void) {                                                            \
@@ -1438,7 +1439,7 @@ void SeaOfTime_Open(void) {
 /// waves were running when the party left, they are still running. In the
 /// last stretch's north part, once Poseidon is beaten, the rocks Grind has not
 /// broken are back and the pulsing red is gone; on the arrival from his battle,
-/// the sea opens (`SeaOfTime_Open`). In its south part the last rock is placed
+/// the sea opens (`SeaOfTime_Open`). In its south part the south rock is placed
 /// until it is broken.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1496,7 +1497,7 @@ s32 Scene_Initialize(void) {
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         SeaOfTime_Open();
     } else {
-      if (!GameFlag_Get(FLAG_LAST_ROCK_CLEARED))
+      if (!GameFlag_Get(FLAG_ROCK_SOUTH_CLEARED))
         SeaOfTime_PlaceRock(89, 85, ACTOR_ROCK_A);
     }
   }
@@ -1716,7 +1717,7 @@ struct Trigger gSeaOfTime_SouthPartTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_FollowChannel)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
-     EVENT(SeaOfTime_GrindLastRock)},
+     EVENT(SeaOfTime_GrindSouthRock)},
     {TRIGGER_TABLE_END},
 };
 

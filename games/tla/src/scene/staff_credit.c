@@ -688,7 +688,7 @@ void StaffCredit_UpdateTransitionBlend(void) {
   }
 }
 
-static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
+static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }
 

@@ -122,12 +122,14 @@ enum {
   CELL_BEHAVIOR_BIG_ICE_SHEET = 81
 };
 
-/// Entrances within a room that the set-up reads: Balm's room's at the north
-/// end of its east hall, where the flame thrower is; the Valkyrie Mail room's
-/// onto its southwest floor from the southeast and the middle east floors, and
-/// onto its north floor from the middle west one.
+/// Balm's room's entrance at the north end of its east hall, where the flame
+/// thrower is, which the set-up reads.
+enum { BALM_EAST_HALL_NORTH_ENTRANCE = 10 };
+
+/// The Valkyrie Mail room's entrances that the set-up reads: onto its southwest
+/// floor from the southeast and the middle east floors, and onto its north
+/// floor from the middle west one.
 enum {
-  BALM_EAST_HALL_NORTH_ENTRANCE = 10,
   VALKYRIE_SOUTHWEST_FROM_SOUTHEAST = 2,
   VALKYRIE_SOUTHWEST_FROM_MIDDLE_EAST = 4,
   VALKYRIE_NORTH_FROM_MIDDLE_WEST = 11

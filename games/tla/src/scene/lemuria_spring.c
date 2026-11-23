@@ -287,18 +287,18 @@ extern u8 MsgLemuriaSpringWhatWillYouThrow[], MsgLemuriaSpringCoins[],
     MsgLemuriaSpringToss[], MsgLemuriaSpringYouWonCoin[];
 s32 Menu_SelectCoinsOrMedals();
 
-// French draws the count window two tiles wider, its numbers 16 pixels further
+// French draws the coin window two tiles wider, its numbers 16 pixels further
 // right; Japanese draws them 16 pixels further left, each followed by its
 // counter word.
 #if LANGUAGE == LANGUAGE_FRENCH
-#define COUNT_WINDOW_WIDTH 19
-#define COUNT_NUMBER_X 88
+#define COIN_WINDOW_WIDTH 19
+#define COIN_NUMBER_X 88
 #elif LANGUAGE == LANGUAGE_JAPANESE
-#define COUNT_WINDOW_WIDTH 17
-#define COUNT_NUMBER_X 56
+#define COIN_WINDOW_WIDTH 17
+#define COIN_NUMBER_X 56
 #else
-#define COUNT_WINDOW_WIDTH 17
-#define COUNT_NUMBER_X 72
+#define COIN_WINDOW_WIDTH 17
+#define COIN_NUMBER_X 72
 #endif
 
 // The toss prompt's window: two tiles narrower in Japanese, against the right
@@ -342,12 +342,12 @@ s32 LemuriaSpring_RunSpringGame(void) {
     Event_SetMessageId(message);
     // "What will you throw?"
     Event_OpenMessage(-1, 0);
-    window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+    window = Window_Create(0, 0, COIN_WINDOW_WIDTH, 4, 2);
     result = (s32)MsgLemuriaSpringCoins;
     Text_DrawMessageAsTiles(result, window, 0, 0);
-    Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
+    Text_DrawNumberInWindow(coins, 6, window, COIN_NUMBER_X, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
-    Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
+    Text_DrawNumberInWindow(medals, 6, window, COIN_NUMBER_X, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
     Message_CloseFinishedWindows();
@@ -416,13 +416,13 @@ s32 LemuriaSpring_RunSpringGame(void) {
     Event_SetMessageId(message);
     // "What will you throw?"
     Event_OpenMessage(-1, 0);
-    window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+    window = Window_Create(0, 0, COIN_WINDOW_WIDTH, 4, 2);
     text = (s32)MsgLemuriaSpringCoins;
     Text_DrawMessageAsTiles(text, window, 0, 0);
-    Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
+    Text_DrawNumberInWindow(coins, 6, window, COIN_NUMBER_X, 0);
     Text_DrawMessageAsTiles(text + 2, window, 104, 0);
     Text_DrawMessageAsTiles(text + 1, window, 0, 8);
-    Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
+    Text_DrawNumberInWindow(medals, 6, window, COIN_NUMBER_X, 8);
     Text_DrawMessageAsTiles(text + 2, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
@@ -1127,8 +1127,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
     toss->launchFrame = toss->launchFrame + 1;
   }
 }
-#undef COUNT_WINDOW_WIDTH
-#undef COUNT_NUMBER_X
+#undef COIN_WINDOW_WIDTH
+#undef COIN_NUMBER_X
 #undef TOSS_WINDOW_X
 #undef TOSS_WINDOW_WIDTH
 #undef WEIGHT

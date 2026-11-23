@@ -35,6 +35,10 @@ void FieldCamera_WaitForArrival(void);
 /// Set once the guards have told the party to fetch the elder's permission.
 #define FLAG_GUARDS_ASKED_FOR_PERMISSION FLAG_AREA_TEMP_01
 
+/// The cells at the foot of the bridge, whose step trigger brings the guards
+/// across it.
+enum { CELL_BEHAVIOR_MADRA_DRAWBRIDGE_FOOT = 10 };
+
 /// The two guards, numbering the rows of gActorPlacements.
 enum MadraDrawbridgeActorId {
   /// The guard on the east side of the bridge.
@@ -167,9 +171,10 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, FLAG_OSENIA_PASSAGE_GRANTED,
-     EVENT(MadraDrawbridge_BlockBridge)},
-    {TRIGGER_STEP, 10, FLAG_DRAWBRIDGE_GUARDS_LET_PARTY_THROUGH,
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_DRAWBRIDGE_FOOT,
+     FLAG_OSENIA_PASSAGE_GRANTED, EVENT(MadraDrawbridge_BlockBridge)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_DRAWBRIDGE_FOOT,
+     FLAG_DRAWBRIDGE_GUARDS_LET_PARTY_THROUGH,
      EVENT(MadraDrawbridge_LetPermittedPartyThrough)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_OSENIA_PASSAGE_GRANTED,
      EVENT(MadraDrawbridge_AskGoingToOsenia)},

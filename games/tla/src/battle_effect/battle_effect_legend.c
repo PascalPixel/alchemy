@@ -68,7 +68,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
-  // Set up the canvas and a clipped MAX blitter, mirrored to face the
+  // Set up the canvas and a clipped additive blitter, mirrored to face the
   // target; mirror the rune's corner into the sheet; load the sparks, the
   // sword and the ring of fire.
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -111,8 +111,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         step->velocityY = (target.y - start.y) * (toFIXED(1) / 16);
         step->variant = 0;
       }
-      for (i = 0; i != LEGEND_SPARK_COUNT; i++)
-        EXTRA_PARTICLES[i].variant = -1;
+      EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
     }
 
     // The swords, one each LEGEND_SWORD_INTERVAL frames.
@@ -209,8 +208,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         scale = frame * (FIXED_ONE / 8) - FIXED_ONE * 2;
         if (height > -48)
           height = -48;
-        // It fades from 60 frames after the last sword sets out: 240 less 4 a
-        // frame, written as a negated sum.
+        // It fades from 60 frames after the last sword sets out, four levels a
+        // frame.
         if (frame >= args->variant * LEGEND_SWORD_INTERVAL + 60)
           alpha = -((frame - args->variant * LEGEND_SWORD_INTERVAL) * 4 + -240);
         if (scale > FIXED_ONE * 2)
@@ -402,6 +401,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                                work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else if (mode == CARD_FLAME) {
     Resource_LoadAndDecompress(RESOURCE_SUN_CARD_SHEET, work->sheet, 1, 1);
+    // DEAD: SmokeSheet is decoded over FlashBurstSheet straight after; the ROM
+    // keeps both loads.
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                                work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
@@ -422,8 +423,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       EFFECT_FREE_PARTICLES(i, work->particles, CARD_PIECES);
       for (i = 0; i != args->targetCount; i++)
         work->particles[CARD_STRIKE_TIMERS + i].variant = (Random16() & 3) + 2;
-      for (i = 0; i != LEGEND_SPARK_COUNT; i++)
-        EXTRA_PARTICLES[i].variant = -1;
+      EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
       EffectPosition_ProjectSprite(args->user, &card);
       for (i = 0; i != args->targetCount; i++)
         EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
@@ -624,6 +624,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     model->texture = &texture;
     model->mesh = gBattleEffect_TallMesh;
     model->vertices = vertices;
+    // DEAD: frame is never negative; the ROM keeps the test.
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
       Matrix_Initialize();
@@ -694,7 +695,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           for (i = 0; i != 4; i++) {
             struct Particle *step = &work->particles[i];
 
-            step->velocityZ = (Random16() & 0x1fff) + 8096;
+            step->velocityZ = (Random16() & 8191) + 8096;
             step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
                       ELEMENT_CARDS_PICTURES;
           }

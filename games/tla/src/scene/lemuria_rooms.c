@@ -9,12 +9,14 @@
 /// - a house where a girl who has never left Lemuria lives
 ///   (LEMURIA_ROOMS_TO_LEMURIA_WEST_B);
 /// - the Senate's hall (LEMURIA_ROOMS_TO_LEMURIA_WEST_C) and the two rooms
-///   behind its arches (exits 4 to 7), where the senators hold to the sealing
-///   of Alchemy and scoff at the party's Mind Read;
-/// - Lunpa's tower (LEMURIA_ROOMS_TO_LEMURIA_EAST_A to
-///   LEMURIA_ROOMS_TO_LEMURIA_EAST_C), its rooms joined by stairs and a ladder
-///   (exits 8 to 11, 13 and 14), where Lunpa hears the party out and storms off
-///   to the king (LemuriaRooms_MeetLunpa).
+///   behind its arches (WAY_HALL_WEST_ARCH, WAY_HALL_EAST_ARCH), where the
+///   senators hold to the sealing of Alchemy and scoff at the party's Mind
+///   Read;
+/// - Lunpa's tower, three rooms one above another, each with its own door to
+///   the city (LEMURIA_ROOMS_TO_LEMURIA_EAST_C, _EAST_A and _EAST_B, from the
+///   bottom), joined by stairs and a ladder: in the bottom one, among his
+///   books, Lunpa hears the party out and storms off to the king
+///   (LemuriaRooms_MeetLunpa).
 
 #include "flags.h"
 #include "game/character_ids.h"
@@ -91,6 +93,27 @@ enum LemuriaRoomsCellBehavior {
   CELL_BEHAVIOR_FOOT_OF_LUNPAS_STAIRS = 31
 };
 
+/// The ways between the rooms, each an exit and the entrance beside it, in
+/// pairs: each way leads to its partner's entrance and back.
+enum LemuriaRoomsWay {
+  WAY_HALL_WEST_ARCH = 4, ///< to the senators' west back room
+  WAY_HALL_EAST_ARCH = 5, ///< to the senators' east back room
+  WAY_WEST_BACK_ROOM = 6, ///< to the hall's west arch
+  WAY_EAST_BACK_ROOM = 7, ///< to the hall's east arch
+  /// The top of the stairs in Lunpa's room, its west and east halves, up to
+  /// the tower's middle room.
+  WAY_LUNPAS_STAIRS_WEST = 8,
+  WAY_LUNPAS_STAIRS_EAST = 9,
+  /// Either side of the stairwell in the middle room, down to Lunpa's.
+  WAY_MIDDLE_ROOM_WEST = 10,
+  WAY_MIDDLE_ROOM_EAST = 11,
+  /// The top of the middle room's stairs, up to the top room
+  /// (gSceneRegions).
+  WAY_MIDDLE_ROOM_STAIRS = 13,
+  /// The ladder down through the top room's floor (gSceneRegions).
+  WAY_TOP_ROOM_LADDER = 14,
+};
+
 /// SPRITE_WHITE_BIRD's own animations: standing, now and then stirring, and
 /// beating its spread wings.
 enum { ANIM_WHITE_BIRD_PERCH = 1, ANIM_WHITE_BIRD_FLAP = 3 };
@@ -121,7 +144,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Piers's uncle asks whether the party came with Piers, then, once Piers has
 /// visited him, is relieved Piers is alive, and later sends the party to
 /// Lunpa's tower.
-/// "Are you the travelers that came here with Piers?"
 void LemuriaRooms_TalkToPiersUncle(s32 actorId) {
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) != 0) {
     Event_SetMessageId((s32)MsgLemuriaInteriorsGoToLunpasTowerHe);
@@ -145,7 +167,7 @@ void LemuriaRooms_TalkToPiersUncle(s32 actorId) {
       LemuriaRooms_PiersVisitsUncle();
     } else {
       Event_Wait(20);
-      // "No? Ah, interesting. I wonder when Piers will come to see me."
+      // No: "No? Ah, interesting. I wonder when Piers will come to see me."
       Event_ShowMessage(actorId, 0);
       Actor_FaceDirection(actorId, FACING_WEST, 0);
     }
@@ -173,43 +195,41 @@ void LemuriaRooms_MindReadPiersUncle(s32 unused, s32 id) {
 /// In the hall of the House of the Senate, an old senator asks whether the
 /// party came from beyond the Sea of Time, and scorns either answer.
 void LemuriaRooms_AskFromBeyondSeaOfTime(s32 actorId) {
-
   Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond);
   // "Are you the warriors from beyond the Sea of Time who returned with..."
   Event_OpenMessage(actorId, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
     Event_Wait(10);
-    // "What can you uncivilized louts hope to bring to Lemuria?"
+    // Yes: "What can you uncivilized louts hope to bring to Lemuria?"
     Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 1);
   } else {
     Event_Wait(20);
-    // "Only savages and barbarians are wont to tell lies when confronted..."
+    // No: "Only savages and barbarians are wont to tell lies when
+    // confronted..."
     Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 2);
   }
   Event_ShowMessage(actorId, 0);
-  return;
 }
 
 /// In a room behind the Senate hall's arches, a senator offers to tell of the
 /// draughts that kept Lemurians long-lived, and tells of them either way.
 void LemuriaRooms_AskAboutDraughts(s32 actorId) {
-
   Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow);
   // "Do you seek to know more about the draughts that provide us with..."
   Event_OpenMessage(actorId, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
     Event_Wait(10);
-    // "Once, Lemurians bottled special draughts to leave here and travel..."
+    // Yes: "Once, Lemurians bottled special draughts to leave here and
+    // travel..."
     Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 1);
   } else {
     Event_Wait(20);
-    // "Then I shall tell you this: So long as we drink of the Lemurian..."
+    // No: "Then I shall tell you this: So long as we drink of the Lemurian..."
     Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 2);
   }
   Event_ShowMessage(actorId, 0);
-  return;
 }
 
 /// The first senator Mind Read touches turns on the party, asks whether that
@@ -229,18 +249,17 @@ void LemuriaRooms_NoticeMindRead(s32 unused, s32 actorId) {
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
     Event_Wait(10);
-    // "Ho ho ho! We Lemurians are masters of Psynergy all! Your powers are..."
+    // Yes: "Ho ho ho! We Lemurians are masters of Psynergy all! Your..."
     Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 1);
   } else {
     Event_Wait(20);
-    // "No? Curious. But it does not matter. Lemurians are masters of..."
+    // No: "No? Curious. But it does not matter. Lemurians are masters of..."
     Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 2);
   }
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, facing, 0);
   Event_Wait(10);
   Event_End();
-  return;
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -276,8 +295,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Piers comes home to his uncle, who is relieved to find him alive.
-/// "I am sorry it has taken me so long to visit, Uncle."
+/// Piers comes home to his uncle, who is relieved to find him alive, and
+/// learns that his mother has died; he runs out to her grave.
 void LemuriaRooms_PiersVisitsUncle(void) {
   struct Actor *leader;
 
@@ -486,13 +505,13 @@ void LemuriaRooms_PiersVisitsUncle(void) {
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
-    // "After all we've been through, the least we can do is offer Piers..."
+    // Yes: "After all we've been through, the least we can do is offer..."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
     gFieldWork->message += 1;
   } else {
     Event_Wait(40);
     gFieldWork->message += 1;
-    // "You're right. Piers probably needs some time alone right now."
+    // No: "You're right. Piers probably needs some time alone right now."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   }
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -508,7 +527,6 @@ void LemuriaRooms_PiersVisitsUncle(void) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
-  return;
 }
 
 /// Frames of each of the bird's two loops round the room.
@@ -595,14 +613,14 @@ void LemuriaRooms_LeavePiersToMourn(void) {
   answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (answer == 0) {
     FieldEvent_Wait(30);
-    // "Of course... He must trust you a great deal."
+    // Yes: "Of course... He must trust you a great deal."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
     gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     FieldEvent_Wait(40);
     gFieldWork->message = (gFieldWork->message) + 1;
-    // "Curious... I can't understand why he would do that..."
+    // No: "Curious... I can't understand why he would do that..."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
   }
@@ -633,14 +651,14 @@ void LemuriaRooms_LeavePiersToMourn(void) {
   answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (answer == 0) {
     FieldEvent_Wait(30);
-    // "You say he's told you, but you look rather confused."
+    // Yes: "You say he's told you, but you look rather confused."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
     gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     FieldEvent_Wait(40);
     gFieldWork->message = (gFieldWork->message) + 1;
-    // "Did Piers tell you nothing before bringing you here to Lemuria?"
+    // No: "Did Piers tell you nothing before bringing you here to Lemuria?"
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
   }
@@ -873,13 +891,13 @@ void LemuriaRooms_MeetLunpa(void) {
   result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     Event_Wait(20);
-    // "Ah, Piers has done quite well in finding you!"
+    // Yes: "Ah, Piers has done quite well in finding you!"
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
     gFieldWork->message++;
   } else {
     Event_Wait(35);
     gFieldWork->message++;
-    // "That doesn't make sense... He wouldn't have brought you to Lemuria..."
+    // No: "That doesn't make sense... He wouldn't have brought you to..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
@@ -1079,7 +1097,7 @@ void LemuriaRooms_MeetLunpa(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
     Event_Wait(10);
-    // "You are kind, Felix, but there are much more important matters at hand."
+    // Yes: "You are kind, Felix, but there are much more important matters..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
     gFieldWork->message++;
   } else {
@@ -1088,7 +1106,7 @@ void LemuriaRooms_MeetLunpa(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
-    // "Yes, yes... I am sorry we were sidetracked. We have much more to..."
+    // No: "Yes, yes... I am sorry we were sidetracked. We have much more..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
   }
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1106,13 +1124,14 @@ void LemuriaRooms_MeetLunpa(void) {
   result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result == 0) {
     Event_Wait(20);
-    // "Clearly, your judgment on this matter is fogged, Felix. I must speak."
+    // Yes: "Clearly, your judgment on this matter is fogged, Felix. I must
+    // speak."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     gFieldWork->message++;
   } else {
     Event_Wait(35);
     gFieldWork->message++;
-    // "I knew you'd agree."
+    // No: "I knew you'd agree."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1357,6 +1376,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_Wait(20);
   Actor_Jump(ACTOR_LUNPA, 6, 15);
   Actor_Jump(ACTOR_LUNPA, 6, 23);
+  // Lunpa flashes white as he gathers himself to charge the door.
   actor = Actor_GetById(ACTOR_LUNPA);
   actor->timer = 0;
   actor->update = (ObjectUpdate)Actor_CyclePictures;
@@ -1371,6 +1391,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_WalkByAndWait(ACTOR_LUNPA, 0, -16);
   Event_Wait(1);
   Actor_GetById(ACTOR_LUNPA)->steeringFlags |= ACTOR_FACES_MOTION;
+  // One more flash, back to his own colours, and the flashing stops.
   target->timer = 3;
   wait(1);
   target->update = NULL;
@@ -1459,8 +1480,8 @@ void LemuriaRooms_MeetLunpa(void) {
 /// The tower's ways between floors: the top of the stairs in the room below,
 /// and the ladder down through the floor of the room above.
 struct SceneRegion gSceneRegions[] = {
-    {416, 32, 592, 432, 48, 608, CONDITION_ALWAYS, 13},
-    {688, -24, 608, 704, -8, 624, CONDITION_ALWAYS, 14},
+    {416, 32, 592, 432, 48, 608, CONDITION_ALWAYS, WAY_MIDDLE_ROOM_STAIRS},
+    {688, -24, 608, 704, -8, 624, CONDITION_ALWAYS, WAY_TOP_ROOM_LADDER},
     {SCENE_TABLE_END},
 };
 
@@ -1472,18 +1493,28 @@ u32 gSceneExits[] = {
                       LEMURIA_FROM_LEMURIA_ROOMS_WEST_B, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIA_ROOMS_TO_LEMURIA_WEST_C, Lemuria,
                       LEMURIA_FROM_LEMURIA_ROOMS_WEST_C, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LemuriaRooms, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, LemuriaRooms, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, LemuriaRooms, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, LemuriaRooms, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, LemuriaRooms, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, LemuriaRooms, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, LemuriaRooms, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, LemuriaRooms, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HALL_WEST_ARCH, LemuriaRooms, WAY_WEST_BACK_ROOM,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_HALL_EAST_ARCH, LemuriaRooms, WAY_EAST_BACK_ROOM,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_WEST_BACK_ROOM, LemuriaRooms, WAY_HALL_WEST_ARCH,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_EAST_BACK_ROOM, LemuriaRooms, WAY_HALL_EAST_ARCH,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_LUNPAS_STAIRS_WEST, LemuriaRooms,
+                      WAY_MIDDLE_ROOM_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_LUNPAS_STAIRS_EAST, LemuriaRooms,
+                      WAY_MIDDLE_ROOM_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_MIDDLE_ROOM_WEST, LemuriaRooms,
+                      WAY_LUNPAS_STAIRS_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_MIDDLE_ROOM_EAST, LemuriaRooms,
+                      WAY_LUNPAS_STAIRS_EAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIA_ROOMS_TO_LEMURIA_EAST_A, Lemuria,
                       LEMURIA_FROM_LEMURIA_ROOMS_EAST_A, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, LemuriaRooms, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, LemuriaRooms, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_MIDDLE_ROOM_STAIRS, LemuriaRooms, WAY_TOP_ROOM_LADDER,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(WAY_TOP_ROOM_LADDER, LemuriaRooms, WAY_MIDDLE_ROOM_STAIRS,
+                      EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIA_ROOMS_TO_LEMURIA_EAST_B, Lemuria,
                       LEMURIA_FROM_LEMURIA_ROOMS_EAST_B, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIA_ROOMS_TO_LEMURIA_EAST_C, Lemuria,
@@ -1521,14 +1552,18 @@ struct Trigger gSceneEvents[] = {
      LEMURIA_ROOMS_TO_LEMURIA_WEST_B},
     {TRIGGER_EXIT, LEMURIA_ROOMS_TO_LEMURIA_WEST_C, CONDITION_ALWAYS,
      LEMURIA_ROOMS_TO_LEMURIA_WEST_C},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, WAY_HALL_WEST_ARCH, CONDITION_ALWAYS, WAY_HALL_WEST_ARCH},
+    {TRIGGER_EXIT, WAY_HALL_EAST_ARCH, CONDITION_ALWAYS, WAY_HALL_EAST_ARCH},
+    {TRIGGER_EXIT, WAY_WEST_BACK_ROOM, CONDITION_ALWAYS, WAY_WEST_BACK_ROOM},
+    {TRIGGER_EXIT, WAY_EAST_BACK_ROOM, CONDITION_ALWAYS, WAY_EAST_BACK_ROOM},
+    {TRIGGER_EXIT, WAY_LUNPAS_STAIRS_WEST, CONDITION_ALWAYS,
+     WAY_LUNPAS_STAIRS_WEST},
+    {TRIGGER_EXIT, WAY_LUNPAS_STAIRS_EAST, CONDITION_ALWAYS,
+     WAY_LUNPAS_STAIRS_EAST},
+    {TRIGGER_EXIT, WAY_MIDDLE_ROOM_WEST, CONDITION_ALWAYS,
+     WAY_MIDDLE_ROOM_WEST},
+    {TRIGGER_EXIT, WAY_MIDDLE_ROOM_EAST, CONDITION_ALWAYS,
+     WAY_MIDDLE_ROOM_EAST},
     {TRIGGER_EXIT, LEMURIA_ROOMS_TO_LEMURIA_EAST_A, CONDITION_ALWAYS,
      LEMURIA_ROOMS_TO_LEMURIA_EAST_A},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH,

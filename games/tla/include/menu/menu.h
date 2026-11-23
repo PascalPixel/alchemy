@@ -2,7 +2,9 @@
 #define ALCHEMY_MENU_H
 
 /// @file
-/// The menus' list orders, sign strings and routines.
+/// What the menus share with the window bank, the shops and the debug rooms:
+/// the item list's sort orders, the strings and tables the menus draw from,
+/// and the routines each side calls of the other.
 
 #include "types.h"
 #include "edition.h"
@@ -37,6 +39,8 @@ enum ListSort {
 #define MENU_MEMBER_Y 26
 #define MENU_MEMBER_CHOSEN_Y 30
 
+/// The width in tiles of each status row's highlight on the status page (enum
+/// UnitStatus).
 extern u8 gStatusScreen_CursorWidths[];
 extern u8 gMenu_ListOrderItemsFirst[];
 extern u8 gMenu_ListOrderEquippedThenItems[];
@@ -46,11 +50,16 @@ extern u8 gMenu_ListOrderEquipmentFirst[];
 extern u8 gMenu_MinusSignString;
 /// `+`, before a stat gain.
 extern u8 gMenu_PlusSignString;
+/// The field menu's four icons: the command at each place, and the place of
+/// each command.
+///@{
 extern s8 gMenu_TopEntryCommandByPosition[];
 extern s8 gMenu_TopEntryPositionByCommand[];
+///@}
 /// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
 /// sprite's tiles (Shop_CopyGlyphs).
 extern u8 gShop_GlyphBytes[];
+/// `L`, before a level in the file list (screens_save.c).
 extern const u8 gStatusMenu_LevelLetterString[];
 void *IconMenu_Open(void);
 void ItemMenu_PositionCategory(void);
@@ -77,20 +86,20 @@ void PaletteFade_ReleaseFar(void);
 void PaletteFade_SetBackdropFar(void);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
-void DebugFlagEditor_DrawTable(s32, s32);
-s32 DebugFlagEditor_HandleInput(s32, s32 *, s32 *);
+void DebugFlagEditor_DrawTable(s32 window, s32 startFlag);
+s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor);
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 w, s32 h);
-s32 IconMenu_Run(s32);
-void Party_AdjustCoinsFar(s32);
-s32 Party_ListMembersFar(s16 *);
-s32 Party_SumDjinnCountsFar(s32);
+s32 IconMenu_Run(s32 initial);
+void Party_AdjustCoinsFar(s32 amount);
+s32 Party_ListMembersFar(s16 *unitIds);
+s32 Party_SumDjinnCountsFar(s32 element);
 #ifndef OWN_WindowSprite_CreateFromResourceFar
 struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
                                                         struct Window *window,
                                                         s32 x, s32 y);
 #endif
 void SelectionMenu_StopDrawing(void);
-void *String_FormatPlayTime(s32, u8 *);
+void *String_FormatPlayTime(s32 frames, u8 *out);
 void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Icon_PrepareActor(struct WindowSprite *icon);
 #ifndef OWN_UiTextResource_Initialize
@@ -102,8 +111,14 @@ void MenuArrow_SetPosition(struct Obj *obj, s32 x, s32 y);
 #endif
 void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
 
+/// `:` and the sixteen hex digits, for the debug rooms' flag and destination
+/// lists.
+///@{
 extern const u8 gMenu_ColonString[];
 extern const u8 gMenu_HexDigitsString[];
+///@}
+/// The frames a selection made for the player to watch waits at each step, by
+/// the icons still to go (IconMenu_AnimateTo).
 extern u8 gMenu_SelectionStepDelays[];
 
 #endif

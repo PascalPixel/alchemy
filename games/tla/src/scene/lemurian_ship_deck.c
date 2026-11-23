@@ -195,8 +195,9 @@ enum { HULL_BAND_FIRST_ANIMATION = 13, HULL_BAND_SECOND_ANIMATION };
 /// The party arrives on the shore by MAIN_DECK_ARRIVAL_ENTRANCE: the screen
 /// opens and the blue band along the ship's hull lights up in two steps.
 ///
-/// XXX: which scene leads here by entrance 99 and when; a search of the exit
-/// tables for it, and a recording, would settle it.
+/// No exit table or event in the game names entrance 99 of the main deck: the
+/// cabins' and the world map's exits lead in by entrances 1 and 2, so this
+/// arrival is reached by none of them.
 void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

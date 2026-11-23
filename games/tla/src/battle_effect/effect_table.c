@@ -93,13 +93,16 @@ const u8 gCastingImpact_PictureX[] = {10, 30, 0, 0, 0, 6, 52,
 /// The reaper's seven panels: their y.
 const u8 gCastingImpact_PictureY[] = {0, 20, 2, 2, 34, 64, 68};
 
-/// Ice's shards and frames, by variant.
+/// Ice's shards and frames, a pair for each variant (ICE_SHARDS, ICE_FRAMES).
 const u8 gFalling_IceCounts[] = {16, 46, 20, 52, 32, 80};
 
-/// The falling shards: four bytes for each variant.
+/// Douse's drops, four bytes for each variant: the drops that fall, the
+/// droplets each splashes into, their spacing in pixels and the frames
+/// (battle_effect_falling.c's DOUSE_ macros).
 const u8 gFalling_Counts[] = {6, 8, 32, 80, 8, 16, 24, 80, 32, 4, 8, 80};
 
-/// The streak styles: four signed bytes for each mode.
+/// The streak styles, four flags for each (STREAK_ANIMATE, STREAK_HIT,
+/// STREAK_MOTION, STREAK_SHAKE).
 const s8 gStreak_Styles[] = {0,  1, 0, 0, 0,  1, 4, 0, 0, 1,
                              -1, 1, 1, 1, -1, 1, 1, 1, 4, 0};
 
@@ -404,10 +407,12 @@ const u8 gVortices_Shapes[][3] = {
     [EFFECT_VARIANT_STRONGEST] = {4, 32, 4}, // Tempest, Hurricane
 };
 
-/// The crystals, the frames and the frame the shatter begins, by variant.
+/// The crystals, the frames and the frame the damage shows, three for each
+/// variant (PRISM_CRYSTAL_COUNT, PRISM_FRAMES, PRISM_DAMAGE_FRAME).
 const u8 gPrism_Counts[] = {1, 85, 30, 4, 124, 54, 12, 166, 86};
 
-/// The sparks and the shake, by variant.
+/// The sparks each lightning pillar throws and the frames the screen shakes at
+/// each strike, a pair for each variant (PLASMA_SPARKS, PLASMA_SHAKE_FRAMES).
 const u16 gPlasma_Sparks[] = {384, 2, 256, 3, 192, 4};
 
 /// The columns' x, seven for each side.
@@ -919,7 +924,7 @@ const u8 gFrost_MoundSpots[] = {53, 108, 73, 110, 29, 110, 73, 108, 33, 104,
                                 21, 95,  53, 90,  33, 90,  72, 91,  82, 91,
                                 77, 86,  52, 84,  18, 92,  56, 81};
 
-/// Each variant's timing, three bytes.
+/// Each variant's timing, three bytes (RISE_MOTES, RISE_COLUMNS, RISE_FRAME).
 const u8 gFrost_Timings[] = {32, 8, 85, 48, 12, 97, 64, 19, 109};
 
 /// Each mote picture's width, in pixels.
@@ -946,7 +951,8 @@ const u8 gFrost_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 /// Each ice chip picture's byte offset in Frost's sheet.
 const u16 gFrost_ChipCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
-/// The sparks, a pair for each variant.
+/// Each variant's sparks: a byte nothing reads, then the sparks each bolt
+/// throws a frame.
 const u8 gRay_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 
 /// Eruption's counts, by variant.

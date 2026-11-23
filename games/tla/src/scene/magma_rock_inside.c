@@ -283,23 +283,7 @@ enum MagmaRockInsideBlazeTabletActorId {
   ACTOR_TORCH_FLAME
 };
 
-/// Creates a hidden effect actor at a place: no motion, never targeted, drawn
-/// under the actors.
-struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
-  struct Actor *actor = FieldActor_Create(kind, x, y, z);
-
-  if (actor != NULL) {
-    Scene_SetActorSpritePriority(actor, 1);
-    actor->motionFlags = 0;
-    actor->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(actor, 0);
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
-    actor->priorityFlags |=
-        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
-    return actor;
-  }
-  return NULL;
-}
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect_move.c"
 

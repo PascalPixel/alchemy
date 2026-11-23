@@ -666,10 +666,10 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
 /// Unused: returns 1.
 UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 
-// The sprite priority an actor takes on the cell under a point.
+/// The sprite priority an actor takes on the cell under a point.
 #define CELL_PRIORITY(cells, x, z)                                             \
   ((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)].actorPriority)
-// The map layer an actor takes on the cell under a point, plus one.
+/// The map layer an actor takes on the cell under a point, plus one.
 #define CELL_LAYER(cells, x, z)                                                \
   ((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)].actorLayer)
 

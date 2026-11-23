@@ -39,7 +39,7 @@ enum ClassSeries {
   CLASS_SERIES_DARK_MAGE   ///< with the Tomegathericon equipped
 };
 
-// The caps on a unit's level and stats (Unit_Calculate).
+/// The caps on a unit's level and stats (Unit_Calculate).
 #define UNIT_LEVEL_MAX 99
 #define UNIT_ENEMY_HP_MAX 16383    ///< maximum HP, an enemy's
 #define UNIT_ENEMY_PP_MAX 9999     ///< maximum PP, an enemy's

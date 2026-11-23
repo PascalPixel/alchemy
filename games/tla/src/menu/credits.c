@@ -100,8 +100,8 @@ extern u8 EndingPicture_DecodeCodeSize[];
 
 extern u8 gDebugTextEnabled;
 
-// Credits text uses six 32-pixel sprites across each 192-pixel line, drawn into
-// a ring of 32 lines of sprite tiles.
+/// Credits text uses six 32-pixel sprites across each 192-pixel line, drawn
+/// into a ring of 32 lines of sprite tiles.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6

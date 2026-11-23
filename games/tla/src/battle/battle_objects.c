@@ -9,7 +9,7 @@
 #include "system/system.h"
 #include "macros.h"
 
-// The status icons' bits in BattleObject.activeStatuses
+/// The status icons' bits in BattleObject.activeStatuses
 #define ICON_POISON 0x01
 #define ICON_VENOM 0x02 ///< deadly poison
 #define ICON_STUN 0x04

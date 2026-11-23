@@ -52,8 +52,8 @@
 /// own import).
 void Import_DebugMadPlantLeap(s32 sprite, s32 x, s32 z);
 
-// The room's flags: the four Scoop spots dug, the Wicked Mace picked up, and
-// whether Blaze has sent Kraden to his second spot.
+/// The room's flags: the four Scoop spots dug, the Wicked Mace picked up, and
+/// whether Blaze has sent Kraden to his second spot.
 #define FLAG_HOLE_DUG FLAG_AREA_TEMP_00
 #define FLAG_PUDDLE_DUG FLAG_AREA_TEMP_01
 #define FLAG_WICKED_MACE_DUG FLAG_AREA_TEMP_02

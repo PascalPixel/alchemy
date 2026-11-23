@@ -187,6 +187,8 @@ enum {
 /// stopping it, and a fade in.
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
+/// A music player's fade volume when it plays at full, and how far each step of
+/// a fade in or out moves it, one step every fadePeriod VBlanks.
 #define SOUND_FADE_FULL_VOLUME 256
 #define SOUND_FADE_STEP 16
 

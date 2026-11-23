@@ -27,8 +27,8 @@
 #endif
 
 #if TLA_PATCH_2
-// These editions size the "Set Djinni" window by the cartridge's language as
-// it runs: wider for Italian and Spanish.
+/// These editions size the "Set Djinni" window by the cartridge's language as
+/// it runs: wider for Italian and Spanish.
 #define TARGET_SET_DJINNI_WIDTH_ITALIAN 10
 #define TARGET_SET_DJINNI_WIDTH_SPANISH 11
 extern const u8 gOwnerStatus_KpString[];

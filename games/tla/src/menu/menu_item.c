@@ -1127,8 +1127,8 @@ void ItemMenu_OpenCategory(s32 ownerId) {
 #define ItemMenu_DrawInfo Text_DrawMessageAsTilesFar
 #endif
 
-// The Japanese release clears the info window; from patch 1 it redraws the
-// window's saved rectangle.
+/// The Japanese release clears the info window; from patch 1 it redraws the
+/// window's saved rectangle.
 #if TLA_PATCH_1
 #define ItemMenu_ClearInfo WindowSprite_RedrawSavedRectFar
 #else

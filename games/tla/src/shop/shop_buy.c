@@ -11,8 +11,8 @@
 #include "gamepak/far_call/menu.h"
 #include "gamepak/far_call/field.h"
 
-// The Select window is wider outside English and narrower in Japanese, the
-// price window wider in German, French and Italian and narrower in Japanese.
+/// The Select window is wider outside English and narrower in Japanese, the
+/// price window wider in German, French and Italian and narrower in Japanese.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define HELD_WINDOW_X 10

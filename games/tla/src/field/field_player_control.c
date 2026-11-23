@@ -32,9 +32,9 @@ enum FieldShortcutKind {
 #define FIELD_SHORTCUT_KEYS gKeysHeld
 #define WORLD_MAP_PROBE_RADIUS toFIXED(8)
 
-// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
-// point, as The Broken Seal's; on the world map this game runs with twice the
-// walk's acceleration.
+/// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
+/// point, as The Broken Seal's; on the world map this game runs with twice the
+/// walk's acceleration.
 #define FIELD_WALK_SPEED toFIXED(1)      ///< 1 pixel a frame
 #define FIELD_RUN_SPEED (toFIXED(3) / 2) ///< 1.5, with a dash key held
 #define FIELD_ACCELERATION                                                     \

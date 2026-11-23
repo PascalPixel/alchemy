@@ -133,11 +133,11 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 #define TOTAL_LABEL_X 32
 #endif
 
-// The stats page: Japanese makes its window a tile wider, draws the old values
-// a column further left, Defense and Agility in four places as HP, PP and
-// Attack (the other editions give those two three places from the next
-// column), and starts the prompt under them (MsgBattleAdditionalPsynergyHelp)
-// 16 pixels further right.
+/// The stats page: Japanese makes its window a tile wider, draws the old values
+/// a column further left, Defense and Agility in four places as HP, PP and
+/// Attack (the other editions give those two three places from the next
+/// column), and starts the prompt under them (MsgBattleAdditionalPsynergyHelp)
+/// 16 pixels further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define STAT_WINDOW_WIDTH 21
 #define OLD_VALUE_X 4

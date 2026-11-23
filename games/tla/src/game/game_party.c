@@ -7,10 +7,10 @@
 #include "game/game.h"
 #include "text/msg_ids.h"
 
-// A unit whose name suffix is below NAME_SUFFIX_COUNT gets one more character
-// after its name, NAME_SUFFIX_BASE plus the suffix: the digits 1 to 9 outside
-// Japan, and the letters A to Z in the Japanese release (String_FindFirstDigit
-// reads it back).
+/// A unit whose name suffix is below NAME_SUFFIX_COUNT gets one more character
+/// after its name, NAME_SUFFIX_BASE plus the suffix: the digits 1 to 9 outside
+/// Japan, and the letters A to Z in the Japanese release (String_FindFirstDigit
+/// reads it back).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define NAME_SUFFIX_BASE 'A'
 #else

@@ -42,8 +42,8 @@
 /// The entrance that brings Isaac's party in (Party_AddIsaacsParty).
 #define ENTRANCE_WITH_ISAACS_PARTY 99
 
-// Set while Sunshine forges what the party brought him, as Yallam's
-// FLAG_SUNSHINE_FORGING is; here only leaving the room clears it.
+/// Set while Sunshine forges what the party brought him, as Yallam's
+/// FLAG_SUNSHINE_FORGING is; here only leaving the room clears it.
 #define FLAG_SHOP_TEST_SUNSHINE_FORGING FLAG_SCENE_TEMP_00
 
 /// The room's people, numbered in the order of gActorPlacements: the shops'

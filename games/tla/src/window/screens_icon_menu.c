@@ -1720,7 +1720,7 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
   return selection;
 }
 
-// The label window's width for each language.
+/// The label window's width for each language.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PAIR_WIDTH 7
 #elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)

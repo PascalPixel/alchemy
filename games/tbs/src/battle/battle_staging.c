@@ -149,8 +149,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 completed = 0;
-  // Default: 0 until the party branch copies completed.
-  s32 partyMode = 0;
+  s32 rollSucceeded = 0;
 
   view->targetYaw = YAW_PARTY_ACTION;
   view->busy = 1;
@@ -159,13 +158,14 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
   // The party: each party member that can move runs, the last listed first,
   // eight frames apart.
   if (plan->unitId <= ALLY_MAX) {
-    partyMode = completed;
+    rollSucceeded = completed;
 
+    // A failed roll (BattleFlee_CheckSuccess) gave the enemies the turn.
     if (battle->firstStrike != FIRST_STRIKE_ENEMIES) {
-      partyMode = 1;
+      rollSucceeded = 1;
     }
 
-    if (!partyMode) {
+    if (!rollSucceeded) {
       BattleMessage_ShowAndWaitFar(MsgNoEscape);
       BattleMessage_WaitForAdvance();
     } else {
@@ -187,11 +187,11 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
     }
   } else if (Random16_Below(10) <= 6) {
     // An enemy: a roll of 0 to 9, 7 in 10 away.
-    s16 event[2];
+    s16 fleeing[2];
 
-    event[0] = plan->unitId;
-    event[1] = BATTLE_UNIT_LIST_END;
-    BattleMotion_SetupEscapeObject(event[0]);
+    fleeing[0] = plan->unitId;
+    fleeing[1] = BATTLE_UNIT_LIST_END;
+    BattleMotion_SetupEscapeObject(fleeing[0]);
     wait(8);
     BattleObject_RemoveFromLists(plan->unitId);
     BattleObject_MarkForRelease(plan->unitId);
@@ -210,13 +210,13 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
 s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   u16 units[UNIT_MAX];
   struct BattleStagingWork work;
-  u32 actor;
-  u32 target;
+  u32 userId;
+  u32 targetId;
   u32 count;
   s32 i;
   s32 n;
   u32 kept;
-  struct Actor *object;
+  struct Actor *userActor;
   // UB: indexing past scalar gBattleWork reaches another heap slot.
 #ifndef UBFIX
   void **slots = (void **)&gBattleWork;
@@ -225,8 +225,8 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   // The camera turns to the acting unit's side for a staged effect, else to the
   // usual view.
   BattleStaging_BuildTargetList(plan, &work.effect);
-  actor = plan->unitId;
-  target = plan->targetIds[0];
+  userId = plan->unitId;
+  targetId = plan->targetIds[0];
   if (plan->battleEffect & EFFECT_SUMMON) {
     struct BattleBackgroundWork *view;
     s32 yaw;
@@ -236,7 +236,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
     yaw = YAW_PARTY_ACTION;
-    if (actor > ALLY_MAX)
+    if (userId > ALLY_MAX)
       yaw = YAW_BEHIND_ENEMIES;
     view->targetYaw = yaw;
     view->frames = 60;
@@ -249,7 +249,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     view = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
     yaw = YAW_ENEMY_ACTION;
-    if (actor <= ALLY_MAX)
+    if (userId <= ALLY_MAX)
       yaw = YAW_PARTY_ACTION;
     if (view->targetYaw != yaw)
       view->targetYaw = yaw;
@@ -258,24 +258,24 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   // The unit raises its hand and glows; the side not targeted fades out.
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
-  object = BattleObject_Get(actor)->actor;
+  userActor = BattleObject_Get(userId)->actor;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   for (i = 0; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
-    if (units[i] != actor) {
-      if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
+    if (units[i] != userId) {
+      if ((targetId <= ALLY_MAX) != (units[i] <= ALLY_MAX))
         BattleHighlight_SetSpriteMode(units[i], SPRITE_SEMI_TRANSPARENT);
     } else {
-      Actor_SelectAnimationFar(object, POSE_CAST);
+      Actor_SelectAnimationFar(userActor, POSE_CAST);
     }
   }
   // The sound of a cast, as the caster raises its hand.
   Sound_PlayFar(SE_CAST);
   ElementGlow_Play(work.effect.user, plan->element, GLOW_STAR_FIELD, 0);
   if (mode & STAGING_HIDE_ACTOR)
-    BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
+    BattleHighlight_SetSpriteMode(userId, SPRITE_SEMI_TRANSPARENT);
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
     wait(1);
@@ -295,10 +295,10 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     kept = 0;
     for (i = 0; i < count; i++) {
       u32 unit = units[i];
-      if (unit == actor) {
+      if (unit == userId) {
         if (!(mode & STAGING_HIDE_ACTOR))
-          units[kept++] = actor;
-      } else if ((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
+          units[kept++] = userId;
+      } else if ((targetId <= ALLY_MAX) == (unit <= ALLY_MAX)) {
         units[kept++] = unit;
       }
     }
@@ -321,7 +321,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     }
     // The side the battle effect plays on: the targets'.
     if (plan->battleEffect & EFFECT_SUMMON) {
-      if (target > ALLY_MAX)
+      if (targetId > ALLY_MAX)
         work.effect.side = EFFECT_SIDE_ENEMIES;
       else
         work.effect.side = EFFECT_SIDE_PARTY;
@@ -351,9 +351,9 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (i = 0; i != count; i++) {
-    if (units[i] == BATTLE_UNIT_REMOVED || units[i] == actor)
+    if (units[i] == BATTLE_UNIT_REMOVED || units[i] == userId)
       continue;
-    if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
+    if ((targetId <= ALLY_MAX) != (units[i] <= ALLY_MAX))
       BattleHighlight_SetSpriteMode(units[i], SPRITE_SEMI_TRANSPARENT);
   }
   for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
@@ -444,12 +444,13 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
 
   unit = Unit_GetFar(work.effect.user);
+  // DEAD: the first target, fetched and not used; the ROM keeps the call.
   Unit_GetFar(work.effect.targets[0]);
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
 
   // The run up: as long as the attacker's POSE_LEAP, with its class's hop
-  // height (16.16).
+  // height.
   animation = GetMotionRecord(BattleObject_Get(plan->unitId)->actor, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
@@ -457,6 +458,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
                               toFIXED(BattleSprite_GetAttackHop(unit->id)));
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
                              ANIM_STEP_NORMAL);
+  // DEAD: BattleObject_Get on the target, unused; the ROM keeps the call.
   BattleObject_Get(work.effect.targets[0]);
 
   if ((u16)work.effect.targets[0] <= ALLY_MAX)

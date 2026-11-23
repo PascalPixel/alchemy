@@ -22,15 +22,15 @@ enum FleeChance {
 /// An empty action's priority, below every other as the sort reads it (s16).
 #define PRIORITY_LOWEST 32768
 
-/// Unused: pulses HIGHLIGHT_PALETTE, the window colours brightening and dimming
-/// with the frame count.
+/// Unused: fills HIGHLIGHT_PALETTE with WINDOW_PALETTE's colours, brightened by
+/// a pulse that rises and falls with the frame count.
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
 
   for (i = 0; i < PALETTE_COLORS; i++) {
-    // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
-    // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
+    // A pulse about every 21 frames (3/64 of a turn a frame), brightening each
+    // channel by up to 12 levels.
     u32 angle = gFrameCount * (TRIG_TURN * 3 / 64);
     u32 color = palette[PALETTE_COLORS];
     s32 brightness = (FIXED_ONE - Trig_Cos(angle)) / (FIXED_ONE / 6);
@@ -89,14 +89,13 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
   gProjection.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
   view->busy = 1;
-  BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0, 8 << 8,
-                        FIXED_ONE * 2);
+  BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0,
+                        Q_8_8(8), FIXED_ONE * 2);
   view->flag = 1;
   view->busy = 0;
 }
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
-/// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[UNIT_MAX];
   s32 count;
@@ -124,16 +123,16 @@ s32 BattleFlee_CheckSuccess(void) {
   s32 levelTotal;
   s32 unitIndex;
   s32 chance;
-  struct BattleWork *escapeState;
+  struct BattleWork *battle;
 
   escaped = 0;
-  escapeState = gBattleWork;
-  if (escapeState->firstStrike == FIRST_STRIKE_PARTY) {
+  battle = gBattleWork;
+  if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     escaped = 1;
   } else {
-    failedAttempts = &escapeState->fleeFailures;
-    chance = FLEE_BASE_CHANCE +
-             (escapeState->fleeFailures * FLEE_CHANCE_PER_FAILURE);
+    failedAttempts = &battle->fleeFailures;
+    chance =
+        FLEE_BASE_CHANCE + (battle->fleeFailures * FLEE_CHANCE_PER_FAILURE);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     levelTotal = 0;
     for (unitIndex = escaped; unitIndex < livingCount; unitIndex++) {
@@ -301,7 +300,7 @@ void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
     if (entry->command == COMMAND_DJINN) {
       struct AbilityDefinition *action;
 
-      // The unit lookup's result is unused.
+      // DEAD: the unit, fetched and not used; the ROM keeps the call.
       Unit_GetFar(entry->unitId);
       action = Ability_Get(
           Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(entry->parameter),
@@ -336,7 +335,7 @@ void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
 
 /// The header a link battle sends before its actions: how many, the next random
 /// number to check the consoles agree, and the parent's seed for the turn.
-struct BattleLinkedActionState {
+struct BattleLinkHeader {
   s32 count; ///< actions that follow the header
   s32 check; ///< the parent's next Battle_RandomFar; the child checks its own
   s32 seed;  ///< the parent's gRandomSeed, the turn's battle seed
@@ -360,8 +359,8 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   struct BattleWork *battle = gBattleWork;
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
-  struct BattleLinkedActionState *state =
-      Heap_AllocEwram(sizeof(struct BattleLinkedActionState));
+  struct BattleLinkHeader *header =
+      Heap_AllocEwram(sizeof(struct BattleLinkHeader));
   s32 index;
 
   // Sends the header, then this console's actions. Both transfers share one
@@ -369,7 +368,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = Serial_StartSend(state, LINK_PACKET_BYTES);
+    s32 status = Serial_StartSend(header, LINK_PACKET_BYTES);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
@@ -412,7 +411,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
     // (serial.h), so every read here loads it again.
     s32 timeout;
     s32 disconnected;
-    s32 status = Serial_StartReceive(state);
+    s32 status = Serial_StartReceive(header);
 
     disconnected = 0;
     timeout = LINK_TRANSFER_TIMEOUT;
@@ -433,8 +432,8 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
     }
     if (gSerialReceivedSize != LINK_PACKET_BYTES)
       return -1;
-    result = state->count;
-    if (state->count) {
+    result = header->count;
+    if (header->count) {
       status = Serial_StartReceive(actions + count);
       if (status == -1)
         return status;
@@ -477,22 +476,22 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
     if (battle->linkSide == 0) {
       u32 saved;
 
-      state->count = count;
-      state->check = Battle_RandomFar();
+      header->count = count;
+      header->check = Battle_RandomFar();
       IRQ_LOCK(saved);
-      Battle_SetRandomSeed(state->seed = gRandomSeed);
+      Battle_SetRandomSeed(header->seed = gRandomSeed);
       IRQ_UNLOCK(saved);
       if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
-      result = state->count;
+      result = header->count;
     } else {
       if (LinkBattle_ReceiveActions() < 0)
         goto fail;
-      result = state->count;
-      state->count = count;
-      if (LinkBattle_SendActions() < 0 || Battle_RandomFar() != state->check)
+      result = header->count;
+      header->count = count;
+      if (LinkBattle_SendActions() < 0 || Battle_RandomFar() != header->check)
         goto fail;
-      Battle_SetRandomSeed(state->seed);
+      Battle_SetRandomSeed(header->seed);
     }
 
     // The received actions, seen from this side: the xor with FIRST_ENEMY_UNIT
@@ -504,24 +503,24 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       action->target ^= FIRST_ENEMY_UNIT;
     }
 
-    Heap_Release(state);
+    Heap_Release(header);
     return result;
   }
 
 fail:
   LinkBattle_ResetTransferState();
   Serial_RemoveIrqHandlers();
-  Heap_Release(state);
+  Heap_Release(header);
   return -1;
 }
 
-/// Copies BG palette 15 to 14 and 5 to 4, each channel moved by offset.
+/// Copies WINDOW_PALETTE into HIGHLIGHT_PALETTE and BASIC_COLORS_PALETTE into
+/// the palette before it, each channel moved by offset levels.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bank;
   s32 source = WINDOW_PALETTE;
   s32 i;
 
-  // Palettes 15 and 5, each into the palette before it, 14 and 4.
   for (bank = 0; bank < 2; bank++) {
     for (i = 0; i < PALETTE_COLORS; i++) {
       s32 index = source * PALETTE_COLORS + i;
@@ -549,7 +548,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       adjusted = RGB(red, green, blue);
       ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
-    source = 5;
+    source = BASIC_COLORS_PALETTE;
   }
 }
 
@@ -575,8 +574,8 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
     }
   }
 
-  // Last turn's guards end; palettes 14 and 4 take 15 and 5 eight steps
-  // brighter; the camera takes the command view.
+  // Last turn's guards end; the highlight palettes take the window's and the
+  // basic colours eight levels brighter; the camera takes the command view.
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
   GameFlag_SetFar(FLAG_CHOOSING_COMMANDS);
@@ -671,8 +670,7 @@ s32 Battle_FindUnitPlace(u32 unitId) {
   }
 }
 
-/// Turns the camera while L or R is held (a second copy). Nothing in the
-/// source calls it.
+/// Unused: a second copy of the camera turn while L or R is held.
 DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeysAlt)
 
 /// Does nothing; Battle_Run calls it at the start of each turn.

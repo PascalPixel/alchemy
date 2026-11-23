@@ -89,7 +89,7 @@ enum LinkLobbyActorId {
   ACTOR_GREETER, ///< "Welcome to the Battle Arena, where..."
   /// "Hm... It comes in like this... Then you do this, and... Whoa, that's
   /// not right..."
-  ACTOR_FUMBLING_VISITOR,
+  ACTOR_PRACTICING_VISITOR,
   /// "You look a little scrawny...", then "I'll be rooting..."
   ACTOR_ROOTING_VISITOR,
   /// "I like my men macho"; with L or R held, takes a song request.
@@ -109,7 +109,7 @@ enum LinkLobbyActorId {
   ACTOR_MONSTER_WINS_TELLER, ///< reports the most Monster Battles won in a row
   /// "Sometimes, your class changes when you unleash a Djinni."
   ACTOR_CLASS_CHANGE_VISITOR,
-  ACTOR_SONG_REQUEST_TAKER, ///< "You have a song request?"
+  ACTOR_SONG_REQUEST_VISITOR, ///< "You have a song request?"
   /// "I don't have the guts to fight in the battle arena."
   ACTOR_GUTLESS_VISITOR
 };
@@ -1124,7 +1124,7 @@ void Window_Close(s32 window, s32 release);
 /// Only the ones already heard in the game can be picked, unless Start, Up and
 /// L are held as the request opens, or this game or a file on the cartridge has
 /// been cleared. The woman in red takes requests while L or R is held
-/// (LinkLobby_TalkToVisitor); ACTOR_SONG_REQUEST_TAKER, a strongman, stands
+/// (LinkLobby_TalkToVisitor); ACTOR_SONG_REQUEST_VISITOR, a strongman, stands
 /// below the hall where the player cannot walk.
 void LinkLobby_TakeSongRequest(s32 actor) {
   s32 window;
@@ -1855,7 +1855,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(LinkLobby_OpenSanctum)},
     {TRIGGER_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
      MSGNO(MsgLobbyWelcomeToBattleArenaWhere)},
-    {TRIGGER_TALK, ACTOR_FUMBLING_VISITOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_PRACTICING_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgLobbyHmItComesInLike)},
     {TRIGGER_TALK, ACTOR_ROOTING_VISITOR, CONDITION_ALWAYS,
      EVENT(LinkLobby_TalkToVisitor)},
@@ -1879,7 +1879,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(LinkLobby_ReportMonsterRecord)},
     {TRIGGER_TALK, ACTOR_CLASS_CHANGE_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgLobbySometimesYourClassChangesWhen)},
-    {TRIGGER_TALK, ACTOR_SONG_REQUEST_TAKER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SONG_REQUEST_VISITOR, CONDITION_ALWAYS,
      EVENT(LinkLobby_TakeSongRequest)},
     {TRIGGER_TALK, ACTOR_GUTLESS_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgLobbyIDontHaveGuts)},

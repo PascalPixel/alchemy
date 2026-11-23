@@ -1,11 +1,11 @@
 /// @file
-/// Mercury Lighthouse and its entrance: leaving a floor through one of its
-/// sparkling passages.
+/// Mercury Lighthouse and its entrance: leaving a room by walking into one of
+/// its waterfalls.
 
-/// Stepping into a passage: the leader moves north with the trail of sparks,
+/// Walking into a waterfall: the leader moves north with the trail of sparks,
 /// vanishes, and after half a second the screen fades and the party takes that
 /// exit.
-static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
+static void MercuryLighthouse_WalkIntoWaterfall(s32 exit) {
   struct Actor *v = Actor_GetById(ACTOR_PARTY_LEADER);
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
@@ -25,9 +25,9 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
 }
 
 // XXX (no evidence): whether this is an early form of
-// MercuryLighthouse_LeaveThroughPassage, which plays the same sound and steps
+// MercuryLighthouse_WalkIntoWaterfall, which plays the same sound and steps
 // the same way; nothing calls it, so nothing shows what would have followed.
-/// Unused: the leader steps 8 pixels north with the passages' sound and
+/// Unused: the leader steps 8 pixels north with the waterfalls' sound and
 /// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
 /// the event; nothing in either overlay calls it.
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {

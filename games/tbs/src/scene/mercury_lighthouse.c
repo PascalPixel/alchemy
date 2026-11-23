@@ -514,19 +514,18 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMercuryLighthouseTriggersOther;
 }
 
-#include "shared/mercury_lighthouse_passage.c"
+#include "shared/mercury_lighthouse_waterfall.c"
 
 /// Walking north into the third of the six waterfalls from the west, in the
 /// first room of waterfalls (cell (16, 7)), Isaac vanishes in a trail of
 /// sparkles and comes out in Sleet's small room.
 ///
-/// The waterfall is one of the sparkling passages of
-/// shared/mercury_lighthouse_passage.c. Its cell's behaviour is its exit's
-/// number, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST,
-/// past EXIT_CELL_BEHAVIOR_OFFSET.
+/// Its cell's behaviour is its exit's number,
+/// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST, past
+/// EXIT_CELL_BEHAVIOR_OFFSET.
 static void MercuryLighthouse_LeaveUpperByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
-                                        EXIT_CELL_BEHAVIOR_OFFSET);
+  MercuryLighthouse_WalkIntoWaterfall(gFieldWork->stepTrigger -
+                                      EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
 /// Walking north into the easternmost of the six waterfalls of the second room
@@ -534,16 +533,16 @@ static void MercuryLighthouse_LeaveUpperByPassage(void) {
 /// comes out at the foot of the room of vines, through
 /// MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_LeaveUpperWaterfallsByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
-                                        EXIT_CELL_BEHAVIOR_OFFSET);
+  MercuryLighthouse_WalkIntoWaterfall(gFieldWork->stepTrigger -
+                                      EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
 /// Walking north into the waterfall under the rainbow (cell (49, 13)), Isaac
 /// vanishes in a trail of sparkles and comes out again on the path that led
 /// there, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
-                                        EXIT_CELL_BEHAVIOR_OFFSET);
+  MercuryLighthouse_WalkIntoWaterfall(gFieldWork->stepTrigger -
+                                      EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
 /// Once all three pipe sections of the pipe room are joined, the floor rumbles

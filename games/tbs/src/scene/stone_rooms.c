@@ -123,11 +123,11 @@ static void StoneRooms_LeaderSilencesThieves(void) {
   Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
   Event_Wait(40);
 
-  // "Shut yer yaps!"; the two thieves start.
   Event_SetMessageId(MsgVaultThiefLeaderSilencesThieves);
   // "Shut yer yaps!"
   Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
+  // The two thieves start.
   Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
   Event_Wait(20);

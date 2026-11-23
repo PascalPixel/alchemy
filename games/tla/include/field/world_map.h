@@ -111,8 +111,8 @@ const struct FlagEntry *FlagEntries_GetTable(void);
 #define MAP_SCREEN_TILE_ROWS 24
 #define MAP_SCREEN_MAP_START (4 * BG_SCREEN_WIDTH)
 
-/// A World Map position, in whole pixels, as a point on the world map
-/// picture.
+/// A World Map position, in whole pixels, as a point on the map
+/// screen.
 #define MAP_SCREEN_X(x) ((x) * 853 / 16384 - 269)
 #define MAP_SCREEN_Y(z) ((z) * 640 / 16384 - 112)
 

@@ -3,8 +3,8 @@
 
 /// @file
 /// What the event commands share with the field and the scenes: the field
-/// Psynergy's casts and their works, the Djinn's join effects, the World
-/// Picture's state, and the encounter zones of the story's battles.
+/// Psynergy's casts and their works, the Djinn's join effects, the map
+/// screen's state, and the encounter zones of the story's battles.
 
 #include "types.h"
 #include "system/vector3.h"

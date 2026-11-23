@@ -877,11 +877,11 @@ void AnkohlRuins_CarriedOffLedge(void) {
 }
 
 /// Felix pushes a face half or a pillar in the face halves' rooms by walking
-/// into it, as Move does; the halves go on as AnkohlRuins_PlaceFaceHalves and
-/// the pillars as AnkohlRuins_FinishMovingPillar.
-// XXX: whether walking into a half or a pillar here moves it at all, or the
-// row only finishes a push Move began; a render of Felix walking into the left
-// half would settle it.
+/// into it: once he has leant on it a moment where the floor lets him push,
+/// the field shoves it a cell ahead (Field_RunPushCell) and then this runs, the
+/// halves going on as AnkohlRuins_PlaceFaceHalves and the pillars as
+/// AnkohlRuins_FinishMovingPillar, as after Move. A push by Move does not come
+/// here: its own rows run those two directly.
 void AnkohlRuins_FinishPushing(s32 a, s32 id) {
   if (id == ACTOR_LEFT_FACE_HALF || id == ACTOR_RIGHT_FACE_HALF)
     AnkohlRuins_PlaceFaceHalves(a, id);
@@ -1339,10 +1339,11 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 
 /// Felix steps on the second sand room's door button and the door in its
 /// north-west wall slides open.
-// XXX: the button's cell, behaviour 43, is (18, 7) in the map, beside the first
-// sand room's; where the player finds it in the second room, and whether the
-// map's rows there are raised by the sand's height, a render of Felix on the
-// full second room's ledge would settle.
+// XXX: the button's cell, behaviour 43, is (18, 7) in the map, 16 pixels up,
+// beside the first sand room's (18, 8); both lie east of every camera box of
+// the scene (x 288, the sand rooms' boxes ending at 272), so no picture of the
+// rooms shows them. Where the player finds it in the second room would take a
+// recording of Felix stepping on it, the second room full of sand.
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
                               FLAG_SECOND_SAND_DOOR_OPENED, 2, 83, 1, 23)
 
@@ -1351,10 +1352,11 @@ DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
 /// behind it, unless he is under the Sand; it stops at the corridor's foot.
 /// It moves four fifths of a pixel a frame. While it passes the sand patch
 /// midway, rows 31 to 36, Sand cannot end (FLAG_SAND_CANNOT_END). Past row 41
-/// it stops, the shaking dies away with a sound, the cells at the corridor's
-/// foot change and FLAG_SCENE_TEMP_01 keeps them so for this visit.
-// XXX: what the cells it leaves at the corridor's foot let Felix do; a render
-// after the slide would settle it.
+/// it stops, the shaking dies away with a sound, and the six cells at the
+/// corridor's foot where it comes to rest, (13, 41) to (15, 42), where the
+/// corridor opens onto the hall below, become wall: Felix cannot walk through
+/// the face there, and the cells that set the slide off are gone with them.
+/// FLAG_SCENE_TEMP_01 keeps them so for this visit.
 void AnkohlRuins_SlideGreatFace(void) {
   struct Actor *camera = gFieldWork->camera;
   struct Actor *face = Actor_GetById(ACTOR_GREAT_FACE);

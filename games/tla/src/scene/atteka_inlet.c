@@ -477,7 +477,10 @@ void AttekaInlet_CycloneUncoversGeode(void) {
 }
 
 /// Cyclone on the westmost clump of weeds on the heights, south-west of the two
-/// pillars on the path north (cell (4, 14)), scatters it.
+/// pillars on the path north (cell (4, 14)), scatters it. Each clump's event
+/// copies bare ground from a cell nearby over the clump's cells that the whirl
+/// touched; on raised ground, as all nine are, a clump is drawn four rows north
+/// of the cell it answers on.
 void AttekaInlet_CycloneFirstWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 4, 10, 0);
 }

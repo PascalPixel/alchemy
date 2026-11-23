@@ -90,11 +90,11 @@ struct SpawnActor {
   s16 homeZ;
 };
 
-/// A scene region as Scene_AssignViewFlags reads it: its id, its flag and
-/// its place.
-struct SceneRegionEntry {
-  s16 id;
-  s16 flag;
+/// An actor placement as Scene_AssignViewFlags reads it: its sprite, its
+/// condition and its place.
+struct ViewedPlacement {
+  s16 sprite; ///< -1 ends the table
+  s16 condition;
   u8 unusedAfterFlag[4]; ///< no code names it
   s32 x;
   u8 unusedAfterX[4]; ///< no code names it

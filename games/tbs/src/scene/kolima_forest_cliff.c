@@ -91,6 +91,8 @@ static void KolimaForestCliff_PushLog(void) {
       Event_Wait(30);
       Sound_Play(SE_LOG_FALL);
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
+      // It floats under the party's feet, and the river's cells under it
+      // become ground to cross on.
       Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       PushedActor_FillGridAttributeRectangle(2, 12, 16, 1, 4,
@@ -117,6 +119,8 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
 
+  // The log the party tipped in still floats in the river, as ground to cross
+  // on.
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
@@ -178,9 +182,8 @@ struct Trigger gKolimaForestCliffTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-// The .bss order follows the first declarations (externs in field.h).
-/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
-/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+/// The healthy colours, kept by KolimaPalette_SaveHealthy: the palette fade's
+/// 448 background and sprite colours, in the array's first half.
 u8 gKolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 u8 gKolimaPalette_Cursed[896] BSS_DATA;

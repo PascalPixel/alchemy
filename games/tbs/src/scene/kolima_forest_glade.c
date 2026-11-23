@@ -123,7 +123,7 @@ s32 Scene_Initialize(void) {
 // clang-format off
 
 struct SceneEntrance gKolimaForestGlade_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
@@ -170,9 +170,8 @@ struct Trigger gKolimaForestGlade_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-// The .bss order follows the first declarations (externs in field.h).
-/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
-/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+/// The healthy colours, kept by KolimaPalette_SaveHealthy: the palette fade's
+/// 448 background and sprite colours, in the array's first half.
 u8 gKolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 u8 gKolimaPalette_Cursed[896] BSS_DATA;

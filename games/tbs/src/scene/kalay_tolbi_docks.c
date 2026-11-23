@@ -248,8 +248,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// The exits of the three scenes, each scene's after its header word (an exit
-/// of kind 0).
+/// The ways out of all three scenes.
 const u32 *Scene_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each scene's people before the crossing, once the ship has crossed and not
@@ -369,7 +368,10 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
 /// ticket and gone ashore, the man checking tickets asks it to board the ship
 /// when it is finished.
 static void KalayTolbiDocks_RemindBoardShip(void) {
+  // Until the third patch the event started before the checks, even when he
+  // had nothing to say, and was never ended here.
 #if !TBS_PATCH_3
+  // DEAD: a lookup whose actor goes unused; the ROM keeps the call.
   ((void)Actor_Get(ACTOR_PARTY_LEADER));
   Event_Start();
 #endif
@@ -1095,12 +1097,14 @@ s32 gKalayTolbiDocks_BodyguardSpinScript[] = {
 };
 
 struct SceneEntrance gKalayTolbiDocks_NoEntrances[] = {
-    {0, CONDITION_ALWAYS, 128, 0, 128, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 128, 0, 128, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
-    {0, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 1368, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 288, 0, 1464,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {KALAY_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 72, 0, 1304,
@@ -1113,7 +1117,8 @@ struct SceneEntrance gKalayTolbiDocks_KalayEntrances[] = {
 };
 
 struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
-    {0, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 392, 0, 296, FACING_WEST, 0, -1, -1,
+     -1, -1, 0},
     {TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK, CONDITION_ALWAYS, 408, 0, 296,
      FACING_WEST, 0, 0, 0, 448, 432, 0},
     {TOLBI_DOCKS_FROM_WORLD_MAP, CONDITION_ALWAYS, 24, 0, 232, FACING_EAST, 0,
@@ -1126,7 +1131,8 @@ struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[] = {
 /// CottageRoomsE's entrances, each into the room at the dock it is
 /// entered from.
 struct SceneEntrance gKalayTolbiDocks_RoomEntrances[] = {
-    {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {COTTAGE_ROOMS_E_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
      FACING_NORTH, 0, 32, 32, 272, 272, 0},
     {COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS, CONDITION_ALWAYS, 384, 0, 248,
@@ -1134,8 +1140,7 @@ struct SceneEntrance gKalayTolbiDocks_RoomEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// Kalay Docks' exits, then Tolbi Docks' and CottageRoomsE's, each after the
-/// header word (an exit of kind 0) for its scene.
+/// Kalay Docks' exits, then Tolbi Docks' and CottageRoomsE's.
 u32 gKalayTolbiDocks_Exits[] = {
     SCENE_EXITS(KalayDocks),
     SCENE_EXIT(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,

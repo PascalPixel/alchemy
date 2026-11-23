@@ -62,14 +62,14 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
   for (; list->actor != ACTOR_LIST_END; list++) {
     s32 change = 0;
     struct Actor *actor = Actor_GetById(list->actor);
-    u8 frame = ((struct Sprite *)actor->sprite)->lastNo;
+    u8 animation = ((struct Sprite *)actor->sprite)->lastNo;
     u16 flag = list->flag;
 
     if (GameFlag_Get(flag)) {
-      if (frame != PUDDLE_ANIMATION_FROZEN)
+      if (animation != PUDDLE_ANIMATION_FROZEN)
         change = 1;
     } else {
-      if (frame != PUDDLE_ANIMATION_PUDDLE)
+      if (animation != PUDDLE_ANIMATION_PUDDLE)
         change = 1;
     }
     if (change) {
@@ -78,13 +78,13 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
                                   .cells;
       u8 *shapes;
       s32 slot;
-      u32 key;
+      u32 kind;
       s32 height;
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Actor_GetCellIndex(actor);
-      key = MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed,
-                                      actor->z.fixed);
+      kind = MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed,
+                                       actor->z.fixed);
       height = CELL_HEIGHT_STEPS(MapGrid_GetTerrainHeightFar(
           actor->layer, actor->x.fixed, actor->z.fixed));
 
@@ -100,7 +100,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
         cells += slot;
         shapes += slot;
-        *shapes = MapCollision_FindOrAddTag(actor->layer, key, height);
+        *shapes = MapCollision_FindOrAddTag(actor->layer, kind, height);
         if (GameFlag_Get(flag)) {
           s32 bits;
 

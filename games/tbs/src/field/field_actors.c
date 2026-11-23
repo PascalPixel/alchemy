@@ -175,6 +175,7 @@ void ActorSystem_Initialize(s32 controlMode) {
   system->fill = 0;
 }
 
+/// Unused: two empty routines.
 UNUSED void ActorSystem_ReservedNoOpA(void) {}
 
 UNUSED void ActorSystem_ReservedNoOpB(void) {}
@@ -221,8 +222,8 @@ void Actor_Release(struct Actor *actor) {
 }
 
 /// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
-/// is in use. id / 4096 is its enum ActorCreateKind and the low 12 bits the
-/// sprite's animation id.
+/// is in use. encodedSprite / 4096 is its enum ActorCreateKind and the low 12
+/// bits its sprite.
 struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -253,7 +254,7 @@ struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
           (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
       actor->spriteStorageKind = spriteStorageKind;
       actor->sprite = (struct Sprite *)spriteSlots;
-      Dma_Fill32(0, spriteSlots, 16);
+      Dma_Fill32(0, spriteSlots, 4 * sizeof(void *));
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
@@ -371,7 +372,7 @@ void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation) {
     actor->sprite->rotation = rotation;
 }
 
-/// Gives a one-sprite actor's first sprite animation animation id animationId
+/// Gives a one-sprite actor's first sprite animation the animation animationId
 /// and restarts its animations. A negative animationId does nothing.
 void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId) {
   struct Actor *actor = rawDispatchActor;
@@ -387,8 +388,8 @@ void Actor_SetFirstSpriteAnimation(void *rawDispatchActor, s32 animationId) {
   }
 }
 
-/// Adds a sprite animation of animation id animationId to a one-sprite actor's
-/// sprite. A negative animationId does nothing.
+/// Adds a layer playing animationId to a one-sprite actor's sprite. A negative
+/// animationId does nothing.
 void Actor_RegisterSpriteMetadata(struct Actor *actor, s32 animationId) {
   if (actor != 0 &&
       (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
@@ -411,8 +412,8 @@ void Actor_StartKeyCheck(struct Actor *actor) {
 }
 
 /// Starts an actor on the script that moves it by the keys (SC_KEYS).
-/// The field sequence gives it to the leader when
-/// gMainRoutineWork.movementMode is 1.
+/// The field sequence gives it to the leader while he climbs
+/// (LEADER_MOVEMENT_CLIMB).
 void Actor_StartMoveByKeys(struct Actor *actor) {
   Actor_StartScript(actor, gActor_KeysScript);
 }
@@ -423,8 +424,8 @@ void Actor_StartPlayerControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_PlayerScript);
 }
 
-/// Starts an actor on the world map control script (SC_WORLD).
-/// The field sequence gives it to the leader on the world map.
+/// Starts an actor on the World Map control script (SC_WORLD).
+/// The field sequence gives it to the leader on the World Map.
 void Actor_StartWorldMapControl(struct Actor *actor) {
   Actor_StartScript(actor, gActor_WorldMapScript);
 }

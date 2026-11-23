@@ -1,11 +1,12 @@
 /// @file
-/// Whirlwind.
+/// Whirlwind: an orb flies from the caster and spins up a ring of leaves that
+/// blows its target away.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 
-/// Whirlwind's motes: the ring that spreads from the caster, the motes that
-/// circle the wind 8 pixels out, a 32nd of a turn a frame, for 121 frames
+/// Whirlwind's particles: the ring that spreads from the caster, the leaves
+/// that circle the orb 8 pixels out, a 32nd of a turn a frame, for 121 frames
 /// before they wander off for 101, the target shrinking to half its size, and
 /// the orb's 10 frames from caster to target.
 enum {
@@ -130,47 +131,49 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
 /// field effect.
 void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 
-/// An orb is carried from the caster to 4 pixels above the Psynergy's position
-/// over 10 frames, growing from 0.25.
+/// Whirlwind: an orb grows as it flies from the caster to 4 pixels below the
+/// Psynergy's position in 10 frames, swells and gusts; cast at a target a
+/// trigger names, it shrinks the target away and sends 16 leaves circling, then
+/// it whooshes off.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct Actor *src = effectWork->mainActor;
+  struct Actor *caster = effectWork->mainActor;
   struct Actor *target = effectWork->child;
   struct Vector3 pos;
   struct Vector3 from;
   struct Vector3 to;
-  struct Actor *ball;
+  struct Actor *orb;
   s32 step;
-  struct Actor *particle;
+  struct Actor *leaf;
   s32 steps = WHIRLWIND_TRAVEL_FRAMES + 1;
 
   step = 0;
-  from.x = src->x.fixed;
-  from.y = src->y.fixed;
-  from.z = src->z.fixed;
+  from.x = caster->x.fixed;
+  from.y = caster->y.fixed;
+  from.z = caster->z.fixed;
   to.x = effectWork->x;
   to.y = effectWork->y - toFIXED(4);
   to.z = effectWork->z;
-  // Include both endpoints of the ten-frame interpolation.
-  ball = Actor_Spawn(SPRITE_WHIRLWIND, 0, 0, 0);
-  if (ball == 0) {
+  orb = Actor_Spawn(SPRITE_WHIRLWIND, 0, 0, 0);
+  if (orb == 0) {
     return;
   }
   FieldPsynergy_FadeToCastColor();
-  Actor_SelectAnimationFar(ball, 2);
+  Actor_SelectAnimationFar(orb, 2);
+  // Both ends of the ten-frame flight.
   for (; step < steps; step++) {
     FIXED scale;
-    ball->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
-    ball->y.fixed = from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_FRAMES;
-    ball->z.fixed = from.z + step * (to.z - from.z) / WHIRLWIND_TRAVEL_FRAMES;
+    orb->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
+    orb->y.fixed = from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_FRAMES;
+    orb->z.fixed = from.z + step * (to.z - from.z) / WHIRLWIND_TRAVEL_FRAMES;
     scale = FIXED_ONE / 4 + step * (FIXED_ONE * 21 / 20) /
                                 WHIRLWIND_TRAVEL_FRAMES; // from 0.25 to 1.3
-    ball->scaleX = scale;
-    ball->scaleY = scale;
+    orb->scaleX = scale;
+    orb->scaleY = scale;
     wait(1);
   }
-  ball->scaleX = FIXED_ONE * 17 / 10; // wide
-  ball->scaleY = FIXED_ONE * 13 / 10; // high
+  orb->scaleX = FIXED_ONE * 17 / 10; // wide
+  orb->scaleY = FIXED_ONE * 13 / 10; // high
   Sound_PlayFar(SE_RUSH);
   wait(20);
   // Cleared by FieldPsynergy_Dispatch: cast on a target a trigger
@@ -179,34 +182,34 @@ void FieldPsynergy_Whirlwind(void) {
     if (target != 0)
       target->update = FieldEffect_ShrinkActorScaleUntilHalf;
 
-    // Particles from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
+    // Leaves from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
     // pixels away.
     for (step = 0; step < WHIRLWIND_ORBIT_PARTICLES; step++) {
       FIXED dist;
 
-      pos.x = ball->x.fixed;
-      pos.y = ball->y.fixed + step * (toFIXED(4) / 5) + toFIXED(4);
-      pos.z = ball->z.fixed;
+      pos.x = orb->x.fixed;
+      pos.y = orb->y.fixed + step * (toFIXED(4) / 5) + toFIXED(4);
+      pos.z = orb->z.fixed;
       dist = Random16() * 5 + toFIXED(3);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = Actor_Spawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
-      if (particle != 0) {
-        particle->update = FieldEffect_CircleAnchor;
-        particle->watchedActor = ball;
-        particle->timer = 0;
-        particle->userValue = 0;
-        particle->facing = Random16();
+      leaf = Actor_Spawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
+      if (leaf != 0) {
+        leaf->update = FieldEffect_CircleAnchor;
+        leaf->watchedActor = orb;
+        leaf->timer = 0;
+        leaf->userValue = 0;
+        leaf->facing = Random16();
       }
       wait(6);
     }
     wait(20);
     wait(120);
   }
-  Actor_SelectAnimationFar(ball, 1);
+  Actor_SelectAnimationFar(orb, 1);
   wait(30);
   Sound_PlayFar(SE_WHOOSH);
   wait(20);
-  // Every particle has left its orbit by now.
-  Actor_ReleaseFar(ball);
+  // Every leaf has left its orbit by now.
+  Actor_ReleaseFar(orb);
   FieldPsynergy_FadeFromCastColor();
 }

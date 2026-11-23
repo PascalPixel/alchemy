@@ -24,6 +24,22 @@
 #define CENTER_LINE_HIDDEN_SECOND 250
 /// The colour the dissolve covers the screen in, the window palette's last.
 #define DISSOLVE_COVER_COLOR 15
+/// Keeps a line's window edges on the screen, 0 to DISPLAY_WIDTH.
+#define CLAMP_EDGES_TO_SCREEN(left, right)                                     \
+  {                                                                            \
+    if ((left) < 0) {                                                          \
+      (left) = 0;                                                              \
+    }                                                                          \
+    if ((right) < 0) {                                                         \
+      (right) = 0;                                                             \
+    }                                                                          \
+    if ((left) > DISPLAY_WIDTH) {                                              \
+      (left) = DISPLAY_WIDTH;                                                  \
+    }                                                                          \
+    if ((right) > DISPLAY_WIDTH) {                                             \
+      (right) = DISPLAY_WIDTH;                                                 \
+    }                                                                          \
+  }
 
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
@@ -243,18 +259,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
           Iwram_Sqrt(radiusSquaredFixed - INTtoFIXED(value * value)) >> 8;
       left = DISPLAY_WIDTH / 2 - horizontalExtent;
       right = horizontalExtent + DISPLAY_WIDTH / 2;
-      if (left < 0) {
-        left = 0;
-      }
-      if (right < 0) {
-        right = 0;
-      }
-      if (left > DISPLAY_WIDTH) {
-        left = DISPLAY_WIDTH;
-      }
-      if (right > DISPLAY_WIDTH) {
-        right = DISPLAY_WIDTH;
-      }
+      CLAMP_EDGES_TO_SCREEN(left, right);
 #ifdef UBFIX
       edges = (left << 8) + right;
       memcpy(pageBytes, &edges, sizeof(edges));
@@ -330,18 +335,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
                          8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
-      if (left < 0) {
-        left = 0;
-      }
-      if (right < 0) {
-        right = 0;
-      }
-      if (left > DISPLAY_WIDTH) {
-        left = DISPLAY_WIDTH;
-      }
-      if (right > DISPLAY_WIDTH) {
-        right = DISPLAY_WIDTH;
-      }
+      CLAMP_EDGES_TO_SCREEN(left, right);
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
     }
@@ -388,18 +382,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
           right = DISPLAY_WIDTH;
         }
       }
-      if (left < 0) {
-        left = 0;
-      }
-      if (right < 0) {
-        right = 0;
-      }
-      if (left > DISPLAY_WIDTH) {
-        left = DISPLAY_WIDTH;
-      }
-      if (right > DISPLAY_WIDTH) {
-        right = DISPLAY_WIDTH;
-      }
+      CLAMP_EDGES_TO_SCREEN(left, right);
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
       k += 2;
@@ -439,18 +422,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
                          8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
-      if (left < 0) {
-        left = 0;
-      }
-      if (right < 0) {
-        right = 0;
-      }
-      if (left > DISPLAY_WIDTH) {
-        left = DISPLAY_WIDTH;
-      }
-      if (right > DISPLAY_WIDTH) {
-        right = DISPLAY_WIDTH;
-      }
+      CLAMP_EDGES_TO_SCREEN(left, right);
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
     }
@@ -491,18 +463,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
                          8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
-      if (left < 0) {
-        left = 0;
-      }
-      if (right < 0) {
-        right = 0;
-      }
-      if (left > DISPLAY_WIDTH) {
-        left = DISPLAY_WIDTH;
-      }
-      if (right > DISPLAY_WIDTH) {
-        right = DISPLAY_WIDTH;
-      }
+      CLAMP_EDGES_TO_SCREEN(left, right);
       scanlineData[0] = ((left << 8) + right);
       scanlineData += 2;
     }
@@ -943,9 +904,7 @@ void ScreenTransition_InitializeState(s32 mode) {
   Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
   wait(120);
 }
-#undef TRANSITION_OPEN
-#undef TRANSITION_CLOSED
-#undef TRANSITION_SHOW_ALL
+
 #undef TRANSITION_NOISE_EDGE_MAX
 #undef TRANSITION_ELLIPSE_RISE
 #undef TRANSITION_EDGE_OFFSETS
@@ -954,3 +913,4 @@ void ScreenTransition_InitializeState(s32 mode) {
 #undef CENTER_LINE_HIDDEN_FIRST
 #undef CENTER_LINE_HIDDEN_SECOND
 #undef DISSOLVE_COVER_COLOR
+#undef CLAMP_EDGES_TO_SCREEN

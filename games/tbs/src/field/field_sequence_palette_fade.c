@@ -5,8 +5,8 @@
 #include "field_sequence_internal.h"
 
 /// The colours a palette fade moves: the BG's 224, then the OBJ's 224.
-#define COLOR_MAX 448
 #define COLOR_HALF 224
+#define COLOR_MAX (2 * COLOR_HALF)
 /// Palette fade work holds each channel of a colour in bits 14..10 of a
 /// halfword, where RGB555 keeps blue: green's bits move up
 /// BLUE_SHIFT - GREEN_SHIFT to get there, red's BLUE_SHIFT.
@@ -134,7 +134,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
             REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
-    case PALETTE_TINT_GRAYSCALE: // grey of brightness (2R + 4G + B) / 7
+    case PALETTE_TINT_GRAYSCALE:
+      // Grey, of brightness (2R + 4G + B) / 7.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RED_CHANNEL_DOUBLED(color);
@@ -146,8 +147,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = color;
       }
       break;
-    case PALETTE_TINT_SEPIA: // the brightness, red stronger, within 8 to
-                             // 28
+    case PALETTE_TINT_SEPIA:
+      // The brightness, red stronger, each level within 8 to 28.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -173,8 +174,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gColorBuffer_ChannelCurveLight[red];
       }
       break;
-    case PALETTE_TINT_WARM: // half R + 10, two thirds G + 8, B - 7 (black
-                            // stays black)
+    case PALETTE_TINT_WARM:
+      // Half R + 10, two thirds G + 8, B - 7; black stays black.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -195,7 +196,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
-    case PALETTE_TINT_MUTED: // narrow the range, G and B + 2
+    case PALETTE_TINT_MUTED:
+      // Each level narrowed to a middle range, G and B + 2.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -223,7 +225,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
-    case PALETTE_TINT_PALE: // half of each, plus the mean
+    case PALETTE_TINT_PALE:
+      // Half of each level, plus the mean.
       for (i = 0; i < colorCount; i++) {
         s32 mean;
 
@@ -244,8 +247,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TINT_RED: // an eighth of G and B added to R; G and B two
-                           // thirds
+    case PALETTE_TINT_RED:
+      // An eighth of G and B added to R; G and B two thirds.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -261,7 +264,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TINT_WARM_DARK: // half R + 6, two thirds G + 4, B - 6
+    case PALETTE_TINT_WARM_DARK:
+      // Half R + 6, two thirds G + 4, B - 6.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -281,7 +285,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    default: // unchanged
+    default:
+      // Unchanged.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         dst[i * 3 + 0] = BLUE_CHANNEL(color);

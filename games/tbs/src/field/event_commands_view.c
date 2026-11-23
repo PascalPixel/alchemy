@@ -15,6 +15,10 @@
 #define EMOTE_BUBBLE_MASK (EMOTE_IN_FRONT - 1)
 #define EMOTE_ANIMATION_MASK 15
 
+/// FieldEffect_SetAttached's flags: the enum AttachedEffectFlag below its
+/// ATTACHED_EFFECT_IN_FRONT.
+#define ATTACHED_EFFECT_KIND_MASK 3
+
 /// The event command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (FieldCamera_MoveWithinMapBounds).
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
@@ -90,9 +94,9 @@ void Event_WaitForZoomTransition(void) {
   }
 }
 
-/// Per-frame update of a riding actor: keeps it on the actor it rides (its
-/// watched actor), raised by the actor's sprite height (its metadata's boxX)
-/// and 8 pixels. Its work holds the actor's id.
+/// Per-frame update of an emote bubble or attached effect: keeps it on the
+/// actor it rides (its watched actor, whose id is its userValue), raised by
+/// that actor's sprite height (its metadata's boxX) and 8 pixels.
 UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *host;
 
@@ -191,8 +195,9 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   if (actor == 0)
     return;
 
-  if ((flags & 3) != 0) {
-    if ((flags & 3) == ATTACHED_EFFECT_ONCE || actor->watchedActor == 0) {
+  if ((flags & ATTACHED_EFFECT_KIND_MASK) != 0) {
+    if ((flags & ATTACHED_EFFECT_KIND_MASK) == ATTACHED_EFFECT_ONCE ||
+        actor->watchedActor == 0) {
       effect = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
                                actor->y.fixed, actor->z.fixed);
     }
@@ -208,7 +213,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   if (effect == 0)
     return;
 
-  mode = flags & 3;
+  mode = flags & ATTACHED_EFFECT_KIND_MASK;
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     Actor_SelectAnimationFar(effect, 1);
@@ -259,3 +264,4 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 #undef ATTR2_HIGH_PRIORITY_MASK
 #undef EMOTE_BUBBLE_MASK
 #undef EMOTE_ANIMATION_MASK
+#undef ATTACHED_EFFECT_KIND_MASK

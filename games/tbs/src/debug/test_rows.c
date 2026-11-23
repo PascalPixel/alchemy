@@ -1,5 +1,5 @@
 /// @file
-/// The Menu test scene and the test scenes: a table both overlays keep,
+/// An unused table that the Menu test room and the Test rooms both keep,
 /// included at its place in each.
 
 #include "fixed_math.h"

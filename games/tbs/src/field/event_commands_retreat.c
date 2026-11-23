@@ -1,10 +1,9 @@
 /// @file
-/// Retreat.
+/// Retreat, the caster spinning away in a spray of sparks, and the golden
+/// rings that fall round the caster of Avoid.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
-
-// The event owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
 /// Per-frame update: spins by FACING_STEP + timer * 80 a frame, speeding up
 /// (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
@@ -262,8 +261,9 @@ struct DescendingArcSprite {
   struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
 };
 
-/// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
-/// at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
+/// Avoid's rings: a pair of falling arcs (one upside down) 64 pixels above
+/// source, at 0.4 of full size, drawn with the tiles in
+/// effectWork->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *leader = effectWork->mainActor;

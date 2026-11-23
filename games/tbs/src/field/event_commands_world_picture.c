@@ -303,7 +303,7 @@ void WorldPicture_UpdateMarkers(void) {
         continue;
       tile = WORLD_PICTURE_MARKER_PARTY;
       flag = leader;
-      mode = 0;
+      mode = OBJ_MODE_NORMAL;
     } else {
       flag = *place++;
       message = *place++;
@@ -313,10 +313,10 @@ void WorldPicture_UpdateMarkers(void) {
       if (flag == -1)
         break;
       tile = WORLD_PICTURE_AREA_MARKER_TILE(flag);
-      mode = 1;
+      mode = OBJ_MODE_SEMI_TRANSPARENT;
 #else
       tile = WORLD_PICTURE_AREA_MARKER_TILE(flag);
-      mode = 1;
+      mode = OBJ_MODE_SEMI_TRANSPARENT;
       if (flag == -1)
         break;
 #endif
@@ -432,9 +432,8 @@ void WorldPicture_UpdateMarkers(void) {
                       IO_WRITE_HALFWORD);
 }
 
-/// Borrows the map-cell buffer for the still map until A or B closes it.
-/// FieldSequence_Run reaches this for FIELD_RAISED_TRIGGER_WORLD_PICTURE in
-/// World Map mode.
+/// The world picture, shown over the World Map when the player presses R, until
+/// A or B closes it; it borrows the map-cell buffer for its pixels.
 void WorldPicture_Show(s32 picture) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct FieldWork *work =

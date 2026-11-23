@@ -1,5 +1,6 @@
 /// @file
-/// Ply.
+/// Ply cast in the field: eight winged figures spiral into one, which flashes,
+/// sheds sparks and flies off.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -86,7 +87,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
 /// Ply's flashing figure: its steps, of 2 frames each.
 #define PLY_FLASH_STEPS 30
 
-/// Runs FieldPsynergy_Ply, then stops the caster's update routine.
+/// Ply cast on a target, which stops the caster's update once it is done.
 void FieldPsynergy_PlyOnTarget(s32 unused) {
   FieldPsynergy_Ply();
   FieldPsynergy_StopCasterUpdate();

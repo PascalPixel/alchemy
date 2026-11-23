@@ -23,7 +23,8 @@ struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
   s32 tableIndex;
   s32 placedActorId = ACTOR_FIRST_PLACED;
 
-  for (tableIndex = 0; tableIndex < 4; tableIndex++) {
+  for (tableIndex = 0; tableIndex < (s32)ARRAY_COUNT(gFieldWork->tables);
+       tableIndex++) {
     placement = gFieldWork->tables[tableIndex];
     if (placement == NULL)
       continue;
@@ -446,6 +447,7 @@ s32 Field_ExamineCell(s32 tile) {
           if (GameFlag_IsConditionActive(condition) != 0)
             FieldMessage_ShowFar((u16)trigger->value, FIELD_MESSAGE_ZOOM);
           else
+            // "but found nothing."
             FieldMessage_ShowFar(MsgButFoundNothing, FIELD_MESSAGE_ZOOM);
         }
       } else {
@@ -478,6 +480,7 @@ s32 Field_ExamineCell(s32 tile) {
               Sound_PlayFar(MUS_TREASURE_FOUND);
               MessageArgument_PushFar((u16)trigger->value,
                                       MESSAGE_ARGUMENT_NUMBER);
+              // "Isaac got a Psynergy Stone."
               FieldMessage_ShowFar(MsgGotPsynergyStone,
                                    FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_WAITING_FOR_SOUND);
@@ -518,6 +521,7 @@ s32 Field_ExamineCell(s32 tile) {
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)trigger->value);
               Sound_PlayFar(gMainRoutineWork.battleMusic);
+              // "The treasure chest was really a Mimic!"
               FieldMessage_ShowFar(MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
@@ -533,6 +537,7 @@ s32 Field_ExamineCell(s32 tile) {
               Sound_PlayFar(MUS_TREASURE_FOUND);
               MessageArgument_PushFar((u16)trigger->value,
                                       MESSAGE_ARGUMENT_NUMBER);
+              // "Isaac got [number] coins."
               FieldMessage_ShowFar(MsgGotCoins,
                                    FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_WAITING_FOR_SOUND);
@@ -555,6 +560,7 @@ s32 Field_ExamineCell(s32 tile) {
               if (recipient == -1) {
                 MessageArgument_PushFar(trigger->value & FIND_ITEM_MASK,
                                         MESSAGE_ARGUMENT_ITEM);
+                // "Isaac found [item]."
                 FieldMessage_ShowFar(MsgFoundItem, FIELD_MESSAGE_ZOOM);
                 // "But Isaac's party can't carry any more, so they left it
                 // behind."
@@ -572,11 +578,13 @@ s32 Field_ExamineCell(s32 tile) {
                 MessageArgument_PushFar(trigger->value & messageOffset,
                                         MESSAGE_ARGUMENT_ITEM);
                 if (recipient == gMainRoutineWork.leaderActorId) {
+                  // "Isaac got [item]."
                   FieldMessage_ShowFar(MsgColossoIsaacGotItem,
                                        FIELD_MESSAGE_ZOOM |
                                            FIELD_MESSAGE_WAITING_FOR_SOUND);
                 } else {
                   MessageArgument_PushFar(recipient, MESSAGE_ARGUMENT_ACTOR);
+                  // "Isaac gave [item] to [member]."
                   FieldMessage_ShowFar(MsgGaveItemToMember,
                                        FIELD_MESSAGE_ZOOM |
                                            FIELD_MESSAGE_WAITING_FOR_SOUND);
@@ -587,6 +595,7 @@ s32 Field_ExamineCell(s32 tile) {
               }
             }
           } else {
+            // "but Isaac can't open it..."
             FieldMessage_ShowFar(MsgCantOpenIt, FIELD_MESSAGE_ZOOM);
           }
         } else {
@@ -598,7 +607,9 @@ s32 Field_ExamineCell(s32 tile) {
         Scene_PlayQueuedMusic();
       }
     } else {
+      // "Isaac checked on the ground..."
       FieldMessage_ShowFar(MsgCheckedGround, FIELD_MESSAGE_ZOOM);
+      // "but didn't find anything."
       FieldMessage_ShowFar(MsgGroundDidntFindAnything, FIELD_MESSAGE_ZOOM);
     }
     GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);

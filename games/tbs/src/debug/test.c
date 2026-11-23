@@ -35,18 +35,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern u32 gTest_UnusedRows[];
-extern char gDebugItemPrompt[12];
-extern char gDebugItemCapacityLabel[24];
-extern char gDebugItemFullLabel[20];
+extern char gMenuTest_ItemPrompt[12];
+extern char gMenuTest_ItemHelp[24];
+extern char gMenuTest_ItemFull[20];
 extern struct SceneEntrance gMenuTest_Entrances[];
 extern u32 gMenuTest_Exits[];
 extern struct ActorPlacement gMenuTest_ActorPlacements[];
 extern struct Trigger gMenuTest_Triggers[];
 extern s32 gMenuTest_NextLevel;
 extern s32 gMenuTest_FillLetter;
-
-#define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
-#define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 
 /// The level Scene_Initialize raises Garet, Mia and Ivan to.
 #define DEBUG_PARTY_LEVEL 30
@@ -207,11 +204,12 @@ static void MenuTest_RunMessageTest(void) {
 /// Talking to ACTOR_ARMOR_MERCHANT: the debug shop.
 static void MenuTest_OpenDebugShop(void) { Shop_OpenDebugShop(1); }
 
+/// Unused: an event that does nothing.
 UNUSED static void MenuTest_NoOp(void) {}
 
 /// Talking to ACTOR_KRADEN: the picker a full party drops an item with, whose
 /// choice of member and slot nothing uses.
-static void MenuTest_TestItemSelection(void) {
+static void MenuTest_OpenItemPicker(void) {
   s32 selectedOwner;
   s32 selectedSlot;
   ItemPicker_Run(&selectedOwner, &selectedSlot);
@@ -223,10 +221,10 @@ static void MenuTest_EditIsaacName(void) { NameEntry_EditMemberName(ISAAC); }
 /// Whirlwind, Force and Catch cast at ACTOR_IVY: nothing happens to it.
 static void MenuTest_IgnorePsynergy(void) {}
 
-/// Keeps Force from moving ACTOR_IVY: run before Force is cast at it, this sets
-/// the effect's childMode, and Force's shot then leaves its target where it is
-/// (field/event_commands_force.c).
-static void MenuTest_EnableEffectChildMode(void) {
+/// Keeps Force from pushing ACTOR_IVY: run as Force is cast at it, before the
+/// shot, this sets the effect's childMode, and the shot then leaves its target
+/// where it is (field/event_commands_force.c).
+static void MenuTest_KeepIvyInPlace(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }
 
@@ -258,6 +256,7 @@ static void MenuTest_RaisePartyLevels(void) {
 static void MenuTest_GiveConsumableTestStock(void) {
   // "You got an item!"
   FieldMessage_Show(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
+  // Isaac: 17 Antidotes, 14 Herbs, 11 Nuts, 13 Vials and 9 Potions.
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -322,6 +321,7 @@ static void MenuTest_GiveConsumableTestStock(void) {
   Inventory_AddItem(ISAAC, ITEM_POTION);
   Inventory_AddItem(ISAAC, ITEM_POTION);
   Inventory_AddItem(ISAAC, ITEM_POTION);
+  // Garet: 13 Psy Crystals and 12 Antidotes.
   Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
   Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
   Inventory_AddItem(GARET, ITEM_PSY_CRYSTAL);
@@ -347,6 +347,7 @@ static void MenuTest_GiveConsumableTestStock(void) {
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
+  // Ivan: 14 Elixirs, 11 Waters of Life and 16 Sacred Feathers.
   Inventory_AddItem(IVAN, ITEM_ELIXIR);
   Inventory_AddItem(IVAN, ITEM_ELIXIR);
   Inventory_AddItem(IVAN, ITEM_ELIXIR);
@@ -388,6 +389,8 @@ static void MenuTest_GiveConsumableTestStock(void) {
   Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
   Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
   Inventory_AddItem(IVAN, ITEM_SACRED_FEATHER);
+  // Mia: 11 Power Breads, 11 Cookies, 11 Apples, 7 Hard Nuts, 13 Mints and 8
+  // Lucky Peppers.
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
@@ -609,14 +612,16 @@ static void MenuTest_GiveEquipmentTestStock(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Browses item definitions and gives the selected item while party bags allow
-/// it. Talking to ACTOR_SECOND_FELIX in Japanese (MenuTest_OpenItemBrowser).
+/// The Japanese item browser: `Item No:` over an item's name, its icon and what
+/// equipping it does; A gives it to the party, and B, or A once the bags are
+/// full, leaves. Unlike the Increase item and level room's, it stops on numbers
+/// with no item.
 static void MenuTest_SelectItem(void) {
   struct Window *window;
   struct Window *details;
   s32 selectedItemId;
   s32 redraw;
-  s32 definitionId;
+  s32 itemId;
   s32 itemCount;
 
   itemCount = DEBUG_ITEM_COUNT;
@@ -625,9 +630,8 @@ static void MenuTest_SelectItem(void) {
   details = Window_Create(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
   selectedItemId = 1;
   redraw = 1;
-  // Reuse the item palette for both debug windows: sprite palette 0 into BG
-  // HIGHLIGHT_PALETTE, and WINDOW_BACKGROUND_COLOR over its
-  // TEXT_BACKGROUND_COLOR, as the Increase item and level scene's browser does.
+  // Lend HIGHLIGHT_PALETTE to the item icons, as the Increase item and level
+  // room's browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -640,20 +644,20 @@ static void MenuTest_SelectItem(void) {
       selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
       WindowSprite_RedrawSavedRect(window);
       WindowSprite_ClearList(window);
-      Text_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);
+      Text_DrawStringInWindow(gMenuTest_ItemPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        Text_DrawStringInWindow(gDebugItemCapacityLabel, window, 0, 32);
-        definitionId = selectedItemId & INVENTORY_ITEM_ID_MASK;
+        Text_DrawStringInWindow(gMenuTest_ItemHelp, window, 0, 32);
+        itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
         // DEAD: the item's definition is looked up and not used; the ROM keeps
         // the call.
-        Item_GetDirect(definitionId);
-        Text_DrawMessageAsTiles(definitionId + MsgItemName, window, 120, 0);
-        Text_DrawMessage(definitionId + MsgItemPlainName, window, 0, 16);
+        Item_GetDirect(itemId);
+        Text_DrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
+        Text_DrawMessage(itemId + MsgItemPlainName, window, 0, 16);
         WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
-        Text_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
+        Text_DrawStringInWindow(gMenuTest_ItemFull, window, 0, 32);
       }
     }
     if (gKeysPressed & KEY_A) {
@@ -678,22 +682,22 @@ static void MenuTest_SelectItem(void) {
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      selectedItemId += DEBUG_ITEM_ROW_STEP;
+      selectedItemId += DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
-      selectedItemId -= DEBUG_ITEM_ROW_STEP;
+      selectedItemId -= DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
-      selectedItemId += DEBUG_ITEM_PAGE_STEP;
+      selectedItemId += DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
-      selectedItemId -= DEBUG_ITEM_PAGE_STEP;
+      selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
@@ -705,6 +709,7 @@ static void MenuTest_SelectItem(void) {
   Window_Close(details, 1);
 }
 
+/// Talking to ACTOR_SECOND_FELIX in Japanese: the item browser.
 UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }
 
 /// Talking to ACTOR_MENARDI: gives the four treasure, eleven Game Tickets and
@@ -759,7 +764,8 @@ static void MenuTest_GiveTreasureTestStock(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Sets the debug party, stock counters and levels; returns zero.
+/// Sets up the room: Isaac, Garet, Mia and Ivan as the party, a stock of rare
+/// items for the shops, everyone's levels, and in Japanese 777,777 coins.
 s32 Scene_Initialize(void) {
   // Jenna leaves; Garet, Mia and Ivan join.
   Party_RemoveMember(JENNA);
@@ -809,11 +815,11 @@ static s32 MenuTest_OpenSanctum(s32 unitId) { return Sanctum_Run(unitId); }
 
 #include "test_rows.c"
 
-char gDebugItemPrompt[12] = "Item No:";
+char gMenuTest_ItemPrompt[12] = "Item No:";
 
-char gDebugItemCapacityLabel[24] = "A:Get Item  B:Return";
+char gMenuTest_ItemHelp[24] = "A:Get Item  B:Return";
 
-char gDebugItemFullLabel[20] = "ITEM FULL........";
+char gMenuTest_ItemFull[20] = "ITEM FULL........";
 
 struct SceneEntrance gMenuTest_Entrances[] = {
     {0, CONDITION_ALWAYS, 60, 0, 94, FACING_NORTH, 0, -1, -1, -1, -1, 0},
@@ -868,7 +874,7 @@ struct Trigger gMenuTest_Triggers[] = {
      EVENT(MenuTest_GiveConsumableTestStock)},
     {TRIGGER_TALK, MIA, CONDITION_ALWAYS, EVENT(MenuTest_EditIsaacName)},
     {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
-     EVENT(MenuTest_TestItemSelection)},
+     EVENT(MenuTest_OpenItemPicker)},
     {TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS,
      EVENT(MenuTest_GivePartyDjinn)},
     {TRIGGER_TALK, ACTOR_SATUROS, CONDITION_ALWAYS,
@@ -923,7 +929,7 @@ struct Trigger gMenuTest_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_IVY, CONDITION_ALWAYS,
      EVENT(MenuTest_IgnorePsynergy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_IVY, CONDITION_ALWAYS, EVENT(MenuTest_EnableEffectChildMode)},
+     ACTOR_IVY, CONDITION_ALWAYS, EVENT(MenuTest_KeepIvyInPlace)},
     {TRIGGER_TABLE_END},
 };
 

@@ -6,23 +6,19 @@
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
 s32 ActorScript_SetBase(struct Actor *interpreter) {
-
-  // The word after the command becomes the script's start.
   interpreter->script = interpreter->script + interpreter->scriptCursor + 1;
   interpreter->scriptCursor = 0;
   return 1;
 }
 
-/// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
-/// to the next command.
+/// SC_HIDE_SPRITES: hides the actor's sprites and runs on.
 s32 ActorScript_HideSprites(struct Actor *interpreter) {
   interpreter->spriteStorageKind = ACTOR_SPRITE_NONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
-/// SC_SHOW_SPRITE: sets spriteStorageKind to ACTOR_SPRITE_ONE, one sprite
-/// drawn, and moves on to the next command.
+/// SC_SHOW_SPRITE: shows the actor's one sprite and runs on.
 s32 ActorScript_ShowSprite(struct Actor *interpreter) {
   interpreter->spriteStorageKind = ACTOR_SPRITE_ONE;
   interpreter->scriptCursor++;
@@ -362,7 +358,7 @@ void Actor_UpdateAllThumb(void) {
       actor->targetX = ACTOR_NO_TARGET;
       actor->targetY = ACTOR_NO_TARGET;
       actor->targetZ = ACTOR_NO_TARGET;
-      actor->arrivalAxis = 0;
+      actor->arrivalAxis = ARRIVAL_AXIS_NONE;
     }
 
     SET_ACTOR_POSITION(actor, x, y, z);
@@ -585,7 +581,7 @@ void Actor_UpdateAllMotion(void) {
     y += actor->velocityY;
     z += actor->velocityZ;
     // Arrived: the watched axis reached the target, or crossed it.
-    if (actor->arrivalAxis != 0)
+    if (actor->arrivalAxis != ARRIVAL_AXIS_NONE)
       switch (actor->arrivalAxis) {
       case ARRIVAL_AXIS_X:
         if (x == actor->targetX ||
@@ -617,7 +613,7 @@ void Actor_UpdateAllMotion(void) {
       actor->targetX = ACTOR_NO_TARGET;
       actor->targetY = ACTOR_NO_TARGET;
       actor->targetZ = ACTOR_NO_TARGET;
-      actor->arrivalAxis = 0;
+      actor->arrivalAxis = ARRIVAL_AXIS_NONE;
     }
     SET_ACTOR_POSITION(actor, x, y, z);
     // Turn to face the direction of travel, at most FACING_STEP a frame, the

@@ -69,9 +69,8 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
   gMainRoutineWork.defeatEntrance = entrance;
 }
 
-/// Makes the event leave for entrance entrance of scene sceneId: sets
-/// gMainRoutineWork.next and entrance and raises the exit request
-/// EXIT_KEEP_DESTINATION, so the field sequence leaves on its next pass.
+/// Sends the party to an entrance of another scene: the field sequence leaves
+/// on its next pass (EXIT_KEEP_DESTINATION).
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gMainRoutineWork.next = sceneId;
@@ -79,10 +78,8 @@ void Event_LeaveFor(u16 sceneId, u16 entrance) {
   work->exit = EXIT_KEEP_DESTINATION;
 }
 
-/// Plays SE_STOP_EXIT_SE, then soundId (SOUND_FADE_OUT_ACTION_SE for
-/// -1), and remembers soundId for Scene_PlayQueuedMusic in the field work's
-/// queuedSound; -1 is remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE
-/// now and nothing later.
+/// Changes the scene's music to soundId and remembers it for
+/// Scene_PlayQueuedMusic; -1 fades the music out and remembers none.
 void Scene_QueueMusic(s32 soundId) {
   gFieldWork->queuedSound = soundId;
   if ((s16)soundId == -1) {

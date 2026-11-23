@@ -6,7 +6,7 @@
 
 /// The function a scene's item trigger may name instead of a message, called
 /// with the item, its user and its inventory slot; its result is not read.
-typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
+typedef s32 (*ItemTriggerCallback)(s32 item, s32 actorId, s32 slot);
 
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item).
@@ -101,6 +101,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
 
     if (mostMatchingSlots == 0) {
+      // "But nothing happens."
       FieldMessage_ShowFar(MsgNothingHappens, FIELD_MESSAGE_ZOOM);
       return -1;
     }
@@ -114,6 +115,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (!(trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+      // "[member] uses [item]."
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
     }
     if ((s32)trigger->value < TRIGGER_RESULT_MESSAGE_END) {
@@ -124,7 +126,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       Event_ShowMessageAndWait(nearbyActorId, 0);
       Event_End();
     } else {
-      ((BattleItemCallback)trigger->value)(itemId, actorId, slot);
+      ((ItemTriggerCallback)trigger->value)(itemId, actorId, slot);
     }
     result = 0;
   } else {
@@ -145,6 +147,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       if (abilityId == ABILITY_RETREAT &&
           !GameFlag_GetFar(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+        // "Use [item]?" Yes: the party retreats; No: nothing more.
         FieldMessage_ShowFar(MsgUseItemQuestion, FIELD_MESSAGE_ZOOM |
                                                      FIELD_MESSAGE_KEEP_OPEN |
                                                      FIELD_MESSAGE_LOWER);
@@ -161,6 +164,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
       MessageArgument_PushFar(actorId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+      // "[member] uses [item]."
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       // UB: called as a function returning int, as a call with no prototype
       // is, though it is defined void.
@@ -174,12 +178,13 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       work->psynergyActing = 0;
       FieldPsynergy_End();
 
-      if (Item_GetDirectFar(itemId)->useType & 1)
+      if (Item_GetDirectFar(itemId)->useType & ITEM_USE_CONSUMED)
         GameFlag_SetFar(FLAG_ITEM_USED_UP);
     }
   }
 
   if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS))
+    // "But nothing happens."
     FieldMessage_ShowFar(MsgNothingHappens, FIELD_MESSAGE_ZOOM);
   if (GameFlag_GetFar(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(actorId, slot);

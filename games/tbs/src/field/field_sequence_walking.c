@@ -5,7 +5,6 @@
 
 #include "field_sequence_internal.h"
 
-// The fields of struct Unit that Field_UpdateWalking reads (see its tag).
 /// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   struct FieldWork *work = gFieldWork;
@@ -200,7 +199,8 @@ void Field_UpdateWalking(s32 layer, FIXED x, FIXED y, FIXED z) {
       tile = gridState->layers[layer].cells;
     else
       tile = (struct MapGridCell *)gMapGridCellBuffer;
-    tile = &tile[(x / toFIXED(16)) + ((z / toFIXED(16)) << 7)];
+    tile = &tile[(x / toFIXED(MAPGRID_CELL_PIXELS)) +
+                 (z / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE];
   }
   event = tile->behavior;
   work->previousCell = work->currentCell;
@@ -318,7 +318,7 @@ void Field_UpdateWalking(s32 layer, FIXED x, FIXED y, FIXED z) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
         work->fallenOwners[work->fallenCount++] = gMainRoutineWork.party[i];
-        work->raisedTrigger = -1;
+        work->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
         unitVitals->poison = 0;
       }
     }
@@ -347,7 +347,8 @@ void Party_AddHp(s32 amount, s32 percent) {
   struct Unit *unit;
 
   if (amount < 0) {
-    PaletteFade_SetSource(RGB(31, 15, 0), 0);
+    // The screen flashes orange.
+    PaletteFade_SetSource(RGB(31, 15, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(4);
     if (amount < -HEAVY_DAMAGE)
       Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -416,7 +417,7 @@ s32 Party_ApplyPoisonDamage(void) {
   }
 
   if (worstPoison != 0) {
-    PaletteFade_SetSource(RGB(31, 15, 0), 0);
+    PaletteFade_SetSource(RGB(31, 15, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(4);
     Sound_PlayFar(SE_IMPACT);
   }
@@ -424,9 +425,8 @@ s32 Party_ApplyPoisonDamage(void) {
   return worstPoison;
 }
 
-/// Starts an event or menu on the World Map: ends any colour ratio transition
-/// in progress, pauses camera movement and freezes the perspective view as a
-/// still picture.
+/// Before an event or menu on the World Map: ends any screen transition in
+/// progress, stops the camera and holds the view as a still picture.
 void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
@@ -446,8 +446,8 @@ void WorldMap_Freeze(void) {
   }
 }
 
-/// Ends what WorldMap_Freeze started: on the World Map, reloads
-/// the area's graphics and sets the camera's movement state back to 0.
+/// Ends what WorldMap_Freeze started: on the World Map, reloads the area's
+/// graphics and lets the camera move again.
 void WorldMap_Unfreeze(void) {
   struct FieldWork *work;
 

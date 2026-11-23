@@ -15,9 +15,9 @@
 ///   Actors          field_actors.c: Actor_Create, ActorSystem_Initialize;
 ///                   field_actor_motion.c: Actor_UpdateAllThumb,
 ///                   Actor_SetMoveTarget
-///   Actor scripts   field_script_commands.c (the SC_ commands of
-///   actor_script.h);
-///                   field_player_control.c: Actor_UpdatePlayerControl
+///   Actor scripts   field_script_commands.c, the SC_ commands of
+///                   actor_script.h
+///   The player      field_player_control.c: Actor_UpdatePlayerControl
 ///   Maps            field_map_grid.c: MapGrid_LoadMap,
 ///                   MapGrid_UpdateLayerScroll; field_world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView

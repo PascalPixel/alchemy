@@ -7,9 +7,10 @@
 /// The motes that circle down onto the leader, evenly spread round a circle.
 #define VENUS_DESCENDING_MOTES 24
 
-/// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
-/// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
-/// 24 particles rise round it (FieldEffect_UpdateRadialSpread).
+/// A Venus Djinni joins the party: on a green screen it hops twice, spins and
+/// leaps, then shrinks away; the leader turns to the camera and raises both
+/// arms as green particles rise and 24 motes circle down onto him, and a burst
+/// of sparks ends it.
 void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
@@ -31,7 +32,6 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   // event_commands_mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
   wait(30);
-  // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);
@@ -85,7 +85,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   MapGrid_SetScreenShakeFar(1, 1, 1);
   wait(30);
 
-  // The motes, 120 pixels above the leader.
+  // The motes, 120 pixels above the leader; djinni, gone now, holds each mote
+  // and then each spark.
   for (remaining = 0; remaining < VENUS_DESCENDING_MOTES; remaining++) {
     position.x = leader->x.fixed;
     position.y = leader->y.fixed + toFIXED(120);

@@ -41,10 +41,9 @@ extern u32 gIncreaseItemAndLevel_Exits[];
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 
-/// Edition-specific text and window layout values: outside Japanese the item
-/// browser's details window is 28 tiles wide rather than 13, and its
-/// MsgItemPlainName line is drawn as tiles (Text_DrawMessageAsTiles)
-/// rather than into the window's canvas (Text_DrawMessage).
+/// The item browser's details window, 28 tiles wide outside Japanese and 13 in
+/// it, and how it draws the item's plain name: as tiles outside Japanese, into
+/// the window's canvas in it.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_DEBUG_DETAILS_WIDTH 28
 #define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessageAsTiles
@@ -54,8 +53,6 @@ extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 #endif
 
 #define DEBUG_ABILITY_COUNT 270 ///< The ability browser's numbers, 0 to 269.
-#define BROWSER_ROW_STEP 10     ///< Right and Left move ten numbers.
-#define BROWSER_PAGE_STEP 30    ///< R and L move thirty.
 
 /// ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
 /// changed (Scene_Initialize).
@@ -85,11 +82,12 @@ enum IncreaseItemAndLevelActorId {
   /// IncreaseItemAndLevel_SelectAbility: `Psy No:` over an ability's name, with
   /// `B:Return`.
   ACTOR_ABILITY_BROWSER,
-  /// IncreaseItemAndLevel_ShowMessageThenEmote: its message, then a wince.
-  ACTOR_FIRST_EMOTE_TESTER,
-  /// IncreaseItemAndLevel_ShowEmoteThenMessage: an ellipsis over the first
-  /// tester, then its message.
-  ACTOR_SECOND_EMOTE_TESTER
+  /// An emote bubble standing on its own, showing "...":
+  /// IncreaseItemAndLevel_WinceAndSpeak.
+  ACTOR_ELLIPSIS_BUBBLE,
+  /// An emote bubble standing on its own, showing the wince:
+  /// IncreaseItemAndLevel_EllipsisAndSpeak.
+  ACTOR_WINCE_BUBBLE
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -106,20 +104,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 #if TBS_PATCH_1
-/// Sets the test message before displaying the first emote on the actor
-/// spoken to, ACTOR_FIRST_EMOTE_TESTER.
-static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
+/// Talking to ACTOR_ELLIPSIS_BUBBLE: a wince pops up over it and it says "I
+/// won't stop you, but I wouldn't go unless I had business there." The line is
+/// chosen before the bubble, where IncreaseItemAndLevel_EllipsisAndSpeak
+/// chooses it after: the one way the two differ.
+static void IncreaseItemAndLevel_WinceAndSpeak(void) {
   Event_SetMessageId(MsgDebugWontStopYou);
-  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Event_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
+  Actor_ShowEmote(ACTOR_ELLIPSIS_BUBBLE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Event_ShowMessageAndWait(ACTOR_ELLIPSIS_BUBBLE, 0);
 }
 
-/// Displays the other test emote before setting ACTOR_FIRST_EMOTE_TESTER's
-/// message.
-static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
-  Actor_ShowEmote(ACTOR_FIRST_EMOTE_TESTER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+/// Talking to ACTOR_WINCE_BUBBLE: a "..." pops up over the other bubble, which
+/// says the same line.
+static void IncreaseItemAndLevel_EllipsisAndSpeak(void) {
+  Actor_ShowEmote(ACTOR_ELLIPSIS_BUBBLE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_SetMessageId(MsgDebugWontStopYou);
-  Event_ShowMessageAndWait(ACTOR_FIRST_EMOTE_TESTER, 0);
+  Event_ShowMessageAndWait(ACTOR_ELLIPSIS_BUBBLE, 0);
 }
 #endif
 
@@ -127,33 +127,35 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIncreaseItemAndLevel_Triggers;
 }
 
-/// Raises one party member's level by amount, then recalculates that unit.
-static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
-  struct Unit *unit = Unit_Get(ownerId);
+/// Raises one party member the given number of levels and works out their new
+/// stats.
+static void IncreaseItemAndLevel_RaiseMemberLevel(s32 memberId, s32 levels) {
+  struct Unit *unit = Unit_Get(memberId);
 
-  Unit_LevelUpTo(ownerId, unit->level + amount);
-  Unit_Calculate(ownerId);
+  Unit_LevelUpTo(memberId, unit->level + levels);
+  Unit_Calculate(memberId);
 }
 
-/// Changes every party member's level by amount.
-static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
-  u16 ownerIds[16];
-  u16 *owner;
-  s32 ownerCount;
+/// Raises everyone in the party the given number of levels.
+static void IncreaseItemAndLevel_RaisePartyLevels(s32 levels) {
+  u16 memberIds[16];
+  u16 *member;
+  s32 memberCount;
 
-  ownerCount = FieldParty_ListMembers(ownerIds);
-  if (ownerCount > 0) {
+  memberCount = FieldParty_ListMembers(memberIds);
+  if (memberCount > 0) {
     s32 remaining;
-    owner = ownerIds;
-    remaining = ownerCount;
+    member = memberIds;
+    remaining = memberCount;
     do {
-      IncreaseItemAndLevel_AdjustOwnerLevel(*owner++, amount);
+      IncreaseItemAndLevel_RaiseMemberLevel(*member++, levels);
     } while (--remaining != 0);
   }
 }
 
-/// Displays the selected party member's level and changes the whole party. B
-/// closes the window and recalculates the original four heroes.
+/// Talking to ACTOR_LEVEL_EDITOR: `Raise everyone's level.` over the leader's
+/// name and level. A raises the whole party one level, Start or Select five,
+/// and B closes the window and works out the four's stats again.
 static void IncreaseItemAndLevel_RunLevelEditor(void) {
   struct Unit *unit;
   struct Window *window;
@@ -163,6 +165,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   unit = Unit_Get(gMainRoutineWork.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
+  // "Raise everyone's level.", the A and Start help, and "B Button: End".
   messageId = MsgDebugRaiseEveryonesLevel;
   Text_DrawMessage(messageId, window, 0, 0);
   Text_DrawMessage(messageId + 1, window, 0, 16);
@@ -181,13 +184,13 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
 
     // Start or Select adds five levels, A one.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
-      IncreaseItemAndLevel_AdjustPartyLevels(5);
+      IncreaseItemAndLevel_RaisePartyLevels(5);
       Sound_Play(MUS_SUPER_LUCKY);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
-      IncreaseItemAndLevel_AdjustPartyLevels(1);
+      IncreaseItemAndLevel_RaisePartyLevels(1);
       Sound_Play(MUS_LUCKY);
       redraw = 1;
     }
@@ -209,14 +212,15 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   }
 }
 
-/// Browses nonempty item definitions and gives the selected item to the party.
-/// Talking to ACTOR_ITEM_BROWSER.
+/// Talking to ACTOR_ITEM_BROWSER: `Item No:` over an item's name, its icon and
+/// what equipping it does, stepping over the numbers with no item. A gives it
+/// to the party, and B, or A once the bags are full, leaves.
 static void IncreaseItemAndLevel_SelectItem(void) {
   struct Window *window;
   struct Window *details;
   s32 selectedItemId;
   s32 redraw;
-  s32 messageOrDefinitionId;
+  s32 itemId;
   s32 entryCount;
   s8 seekDirection;
 
@@ -229,10 +233,10 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   details =
       Window_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, WINDOW_FLAG_INSTANT);
   // Lend HIGHLIGHT_PALETTE to the item icons, as Palette_LoadIconsIntoHighlight
-  // does: sprite palette 0 into it, then BG WINDOW_BACKGROUND_COLOR over its
-  // TEXT_BACKGROUND_COLOR.
+  // does: sprite palette 0 into it, then the window's background colour over
+  // its TEXT_BACKGROUND_COLOR.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
@@ -248,12 +252,12 @@ static void IncreaseItemAndLevel_SelectItem(void) {
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
-        messageOrDefinitionId = selectedItemId & INVENTORY_ITEM_ID_MASK;
-        Item_GetDirect(messageOrDefinitionId);
-        Text_DrawMessageAsTiles(messageOrDefinitionId + MsgItemName, window,
-                                120, 0);
-        ITEM_DEBUG_DRAW_ITEM_NAME(messageOrDefinitionId + MsgItemPlainName,
-                                  window, 0, 16);
+        itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
+        // DEAD: the item's definition is looked up and not used; the ROM keeps
+        // the call.
+        Item_GetDirect(itemId);
+        Text_DrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
+        ITEM_DEBUG_DRAW_ITEM_NAME(itemId + MsgItemPlainName, window, 0, 16);
         WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
@@ -285,25 +289,25 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
-      selectedItemId += BROWSER_ROW_STEP;
+      selectedItemId += DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
-      selectedItemId -= BROWSER_ROW_STEP;
+      selectedItemId -= DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
-      selectedItemId += BROWSER_PAGE_STEP;
+      selectedItemId += DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
-      selectedItemId -= BROWSER_PAGE_STEP;
+      selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
@@ -336,8 +340,9 @@ static void IncreaseItemAndLevel_SelectItem(void) {
 }
 
 #if TBS_PATCH_1
-/// Browses ability names and descriptions, skipping unavailable entries. B
-/// closes the sole window created by this browser.
+/// Talking to ACTOR_ABILITY_BROWSER in English and German: `Psy No:` over an
+/// ability's name and its description, stepping over the numbers with no
+/// ability; B leaves.
 UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   struct Window *window;
 #ifndef UBFIX
@@ -345,7 +350,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
 #endif
   s32 selectedAbilityId;
   s32 redraw;
-  s32 messageOrDefinitionId;
+  s32 abilityId;
   s32 entryCount;
   s8 seekDirection;
 
@@ -357,7 +362,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   window = Window_Create(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
   // Lend HIGHLIGHT_PALETTE to the icons, as the item browser does.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
@@ -372,12 +377,11 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyHelp, window, 0, 72);
-      messageOrDefinitionId = selectedAbilityId & ACTION_ID_MASK;
-      Text_DrawMessageAsTiles(messageOrDefinitionId + MsgAbilityName, window,
-                              120, 0);
-      messageOrDefinitionId += MsgAbilityDescription;
-      Text_DrawMessageAsTiles(messageOrDefinitionId, window, 0, 24);
-      Text_DrawMessage(messageOrDefinitionId, window, 0, 48);
+      abilityId = selectedAbilityId & ACTION_ID_MASK;
+      Text_DrawMessageAsTiles(abilityId + MsgAbilityName, window, 120, 0);
+      // The description twice: as tiles, and below it into the canvas.
+      Text_DrawMessageAsTiles(abilityId + MsgAbilityDescription, window, 0, 24);
+      Text_DrawMessage(abilityId + MsgAbilityDescription, window, 0, 48);
     }
     if (gKeysPressed & KEY_B) {
       Sound_Play(SE_MENU_CANCEL);
@@ -397,25 +401,25 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
     }
     if (gKeysRepeat & KEY_RIGHT) {
       seekDirection = 1;
-      selectedAbilityId += BROWSER_ROW_STEP;
+      selectedAbilityId += DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_LEFT) {
       seekDirection = -1;
-      selectedAbilityId -= BROWSER_ROW_STEP;
+      selectedAbilityId -= DEBUG_BROWSER_ROW_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_R) {
       seekDirection = 1;
-      selectedAbilityId += BROWSER_PAGE_STEP;
+      selectedAbilityId += DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_L) {
       seekDirection = -1;
-      selectedAbilityId -= BROWSER_PAGE_STEP;
+      selectedAbilityId -= DEBUG_BROWSER_PAGE_STEP;
       redraw = 1;
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
@@ -463,22 +467,24 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
   Import_EventSetExitRequest();
 }
 
-/// Sets up the scene: the window transition in, and the level editor's size.
+/// Sets up the room: the window transition in, the level editor's size, and
+/// what each emote bubble shows.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
   Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
   Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
 #if TBS_PATCH_1
-  Import_ActorSetAnimation(ACTOR_FIRST_EMOTE_TESTER, 5);
-  Import_ActorSetAnimation(ACTOR_SECOND_EMOTE_TESTER, 2);
+  Import_ActorSetAnimation(ACTOR_ELLIPSIS_BUBBLE, EMOTE_ELLIPSIS);
+  Import_ActorSetAnimation(ACTOR_WINCE_BUBBLE, EMOTE_WINCE);
 #endif
   return 0;
 }
 
 #if !TBS_PATCH_1
-/// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its test
-/// position.
+/// Force cast at ACTOR_PORTRAIT_BROWSER in Japanese: Menardi starts walking on
+/// the spot and the cat shaking its head, and once Menardi's animation moves on
+/// the cat is put at 312x416 on the map.
 static void IncreaseItemAndLevel_RunMotionTest(void) {
   Event_Start();
   Import_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
@@ -490,8 +496,8 @@ static void IncreaseItemAndLevel_RunMotionTest(void) {
 #endif
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-/// Displays the three character-set caption rows in a debug window. Force cast
-/// at ACTOR_PORTRAIT_BROWSER, outside Japanese. The window is left open.
+/// Force cast at ACTOR_PORTRAIT_BROWSER outside Japanese: a window at the foot
+/// of the screen with three rows of the font's letters and marks, left open.
 static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
   struct Window *window;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -505,24 +511,22 @@ static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
 }
 #endif
 
-/// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
-/// cast at it, this sets the effect's childMode, and Force's shot then leaves
+/// Keeps Force from pushing ACTOR_PORTRAIT_BROWSER: run as Force is cast at it,
+/// before the shot, this sets the effect's childMode, and the shot then leaves
 /// its target where it is (field/event_commands_force.c).
-static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
+static void IncreaseItemAndLevel_KeepPortraitBrowserInPlace(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
 
   effectWork->childMode = 1;
 }
 
-/// Returns the icon browser's status to the event dispatcher. Talking to
-/// ACTOR_ICON_BROWSER.
+/// Talking to ACTOR_ICON_BROWSER: the icon browser.
 static int IncreaseItemAndLevel_OpenIconBrowser(void) {
   return DebugBrowser_Icons();
 }
 
-/// Returns the portrait browser's status to the event dispatcher. Talking
-/// to ACTOR_PORTRAIT_BROWSER.
+/// Talking to ACTOR_PORTRAIT_BROWSER: the portrait browser.
 static int IncreaseItemAndLevel_OpenPortraitBrowser(void) {
   return DebugBrowser_Portraits();
 }
@@ -569,7 +573,7 @@ u32 gIncreaseItemAndLevel_Exits[] = {
 /// The scene's actors, in the order of enum IncreaseItemAndLevelActorId:
 /// the item, icon and portrait browsers and the level editor; outside Japanese
 /// also the ability browser (reachable in English and German only) and the two
-/// emote testers.
+/// emote bubbles.
 // clang-format off
 struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 864, FACING_SOUTHEAST,
@@ -604,7 +608,8 @@ struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[] = {
 };
 // clang-format on
 
-/// Talking to each tester runs its tool.
+/// Talking to each actor opens its tool; Force cast at Menardi runs a test of
+/// its own.
 struct Trigger gIncreaseItemAndLevel_Triggers[] = {
     {TRIGGER_TALK, ACTOR_ITEM_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_SelectItem)},
@@ -622,15 +627,15 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
     {TRIGGER_TALK, ACTOR_ABILITY_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_SelectAbility)},
 #endif
-    {TRIGGER_TALK, ACTOR_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
-     EVENT(IncreaseItemAndLevel_ShowMessageThenEmote)},
-    {TRIGGER_TALK, ACTOR_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
-     EVENT(IncreaseItemAndLevel_ShowEmoteThenMessage)},
+    {TRIGGER_TALK, ACTOR_ELLIPSIS_BUBBLE, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_WinceAndSpeak)},
+    {TRIGGER_TALK, ACTOR_WINCE_BUBBLE, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_EllipsisAndSpeak)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_ShowGlyphCaptions)},
 #endif
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+     EVENT(IncreaseItemAndLevel_KeepPortraitBrowserInPlace)},
     {TRIGGER_TABLE_END},
 };

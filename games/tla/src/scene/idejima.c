@@ -67,7 +67,8 @@
 /// where only the unseen door answers, and the two of the island run aground.
 enum IdejimaEntrance {
   /// At the foot of the mountain, cell (11, 10), with the unseen door north.
-  // XXX: what enters by entrance 1; no exit table or event names it.
+  /// No exit table or event in the game leads here by it; the unseen door
+  /// leads back by ENTRANCE_FROM_DOOR_AGAIN.
   ENTRANCE_FROM_DOOR = 1,
   /// The island run aground, where Felix wakes after the tidal wave.
   ENTRANCE_WAKE = 2,

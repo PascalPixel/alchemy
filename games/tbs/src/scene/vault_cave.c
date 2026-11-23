@@ -1286,6 +1286,8 @@ u32 gVaultCave_ScheduleFrames[] = {
 };
 // clang-format on
 
+/// The frame of the drops' 191-frame beat, and the timed drop that falls next
+/// when it reaches that drop's frame in gVaultCave_ScheduleFrames.
 s32 gVaultCave_ScheduleTimer = 0;
 
 s32 gVaultCave_ScheduleIndex = 0;

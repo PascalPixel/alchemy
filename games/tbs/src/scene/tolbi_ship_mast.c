@@ -119,6 +119,9 @@ s32 gTolbiShipMast_RockOffsetY BSS_DATA ALIGNED(16);
 s32 gTolbiShipMast_RockOffsetX BSS_DATA;
 s32 gTolbiShipMast_RockAngleY BSS_DATA;
 s32 gTolbiShipMast_RockUnused BSS_DATA;
+/// Where the sparkle appears, and where the camera was then: the sparkle moves
+/// with the camera across, and half as far up and down
+/// (TolbiShipMast_FollowCameraAndRotate).
 s32 gTolbiShipMast_CameraCenter[2] BSS_DATA;
 s32 gTolbiShipMast_CameraOrigin[2] BSS_DATA;
 s32 gTolbiShipMast_RockAngleX BSS_DATA;

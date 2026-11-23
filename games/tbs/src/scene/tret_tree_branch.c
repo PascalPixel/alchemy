@@ -105,6 +105,8 @@ enum TretTreeBranchCellBehavior {
 /// Starts the clouds drifting above the forest.
 static void TretTreeBranch_StartBg3Split(void);
 
+/// The header and data of the unused input exchange
+/// (TretTreeBranch_ExchangeInputPacket).
 static u16 sTransferHeader[16] ALIGNED(16);
 static u8 sTransferData[96];
 /// The map height at which the background splits: the clouds drift above it,

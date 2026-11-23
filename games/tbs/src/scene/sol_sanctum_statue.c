@@ -106,6 +106,8 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 8
 #endif
 
+/// A row of sky clouds: nine sprites 32 pixels wide, 288 pixels across the
+/// 240-pixel screen as the row scrolls.
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
 

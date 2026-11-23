@@ -3081,6 +3081,8 @@ s32 gMercuryLighthouse_PushScriptC[] = {
     SC_END,
 };
 
+/// Unused, with gPaletteCycleGreen and gPaletteCycleBlue: nothing reads them or
+/// changes them.
 s32 gPaletteCycleRed = 0;
 
 s32 gPaletteCycleGreen = 0;

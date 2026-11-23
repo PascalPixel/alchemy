@@ -25,8 +25,9 @@ enum VaultCellBehavior {
   CELL_BEHAVIOR_VAULT_MAYORS_HOUSE_DOOR = 10,
   CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY = 11,
   CELL_BEHAVIOR_VAULT_DOOR_TO_JAIL = 12,
-  /// The doorless way into the room with the crate.
-  CELL_BEHAVIOR_VAULT_WEST_ENTRANCE = 13,
+  /// The top of the ladder against the inn's west wall, which Isaac climbs
+  /// in through the roof (Vault_ClimbIntoInnLoft).
+  CELL_BEHAVIOR_VAULT_INN_LOFT_LADDER = 13,
   /// Before the south gate's exit (VAULT_TO_WORLD_MAP_SOUTH).
   CELL_BEHAVIOR_VAULT_SOUTH_GATE = 20,
   /// Before the north gate's exit (VAULT_TO_WORLD_MAP_NORTH).

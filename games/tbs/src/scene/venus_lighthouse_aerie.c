@@ -9,19 +9,22 @@
 ///
 /// The parts, in the order the entrances chain them:
 /// - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
-///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A platform carries the
-///   leader up and a conversation plays, with one yes-or-no question that
-///   changes only the reply.
-/// - Six floating platforms lie between the party and the beacon
+///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A floating platform
+///   carries Isaac up beside the tower in the north-east onto its top, and
+///   the party overhears Saturos, Menardi, Felix and Sheba arguing at the
+///   beacon, with one yes-or-no question that changes only the reply.
+/// - Two rows of three floating platforms bob in the air, one between the
+///   tower and the middle of the aerie and one west of the middle
 ///   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
-///   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS). The leader
-///   jumps from one to the next, and each stops bobbing and dips under him as
-///   he lands. FLAG_VENUS_AERIE_ON_PLATFORM is set while he stands on one.
-/// - The confrontation (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
+///   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS). Isaac jumps
+///   from one to the next, and each stops bobbing and dips under him as he
+///   lands. FLAG_VENUS_AERIE_ON_PLATFORM is set while he stands on one.
+/// - The confrontation, when Isaac walks up to the beacon
+///   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   VenusLighthouseAerie_ConfrontSaturosAndMenardi). The Shaman's Rod is
-///   handed over, remembered in FLAG_SHAMANS_ROD_HOLDER plus the party member
-///   who carried it. The first battle follows (ENCOUNTER_ZONE_SCRIPTED,
-///   slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
+///   handed over for Sheba's sake, remembered in FLAG_SHAMANS_ROD_HOLDER plus
+///   the party member who carried it. The first battle follows
+///   (ENCOUNTER_ZONE_SCRIPTED, slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
 ///   VenusLighthouseAerie_CombineSaturosAndMenardi). Saturos throws the Venus
 ///   Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave,
@@ -42,7 +45,7 @@
 ///   from the bottom;
 ///   https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption-layers-3d.gif:
 ///   five and a half seconds in, pulled apart into its layers, the sky at the
-///   back, BG2, BG1 and BG0, and the sprites in front).
+///   back and the sprites in front).
 /// - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
 ///   VenusLighthouseAerie_ShowShebaInDanger). Sheba hangs from the broken
 ///   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the World Map
@@ -176,6 +179,7 @@ enum {
   FLAG_AERIE_SECOND_BATTLE_BEGUN = FLAG_AREA_TEMP_51
 };
 
+/// Sets the six platforms bobbing in the air again (see its definition).
 static void VenusLighthouseAerie_FloatPlatforms(void);
 static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown);
@@ -204,7 +208,7 @@ static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor);
 /// The cell behaviors the aerie's step triggers answer.
 enum VenusLighthouseAerieCellBehavior {
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
-      5, ///< where the party confronts Saturos and Menardi
+      5, ///< before the beacon, where Isaac confronts Saturos and Menardi
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM =
       10, ///< a floating platform's cells
   /// The floor beside the platforms, from which the leader jumps
@@ -334,8 +338,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// The leader stands on one of the floating platforms.
 #define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_SCENE_TEMP_50
 
-/// Walking off the edge of a platform makes the leader jump across, if the
-/// ground two cells ahead is clear.
+/// Walking off the edge of the floor or of a platform toward the next one,
+/// Isaac springs and leaps two cells across onto it, if there is somewhere
+/// to land.
 static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   struct Actor *actor;
   union {
@@ -373,7 +378,8 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   }
 }
 
-/// Landing on a platform makes it dip under the leader and spring back up.
+/// As Isaac lands on a platform, it stops bobbing, dips under him and springs
+/// back up.
 static void VenusLighthouseAerie_LandOnPlatform(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *platform;
@@ -412,8 +418,11 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
   Event_End();
 }
 
-/// Stepping back onto the floor, and before each jump, sets the platforms
-/// floating again.
+/// Stepping onto the floor at either end of a row of platforms (cells
+/// (12, 12) and (25, 12) beside the middle of the aerie, and (31, 10) on the
+/// tower in the north-east), and just before each jump, sets all six
+/// platforms bobbing in the air again, so the one Isaac stood on no longer
+/// holds still.
 static void VenusLighthouseAerie_FloatPlatforms(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -425,7 +434,8 @@ static void VenusLighthouseAerie_FloatPlatforms(void) {
   Actor_Get(ACTOR_LAST_PLATFORM)->motionFlags = ACTOR_FLOATS;
 }
 
-/// Returns the platform and confrontation step triggers.
+/// The aerie's events: the platforms, and the beacon where Saturos and
+/// Menardi wait.
 const struct Trigger *Scene_GetTriggers(void) {
   return gVenusLighthouseAerieTriggers;
 }
@@ -516,7 +526,10 @@ static void VenusLighthouseAerie_FaceActor(s32 actorId, s32 facing) {
   Actor_FaceDirection(actorId, facing, 10);
 }
 
-/// Brings the party onto the aerie and reveals the argument over Sheba.
+/// A floating platform carries Isaac up beside the tower in the north-east of
+/// the aerie onto its top, and the party looks across to the beacon, where
+/// Saturos and Menardi argue with Felix over Sheba and the lighthouses still
+/// to light.
 static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   struct Actor *arrivalPlatform;
   struct Actor *leader;
@@ -862,8 +875,10 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   }
 }
 
-/// Walking up to Saturos and Menardi starts the confrontation
-/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON).
+/// Isaac walks up to the beacon in the middle of the aerie (cells (20, 14) and
+/// (21, 14)) and the party confronts Saturos and Menardi. Saturos offers a
+/// deal for the Shaman's Rod, the party hands it over for Sheba's sake,
+/// Saturos keeps her all the same, and the battle begins.
 static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
@@ -1401,7 +1416,9 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
   Actor_ShowEmote(ACTOR_MIA, emote, waitFrames);
 }
 
-/// Back from the first battle, Saturos and Menardi fuse
+/// After the first battle, Saturos and Menardi rise again. Saturos throws the
+/// Venus Star into the beacon, Felix and Sheba leave, and the two fuse into
+/// the Fusion Dragon for the second battle
 /// (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE).
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;

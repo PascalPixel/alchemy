@@ -1,37 +1,51 @@
 /// @file
-/// Sol Entrance and the first rooms of Sol Sanctum, two scenes one overlay
-/// serves, chosen by gMainRoutineWork.next in every entry point.
+/// The way into Sol Sanctum: the mountainside before its door, and the first
+/// rooms inside, where Isaac, Garet and Jenna follow Kraden on the morning the
+/// story begins. Two scenes share this overlay, and every entry point chooses
+/// by gMainRoutineWork.next.
 ///
-/// - Sol Entrance (SceneId_SolEntrance), the mountainside before the sanctum's
-///   door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north into the
-///   door opens it and takes the leader in
-///   (SolSanctumEntrance_OpenDoorAndEnter). Searching the other door finds it
-///   "tightly locked". Retreat does not work here. The way down leads to
-///   SceneId_Vale, except between the eruption (FLAG_SOL_SANCTUM_ERUPTED) and
-///   the party leaving Vale (FLAG_VALE_PARTY_LEFT), when it leads to
-///   SceneId_ValeEruption. After the eruption the ground rumbles now and then.
-///   Once the party has left Vale a man stands in the path and warns everyone
-///   away.
-/// - Sol Sanctum (SceneId_SolSanctumReliefs), the rooms inside the door, which
-///   Isaac, Garet and Jenna explore with Kraden. Two minotaur reliefs each have
-///   an empty eye socket, and a Small Jewel set in it opens the way on. The
-///   first jewel comes from this scene's chest
-///   (FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET), the second from the chest in
-///   SceneId_SolSanctumMaze (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET). Kraden
-///   has an event on the first entry at the door
-///   (SolSanctumEntrance_IntroduceSanctum), in the first relief room
-///   (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in the second
-///   (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues in the first
-///   relief room and the row of six in the second can be pushed, or moved with
-///   Move, a cell east or west. Its exits lead to SceneId_SolSanctumCorridor,
-///   SceneId_SolSanctumMaze, Sol Entrance and SceneId_SolSanctumLunaSolRooms.
-///   The rest lead between its own rooms.
+/// Sol Entrance (SceneId_SolEntrance) is the paved terrace at the top of the
+/// path from Vale, with the sanctum's carved door in the cliff. Walking north
+/// into the door (cells (6, 6) to (8, 6)) slides it open and takes the party in
+/// (SolSanctumEntrance_OpenDoorAndEnter). Retreat does not work here. Until
+/// the eruption the path leads down to Vale; during it, to Vale with the
+/// villagers gathered (SceneId_ValeEruption) until the party has left. After
+/// the eruption the ground rumbles now and then. Once Isaac and Garet are back
+/// from the mountain the door no longer opens: Isaac walks up to it and stops,
+/// and searching it finds it "tightly locked". Once the party has left Vale, a
+/// bearded man in a long robe stands in the path and warns everyone away.
 ///
-/// SceneId_SolSanctumReliefs is one scene, but each relief room has actor
-/// placement and trigger tables of its own.
-/// Scene_GetActorPlacements and _GetTriggers choose them by the
-/// entrance the party came in at, so a room's statues and their events exist
-/// only while the party is in it.
+/// Sol Sanctum (SceneId_SolSanctumReliefs) is the run of rooms behind the
+/// door, in the order the party meets them:
+/// - The entrance hall, where Kraden welcomes them on the first visit
+///   (SolSanctumEntrance_IntroduceSanctum).
+/// - Two rooms of stepping stones over water, where Isaac jumps one-cell gaps,
+///   joined by a corridor (SceneId_SolSanctumCorridor). In the north of the
+///   second lie the chest with the first Small Jewel (cell (17, 3)) and, at
+///   cell (30, 2), a minotaur relief with an empty eye socket. Setting the
+///   jewel in it opens an arched doorway at the end of the west path, between
+///   two lit sconces (cells (3, 1) to (5, 2)).
+/// - The first relief room, the hall of eleven statues on a checkered floor
+///   that the first relief opens. Kraden searches it for the hidden passage
+///   Saturos and Menardi spoke of
+///   (SolSanctumEntrance_KradenSuspectsHiddenPassage). Its westmost and
+///   eastmost statues stand in front of doorways, cells (94, 7) and (114, 7),
+///   and can be pushed or moved aside: the west one hides a small room with a
+///   statue that will not budge, the east one the steps up to the maze
+///   (SceneId_SolSanctumMaze) and its chest with the second Small Jewel.
+/// - The second relief room, at the maze's far end, where six statues stand in
+///   alcoves across a channel of water. Kraden sees them out of reach
+///   (SolSanctumEntrance_KradenSeesStatuesOutOfReach); Move shifts them. The
+///   westmost hides the second minotaur relief, the next a doorway into a
+///   winding passage that leads nowhere. Once a statue is moved, Isaac can jump
+///   to its alcove from the stepping stone in the water before it, and push it
+///   by hand. Setting the second jewel opens a way behind the eastmost statue,
+///   on to the rooms of Sol and Luna (SceneId_SolSanctumLunaSolRooms).
+///
+/// Each relief room has actor placement and trigger tables of its own.
+/// Scene_GetActorPlacements and _GetTriggers choose them by the entrance the
+/// party came in at, so a room's statues and their events exist only while the
+/// party is in it.
 ///
 /// A pushed statue stays where it was left for the rest of the visit. Each
 /// pushable statue's column is kept in two area flags, one for each side, which
@@ -42,13 +56,12 @@
 /// Searching a relief while its Small Jewel is held asks for the field menu as
 /// the search ends, so that the jewel can be used on it at once.
 ///
-/// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH) the
-/// door no longer opens. The leader walks up to the door and stops, and
-/// searching it finds it "tightly locked". Sol
-/// Entrance's setup does this with two changes. It makes the three wall cells
-/// across the door CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR, copied from the
-/// other door. And it makes the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells
-/// before it plain ground.
+/// The locked door is two changes in Sol Entrance's setup, once
+/// FLAG_VALE_RETURNED_FROM_MT_ALEPH is set. It makes the three
+/// CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells before the door plain ground, and the
+/// three wall cells across the door CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR,
+/// copied from a spare row in the cliff at the map's top left, cells (0, 1) to
+/// (2, 1), which the player never reaches.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -279,8 +292,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumEntrance_FallbackTriggers;
 }
 
-/// Sol Entrance: walking north into the sanctum's door slides it open, and the
-/// leader walks in.
+/// Isaac walks north into Sol Sanctum's door at the top of the terrace (cells
+/// (6, 6) to (8, 6)); with a boom the stone door slides open, and he walks in
+/// as the screen fades.
+///
+/// The door is drawn open in three steps ten frames apart, each copying the
+/// next picture of it from a spare part of the map.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Event_Start();
   // The door opens over three frames.
@@ -303,8 +320,13 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Event_End();
 }
 
-/// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
-/// both once the Small Jewel is set.
+/// Isaac searches the minotaur relief at the north of the second room of
+/// stepping stones (cell (30, 2)): "The right eye is sparkling, but there's a
+/// hole where the left eye should be." Once the Small Jewel is set, both eyes
+/// sparkle.
+///
+/// While Isaac holds the jewel, the field menu opens as the message ends, so
+/// that he can use it on the relief at once.
 static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   Event_Start();
 
@@ -320,7 +342,8 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   Event_End();
 }
 
-/// The room shakes as stone shifts, and the leader looks around and jumps.
+/// The room shakes as stone shifts, and the leader looks round, startled, and
+/// jumps.
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(20);
@@ -337,8 +360,14 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Event_Wait(40);
 }
 
-/// Sol Sanctum: using the Small Jewel on the first relief sets it in, and a
-/// passage opens.
+/// Isaac uses the Small Jewel on the first minotaur relief (cell (30, 2)) and
+/// sets it into the empty socket. "You hear the sound of shifting stone": the
+/// room shakes, Isaac looks round, startled, and an arched doorway opens at
+/// the end of the room's west path, between two lit sconces.
+///
+/// The jewel is used up. The doorway is cells (3, 1) to (5, 2), copied in with
+/// their heights from a spare part of the map; Scene_Initialize redraws it on
+/// later visits.
 static void SolSanctumEntrance_SetFirstSmallJewel(void) {
   s32 message;
 
@@ -368,8 +397,9 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
   }
 }
 
-/// Sol Sanctum, the second relief room: searching the second minotaur relief,
-/// as the first.
+/// Isaac searches the second minotaur relief, uncovered behind the westmost of
+/// the six statues across the water (cell (100, 31)). It too has one eye
+/// sparkling and a hole for the other, until the second Small Jewel is set.
 static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   struct FieldWork *work;
 
@@ -388,8 +418,13 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   Event_End();
 }
 
-/// Sol Sanctum, the second relief room: using the Small Jewel on the second
-/// relief, as the first, and a doorway opens.
+/// Isaac uses the second Small Jewel on the second minotaur relief (cell
+/// (100, 31)) and sets it. Stone shifts, the room shakes, and a doorway opens
+/// in the wall behind the eastmost of the six statues (cells (120, 30) to
+/// (120, 31)), the way on to the rooms of Sol and Luna.
+///
+/// The eastmost statue still stands in front of the doorway until it is moved
+/// aside.
 static void SolSanctumEntrance_SetSecondSmallJewel(void) {
   s32 message;
 
@@ -431,9 +466,15 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
   }
 }
 
-/// Sol Sanctum, the first relief room: Move on the west statue
-/// (ACTOR_WEST_STATUE) while FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is clear,
-/// and called by SolSanctumEntrance_PushStatue there.
+/// Isaac shifts the westmost statue of the checkered statue hall a cell east or
+/// west, with Move or by pushing it, and uncovers the dark doorway behind it
+/// (cell (94, 7)) to a small room whose statue will not budge. Nothing more
+/// happens on screen; the game notes which side the statue now stands on, so
+/// it is still there when the party comes back into the hall.
+///
+/// The Move row runs this after Move has shifted the statue, and
+/// SolSanctumEntrance_PushStatue after a push. The statue starts in column 94;
+/// columns 93 and 95 set its two flags.
 static void SolSanctumEntrance_WestStatueMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_WEST_STATUE);
   s32 column;
@@ -446,8 +487,13 @@ static void SolSanctumEntrance_WestStatueMoved(void) {
       column, FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST, 93, 95);
 }
 
-/// Sol Sanctum, the first relief room: Move on the east statue
-/// (ACTOR_EAST_STATUE), as the west one.
+/// Isaac shifts the eastmost statue of the checkered statue hall a cell east or
+/// west, with Move or by pushing it, and uncovers the doorway behind it (cell
+/// (114, 7)) to the steps up to the maze. As for the west statue, the game
+/// notes which side it now stands on, so it stays there for the rest of the
+/// visit.
+///
+/// The statue starts in column 114; columns 113 and 115 set its two flags.
 static void SolSanctumEntrance_EastStatueMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_EAST_STATUE);
   s32 column;
@@ -465,8 +511,14 @@ static void SolSanctumEntrance_EastStatueMoved(void) {
   }
 }
 
-/// Sol Sanctum, the second relief room: Move on the first statue of the row
-/// (ACTOR_ROW_STATUE_A), and called by SolSanctumEntrance_PushStatue there.
+/// Isaac uses Move on the westmost of the six statues across the water (cell
+/// (100, 32)) and shifts it a cell east or west, uncovering the second minotaur
+/// relief in the wall behind it. The game notes where the statue now stands,
+/// so it stays there for the rest of the visit.
+///
+/// SolSanctumEntrance_PushStatue runs this too, after a push by hand.
+/// SolSanctumEntrance_RestoreRowStatueCells then lets Isaac jump into the cell
+/// the statue left, from the stepping stone before it.
 static void SolSanctumEntrance_RowStatueAMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_A);
   s32 column;
@@ -480,8 +532,10 @@ static void SolSanctumEntrance_RowStatueAMoved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
-/// for the row's second statue (ACTOR_ROW_STATUE_B).
+/// Isaac uses Move on the second of the six statues from the west (cell
+/// (104, 32)) and shifts it aside, uncovering a dark doorway behind it into a
+/// winding passage that leads nowhere. The game notes where the statue now
+/// stands, so it stays there for the rest of the visit.
 static void SolSanctumEntrance_RowStatueBMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_B);
   s32 column;
@@ -495,8 +549,10 @@ static void SolSanctumEntrance_RowStatueBMoved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
-/// for the row's third statue (ACTOR_ROW_STATUE_C).
+/// Isaac uses Move on the third of the six statues from the west (cell
+/// (108, 32)) and shifts it aside; only plain wall stands behind it. The game
+/// notes where the statue now stands, so it stays there for the rest of the
+/// visit.
 static void SolSanctumEntrance_RowStatueCMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_C);
   s32 column;
@@ -510,8 +566,10 @@ static void SolSanctumEntrance_RowStatueCMoved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
-/// for the row's fourth statue (ACTOR_ROW_STATUE_D).
+/// Isaac uses Move on the fourth of the six statues from the west (cell
+/// (112, 32)) and shifts it aside; only plain wall stands behind it. The game
+/// notes where the statue now stands, so it stays there for the rest of the
+/// visit.
 static void SolSanctumEntrance_RowStatueDMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_D);
   s32 column;
@@ -525,8 +583,10 @@ static void SolSanctumEntrance_RowStatueDMoved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
-/// for the row's fifth statue (ACTOR_ROW_STATUE_E).
+/// Isaac uses Move on the fifth of the six statues from the west (cell
+/// (116, 32)) and shifts it aside; only plain wall stands behind it. The game
+/// notes where the statue now stands, so it stays there for the rest of the
+/// visit.
 static void SolSanctumEntrance_RowStatueEMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_E);
   s32 column;
@@ -540,8 +600,11 @@ static void SolSanctumEntrance_RowStatueEMoved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
-/// for the row's sixth statue (ACTOR_ROW_STATUE_F).
+/// Isaac uses Move on the eastmost of the six statues (cell (120, 32)) and
+/// shifts it aside. Behind it is plain wall until the second Small Jewel is
+/// set in the relief, then the doorway on to the rooms of Sol and Luna. The
+/// game notes where the statue now stands, so it stays there for the rest of
+/// the visit.
 static void SolSanctumEntrance_RowStatueFMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_F);
   s32 column;
@@ -560,8 +623,15 @@ static void SolSanctumEntrance_RowStatueFMoved(void) {
 /// first relief room's statues.
 #define FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM FLAG_SCENE_TEMP_34
 
-/// Sol Sanctum, the two relief rooms: walking into a statue's cell pushes it
-/// one cell, the leader behind it, if nothing is in the way.
+/// Isaac walks into one of the statues that can be pushed and shoves it one
+/// cell, following behind it, if nothing is in the way: the westmost and
+/// eastmost statues of the checkered hall (cells (94, 8) and (114, 8)), which
+/// a dotted line on the floor marks, or a statue of the row across the water,
+/// once he has jumped into its alcove.
+///
+/// Each statue's cells and the cells beside it carry the push behaviours; the
+/// statue pushed is whichever stands one step ahead of the leader. After the
+/// push the room's Moved routines note where every statue now stands.
 static void SolSanctumEntrance_PushStatue(void) {
   struct Actor *leader;
   struct Actor *statue;
@@ -738,8 +808,9 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   }
 }
 
-/// Sol Sanctum, the first time the party comes in through the door: Kraden
-/// welcomes it.
+/// The first time the party comes in through the door, Kraden steps up in the
+/// entrance hall, looks round and asks if this is their first time here; the
+/// answer gets "Take a good look at it" or "I doubt that...".
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct Actor *leader;
 
@@ -807,8 +878,12 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_End();
 }
 
-/// Sol Sanctum, the first time the party enters the first relief room: Kraden
-/// suspects a hidden passage.
+/// The first time the party enters the checkered statue hall, Kraden looks
+/// round both sides of it, then tells the others that Saturos and Menardi
+/// spoke of a hidden passage leading deeper in, and that a sanctum built in
+/// honour of the sun ought to show it somewhere. "Let's see if we can find
+/// it!" Garet asks whether they should help him, and whatever Isaac answers,
+/// the three agree to stay together and help.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct Actor *leader;
 
@@ -1031,8 +1106,10 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_End();
 }
 
-/// Sol Sanctum, the first time the party enters the second relief room: Kraden
-/// sees a row of statues out of reach.
+/// The first time the party comes into the second relief room, the view pans
+/// along the six statues across the water and Kraden says, "More statues...
+/// It doesn't look like we can reach them," then, "Perhaps Psynergy is the
+/// key..."
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Start();
   gFieldWork->transition =
@@ -1077,8 +1154,11 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_End();
 }
 
-/// Sol Sanctum, the second relief room: sets the cells the six statues start
-/// on.
+/// Sets the ground under the six statues across the water. Each statue's start
+/// cell is a wall while it stands there. Once it has been moved, the cell is
+/// one Isaac can jump to (CELL_BEHAVIOR_JUMP_FORWARD) from the stepping stone
+/// in the water two rows south, so he can get into the alcove. With
+/// placeActors, the moved statues are also put back where they were left.
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 100, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 104, 32);
@@ -1166,15 +1246,22 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
   }
 }
 
-/// Sol Entrance: searching the other door. "The door is tightly locked."
+/// Isaac searches Sol Sanctum's door once he and Garet are back from the
+/// mountain: "The door is tightly locked."
+///
+/// The search answers the wall cells across the door, (6, 5) to (8, 5), which
+/// Sol Entrance's setup gives this behaviour only then.
 static void SolSanctumEntrance_DoorTightlyLocked(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
   Event_End();
 }
 
-/// Sol Entrance after the eruption: the ground rumbles now and then, and each
-/// shake fades.
+/// After the eruption the terrace before the door rumbles and shakes every few
+/// seconds, at random, each shake dying away.
+///
+/// A shake lasts 80 frames and starts to fade after 40. Between shakes, each
+/// frame has one chance in 120 of starting the next.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   if (gSolSanctumEntrance_RumbleTimer != 0) {
     if (--gSolSanctumEntrance_RumbleTimer == 40) {

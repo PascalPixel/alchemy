@@ -1,24 +1,33 @@
 /// @file
-/// The Tunnel Ruins under Babi Lighthouse are two scenes of Psynergy puzzles,
-/// with no story event, between Babi Lighthouse and Venus Lighthouse.
+/// The Tunnel Ruins run from the basement of Babi Lighthouse in Lalivero to
+/// the upper floors of Venus Lighthouse: the way on after the lighthouse's
+/// own base ends in a dead end. They are two scenes of Psynergy puzzles, with
+/// no story event, and a chest of armour at the end of each of two routes.
 ///
-/// Both have the area name Tunnel Ruins, but for the rooms where Babi
-/// Lighthouse Entry's three drops land, which the area names call Babi
-/// Lighthouse.
+/// Both have the area name Tunnel Ruins, but for the rooms of Babi
+/// Lighthouse's basement where the slides of Babi Lighthouse Entry land,
+/// which the area names call Babi Lighthouse.
 ///
-/// - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue) is entered from
-///   Babi Lighthouse's stone door. A statue in the first room speaks to the
-///   leader's soul. The rooms after it hold two pairs of pillars to push or
-///   Move, and three small pillars with three patches of ivy for Whirlwind.
-///   They also hold two pillars that sink into the floor once moved onto their
-///   columns, each then carrying a hidden target for Frost.
-/// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues) has a pillar that
-///   Douse soaks, two balance platforms weighed with carved stones by Carry,
-///   and two statues that Reveal makes vanish from the chests they stand on.
-///   It also has two pillars that keep their places between visits, and the
-///   room of four walkways over a pit. Last come five coloured statues of a
-///   woman that open the door to Venus Lighthouse once all five stand on their
-///   marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
+/// - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue) is entered by
+///   the stone door Reveal finds in Babi Lighthouse. Its first room holds a
+///   giant pink statue, with a small model of Venus Lighthouse on the floor
+///   before it: searching it tells the party to seek "the lady's leave", the
+///   great statue in Venus Lighthouse, whose answer opens one of two routes.
+///   South of it, Isaac pushes one of two gold-topped pillars so that he can
+///   hop across their tops past a wall. Beyond, a room of stone columns in a
+///   pit gets one more column for each route opened. One route goes by a
+///   second pair of pillars and a room where Whirlwind blows ivy off a small
+///   pillar, then by the balance and its carved stones to the Oracle's Robe.
+///   The other goes by a room of two pillars that sink onto water crests,
+///   raising stepping stones from a pit, to the Asura's Armor.
+/// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues) holds the rest:
+///   Babi Lighthouse's basement with its two grey pillars; the balance, two
+///   platforms Carry weighs down with three carved stones; the two white
+///   statues that Reveal makes vanish from the chests they stand on; a room
+///   of four walkways over a pit; and a pillar to push, Douse and Frost.
+///   Last come five coloured statues of a woman that open the door to Venus
+///   Lighthouse once all five stand on their marks
+///   (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
 /// The getters choose by gMainRoutineWork.next. The actor placements of
 /// TunnelRuinsLadyStatues answer any other scene number, and
@@ -37,8 +46,11 @@
 ///   leader south of a depth set per room (TunnelRuins_UpdateTrackedActor).
 ///
 /// The walking events, keyed on the cell behaviors under the leader, are shared
-/// by both scenes. They are hops across gaps (TunnelRuins_HopLeaderTo), jumps
-/// off ledges and steps down.
+/// by both scenes. Walking against a one-cell gap or a pillar makes Isaac leap
+/// over it to the cell beyond (TunnelRuins_HopLeaderTo), from a ledge onto a
+/// pillar's top, from top to top, or over a pillar standing on a walkway.
+/// Others jump him down a ledge or hop him down a step, and walking into a
+/// pillar, a carved stone or a statue pushes it a cell.
 ///
 /// The puzzles that must survive a visit keep story flags
 /// (FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY,
@@ -49,10 +61,10 @@
 ///
 /// The rest keep scene flags, which mean different things in each scene:
 ///
-/// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are ivy
-///   A and B blown away beside the small pillars, and in the sinking pillars'
-///   room the two pillars' Frost targets frozen. FLAG_SCENE_TEMP_02 is the
-///   south-east pillar soaked by Douse.
+/// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are the
+///   two halves of the ivy over the small pillar blown away, and in the
+///   sinking pillars' room the two pillars' Frost targets frozen.
+///   FLAG_SCENE_TEMP_02 is the south-east pillar soaked by Douse.
 /// - TunnelRuinsLadyStatues: FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_02 are the
 ///   carved stones set on the balance. FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED is
 ///   the pillar soaked by Douse, and
@@ -62,8 +74,9 @@
 /// set on one adds one to it and takes one from the other.
 /// gTunnelRuins_BalanceHeights turns each weight into the platform's height.
 ///
-/// Entering from the Great Statue's north sets the balance up empty. Coming in
-/// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
+/// Coming into the balance's room from the north, out of the first scene, sets
+/// the balance up empty. Coming back up from the south
+/// (TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH) sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4.
 
 #include "ability_ids.h"
@@ -108,6 +121,60 @@ extern struct ActorPlacement gTunnelRuinsActorPlacementsOther[];
 extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
 extern struct Trigger gTunnelRuinsTriggersOther[];
 
+/// The cell behaviors TunnelRuinsGreatStatue's triggers answer, past its exits.
+enum {
+  /// The ledge east of the first pair of pillars, cell (14, 42).
+  CELL_BEHAVIOR_TUNNEL_RUINS_FIRST_PILLARS_LEDGE = 23,
+  /// The floor the first pair of pillars is pushed across.
+  CELL_BEHAVIOR_TUNNEL_RUINS_FIRST_PILLARS_FLOOR,
+  /// The step down in the south-east of the small pillars' room, cell
+  /// (33, 54).
+  CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLARS_STEP,
+  /// The floor the second pair of pillars is pushed across.
+  CELL_BEHAVIOR_TUNNEL_RUINS_SECOND_PILLARS_FLOOR,
+  /// The ledge west of the second pair of pillars, cell (27, 33).
+  CELL_BEHAVIOR_TUNNEL_RUINS_SECOND_PILLARS_LEDGE,
+  /// The floor the small pillars are pushed across.
+  CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLARS_FLOOR,
+  /// The north walkway of the sinking pillars' room, where its pillar moves.
+  CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY,
+  /// The south walkway, where the grey pillar moves.
+  CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY,
+  /// The north walkway's east end, cell (47, 8), beside the pit.
+  CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY_END,
+  /// The south walkway's west end, cell (47, 14), beside the pit.
+  CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY_END,
+  /// Before the giant statue, cell (12, 7).
+  CELL_BEHAVIOR_TUNNEL_RUINS_GIANT_STATUE = 40,
+  /// A small pillar's top, and the ledge above them at cell (32, 50).
+  CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLAR_TOP = 50
+};
+
+/// The cell behaviors the triggers of TunnelRuinsLadyStatues answer, past its
+/// exits.
+enum {
+  /// The door east of the five coloured statues, cell (32, 47), while shut.
+  CELL_BEHAVIOR_TUNNEL_RUINS_STATUE_DOOR = 20,
+  /// The floor the Douse pillar is pushed across.
+  CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_FLOOR = 25,
+  /// The ledge north-east of the Douse pillar's floor, cell (28, 10).
+  CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_LEDGE,
+  /// The step east of the Douse pillar's floor, cell (28, 11).
+  CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_STEP,
+  /// The floor north of the balance, where the carved stones stand.
+  CELL_BEHAVIOR_TUNNEL_RUINS_CARVED_STONES_FLOOR,
+  /// The row of Babi Lighthouse's two grey pillars, cells (44, 19) and
+  /// (47, 19).
+  CELL_BEHAVIOR_TUNNEL_RUINS_GREY_PILLARS_ROW,
+  /// A balance platform, or a carved stone on one, risen near the floor's
+  /// height; copied from cell (4, 9).
+  CELL_BEHAVIOR_TUNNEL_RUINS_RISEN_PLATFORM,
+  /// The floor the five coloured statues are moved across.
+  CELL_BEHAVIOR_TUNNEL_RUINS_LADY_STATUES_FLOOR = 41,
+  /// A coloured statue's cell, copied from cell (20, 56).
+  CELL_BEHAVIOR_TUNNEL_RUINS_LADY_STATUE
+};
+
 /// The actors of TunnelRuinsGreatStatue, in the order of its actor placements.
 ///
 /// They are two pairs of pillars to push or Move, three small pillars, three
@@ -125,14 +192,17 @@ enum {
   ACTOR_SMALL_PILLAR_A,
   /// Beside ACTOR_SMALL_PILLAR_A.
   ACTOR_SMALL_PILLAR_B,
-  /// Behind ivy A, out of sight until Whirlwind clears the ivy.
+  /// On the ledge in the room's north-west corner, hidden in the clump of ivy
+  /// until Whirlwind has blown away both its halves.
   ACTOR_SMALL_PILLAR_C,
-  /// Ivy on the ledge above the small pillars. It is drawn with SPRITE_IVY, the
-  /// sprite of the ivy that traps the stump at Goma Cave's entrance.
+  /// The west half of the clump of ivy on the ledge above the small pillars.
+  /// It is drawn with SPRITE_IVY, the sprite of the ivy that traps the stump at
+  /// Goma Cave's entrance.
   ACTOR_IVY_A,
-  /// Ivy beside ACTOR_IVY_A.
+  /// The east half of the clump.
   ACTOR_IVY_B,
-  /// Ivy in an arched niche to the east.
+  /// Ivy filling the arched doorway in the room's east wall, the way on to the
+  /// long passage.
   ACTOR_IVY_C,
   ACTOR_NORTHWEST_SINKING_PILLAR,
   ACTOR_SOUTHEAST_SINKING_PILLAR,
@@ -195,7 +265,7 @@ static void TunnelRuins_MarkPushPillarCells(void);
 #include "shared/field_effect_spawn.c"
 
 /// Takes the shadow off the small Venus Lighthouse on the floor before the
-/// Great Statue, once gTunnelRuins_SmallLighthouseScript has made it small
+/// giant statue, once gTunnelRuins_SmallLighthouseScript has made it small
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
 static s32 TunnelRuins_HideLighthouseShadow(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
@@ -212,8 +282,9 @@ static inline s32 TunnelRuins_GetLandingPixel(FIXED coordinate) {
 #endif
 }
 
-/// The leader hops over the cell ahead to the target, when that cell is no wall
-/// and the target is clear. Returns 1 when there is no hop.
+/// Isaac crouches, leaps over the cell ahead with the jump sound and lands on
+/// the target, when that cell is no wall and the target is clear: across a gap
+/// or over a pillar. Returns 1 when there is no hop.
 static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   u8 savedMotionFlags = actor->motionFlags;
@@ -254,7 +325,12 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   return 1;
 }
 
-/// Walking south into a gap makes the leader hop 32 pixels across it.
+/// Walking south against a one-cell gap or a pillar makes Isaac leap over it
+/// and land two cells on: from the ledge onto a small pillar's top, from top
+/// to top, or over a pillar on its walkway in the sinking pillars' room.
+///
+/// It also runs from the row of Babi Lighthouse's two grey pillars in the
+/// basement (cells (44, 19) and (47, 19)).
 static void TunnelRuins_HopSouth(void) {
   struct FieldPosition target;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -265,7 +341,10 @@ static void TunnelRuins_HopSouth(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// Walking north into a gap makes the leader hop 32 pixels across it.
+/// Walking north against a one-cell gap or a pillar makes Isaac leap over it
+/// and land two cells on: north over a pillar on its walkway in the sinking
+/// pillars' room, or from the row of Babi Lighthouse's two grey pillars in the
+/// basement (cells (44, 19) and (47, 19)).
 static void TunnelRuins_HopNorth(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -339,9 +418,10 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// Once the Douse pillar is soaked, its Frost target stays 32 pixels below the
-/// pillar while the pillar is in row 10 and the leader is above 48 pixels down;
-/// otherwise the target is put away at the map's origin.
+/// Once the Douse pillar is soaked, its hidden Frost target lies 32 pixels
+/// below it while the pillar stands in map row 10 and Isaac is no more than 48
+/// pixels down. Anywhere else the target waits at the map's corner, out of
+/// Frost's reach.
 static UNREAD_RESULT
 TunnelRuins_FrostTargetFollowsPillar(struct Actor *frostTarget) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -388,8 +468,12 @@ static void TunnelRuins_WaitForActorToLand(struct Actor *actor) {
 
 #include "shared/field_effect_advance.c"
 
-/// Walking south off a step makes the leader hop 12 pixels forward and slide 16
-/// pixels down, kicking up dust behind.
+/// Walking south off the step in the south-east of the small pillars' room
+/// (cell (33, 54)), or off the east edge of the Douse pillar's floor (cell
+/// (28, 11)), makes Isaac hop down it with a thud and a puff of dust.
+///
+/// He leaps 12 pixels forward, then sinks 16 pixels to the floor below over 8
+/// frames while the dust flies out behind him.
 static void TunnelRuins_HopDownStep(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct EffectOptions options;
@@ -491,7 +575,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return table;
 }
 
-/// Walking into the first pair of pillars pushes them along.
+/// Walking into one of the two gold-topped pillars in the room south of the
+/// giant statue pushes it a cell, across their floor (cells (9, 38) to
+/// (13, 43)).
+///
+/// The walkthrough's way is to push one east, so that Isaac can hop from the
+/// ledge east of them onto its top and on past the wall.
 static void TunnelRuins_PushFirstPillars(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -500,7 +589,12 @@ static void TunnelRuins_PushFirstPillars(void) {
   Event_End();
 }
 
-/// Walking west into a gap makes the leader hop 32 pixels across it.
+/// Walking west against a one-cell gap or a pillar makes Isaac leap over it
+/// and land two cells on. In the room south of the giant statue he leaps from
+/// the ledge at cell (14, 42) onto the top of a pillar pushed below it. In the
+/// sinking pillars' room he leaps from the south walkway's west end (cell
+/// (47, 14)) onto the stepping stone the south-east pillar raised from the pit,
+/// or over a pillar on its walkway.
 static void TunnelRuins_HopWest(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -511,7 +605,12 @@ static void TunnelRuins_HopWest(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// Walking into the second pair of pillars pushes them along.
+/// Walking into one of the second pair of gold-topped pillars, on the route
+/// past the small pillars, pushes it a cell, across their floor (cells
+/// (28, 30) to (34, 34)).
+///
+/// The walkthrough has both pushed down and to the west, which lets Isaac hop
+/// onto their tops from the ledge at cell (27, 33) and cross to the next room.
 static void TunnelRuins_PushSecondPillars(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -520,12 +619,20 @@ static void TunnelRuins_PushSecondPillars(void) {
   Event_End();
 }
 
-/// Walking south off a ledge makes the leader jump down.
+/// Walking south off the ledge beside the pillars in the room south of the
+/// giant statue (cell (14, 42)) or in the second pillars' room (cell (27, 33)),
+/// or off the ledge north-east of the Douse pillar (cell (28, 10)), makes Isaac
+/// jump down to the floor below.
 static void TunnelRuins_JumpDownLedge(void) {
   FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
 }
 
-/// Walking east into a gap makes the leader hop 32 pixels across it.
+/// Walking east against a one-cell gap or a pillar makes Isaac leap over it
+/// and land two cells on. In the second pillars' room he leaps from the ledge
+/// at cell (27, 33) onto the top of a pillar pushed beside it; in the small
+/// pillars' room, from one pillar's top to the next. In the sinking pillars'
+/// room he leaps from the north walkway's east end (cell (47, 8)) onto the
+/// stepping stone the north-west pillar raised from the pit.
 static void TunnelRuins_HopEast(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -536,7 +643,8 @@ static void TunnelRuins_HopEast(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-/// Walking into the small pillars pushes the one in front along.
+/// Walking into one of the three small white-topped pillars on the floor
+/// below the ivy's ledge pushes it a cell.
 static void TunnelRuins_PushSmallPillars(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -546,8 +654,8 @@ static void TunnelRuins_PushSmallPillars(void) {
   Event_End();
 }
 
-/// Walking south at the small pillars makes the leader hop a gap if there is
-/// one, and push the small pillar in front otherwise.
+/// Walking south on the floor of the small pillars makes Isaac leap over a gap
+/// if there is one, and push the small pillar in front of him otherwise.
 static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
@@ -560,7 +668,12 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
   }
 }
 
-/// Whirlwind on ivy A blows it away.
+/// Whirlwind on the west half of the clump of ivy on the ledge, in the
+/// north-west corner of the small pillars' room, blows its leaves away.
+///
+/// Once the east half has gone too, the small pillar hidden in the clump can
+/// be reached with Move. Unlike the doorway's ivy, the clump is kept only in a
+/// scene flag, not for good.
 static void TunnelRuins_BlowAwayIvyA(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_00);
   if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
@@ -572,7 +685,9 @@ static void TunnelRuins_BlowAwayIvyA(void) {
   }
 }
 
-/// Whirlwind on ivy B blows it away, as for ivy A.
+/// Whirlwind on the east half of the clump of ivy on the ledge blows its
+/// leaves away, and once the west half has gone too, the small pillar hidden
+/// in the clump can be reached with Move.
 static void TunnelRuins_BlowAwayIvyB(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_01);
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
@@ -584,12 +699,18 @@ static void TunnelRuins_BlowAwayIvyB(void) {
   }
 }
 
-/// Whirlwind on ivy C blows it away for good.
+/// Whirlwind on the ivy filling the arched doorway in the east wall of the
+/// small pillars' room blows it away, opening the way to the long passage.
+///
+/// Unlike the clump on the ledge, this ivy stays gone for good
+/// (FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY).
 static void TunnelRuins_BlowAwayIvyC(void) {
   GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY);
 }
 
-/// Hops west as TunnelRuins_HopWest, except from cell (32, 50).
+/// Walking west from a small pillar's top makes Isaac leap over the gap
+/// beside it, as TunnelRuins_HopWest does, except from the ledge's cell
+/// (32, 50) beside the top of the stairs.
 static void TunnelRuins_HopWestBySmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -598,7 +719,9 @@ static void TunnelRuins_HopWestBySmallPillars(void) {
   }
 }
 
-/// Hops north as TunnelRuins_HopNorth, except from cell (30, 52).
+/// Walking north from a small pillar's top makes Isaac leap over the gap
+/// before it, as TunnelRuins_HopNorth does, except from cell (30, 52), where
+/// the first small pillar starts.
 static void TunnelRuins_HopNorthBySmallPillars(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -607,24 +730,32 @@ static void TunnelRuins_HopNorthBySmallPillars(void) {
   }
 }
 
-/// Draws one picture of the passage's impact and starts a decaying vertical
-/// shake.
-static inline void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
-                                                     s32 column, s32 row) {
+/// The stepping stone in the pit rises one stage with a thump, and the screen
+/// shakes up and down, dying away.
+static inline void TunnelRuins_RaiseSteppingStone(s32 sourceColumn, s32 column,
+                                                  s32 row) {
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(sourceColumn, 8, column, row, 1, 3);
   MapGrid_SetShake(0, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// The column each sinking pillar sinks in once it is moved there.
-#define NORTHWEST_PILLAR_SINK_COLUMN 46
-#define SOUTHEAST_PILLAR_SINK_COLUMN 48
+/// The map column of the water crest each sinking pillar sinks onto: cell
+/// (46, 8) on the north walkway, cell (48, 14) on the south one.
+#define NORTHWEST_PILLAR_CREST_COLUMN 46
+#define SOUTHEAST_PILLAR_CREST_COLUMN 48
 /// How far a sinking pillar sinks into the floor, in pixels.
 #define PILLAR_SINK_DEPTH 16
 
-/// Moving the north-west sinking pillar into NORTHWEST_PILLAR_SINK_COLUMN sinks
-/// it into the floor in a cloud of dust.
+/// When the water-filled pillar on the north walkway of the sinking pillars'
+/// room has been pushed or moved onto the water crest at cell (46, 8), it sinks
+/// into the floor in a cloud of dust. With two thumps that shake the room, a
+/// stepping stone bearing the same crest rises out of the pit east of the
+/// walkway (cell (49, 8)), and Isaac can hop across to it.
+///
+/// The pillar sinks a pixel every three frames, 16 in all. Its top is left
+/// flush with the floor, a square of water where Frost's hidden target now
+/// lies.
 static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
@@ -634,7 +765,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
 
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->x.fixed) ==
-      NORTHWEST_PILLAR_SINK_COLUMN) {
+      NORTHWEST_PILLAR_CREST_COLUMN) {
     Event_Wait(30);
     overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -659,9 +790,9 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Actor_Release(overlay);
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
     Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 744, 136);
-    TunnelRuins_AnimateLoweringImpact(58, 49, 8);
+    TunnelRuins_RaiseSteppingStone(58, 49, 8);
     Event_Wait(20);
-    TunnelRuins_AnimateLoweringImpact(59, 49, 8);
+    TunnelRuins_RaiseSteppingStone(59, 49, 8);
     MapGrid_WaitForShakeToSettle();
     Event_Wait(10);
     GameFlag_Set(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR);
@@ -669,8 +800,10 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   Event_End();
 }
 
-/// Walking into the north-west sinking pillar pushes it, and it sinks if it
-/// reaches its column (until FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
+/// Walking into the water-filled pillar on the north walkway of the sinking
+/// pillars' room pushes it a cell, and it sinks if that brings it onto its
+/// water crest. Once it has sunk it no longer moves
+/// (FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
 static void TunnelRuins_PushNorthwestSinkingPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -678,7 +811,8 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
   TunnelRuins_SinkNorthwestPillar();
 }
 
-/// Frost on the north-west pillar's hidden target raises a pillar of ice.
+/// Frost on the water of the sunken pillar on the north walkway raises a
+/// pillar of ice from it.
 static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
   Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
@@ -691,9 +825,12 @@ static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
-/// Moving the south-east sinking pillar into SOUTHEAST_PILLAR_SINK_COLUMN once
-/// Douse has soaked it sinks it as the north-west pillar does, and its Frost
-/// target moves onto it.
+/// When the grey pillar on the south walkway of the sinking pillars' room
+/// stands on the water crest at cell (48, 14) and Douse has filled it with
+/// water, it sinks into the floor as the north walkway's pillar does. A
+/// stepping stone rises out of the pit west of the walkway (cell (45, 14)).
+///
+/// Unwatered, it stands on the crest and nothing happens.
 static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
@@ -703,7 +840,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
 
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->x.fixed) ==
-      SOUTHEAST_PILLAR_SINK_COLUMN) {
+      SOUTHEAST_PILLAR_CREST_COLUMN) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
@@ -729,9 +866,9 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Actor_Release(overlay);
       MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
       Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 776, 232);
-      TunnelRuins_AnimateLoweringImpact(58, 45, 14);
+      TunnelRuins_RaiseSteppingStone(58, 45, 14);
       Event_Wait(20);
-      TunnelRuins_AnimateLoweringImpact(59, 45, 14);
+      TunnelRuins_RaiseSteppingStone(59, 45, 14);
       MapGrid_WaitForShakeToSettle();
       Event_Wait(10);
       GameFlag_Set(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR);
@@ -740,8 +877,9 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   Event_End();
 }
 
-/// Walking into the south-east sinking pillar pushes it, and it sinks if it is
-/// soaked and reaches its column.
+/// Walking into the grey pillar on the south walkway of the sinking pillars'
+/// room pushes it a cell, and it sinks if it is full of water and that brings
+/// it onto its crest.
 static void TunnelRuins_PushSoutheastSinkingPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -749,20 +887,22 @@ static void TunnelRuins_PushSoutheastSinkingPillar(void) {
   TunnelRuins_SinkSoutheastPillar();
 }
 
-/// As Douse begins on the south-east sinking pillar, water splashes on it.
+/// As Douse rains on the grey pillar on the south walkway, water splashes on
+/// its top.
 static void TunnelRuins_DouseStartsOnSoutheastPillar(void) {
   Actor_SetScript(ACTOR_SOUTHEAST_SINKING_PILLAR,
                   gTunnelRuins_DouseSplashScript);
 }
 
-/// Douse soaks the south-east sinking pillar, which sinks at once if it is
-/// already in its column.
+/// Douse fills the grey pillar on the south walkway with water, and it sinks
+/// at once if it already stands on its crest.
 static void TunnelRuins_DouseSoutheastPillar(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_02);
   TunnelRuins_SinkSoutheastPillar();
 }
 
-/// Frost on the south-east pillar's hidden target raises a pillar of ice.
+/// Frost on the water of the sunken pillar on the south walkway raises a
+/// pillar of ice from it.
 static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
   Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                      PUDDLE_ANIMATION_PUDDLE);
@@ -775,9 +915,15 @@ static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
-/// Searching the statue in TunnelRuinsGreatStatue's first room has it speak to
-/// the leader's soul.
-static void TunnelRuins_ReadFirstStatue(void) {
+/// Searching the giant pink statue in the first room of the Tunnel Ruins, from
+/// cell (12, 7) before it: "The statue speaks to Isaac's soul..." It bids
+/// those who seek to climb Venus Lighthouse to "seek the lady's leave", and
+/// says the lady will keep safe at her feet the place they seek.
+///
+/// Once the great statue in Venus Lighthouse has opened a path, it says
+/// instead that the lady knows their desires: "Here, your path shall not be
+/// opened."
+static void TunnelRuins_SearchGiantStatue(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
@@ -789,14 +935,16 @@ static void TunnelRuins_ReadFirstStatue(void) {
   Event_End();
 }
 
-/// Nothing more happens when the Douse pillar is moved, until its Frost target
-/// is frozen.
+/// Nothing more happens when Move pushes the grey pillar in the Douse pillar's
+/// room: the push is all there is. The row that runs it stops once the pillar
+/// of ice stands below it.
 static void TunnelRuins_MoveDousePillar(void) {
   Event_Start();
   Event_End();
 }
 
-/// Walking into the Douse pillar pushes it along.
+/// Walking into the grey pillar in the Douse pillar's room pushes it a cell,
+/// across its floor (cells (23, 10) to (27, 13)).
 static void TunnelRuins_PushDousePillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -804,8 +952,11 @@ static void TunnelRuins_PushDousePillar(void) {
   TunnelRuins_MoveDousePillar();
 }
 
-/// As Douse begins on the pillar, water splashes on it and it is soaked. Its
-/// Frost target follows it from then on.
+/// Douse on the grey pillar in the Douse pillar's room fills it with water,
+/// which splashes on its top as the rain falls.
+///
+/// From then on its hidden Frost target follows it
+/// (TunnelRuins_FrostTargetFollowsPillar).
 static void TunnelRuins_DouseStartsOnPillar(void) {
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
@@ -813,7 +964,12 @@ static void TunnelRuins_DouseStartsOnPillar(void) {
       (void (*)(struct Actor *))TunnelRuins_FrostTargetFollowsPillar;
 }
 
-/// Frost on the pillar's hidden target raises a pillar of ice where it stands.
+/// Frost on the soaked grey pillar in the Douse pillar's room, once it stands
+/// in map row 10, raises a pillar of ice 32 pixels below it, a square Isaac
+/// can hop onto: the walkthrough's way on to the next room.
+///
+/// XXX: a recording of Frost cast with the pillar soaked in row 10 would show
+/// where on screen the ice stands.
 static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   s32 column;
   s32 row;
@@ -841,8 +997,8 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   Event_End();
 }
 
-/// A carved stone set on the balance rides 16 pixels above what it rests on,
-/// whose actor its timer holds.
+/// A carved stone set on the balance rides up and down with the platform or
+/// stone it rests on, 16 pixels above it. Its timer holds that actor.
 static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
   struct Actor *supportingActor = Actor_Get(supportedActor->timer);
 
@@ -852,6 +1008,10 @@ static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
 
 /// The balance platforms move to the heights their weights give them (their
 /// timers index gTunnelRuins_BalanceHeights), with sounds unless frames is 0.
+///
+/// A platform, or the top stone on one, that comes to rest just below the
+/// floor's height becomes a square Isaac can step onto and leap from, east or
+/// west (CELL_BEHAVIOR_TUNNEL_RUINS_RISEN_PLATFORM).
 static void TunnelRuins_SettleBalance(s32 frames) {
   u32 i;
 
@@ -930,8 +1090,18 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
   Event_Wait(30);
 }
 
-/// Setting down a carved stone with Carry loses it in a pit or sets it on the
-/// balance.
+/// Carry on one of the three carved stones north of the balance lifts it, and
+/// where Isaac sets it down decides what happens.
+///
+/// Set down over one of the balance's two white platforms (map row 9), the
+/// camera turns to the balance, the stone drops onto the platform or onto the
+/// stone already there with a thud and a ring of dust, and that platform sinks
+/// a step while the other rises. The walkthrough puts two stones on the east
+/// platform, so that the west one rises. Set down where it falls below the
+/// floor, the stone drops out of sight and is gone for this visit.
+///
+/// The stones look alike, so the code swaps the one set down with the first
+/// stone not yet set, and the stones are always counted set from the first.
 static void TunnelRuins_SetStoneOnBalance(void) {
   struct Actor savedPosition;
   s32 i;
@@ -1014,20 +1184,23 @@ static void TunnelRuins_SetStoneOnBalance(void) {
   Event_End();
 }
 
-/// Walking into a pushable object pushes it along.
+/// Walking into one of the three carved stones north of the balance pushes
+/// it a cell.
 static void TunnelRuins_PushActor(void) {
   Event_Start();
   PushedActor_AdvancePair();
   Event_End();
 }
 
-/// The columns the east pillars stand in once each is pushed a cell west of its
-/// place.
+/// The map columns Babi Lighthouse's two grey pillars stand in once each is
+/// pushed a cell west of its place.
 #define EAST_PILLAR_A_PUSHED_COLUMN 45
 #define EAST_PILLAR_B_PUSHED_COLUMN 46
 
-/// Moving either east pillar keeps, for the next visit, whether each stands a
-/// cell west of its place.
+/// Nothing visible happens after Move shifts one of the two grey pillars in
+/// Babi Lighthouse's basement: the game remembers whether each now stands a
+/// cell west of its place, so that the pillars stay where Isaac left them
+/// when he comes back.
 static void TunnelRuins_MoveEastPillar(void) {
   Event_Start();
 
@@ -1049,7 +1222,8 @@ static void TunnelRuins_MoveEastPillar(void) {
   Event_End();
 }
 
-/// Walking into an east pillar pushes it along, and its place is kept.
+/// Walking east into one of the two grey pillars in Babi Lighthouse's
+/// basement pushes it a cell, and the game remembers where it stands.
 static void TunnelRuins_PushEastPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -1057,9 +1231,13 @@ static void TunnelRuins_PushEastPillar(void) {
   Event_End();
 }
 
-/// The two vanishing statues stand, blocking their cells, and the chests on
-/// those cells are put away at the map's origin. They do so on entering their
-/// rooms and as Reveal's light fades.
+/// The two white statues stand over the chests of the Oracle's Robe and the
+/// Asura's Armor, in the rooms at the ends of the two routes, and the chests
+/// are hidden. So it is on entering either room, and again as Reveal's light
+/// fades: a chest can be opened only while Reveal lasts.
+///
+/// The statues block their cells, and the chests are put away at the map's
+/// corner.
 static void TunnelRuins_ShowVanishingStatues(void) {
   MapGrid_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(113, 43, 1, 1, 49, 43);
@@ -1069,8 +1247,9 @@ static void TunnelRuins_ShowVanishingStatues(void) {
   Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, 792, 696);
 }
 
-/// Reveal makes the two vanishing statues go, and shows the chest each one
-/// stood on, back in its own cell.
+/// Reveal makes the white statue in the room vanish, and the chest it stood
+/// on appears: the Oracle's Robe at cell (8, 49) in the west room, the Asura's
+/// Armor at cell (49, 43) in the east one.
 static void TunnelRuins_HideVanishingStatues(void) {
   MapGrid_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   MapGrid_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1080,9 +1259,9 @@ static void TunnelRuins_HideVanishingStatues(void) {
   Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, 0, 0);
 }
 
-/// The five marks before the door the statues must stand on: the corners and
-/// middle of a square of cells. Each corner statue belongs on the opposite
-/// corner, and the south statue in the middle.
+/// The five marks the statues must stand on, west of the door: the corners
+/// and middle of the square of cells (23, 47) to (25, 49). Each corner statue
+/// belongs on the opposite corner, and the gold statue in the middle.
 enum {
   MARKS_WEST_COLUMN = 23,
   MARKS_MIDDLE_COLUMN,
@@ -1092,8 +1271,14 @@ enum {
   MARKS_SOUTH_ROW
 };
 
-/// Moving one of the five coloured statues in TunnelRuinsLadyStatues opens the
-/// door once all five are on their marks.
+/// After Move shifts one of the five coloured statues of a woman, the door in
+/// the room's east wall (cell (32, 47)) opens once all five stand on their
+/// marks: red north-west, blue north-east, gold in the middle, green
+/// south-west and violet south-east.
+///
+/// The camera slides over to the door and it opens with the door sound; it
+/// shuts again the same way if a statue is moved off its mark afterwards.
+/// Otherwise nothing visible happens.
 static void TunnelRuins_MoveLadyStatue(void) {
   s32 correctPositions;
 
@@ -1183,8 +1368,8 @@ static void TunnelRuins_MoveLadyStatue(void) {
   Event_End();
 }
 
-/// Walking into one of the five coloured statues pushes it along, then checks
-/// the door.
+/// Walking into one of the five coloured statues pushes it a cell, and the
+/// door opens or shuts as moving it with Move would make it.
 static void TunnelRuins_PushLadyStatue(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
@@ -1193,16 +1378,17 @@ static void TunnelRuins_PushLadyStatue(void) {
   Event_End();
 }
 
-/// Searching the statue in TunnelRuinsLadyStatues's room of the five coloured
-/// statues. "The statue seems to speak to your soul..."
-static void TunnelRuins_ReadSecondStatue(void) {
+/// Searching any of the five coloured statues of a woman: "The statue seems
+/// to speak to your soul..." Mind Read then hears where each colour belongs.
+static void TunnelRuins_SearchLadyStatue(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   Event_End();
 }
 
-/// Searching the door in TunnelRuinsLadyStatues finds it tightly locked.
+/// Searching the door in the east wall of the five statues' room, while it is
+/// shut, finds it tightly locked.
 static void TunnelRuins_SearchLockedDoor(void) {
   Event_Start();
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
@@ -1218,8 +1404,13 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gTunnelRuinsTriggersOther;
 }
 
-/// After the first pillars move, redraws their room's cells and marks the cells
-/// the pillars stand on.
+/// Nothing visible happens after Move shifts one of the two gold-topped pillars
+/// in the room south of the giant statue. The game resets their floor and
+/// makes each pillar's top a hop square, so that Isaac can leap onto it.
+///
+/// It also runs after a push and on entering the room. The floor's own
+/// behaviours are kept in a spare copy at cells (73, 38) to (77, 43); the hop
+/// square is copied from cell (2, 36).
 static void TunnelRuins_UpdateFirstPillarCells(void) {
   s32 row;
   s32 columnA;
@@ -1237,7 +1428,10 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
   MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
-/// After the second pillars move, does the same for their room.
+/// Nothing visible happens after Move shifts one of the second pair of
+/// gold-topped pillars. As for the first pair, the game resets their floor
+/// (kept at cells (92, 30) to (98, 34)) and makes each pillar's top a hop
+/// square.
 static void TunnelRuins_UpdateSecondPillarCells(void) {
   s32 row;
   s32 columnA;
@@ -1255,8 +1449,9 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   MapGrid_CopyCellAttributes(2, 36, 1, 1, columnB, row);
 }
 
-/// After the small pillars move, redraws their room's cells and marks the cells
-/// they stand on.
+/// Nothing visible happens after Move shifts one of the three small pillars.
+/// The game resets their floor (kept at cells (89, 49) to (96, 56)) and makes
+/// each pillar's top a square Isaac can leap from in any direction.
 static void TunnelRuins_UpdateSmallPillarCells(void) {
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   MapGrid_CopyCellAttributes(89, 51, 8, 5, 25, 51);
@@ -1272,7 +1467,8 @@ static void TunnelRuins_UpdateSmallPillarCells(void) {
       FIELD_CELL(Actor_Get(ACTOR_SMALL_PILLAR_C)->z.fixed));
 }
 
-/// Redraws the east pillars' row and marks the cells they stand on.
+/// Resets the row of Babi Lighthouse's two grey pillars (kept at cells (108,
+/// 19) to (111, 19)) and makes each pillar's cell a wall.
 static void TunnelRuins_MarkPushPillarCells(void) {
   MapGrid_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   PushedActor_FillGridAttributeRectangle(
@@ -1302,9 +1498,9 @@ s32 Scene_Initialize(void) {
     switch (gMainRoutineWork.entrance) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
-      // The round floor lamps before the purple pillar, with the path the
-      // great statue has opened lit: gold lines join the lamps along the
-      // first path's route, or along the second's, as
+      // The round floor lamps before the model of the lighthouse, with the
+      // path the great statue in Venus Lighthouse has opened lit: gold lines
+      // join the lamps along the first path's route, or along the second's, as
       // VenusLighthouse_DrawFirstPath and _DrawSecondPath light them in the
       // statue's own room. With neither flag the lamps stay dark.
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
@@ -1904,7 +2100,7 @@ struct ActorPlacement gTunnelRuinsGreatStatueActorPlacements[] = {
                     FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, 0, MOVEMENT_TYPE_STAND, 728, 0, 184,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    // A model of Venus Lighthouse on the floor before the Great Statue: the
+    // A model of Venus Lighthouse on the floor before the giant statue: the
     // World Map's tower, at three fifths of its size, with no collision
     // and no shadow.
     ACTOR_PLACEMENT(SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, 0,
@@ -1972,50 +2168,50 @@ struct Trigger gTunnelRuinsGreatStatueTriggers[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_COLUMNS_SOUTH_TO_SINKING_PILLARS},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHWEST},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, TUNNEL_RUINS_GREAT_STATUE_TO_TUNNEL_RUINS_LADY_STATUES_SOUTHEAST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 23, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 23, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_FIRST_PILLARS_LEDGE, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_FIRST_PILLARS_LEDGE, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopWest)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, CONDITION_ALWAYS, EVENT(TunnelRuins_PushFirstPillars)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_FIRST_PILLARS_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_PushFirstPillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLARS_STEP, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopDownStep)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 26, CONDITION_ALWAYS, EVENT(TunnelRuins_PushSecondPillars)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_SECOND_PILLARS_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_PushSecondPillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_SECOND_PILLARS_LEDGE, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_SECOND_PILLARS_LEDGE, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLAR_TOP, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopWestBySmallPillars)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLAR_TOP, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLAR_TOP, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopNorthBySmallPillars)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLAR_TOP, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(TunnelRuins_HopSouthOrPushSmallPillars)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT(TunnelRuins_PushSmallPillars)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 29, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_PushNorthwestSinkingPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 29, FLAG_SCENE_TEMP_00,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLARS_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_HopSouthOrPushSmallPillars)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_SMALL_PILLARS_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_PushSmallPillars)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_PushNorthwestSinkingPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY, FLAG_SCENE_TEMP_00,
         EVENT(TunnelRuins_HopEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 29, FLAG_SCENE_TEMP_00,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY, FLAG_SCENE_TEMP_00,
         EVENT(TunnelRuins_HopSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 29, FLAG_SCENE_TEMP_00,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY, FLAG_SCENE_TEMP_00,
         EVENT(TunnelRuins_HopNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, FLAG_SCENE_TEMP_00,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY_END, FLAG_SCENE_TEMP_00,
         EVENT(TunnelRuins_HopWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_NORTH_WALKWAY_END, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopEast)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_PushSoutheastSinkingPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, FLAG_SCENE_TEMP_01,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_PushSoutheastSinkingPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY, FLAG_SCENE_TEMP_01,
         EVENT(TunnelRuins_HopWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, FLAG_SCENE_TEMP_01,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY, FLAG_SCENE_TEMP_01,
         EVENT(TunnelRuins_HopSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 30, FLAG_SCENE_TEMP_01,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY, FLAG_SCENE_TEMP_01,
         EVENT(TunnelRuins_HopNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_PushSoutheastSinkingPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32, FLAG_SCENE_TEMP_01,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY_END, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_PushSoutheastSinkingPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY_END, FLAG_SCENE_TEMP_01,
         EVENT(TunnelRuins_HopEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_SOUTH_WALKWAY_END, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopWest)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 40, CONDITION_ALWAYS, EVENT(TunnelRuins_ReadFirstStatue)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TUNNEL_RUINS_GIANT_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_SearchGiantStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR_A, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateFirstPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR_B, CONDITION_ALWAYS, EVENT(TunnelRuins_UpdateFirstPillarCells)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR_A, CONDITION_ALWAYS,
@@ -2052,26 +2248,26 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_FIVE_STATUES_EAST},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 14, CONDITION_ALWAYS, TUNNEL_RUINS_LADY_STATUES_TO_VENUS_LIGHTHOUSE_FIRST_FLOOR},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 25, CONDITION_ALWAYS, EVENT(TunnelRuins_PushDousePillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 26, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_PushDousePillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_LEDGE, CONDITION_ALWAYS, EVENT(TunnelRuins_JumpDownLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_LEDGE, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_DOUSE_PILLAR_STEP, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopDownStep)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT(TunnelRuins_PushActor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_CARVED_STONES_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_PushActor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_RISEN_PLATFORM, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TUNNEL_RUINS_RISEN_PLATFORM, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopWest)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT(TunnelRuins_PushActor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 29, CONDITION_ALWAYS, EVENT(TunnelRuins_PushEastPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 29, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_RISEN_PLATFORM, CONDITION_ALWAYS, EVENT(TunnelRuins_PushActor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_TUNNEL_RUINS_GREY_PILLARS_ROW, CONDITION_ALWAYS, EVENT(TunnelRuins_PushEastPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_TUNNEL_RUINS_GREY_PILLARS_ROW, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 29, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_TUNNEL_RUINS_GREY_PILLARS_ROW, CONDITION_ALWAYS,
         EVENT(TunnelRuins_HopNorth)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 41, CONDITION_ALWAYS, EVENT(TunnelRuins_PushLadyStatue)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(TunnelRuins_SearchLockedDoor)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(TunnelRuins_ReadSecondStatue)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_TUNNEL_RUINS_LADY_STATUES_FLOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_PushLadyStatue)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TUNNEL_RUINS_STATUE_DOOR, CONDITION_ALWAYS, EVENT(TunnelRuins_SearchLockedDoor)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TUNNEL_RUINS_LADY_STATUE, CONDITION_ALWAYS, EVENT(TunnelRuins_SearchLadyStatue)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_ORACLES_ROBE, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_ASURAS_ARMOR, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN, EVENT(TunnelRuins_MoveDousePillar)},

@@ -1,38 +1,52 @@
 /// @file
-/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes, is
-/// out on Tret's branches under open sky (places/tret-tree-branch/map-0.png).
+/// Tret Tree's branches (SceneId_TretTreeBranch): the outside of Tret, the holy
+/// tree of Kolima Forest, high up under open sky, with clouds drifting past
+/// above and the green of the forest far below
+/// (places/tret-tree-branch/map-0.png). Isaac climbs Tret from the inside
+/// (SceneId_TreeRooms, tree_rooms.c), where the story is told; out here there
+/// is no story event, and nothing tests a story flag.
 ///
-/// The branches lie between the rooms of SceneId_TreeRooms (tree_rooms.c),
-/// where the story is told. This scene has no story event and tests no story
-/// flag.
+/// Arched doors in Tret's trunk lead out onto the branches, two from each of
+/// the second to fifth floors. Walking into one goes back inside:
+/// - the second floor's west door (cell (20, 26)) opens onto a branch that
+///   leads nowhere, and its east door (cell (26, 27)) onto the branch below
+///   the southeast vine;
+/// - the third floor's south door (cell (23, 22)) opens onto a branch that
+///   runs west, and its east door (cell (26, 20)) onto the branch above the
+///   southeast vine;
+/// - the fourth floor's south door (cell (23, 16)) opens onto the branch below
+///   the northeast vine, and its west door (cell (20, 15)) onto the branch
+///   below the west vine;
+/// - the fifth floor's west door (cell (20, 9)) opens onto the branch above the
+///   west vine, and its east door (cell (26, 8)) onto the branch above the
+///   northeast vine.
 ///
-/// Its eight exits lead back into SceneId_TreeRooms. They are
-/// TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and the seven after it.
-/// Walking into one for two frames (STEP_TRIGGER_FLAG_QUICK) plays the exit
-/// sound and leaves at once. The cells' cell behaviors are the exits' own
-/// numbers.
+/// So the way up Tret goes out of the second floor's east door, up the
+/// southeast vine and in at the third floor's east door; then out of the
+/// fourth floor's south door, east and up the northeast vine to the fifth
+/// floor's east door, where the Nut's chest is; and out of the fourth floor's
+/// west door, along the branch and up the west vine to the fifth floor's west
+/// door, which leads to the leaf that drops Isaac to Tret.
 ///
-/// Vines hang from one branch to the one below. Step triggers on cell behaviors
-/// 10 to 15 lie in pairs at the top and bottom of the vines. In
-/// tret_tree_branch's map.txt these are cells (7, 12) and (8, 17), (37, 11) and
-/// (36, 16), (41, 20) and (40, 26). Each trigger moves the leader and the
-/// camera five or six cells north or south in one step, up or down its vine,
-/// with no walk. Each vine has cell behaviors of its own, so 12 and 13 repeat
-/// 10's and 11's events for the second vine.
+/// Breeze, a Jupiter Djinni, waits at the east end of the highest branch, above
+/// the fifth floor's east door, until it has joined the party.
 ///
-/// Breeze, a Jupiter Djinni, stands here until it has joined the party. Its own
-/// flag (FLAG_DJINNI(DJINNI_BREEZE)) removes its actor placement. Talking to it
-/// starts a battle with it.
+/// The three vines climb like any vine: Isaac stands on the vine and holds Up
+/// or Down. Nothing visible happens at the vines' tops, but the game has work
+/// to do there. The stretch of upper branch at each vine's top is stored twice
+/// in the map: once as the branch Isaac walks on, and once as a hidden copy, 5
+/// or 6 cells further south and as much higher, so that both are drawn on the
+/// same pixels. Only the hidden copy joins the vine. One cell beside each vine
+/// moves Isaac onto the copy, and one on the copy moves him back
+/// (TretTreeBranch_JoinWestVine and the others).
 ///
-/// The setup opens the map with a backdrop fade and blends BG1 over the rest of
-/// the screen. It also splits BG3's scroll at a scanline, BG3_SPLIT_Y less the
-/// ground layer's vertical scroll (TretTreeBranch_UpdateBg3ScrollSplit).
+/// Leaves hang in front of the branches, so the scene keeps an oval round Isaac
+/// in which they are see-through, from when he steps out until he goes back
+/// in. Reveal's own ripple takes its place while Reveal lasts, and the scene
+/// puts it back afterwards.
 ///
-/// BG3 follows the map's horizontal scroll on both sides of the split. Above
-/// the split its offset also falls by one every four frames. So the clouds
-/// there drift right, while the band below moves only with the map.
-///
-/// Casting Reveal sets the blend and the window again as at entry.
+/// The clouds above the forest drift slowly right while the forest below moves
+/// only with the map (TretTreeBranch_UpdateBg3ScrollSplit).
 ///
 /// The overlay also keeps three unused hooks and a link-cable input exchange no
 /// table reaches.
@@ -70,21 +84,39 @@ extern struct Trigger gTretTreeBranch_Triggers[];
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.
 enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED };
 
-/// Starts the scanline-dependent BG3 scroll tasks.
+/// The cells at the vines' tops that move Isaac between the branch he walks on
+/// and the hidden copy of it that joins the vine. A door's cells carry its exit
+/// number (TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST and the others).
+enum TretTreeBranchCellBehavior {
+  /// Beside the west vine's top, on the branch Isaac walks on: cell (7, 12).
+  CELL_BEHAVIOR_TRET_JOIN_WEST_VINE = 10,
+  /// On the hidden copy, east of the west vine's top: cell (8, 17).
+  CELL_BEHAVIOR_TRET_LEAVE_WEST_VINE = 11,
+  /// Above the northeast vine's top, on the branch: cell (37, 11).
+  CELL_BEHAVIOR_TRET_JOIN_NORTHEAST_VINE = 12,
+  /// On the hidden copy, west of the northeast vine's top: cell (36, 16).
+  CELL_BEHAVIOR_TRET_LEAVE_NORTHEAST_VINE = 13,
+  /// West of the southeast vine's top, on the branch: cell (41, 20).
+  CELL_BEHAVIOR_TRET_JOIN_SOUTHEAST_VINE = 14,
+  /// On the hidden copy, west of the southeast vine's top: cell (40, 26).
+  CELL_BEHAVIOR_TRET_LEAVE_SOUTHEAST_VINE = 15,
+};
+
+/// Starts the clouds drifting above the forest.
 static void TretTreeBranch_StartBg3Split(void);
 
 static u16 sTransferHeader[16] ALIGNED(16);
 static u8 sTransferData[96];
-/// The map height at which BG3's scroll splits, the clouds above and the band
-/// below.
+/// The map height at which the background splits: the clouds drift above it,
+/// and the forest far below lies under it.
 #define BG3_SPLIT_Y 192
 
 static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;
 
-/// Talking to Breeze in Tret Tree makes the Djinni hop and starts the battle
-/// with it.
+/// Talking to Breeze, the Jupiter Djinni at the east end of Tret's highest
+/// branch, makes it hop and starts the battle with it.
 static void TretTreeBranch_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
@@ -101,8 +133,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTretTreeBranch_ActorPlacements;
 }
 
-/// Moves the leader and camera by signed 16-pixel cell offsets, placing each
-/// at the ground height of its destination.
+/// Moves the leader and the camera the same number of cells, each set on the
+/// ground of the cell it lands on. Between a branch and its hidden copy the
+/// cells south are as much higher, so the picture does not change.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
   struct FieldWork *work = gFieldWork;
@@ -136,44 +169,64 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-/// Touching cell behavior 10 in Tret Tree moves the leader and camera 80 pixels
-/// south at once.
-static void TretTreeBranch_GoDownWestVine(void) {
+/// Nothing visible happens when Isaac walks over the upper branch next to the
+/// top of the west vine (cell (7, 12)), the branch that leads to the fifth
+/// floor's west door. The game quietly moves him 5 cells south onto a hidden
+/// copy of the branch, drawn in the same place, that joins the vine, so that
+/// holding Down at the vine climbs him down it.
+static void TretTreeBranch_JoinWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touching cell behavior 11 in Tret Tree moves the leader and camera 80 pixels
-/// north at once.
-static void TretTreeBranch_GoUpWestVine(void) {
+/// Nothing visible happens when Isaac, having climbed up the west vine, walks
+/// east along the upper branch (cell (8, 17)). The game quietly moves him from
+/// the hidden copy of the branch back onto the one drawn in the same place, 5
+/// cells north, which leads to the fifth floor's west door.
+static void TretTreeBranch_LeaveWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touching cell behavior 12 in Tret Tree makes the same 80-pixel move south as
-/// cell behavior 10.
-static void TretTreeBranch_GoDownNortheastVine(void) {
+/// Nothing visible happens when Isaac walks along the upper branch onto the top
+/// of the northeast vine (cell (37, 11)), on the branch that leads to the fifth
+/// floor's east door. The game quietly moves him 5 cells south onto a hidden
+/// copy of the branch, drawn in the same place, whose cell is the vine's top,
+/// so that holding Down climbs him down it.
+static void TretTreeBranch_JoinNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touching cell behavior 13 in Tret Tree makes the same 80-pixel move north as
-/// cell behavior 11.
-static void TretTreeBranch_GoUpNortheastVine(void) {
+/// Nothing visible happens when Isaac, having climbed up the northeast vine,
+/// walks west off its top (cell (36, 16)). The game quietly moves him from the
+/// hidden copy of the branch back onto the one drawn in the same place, 5
+/// cells north, which leads to the fifth floor's east door and to Breeze.
+static void TretTreeBranch_LeaveNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touching cell behavior 14 in Tret Tree moves the leader and camera 96 pixels
-/// south at once.
-static void TretTreeBranch_GoDownSoutheastVine(void) {
+/// Nothing visible happens when Isaac walks east along the branch from the
+/// third floor's east door to the top of the southeast vine (cell (41, 20)).
+/// The game quietly moves him 6 cells south onto a hidden copy of the branch,
+/// drawn in the same place, that joins the vine, so that holding Down at the
+/// vine climbs him down it to the second floor's east door.
+static void TretTreeBranch_JoinSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-/// Touching cell behavior 15 in Tret Tree moves the leader and camera 96 pixels
-/// north at once.
-static void TretTreeBranch_GoUpSoutheastVine(void) {
+/// Nothing visible happens when Isaac, having climbed up the southeast vine,
+/// walks west along the branch towards the third floor's east door (cell (40,
+/// 26)). The game quietly moves him from the hidden copy of the branch back
+/// onto the one drawn in the same place, 6 cells north.
+static void TretTreeBranch_LeaveSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-/// Walking into one of the eight exits in Tret Tree plays the exit sound and
-/// leaves by the exit touched.
+/// Isaac walks into one of the arched doors in Tret's trunk, such as the second
+/// floor's west door at the end of the lowest branch (cell (20, 26)), and goes
+/// back inside Tret Tree to the floor that door belongs to.
+///
+/// A moment's push against the doorway is enough (STEP_TRIGGER_FLAG_QUICK).
+/// The exit sound plays, and the door's cell carries its own exit number,
+/// which the step trigger hands on as the exit to take.
 static void TretTreeBranch_EnterTretTreeRooms(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -181,14 +234,16 @@ static void TretTreeBranch_EnterTretTreeRooms(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// Reveal's window round the leader (WINDOW_TRANSITION_LEADER): inside it
-/// everything shows with BG1's blend, and outside it every layer shows without
-/// the colour effect. REVEAL_WINDOW_STEPS is how far it is open.
+/// The oval round Isaac (WINDOW_TRANSITION_LEADER) in which the leaves in front
+/// of the branches are see-through: inside it BG1, the leaves, is blended over
+/// the rest, and outside it every layer shows without the colour effect.
+/// REVEAL_WINDOW_STEPS is how far it is open.
 #define REVEAL_WININ (WININ_WIN0_ALL | WININ_WIN1_ALL)
 #define REVEAL_WINOUT (WINOUT_WIN01_ALL & ~WINOUT_WIN01_CLR)
 #define REVEAL_WINDOW_STEPS 10
 
-/// Selects the same window for Reveal and scene entry.
+/// Opens the see-through oval round Isaac, as the scene starts and again after
+/// Reveal.
 static inline void
 TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
   state->mask = REVEAL_WININ;
@@ -196,10 +251,14 @@ TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
   state->value = REVEAL_WINDOW_STEPS;
 }
 
-/// Casting Reveal in Tret Tree sets the window transition and BG1's blend over
-/// the rest of the screen again, as when the map opened.
+/// When Reveal wears off on Tret's branches, the leaves round Isaac turn
+/// see-through again, as they were before he cast it.
+///
+/// Reveal draws its own rippling oval in place of the scene's, so this puts
+/// back the scene's oval (WINDOW_TRANSITION_LEADER) and the leaves' blend as
+/// Scene_Initialize set them.
 static void TretTreeBranch_CastReveal(void) {
-  ScreenTransition_StartHeldWindow(9);
+  ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
@@ -207,7 +266,8 @@ static void TretTreeBranch_CastReveal(void) {
   TretTreeBranch_SetRevealWindow(gScreenTransitionWork);
 }
 
-/// Returns the scene's exit, coord, talk and Reveal events.
+/// Returns the scene's events: its eight doors, the six cells at the vines'
+/// tops, Breeze and Reveal.
 const struct Trigger *Scene_GetTriggers(void) {
   return gTretTreeBranch_Triggers;
 }
@@ -233,14 +293,14 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
   Serial_PollAndTransfer(header, sTransferData);
 }
 
-/// Initializes the backdrop transition and installs BG3's line scroll
-/// split. Returns 0 for the overlay initialization entry point.
+/// Opens Tret's branches with a backdrop fade, opens the see-through oval in
+/// the leaves round Isaac and starts the clouds drifting. Returns 0.
 s32 Scene_Initialize(void) {
   struct ScreenTransitionState *state;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-  ScreenTransition_StartHeldWindow(9);
+  ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
@@ -252,7 +312,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// HBlank selects BG3's horizontal offset for the next scanline.
+/// At each scanline, picks the background's horizontal scroll: the drifting
+/// clouds' above the split, the map's below it.
 static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
   u16 *scrollOffset;
   u32 horizontalScroll;
@@ -266,8 +327,9 @@ static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
   REG_BG3HOFS = horizontalScroll;
 }
 
-/// Updates the split from the pixel position of the map grid's first layer.
-/// Before the split, scroll subtracts one pixel for every four elapsed frames.
+/// Each frame, moves the split with the map's vertical scroll, so that it stays
+/// at BG3_SPLIT_Y on the map. The clouds above it lag the map by one more pixel
+/// every four frames, so they drift slowly right.
 static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   struct MapGridLayerScroll *layer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -279,8 +341,8 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   sHofsBeforeSplit = horizontalOffset - (gFrameCount >> 2);
 }
 
-/// Runs the BG3 scroll selection at every HBlank, updating the split each
-/// frame.
+/// Starts the clouds drifting: the split is chosen at every scanline and moved
+/// every frame.
 static void TretTreeBranch_StartBg3Split(void) {
   Irq_SetHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
   Task_AddFrame(TretTreeBranch_UpdateBg3ScrollSplit, TASK_PASS_FRAME);
@@ -338,32 +400,42 @@ struct ActorPlacement gTretTreeBranch_ActorPlacements[] = {
 // clang-format on
 
 struct Trigger gTretTreeBranch_Triggers[] = {
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTH, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 6, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTHWEST, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 7, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHWEST, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 8, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK,
+     TRET_TREE_BRANCH_TO_TREE_ROOMS_NORTH_NORTHEAST, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_EnterTretTreeRooms)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TretTreeBranch_GoDownWestVine)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TretTreeBranch_GoUpWestVine)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
-     EVENT(TretTreeBranch_GoDownNortheastVine)},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS,
-     EVENT(TretTreeBranch_GoUpNortheastVine)},
-    {TRIGGER_STEP, 14, CONDITION_ALWAYS,
-     EVENT(TretTreeBranch_GoDownSoutheastVine)},
-    {TRIGGER_STEP, 15, CONDITION_ALWAYS,
-     EVENT(TretTreeBranch_GoUpSoutheastVine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRET_JOIN_WEST_VINE, CONDITION_ALWAYS,
+     EVENT(TretTreeBranch_JoinWestVine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRET_LEAVE_WEST_VINE, CONDITION_ALWAYS,
+     EVENT(TretTreeBranch_LeaveWestVine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRET_JOIN_NORTHEAST_VINE, CONDITION_ALWAYS,
+     EVENT(TretTreeBranch_JoinNortheastVine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRET_LEAVE_NORTHEAST_VINE, CONDITION_ALWAYS,
+     EVENT(TretTreeBranch_LeaveNortheastVine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRET_JOIN_SOUTHEAST_VINE, CONDITION_ALWAYS,
+     EVENT(TretTreeBranch_JoinSoutheastVine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRET_LEAVE_SOUTHEAST_VINE, CONDITION_ALWAYS,
+     EVENT(TretTreeBranch_LeaveSoutheastVine)},
     {TRIGGER_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_TalkToBreeze)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,

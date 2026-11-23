@@ -4,36 +4,39 @@
 ///
 /// Its code does three kinds of work.
 ///
-/// It lets the party into the areas. Each area stands on the map as an actor
-/// drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE, _CAVE, _DOCK and
-/// the rest), turned with the map (WorldMap_AlignToMap).
+/// It lets the party into the areas. Each town, cave, dock and passage stands
+/// on the map as a small picture of its kind (a village, a cave mouth, a pier
+/// and the rest), turned as the map turns, and walking into the picture enters
+/// the place. A few ways in are stretches of ground instead, such as the
+/// deserts' edges and the paths up to Venus Lighthouse.
 ///
-/// WorldMap_UpdateAreaContacts runs every frame. It hides the actors outside
-/// a box around the view and raises the STEP_TRIGGER_AREA of the one the
-/// leader touches. The trigger table turns that into the area's exit. A few
-/// ways in are cells instead, each carrying the number of its exit.
+/// WorldMap_UpdateAreaContacts runs every frame. It shows only the pictures
+/// near the view and, when the leader touches one, raises that area's
+/// STEP_TRIGGER_AREA, which the trigger table turns into the area's exit.
 ///
-/// Five areas have two ways in, and their events choose the exit by the side
-/// the leader comes from. For the Bilibin Barricade that is the west or the
-/// east. For Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero it is
-/// the north or the south.
+/// Five areas have two ways in, and the party comes in by the side it walks up
+/// from: the Bilibin Barricade from the west or the east, and Kolima Bridge,
+/// Kalay Docks, Gondowan Passage and Lalivero from the north or the south.
 ///
-/// Kolima Bridge's actor shows the drawbridge let down once
-/// FLAG_KOLIMA_BRIDGE_LOWERED is set.
+/// Kolima Bridge's picture shows the drawbridge let down once it has been
+/// lowered (FLAG_KOLIMA_BRIDGE_LOWERED).
 ///
-/// It holds what the party meets on the map itself. Vine, Corona and Hail, a
-/// Venus, a Mars and a Mercury Djinni, stand on the map. Talked to or walked
-/// near, they fight once a random battle is nearly due.
+/// It holds what the party meets on the map itself. Flint, the first Djinni,
+/// is a small spark circling a spot just outside Vale. Three more wait unseen:
+/// Vine on a small island north-west of the Lamakan Desert's way out, Corona
+/// on a lone island far north of Xian, and Hail in the fields far west of
+/// Tolbi. Walking over their ground once a random battle is nearly due may
+/// bring the Djinni's battle instead.
 ///
-/// A whirlwind spins near Crossbone Isle (ACTOR_STORM). It is put away while
-/// the Tolbi-bound Ship lies at anchor off the island. Walked into, it lifts
-/// the party into the air for STORM_FRAMES_IN_AIR frames, as the Suhalla
-/// Desert's storms do. Douse on it brings the party down into a battle. When
-/// the time runs out it drops the party outside Suhalla
-/// (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING).
+/// A whirlwind spins near Crossbone Isle (ACTOR_STORM), where the red storm in
+/// Suhalla Desert drops a party it carries off. It is put away while the
+/// Tolbi-bound Ship lies at anchor off the island. Walked into, it lifts the
+/// party into the air for three seconds, as Suhalla Desert's storms do. Douse
+/// on it brings the party down to fight the Tempest Lizard inside. If the time
+/// runs out it carries the party off and drops them outside Suhalla.
 ///
-/// The Turtle Boots are buried in the ground
-/// (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
+/// The Turtle Boots are buried past the Bilibin Barricade, in the forest at the
+/// end of a long, narrow island, and are found by checking the ground there.
 ///
 /// And it plays the story's moments on the map, each run by Scene_Initialize
 /// for the entrance another scene sends the party to. In story order:
@@ -69,9 +72,9 @@
 /// - The Black Orb. Out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
 ///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use on
 ///   it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA). He
-///   calls him back if he walks into the cave again. Used on the wreck
-///   (CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK) the orb does nothing. Iodem takes it
-///   back and the party must go on to Babi Lighthouse
+///   calls him back if he walks into the cave again. Used on the wreck, the
+///   orb sparkles but nothing happens: Iodem decides it is not yet time,
+///   takes it back and sends the party on to Babi Lighthouse
 ///   (FLAG_BLACK_ORB_RETURNED). A defeat meanwhile returns to
 ///   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the orb and leads on by
 ///   WORLD_MAP_TO_ROCK_ROOMS.
@@ -397,7 +400,14 @@ enum {
 // party up in the air. FLAG_WORLD_MAP_STORM_GONE: the storm is done with, or
 // put away. FLAG_WORLD_MAP_STORM_FRAMES_LEFT: a byte: frames left in the air.
 
-/// Walking near Vine, or talking to him, can start a fight with him.
+/// Walking over the small island north-west of the Lamakan Desert's way out,
+/// once a random battle is nearly due, may start a battle with the Venus
+/// Djinni Vine; nothing is seen of him beforehand.
+///
+/// From nine tenths of the steps to the next battle on, each step there has an
+/// even chance of bringing Vine's battle; otherwise the next random battle is
+/// made due at once. The row for talking to him is never reached, as his actor
+/// stays at the map's corner once it has played Flint.
 static void WorldMap_MeetVine(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -411,8 +421,12 @@ static void WorldMap_MeetVine(void) {
   }
 }
 
-/// Walking near Corona, or talking to him, makes Corona fight once a battle
-/// is nearly due.
+/// Walking over the lone island far north of Xian, once a random battle is
+/// nearly due, starts a battle with the Mars Djinni Corona; nothing is seen of
+/// him beforehand.
+///
+/// His actor is placed at the map's corner, out of reach, so the row for
+/// talking to him is never reached.
 static void WorldMap_MeetCorona(void) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
   s32 *steps = &routine->encounterSteps;
@@ -424,8 +438,12 @@ static void WorldMap_MeetCorona(void) {
   }
 }
 
-/// Walking near Hail, or talking to him, makes Hail fight once a battle is
-/// nearly due.
+/// Walking over the fields far west of Tolbi, once a random battle is nearly
+/// due, starts a battle with the Mercury Djinni Hail; nothing is seen of him
+/// beforehand.
+///
+/// His actor is placed at the map's corner, out of reach, so the row for
+/// talking to him is never reached.
 static void WorldMap_MeetHail(void) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
   s32 *steps = &routine->encounterSteps;
@@ -614,8 +632,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gWorldMapActorPlacements;
 }
 
-/// Chooses a passage exit from the side of the actor the leader
-/// approaches.
+/// Takes the party into an area with two ways in by the side it walks up
+/// from: `exitBefore` if the leader is west of the area's picture, else
+/// `exitAfter`, with the sound of leaving the map.
 static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
@@ -632,7 +651,9 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   Sound_Play(SE_MAP_EXIT);
 }
 
-/// Chooses a passage exit from the leader's north-south approach.
+/// Takes the party into an area with two ways in by the side it walks up
+/// from: `exitBefore` if the leader is north of the area's picture, else
+/// `exitAfter`, with the sound of leaving the map.
 static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
@@ -649,37 +670,40 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   Sound_Play(SE_MAP_EXIT);
 }
 
-/// Touching the Bilibin Barricade's actor takes the party in by the side it
-/// comes from.
+/// Walking onto the Bilibin Barricade on the World Map enters it by the side
+/// the party comes from, west or east.
 static void WorldMap_EnterBilibinBarricade(void) {
   WorldMap_SelectExitByX(STEP_TRIGGER_AREA(ACTOR_TO_BILIBIN_BARRICADE),
                          WORLD_MAP_TO_BILIBIN_BARRICADE_WEST,
                          WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
 
-/// The party enters Kolima Bridge from the World Map.
+/// Walking onto Kolima Bridge on the World Map enters it at its north end from
+/// the north, or at its south end from the south.
 static void WorldMap_EnterKolimaBridge(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KOLIMA_BRIDGE),
                          WORLD_MAP_TO_KOLIMA_BRIDGE_WEST,
                          WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Kalay Docks.
+/// Walking onto Kalay Docks on the World Map enters them by their north side
+/// from the north, or by their south side from the south.
 static void WorldMap_EnterKalayDocks(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KALAY_DOCKS),
                          WORLD_MAP_TO_KALAY_DOCKS_NORTH,
                          WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Gondowan Passage.
+/// Walking onto Gondowan Passage on the World Map enters it at its north end
+/// from the north, or at its south end from the south.
 static void WorldMap_EnterGondowanPassage(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_GONDOWAN_PASSAGE),
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST,
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Lalivero. From the north the exit is
-/// WORLD_MAP_TO_LALIVERO_WEST, and from the south WORLD_MAP_TO_LALIVERO_EAST.
+/// Walking onto Lalivero on the World Map enters the town by its west side from
+/// the north, or by its east side from the south.
 static void WorldMap_EnterLalivero(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_LALIVERO),
                          WORLD_MAP_TO_LALIVERO_WEST,
@@ -688,7 +712,9 @@ static void WorldMap_EnterLalivero(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gWorldTriggers; }
 
-/// Run each frame on the map, where Scene_Initialize adds it.
+/// Run each frame on the map, where Scene_Initialize adds it: it shows only
+/// the area pictures near the view and, when the leader touches one, raises
+/// that area's trigger.
 static void WorldMap_UpdateAreaContacts(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -746,7 +772,8 @@ static void WorldMap_UpdateAreaContacts(void) {
   }
 }
 
-/// Touching Vault's actor takes the party into Vault.
+/// Walking onto Vault on the World Map enters the town by its south side. The
+/// first time, Hammet's caravan is seen leaving first.
 static void WorldMap_EnterVault(void) {
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Import_EventSetExitRequest(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
@@ -756,9 +783,8 @@ static void WorldMap_EnterVault(void) {
   }
 }
 
-/// Walking east from Crossbone Isle's shore back aboard the Tolbi-bound Ship
-/// (WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, to
-/// TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS).
+/// Walking east along Crossbone Isle's shore into the anchored Tolbi-bound Ship
+/// takes the party back aboard, onto its deck.
 static void WorldMap_ReturnToTolbiShip(void) {
   Event_Start();
   Import_EventSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
@@ -1892,9 +1918,9 @@ static void WorldMap_IodemCallsIsaacBack(void) {
   Event_End();
 }
 
-/// Searching the wreck off Gateway Cave shows "The wreckage of a ship
-/// scuttled off the coast." Once Iodem has handed over the Black Orb, the
-/// field menu opens after it, for the orb to be used.
+/// Checking the wreck of Babi's ship off the coast by Gateway Cave reads "The
+/// wreckage of a ship scuttled off the coast." While Isaac holds the Black Orb
+/// Iodem gave him, the field menu then opens, so that he can use it.
 static void WorldMap_SearchWreckage(void) {
   Event_Start();
 #if !TBS_PATCH_3
@@ -1910,8 +1936,10 @@ static void WorldMap_SearchWreckage(void) {
   Event_End();
 }
 
-/// Using the Black Orb on the shipwreck does nothing. The orb is taken back
-/// and the party is to press on to Babi Lighthouse.
+/// Using the Black Orb on the wreck off Gateway Cave, Isaac holds it up and it
+/// pulses and sparkles, but nothing happens. Iodem decides it is not yet time
+/// ("We must press on to Babi Lighthouse"), takes the orb back and leaves, and
+/// Gateway Cave can be entered again.
 static void WorldMap_UseBlackOrb(void) {
   struct Actor *iodem;
   struct Actor *orb;
@@ -2429,7 +2457,9 @@ static void WorldMap_ShowIslandDrifting(void) {
   Import_EventSetExitRequest(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
-/// Run each frame while a storm holds the party in the air.
+/// Run each frame while a storm holds the party in the air: it spins the
+/// leader round and counts down the time left, which stands still while the
+/// menu is open.
 static void WorldMap_UpdateStormTimer(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -2488,18 +2518,20 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
   }
 }
 
-/// Walking into the storm lifts the party up into the air.
+/// Walking into the whirlwind near Crossbone Isle draws the leader into it and
+/// lifts the party into the air for three seconds.
 static void WorldMap_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
-/// Starting to cast Douse on the storm gathers Douse's rain cloud 80 pixels
-/// up, where the party floats (event_commands_douse.c reads childOption).
+/// Casting Douse on the whirlwind that holds the party gathers the rain cloud
+/// high up, over the party where it floats, not on the ground below
+/// (event_commands_douse.c reads `childOption`).
 static void WorldMap_StartDousingStorm(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
 
-/// Douse on the storm brings the party down, and the battle with what is in
-/// it begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
-/// Desert's storms.
+/// Douse on the whirlwind that holds the party stops it, and the party drops
+/// to fight the Tempest Lizard inside, as in Suhalla Desert's red storm. The
+/// battle is taken from the scripted encounter table as that storm's is.
 static void WorldMap_DouseMapStorm(void) {
   if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedTrigger = 0;
@@ -2513,7 +2545,9 @@ static void WorldMap_DouseMapStorm(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 }
 
-/// The storm drops the party outside Suhalla when its time in the air runs out.
+/// If the party is not brought down within three seconds, the whirlwind rises
+/// with them faster and faster out of sight, the screen closes, and they drop
+/// onto the World Map outside Suhalla.
 static void WorldMap_StormDropsParty(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *storm = Actor_Get(ACTOR_STORM);

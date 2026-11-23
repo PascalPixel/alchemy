@@ -1,87 +1,55 @@
 /// @file
-/// Tree rooms (SceneId_TreeRooms) is a sheet of rooms drawn inside a tree.
+/// Tret Tree's rooms (SceneId_TreeRooms): the hollow inside of Tret, the holy
+/// tree of Kolima Forest, where the party come to face his wrathful side. Six
+/// rooms are stacked inside the trunk. Doors in the four upper floors lead out
+/// onto his branches (SceneId_TretTreeBranch, tret_tree_branch.c), where vines
+/// climb from one floor's door to the next.
 ///
-/// It is the inside of Tret, the holy tree of Kolima Forest, and the first of
-/// Tret Tree's two scenes. The party comes in from Kolima Forest
-/// (kolima_forest_tree.c) to face Tret's wrathful side.
+/// The party come in from Kolima Forest (kolima_forest_tree.c) by the door at
+/// the south end of the entrance room (cell (30, 16)), a maze of root walls
+/// with a round hole in the middle of its floor (cell (30, 9)). A vine near its
+/// north wall (cell (26, 4)) climbs to the second floor.
 ///
-/// FLAG_TRET_DEFEATED decides most of the scene. It says whether that battle is
-/// won and Tret has spoken with the party since.
+/// The floors above are spider webs stretched over holes, with yellow leaves
+/// lying on them. Isaac crosses a web by jumping two cells at a time from leaf
+/// to leaf (TreeRooms_JumpOffLeaf). The first time he lands on a leaf it tears.
+/// The next time it breaks, and he falls through into the room below, straight
+/// under the leaf (TreeRooms_StepOnLeaf). Four leaves are torn from the start.
 ///
-/// The map is six rooms, the six camera boxes of its entrance table. The party
-/// comes in from Kolima Forest (SceneId_KolimaForestTree) at
-/// TREE_ROOMS_FROM_KOLIMA_FOREST_TREE and leaves by
-/// TREE_ROOMS_TO_KOLIMA_FOREST_TREE.
+/// - The second floor's web holds nine leaves, and its west and east doors
+///   lead out onto the branches. Its leaves drop Isaac into the entrance room.
+/// - The third floor, entered from the branches by its south or east door, has
+///   a leaf on a web either side of the Healing Ring's chest, a Psynergy Stone
+///   by its north wall and a vine up to the fourth floor. Its leaves drop him
+///   to the second floor. A third web, in the south-west, has only a small
+///   spider on it.
+/// - The fourth floor is bare, with a hole in the middle of its floor, the top
+///   of the vine from the third floor, a west door and a south door.
+/// - The fifth floor, the highest, is one great web of ten leaves beside the
+///   Nut's chest, entered by its west or east door. Its leaves drop him to the
+///   fourth floor.
 ///
-/// Eight exits, from TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to
-/// _NORTH_NORTHEAST, lead out to Tret Tree's other scene
-/// (SceneId_TretTreeBranch). Six more, TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR to
-/// TREE_ROOMS_ENTRANCE_TO_TRET, lead from room to room. Three of those go
-/// through regions 28 to 36 pixels up (Scene_GetExitRegions).
+/// The leaf in the middle of the fifth floor's web is the way to Tret. It drops
+/// Isaac through the holes in the fourth, third and second floors and the
+/// entrance room, in turn, into Tret's room under the entrance room, where his
+/// face looks out of the north wall (TreeRooms_LandFromFall).
 ///
-/// Webs hold cocoons. Each is a step trigger (cell behaviors 21 to 29, 31, 32
-/// and 50 to 59) with a temporary flag of its own
-/// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN and the others).
+/// Walking up to the face starts the battle with Tret (TreeRooms_FightTret).
+/// Afterwards he comes to himself, finds he turned the people of Kolima into
+/// trees, fails to free them and sinks away, and a vine grows in the middle of
+/// his room (TreeRooms_PlayPostBattleConversation). From then on that vine
+/// joins his room and the hole in the entrance room's floor. FLAG_TRET_DEFEATED
+/// records the battle won and the conversation over. In Kolima Forest it lets
+/// Hermes' Water heal Tret and lift the curse.
 ///
-/// The first step on a cocoon tears it. Its cell is redrawn and its flag set.
+/// The light inside the tree slowly swells and fades
+/// (TretPalette_UpdateMapTint), and casting Reveal stops it.
 ///
-/// The next step on a torn cocoon breaks through. The leader spins and falls to
-/// the room below, arriving at the entrance numbered as the cocoon, straight
-/// below the cocoon. FLAG_ARRIVE_FALLING plays the landing.
-///
-/// - The second floor's nine (21 to 29) drop the leader into the entrance room.
-/// - The third floor's two (31 and 32) drop the leader onto the second floor.
-/// - The fifth floor's (50 to 59) drop the leader onto the fourth.
-///
-/// A third cocoon drawn on the third floor, on its southwest web, has no step
-/// trigger.
-///
-/// The layout draws four cocoons already torn (22, 52, 54 and 58) and the setup
-/// sets their flags, so they give way at the first step.
-///
-/// A latch in the scene state (sLastCocoon) keeps a step from counting twice
-/// until the leader walks on.
-///
-/// Cocoon 50 is the way down to Tret. Its landing and the fall's entrances
-/// (TREE_ROOMS_FALL_THROUGH_A to _C) each let the leader fall on to the
-/// entrance numbered ten lower. At TREE_ROOMS_FALL_LANDING the leader lands in
-/// a ring of dust as the map shakes, in front of Tret.
-///
-/// Torn cocoons stay torn across a battle. After one (FLAG_KEEP_PARTY_POSITION)
-/// the setup redraws them from gTreeRooms_MapPatches.
-///
-/// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot speak his
-/// lines.
-///
-/// Walking up to him (cell behavior 40, while FLAG_TRET_DEFEATED is clear) runs
-/// TreeRooms_FightTret. He roars, the party gathers in front of him, and the
-/// evil within him scorns them before the battle with Tret.
-///
-/// The battle returns to TREE_ROOMS_AFTER_FIGHT_TRET, where the setup plays the
-/// conversation after it.
-///
-/// - A passage opens in his room.
-/// - He comes to himself, thanks the party and asks whether they need
-///   something.
-/// - He realises that he turned the people of Kolima into trees
-///   ("I turned the people of Kolima into trees?").
-/// - He tries to free them but cannot reach that far.
-/// - His face sinks away as the party resolve to heal him.
-///
-/// Only then is FLAG_TRET_DEFEATED set. In Kolima Forest it lets Hermes' Water
-/// heal Tret and lift the curse.
-///
-/// Once it is set, the setup moves both Tret actors away, opens that passage
-/// and redraws cells near TREE_ROOMS_FALL_THROUGH_C. Before, it keeps the
-/// passage closed.
-///
-/// The setup also saves the background palettes and starts a slow tint that
-/// shifts them every 32 frames. The tint does not start after the battle until
-/// the conversation ends, and casting Reveal stops it. The setup also scales
-/// the first layer of the map grid to the room.
-///
-/// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
-/// (examine triggers 100 to 102).
+/// Each leaf has a temporary flag of its own, set when it tears
+/// (FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN and the others). The cells of a
+/// leaf carry the number of the entrance its fall lands at, so the step
+/// triggers name them by those entrances. A torn leaf is redrawn after a
+/// battle (FLAG_KEEP_PARTY_POSITION) from gTreeRooms_MapPatches.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -127,11 +95,12 @@ extern struct ActorPlacement gTreeRoomsActorPlacements[];
 extern struct Trigger gTreeRoomsTriggers[];
 extern s32 gTreeRooms_TintIndex;
 
-/// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
-/// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.
+/// Tret's face in the north wall of his room (SPRITE_TRET), the first actor
+/// placed after the party, and a second Tret actor (SPRITE_TRET_RAISED) placed
+/// at the same spot.
 ///
-/// Both speak Tret's lines. The face speaks as he attacks, the second after the
-/// battle.
+/// Both speak Tret's lines. The face scorns the party before the battle; the
+/// second roars before it and speaks every line after it.
 enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
   /// Draws nothing the render shows beyond Tret's face.
@@ -142,20 +111,35 @@ enum {
 /// SPEAKER_WINDOW_BELOW.
 #define TREE_ROOMS_SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
 
-// The scene's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN and
-// the others are set the first time each cocoon is stepped on, tearing it; the
-// next step breaks through (gTreeRooms_MapPatches lists them).
+/// The cells Tret Tree's examine and step triggers answer besides the doors,
+/// the vines and the leaves. The doors' cells and the tops of the vines that
+/// lead down carry the numbers of their exits, and each leaf's cell the number
+/// of the entrance its fall lands at.
+enum TreeRoomsCellBehavior {
+  /// The row in front of Tret's face in the lowest room, (9, 5) to (11, 5).
+  CELL_BEHAVIOR_TREE_ROOMS_BEFORE_TRET = 40,
+  /// The Healing Ring's chest on the third floor, between its webs (10, 24).
+  CELL_BEHAVIOR_TREE_ROOMS_HEALING_RING_CHEST = 100,
+  /// The Nut's chest on the fifth floor, east of its web (54, 25).
+  CELL_BEHAVIOR_TREE_ROOMS_NUT_CHEST = 101,
+  /// The Psynergy Stone by the third floor's north wall (9, 21).
+  CELL_BEHAVIOR_TREE_ROOMS_PSYNERGY_STONE = 102
+};
 
-#define COCOON_FALL_SPIN_FRAMES 30
+/// How long Isaac spins as he drops through a broken leaf.
+#define LEAF_FALL_SPIN_FRAMES 30
 #define SWIRL_SPARK_LAST_FRAME 79
 #define SWIRL_SPARK_SHRINK_LAST_FRAME 39
-/// Tret's tint covers background palettes 1 to 4 but palette 4's last colour.
+/// The light's slow swell inside Tret (TretPalette_UpdateMapTint) covers
+/// background palettes 1 to 4 but palette 4's last colour.
 #define TRET_TINT_COLOR_COUNT (4 * PALETTE_COLORS - 1)
 #define TRET_TINT_CHANNEL_MAX 31
 #define TRET_TINT_END 99
 
-/// The leader's fall from TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON takes the
-/// entrances ten apart, a floor at a time, down to TREE_ROOMS_FALL_LANDING.
+/// The fall from the fifth floor's centre leaf goes down a floor at a time
+/// through entrances ten apart: TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON on
+/// the fourth floor, then TREE_ROOMS_FALL_THROUGH_A to _C, then
+/// TREE_ROOMS_FALL_LANDING in Tret's room.
 #define FALL_ENTRANCE_STEP                                                     \
   (TREE_ROOMS_FALL_THROUGH_B - TREE_ROOMS_FALL_THROUGH_C)
 
@@ -186,86 +170,90 @@ static void TreeRooms_LandFromFall(void);
 
 static struct FieldPosition sSparkOrigin ALIGNED(8);
 static s32 sSparkFrame;
-static s16 *sLastCocoon;
+static s16 *sLastLeaf;
 
 #include "shared/field_effect_create.c"
 
 #include "shared/field_effect_spawn.c"
 
-/// Cocoon 21 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN FLAG_SCENE_TEMP_00
-/// Cocoon 22 has been torn by a first step, so the next step on it drops the
-/// leader to the room below. The layout draws it torn, and the setup sets this
-/// flag.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN FLAG_SCENE_TEMP_01
-/// Cocoon 23 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_C_TORN FLAG_SCENE_TEMP_02
-/// Cocoon 24 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_D_TORN FLAG_SCENE_TEMP_03
-/// Cocoon 25 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_E_TORN FLAG_SCENE_TEMP_04
-/// Cocoon 26 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_F_TORN FLAG_SCENE_TEMP_05
-/// Cocoon 27 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_G_TORN FLAG_SCENE_TEMP_06
-/// Cocoon 28 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_H_TORN FLAG_SCENE_TEMP_07
-/// Cocoon 29 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_I_TORN FLAG_SCENE_TEMP_08
-/// Cocoon 31 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN FLAG_SCENE_TEMP_09
-/// Cocoon 32 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN FLAG_SCENE_TEMP_0A
-/// Cocoon 50, the way down to Tret, has been torn by a first step, so the next
-/// step on it drops the leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN FLAG_SCENE_TEMP_0B
-/// Cocoon 51 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN FLAG_SCENE_TEMP_0C
-/// Cocoon 52 has been torn by a first step, so the next step on it drops the
-/// leader to the room below. The layout draws it torn, and the setup sets this
-/// flag.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN FLAG_SCENE_TEMP_0D
-/// Cocoon 53 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN FLAG_SCENE_TEMP_0E
-/// Cocoon 54 has been torn by a first step, so the next step on it drops the
-/// leader to the room below. The layout draws it torn, and the setup sets this
-/// flag.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN FLAG_SCENE_TEMP_0F
-/// Cocoon 55 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN FLAG_SCENE_TEMP_10
-/// Cocoon 56 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN FLAG_SCENE_TEMP_11
-/// Cocoon 57 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN FLAG_SCENE_TEMP_12
-/// Cocoon 58 has been torn by a first step, so the next step on it drops the
-/// leader to the room below. The layout draws it torn, and the setup sets this
-/// flag.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_13
-/// Cocoon 59 has been torn by a first step, so the next step on it drops the
-/// leader to the room below.
-#define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_14
+/// Set once the west leaf of the pair in the north of the second floor's web,
+/// cell (49, 6), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN FLAG_SCENE_TEMP_00
+/// Set once the east leaf of the pair in the north of the second floor's web,
+/// cell (51, 6), is torn, so that landing on it again breaks it. It is torn
+/// from the start: the setup sets this flag.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN FLAG_SCENE_TEMP_01
+/// Set once the upper of the two leaves down the west side of the second
+/// floor's web, cell (46, 8), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN FLAG_SCENE_TEMP_02
+/// Set once the lower of the two leaves down the west side of the second
+/// floor's web, cell (46, 10), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN FLAG_SCENE_TEMP_03
+/// Set once the west leaf of the pair in the middle of the second floor's web,
+/// cell (47, 12), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN FLAG_SCENE_TEMP_04
+/// Set once the east leaf of the pair in the middle of the second floor's web,
+/// cell (49, 12), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN FLAG_SCENE_TEMP_05
+/// Set once the west leaf of the row along the south of the second floor's web,
+/// cell (48, 14), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN FLAG_SCENE_TEMP_06
+/// Set once the middle leaf of the row along the south of the second floor's
+/// web, cell (50, 14), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN FLAG_SCENE_TEMP_07
+/// Set once the east leaf of the row along the south of the second floor's web,
+/// cell (52, 14), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN FLAG_SCENE_TEMP_08
+/// Set once the leaf on the third floor's west web, cell (7, 23), is torn, so
+/// that landing on it again breaks it.
+#define FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN FLAG_SCENE_TEMP_09
+/// Set once the leaf on the third floor's east web, cell (13, 24), is torn, so
+/// that landing on it again breaks it.
+#define FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN FLAG_SCENE_TEMP_0A
+/// Set once the leaf in the middle of the fifth floor's web, the way down to
+/// Tret, cell (50, 26), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN FLAG_SCENE_TEMP_0B
+/// Set once the north-west leaf of the fifth floor's web, cell (48, 24), is
+/// torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN FLAG_SCENE_TEMP_0C
+/// Set once the north leaf of the fifth floor's web, cell (50, 24), is torn, so
+/// that landing on it again breaks it. It is torn from the start: the setup
+/// sets this flag.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN FLAG_SCENE_TEMP_0D
+/// Set once the north-east leaf of the fifth floor's web, cell (52, 24), is
+/// torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN FLAG_SCENE_TEMP_0E
+/// Set once the west leaf of the fifth floor's web, cell (48, 26), is torn, so
+/// that landing on it again breaks it. It is torn from the start: the setup
+/// sets this flag.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN FLAG_SCENE_TEMP_0F
+/// Set once the east leaf of the fifth floor's web, cell (52, 26), is torn, so
+/// that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN FLAG_SCENE_TEMP_10
+/// Set once the south-west leaf of the fifth floor's web, cell (48, 28), is
+/// torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN FLAG_SCENE_TEMP_11
+/// Set once the south leaf of the fifth floor's web, cell (50, 28), is torn, so
+/// that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN FLAG_SCENE_TEMP_12
+/// Set once the south-east leaf of the fifth floor's web, cell (52, 28), is
+/// torn, so that landing on it again breaks it. It is torn from the start: the
+/// setup sets this flag.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN FLAG_SCENE_TEMP_13
+/// Set once the leaf at the east end of the fifth floor's south row, cell (54,
+/// 28), is torn, so that landing on it again breaks it.
+#define FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN FLAG_SCENE_TEMP_14
 
-/// Returns the scene's entrances, the cocoons' landing spots among them.
+/// Returns the scene's entrances, where the leaves' falls land among them.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTreeRoomsEntrances;
 }
 
-/// Returns the three exit regions 28 to 36 pixels up.
+/// Returns the tops of the three vines that climb to the room above: from the
+/// entrance room to the second floor, from the third floor to the fourth, and,
+/// once Tret is beaten, from Tret's room to the entrance room. Climbing to
+/// between 28 and 36 pixels up one of them takes Isaac through.
+
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTreeRoomsRegions;
 }
@@ -278,10 +266,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTreeRoomsActorPlacements;
 }
 
-/// Stepping on a cocoon in Tret Tree tears it at the first step and breaks
-/// through at the next.
-static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
-                                   s32 sourceRow, s32 entrance) {
+/// Isaac landing on a leaf on one of Tret Tree's webs tears it the first time.
+/// The next time the leaf breaks: he starts in surprise, spins as he drops
+/// through the web, leaving a hole where the leaf lay, and falls into the room
+/// below, landing straight under the leaf.
+/// The torn leaf and the hole are pictures kept on a spare row of the map
+/// (`sourceColumn` on `sourceRow`, and the row below it), copied over the
+/// leaf's cell in the map's upper layer. `entrance` is where the fall lands.
+/// `sLastLeaf` keeps a landing from counting again while he stands on the leaf,
+/// until he jumps off it (TreeRooms_JumpOffLeaf). FLAG_ARRIVE_FALLING has him
+/// drop into the room below, except from the fifth floor's centre leaf, whose
+/// fall goes on down through the rooms (Scene_Initialize).
+static void TreeRooms_StepOnLeaf(s32 leafFlag, s32 sourceColumn, s32 sourceRow,
+                                 s32 entrance) {
   s32 destinationColumn;
   s32 destinationRow;
   s32 leaderActorId;
@@ -292,18 +289,18 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   destinationRow = FIELD_CELL(gMainRoutineWork.z);
   leaderActorId = gMainRoutineWork.leaderActorId;
   actor = Actor_Get(leaderActorId);
-  if (entrance == *sLastCocoon)
+  if (entrance == *sLastLeaf)
     return;
-  *sLastCocoon = entrance;
-  if (GameFlag_Get(cocoonFlag) == 0) {
+  *sLastLeaf = entrance;
+  if (GameFlag_Get(leafFlag) == 0) {
     MapGrid_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
                       destinationRow);
-    GameFlag_Set(cocoonFlag);
+    GameFlag_Set(leafFlag);
     return;
   }
-  // On the next touch, replace the cell and spin the actor into the
-  // fall.
-  *sLastCocoon = -1;
+  // Landing on a torn leaf: draw the hole and spin Isaac down through the
+  // web.
+  *sLastLeaf = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                     destinationRow);
   Sound_Play(SE_CURSE_FALL);
@@ -322,7 +319,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Event_Wait(3);
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
-  for (spinFrame = 0; spinFrame < COCOON_FALL_SPIN_FRAMES; spinFrame++) {
+  for (spinFrame = 0; spinFrame < LEAF_FALL_SPIN_FRAMES; spinFrame++) {
     actor->facing += 2 * FACING_STEP;
     wait(1);
   }
@@ -330,131 +327,204 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     GameFlag_Set(FLAG_ARRIVE_FALLING);
 }
 
-// The cocoons' step triggers in Tret Tree, one per cocoon: each passes its
-// flag, the staging cell of its torn picture and its own number, the landing
-// entrance, to TreeRooms_StepOnCocoon. The second floor's nine
-// are alike, on one web, and are lettered A to I in the order of their step
-// triggers and landing entrances, 21 to 29.
+// The leaves' step triggers, one for each leaf: each passes its flag, the
+// column of its torn picture on the spare row and its landing entrance to
+// TreeRooms_StepOnLeaf. The second floor's nine are lettered A to I in the
+// order of their landing entrances, 21 to 29.
 
-static void TreeRooms_StepOnSecondFloorCocoonA(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN, 64, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A);
+/// Isaac landing on the west leaf of the pair in the north of the second
+/// floor's web (cell (49, 6)) tears it. Landing on it again breaks it, and he
+/// falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafA(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 64, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonB(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN, 65, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B);
+/// The east leaf of the pair in the north of the second floor's web (cell (51,
+/// 6)) is torn from the start, so the first time Isaac lands on it, it breaks
+/// and he falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafB(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 65, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonC(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_C_TORN, 66, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C);
+/// Isaac landing on the upper of the two leaves down the west side of the
+/// second floor's web (cell (46, 8)), the one he can jump to from the floor by
+/// the west door, tears it. Landing on it again breaks it, and he falls into
+/// the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafC(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 66, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonD(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_D_TORN, 67, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D);
+/// Isaac landing on the lower of the two leaves down the west side of the
+/// second floor's web (cell (46, 10)) tears it. Landing on it again breaks it,
+/// and he falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafD(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 67, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonE(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_E_TORN, 68, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E);
+/// Isaac landing on the west leaf of the pair in the middle of the second
+/// floor's web (cell (47, 12)) tears it. Landing on it again breaks it, and he
+/// falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafE(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 68, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonF(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_F_TORN, 69, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F);
+/// Isaac landing on the east leaf of the pair in the middle of the second
+/// floor's web (cell (49, 12)) tears it. Landing on it again breaks it, and he
+/// falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafF(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 69, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonG(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_G_TORN, 70, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G);
+/// Isaac landing on the west leaf of the row along the south of the second
+/// floor's web (cell (48, 14)) tears it. Landing on it again breaks it, and he
+/// falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafG(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 70, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonH(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_H_TORN, 71, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H);
+/// Isaac landing on the middle leaf of the row along the south of the second
+/// floor's web (cell (50, 14)) tears it. Landing on it again breaks it, and he
+/// falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafH(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 71, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoonI(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_I_TORN, 72, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I);
+/// Isaac landing on the east leaf of the row along the south of the second
+/// floor's web (cell (52, 14)) tears it. Landing on it again breaks it, and he
+/// falls into the entrance room below.
+static void TreeRooms_StepOnSecondFloorLeafI(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 72, 35,
+                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I);
 }
 
-static void TreeRooms_StepOnThirdFloorWestCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN, 73, 35,
-                         TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON);
+/// Isaac landing on the leaf on the third floor's west web (cell (7, 23)), west
+/// of the Healing Ring's chest, tears it. Landing on it again breaks it, and he
+/// falls to the second floor.
+static void TreeRooms_StepOnThirdFloorWestLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 73, 35,
+                       TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON);
 }
 
-static void TreeRooms_StepOnThirdFloorEastCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN, 74, 35,
-                         TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON);
+/// Isaac landing on the leaf on the third floor's east web (cell (13, 24)),
+/// east of the Healing Ring's chest and below the vine to the fourth floor,
+/// tears it. Landing on it again breaks it, and he falls to the second floor.
+static void TreeRooms_StepOnThirdFloorEastLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 74, 35,
+                       TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorCenterCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN, 79, 35,
-                         TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON);
+/// Isaac landing on the leaf in the middle of the fifth floor's web (cell (50,
+/// 26)), just south of the torn north leaf, tears it. Landing on it again
+/// breaks it, and he falls all the way down to Tret: through the fourth floor,
+/// the third, the second and the entrance room, into Tret's room at the bottom
+/// of the tree.
+static void TreeRooms_StepOnFifthFloorCenterLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN, 79, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorNorthwestCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 75,
-                         35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON);
+/// Isaac landing on the north-west leaf of the fifth floor's web (cell (48,
+/// 24)) tears it. Landing on it again breaks it, and he falls to the fourth
+/// floor.
+static void TreeRooms_StepOnFifthFloorNorthwestLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN, 75, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorNorthCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN, 76, 35,
-                         TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON);
+/// The north leaf of the fifth floor's web (cell (50, 24)) is torn from the
+/// start, so the first time Isaac lands on it, it breaks and he falls to the
+/// fourth floor.
+static void TreeRooms_StepOnFifthFloorNorthLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 76, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorNortheastCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN, 77,
-                         35, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON);
+/// Isaac landing on the north-east leaf of the fifth floor's web (cell (52,
+/// 24)), west of the Nut's chest, tears it. Landing on it again breaks it, and
+/// he falls to the fourth floor.
+static void TreeRooms_StepOnFifthFloorNortheastLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN, 77, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorWestCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN, 78, 35,
-                         TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON);
+/// The west leaf of the fifth floor's web (cell (48, 26)) is torn from the
+/// start, so the first time Isaac lands on it, it breaks and he falls to the
+/// fourth floor.
+static void TreeRooms_StepOnFifthFloorWestLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 78, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorEastCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN, 80, 35,
-                         TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
+/// Isaac landing on the east leaf of the fifth floor's web (cell (52, 26))
+/// tears it. Landing on it again breaks it, and he falls to the fourth floor.
+static void TreeRooms_StepOnFifthFloorEastLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 80, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
 }
 
-/// Cocoon 56 lands at the same spot as cocoon 54. Their entrances agree.
-static void TreeRooms_StepOnFifthFloorSouthwestCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81,
-                         35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
+/// Isaac landing on the south-west leaf of the fifth floor's web (cell (48,
+/// 28)) tears it. Landing on it again breaks it, and he falls to the fourth
+/// floor, not straight under it but two cells further north, where the west
+/// leaf's fall lands (cell (28, 26)).
+static void TreeRooms_StepOnFifthFloorSouthwestLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN, 81, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorSouthCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN, 82, 35,
-                         TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON);
+/// Isaac landing on the south leaf of the fifth floor's web (cell (50, 28))
+/// tears it. Landing on it again breaks it, and he falls to the fourth floor.
+static void TreeRooms_StepOnFifthFloorSouthLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 82, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorSoutheastCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN, 83,
-                         35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON);
+/// The south-east leaf of the fifth floor's web (cell (52, 28)) is torn from
+/// the start, so the first time Isaac lands on it, it breaks and he falls to
+/// the fourth floor.
+static void TreeRooms_StepOnFifthFloorSoutheastLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN, 83, 35,
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON);
 }
 
-static void TreeRooms_StepOnFifthFloorFarSoutheastCocoon(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN,
-                         84, 35,
-                         TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON);
+/// Isaac landing on the leaf at the east end of the fifth floor's south row
+/// (cell (54, 28)), below the Nut's chest, tears it. Landing on it again breaks
+/// it, and he falls to the fourth floor.
+static void TreeRooms_StepOnFifthFloorFarSoutheastLeaf(void) {
+  TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN, 84,
+                       35, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON);
 }
 
-/// Jumping on from a cocoon in Tret Tree (Field_TryJumpForward) clears the
-/// latch, so the next step on a cocoon counts again.
-static void TreeRooms_JumpFromCocoon(void) {
+/// Walking while Isaac stands on a leaf in Tret Tree makes him jump two cells
+/// that way, over the web to the next leaf, wherever there is room to land
+/// (Field_TryJumpForward).
+/// Once he has jumped, `sLastLeaf` is cleared, so that the leaf he lands on
+/// counts as a fresh landing.
+static void TreeRooms_JumpOffLeaf(void) {
   if (Field_TryJumpForward() == 0)
-    *sLastCocoon = -1;
+    *sLastLeaf = -1;
 }
 
-/// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
+/// Returns the doors, the vines, the leaves, Tret, Reveal, the chests and the
+/// Psynergy Stone.
 const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 
-/// Walking up to Tret in Tret Tree starts the battle with him (cell behavior
-/// 40, while FLAG_TRET_DEFEATED is clear).
+/// Walking up to Tret's face in the north wall of the lowest room in Tret Tree
+/// (cells (9, 5) to (11, 5)) starts the battle with him. He roars "Hm
+/// HROOOM!!!", Garet, Ivan and Mia, once she has joined, gather beside Isaac
+/// before him, and his face turns wrathful: "You hoped to find my kindly self?"
+/// The party start back, and he swears they will all become trees before the
+/// screen breaks into bars for the battle.
+/// It runs only while FLAG_TRET_DEFEATED is clear. The battle returns to
+/// TREE_ROOMS_AFTER_FIGHT_TRET, where the setup plays
+/// TreeRooms_PlayPostBattleConversation.
 static void TreeRooms_FightTret(void) {
   s32 hasMia;
 
@@ -530,8 +600,16 @@ static void TreeRooms_FightTret(void) {
   Event_End();
 }
 
-/// After the battle with Tret, in Tret Tree, a passage opens in his room, and
-/// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..."
+/// After the battle with Tret, the view slides down the middle of his room as a
+/// vine grows up out of the floor, and Tret comes to himself ("Oh...
+/// Mmmmm..."). He thanks the party and says good-bye, but Garet and Ivan will
+/// not let him die while they still need his help. Learning that he turned the
+/// people of Kolima into trees, he tries to free them: the room turns purple
+/// and sparks swirl out from his face, but his power no longer reaches Kolima.
+/// His face sinks into the wall, and the party resolve to heal him.
+/// Only then is FLAG_TRET_DEFEATED set and the light's slow swell started again
+/// (TretPalette_UpdateMapTint). Answering "Do you need something?" with no
+/// makes Garet and Ivan scold Isaac.
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
   TaskFunc sparkTask;
@@ -665,8 +743,8 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
-  // Tret tries to release the people of Kolima: the colours shift and sparks
-  // swirl out from his face, then fade.
+  // Tret tries to release the people of Kolima: the room turns purple and
+  // sparks swirl out from his face, then fade.
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
@@ -734,9 +812,16 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_End();
 }
 
-/// Sets the map grid by FLAG_TRET_DEFEATED. The passage in Tret's room is
-/// closed before and open after, with cells near TREE_ROOMS_FALL_THROUGH_C
-/// redrawn.
+/// Sets Tret's room and the entrance room for whether Tret is beaten, after
+/// playing the conversation that follows the battle when `playRecoveryEvent`
+/// asks for it. Before, the middle of Tret's room (cell (10, 8)) is bare floor
+/// and the hole in the entrance room's floor is a bare hole. After, the vine
+/// stands in Tret's room and can be climbed, and its top shows in the hole in
+/// the entrance room (cell (30, 9)), where stepping on it takes Isaac down to
+/// Tret's room.
+/// The vine's cells take their climbing from the vine near the entrance room's
+/// north wall (cell (26, 3)), and the hole's cells take the exit down to Tret
+/// from the spare cell at (0, 0).
 static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   if (playRecoveryEvent != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TreeRooms_PlayPostBattleConversation();
@@ -755,9 +840,16 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   }
 }
 
-/// Tret Tree's setup places or removes the Tret actors, starts the tint,
-/// redraws the torn cocoons after a battle, and sets the map grid by
-/// FLAG_TRET_DEFEATED.
+/// Entering any of Tret Tree's rooms: once Tret is beaten his face is gone from
+/// the lowest room, the light's slow swell starts, leaves torn before a battle
+/// are torn again, and four leaves start torn. Arriving by a fall from the
+/// fifth floor's centre leaf, Isaac drops in from above and on through the hole
+/// in the floor, a room at a time, until he lands before Tret
+/// (TreeRooms_LandFromFall). Back from the battle with Tret, the conversation
+/// after it plays.
+/// The setup also saves the rooms' colours for the swell
+/// (TretPalette_SaveMapColors) and sets the map's first layer to scroll at nine
+/// tenths of the pace of the view, offset to the room.
 s32 Scene_Initialize(void) {
   struct Actor *tret;
   struct Actor *actor;
@@ -769,7 +861,7 @@ s32 Scene_Initialize(void) {
   struct Actor *secondTret;
 
   tret = Actor_Get(ACTOR_TRET);
-  sLastCocoon = (s16 *)gSceneLocalState;
+  sLastLeaf = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -toFIXED(10);
@@ -794,12 +886,12 @@ s32 Scene_Initialize(void) {
   layer->offsetY += Iwram_MulFX(grid->minY + toFIXED(136), FIXED_ONE / 10);
   layer->scaleX = 9 * FIXED_ONE / 10;
   layer->scaleY = 9 * FIXED_ONE / 10;
-  // The layout draws four cocoons already torn: the first step on them breaks
-  // through.
-  GameFlag_Set(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN);
-  GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN);
-  GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN);
-  GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
+  // The layout draws four leaves already torn, so the first landing on them
+  // breaks them.
+  GameFlag_Set(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN);
   wait(1);
   TreeRooms_ApplyPostBattleState(0);
   work = gFieldWork;
@@ -808,8 +900,8 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
   leaderActorId = gMainRoutineWork.leaderActorId;
   actor = Actor_Get(leaderActorId);
-  // Falling through a room, the leader falls on to the entrance numbered ten
-  // lower; at the fall's landing he lands in a cloud of dust before Tret.
+  // Falling through a room, Isaac falls on to the entrance numbered ten lower;
+  // at the fall's end he lands in a ring of dust in Tret's room.
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (entrance == TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON ||
       entrance == TREE_ROOMS_FALL_THROUGH_A ||
@@ -843,14 +935,21 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Saves background palettes 0 to 13 as the base for Tret's map tint.
+/// Saves background palettes 0 to 13, the rooms' own colours, which the
+/// light's slow swell inside Tret brightens (TretPalette_UpdateMapTint).
 static void TretPalette_SaveMapColors(void) {
   Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette, DMA_COPY_WORDS(112),
           REG_DMA3);
 }
 
-/// Tints background colours 16 to 78 every thirty-two frames, leaving
-/// palette 4's last colour alone. Each later palette receives a weaker tint.
+/// The light inside Tret Tree slowly swells and fades: over a few seconds the
+/// walls and floors grow a little brighter and warmer, then sink back, again
+/// and again. It pauses while Psynergy is being cast, and stops for good once
+/// Reveal is cast (TreeRooms_CastReveal).
+/// Every 32 frames it adds the next red, green and blue step of
+/// gTreeRooms_TintSteps, a ramp from 0 up to 4 and back, to the saved colours
+/// of background palettes 1 to 4, skipping a random few steps each time; each
+/// later palette takes a weaker step.
 static void TretPalette_UpdateMapTint(void) {
   u16 *sourceColors;
   u16 *destinationColors;
@@ -918,7 +1017,8 @@ static void TretPalette_UpdateMapTint(void) {
     gTreeRooms_TintIndex = 0;
 }
 
-/// Plays one of Tret's face changes, six frames to a picture, and waits twelve
+/// Changes Tret's face in the north wall of his room (opening or closing his
+/// eyes, blinking, looking aside), six frames to a picture, and waits twelve
 /// frames after it.
 static void TreeRooms_ChangeFace(s32 change) {
   switch (change) {
@@ -992,7 +1092,9 @@ static void TreeRooms_ChangeFace(s32 change) {
   wait(12);
 }
 
-/// Moves a fading spark outward from its saved origin, then releases it.
+/// One of the sparks that swirl out from Tret's face as he tries to free the
+/// people of Kolima: it spirals outward from his face, shrinking as it goes,
+/// and is put away after 80 frames.
 static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
   struct FieldPosition position;
   s32 frame;
@@ -1022,7 +1124,9 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
   }
 }
 
-/// Emits five shrinking waves of fading sparks from the saved origin.
+/// Sends out the sparks from Tret's face as he tries to free the people of
+/// Kolima: five waves, ten frames apart, of six, five, four, three and two
+/// sparks, each wave with a shimmering sound.
 static void TreeRooms_SpawnSwirlSparks(void) {
   struct Actor *spark;
   u32 frame;
@@ -1071,8 +1175,8 @@ static void TreeRooms_SpawnSwirlSparks(void) {
   }
 }
 
-/// Redraws each torn cocoon whose flag is set, as the party left it before a
-/// battle.
+/// Tears again each leaf that was torn before a battle, so that the webs look
+/// as the party left them.
 static void TreeRooms_ApplyFlaggedMapPatches(void) {
   s32 patchOffset;
 
@@ -1087,16 +1191,19 @@ static void TreeRooms_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_ACTS) stops the map tint until
-/// the scene is entered again.
+/// Casting Reveal anywhere inside Tret Tree stops the light's slow swell and
+/// fade, leaving the rooms' colours as they are, until Isaac next goes through
+/// a door, up or down a vine or through a leaf into another room.
 static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
 #include "shared/field_effect_advance.c"
 
-/// The leader lands at TREE_ROOMS_FALL_LANDING, at the end of the fall from
-/// the fifth floor's centre cocoon, in a ring of dust.
+/// Isaac lands in Tret's room at the end of the fall from the fifth floor's
+/// centre leaf: he drops into the middle of the room, south of Tret's face, and
+/// hits the floor with a thump in a ring of white dust as the screen shakes,
+/// staggering back in surprise.
 static void TreeRooms_LandFromFall(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
@@ -1155,32 +1262,32 @@ static void TreeRooms_LandFromFall(void) {
 
 #include "shared/field_effect_duration_scripts.c"
 
-/// The torn cocoons redrawn after a battle. Each row is the cocoon's flag,
-/// whether it is redrawn (0 for the four the layout draws torn), the staging
-/// cell x/y and the cocoon's cell x/y.
+/// The leaves torn again after a battle. Each row is the leaf's flag, whether
+/// it is redrawn (0 for the four the map draws torn), the torn picture's cell
+/// x/y on the spare row and the leaf's cell x/y in the map's upper layer.
 // clang-format off
 s16 gTreeRooms_MapPatches[] = {
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN, 1, 64, 35, 113, 6,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN, 0, 65, 35, 115, 6,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_C_TORN, 1, 66, 35, 110, 8,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_D_TORN, 1, 67, 35, 110, 10,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_E_TORN, 1, 68, 35, 111, 12,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_F_TORN, 1, 69, 35, 113, 12,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_G_TORN, 1, 70, 35, 112, 14,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_H_TORN, 1, 71, 35, 114, 14,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_I_TORN, 1, 72, 35, 116, 14,
-    FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN, 1, 73, 35, 71, 23,
-    FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN, 1, 74, 35, 77, 24,
-    FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 1, 75, 35, 112, 24,
-    FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN, 0, 76, 35, 114, 24,
-    FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN, 1, 77, 35, 116, 24,
-    FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN, 0, 78, 35, 112, 26,
-    FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_COCOON_TORN, 1, 79, 35, 114, 26,
-    FLAG_TRET_TREE_FIFTH_FLOOR_EAST_COCOON_TORN, 1, 80, 35, 116, 26,
-    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 1, 81, 35, 112, 28,
-    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN, 1, 82, 35, 114, 28,
-    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN, 0, 83, 35, 116, 28,
-    FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON_TORN, 1, 84, 35, 118, 28,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 1, 64, 35, 113, 6,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 0, 65, 35, 115, 6,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 1, 66, 35, 110, 8,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 1, 67, 35, 110, 10,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 1, 68, 35, 111, 12,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 1, 69, 35, 113, 12,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 1, 70, 35, 112, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 1, 71, 35, 114, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 1, 72, 35, 116, 14,
+    FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 1, 73, 35, 71, 23,
+    FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 1, 74, 35, 77, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN, 1, 75, 35, 112, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 0, 76, 35, 114, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN, 1, 77, 35, 116, 24,
+    FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 0, 78, 35, 112, 26,
+    FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN, 1, 79, 35, 114, 26,
+    FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 1, 80, 35, 116, 26,
+    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN, 1, 81, 35, 112, 28,
+    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 1, 82, 35, 114, 28,
+    FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN, 0, 83, 35, 116, 28,
+    FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN, 1, 84, 35, 118, 28,
     -1, 0,
 };
 
@@ -1224,9 +1331,9 @@ s32 gTreeRooms_MiaGathersActions[] = {
     SC_END,
 };
 
-/// Tret's face sinks away after the conversation. Eight times it shows 80
-/// pixels up for 4 frames and drops back 78, shrinking a sixteenth each time.
-/// Then it is put away.
+/// Tret's face sinking into the wall at the end of the conversation after the
+/// battle. Eight times it is raised 80 pixels for 4 frames and lowered 78, a
+/// sixteenth smaller each time, and then it is put away.
 s32 gTreeRooms_FaceSinksActions[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(80)),
@@ -1241,7 +1348,8 @@ s32 gTreeRooms_FaceSinksActions[] = {
     SC_END,
 };
 
-/// Garet, Ivan and Mia walk back to the leader and are put away.
+/// Garet, Ivan and Mia walk back into Isaac at the end of the conversation
+/// after the battle, and are put away.
 s32 gTreeRooms_WalkBackToLeaderScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(166, 0, 80),
@@ -1320,7 +1428,7 @@ struct SceneEntrance gTreeRoomsEntrances[] = {
     { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH, CONDITION_ALWAYS, 488, 0, 520, FACING_NORTH, 0, 352, 272, 640, 544, 0 },
     { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST, CONDITION_ALWAYS, 712, 0, 424, FACING_EAST, 0, 672, 272, 960, 544, 0 },
     { TREE_ROOMS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST, CONDITION_ALWAYS, 920, 0, 424, FACING_WEST, 0, 672, 272, 960, 544, 0 },
-    { 10, CONDITION_ALWAYS, 168, 0, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
+    { TREE_ROOMS_FALL_LANDING, CONDITION_ALWAYS, 168, 0, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
     { TREE_ROOMS_ENTRANCE_FROM_SECOND_FLOOR, CONDITION_ALWAYS, 424, 24, 72, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { TREE_ROOMS_SECOND_FLOOR_FROM_ENTRANCE, CONDITION_ALWAYS, 744, 0, 88, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { TREE_ROOMS_THIRD_FLOOR_FROM_FOURTH_FLOOR, CONDITION_ALWAYS, 232, 24, 344, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
@@ -1348,9 +1456,9 @@ struct SceneEntrance gTreeRoomsEntrances[] = {
     { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { 40, CONDITION_ALWAYS, 168, 0, 424, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
-    { 30, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-    { 20, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FALL_THROUGH_A, CONDITION_ALWAYS, 168, 0, 424, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
+    { TREE_ROOMS_FALL_THROUGH_B, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FALL_THROUGH_C, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { TREE_ROOMS_AFTER_FIGHT_TRET, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
     { SCENE_TABLE_END },
 };
@@ -1402,119 +1510,155 @@ struct ActorPlacement gTreeRoomsActorPlacements[] = {
 // clang-format on
 
 struct Trigger gTreeRoomsTriggers[] = {
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH,
+     TREE_ROOMS_TO_KOLIMA_FOREST_TREE, CONDITION_ALWAYS,
      TREE_ROOMS_TO_KOLIMA_FOREST_TREE},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_WEST, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_WEST,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_EAST, 3, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_EAST,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 4, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_EAST, 5, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_EAST,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTHEAST},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_WEST, 6, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_WEST,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTHWEST},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_WEST, 8, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_WEST,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_EAST, 9, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_EAST,
+     TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, CONDITION_ALWAYS,
      TREE_ROOMS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE},
-    {TRIGGER_EXIT, 13, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE, CONDITION_ALWAYS,
+     TREE_ROOMS_SECOND_FLOOR_TO_ENTRANCE},
+    {TRIGGER_EXIT, TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR, CONDITION_ALWAYS,
      TREE_ROOMS_FOURTH_FLOOR_TO_THIRD_FLOOR},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, TREE_ROOMS_ENTRANCE_TO_TRET},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 21, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 22, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 23, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 25, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 26, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 27, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 28, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 29, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 32, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 50, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 51, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 52, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 53, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 54, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 55, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 56, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 57, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 58, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 59, CONDITION_ALWAYS,
-     EVENT(TreeRooms_JumpFromCocoon)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonA)},
-    {TRIGGER_STEP, 22, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonB)},
-    {TRIGGER_STEP, 23, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonC)},
-    {TRIGGER_STEP, 24, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonD)},
-    {TRIGGER_STEP, 25, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonE)},
-    {TRIGGER_STEP, 26, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonF)},
-    {TRIGGER_STEP, 27, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonG)},
-    {TRIGGER_STEP, 28, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonH)},
-    {TRIGGER_STEP, 29, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoonI)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnThirdFloorWestCocoon)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnThirdFloorEastCocoon)},
-    {TRIGGER_STEP, 50, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorCenterCocoon)},
-    {TRIGGER_STEP, 51, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorNorthwestCocoon)},
-    {TRIGGER_STEP, 52, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorNorthCocoon)},
-    {TRIGGER_STEP, 53, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorNortheastCocoon)},
-    {TRIGGER_STEP, 54, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorWestCocoon)},
-    {TRIGGER_STEP, 55, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorEastCocoon)},
-    {TRIGGER_STEP, 56, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorSouthwestCocoon)},
-    {TRIGGER_STEP, 57, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorSouthCocoon)},
-    {TRIGGER_STEP, 58, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorSoutheastCocoon)},
-    {TRIGGER_STEP, 59, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnFifthFloorFarSoutheastCocoon)},
-    {TRIGGER_STEP, 40, FLAG_TRET_DEFEATED, EVENT(TreeRooms_FightTret)},
+    {TRIGGER_EXIT, TREE_ROOMS_ENTRANCE_TO_TRET, CONDITION_ALWAYS,
+     TREE_ROOMS_ENTRANCE_TO_TRET},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_JumpOffLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafA)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafB)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafC)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafD)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafE)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafF)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafG)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafH)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnSecondFloorLeafI)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnThirdFloorWestLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnThirdFloorEastLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorCenterLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON,
+     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorNorthwestLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorNorthLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON,
+     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorNortheastLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorWestLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorEastLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON,
+     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorSouthwestLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorSouthLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON,
+     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorSoutheastLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON,
+     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorFarSoutheastLeaf)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TREE_ROOMS_BEFORE_TRET, FLAG_TRET_DEFEATED,
+     EVENT(TreeRooms_FightTret)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(TreeRooms_CastReveal)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 102, FLAG_AREA_TEMP_50,
-     FIND_PSYNERGY_STONE},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST),
+     CELL_BEHAVIOR_TREE_ROOMS_HEALING_RING_CHEST, 0xf5b,
+     FIND_ITEM(ITEM_HEALING_RING)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_TREE_ROOMS_NUT_CHEST, 0xf5c,
+     FIND_ITEM(ITEM_NUT)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TREE_ROOMS_PSYNERGY_STONE,
+     FLAG_AREA_TEMP_50, FIND_PSYNERGY_STONE},
     {TRIGGER_TABLE_END},
 };
 

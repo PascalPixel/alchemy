@@ -19,13 +19,15 @@
 /// - FLAG_VALE_STORM_FIRST_ROCK_FELL to FLAG_VALE_STORM_FOURTH_ROCK_FELL, with
 ///   the area flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
 ///   FLAG_VALE_STORM_FOURTH_ROCK_PASSED: ValePrologue_FirstRockFalls to
-///   ValePrologue_FourthRockFalls drop a rock across a path at four spots.
+///   ValePrologue_FourthRockFalls drop a huge rock across a path at four
+///   spots: south of Isaac's house, below the house north-west of it, on the
+///   path along the west edge, and east of Jenna's grandparents' house.
 ///   The _FELL flag puts back the rock and the cell behaviors of the cells
 ///   it blocks. The _PASSED flag, cleared once the party leaves Vale, keeps
 ///   the event from running again.
 /// - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: ValePrologue_BumpIntoShovingMan,
-///   the first time Isaac tries the door of
-///   VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH.
+///   the first time Isaac tries the door of the house north-west of his own
+///   (VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH).
 /// - FLAG_VALE_STORM_HEARD_GARET, then FLAG_VALE_STORM_GARET_JOINED: Garet is
 ///   trying to save his chest of valuables. Talking to him, or walking off
 ///   past him, brings him into the party (ValePrologue_GaretLeavesHisChest)
@@ -50,7 +52,9 @@
 /// stops the lightning first, and each door plays its opening cells before
 /// it. gValePrologue_Exits gives each exit's destination.
 ///
-/// Two cells start a battle once each (slots 2 and 3 of
+/// Two monsters attack once each, at the west end of the rope bridge west of
+/// Isaac's house and past the east end of the bridge in the south (slots 2
+/// and 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
 #include "flags.h"
@@ -203,6 +207,74 @@ enum StormNightActorId {
   ACTOR_ELDER_WEST
 };
 
+/// What the night's cells do when Isaac steps on them, walks into them or
+/// searches them, by the trigger rows that answer them. The day's Vale
+/// (vale.c) numbers the same cells the same way.
+enum ValePrologueCellBehavior {
+  /// The steps up Mt. Aleph in the north-west: cells (5, 16) to (8, 16).
+  CELL_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH = 2,
+  /// The northern way west to Kraden's cottage: cells (0, 38) to (0, 41).
+  CELL_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN,
+  /// The southern way west: cells (0, 49) and (0, 50).
+  CELL_BEHAVIOR_VALE_SOUTH_WAY_TO_KRADEN,
+  /// The way east to the plaza, in the south: cells (29, 86) and (29, 87).
+  CELL_BEHAVIOR_VALE_WAY_TO_THE_PLAZA,
+  /// The door of Garet's house: cell (25, 46).
+  CELL_BEHAVIOR_VALE_GARETS_DOOR,
+  /// The door of the house north-west of Isaac's: cell (16, 51).
+  CELL_BEHAVIOR_VALE_NORTHWEST_HOUSE_DOOR,
+  /// The door of Isaac's house: cell (21, 56).
+  CELL_BEHAVIOR_VALE_ISAACS_DOOR,
+  /// The door of Jenna's grandparents' house: cell (20, 71).
+  CELL_BEHAVIOR_VALE_GRANDPARENTS_DOOR,
+  /// The door of the house south of theirs: cell (23, 78).
+  CELL_BEHAVIOR_VALE_SOUTH_HOUSE_DOOR,
+  /// Unused: no cell carries it.
+  CELL_BEHAVIOR_VALE_UNUSED_WRECKED_HOUSE_DOOR,
+  /// The west door of the house by the river, on its west bank: cell (6, 75).
+  CELL_BEHAVIOR_VALE_RIVERSIDE_HOUSE_WEST_DOOR,
+  /// Its east door, onto the wooden deck: cell (9, 74).
+  CELL_BEHAVIOR_VALE_RIVERSIDE_HOUSE_EAST_DOOR,
+  /// A cell beyond each end of the rope bridges, a step from the river.
+  CELL_BEHAVIOR_VALE_OFF_BRIDGE,
+  /// The cells at each end of the rope bridges.
+  CELL_BEHAVIOR_VALE_ONTO_BRIDGE,
+  /// Where the night's two monsters attack: the west end of the rope bridge
+  /// west of Isaac's house, cells (3, 54) and (4, 54), and past the east end
+  /// of the bridge in the south, cells (21, 85) and (21, 86).
+  CELL_BEHAVIOR_VALE_THIRD_MONSTER,
+  CELL_BEHAVIOR_VALE_FOURTH_MONSTER,
+  /// Garet's chest of valuables, left on the path: cells (25, 38) to (27, 38).
+  CELL_BEHAVIOR_VALE_GARETS_CHEST = 19,
+  /// The wrecked house's stuck door, once the Boulder has passed: cell (6, 74).
+  CELL_BEHAVIOR_VALE_WRECKED_HOUSE_DOOR = 24,
+  /// Beside Garet on the path north of his house: cells (21, 38) to (21, 41).
+  CELL_BEHAVIOR_VALE_BESIDE_GARET = 30,
+  /// West of Garet, walking on past him: cells (19, 39) to (19, 42).
+  CELL_BEHAVIOR_VALE_PAST_GARET,
+  /// Around the foot of the steps up to the Sanctum, cells (15, 29) to
+  /// (16, 29) and (15, 35) to (16, 35), where Garet would run up to Isaac
+  /// (ValePrologue_UnusedGaretJoinsIsaac).
+  CELL_BEHAVIOR_VALE_UNUSED_GARET_JOINS,
+  /// The foot of the steps up to the Sanctum's door: cells (15, 30) and
+  /// (16, 30).
+  CELL_BEHAVIOR_VALE_FOOT_OF_SANCTUM_STEPS,
+  /// Where the Boulder comes into view: cells (4, 35) and (5, 35).
+  CELL_BEHAVIOR_VALE_BOULDER_IN_VIEW,
+  /// The river's west bank where Felix is seen: cells (9, 66), (8, 67) and
+  /// (9, 67).
+  CELL_BEHAVIOR_VALE_FELIX_IN_VIEW,
+  /// The middle of the rope bridge in the south, once its planks are laid:
+  /// cells (13, 85) and (13, 86).
+  CELL_BEHAVIOR_VALE_MIDDLE_OF_BRIDGE,
+  /// Where each rock falls as Isaac walks past (ValePrologue_FirstRockFalls
+  /// to ValePrologue_FourthRockFalls).
+  CELL_BEHAVIOR_VALE_FIRST_ROCK = 41,
+  CELL_BEHAVIOR_VALE_SECOND_ROCK,
+  CELL_BEHAVIOR_VALE_THIRD_ROCK,
+  CELL_BEHAVIOR_VALE_FOURTH_ROCK
+};
+
 /// Animations of the night's own sprites beyond enum ActorAnimation, as
 /// each sprite's animation table and frames under graphics/sprite draw them.
 enum StormNightAnimation {
@@ -312,15 +384,30 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gValePrologue_Triggers; }
 
-/// In Vale on the stormy night, swaps the bridge's cell behaviors as
-/// the leader steps onto it.
+/// Nothing visible happens as Isaac steps up to either end of the rope bridge
+/// across the river in the south of the village, at cells (8, 85) to (8, 88)
+/// on the west bank or (18, 84) to (18, 87) on the east. The game lays the
+/// bridge's planks into the cells over the river, so that he can walk across.
+///
+/// As by day (Vale_StepOntoBridge in vale.c), the planks are copied from the
+/// bridge's own layer, cells (40, 84) to (46, 87) of the map, onto cells
+/// (10, 84) to (16, 87), and FLAG_VALE_ON_BRIDGE keeps them there after a
+/// battle. The ends of the rope bridge west of Isaac's house, cells (5, 56)
+/// to (5, 57) and (13, 56) to (14, 57), run this too, though that bridge is
+/// always open.
 static void ValePrologue_StepOntoBridge(void) {
   GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// In Vale on the stormy night, restores the bridge's cell behaviors as
-/// the leader steps off it.
+/// Nothing visible happens as Isaac steps off either end of the rope bridge
+/// across the river in the south of the village, a cell further from the
+/// river than ValePrologue_StepOntoBridge's cells. The game puts the river's
+/// cells back under the bridge.
+///
+/// The river's cells are kept below the bridge's own, at cells (40, 89) to
+/// (46, 92) of the map. The ends of the bridge west of Isaac's house run this
+/// too.
 static void ValePrologue_StepOffBridge(void) {
   GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
@@ -344,28 +431,39 @@ UNUSED static void ValePrologue_UnusedOpenSanctumDoor(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR);
 }
 
-/// Leaves through an exit the exit table doesn't list.
+/// On the stormy night, climbing the steps up Mt. Aleph in the north-west of
+/// the village (cells (5..8, 16)) does not take Isaac up the mountain: he comes
+/// out in the plaza, outside the door of the house at its top.
+///
+/// By day the steps lead to Sol Sanctum by exit 1 (VALE_TO_SOL_ENTRANCE).
+/// The event asks for the same exit 1, which gValePrologue_Exits does not
+/// list, and the running game brings Isaac out at the plaza's first entrance,
+/// VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH, instead.
 static void ValePrologue_LeaveNorthwestToValePlaza(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
 }
 
-/// In Vale on the stormy night, leaves for the part of Vale around Kraden's
-/// cottage.
+/// On the stormy night, Isaac leaves the village by the northern of the two
+/// paths off its west edge (cells (0, 38..41)), toward Kraden's cottage.
 static void ValePrologue_LeaveToValeKradensCottageNorth(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// In Vale on the stormy night, leaves for the part of Vale around Kraden's
-/// cottage by its second path.
+/// On the stormy night, Isaac leaves the village by the southern of the two
+/// paths off its west edge (cells (0, 49..50)), toward Kraden's cottage.
 static void ValePrologue_LeaveToValeKradensCottageSouth(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// In Vale on the stormy night, leaves for the plaza, where the villagers have
-/// gathered (SceneId_ValePlaza).
+/// On the stormy night, Isaac leaves by the path off the village's south-east
+/// edge (cells (29, 86..87)) for the plaza, where the villagers have gathered
+/// (SceneId_ValePlaza).
+///
+/// Once the Boulder has swept Felix and the others away, Garet goes after him
+/// first (ValePrologue_GaretFollowsIsaac).
 static void ValePrologue_LeaveToValePlaza(void) {
   Sound_Play(SE_MAP_EXIT);
   if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
@@ -375,7 +473,8 @@ static void ValePrologue_LeaveToValePlaza(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_VALE_PLAZA);
 }
 
-/// In Vale on the stormy night, opens the door of Garet's house and goes in.
+/// On the stormy night, Isaac opens the door of Garet's house (cell (25, 46))
+/// and goes in.
 static void ValePrologue_LeaveToCottageRoomsAEast(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_IsaacsDoorOpens, 54, 32);
@@ -384,7 +483,10 @@ static void ValePrologue_LeaveToCottageRoomsAEast(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_EAST);
 }
 
-/// A stout man runs out of a house and shoves Isaac.
+/// The first time Isaac walks up to the door of the house north-west of his
+/// own (cell (16, 51)) on the stormy night, a stout man runs out of it and
+/// shoves him (ValePrologue_BumpIntoShovingMan). After that, or once the
+/// second rock has fallen, Isaac goes in.
 static void ValePrologue_LeaveToCottageRoomsA(void) {
   if (Event_GetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -401,8 +503,9 @@ static void ValePrologue_LeaveToCottageRoomsA(void) {
   }
 }
 
-/// Goes back into Isaac's house on the stormy night. It's the door he and Dora
-/// came out of in Vale, and it opens unless they left it open.
+/// On the stormy night, Isaac goes back into his own house by its door (cell
+/// (21, 56)), the one he and Dora came out of. It opens unless they left it
+/// open.
 static void ValePrologue_LeaveToIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -413,7 +516,8 @@ static void ValePrologue_LeaveToIsaacsHouse(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE);
 }
 
-/// In Vale on the stormy night, opens a door and goes in.
+/// On the stormy night, Isaac opens the door of Jenna's grandparents' house,
+/// on the river's east bank (cell (20, 71)), and goes in.
 static void ValePrologue_LeaveToCottageRoomsANorth(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_GrandparentsDoorOpens, 49, 69);
@@ -422,7 +526,8 @@ static void ValePrologue_LeaveToCottageRoomsANorth(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
-/// In Vale on the stormy night, opens a door and goes in.
+/// On the stormy night, Isaac opens the door of the house south of Jenna's
+/// grandparents', on the river's east bank (cell (23, 78)), and goes in.
 static void ValePrologue_LeaveToCottageRoomsAWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_WestHouseDoorOpens, 52, 76);
@@ -431,8 +536,9 @@ static void ValePrologue_LeaveToCottageRoomsAWest(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST);
 }
 
-/// Unused: its row answers cell behavior 11, which no cell of the stormy
-/// night's layout (map/vale_prologue) carries.
+/// Unused: a door of a house on the river's west bank would lead into the
+/// house south of Jenna's grandparents', but no cell of the stormy night's map
+/// carries its row's cell behavior, so it never opens.
 static void ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 35, 74);
@@ -442,7 +548,8 @@ static void ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor(void) {
       VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR);
 }
 
-/// In Vale on the stormy night, opens a door and goes in.
+/// On the stormy night, Isaac opens the west door of the house on the river's
+/// west bank (cell (6, 75)) and goes in.
 static void ValePrologue_LeaveToCottageRoomsBWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 35, 73);
@@ -451,7 +558,8 @@ static void ValePrologue_LeaveToCottageRoomsBWest(void) {
   Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_WEST);
 }
 
-/// In Vale on the stormy night, opens a door and goes in.
+/// On the stormy night, Isaac opens the east door of the house on the river's
+/// west bank, onto the wooden deck by the water (cell (9, 74)), and goes in.
 static void ValePrologue_LeaveToCottageRoomsBEast(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_GrandparentsDoorOpens, 38, 72);
@@ -788,9 +896,9 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Event_End();
 }
 
-/// In Vale on the stormy night, the first rock (ACTOR_FIRST_ROCK) falls
-/// across the path as Isaac walks past, and Garet, once with Isaac, says they
-/// cannot get around it.
+/// On the stormy night, a huge rock falls across the path just south of
+/// Isaac's house as he walks past (cells (19, 57..59)), and Garet, once with
+/// Isaac, says they cannot get around it.
 static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
   FIXED targetHeight;
@@ -858,8 +966,9 @@ static void ValePrologue_ApplyFirstRockCollision(void) {
   MapGrid_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
-/// In Vale on the stormy night, the second rock (ACTOR_FIRST_ROCK + 1) falls
-/// down the path as Isaac walks past.
+/// On the stormy night, a huge rock falls down onto the path below the house
+/// north-west of Isaac's, by the river, as he walks past (cells (12, 52) and
+/// (14, 55)).
 static void ValePrologue_SecondRockFalls(void) {
   struct Actor *rock;
   FIXED targetHeight;
@@ -928,8 +1037,9 @@ static void ValePrologue_ApplySecondRockCollision(void) {
   MapGrid_CopyCellAttributes(13, 55, 1, 1, 15, 55);
 }
 
-/// In Vale on the stormy night, the third rock (ACTOR_FIRST_ROCK + 2) falls
-/// down the path as Isaac walks past.
+/// On the stormy night, a huge rock falls down onto the path along the
+/// village's west edge, between the two paths to Kraden's cottage, as Isaac
+/// walks past (cells (2..5, 40..45)).
 static void ValePrologue_ThirdRockFalls(void) {
   if (Event_GetFlag(FLAG_VALE_STORM_THIRD_ROCK_PASSED) == 0) {
     Event_Start();
@@ -996,8 +1106,9 @@ static void ValePrologue_ApplyThirdRockCollision(void) {
   MapGrid_CopyCellAttributes(23, 20, 3, 1, 2, 43);
 }
 
-/// In Vale on the stormy night, the fourth rock (ACTOR_FIRST_ROCK + 3) falls
-/// down the path as Isaac walks past.
+/// On the stormy night, a huge rock falls down onto the path east of Jenna's
+/// grandparents' house, by the river, as Isaac walks past (cells (25..28,
+/// 68..74)).
 static void ValePrologue_FourthRockFalls(void) {
   struct Actor *rock;
   FIXED targetHeight;
@@ -1059,8 +1170,10 @@ static void ValePrologue_ApplyFourthRockCollision(void) {
   MapGrid_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-/// Stops the leader at the door of VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH for
-/// the first conversation of the night.
+/// A stout man runs out of the door of the house north-west of Isaac's and
+/// knocks him back. "Huh? Isaac? Did you come to get me?" He says sorry,
+/// says they had better get to the plaza before the Boulder hits, and runs
+/// off.
 static void ValePrologue_BumpIntoShovingMan(void) {
   s32 message;
 
@@ -1096,8 +1209,9 @@ static void ValePrologue_BumpIntoShovingMan(void) {
   Event_End();
 }
 
-/// In Vale on the stormy night, Isaac hears Garet struggling with his things.
-/// "Ugh... Hrnghhh..."
+/// On the stormy night, walking up beside Garet, who is dragging his chest of
+/// valuables along the path north of his house (cells (21, 38..41)), Isaac
+/// hears him struggling. "Ugh... Hrnghhh..."
 static void ValePrologue_HearGaretStruggling(void) {
   if (Event_GetFlag(FLAG_VALE_STORM_HEARD_GARET) == 0) {
     if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -1118,8 +1232,9 @@ static void ValePrologue_HearGaretStruggling(void) {
   }
 }
 
-/// In Vale on the stormy night, Garet calls after Isaac as he walks away
-/// from him, asking whether he will just leave him there.
+/// On the stormy night, if Isaac walks on west past Garet and his chest
+/// (cells (19, 39..42)), Garet calls after him, asking whether he will just
+/// leave him there.
 static void ValePrologue_GaretCallsAfterIsaac(void) {
   if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       GameFlag_Get(FLAG_VALE_STORM_HEARD_GARET) != 0) {
@@ -1239,8 +1354,14 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
   }
 }
 
-/// In Vale on the stormy night, Garet turns Isaac back from the path north,
-/// which leads to Mt. Aleph.
+/// On the stormy night, as Isaac walks up to the foot of the steps up to the
+/// Sanctum's door, beside the waterfall (cells (15..16, 30)), Garet stops him
+/// and turns him back.
+/// "We shouldn't go north... that'll take us toward Mt. Aleph."
+///
+/// Garet steps out from behind Isaac, faces him, then turns south: "The plaza
+/// is over that way. We need to head south." He falls back in behind, and
+/// Isaac walks back from the steps.
 static void ValePrologue_WarnAboutMtAleph(void) {
   struct Actor *initialLeader;
 
@@ -1298,7 +1419,10 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Scene_WalkIntoLeader(ACTOR_GARET_CHILD);
 }
 
-/// The Boulder slips toward the village and the elders tell the boys to run.
+/// On the stormy night, walking along the path west of Garet's house (cells
+/// (4..5, 35)), Isaac and Garet see the elders holding the Boulder up on the
+/// mountainside with their Psynergy. It slips toward the village, and the
+/// elders tell the boys to run.
 static void ValePrologue_WatchBoulderFall(void) {
   u32 i;
   struct Actor *movingActor;
@@ -1517,7 +1641,9 @@ UNUSED static void ValePrologue_FlashBoulderMapAnimationEntries(void) {
   }
 }
 
-/// Jenna cries out for Felix as her family tries to save him at the river.
+/// On the stormy night, coming down to the river's west bank north of the
+/// house by the river (cells (8..9, 66..67)), Isaac sees Felix clinging on in
+/// the current, and Jenna cries out as her family tries to save him.
 static void ValePrologue_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
@@ -1933,7 +2059,10 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
   Event_End();
 }
 
-/// The Boulder sweeps Felix, his parents and Kyle away.
+/// On the stormy night, back at the river with Jenna and the strongman, as
+/// Isaac walks out onto the rope bridge across the river in the south (cells
+/// (13, 85..86)), the Boulder comes down the river and sweeps Felix, his
+/// parents and Kyle away.
 static void ValePrologue_BoulderSweepsThemAway(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -2607,7 +2736,8 @@ static void ValePrologue_RebuildRiverbank(void) {
   MapGrid_CenterOnFollowedPoint();
 }
 
-/// In Vale on the stormy night, a monster attacks on the paths (slot 2 of
+/// On the stormy night, a monster attacks as Isaac comes to the west end of the
+/// rope bridge west of his house (cells (3..4, 54)). It attacks once (slot 2 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 static void ValePrologue_FightThirdMonster(void) {
   struct FieldWork *work;
@@ -2623,7 +2753,9 @@ static void ValePrologue_FightThirdMonster(void) {
   Event_End();
 }
 
-/// In Vale on the stormy night, another monster attacks (slot 3 of
+/// On the stormy night, a monster attacks as Isaac steps off the east end of
+/// the rope bridge across the river in the south of the village (cells
+/// (21, 85..86)). It attacks once (slot 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 static void ValePrologue_FightFourthMonster(void) {
   struct FieldWork *work;
@@ -2732,16 +2864,18 @@ static void ValePrologue_CopyLeaderSpritePriority(void) {
 #endif
 }
 
-/// In Vale on the stormy night, searching a broken door shows it won't open,
-/// the impact having knocked it off its hinges.
+/// Once the Boulder has passed, searching the west door of the house on the
+/// river's west bank (cell (6, 74)) finds it will not open. "The force of the
+/// impact must have knocked it off its hinges."
 static void ValePrologue_SearchBrokenDoor(void) {
   Event_Start();
   FieldMessage_Show(MsgValeDoorWontOpen, 1);
   Event_End();
 }
 
-/// In Vale on the stormy night, searching the chest Garet was trying to save.
-/// "It's Garet's chest of valuables."
+/// On the stormy night, searching the chest Garet was trying to save, left on
+/// the path north of his house once he joins (cells (25..27, 38)). "It's
+/// Garet's chest of valuables."
 static void ValePrologue_SearchValuablesChest(void) {
   Event_Start();
   FieldMessage_Show(MsgValeSChestValuables, 1);
@@ -3190,28 +3324,35 @@ struct ActorPlacement gValePrologue_BoulderWatchers[] = {
 // clang-format on
 
 struct Trigger gValePrologue_Triggers[] = {
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveNorthwestToValePlaza)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToValeKradensCottageNorth)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_SOUTH_WAY_TO_KRADEN, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToValeKradensCottageSouth)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(ValePrologue_LeaveToValePlaza)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(ValePrologue_LeaveToCottageRoomsAEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_WAY_TO_THE_PLAZA, CONDITION_ALWAYS,
+     EVENT(ValePrologue_LeaveToValePlaza)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GARETS_DOOR,
+     CONDITION_ALWAYS, EVENT(ValePrologue_LeaveToCottageRoomsAEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_VALE_NORTHWEST_HOUSE_DOOR, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsA)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT(ValePrologue_LeaveToIsaacsHouse)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_ISAACS_DOOR,
+     CONDITION_ALWAYS, EVENT(ValePrologue_LeaveToIsaacsHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_VALE_GRANDPARENTS_DOOR, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsANorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_VALE_SOUTH_HOUSE_DOOR, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsAWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_VALE_UNUSED_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS,
      EVENT(ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_VALE_RIVERSIDE_HOUSE_WEST_DOOR, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsBWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_VALE_RIVERSIDE_HOUSE_EAST_DOOR, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsBEast)},
     {TRIGGER_TALK, ACTOR_GARET_CHILD, CONDITION_ALWAYS,
      EVENT(ValePrologue_TalkToGaret)},
@@ -3243,32 +3384,42 @@ struct Trigger gValePrologue_Triggers[] = {
      MSGNO(MsgValeRockCannotBeMoved)},
     {TRIGGER_TALK, ACTOR_FIRST_ROCK + 7, CONDITION_ALWAYS,
      MSGNO(MsgValeRockCannotBeMoved)},
-    {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(ValePrologue_StepOntoBridge)},
-    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(ValePrologue_StepOffBridge)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(ValePrologue_FirstRockFalls)},
-    {TRIGGER_STEP, 42, CONDITION_ALWAYS, EVENT(ValePrologue_SecondRockFalls)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(ValePrologue_ThirdRockFalls)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(ValePrologue_FourthRockFalls)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_ONTO_BRIDGE, CONDITION_ALWAYS,
+     EVENT(ValePrologue_StepOntoBridge)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_OFF_BRIDGE, CONDITION_ALWAYS,
+     EVENT(ValePrologue_StepOffBridge)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_FIRST_ROCK, CONDITION_ALWAYS,
+     EVENT(ValePrologue_FirstRockFalls)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_SECOND_ROCK, CONDITION_ALWAYS,
+     EVENT(ValePrologue_SecondRockFalls)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_THIRD_ROCK, CONDITION_ALWAYS,
+     EVENT(ValePrologue_ThirdRockFalls)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_FOURTH_ROCK, CONDITION_ALWAYS,
+     EVENT(ValePrologue_FourthRockFalls)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_BESIDE_GARET, CONDITION_ALWAYS,
      EVENT(ValePrologue_HearGaretStruggling)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_PAST_GARET, CONDITION_ALWAYS,
      EVENT(ValePrologue_GaretCallsAfterIsaac)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_UNUSED_GARET_JOINS, CONDITION_ALWAYS,
      EVENT(ValePrologue_UnusedGaretJoinsIsaac)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(ValePrologue_WarnAboutMtAleph)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(ValePrologue_WatchBoulderFall)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_FOOT_OF_SANCTUM_STEPS, CONDITION_ALWAYS,
+     EVENT(ValePrologue_WarnAboutMtAleph)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_BOULDER_IN_VIEW, CONDITION_ALWAYS,
+     EVENT(ValePrologue_WatchBoulderFall)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_FELIX_IN_VIEW, CONDITION_ALWAYS,
      EVENT(ValePrologue_WatchAttemptToSaveFelix)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_MIDDLE_OF_BRIDGE, CONDITION_ALWAYS,
      EVENT(ValePrologue_BoulderSweepsThemAway)},
-    {TRIGGER_STEP, 16, FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_THIRD_MONSTER,
+     FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT,
      EVENT(ValePrologue_FightThirdMonster)},
-    {TRIGGER_STEP, 17, FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT,
+    {TRIGGER_STEP, CELL_BEHAVIOR_VALE_FOURTH_MONSTER,
+     FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT,
      EVENT(ValePrologue_FightFourthMonster)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS,
-     EVENT(ValePrologue_SearchBrokenDoor)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 19, CONDITION_ALWAYS,
-     EVENT(ValePrologue_SearchValuablesChest)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_WRECKED_HOUSE_DOOR,
+     CONDITION_ALWAYS, EVENT(ValePrologue_SearchBrokenDoor)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_GARETS_CHEST,
+     CONDITION_ALWAYS, EVENT(ValePrologue_SearchValuablesChest)},
     {TRIGGER_TABLE_END},
 };
 

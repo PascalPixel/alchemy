@@ -5,41 +5,46 @@
 ///
 /// Three scenes share this overlay and the area name Suhalla Desert:
 ///
-/// - SuhallaDesertNorth (SceneId_SuhallaDesertNorth): entered from the world
-///   map near Suhalla, with five storms.
-/// - SuhallaDesertSouth (SceneId_SuhallaDesertSouth): four storms and a fifth
-///   that gives chase, Flash, a Mars Djinni, a stone pillar that Reveal shows,
-///   and near its way out Iodem's question whether to search on for Sheba
+/// - The north half (SceneId_SuhallaDesertNorth), entered from the World Map
+///   just south of Suhalla at the top of the map. Five sandstorms lie in wait:
+///   on the west path and on the east path toward the Virtuous Armlet's chest
+///   near the top, and three in the south, the middle one beside the chest
+///   the Mimic hides in. The way on leaves by the map's south-west edge.
+/// - The south half (SceneId_SuhallaDesertSouth), entered at its east side.
+///   A long valley ends in three ways north, each with a storm: the west way
+///   to a chest with a Cookie, the east way to a chest with a Lucky Medal.
+///   Below lie two cave mouths: by the west one Flash, the Mars Djinni, is
+///   reached over a pit with a pillar Reveal shows, and the east one opens
+///   into a hollow where a great red storm turns. Across the wide plain
+///   south, past a half-buried stone head, a storm gives chase, and near the
+///   way out in the south-east Iodem asks whether to search on for Sheba
 ///   (SuhallaDesert_IodemAsksWhetherToPressOn,
 ///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
-/// - SuhallaDesertCaves (SceneId_SuhallaDesertCaves): two caves under the
-///   desert, reached from SuhallaDesertSouth. They place nothing.
+/// - The caves under the south half (SceneId_SuhallaDesertCaves), which join
+///   its west cave mouth to the hollow of the red storm. They place nothing.
 ///
-/// One exit table and, for the first two scenes, one trigger table serve the
+/// One exit table and, for the two halves, one trigger table serve the
 /// overlay. The exits in that trigger table keep their numbers, which each
-/// scene's exit rows lead its own way.
+/// half's exit rows lead its own way.
 ///
-/// The storms are the desert's mechanism, ACTOR_FIRST_SANDSTORM to
-/// ACTOR_LAST_SANDSTORM in the first two scenes.
+/// The storms, ACTOR_FIRST_SANDSTORM to ACTOR_LAST_SANDSTORM in both halves,
+/// start shrunk to nothing in the sand. Stepping next to one (the cells north
+/// and south of it) makes a white whirlwind rise there with a roar
+/// (SuhallaDesert_RaiseStorm); the first time, blowing sand fills the air.
+/// That haze is BG1 blended over the rest (SUHALLA_DESERT_HAZE_BLEND). The
+/// first storm to rise while Iodem travels with the party brings him out to
+/// warn of them.
 ///
-/// As the party nears one (cell behaviors 61 to 65 and 71 to 73) it rises,
-/// growing to full size (SuhallaDesert_RaiseStorm). The first time, the sand
-/// haze fades in. The haze is BG1 blended over the rest
-/// (SUHALLA_DESERT_HAZE_BLEND). The first storm to rise while Iodem travels
-/// with the party brings him out to warn of them.
+/// Walking into a storm draws the leader to its centre and lifts the party,
+/// spinning, for SANDSTORM_CAPTURE_FRAMES (SuhallaDesert_CatchInStorm).
 ///
-/// Walking into one (cell behaviors 41 to 45 and 51 to 54) draws the leader
-/// to its centre and lifts the party, spinning, for SANDSTORM_CAPTURE_FRAMES
-/// (SuhallaDesert_CatchInStorm).
-///
-/// Douse in that time stops the storm and the monster in it attacks
-/// (SuhallaDesert_DouseStorm). Otherwise the storm carries the party up and
-/// drops it on the World Map outside Suhalla
-/// (SuhallaDesert_StormCarriesPartyAway), which is why everyone the storms
-/// catch winds up there.
-///
-/// In SuhallaDesertSouth, cell behavior 81 sets the fifth storm chasing the
-/// leader (SuhallaDesert_ChaseLeader), and it catches a leader on the move.
+/// Douse in that time stops the storm, and the monster in it attacks: a
+/// Tornado Lizard, or the Tempest Lizard in the red storm and the Storm
+/// Lizard in the storm that gives chase (SuhallaDesert_DouseStorm). Otherwise
+/// the storm carries the party up out of sight and drops it on the World Map
+/// outside Suhalla (SuhallaDesert_StormCarriesPartyAway), which is why
+/// everyone the storms catch winds up there; the red storm drops it far off,
+/// near Crossbone Isle.
 ///
 /// A doused storm's flag is an area flag, five from
 /// FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED and five from
@@ -101,14 +106,14 @@ extern s32 gSuhallaDesertChaseScript[];
 extern struct Trigger gSuhallaDesertTriggersOther[];
 extern struct Trigger gSuhallaDesertCavesTriggers[];
 
-/// Storms doused in the first and second scenes, one flag per storm from the
+/// Storms doused in the north and south halves, one flag per storm from the
 /// first.
 ///
 /// Each storm stays away once doused.
 enum {
-  /// The first scene's storms, five from this one.
+  /// The north half's storms, five from this one.
   FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_01,
-  /// The second scene's storms, five from this one.
+  /// The south half's storms, five from this one.
   FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_11,
   /// A storm has risen, so the sand haze stays faded in.
   FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN = FLAG_AREA_TEMP_40,
@@ -116,31 +121,53 @@ enum {
   FLAG_SUHALLA_DESERT_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
-/// The actors, numbering the actor placement rows of the first two
-/// scenes from ACTOR_FIRST_PLACED.
+/// The actors, numbering the actor placement rows of both halves of the
+/// desert from ACTOR_FIRST_PLACED.
 ///
-/// The third scene places none.
+/// The caves place none.
 enum {
-  /// The storms, five in each scene.
+  /// The storms, five in each half.
   ACTOR_FIRST_SANDSTORM = ACTOR_FIRST_PLACED,
+  /// In the south half, the great red storm in the hollow by the east cave
+  /// mouth, which holds the Tempest Lizard.
   ACTOR_FOURTH_SANDSTORM = ACTOR_FIRST_SANDSTORM + 3,
   ACTOR_LAST_SANDSTORM = ACTOR_FIRST_SANDSTORM + 4,
-  /// In the second scene the last storm gives chase.
+  /// In the south half the last storm waits off the map until it gives chase
+  /// across the plain. It holds the Storm Lizard.
   ACTOR_CHASING_SANDSTORM = ACTOR_LAST_SANDSTORM,
   /// Iodem, who steps out of the party to talk and then rejoins it.
   ACTOR_IODEM,
-  /// In the second scene, seen only while Reveal lasts, drawn as Goma Cave's
-  /// stone pillars.
+  /// In the south half, the stone pillar Reveal shows in the pit east of
+  /// Flash, drawn as Goma Cave's stone pillars.
   ACTOR_REVEALED_PILLAR,
-  /// In the second scene, the Mars Djinni.
+  /// In the south half, Flash, the Mars Djinni, by the west cave mouth.
   ACTOR_FLASH
+};
+
+/// The cell behaviors of the desert's step triggers.
+enum SuhallaDesertCellBehavior {
+  /// Near the south half's way out, where Iodem asks whether to press on.
+  CELL_BEHAVIOR_SUHALLA_DESERT_IODEM_ASKS = 9,
+  /// A storm's own cell in the north half, one behavior per storm from the
+  /// first.
+  CELL_BEHAVIOR_SUHALLA_DESERT_NORTH_STORM = 41,
+  /// A storm's own cells in the south half, one behavior per storm from the
+  /// first; the fourth is the red storm's.
+  CELL_BEHAVIOR_SUHALLA_DESERT_SOUTH_STORM = 51,
+  /// The cells north and south of a storm in the north half, which raise it.
+  CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_NORTH_STORM = 61,
+  /// The cells north and south of a storm in the south half, which raise it.
+  CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_SOUTH_STORM = 71,
+  /// The cells across the south half's plain that set a storm chasing.
+  CELL_BEHAVIOR_SUHALLA_DESERT_STORM_CHASES = 81
 };
 
 /// Frames a caught party spins before the storm carries it away.
 enum { SANDSTORM_CAPTURE_FRAMES = 180 };
 
-/// The treasure spot of SuhallaDesertSouth's hidden Psynergy Stone, whose
-/// search row finds the stone (FIND_PSYNERGY_STONE).
+/// The treasure spot of the Psynergy Stone hidden in the south half, at cell
+/// (12, 71) on the plain, whose search row finds the stone
+/// (FIND_PSYNERGY_STONE).
 ///
 /// Its actor stands in its cell only while Reveal lasts
 /// (SuhallaDesert_RevealStarts moves it to the cell's centre). It is moved
@@ -189,7 +216,7 @@ static u16 sSuhallaDesertSavedColor;
 #define FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_09
 /// The fifth sandstorm (ACTOR_LAST_SANDSTORM) has risen on this visit.
 #define FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN FLAG_SCENE_TEMP_0A
-/// In SuhallaDesertSouth, the sandstorm that gives chase has set off after the
+/// In the south half, the sandstorm that gives chase has set off after the
 /// leader.
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF FLAG_SCENE_TEMP_0E
 /// A sandstorm has caught the leader and lifts the party, and Douse can put it
@@ -202,13 +229,16 @@ static u16 sSuhallaDesertSavedColor;
 /// leader.
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_SCENE_TEMP_18
 
-/// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.
+/// Talking to Flash, the Mars Djinni by the west cave mouth in the south half
+/// of Suhalla Desert (cell (4, 43)), starts its battle.
+///
+/// The party reaches it by hopping across the pit on the pillar Reveal shows.
 static void SuhallaDesert_FightFlash(void) {
   Field_RequestDjinnBattle(ACTOR_FLASH, DJINNI_FLASH);
 }
 
-/// A storm's actor placement script, which clears its sprite and collision
-/// flags.
+/// A storm's actor placement script: the storm casts no shadow and nothing
+/// bumps into it.
 static s32
 SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
@@ -216,7 +246,7 @@ SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *actor) {
   return 0;
 }
 
-/// A storm's actor placement script, which toggles its single-sprite storage.
+/// A storm's actor placement script, which flips how its sprite is stored.
 static s32 SuhallaDesert_ToggleActorActive(struct Actor *actor) {
   actor->spriteStorageKind ^= 1;
   return 1;
@@ -242,7 +272,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 /// Where each exit of the three scenes leads.
 const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
-/// The storms, Iodem, and in the second scene Flash and what Reveal shows.
+/// The storms, Iodem, and in the south half Flash and the pillar Reveal shows.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -258,8 +288,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSuhallaDesertActorPlacementsOther;
 }
 
-/// Each frame while caught, spins the leader and counts down to raising event
-/// 99, the storm carrying the party away.
+/// Each frame while caught, spins the leader round and counts down to the
+/// storm carrying the party away (RAISED_SANDSTORM_CARRIES_PARTY_AWAY). The
+/// count stands still while the menu is open.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -282,7 +313,10 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
                         remainingFrames);
 }
 
-/// The leader walks into a storm and is caught.
+/// The leader walks into a storm: he is drawn to its centre, looking about,
+/// and lifted spinning into the air with the roar of the wind.
+///
+/// Until the count runs out, Douse can still stop it.
 static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 leaderId;
   struct Actor *leader;
@@ -322,41 +356,52 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   }
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the leader walks into the scene's first storm
-/// (cell behavior 41 or 51).
+/// Walking into the sandstorm on the west path near the top of Suhalla
+/// Desert's north half (cell (3, 16)), or the one in the west way north out of
+/// the south half's long valley toward the Cookie's chest (cell (13, 20)),
+/// gets the party caught up in it.
 static void SuhallaDesert_CaughtByFirstStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM);
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the leader walks into the second storm
-/// (cell behavior 42 or 52).
+/// Walking into the sandstorm on the east path near the top of Suhalla
+/// Desert's north half, toward the Virtuous Armlet's chest (cell (28, 16)), or
+/// the one in the middle way north out of the south half's long valley (cell
+/// (18, 20)), gets the party caught up in it.
 static void SuhallaDesert_CaughtBySecondStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 1);
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the leader walks into the third storm (cell
-/// behavior 43 or 53).
+/// Walking into the sandstorm in the south-west of Suhalla Desert's north half
+/// (cell (7, 43)), or the one in the east way north out of the south half's
+/// long valley toward the Lucky Medal's chest (cell (25, 20)), gets the party
+/// caught up in it.
 static void SuhallaDesert_CaughtByThirdStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 2);
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the leader walks into the fourth storm
-/// (cell behavior 44 or 54).
+/// Walking into the sandstorm beside the Mimic's chest in the south of Suhalla
+/// Desert's north half (cell (16, 43)), or into the great red storm in the
+/// hollow by the south half's east cave mouth (cells (24, 37) to (24, 40)),
+/// gets the party caught up in it.
 static void SuhallaDesert_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
-/// The fifth storm catches the leader.
+/// Walking into the sandstorm in the south-east of Suhalla Desert's north half
+/// (cell (27, 45)) gets the party caught up in it, and so does the storm
+/// chasing the party across the south half's plain when it reaches a leader
+/// on the move (RAISED_CHASING_SANDSTORM_CATCHES).
 static void SuhallaDesert_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
-/// As the party nears a storm it rises, growing to full size with the sand
-/// haze fading in the first time.
+/// Stepping next to a storm makes a white whirlwind rise out of the sand with a
+/// roar, growing to full size in about a quarter of a second, and the first
+/// time the air fills with blowing sand.
+///
+/// The first time a storm rises while Iodem travels with the party, he steps
+/// out, cries "A sandstorm!", and warns that they must step carefully.
 static void SuhallaDesert_RaiseStorm(s32 stormId) {
   s32 frame;
   s32 weight;
@@ -437,40 +482,48 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   Event_End();
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the party nears the scene's first storm
-/// (cell behavior 61 or 71).
+/// Stepping next to the hidden storm on the west path near the top of Suhalla
+/// Desert's north half (cells (3, 15) and (3, 17)), or the one in the west way
+/// out of the south half's long valley (cells (13, 19) and (13, 21)), makes it
+/// rise.
 static void SuhallaDesert_FirstStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM);
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the party nears the second storm (cell
-/// behavior 62 or 72).
+/// Stepping next to the hidden storm on the east path near the top of Suhalla
+/// Desert's north half (cells (28, 15) and (28, 17)), or the one in the middle
+/// way out of the south half's long valley (cells (18, 19) and (18, 21)), makes
+/// it rise.
 static void SuhallaDesert_SecondStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 1);
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the party nears the third storm (cell
-/// behavior 63 or 73).
+/// Stepping next to the hidden storm in the south-west of Suhalla Desert's
+/// north half (cells (7, 42) and (7, 44)), or the one in the east way out of
+/// the south half's long valley (cells (25, 19) and (25, 21)), makes it rise.
 static void SuhallaDesert_ThirdStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 2);
 }
 
-/// In SuhallaDesertNorth, the party nears the fourth storm (cell behavior
-/// 64).
+/// Stepping next to the hidden storm beside the Mimic's chest in the south of
+/// Suhalla Desert's north half (cells (16, 42) and (16, 44)) makes it rise.
 static void SuhallaDesert_FourthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
-/// In SuhallaDesertNorth, the party nears the fifth storm (cell behavior
-/// 65).
+/// Stepping next to the hidden storm in the south-east of Suhalla Desert's
+/// north half (cells (27, 44) and (27, 46)) makes it rise.
 static void SuhallaDesert_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
-/// Iodem asks whether to search the desert for Sheba again or press on.
+/// Near the way out of Suhalla Desert's south half, in its south-east corner
+/// (cell (27, 79)), Iodem steps out of the party: Sheba is nowhere to be
+/// found, should they search the desert once more or press on to Lalivero?
+/// Either way he decides to head for the guard gate ahead first.
+///
+/// It plays once, while Iodem travels with the party, after he has heard the
+/// wounded soldiers in Suhalla and before the party reaches Lalivero.
 static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
   struct Actor *leader;
 
@@ -531,7 +584,10 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
 /// How far apart two coordinates are.
 #define GAP(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/// The chasing storm's script, which follows the leader.
+/// The chasing storm's script: it speeds after the leader, throwing up sand,
+/// and once it reaches a leader on the move it catches him.
+///
+/// It holds still while the field handles another event.
 static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   struct EffectOptions options;
   struct Actor *leader;
@@ -580,8 +636,10 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   return 1;
 }
 
-/// In SuhallaDesertSouth, until the chasing storm has been doused, it
-/// appears behind the party and gives chase.
+/// Crossing the wide plain in the south of Suhalla Desert's south half
+/// (cells (18, 48) to (18, 52), (22, 51) to (22, 52), or (14, 62) to
+/// (21, 62)) sets a storm chasing the party from beside the half-buried stone
+/// head (cell (7, 51)), until it has been doused.
 static void SuhallaDesert_StormGivesChase(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF);
@@ -590,17 +648,21 @@ static void SuhallaDesert_StormGivesChase(void) {
   }
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader
-/// rains on it from above.
+/// Casting Douse while a sandstorm in Suhalla Desert holds the party makes the
+/// rain fall on the storm from above.
 static void SuhallaDesert_DouseCastAtStorm(void) {
   struct FieldEffectWork *work = gFieldEffectWork;
 
   work->childOption = 1;
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), Douse stops the storm that caught the leader.
+/// Douse on a sandstorm in Suhalla Desert that holds the party stops it, and
+/// the monster inside attacks: a Tornado Lizard, or the Tempest Lizard in the
+/// red storm by the south half's east cave mouth, or the Storm Lizard in the
+/// storm that chased the party across the plain.
+///
+/// The storm stays gone until the party leaves the desert; the chasing storm
+/// is gone for good.
 static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
   // The storm no longer carries the party away.
   if (gFieldWork->raisedTrigger == RAISED_SANDSTORM_CARRIES_PARTY_AWAY) {
@@ -634,9 +696,13 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
-/// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the spinning runs out (event 99) and the storm
-/// carries the party away.
+/// When a sandstorm in Suhalla Desert has held the party for three seconds
+/// without being doused, it rises with them faster and faster out of sight,
+/// the screen closes, and the party drops onto the World Map outside Suhalla.
+///
+/// The red storm by the south half's east cave mouth drops them far off
+/// instead, near Crossbone Isle beside the World Map's own storm
+/// (WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM).
 static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 stormId;
   struct Actor *leader;
@@ -680,8 +746,8 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   }
 }
 
-/// While Reveal lasts, one palette color pulses, brightening and dimming over
-/// 64 frames.
+/// While Reveal lasts, one colour of the desert's picture pulses grey,
+/// brightening and dimming about once a second.
 static void SuhallaDesert_PulseRevealPalette(void) {
   u16 brightnessFrame = gFrameCount & 63;
   s32 grey;
@@ -694,10 +760,22 @@ static void SuhallaDesert_PulseRevealPalette(void) {
 }
 
 #ifdef UBFIX
-/// Reveal wears off, and what it showed is hidden again.
+/// When Reveal wears off in Suhalla Desert's south half, the stone pillar in
+/// the pit east of Flash (cell (15, 44)) disappears again, and the Psynergy
+/// Stone on the plain (cell (12, 71)) can no longer be found.
+///
+/// The pillar's cell takes back the attributes of the cell east of it, and the
+/// stone's cell is stashed away at (127, 127). The scene runs it on entry
+/// too, so both start hidden.
 static void SuhallaDesert_RevealEnds(void) {
 #else
-/// Reveal wears off, and what it showed is hidden again.
+/// When Reveal wears off in Suhalla Desert's south half, the stone pillar in
+/// the pit east of Flash (cell (15, 44)) disappears again, and the Psynergy
+/// Stone on the plain (cell (12, 71)) can no longer be found.
+///
+/// The pillar's cell takes back the attributes of the cell east of it, and the
+/// stone's cell is stashed away at (127, 127). The scene runs it on entry
+/// too, so both start hidden.
 static s32 SuhallaDesert_RevealEnds(void) {
   s32 removalResult;
 #endif
@@ -722,7 +800,12 @@ static s32 SuhallaDesert_RevealEnds(void) {
   }
 }
 
-/// Reveal shows a hidden stone pillar in the desert's south.
+/// Reveal in Suhalla Desert's south half shows a stone pillar standing in the
+/// pit east of Flash (cell (15, 44)), to hop across while Reveal lasts, and
+/// lets the party find a Psynergy Stone hidden on the plain (cell (12, 71)).
+///
+/// The pillar's cell takes the attributes of a spare cell off the drawn map
+/// (31, 95), and the stone's cell comes back from its stash.
 static UNREAD_RESULT SuhallaDesert_RevealStarts(void) {
   if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
     Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -740,8 +823,8 @@ static UNREAD_RESULT SuhallaDesert_RevealStarts(void) {
   }
 }
 
-/// The third scene's exits, or the storms, Iodem, treasure and Reveal of the
-/// first two.
+/// The caves' exits, or the storms, Iodem, treasure and Reveal of the two
+/// halves.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_SUHALLA_DESERT_CAVES) {
     return gSuhallaDesertCavesTriggers;
@@ -749,7 +832,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaDesertTriggersOther;
 }
 
-/// Sets a scene up as the party enters.
+/// Sets a part of the desert up as the party enters: a party still held by a
+/// storm (after the menu) goes on spinning, what Reveal shows is hidden, the
+/// storms that are left start shrunk into the sand, and the blowing sand is
+/// shown only if a storm has already risen.
 s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
 
@@ -778,7 +864,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The first scene's storms on entry.
+/// The north half's storms on entry: doused ones count as risen, and the rest
+/// start shrunk into the sand unless the party is coming back to where it
+/// was.
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   struct Actor *actor;
   s32 stormId;
@@ -824,7 +912,8 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
                       IO_WRITE_HALFWORD);
 }
 
-/// The second scene's storms on entry, as the first scene's.
+/// The south half's storms on entry, as the north half's; the fourth is
+/// tinted red, and is already full size.
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -1020,11 +1109,11 @@ s32 gSuhallaDesertChaseScript[] = {
     SC_END,
 };
 
-/// The first two scenes' events, in one table.
+/// The events of the desert's two halves, in one table.
 ///
-/// Its exits keep their numbers, since each scene's exit table gives them its
-/// own ways out. Exit 1 is SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the first and
-/// SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH in the second.
+/// Its exits keep their numbers, since each half's exit table gives them its
+/// own ways out. Exit 1 is SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the north half
+/// and SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH in the south half.
 struct Trigger gSuhallaDesertTriggersOther[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1 },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2 },
@@ -1034,25 +1123,25 @@ struct Trigger gSuhallaDesertTriggersOther[] = {
 #else
     { TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4 },
 #endif
-    { TRIGGER_STEP, 9, FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA, EVENT(SuhallaDesert_IodemAsksWhetherToPressOn) },
-    { TRIGGER_STEP, 41, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED, EVENT(SuhallaDesert_CaughtByFirstStorm) },
-    { TRIGGER_STEP, 42, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 1, EVENT(SuhallaDesert_CaughtBySecondStorm) },
-    { TRIGGER_STEP, 43, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 2, EVENT(SuhallaDesert_CaughtByThirdStorm) },
-    { TRIGGER_STEP, 44, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 3, EVENT(SuhallaDesert_CaughtByFourthStorm) },
-    { TRIGGER_STEP, 45, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 4, EVENT(SuhallaDesert_CaughtByFifthStorm) },
-    { TRIGGER_STEP, 51, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, EVENT(SuhallaDesert_CaughtByFirstStorm) },
-    { TRIGGER_STEP, 52, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 1, EVENT(SuhallaDesert_CaughtBySecondStorm) },
-    { TRIGGER_STEP, 53, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 2, EVENT(SuhallaDesert_CaughtByThirdStorm) },
-    { TRIGGER_STEP, 61, FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN, EVENT(SuhallaDesert_FirstStormRises) },
-    { TRIGGER_STEP, 62, FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN, EVENT(SuhallaDesert_SecondStormRises) },
-    { TRIGGER_STEP, 63, FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN, EVENT(SuhallaDesert_ThirdStormRises) },
-    { TRIGGER_STEP, 64, FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN, EVENT(SuhallaDesert_FourthStormRises) },
-    { TRIGGER_STEP, 65, FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN, EVENT(SuhallaDesert_FifthStormRises) },
-    { TRIGGER_STEP, 71, FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN, EVENT(SuhallaDesert_FirstStormRises) },
-    { TRIGGER_STEP, 72, FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN, EVENT(SuhallaDesert_SecondStormRises) },
-    { TRIGGER_STEP, 73, FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN, EVENT(SuhallaDesert_ThirdStormRises) },
-    { TRIGGER_STEP, 54, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 3, EVENT(SuhallaDesert_CaughtByFourthStorm) },
-    { TRIGGER_STEP, 81, FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF, EVENT(SuhallaDesert_StormGivesChase) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_IODEM_ASKS, FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA, EVENT(SuhallaDesert_IodemAsksWhetherToPressOn) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NORTH_STORM, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED, EVENT(SuhallaDesert_CaughtByFirstStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NORTH_STORM + 1, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 1, EVENT(SuhallaDesert_CaughtBySecondStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NORTH_STORM + 2, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 2, EVENT(SuhallaDesert_CaughtByThirdStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NORTH_STORM + 3, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 3, EVENT(SuhallaDesert_CaughtByFourthStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NORTH_STORM + 4, FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED + 4, EVENT(SuhallaDesert_CaughtByFifthStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_SOUTH_STORM, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, EVENT(SuhallaDesert_CaughtByFirstStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_SOUTH_STORM + 1, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 1, EVENT(SuhallaDesert_CaughtBySecondStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_SOUTH_STORM + 2, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 2, EVENT(SuhallaDesert_CaughtByThirdStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_NORTH_STORM, FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN, EVENT(SuhallaDesert_FirstStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_NORTH_STORM + 1, FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN, EVENT(SuhallaDesert_SecondStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_NORTH_STORM + 2, FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN, EVENT(SuhallaDesert_ThirdStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_NORTH_STORM + 3, FLAG_SUHALLA_DESERT_FOURTH_SANDSTORM_RISEN, EVENT(SuhallaDesert_FourthStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_NORTH_STORM + 4, FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN, EVENT(SuhallaDesert_FifthStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_SOUTH_STORM, FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN, EVENT(SuhallaDesert_FirstStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_SOUTH_STORM + 1, FLAG_SUHALLA_DESERT_SECOND_SANDSTORM_RISEN, EVENT(SuhallaDesert_SecondStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_NEAR_SOUTH_STORM + 2, FLAG_SUHALLA_DESERT_THIRD_SANDSTORM_RISEN, EVENT(SuhallaDesert_ThirdStormRises) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_SOUTH_STORM + 3, FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 3, EVENT(SuhallaDesert_CaughtByFourthStorm) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_DESERT_STORM_CHASES, FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF, EVENT(SuhallaDesert_StormGivesChase) },
     { TRIGGER_TALK, ACTOR_FLASH, CONDITION_ALWAYS, EVENT(SuhallaDesert_FightFlash) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), TREASURE_SPOT_PSYNERGY_STONE, FLAG_SUHALLA_DESERT_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET, FIND_ITEM(ITEM_VIRTUOUS_ARMLET) },

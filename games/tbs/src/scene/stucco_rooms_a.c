@@ -22,7 +22,17 @@
 ///   Its find comes first in the table under the same cell behavior, and a
 ///   named examine trigger ignores its condition, so it answers every time and
 ///   the eggplant line is unused. Barrels hold 11 coins and an Elixir. The
-///   inn's table and the houses' both carry these examine triggers.
+///   inn's table and the houses' both carry these examine triggers. The
+///   Smoke Bomb's oven is in the easternmost house (cell (34, 6)), the 11
+///   coins' barrel in the house in the town's lower right corner (cell
+///   (12, 27)), and the Elixir's barrel in the inn's basement (cell (24, 40)).
+///
+///   Stairs lead down from the inn to its basement: a passage with two wooden
+///   doors in its north wall and two doorways in its south wall, each into a
+///   guest room. The rooms behind the south doorways have wooden doors of
+///   their own back out, in their north walls. One holds a young man and a
+///   woman about to join the tour, the other two men who fled Lalivero; the
+///   rooms north of the passage hold Ouranos and Sean, and an empty one.
 /// - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
@@ -225,8 +235,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gStuccoRoomsA_NoTriggers;
 }
 
-/// The tour's guide in the dining room of Kalay's inn tells the party of the
-/// tour.
+/// Isaac talks to the tour guide with a pack in the dining room of Kalay's inn:
+/// "Please finish eating if you are taking the tour! We'll be leaving soon!"
+/// From then on, leaving the town plays the tour group's departure.
 static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
@@ -236,7 +247,13 @@ static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_End();
 }
 
-/// Someone asks whether the party knows the continent south of Tolbi.
+/// Isaac talks to the young man with brown hair in a guest room of the inn's
+/// basement, the one behind the passage's south-east doorway, and he asks
+/// whether Isaac knows the continent south of Tolbi. Yes: the guest next door
+/// is dressed like he comes from Gondowan. No: he tells of Gondowan, very
+/// large and very warm.
+///
+/// He has left with the Colosso tour once it has gone.
 static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
@@ -247,8 +264,9 @@ static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_End();
 }
 
-/// Spoken to across the counter of Kalay's inn, the leader facing west, the
-/// innkeeper offers a room.
+/// Isaac talks to Kalay's innkeeper across the counter, facing west, and is
+/// offered a room. From anywhere else the innkeeper asks, "Are you going to
+/// Tolbi also?", or, once the tour has gone, says the inn feels empty.
 static void StuccoRoomsA_TalkToInnkeeper(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -274,7 +292,9 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
   }
 }
 
-/// The Kalay Sanctum's healer offers its services across the counter.
+/// Isaac talks to the healer in a tall hat across the Kalay Sanctum's counter
+/// and is offered the Sanctum's services. From the side the healer only says
+/// that one can live in peace in Kalay.
 static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -289,8 +309,14 @@ static void StuccoRoomsA_TalkToHealer(void) {
   }
 }
 
-/// Walking north into one of four doors inside Kalay's houses and inn opens
-/// it and takes the party through.
+/// Isaac walks north into one of the four wooden doors of the inn's basement,
+/// and it opens as he walks through: the two in the north wall of the
+/// passage (cells (34, 40) and (39, 40)), into the guest rooms north of it, or
+/// the door in the north wall of either guest room behind the passage's south
+/// doorways (cells (50, 38) and (52, 49)), back out to the passage.
+///
+/// Each door's step trigger is the exit it leaves by, and
+/// gStuccoRoomsA_DoorCells holds the cells its opening is drawn on.
 static void StuccoRoomsA_OpenDoorAndExit(void) {
   struct FieldWork *work = gFieldWork;
   u32 slot;

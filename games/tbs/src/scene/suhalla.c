@@ -1,30 +1,37 @@
 /// @file
-/// Suhalla (SceneId_Suhalla, area name Suhalla), the desert village of Gondowan
-/// at the edge of the Suhalla Desert, on the way from Gondowan Passage to
-/// Lalivero.
+/// Suhalla, the desert village of Gondowan at the edge of the Suhalla Desert.
+/// Isaac's party, with Iodem, reaches it from the west after the Gondowan
+/// Bridge, and leaves it eastward for the desert on the way to Lalivero.
 ///
 /// Before Babi's audience after Colosso, the village talks of the sandstorms
 /// that close the desert, of its distrust of Angara and of Sheba, the
 /// hostage. After it, the village talks of the soldiers the storms caught on
-/// the way to Babi Lighthouse, who lie in one of its houses
-/// (timber_rooms_a.c).
+/// the way to Babi Lighthouse, who lie in the house in the south-east corner
+/// (timber_rooms_a.c), and a woman the sandstorms brought here stands by the
+/// south-west house.
 ///
-/// So its people come in two sets, each an actor placement table and a
-/// trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. The same people
-/// stand in the same rows of both actor placement tables, so one enum names
-/// them. The woman the sandstorms brought stands off the map until the
-/// audience.
+/// The people come in two sets, each an actor placement table and a trigger
+/// table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. The same people stand in
+/// the same rows of both actor placement tables, so one enum names them; the
+/// woman the sandstorms brought stands off the map until the audience.
 ///
-/// Five doors lead into the village's buildings. They open as the leader
-/// walks north into them (Suhalla_EnterDoor, Suhalla_EnterWideDoor). Their
-/// cell behaviors are their exits' numbers (SUHALLA_TO_INN to
-/// SUHALLA_TO_HOUSE_EAST).
+/// Five doors lead indoors: the inn in the north-west (its door at cell
+/// (8, 9)), the Sanctum's arched double door in the north, inside a ring of
+/// water (cell (15, 7)), and along the south the shop (cell (5, 18)), the old
+/// couple's house (cell (13, 17)) and the house in the south-east corner
+/// (cell (18, 18)). Each opens as the leader walks north into it
+/// (Suhalla_EnterDoor, Suhalla_EnterSanctumDoor). Their cell behaviors are
+/// their exits' numbers (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST).
 ///
-/// Three ways lead out onto the World Map, and the desert's sandstorms drop
-/// a caught party at WORLD_MAP_FROM_SUHALLA.
+/// The village's west, north and east edges lead out onto the World Map, and
+/// the desert's sandstorms drop a caught party outside it
+/// (WORLD_MAP_FROM_SUHALLA).
 ///
-/// A chest and two jars hold a Hard Nut, a Lucky Medal and coins. Growth
-/// grows a sprout and changes its cell.
+/// A jar on the west edge just south of the way in holds 5 coins. The Lucky
+/// Medal is in a jar beside the Sanctum, reached by hopping over the water
+/// behind it, and the Hard Nut is in a chest farther on, in the north-west
+/// corner (cell (1, 1)). Growth on the sprout beside the inn's door grows a
+/// vine up the inn's wall.
 ///
 /// Its scene flag:
 ///
@@ -63,6 +70,16 @@ extern struct Trigger gSuhallaTriggersLater[];
 ///
 /// A return that keeps the party's position draws it grown again.
 #define FLAG_SUHALLA_SPROUT_GROWN FLAG_SCENE_TEMP_01
+
+/// The cell behaviors of the village's edges, each a way out onto the World
+/// Map.
+enum SuhallaCellBehavior {
+  /// The west edge, where the party comes in from the Gondowan Bridge.
+  CELL_BEHAVIOR_SUHALLA_WEST_EDGE = 10,
+  CELL_BEHAVIOR_SUHALLA_NORTH_EDGE,
+  /// The east edge, toward the Suhalla Desert.
+  CELL_BEHAVIOR_SUHALLA_EAST_EDGE
+};
 
 /// Suhalla's people and its sprout, numbering the rows of both actor
 /// placement tables from ACTOR_FIRST_PLACED.
@@ -114,7 +131,8 @@ enum SuhallaActorId {
   ///
   /// Later she says "Those soldiers kept mumbling about monsters..."
   ACTOR_GIRL_SANDSTORMS_INCREASED,
-  /// The sprout at 72, 144, which Growth grows (Suhalla_GrowSprout).
+  /// The sprout beside the inn's door, which Growth grows into a vine
+  /// (Suhalla_GrowSprout).
   ACTOR_SPROUT
 };
 
@@ -134,7 +152,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSuhallaActorPlacements;
 }
 
-/// A woman asks whether the party is trying to get to Lalivero.
+/// The woman with fair hair, who wanders by the houses in the south, asks
+/// whether the party is trying to get to Lalivero, and answers yes or no.
 static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Event_SetMessageId(firstMessage);
@@ -149,7 +168,8 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// An old woman asks whether the sandstorm brought the party to Suhalla.
+/// After Babi's audience, the old woman by the south-west house asks whether
+/// the sandstorm brought the party to Suhalla, and answers yes or no.
 static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Event_SetMessageId(firstMessage);
@@ -164,14 +184,21 @@ static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// Growth on Suhalla's sprout makes the plant grow.
+/// Growth on the sprout beside the inn's door, in the north-west of Suhalla,
+/// grows a green vine up the inn's wall (cell (4, 9)).
+///
+/// The vine's cell takes its attributes from a spare cell off the drawn map,
+/// so it can be climbed.
 static void Suhalla_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   GameFlag_Set(FLAG_SUHALLA_SPROUT_GROWN);
 }
 
-/// Walking north into one of Suhalla's doors opens it and takes the party
-/// inside.
+/// Walking north into the door of the inn, or of the shop or one of the two
+/// houses along Suhalla's south side, opens it and takes the party inside.
+///
+/// The door is drawn open, the leader walks a step in, and the scene leaves by
+/// the exit numbered as the door's cell behavior.
 static void Suhalla_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 exitTrigger = work->stepTrigger;
@@ -185,8 +212,12 @@ static void Suhalla_EnterDoor(void) {
   Import_EventSetExitRequest(exitTrigger);
 }
 
-/// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
-static void Suhalla_EnterWideDoor(void) {
+/// Walking north into the Sanctum's arched double door, in the north of
+/// Suhalla inside the ring of water (cell (15, 7)), opens it and takes the
+/// party into Suhalla's Sanctum.
+///
+/// It works as Suhalla_EnterDoor does, with a door two cells wide.
+static void Suhalla_EnterSanctumDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 exitTrigger = work->stepTrigger;
   u16 cellX = gSuhallaDoorCells[exitTrigger][0];
@@ -208,7 +239,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaTriggers;
 }
 
-/// Sets Suhalla up as the party enters.
+/// Sets Suhalla up as the party enters: arriving from Babi's audience turns
+/// the village to its later people, and after a battle a vine Growth has grown
+/// stands again.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
@@ -323,13 +356,13 @@ u16 gSuhallaWideDoorOpenSteps[] = {
 
 struct Trigger gSuhallaTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Suhalla_EnterWideDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Suhalla_EnterSanctumDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
-    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
-    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_SUHALLA_WEST_EDGE, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_SUHALLA_NORTH_EDGE, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_SUHALLA_EAST_EDGE, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { TRIGGER_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaThisIsSuhallaDontTryCrossing) },
     { TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, EVENT(Suhalla_AskIfGoingToLalivero) },
     { TRIGGER_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWeGondowansWillNeverTrustAnyone) },
@@ -353,13 +386,13 @@ struct Trigger gSuhallaTriggers[] = {
 
 struct Trigger gSuhallaTriggersLater[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_INN, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Suhalla_EnterWideDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Suhalla_EnterSanctumDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Suhalla_EnterDoor) },
-    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
-    { TRIGGER_EXIT, 12, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_SUHALLA_WEST_EDGE, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_SUHALLA_NORTH_EDGE, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_SUHALLA_EAST_EDGE, CONDITION_ALWAYS, SUHALLA_TO_WORLD_MAP_EAST },
     { TRIGGER_TALK, ACTOR_MAN_THIS_IS_SUHALLA, CONDITION_ALWAYS, MSGNO(MsgSuhallaWelcomeToSuhallaIBetThe) },
     { TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, CONDITION_ALWAYS, MSGNO(MsgSuhallaTheDesertIsEnvelopedInSandstorms) },
     { TRIGGER_TALK, ACTOR_MAN_NEVER_TRUSTING_ANGARA, CONDITION_ALWAYS, MSGNO(MsgSuhallaSoldiersFromTolbiWereCaughtIn) },

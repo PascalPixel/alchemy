@@ -1,58 +1,46 @@
 /// @file
-/// Vale Cave's overlay holds three rooms, each a scene of its own.
+/// Vale Cave, the optional cave above Vale where Kite, a Jupiter Djinni, hides.
+/// Its overlay holds three scenes.
 ///
-/// They are the way in, which the game still calls Vale, and two rooms of Vale
-/// Cave proper. Kite, a Jupiter Djinni, hides in the second.
+/// - The clearing outside (Vale, SceneId_ValeCaveMouth), a grassy hillside
+///   reached by the two paths that run north past the west side of Kraden's
+///   cottage. The lower path comes in at cells (5..7, 22) and the raised path
+///   east of it at (8, 23..25); both lead back down (ValeCave_LeaveRoom).
+///   The cave's mouth is a dark opening in the cliff at cell (8, 10), beside
+///   stacked crates and two logs. The game still calls the clearing Vale, so
+///   arriving here clears FLAG_SHOW_AREA_NAME.
+/// - The first room of the cave (SceneId_ValeCaveKite), one map holding three
+///   parts that the player meets as separate rooms, joined by passages.
+///   Inside the mouth is a pool crossed by hopping from post to post. Reveal
+///   shows the post missing from the row, at cell (15, 15)
+///   (ValeCave_RevealHiddenTile). Beyond it, a passage in the north-west leads
+///   to a pool with two stacks of crates and a log floating by its north wall.
+///   Move or a push sinks the eastern stack into the water, where its top
+///   becomes a square to walk across on the way to Kite's part. Two Moves sink
+///   the western stack beside the log. Isaac then hops onto the log, which
+///   carries him across the pool to the passage on its east side
+///   (ValeCave_RideLogEast).
+/// - The room of logs (SceneId_ValeCaveLogs). Its southern passage leads round
+///   to a pool between two ledges, each with a log standing on it, and a third
+///   log lying across the floor south of the water. Isaac rolls the two
+///   standing logs into the water, hops down, and pushes the lying log north
+///   into the pool, where it floats and lets him across.
+/// - Kite's part of the first room, reached from the room of logs and from
+///   the riding log's pool. The Halt Gem's and the Nut's chests are near the
+///   top of a narrow ridge. Walking down the ridge startles Kite, who hops off
+///   its south end onto the round floor below, where three mossy rocks stand in
+///   a row (ValeCave_KiteRunsOff). Kite then runs round behind the rocks
+///   (ValeCave_KiteRunsBehindRocks) and keeps to their far side as Isaac walks
+///   round them (ValeCave_KiteKeepsAway). Halt stops it, and
+///   talking to it then makes it join the party (ValeCave_TalkToKite,
+///   FLAG_KITE).
 ///
-/// No story flag is read here and no message is shown. The cave is a side trip
-/// from the part of Vale around Kraden's cottage, a run of Psynergy puzzles
-/// whose progress lives in scene and area flags.
-///
-/// - Vale (SceneId_ValeCaveMouth), the way in, is an area of its own (29).
-///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
-///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST lead back to Kraden's part of
-///   Vale (SceneId_ValeKradensCottage), whose
-///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
-///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here.
-///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
-///   the exit sound first (ValeCave_LeaveRoom). On arrival Scene_Initialize
-///   fades the room in from the backdrop and clears FLAG_SHOW_AREA_NAME.
-///   Entering a new area sets that flag, but this is still Vale.
-/// - Vale Cave (SceneId_ValeCaveKite) is one map in three parts, each with its
-///   own entrances and camera box. Walking south into a ledge's cells hops the
-///   leader down it (ValeCave_HopDownLedge). In the first part
-///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden cell while
-///   it lasts (ValeCave_RevealHiddenTile). In Kite's part
-///   (VALE_CAVE_KITE_EAST_FROM_WEST to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near makes Kite hop away
-///   (ValeCave_KiteRunsOff) and then run behind a ledge
-///   (ValeCave_KiteRunsBehindLedge, setting FLAG_VALE_CAVE_KITE_BEHIND_LEDGE).
-///   From then on twelve cell behaviors, 45 to 56 on the 23 cells round the
-///   ledge, each send it to its point of gValeCave_WalkTargets on the ledge's
-///   far side as the leader walks round (ValeCave_KiteKeepsAway). So it cannot
-///   be reached until Halt stops it. A stopped Kite can be talked to and joins
-///   the party (ValeCave_TalkToKite), setting FLAG_KITE, which removes it from
-///   the actor placements. The room's chests hold the Halt Gem, which gives
-///   Halt, and a Nut. In the riding log's part (VALE_CAVE_KITE_SOUTH_FROM_WEST
-///   to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of crates sink
-///   into the water once Move or a push leaves them at their own column
-///   (FLAG_VALE_CAVE_WEST_CRATES_SUNK and FLAG_VALE_CAVE_EAST_CRATES_SUNK).
-///   That opens the way. A log carries the leader along the passage when walked
-///   into from the west or the east (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its exits
-///   lead back to the first room, on to the third, and between its own parts.
-/// - Vale Cave (SceneId_ValeCaveLogs), the inner room, has three logs to push.
-///   One goes off a ledge (ValeCave_PushLogOffLedge). One goes along the ledge
-///   until it drops at its edge (ValeCave_PushLogOverEdge). One goes north
-///   (ValeCave_PushLogNorth). Each clears the cells it held. Its exits lead
-///   back into the second room and between its own parts.
-///
-/// Vale Cave's two rooms are one area (30). So their area flags
-/// (FLAG_VALE_CAVE_RIDING_LOG_EAST, FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) last
-/// while the party goes between them.
-///
-/// On every arrival ValeCave_ApplyEntryState rebuilds the cells of each puzzle
-/// already solved. Once Kite has run behind its ledge, it puts Kite back there.
+/// No story flag is read here and no message is shown. Each room's progress
+/// lives in scene and area flags, and on every arrival
+/// ValeCave_ApplyEntryState rebuilds the cells of each puzzle already solved
+/// and puts Kite back behind its rocks. The two rooms of the cave proper are
+/// one area, so their area flags (the riding log's end, Kite behind the
+/// rocks) last while the party goes between them.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -93,7 +81,7 @@ extern struct Trigger gValeCave_MouthTriggers[];
 extern struct Trigger gValeCave_KiteTriggers[];
 extern struct Trigger gValeCave_LogsTriggers[];
 
-/// The way in's actor placements (gValeCave_MouthActorPlacements), numbered
+/// The clearing's actor placements (gValeCave_MouthActorPlacements), numbered
 /// from ACTOR_FIRST_PLACED.
 ///
 /// They are three stacks of crates, drawn as the crates of the Bilibin
@@ -105,74 +93,104 @@ enum ValeCaveMouthActorId {
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
-/// The second room's actor placements (gValeCave_KiteActorPlacements), numbered
+/// The first room's actor placements (gValeCave_KiteActorPlacements), numbered
 /// from ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActorId {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
   ACTOR_KITE = ACTOR_FIRST_PLACED,
-  /// The two stacks of crates in the riding log's part, which sink into the
-  /// water. The western sinks under Move, the eastern under Move or a push.
+  /// The two stacks of crates at the edge of the riding log's pool, which sink
+  /// into the water. The western stack sinks under Move, the eastern one under
+  /// Move or a push.
   ACTOR_WEST_CRATES,
   ACTOR_EAST_CRATES,
-  /// The log the leader rides along its part's passage, from one end to the
-  /// other. It is drawn as the north-south log of Colosso's Lumber Water
+  /// The log floating by the north wall of its pool, which carries Isaac from
+  /// one end of the pool to the other. It is drawn as the north-south log of
+  /// Colosso's Lumber Water
   /// Crossing Area (colosseum_azart_match.c).
   ACTOR_RIDING_LOG,
-  /// Two stacks of crates and two logs that stand in the first part.
+  /// Two stacks of crates and two logs, stacked by the passage to the room of
+  /// logs as they are at the cave's mouth.
   ACTOR_FIRST_STANDING_CRATES,
   ACTOR_SECOND_STANDING_CRATES,
   ACTOR_FIRST_STANDING_LOG,
   ACTOR_SECOND_STANDING_LOG
 };
 
-/// The third room's actor placements (gValeCave_LogsActorPlacements), numbered
+/// The room of logs' actor placements (gValeCave_LogsActorPlacements), numbered
 /// from ACTOR_FIRST_PLACED.
 ///
-/// Its first row places Kite as the second room's does. Its three logs are
-/// pushed, and lie as in Kolima Forest.
+/// Its first row places Kite as the first room's does, out of sight of this
+/// room. Its three logs are pushed, and are drawn as Kolima Forest's.
 enum ValeCaveLogsActorId {
-  /// Lying north to south, pushed off the ledge.
+  /// Standing on the ledge west of the pool, rolled east into the water.
   ACTOR_WEST_LOG = ACTOR_FIRST_PLACED + 1,
-  ACTOR_EAST_LOG, ///< lying north to south, pushed along the ledge until it
-                  ///< falls
-  ACTOR_SOUTH_LOG ///< lying west to east, pushed north
+  /// Standing on the ledge east of the pool, pushed west until it rolls off.
+  ACTOR_EAST_LOG,
+  /// Lying west to east across the floor south of the pool, pushed north.
+  ACTOR_SOUTH_LOG
 };
 
-/// The first of the twelve cell behaviors that send Kite round its ledge
-/// (ValeCave_KiteKeepsAway), one for each of gValeCave_WalkTargets.
-enum ValeCaveCellBehavior { CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45 };
+/// The cells the cave's step triggers answer.
+enum ValeCaveCellBehavior {
+  /// The riding log's west end, cells (23, 34..36), and its east end, cells
+  /// (35, 34..36). Only the end the log lies at holds its behavior.
+  CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_WEST_END = 20,
+  CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_EAST_END,
+  /// The bank east of the riding log's pool's eastern crates, cell (29, 41).
+  CELL_BEHAVIOR_VALE_CAVE_EAST_CRATES_BANK = 24,
+  /// In Kite's part, the top of the ridge, cell (49, 11), and its foot,
+  /// cell (49, 16).
+  CELL_BEHAVIOR_VALE_CAVE_KITE_RIDGE_TOP = 40,
+  CELL_BEHAVIOR_VALE_CAVE_KITE_RIDGE_FOOT,
+  /// The first of the twelve cell behaviors on the ring of floor round Kite's
+  /// mossy rocks (ValeCave_KiteKeepsAway), one for each of
+  /// gValeCave_WalkTargets.
+  CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45
+};
 
-/// The columns from which Move sinks the second room's western and eastern
-/// crates into the water.
+/// The cells of the room of logs' step triggers.
+enum ValeCaveLogsCellBehavior {
+  /// The ledge east of the east log, cells (20, 16..17).
+  CELL_BEHAVIOR_VALE_CAVE_EAST_LOG_LEDGE = 20,
+  /// The ledge west of the west log, cells (11, 16..17).
+  CELL_BEHAVIOR_VALE_CAVE_WEST_LOG_LEDGE,
+  /// The floor south of the south log, cells (13..16, 23).
+  CELL_BEHAVIOR_VALE_CAVE_SOUTH_LOG_FLOOR
+};
+
+/// The map columns where the riding log's pool's western and eastern crates
+/// sink: the western stack at cell (23, 39), after two Moves east, and the
+/// eastern one at cell (27, 41), after one Move or push west.
 #define WEST_CRATES_SINK_COLUMN 23
 #define EAST_CRATES_SINK_COLUMN 27
-/// The third room's ledge edge, from which the western log rolls off.
+/// The map column at the west end of the east log's ledge, cell (17, 16),
+/// from which the log rolls off into the pool.
 #define LEDGE_EDGE_COLUMN 17
-/// The third room's southern row, where the southern log can stop.
+/// The map row the south log can stop on when pushed north.
 #define SOUTH_LOG_SOUTH_ROW 20
 
 /// The flag of Kite, set once it is caught.
 #define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
 // The cave's scene flags: each room reuses them for its own puzzle, so the
-// second room's two have one name in the riding log's part and another in
-// Kite's.
-/// The riding log's part: the western crates have sunk into the water.
+// first room's two have one name at the riding log's pool and another in
+// Kite's part.
+/// The riding log's pool: the western crates have sunk into the water.
 #define FLAG_VALE_CAVE_WEST_CRATES_SUNK FLAG_SCENE_TEMP_00
-/// The riding log's part: the eastern crates have sunk into the water.
+/// The riding log's pool: the eastern crates have sunk into the water.
 #define FLAG_VALE_CAVE_EAST_CRATES_SUNK FLAG_SCENE_TEMP_01
 /// Kite's part: Kite has run off once (ValeCave_KiteRunsOff).
 #define FLAG_VALE_CAVE_KITE_RAN_OFF FLAG_SCENE_TEMP_00
-/// Kite's part: Kite has run behind the ledge
-/// (ValeCave_KiteRunsBehindLedge).
-#define FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE FLAG_SCENE_TEMP_01
+/// Kite's part: Kite has run behind the mossy rocks
+/// (ValeCave_KiteRunsBehindRocks).
+#define FLAG_VALE_CAVE_KITE_RAN_BEHIND_ROCKS FLAG_SCENE_TEMP_01
 
-// The cave's area flags. The second and third rooms are one area,
-// so these last while the party goes between them; the first room is another.
-/// The riding log of the second room is at the eastern end of its passage.
+// The cave's area flags. The first room and the room of logs are one area, so
+// these last while the party goes between them; the clearing is another.
+/// The riding log is at the east end of its pool.
 #define FLAG_VALE_CAVE_RIDING_LOG_EAST FLAG_AREA_TEMP_01
-/// Kite has run behind the ledge and keeps to its far side.
-#define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE FLAG_AREA_TEMP_02
+/// Kite has run behind the mossy rocks and keeps to their far side.
+#define FLAG_VALE_CAVE_KITE_BEHIND_ROCKS FLAG_AREA_TEMP_02
 
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
@@ -181,20 +199,20 @@ static void ValeCave_ApplyEntryState(void);
 #include "shared/field_effect_spawn.c"
 #include "shared/staged_actor.c"
 
-/// In the third room, the western log has been pushed off the ledge.
+/// In the room of logs, the west log has been rolled into the pool.
 #define FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE FLAG_SCENE_TEMP_02
-/// In the third room, the eastern log has been pushed along the ledge and over
-/// its edge.
+/// In the room of logs, the east log has been pushed along its ledge and has
+/// rolled off into the pool.
 #define FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE FLAG_SCENE_TEMP_03
-/// In the third room, the southern log has been pushed north and stopped on the
-/// northern row.
+/// In the room of logs, the south log has been pushed north and stopped on
+/// the northern of its two rows.
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_NORTH_ROW FLAG_SCENE_TEMP_04
-/// In the third room, the southern log has been pushed north and stopped on the
-/// southern row (SOUTH_LOG_SOUTH_ROW).
+/// In the room of logs, the south log has been pushed north and stopped on
+/// the southern of its two rows (SOUTH_LOG_SOUTH_ROW).
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_SCENE_TEMP_05
 
-/// In Vale Cave's second room, talking to Kite once Halt has stopped it has
-/// Kite, a Jupiter Djinni, join the party.
+/// Talking to Kite, once Halt has stopped it on the round floor below the
+/// ridge, makes the Jupiter Djinni join the party.
 static void ValeCave_TalkToKite(void) {
   Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
@@ -212,7 +230,8 @@ static void ValeCave_WaitForActorLanding(struct Actor *actor) {
   actor->y.fixed = actor->groundHeight;
 }
 
-/// Turns Kite to face the party leader each frame.
+/// Turns Kite to face the party leader each frame, so that it watches Isaac
+/// from behind its rocks.
 static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   FIXED distanceZ = leader->z.fixed - actor->z.fixed;
@@ -267,18 +286,24 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValeCave_MouthActorPlacements;
 }
 
-/// In Vale Cave's second room, Reveal ends and the hidden cell is hidden again.
+/// When Reveal fades in the pool just inside the cave, the post it showed at
+/// cell (15, 15) is gone again and the gap in the row of posts is water.
 static void ValeCave_HideRevealedTile(void) {
   MapGrid_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/// In Vale Cave's second room, Reveal shows a hidden cell.
+/// Reveal, cast in the pool just inside the cave's mouth, shows the post
+/// missing from the row of posts across the water, at cell (15, 15), so that
+/// Isaac can hop over it to the west side.
+///
+/// The post is copied from a spare one at cell (16, 17), and
+/// ValeCave_HideRevealedTile puts the water back when Reveal fades.
 static void ValeCave_RevealHiddenTile(void) {
   MapGrid_CopyCells(16, 17, 1, 1, 15, 15);
 }
 
-/// Sinks a stack of crates into the water, spawning a particle each frame
-/// around it.
+/// Sinks a stack of crates into the water over 68 frames, with a white splash
+/// of spray round it.
 static inline void
 ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
                                 struct EffectOptions *particleOptions) {
@@ -296,8 +321,13 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   }
 }
 
-/// In Vale Cave's second room, Move on the western crates sinks them into the
-/// water once they are at WEST_CRATES_SINK_COLUMN.
+/// Move on the western stack of crates in the riding log's pool sinks it into
+/// the water once a second Move has brought it to cell (23, 39), just south of
+/// the floating log. Its top is then a square Isaac hops onto, on his way to
+/// the log.
+///
+/// The game's Move has already slid the stack a cell east. Short of the sink
+/// column the event does nothing more.
 static void ValeCave_MoveWestCratesIntoWater(void) {
   struct EffectOptions options;
   struct Actor *leftEffect;
@@ -335,8 +365,10 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
   Event_End();
 }
 
-/// In Vale Cave's second room, Move on the eastern crates sinks them into the
-/// water once they are at EAST_CRATES_SINK_COLUMN.
+/// Move on the eastern stack of crates, at the foot of the rock pillar in the
+/// riding log's pool, slides it one cell west into the water at cell (27, 41).
+/// It sinks with a splash until only its top shows, a square of floor Isaac
+/// can walk across.
 static void ValeCave_MoveEastCratesIntoWater(void) {
   struct EffectOptions options;
   struct Actor *leftEffect;
@@ -375,8 +407,9 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
   Event_End();
 }
 
-/// In Vale Cave's second room, pushing the eastern crates moves them a cell,
-/// and they sink if they are then at column 27.
+/// Pushing the eastern stack of crates west, from the bank east of it at cell
+/// (29, 41), slides it a cell into the water, where it sinks as it does under
+/// Move (ValeCave_MoveEastCratesIntoWater).
 static void ValeCave_PushEastCratesIntoWater(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -384,9 +417,12 @@ static void ValeCave_PushEastCratesIntoWater(void) {
   ValeCave_MoveEastCratesIntoWater();
 }
 
-/// In Vale Cave's second room, walking south off a ledge has Isaac hop down if
-/// the cell below is free.
-static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
+/// Walking south off the riding log, once it has carried him to the east side
+/// of its pool (cell (35, 36)), Isaac leaps down onto the rock bank below.
+///
+/// He lands two cells south, at cell (35, 38), and only if nothing stands
+/// there.
+static s32 ValeCave_LeapOffRidingLog(s32 unusedArgument) {
   struct FieldCoordinate landingPosition[3];
   struct Actor *leader;
   s32 savedMotionFlags;
@@ -425,8 +461,10 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   return 0;
 }
 
-/// In Kite's part of Vale Cave's second room, coming near Kite makes it hop
-/// away up the ledge.
+/// Walking onto the narrow ridge that runs south between two channels of water
+/// in Kite's part (cell (49, 11)) startles Kite, who stands further down it.
+/// The camera follows Kite as it gives a start and hops off the ridge's south
+/// end onto the round floor below.
 static void ValeCave_KiteRunsOff(void) {
   if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_OFF) == 0) {
     GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
@@ -452,13 +490,14 @@ static void ValeCave_KiteRunsOff(void) {
   }
 }
 
-/// In Kite's part of Vale Cave's second room, coming near again makes Kite run
-/// behind the ledge and turn to watch the party.
-static void ValeCave_KiteRunsBehindLedge(void) {
+/// Reaching the foot of the ridge (cell (49, 16)) after Kite has fled makes it
+/// run round behind the three mossy rocks on the round floor, where it turns
+/// to watch Isaac.
+static void ValeCave_KiteRunsBehindRocks(void) {
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_RAN_OFF) != 0) {
-    if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE) == 0) {
-      GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
-      GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
+    if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_BEHIND_ROCKS) == 0) {
+      GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_ROCKS);
+      GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_ROCKS);
       Event_Start();
       Actor_SetAttachedEffect(ACTOR_KITE,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -476,13 +515,16 @@ static void ValeCave_KiteRunsBehindLedge(void) {
   }
 }
 
-/// In Kite's part of Vale Cave's second room, as the leader walks around the
-/// ledge, Kite keeps to the far side of it, unless Halt has stopped it.
+/// As Isaac walks round the three mossy rocks, Kite keeps to their far side,
+/// matching his pace, until Halt stops it.
+///
+/// Each cell of the ring of floor round the rocks (cells (46..52, 17..20))
+/// sends Kite to the point opposite, from gValeCave_WalkTargets.
 static void ValeCave_KiteKeepsAway(void) {
   struct FieldWork *field = gFieldWork;
   s32 route;
 
-  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0 &&
+  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_ROCKS) != 0 &&
       gMainRoutineWork.haltedActor != ACTOR_KITE) {
     route = field->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
     Actor_Get(ACTOR_KITE)->speedLimit =
@@ -494,15 +536,17 @@ static void ValeCave_KiteKeepsAway(void) {
   }
 }
 
-/// In Vale Cave's second room, Halt on Kite stops it where it stands.
+/// Halt on Kite stops it where it stands behind the mossy rocks, so that Isaac
+/// can walk round and talk to it.
 static void ValeCave_HaltKite(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_KITE, ANIM_STILL);
   Event_End();
 }
 
-/// In Vale Cave's third room, pushing the eastern log along the ledge makes it
-/// fall off at the ledge's edge, opening the way.
+/// Pushing the log standing on the ledge east of the pool in the room of logs
+/// moves it west a cell at a time. At the ledge's west end, cell (17, 16), it
+/// rolls off into the pool.
 static void ValeCave_PushLogOverEdge(void) {
   struct PushedActorProbe probe;
 
@@ -541,8 +585,8 @@ static void ValeCave_PushLogOverEdge(void) {
   Event_End();
 }
 
-/// In Vale Cave's third room, pushing the western log east makes it fall off
-/// the ledge, opening the way.
+/// Pushing the log standing on the ledge west of the pool in the room of logs,
+/// from cell (11, 16), rolls it east off the ledge into the pool.
 static void ValeCave_PushLogOffLedge(void) {
   Event_Start();
   Event_Wait(10);
@@ -577,8 +621,9 @@ static void ValeCave_PushLogOffLedge(void) {
   Event_End();
 }
 
-/// In Vale Cave's third room, pushing the southern log north slides it a cell,
-/// opening the way.
+/// Pushing the log that lies across the floor south of the pool in the room of
+/// logs north tips it into the pool's south end, where it floats with a
+/// splash and makes a way across.
 static void ValeCave_PushLogNorth(void) {
   struct PushedActorProbe probe;
 
@@ -606,7 +651,7 @@ static void ValeCave_PushLogNorth(void) {
   Event_End();
 }
 
-/// Selects the current room's coord, Psynergy and examine triggers.
+/// Selects the current room's step, Psynergy and examine triggers.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -638,8 +683,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// In Vale, the cave's way in (SceneId_ValeCaveMouth), each exit plays the exit
-/// sound before leaving.
+/// In the clearing outside Vale Cave, Isaac walks into the cave's mouth (cell
+/// (8, 10)) or down either path back to Kraden's cottage: the lower path at
+/// cells (5..7, 22) or the raised one east of it at (8, 23..25).
+///
+/// Each plays the exit sound first. The cell's behavior is the exit's number.
 static void ValeCave_LeaveRoom(void) {
   s32 exitNumber = gFieldWork->stepTrigger;
 
@@ -647,7 +695,11 @@ static void ValeCave_LeaveRoom(void) {
   Import_EventSetExitRequest(exitNumber);
 }
 
-/// Rebuilds the passage cells around the riding log's saved end.
+/// Puts the riding log at the end of its pool where it was left, and makes that
+/// end the one Isaac can step onto.
+///
+/// The passage's cells are copied back from their spare copy at cells (0..12,
+/// 34..36), and the far end is then covered with water.
 static void ValeCave_UpdateRidingLogPassage(void) {
   MapGrid_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
@@ -662,8 +714,9 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 
 #include "shared/actor_pair_move.c"
 
-/// In Vale Cave's second room, walking east onto the riding log has it carry
-/// the leader to the eastern end of the passage.
+/// Walking east onto the riding log at the west end of its pool (cell (23,
+/// 35)) has it float east along the north wall with Isaac on it, to the pool's
+/// east side, where a post leads to the passage into the room of logs.
 static void ValeCave_RideLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, 112, 0);
@@ -674,8 +727,8 @@ static void ValeCave_RideLogEast(void) {
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
 }
 
-/// In Vale Cave's second room, walking west onto the riding log has it carry
-/// the leader back to the western end of the passage.
+/// Walking west onto the riding log at the east end of its pool (cell (35,
+/// 35)) has it float back west along the north wall with Isaac on it.
 static void ValeCave_RideLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_RIDING_LOG, -112, 0);
@@ -699,8 +752,8 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   }
 }
 
-/// Restores, on entry, Kite behind its ledge and the crates and logs of the
-/// puzzles already solved.
+/// Restores, on entry, Kite behind its mossy rocks and the crates and logs of
+/// the puzzles already solved.
 static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
@@ -725,18 +778,18 @@ static void ValeCave_ApplyEntryState(void) {
       if (GameFlag_Get(FLAG_KITE) != 0) {
         break;
       }
-      if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
+      if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_ROCKS) == 0) {
         break;
       }
       GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
       if (gMainRoutineWork.entrance == VALE_CAVE_KITE_EAST_FROM_WEST) {
-        GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
+        GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_ROCKS);
       }
       wait(1);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
         break;
       }
-      // Kite waits behind the ledge, watching the leader.
+      // Kite waits behind the mossy rocks, watching the leader.
       Actor_SetPosition(ACTOR_KITE, 792, 280);
       Actor_Get(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
       break;
@@ -802,7 +855,8 @@ static void ValeCave_ApplyEntryState(void) {
   }
 }
 
-/// In Vale Cave's second room, touching the riding log restarts its animation.
+/// Stepping onto either end of the riding log starts its floating animation
+/// over from the first frame.
 static void ValeCave_TouchRidingLog(void) {
   Actor_SetAnimation(ACTOR_RIDING_LOG, 1);
   Actor_SetAnimation(ACTOR_RIDING_LOG, 2);
@@ -813,7 +867,7 @@ static void ValeCave_TouchRidingLog(void) {
 #include "shared/pushed_actor_tables.c"
 // clang-format off
 
-/// The twelve points round the far side of Kite's ledge, x then z in pixels,
+/// The twelve points round Kite's mossy rocks, x then z in pixels,
 /// one for each cell behavior from CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE on.
 s32 gValeCave_WalkTargets[][2] = {
     760, 296,
@@ -950,43 +1004,43 @@ struct Trigger gValeCave_TriggersOther[] = {
 };
 
 struct Trigger gValeCave_MouthTriggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
+    { TRIGGER_STEP, VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
+    { TRIGGER_STEP, VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
+    { TRIGGER_STEP, VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST, CONDITION_ALWAYS, EVENT(ValeCave_LeaveRoom) },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeCave_KiteTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
-    { TRIGGER_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
-    { TRIGGER_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_WEST },
-    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_SOUTH },
-    { TRIGGER_EXIT, 7, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
-    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_WEST },
-    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_EAST },
-    { TRIGGER_EXIT, 10, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20, CONDITION_ALWAYS, EVENT(ValeCave_RideLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(ValeCave_RideLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, CONDITION_ALWAYS, EVENT(ValeCave_HopDownLedge) },
-    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(ValeCave_TouchRidingLog) },
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(ValeCave_TouchRidingLog) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 24, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT(ValeCave_PushEastCratesIntoWater) },
-    { TRIGGER_STEP, 40, FLAG_KITE, EVENT(ValeCave_KiteRunsOff) },
-    { TRIGGER_STEP, 41, FLAG_KITE, EVENT(ValeCave_KiteRunsBehindLedge) },
-    { TRIGGER_STEP, 45, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 46, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 47, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 48, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 49, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 50, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 51, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 52, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 53, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 54, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 55, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
-    { TRIGGER_STEP, 56, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_MOUTH },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_WEST_TO_EAST, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_EAST },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_WEST_TO_SOUTH, CONDITION_ALWAYS, VALE_CAVE_KITE_WEST_TO_SOUTH },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_WEST },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_EAST_TO_WEST, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_WEST },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_EAST_TO_SOUTH, CONDITION_ALWAYS, VALE_CAVE_KITE_EAST_TO_SOUTH },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_EAST },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_SOUTH_TO_WEST, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_WEST },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_SOUTH_TO_EAST, CONDITION_ALWAYS, VALE_CAVE_KITE_SOUTH_TO_EAST },
+    { TRIGGER_EXIT, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH, CONDITION_ALWAYS, VALE_CAVE_KITE_TO_VALE_CAVE_LOGS_SOUTH },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_WEST_END, CONDITION_ALWAYS, EVENT(ValeCave_RideLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_EAST_END, CONDITION_ALWAYS, EVENT(ValeCave_RideLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_EAST_END, CONDITION_ALWAYS, EVENT(ValeCave_LeapOffRidingLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_WEST_END, CONDITION_ALWAYS, EVENT(ValeCave_TouchRidingLog) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_RIDING_LOG_EAST_END, CONDITION_ALWAYS, EVENT(ValeCave_TouchRidingLog) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VALE_CAVE_EAST_CRATES_BANK, FLAG_VALE_CAVE_EAST_CRATES_SUNK, EVENT(ValeCave_PushEastCratesIntoWater) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_KITE_RIDGE_TOP, FLAG_KITE, EVENT(ValeCave_KiteRunsOff) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_KITE_RIDGE_FOOT, FLAG_KITE, EVENT(ValeCave_KiteRunsBehindRocks) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 1, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 2, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 3, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 4, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 5, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 6, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 7, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 8, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 9, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 10, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 11, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
     { TRIGGER_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT(ValeCave_TalkToKite) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
@@ -1000,16 +1054,24 @@ struct Trigger gValeCave_KiteTriggers[] = {
 // clang-format on
 
 struct Trigger gValeCave_LogsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_CAVE_LOGS_NORTH_TO_SOUTH},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, VALE_CAVE_LOGS_SOUTH_TO_NORTH},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST, CONDITION_ALWAYS,
+     VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_WEST},
+    {TRIGGER_EXIT, VALE_CAVE_LOGS_NORTH_TO_SOUTH, CONDITION_ALWAYS,
+     VALE_CAVE_LOGS_NORTH_TO_SOUTH},
+    {TRIGGER_EXIT, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST, CONDITION_ALWAYS,
+     VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_EAST},
+    {TRIGGER_EXIT, VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH, CONDITION_ALWAYS,
+     VALE_CAVE_LOGS_TO_VALE_CAVE_KITE_SOUTH},
+    {TRIGGER_EXIT, VALE_CAVE_LOGS_SOUTH_TO_NORTH, CONDITION_ALWAYS,
+     VALE_CAVE_LOGS_SOUTH_TO_NORTH},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_VALE_CAVE_EAST_LOG_LEDGE, CONDITION_ALWAYS,
      EVENT(ValeCave_PushLogOverEdge)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
+     CELL_BEHAVIOR_VALE_CAVE_WEST_LOG_LEDGE, CONDITION_ALWAYS,
      EVENT(ValeCave_PushLogOffLedge)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 22, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_VALE_CAVE_SOUTH_LOG_FLOOR, CONDITION_ALWAYS,
      EVENT(ValeCave_PushLogNorth)},
     {TRIGGER_TABLE_END},
 };

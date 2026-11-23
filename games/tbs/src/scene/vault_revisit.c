@@ -8,37 +8,36 @@
 /// (VAULT_REVISIT_FROM_VAULT). Vault Sanctum, Vault Cave, the jail and the
 /// houses (log_rooms_b.c) lead back here directly.
 ///
-/// The thieves the party caught have broken out of jail. Most townspeople say
-/// so, or speak of Hammet and Lunpa, in plain message rows.
-///
-/// Four of them speak through events instead. These remember who has spoken
+/// The townspeople stand where they stood before, and the news is that the
+/// thieves the party caught have broken out of jail, that the bridge to Kalay
+/// is fixed, and that Hammet is still in Lunpa. Some speak in plain message
+/// rows; the young man by the rope bridge, the woman in green, the old man by
+/// the jail, the old woman by the inn, the two children round the well and
+/// the strongman speak through events. Those who greet the party remember it
 /// in area flags (FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED to
 /// FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL), so that a Mind Read on one not yet
-/// spoken to plays the conversation first. The old man's praise also sets
+/// spoken to plays the greeting first. The old man's praise also sets
 /// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the mayor's welcome indoors does.
 ///
-/// Searching the bell rings it. A ring while FLAG_VAULT_SAP_CALLED_BY_BELL is
-/// clear calls Sap, a Venus Djinni, out of the tree east of the bell tower
-/// onto the cliff top above the cave mouth. Spoken to, Sap joins the party.
-/// Coming in by a gate clears the call, so Sap hides again until it has
-/// joined.
+/// This is where the walkthrough sends the player back for two things. Up on
+/// the bell tower, ringing the bell startles Sap, a Venus Djinni, out of the
+/// tree east of the tower onto the cliff top beside the cave mouth; the party
+/// reaches it there through Vault Cave, and talking to it makes it join.
+/// Coming into town from the World Map sends Sap back into its tree until it
+/// has joined (FLAG_VAULT_SAP_CALLED_BY_BELL). And Reveal among the six
+/// gravestones south of the inn shows a hole, the hidden passage down into
+/// Vault Cave. The dog, given a Bone from the inn, runs to that spot and jumps
+/// there three times as a hint (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with
+/// vault.c). The cave mouth in the north-east cliff is the cave's other way
+/// in.
 ///
-/// The dog, given a Bone, runs to a spot and jumps there three times
-/// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c). Reveal then shows the
-/// hidden passage at that spot, whose cell
-/// (CELL_BEHAVIOR_VAULT_HIDDEN_PASSAGE) leads down into Vault Cave. The cave
-/// mouth in the northeast cliff (CELL_BEHAVIOR_VAULT_CLIFF_CAVE_MOUTH) is a
-/// second way in.
+/// The wooden box beside the mayor's house still holds a Nut if it was not
+/// taken before, and the well rumbles with water. The cells the events answer
+/// are enum VaultCellBehavior (vault.h).
 ///
-/// A wooden box holds a Nut, and the well rumbles with water. The cells the
-/// events answer are enum VaultCellBehavior (vault.h). The jail door brings
-/// the party in by STONE_ROOMS_FROM_VAULT_REVISIT, where a lone prisoner sits
-/// in the thieves' place.
-///
-/// The inn's roof is mended. Scene_Initialize copies a 3-by-3 block of cells
-/// from (45, 41) to (8, 45). The block lies under map grid layer 2's window,
-/// on the inn's roof, and draws the thatch whole where vault.c's town shows
-/// the hole the fiery rock burnt in it.
+/// The inn's roof is mended: Scene_Initialize copies a 3-by-3 block of cells
+/// from (45, 41) to (8, 45), which draws the thatch whole where vault.c's town
+/// shows the hole the fiery rock burnt in it.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -80,36 +79,43 @@ extern u16 gVaultRevisit_MayorsHouseDoorCells[];
 extern u16 gVaultRevisit_JailDoorCells[];
 extern struct Trigger gVaultRevisit_Triggers[];
 
-/// The townspeople, the dog and Sap, numbering
-/// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.
+/// The townspeople, the dog and Sap, standing where vault.c places them.
 enum VaultRevisitActorId {
-  /// vault.c's welcoming young man, who recognizes the party.
+  /// The young man with brown hair outside the gem owner's house in the east,
+  /// by the rope bridge, who recognizes the party.
   ACTOR_WELCOMING_YOUNG_MAN = ACTOR_FIRST_PLACED,
-  /// A woman with fair hair who brings the news from Kalay.
+  /// A woman with fair hair east of the six gravestones, who brings the news
+  /// that the bridge to Kalay is fixed.
   ACTOR_WOMAN_ON_THE_FIXED_BRIDGE,
-  /// A burly grey-haired man who worries about Hammet.
+  /// A burly grey-haired man up on the bell tower, beside the bell, who
+  /// worries about Hammet.
   ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET,
-  /// A woman.
+  /// A woman in a green dress who wanders north of the inn.
   ACTOR_WOMAN_ON_LUNPAS_THIEVES,
-  /// An old man with a cane who has talked with the mayor.
+  /// An old man with a cane east of the jail's door, who has been talking
+  /// with the mayor.
   ACTOR_MAYORS_VISITOR,
-  /// An old woman.
+  /// An old woman who wanders east of the inn's door.
   ACTOR_OLD_WOMAN_ON_THE_VOLCANO,
   /// vault.c's two children, walking round the well again. The boy greets the
   /// party. "Hey, it's that warrior guy!"
   ACTOR_BOY_ROUND_THE_WELL,
-  /// Speaks of the grown-ups. "Grown-ups always get so scared"
+  /// Wishes Vault's elders were as brave as the party.
   ACTOR_GIRL_ROUND_THE_WELL,
-  /// vault.c's strongman on watch. "Did you guys check out the jail?"
+  /// The strongman who wanders near the west end of the rope bridge. "Did you
+  /// guys check out the jail?"
   ACTOR_STRONGMAN_ON_WATCH,
-  /// A bearded man in a long robe who takes the thieves' escape calmly.
+  /// A bearded man in a long robe beside the Sanctum's door, who takes the
+  /// thieves' escape calmly.
   ACTOR_VILLAGER_DIVINE_PLAN,
+  /// The dog south of the six gravestones.
   ACTOR_VAULT_DOG,
-  /// vault.c's young man fixing the roof, standing where he did there, his work
-  /// done.
+  /// The young man at the foot of the ladder against the inn's west wall, the
+  /// roof now mended.
   ACTOR_YOUNG_MAN_FIXING_THE_ROOF,
-  /// Sap, a Venus Djinni, hiding until the bell calls it. The row before it,
-  /// SPRITE_IVY placed at 0, 0, is never referred to.
+  /// Sap, a Venus Djinni, hiding in the tree east of the bell tower until the
+  /// bell calls it. The row before it, SPRITE_IVY placed at 0, 0, is never
+  /// referred to.
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
 
@@ -138,12 +144,12 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
-/// Returns the villagers, dog, and Djinni actor placements.
+/// The townspeople, the dog and Sap.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVaultRevisit_ActorPlacements;
 }
 
-/// Stands the actor still while showing the message already selected.
+/// Stands the person still while they say the message already chosen.
 static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
   Event_Start();
   Actor_SetAnimation(actorId, ANIM_STAND);
@@ -151,8 +157,9 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
   Event_End();
 }
 
-/// The party is recognized. "You're the warriors who captured the thieves a
-/// while back, aren't you? You've returned to Vault!"
+/// The young man outside the gem owner's house, by the rope bridge, turns to
+/// Isaac and recognizes the party: "You're the warriors who captured the
+/// thieves a while back, aren't you? You've returned to Vault!"
 static void VaultRevisit_RecognizeWarriors(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
@@ -163,8 +170,9 @@ static void VaultRevisit_RecognizeWarriors(void) {
   Event_End();
 }
 
-/// There are rumors of thieves from Lunpa running wild, yet they have been
-/// quiet.
+/// The woman in green who wanders north of the inn stops and turns to Isaac:
+/// there have been rumors of thieves from Lunpa running wild, and she wonders
+/// why they have been so quiet recently.
 static void VaultRevisit_TalkOfLunpaThieves(void) {
   Event_SetMessageId(MsgVaultRumorsThievesLunpa);
   Actor_TurnToFaceEachOther(ACTOR_WOMAN_ON_LUNPAS_THIEVES, ACTOR_PARTY_LEADER,
@@ -172,7 +180,9 @@ static void VaultRevisit_TalkOfLunpaThieves(void) {
   VaultRevisit_ShowStandingActorMessage(ACTOR_WOMAN_ON_LUNPAS_THIEVES);
 }
 
-/// The old man was just talking about the party with the mayor.
+/// The old man with a cane east of the jail's door turns to Isaac: he was just
+/// talking about the party with the mayor, and they are so strong that the
+/// thieves are welcome to attack.
 static void VaultRevisit_PraisePartyStrength(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
@@ -184,8 +194,9 @@ static void VaultRevisit_PraisePartyStrength(void) {
   Event_End();
 }
 
-/// If the volcano stays calm and the southern bridge stays fixed, there is
-/// nothing to worry about.
+/// The old woman who wanders east of the inn's door stops and turns to Isaac:
+/// if the volcano stays calm and the southern bridge stays fixed, Vault won't
+/// have any worries at all.
 static void VaultRevisit_HopeVolcanoStaysCalm(void) {
   Event_SetMessageId(MsgVaultVolcanoStaysCalm);
   Actor_TurnToFaceEachOther(ACTOR_OLD_WOMAN_ON_THE_VOLCANO, ACTOR_PARTY_LEADER,
@@ -193,7 +204,10 @@ static void VaultRevisit_HopeVolcanoStaysCalm(void) {
   VaultRevisit_ShowStandingActorMessage(ACTOR_OLD_WOMAN_ON_THE_VOLCANO);
 }
 
-/// The boy round the well stops circling.
+/// The boy walking round the well stops and turns to Isaac. The first time, an
+/// exclamation mark pops up over him: "Hey, it's that warrior guy! Yeah, and
+/// Ivan, too." Then, each time: "I'm so glad you came back to Vault!" He goes
+/// back to walking round the well.
 static void VaultRevisit_GreetWarriorGuy(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   u16 facing = actor->facing;
@@ -222,7 +236,8 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
 }
 
-/// The girl round the well stops. "I wish Vault's elders were as brave as you!"
+/// The girl walking round the well stops and turns to Isaac: "I wish Vault's
+/// elders were as brave as you!"
 static void VaultRevisit_WishEldersWereBrave(void) {
   struct Actor *actor;
   s16 originalFacing;
@@ -242,8 +257,10 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   actor->timer = 0;
 }
 
-/// The strongman on watch asks about the jail. "Did you guys check out the
-/// jail?"
+/// The strongman by the rope bridge asks, "Oh, so did you guys check out the
+/// jail?" If Isaac nods, he wonders how the thugs broke out, the bars being so
+/// strong; if he shakes his head, the strongman tells him the thieves broke
+/// out and got away.
 static void VaultRevisit_AskAboutJail(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
@@ -258,8 +275,8 @@ static void VaultRevisit_AskAboutJail(void) {
   Event_End();
 }
 
-/// Mind Read on the welcoming young man before he has spoken. He turns and
-/// recognizes the party.
+/// Mind Read on the young man by the rope bridge before he has spoken: he
+/// turns to Isaac and recognizes the party aloud, as when talked to.
 static void VaultRevisit_ReadMindAndRecognizeWarriors(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_YOUNG_MAN, 1);
@@ -272,7 +289,9 @@ static void VaultRevisit_ReadMindAndRecognizeWarriors(void) {
   Event_End();
 }
 
-/// Mind Read on the woman who talks of Lunpa's thieves.
+/// Mind Read on the woman in green north of the inn: "Once Dodonpa took over,
+/// Lunpa's outlaws became no better than thieves. There's gotta be a reason
+/// those guys are being so quiet."
 static void VaultRevisit_ReadMindOnDodonpa(void) {
   Event_SetMessageId(MsgVaultOnceDodonpaTook);
   Actor_Get(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 1;
@@ -280,7 +299,8 @@ static void VaultRevisit_ReadMindOnDodonpa(void) {
   Actor_Get(ACTOR_WOMAN_ON_LUNPAS_THIEVES)->paused = 0;
 }
 
-/// Mind Read before the old man has spoken. He turns and praises the party.
+/// Mind Read on the old man by the jail's door before he has spoken: he turns
+/// to Isaac and praises the party aloud, as when talked to.
 static void VaultRevisit_ReadMindAndPraisePartyStrength(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAYORS_VISITOR, 1);
@@ -294,8 +314,8 @@ static void VaultRevisit_ReadMindAndPraisePartyStrength(void) {
   Event_End();
 }
 
-/// Mind Read. It would have been great to have everything solved before
-/// winter.
+/// Mind Read on the old woman east of the inn's door: "It would have been
+/// great to have everything solved before winter came."
 static void VaultRevisit_ReadMindOnWinter(void) {
   Event_SetMessageId(MsgVaultGreatEverythingSolved);
   Actor_Get(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 1;
@@ -303,8 +323,9 @@ static void VaultRevisit_ReadMindOnWinter(void) {
   Actor_Get(ACTOR_OLD_WOMAN_ON_THE_VOLCANO)->paused = 0;
 }
 
-/// Mind Read on the boy round the well. Watching the party makes one feel
-/// brave. Before the boy has spoken, it plays the greeting.
+/// Mind Read on the boy walking round the well: watching the party makes him
+/// feel brave, and he hopes they'll tell him all about their travels
+/// sometime. If he has not spoken to them yet, he greets them aloud instead.
 static void VaultRevisit_ReadMindOnFeelingBrave(void) {
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
@@ -319,7 +340,8 @@ static void VaultRevisit_ReadMindOnFeelingBrave(void) {
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = VILLAGER_IS_BOY;
 }
 
-/// Mind Read on the girl round the well. Grown-ups always get so scared.
+/// Mind Read on the girl walking round the well: "Grown-ups always get so
+/// scared whenever anything happens. I get so tired of that..."
 static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
@@ -329,7 +351,10 @@ static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
 }
 
-/// Mind Read on the strongman on watch.
+/// Mind Read on the strongman by the rope bridge: it's not easy to grab the
+/// key to that jail, so the thieves must know the secret of the lock, and
+/// that must have been great! If he has not asked about the jail yet, he asks
+/// aloud instead, then wanders off again.
 static void VaultRevisit_ReadMindOnJailKey(void) {
   s32 requestHeard;
 
@@ -382,7 +407,10 @@ static void VaultRevisit_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   jumpingActor->gravity = toFIXED(1);
 }
 
-/// Searching the bell rings it (SE_BELL).
+/// Up on the bell tower, Isaac rings the bell (cell (17, 8)). The first time
+/// since the party came into town, Sap the Venus Djinni pops up, startled, on
+/// top of the tree east of the tower, hops twice and leaps away north-east
+/// onto the cliff top beside the cave mouth, where it waits.
 static void VaultRevisit_RingBell(void) {
   Event_Start();
   Sound_Play(SE_BELL);
@@ -403,8 +431,8 @@ static void VaultRevisit_RingBell(void) {
   Event_End();
 }
 
-/// Walks the leader into a doorway while the exit waits its
-/// MAP_TRANSITION_FRAMES.
+/// Walks Isaac into the doorway at (x, z) as the screen changes to the room
+/// behind it.
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
@@ -412,28 +440,33 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   Import_EventSetExitRequest(exitNumber);
 }
 
-/// The door of the gem owner's house opens and the party walks in.
+/// Isaac opens the door of the house in the east, by the rope bridge (cell
+/// (25, 21)), the gem owner's, and goes in.
 static void VaultRevisit_EnterGemOwnersHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST);
 }
 
-/// The door of a child's home opens and the party walks in.
+/// Isaac opens the door of the house east of the inn (cell (19, 20)), a
+/// child's home, and goes in.
 static void VaultRevisit_EnterChildsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH);
 }
 
-/// The door of VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST opens into the inn.
+/// Isaac opens the inn's door, in the middle of town (cell (13, 19)), and goes
+/// in.
 static void VaultRevisit_EnterInn(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST);
 }
 
-/// The item shop's door opens and the party walks in.
+/// Isaac opens the item shop's door, under the jar sign in the cliff in the
+/// east of town (cell (23, 15)), and goes in, vanishing into the doorway as
+/// he walks: he is drawn behind the cliff from the door's first step.
 static void VaultRevisit_EnterItemShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -446,8 +479,9 @@ static void VaultRevisit_EnterItemShop(void) {
   Vault_WalkThroughExit(376, 224, VAULT_REVISIT_TO_LOG_ROOMS_B_EAST);
 }
 
-/// The weapon and armor shop's door opens and the party walks in.
-/// It's VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH, drawn like the item shop's.
+/// Isaac opens the weapon and armor shop's door, under the sword sign in the
+/// cliff below the bell tower (cell (18, 12)), and goes in, as at the item
+/// shop.
 static void VaultRevisit_EnterWeaponAndArmorShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -460,8 +494,8 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
   Vault_WalkThroughExit(296, 176, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTH);
 }
 
-/// The door of VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST opens into the mayor's
-/// house.
+/// Isaac opens the door of the mayor's house, the big house in the town's
+/// north-west (cell (7, 10)), and goes in.
 static void VaultRevisit_EnterMayorsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVaultRevisit_MayorsHouseDoorCells, 38, 6);
@@ -470,7 +504,9 @@ static void VaultRevisit_EnterMayorsHouse(void) {
 
 #include "shared/vault_map_cells.c"
 
-/// The jail door opens and the party walks in.
+/// Isaac opens the jail's grey iron door, in the cliff below the mayor's house
+/// (cell (4, 11)), and walks into the jail the thieves broke out of,
+/// vanishing into the doorway as at the shops.
 static void VaultRevisit_EnterJail(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -485,18 +521,22 @@ static void VaultRevisit_EnterJail(void) {
 
 #include "shared/vault_toggle.c"
 
-/// Talking to Sap, a Venus Djinni, makes it join the party.
+/// On the cliff top beside the cave mouth, where the bell sent it, talking to
+/// Sap, a Venus Djinni, makes it join the party.
 static void VaultRevisit_SapJoins(void) {
   Djinn_JoinParty(ACTOR_SAP, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
 }
 
-/// Jumps at the hidden passage, then pauses so the party can see the clue.
+/// The dog jumps once on the hidden passage's spot, then pauses.
 static inline void VaultRevisit_DogJumpAtPassage(void) {
   Actor_Jump(ACTOR_VAULT_DOG, 6, 0);
   Event_Wait(30);
 }
 
-/// Using a Bone on the dog makes it show the hidden passage.
+/// Isaac gives the dog south of the six gravestones a Bone. It trots
+/// north to the middle of the gravestones (cell (13, 25)), turns south and
+/// jumps there three times, then steps one cell north and sits facing the
+/// spot, where Reveal will show the passage.
 static void VaultRevisit_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Event_Start();
@@ -516,20 +556,25 @@ static void VaultRevisit_GiveBoneToDog(void) {
   Event_End();
 }
 
-/// Covers the hidden passage again, tiles and cell behaviors, when Reveal
-/// ends.
+/// When Reveal wears off, the hole among the six gravestones (cell (13, 25))
+/// is grass again and can no longer be walked into.
 static void VaultRevisit_HidePassage(void) {
   MapGrid_CopyCellAttributes(41, 43, 1, 1, 13, 25);
   MapGrid_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
-/// Reveal shows the hidden passage where the dog jumps.
+/// Reveal, cast near the six gravestones south of the inn, shows a dark hole
+/// in the middle of them (cell (13, 25)), where the dog jumps: the hidden
+/// passage down into Vault Cave, which Isaac can walk into while the spell
+/// lasts.
 static void VaultRevisit_RevealPassage(void) {
   MapGrid_CopyCellAttributes(37, 43, 1, 1, 13, 25);
   MapGrid_CopyCellsTo(36, 42, 12, 22, 3, 3);
 }
 
-/// The dog barks.
+/// The dog south of the six gravestones turns to Isaac and barks. "Ruff!
+/// Rrruff!!" If Isaac carries a Bone and the dog has not yet shown its spot,
+/// the item menu opens so that he can give it one.
 static void VaultRevisit_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruffAfterCapture);
@@ -548,7 +593,8 @@ static void VaultRevisit_TalkToDog(void) {
   Event_End();
 }
 
-/// Describes the water heard at the bottom of the well.
+/// Isaac peers into the well in the south-west of Vault (cells (7, 24) to
+/// (8, 25)): "You can hear water rumbling down there."
 static void VaultRevisit_PeerIntoWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -556,7 +602,8 @@ static void VaultRevisit_PeerIntoWell(void) {
   Event_End();
 }
 
-/// Returns the town's talk, bg, Psynergy, and doorway events.
+/// The town's events: its people, doors, bell, well and box, the dog's Bone
+/// and Reveal among the gravestones.
 const struct Trigger *Scene_GetTriggers(void) { return gVaultRevisit_Triggers; }
 
 /// Patched editions keep Sap on the cliff top when the party keeps its
@@ -731,8 +778,8 @@ u16 gVaultRevisit_JailDoorCells[] = {
 };
 
 struct Trigger gVaultRevisit_Triggers[] = {
-    { TRIGGER_EXIT, 20, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
-    { TRIGGER_EXIT, 21, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_SOUTH_GATE, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_NORTH_GATE, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_NORTH },
     { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_HIDDEN_PASSAGE, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE },
     { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_CLIFF_CAVE_MOUTH, CONDITION_ALWAYS, VAULT_REVISIT_TO_VAULT_CAVE_MOUTH },
     { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_BRIDGE_END, CONDITION_ALWAYS, EVENT(Vault_RaisePathToBridge) },

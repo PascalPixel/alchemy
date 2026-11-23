@@ -15,9 +15,10 @@
 ///   (STUCCO_ROOMS_B_WEAPON_SHOP, STUCCO_ROOMS_B_ARMOR_SHOP and
 ///   STUCCO_ROOMS_B_ITEM_SHOP) open across their counters. The inn behind
 ///   TOLBI_TO_INN is full, `Inn Full / No Vacancies`.
-///   STUCCO_ROOMS_B_INN_TO_INN_PASSAGE and
-///   STUCCO_ROOMS_B_INN_PASSAGE_TO_INN join it to the inn's corridor, whose
-///   doors lead into four guest rooms
+///   Stairs lead down from it to its basement
+///   (STUCCO_ROOMS_B_INN_TO_INN_PASSAGE and STUCCO_ROOMS_B_INN_PASSAGE_TO_INN),
+///   a passage with two wooden doors in its north wall into the upper guest
+///   rooms, and two doorways in its south wall into the lower ones
 ///   (STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST and the rest).
 /// - Tolbi Sanctum, behind TOLBI_TO_SANCTUM (STUCCO_ROOMS_B_SANCTUM), whose
 ///   healer opens the sanctum across the counter. STUCCO_ROOMS_B_SANCTUM_NORTH
@@ -38,14 +39,14 @@
 /// After Colosso two short events play, each once, on entering their
 /// rooms (Scene_Initialize).
 ///
-/// In the northeast guest room a woman finds something on the floor, starts
-/// at the sight of the party and hides it behind the trash pile
-/// (StuccoRoomsB_WatchWomanHideMedal, FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN). It
-/// is a Lucky Medal, which the party can then take from that barrel
+/// In the upper right guest room of the inn's basement a woman finds something
+/// on the floor, starts at the sight of the party and hides it behind the trash
+/// pile (StuccoRoomsB_WatchWomanHideMedal, FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN).
+/// It is a Lucky Medal, which the party can then take from that barrel
 /// (FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN). After that she greets them, startled,
 /// and Mind Read hears her hope its owner will not ask for it back.
 ///
-/// In the southeast one stranded passengers argue that the captain will not
+/// In the lower right one, stranded passengers argue that the captain will not
 /// sail although they agreed to do whatever it takes
 /// (StuccoRoomsB_WatchPassengersArgue, an area flag).
 ///
@@ -171,10 +172,14 @@ enum StuccoRoomsBActorId {
 };
 
 /// The cell behaviors the rooms' coord and examine triggers answer: the
-/// doors, counted from CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR, and the things
-/// the party can search.
+/// things the party can search, and the four wooden doors of the inn's
+/// basement. A door's cell carries the number of the exit it leaves by, from
+/// STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST to
+/// STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, so the trigger rows name
+/// the exits, and gStuccoRoomsBDoors lists the doors in that order.
 enum StuccoRoomsBCellBehavior {
-  CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR = 14,
+  CELL_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR =
+      STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST,
   CELL_BEHAVIOR_STUCCO_ROOMS_B_INN_SIGN = 40,
   CELL_BEHAVIOR_STUCCO_ROOMS_B_VIAL_BARREL = 100,
   CELL_BEHAVIOR_STUCCO_ROOMS_B_MEDAL_BARREL = 101,
@@ -246,8 +251,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 #if TBS_PATCH_4
-/// In Tolbi on finals day, patch 4 (the Spanish and Italian editions) adds a
-/// question about Babi.
+/// On finals day, in the Spanish and Italian editions, the strongman in the
+/// storeroom of hay bales and barrels asks Isaac whether Babi's disappearance
+/// was a misunderstanding, now that Babi has shown himself at the finals. Yes:
+/// it must have been, since he is at the Colosseum now. No: so they found him
+/// in time for the finals? Ridiculous!
+///
+/// The other editions skip the question and keep only the yes answer, "Well, I
+/// guess so, since he's in the colosseum now."
 static void StuccoRoomsB_AskWhetherBabiWasMissing(s32 speaker) {
   StuccoRoomsB_AskYesNo(MsgTolbiInteriorsBabiShowedHimselfAtFinals, speaker);
 }
@@ -277,8 +288,12 @@ UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
   Import_EventSetExitRequest();
 }
 
-/// In Tolbi, walking into one of the four doors at cell behaviors 14 to 17
-/// opens it.
+/// Isaac walks north into one of the four wooden doors of Tolbi's inn
+/// basement, down the stairs from the inn, and it opens as he walks through:
+/// the two in the north wall of the passage (cells (24, 42) and (33, 42)),
+/// into the guest rooms north of it, or the door in the north wall of either
+/// guest room behind the passage's south doorways (cells (50, 41) and
+/// (52, 51)), back out to the passage.
 static void StuccoRoomsB_EnterDoor(void) {
   u32 actorId;
   struct Actor *actor;
@@ -306,8 +321,11 @@ static void StuccoRoomsB_EnterDoor(void) {
   Import_EventSetExitRequest(*trigger);
 }
 
-/// In Tolbi after Colosso, a woman in the northeast guest room hides
-/// something as the party enters.
+/// The first time the party enters the upper right guest room of the inn's
+/// basement after Colosso, through the passage's east door, a woman with fair
+/// hair finds something sparkling on the floor, starts at the sight of them,
+/// and hides it behind the trash pile. It is a Lucky Medal, in the barrel there
+/// (cell (35, 52)).
 static void StuccoRoomsB_WatchWomanHideMedal(void) {
   struct Actor *sparkle;
 
@@ -384,8 +402,10 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_End();
 }
 
-/// In Tolbi after Colosso, three stranded passengers in the southeast guest
-/// room argue about the captain, who won't sail the ship.
+/// The first time the party enters the lower right guest room of the inn's
+/// basement after Colosso, through the passage's south-east doorway (cell
+/// (33, 46)), three stranded passengers argue that the captain won't sail the
+/// ship, though they agreed to do whatever it takes.
 static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiHeWontSailShipEven);
@@ -542,14 +562,18 @@ static void StuccoRoomsB_TalkToWaitress(s32 speaker) {
   Event_End();
 }
 
-/// In Tolbi during the festival, a resident offers the party a bed.
+/// During the festival a woman with fair hair asks Isaac whether he wants to
+/// stay with them, then admits the house is already full.
 static void StuccoRoomsB_TalkToHost(s32 speaker) {
   Event_Start();
   StuccoRoomsB_AskYesNo(MsgTolbiWantStay, speaker);
   Event_End();
 }
 
-/// In Tolbi, the woman who hid the Lucky Medal.
+/// Isaac talks to the woman who hid the Lucky Medal in the upper right guest
+/// room of the inn's basement. Until he takes it she giggles, "Hee hee! Do I
+/// look like I'm that excited?"; afterwards she greets him, startled, "Oh...
+/// Hello!", and says it's nothing.
 static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
   Event_Start();
   if (GameFlag_Get(FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN) == 0) {
@@ -571,7 +595,9 @@ static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
   Event_End();
 }
 
-/// In Tolbi, Mind Read on the medal woman gives the hiding place away.
+/// Isaac reads the medal woman's mind: she just hid the thing she found behind
+/// the trash pile, and nobody will ever know. Once he has taken it, she hopes
+/// its owner won't ask her to return it.
 static void StuccoRoomsB_ReadMedalWomanMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO) == 0) {
@@ -594,7 +620,9 @@ static void StuccoRoomsB_TalkToAngryPassenger(s32 speaker) {
   Event_End();
 }
 
-/// The man from the ship asks whether the party remembers him.
+/// A man who rode the ship from Kalay with the party greets Isaac, "Hey!
+/// You're the would-be warrior! Do you remember me?", and is stuck in Tolbi
+/// with no way back.
 static void StuccoRoomsB_TalkToFellowPassenger(s32 speaker) {
   Event_Start();
   StuccoRoomsB_AskYesNo(MsgTolbiWarriorRemember, speaker);
@@ -875,10 +903,10 @@ struct Trigger gStuccoRoomsBTriggersFestival[] = {
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
     { TRIGGER_EXIT, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
     { TRIGGER_EXIT, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
     { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring) },
@@ -950,10 +978,10 @@ struct Trigger gStuccoRoomsBTriggersFinalsDay[] = {
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
     { TRIGGER_EXIT, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
     { TRIGGER_EXIT, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
     { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsSoColossoHasAlreadyReachedThe) },
@@ -1030,10 +1058,10 @@ struct Trigger gStuccoRoomsBTriggersAfterColosso[] = {
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_INN },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST },
     { TRIGGER_EXIT, 13, CONDITION_ALWAYS, STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHEAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 16, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), STUCCO_ROOMS_B_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE, CONDITION_ALWAYS, EVENT(StuccoRoomsB_EnterDoor) },
     { TRIGGER_EXIT, 18, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHWEST_TO_INN_PASSAGE },
     { TRIGGER_EXIT, 19, CONDITION_ALWAYS, STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_TO_INN_PASSAGE },
     { TRIGGER_TALK, ACTOR_STUCCO_ROOMS_B_MAKESHIFT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNowThatColossoIsOverWeve) },

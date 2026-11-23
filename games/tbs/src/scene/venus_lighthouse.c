@@ -12,8 +12,8 @@
 /// - Venus Lighthouse Entry (SceneId_VenusLighthouseEntry), outside. The
 ///   scholars and Babi's soldiers the wanderers attacked lie hurt and say what
 ///   they saw. A soldier who tells of the attack flickers and vanishes
-///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the cell behavior of his spot
-///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
+///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and his spot no longer answers a
+///   search. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
 ///   door, leads in.
 /// - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by an area
 ///   rule of its own), the floor behind the front door, with three scholars.
@@ -35,8 +35,9 @@
 ///   floor below.
 /// - Venus Lighthouse (SceneId_VenusLighthouseFirstFloor), where the Tunnel
 ///   Ruins come up
-///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A floor
-///   carries the party south, and a hole drops the leader into the room below.
+///   (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A wide
+///   slide of flowing sand carries the party south down its big room, and a
+///   hole drops the leader into the room below.
 ///   Three capped pillars are Moved or pushed. Two pillars by a gap are
 ///   carried across it, or dropped through the floor. A chest holds the Thunder
 ///   Crown, and a Psynergy Stone lies here.
@@ -47,15 +48,16 @@
 ///   socket sinks, and a light runs from the lady statue along the gold track
 ///   over it to open the gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
 /// - Venus Lighthouse (SceneId_VenusLighthouseThirdFloor). Three more
-///   sparkling passages, a drifting floor, and three pillars carrying pieces
-///   of track that sink into four sockets. With all three sunk two lights run
-///   from the statue, and when the track leads one to the gate it opens
-///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
+///   sparkling passages, slides of flowing sand, and three pillars carrying
+///   pieces of track that sink into four sockets. With all three sunk two
+///   lights run from the statue, and when the track leads one to the gate it
+///   opens (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
 ///   FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY or
 ///   FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY for where the pillars stand).
 ///   A chest holds Dragon Scales.
-/// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). Floors carry the
-///   party each way. A west and an east floor switch slide their walls aside
+/// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). A maze of sand
+///   flowing north, south, west and east carries the party each way. A west and
+///   an east floor switch slide their walls aside
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
 ///   VenusLighthouseThirdFloor also redraws). Carry sets down four floating
 ///   pillars on two balance platforms that sink and rise to their weight
@@ -192,7 +194,7 @@ enum VenusLighthouseCellBehavior {
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_LOCKED_DOOR =
       25, ///< a locked door, from the second floor up
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH =
-      30, ///< a floor that carries the party south
+      30, ///< sand flowing south, which carries the party with it
   /// A floor's chest.
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST = 100,
   /// A floor's Psynergy Stone.
@@ -210,6 +212,12 @@ enum VenusLighthouseCellBehavior {
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_SECOND_CHEST = 101,
   // VenusLighthouseFirstFloor
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_HOLE = 35,
+  /// The floor bounding the rows where the capped pillars stand, where
+  /// stepping back out ends VenusLighthouse_EnterCappedPillarRows.
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_BESIDE_CAPPED_PILLARS = 31,
+  /// The rows where the capped pillars stand. Walking into a pillar from
+  /// either kind of cell pushes it.
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AMONG_CAPPED_PILLARS = 32,
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS =
       45, ///< the gap and the two pillars beside it
   // VenusLighthouseSecondFloor
@@ -221,6 +229,7 @@ enum VenusLighthouseCellBehavior {
       35, ///< the gaps and the three switch pillars
   // VenusLighthouseFourthFloor
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_RISING_PASSAGE = 18,
+  /// The sand maze's flowing sand, by the way it carries the party.
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_NORTH = 31,
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_WEST = 32,
   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_EAST = 33,
@@ -732,13 +741,20 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-/// Makes the leader the actor the fade overlay follows.
+/// On the first floor, in the room of the three capped pillars, Isaac steps
+/// into the rows where the pillars stand. The game starts drawing the fade
+/// overlay on him: a see-through strip on each side of him wherever the floor
+/// beside him is higher than his own, so that the raised floor's edges seem to
+/// pass in front of him.
+// XXX: how the strips look on him here; a recording of Isaac walking
+// between the pillars would settle it.
 static void VenusLighthouse_EnterCappedPillarRows(void) {
   gFadeOverlayWork->actor = Actor_Get(ACTOR_PARTY_LEADER);
 }
 
-/// Stepping onto cell behavior 31 of VenusLighthouseFirstFloor, in the rows
-/// that bound the capped pillars', makes the fade overlay follow no one.
+/// On the first floor, Isaac steps out of the rows of capped pillars onto the
+/// floor round them, and the game stops drawing the fade overlay
+/// (VenusLighthouse_EnterCappedPillarRows) on him.
 static void VenusLighthouse_LeaveCappedPillarRows(void) {
   gFadeOverlayWork->actor = NULL;
 }
@@ -867,9 +883,13 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   return effect;
 }
 
-/// The leader jumps a one-cell gap if the far side is clear.
+/// Walking into a one-cell gap in the floor, Isaac springs and leaps across
+/// it, if the cell beyond is clear. These are the gaps beside the pillars Move
+/// pushes on each floor of the climb, and on the fourth floor the gaps among
+/// the floating pillars.
 ///
-/// Returns 1 after a jump, 0 when there was none.
+/// When something stands in the way there is no jump, and the callers try a
+/// push instead (the result is 0).
 static s32 VenusLighthouse_JumpAcrossGap(void) {
   struct Actor *leader;
   struct FieldPosition landing;
@@ -1065,8 +1085,18 @@ static void VenusLighthouse_CarryPillarPastWall(void) {
   Event_End();
 }
 
-/// Searching a relief in VenusLighthouseGroundFloor shows its words, the relief
-/// cell behavior's own message. "There are words carved into the relief..."
+/// Isaac reads the relief on the wall of the room north of the entrance hall
+/// (cells (19, 10) to (23, 10)): "There are words carved into the relief... If
+/// ye seek to climb Venus Lighthouse, first seek the power within. To obtain
+/// this power, see with the eyes of truth. Then the way shall open." In the
+/// editions that keep them, two more reliefs further in (cells (47, 57) and
+/// (58, 57)) say, "The true road can only be known by he who bears a true
+/// heart."
+///
+/// Each relief's message is the first's plus its cell's place after
+/// CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF. Editions with patch 1 but not
+/// patch 2 show the first relief's words for every relief and leave the two
+/// further in silent.
 static void VenusLighthouse_ReadRelief(void) {
   s32 message;
 #if !TBS_PATCH_1 || TBS_PATCH_2
@@ -1375,8 +1405,8 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   Event_End();
 }
 
-/// In VenusLighthouseFirstFloor, the leader steps onto the hole in the floor
-/// (cell behavior 35).
+/// On the first floor, Isaac steps onto the hole in the floor and drops
+/// through it into the room below.
 static void VenusLighthouse_FallThroughFloor(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1466,9 +1496,11 @@ static void VenusLighthouse_PushCappedPillar(void) {
   Event_End();
 }
 
-/// In VenusLighthouseFirstFloor, Move or Carry starts on one of the two
-/// pillars by the gap. Their cells are marked before they move.
-static void VenusLighthouse_LiftCarryPillar(void) {
+/// Nothing visible happens as Isaac begins Move or Carry on one of the two
+/// grey blocks marked with a spiral by the pit on the first floor, or pushes
+/// one. The game first frees the cells under both blocks, which walking into
+/// then tries a jump or a push, since one of them is about to leave its cell.
+static void VenusLighthouse_UnblockCarryPillarCells(void) {
   u32 pillarIndex;
   struct Actor *pillar;
 
@@ -1499,7 +1531,7 @@ static void VenusLighthouse_MoveCarryPillar(void) {
 static void VenusLighthouse_JumpOrPushCarryPillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
-    VenusLighthouse_LiftCarryPillar();
+    VenusLighthouse_UnblockCarryPillarCells();
     VenusLighthouse_PushPillarAhead();
     VenusLighthouse_MoveCarryPillar();
   }
@@ -2887,9 +2919,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Standing on this floor (VenusLighthouseFourthFloor's
-/// CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_NORTH) carries the party north in a
-/// trail of dust. At a ledge they drop down.
+/// Isaac steps onto sand flowing north in the fourth floor's sand maze, and
+/// it carries him north a cell at a time in puffs of sand. Where it runs over
+/// a ledge he drops down.
 static void VenusLighthouse_DriftNorth(void) {
   struct Vector3 args;
 
@@ -2898,7 +2930,10 @@ static void VenusLighthouse_DriftNorth(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-/// As VenusLighthouse_DriftNorth, south.
+/// Isaac steps onto a slide of flowing sand, and it carries him south a cell
+/// at a time in puffs of sand until he reaches firm floor: down the middle of
+/// the first floor's big room (cells (34, 8) to (50, 33)), the third floor's
+/// slides, and the south-flowing sand of the fourth floor's maze.
 static void VenusLighthouse_DriftSouth(void) {
   struct Vector3 args;
 
@@ -2907,7 +2942,8 @@ static void VenusLighthouse_DriftSouth(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-/// As VenusLighthouse_DriftNorth, west.
+/// Isaac steps onto sand flowing west in the fourth floor's sand maze, and it
+/// carries him west a cell at a time in puffs of sand.
 static void VenusLighthouse_DriftWest(void) {
   struct Vector3 args;
 
@@ -2916,7 +2952,8 @@ static void VenusLighthouse_DriftWest(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-/// As VenusLighthouse_DriftNorth, east.
+/// Isaac steps onto sand flowing east in the fourth floor's sand maze, and it
+/// carries him east a cell at a time in puffs of sand.
 static void VenusLighthouse_DriftEast(void) {
   struct Vector3 args;
 
@@ -4373,20 +4410,20 @@ struct Trigger gVenusLighthouseFirstFloorTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
     { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
     { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_HOLE, CONDITION_ALWAYS, EVENT(VenusLighthouse_FallThroughFloor) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushCappedPillar) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushCappedPillar) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_LeaveCappedPillarRows) },
-    { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterCappedPillarRows) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_BESIDE_CAPPED_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushCappedPillar) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AMONG_CAPPED_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushCappedPillar) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_BESIDE_CAPPED_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_LeaveCappedPillarRows) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AMONG_CAPPED_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterCappedPillarRows) },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushCarryPillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CAPPED_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCappedPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CAPPED_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCappedPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CAPPED_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCappedPillar) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_UnblockCarryPillarCells) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_UnblockCarryPillarCells) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_UnblockCarryPillarCells) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_UnblockCarryPillarCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCarryPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCarryPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_CarryPillarAcrossGap) },

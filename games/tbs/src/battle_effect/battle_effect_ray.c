@@ -8,7 +8,7 @@
 
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 
-#define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
+#define RAY_PICTURES 1550 ///< where the bolt pictures start in the sheet
 #define RAY_COUNT 4       ///< bolts
 /// The bolts turn a 32nd of a turn a frame, each a quarter turn more than the
 /// one before.
@@ -19,6 +19,9 @@
 /// Where the canvas is shown over targets on the party's side: from screen x
 /// 128.
 #define RAY_PARTY_CANVAS_X 128
+/// The column of a gRay_Sparks row that says how many sparks each bolt throws
+/// a frame; nothing reads the first.
+#define RAY_SPARKS_PER_BOLT 1
 
 /// Four bolts close in, turning towards the centre and scattering sparks from
 /// their roots.
@@ -28,7 +31,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *sheet;
+  u8 *motes;
   s32 bolt;
   s32 thrown;
   BlitterPair draw;
@@ -36,7 +39,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartTiledCanvas(1);
   if (work->args->variant == EFFECT_VARIANT_STRONGEST)
@@ -52,7 +55,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + RAY_PICTURES, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(RAY_WIDE_CANVAS_SHIFT << 8);
@@ -125,7 +128,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
             thrown++;
-            if (thrown == gRay_Sparks[work->args->variant][1])
+            if (thrown == gRay_Sparks[work->args->variant][RAY_SPARKS_PER_BOLT])
               break;
           }
         }
@@ -147,7 +150,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
           s32 y = FIXEDtoINT(spark->y);
           s32 size = spark->variant / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, x, y, size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, motes, x, y, size);
         }
       }
     }
@@ -174,3 +177,4 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 #undef RAY_WIDE_CANVAS_SHIFT
 #undef RAY_PARTY_CANVAS_X
 #undef RAY_FRAMES
+#undef RAY_SPARKS_PER_BOLT

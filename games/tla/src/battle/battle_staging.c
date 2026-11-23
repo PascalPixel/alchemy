@@ -7,6 +7,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "battle/battle.h"
+#include "battle_effect/battle_effect_ids.h"
 #include "gamepak/far_call/battle_effect.h"
 #include "battle/presentation.h"
 
@@ -80,7 +81,7 @@ void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   }
   plan->targetCount = count;
   plan->abilityId = ABILITY_DAEDALUS_STRIKE;
-  plan->battleEffect = EFFECT_SUMMON | 26;
+  plan->battleEffect = EFFECT_SUMMON | SUMMON_EFFECT_DAEDALUS_STRIKE;
 }
 
 /// The plan of Megaera's second part (STAGING_MEGAERA): High Impact
@@ -104,7 +105,7 @@ void BattleStaging_PlanHighImpact(struct BattlePlan *plan) {
   }
   plan->targetCount = count;
   plan->abilityId = ABILITY_HIGH_IMPACT;
-  plan->battleEffect = 1 << EFFECT_VARIANT_SHIFT | 181;
+  plan->battleEffect = 1 << EFFECT_VARIANT_SHIFT | BATTLE_EFFECT_CRUCIBLE_FIRE;
 }
 
 /// The plan of Iris's second part (STAGING_IRIS): Aurora Field
@@ -130,7 +131,8 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
   }
   plan->targetCount = count;
   plan->abilityId = ABILITY_AURORA_FIELD;
-  plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | 182;
+  plan->battleEffect =
+      EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | BATTLE_EFFECT_REVERSE_STAR;
   plan->hauntDamage = 0;
 }
 

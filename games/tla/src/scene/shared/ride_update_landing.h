@@ -1,4 +1,5 @@
-/// Flame_UpdateForward for the rides that set the direction through their work.
+/// Flame_UpdateForward for a flame flying east or west: it goes along x, and a
+/// leader it reaches is knocked back along x.
 void Flame_UpdateLanding(struct Actor *actor) {
   struct FlameHitWork *work = RIDE_WORK;
   struct Actor *other = Actor_Get(gMainRoutineWork.leaderActorId);

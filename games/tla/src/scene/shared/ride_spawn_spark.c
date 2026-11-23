@@ -1,5 +1,8 @@
-/// Spawns a spark thrown up at `speed`.
-void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
+/// A flame thrower's spark (FLAME_SPARK): a red dust cloud thrown from
+/// `position`, a little east or west, up by chance and south at `speed` and
+/// more, spinning, blended over the room (Ride_UpdateDrift). Unlike the
+/// flames it never keeps its picture out of sight.
+void Ride_SpawnSpark(s32 *position, s32 speed, s32 offScreen) {
   struct Actor *actor = Import_ActorCreate_(
       SPRITE_DUST_CLOUD, position[0], position[1], position[2] - toFIXED(2));
   s32 spin;

@@ -774,6 +774,9 @@ void ShamanVillageCave_EnterPassage(void) {
   Event_End();
 }
 
+/// Sets the cave up as its flags left it: the scattered weeds gone, the pillar
+/// in its gap, the puddle frozen, Eddy where its battle was fought, and the
+/// gladiators back from their rematch, won or lost, or waiting for one.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -800,7 +803,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN)) {
     actor = Actor_Get(ACTOR_PUDDLE);
     Actor_SetAnimation(ACTOR_PUDDLE, 5);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_PUDDLE), 0);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_PUDDLE), SPRITE_COLOR_NORMAL);
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
     actor->y.fixed = 0;
@@ -808,9 +811,10 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_FOUGHT))
     Actor_SetPosition(ACTOR_EDDY, 328, 792);
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_SATRAGE), 1);
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AZART), 0);
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_NAVAMPA), 2);
+  // The three gladiators share one sprite, told apart by its colours.
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_SATRAGE), SPRITE_COLOR_GRB);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_AZART), SPRITE_COLOR_NORMAL);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_NAVAMPA), SPRITE_COLOR_RBG);
   if ((!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
        (gMainRoutineWork.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS ||
         gMainRoutineWork.entrance == ENTRANCE_AFTER_LOSING_TO_GLADIATORS)) ||
@@ -831,6 +835,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// The walls whose weeds Whirlwind has scattered are climbable again.
 s32 Scene_PrepareMap(void) {
   s32 firstScattered;
   s32 secondScattered;

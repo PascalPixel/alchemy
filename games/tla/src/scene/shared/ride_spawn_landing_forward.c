@@ -1,5 +1,7 @@
-/// A flame thrower's flame that lands as it goes forward from `position`.
-void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
+/// A flame thrower's flame (FLAME_LANDING_FORWARD), sent east from `position`
+/// at `speed` (Flame_UpdateLanding); `offScreen` keeps its sprite's picture
+/// loaded out of sight.
+void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 offScreen) {
   struct Actor *actor = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
                                             position[1], position[2]);
 
@@ -9,7 +11,7 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
     actor->riseBaseY = speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateLanding;
-    if (mode)
+    if (offScreen)
       actor->retainSpriteCache = 2;
     Actor_SelectAnimation(actor, 2);
   }

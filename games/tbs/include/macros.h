@@ -35,7 +35,7 @@
 
 /// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
 /// `v | -v`. The flag readers, the save checks and the Psynergy tests return
-/// their truth values so; the name is ours. `v` is read twice.
+/// their truth values so. `v` is read twice.
 #define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
 
 /// Data aligned as the ROM places it, where its own type would not.

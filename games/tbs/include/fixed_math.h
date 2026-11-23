@@ -31,7 +31,7 @@ typedef s32 FIXED;
 #define toFIXED(value) ((s32)((value) * FIXED_ONE))
 
 /// A whole turn in the angles that Trig_Sin, Trig_Cos and the transform's
-/// turns take: DEGtoANG(90) is a quarter turn.
+/// turns take, 65,536 to the turn.
 #define TRIG_TURN (1 << 16)
 /// An angle given in degrees, as SGL writes it: DEGtoANG(90) is a quarter turn.
 #define DEGtoANG(degrees) ((degrees) * TRIG_TURN / 360)
@@ -46,6 +46,8 @@ FIXED Trig_Sin(s32 angle);
 /// through into Trig_Sin a quarter turn on.
 FIXED Trig_Cos(s32 angle);
 
+/// The C library's signed division and remainder, which `/` and `%` compile
+/// to; declared for the routines that call them by name.
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
 

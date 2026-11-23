@@ -7,24 +7,10 @@
 
 #include "edition.h"
 
-#if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN) +                       \
-     defined(TBS_EDITION_DE) + defined(TBS_EDITION_ES) +                       \
-     defined(TBS_EDITION_FR) + defined(TBS_EDITION_IT)) > 1
-#error Select exactly one TBS edition
-#endif
-#if (defined(TBS_EDITION_JA) && TBS_EDITION_JA != 1) ||                        \
-    (defined(TBS_EDITION_EN) && TBS_EDITION_EN != 1) ||                        \
-    (defined(TBS_EDITION_DE) && TBS_EDITION_DE != 1) ||                        \
-    (defined(TBS_EDITION_ES) && TBS_EDITION_ES != 1) ||                        \
-    (defined(TBS_EDITION_FR) && TBS_EDITION_FR != 1) ||                        \
-    (defined(TBS_EDITION_IT) && TBS_EDITION_IT != 1)
-#error Edition definitions must be 1
-#endif
-
-/// Observed cumulative logic changes from the Japanese baseline. These are our
-/// patch groups, not recovered Camelot version numbers or a release chronology.
-/// Each conditional stays beside the behavior it changes; language choices
-/// use LANGUAGE independently of these groups.
+/// How far an edition's code has moved from the Japanese release's, each level
+/// keeping the changes of those below it. The levels group the changes the
+/// editions were measured to share; they are not Camelot's version numbers or
+/// the order of release. A test of one stands beside the code it changes.
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 #define TBS_PATCH_LEVEL 4
 #elif defined(TBS_EDITION_FR)
@@ -37,9 +23,8 @@
 #define TBS_PATCH_LEVEL 0
 #endif
 
-#define TBS_PATCH_1 (TBS_PATCH_LEVEL >= 1) ///< every edition but Japanese
-/// German, French, Spanish and Italian.
-#define TBS_PATCH_2 (TBS_PATCH_LEVEL >= 2)
+#define TBS_PATCH_1 (TBS_PATCH_LEVEL >= 1) ///< all but Japanese
+#define TBS_PATCH_2 (TBS_PATCH_LEVEL >= 2) ///< German, French, Spanish, Italian
 #define TBS_PATCH_3 (TBS_PATCH_LEVEL >= 3) ///< French, Spanish and Italian
 #define TBS_PATCH_4 (TBS_PATCH_LEVEL >= 4) ///< Spanish and Italian
 

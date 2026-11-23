@@ -358,7 +358,7 @@ extern u32 gYampiDesert_OtherTravelerLooksAround[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 
-extern struct SceneEntrance gYampiDesert_Entrances[];
+extern struct SceneEntrance gSceneEntrances[];
 extern struct SceneEntrance gYampiDesertSpringCaveEntrances[];
 extern s16 gYampiDesertScorpionPitExitRegions[];
 extern s16 gYampiDesertSpringCaveExitRegions[];
@@ -373,7 +373,7 @@ void YampiDesert_FightBlitz(void) {
 const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_SPRING_CAVE)
     return gYampiDesertSpringCaveEntrances;
-  return gYampiDesert_Entrances;
+  return gSceneEntrances;
 }
 
 /// The regions of the rooms whose exits are boxes: the scorpion pit and the
@@ -2724,12 +2724,8 @@ LATE_DATA s32 gYampiDesert_RaisedEvent = 0;
 /// The sand ripple that follows the room's King Scorpion under the sand.
 LATE_DATA struct Actor *gYampiDesert_SandRipple = NULL;
 
-/// Where the party arrives in the desert's rooms; the cave under the spring has
-/// its own.
-LATE_DATA struct SceneEntrance gYampiDesert_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#define SCENE_ENTRANCES_SECTION LATE_DATA
+#include "shared/scene_entrances_default.c"
 
 /// Where the party arrives in the cave under the spring.
 LATE_DATA struct SceneEntrance gYampiDesertSpringCaveEntrances[] = {

@@ -123,7 +123,7 @@ struct Actor;
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-extern struct SceneEntrance gMadraCatacombs_Entrances[];
+extern struct SceneEntrance gSceneEntrances[];
 extern struct SceneEntrance gMadraCatacombs_StoneDoorEntrances[];
 
 extern struct SceneEntrance gMadraCatacombs_BookshelfEntrances[];
@@ -201,7 +201,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
     return gMadraCatacombs_StoneDoorEntrances;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_BookshelfEntrances;
-  return gMadraCatacombs_Entrances;
+  return gSceneEntrances;
 }
 
 const s16 *Scene_GetExitRegions(void) {
@@ -856,11 +856,7 @@ s16 gMadraCatacombs_VinePillar[] = {
     ACTOR_VINE_PILLAR, -1, 0,
 };
 
-/// The entrances of the catacombs' rooms with no table of their own.
-struct SceneEntrance gMadraCatacombs_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 /// The entrances of the stone door's room.
 struct SceneEntrance gMadraCatacombs_StoneDoorEntrances[] = {

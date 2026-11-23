@@ -359,7 +359,7 @@ void ShamanVillage_CountDownToStart(void);
 
 extern s32 gShamanVillage_EnterDoorScript[];
 extern s32 gShamanVillage_HopFortuneTellerScript[];
-extern struct SceneEntrance gShamanVillage_Entrances[];
+extern struct SceneEntrance gSceneEntrances[];
 extern struct SceneEntrance gShamanVillageTentsEntrances[];
 extern struct SceneEntrance gShamanVillageSanctumEntrances[];
 
@@ -378,7 +378,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
     return gShamanVillageTentsEntrances;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillageSanctumEntrances;
-  return gShamanVillage_Entrances;
+  return gSceneEntrances;
 }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
@@ -3391,10 +3391,7 @@ s16 gShamanVillage_LetteringWinScript[] ALIGNED(4) = {
     LETTERING_END,
 };
 
-struct SceneEntrance gShamanVillage_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_default.c"
 
 struct SceneEntrance gShamanVillageTentsEntrances[] = {
     {15, CONDITION_ALWAYS, 544, 0, 680, FACING_NORTH, 0, 420, 560, 660, 720, 0},

@@ -1129,9 +1129,11 @@ void DehkanPlateau_FinishMovingVinePillar(void) {
 /// Pounded. The game holds the stake still and gives the stake's cell (47, 12)
 /// the attributes of the gray pillar's (51, 12); stepping off the lower floor
 /// puts the cell back.
-// XXX: what the change does for Felix down there; a recording of him walking
-// to the stake from the vine with and without it would settle it (the
-// recorder cannot reach the cells).
+// While he is down there the stake's cell is the gray pillar's kind (behaviour
+// 8, ground 32 pixels up, as probed), and a step onto it is answered as one on
+// the pillar (DehkanPlateau_StepOnCannonPillar); off the lower
+// floor it takes back the attributes of cell (48, 11), a closed cell at ground
+// level (DehkanPlateau_LeaveLowerPath).
 void DehkanPlateau_EnterLowerPath(void) {
   s32 set = GameFlag_Get(FLAG_CANNON_ROOM_STAKE_POUNDED);
 

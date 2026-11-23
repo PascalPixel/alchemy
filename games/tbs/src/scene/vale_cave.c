@@ -521,12 +521,12 @@ static void ValeCave_KiteRunsBehindRocks(void) {
 /// Each cell of the ring of floor round the rocks (cells (46..52, 17..20))
 /// sends Kite to the point opposite, from gValeCave_WalkTargets.
 static void ValeCave_KiteKeepsAway(void) {
-  struct FieldWork *field = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 route;
 
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_ROCKS) != 0 &&
       gMainRoutineWork.haltedActor != ACTOR_KITE) {
-    route = field->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
+    route = work->stepTrigger - CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE;
     Actor_Get(ACTOR_KITE)->speedLimit =
         Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
     Actor_Get(ACTOR_KITE)->acceleration =

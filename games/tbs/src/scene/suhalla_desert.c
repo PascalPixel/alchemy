@@ -651,9 +651,9 @@ static void SuhallaDesert_StormGivesChase(void) {
 /// Casting Douse while a sandstorm in Suhalla Desert holds the party makes the
 /// rain fall on the storm from above.
 static void SuhallaDesert_DouseCastAtStorm(void) {
-  struct FieldEffectWork *work = gFieldEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
 
-  work->childOption = 1;
+  effectWork->childOption = 1;
 }
 
 /// Douse on a sandstorm in Suhalla Desert that holds the party stops it, and

@@ -15,7 +15,7 @@ enum SettingsMenuRow {
   SETTINGS_ROW_MESSAGE_SPEED = 2,
   SETTINGS_ROW_SPEECH = 3, ///< "Turn voice sounds on or off."
   SETTINGS_ROW_AUTO_SLEEP = 4,
-  SETTINGS_MENU_ROWS = 5
+  SETTINGS_ROW_COUNT = 5
 };
 
 /// The window colours the window colour settings set: WINDOW_PALETTE's colours
@@ -501,7 +501,7 @@ s32 SettingsMenu_Run(void) {
     if (redraw != 0) {
       redraw = 0;
       selectedOption =
-          (selectedOption + SETTINGS_MENU_ROWS) % SETTINGS_MENU_ROWS;
+          (selectedOption + SETTINGS_ROW_COUNT) % SETTINGS_ROW_COUNT;
       work->option[selectedOption] =
           (work->option[selectedOption] + work->optionCount[selectedOption]) %
           work->optionCount[selectedOption];

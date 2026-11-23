@@ -298,7 +298,7 @@ FIXED Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// height function of the cell's terrain kind applied to its samples.
 /// y is the map's down axis, an actor's z.
 FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
-  struct MapGridScrollWork *work = gMapGridWork[0];
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridCell *cell;
   u8 *heightBytes;
 
@@ -306,8 +306,8 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
   y = FIXEDtoINT(y);
   // Before the map work exists, the grid is read from its start.
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
-  if (work != NULL) {
-    cell = work->layers[layer & 3].cells;
+  if (grid != NULL) {
+    cell = grid->layers[layer & 3].cells;
   }
   // Cells are 16 pixels, 128 to a row.
   cell += x / MAPGRID_CELL_PIXELS + (y / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;

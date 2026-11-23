@@ -162,7 +162,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 /// or while he talks to someone or reads a mind.
 static UNREAD_RESULT Vault_UpdateWomanWantingRoofFixed(struct Actor *woman) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *field = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 force = 0;
   s32 range = STOP_RANGE;
   struct Actor *leader;
@@ -171,7 +171,7 @@ static UNREAD_RESULT Vault_UpdateWomanWantingRoofFixed(struct Actor *woman) {
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((s16)field->talk != 0 || window->mindRead != 0) {
+  if ((s16)work->talk != 0 || window->mindRead != 0) {
     range = TALK_STOP_RANGE;
     force = 1;
   }

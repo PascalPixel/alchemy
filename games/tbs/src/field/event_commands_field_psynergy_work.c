@@ -10,7 +10,7 @@
 /// The caster's casting animations on the party's sheets: ANIM_CAST_PSYNERGY's
 /// first two pictures, held on the second, and from the second to its last,
 /// held on the last.
-#define ANIM_CAST_PSYNERGY_BEGIN 20
+#define ANIM_CAST_PSYNERGY_START 20
 #define ANIM_CAST_PSYNERGY_END 21
 
 /// A PaletteFade half's colours, the BG's and then the sprites', three
@@ -181,7 +181,7 @@ void FieldPsynergy_End(void) {
   }
 }
 
-/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_BEGIN) and
+/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_START) and
 /// stops; with FLAG_PLAY_PSYNERGY_CAST it goes on to ANIM_CAST_PSYNERGY_END.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
@@ -193,7 +193,7 @@ void FieldPsynergy_StartCast(void) {
   renderState = *(void **)Ram_FieldWork;
   caster = effectWork->mainActor;
   ability = (s16)effectWork->action;
-  Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_BEGIN);
+  Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_START);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
@@ -211,7 +211,7 @@ void FieldPsynergy_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    Actor_SetOthersPaused(caster, 0, ANIMATION_STEP_NORMAL);
+    Actor_SetOthersPaused(caster, 0, SPRITE_ANIMATION_STEP_NORMAL);
   }
   if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
     if (effectWork->visible != 0) {
@@ -271,11 +271,11 @@ void FieldPsynergy_FadeToCastColor(void) {
 /// frames; while Reveal is active the BG half fades to Reveal's grey
 /// instead (PALETTE_TINT_GRAYSCALE).
 void FieldPsynergy_FadeFromCastColor(void) {
-  struct FieldWork *field = gFieldWork;
-  s32 savedPalettes = (s32)field->savedFadeTarget;
+  struct FieldWork *work = gFieldWork;
+  s32 savedPalettes = (s32)work->savedFadeTarget;
 
   PaletteFade_SetTarget(savedPalettes, 2);
-  if (field->revealActive != 0) {
+  if (work->revealActive != 0) {
     PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   } else {
     PaletteFade_SetTarget(savedPalettes, 1);
@@ -328,7 +328,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 
 #undef SETUP_OBJECT_SLOTS
 #undef END_ARC_WAIT_FRAMES
-#undef ANIM_CAST_PSYNERGY_BEGIN
+#undef ANIM_CAST_PSYNERGY_START
 #undef ANIM_CAST_PSYNERGY_END
 #undef FADE_HALF_COLORS
 #undef FADE_HALF_CHANNELS

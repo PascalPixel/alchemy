@@ -880,7 +880,7 @@ static void LamakanDesert_FallIntoPit(void) {
       FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + DEGtoANG(180));
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER,
-                              ANIMATION_STEP_NORMAL * 3 / 2);
+                              SPRITE_ANIMATION_STEP_NORMAL * 3 / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   Actor_Get(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))LamakanDesert_KickUpSand;
@@ -1099,7 +1099,7 @@ static void HeatGauge_Draw(void) {
   s32 tile;
   s16 *colors;
   s16 *color;
-  struct ScreenTransitionState *transition;
+  struct ScreenTransitionState *state;
   u32 *pixels;
   u32 *word;
   u8 *frame;
@@ -1138,9 +1138,9 @@ static void HeatGauge_Draw(void) {
 
   // Window 1 spans the gauge, from the screen's left edge to the gauge's
   // right, on the lines it covers: each line's WIN1H, past WININ and WINOUT.
-  transition = gScreenTransitionWork;
-  if (transition != NULL) {
-    u16 *edge = transition->pages[transition->page];
+  state = gScreenTransitionWork;
+  if (state != NULL) {
+    u16 *edge = state->pages[state->page];
     s32 right = (s16)(shown << 3);
 
     edge += 3 + 2 * HEAT_GAUGE_TOP;

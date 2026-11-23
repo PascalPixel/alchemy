@@ -171,10 +171,10 @@ s32 Party_ListMembers(s16 *unitIds) {
 /// returns the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
-  struct MainRoutineWork *work;
+  struct MainRoutineWork *routine;
 
-  work = &gMainRoutineWork;
-  value = work->holdings.coins;
+  routine = &gMainRoutineWork;
+  value = routine->holdings.coins;
   value += amount;
   if (value > COINS_MAX) {
     value = COINS_MAX;
@@ -182,7 +182,7 @@ s32 Party_AdjustCoins(s32 amount) {
   if (value < 0) {
     value = 0;
   }
-  work->holdings.coins = value;
+  routine->holdings.coins = value;
   return value;
 }
 

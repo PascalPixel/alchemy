@@ -72,7 +72,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   Actor_SelectAnimationFar(caster, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(caster, SPRITE_ANIMATION_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   work->transferMode = CANVAS_COPY_AND_FADE;

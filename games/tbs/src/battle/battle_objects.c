@@ -282,7 +282,7 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
 
   Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, pose);
   Actor_SetAnimationSpeedFar(BattleObject_Get(unitId)->actor,
-                             ANIMATION_STEP_NORMAL - 2 + (unitId & 3));
+                             SPRITE_ANIMATION_STEP_NORMAL - 2 + (unitId & 3));
 }
 
 /// Releases every sprite unitId's actor holds and leaves it with none, clearing

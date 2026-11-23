@@ -395,9 +395,9 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
     x = leader->x.fixed;
     y = leader->y.fixed;
     z = leader->z.fixed;
-    cameraActor->targetX = TARGET_UNSET;
-    cameraActor->targetY = TARGET_UNSET;
-    cameraActor->targetZ = TARGET_UNSET;
+    cameraActor->targetX = ACTOR_NO_TARGET;
+    cameraActor->targetY = ACTOR_NO_TARGET;
+    cameraActor->targetZ = ACTOR_NO_TARGET;
     if (x < minX)
       x = minX;
     if (z < minZ)

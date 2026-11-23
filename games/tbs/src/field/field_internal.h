@@ -88,10 +88,6 @@ enum CellPicturePacking {
   CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
-/// A movement target coordinate that is not set: actor_arm_view.h's
-/// ACTOR_NO_TARGET, by the name field_script_commands.c still writes.
-#define TARGET_UNSET ACTOR_NO_TARGET
-
 /// Where a layout's tileset animation and blend scripts are decoded, in the
 /// space after the shapes; the world map decodes its tileset animation there
 /// too.

@@ -72,7 +72,7 @@
 ///
 /// Each balance platform's timer is its weight. Both start at 3. A carved stone
 /// set on one adds one to it and takes one from the other.
-/// gTunnelRuins_BalanceHeights turns each weight into the platform's height.
+/// gBalance_PlatformHeights turns each weight into the platform's height.
 ///
 /// Coming into the balance's room from the north, out of the first scene, sets
 /// the balance up empty. Coming back up from the south
@@ -107,7 +107,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern u32 gTunnelRuins_BalanceHeights[];
+extern u32 gBalance_PlatformHeights[];
 extern s32 gTunnelRuins_DouseSplashScript[];
 extern u16 gTunnelRuins_DoorOpenSteps[];
 extern u16 gTunnelRuins_DoorCloseSteps[];
@@ -1007,7 +1007,7 @@ static UNREAD_RESULT TunnelRuins_RideStoneBelow(struct Actor *supportedActor) {
 }
 
 /// The balance platforms move to the heights their weights give them (their
-/// timers index gTunnelRuins_BalanceHeights), with sounds unless frames is 0.
+/// timers index gBalance_PlatformHeights), with sounds unless frames is 0.
 ///
 /// A platform, or the top stone on one, that comes to rest just below the
 /// floor's height becomes a square Isaac can step onto and leap from, east or
@@ -1022,18 +1022,18 @@ static void TunnelRuins_SettleBalance(s32 frames) {
   }
   FieldActor_SetMoveTargetFX(
       Actor_Get(ACTOR_BALANCE_WEST), Actor_Get(ACTOR_BALANCE_WEST)->x.fixed,
-      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer],
+      gBalance_PlatformHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer],
       Actor_Get(ACTOR_BALANCE_WEST)->z.fixed);
   FieldActor_SetMoveTargetFX(
       Actor_Get(ACTOR_BALANCE_EAST), Actor_Get(ACTOR_BALANCE_EAST)->x.fixed,
-      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer],
+      gBalance_PlatformHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer],
       Actor_Get(ACTOR_BALANCE_EAST)->z.fixed);
   Actor_WaitForMoveById(ACTOR_BALANCE_WEST);
   Actor_WaitForMoveById(ACTOR_BALANCE_EAST);
   Actor_Get(ACTOR_BALANCE_WEST)->y.fixed =
-      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer];
+      gBalance_PlatformHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer];
   Actor_Get(ACTOR_BALANCE_EAST)->y.fixed =
-      gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer];
+      gBalance_PlatformHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer];
   if (frames != 0) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
@@ -1802,12 +1802,7 @@ s32 Scene_Initialize(void) {
 
 #include "shared/field_effect_duration_scripts.c"
 
-/// A balance platform's height by its weight (its timer). Each carved stone on
-/// it takes it 16 pixels further down, and the other platform up as far.
-u32 gTunnelRuins_BalanceHeights[] = {
-    -toFIXED(16), -toFIXED(16), -toFIXED(32), -toFIXED(48),
-    -toFIXED(64), -toFIXED(80), -toFIXED(80),
-};
+#include "shared/balance_heights.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

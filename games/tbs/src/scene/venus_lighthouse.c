@@ -61,7 +61,7 @@
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
 ///   VenusLighthouseThirdFloor also redraws). Carry sets down four floating
 ///   pillars on two balance platforms that sink and rise to their weight
-///   (gVenusBalancePlatformHeights). Four pillars carrying track sink into
+///   (gBalance_PlatformHeights). Four pillars carrying track sink into
 ///   eight sockets, and the lights run on to the pillar room's gate
 ///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A chest holds the Gaia Blade,
 ///   and a Psynergy Stone lies here. A passage raises the leader on a
@@ -114,7 +114,7 @@
 
 extern s32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
-extern u32 gVenusBalancePlatformHeights[];
+extern u32 gBalance_PlatformHeights[];
 extern struct SwitchCell gVenusFourthFloorSockets[];
 extern u8 gVenusTracksMovingWest[];
 extern u8 gVenusTracksMovingEast[];
@@ -2000,15 +2000,15 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
     Sound_Play(SE_SETTLE);
   }
   FieldActor_SetMoveTargetFX(westSupport, westSupport->x.fixed,
-                             gVenusBalancePlatformHeights[westSupport->timer],
+                             gBalance_PlatformHeights[westSupport->timer],
                              westSupport->z.fixed);
   FieldActor_SetMoveTargetFX(eastSupport, eastSupport->x.fixed,
-                             gVenusBalancePlatformHeights[eastSupport->timer],
+                             gBalance_PlatformHeights[eastSupport->timer],
                              eastSupport->z.fixed);
   Actor_WaitForMoveById(ACTOR_BALANCE_WEST);
   Actor_WaitForMoveById(ACTOR_BALANCE_EAST);
-  westSupport->y.fixed = gVenusBalancePlatformHeights[westSupport->timer];
-  eastSupport->y.fixed = gVenusBalancePlatformHeights[eastSupport->timer];
+  westSupport->y.fixed = gBalance_PlatformHeights[westSupport->timer];
+  eastSupport->y.fixed = gBalance_PlatformHeights[eastSupport->timer];
   if (waitFrames != 0) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
@@ -3612,11 +3612,7 @@ struct SwitchCell gVenusThirdFloorSockets[] = {
 };
 
 // clang-format off
-/// The heights of a balance platform by the weight on it (its timer, from 0
-/// to 6). The more floating pillars stand on its side, the lower it sinks.
-u32 gVenusBalancePlatformHeights[] = {
-    -toFIXED(16), -toFIXED(16), -toFIXED(32), -toFIXED(48), -toFIXED(64), -toFIXED(80), -toFIXED(80),
-};
+#include "shared/balance_heights.c"
 
 /// The fourth floor's eight sockets, by cell: northwest, northeast, west,
 /// east, far west, middle, southwest and southeast.

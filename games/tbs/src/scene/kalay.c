@@ -115,7 +115,7 @@ extern s32 gKalay_HeadGuideReturnScript[];
 extern s32 gKalay_SecondGuideReturnScript[];
 extern s32 gKalay_PartyLookAboutScript[];
 extern s32 gKalay_PartyGatherScript[];
-extern s32 gKalay_FrostGrowScript[];
+extern s32 gKalay_PuddleGrowScript[];
 extern struct SceneEntrance gKalay_FallbackEntrances[];
 extern struct SceneEntrance gKalay_TownEntrances[];
 extern struct SceneEntrance gKalay_HammetPalaceEntrances[];
@@ -272,6 +272,9 @@ enum KalayTunnelFlag {
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = FLAG_AREA_TEMP_02,
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = FLAG_AREA_TEMP_03
 };
+
+/// The stock rows the three counters of Kalay's shops open (Shop_Run).
+enum { SHOP_KALAY_WEAPONS = 22, SHOP_KALAY_ARMOR = 23, SHOP_KALAY_ITEMS = 24 };
 
 static void Kalay_PrepareTown(void);
 static void Kalay_PrepareHammetPalace(void);
@@ -480,7 +483,7 @@ static void Kalay_TalkToWeaponMerchant(void) {
 
   // Across the counter: between northwest and southeast, by way of north.
   if (leader->facing < FACING_SOUTHEAST || leader->facing > FACING_NORTHWEST) {
-    Shop_Run(22, ACTOR_WEAPON_MERCHANT);
+    Shop_Run(SHOP_KALAY_WEAPONS, ACTOR_WEAPON_MERCHANT);
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayLordHammetSellsHisBest);
@@ -497,7 +500,7 @@ static void Kalay_TalkToArmorMerchant(void) {
 
   // Across the counter: between southwest and northeast, by way of west.
   if (leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHEAST) {
-    Shop_Run(23, ACTOR_ARMOR_MERCHANT);
+    Shop_Run(SHOP_KALAY_ARMOR, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayDidFindNeededInWeapon);
@@ -516,7 +519,7 @@ static void Kalay_TalkToItemMerchant(void) {
 
   // Across the counter: between northeast and southeast, by way of east.
   if (leader->facing < FACING_SOUTHEAST || leader->facing > FACING_NORTHEAST) {
-    Shop_Run(24, ACTOR_ITEM_MERCHANT);
+    Shop_Run(SHOP_KALAY_ITEMS, ACTOR_ITEM_MERCHANT);
   } else {
     Event_Start();
     Event_SetMessageId(MsgKalayLadyLayanaSharedInLord);
@@ -1144,12 +1147,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up Kalay.
-static void Kalay_PrepareTown(void) {
-  OrbitingMapActor *nut;
-  GlyphTransfer *glyph;
-  OrbitingMapActorSprite *sprite;
-
+/// Catches the palace's story up with Lunpa's: once Hammet is free, Ivan's
+/// report and Layana's scolding count as seen and the tunnel is open; once the
+/// party has heard in Lunpa that he is held there, Kalay has heard it too.
+static inline void Kalay_CatchUpWithLunpa(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
     GameFlag_Set(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
@@ -1159,6 +1160,15 @@ static void Kalay_PrepareTown(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
   }
+}
+
+/// Sets up Kalay.
+static void Kalay_PrepareTown(void) {
+  OrbitingMapActor *nut;
+  GlyphTransfer *glyph;
+  OrbitingMapActorSprite *sprite;
+
+  Kalay_CatchUpWithLunpa();
   if (gMainRoutineWork.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     Actor_SetPosition(ACTOR_TOWN_STATUE, 424, 88);
   }
@@ -1192,15 +1202,7 @@ static void Kalay_PrepareTown(void) {
 
 /// Sets up Hammet Palace's front (HammetPalaceGrounds).
 static void Kalay_PrepareHammetPalace(void) {
-  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-    GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
-    GameFlag_Set(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
-    GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
-    GameFlag_Set(FLAG_KALAY_TUNNEL_OPEN);
-  }
-  if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
-    GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
-  }
+  Kalay_CatchUpWithLunpa();
   if (gMainRoutineWork.entrance != ENTRANCE_DEFAULT) {
     if (GameFlag_Get(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
@@ -1225,6 +1227,8 @@ static void Kalay_PrepareTunnelEntrance(void) {
 static void Kalay_PrepareTunnelPassage(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+  // Once the tunnel is open, the barred gate across the long corridor stands
+  // open.
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     MapGrid_CopyCellsTo(58, 5, 58, 8, 2, 3);
     MapGrid_CopyCellAttributes(8, 11, 2, 1, 8, 10);
@@ -1291,7 +1295,8 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_STATUE), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_STATUE), 0);
   Task_AddFrame(Kalay_UpdateTunnelEmitters, TASK_PASS_FRAME);
-  // The man who waited for the tunnel stands here once it is open.
+  // Once the tunnel is open, the man who waited for it stands here and the
+  // barred gate beside him stands open.
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     Actor_SetPosition(ACTOR_WAITING_MAN, 426, 730);
     Actor_Get(ACTOR_WAITING_MAN)->facing = FACING_SOUTH_SOUTHWEST;
@@ -1754,7 +1759,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetScript(ACTOR_MIA, gKalay_PartyLookAboutScript);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "Arrived where?"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 20);
   // "Oh, didn't I tell you about this entrance, Ivan?"
@@ -1774,7 +1779,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "An underground passage? What for?"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   // "Just to be safe."
   Event_ShowMessageThenWait(ACTOR_HAMMET, 0, 10);
@@ -1808,14 +1813,14 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   // "What? Why? We'll just go this way with you."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_BUNZA, ANIM_SHAKE_HEAD);
   // "You can't. You must go through town to the Palace."
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "I'm confused..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   // "You have no reason to hide, now, do you?"
@@ -1862,7 +1867,7 @@ static void Kalay_HammetReturnsToPalace(void) {
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
     // "In that case, we will gladly ride in the wagon."
-    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
+    Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, 0, 10);
   }
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -2002,14 +2007,15 @@ static void Kalay_PushTunnelStatue(void) {
   }
 }
 
-/// A passage's opening frames, copied in turn over its doorway: each one map
-/// column five cells tall from row 58. This is the first frame's column.
-#define PASSAGE_FIRST_FRAME_COLUMN 67
-/// The frame from which the passage counts as open
+/// The eight pictures of a hall's waterfall running dry, copied in turn over it
+/// on the overhead layer: each one map column five cells tall from row 58.
+/// This is the first picture's column.
+#define WATERFALL_FIRST_FRAME_COLUMN 67
+/// The picture from which the way across counts as open
 /// (FLAG_TUNNEL_FIRST_PASSAGE_OPEN, FLAG_TUNNEL_SECOND_PASSAGE_OPEN).
-#define PASSAGE_OPEN_FRAME_COLUMN 70
-/// The last frame's column.
-#define PASSAGE_LAST_FRAME_COLUMN 74
+#define WATERFALL_OPEN_FRAME_COLUMN 70
+/// The last picture's column: the waterfall gone.
+#define WATERFALL_LAST_FRAME_COLUMN 74
 
 /// The half-cell column each statue must be pushed west to, or past, to open
 /// its passage.
@@ -2025,31 +2031,33 @@ static void Kalay_UpdateTunnelPassages(void) {
   struct Actor *firstStatue;
   struct Actor *secondStatue;
   s32 firstPassageOpen;
-  struct Actor *frostEffect;
+  struct Actor *puddle;
   u32 i;
 
-  // Open each passage only after its corresponding statue reaches the trigger.
   firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
   secondStatue = Actor_Get(ACTOR_SECOND_STATUE);
   firstPassageOpen = GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
   if (firstPassageOpen == 0 &&
       FIELD_HALF_CELL(firstStatue->x.fixed) <= FIRST_STATUE_OPENING_HALF_CELL) {
-    frostEffect = Actor_Get(ACTOR_PUDDLE);
+    puddle = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
-    for (i = PASSAGE_FIRST_FRAME_COLUMN; i <= PASSAGE_LAST_FRAME_COLUMN; i++) {
+    for (i = WATERFALL_FIRST_FRAME_COLUMN; i <= WATERFALL_LAST_FRAME_COLUMN;
+         i++) {
       MapGrid_CopyCellsTo(i, 58, 78, 41, 1, 5);
       Event_Wait(4);
-      if (i == PASSAGE_OPEN_FRAME_COLUMN) {
+      if (i == WATERFALL_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
       }
     }
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
     Event_Wait(40);
-    frostEffect->scaleX = FIXED_ONE / 10;
-    frostEffect->scaleY = FIXED_ONE / 10;
+    // The pool drains in three stages, 40 frames apart, and the puddle grows
+    // out of its bed.
+    puddle->scaleX = FIXED_ONE / 10;
+    puddle->scaleY = FIXED_ONE / 10;
     Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
-    Actor_SetScript(ACTOR_PUDDLE, gKalay_FrostGrowScript);
+    Actor_SetScript(ACTOR_PUDDLE, gKalay_PuddleGrowScript);
     MapGrid_CopyCellsTo(67, 64, 71, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 72, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 68, 73, 43, 1, 2);
@@ -2074,6 +2082,8 @@ static void Kalay_UpdateTunnelPassages(void) {
     MapGrid_CopyCellsTo(68, 66, 80, 44, 1, 2);
     MapGrid_CopyCellsTo(4, 0, 9, 42, 2, 2);
     Event_Wait(40);
+    // The drained floor, on the ground layer and the overhead layer, and its
+    // ground.
     MapGrid_CopyCellsTo(7, 11, 7, 42, 10, 8);
     MapGrid_CopyCellsTo(71, 12, 71, 43, 10, 13);
     MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
@@ -2086,15 +2096,17 @@ static void Kalay_UpdateTunnelPassages(void) {
       FIELD_HALF_CELL(secondStatue->x.fixed) <=
           SECOND_STATUE_OPENING_HALF_CELL) {
     Event_Start();
-    for (i = PASSAGE_FIRST_FRAME_COLUMN; i <= PASSAGE_LAST_FRAME_COLUMN; i++) {
+    for (i = WATERFALL_FIRST_FRAME_COLUMN; i <= WATERFALL_LAST_FRAME_COLUMN;
+         i++) {
       MapGrid_CopyCellsTo(i, 58, 107, 41, 1, 5);
       Event_Wait(4);
-      if (i == PASSAGE_OPEN_FRAME_COLUMN) {
+      if (i == WATERFALL_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_SECOND_PASSAGE_OPEN);
       }
     }
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
     Event_Wait(40);
+    // The east pool drains the same way, with no puddle.
     MapGrid_CopyCellsTo(67, 64, 102, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 103, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 104, 44, 1, 2);
@@ -2166,34 +2178,34 @@ static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
 /// While a hall's pool in the Kalay Tunnel is still full, sparkles stream from
 /// its statue as it nears the waterfall.
 static void Kalay_UpdateTunnelEmitters(void) {
-  struct Actor *firstEmitter;
-  struct Actor *secondEmitter;
+  struct Actor *firstStatue;
+  struct Actor *secondStatue;
 
-  firstEmitter = Actor_Get(ACTOR_FIRST_STATUE);
-  secondEmitter = Actor_Get(ACTOR_SECOND_STATUE);
-  if ((u32)(firstEmitter->x.part[0].integer - 381) <= 12 &&
-      firstEmitter->z.part[0].integer > 777) {
-    firstEmitter->sprite->image.priority =
+  firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
+  secondStatue = Actor_Get(ACTOR_SECOND_STATUE);
+  if ((u32)(firstStatue->x.part[0].integer - 381) <= 12 &&
+      firstStatue->z.part[0].integer > 777) {
+    firstStatue->sprite->image.priority =
         Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
-             firstEmitter->x.part[0].integer <= 245 && (gFrameCount & 1) == 0) {
+             firstStatue->x.part[0].integer <= 245 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
-    Kalay_SpawnTunnelParticle(firstEmitter->x.fixed, firstEmitter->y.fixed,
-                              firstEmitter->z.fixed);
+    Kalay_SpawnTunnelParticle(firstStatue->x.fixed, firstStatue->y.fixed,
+                              firstStatue->z.fixed);
   }
   if (!GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
-      secondEmitter->x.part[0].integer <= 709 && (gFrameCount & 1) == 0) {
+      secondStatue->x.part[0].integer <= 709 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }
-    Kalay_SpawnTunnelParticle(secondEmitter->x.fixed, secondEmitter->y.fixed,
-                              secondEmitter->z.fixed);
+    Kalay_SpawnTunnelParticle(secondStatue->x.fixed, secondStatue->y.fixed,
+                              secondStatue->z.fixed);
   }
 }
 
@@ -2223,30 +2235,30 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
 
 /// The Nut in Kalay circles its spot and rocks as it goes.
 static void Kalay_UpdateNutOrbit(void) {
-  OrbitingMapActor *effect = (OrbitingMapActor *)Actor_Get(ACTOR_TOWN_NUT);
-  struct Sprite *sprite = (struct Sprite *)effect->sprite;
-  FIXED offset = Trig_Sin(effect->orbitAngle) * 2;
+  OrbitingMapActor *nut = (OrbitingMapActor *)Actor_Get(ACTOR_TOWN_NUT);
+  struct Sprite *sprite = (struct Sprite *)nut->sprite;
+  FIXED offset = Trig_Sin(nut->orbitAngle) * 2;
 
   if (offset > 0) {
     offset = -offset;
   }
-  effect->x = effect->orbitCenterX + Trig_Cos(effect->orbitAngle) * 2;
-  effect->y = effect->orbitCenterY + offset;
-  sprite->rotation = Trig_Cos(effect->orbitAngle + DEGtoANG(180)) >> 3;
-  effect->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
+  nut->x = nut->orbitCenterX + Trig_Cos(nut->orbitAngle) * 2;
+  nut->y = nut->orbitCenterY + offset;
+  sprite->rotation = Trig_Cos(nut->orbitAngle + DEGtoANG(180)) >> 3;
+  nut->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
 }
 
 /// Frost on the puddle in the drained west pool of the Kalay Tunnel freezes it
 /// and sinks it into the floor, out of Isaac's way.
 static void Kalay_FreezePuddle(void) {
-  struct Actor *effect = Actor_Get(ACTOR_PUDDLE);
+  struct Actor *puddle = Actor_Get(ACTOR_PUDDLE);
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 14);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
-  if (effect != NULL) {
-    Actor_SetSpriteFlags(effect, 0);
-    effect->y.fixed -= toFIXED(32);
-    effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  if (puddle != NULL) {
+    Actor_SetSpriteFlags(puddle, 0);
+    puddle->y.fixed -= toFIXED(32);
+    puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
@@ -2405,7 +2417,7 @@ s32 gKalay_PartyGatherScript[] = {
     SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };
 
-s32 gKalay_FrostGrowScript[] = {
+s32 gKalay_PuddleGrowScript[] = {
     SC_ADD(SW_SCALE_X, 546),
     SC_ADD(SW_SCALE_Y, 546),
     SC_WAIT(1),

@@ -2,7 +2,7 @@
 #define ALCHEMY_MENU_LIST_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// The battle menus' shared work, and the sprite shapes the menus queue.
 
 #include "types.h"
 
@@ -59,9 +59,10 @@ struct MenuSprite {
   } oam;
 };
 
-/// The battle menu work (heap slot 57), The Broken Seal's BattleMenuWork.
+/// The battle menus' work (HEAP_SLOT_BATTLE_MENU): what the command row and
+/// the lists remember between them while the party's commands are chosen.
 struct BattleMenuWork {
-  /// The sprites UpdateLinkSessionCountdown draws each frame: the chosen
+  /// The sprites BattleMenu_UpdateEachFrame draws each frame: the chosen
   /// command's icon, the chosen ability's icon and the party member's portrait.
   struct MenuSprite icons[3];
   u8 iconShown[3]; ///< whether each of icons is drawn
@@ -122,7 +123,7 @@ enum { BATTLE_LIST_ROWS = 5 };
 
 /// Gives a menu sprite its shape and clears the rest of its attributes, its
 /// tile and place still to come. The battle lists, the status screen and the
-/// command row start their sprites so; the name is ours, as The Broken Seal's.
+/// command row start their sprites so.
 #define MenuSprite_Initialize(sprite, shape)                                   \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -151,7 +152,7 @@ enum { BATTLE_LIST_ROWS = 5 };
 
 /// Marks the 4-row band of the window tilemap that holds `row` for upload
 /// (WindowWork.dirty): the battle lists mark their top border's
-/// row so, and the Djinn list its preview's; the name is ours.
+/// row so, and the Djinn list its preview's.
 #define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
   do {                                                                         \
     (work)->dirty |= 2 << ((row) >> 2);                                        \

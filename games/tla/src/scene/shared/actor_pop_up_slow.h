@@ -1,4 +1,8 @@
-/// An actor pops up out of the ground, holds and settles back.
+/// A script call that shows an actor 16 pixels over the ground: unseen for
+/// half a second, then whole while the actor it watches whooshes into its
+/// second animation and flashes white every other two frames for half a second
+/// more; then that one takes its first animation again with a pop, and the
+/// actor drops to the ground. 1 while it runs.
 s32 Actor_PopUpSlow(struct Actor *actor) {
   s32 frame = actor->timer;
 
@@ -21,7 +25,7 @@ s32 Actor_PopUpSlow(struct Actor *actor) {
     {
       s32 half = (actor->timer / 2) & 1;
 
-      Actor_SetSpriteColorMode(actor->watchedActor, half * 7);
+      Actor_SetSpriteColorMode(actor->watchedActor, half * SPRITE_COLOR_WHITE);
     }
   } else {
     Actor_SelectAnimation(actor->watchedActor, 1);

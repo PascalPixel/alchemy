@@ -15,7 +15,7 @@ s32 KNOCK_BACK(void) {
   struct FlameHitWork *work;
   struct Vector3 position;
 
-  if (main->movementMode == 0) {
+  if (main->movementMode == LEADER_MOVEMENT_WALK) {
     struct Actor *actor;
 
 #ifdef UBFIX

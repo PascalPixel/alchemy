@@ -25,6 +25,8 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #else
 #define WINDOW_X 23
 #endif
+/// The same column for the party's row of Fight, Flee and Status.
+#define PARTY_WINDOW_X 20
 
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
@@ -54,13 +56,13 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
 /// presses the keys for the player.
 s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
-  u8 party[4];
+  u8 standby[4];
   struct WindowWork *work;
   struct BattleCommandRowWork *selectionUi;
   struct BattleMenuWork *battleMenu;
   struct BattleMenuWork *navigation;
   s32 stripDirty;
-  s32 tradeCount;
+  s32 standbyCount;
   s32 pulseScale;
   s32 command;
   s32 entryIndex;
@@ -74,7 +76,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
   iconSlot = VramCache_AllocEntry(32 * 32);
   stripDirty = 1;
-  tradeCount = 0;
+  standbyCount = 0;
   battleMenu = BATTLE_MENU_WORK;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
@@ -82,10 +84,13 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_FREE;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
-    selectionUi->window = Window_Create(20, COMMAND_ROW_TOP, 10, 3, 6);
+    selectionUi->window = Window_Create(
+        PARTY_WINDOW_X, COMMAND_ROW_TOP, DISPLAY_TILE_WIDTH - PARTY_WINDOW_X, 3,
+        WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   else
-    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
-                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
+    selectionUi->window =
+        Window_Create(WINDOW_X, COMMAND_ROW_TOP, DISPLAY_TILE_WIDTH - WINDOW_X,
+                      3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   selectionUi->drawnIndex = -1;
   if (mode == COMMAND_ROW_PARTY) {
     kindCount = 0;
@@ -106,11 +111,11 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_PSYNERGY;
     if (*(s32 *)Djinn_GetRecoveryTableFar(0) != 0) {
-      BattleDjinn_CountStandbyFar(0, party);
+      BattleDjinn_CountStandbyFar(0, standby);
       for (i = 0; i <= 3; i++)
-        tradeCount += party[i];
+        standbyCount += standby[i];
       selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DJINN;
-      if (tradeCount != 0)
+      if (standbyCount != 0)
         selectionUi->commandKinds[memberCount++] = COMMAND_ICON_SUMMON;
     }
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ITEM;
@@ -209,14 +214,14 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             for (col = 0; col <= 2; col++) {
               volatile u16 *vram =
                   (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
-                  COMMAND_ROW_BG1_ROW * BG_SCREEN_WIDTH + 20;
+                  COMMAND_ROW_BG1_ROW * BG_SCREEN_WIDTH + PARTY_WINDOW_X;
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
               *(work->tilemap[0] +
                 (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
+                (col & 3) - selectionUi->iconCount * 3 + PARTY_WINDOW_X) = 0;
             }
           }
         }
@@ -272,7 +277,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
 
           if (kind == COMMAND_ICON_SUMMON ||
-              (tradeCount == 0 && kind == COMMAND_ICON_DJINN)) {
+              (standbyCount == 0 && kind == COMMAND_ICON_DJINN)) {
             if (navigation->tutorialStep == 1) {
               void *message;
 
@@ -445,7 +450,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 i;
   s32 j;
 
-  count = BattleUnit_ListIdsFar(1, 0);
+  count = BattleUnit_ListIdsFar(BATTLE_SIDE_MASK_PARTY, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
   if (ids[0] != BATTLE_UNIT_LIST_END) {
@@ -465,3 +470,4 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
 }
 
 #undef WINDOW_X
+#undef PARTY_WINDOW_X

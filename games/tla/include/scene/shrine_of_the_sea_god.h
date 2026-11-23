@@ -2,7 +2,7 @@
 #define ALCHEMY_SCENE_SHRINE_OF_THE_SEA_GOD_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// The Shrine of the Sea God: its footprints and its events.
 
 #include "types.h"
 

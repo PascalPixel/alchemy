@@ -8,13 +8,13 @@
 /// not recoverable: the ROM shows one object, and these parts are ours, cut
 /// where The Broken Seal's are. Where to start:
 ///
-///   Shops           run.c: Shop_Run; buy.c: Shop_SelectBuy; sell.c:
-///                   Shop_SelectSell, which serves repairs too
-///   Stock           stock.c: ShopStock_AddArtifacts, Shop_GiveGameTicket
-///   Forge           forge.c; item_picker.c: Forge_Run
-///   Sanctum         sanctum.c: Sanctum_RunPartyService
-///   Inn             inn.c: Inn_CheckIn
-///   Item picker     item_picker.c: ItemPicker_Run; the item icon grid,
+///   Shops           shop_run.c: Shop_Run; shop_buy.c: Shop_SelectBuy;
+///                   shop_sell.c: Shop_SelectSell, which serves repairs too
+///   Stock           shop_stock.c: ShopStock_AddArtifacts, Shop_GiveGameTicket
+///   Forge           shop_forge.c; shop_item_picker.c: Forge_Run
+///   Sanctum         shop_sanctum.c: Sanctum_Run
+///   Inn             shop_inn.c: Inn_CheckIn
+///   Item picker     shop_item_picker.c: ItemPicker_Run; the item icon grid,
 ///                   ItemIconGrid_ShowInventory
 
 #include "shop_internal.h"

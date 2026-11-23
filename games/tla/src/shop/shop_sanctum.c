@@ -176,8 +176,11 @@ s32 Sanctum_Run(s32 actorId) {
     if (serviceSelection == -1)
       break;
 
+    // "Hmm, you were downed in battle and need reviving, do you?", or the
+    // chosen service's own line.
     Sanctum_ShowKeeperMessage((s32)MsgReviveService);
     if (Sanctum_CountMembersInNeed() == 0) {
+      // "Fear not, none of your companions is down."
       Sanctum_ShowKeeperMessage((s32)MsgReviveService + 1);
     } else {
       Sanctum_RunPartyService();
@@ -255,12 +258,12 @@ s32 Sanctum_RunPartyService(void) {
       break;
   }
 
-  redraw = 2;
+  redraw = MENU_GRID_CHANGED_PAGE;
   for (;;) {
     if (chooseAgain != 0) {
       chooseAgain = 0;
       Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
-      redraw = 2;
+      redraw = MENU_GRID_CHANGED_PAGE;
       for (memberIndex = 0; memberIndex < shop->partyMemberCount;
            memberIndex++) {
         unitId = shop->partyMemberIds[memberIndex];
@@ -274,7 +277,7 @@ s32 Sanctum_RunPartyService(void) {
       MenuCursor_Place(listWindow,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
       shop->cursorFrames = 3;
-      if (redraw == 2) {
+      if (redraw == MENU_GRID_CHANGED_PAGE) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
@@ -294,20 +297,25 @@ s32 Sanctum_RunPartyService(void) {
       WindowSprite_PrepareForRedrawFar(listWindow);
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(donation, MESSAGE_ARGUMENT_NUMBER);
+      // The revive service's lines are quoted; the others say their own.
       messageBase = (s32)MsgReviving;
+      // "Reviving <name> requires a donation of <n> coins. OK?"
       Sanctum_ShowKeeperMessage(messageBase);
       if (Sanctum_AskYesNo(0) != 0) {
+        // "The donation is too much? Then weary wanderers you shall remain."
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 2);
         chooseAgain = 1;
         continue;
       }
       if ((u32)donation > gMainRoutineWork.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
+        // "I'm sorry, but you must be able to pay the donation."
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
         chooseAgain = 1;
         continue;
       }
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+      // "Then I call upon my healing powers."
       Sanctum_ShowKeeperMessage(messageBase + 3);
       Message_CloseFinishedWindowsFar();
       Sanctum_ApplyService(unitId, serviceKind);
@@ -315,6 +323,7 @@ s32 Sanctum_RunPartyService(void) {
       Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+      // "<name> has been revived!"
       Sanctum_ShowKeeperMessage(messageBase + 4);
       if (Sanctum_CountMembersInNeed() != 0) {
         chooseAgain = 1;
@@ -530,6 +539,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     effect->scaleY = FIXED_ONE * 7 / 10;
     effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);
+    // From the sixth sparkle on, the party member's figure flickers through
+    // colours.
     if (effectIndex == 5) {
       shop->burstMember = member;
     }

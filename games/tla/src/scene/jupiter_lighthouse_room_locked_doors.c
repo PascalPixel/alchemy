@@ -4,8 +4,8 @@
 /// by the Cyclone teleporter in front of the red door, at cell (9, 22), and the
 /// Red Key opens it (JupiterLighthouse_UseRedKey); the teleporter in front of
 /// the blue door, at cell (41, 22), only takes him back down
-/// (JupiterLighthouse_LeaveByFirstCyclone,
-/// JupiterLighthouse_LeaveBySecondCyclone), and the Blue Key opens that door
+/// (JupiterLighthouse_LeaveByRedDoorCyclone,
+/// JupiterLighthouse_LeaveByBlueDoorCyclone), and the Blue Key opens that door
 /// (JupiterLighthouse_UseBlueKey). In the room at the back, Reveal shows the
 /// hidden floor across to the jumping puzzle room, and once the lighthouse is
 /// activated a hidden block among six hovering ones, the way to the Psy
@@ -119,10 +119,12 @@ struct Actor *gLightSpriteActors[16] BSS_DATA;
 struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
+/// leader steps on.
 struct CellTarget gCrackedTiles BSS_DATA;
 void JupiterLighthouse_HideThePassage(void);
-void JupiterLighthouse_LeaveByFirstCyclone(void);
-void JupiterLighthouse_LeaveBySecondCyclone(void);
+void JupiterLighthouse_LeaveByRedDoorCyclone(void);
+void JupiterLighthouse_LeaveByBlueDoorCyclone(void);
 void JupiterLighthouse_TryLockedDoor(void);
 void LightSprites_InitA(void);
 void MapGrid_SetCellHeight();
@@ -197,7 +199,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
 /// Felix casts Cyclone on the purple teleporter pad in front of the red door,
 /// cell (9, 22): the party goes back down to the south hall below, by its west
 /// side.
-void JupiterLighthouse_LeaveByFirstCyclone(void) {
+void JupiterLighthouse_LeaveByRedDoorCyclone(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST);
 }
@@ -205,7 +207,7 @@ void JupiterLighthouse_LeaveByFirstCyclone(void) {
 /// Felix casts Cyclone on the purple teleporter pad in front of the blue door,
 /// cell (41, 22): the party goes back down to the south hall below, by its east
 /// side.
-void JupiterLighthouse_LeaveBySecondCyclone(void) {
+void JupiterLighthouse_LeaveByBlueDoorCyclone(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST);
 }
@@ -356,7 +358,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void JupiterLighthouse_LoadPalettes(s32 value);
+void JupiterLighthouse_LoadPalettes(s32 mode);
 
 /// Sets the scene's arrival flags and loads the lighthouse's palettes; lets
 /// Felix walk onto the blocks, raises them once the lighthouse is activated,
@@ -448,6 +450,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -495,18 +498,18 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_WEST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_M_EAST},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_RED_DOOR, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_BLUE_DOOR, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
     {USE_ITEM(ITEM_RED_KEY), CELL_BEHAVIOR_RED_DOOR, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_UseRedKey)},
@@ -515,8 +518,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_HideThePassage)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_RED_DOOR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByFirstCyclone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_BLUE_DOOR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveBySecondCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_RED_DOOR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByRedDoorCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_BLUE_DOOR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByBlueDoorCyclone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -543,7 +546,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_BLUE_DOOR_OPENED
 #undef FLAG_BRIDGE_BLOCK_RAISED
 
-struct CellTarget;
 void Leader_CenterInCell(void);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -553,8 +555,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTile_Step watches, and the cell it copies over the one the
-/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
@@ -569,15 +569,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-
-struct CellTarget;
-struct CellTargetEntry;
-void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
-void JupiterLighthouse_HideThePassage(void);
-void JupiterLighthouse_LeaveByFirstCyclone(void);
-void JupiterLighthouse_LeaveBySecondCyclone(void);
-void JupiterLighthouse_TryLockedDoor(void);
-extern u32 gFieldEffect_LongScript[];
 
 #include "shared/cracked_tile_drop_in.h"
 

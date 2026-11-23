@@ -73,7 +73,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   iconCount = BATTLE_LIST_ROWS;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH,
-                         BATTLE_LIST_ROWS * 2 + 1, 6);
+                         BATTLE_LIST_ROWS * 2 + 1,
+                         WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y;

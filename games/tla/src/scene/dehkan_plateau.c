@@ -305,6 +305,13 @@ enum DehkanPlateauCannonCellBehavior {
   CELL_BEHAVIOR_LEDGE_TO_CANNON
 };
 
+/// The stone stake's two looks in stake.png (Actor_SetCellOpen).
+enum { ANIM_STONE_STAKE_STANDING = 3, ANIM_STONE_STAKE_SUNK };
+
+/// Coming in by this entrance, from the Themis Axe's stretch's east screen
+/// into its west one, the leader is drawn behind the ledge there.
+enum { ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN = 5 };
+
 /// The frames the leader takes to sink through a crack.
 #define FALL_FRAMES 40
 
@@ -557,32 +564,32 @@ void DehkanPlateau_HideBlocks(void) {
 #include "shared/actors_set_hidden.c"
 
 /// Pound on the stake in the first stretch sinks it into the ground.
-void DehkanPlateau_PoundFullMetalVestChestStake(s32 a, s32 b) {
-  Pound_SinkTarget(gDehkanPlateau_FullMetalVestChestStakes, a, b);
+void DehkanPlateau_PoundFullMetalVestChestStake(s32 mode, s32 frame) {
+  Pound_SinkTarget(gDehkanPlateau_FullMetalVestChestStakes, mode, frame);
 }
 
 /// Pound on the stake in the Themis Axe's stretch sinks it into the ground.
-void DehkanPlateau_PoundThemisAxeChestStake(s32 a, s32 b) {
-  Pound_SinkTarget(gDehkanPlateau_ThemisAxeChestStakes, a, b);
+void DehkanPlateau_PoundThemisAxeChestStake(s32 mode, s32 frame) {
+  Pound_SinkTarget(gDehkanPlateau_ThemisAxeChestStakes, mode, frame);
 }
 
 /// Pound on the stake by the rope bridge, if Cannon has not already sunk it,
 /// sinks it into the ground.
-void DehkanPlateau_PoundTightropesStake(s32 a, s32 b) {
-  Pound_SinkTarget(gDehkanPlateau_TightropesStakes, a, b);
+void DehkanPlateau_PoundTightropesStake(s32 mode, s32 frame) {
+  Pound_SinkTarget(gDehkanPlateau_TightropesStakes, mode, frame);
 }
 
 /// Pound on the stake in the cave where Cannon drops the Pound Cube sinks it
 /// into the ground.
-void DehkanPlateau_PoundPoundCubeStake(s32 a, s32 b) {
-  Pound_SinkTarget(gDehkanPlateau_PoundCubeStakes, a, b);
+void DehkanPlateau_PoundPoundCubeStake(s32 mode, s32 frame) {
+  Pound_SinkTarget(gDehkanPlateau_PoundCubeStakes, mode, frame);
 }
 
 /// Pound on the stake in Cannon's cave, from the lower floor below his ledge,
 /// sinks it into the ground: with it gone Cannon has nothing to leap onto and
 /// is cornered.
-void DehkanPlateau_PoundCannonStake(s32 a, s32 b) {
-  Pound_SinkTarget(gDehkanPlateau_CannonStakes, a, b);
+void DehkanPlateau_PoundCannonStake(s32 mode, s32 frame) {
+  Pound_SinkTarget(gDehkanPlateau_CannonStakes, mode, frame);
 }
 
 #include "shared/actor_drop_and_wait.h"
@@ -798,6 +805,8 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
   }
 }
 
+/// The cell of the crack the leader has just opened, in the rope bridge's
+/// stretch and the Pound Cube's cave (DehkanPlateau_ForgetCrackOnLeaving).
 s32 gDehkanPlateau_CrackZ BSS_DATA;
 s32 gDehkanPlateau_CrackX BSS_DATA;
 
@@ -832,6 +841,8 @@ void DehkanPlateau_StepOnCrack(void) {
     record = &gDehkanPlateau_PoundCubeCracks[n][1];
     if (GameFlag_Get(FLAG_FELL_THROUGH(
             DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH)))
+      // Once the party has fallen in beside Cannon, the fifth crack's hole is
+      // drawn with the fourth hole picture instead of the first.
       gDehkanPlateau_PoundCubeCracks[4][3] = 3;
   } else {
     return;
@@ -1134,13 +1145,11 @@ void DehkanPlateau_FinishMovingVinePillar(void) {
 /// Nothing visible happens when Felix steps onto the lower floor of Cannon's
 /// cave, below the ledge (cells (43, 16) to (43, 18)), before the stake is
 /// Pounded. The game holds the stake still and gives the stake's cell (47, 12)
-/// the attributes of the gray pillar's (51, 12); stepping off the lower floor
-/// puts the cell back.
-// While he is down there the stake's cell is the gray pillar's kind (behaviour
-// 8, ground 32 pixels up, as probed), and a step onto it is answered as one on
-// the pillar (DehkanPlateau_StepOnCannonPillar); off the lower
-// floor it takes back the attributes of cell (48, 11), a closed cell at ground
-// level (DehkanPlateau_LeaveLowerPath).
+/// the attributes of the gray pillar's (51, 12),
+/// CELL_BEHAVIOR_CANNON_ROOM_PILLAR with its ground 32 pixels up, so that a
+/// step onto it is answered as one on the pillar
+/// (DehkanPlateau_StepOnCannonPillar). Stepping off the lower floor puts the
+/// cell back (DehkanPlateau_LeaveLowerPath).
 void DehkanPlateau_EnterLowerPath(void) {
   s32 set = GameFlag_Get(FLAG_CANNON_ROOM_STAKE_POUNDED);
 
@@ -1312,7 +1321,7 @@ void DehkanPlateau_SinkPoundedStake(void) {
     actor->scaleY += -(FIXED_ONE * 31 / 256);
   if (work->stage != 0) {
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
-    Actor_SetAnimationById(ACTOR_TIGHTROPES_STAKE, 4);
+    Actor_SetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->collisionFlags &= ~ACTOR_SOLID;
     actor->scaleY = FIXED_ONE;
@@ -1341,9 +1350,9 @@ extern u32 gDehkanPlateau_DustScript[];
 
 /// Cracks a crumbling pillar as Cannon lands on it: it flashes white and takes
 /// its cracked look, and eight puffs of dust rise about the one standing on it.
-void DehkanPlateau_CrackPillar(s32 id, s32 center, s32 flag) {
-  struct Actor *leader;
-  s32 frame;
+void DehkanPlateau_CrackPillar(s32 id, s32 standingId, s32 flag) {
+  struct Actor *standing;
+  s32 vramEntry;
   u32 i;
   FIXED y;
 
@@ -1354,19 +1363,19 @@ void DehkanPlateau_CrackPillar(s32 id, s32 center, s32 flag) {
   Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
   wait(4);
   Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
-  leader = Actor_GetById(center);
-  frame = 0;
+  standing = Actor_GetById(standingId);
+  vramEntry = 0;
   for (i = 0; i <= 7; i++) {
     struct Actor *actor;
     struct FieldEffect *effect;
 
-    y = leader->y.fixed - toFIXED(((Random16() * 7) << 1) >> 16);
+    y = standing->y.fixed - toFIXED(((Random16() * 7) << 1) >> 16);
     actor = ((struct Actor *)Import_ActorCreate(
-        SPRITE_DUST_CLOUD, toFIXED(i * 2) + leader->x.fixed - toFIXED(8),
-        y - toFIXED(2), leader->z.fixed));
+        SPRITE_DUST_CLOUD, toFIXED(i * 2) + standing->x.fixed - toFIXED(8),
+        y - toFIXED(2), standing->z.fixed));
     if (actor != NULL) {
       effect = (struct FieldEffect *)actor;
-      frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
+      vramEntry = Sprite_ShareVramCacheEntry(effect->sprite, vramEntry);
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
@@ -1541,7 +1550,7 @@ void DehkanPlateau_CannonCastsPoundOnLeader(void) {
 /// Pound Cube in his fright, glares at Felix and runs off north.
 void DehkanPlateau_CannonDropsPoundCube(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *helper = Actor_GetById(ACTOR_POUND_CUBE_CANNON);
+  struct Actor *cannon = Actor_GetById(ACTOR_POUND_CUBE_CANNON);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1571,9 +1580,9 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   Actor_SetSpeed(ACTOR_POUND_CUBE_CANNON, 1.6);
   leader->velocityY = toFIXED(6);
-  helper->velocityY = toFIXED(6);
+  cannon->velocityY = toFIXED(6);
   FieldActor_SetMoveTarget(leader, 216, 0, 120);
-  FieldActor_SetMoveTarget(helper, 280, 0, 120);
+  FieldActor_SetMoveTarget(cannon, 280, 0, 120);
   if (gDehkanPlateau_PoundCube != NULL)
     FieldActor_SetMoveTarget(gDehkanPlateau_PoundCube, 248, 0, 88);
   Actor_WaitForMove(leader);
@@ -1700,6 +1709,7 @@ void DehkanPlateau_LeaveRoom(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
+/// Sets up the room of the plateau the party comes into.
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -1759,7 +1769,7 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    if (gMainRoutineWork.entrance == 5) {
+    if (gMainRoutineWork.entrance == ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN) {
       Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_AUTOMATIC;
@@ -1801,7 +1811,7 @@ void Tightrope_Initialize(void);
 /// as he has gone.
 void DehkanPlateau_InitializeTightropes(void) {
   struct Actor *actor;
-  FIXED zero, value;
+  FIXED zero, pillarX;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -1849,9 +1859,9 @@ void DehkanPlateau_InitializeTightropes(void) {
   {
     struct Actor *pillar = Actor_GetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR);
 
-    value = pillar->x.fixed;
+    pillarX = pillar->x.fixed;
     zero = 0;
-    if (FIELD_CELL(value) == 54) {
+    if (FIELD_CELL(pillarX) == 54) {
       struct MapCell *cell =
           ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[0].cells;
 
@@ -1867,11 +1877,11 @@ void DehkanPlateau_InitializeTightropes(void) {
     Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424),
                                toFIXED(104), FACING_SOUTH);
   }
-  Actor_SetAnimationById(ACTOR_TIGHTROPES_STAKE, 3);
+  Actor_SetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_STANDING);
   if (GameFlag_Get(FLAG_CANNON_POUNDED_STAKE) != 0) {
     actor = Actor_GetById(ACTOR_TIGHTROPES_STAKE);
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
-    Actor_SetAnimationById(ACTOR_TIGHTROPES_STAKE, 4);
+    Actor_SetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->collisionFlags &= ~ACTOR_SOLID;
     GameFlag_Set(FLAG_TIGHTROPES_STAKE_POUNDED);
@@ -2031,7 +2041,7 @@ void DehkanPlateau_LandFromFall(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
@@ -2049,12 +2059,12 @@ void DehkanPlateau_LandFromFall(void) {
 /// Sets up the Pound Cube's cave: the Pound Cube where Cannon dropped it, its
 /// cracks, and the landing of a fall, beside Cannon the first time.
 void DehkanPlateau_InitializePoundCube(void) {
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 entrance;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  owner->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   if (GameFlag_Get(FLAG_POUND_CUBE_TAKEN) == 0) {
     DehkanPlateau_CreatePoundCube();
     if (GameFlag_Get(FLAG_CANNON_DROPPED_POUND_CUBE) != 0) {

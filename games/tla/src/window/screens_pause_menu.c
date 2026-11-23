@@ -1,5 +1,5 @@
 /// @file
-/// The Pause menu's selection, a tilemap palette-bit rectangle, and the debug
+/// The Pause menu's choices, a tilemap palette-bit rectangle, and the debug
 /// browsers of icons and portraits.
 // Part of screens.c.
 
@@ -107,12 +107,13 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
 /// L and R switch the kind, Left and Right turn its pages (item and Psynergy
 /// icons from page * ICON_BROWSER_PAGE_ICONS on; the status patterns are the
 /// first page's on every page, whatever the heading says), A or B closes it.
-/// Returns 0. The debug menus open it (debug/test.c, debug/level.c).
+/// Returns 0. The debug rooms open it (debug/level.c, debug/psynergy_test.c,
+/// debug/shop_test.c).
 s32 DebugBrowser_Icons(void) {
   s32 redraw;
   s32 tile;
   s32 page;
-  s32 mode;
+  s32 kind;
   struct Window *window;
   s32 slot;
   s32 base;
@@ -123,7 +124,7 @@ s32 DebugBrowser_Icons(void) {
 
   window = NULL;
   page = 0;
-  mode = 0;
+  kind = 0;
   redraw = 1;
   Ram_HeapSlots->actorSystem->suspended = redraw;
   wait(1);
@@ -138,12 +139,12 @@ s32 DebugBrowser_Icons(void) {
       page++;
     }
     if (gInput.repeat & KEY_L) {
-      mode--;
+      kind--;
       redraw = 1;
     }
     if (gInput.repeat & KEY_R) {
       redraw = 1;
-      mode++;
+      kind++;
     }
     if (gInput.repeat & KEY_A)
       break;
@@ -152,20 +153,20 @@ s32 DebugBrowser_Icons(void) {
     if (redraw != 0) {
       redraw = 0;
       page = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
-      mode = (mode + ICON_BROWSER_KINDS) % ICON_BROWSER_KINDS;
+      kind = (kind + ICON_BROWSER_KINDS) % ICON_BROWSER_KINDS;
       Window_Close(window, 2);
       window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
-      if (mode == 0)
-        Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
-      else if (mode == 1)
-        Text_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
+      if (kind == 0)
+        Text_DrawStringInWindow(gIconBrowser_ItemTitle, window, 0, 0);
+      else if (kind == 1)
+        Text_DrawStringInWindow(gIconBrowser_EnergyTitle, window, 0, 0);
       else
-        Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
-      Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
+        Text_DrawStringInWindow(gIconBrowser_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gIconBrowser_PageLabel, window, 0, 8);
       Text_DrawNumberInWindow(page, 0, window, 40, 8);
       base = page * ICON_BROWSER_PAGE_ICONS;
       Text_DrawNumberInWindow(base, 3, window, 64, 8);
-      Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawStringInWindow(gIconBrowser_RangeDash, window, 88, 8);
       Text_DrawNumberInWindow(base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96,
                               8);
       for (i = 0; i < ICON_BROWSER_PAGE_ICONS; i++) {
@@ -173,10 +174,10 @@ s32 DebugBrowser_Icons(void) {
         row = i / ICON_BROWSER_ROW_ICONS;
         x = (i - row * ICON_BROWSER_ROW_ICONS) * 16;
         y = row * 16 + 16;
-        if (mode == 0) {
-          Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
+        if (kind == 0) {
+          Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, kind);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
-        } else if (mode == 1) {
+        } else if (kind == 1) {
           Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {

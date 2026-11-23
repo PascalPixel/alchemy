@@ -90,8 +90,7 @@ enum MadraRoomsTravelersActorId {
   ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID = ACTOR_BLACK_CRYSTAL + 1,
   ACTOR_TRAVELERS_PARTNER,
   /// The two warriors on their way to Colosso in Tolbi, there once
-  /// FLAG_TRANSFERRED_WON_COLOSSO
-  /// is set: "I'm Morgan, and this here's Dekka."
+  /// FLAG_TRANSFERRED_WON_COLOSSO is set: "I'm Morgan, and this here's Dekka."
   ACTOR_MORGAN,
   ACTOR_DEKKA
 };
@@ -141,6 +140,10 @@ enum MadraRoomsCavernHomeActorId {
   ACTOR_HER_SISTER
 };
 
+/// The cells, (44, 5) and (44, 6) a few steps in from the mayor's door, whose
+/// step trigger runs MadraRooms_WelcomePiersHome.
+enum { CELL_BEHAVIOR_MADRA_ROOMS_WELCOME = 30 };
+
 /// Madra's inn, as Inn_CheckIn numbers the inns.
 enum { MADRA_INN = 1 };
 
@@ -156,7 +159,8 @@ extern s32 gMadraRooms_OldManComesBack[];
 
 extern s32 gMadraRooms_CharFollows[];
 
-/// The overlay's veneer to Event_CountAnswer.
+/// Counts one more weird answer Felix gives (Event_CountAnswer, through the
+/// overlay's veneer).
 void MadraRooms_CountAnswer();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -783,33 +787,36 @@ void MadraRooms_ShinAngersPiers(void) {
   Actor_FaceEachOther(ACTOR_JAIL_KRADEN, ACTOR_FELIX, 0);
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_Wait(20);
-  // "This man... He must be an Adept!"
+  // "This man... He must be an Adept!" Yes: "Of course! That was clearly
+  // Psynergy he just used..." No: "You're right... We only know what we..."
   Event_OpenMessage(ACTOR_JAIL_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
+    // "Of course! That was clearly Psynergy he just used..."
     FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
     gFieldWork->message += 1;
   } else {
     Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
+    // "You're right... We only know what we just saw."
     FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   }
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_Wait(10);
+  // "Perhaps we should try to learn a little more about him."
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JAIL_KRADEN, ANIM_WALK);
   felix = Actor_Get(ACTOR_FELIX);
-  if (felix != 0)
+  if (felix != NULL)
     Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].integer,
                          felix->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_JAIL_KRADEN);
   Actor_SetPosition(ACTOR_JAIL_KRADEN, 0, 0);
   Event_SetFlag(FLAG_PIERS_INTERROGATED);
   Event_End();
-  return;
 }
 
 /// Talking to Piers in his cell in Madra's jail: "Ah... When will that kindly
@@ -823,7 +830,6 @@ void MadraRooms_TalkToPiers(void) {
   // "Ah... When will that kindly elder return and end my imprisonment? I..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Event_End();
-  return;
 }
 
 /// Casting Mind Read on Piers in his cell: he regrets using his Psynergy in
@@ -859,7 +865,6 @@ void MadraRooms_MindReadPiers(void) {
   // "When will I be freed?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Event_End();
-  return;
 }
 
 /// Unused: Piers' Frost at the jail's puddle alone, as
@@ -871,7 +876,6 @@ UNUSED void MadraRooms_PiersUsesPsynergy(void) {
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   FieldPsynergy_End();
-  return;
 }
 
 extern s32 gMadraRooms_WifeWalksToBackRoom[];
@@ -1024,7 +1028,6 @@ void MadraRooms_GiveLaughingFungus(void) {
   // "Please... Won't you please try to find the mushrooms my husband..."
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_COOK, 0, 5);
   Event_End();
-  return;
 }
 
 /// A party member walks into Felix and vanishes, as the party gathers up to
@@ -1047,7 +1050,6 @@ static inline void MadraRooms_WalkIntoLeader(s32 actorId) {
 /// back!" and his household welcomes Piers home, asking after his jewel and
 /// apologising for his imprisonment.
 void MadraRooms_WelcomePiersHome(void) {
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsFelixYoureBack);
@@ -1103,31 +1105,38 @@ void MadraRooms_WelcomePiersHome(void) {
   // "Yes. In fact, we have just returned."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  // "And your jewel..."
+  // "And your jewel..." Yes: "You actually got it back from the Kibombo?
+  // Incredible..." No: "You didn't recover it from the Kibombo?"
   Event_OpenMessage(ACTOR_MAYOR, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "You actually got it back from the Kibombo? Incredible..."
     FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
     FieldEvent_Wait(20);
+    // "I was able to recover it with the help of Felix and his friends."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "That's wonderful! I'm so relieved! I was worried that you might..."
     FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
     gFieldWork->message += 3;
   } else {
     Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     MadraRooms_CountAnswer();
     gFieldWork->message += 3;
+    // "You didn't recover it from the Kibombo?"
     FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
     FieldEvent_Wait(20);
+    // "That's not true, sir. Felix and his companions helped me recover it."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     FieldActor_StartRepeatedMotion(ACTOR_ELDERS_DAUGHTER, 3);
     Actor_SetAttachedEffect(ACTOR_ELDERS_DAUGHTER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(50);
+    // "Please! Don't startle me like that! I was afraid you might never..."
     FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
   }
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
@@ -1138,6 +1147,7 @@ void MadraRooms_WelcomePiersHome(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
+  // "That's why we came back... To let you know that we've recovered it..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   if (Event_GetFlag(FLAG_PIERS_SETTING_SAIL) != 0)
     MadraRooms_SayFarewellAgain();
@@ -1167,7 +1177,6 @@ void MadraRooms_WelcomePiersHome(void) {
   MadraRooms_WalkIntoLeader(ACTOR_JENNA);
   Event_SetFlag(FLAG_MADRA_FAREWELL_SAID);
   Event_End();
-  return;
 }
 
 /// The welcome's end when Piers has already agreed to sail for Lemuria: the
@@ -1212,7 +1221,6 @@ void MadraRooms_SayFarewellAgain(void) {
   FieldEvent_Wait(20);
   // "So would I!"
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
-  return;
 }
 
 /// The welcome's end when Piers has not yet agreed to sail: the household asks
@@ -1324,7 +1332,6 @@ void MadraRooms_AskToStayLonger(void) {
   FieldEvent_Wait(20);
   // "So would I!"
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
-  return;
 }
 
 // clang-format off
@@ -1467,13 +1474,13 @@ struct ActorPlacement gMadraRooms_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 604, 0, 548, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 432, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 518, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 98, MOVEMENT_TYPE_WANDER, 368, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_CHAR), MOVEMENT_TYPE_WANDER, 368, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 676, 0, 762, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 730, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 847, 0, 711, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 906, 0, 760, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(-1, 0, 0, 0, 0, 0, 0, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
 };
 
 /// Madra's houses once the party returns with Piers (enum
@@ -1533,29 +1540,31 @@ struct ActorPlacement gMadraRooms_SecondRoomsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The houses' talk and Mind Read before the Kibombo raid.
+/// The houses' talk and Mind Read before the Kibombo raid. The exits without a
+/// name lead from one of the map's rooms to another, 3 to 4, 6 to 7, 11 to 12
+/// and 13 to 14 and back; 16 and 17 have no row in gSceneExits.
 struct Trigger gMadraRooms_TriggersBeforeRaid[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsLandsToSouthOfGondowan)},
     {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, EVENT(MadraRooms_AskWillWeBeSafe)},
     {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsWaveBigEnoughToMove)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsEverythingHappenedSoSuddenlyEarth)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MUSHROOM_COOK, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsEverythingHappenedSoSuddenlyEarth)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_STRANGE_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsTheySayThatBoatBelongs)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_GROUNDED_SHIP, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsBoatThatRanAground)},
     {TRIGGER_TALK, ACTOR_JEWEL_KEEPER, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsMiladyAndIHaveBeen)},
@@ -1605,7 +1614,7 @@ struct Trigger gMadraRooms_TriggersBeforeRaid[] = {
 
 /// The jail's talk and Mind Read, by the story flags.
 struct Trigger gMadraRooms_JailTriggers[] = {
-    {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_WEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_WEST},
     {TRIGGER_TALK, ACTOR_SHIN, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsOhPiersAfterWay)},
     {TRIGGER_TALK, ACTOR_SHINS_FRIEND, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsShinsDevelopedTerribleFear)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
@@ -1628,8 +1637,8 @@ struct Trigger gMadraRooms_JailTriggers[] = {
 
 /// The left cavern home's talk and Mind Read, by the story flags.
 struct Trigger gMadraRooms_SecondRoomsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_EAST, CONDITION_ALWAYS, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_EAST},
+    {TRIGGER_EXIT, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_WEST, CONDITION_ALWAYS, MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_WEST},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_BRIGGS_CAUGHT, MSGNO(MsgMadraInteriorsInAllThisChaosEveryone)},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, FLAG_GABOMBA_MESSAGE_CARRIED, MSGNO(MsgMadraInteriorsSoBriggsAndHisPirates)},
     {TRIGGER_TALK, ACTOR_MAN_ON_ALHAFRA, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsTheresTalkOfMightyTravelers)},
@@ -1654,21 +1663,21 @@ struct Trigger gMadraRooms_SecondRoomsTriggers[] = {
 
 /// The houses' talk and Mind Read once the Kibombo have raided Madra.
 struct Trigger gMadraRooms_TriggersAfterRaid[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsKibomboAreVeryWarlikeTribe)},
@@ -1721,24 +1730,24 @@ struct Trigger gMadraRooms_TriggersAfterRaid[] = {
 /// The houses' talk and Mind Read once the party returns with Piers, the
 /// welcome, and the mushroom trade.
 struct Trigger gMadraRooms_TriggersOnReturn[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B, CONDITION_ALWAYS, MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 30, FLAG_MADRA_FAREWELL_SAID, EVENT(MadraRooms_WelcomePiersHome)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_ROOMS_WELCOME, FLAG_MADRA_FAREWELL_SAID, EVENT(MadraRooms_WelcomePiersHome)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsOurSalesmanSaidKibombosCeremony)},
     {TRIGGER_TALK, ACTOR_WOMAN_WARY_OF_GONDOWAN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIWonderIfKibomboHave)},
     {TRIGGER_TALK, ACTOR_MUSHROOM_LOVER, CONDITION_ALWAYS, EVENT(MadraRooms_TalkToMushroomLover)},

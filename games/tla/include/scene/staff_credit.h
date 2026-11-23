@@ -42,8 +42,7 @@ static inline void Scene_QueueIoWrite16(u32 address, u32 value) {
 /// The PP gauge shown over the leader on the world map: a 32x16 sprite of
 /// eight tiles.
 #define GAUGE_SIZE (8 * TILE_SIZE_4BPP)
-/// The gauge's levels of PP, and what it shows: empty, its level, or its
-/// level flashing when PP is low.
+/// The levels of PP the gauge can show.
 #define GAUGE_LEVELS 30
 /// What the gauge shows, kept as kind plus level: nothing, the level, or the
 /// level blinking low.

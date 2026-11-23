@@ -2,7 +2,8 @@
 #define ALCHEMY_SCENE_KIBOMBO_H
 
 /// @file
-/// What games/tla/src/scene/ declares for the files that use it, written once.
+/// Two of Kibombo's events: the vent by the statue shown uncovered, and
+/// Akafubu's Psynergy on the Black Crystal.
 
 #include "types.h"
 

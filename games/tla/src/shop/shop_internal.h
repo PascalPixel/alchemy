@@ -77,7 +77,10 @@ enum ShopType {
   SHOP_TYPE_ITEMS = EQUIPMENT_GROUP_NONE,
   SHOP_TYPE_WEAPONS = EQUIPMENT_GROUP_WEAPON,
   SHOP_TYPE_ARMOR = EQUIPMENT_GROUP_ARMOR,
-  SHOP_TYPE_GENERAL_STORE = 3
+  SHOP_TYPE_GENERAL_STORE = 3,
+  /// Unused: lists every group's artifacts, as a general store does, but no
+  /// stock row has it and nothing else sets it.
+  SHOP_TYPE_EVERY_GROUP = 4
 };
 
 /// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
@@ -107,6 +110,14 @@ enum {
   SHOP_PARTY_PAGE_MEMBERS = 4,
   /// The most of one item a party member can carry, and so buy at once.
   SHOP_STACK_LIMIT = 30
+};
+
+/// What MenuGrid_MoveCursor reports, and so what a list redraws.
+enum MenuGridMove {
+  MENU_GRID_STAYED = 0,
+  MENU_GRID_MOVED = 1, ///< within its page: the cursor and the entry
+  /// To another page: the page's party figures are made again too.
+  MENU_GRID_CHANGED_PAGE = 2
 };
 
 /// What Shop_DrawItemPrice says below an item: its price, or when the price is

@@ -64,8 +64,10 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
   MessageArgument_PushFar(repairCost, MESSAGE_ARGUMENT_NUMBER);
   messageBase = (s32)MsgRepairOffer;
+  // "I'll fix your <item> for <n> coins, OK?"
   Shop_ShowKeeperMessageHidingCursor(messageBase);
   if (Shop_AskYesNo(0) != 0) {
+    // "Changed your mind? Whatever you say!"
     Shop_ShowKeeperMessageHidingCursor(messageBase + 1);
     return;
   }
@@ -74,6 +76,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   unit->inventory[slot] = 0;
   Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  // "Yes, sir! I'll take your <item>, then."
   Shop_ShowKeeperMessageHidingCursor(messageBase + 2);
   Message_CloseFinishedWindowsFar();
   // The hammer blows are 110 frames apart; the item stays hidden throughout.
@@ -92,6 +95,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Shop_DrawMoney();
   Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  // "I've repaired your <item>. Here it is."
   Shop_ShowKeeperMessageHidingCursor(messageBase + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);

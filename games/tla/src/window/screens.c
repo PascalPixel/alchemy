@@ -1,8 +1,9 @@
 /// @file
 /// The screens object: the screens built on the windows, from the window
-/// sprites to the Pause menu, which The Broken Seal also links as screens.c.
-/// Its code calls several window routines with no declaration in scope, as
-/// the twin's screens.c does.
+/// sprites, the party status window and the file list to the battle menus,
+/// the icon menus and the Pause menu, as in The Broken Seal's screens.c. Its
+/// code calls several window routines with no declaration in scope, as The
+/// Broken Seal's does.
 ///
 /// window_internal.h holds what both objects share; the code is in the
 /// screens_*.c files under window/, included here in the order it has in the
@@ -39,8 +40,8 @@ extern const s16 gPortrait_SpriteMap[];
 #endif
 
 /// One icon of the command row (struct BattleCommandRowWork): its sprite, where
-/// it stands and the command it stands for. menu_titles.c loads it,
-/// battle_command_row.c runs the row.
+/// it stands and the command it stands for. screens_menu_titles.c loads it,
+/// screens_battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.
@@ -175,7 +176,7 @@ extern const u16 gSummon_Abilities[];
 
 /// The heading pair's bob (MenuTitle_Bob), in pixels, a step every four
 /// VBlanks.
-extern const u8 gMenuTitleBobOffsets[];
+extern const u8 gMenuTitle_BobOffsets[];
 
 /// The rows the range icons are marked with (Menu_BuildLocalizedPatternTiles).
 extern const struct BarPatternRow gMenu_BarPatternRows[];
@@ -200,7 +201,8 @@ extern const u8 gWindow_ProgressBarRows[];
 /// The progress bar's tiles, compressed.
 extern const u8 gWindow_ProgressBarTiles[];
 
-/// The cell picture routine, copied to RAM before it runs.
+/// The ARM routine that reads the windows' edges off the UI tilemap for each
+/// scan line (cell_picture.c), copied to RAM before it runs.
 extern u8 Tile_BuildCellPicturesCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
@@ -250,14 +252,14 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-/// The Pause menu's headings and page label.
-extern const u8 gWorkspace_ItemTitle[];
-extern const u8 gWorkspace_EnergyTitle[];
-extern const u8 gWorkspace_StatusTitle[];
-extern const u8 gWorkspace_PageLabel[];
-extern const u8 gWorkspace_RangeDash[];
+/// The debug icon browser's headings and page label.
+extern const u8 gIconBrowser_ItemTitle[];
+extern const u8 gIconBrowser_EnergyTitle[];
+extern const u8 gIconBrowser_StatusTitle[];
+extern const u8 gIconBrowser_PageLabel[];
+extern const u8 gIconBrowser_RangeDash[];
 
-/// The save screen's icon menu: the action at each icon position.
+/// The File Screen's icon menu: the action at each icon position.
 extern s8 gMenu_SaveSlotActionByPosition[];
 
 // The parts, in ROM order.

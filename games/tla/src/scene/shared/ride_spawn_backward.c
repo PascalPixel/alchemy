@@ -1,5 +1,7 @@
-/// Spawns a ride object moving back at `speed`.
-void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
+/// A flame thrower's flame (FLAME_BACKWARD), sent north from `position` at
+/// `speed` (Flame_UpdateForward); `offScreen` keeps its sprite's picture
+/// loaded out of sight.
+void Ride_SpawnBackward(s32 *position, s32 speed, s32 offScreen) {
   struct Actor *actor = Import_ActorCreate_(SPRITE_BLAZE_FLAME, position[0],
                                             position[1], position[2]);
 
@@ -9,7 +11,7 @@ void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
     actor->riseBaseY = -speed;
     Actor_SetupScriptedPart(actor, 3);
     actor->update = Flame_UpdateForward;
-    if (mode)
+    if (offScreen)
       actor->retainSpriteCache = 2;
     Actor_SelectAnimation(actor, 2);
   }

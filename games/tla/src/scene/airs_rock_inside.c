@@ -435,7 +435,9 @@ s32 Actor_HasArrived(struct Actor *actor);
 
 void AirsRockInside_SetStakeCells(struct Actor *actor);
 
-void Pillar_Place(s16 *list) {
+/// Unused: places the pillars of a list as shared/pillar_place.h does, reading
+/// its halfwords as signed.
+UNUSED void Pillar_Place(s16 *list) {
   s16 *entry;
 
   if ((u16)list[0] == ACTOR_LIST_END)
@@ -685,7 +687,7 @@ void AirsRockInside_PlaceStakes(u16 *list) {
 void AirsRockInside_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
-  struct Actor *rider, *dust;
+  struct Actor *statue, *dust;
   s32 rise;
   FIXED dx, dz;
   s32 moved, frames, height;
@@ -721,7 +723,7 @@ void AirsRockInside_RideWhirlwind(void) {
   facing = ride->facing;
   switch (facing) {
   case FACING_NORTH:
-    rider = ride->watchedActor;
+    statue = ride->watchedActor;
     dx = 0;
     dz = 0;
     leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
@@ -777,7 +779,8 @@ void AirsRockInside_RideWhirlwind(void) {
       }
     }
   found:
-    height = Map_GetTerrainHeight(rider->riseCounter, ride->x.fixed + dx,
+    // The statue's riseCounter holds the layer of the ledge he lands on.
+    height = Map_GetTerrainHeight(statue->riseCounter, ride->x.fixed + dx,
                                   ride->z.fixed + dz);
     leader->y.fixed = height;
     leader->groundHeight = height;
@@ -790,7 +793,7 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->velocityY = toFIXED(4);
     leader->motionFlags = ACTOR_FALLS;
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-    leader->layer = rider->riseCounter;
+    leader->layer = statue->riseCounter;
     Actor_SetMoveTarget(leader, leader->x.fixed + dx, leader->y.fixed,
                         leader->z.fixed + dz);
     OverlayObject_WaitUntilIdle(leader);
@@ -959,12 +962,14 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *actor) {
 }
 
 /// Wakes a statue unless the party keeps its place: it breathes its first
-/// whirlwind once its timer reaches WHIRLWIND_BREATH_FRAMES.
-void AirsRockInside_WakeStatue(struct Actor *actor, s16 timer, u8 value) {
+/// whirlwind once its timer reaches WHIRLWIND_BREATH_FRAMES, and its whirlwinds
+/// set the leader down on the ledge of layer `landingLayer`.
+void AirsRockInside_WakeStatue(struct Actor *actor, s16 timer,
+                               u8 landingLayer) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     actor->steeringFlags = 0;
     actor->timer = timer;
-    actor->riseCounter = value;
+    actor->riseCounter = landingLayer;
     actor->update = (s32)AirsRockInside_StatueBreathesWhirlwind;
   }
 }
@@ -1091,11 +1096,11 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *actor) {
 
 /// Wakes the hall's movable statue as AirsRockInside_WakeStatue does.
 void AirsRockInside_WakeMovableStatue(struct Actor *actor, s16 timer,
-                                      u8 value) {
+                                      u8 landingLayer) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     actor->steeringFlags = 0;
     actor->timer = timer;
-    actor->riseCounter = value;
+    actor->riseCounter = landingLayer;
     actor->update = (s32)AirsRockInside_StatueBreathesPooledWhirlwind;
     Actor_SetSpriteFlags(actor, 0);
   }
@@ -1293,7 +1298,7 @@ void AirsRockInside_BlowGust(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *gust, *spark, *actor;
   struct Vector3 velocity;
-  struct EffectOptions leaves, dust;
+  struct EffectOptions glints, dust;
   struct Cell dir, cell;
   s32 i, steps = 0, carried;
   s32 x, z;
@@ -1413,15 +1418,15 @@ void AirsRockInside_BlowGust(void) {
         PICK_UP(actor, GUST_DROP(120, 408));
     }
     if ((gFrameCount & 1) == 0) {
-      leaves.priority = 1;
-      leaves.type = SPRITE_GLINT;
-      leaves.palette = 2;
+      glints.priority = 1;
+      glints.type = SPRITE_GLINT;
+      glints.palette = 2;
       velocity.x = Trig_Cos((gFrameCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
       velocity.y = gust->y.fixed + INTtoFIXED(Random16() & 31);
       velocity.z = Trig_Sin((gFrameCount & 0x1ff) * (TRIG_TURN / 16));
       FieldEffect_Spawn(
           gust->x.fixed, velocity.y, gust->z.fixed, velocity.x, 0, velocity.z,
-          EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &leaves);
+          EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &glints);
     }
     FieldEvent_Wait(1);
   }

@@ -58,7 +58,7 @@ enum AlhafraManorActorId {
   ACTOR_MAYOR,
   /// "You should go to the watchtower and gaze southward."
   ACTOR_BOY_ON_THE_WATCHTOWER = ACTOR_FIRST_PLACED + 2,
-  /// Who asks what the party knows of Alhafra; her thought: "Why do they
+  /// Who asks what the party thinks of Alhafra; her thought: "Why do they
   /// always tell me to send adventure-seekers to South Osenia?"
   ACTOR_WOMAN_ON_SOUTH_OSENIA,
   /// "Our town was rife with pirates until just recently."
@@ -118,12 +118,16 @@ void AlhafraManor_AskAboutAlhafra(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManorWhatDoYouThinkOf;
 
   Event_SetMessageId(msg);
+  // "What do you think of Alhafra? Have you taken a fancy to it?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
+    // Yes: "Then you are welcome to stay here and relax for as long as you
+    // please..."
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
+    // No: "Then why don't you follow your feet to the south?..."
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
@@ -137,6 +141,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(msg);
+  // "Lookee here! Can't you see Air's Rock out there?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(20);
@@ -149,6 +154,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
     Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_ALHAFRA_MANOR_VIEW);
   } else {
     Event_SetMessageId(msg + 2);
+    // No: "Oh... I guess today is a bit cloudier than usual..."
     Event_ShowMessageAndWait(actor, 0);
   }
   Event_End();
@@ -160,12 +166,17 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
   s32 msg = (s32)&MsgAlhafraManorAreYouTheBraveHero;
 
   Event_SetMessageId(msg);
+  // "Are you the brave hero who defeated the pirates?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
+    // Yes: "Well, I wonder if even a hero like you can stand up against a
+    // creature..."
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
+    // No: "I know you're the one who beat the pirates... Don't try to act
+    // humble..."
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(actor, 0);

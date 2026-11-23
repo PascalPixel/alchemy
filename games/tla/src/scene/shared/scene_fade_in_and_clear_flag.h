@@ -1,4 +1,5 @@
-/// Fades the screen in and clears flag 0x12f.
+/// Sets the screen to open with the window transition, and the area's name not
+/// to show (FLAG_SHOW_AREA_NAME).
 void Scene_FadeInAndClearFlag(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

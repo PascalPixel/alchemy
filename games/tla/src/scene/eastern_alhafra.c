@@ -192,6 +192,10 @@ enum EasternAlhafraAfterBriggsActorId {
   ACTOR_MAN_KNOCKED_DOWN
 };
 
+/// A townsperson's own animation 13: lying flat on the ground, as the people
+/// Briggs's pirates knocked down lie at the pier's foot.
+enum { ANIM_LYING_DOWN = 13 };
+
 struct Actor;
 struct EffectSprite;
 struct Vector3;
@@ -208,7 +212,7 @@ struct PushTarget {
 };
 
 void EasternAlhafra_PlaceClearedDebris(void);
-void Rock_Spawn(s32, s32, s32, s32);
+void Rock_Spawn(s32 x, s32 y, s32 z, s32 count);
 
 void EasternAlhafra_StartFallingRocks(void);
 void Rock_EndFalling(void);
@@ -605,7 +609,7 @@ void EasternAlhafra_TalkToSailor(void) {
   // "You're new in town, aren't you?" Yes: "You're probably curious about this
   // here ship..." No: "Well, I've never seen you before, but whatever..."
   Event_OpenMessage(ACTOR_SAILOR_GIVING_UP, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0) {
     FieldEvent_Wait(30);
     // "Well, I've never seen you before, but whatever..."
     FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_GIVING_UP, 0, 0);
@@ -616,7 +620,7 @@ void EasternAlhafra_TalkToSailor(void) {
     // a "sailing" ship... Wind is..." No: "Masted ships like this were
     // originally built..."
     Event_OpenMessage(ACTOR_SAILOR_GIVING_UP, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+    if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0) {
       FieldEvent_Wait(30);
       // "Masted ships like this were originally built by the Champa... Oh..."
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_GIVING_UP, 0, 0);
@@ -627,7 +631,7 @@ void EasternAlhafra_TalkToSailor(void) {
       // Yes: "Yeah, well, think how surprised we were to..." No: "You kids
       // today, with your "been there, done..."
       Event_OpenMessage(ACTOR_SAILOR_GIVING_UP, 0);
-      if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+      if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0) {
         FieldEvent_Wait(30);
         // "You kids today, with your "been there, done that" attitudes...
         // It's..."
@@ -799,10 +803,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_MAN_KNOCKED_DOWN, 136, 600);
       Actor_SetPosition(ACTOR_FIRST_WORKER, 168, 584);
       Actor_FaceDirection(ACTOR_FIRST_WORKER, FACING_SOUTH, 0);
-      Actor_FallOverWithAnimationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0, 13);
+      Actor_FallOverWithAnimationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0,
+                                      ANIM_LYING_DOWN);
       Call3(Actor_FallOverWithAnimationById, ACTOR_MAN_KNOCKED_DOWN,
-            FACING_WEST, 13);
-      Actor_FallOverWithAnimationById(ACTOR_FIRST_WORKER, 0, 13);
+            FACING_WEST, ANIM_LYING_DOWN);
+      Actor_FallOverWithAnimationById(ACTOR_FIRST_WORKER, 0, ANIM_LYING_DOWN);
       Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 112, 432);
       Actor_SetPosition(ACTOR_JIYA, 176, 408);
       Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
@@ -813,9 +818,9 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_Get(ACTOR_JIYA), 0);
       FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, DEGtoANG(90));
       Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_WORKER), 0);
-      Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 13);
-      Actor_SetAnimation(ACTOR_JIYA, 13);
-      Actor_SetAnimation(ACTOR_SECOND_WORKER, 13);
+      Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, ANIM_LYING_DOWN);
+      Actor_SetAnimation(ACTOR_JIYA, ANIM_LYING_DOWN);
+      Actor_SetAnimation(ACTOR_SECOND_WORKER, ANIM_LYING_DOWN);
     }
     if (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0) {
       MapGrid_CopyCellsLayered(40, 0, 24, 31, 11, 6);
@@ -855,11 +860,11 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_WORKER), 0);
     Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
-    Actor_SetAnimation(ACTOR_JIYA, 13);
-    Actor_SetAnimation(ACTOR_SECOND_WORKER, 13);
-    Actor_SetAnimation(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 13);
-    Actor_SetAnimation(ACTOR_MAN_KNOCKED_DOWN, 13);
-    Actor_SetAnimation(ACTOR_FIRST_WORKER, 13);
+    Actor_SetAnimation(ACTOR_JIYA, ANIM_LYING_DOWN);
+    Actor_SetAnimation(ACTOR_SECOND_WORKER, ANIM_LYING_DOWN);
+    Actor_SetAnimation(ACTOR_YOUNG_MAN_KNOCKED_DOWN, ANIM_LYING_DOWN);
+    Actor_SetAnimation(ACTOR_MAN_KNOCKED_DOWN, ANIM_LYING_DOWN);
+    Actor_SetAnimation(ACTOR_FIRST_WORKER, ANIM_LYING_DOWN);
     EasternAlhafra_MayorFindsShipGone();
   }
   EasternAlhafra_PlaceClearedDebris();
@@ -1237,7 +1242,7 @@ void EasternAlhafra_AskIfFinished(void) {
   FieldEvent_Wait(10);
   // "Are you finished here, Felix?"
   Event_OpenMessage(ACTOR_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     // "Wait, you wanted to do this, and now you're telling me we should just
@@ -1437,7 +1442,7 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   FieldEvent_Wait(20);
   // "You were the ones who did it, weren't you?"
   Event_OpenMessage(ACTOR_CHAUCHA, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_CHAUCHA, ANIM_NOD);
     FieldEvent_Wait(10);
@@ -1737,7 +1742,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   FieldEvent_Wait(10);
   // "Why don't you come back to my manor to get some rest?"
   Event_OpenMessage(ACTOR_ALHAFRAS_MAYOR, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0) {
     FieldEvent_Wait(40);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     FieldEvent_Wait(20);
@@ -2385,7 +2390,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(20);
   // "What an awful person. Do you suppose he's always this self-centered?"
   Event_OpenMessage(ACTOR_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(20);
     // "Yes, he's terribly irritating. You're quite right, Felix."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
@@ -2413,7 +2418,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   // "Well, it doesn't matter. I think I've had enough of this town. Shall we
   // be leaving?"
   Event_OpenMessage(ACTOR_KRADEN, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0) {
     FieldEvent_Wait(40);
     // "Ah, yes, well... If you still have business to attend to here."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
@@ -2669,8 +2674,10 @@ u8 gEasternAlhafra_WaveTableIndex[] = {
     0,
 };
 
+/// The two workers' steps about the mayor as they insist the block is gone
+/// (EasternAlhafra_WorkersTellMayor), each ending facing west.
 s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(0, 0, 8),
     SC_SYNC,
     SC_MOVE_BY(16, 0, 16),
@@ -2679,52 +2686,56 @@ s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, -16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEasternAlhafra_SecondWorkerCheerScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(32, 0, 32),
     SC_SYNC,
     SC_MOVE_BY(16, 0, -16),
     SC_SYNC,
     SC_MOVE_BY(2, 0, -6),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
     SC_END,
 };
 
+/// The two workers running ahead of the mayor to the pier's foot, each ending
+/// turned north-east.
 u32 gEasternAlhafra_FirstWorkerRunScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(48, 0, 0),
     SC_SYNC,
     SC_MOVE(168, 0, 584),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gEasternAlhafra_SecondWorkerRunScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(48, 0, 0),
     SC_SYNC,
     SC_MOVE(184, 0, 584),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
     SC_END,
 };
 
+/// The mayor, Jiya and the workers leaving the pier for town, one after another
+/// (EasternAlhafra_MayorFindsShipGone).
 s32 gEasternAlhafra_RunOffScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(152, 0, 640),
     SC_SYNC,
     SC_MOVE_BY(-80, 0, 0),

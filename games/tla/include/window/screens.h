@@ -2,7 +2,9 @@
 #define ALCHEMY_WINDOW_SCREENS_H
 
 /// @file
-/// What the screens object defines for the code outside it.
+/// The screens object's routines and tables that code outside it uses: the
+/// Status screen's cursor stops, the file list and File Screen choices, the
+/// battle menus, the menu headings and the Yes/No menu.
 
 #include "types.h"
 #include "window/cursor.h"
@@ -38,10 +40,9 @@ struct BarPatternRow {
   u32 secondTile;
 };
 
-/// One word of a tile XORed with a row's mask. Ours, not the original's
-/// name: the helper of a family of four sites, the two marks each of
-/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles makes on a tile
-/// pair, which match through it and through no plain XOR.
+/// One word of a tile XORed with a row's mask: the marks
+/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles make on a range
+/// icon's two tiles.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// The twelve Psynergy range icons, built in two sets of six
@@ -55,9 +56,9 @@ static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 void PartyStatus_CreateWindow(s32 flags);
 s32 DebugBrowser_Icons(void);
 s32 DebugBrowser_Portraits(void);
-s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
-s32 Resource_LoadIndexedIntoBuffer(s32 slot, s32 index);
-void UpdateLinkSessionCountdown(void);
+s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection);
+s32 CommandIcon_ReloadSlot(s32 slot, s32 index);
+void BattleMenu_UpdateEachFrame(void);
 s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
@@ -88,7 +89,6 @@ void DjinnFigures_SetShownFar(s32 shown);
 void DjinnFigures_SetSlotPositionFar(s32 index, s32 x, s32 y);
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct WindowSprite *object);
-struct Window;
 struct WindowSprite *Portrait_Create(s32 speaker, s32 option, s32 side,
                                      struct Window *window, s32 x, s32 y);
 /// The 64x16 headings of gMenuTitlePictures that MenuTitle_Create shows, in
@@ -188,7 +188,7 @@ enum PasswordLevel {
 };
 
 /// What IconMenu_ChooseSendOption offers.
-enum ResourceLayoutMode {
+enum SendOptionMenu {
   RESOURCE_LAYOUT_TRANSFER_METHOD = 0, ///< Password or Cable
   RESOURCE_LAYOUT_PASSWORD_LEVEL = 1   ///< Gold, Silver or Bronze
 };

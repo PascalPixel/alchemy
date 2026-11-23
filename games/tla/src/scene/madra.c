@@ -58,6 +58,19 @@
 /// Set once the party has heard Karst call for her sister, this visit.
 #define FLAG_MADRA_KARST_CALLED_FOR_MENARDI FLAG_SCENE_TEMP_0F
 
+/// The cells whose step triggers run Madra's events; a door's cell takes the
+/// number of the exit it leads by.
+enum MadraCellBehavior {
+  /// The Champa's hole outside the north-east wall, cell (46, 15).
+  CELL_BEHAVIOR_MADRA_CHAMPAS_HOLE = 16,
+  /// The gate's inner cells, (29, 25) and (30, 25).
+  CELL_BEHAVIOR_MADRA_GATE_INSIDE = 19,
+  /// The gate's outer cells, (29, 26) and (30, 26).
+  CELL_BEHAVIOR_MADRA_GATE_OUTSIDE,
+  /// The path east of the mayor's house, (13, 17) to (13, 19).
+  CELL_BEHAVIOR_MADRA_PATH_PAST_KARST
+};
+
 /// The town's placed actors, by the rows of gMadra_Placements, the first
 /// visit's: Kraden, out of sight, steps out from behind Felix at the gate, and
 /// Milady and her guard wait out of sight until they hurry to the jail.
@@ -106,9 +119,9 @@ enum MadraActorId {
   ACTOR_LADYS_GUARD,
   /// Who keeps the item stand while her sister recovers from the raid.
   ACTOR_ITEM_MERCHANTS_SIBLING,
-  /// A treasure of the map's own, where the mayor sets the Cyclone Chip down
+  /// The map's third treasure spot, where the mayor sets the Cyclone Chip down
   /// (Madra_MeetKarst); out of sight otherwise.
-  ACTOR_CYCLONE_CHIP = 66
+  ACTOR_CYCLONE_CHIP = FIELD_TREASURE_ACTOR + 2
 };
 
 /// The rows of gMadra_PlacementsOnReturn that differ: Karst, who comes
@@ -133,8 +146,8 @@ extern struct Trigger gMadra_TriggersBeforeRaid[];
 extern struct Trigger gMadra_TriggersAfterRaid[];
 extern struct Trigger gMadra_TriggersOnReturn[];
 
-extern s16 gMadra_DoorOpening[];
-extern s16 gMadra_CavernHomeDoorOpening[];
+extern u16 gMadra_DoorOpening[];
+extern u16 gMadra_CavernHomeDoorOpening[];
 
 void FieldCamera_WaitForArrival(void);
 
@@ -281,7 +294,7 @@ void Madra_KarstSendsPartyAway(void) {
 /// Answering yes, and yes again when she asks whether her sister is dead, makes
 /// her threaten the party; either no sends it away.
 void Madra_KarstAsksAboutMenardi(void) {
-  Event_SetMessageId(MsgMadraHaveYouByChanceSeen);
+  Event_SetMessageId((s32)MsgMadraHaveYouByChanceSeen);
   // "Have you by chance seen a girl named Menardi?"
   Event_OpenMessage(ACTOR_KARST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
@@ -734,7 +747,7 @@ void Madra_InspectPartyAtGate(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgMadraYouThereHoldYourGround);
+  Event_SetMessageId((s32)MsgMadraYouThereHoldYourGround);
   // "You there! Hold your ground!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   FieldCamera_MoveTo(476, CAMERA_KEEP, 420, 1);
@@ -896,7 +909,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_StartScreenTransition();
   Actor_SetPosition(ACTOR_LADY, 172, 332);
   Actor_SetPosition(ACTOR_LADYS_GUARD, 172, 324);
-  Event_SetMessageId(MsgMadraHasPiersEscaped);
+  Event_SetMessageId((s32)MsgMadraHasPiersEscaped);
   Event_WaitTransitionFrames();
   // "Has Piers escaped!?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
@@ -973,7 +986,7 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_FaceDirection(ACTOR_LADY, FACING_NORTH, 0);
   Actor_FaceDirectionById(ACTOR_LADYS_GUARD, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_LADYS_GUARD, 2);
   Event_Wait(20);
   // "It seems Piers is a man of many mysteries."
   Event_ShowMessageThenWait(ACTOR_LADYS_GUARD, 0, 10);
@@ -989,7 +1002,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   // "You look like travelers."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_LADYS_GUARD, 2);
   Actor_FaceActorById(ACTOR_LADYS_GUARD, ACTOR_LADY, 0);
   Event_Wait(20);
   // "Milady, now is not the time to be speaking with strangers!"
@@ -1005,7 +1018,7 @@ void Madra_GrantPassageToOsenia(void) {
   // "When did you arrive? And where are you going?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_LADYS_GUARD, 2);
   Event_Wait(20);
   // "My lady, please..."
   Event_ShowMessageThenWait(ACTOR_LADYS_GUARD, 0, 10);
@@ -1038,7 +1051,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   // "Relay that message at once!"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_LADYS_GUARD, 2);
   Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_LADYS_GUARD, ANIM_NOD);
   Event_Wait(20);
@@ -1074,7 +1087,7 @@ void Madra_StopPartyAfterRaid(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgMadraHeyYouLotHold);
+  Event_SetMessageId((s32)MsgMadraHeyYouLotHold);
   // "Hey! You lot! Hold it right there!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   FieldCamera_MoveTo(476, CAMERA_KEEP, 400, 1);
@@ -1150,7 +1163,7 @@ void Madra_StopPartyAfterRaid(void) {
   // "Right after the mayor left, actually..."
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 10);
   if (Event_GetFlag(FLAG_KIBOMBO_WARRIORS_FOUND)) {
-    Event_SetMessageId(MsgMadraItWasThemWasnt);
+    Event_SetMessageId((s32)MsgMadraItWasThemWasnt);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Event_Wait(20);
     // "It was them, wasn't it, Felix?"
@@ -1170,7 +1183,7 @@ void Madra_StopPartyAfterRaid(void) {
       Event_ShowMessage(ACTOR_KRADEN, 0);
     }
   }
-  Event_SetMessageId(MsgMadraWasAnythingStolen);
+  Event_SetMessageId((s32)MsgMadraWasAnythingStolen);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
@@ -1229,14 +1242,15 @@ void Madra_StopPartyAfterRaid(void) {
   Event_End();
 }
 
-/// Sets an actor's animation, and with SET_MODE_AND_WAIT waits frames after.
-#define SET_MODE(id, mode)                                                     \
+/// Sets an actor's animation, and with Madra_SetAnimationThenWait waits frames
+/// after.
+#define Madra_SetAnimation(id, animation)                                      \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                              \
+    Actor_SetAnimation(id, animation);                                         \
   } while (0)
-#define SET_MODE_AND_WAIT(id, mode, frames)                                    \
+#define Madra_SetAnimationThenWait(id, animation, frames)                      \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                              \
+    Actor_SetAnimation(id, animation);                                         \
     Event_Wait(frames);                                                        \
   } while (0)
 
@@ -1246,6 +1260,8 @@ void Madra_StopPartyAfterRaid(void) {
 /// picked up later). Then Karst, hearing Felix's name, confronts the party
 /// about Menardi, learns of Isaac and swears to have her revenge.
 void Madra_MeetKarst(void) {
+  /* FAKEMATCH(wrapper): the animations set through Madra_SetAnimation's
+     block statements. */
   struct Actor *actor;
   FIXED x = toFIXED(153);
   FIXED z;
@@ -1259,7 +1275,7 @@ void Madra_MeetKarst(void) {
   if (GameFlag_Get(FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES) ||
       GameFlag_Get(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT))
     GameFlag_Set(FLAG_BANDIT_ON_WORLD_MAP);
-  Event_SetMessageId(MsgMadraFelixWait);
+  Event_SetMessageId((s32)MsgMadraFelixWait);
   // "Felix, wait!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_WalkToAndWait(ACTOR_FELIX, 150, 280);
@@ -1271,12 +1287,14 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(20);
-  MapGrid_AnimateCells(gMadra_Doors[6].steps, gMadra_Doors[6].x,
-                       gMadra_Doors[6].y);
+  MapGrid_AnimateCells(
+      gMadra_Doors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].steps,
+      gMadra_Doors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].x,
+      gMadra_Doors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].y);
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_MAYOR, x, z,
                                                  FACING_SOUTH);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 4);
-  SET_MODE_AND_WAIT(ACTOR_MAYOR, ANIM_NOD, 20);
+  Madra_SetAnimationThenWait(ACTOR_MAYOR, ANIM_NOD, 20);
   // "I believe I promised you a reward for helping with the boat, didn't I?"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_FELIX, 0);
@@ -1292,7 +1310,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
     Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
-    SET_MODE(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
+    Madra_SetAnimation(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
     Event_Wait(33);
     Event_Wait(20);
     // "Imagine! You came all this way to put us at ease, and I totally..."
@@ -1305,7 +1323,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
     Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
-    SET_MODE(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
+    Madra_SetAnimation(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
     Event_Wait(33);
     Event_Wait(20);
     (gFieldWork->message)++;
@@ -1315,7 +1333,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Regardless, I told you that I would reward you when the boat was..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  SET_MODE(ACTOR_MAYOR, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "That being the case, I'd like to give you that reward now."
@@ -1327,7 +1345,7 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Event_Wait(20);
-  SET_MODE(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
   // "Madra is still in shambles from the disaster... We couldn't possibly..."
@@ -1348,7 +1366,7 @@ void Madra_MeetKarst(void) {
   } else {
     s32 count = gFieldWork->message + 1;
 
-    Event_SetMessageId(MsgMadraMayorTriedToGiveFelix);
+    Event_SetMessageId((s32)MsgMadraMayorTriedToGiveFelix);
     MessageArgument_Push(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_Show((gFieldWork->message)++, 5);
     Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
@@ -1364,27 +1382,31 @@ void Madra_MeetKarst(void) {
   Actor_WalkByAndWait(ACTOR_MAYOR, -16, -8);
   Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "I am glad that I was able to give it to you before you left."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  SET_MODE(ACTOR_MAYOR, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  // "Your travels seem to take you from danger into greater danger. Please..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
-  SET_MODE(ACTOR_FELIX, ANIM_NOD);
-  SET_MODE(ACTOR_JENNA, ANIM_NOD);
-  SET_MODE(ACTOR_SHEBA, ANIM_NOD);
-  SET_MODE(ACTOR_PIERS, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_NORTH);
   Actor_WalkToAndWait(ACTOR_MAYOR, 153, 259);
   Actor_SetPosition(ACTOR_MAYOR, 0, 0);
-  SET_MODE(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
+  // "Thank you, Mr. Mayor."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  // "...Felix?"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1402,6 +1424,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(60);
   Sound_Play(MUS_CONFRONTATION);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "You... He just called you Felix, didn't he?"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_KARST, FACING_WEST, 0);
   Actor_TurnToFaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
@@ -1410,6 +1433,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Event_Wait(20);
+  // "Why didn't I see it before? You are Felix!"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_FaceActorById(ACTOR_FELIX, ACTOR_KARST, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_KARST, 0);
@@ -1420,25 +1444,33 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
   Actor_FaceDirectionAndRefreshById(ACTOR_KARST, FACING_EAST);
   Event_Wait(20);
+  // "Then Menardi should be somewhere around here, too... And yet..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_JENNA, 0);
   Event_Wait(20);
+  // "You won't see Menardi or Saturos ever again. Isaac killed them..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Sheba! Quiet!"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Hmph! I heard that, you wretched little thing!"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_FaceActorById(ACTOR_KARST, ACTOR_FELIX, 0);
   Event_Wait(20);
+  // "Can it be true? Is my sister dead?" Yes: "I can't believe it... No one
+  // has the power..." No: "No? Then where is she!? Show me my sister!"
   FieldMessage_ShowAtActor(ACTOR_KARST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0) {
+    // "No? Then where is she!? Show me my sister!"
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_Wait(40);
-    SET_MODE(ACTOR_KARST, ANIM_NOD);
+    Madra_SetAnimation(ACTOR_KARST, ANIM_NOD);
     Event_Wait(20);
     Event_Wait(20);
+    // "What is the matter? Is it so very hard? You were traveling with her..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     Actor_TurnToFaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
     Event_Wait(40);
@@ -1446,13 +1478,14 @@ void Madra_MeetKarst(void) {
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_KARST, 0);
     Event_Wait(40);
     Actor_SetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-    SET_MODE(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    Madra_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     Event_Wait(33);
     Event_Wait(20);
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "She would never have left you behind...and yet you are alone... So..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
   } else {
-    Event_SetMessageId(MsgMadraICantBelieveItNo);
+    Event_SetMessageId((s32)MsgMadraICantBelieveItNo);
     // "I can't believe it... No one has the power to defeat Saturos and my..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     Actor_TurnToFaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
@@ -1461,26 +1494,26 @@ void Madra_MeetKarst(void) {
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_KARST, 0);
     Event_Wait(40);
     Actor_SetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
-    SET_MODE(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    Madra_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     Event_Wait(33);
     Event_Wait(20);
     FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "Yet you all avoid my gaze... And that look on your faces... It...is..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
   }
-  Event_SetMessageId(MsgMadraWhoIsThisIsaac);
+  Event_SetMessageId((s32)MsgMadraWhoIsThisIsaac);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Event_Wait(20);
   // "Who is this Isaac?"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-  SET_MODE(ACTOR_FELIX, ANIM_SHAKE_HEAD);
-  SET_MODE(ACTOR_PIERS, ANIM_SHAKE_HEAD);
-  SET_MODE(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
-  SET_MODE(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_FELIX, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
-  SET_MODE(ACTOR_KARST, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "What? You feign ignorance? Why? Would you protect him from my fury!?"
@@ -1497,7 +1530,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  SET_MODE(ACTOR_KARST, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "Is this Isaac the same one they've been speaking of? Is he pursuing you?"
@@ -1513,7 +1546,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "What do you take me for? I'm a warrior, like my sister... I can..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KARST, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
   // "Even if you doubled Felix's power, he would still be no match for my..."
@@ -1531,12 +1564,12 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   Event_Wait(20);
-  SET_MODE(ACTOR_KARST, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "But I must congratulate you on your successes at both the Mercury..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KARST, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
   // "Although your success there now prevents us from returning to the..."
@@ -1569,7 +1602,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "And if you make the journey, you'll have to light Jupiter on your..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KARST, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "We have our own work to do, and number one on the list is taking..." Yes:
@@ -1588,13 +1621,13 @@ void Madra_MeetKarst(void) {
     Event_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   }
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  SET_MODE(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(33);
-  SET_MODE(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   // "No, thank you. I believe we'll just find Jupiter Lighthouse on our..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(ACTOR_KARST, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "I see. Just don't let us down."
@@ -1617,7 +1650,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Wow. And I thought Saturos and Menardi had issues."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  SET_MODE(ACTOR_JENNA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "We shouldn't take Karst too lightly..."
@@ -1627,7 +1660,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "Wait a moment... Karst did say "we," didn't she?"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  SET_MODE(ACTOR_KRADEN, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(10);
   // "Yes. Saturos and Menardi traveled as a pair. Perhaps she has a..."
@@ -1640,7 +1673,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "Believe me, I'd love to see Isaac again, but we just don't have time..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  SET_MODE(ACTOR_KRADEN, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
@@ -1702,49 +1735,49 @@ void Madra_MeetKarst(void) {
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KRADEN, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_KRADEN, 0);
   Event_Wait(40);
-  SET_MODE(ACTOR_KRADEN, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "They were strong enough to defeat Saturos and Menardi. They won't be..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(ACTOR_FELIX, ANIM_NOD);
-  SET_MODE(ACTOR_JENNA, ANIM_NOD);
-  SET_MODE(ACTOR_SHEBA, ANIM_NOD);
-  SET_MODE(ACTOR_PIERS, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
-  SET_MODE(ACTOR_KRADEN, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "We should continue on ahead, just as Saturos and Menardi would have..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(ACTOR_JENNA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Sheba? Piers? Are you ready?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(ACTOR_SHEBA, ANIM_NOD);
-  SET_MODE(ACTOR_PIERS, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
-  SET_MODE(ACTOR_KRADEN, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   // "Then we should be going, right, Felix?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(ACTOR_FELIX, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
-  SET_MODE(ACTOR_SHEBA, ANIM_NOD);
-  SET_MODE(ACTOR_JENNA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
-  SET_MODE(ACTOR_FELIX, ANIM_NOD);
+  Madra_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  SET_MODE_AND_WAIT(ACTOR_KRADEN, ANIM_NOD, 20);
+  Madra_SetAnimationThenWait(ACTOR_KRADEN, ANIM_NOD, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  SET_MODE(ACTOR_KRADEN, ANIM_WALK);
+  Madra_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   actor = Actor_GetById(ACTOR_FELIX);
   if (actor != NULL)
     Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
@@ -1752,7 +1785,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
-  SET_MODE(ACTOR_JENNA, ANIM_WALK);
+  Madra_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   actor = Actor_GetById(ACTOR_FELIX);
   if (actor != NULL)
     Actor_SetDestinationById(ACTOR_JENNA, actor->x.part[0].integer,
@@ -1760,7 +1793,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
-  SET_MODE(ACTOR_SHEBA, ANIM_WALK);
+  Madra_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   actor = Actor_GetById(ACTOR_FELIX);
   if (actor != NULL)
     Actor_SetDestinationById(ACTOR_SHEBA, actor->x.part[0].integer,
@@ -1768,7 +1801,7 @@ void Madra_MeetKarst(void) {
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
-  SET_MODE(ACTOR_PIERS, ANIM_WALK);
+  Madra_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   actor = Actor_GetById(ACTOR_FELIX);
   if (actor != NULL)
     Actor_SetDestinationById(ACTOR_PIERS, actor->x.part[0].integer,
@@ -1779,7 +1812,8 @@ void Madra_MeetKarst(void) {
   GameFlag_Set(FLAG_MADRA_KARST_MET);
   Event_End();
 }
-#undef SET_MODE
+#undef Madra_SetAnimation
+#undef Madra_SetAnimationThenWait
 
 /// Nothing visible happens when Felix walks south out through the gate (cells
 /// (29, 25) and (30, 25)) without having been inspected; the game marks the
@@ -1945,17 +1979,20 @@ struct ActorPlacement gMadra_PlacementsOnReturn[] = {
 };
 
 /// A door opening: the one cell animation step of most of the town's doors.
-s16 gMadra_DoorOpening[] = {
-    1, 39, 1, 2, 6, -1,
+u16 gMadra_DoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(1, 39, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// The door opening of the left cavern home's two doors, from other cells.
-s16 gMadra_CavernHomeDoorOpening[] = {
-    3, 39, 1, 2, 6, -1,
+u16 gMadra_CavernHomeDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(3, 39, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 // clang-format on
 
-/// The town's doors that open with a cell animation as the party walks through.
+/// The town's doors that open with a cell animation as the party walks through,
+/// by the exits they lead by.
 struct MapGridCellAnimation gMadra_Doors[] = {
     {gMadra_CavernHomeDoorOpening, 20, 3},
     {gMadra_DoorOpening, 13, 23},
@@ -1965,37 +2002,49 @@ struct MapGridCellAnimation gMadra_Doors[] = {
     {gMadra_DoorOpening, 28, 6},
     {gMadra_DoorOpening, 9, 6},
     {gMadra_DoorOpening, 19, 24},
-    {gMadra_DoorOpening, 0, 0},
+    {gMadra_DoorOpening, 0, 0}, // the jail's doorway has no door
     {gMadra_CavernHomeDoorOpening, 17, 3},
 };
 
 /// The town's doors, gate, talk and Mind Read before the Kibombo raid.
 struct Trigger gMadra_TriggersBeforeRaid[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_A, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_A, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_B, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_B, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, MADRA_TO_MADRA_ROOMS_HOUSES_WEST, CONDITION_ALWAYS,
+     MADRA_TO_MADRA_ROOMS_HOUSES_WEST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_WEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksHole)},
-    {TRIGGER_STEP, 19, FLAG_MADRA_GATE_INSPECTED,
+    {TRIGGER_EXIT, MADRA_TO_WORLD_MAP, CONDITION_ALWAYS, MADRA_TO_WORLD_MAP},
+    {TRIGGER_EXIT, MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST, CONDITION_ALWAYS,
+     MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_CHAMPAS_HOLE, CONDITION_ALWAYS,
+     EVENT(Madra_WorkerBlocksHole)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_GATE_INSIDE, FLAG_MADRA_GATE_INSPECTED,
      EVENT(Madra_SkipGateInspection)},
-    {TRIGGER_STEP, 20, FLAG_MADRA_GATE_INSPECTED,
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_GATE_OUTSIDE, FLAG_MADRA_GATE_INSPECTED,
      EVENT(Madra_InspectPartyAtGate)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
      MSGNO(MsgMadraTownElderTookOff)},
@@ -2106,32 +2155,44 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
 /// The town's doors, gate, talk and Mind Read once the Kibombo have raided
 /// Madra.
 struct Trigger gMadra_TriggersAfterRaid[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_A, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_A, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_B, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_B, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, MADRA_TO_MADRA_ROOMS_HOUSES_WEST, CONDITION_ALWAYS,
+     MADRA_TO_MADRA_ROOMS_HOUSES_WEST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_WEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 16, CONDITION_ALWAYS, EVENT(Madra_WorkerBlocksSealedHole)},
-    {TRIGGER_STEP, 19, FLAG_MADRA_RAID_QUESTIONING_DONE,
-     EVENT(Madra_SkipRaidQuestioning)},
-    {TRIGGER_STEP, 20, FLAG_MADRA_RAID_QUESTIONING_DONE,
-     EVENT(Madra_StopPartyAfterRaid)},
+    {TRIGGER_EXIT, MADRA_TO_WORLD_MAP, CONDITION_ALWAYS, MADRA_TO_WORLD_MAP},
+    {TRIGGER_EXIT, MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST, CONDITION_ALWAYS,
+     MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_CHAMPAS_HOLE, CONDITION_ALWAYS,
+     EVENT(Madra_WorkerBlocksSealedHole)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_GATE_INSIDE,
+     FLAG_MADRA_RAID_QUESTIONING_DONE, EVENT(Madra_SkipRaidQuestioning)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_GATE_OUTSIDE,
+     FLAG_MADRA_RAID_QUESTIONING_DONE, EVENT(Madra_StopPartyAfterRaid)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
      MSGNO(MsgMadraWeThinkKibomboCameInto)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS, CONDITION_ALWAYS,
@@ -2226,28 +2287,40 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
 /// The town's doors, talk and Mind Read once the party returns with Piers, and
 /// Karst's visit.
 struct Trigger gMadra_TriggersOnReturn[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_A, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_A, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_B, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_B, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, MADRA_TO_MADRA_ROOMS_HOUSES_WEST, CONDITION_ALWAYS,
+     MADRA_TO_MADRA_ROOMS_HOUSES_WEST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_WEST, CONDITION_ALWAYS,
      EVENT(Madra_EnterDoor)},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 21, FLAG_MADRA_KARST_MET, EVENT(Madra_KarstCallsForMenardi)},
+    {TRIGGER_EXIT, MADRA_TO_WORLD_MAP, CONDITION_ALWAYS, MADRA_TO_WORLD_MAP},
+    {TRIGGER_EXIT, MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST, CONDITION_ALWAYS,
+     MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MADRA_PATH_PAST_KARST, FLAG_MADRA_KARST_MET,
+     EVENT(Madra_KarstCallsForMenardi)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_ELDER, CONDITION_ALWAYS,
      MSGNO(MsgMadraIDontThinkMayorEver)},
     {TRIGGER_TALK, ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS, CONDITION_ALWAYS,

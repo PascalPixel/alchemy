@@ -244,7 +244,7 @@ UNUSED void SuhallaGate_OpenCliffsCell(void) {
 /// leader, but here Jenna leads and Isaac is not on stage, so nobody is seen to
 /// go in.
 void SuhallaGate_EnterRockDoor(void) {
-  s32 value = gFieldWork->stepTrigger;
+  s32 exit = gFieldWork->stepTrigger;
 
   Actor_GetById(ACTOR_ISAAC)->motionFlags = 0;
   Event_PlaySound(SE_DOOR_OPEN);
@@ -254,17 +254,17 @@ void SuhallaGate_EnterRockDoor(void) {
   wait(4);
   Actor_CenterAndWalk(ACTOR_ISAAC, 3, -16);
   Event_PlaySound(SE_MAP_EXIT);
-  Import_EventSetExitRequest(value);
+  Import_EventSetExitRequest(exit);
 }
 
 /// Walking out of the cave's far end, cell (41, 39), Jenna and Kraden leave for
 /// Idejima, and Felix becomes the leader again.
 void SuhallaGate_LeaveForIdejima(void) {
-  s32 value = gFieldWork->stepTrigger;
+  s32 exit = gFieldWork->stepTrigger;
 
   gMainRoutineWork.leaderActorId = ACTOR_FELIX;
   Event_PlaySound(SE_MAP_EXIT);
-  Import_EventSetExitRequest(value);
+  Import_EventSetExitRequest(exit);
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
@@ -376,6 +376,7 @@ void SuhallaGate_FightPunchAnt(void) {
   Field_RequestBattleFromEncounterTable(9, 3);
   Event_End();
 }
+
 /// On the way to the Psynergy Stone, cells (31, 26) to (33, 29), a Punch Ant
 /// jumps out from the south-west; Jenna turns to it with a start, and it hops
 /// up to her and attacks.

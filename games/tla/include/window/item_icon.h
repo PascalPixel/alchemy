@@ -1,12 +1,17 @@
 #ifndef ALCHEMY_ITEM_ICON_H
 #define ALCHEMY_ITEM_ICON_H
 
+/// @file
+/// Item and ability icons as window sprites, and the shops' grid of item
+/// icons.
+
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "system/task.h"
 #include "graphics/vram_tab.h"
 
-#define ICON_NONE 96 ///< No resource.
+/// An icon slot that holds no VRAM cache entry.
+#define ICON_NONE VRAM_CACHE_ENTRY_COUNT
 
 /// An icon sprite's OAM attributes, as OAM lays them out.
 struct IconAttr {

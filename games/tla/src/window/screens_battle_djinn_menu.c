@@ -95,13 +95,14 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
-  listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11, 6);
+  listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_Get(member);
 
   for (element = 0; element <= 3; element++) {
-    // The entry cursor is computed through integer casts: as djinnEntries +
-    // djinnCount, 2 of 1246 differ.
+    /* FAKEMATCH(signature): the entry cursor summed as integers; as
+     * djinnEntries + djinnCount. */
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
@@ -113,7 +114,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         u32 v;
         s32 k;
 
-        list = &(Djinn_GetRecoveryTableFar((u32)member > 7 ? 1 : 0))->list;
+        list =
+            &(Djinn_GetRecoveryTableFar((u32)member > ALLY_MAX ? 1 : 0))->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&
@@ -145,9 +147,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
-      // Spelt *&: a byte store that may alias the window it highlights next,
-      // which keeps the work load before the entry index's add.
-      *&work->holdTilemapUpload = 1;
+      work->holdTilemapUpload = 1;
       Window_HighlightRect((s16)listWindow->x + 1,
                            (s16)listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, WINDOW_PALETTE);
@@ -161,7 +161,6 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
       redraw = 0;
       if (djinnCount != 0) {
-        // Default: 0, though the loop below sets it again.
         s32 k = 0;
 
         MessageArgument_ClearAll();

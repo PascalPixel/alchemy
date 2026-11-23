@@ -43,6 +43,7 @@ void EndingImage_LowerTopStrip(s32 enable);
 
 /// The portrait frame's VRAM cache entry.
 s32 gEpiloguePortraitFrameEntry BSS_DATA ALIGNED(16);
+/// Unused: 268 bytes after the frame's entry that the epilogue never touches.
 u8 gEpilogue_UnusedAfterPortraitFrameEntry[268] BSS_DATA;
 /// The frame drawn round each portrait, a sprite under the portrait.
 struct EffectSprite gEpiloguePortraitFrame BSS_DATA;
@@ -139,12 +140,15 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
 /// and set an option bit that Message_OpenWindow never reads.
 #define EPILOGUE_WINDOW_OPTIONS 4
 
+/// Epilogue_ShowLineAt's mode for a line of seven or eight rows at the foot of
+/// the screen: its window is moved a row down and given no size of its own.
+#define EPILOGUE_TALL_LINE_AT_FOOT 2
+
 /// Opens the epilogue's message window at tile (x, y) and, unless the speaker
 /// has EPILOGUE_NO_PORTRAIT, the speaker's portrait at tile (portraitX,
-/// portraitY) with its frame round it; in mode 2, which Epilogue_ShowLine
-/// takes for a line of seven or eight rows at the foot, it moves the message
-/// window a row down and sets its size to nothing. Then it waits for the text,
-/// closes both windows and waits the given frames.
+/// portraitY) with its frame round it, the window lowered in mode
+/// EPILOGUE_TALL_LINE_AT_FOOT. Then it waits for the text, closes both windows
+/// and waits the given frames.
 void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 portraitX,
                          s32 portraitY, s32 frames, s32 mode) {
   s32 noPortrait;
@@ -163,7 +167,7 @@ void Epilogue_ShowLineAt(s32 speaker, s32 x, s32 y, s32 portraitX,
     gEpiloguePortraitX = portraitX << 3;
     gEpiloguePortraitY = portraitY << 3;
   }
-  if (mode == 2) {
+  if (mode == EPILOGUE_TALL_LINE_AT_FOOT) {
     window->y++;
     window->width = 0;
     window->height = 0;
@@ -238,7 +242,7 @@ void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
     if (half == 3) {
       y = 13;
       portraitY = 15;
-      mode = 2;
+      mode = EPILOGUE_TALL_LINE_AT_FOOT;
     } else {
       y = 16;
       portraitY = 15;

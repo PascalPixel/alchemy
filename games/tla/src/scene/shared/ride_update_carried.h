@@ -22,7 +22,7 @@ void Flame_UpdateForward(struct Actor *flame) {
   flame->scaleY += flame->acceleration;
   ((struct FieldSprite *)flame->sprite)->rotation += flame->timer;
   if (actor->y.fixed == actor->groundHeight && Actor_IsTouching(flame, actor) &&
-      gMainRoutineWork.movementMode == 0) {
+      gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     if (flame->riseBaseY != 0) {
       work->direction.x = 0;
       if (flame->riseBaseY > 0)

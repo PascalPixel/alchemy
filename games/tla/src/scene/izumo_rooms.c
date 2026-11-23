@@ -64,7 +64,10 @@ extern struct Trigger gIzumoRooms_TriggersOnceTheSerpentIsSlain[];
 
 void Inn_CheckIn(s32 slot, s32 actor);
 
-void IzumoRooms_RecognizeTheHeroes(s32 mode);
+/// The side of the hall of Susa's house Felix came up for the heroes' welcome.
+enum { HEROES_FROM_THE_EAST, HEROES_FROM_THE_WEST };
+
+void IzumoRooms_RecognizeTheHeroes(s32 side);
 
 void IzumoRooms_ShowMove(void);
 extern s32 gIzumoRooms_FirstDancerScript[];
@@ -179,6 +182,12 @@ void IzumoRooms_TalkToPriest(s32 actor) {
     Event_End();
   }
 }
+
+/// The fifth animation of these villagers' sprites, as Kushinada's room and
+/// Susa's house show them before the Serpent is slain: Kushinada kneeling on
+/// her seat, the women in red dancing with their arms out, and the old men
+/// beating the drums.
+enum { ANIM_KNEEL = 5, ANIM_DANCE = 5, ANIM_BEAT_DRUM = 5 };
 
 /// Izumo's inn, as Inn_CheckIn numbers the inns.
 enum { IZUMO_INN = 9 };
@@ -405,7 +414,7 @@ s32 IzumoRooms_KushinadaAsksSusaNotToCome(void) {
 /// Lady Uzume and Kushinada hearing that warriors came out of the mountain,
 /// and the welcome of the heroes begins.
 void IzumoRooms_HeroesComeFromTheEast(void) {
-  IzumoRooms_RecognizeTheHeroes(0);
+  IzumoRooms_RecognizeTheHeroes(HEROES_FROM_THE_EAST);
 }
 
 /// The first time the party comes into Susa's house after the Serpent is
@@ -413,7 +422,7 @@ void IzumoRooms_HeroesComeFromTheEast(void) {
 /// Lady Uzume and Kushinada hearing that warriors came out of the mountain,
 /// and the welcome of the heroes begins.
 void IzumoRooms_HeroesComeFromTheWest(void) {
-  IzumoRooms_RecognizeTheHeroes(1);
+  IzumoRooms_RecognizeTheHeroes(HEROES_FROM_THE_WEST);
 }
 
 /// Susa's answers to Sheba's "Don't forget, Susa dealt the finishing blow,
@@ -426,6 +435,18 @@ enum FinishingBlowMessage {
   SUSA_HARDLY_A_FINISHING_BLOW = 11
 };
 
+/// The party's answers to Kraden's "Even Felix agrees, don't you, Felix?",
+/// from MsgIDisagree on.
+enum SusasRewardMessage {
+  /// Yes: "I do, too.", "We weren't fighting in hopes of getting a reward, were
+  /// we?", "We'll be satisfied just learning your Psynergy."
+  PARTY_WANTS_NO_REWARD = 4,
+  /// No: "Are you asking for a reward? That's just plain greedy!", "We
+  /// couldn't possibly take any sort of reward.", "Learning new Psynergy will
+  /// be reward enough."
+  PARTY_CALLS_FELIX_GREEDY = 7
+};
+
 /// The heroes' welcome in Susa's house. A villager tells Lady Uzume and
 /// Kushinada that warriors came out of the mountain after the Serpent's roar;
 /// Lady Uzume orders the strangers out of her home until the villager knows
@@ -436,17 +457,16 @@ enum FinishingBlowMessage {
 /// Susa dealt the finishing blow, and whether Susa deserves the reward. The
 /// party say they must leave for Lemuria and vow to return.
 ///
-/// Mode 0 (IzumoRooms_HeroesComeFromTheEast) and mode 1
-/// (IzumoRooms_HeroesComeFromTheWest) walk the party, Lady Uzume, the villager
-/// and Susa on the side of the hall Felix came up.
-void IzumoRooms_RecognizeTheHeroes(s32 mode) {
-  struct Actor *person, *leader;
+/// The party, Lady Uzume, the villager and Susa walk on the side of the hall
+/// Felix came up.
+void IzumoRooms_RecognizeTheHeroes(s32 side) {
+  struct Actor *leader;
   s32 answer, message;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(143, CAMERA_KEEP, 560, 1);
-  if (mode == 0) {
+  if (side == HEROES_FROM_THE_EAST) {
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 184, 568);
   } else {
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 104, 568);
@@ -497,7 +517,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   FieldActor_WaitForMoveById(ACTOR_UZUME);
   FieldEvent_Wait(15);
   Actor_ShowEmote(ACTOR_UZUME, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  if (mode == 0) {
+  if (side == HEROES_FROM_THE_EAST) {
     Actor_WalkToAndWait(ACTOR_UZUME, 168, 536);
   } else {
     Actor_WalkToAndWait(ACTOR_UZUME, 120, 536);
@@ -541,13 +561,13 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Actor_FaceDirection(ACTOR_SAVED_KUSHINADA, FACING_SOUTH, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
-  if (mode == 0) {
+  if (side == HEROES_FROM_THE_EAST) {
     Actor_WalkTo(ACTOR_WITNESS, 104, 568);
   } else {
     Actor_WalkTo(ACTOR_WITNESS, 184, 568);
   }
   FieldActor_WaitForMoveById(ACTOR_WITNESS);
-  if (mode == 0) {
+  if (side == HEROES_FROM_THE_EAST) {
     Actor_FaceDirection(ACTOR_WITNESS, FACING_EAST, 0);
   } else {
     Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
@@ -732,7 +752,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Actor_SetSpeed(ACTOR_SUSA, 0.6);
   Actor_GetById(ACTOR_SUSA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkTo(ACTOR_SUSA, 144, 648);
-  if (mode == 0) {
+  if (side == HEROES_FROM_THE_EAST) {
     Actor_WalkToAndWait(ACTOR_SUSA, 88, 648);
     Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_SUSA, 0);
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
@@ -839,13 +859,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
     Actor_WalkToAndWait(ACTOR_WITNESS, 200, 648);
     Actor_SetPosition(ACTOR_WITNESS, 0, 0);
   }
-  person = Actor_GetById(ACTOR_SUSA);
-  {
-    u8 *priority = &person->priorityFlags;
-    s32 flags = *priority | 1;
-
-    *priority = flags;
-  }
+  Actor_GetById(ACTOR_SUSA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1074,7 +1088,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Event_OpenMessage(ACTOR_KRADEN, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
   if (answer == 0) {
-    Event_SetMessageId(message + 4);
+    Event_SetMessageId(message + PARTY_WANTS_NO_REWARD);
     Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
     Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1086,7 +1100,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
     // "We'll be satisfied just learning your Psynergy."
     Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   } else {
-    Event_SetMessageId(message + 7);
+    Event_SetMessageId(message + PARTY_CALLS_FELIX_GREEDY);
     Actor_SetAnimationById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
@@ -1170,14 +1184,14 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Event_Wait(30);
   // "I understand... We must vow to return, everyone."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 7, 0);
+  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_PIERS, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   Actor_TurnToFaceEachOther(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(15);
-  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 5, 0);
+  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_JENNA, 0);
   Actor_TurnToFaceEachOther(ACTOR_PIERS, ACTOR_SHEBA, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1373,7 +1387,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTHWEST &&
       !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
-    Actor_SetAnimation(ACTOR_KUSHINADA, 5);
+    Actor_SetAnimation(ACTOR_KUSHINADA, ANIM_KNEEL);
     Actor_SetAttachedEffect(ACTOR_KUSHINADA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   }
@@ -1381,10 +1395,10 @@ s32 Scene_Initialize(void) {
       !GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     struct Actor *actor;
 
-    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_FIRST_DANCER, 5);
-    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_SECOND_DANCER, 5);
-    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_WEST_VILLAGER, 5);
-    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_EAST_VILLAGER, 5);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_FIRST_DANCER, ANIM_DANCE);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_SECOND_DANCER, ANIM_DANCE);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_WEST_VILLAGER, ANIM_BEAT_DRUM);
+    Actor_SetAnimation(ACTOR_SUSAS_HOUSE_EAST_VILLAGER, ANIM_BEAT_DRUM);
     actor = Actor_GetById(ACTOR_SUSAS_HOUSE_WEST_VILLAGER);
     actor->scaleX = -Actor_GetById(ACTOR_SUSAS_HOUSE_WEST_VILLAGER)->scaleX;
   }

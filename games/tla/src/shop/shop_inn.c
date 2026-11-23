@@ -10,11 +10,11 @@
 /// The innkeeper's lines, in message order from MsgInnWelcome ("Welcome to our
 /// inn.").
 enum InnMessageId {
-  INN_MESSAGE_WELCOME,
-  INN_MESSAGE_STAY_COMPLETE,
-  INN_MESSAGE_NOT_ENOUGH_COINS,
-  INN_MESSAGE_GOODBYE,
-  INN_MESSAGE_REST_COMPLETE,
+  INN_MESSAGE_WELCOME,          ///< "Welcome to our inn."
+  INN_MESSAGE_ENJOY_STAY,       ///< "Please enjoy your stay."
+  INN_MESSAGE_NOT_ENOUGH_COINS, ///< "I'm afraid you don't have enough."
+  INN_MESSAGE_COME_AGAIN,       ///< "Please come again."
+  INN_MESSAGE_SLEPT_WELL,       ///< "I hope you slept well."
 };
 
 /// Returns the night's price: the inn's price per guest times the party
@@ -36,8 +36,7 @@ s32 Inn_RoomPrice(s32 innId) {
 }
 
 /// Returns the night's price at inn `innId` with the shop's work opened for
-/// it, for an event to quote before checking in. Called through the far-call
-/// table.
+/// it, for an event to quote before checking in.
 s32 Inn_QuoteRoomPrice(s32 innId) {
   struct ShopWork *shop;
 
@@ -77,14 +76,14 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
   Shop_DrawMoney();
 
   if (Shop_AskYesNo(0) != 0) {
-    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_GOODBYE);
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_COME_AGAIN);
     Window_CloseFar(shop->moneyWindow, 2);
   } else if ((u32)roomPrice > gMainRoutineWork.coins) {
     Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_NOT_ENOUGH_COINS);
     Window_CloseFar(shop->moneyWindow, 2);
   } else {
     Window_CloseFar(shop->moneyWindow, 2);
-    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_STAY_COMPLETE);
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_ENJOY_STAY);
     Window_CloseFar(innkeeperWindow, 2);
     Inn_PlaySleep(roomPrice);
 
@@ -92,7 +91,7 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
     shop->keeperGraphics =
         ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);
-    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_REST_COMPLETE);
+    Shop_ShowKeeperMessage(messageBase + INN_MESSAGE_SLEPT_WELL);
   }
 
   Window_CloseFar(innkeeperWindow, 2);
@@ -110,7 +109,6 @@ void Inn_PlaySleep(s32 roomPrice) {
   struct FieldWork *work;
 
   memberCount = Party_ListMembersFar(partyMemberIds);
-  // Charge once and restore only party members who are alive.
   Party_AdjustCoinsFar(-roomPrice);
 
   for (memberIndex = 0; memberIndex < memberCount; memberIndex++) {

@@ -8,7 +8,7 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-/// The party status window's column a party member, in tiles.
+/// The party status window's column for each party member, in tiles.
 #define PARTY_STATUS_COLUMN_WIDTH 6
 #define PARTY_STATUS_DJINN_WIDTH 5 ///< the Djinn column, in battle
 
@@ -63,7 +63,8 @@ void PartyStatus_CreateWindow(s32 flags) {
   work->holdTilemapUpload = 1;
   PartyStatus_BuildLayoutBounds(flags);
   window->window = (struct Window *)Window_Create(
-      window->x, window->y, window->width, window->height, 6);
+      window->x, window->y, window->width, window->height,
+      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   PartyStatus_Draw(flags);
   work->holdTilemapUpload = 0;
 }
@@ -158,6 +159,13 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 #define PARTY_STATUS_BAR_LENGTH 40
 #define BAR_TILE_COLOR 14
 #define BAR_TILE_SHADOW_COLOR 1
+/// The colours the filled part of a bar and the rest of it are drawn in, each
+/// over its shadow: on the field, the basic sprite colours copied into
+/// HIGHLIGHT_PALETTE.
+#define BAR_FILLED_COLOR 8
+#define BAR_FILLED_SHADOW_COLOR 13
+#define BAR_EMPTY_COLOR 2
+#define BAR_EMPTY_SHADOW_COLOR 12
 /// A 4bpp tile row: eight pixels of four bits, one word.
 #define TILE_ROW_BITS 32
 
@@ -188,12 +196,12 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   for (i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
     tile = work->tilemap[0][y * BG_SCREEN_WIDTH + x];
-    bar = PIXELS_4BPP(2);
-    shadow = PIXELS_4BPP(12);
+    bar = PIXELS_4BPP(BAR_EMPTY_COLOR);
+    shadow = PIXELS_4BPP(BAR_EMPTY_SHADOW_COLOR);
     tile &= TILE_NUMBER_MASK;
     if (length > 7) {
-      bar = PIXELS_4BPP(8);
-      shadow = PIXELS_4BPP(13);
+      bar = PIXELS_4BPP(BAR_FILLED_COLOR);
+      shadow = PIXELS_4BPP(BAR_FILLED_SHADOW_COLOR);
       // UB: at a length of zero the shift below is by 32, which the GBA
       // takes as zero.
 #ifdef UBFIX
@@ -202,9 +210,10 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     } else if (length >= 0) {
 #endif
       bar <<= length * 4;
-      bar |= PIXELS_4BPP(8) >> (TILE_ROW_BITS - length * 4);
+      bar |= PIXELS_4BPP(BAR_FILLED_COLOR) >> (TILE_ROW_BITS - length * 4);
       shadow <<= length * 4;
-      shadow |= PIXELS_4BPP(13) >> (TILE_ROW_BITS - length * 4);
+      shadow |=
+          PIXELS_4BPP(BAR_FILLED_SHADOW_COLOR) >> (TILE_ROW_BITS - length * 4);
     }
     for (row = 0; row <= (fullLength != 0 ? 2 : 0); row++) {
       pixels = *TILE_ROW_FROM_BOTTOM(tile, row);
@@ -380,6 +389,10 @@ void PartyStatus_Close(void) {
 #undef PARTY_STATUS_BAR_LENGTH
 #undef BAR_TILE_COLOR
 #undef BAR_TILE_SHADOW_COLOR
+#undef BAR_FILLED_COLOR
+#undef BAR_FILLED_SHADOW_COLOR
+#undef BAR_EMPTY_COLOR
+#undef BAR_EMPTY_SHADOW_COLOR
 #undef TILE_ROW_BITS
 #undef PARTY_STATUS_DJINN_WIDTH
 #undef PARTY_STATUS_COLUMN_WIDTH

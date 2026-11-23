@@ -5,6 +5,14 @@
 /// it, a palette cycle, as Teleport is cast and as the party arrives on a
 /// circle.
 
+/// Teleport's steps (gMainRoutineWork.teleportState), as the field sequence
+/// names them: a place was chosen, then the party arrives in its scene.
+enum TeleportState {
+  TELEPORT_NONE,
+  TELEPORT_CHOSEN,
+  TELEPORT_ARRIVING,
+};
+
 /// Writes each listed background colour from its red, green and blue, keeps
 /// the lists for the shimmer, and saves the palettes as the fade's
 /// source; arriving by Teleport, the party then arrives on the circle.
@@ -31,7 +39,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *cycleColors,
       DMA_COPY_WORDS((ARRAY_COUNT(fade->palette) - PALETTE_FADE_BG_COLORS) / 2),
       REG_DMA3);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  if (gMainRoutineWork.teleportState == 2)
+  if (gMainRoutineWork.teleportState == TELEPORT_ARRIVING)
     Teleport_ArriveWhirling();
 }
 
@@ -88,7 +96,7 @@ void Teleport_ArriveWhirling(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->teleportState = 0;
+    party->teleportState = TELEPORT_NONE;
   }
   work->transition = saved;
 }

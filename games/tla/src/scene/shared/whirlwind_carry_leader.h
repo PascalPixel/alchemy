@@ -27,8 +27,9 @@ void Whirlwind_CarryLeader(void) {
     if (rise < toFIXED(4))
       rise += toFIXED(0.1);
     actor->facing = (u8)gFrameCount * FACING_STEP;
+    // As he spins he is drawn now under the wind, now over it.
     p = &actor->priorityFlags;
-    *p ^= 2 << (gFrameCount & 1);
+    *p ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
     wait(1);
   }
   work->glow = 1;

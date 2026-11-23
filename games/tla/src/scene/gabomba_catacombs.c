@@ -21,9 +21,6 @@
 /// (GabombaCatacombs_GabombaBestowsPower).
 
 #include "flags.h"
-/// Set once the Great Gabomba has given the party its power, the
-/// Tomegathericon (GabombaCatacombs_GabombaBestowsPower).
-#define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 #include "djinn_ids.h"
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
@@ -51,6 +48,10 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "field/event_commands.h"
+
+/// Set once the Great Gabomba has given the party its power, the
+/// Tomegathericon (GabombaCatacombs_GabombaBestowsPower).
+#define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 
 void Actor_StartScript(struct Actor *actor, const void *script);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
@@ -449,7 +450,7 @@ void GabombaCatacombs_FreezeFirstPuddle(void) {
 /// takes the attributes of cell (0, 4), plain ground 48 pixels up, 16 above the
 /// ring's floor. The ring's six cells, (6, 15), (8, 15), (9, 16), (8, 17),
 /// (6, 17) and (5, 16), lie on that floor and not over a gap, so its pillars
-/// bridge nothing; the walkthrough passes them by.
+/// bridge nothing.
 void GabombaCatacombs_FreezeSecondPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SECOND_PUDDLE);
 
@@ -624,7 +625,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_SetMessageId((s32)MsgByReachingThis);
   TALK();
   Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
-  treasure->motionFlags = 6;
+  treasure->motionFlags = ACTOR_FALLS | ACTOR_FLOATS;
   treasure->groundHeight += toFIXED(16);
   Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(SPRITE_FIREBALL, 0, 0, 0));
@@ -704,8 +705,9 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   GameFlag_Set(FLAG_GABOMBA_BESTOWED_POWER);
+  // The cave's music and its light come back.
   Scene_PlayMusic();
-  PaletteFade_ApplyTarget(speed, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   FieldCamera_MoveToActorById(gMainRoutineWork.leaderActorId, 1);
   Event_Wait(60);
@@ -772,8 +774,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 #endif
 
 extern char SceneId_GabombaStatuePinion, SceneId_GabombaStatueChamberIdol;
-void FieldEffect_StartBlankOverlay(s32 a);
+void FieldEffect_StartBlankOverlay(s32 mode);
 
+/// Sets up the room the party comes into: coming down the ladder into the first
+/// cave, where a retreat leads back to in the statue above; landing from a
+/// teleport stone beside Mud, in a ring of light; the puddles frozen into
+/// pillars on this visit; and the Tomegathericon on the idol's lap until it is
+/// taken.
 s32 Scene_Initialize(void) {
   s32 entrance;
   struct Actor *treasure;
@@ -781,18 +788,21 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS &&
-      (entrance = gMainRoutineWork.entrance) == 1) {
+      (entrance = gMainRoutineWork.entrance) ==
+          GABOMBA_CATACOMBS_TELEPORTERS_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR) {
     if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_PINION)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_IDOL)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
-      gMainRoutineWork.retreatEntrance = 3;
+      gMainRoutineWork.retreatEntrance =
+          GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS;
     }
   }
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD &&
-      gMainRoutineWork.entrance > 2)
+      gMainRoutineWork.entrance >
+          GABOMBA_CATACOMBS_MUD_FROM_GABOMBA_CATACOMBS_HIDDEN_WALL)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL) {
     if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN))
@@ -819,7 +829,7 @@ s32 Scene_Initialize(void) {
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     treasure = Actor_GetById(FIELD_TREASURE_ACTOR);
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
-    treasure->motionFlags = 6;
+    treasure->motionFlags = ACTOR_FALLS | ACTOR_FLOATS;
     treasure->groundHeight += toFIXED(16);
   }
   return 0;

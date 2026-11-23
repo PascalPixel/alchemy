@@ -12,6 +12,7 @@
 /// FLAG_ALHAFRA_MAST_CLEARED).
 
 #include "system/main_routine_work.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -42,6 +43,11 @@
 #define FLAG_GUESTS_ASKED_FOR_TEA 0x8b1
 #define FLAG_HOST_TOLD_OF_REPAIRS 0x8b8
 
+/// Set, once the mast is cleared, when Felix comes into the rooms east of
+/// x 512 on the map; only then are the sailors of the Crossbone Isle tale
+/// placed.
+#define FLAG_ENTERED_IN_THE_EAST FLAG_SCENE_TEMP_00
+
 struct EffectSprite gAlhafraRooms_SecondGuestSprite BSS_DATA ALIGNED(16);
 struct EffectSprite gAlhafraRooms_FirstGuestSprite BSS_DATA ALIGNED(16);
 
@@ -56,8 +62,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-
-// ---- this overlay
 
 /// Alhafra's houses' people, numbering the rows of all three placement tables:
 /// the same row is the same person in each, put out of sight (-56, -56) while
@@ -381,15 +385,16 @@ s32 AlhafraRooms_DrawSecondGuestSprite(struct Actor *guest) {
   return 0;
 }
 
-// The Japanese edition sets no FLAG_SCENE_TEMP_00 by the leader's position and
-// places neither sailor of the Crossbone Isle tale.
+// The Japanese edition sets no FLAG_ENTERED_IN_THE_EAST by the leader's
+// position and places neither sailor of the Crossbone Isle tale.
 #if TLA_PATCH_1
 void FadeOverlay_FillTiles(s32 mode);
 
 /// Sets up the houses: the old couple's second sprites, and once the mast is
 /// cleared the two sailors in Alex's room.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   FieldActor_SetSpritePriority(ACTOR_PRIEST, 3);
@@ -407,10 +412,10 @@ s32 Scene_Initialize(void) {
       AlhafraRooms_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed >= toFIXED(512))
-      Event_SetFlag(FLAG_SCENE_TEMP_00);
+      Event_SetFlag(FLAG_ENTERED_IN_THE_EAST);
     else
-      Event_ClearFlag(FLAG_SCENE_TEMP_00);
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00) &&
+      Event_ClearFlag(FLAG_ENTERED_IN_THE_EAST);
+    if (Event_GetFlag(FLAG_ENTERED_IN_THE_EAST) &&
         Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) &&
         !Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
       Actor_SetPosition(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 376, 316);
@@ -435,7 +440,8 @@ void FadeOverlay_FillTiles(s32 mode);
 
 /// Sets up the houses and the old couple's second sprites.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   FieldActor_SetSpritePriority(ACTOR_PRIEST, 3);
@@ -482,13 +488,14 @@ extern u32 gAlhafraRooms_TravelersWalkOffScript[];
 ///
 /// It runs while FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set and sets
 /// FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE; outside the Japanese edition, only
-/// when Felix came in from the east of the map (FLAG_SCENE_TEMP_00).
+/// when Felix came in from the east of the map (FLAG_ENTERED_IN_THE_EAST).
 void AlhafraRooms_OverhearCrossboneIsleTale(void) {
 
   if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
   } else {
-#if TLA_PATCH_1 /* The Japanese edition does not check FLAG_SCENE_TEMP_00. */
-    if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+#if TLA_PATCH_1 /* The Japanese edition does not check                         \
+                   FLAG_ENTERED_IN_THE_EAST. */
+    if (!Event_GetFlag(FLAG_ENTERED_IN_THE_EAST)) {
     } else
 #endif
     {

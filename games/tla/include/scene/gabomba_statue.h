@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_GABOMBA_STATUE_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// Gabomba Statue's events, scripts and the routines of its clock, cogs,
+/// ladders and channel puzzle, and Actor_SetCellOpen and Actors_SetDrawn,
+/// which other scenes keep a copy of.
 
 #include "types.h"
 #include "resource_ids.h"
@@ -84,8 +86,8 @@ void GabombaStatue_InitializeArrows(void);
 void GabombaStatue_InitializePinion(void);
 void GabombaStatue_StartClock();
 void GabombaStatue_ResetClock();
-s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c,
-                          s32 d);
+s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
+                          s32 direction, s32 last, s32 bit);
 void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state);
 s32 abs(s32);
 s32 GabombaStatue_PickPiece(s32 row, s32 column, s32 direction);
@@ -112,9 +114,10 @@ extern u32 gGabombaStatue_CogShapes[];
 
 /// Coils a rope at its first post (Rope_Coil, through the overlay's own import
 /// row).
-void GabombaStatue_CoilRope(s32 index, s32 a, s32 b);
+void GabombaStatue_CoilRope(s32 index, s32 firstPost, s32 secondPost);
 /// Places a rope between its posts, tied when its flag is set, else coiled
 /// (Rope_Place, through the overlay's own import row).
-void GabombaStatue_PlaceRope(s32 index, s32 flag, s32 a, s32 b);
+void GabombaStatue_PlaceRope(s32 index, s32 flag, s32 firstPost,
+                             s32 secondPost);
 
 #endif

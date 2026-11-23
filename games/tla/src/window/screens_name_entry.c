@@ -58,13 +58,14 @@ s32 NameEntry_CountLetters(const u8 *name) {
   return count;
 }
 #else
-/// Unused: the Japanese edition's mark test (NameEntry_AcceptsMark there),
-/// which accepts every letter where no letter takes a mark.
-UNUSED s32 Window_ReturnOne(void) { return 1; }
+/// Unused: NameEntry_AcceptsMark's place in the editions whose letters take no
+/// marks, which accepts every letter.
+UNUSED s32 NameEntry_AcceptsAnyLetter(void) { return 1; }
 #endif
 
-/// Decompresses the type-01 tilemap resource and copies it over window's
-/// rectangle, into the BG map in VRAM and the window work's mirror of it.
+/// Decompresses a tilemap, such as the name entry's keyboard, and copies it
+/// over the window's rectangle, into the BG map in VRAM and the window work's
+/// copy of it.
 void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *buffer = Heap_AllocEwram(768);
@@ -121,9 +122,9 @@ void Resource_CopyFixedBlockA(s32 slot) {
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-/// Puts the string `str` into the UI's text entries and returns its width in
-/// pixels.
-s32 Text_SetString(const u8 *str) {
+/// Returns the width of the string `str` in pixels, measured as decoded text
+/// (it is copied into the window work's text buffer).
+s32 Text_MeasureString(const u8 *str) {
   struct WindowWork *work;
   u16 *dst;
   s32 count;
@@ -181,6 +182,8 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 #define NAME_MAX_BYTES 14
 #define NAME_MAX_LETTERS 5
 #define NAME_COMMAND_COLUMN 18
+/// The last column of letters, before the gap and the commands.
+#define NAME_LAST_LETTER_COLUMN (NAME_COMMAND_COLUMN - 2)
 /// The empty columns between the keyboard's groups of letters.
 #define NAME_IS_GAP_COLUMN(column)                                             \
   ((column) == 5 || (column) == 11 || (column) == 17)
@@ -285,7 +288,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   nameWindow = Window_Create(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(member, 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
-  Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
+  Window_DrawDividerLine(keyboardWindow, NAME_COMMAND_COLUMN, 0,
+                         NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
   render->dirty = textDirty;
   text[0] = result;
   {
@@ -415,7 +419,7 @@ s32 NameEntry_EditMemberName(s32 member) {
             keyRow == NAME_FINISH_ROW)
           keyColumn = NAME_COMMAND_COLUMN;
         else
-          keyColumn = 16;
+          keyColumn = NAME_LAST_LETTER_COLUMN;
       } else if (NAME_IS_GAP_COLUMN(keyColumn)) {
         keyColumn--;
       }
@@ -424,7 +428,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
-      if (keyColumn == 19)
+      if (keyColumn == NAME_COMMAND_COLUMN + 1)
         keyColumn = 0;
       else if (NAME_IS_GAP_COLUMN(keyColumn))
         keyColumn++;
@@ -451,7 +455,8 @@ s32 NameEntry_EditMemberName(s32 member) {
                                  gNameEntry_AlternateKeyboardTilemap);
       else
         Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
-      Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
+      Window_DrawDividerLine(keyboardWindow, NAME_COMMAND_COLUMN, 0,
+                             NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
       render->dirty = 1;
       continue;
     }
@@ -545,6 +550,9 @@ s32 NameEntry_EditMemberName(s32 member) {
   return result;
 }
 #else
+/// The name entry screen for party member `member`: the player types a name of
+/// up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or Start,
+/// which jumps there). B with no letters left cancels and returns -1.
 s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;
@@ -577,7 +585,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
   Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
-  Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
+  Window_DrawDividerLine(keyboardWindow, NAME_COMMAND_COLUMN, 0,
+                         NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
   render->dirty = textDirty;
   text[0] = result;
   {
@@ -621,7 +630,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     output->depth = OAM_DEPTH_FRONT;
     output->sprite.oam.priority = 0;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
-                                       Text_SetString(editedName) + 70, 22);
+                                       Text_MeasureString(editedName) + 70, 22);
   }
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
@@ -649,8 +658,8 @@ s32 NameEntry_EditMemberName(s32 member) {
     }
     if (textDirty) {
       textDirty = 0;
-      MenuCursor_SetFar(&nameCaret.cursor, Text_SetString(editedName) + 70, 22,
-                        3);
+      MenuCursor_SetFar(&nameCaret.cursor, Text_MeasureString(editedName) + 70,
+                        22, 3);
     }
     MenuCursor_AdvanceFar(keyMotion);
     MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
@@ -693,7 +702,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         if (keyRow >= NAME_REMOVE_ROW && keyRow <= NAME_FINISH_ROW)
           keyColumn = NAME_COMMAND_COLUMN;
         else
-          keyColumn = 16;
+          keyColumn = NAME_LAST_LETTER_COLUMN;
       } else if (NAME_IS_GAP_COLUMN(keyColumn)) {
         keyColumn--;
       }
@@ -702,7 +711,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
-      if (keyColumn == 19)
+      if (keyColumn == NAME_COMMAND_COLUMN + 1)
         keyColumn = 0;
       else if (NAME_IS_GAP_COLUMN(keyColumn))
         keyColumn++;
@@ -787,6 +796,7 @@ s32 NameEntry_EditMemberName(s32 member) {
 #undef NAME_MAX_BYTES
 #undef NAME_MAX_LETTERS
 #undef NAME_COMMAND_COLUMN
+#undef NAME_LAST_LETTER_COLUMN
 #undef NAME_IS_GAP_COLUMN
 #undef NAME_KEYBOARD_HEIGHT
 #undef NAME_DIVIDER_BOTTOM

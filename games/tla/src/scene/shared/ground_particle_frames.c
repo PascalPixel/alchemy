@@ -1,6 +1,6 @@
 /// @file
-/// The frames of the sparkles GroundParticles_Draw moves, which the Apojii
-/// Islands and Aqua Rock keep a copy of.
+/// The frames of the drops of rain GroundParticles_Draw moves about a doused
+/// stone, which the Apojii Islands and Aqua Rock keep a copy of.
 ///
 /// An includer whose overlay places the table after its pictures defines
 /// GROUND_PARTICLE_FRAMES_SECTION as LATE_DATA first.
@@ -9,7 +9,10 @@
 #define GROUND_PARTICLE_FRAMES_SECTION
 #endif
 
-/// The sparkles' frames, read by GroundParticles_Draw.
+/// A drop's frames, five halfwords each, played from the last to the first: its
+/// offset from where it lands, x and y in pixels, its first tile, its OAM
+/// shape and its size. Nine frames of a streak falling slantwise down to the
+/// ground, 8 pixels across and 16 down a frame, then seven of its splash.
 GROUND_PARTICLE_FRAMES_SECTION s16 gGroundParticleFrames[] = {
     -8,   -12,  20,   0,   1,   -8,   -12,  20,  0,   1,   -8,   -12, 20,   0,
     1,    -8,   -12,  16,  0,   1,    -8,   -12, 16,  0,   1,    -8,  -12,  12,

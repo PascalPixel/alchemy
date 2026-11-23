@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_DEHKAN_PLATEAU_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// Dehkan Plateau's tables and events, and routines several scenes keep a
+/// copy of and declare from here (Pound_SinkTarget, Actor_SetCellOpen,
+/// FieldEffect_Spawn).
 
 #include "types.h"
 
@@ -29,7 +31,7 @@ void Dust_Scatter(s32 spread);
 
 void Dust_Burst(void);
 
-void Leader_SetCellShapeAt(s32 a, s32 b);
+void Leader_SetCellShapeAt(s32 level, s32 layer);
 
 extern u16 gDehkanPlateau_FullMetalVestChestHolePictures[];
 extern u16 gDehkanPlateau_ThemisAxeChestHolePictures[];
@@ -82,7 +84,6 @@ void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
 
 void DehkanPlateau_HideFullMetalVestChestBlocks(void);
 
-struct Actor;
 struct EffectOptions;
 
 void DehkanPlateau_EnterLowerPath(void);

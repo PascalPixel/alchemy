@@ -2,7 +2,8 @@
 #define ALCHEMY_SCENE_LEMURIAN_SHIP_H
 
 /// @file
-/// What games/tla/src/scene/ declares for the files that use it, written once.
+/// The Lemurian Ship's rooms: their tables, doors and set-ups, and the pillar
+/// Lift raises.
 
 #include "types.h"
 #include "scene/scene.h"

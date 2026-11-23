@@ -1,5 +1,9 @@
-#ifndef TLA_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
-#define TLA_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
+/// @file
+/// What the Mars Lighthouse rooms with flame throwers share: the flag bytes of
+/// the crack the leader falls through, and the calls they make through
+/// wrappers of their own.
+#ifndef ALCHEMY_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
+#define ALCHEMY_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 
 #include "fixed_math.h"
 #include "types.h"
@@ -26,14 +30,15 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void ObjectTable_Snapshot(void);
 FIXED Trig_Cos(s32 angle);
 
-static inline void Map_CopyCellAttributeRect_(s32 a0, s32 a1, s32 a2, s32 a3,
-                                              s32 a4, s32 a5) {
-  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
+static inline void Map_CopyCellAttributeRect_(s32 srcX, s32 srcY, s32 width,
+                                              s32 height, s32 dstX, s32 dstY) {
+  Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
 
-static inline void MapGrid_CopyCellPictureCellsRect_(s32 a0, s32 a1, s32 a2,
-                                                     s32 a3, s32 a4, s32 a5) {
-  MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
+static inline void MapGrid_CopyCellPictureCellsRect_(s32 srcX, s32 srcY,
+                                                     s32 width, s32 height,
+                                                     s32 dstX, s32 dstY) {
+  MapGrid_CopyCellPictureCellsRect(srcX, srcY, width, height, dstX, dstY);
 }
 
 static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, FIXED x,
@@ -46,8 +51,8 @@ static inline struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y, s32 z) {
 }
 
 static inline void FieldCamera_MoveWithinMapBounds_(FIXED x, FIXED y, FIXED z,
-                                                    s32 use_setter) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
+                                                    s32 mode) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 #endif

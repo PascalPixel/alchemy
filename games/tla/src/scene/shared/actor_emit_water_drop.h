@@ -1,4 +1,6 @@
-/// A drop falls from an actor every sixteenth frame.
+/// Every sixteenth frame a splash ring (SPRITE_SPLASH_RING's animation 2)
+/// starts 7.5 pixels down at the actor and rises a quarter of a pixel a frame
+/// for 31 frames (gWaterDropScript).
 void Actor_EmitWaterDrop(struct Actor *actor) {
   s32 phase = gFrameCount & 15;
 

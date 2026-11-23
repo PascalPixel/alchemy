@@ -104,7 +104,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                                     WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
+  window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1,
+                         WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y;

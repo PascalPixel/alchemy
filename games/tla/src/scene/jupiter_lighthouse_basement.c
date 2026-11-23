@@ -11,6 +11,7 @@
 /// grounds. Its side room (SceneId_JupiterLighthouseBasementPsynergyStone)
 /// holds a Psynergy Stone, and sixteen sparks rise and sway out of the dark in
 /// its middle.
+
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -311,7 +312,7 @@ extern s32 gPaletteCyclePausesInEvents;
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame (gPaletteCycleFrame).
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -407,10 +408,6 @@ void CrackedTile_Fall();
 
 #include "shared/cracked_tile_place_landing.h"
 
-void JupiterLighthouse_ScatterNearWeeds(void);
-void JupiterLighthouse_UncoverMadPlant(void);
-void JupiterLighthouse_TeleportToGroundFloor(void);
-
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
@@ -433,10 +430,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gJupiterLighthouseBasement_TeleportersTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_ENTRANCE, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_ENTRANCE},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_NEAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterNearWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_MAD_PLANT_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterMadPlantWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_FAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterFarWeeds)},
@@ -447,7 +444,7 @@ struct Trigger gJupiterLighthouseBasement_TeleportersTriggers[] = {
 };
 
 struct Trigger gJupiterLighthouseBasement_PsynergyStoneTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_BASEMENT_PSYNERGY_STONE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS},
     {TRIGGER_TABLE_END},
 };
 

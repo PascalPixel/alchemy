@@ -46,8 +46,8 @@
 enum AlhafraPirateScene { PIRATE_STEPPED_PAST, PIRATE_READ_BY_MIND_READ };
 
 void Alhafra_PirateSeesMadrasMayor(s32 how);
-void Alhafra_TalkToHungryBoy(s32 a);
-void Alhafra_TakeLeadersLayer();
+void Alhafra_TalkToHungryBoy(s32 id);
+void Alhafra_TakeLeadersLayer(void);
 s32 Actor_TakeLeaderLayer();
 void Alhafra_ReadPiratesMind(void);
 void Alhafra_DrawPirateBehind(void);
@@ -73,6 +73,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #define FLAG_BOY_TOLD_OF_CAVE 0x8b6 ///< he told of the cave under the manor
 #define FLAG_GOLD_COINS_FOUND 0x8b7 ///< his mother found five gold coins
 #define FLAG_LET_INTO_CAVE 0x8b9    ///< his father let the party pass
+
+/// Set while Frost holds each of the three puddles frozen into a pillar.
+#define FLAG_PUDDLE_A_FROZEN FLAG_SCENE_TEMP_00
+#define FLAG_PUDDLE_B_FROZEN FLAG_SCENE_TEMP_01
+#define FLAG_PUDDLE_C_FROZEN FLAG_SCENE_TEMP_02
 
 /// The chest Reveal shows among the six gravestones, holding a Psy Crystal.
 #define ACTOR_PSY_CRYSTAL_CHEST 64
@@ -227,7 +232,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// A door of the town opens as Felix walks into it, he walks
 /// through, and the screen wipes to the room behind it (AlhafraRooms, the
 /// jail, the cave or the manor, by the exit given).
-void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
+void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 exit,
                               s32 unused) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -238,7 +243,7 @@ void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   Event_Wait(10);
-  Import_EventSetExitRequest(countdown);
+  Import_EventSetExitRequest(exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -1307,8 +1312,8 @@ void Alhafra_PirateSeesMadrasMayor(s32 how) {
 /// The three puddles Frost freezes into pillars, each with the flag set while
 /// it stands (FlagBlock_PlaceAll).
 s16 gAlhafra_Puddles[] = {
-    ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01,
-    ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_02, -1,             0,
+    ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN,
+    ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, -1, 0,
 };
 
 u32 gAlhafra_LookAroundScript[] = {
@@ -1545,9 +1550,9 @@ struct Trigger gAlhafra_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraMyPartnersAlwaysInSuch)},
     {TRIGGER_TALK, ACTOR_HUNGRY_BOYS_FATHER, CONDITION_ALWAYS, MSGNO(MsgAlhafraNoOneIsAllowedBeyond)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_BOYS_FATHER, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorSaidNoOne)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, EVENT(Alhafra_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01, EVENT(Alhafra_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_02, EVENT(Alhafra_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, EVENT(Alhafra_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN, EVENT(Alhafra_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, EVENT(Alhafra_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 

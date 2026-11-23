@@ -7,32 +7,33 @@
 #include "shop/shop.h"
 #include "window/cursor.h"
 
-/// The frames the field's colours take to fade to a shop's tint and back.
+/// The frames the field's colours take to fade to a tint and back.
 #define SHOP_TINT_FRAMES 16
 
-/// Colours the first itemCount segments of the quantity bar, each two pixels
-/// wide.
-void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
-  u32 shifted = paletteSelector << 4;
+/// Paints the first `segments` segments of the quantity bar in `color` (a
+/// QUANTITY_BAR_ colour), over what was painted before.
+void QuantityBar_Fill(s32 segments, s32 color, u8 *tileBuffer) {
+  u32 shifted = color << 4;
   const u16 *offset;
 
-  // One byte holds two 4-bit pixels, the left one in the low nibble.
-  paletteSelector = shifted + 1;
+  // A segment is one byte, two pixels: colour 1 on the left (the low nibble)
+  // and `color` on the right.
+  color = shifted + 1;
 
-  if (itemCount > 0) {
+  if (segments > 0) {
     offset = gShop_SelectorTileOffsets;
     do {
       // The segment's byte in rows 1 to 6.
       u8 *column = tileBuffer + *offset++;
 
-      column[1 * TILE_ROW_SIZE_4BPP] = paletteSelector;
-      column[2 * TILE_ROW_SIZE_4BPP] = paletteSelector;
-      column[3 * TILE_ROW_SIZE_4BPP] = paletteSelector;
-      column[4 * TILE_ROW_SIZE_4BPP] = paletteSelector;
-      column[5 * TILE_ROW_SIZE_4BPP] = paletteSelector;
-      column[6 * TILE_ROW_SIZE_4BPP] = paletteSelector;
-      itemCount--;
-    } while (itemCount != 0);
+      column[1 * TILE_ROW_SIZE_4BPP] = color;
+      column[2 * TILE_ROW_SIZE_4BPP] = color;
+      column[3 * TILE_ROW_SIZE_4BPP] = color;
+      column[4 * TILE_ROW_SIZE_4BPP] = color;
+      column[5 * TILE_ROW_SIZE_4BPP] = color;
+      column[6 * TILE_ROW_SIZE_4BPP] = color;
+      segments--;
+    } while (segments != 0);
   }
 }
 
@@ -101,9 +102,10 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   return priceSprite;
 }
 
-/// Saves the field's background colours in the field work and fades to `layer`
-/// over SHOP_TINT_FRAMES frames.
-void Shop_SaveAndTintFieldPalette(s32 layer) {
+/// Saves the field's colours and fades them to `tint` (a PALETTE_TINT_ mode)
+/// over SHOP_TINT_FRAMES frames: the grey of the sanctum's healing, and the
+/// element's colour as a Djinni joins the party.
+void Shop_SaveAndTintFieldPalette(s32 tint) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct PaletteFade *paletteBuffers = Ram_HeapSlots->paletteFade;
   u16 *savedPalette = paletteBuffers->target;
@@ -113,7 +115,7 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
           REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
-  PaletteFade_SetTargetFar(layer, 1);
+  PaletteFade_SetTargetFar(tint, 1);
   PaletteFade_StartInterpolationFar(SHOP_TINT_FRAMES);
 }
 

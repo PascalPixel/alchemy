@@ -85,7 +85,7 @@ enum JupiterLighthouseRoomBlueKeyCellBehavior {
 
 struct Actor;
 s32 CrackedTile_Step(void);
-void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 void Actor_DisableById(s32 id);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_PushColumn(void);
@@ -106,7 +106,7 @@ s16 gLightSpritePriority BSS_DATA;
 /// The cells CrackedTile_Step watches, and the cell it copies over the one the
 /// leader steps on.
 struct CellTarget gCrackedTiles BSS_DATA;
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -252,7 +252,7 @@ extern s32 gPaletteCyclePausesInEvents;
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame (gPaletteCycleFrame).
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -309,10 +309,6 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 #include "shared/actor_stop_at_push_target.h"
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -338,13 +334,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/field_effect_move.c"
 
-// The room's copy of the effect spawner, and the cracked tiles, found, cracked
-// and fallen through.
-
-struct Actor;
-struct CellTarget;
-struct FieldEffect;
-s32 CrackedTile_Step(void);
 void Leader_CenterInCell(void);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
@@ -368,33 +357,16 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The cracked tiles' steps and the fall to the floor below.
-
-struct CellTarget;
-struct CellTargetEntry;
-s32 CrackedTile_Step(void);
-void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
-extern u16 gPushKinds[PUSH_KINDS];
-void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 #include "shared/cracked_tile_drop_in.h"
-
-void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
 
-// The tables the scene's getters return.
-
-void JupiterLighthouse_PushColumn(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
-
-void JupiterLighthouse_StepOnCrackedTile(void);
-
-void JupiterLighthouse_StartMovingPillar(void);
 
 // clang-format off
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
@@ -440,8 +412,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_M},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
@@ -460,7 +432,9 @@ LATE_DATA s32 gPaletteCycleFrame = -1;
 LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 

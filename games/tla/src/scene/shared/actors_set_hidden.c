@@ -1,4 +1,4 @@
-/// Sets or clears bit 0x10 of count actors' priority flags from first.
+/// Draws (`show` 1) or stops drawing `count` actors, from `first` on.
 void Actors_SetDrawn(s32 show, s32 first, u32 count) {
   u32 i;
 

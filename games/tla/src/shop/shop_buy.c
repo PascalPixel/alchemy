@@ -42,7 +42,7 @@ s32 Shop_SelectBuy(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct Window *priceWindow = 0;
   struct Window *stockWindow;
-  struct Window *messageWindow;
+  struct Window *descriptionWindow;
   struct Window *partyWindow;
   s32 selected = 0;
   s32 quantity;
@@ -77,7 +77,7 @@ next_page:
   stockWindow = Window_CreateFar(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
-  messageWindow = Window_CreateFar(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
+  descriptionWindow = Window_CreateFar(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
   redraw = 1;
   stockIds = shop->stockItemIds;
 
@@ -90,7 +90,7 @@ next_page:
                        selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
       shop->cursorFrames = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
-      Shop_DrawMessage(messageWindow, itemId + (s32)MsgItemPlainName);
+      Shop_DrawMessage(descriptionWindow, itemId + (s32)MsgItemPlainName);
       WindowSprite_RedrawSavedRectFar(priceWindow);
       Shop_DrawItemPrice(priceWindow, itemId, (u16)stockDefinition->price,
                          SHOP_PRICE_KIND_BUY);
@@ -148,7 +148,7 @@ next_page:
     wait(1);
   }
 
-  Window_CloseFar(messageWindow, 2);
+  Window_CloseFar(descriptionWindow, 2);
   Window_CloseFar(stockWindow, 2);
   wait(1);
   if (selectionResult == -1)
@@ -166,7 +166,7 @@ next_page:
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
-  redraw = 2;
+  redraw = MENU_GRID_CHANGED_PAGE;
 
   while (1) {
     if (repromptRecipient != 0) {
@@ -179,7 +179,7 @@ next_page:
       MenuCursor_Place(partyWindow,
                        selectionIndex % SHOP_PARTY_PAGE_MEMBERS * 24 - 12, 0);
       shop->cursorFrames = 3;
-      if (redraw == 2) {
+      if (redraw == MENU_GRID_CHANGED_PAGE) {
         Menu_CreateOwnerEntryObjectsFar(
             selectionIndex / SHOP_PARTY_PAGE_MEMBERS * SHOP_PARTY_PAGE_MEMBERS);
         wait(1);
@@ -191,7 +191,7 @@ next_page:
         Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
     }
     if (key = gInput.pressed & KEY_A) {
-      redraw = 2;
+      redraw = MENU_GRID_CHANGED_PAGE;
       WindowSprite_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
@@ -394,6 +394,7 @@ not_broken:
 show_price:
   labelMessage = (s32)MsgPrice;
   Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
+  // "Coins", three messages before "Price".
   labelMessage -= 3;
   Text_DrawNumberInWindowFar(price, 5, (s32)window, SHOP_PRICE_NUMBER_X, 8);
   Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
@@ -769,8 +770,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 #undef QUANTITY_PRICE_X
 #undef QUANTITY_COINS_X
 
-/// Gives the party member each item bought and takes its price, then offers to
-/// equip it and to sell what it replaced.
+/// Gives the party member each item bought, one at a time, taking its price
+/// and counting it toward the next Game Ticket; then offers to equip it and to
+/// sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;
@@ -781,8 +783,6 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   item = Item_GetDirectFar(itemId);
   lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
-  // Keep each inventory addition, coin debit and shop-credit increment in
-  // order.
   Sound_PlayFar(SE_SHOP_PURCHASE);
   if (lastAddedSlot < remainingQuantity) {
     do {
@@ -837,7 +837,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (item->flags & ITEM_CURSED) {
     Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
-    Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
+    Message_OpenWindowFar(MsgBecameCursed, 8, 4, MESSAGE_WINDOW_UNREAD);
     while (Message_AllTypedFar() == 0) {
       wait(1);
     }

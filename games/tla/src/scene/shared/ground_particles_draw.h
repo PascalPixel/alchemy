@@ -1,5 +1,6 @@
-/// Task: the drops falling about the actor the particles gather around, the
-/// overlay's copy of GroundParticles_Update. Each plays its frames of
+/// Task: the drops of rain falling about the stone Douse has struck
+/// (GroundParticles_SetAnchor), the overlay's copy of GroundParticles_Update.
+/// Each plays its frames of
 /// gGroundParticleFrames, falling and then splashing on the ground (held while
 /// FLAG_WEATHER_HELD is set), and falls again at a random spot within a screen
 /// of that actor, or at the origin when there is none.

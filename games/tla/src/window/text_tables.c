@@ -58,8 +58,9 @@ const s8 gWindow_PartyColumnOffsets[] = {
 };
 
 #if TLA_PATCH_4 || !TLA_PATCH_3
-/// Unused: six bytes after the columns' lists, which nothing reads; the
-/// French edition drops them.
+/// Unused: the HP and PP labels' tile numbers (WINDOW_TILE_HP_LABEL and
+/// WINDOW_TILE_PP_LABEL, each with its second tile and a 0), which nothing
+/// reads; the French edition drops them.
 const u8 gWindow_UnusedPartyColumnBytes[] = {
 #if TLA_PATCH_4
     29, 30, 0, 31, 5, 0,

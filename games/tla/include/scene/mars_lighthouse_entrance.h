@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_MARS_LIGHTHOUSE_ENTRANCE_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// Mars Lighthouse's entrance: its events of fireballs, ice and teleport
+/// circles, and the teleport and cracked-tile routines other scenes keep a
+/// copy of and declare from here.
 
 #include "types.h"
 #include "field/cell_target.h"
@@ -34,7 +36,8 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell);
 
 void MarsLighthouseEntrance_FlingIceCone(struct Actor *actor);
 
-s32 Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+s32 Actor_Attach(s32 torchId, s32 sparkleId, s32 fireballId, s32 facing,
+                 const void *path);
 
 void Leader_SlideOnIceFromEdge(void);
 

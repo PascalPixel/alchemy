@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_MESSAGE_SPEED_H
 #define ALCHEMY_MESSAGE_SPEED_H
 
+/// @file
+/// The message speed setting and the typing tables it picks a row of
+/// (text_speed.c).
+
 #include "types.h"
 
 /// MainRoutineWork.messageSpeed, as the settings name it

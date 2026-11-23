@@ -36,6 +36,27 @@
 #include "scene/dehkan_plateau.h"
 #include "graphics/palette_buffers.h"
 #include "macros.h"
+#include "text/msg_ids.h"
+#include "graphics/resource.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/scene_tables.h"
+#include "field/field_event.h"
+#include "system/iwram_call.h"
+#include "system/io_write.h"
+#include "field/field_sprite.h"
+#include "system/field_effect.h"
+#include "system/vector3.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "system/input.h"
+#include "field/call.h"
+#include "system/bg_scroll.h"
 
 /// Set once the first of the cliff's pillars has dropped into its gap, by the
 /// golden door, cell (16, 43).
@@ -52,6 +73,15 @@
 /// (AirsRock_MoveThirdPillar).
 #define FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED 0x879
 
+/// Set while the left and the right of the two pillars on the ledges below the
+/// fog stand moved one cell west (AirsRock_MoveFirstPillar,
+/// AirsRock_MoveSecondPillar), so that they stand there when the party comes
+/// back.
+#define FLAG_FIRST_PILLAR_MOVED_WEST FLAG_AREA_TEMP_10
+#define FLAG_SECOND_PILLAR_MOVED_WEST FLAG_AREA_TEMP_11
+/// Set while Frost holds the cliff's puddle frozen into a pillar.
+#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+
 /// Story flags: the eight barriers the Wind Stones' gusts blow away, in the
 /// order of gAirsRock_GustTargets, then the mud blown from the wall, the fog
 /// cleared and the way to the top opened.
@@ -63,7 +93,9 @@
 /// What these rooms mark as the collision code (CELL_CODE) of a cell on the
 /// second layer.
 enum AirsRockCellMark {
-  /// Gust target n (a row of gAirsRock_GustTargets) is marked this plus n.
+  /// A barrier a gust blows away is marked this plus its kind, a row of
+  /// gAirsRock_GustTargets; the cell beyond it holds the barrier's number
+  /// plus one, which picks its flag.
   CELL_MARK_FIRST_GUST_TARGET = 30,
   /// A statue's whirlwind fades here.
   CELL_MARK_WHIRLWIND_END = 212,
@@ -172,27 +204,6 @@ enum AirsRockFujinShieldChestEntrance {
   /// (AirsRock_WhirlwindOpensTheTop).
   ENTRANCE_OPEN_THE_TOP = 99
 };
-#include "graphics/resource.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "field/field_event.h"
-#include "system/iwram_call.h"
-#include "system/io_write.h"
-#include "field/field_sprite.h"
-#include "system/field_effect.h"
-#include "system/vector3.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "system/input.h"
-#include "field/field_sequence_event.h"
-#include "field/call.h"
-#include "system/bg_scroll.h"
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
@@ -219,8 +230,6 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 actorId) {
 #include "../field/actor_wait_until_idle.c"
 
 #undef EFFECT_SET_SCRIPT
-
-#include "text/msg_ids.h"
 
 void Actor_PlaceMovedBlock(void);
 
@@ -320,9 +329,9 @@ void AirsRock_MoveFirstPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FIELD_CELL(actor->x.fixed) == 31) {
-    Event_SetFlag(FLAG_AREA_TEMP_10);
+    Event_SetFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
   } else {
-    Event_ClearFlag(FLAG_AREA_TEMP_10);
+    Event_ClearFlag(FLAG_FIRST_PILLAR_MOVED_WEST);
   }
   Event_End();
 }
@@ -349,12 +358,12 @@ void AirsRock_MoveSecondPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FIELD_CELL(actor->x.fixed) == 32) {
-    Event_SetFlag(FLAG_AREA_TEMP_11);
+    Event_SetFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
     value &= CELL_ATTRIBUTE_BITS;
     MapCell_SetAttributes(4, 70, 67, value);
     MapCell_SetAttributes(2, 33, 54, value);
   } else {
-    Event_ClearFlag(FLAG_AREA_TEMP_11);
+    Event_ClearFlag(FLAG_SECOND_PILLAR_MOVED_WEST);
     value = CELL_ATTRIBUTES(CELL_MARK_BLOCKED, value & CELL_ATTRIBUTE_BITS);
     MapCell_SetAttributes(4, 70, 67, value);
     MapCell_SetAttributes(2, 33, 54, value);
@@ -503,10 +512,11 @@ extern s16 gAirsRock_GustTargets[][4];
 /// rocks stands in its path it blows it away for good, opening the path;
 /// with nothing in its path it fades at the next wall with a whoosh.
 ///
-/// The gust looks ahead with MapCell_GetAttributes for a cell marked as one
-/// of the barriers of gAirsRock_GustTargets, stops a cell and a half short
-/// of it, sweeps the barrier's cells away and sets its flag, counted from
-/// FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN.
+/// The gust looks ahead along the second layer for the first cell with a
+/// mark: a wall (CELL_MARK_BLOCKED) or a barrier (CELL_MARK_FIRST_GUST_TARGET
+/// plus its kind). It travels to that cell, sweeps a barrier's cells away as
+/// it blows three cells on, and sets the flag counted from
+/// FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN by the cell beyond it.
 void AirsRock_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
@@ -884,7 +894,7 @@ void AirsRock_WhirlwindClearsWall(void) {
     Actor_Get(*ownerId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     {
       u8 *flags = &Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->priorityFlags;
-      u8 v = *flags | 1;
+      u8 v = *flags | ACTOR_PRIORITY_AUTOMATIC;
 
       *flags = v;
     }
@@ -924,7 +934,7 @@ void AirsRock_RideWhirlwind(void) {
     if (rise < toFIXED(12))
       rise += toFIXED(1) / 10;
     leader->facing = (u8)gFrameCount * FACING_STEP;
-    leader->priorityFlags ^= 2 << (gFrameCount & 1);
+    leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
     wait(1);
   }
   Sound_Play(SE_STOP_ACTION_SE);
@@ -986,6 +996,7 @@ void AirsRock_RideWhirlwind(void) {
       }
     }
   found:
+    // The statue's riseCounter holds the layer of the ledge he lands on.
     height = Map_GetTerrainHeight(statue->riseCounter, ride->x.fixed + dx,
                                   ride->z.fixed + dz);
     leader->y.fixed = height;
@@ -1758,6 +1769,7 @@ s32 Scene_Initialize(void) {
     case AIRS_ROCK_STORM_BRAND_CHEST_FROM_AIRS_ROCK_ENTRANCE_EAST_B:
       Leader_Lift(toFIXED(88));
     }
+    // The barriers already blown away stay gone.
     if (GameFlag_Get(FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN)) {
       MapGrid_CopyCellsTo(64, 0, 113, 11, 3, 3);
       MapGrid_CopyCellAttributes(64, 0, 3, 2, 113, 12);
@@ -1907,9 +1919,9 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_SECOND_PILLAR)->y.fixed = toFIXED(208);
       Actor_GetById(ACTOR_SECOND_PILLAR)->groundHeight =
           Actor_GetById(ACTOR_SECOND_PILLAR)->y.fixed;
-      if (GameFlag_Get(FLAG_AREA_TEMP_10))
+      if (GameFlag_Get(FLAG_FIRST_PILLAR_MOVED_WEST))
         Actor_SetPosition(ACTOR_FIRST_PILLAR, 504, 872);
-      if (GameFlag_Get(FLAG_AREA_TEMP_11))
+      if (GameFlag_Get(FLAG_SECOND_PILLAR_MOVED_WEST))
         Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 872);
       AirsRock_MoveSecondPillar();
       /* FAKEMATCH(dead): the third layer's offsets and scales stored through
@@ -2056,8 +2068,6 @@ s32 Scene_PrepareMap(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SPRITE_PRIORITY
 
-void AirsRock_MoveSecondPillar(void);
-
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
@@ -2107,7 +2117,7 @@ s32 gAirsRock_RubbleScript[] = {
 /// The puddle Frost freezes into a pillar, and the flag set while it stands
 /// (FlagBlock_PlaceAll).
 s16 gAirsRock_FrozenPuddle[] = {
-    ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
+    ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
 };
 
 #include "shared/scene_entrances_default.c"
@@ -2257,7 +2267,7 @@ struct Trigger gAirsRock_EntranceTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, EVENT(AirsRock_PlacePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FOURTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, EVENT(AirsRock_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, EVENT(AirsRock_PlacePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(AirsRock_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AirsRock_FreezePuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIFTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, EVENT(AirsRock_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_LEDGE_PILLAR, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, EVENT(AirsRock_PlacePillar)},
     {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRock_RideWhirlwind)},
@@ -2285,8 +2295,11 @@ struct Trigger gAirsRock_FujinShieldChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The Wind Stones' gusts' barriers, a row each, in the order of their flags
-/// from FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN.
+/// The kinds of barrier a gust sweeps away (AirsRock_BlowGust), a row each: the
+/// map cell the cleared ground's picture is copied from, and how far the
+/// barrier's pictures lie from the cells the gust crosses, 64 cells east. Kinds
+/// 1 and 3 clear a column three cells tall, 0 and 2 one cell; the map marks
+/// its barriers with kinds 0, 2 and 3.
 s16 gAirsRock_GustTargets[][4] = {
     {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
 };

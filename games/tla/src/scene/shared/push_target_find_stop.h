@@ -1,5 +1,5 @@
-/// What MapGrid_CheckCollision says of a step to a position (enum Collision):
-/// The Broken Seal's system_call.h layer.
+/// What MapGrid_CheckCollision says of a step to a position (enum Collision),
+/// under The Broken Seal's name for it.
 static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
                                                     s32 *position) {
   return MapGrid_CheckCollision(actor, position);

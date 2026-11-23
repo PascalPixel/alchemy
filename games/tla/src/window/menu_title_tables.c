@@ -1,6 +1,6 @@
 /// @file
-/// The menu titles' tables: the colour map of the doubled digit tiles, and
-/// the link timer's label.
+/// The colour map of the page number tiles, built twice from the UI's
+/// digits, and the link battle timer's label.
 
 #include "types.h"
 #include "edition.h"
@@ -14,6 +14,8 @@ u16 gGraphics_ExpandNibbleTable[32] = {
 };
 // clang-format on
 
+/// The label of the link battle's countdown window
+/// (Link_CreateCountdownLabelWindow).
 #if LANGUAGE == LANGUAGE_SPANISH
 u8 gLink_TimeLabelString[] = "TMPO.";
 #elif LANGUAGE == LANGUAGE_FRENCH

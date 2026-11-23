@@ -40,8 +40,8 @@
 #define FILE_LIST_GLOW_GREEN 16
 #define FILE_LIST_GLOW_BLUE 20
 
-/// The file list shows the chosen file's party as standing sprites in a row,
-/// and four Djinn sprites, one for each element, over the file's Djinn counts.
+/// The tiles between two of the file list's party sprites, and between two of
+/// its Djinn counts, one for each element.
 #define FILE_LIST_SPRITE_SPACING 3
 
 #include "window/window.h"
@@ -179,7 +179,7 @@ s32 Save_DeletePart(s32 partId);
 
 /// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
 /// all four DMA channels stopped, setting SaveProgress_Advance as the save's
-/// progress command around it, as Save_WritePartMasked does around
+/// progress callback around it, as Save_WritePartMasked does around
 /// Save_WritePart.
 s32 Save_DeletePartMasked(s32 partId) {
   volatile u32 ime;
@@ -525,7 +525,7 @@ s32 Save_ProcessSelectedFile(void) {
 /// Saves the game to slot (at most 2).
 s32 Save_ToFile(u32 slot) {
   s32 result = 0;
-  s32 found;
+  s32 error;
 
   if (slot > 2)
     slot = 2;
@@ -541,11 +541,11 @@ s32 Save_ToFile(u32 slot) {
                                            FIELD_MESSAGE_LOWER);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
-    found = Save_WritePartMasked(slot, gSaveBuffer);
+    error = Save_WritePartMasked(slot, gSaveBuffer);
     while (Message_AllTyped() == 0)
       wait(1);
     Message_CloseFinishedWindows();
-    if (found != 0) {
+    if (error != 0) {
       FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
       result = SAVE_ERROR_WRITE;
     } else {
@@ -562,8 +562,8 @@ s32 Save_ToFile(u32 slot) {
 s32 Save_ToChosenFile(void) {
   s32 result = 0;
   s32 slot;
-  s32 found;
-  s32 token;
+  s32 error;
+  s32 progress;
   struct SaveWorkspace *work;
 
   if (Save_InitializeWork() != 0) {
@@ -582,20 +582,20 @@ s32 Save_ToChosenFile(void) {
                               FIELD_MESSAGE_LOWER);
         while (Message_AllTyped() == 0)
           wait(1);
-        if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
+        if (YesNoMenu_Run(1, 0, 0, NO) != YES) {
           Message_CloseFinishedWindows();
           goto done;
         }
         Message_CloseFinishedWindows();
       }
       gSaveSlot = slot;
-      token = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
+      progress = (s32)SaveProgress_Open(SAVE_PROGRESS_SAVING);
       Save_BuildFileSummary();
       ObjectTable_SnapshotFar();
-      found = Save_WritePartMasked(slot, gSaveBuffer);
-      SaveProgress_Close((struct Window *)token);
+      error = Save_WritePartMasked(slot, gSaveBuffer);
+      SaveProgress_Close((struct Window *)progress);
       Message_CloseFinishedWindows();
-      if (found != 0) {
+      if (error != 0) {
         FieldMessage_Show((s32)&MsgSaveFailed, FIELD_MESSAGE_ZOOM);
         result = SAVE_ERROR_WRITE;
       } else {
@@ -636,11 +636,12 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   return result;
 }
 
-/// Selects a file and copies it to a free file.
+/// Selects a file and copies it to a free file. Its failures say "Failed to
+/// erase." (MsgEraseFailed), as erasing's do.
 s32 Save_CopyFile(void) {
   s32 result = 0;
   s32 value;
-  s32 token;
+  s32 progress;
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
@@ -663,9 +664,9 @@ s32 Save_CopyFile(void) {
           FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_NO_FILE;
         } else {
-          token = (s32)SaveProgress_Open(SAVE_PROGRESS_COPYING);
+          progress = (s32)SaveProgress_Open(SAVE_PROGRESS_COPYING);
           value = Save_WritePartMasked(value, buffer);
-          SaveProgress_Close((struct Window *)token);
+          SaveProgress_Close((struct Window *)progress);
           if (value != 0) {
             FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
             result = SAVE_ERROR_WRITE;
@@ -690,8 +691,8 @@ s32 Save_CopyFile(void) {
 s32 Save_EraseSelectedFile(void) {
   s32 result = 0;
   s32 value;
-  s32 token;
-  s32 found;
+  s32 progress;
+  s32 error;
 
   if (Save_InitializeWork() != 0) {
     FieldMessage_Show((s32)&MsgNoBackupMemory, FIELD_MESSAGE_ZOOM);
@@ -705,14 +706,14 @@ s32 Save_EraseSelectedFile(void) {
       Message_OpenWindow((s32)&MsgEraseConfirm, ERASE_CONFIRM_X, 1, 2);
       while (Message_AllTyped() == 0)
         wait(1);
-      if (YesNoMenu_Run(1, 0, 3, 1) != 0) {
+      if (YesNoMenu_Run(1, 0, 3, NO) != YES) {
         Message_CloseFinishedWindows();
       } else {
         Message_CloseFinishedWindows();
-        token = (s32)SaveProgress_Open(SAVE_PROGRESS_ERASING);
-        found = Save_DeletePartMasked(value);
-        SaveProgress_Close((struct Window *)token);
-        if (found != 0) {
+        progress = (s32)SaveProgress_Open(SAVE_PROGRESS_ERASING);
+        error = Save_DeletePartMasked(value);
+        SaveProgress_Close((struct Window *)progress);
+        if (error != 0) {
           FieldMessage_Show((s32)&MsgEraseFailed, FIELD_MESSAGE_ZOOM);
           result = SAVE_ERROR_ERASE;
         } else {
@@ -770,11 +771,15 @@ void FileList_StartPulse(void) {
 /// Stops the palette glow.
 void FileList_StopPulse(void) { Task_Remove((u32)((s32)FileList_UpdatePulse)); }
 
+/// The window tile the file list's chosen row is filled with, drawn in
+/// HIGHLIGHT_PALETTE, whose colours FileList_UpdatePulse makes glow.
+#define FILE_LIST_HIGHLIGHT_TILE 6
+
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
-/// clipped to the screen as Window_SetTextTileBitRect clips, with the tile
-/// entry of tile 6 in HIGHLIGHT_PALETTE, the palette FileList_UpdatePulse
-/// animates.
-void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
+/// clipped to the screen as Window_SetTextTileBitRect clips, with
+/// FILE_LIST_HIGHLIGHT_TILE: the file list's glowing bar under the chosen
+/// file.
+void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 sum;
@@ -812,11 +817,12 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     s32 offset = yOffset + ((s32)work + xOffset);
     do {
       s32 remaining = width;
-      u16 *cell = (u16 *)(offset + 8);
+      u16 *cell = (u16 *)(offset + offsetof(struct WindowWork, tilemap));
       if (remaining != 0) {
         do {
           remaining--;
-          *cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
+          *cell++ =
+              BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | FILE_LIST_HIGHLIGHT_TILE;
         } while (remaining != 0);
       }
       height--;
@@ -872,22 +878,22 @@ void FileList_HidePartySprites(void) {
 /// this frame.
 void FileList_PlacePartySprites(void) {
   struct FileListWork *state = (struct FileListWork *)Ram_HeapSlots->menuWork;
-  s32 source[2];
-  FIXED request[4];
+  s32 scale[2];
+  FIXED position[4];
   s32 index = 0;
-  s32 handle;
+  s32 sprite;
 
   while (1) {
-    handle = (s32)state->partyMemberIcons[index];
-    if (handle != 0) {
-      source[0] = state->partyMemberScale[index];
-      source[1] = state->partyMemberScale[index];
-      request[0] = toFIXED(state->partyMemberX[index]);
-      request[1] = toFIXED(500);
-      request[2] = toFIXED(state->partyMemberY[index]) + toFIXED(500);
-      request[3] = 0;
-      Render_ApplyProjectedPlacementFar((struct Sprite *)handle, request,
-                                        source, FACING_SOUTH);
+    sprite = (s32)state->partyMemberIcons[index];
+    if (sprite != 0) {
+      scale[0] = state->partyMemberScale[index];
+      scale[1] = state->partyMemberScale[index];
+      position[0] = toFIXED(state->partyMemberX[index]);
+      position[1] = toFIXED(500);
+      position[2] = toFIXED(state->partyMemberY[index]) + toFIXED(500);
+      position[3] = 0;
+      Render_ApplyProjectedPlacementFar((struct Sprite *)sprite, position,
+                                        scale, FACING_SOUTH);
     }
     index += 1;
     if (index > 3) {
@@ -1151,7 +1157,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       WindowSprite_RedrawSavedRect(fileList);
       Window_DrawDividerLine(fileList, 0, 2, 27, 2);
       Window_DrawDividerLine(fileList, 0, 4, 27, 4);
-      Window_FillTilemapRect(fileList, 0, selectedFile * 2, 26, 1);
+      FileList_FillHighlight(fileList, 0, selectedFile * 2, 26, 1);
     }
     MenuTitle_Bob(modePicture);
     wait(1);
@@ -1222,6 +1228,7 @@ done:
 #undef FILE_LIST_LEADER_X
 #undef FILE_LIST_AREA_X
 #undef SAVE_MENU_NO_FILE
+#undef FILE_LIST_HIGHLIGHT_TILE
 #undef SAVE_CHECKSUM_WORDS
 #undef FILE_LIST_GLOW_RED
 #undef FILE_LIST_GLOW_GREEN

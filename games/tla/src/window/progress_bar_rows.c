@@ -1,20 +1,31 @@
 /// @file
-/// The save screen's progress bar, laid out by step. Its own file: it starts
-/// where the progress bar's tiles end, on no word in French, and the tables
-/// after it are word-aligned.
+/// The saving screen's progress bar, laid out by step: its own file, between
+/// the progress bar's tiles and the word-aligned tables after it.
 
 #include "types.h"
 
+/// The progress bar's tiles (progress.png), from its left end to its right:
+/// the empty bar in green, the filled part in yellow.
+enum {
+  BAR_LEFT_EMPTY = 0,
+  BAR_EMPTY = 1,
+  BAR_RIGHT_EMPTY = 2,
+  BAR_LEFT_FULL = 3,
+  BAR_FRONT = 4, ///< where the yellow ends
+  BAR_FULL = 5,
+  BAR_RIGHT_FULL = 7,
+};
+
 // clang-format off
-/// The save screen's progress bar by step, a row of 12 of the progress
-/// bar's tiles for each of its seven steps.
+/// The saving screen's progress bar by step, a row of its 12 tiles for each of
+/// its seven steps.
 const u8 gWindow_ProgressBarRows[7 * 12] = {
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
-    3, 5, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2,
-    3, 5, 5, 5, 4, 1, 1, 1, 1, 1, 1, 2,
-    3, 5, 5, 5, 5, 5, 4, 1, 1, 1, 1, 2,
-    3, 5, 5, 5, 5, 5, 5, 5, 4, 1, 1, 2,
-    3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 2,
-    3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 7,
+    BAR_LEFT_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
+    BAR_LEFT_FULL, BAR_FULL, BAR_FRONT, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
+    BAR_LEFT_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FRONT, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
+    BAR_LEFT_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FRONT, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
+    BAR_LEFT_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FRONT, BAR_EMPTY, BAR_EMPTY, BAR_RIGHT_EMPTY,
+    BAR_LEFT_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FRONT, BAR_RIGHT_EMPTY,
+    BAR_LEFT_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_FULL, BAR_RIGHT_FULL,
 };
 // clang-format on

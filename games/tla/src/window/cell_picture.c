@@ -1,15 +1,20 @@
 /// @file
-/// The window transition's scanline bounds, built from the UI tilemap by ARM
-/// code that ScanlineWindow_FillSpans copies into RAM for each call.
+/// The windows' outline for a screen transition: for each scan line, the left
+/// and right edge of the windows on it, read off the UI tilemap by ARM code
+/// that ScanlineWindow_FillSpans copies into RAM for each call. The windows'
+/// rounded corners cut a pixel off each end of a window's top and bottom line.
 
 #include "edition.h"
 #include "types.h"
 #include "system/io_reg.h"
 #include "window/window.h"
 
-/// Builds the hardware window's horizontal extent for each of the screen's 160
-/// scanlines from the UI tilemap at tilemap (BG_SCREEN_WIDTH tiles a row,
-/// DISPLAY_TILE_WIDTH shown), and returns the end of what it wrote.
+/// Writes the hardware window's horizontal extent, (left << 8) | right, into
+/// the second halfword of each of the screen's 160 lines' pairs at
+/// scanlineBounds, from the window borders on the UI tilemap at tilemap
+/// (BG_SCREEN_WIDTH tiles a row, DISPLAY_TILE_WIDTH shown), and returns the end
+/// of what it wrote. The left edge is the first border tile on the row, the
+/// right edge the last.
 u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
@@ -37,8 +42,8 @@ u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
 
       if (tile == 0)
         continue;
-      // The first border tile establishes the left edge and a one-tile span.
-      // A later right border tile extends that span.
+      // The first border tile sets the left edge and a one-tile span; a later
+      // right border tile carries the right edge out to it.
       if (foundLeftEdge == 0) {
         switch (tile) {
         case WINDOW_TILE_BORDER_TOP_LEFT:
@@ -59,7 +64,9 @@ u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
           bottomRight = left + 7;
           foundLeftEdge++;
           break;
-        // The left edge meeting a divider counts as a side too.
+        // A side, or a side meeting a divider.
+        // XXX: tile 7 (window_tiles.png, a red mark on yellow) counts as a
+        // side too; a screen whose window edge shows it would say why.
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
         case WINDOW_TILE_BORDER_LEFT_TEE:

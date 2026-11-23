@@ -15,6 +15,7 @@
 /// Phantasmal Mail, two more stakes and a green pool: Parch dries the pool
 /// (IzumoRuins_ParchThePool) and opens the way to the room of the stone tablet
 /// that teaches Ulysses, which stands in a ring of six stone pillars.
+
 #include "system/iwram_call.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
@@ -30,6 +31,23 @@
 #include "system/frame.h"
 #include "field/scene_tables.h"
 #include "sprite_ids.h"
+#include "field/map_grid.h"
+#include "shared/trial_road.h"
+#include "system/system.h"
+#include "field/field_sprite.h"
+#include "system/field_effect.h"
+#include "field/field_effect.h"
+#include "flags.h"
+#include "shared/tables.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "field/field_sequence_event.h"
+#include "field/call.h"
+#include "field/actor_script.h"
 
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void IzumoRuins_ShowStakeState(struct Actor *actor);
@@ -61,25 +79,6 @@ void Actor_PlaceBlocks(const void *data);
 void FieldEffect_StartBlankOverlay(s32 value);
 void FlagBlock_PlaceAll(const void *data);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-#include "field/map_grid.h"
-#include "shared/trial_road.h"
-#include "system/system.h"
-#include "field/field_sprite.h"
-#include "system/field_effect.h"
-#include "field/field_effect.h"
-#include "flags.h"
-#include "shared/tables.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/field_sequence_event.h"
-#include "field/call.h"
-#include "field/actor_script.h"
-
-struct Actor;
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 flags);
@@ -107,9 +106,6 @@ s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-#include "text/msg_ids.h"
-
-struct Actor;
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -171,6 +167,12 @@ enum {
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
+/// The dried bed of the green pool, copied over it from elsewhere on the map:
+/// first where Felix can walk, then its pictures.
+#define IzumoRuins_ShowThePoolDried()                                          \
+  (MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12),                              \
+   MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9))
+
 /// Fits the cell under a stake to whether it stands or is driven down (its
 /// flag, kept in its timer). Standing, its top is a step STAKE_HEIGHT_STEPS
 /// above the floor that Felix jumps onto and across, and under Sand it blocks
@@ -190,7 +192,7 @@ void IzumoRuins_ShowStakeState(struct Actor *actor) {
     lower &= ~MAP_CELL_JUMP;
     if (CELL_HEIGHT_STEPS(actor->groundHeight) != height)
       height -= STAKE_HEIGHT_STEPS;
-    Scene_SetActorSpritePriority((struct Actor *)actor, 3);
+    Scene_SetActorSpritePriority(actor, 3);
   } else {
     if (CELL_CODE(lower) != CELL_BEHAVIOR_SAND)
       upper = CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, upper & CELL_ATTRIBUTE_BITS);
@@ -198,7 +200,7 @@ void IzumoRuins_ShowStakeState(struct Actor *actor) {
       upper = CELL_ATTRIBUTES(CELL_BEHAVIOR_SAND, upper & CELL_ATTRIBUTE_BITS);
     lower |= MAP_CELL_JUMP;
     height += STAKE_HEIGHT_STEPS;
-    Scene_SetActorSpritePriority((struct Actor *)actor, 2);
+    Scene_SetActorSpritePriority(actor, 2);
   }
   MapCell_SetAttributes(MAPGRID_LAYER_GROUND, column, row, lower);
   MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, column, row, upper);
@@ -206,13 +208,13 @@ void IzumoRuins_ShowStakeState(struct Actor *actor) {
                         actor->layer, height);
 }
 
-/// Places Pound's stakes from a list of rows (actor, unused, flag), ended by
+/// Places Pound's stakes from a list of rows (actor, cell kind, flag), ended by
 /// -1: each standing, or driven down if its flag is set.
 void IzumoRuins_PlaceStakes(u16 *list) {
   struct Actor *actor;
   s32 flag;
 
-  for (; list[0] != (u16)-1; list += 3) {
+  for (; list[0] != ACTOR_LIST_END; list += 3) {
     actor = Actor_Get(list[0]);
     flag = (s16)list[2];
     Actor_SetSpriteFlags(actor, 0);
@@ -256,16 +258,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 ///
 /// Pound_SinkTarget animates the blow from the scene's list of stakes; as the
 /// stake lands (mode 1) IzumoRuins_ShowStakeState makes its cell floor.
-void IzumoRuins_PoundStake(s32 mode, s32 target) {
+void IzumoRuins_PoundStake(s32 mode, s32 frame) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 
   scene = party->next;
   if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-    Pound_SinkTarget(gIzumoRuins_FirstRoomStakes, mode, target);
+    Pound_SinkTarget(gIzumoRuins_FirstRoomStakes, mode, frame);
   else
-    Pound_SinkTarget(gIzumoRuins_SecondRoomStakes, mode, target);
+    Pound_SinkTarget(gIzumoRuins_SecondRoomStakes, mode, frame);
   if (mode == 1)
     IzumoRuins_ShowStakeState(Actor_Get(work->secondActorId));
 }
@@ -287,9 +289,9 @@ void IzumoRuins_FreezePuddle(void) {
 }
 
 /// Casting Sand while standing on one of the ruins' sand patches takes Felix
-/// into the sand: the game moves him onto the map's sand layer, where he can
-/// travel only through sand cells, under the stakes and past what blocks the
-/// floor above. Cast off the sand, nothing changes.
+/// into the sand: he moves onto the cells of the map's overhead layer, which
+/// mark the sand, and can travel only through sand, under the stakes and past
+/// what blocks the floor above. Cast off the sand, nothing changes.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell =
@@ -297,15 +299,15 @@ void IzumoRuins_SinkIntoSand(void) {
                             FIELD_CELL(leader->z.fixed));
 
   if (CELL_CODE(cell) == CELL_BEHAVIOR_SAND)
-    leader->layer = 2;
+    leader->layer = MAPGRID_LAYER_OVERHEAD;
 }
 
-/// As Sand wears off, Felix comes up out of the sand onto the ruins' floor:
-/// the game puts him back on the map's ground layer.
+/// As Sand wears off, Felix comes up out of the sand onto the ruins' floor,
+/// the cells of the map's ground layer.
 void IzumoRuins_RiseOutOfSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  leader->layer = 0;
+  leader->layer = MAPGRID_LAYER_GROUND;
 }
 
 /// Move (or a push) takes hold of a stone pillar: the one at the north end of
@@ -346,8 +348,7 @@ void IzumoRuins_FinishMovingPillar(void) {
 /// that leads on towards the room of the stone tablet.
 void IzumoRuins_ParchThePool(void) {
   Event_Start();
-  MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
-  MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
+  IzumoRuins_ShowThePoolDried();
   Event_SetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED);
   Event_End();
 }
@@ -385,8 +386,7 @@ s32 Scene_Initialize(void) {
     Actor_PlaceBlocks(gIzumoRuins_SecondRoomPillars);
     IzumoRuins_PlaceStakes((u16 *)gIzumoRuins_SecondRoomStakes);
     if (Event_GetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {
-      MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
-      MapGrid_CopyCellsTo(7, 66, 7, 76, 8, 9);
+      IzumoRuins_ShowThePoolDried();
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -429,17 +429,15 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// Pound's stakes in each scene (IzumoRuins_PlaceStakes): actor, unused, and
-/// the flag set while it is driven down; ended by -1.
+/// Pound's stakes in each scene (IzumoRuins_PlaceStakes, Pound_SinkTarget):
+/// actor, the cell kind Pound opens under it, and the flag set while it is
+/// driven down; ended by -1.
 s16 gIzumoRuins_FirstRoomStakes[] = {
     ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
     ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
     ACTOR_THIRD_STAKE, 0, FLAG_THIRD_STAKE_POUNDED,
     -1,
 };
-
-/// The second room's two stakes that Pound sinks: each stake, its kind and the
-/// flag set once it is sunk, ended by -1.
 s16 gIzumoRuins_SecondRoomStakes[] = {
     ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
     ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
@@ -472,12 +470,19 @@ struct SceneRegion gIzumoRuins_SecondRoomRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(IzumoRuinsFirstRoom),
-    SCENE_EXIT_UNLESS(1, Izumo, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_RUINS_FIRST_ROOM_TO_IZUMO, Izumo,
+                      IZUMO_FROM_IZUMO_RUINS_FIRST_ROOM, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, IzumoRuinsFirstRoom, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, IzumoRuinsFirstRoom, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IzumoRuinsSecondRoom, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_RUINS_FIRST_ROOM_TO_IZUMO_RUINS_SECOND_ROOM,
+                      IzumoRuinsSecondRoom,
+                      IZUMO_RUINS_SECOND_ROOM_FROM_IZUMO_RUINS_FIRST_ROOM,
+                      EXIT_FLAG_NONE),
     SCENE_EXITS(IzumoRuinsSecondRoom),
-    SCENE_EXIT_UNLESS(1, IzumoRuinsFirstRoom, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM,
+                      IzumoRuinsFirstRoom,
+                      IZUMO_RUINS_FIRST_ROOM_FROM_IZUMO_RUINS_SECOND_ROOM,
+                      EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, IzumoRuinsSecondRoom, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, IzumoRuinsSecondRoom, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
@@ -511,10 +516,12 @@ struct ActorPlacement gIzumoRuins_SecondRoomActorPlacements[] = {
 // clang-format on
 
 struct Trigger gIzumoRuins_FirstRoomTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, IZUMO_RUINS_FIRST_ROOM_TO_IZUMO, CONDITION_ALWAYS,
+     IZUMO_RUINS_FIRST_ROOM_TO_IZUMO},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, IZUMO_RUINS_FIRST_ROOM_TO_IZUMO_RUINS_SECOND_ROOM,
+     CONDITION_ALWAYS, IZUMO_RUINS_FIRST_ROOM_TO_IZUMO_RUINS_SECOND_ROOM},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_FIRST_STAKE, FLAG_FIRST_STAKE_POUNDED, EVENT(IzumoRuins_PoundStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
@@ -541,7 +548,8 @@ struct Trigger gIzumoRuins_FirstRoomTriggers[] = {
 };
 
 struct Trigger gIzumoRuins_SecondRoomTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, IZUMO_RUINS_SECOND_ROOM_TO_IZUMO_RUINS_FIRST_ROOM},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),

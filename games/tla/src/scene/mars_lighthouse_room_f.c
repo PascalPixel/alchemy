@@ -220,7 +220,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Ride_SetEntry(s32 index, s32 value);
 #endif
 s32 Ride_GetEntryFlags(s32 index);
-s32 PushTarget_FindSlide(struct PushTarget *target);
+s32 PushTarget_FindStop(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 void Actor_StartScript(struct Actor *actor, const void *script);
 void FieldCamera_WaitForArrival(void);
@@ -608,7 +608,7 @@ void MarsLighthouseRoomF_RouteFireThroughPipes(void) {
 void MarsLighthouseRoomF_PushPipe(void) {
   struct PushTarget box;
 
-  if (PushTarget_FindSlide(&box)) {
+  if (PushTarget_FindStop(&box)) {
     PushTarget_Push(box);
     MarsLighthouseRoomF_RouteFireThroughPipes();
   }
@@ -982,7 +982,7 @@ void MarsLighthouseRoomF_WatchFlameThrower(void) {
 void MarsLighthouseRoomF_PushPipeOrJump(void) {
   struct PushTarget box;
 
-  if (PushTarget_FindSlide(&box)) {
+  if (PushTarget_FindStop(&box)) {
     PushTarget_Push(box);
     MarsLighthouseRoomF_RouteFireThroughPipeline();
     if (Ride_GetEntryFlags(0) != FLAME_THROWER_DRY &&
@@ -1703,7 +1703,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
   return MapGrid_CheckCollision(actor, position);
 }
 
-#include "shared/push_target_find_slide.h"
+#include "shared/push_target_find_stop.h"
 
 #include "shared/push_target_find_ahead.h"
 

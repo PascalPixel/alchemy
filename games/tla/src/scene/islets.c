@@ -331,7 +331,7 @@ void Islets_SetSonsTargetedByHeight(void);
 void Leader_PushObjectAhead(void);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 struct Actor *Actor_FindAtCell(struct Vector3 *position, s32 mode);
-s32 PushTarget_FindSlide(struct PushTarget *target);
+s32 PushTarget_FindStop(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 
 void Islets_PlayFootsteps(void);
@@ -369,7 +369,7 @@ void Islets_PushLogIntoWater(void) {
   struct PushTarget target;
   struct Actor *actor = Actor_Get(ACTOR_LOG);
 
-  if (PushTarget_FindSlide(&target)) {
+  if (PushTarget_FindStop(&target)) {
     PushTarget_Push(target);
     System_Wait(5);
     actor->gravity = toFIXED(1) / 2;
@@ -2514,7 +2514,7 @@ static __inline__ s32 PushTarget_CheckCollision(struct Actor *actor,
   return MapGrid_CheckCollision(actor, cell);
 }
 
-#include "shared/push_target_find_slide.h"
+#include "shared/push_target_find_stop.h"
 
 #include "shared/push_target_find_ahead.h"
 

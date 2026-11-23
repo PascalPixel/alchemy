@@ -128,7 +128,7 @@ struct PushTarget {
   void *callback;
 };
 
-s32 PushTarget_FindSlide(struct PushTarget *target);
+s32 PushTarget_FindStop(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 
 /// Felix steps on a cracked tile in the room above the columns. The first step
@@ -140,11 +140,11 @@ void JupiterLighthouse_StepOnCrackedTile(void) {
 }
 
 /// Felix walks into one of the blue fallen columns round the Blue Key and
-/// pushes it: it slides until something stops it (PushTarget_FindSlide).
+/// pushes it: it rolls until something stops it (PushTarget_FindStop).
 void JupiterLighthouse_PushColumn(void) {
   struct PushTarget target;
 
-  if (PushTarget_FindSlide(&target))
+  if (PushTarget_FindStop(&target))
     PushTarget_Push(target);
 }
 
@@ -297,7 +297,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
   return MapGrid_CheckCollision(actor, position);
 }
 
-#include "shared/push_target_find_slide.h"
+#include "shared/push_target_find_stop.h"
 
 #include "shared/push_target_find_ahead.h"
 

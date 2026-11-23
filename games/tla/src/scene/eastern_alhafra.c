@@ -519,7 +519,7 @@ void PushTarget_Push(struct PushTarget target);
 void EasternAlhafra_RollLog(void) {
   struct Actor *log;
   struct Actor *rock;
-  struct PushTarget slide;
+  struct PushTarget target;
   s32 facing;
   s32 frames;
 
@@ -531,16 +531,16 @@ void EasternAlhafra_RollLog(void) {
   if (rock != NULL && Event_GetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0)
     MapGrid_SetCellBehavior(rock->x.fixed, rock->z.fixed, 2,
                             CELL_BEHAVIOR_WALL);
-  if (PushTarget_FindSlide(&slide) != 0) {
+  if (PushTarget_FindStop(&target) != 0) {
     if (Event_GetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0 ||
         facing == FACING_NORTH) {
-      PushTarget_Push(slide);
+      PushTarget_Push(target);
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-      PushTarget_Push(slide);
+      PushTarget_Push(target);
       MapGrid_SetCellBehavior(log->x.fixed - toFIXED(24), log->z.fixed, 0, 0);
       MapGrid_SetCellBehavior(log->x.fixed + toFIXED(8), log->z.fixed, 0, 0);
       MapGrid_SetCellBehavior(log->x.fixed - toFIXED(24), log->z.fixed, 2, 0);
@@ -2496,7 +2496,7 @@ extern s8 gPushFootprints[][4];
 
 extern s32 gPushLeaderSteps[];
 
-#include "shared/push_target_find_slide.h"
+#include "shared/push_target_find_stop.h"
 
 #include "shared/push_target_find_ahead.h"
 

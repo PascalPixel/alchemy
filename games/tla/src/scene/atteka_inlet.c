@@ -183,10 +183,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AttekaInlet_AskKradenToSetSail(void) {
   struct Actor *actor;
 
-  // XXX: Kraden is placed nowhere on the harbor's stage outside
-  // AttekaInlet_KradenAsksToSetSail, which sends him away again, so when the
-  // player can talk to him is open; a render of the deck after that event, or
-  // another routine placing ACTOR_KRADEN, would settle it.
+  // The player never finds him to talk to: Kraden is placed on the harbor's
+  // stage only by AttekaInlet_KradenAsksToSetSail, and answered No there he
+  // walks back into Felix and is gone from the deck.
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAreWeSetting);

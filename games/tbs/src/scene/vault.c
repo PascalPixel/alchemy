@@ -1003,14 +1003,14 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   x += anchor->x.fixed;
   y = anchor->y.fixed;
   z += anchor->z.fixed;
-  // XXX (no evidence): what this drift was meant to draw; SPRITE_172 has no
-  // image (its row in sprites.tsv is empty) and nothing calls this routine.
-  effect = Actor_Create(SPRITE_172, x, y, z);
+  // XXX (no evidence): what this drift was meant to draw; SPRITE_NO_IMAGE's row
+  // in sprites.tsv is empty and nothing calls this routine.
+  effect = Actor_Create(SPRITE_NO_IMAGE, x, y, z);
   if (effect == NULL)
     return;
   sprite = effect->sprite;
-  // UB: Sprite_Create makes no sprite for SPRITE_172, which has no image, so
-  // sprite is NULL and the two stores through it below write near address 0.
+  // UB: Sprite_Create makes no sprite for SPRITE_NO_IMAGE, so sprite is NULL
+  // and the two stores through it below write near address 0.
 #ifdef UBFIX
   if (sprite == NULL)
     return;

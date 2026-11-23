@@ -91,7 +91,7 @@ const struct SoundTestValues gDebugSoundTest_StartValues = {{0, 80, 100, 2}};
 const u8 SoundTest_MusicString[] ALIGNED(4) = "Music";
 const u8 SoundTest_JingleString[] ALIGNED(4) = "Jingle";
 const u8 SoundTest_SeString[] ALIGNED(4) = "SE";
-const u8 SoundTest_FxString[] ALIGNED(4) = "FX";
+const u8 SoundTest_EffectString[] ALIGNED(4) = "FX";
 
 /// The debug warp presets' names (window/keyboard.s), last first.
 const u8 DebugWarp_KaoruSpecial1Name[] ALIGNED(4) = "8:Kaoru Special1";

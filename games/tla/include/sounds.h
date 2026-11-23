@@ -309,7 +309,9 @@ enum SoundId {
   SE_SCATTER,
   /// Played as the birds land on Venus Lighthouse's entrance and fly off.
   SE_BIRD_WINGS,
-  SE_166,
+  /// The Broken Seal's SE_UNUSED_AMBIENT_WIND_LOW note for note: one soft note
+  /// held on noise voice 42 until stopped; nothing plays it.
+  SE_UNUSED_AMBIENT_WIND_LOW,
   SE_MAP_TRANSITION,
   /// Played three times as the Ruin Key opens the Madra Catacombs.
   SE_UNLOCK,
@@ -425,7 +427,9 @@ enum SoundId {
   SE_HEAVY_MOVE,
   SE_LOG_FALL,
   SE_WATER_MOVE,
-  SE_242,
+  /// Two notes held until stopped on the Curse sample, doubled on noise voice
+  /// 28 and on the Rumble sample; nothing plays it.
+  SE_UNUSED_CURSE_RUMBLE,
   /// A lift of the Lemurian Ship stepped on (LemurianShip_StepOnLift).
   SE_LEMURIAN_SHIP_LIFT,
   SE_SANDSTORM,
@@ -444,7 +448,9 @@ enum SoundId {
   /// Played as the Black Crystal is set on the Lemurian Ship.
   SE_BLACK_CRYSTAL_SET,
   SE_COLOSSO_WARRIOR_APPEAR,
-  SE_253,
+  /// SE_COLOSSO_WARRIOR_APPEAR's rising note on noise voice 20, doubled an
+  /// octave lower on the Roar sample; nothing plays it.
+  SE_UNUSED_COLOSSO_WARRIOR_ROAR,
   /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus four
   /// times its voice, and the letters typed play it plus the letter's low two
   /// bits, so a voice is four blips, _A to _D.
@@ -503,7 +509,10 @@ enum SoundId {
   /// The leader dropping down a ledge or through a hole, a block or flower
   /// knocked off a ledge, and Jupiter Lighthouse's floor opening.
   SE_FALL,
-  SE_311,
+  /// A chord held until stopped on the Colosso lettering's sample, under rising
+  /// runs on noise voice 23 and the Sparks sample and a note of Psynergy
+  /// sparkle; nothing plays it.
+  SE_UNUSED_SPARKLING_LETTERING,
   /// Not a sound: fades out what MUSIC_PLAYER_ACTION_SE and MUSIC_PLAYER_SE5
   /// play.
   SOUND_FADE_OUT_ACTION_SE = 390,
@@ -528,7 +537,9 @@ enum SoundId {
   SE_524,
   /// Played as Garoh's people howl at night.
   SE_HOWL,
-  SE_526,
+  /// SE_HOWL's note and length on voice 115 at a slower tempo; nothing plays
+  /// it.
+  SE_UNUSED_HOWL_SLOW,
   /// SE_GABOMBA_JAWS_OPEN's voice on one note above its two, held and bent up
   /// and down until stopped; nothing plays it.
   SE_UNUSED_GABOMBA_JAWS_OPEN_HELD,
@@ -560,7 +571,9 @@ enum SoundId {
   SE_UNUSED_PARCH_HIGH,
   /// The sand mound sinking away as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_END,
-  SE_545,
+  /// SE_UNUSED_CURSE_RUMBLE on its voices with lower notes, louder; nothing
+  /// plays it.
+  SE_UNUSED_CURSE_RUMBLE_LOW,
   /// SE_SETTLE's notes played once instead of held, with voice 93 in its
   /// first track; nothing plays it.
   SE_UNUSED_SETTLE_SHORT,
@@ -591,7 +604,8 @@ enum SoundId {
   /// spring and pillars sinking, Magma Rock's flames growing, and the Sea of
   /// Time's waves starting and the sea opening.
   SE_RISE_WITH_SPARKS_LOW,
-  SE_558,
+  /// A run of ten short notes on the Thunder sample; nothing plays it.
+  SE_UNUSED_THUNDER_RUN,
   /// SE_UNUSED_COIN_PAYOUT_C an octave lower on SE_ICE_CRACK's voice, with four
   /// notes more; nothing plays it.
   SE_UNUSED_COIN_PAYOUT_LOW,
@@ -663,23 +677,28 @@ enum SoundId {
   /// Played as the party presses a switch or button in Mars Lighthouse, the
   /// Ankohl Ruins and the Anemos Inner Sanctum.
   SE_BUTTON_PRESS,
-  SE_585,
+  /// One short note on SE_SPARKS's sample; nothing plays it.
+  SE_UNUSED_SPARK,
   /// The Gabomba Statue's cogs turning back.
   SE_GABOMBA_STATUE_COGS,
   SE_587,
   SE_588,
   /// SE_588's times and loudness, a note of each of its chords, with other
-  /// notes on voice 108 at a slower tempo; nothing plays either.
-  SE_589,
+  /// notes falling on the Surf sample (voice 108) at a slower tempo; nothing
+  /// plays either.
+  SE_UNUSED_SURF_FALL,
   /// Played as Gaia Rock's statue rises under the leader.
   SE_STATUE_RISE,
-  SE_591,
+  /// Two short rising notes on SE_STATUE_STIRS's sample and on voice 96;
+  /// nothing plays it.
+  SE_UNUSED_STATUE_STIRS_SHORT,
   /// SE_IMPACT's rhythm and most of its notes, doubled by a second track on
   /// voice 90; nothing plays it.
   SE_UNUSED_IMPACT_DOUBLED,
   SE_593,
-  /// SE_545's second and third tracks alone; nothing plays either.
-  SE_594,
+  /// SE_UNUSED_CURSE_RUMBLE_LOW's noise and Rumble tracks alone; nothing plays
+  /// it.
+  SE_UNUSED_RUMBLE_LOW,
   /// The Doom Dragon flickering into the people it was, at Mars Lighthouse's
   /// aerie.
   SE_DRAGON_FLICKER,
@@ -691,7 +710,9 @@ enum SoundId {
   /// Rings of light rising: Contigo's sparkle, Mars Lighthouse's aerie, and the
   /// Psynergy test room.
   SE_RISING_RINGS,
-  SE_610 = 610,
+  /// A held note on the Crash sample under two chords on SE_SPIN_AWAY's sample;
+  /// nothing plays it.
+  SE_UNUSED_SPIN_AWAY_CRASH = 610,
   /// SE_COIN_PAYOUT's notes with voice 119 in its first track; nothing plays
   /// it.
   SE_UNUSED_COIN_PAYOUT_B,

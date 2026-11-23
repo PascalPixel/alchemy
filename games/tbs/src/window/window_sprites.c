@@ -247,8 +247,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 /// The tiles a voiced mark takes in place of its own over the frame's top edge
 /// and over a divider; a semi-voiced mark takes the next.
-#define MARK_OVER_BORDER_TILE 30
-#define MARK_OVER_DIVIDER_TILE 14
+#define VOICED_MARK_OVER_BORDER_TILE 30
+#define VOICED_MARK_OVER_DIVIDER_TILE 14
 
 /// The Japanese Window_PutGlyph, which also places the kana marks.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
@@ -307,18 +307,18 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       // A kana mark goes in the tile above the character before it. Over the
       // frame's top edge or a divider it takes another tile.
       // XXX (no evidence): whether a voiced kana ever lands on a window's top
-      // edge or a divider, where it takes MARK_OVER_BORDER_TILE (parts of the
-      // Japanese HP and PP labels) or MARK_OVER_DIVIDER_TILE (the dividers);
-      // no scene staged so far opens such a window.
+      // edge or a divider, where it takes VOICED_MARK_OVER_BORDER_TILE (parts
+      // of the Japanese HP and PP labels) or VOICED_MARK_OVER_DIVIDER_TILE (the
+      // dividers); no scene staged so far opens such a window.
       u32 line;
 
       line = (win->y + y) * BG_SCREEN_WIDTH;
       switch (*(((struct WindowWork *)base)->tilemap + (line + (win->x + x)))) {
       case WINDOW_TILE_BORDER_TOP:
-        tile -= TEXT_MARK_VOICED - MARK_OVER_BORDER_TILE;
+        tile -= TEXT_MARK_VOICED - VOICED_MARK_OVER_BORDER_TILE;
         break;
       case WINDOW_TILE_DIVIDER_HORIZONTAL:
-        tile -= TEXT_MARK_VOICED - MARK_OVER_DIVIDER_TILE;
+        tile -= TEXT_MARK_VOICED - VOICED_MARK_OVER_DIVIDER_TILE;
         break;
       }
     } else {
@@ -627,5 +627,5 @@ void WindowSprite_UpdateAll(void) {
 #undef PAGE_ARROW_FRAME_BYTES
 #undef WOBBLE_STEPS
 #undef HOP_STEPS
-#undef MARK_OVER_BORDER_TILE
-#undef MARK_OVER_DIVIDER_TILE
+#undef VOICED_MARK_OVER_BORDER_TILE
+#undef VOICED_MARK_OVER_DIVIDER_TILE

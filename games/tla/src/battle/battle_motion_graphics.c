@@ -249,7 +249,7 @@ void BattleMotion_ReleaseBuffer(struct SavedBattleObject *saved) {
   struct MotionObject *object = BattleObject_Get(saved->unitId)->object;
 
   if (saved->buffer != NULL) {
-    Animation_SkipToStopFar(GetMotionRecord(object, 0));
+    Sprite_SkipToStopFar(GetMotionRecord(object, 0));
     wait(1);
     Heap_Release(saved->buffer);
     saved->buffer = NULL;

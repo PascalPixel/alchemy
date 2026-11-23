@@ -30,12 +30,12 @@
 #include "field/field_sequence.h"
 #include "graphics/glyph.h"
 
-/// The frames Animation_WaitForTrackEnd waits at most.
+/// The frames Sprite_WaitForTrackEnd waits at most.
 #define TRACK_END_WAIT_FRAMES 90
 
 /// Waits, at most TRACK_END_WAIT_FRAMES, for a sprite's animation to change or
 /// for its first layer's script to reach ANIMCMD_HOLD.
-void Animation_WaitForTrackEnd(struct Sprite *sprite) {
+void Sprite_WaitForTrackEnd(struct Sprite *sprite) {
   u8 animation = sprite->lastNo;
   struct SpriteAnimation *entry = sprite->entries[0];
   s32 i;
@@ -567,7 +567,7 @@ void Actor_SetBlendMode(struct Actor *actor, u32 mode) {
 
 /// Sets a one-sprite actor's sprite's own-scale bit: drawn at its own scale,
 /// not scaled by distance.
-void Animation_SetDisplayFlag(struct Actor *actor, u32 value) {
+void Actor_SetOwnScale(struct Actor *actor, u32 value) {
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
     ((struct Sprite *)actor->sprite)->useOwnScale = value;
 }
@@ -633,10 +633,10 @@ s32 Actor_GetSpriteId(struct Actor *actor) {
   return 0;
 }
 
-/// Animation_WaitForTrackEnd on an actor's sprite.
+/// Sprite_WaitForTrackEnd on an actor's sprite.
 void Actor_WaitForTrackEnd(struct Actor *actor) {
   if (actor != NULL)
-    Animation_WaitForTrackEnd(actor->sprite);
+    Sprite_WaitForTrackEnd(actor->sprite);
 }
 
 /// Suspends the actor camera updates, starts the palette back to normal and, a

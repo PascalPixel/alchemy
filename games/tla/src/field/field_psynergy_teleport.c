@@ -15,10 +15,10 @@
 #define WHIRL_COUNT 100
 /// The frames a spark flies before it vanishes.
 #define TELEPORT_SPARK_FRAMES 20
-/// Before the sparks, the leader spins for SPARKS_SPIN_FRAMES, its turn each
-/// frame SPARKS_SPIN_ACCELERATION (1/65536 turns) faster than the last.
-#define SPARKS_SPIN_FRAMES 50
-#define SPARKS_SPIN_ACCELERATION 60
+/// Before the sparks, the leader spins for TELEPORT_SPIN_FRAMES, its turn each
+/// frame TELEPORT_SPIN_ACCELERATION (1/65536 turns) faster than the last.
+#define TELEPORT_SPIN_FRAMES 50
+#define TELEPORT_SPIN_ACCELERATION 60
 
 /// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
 /// then the 100 sparks and their sprites.
@@ -218,8 +218,8 @@ void Teleport_PlaySparks(void) {
   wait(30);
   Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(actor, ANIM_NOD);
-  for (spin = 0, frame = 0; frame < SPARKS_SPIN_FRAMES;
-       frame++, spin += SPARKS_SPIN_ACCELERATION) {
+  for (spin = 0, frame = 0; frame < TELEPORT_SPIN_FRAMES;
+       frame++, spin += TELEPORT_SPIN_ACCELERATION) {
     actor->facing += spin + FACING_STEP;
     wait(1);
   }
@@ -328,6 +328,6 @@ void FieldPsynergy_Teleport(void) {
 }
 #undef WHIRL_COUNT
 #undef TELEPORT_SPARK_FRAMES
-#undef SPARKS_SPIN_FRAMES
-#undef SPARKS_SPIN_ACCELERATION
+#undef TELEPORT_SPIN_FRAMES
+#undef TELEPORT_SPIN_ACCELERATION
 #undef TELEPORT_SPARK_COUNT

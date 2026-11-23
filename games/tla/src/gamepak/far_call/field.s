@@ -78,7 +78,7 @@ FarCall_FieldTable:
 	export Actor_SetFirstSpriteAnimationFar, Actor_SetFirstSpriteAnimation
 	export ActorSystem_SuspendProjectionAndShowSpritesFar, ActorSystem_SuspendProjectionAndShowSprites
 	export ActorSystem_ResumeProjectionAndHideLayersFar, ActorSystem_ResumeProjectionAndHideLayers
-	export Animation_SetDisplayFlagFar, Animation_SetDisplayFlag
+	export Actor_SetOwnScaleFar, Actor_SetOwnScale
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
 	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
 	export WorldMap_StartStillPictureFar, WorldMap_StartStillPicture
@@ -107,14 +107,14 @@ FarCall_FieldTable:
 	export WorldMap_IsSailableFar, WorldMap_IsSailable
 	export Map_GetHeaderSizeFar, Map_GetHeaderSize
 	export Actor_GetSpriteIdFar, Actor_GetSpriteId
-	export Animation_WaitForTrackEndFar, Animation_WaitForTrackEnd
+	export Sprite_WaitForTrackEndFar, Sprite_WaitForTrackEnd
 	export Actor_WaitForTrackEndFar, Actor_WaitForTrackEnd
 	export Field_CheckSpheresOverlapFar, Field_CheckSpheresOverlap
 	export WorldMap_GetBlockPlaceFar, WorldMap_GetBlockCellBehavior
 	export WorldMap_GetCollisionFar, WorldMap_GetCollision
 	export MapGrid_SetCellHeightFar, MapGrid_SetCellHeight
 	export MapGrid_GetCellHeightFar, MapGrid_GetCellHeight
-	export Animation_SkipToStopFar, Animation_SkipToStop
+	export Sprite_SkipToStopFar, Sprite_SkipToStop
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export ActorShadow_FreeTilesFar, ActorShadow_FreeTiles
 	export ActorShadow_LoadTilesFar, ActorShadow_LoadTiles

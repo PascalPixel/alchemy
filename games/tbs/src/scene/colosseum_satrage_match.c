@@ -316,6 +316,18 @@ enum FallingLogAnimation {
   FALLING_LOG_ANIMATION_FALLEN = 4
 };
 
+/// SPRITE_YOUNG_MAN_WITH_FAIR_HAIR's two poses at the lever of the shifting
+/// floor, which the lifts' operator takes as he lines the lifts up and as he
+/// breaks the line.
+enum LiftOperatorAnimation {
+  LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP = 10,
+  LIFT_OPERATOR_ANIMATION_LIFTS_APART = 11
+};
+
+/// SPRITE_LOG_NORTH_SOUTH lying still after a roll (log_north_south.tsv's
+/// first rolling picture, held), beside its LogAnimation.
+#define ROLLED_LOG_ANIMATION_AT_REST 1
+
 /// The cell behaviours the stages' step triggers answer.
 enum ColosseumSatrageMatchCellBehavior {
   /// The ledge at the foot of The Wall, cell (37, 16), a cell east of where
@@ -679,7 +691,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Actor_WaitForMove(log);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
-  Actor_SelectAnimation(log, 1);
+  Actor_SelectAnimation(log, ROLLED_LOG_ANIMATION_AT_REST);
   Event_Wait(15);
   Event_End();
 }
@@ -829,7 +841,8 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
           184);
       FieldActor_SetMoveTarget(
           Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT), 1032, 0, 248);
-      Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 11);
+      Actor_SetAnimation(ACTOR_LIFT_OPERATOR,
+                         LIFT_OPERATOR_ANIMATION_LIFTS_APART);
     } else {
       FieldActor_SetMoveTarget(
           Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0, 216);
@@ -840,7 +853,8 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
           216);
       FieldActor_SetMoveTarget(
           Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT), 1032, 0, 216);
-      Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
+      Actor_SetAnimation(ACTOR_LIFT_OPERATOR,
+                         LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
     }
   }
   gColosseumSatrageMatch_LiftTimer++;
@@ -862,7 +876,8 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
   Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, 968, 216);
   Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2, 1000, 216);
   Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT, 1032, 216);
-  Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
+  Actor_SetAnimation(ACTOR_LIFT_OPERATOR,
+                     LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
 }
 
 /// Starts the shifting floor's lifts moving again.
@@ -1002,6 +1017,9 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
+  // Keep a copy of the Board Walk's cells at column 100 and the Log-Rolling
+  // Stage's at column 120, off the stages, to put back before the logs' cells
+  // are walled again where they lie.
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
   for (obstacleId = ACTOR_BOARD_WALK_FIRST_PLATFORM;
@@ -1091,7 +1109,8 @@ s32 Scene_Initialize(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
   // With FLAG_LIFTS_HALTED set the lifts stay where they are; otherwise their
   // task resumes.
-  Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
+  Actor_SetAnimation(ACTOR_LIFT_OPERATOR,
+                     LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
   if (GameFlag_Get(FLAG_LIFTS_HALTED)) {
     for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
         columnOffset = 58;
@@ -1102,7 +1121,8 @@ s32 Scene_Initialize(void) {
       Actor_SelectAnimation(actor, 4);
       MapGrid_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
-    Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
+    Actor_SetAnimation(ACTOR_LIFT_OPERATOR,
+                       LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
     FieldPsynergy_HaltActor(ACTOR_LIFT_OPERATOR);
   } else {
     for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
@@ -1450,33 +1470,35 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   Event_End();
 }
 
-/// Moves a demonstration obstacle to pixel coordinates while its pusher
-/// follows.
-static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
-                                                     s32 row) {
+/// In the Board Walk attendant's demonstration, Isaac leans on a log and it
+/// rolls west to (x, z) in pixels, with Isaac walking after it half the way.
+static void ColosseumSatrageMatch_DemonstrateLogPush(s32 obstacleId, s32 x,
+                                                     s32 z) {
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *obstacle = Actor_Get(obstacleId);
-  s32 alongX = FIELD_CELL(obstacle->x.fixed) != column / 2;
+  // The test is ColosseumSatrageMatch_RollLogToCell's, made for half cells:
+  // given pixels it always holds, so the push is along x, as this one is.
+  s32 alongX = FIELD_CELL(obstacle->x.fixed) != x / 2;
   FIXED offsetX;
   FIXED offsetZ;
 
-  column <<= 16;
-  row <<= 16;
+  x <<= 16;
+  z <<= 16;
   if (alongX) {
-    offsetX = (column - obstacle->x.fixed) / 2;
+    offsetX = (x - obstacle->x.fixed) / 2;
     offsetZ = 0;
   } else {
     offsetX = 0;
-    offsetZ = (row - obstacle->z.fixed) / 2;
+    offsetZ = (z - obstacle->z.fixed) / 2;
   }
   Actor_SetAnimation(pusher, ANIM_PUSH);
   Event_Wait(6);
   obstacle->speedLimit = toFIXED(1) / 2;
   obstacle->acceleration = toFIXED(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SelectAnimation(obstacle, 3);
-  FieldActor_SetMoveTargetFX(obstacle, column, 0, row);
+  Actor_SelectAnimation(obstacle, LOG_ANIMATION_ROLL_WEST);
+  FieldActor_SetMoveTargetFX(obstacle, x, 0, z);
   Event_Wait(6);
   Actor_SetAnimation(pusher, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
@@ -1486,7 +1508,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Actor_WaitForMove(pusherActor);
   Actor_SelectAnimation(pusherActor, ANIM_STAND);
   Actor_WaitForMove(obstacle);
-  Actor_SelectAnimation(obstacle, 1);
+  Actor_SelectAnimation(obstacle, ROLLED_LOG_ANIMATION_AT_REST);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   Event_Wait(15);
@@ -1519,7 +1541,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 408, 216);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Event_ShowMessage(attendant, 0);
-    ColosseumSatrageMatch_PushObstacleToCell(ACTOR_ROLLING_LOG_EAST, 360, 208);
+    ColosseumSatrageMatch_DemonstrateLogPush(ACTOR_ROLLING_LOG_EAST, 360, 208);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SMILE, 45);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
@@ -1637,6 +1659,7 @@ char gHexDigits[20] = "0123456789ABCDEF";
 
 #include "shared/pushed_actor_direction_steps.c"
 
+// No exit leads to entrance 10, on the Board Walk.
 struct SceneEntrance gColosseumSatrageMatchEntrances[] = {
     { COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND, CONDITION_ALWAYS, 1272, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST, CONDITION_ALWAYS, 1224, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },

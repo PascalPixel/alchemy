@@ -5,8 +5,8 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
-/// The SST chip's waits by timing: milliseconds, the timer's reload value and
-/// its control, as Flash_MaxTimeMacronix's.
+/// The SST chip's time limits, a row per enum FlashPhase (row 0 unused):
+/// milliseconds, the timer's reload value and its control.
 // clang-format off
 const u16 Flash_MaxTimeSst[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,

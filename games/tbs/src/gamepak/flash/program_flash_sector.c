@@ -5,7 +5,8 @@
 #include "gamepak/flash_data.h"
 #include "system/io_reg.h"
 
-/// Erases a standard sector and programs bytes until completion or an error.
+/// Erases a 4 KB sector and writes it from `source` byte by byte, stopping at
+/// the first byte that does not read back.
 u16 ProgramFlashSector(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;

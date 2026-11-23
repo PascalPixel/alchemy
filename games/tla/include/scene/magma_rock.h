@@ -62,7 +62,7 @@ void MagmaRock_EndFallingRocks(void);
 
 void MagmaRock_BurstStatue(s32 mode, s32 cue);
 
-void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id);
+void Actor_SetCellShape(s32 level, s32 layer, s32 id);
 
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *self);
 

@@ -79,7 +79,7 @@ extern s32 gMagmaRockInside_LastStepCell;
 
 void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue);
 void MagmaRockInside_TrackStepCell(void);
-void MagmaRockInside_SetActorCellShape(s32 heightOffset, s32 layer, s32 owner);
+void Actor_SetCellShape(s32 heightOffset, s32 layer, s32 owner);
 void Actor_StartScript(struct Actor *actor, const void *data);
 void Actor_DisableById(s32 id);
 
@@ -366,7 +366,7 @@ s32 Field_TryJumpForward(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void Dust_Scatter(s32 spread);
-void MagmaRockInside_SetLeaderCellShape(s32 heightOffset, s32 layer);
+void Leader_SetCellShapeAt(s32 heightOffset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
 extern u32 gDust_ScatterScript[];
 
@@ -2817,7 +2817,7 @@ UNUSED void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
       Dust_Scatter(0);
       System_Wait(8);
       Actor_SelectAnimation(actor, 2);
-      MagmaRockInside_SetActorCellShape(-4, actor->layer, id);
+      Actor_SetCellShape(-4, actor->layer, id);
       Dust_Scatter(1);
       System_Wait(16);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -2911,10 +2911,10 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
           Dust_Scatter(0);
           wait(8);
           Actor_SelectAnimation(partner, 2);
-          MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
+          Leader_SetCellShapeAt(-2, trap->layer);
           Dust_Scatter(1);
           wait(16);
-          MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
+          Leader_SetCellShapeAt(-2, trap->layer);
           wait(4);
           MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
           wait(8);
@@ -2982,29 +2982,9 @@ void MagmaRockInside_SpawnDustRing(void) {
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-/// Gives an actor's cell the collision shape of the ground beneath it, raised
-/// by heightOffset steps of 8 pixels.
-void MagmaRockInside_SetActorCellShape(s32 heightOffset, s32 layer, s32 owner) {
-  struct Actor *actor = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid +
-              (((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
-               (struct MapCell *)Ram_MapCellBuffer);
-  s32 value =
-      MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
-  s32 height = CELL_HEIGHT_STEPS(
-      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
+#include "shared/actor_set_cell_shape.h"
 
-  height += heightOffset;
-
-  shape += actor->x.fixed / toFIXED(16) + actor->z.fixed / toFIXED(16) * 128;
-  *shape = MapCollision_FindOrAddTag(actor->layer, value, height);
-}
-
-/// MagmaRockInside_SetActorCellShape for the leader.
-void MagmaRockInside_SetLeaderCellShape(s32 heightOffset, s32 layer) {
-  MagmaRockInside_SetActorCellShape(heightOffset, layer,
-                                    gMainRoutineWork.leaderActorId);
-}
+#include "shared/leader_set_cell_shape.h"
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);

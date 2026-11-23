@@ -678,9 +678,9 @@ void Actor_DisableById(s32 id);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void Dust_Scatter(s32 value);
-void MagmaRockInside_SetLeaderCellShape(s32 offset, s32 layer);
+void Leader_SetCellShapeAt(s32 offset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
-void TrialRoad_SetActorCellShape(s32 a, s32 b, s32 c);
+void Actor_SetCellShape(s32 a, s32 b, s32 c);
 
 void TrialRoad_DriftDust(union FieldObject *object);
 
@@ -3345,7 +3345,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
         Dust_Scatter(0);
         wait(8);
         Actor_SelectAnimation(actor, 2);
-        TrialRoad_SetActorCellShape(-4, actor->layer, id);
+        Actor_SetCellShape(-4, actor->layer, id);
         Dust_Scatter(1);
         wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -3436,10 +3436,10 @@ void TrialRoad_StepOnTrap(const u16 *table) {
           Dust_Scatter(0);
           wait(8);
           Actor_SelectAnimation(partner, 2);
-          MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
+          Leader_SetCellShapeAt(-2, trap->layer);
           Dust_Scatter(1);
           wait(16);
-          MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
+          Leader_SetCellShapeAt(-2, trap->layer);
           wait(4);
           MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
           wait(8);
@@ -3579,26 +3579,9 @@ void MagmaRockInside_SpawnDustRing(void) {
   }
 }
 
-/// Sets the shape of the cell under an actor (Actor_SetCellShape).
-void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
-  struct Actor *actor = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid +
-              (((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
-               (struct MapCell *)Ram_MapCellBuffer);
-  s32 value =
-      MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
-  s32 height = CELL_HEIGHT_STEPS(
-      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
+#include "shared/actor_set_cell_shape.h"
 
-  height += level;
-
-  shape += actor->x.fixed / toFIXED(16) + actor->z.fixed / toFIXED(16) * 128;
-  *shape = MapCollision_FindOrAddTag(actor->layer, value, height);
-}
-
-void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
-  TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.leaderActorId);
-}
+#include "shared/leader_set_cell_shape.h"
 
 extern u32 gTrialRoad_HexDigits[];
 

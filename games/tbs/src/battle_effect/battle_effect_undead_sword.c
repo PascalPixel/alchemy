@@ -108,6 +108,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                                 composite);
+          // DEAD: draw[0] is fetched afresh before it is read; the ROM keeps
+          // the store.
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
           EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, work->sheet, x,
                                              UNDEAD_SWORD_FOOT_Y - height,

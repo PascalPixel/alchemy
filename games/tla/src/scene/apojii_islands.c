@@ -953,35 +953,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
 /// aqua_rock_inside.c names it.
 enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
 
-/// Unused here: in Aqua Rock the leader spins up and away to `entrance`,
-/// splashing at the Vial chest room's third puddle.
-UNUSED void Leader_SpinAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  leader->motionFlags = 0;
-  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Event_PlaySound(SE_SPLASH_SMALL);
-  Actor_SelectAnimation(leader, ANIM_LEADER_TUMBLE_IN_WATER);
-  Event_PlaySound(SE_SPIN_AWAY);
-  for (i = 0; i < 60; i++) {
-    s32 angle;
-
-    if (i == 30)
-      Event_FinishScreenTransition();
-    leader->y.fixed -= toFIXED(1) / 4;
-    angle = leader->facing;
-    leader->facing = angle + TRIG_TURN / 16;
-    if ((i & 7) == 0)
-      Actor_SpawnWadingSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
-    System_Wait(1);
-  }
-  Event_End();
-  FieldEvent_SetExitRequest(entrance);
-}
+#include "shared/leader_spin_away.h"
 
 #include "shared/actor_emit_mist.h"
 

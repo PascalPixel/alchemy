@@ -270,7 +270,7 @@ void Actor_EmitWaterDrop(struct Actor *actor);
 
 void AquaRock_KeepLeaderPriority(void);
 void AquaRock_StartBubbles(void);
-void AquaRock_StartSparkles(void);
+void GroundParticles_Start(void);
 void AquaRock_MoaiStepAside(void);
 void AquaRock_SetUpStreams(void);
 void AquaRock_ArriveFromPassage(void);
@@ -1240,7 +1240,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_FIRST_FISH + 1, 1);
     Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_MOAI_PILLAR, 1);
     AquaRock_StartBubbles();
-    AquaRock_StartSparkles();
+    GroundParticles_Start();
     if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
       AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
       AquaRock_SetSparkleAnchor(ACTOR_WATER_STONE);
@@ -1293,7 +1293,7 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       AquaRock_StartBubbles();
-      AquaRock_StartSparkles();
+      GroundParticles_Start();
       if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
         AquaRock_SetBubbleAnchor(ACTOR_BUBBLE_MARKER);
         AquaRock_SetSparkleAnchor(ACTOR_BUBBLE_MARKER);
@@ -1306,7 +1306,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BUBBLE_MARKER), 0);
     } else {
       AquaRock_StartBubbles();
-      AquaRock_StartSparkles();
+      GroundParticles_Start();
       Actor_GetById(ACTOR_MIST_SABRE_WATER_STONE)->update =
           AquaRock_StopFlashing;
       if (GameFlag_Get(FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED)) {
@@ -1626,44 +1626,7 @@ void AquaRock_SetBubbleAnchor(s32 id) {
 
 #include "shared/ground_particles_draw.h"
 
-/// Starts the sparkles: their sprites on the ground at the origin, their
-/// tiles decoded into VRAM, and GroundParticles_Draw scheduled to move them.
-void AquaRock_StartSparkles(void) {
-  struct GroundParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct GroundParticleWork));
-  struct GroundParticle *p = work->particles;
-  u8 *buf;
-  u32 i;
-  u32 size;
-  volatile u32 zero;
-
-  size = 0;
-  zero = size;
-  Dma_Set((const void *)&zero, work,
-          DMA_FILL_WORDS(sizeof(struct GroundParticleWork) / 4), REG_DMA3);
-  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-  Decompress_ByteLz(gField_GroundTiles, buf);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = VramCache_Load(work->entry, 768, buf);
-  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  work->leader = (s32 *)size;
-  i = 0;
-  do {
-    size = (u32)p;
-    *(u32 *)size = 0;
-    size += 4;
-    *(u32 *)size = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    size += 4;
-    *(u32 *)size = OBJ_PRIORITY(1) | OBJ_PALETTE(11);
-    p->posX = 0;
-    p->posZ = 0;
-    p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-    p->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
-    i++;
-    p++;
-  } while (i < ARRAY_COUNT(work->particles));
-  Task_Add(GroundParticles_Draw, TASK_PASS_FRAME);
-}
+#include "shared/ground_particles_start.h"
 
 /// Ties the sparkles to the actor `id`, or to none.
 void AquaRock_SetSparkleAnchor(s32 id) {
@@ -1731,14 +1694,7 @@ u32 gWadingSplash_Script[] = {
     SC_RELEASE,
 };
 
-/// A ring of water's script: it rises a quarter of a pixel a frame for 31
-/// frames, then is released.
-u32 gWaterDropScript[] = {
-    SC_ADD(SW_Y, toFIXED(1) / 4),
-    SC_WAIT(1),
-    SC_LOOP(30, SC_TOP),
-    SC_RELEASE,
-};
+#include "shared/water_drop_script.c"
 // clang-format on
 
 #undef DEFINE_AQUA_ROCK_FREEZE_PUDDLE
@@ -1748,20 +1704,8 @@ u32 gWaterDropScript[] = {
 #undef EFFECT_SPRITE_PRIORITY
 
 // clang-format off
-LATE_DATA s16 gGroundParticleFrames[] = {                                                               
-      -8,  -12,  20,  0,   1,    -8,  -12,  20,  0,    1,   -8,   -12,         
-      20,  0,    1,   -8,  -12,  16,  0,    1,   -8,   -12, 16,   0,           
-      1,   -8,   -12, 12,  0,    1,   -8,   -12, 8,    0,   1,    0,           
-      -32, 0,    2,   2,   8,    -48, 0,    2,   2,    16,  -64,  0,           
-      2,   2,    24,  -80, 0,    2,   2,    32,  -96,  0,   2,    2,           
-      40,  -112, 0,   2,   2,    48,  -128, 0,   2,    2,   56,   -144,        
-      0,   2,    2,   64,  -160, 0,   2,    2,   -2,   12,  -4,   12,          
-      -6,  12,   -8,  8,   -10,  8,   -12,  8,   -14,  8,   -16,  8,           
-      -19, 4,    -21, 4,   -24,  4,   -27,  4,   -30,  4,   -33,  4,           
-      -36, 4,    -40, 4,   -44,  4,   -48,  0,   -52,  0,   -56,  0,           
-      -60, 0,    -64, 0,   -68,  0,   -72,  0,   -76,  0,   -80,  0,           
-      -85, 0,    -90, 0,   -95,  0,   -100, 0,   -110, 0,   -120, 0,           
-  };
+#define GROUND_PARTICLE_FRAMES_SECTION LATE_DATA
+#include "shared/ground_particle_frames.c"
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

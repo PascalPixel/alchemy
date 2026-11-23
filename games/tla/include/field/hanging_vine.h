@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_HANGING_VINE_H
 #define ALCHEMY_HANGING_VINE_H
 
+/// @file
+/// The hanging vines the leader swings from: their links and their swing.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "system/ram_buffer.h"

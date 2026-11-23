@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_OBJECT_H
 
 /// @file
-/// What games/tla/src/field/actor_*.c declare for the files that use it,
-/// written once.
+/// The field's actors, ropes, tightropes and hanging vines, field effects and
+/// palette fades, as the scenes and the event commands call them.
 
 #include "fixed_math.h"
 #include "types.h"

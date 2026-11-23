@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_FIELD_PSYNERGY_H
 
 /// @file
-/// What games/tla/src/field/field_psynergy.c declares for the files that
-/// use it, written once.
+/// The works of the field Psynergy's effects: the scatter, Whirlwind's orb,
+/// the Arrow's bow, and Avoid's falling arcs.
 
 #include "types.h"
 #include "field/effect_sprite.h"

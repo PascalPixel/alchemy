@@ -8,7 +8,6 @@
 #include "edition.h"
 
 struct Actor;
-struct Actor;
 
 void *Actor_FindFree(void);
 void Actor_Release(struct Actor *actor);

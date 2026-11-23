@@ -32,7 +32,7 @@ enum LeaderMovementMode {
   LEADER_MOVEMENT_NONE = 12        ///< the idle script: it does not move
 };
 
-/// A window transition's shape): SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
+/// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which ScreenTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {
   WINDOW_TRANSITION_BARS = 0,   ///< a bar on each line, at random

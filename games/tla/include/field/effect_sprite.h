@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_EFFECT_SPRITE_H
 #define ALCHEMY_EFFECT_SPRITE_H
 
+/// @file
+/// The sprites a field effect draws itself, placed, scaled and turned.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"

@@ -2,7 +2,8 @@
 #define ALCHEMY_FIELD_MAP_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// The map's buffers in EWRAM and its shape table, the world map's blocks, and
+/// the map routines the scenes call.
 
 #include "fixed_math.h"
 #include "types.h"

@@ -353,7 +353,7 @@ static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 /// actor_script.h.
 static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 
-/// Signed division written as a call; the `/` compiles to __divsi3.
+/// Divides, rounding toward zero.
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
@@ -406,8 +406,8 @@ static inline void FieldEvent_ShowMessageThenWait(s32 speaker, s32 flags,
   Event_ShowMessageThenWait(speaker, flags, frames);
 }
 
-/// Sets a sprite param on every part of an actor's sprite, or makes it
-/// blink.
+/// Sets a colour mode (enum SpriteColorMode) on every part of an actor's
+/// sprite, or SPRITE_COLOR_BLINK to make it blink.
 static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
   Actor_ConfigureSpriteColor(actorId, value);
 }
@@ -462,7 +462,8 @@ static inline void FieldEvent_ShowTwoMessagesAndWait(
                                secondPortraitX, secondPortraitY, delay);
 }
 
-/// The field encodes either a movement type or an actor-script address.
+/// Gives an actor a movement type (enum MovementType) or an actor script to
+/// run; the event goes on meanwhile.
 static inline void Actor_SetScript(s32 actorId, const s32 *script) {
   Actor_SetMovementTypeById(actorId, script);
 }

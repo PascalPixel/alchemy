@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
+/// @file
+/// Creating actors and starting their scripts and animations from a scene.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "field/field_sprite.h"

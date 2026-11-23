@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_MAP_GRID_H
 #define ALCHEMY_MAP_GRID_H
 
+/// @file
+/// The map grid: its layers and cells, the cell behaviors and attributes the
+/// field reads, its tile animations and blend script, and the world map's
+/// collision and battle environments.
+
 #include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"

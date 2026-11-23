@@ -2,7 +2,7 @@
 #define ALCHEMY_LUCKY_WHEELS_TITLE_H
 
 /// @file
-/// What games/tla/src/field/ declares for the files that use it, written once.
+/// The letters of the Lucky Wheels title: their tiles and each one's width.
 
 #include "types.h"
 

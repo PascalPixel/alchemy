@@ -2,8 +2,7 @@
 #define ALCHEMY_ENCOUNTER_ZONE_H
 
 /// @file
-/// What games/tla/src/field/field_sequence_*.c declare for the files that use
-/// it, written once.
+/// A row of the encounter zone table, gEncounterZones (encounter_zones.c).
 
 #include "types.h"
 

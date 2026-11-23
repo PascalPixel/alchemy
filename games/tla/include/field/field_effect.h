@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_FIELD_EFFECT_H
 
 /// @file
-/// What games/tla/src/field/field_effect_*.c declare for the files that use it,
-/// written once.
+/// The tints a field Psynergy washes the screen in, and the motion updates of
+/// its effect actors.
 
 #include "types.h"
 

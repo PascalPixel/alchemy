@@ -89,7 +89,8 @@ enum {
 /// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
-/// Entrance positions.
+/// Where the party arrives by one of a scene's entrances, which way the leader
+/// faces, and the camera's bounds there.
 struct SceneEntrance {
   s16 entrance;     ///< the entrance number; SCENE_TABLE_END ends the table
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
@@ -139,7 +140,6 @@ struct SceneEntrance {
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 511
 
-/// Actor placements.
 /// An actor a scene places: its sprite, the condition for placing it,
 /// how it behaves, where it stands and which way it faces, and how it turns to
 /// talk.

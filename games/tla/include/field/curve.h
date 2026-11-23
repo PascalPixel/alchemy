@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_CURVE_H
 #define ALCHEMY_CURVE_H
 
+/// @file
+/// The ground height of a map cell from its shape's height samples, one
+/// routine for each kind of slope, and the tables they read.
+
 #include "fixed_math.h"
 #include "types.h"
 

@@ -85,7 +85,8 @@ struct SpritePictureCache {
 #define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
 
 /// The actor system's work: the flag that suspends sprite projection, the
-/// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.
+/// outline's edge and fill colours, and the sprite picture caches
+/// (HEAP_SLOT_ACTOR_SYSTEM).
 struct ActorSystemWork {
   u16 used; ///< sprite pixel bytes composed since the camera reset it
   u8 unusedAfterUsed[2]; ///< no code names it

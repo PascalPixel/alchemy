@@ -41,26 +41,26 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Gives the first Djinni of an element, then clears its flag so it stays.
-static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
+static __inline__ void Test_GiveDjinni(s32 actorId, s32 element) {
   Djinn_JoinParty(actorId, element, 0);
   GameFlag_Clear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
 }
 
 /// Talking to Flint, Fizz, Forge or Gust gives that Djinni to the party.
 static void Test_ReceiveFlint(void) {
-  Test_GiveDjinniForTesting(ACTOR_FLINT, ELEMENT_VENUS);
+  Test_GiveDjinni(ACTOR_FLINT, ELEMENT_VENUS);
 }
 
 static void Test_ReceiveFizz(void) {
-  Test_GiveDjinniForTesting(ACTOR_FIZZ, ELEMENT_MERCURY);
+  Test_GiveDjinni(ACTOR_FIZZ, ELEMENT_MERCURY);
 }
 
 static void Test_ReceiveForge(void) {
-  Test_GiveDjinniForTesting(ACTOR_FORGE, ELEMENT_MARS);
+  Test_GiveDjinni(ACTOR_FORGE, ELEMENT_MARS);
 }
 
 static void Test_ReceiveGust(void) {
-  Test_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
+  Test_GiveDjinni(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gTest_Triggers; }

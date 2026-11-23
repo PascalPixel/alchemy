@@ -2,7 +2,8 @@
 #define ALCHEMY_DEBUG_H
 
 /// @file
-/// The main-image calls the debug menus import, and their palette swatch tiles.
+/// What the debug rooms and windows share: the main-image headers their menus
+/// call into, the palette editor's swatch tiles, and the browsers' steps.
 
 #include "edition.h"
 #include "types.h"
@@ -18,5 +19,9 @@ extern const u8 gDebug_PaletteSwatchTiles[];
 
 /// The debug item browsers' item numbers, 0 to 269, wrapping.
 #define DEBUG_ITEM_COUNT 270
+/// The debug browsers' steps: Right and Left move the number ten, R and L
+/// thirty.
+#define DEBUG_BROWSER_ROW_STEP 10
+#define DEBUG_BROWSER_PAGE_STEP 30
 
 #endif

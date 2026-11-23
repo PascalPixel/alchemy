@@ -101,6 +101,25 @@
 /// back to the tower's first room.
 #define JUPITER_TOWER_THROUGH_HOLE 16
 
+/// The Jupiter tower's landings from Cyclone's whirlwinds, each where an exit
+/// of a Cyclone circle sets the party down: most on the circle that takes it
+/// back, the rest in the big room of the white dragon statue.
+enum {
+  JUPITER_TOWER_FIRST_HALL_WEST_CIRCLE = 2,
+  JUPITER_TOWER_CORRIDOR_FOOT_CIRCLE = 3,
+  JUPITER_TOWER_FIRST_HALL_EAST_CIRCLE = 4,
+  JUPITER_TOWER_NARROW_ROOM_FIRST_CIRCLE = 5,
+  JUPITER_TOWER_BIG_ROOM_SOUTHWEST = 6,
+  JUPITER_TOWER_BIG_ROOM_FAR_WEST = 7,
+  JUPITER_TOWER_BIG_ROOM_RAISED_CIRCLE = 8,
+  JUPITER_TOWER_TWO_CIRCLE_ROOM_FIRST_CIRCLE = 9,
+  JUPITER_TOWER_BIG_ROOM_NORTHEAST_LEDGE = 10,
+  JUPITER_TOWER_BIG_ROOM_EAST_CIRCLE = 11,
+  JUPITER_TOWER_NARROW_ROOM_SECOND_CIRCLE = 12,
+  JUPITER_TOWER_BIG_ROOM_WEST_CIRCLE = 13,
+  JUPITER_TOWER_CARVED_DRAGON_CIRCLE = 14
+};
+
 /// The Venus tower's doorways the party comes through from the small rooms
 /// between its halls: the west and east doorways of the hall of the flame
 /// throwers and stones; the statue hall's west doorway (the upper doorway,
@@ -243,6 +262,10 @@ struct EffectOptions;
 struct LightOam;
 
 extern s16 gSlideOnIce_SteerAngles[];
+/// The first of gSlideOnIce_SteerAngles' second row, which keeps only the four
+/// straight headings: the first row has an entry for each of the sixteen
+/// combinations of the pad's four direction keys.
+#define STEER_STRAIGHT_ROW 16
 
 void MarsLighthouseRoomF_MeltPuddle(s32 id);
 
@@ -1012,7 +1035,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
 
     Actor_Get(gMainRoutineWork.leaderActorId);
     keys = &gInput.held;
-    table = &gSlideOnIce_SteerAngles[16];
+    table = &gSlideOnIce_SteerAngles[STEER_STRAIGHT_ROW];
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 0xf) << 1));
     if (angle != -1) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1272,7 +1295,7 @@ s32 Scene_Initialize(void) {
     }
     if (Flag_IsSet(FLAG_JUPITER_STATUE_BLOCKS_FLAMES))
       Actor_SetPosition(ACTOR_JUPITER_STATUE, 120, 296);
-    if (entrance == 14 ||
+    if (entrance == JUPITER_TOWER_CARVED_DRAGON_CIRCLE ||
         entrance ==
             MARS_LIGHTHOUSE_JUPITER_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_FLAME) {
       FlameThrowers_Start(gMarsLighthouseRoomF_JupiterUpperFlameThrowers,
@@ -1285,16 +1308,24 @@ s32 Scene_Initialize(void) {
                           gMarsLighthouseRoomF_JupiterFlameStops, 0,
                           STEP_TRIGGER_FLAME_HIT);
     }
-    // Entrances 2 to 14 are the landings of Cyclone's circles, numbered as
-    // the exit table pairs them: on some the party spins down from above
+    // On some of Cyclone's landings the party spins down from above
     // (Actor_DepartInRing), on the others it shows in a widening whirlwind
     // (Actor_ArriveInRing).
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
-      if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
-          entrance == 8 || entrance == 10 || entrance == 11 || entrance == 13)
+      if (entrance == JUPITER_TOWER_FIRST_HALL_WEST_CIRCLE ||
+          entrance == JUPITER_TOWER_FIRST_HALL_EAST_CIRCLE ||
+          entrance == JUPITER_TOWER_BIG_ROOM_SOUTHWEST ||
+          entrance == JUPITER_TOWER_BIG_ROOM_FAR_WEST ||
+          entrance == JUPITER_TOWER_BIG_ROOM_RAISED_CIRCLE ||
+          entrance == JUPITER_TOWER_BIG_ROOM_NORTHEAST_LEDGE ||
+          entrance == JUPITER_TOWER_BIG_ROOM_EAST_CIRCLE ||
+          entrance == JUPITER_TOWER_BIG_ROOM_WEST_CIRCLE)
         Actor_DepartInRing(gMainRoutineWork.leaderActorId);
-      if (entrance == 3 || entrance == 5 || entrance == 9 || entrance == 12 ||
-          entrance == 14)
+      if (entrance == JUPITER_TOWER_CORRIDOR_FOOT_CIRCLE ||
+          entrance == JUPITER_TOWER_NARROW_ROOM_FIRST_CIRCLE ||
+          entrance == JUPITER_TOWER_TWO_CIRCLE_ROOM_FIRST_CIRCLE ||
+          entrance == JUPITER_TOWER_NARROW_ROOM_SECOND_CIRCLE ||
+          entrance == JUPITER_TOWER_CARVED_DRAGON_CIRCLE)
         Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
       if (entrance == JUPITER_TOWER_THROUGH_HOLE &&
           !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
@@ -2072,19 +2103,30 @@ LATE_DATA u32 gSceneExits[] = {
         MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_JUPITER_LEDGE,
         MarsLighthouseJupiterLedge,
         MARS_LIGHTHOUSE_JUPITER_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER),
-    SCENE_EXIT(2, MarsLighthouseJupiterTower, 3),
-    SCENE_EXIT(3, MarsLighthouseJupiterTower, 2),
-    SCENE_EXIT(4, MarsLighthouseJupiterTower, 5),
-    SCENE_EXIT(5, MarsLighthouseJupiterTower, 4),
-    SCENE_EXIT(6, MarsLighthouseJupiterTower, 6),
-    SCENE_EXIT(7, MarsLighthouseJupiterTower, 7),
-    SCENE_EXIT(8, MarsLighthouseJupiterTower, 9),
-    SCENE_EXIT(9, MarsLighthouseJupiterTower, 8),
-    SCENE_EXIT(10, MarsLighthouseJupiterTower, 10),
-    SCENE_EXIT(11, MarsLighthouseJupiterTower, 12),
-    SCENE_EXIT(12, MarsLighthouseJupiterTower, 11),
-    SCENE_EXIT(13, MarsLighthouseJupiterTower, 14),
-    SCENE_EXIT(14, MarsLighthouseJupiterTower, 13),
+    SCENE_EXIT(2, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_CORRIDOR_FOOT_CIRCLE),
+    SCENE_EXIT(3, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_FIRST_HALL_WEST_CIRCLE),
+    SCENE_EXIT(4, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_NARROW_ROOM_FIRST_CIRCLE),
+    SCENE_EXIT(5, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_FIRST_HALL_EAST_CIRCLE),
+    SCENE_EXIT(6, MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_SOUTHWEST),
+    SCENE_EXIT(7, MarsLighthouseJupiterTower, JUPITER_TOWER_BIG_ROOM_FAR_WEST),
+    SCENE_EXIT(8, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_TWO_CIRCLE_ROOM_FIRST_CIRCLE),
+    SCENE_EXIT(9, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_BIG_ROOM_RAISED_CIRCLE),
+    SCENE_EXIT(10, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_BIG_ROOM_NORTHEAST_LEDGE),
+    SCENE_EXIT(11, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_NARROW_ROOM_SECOND_CIRCLE),
+    SCENE_EXIT(12, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_BIG_ROOM_EAST_CIRCLE),
+    SCENE_EXIT(13, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_CARVED_DRAGON_CIRCLE),
+    SCENE_EXIT(14, MarsLighthouseJupiterTower,
+               JUPITER_TOWER_BIG_ROOM_WEST_CIRCLE),
     SCENE_EXIT(MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
                MarsLighthouseRoomMFlame,
                MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER),

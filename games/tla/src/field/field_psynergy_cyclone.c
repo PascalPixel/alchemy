@@ -1,8 +1,8 @@
 /// @file
-/// Field effects that event commands start, in ROM order: the 96-particle
-/// burst, an actor carried from one point to another as it circles, a whirl of
-/// rings, an actor spinning away and back in a whirlwind (Actor_DepartInRing,
-/// Actor_ArriveInRing) and a spray of drops and smoke puffs.
+/// Cyclone and the whirlwinds: the 96-particle burst, the leader carried or
+/// lifted to a Cyclone cell, Cyclone itself, an actor leaving or arriving in a
+/// whirlwind (Actor_DepartInRing, Actor_ArriveInRing), then Blaze's jet of
+/// flame and the smoke it leaves.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -72,7 +72,7 @@ void ParticleBurst_Update(void) {
 
 /// Ends the particle burst (ParticleBurst_Start): stops its task and frees its
 /// tiles.
-void BattleEffect_EndX(void) {
+void ParticleBurst_End(void) {
   struct ParticleBurstWork *work = Ram_HeapSlots->battleEffect;
 
   Task_Remove((u32)ParticleBurst_Update);
@@ -175,7 +175,7 @@ void Cyclone_LiftLeader(void) {
 }
 
 /// Per-frame update: turns an actor 1/16 turn a frame.
-void BattleEffect_SpinObject(struct MotionObject *object) {
+void Actor_UpdateSpin(struct MotionObject *object) {
   object->angle += TRIG_TURN / 16;
 }
 
@@ -204,10 +204,10 @@ void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 void FieldPsynergy_Cyclone(void) {
   struct CycloneWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct CycloneWork));
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
-  s16 *points = &event->psynergyCells[0];
+  s16 *points = &field->psynergyCells[0];
   FIXED spread = toFIXED(4);
   s32 step = toFIXED(7) / 8;
   struct CanvasSpriteWork *canvas;
@@ -225,7 +225,7 @@ void FieldPsynergy_Cyclone(void) {
   FieldPsynergy_FadeToCastColor();
   FieldPsynergy_GatherNearbyCells();
   BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
-  owner->update = BattleEffect_SpinObject;
+  owner->update = Actor_UpdateSpin;
   owner->timer = owner->facing;
   // The whirl's colours: blue full, red and green rising from half to full.
   palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
@@ -289,9 +289,9 @@ void FieldPsynergy_Cyclone(void) {
   work->state = 0;
   work->timer = 0;
   work->state = 0;
-  if (event->cycloneLiftX != -1)
+  if (field->cycloneLiftX != -1)
     mode = CYCLONE_CELL_LIFT;
-  else if (event->cycloneCarryX != -1)
+  else if (field->cycloneCarryX != -1)
     mode = CYCLONE_CELL_CARRY;
   else {
     point = points[0];
@@ -314,9 +314,9 @@ void FieldPsynergy_Cyclone(void) {
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = toFIXED(event->cycloneLiftX);
+    work->to[0] = toFIXED(field->cycloneLiftX);
     work->to[1] = owner->y.fixed + toFIXED(32);
-    work->to[2] = toFIXED(event->cycloneLiftZ);
+    work->to[2] = toFIXED(field->cycloneLiftZ);
     Task_Add(Cyclone_LiftLeader, TASK_PASS_FRAME);
     while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)
@@ -329,7 +329,7 @@ void FieldPsynergy_Cyclone(void) {
       owner->scaleX = 0;
     whirlwind->scaleX = 0;
     if (work->kind)
-      BattleEffect_EndX();
+      ParticleBurst_End();
   } else if (mode == CYCLONE_CELL_CARRY) {
     if (work->kind)
       ParticleBurst_Start();
@@ -344,9 +344,9 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = toFIXED(event->cycloneCarryX);
+    work->to[0] = toFIXED(field->cycloneCarryX);
     work->to[1] = owner->y.fixed;
-    work->to[2] = toFIXED(event->cycloneCarryZ);
+    work->to[2] = toFIXED(field->cycloneCarryZ);
     Task_Add(Cyclone_CarryLeader, TASK_PASS_FRAME);
     frame = 0;
     while (work->state != FIELD_PSYNERGY_FINISHED) {
@@ -369,7 +369,7 @@ void FieldPsynergy_Cyclone(void) {
     }
     whirlwind->scaleX = 0;
     if (work->kind)
-      BattleEffect_EndX();
+      ParticleBurst_End();
   } else if (mode == CYCLONE_CELL_BURST) {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(whirlwind, 6);
@@ -390,7 +390,7 @@ void FieldPsynergy_Cyclone(void) {
       frame++;
     }
     if (work->kind)
-      BattleEffect_EndX();
+      ParticleBurst_End();
   } else {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(whirlwind, 6);
@@ -428,7 +428,7 @@ void Actor_DepartInRing(s32 actorId) {
 
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   actor->motionFlags = 0;
-  actor->update = BattleEffect_SpinObject;
+  actor->update = Actor_UpdateSpin;
   whirlwind = Actor_Spawn(SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed,
                           actor->z.fixed);
   Actor_SelectAnimationFar(whirlwind, 2);
@@ -475,7 +475,7 @@ void Actor_ArriveInRing(s32 actorId) {
   struct Actor *whirlwind;
   s32 i;
 
-  actor->update = BattleEffect_SpinObject;
+  actor->update = Actor_UpdateSpin;
   actor->scaleX = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -507,8 +507,6 @@ void Actor_ArriveInRing(s32 actorId) {
   actor->update = NULL;
   actor->facing = angle;
 }
-
-// The spray's drops and smoke puffs, moved and drawn each frame.
 
 /// What Blaze does (BlazeWork.mode).
 enum BlazeMode {
@@ -561,7 +559,7 @@ struct BlazeWork {
 void Blaze_UpdateSpray(void) {
   struct BlazeWork *work = (struct BlazeWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
   struct FieldPsynergyParticle *puff;
@@ -619,7 +617,7 @@ void Blaze_UpdateSpray(void) {
     if (++particle->timer == work->lifetime)
       particle->timer = -1;
     for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
-      struct Actor *other = event->actors[j];
+      struct Actor *other = field->actors[j];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & ACTOR_SOLID) && other != scene->mainActor &&
           other != scene->child &&

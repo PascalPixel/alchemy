@@ -69,7 +69,7 @@ void FieldPsynergy_Parch(void) {
   struct HeapSlots *heap;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  s32 offset; // byte offset of the event work's 80 actor pointers
+  s32 offset; // into the field work's actor list
   struct Actor *caster;
   struct Actor *actor;
   struct Sprite *actorSprite;
@@ -119,6 +119,7 @@ void FieldPsynergy_Parch(void) {
        i++, offset += sizeof(struct Actor *)) {
     actor = *(struct Actor **)((u8 *)heap->fieldWork + offset);
     actorSprite = actor->sprite;
+    // A puddle showing water (animation 1), not frozen into a pillar of ice.
     if (actor->script != NULL && actorSprite->entries[0]->animationId == kind &&
         actorSprite->lastNo == 1 &&
         FieldPsynergy_CheckOverlap(pos, 4, &actor->x.fixed,
@@ -395,8 +396,9 @@ extern const u16 gParch_PictureTiles[];
 /// The picture BgMap_DrawClipped16x16 draws, 16 tiles square.
 #define CLIPPED_PICTURE_TILES 16
 
-/// Copies a 16x16-tile picture to BG0's map, leaving out the tiles that would
-/// fall outside the 30x20-tile screen at (x, y).
+/// Copies Parch's 16x16-tile picture (gParch_PictureTiles) to BG0's map,
+/// leaving out the tiles that would fall outside the 30x20-tile screen at (x,
+/// y).
 void BgMap_DrawClipped16x16(s32 x, s32 y) {
   const u16 *tiles = gParch_PictureTiles;
   s32 row;

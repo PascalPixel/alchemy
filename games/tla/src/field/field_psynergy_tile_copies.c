@@ -29,10 +29,10 @@
 /// catacombs call it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
-  struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
+  struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
   s32 lift;
   s32 scrollX = FIELD_CELL(layer->offsetX);
   s32 scrollZ = FIELD_CELL(layer->offsetY);
@@ -166,9 +166,9 @@ void ParticleBurst_Start(void) {
   struct ParticleBurstWork *work =
       (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
-  struct BurstCell *cell = (struct BurstCell *)event->psynergyCells;
+  struct BurstCell *cell = (struct BurstCell *)field->psynergyCells;
   FIXED dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
   FIXED dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);
   s32 heading = (u16)Trig_Atan(dz, dx);

@@ -30,14 +30,14 @@
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *field = gFieldWork;
 
   if (gDebugMode != 0) {
     if (gInput.pressed & KEY_L) {
-      runtime->fastForward = 0;
+      field->fastForward = 0;
     }
     if (gInput.pressed & KEY_R) {
-      runtime->fastForward = -1;
+      field->fastForward = -1;
     }
   }
 }
@@ -72,19 +72,19 @@ void Leader_StopMoving(void) {
 /// state, and starts the debug fast-forward task with the leader as the
 /// message speaker.
 void Event_Start(void) {
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   AreaNameWindow_HideFar();
   Leader_StopMoving();
-  if (state->busy != 0)
+  if (field->busy != 0)
     Event_ResolveAllPendingActions();
-  state->choiceMessage = 0;
-  state->choiceWidth = 0;
-  state->choiceSelection = 0;
-  state->transitionFrames = MAP_TRANSITION_FRAMES;
-  state->fastForward = 0;
-  state->unusedAfterMessage = -1;
-  state->unusedBeforeCamera[0] = -1;
-  state->unusedBeforeCamera[1] = -1;
+  field->choiceMessage = 0;
+  field->choiceWidth = 0;
+  field->choiceSelection = 0;
+  field->transitionFrames = MAP_TRANSITION_FRAMES;
+  field->fastForward = 0;
+  field->unusedAfterMessage = -1;
+  field->unusedBeforeCamera[0] = -1;
+  field->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
   // clears it, and nothing in either game's code, tables or cleared ranges of
@@ -92,8 +92,8 @@ void Event_Start(void) {
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    state->speaker = party->leaderActorId;
-    state->messageWindow = 0;
+    field->speaker = party->leaderActorId;
+    field->messageWindow = 0;
   }
 }
 
@@ -448,19 +448,19 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// The event command "open screen": starts the event's screen transition and
 /// sets transitionActive.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *field = gFieldWork;
 
-  ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
-  runtime->transitionActive = 1;
+  ScreenTransition_Start(field->transition, field->transitionFrames);
+  field->transitionActive = 1;
 }
 
 /// The event command "close screen": finishes the event's screen transition
 /// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *field = gFieldWork;
 
-  ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
-  runtime->transitionActive = 0;
+  ScreenTransition_Finish(field->transition, field->transitionFrames);
+  field->transitionActive = 0;
 }
 
 /// The event command "wait for screen": waits as long as the transition runs
@@ -479,10 +479,10 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 /// Makes the event leave and records sceneId and entrance as the restart
 /// point.
 void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->exit = EXIT_KEEP_DESTINATION;
+  field->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
   party->restartScene = sceneId;
   party->restartEntrance = entrance;
@@ -491,8 +491,8 @@ void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
 /// The event command "request exit": sets the field's exit request
 /// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 request) {
-  struct FieldWork *state = gFieldWork;
-  state->exit = request;
+  struct FieldWork *field = gFieldWork;
+  field->exit = request;
 }
 
 #undef GIFT_RECEIVED_MESSAGE_MODE

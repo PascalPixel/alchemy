@@ -602,7 +602,7 @@ void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 void FieldPsynergy_UpdateLash(void) {
   struct ScatterWork *work = (struct ScatterWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor = work->actor;
   struct Vector3 position;
   struct EffectSprite *sprite;
@@ -674,7 +674,7 @@ void FieldPsynergy_UpdateLash(void) {
   case 2:
     if (work->timer == 0)
       work->flash = 1;
-    Rope_GetEndNodePosition(event->targetX, &position);
+    Rope_GetEndNodePosition(field->targetX, &position);
     SET_ACTOR_POSITION(actor, position.x, position.y - toFIXED(4), position.z);
     if (work->hit != 0) {
       work->phase++;
@@ -708,7 +708,7 @@ void FieldPsynergy_UpdateLash(void) {
 /// Lash runs as if cast on nothing (enabled), else the field work keeps the
 /// rope and its ends. Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 second;
   s32 first;
@@ -716,9 +716,9 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   if (Rope_FindById(value, &first, &second)) {
     work->enabled = 1;
   } else {
-    state->targetY = value;
-    state->targetZ = first;
-    state->targetX = second;
+    field->targetY = value;
+    field->targetZ = first;
+    field->targetX = second;
   }
   FieldPsynergy_Lash();
 }
@@ -735,7 +735,7 @@ void FieldPsynergy_Lash(void) {
   struct ScatterWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ScatterWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
   struct Actor *actor;
   struct EffectSprite *sprite;
@@ -808,7 +808,7 @@ void FieldPsynergy_Lash(void) {
       while (work->phase != FIELD_PSYNERGY_FINISHED) {
         if (work->flash == 1) {
           Sound_PlayFar(SE_LASH);
-          Rope_Lash(event->targetX, event->targetY, event->targetZ);
+          Rope_Lash(field->targetX, field->targetY, field->targetZ);
           work->hit = 1;
           Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
         }
@@ -1357,7 +1357,7 @@ void FieldPsynergy_UpdateArrow(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleEffect;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
@@ -1443,7 +1443,7 @@ again:
       goto again;
     }
     for (objectIndex = 0; objectIndex < FIELD_ACTOR_COUNT; objectIndex++) {
-      actor = event->actors[objectIndex];
+      actor = field->actors[objectIndex];
       if (actor != NULL && actor->script != NULL &&
           (actor->collisionFlags & ACTOR_SOLID) && actor != scene->mainActor &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &actor->x.fixed,
@@ -1634,7 +1634,7 @@ void FieldPsynergy_Arrow(void) {
   struct BowWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct BowMotion *motion;
@@ -1732,7 +1732,7 @@ void FieldPsynergy_Arrow(void) {
     wait(1);
   Task_Remove(FieldPsynergy_UpdateArrow);
   if (work->done != 0 && work->result != -1)
-    event->psynergyHitObject = work->result;
+    field->psynergyHitObject = work->result;
   VramCache_FreeEntry(arrowSlot);
   VramCache_FreeEntry(bowSlot);
   FieldPsynergy_FadeFromCastColor();
@@ -1877,9 +1877,9 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                                  s32 height, s32 windowX, s16 windowZ,
                                  s32 layerIndex) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
+  struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = &map->layers[layerIndex];

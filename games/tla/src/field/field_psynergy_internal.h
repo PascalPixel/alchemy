@@ -123,6 +123,12 @@ struct CycloneWork {
 #define CANVAS_SHINE_MIDDLE 16
 #define CANVAS_SHINE_SWING 12
 
+/// FieldWork.psynergyDrawFlags, which a scene sets for Pound and Scoop to
+/// draw in its room.
+#define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground
+/// The fist or hand at priority 1, not sorted by depth.
+#define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
+
 /// A 256-colour picture's size in the 16-colour tiles a sprite counts.
 #define OBJ_TILES_PER_8BPP_TILE (TILE_SIZE_8BPP / TILE_SIZE_4BPP)
 

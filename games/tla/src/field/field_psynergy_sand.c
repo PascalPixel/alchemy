@@ -53,7 +53,7 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 /// (gMainRoutineWork.onUpperLevel), or while it climbs as sand it leaves a
 /// climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *actor = Actor_Lookup(party->leaderActorId);
   s32 reason = 0;
@@ -75,7 +75,7 @@ void FieldPsynergy_WatchSandGround(void) {
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(actor) & 2) == 0)
-    event->psynergy = ABILITY_SAND | ACT_PACKED;
+    field->psynergy = ABILITY_SAND | ACT_PACKED;
 }
 
 // How a picture is stored.
@@ -180,7 +180,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 /// depth, priority, scale (three quarters on the world map) and place.
 void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   FIXED position[3];
 
   EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
@@ -188,7 +188,7 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprite->scaleX = FIXED_ONE * 3 / 4;
     sprite->scaleY = FIXED_ONE * 3 / 4;
   } else {
@@ -292,7 +292,7 @@ void FieldPsynergy_EndSand(void) {
   struct SandWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SandWork));
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
   struct Actor *owner = effect->mainActor;
   s32 particleEntry;
@@ -328,7 +328,7 @@ void FieldPsynergy_EndSand(void) {
   particleSprite = work->grainSprites;
   for (; i < SAND_GRAIN_COUNT; i++) {
     Sand_SpawnGrain(particleSprite, particle, i, particleTiles,
-                    event->standing);
+                    field->standing);
     particle->timer = delay;
     particleSprite++;
     delay -= 2;
@@ -353,7 +353,7 @@ void FieldPsynergy_EndSand(void) {
     mask |= OAM_SIZE_32X32_BYTE;
     ((u8 *)owner->sprite)[7] = mask;
   }
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
     ((struct Sprite *)owner->sprite)->scale = FIXED_ONE * 3 / 4;
   owner->facing = DEGtoANG(90);
   Actor_SelectAnimationFar(owner, 0);
@@ -391,14 +391,14 @@ void FieldPsynergy_EndSand(void) {
                               SPRITE_FLAG_SHADOW);
       FieldCamera_FollowActor(effect->firstActorId, 1);
       Sound_PlayFar(SE_SAND_EMERGE);
-      if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
         gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
         *motionFlags = ACTOR_FALLS;
       } else {
         gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
         *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       }
-      if (event->standing == 0)
+      if (field->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
                 PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES), effect->fieldPsynergy,
@@ -434,7 +434,7 @@ void FieldPsynergy_Sand(void) {
   struct SandWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SandWork));
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner;
   s32 pictureEntry;
   s32 particleEntry;
@@ -458,9 +458,9 @@ void FieldPsynergy_Sand(void) {
     FieldPsynergy_MarkWorldMapTilesUsed();
     Actor_SetOthersPaused(owner, 1, 0);
     if (MapGrid_IsSandCell(owner->x.fixed, owner->z.fixed, owner->layer) == 0)
-      event->standing = 1;
+      field->standing = 1;
     else
-      event->standing = 0;
+      field->standing = 0;
     FieldPsynergy_FadeToCastColor();
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
     particleEntry = VramCache_FindFreeEntry();
@@ -470,7 +470,7 @@ void FieldPsynergy_Sand(void) {
     delay = -12;
     sprite = work->grainSprites;
     for (; i < SAND_GRAIN_COUNT; i++) {
-      Sand_SpawnGrain(sprite, particle, i, particleTiles, event->standing);
+      Sand_SpawnGrain(sprite, particle, i, particleTiles, field->standing);
       particle->timer = delay;
       sprite++;
       delay -= 2;
@@ -534,15 +534,15 @@ void FieldPsynergy_Sand(void) {
                                              SPRITE_COLOR_NORMAL);
       wait(1);
     }
-    if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+    if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_SAND;
     else
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_SAND;
     owner->timer = 0;
     owner->userValue = 0;
-    event->sandTrailPriority = 3;
+    field->sandTrailPriority = 3;
     gMainRoutineWork.sandActive = 1;
-    if (event->standing == 0)
+    if (field->standing == 0)
       Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_FRAME);
     Actor_SetOthersPaused(owner, 0, ANIM_STEP_NORMAL);
     VramCache_FreeEntry(pictureEntry);
@@ -550,7 +550,7 @@ void FieldPsynergy_Sand(void) {
     FieldPsynergy_FadeFromCastColor();
   }
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
-  if (event->standing != 0)
+  if (field->standing != 0)
     FieldPsynergy_EndSand();
 }
 #undef SAND_GRAIN_COUNT

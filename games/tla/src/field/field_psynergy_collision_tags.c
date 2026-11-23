@@ -60,10 +60,10 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
 /// pixels, open and a gap to jump across, and the flag set. The field work
 /// remembers the block.
 void FlagBlock_ApplyFlags(struct ActorFlag *list) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   u8 *grid = gMapShapeGrid;
 
-  event->movedBlock = NULL;
+  field->movedBlock = NULL;
   for (; list->actor != ACTOR_LIST_END; list++) {
     s32 change = 0;
     struct Actor *actor = Actor_GetById(list->actor);
@@ -93,7 +93,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
       height = CELL_HEIGHT_STEPS(MapGrid_GetTerrainHeightFar(
           actor->layer, actor->x.fixed, actor->z.fixed));
 
-      event->movedBlock = actor;
+      field->movedBlock = actor;
       if (GameFlag_Get(flag)) {
         height -= CELL_HEIGHT_STEPS(toFIXED(32));
         GameFlag_Clear(flag);

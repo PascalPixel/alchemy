@@ -59,7 +59,7 @@ struct RingWork {
 /// Task of the Ring: its motes and colours each frame.
 void FieldPsynergy_UpdateRing(void) {
   struct RingWork *work = Ram_HeapSlots->battleEffect;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
   struct FieldPsynergyParticle *entry;
@@ -79,7 +79,7 @@ void FieldPsynergy_UpdateRing(void) {
   position[1] = actor->y.fixed + toFIXED(16);
   position[2] = actor->z.fixed;
   if (work->orbiting != 0)
-    Vector_AddPolarOffset(toFIXED(2), -(event->ringFrames * (TRIG_TURN / 32)),
+    Vector_AddPolarOffset(toFIXED(2), -(field->ringFrames * (TRIG_TURN / 32)),
                           position);
   Camera_WorldToScreen(position);
   x = FIXEDtoINT(position[0]);
@@ -139,10 +139,10 @@ void FieldPsynergy_UpdateRing(void) {
     }
   }
 
-  if (event->ringTimerRunning != 0 && event->ringFrames != 0)
-    event->ringFrames--;
-  if (event->ringFrames == 0)
-    event->psynergy = ABILITY_MAGNET | ACT_PACKED;
+  if (field->ringTimerRunning != 0 && field->ringFrames != 0)
+    field->ringFrames--;
+  if (field->ringFrames == 0)
+    field->psynergy = ABILITY_MAGNET | ACT_PACKED;
 }
 
 /// The Ring: a ring of light is drawn round the caster among rising
@@ -154,7 +154,7 @@ void FieldPsynergy_Ring(void) {
   struct RingWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
   struct CanvasSpriteWork *canvas;
   s32 entry;
@@ -177,7 +177,7 @@ void FieldPsynergy_Ring(void) {
   angle = 0;
   repeat = 1;
   drawing = 0;
-  if (event->ringActive == 0) {
+  if (field->ringActive == 0) {
     FieldPsynergy_FadeToCastColor();
     gCpuLoadDisplayEnabled = 0;
     BattleEffect_StartCanvasSprite();
@@ -222,9 +222,9 @@ void FieldPsynergy_Ring(void) {
     work->orbiting = 0;
     work->cycling = 1;
     work->phase = 0;
-    event->ringActive = 1;
-    event->ringTimerRunning = 1;
-    event->ringFrames = 999;
+    field->ringActive = 1;
+    field->ringTimerRunning = 1;
+    field->ringFrames = 999;
     Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
     wait(1);
     work->cycling = 0;
@@ -327,9 +327,9 @@ void FieldPsynergy_Ring(void) {
     FieldPsynergy_FadeFromCastColor();
   }
   work->cycling = 1;
-  event->ringActive = 1;
-  event->ringTimerRunning = 1;
-  event->ringFrames = RING_FRAMES;
+  field->ringActive = 1;
+  field->ringTimerRunning = 1;
+  field->ringFrames = RING_FRAMES;
   Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
 }
 
@@ -338,7 +338,7 @@ void FieldPsynergy_Ring(void) {
 /// fall for 40 frames, and the window graphics come back to BG0.
 void FieldPsynergy_EndRing(void) {
   struct RingWork *work = Ram_HeapSlots->battleEffect;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldPsynergyParticle *mote;
   struct EffectSprite *sprite;
@@ -348,11 +348,11 @@ void FieldPsynergy_EndRing(void) {
   s32 i;
   s32 frame;
 
-  if (event->ringActive == 0)
+  if (field->ringActive == 0)
     return;
-  event->ringActive = 0;
-  event->ringTimerRunning = 0;
-  event->ringFrames = 0;
+  field->ringActive = 0;
+  field->ringTimerRunning = 0;
+  field->ringFrames = 0;
   Task_Remove(FieldPsynergy_UpdateRing);
   wait(1);
   Sound_PlayFar(SE_MAP_TRANSITION);
@@ -433,8 +433,8 @@ void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 /// move (the view is held, or the field is in control mode 3), it shakes the
 /// screen along the asked direction instead.
 void ViewMove_Start(s32 direction) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *center = event->camera;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct Actor *center = field->camera;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 viewX = FIXEDtoINT(map->viewX);
   s32 viewZ = FIXEDtoINT(map->viewZ);
@@ -462,7 +462,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 #endif
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (direction & VIEW_MOVE_X) {
       MapGrid_SetScreenShakeFar(toFIXED(3), 0, FIXED_ONE);
       return;
@@ -515,9 +515,9 @@ void ViewMove_Start(s32 direction) {
 /// into the room: away from the edge the view is beside, or forward when it is
 /// beside neither. A held view does not move.
 void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
-  struct Actor *center = event->camera;
+  struct Actor *center = field->camera;
   FIXED x;
   FIXED z;
   s32 edge;
@@ -527,7 +527,7 @@ void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
   if (((struct MapWork *)Ram_HeapSlots->mapGrid)->cameraBoxes != NULL)
     return;
 #endif
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP)
     return;
 
   if (direction & VIEW_MOVE_X) {

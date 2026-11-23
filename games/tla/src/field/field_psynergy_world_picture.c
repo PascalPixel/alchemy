@@ -168,13 +168,13 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 /// map, the picture's fixed point (264, 16).
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
   s32 x;
   s32 z;
 
   GameFlag_Clear(FLAG_LEADER_OFF_MAP_PICTURE);
-  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     actor = Actor_Lookup(leader);
     if (actor == 0)
       return;

@@ -189,7 +189,7 @@ void FieldPsynergy_Scoop(void) {
   struct ScoopWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
   struct Actor *other = NULL;
   struct Actor *actor;
@@ -209,7 +209,7 @@ void FieldPsynergy_Scoop(void) {
   s32 frame;
   s32 i;
 
-  if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode != ACTOR_SYSTEM_WORLD_MAP) {
     SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
                  caster->y.fixed,
                  (caster->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
@@ -220,7 +220,7 @@ void FieldPsynergy_Scoop(void) {
   work->actor = actor;
   if (actor != NULL) {
     actor->motionFlags = 0;
-    if (event->psynergyDrawFlags & 2) {
+    if (field->psynergyDrawFlags & PSYNERGY_DRAW_FIXED_PRIORITY) {
       if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
           ACTOR_SPRITE_ONE) {
         ((struct EffectSprite *)actor->sprite)->oam.priority = 1;
@@ -244,7 +244,7 @@ void FieldPsynergy_Scoop(void) {
       other->motionFlags = 0;
       other->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
       other->scaleX = 0;
-      if (!(event->psynergyDrawFlags & 1))
+      if (!(field->psynergyDrawFlags & PSYNERGY_DRAW_NO_SCENE_SPRITE))
         FieldPsynergy_StartSceneSprite();
       Sound_PlayFar(SE_ITEM_BREAK);
       FieldPsynergy_GrowFromCaster(actor, scene->x, scene->y + toFIXED(32),
@@ -261,7 +261,7 @@ void FieldPsynergy_Scoop(void) {
 
       failed = 0;
       for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
-        target = event->actors[i];
+        target = field->actors[i];
         if (target != NULL && target->script != NULL &&
             (Actor_GetSpriteIdFar(target) == SPRITE_STAKE ||
              (target->collisionFlags & ACTOR_SOLID)) &&
@@ -459,7 +459,7 @@ void FieldPsynergy_Scoop(void) {
 /// gravity, waits 50 frames, then asks for its talk, which opens it without its
 /// "checked the ..." message (FIELD_TALK_SILENT).
 void BattleEffect_DropObjectAtAnchor(s32 id) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;
   struct Actor *actor;
 
@@ -469,7 +469,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
     SET_ACTOR_POSITION(actor, anchor->x.fixed, anchor->y.fixed,
                        anchor->z.fixed);
   }
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = 0;
   } else {
@@ -477,7 +477,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   }
   actor->gravity = toFIXED(9) / 100;
   wait(50);
-  event->talk = id | FIELD_TALK_SILENT;
+  field->talk = id | FIELD_TALK_SILENT;
 }
 
 struct Unit *Unit_Get(u32 unitId);
@@ -490,14 +490,14 @@ extern const u16 gScoop_DugItems[16];
 void Scoop_DigUpItem(void) {
   struct ScoopWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *anchor;
-  struct FieldWork *event;
+  struct FieldWork *field;
   struct Unit *unit;
   struct Actor *actor;
   s32 item;
   s32 id = SCOOPED_ITEM_ACTOR;
 
   anchor = work->actor;
-  event = Ram_HeapSlots->fieldWork;
+  field = Ram_HeapSlots->fieldWork;
   unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
   actor = Actor_GetById(id);
@@ -506,7 +506,7 @@ void Scoop_DigUpItem(void) {
                             anchor->y.fixed, anchor->z.fixed);
     if (actor == NULL)
       return;
-    event->actors[id] = actor;
+    field->actors[id] = actor;
   }
   if (Random16() < SCOOP_ITEM_CHANCE) {
     item = gScoop_DugItems[Random_Below(ARRAY_COUNT(gScoop_DugItems))];
@@ -517,7 +517,7 @@ void Scoop_DigUpItem(void) {
   }
   SET_ACTOR_POSITION(actor, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
   Actor_ShowItemIconById(id, item);
-  event->scoopedItem = item;
+  field->scoopedItem = item;
   BattleEffect_DropObjectAtAnchor(id);
 }
 #undef NEXT_PHASE

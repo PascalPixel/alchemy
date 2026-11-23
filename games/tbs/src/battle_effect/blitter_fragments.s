@@ -166,7 +166,7 @@ BattleEffect_Mask:
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16
 gBlitterTemplate:
-	@ Block 1: prologue (see battle_effect_blitter.c)
+	@ Block 1: entry code (see battle_effect_blitter.c)
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32
 	ldm	r4, {r4, r5}

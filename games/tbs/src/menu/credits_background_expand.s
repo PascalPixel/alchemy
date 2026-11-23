@@ -10,7 +10,7 @@
 @ fp as a mask. ldr pc jumps into those commands, below in this file
 @ and in its .text.credits_background_expand_commands section.
 @ In this file itself: it is a two-instruction fragment of that decoder, with
-@ no prologue and no return of its own, and its tell is the computed pc into
+@ no entry code and no return of its own, and its tell is the computed pc into
 @ code. and ip, r3, #7 / ldr pc, [pc, ip, lsl #2] is unconditional and has
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop, in the next

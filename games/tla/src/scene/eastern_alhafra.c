@@ -1364,12 +1364,11 @@ void EasternAlhafra_AskIfFinished(void) {
   return;
 }
 
-extern u32 gEasternAlhafra_QuestionMarkScript[];
+extern u32 gQuestionMark_Script[];
 
-/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
-/// frames.
-void EasternAlhafra_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
-                                    s32 frames) {
+/// Pops a "?" bubble up at (x, y, z), tilted by `rotation`, for `frames`, on
+/// sprite priority 1: shared/question_mark_pop.h's bubble as the dock draws it.
+void QuestionMark_Pop(FIXED x, FIXED y, FIXED z, u16 rotation, s32 frames) {
   struct Actor *mark;
   struct Sprite *sprite;
 
@@ -1377,7 +1376,7 @@ void EasternAlhafra_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
   if (mark != NULL) {
     sprite = mark->sprite;
     Actor_SelectAnimation(mark, EMOTE_QUESTION);
-    Actor_StartScript(mark, gEasternAlhafra_QuestionMarkScript);
+    Actor_StartScript(mark, gQuestionMark_Script);
     Actor_SetSpritePriorityDirect(mark, 1);
     mark->motionFlags = 0;
     mark->wait = frames;
@@ -1386,32 +1385,7 @@ void EasternAlhafra_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
   }
 }
 
-/// Four question marks pop up over Briggs's head in turn, right and left, as
-/// he tries to remember what he swore to do to Felix.
-void EasternAlhafra_PopQuestionMarks(s32 id) {
-  struct Actor *actor = Actor_Get(id);
-
-  EasternAlhafra_PopQuestionMark(actor->x.fixed + toFIXED(8),
-                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                 TRIG_TURN / 16, 15);
-  Event_PlaySound(SE_LIGHT_APPEAR);
-  FieldEvent_Wait(15);
-  EasternAlhafra_PopQuestionMark(actor->x.fixed - toFIXED(8),
-                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                 TRIG_TURN * 15 / 16, 15);
-  Event_PlaySound(SE_LIGHT_APPEAR);
-  FieldEvent_Wait(15);
-  EasternAlhafra_PopQuestionMark(actor->x.fixed + toFIXED(8),
-                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                 TRIG_TURN / 16, 15);
-  Event_PlaySound(SE_LIGHT_APPEAR);
-  FieldEvent_Wait(15);
-  EasternAlhafra_PopQuestionMark(actor->x.fixed - toFIXED(8),
-                                 actor->y.fixed + toFIXED(28), actor->z.fixed,
-                                 TRIG_TURN * 15 / 16, 15);
-  Event_PlaySound(SE_LIGHT_APPEAR);
-  FieldEvent_Wait(15);
-}
+#include "shared/actor_pop_question_marks.h"
 
 /// Heading off the ship once the block is Burst, Felix sees two workers below
 /// the ship find it gone: "Hey! That block on the mast has disappeared!" They
@@ -1999,7 +1973,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  EasternAlhafra_PopQuestionMarks(ACTOR_BRIGGS);
+  Actor_PopQuestionMarks(ACTOR_BRIGGS);
   Event_PlaySound(SE_CURSE);
   FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
@@ -2009,7 +1983,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  EasternAlhafra_PopQuestionMarks(ACTOR_BRIGGS);
+  Actor_PopQuestionMarks(ACTOR_BRIGGS);
   FieldActor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 50);
   Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -2796,6 +2770,6 @@ s32 gEasternAlhafra_RunOffScript[] = {
 };
 // clang-format on
 
-u32 gEasternAlhafra_QuestionMarkScript[] = {
+u32 gQuestionMark_Script[] = {
     SC_RELEASE,
 };

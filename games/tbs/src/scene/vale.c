@@ -3117,6 +3117,8 @@ static void Vale_CycleThirdBoardPalette(void) {
 
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
+// The same routine as Position_Distance, which this scene also holds through
+// shared/staged_actor.c, under another name.
 static s32 Vale_DistanceInPixels(FIXED *first, FIXED *second) {
   s32 dx = FIXEDtoINT(*first++ - *second++);
   s32 dy = FIXEDtoINT(*first++ - *second++);

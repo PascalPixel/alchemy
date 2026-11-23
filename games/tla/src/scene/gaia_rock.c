@@ -121,7 +121,7 @@ struct Actor;
 extern struct SceneRegion gGaiaRock_SusaExitRegions[];
 extern struct SceneRegion gGaiaRock_StatueSpotsExitRegions[];
 
-void GaiaRock_StoneFaceBurstsOut(s32 id, s32 flag);
+void StoneHead_BurstOut(s32 id, s32 flag);
 
 extern struct ActorPlacement gGaiaRock_Placements[];
 extern struct ActorPlacement gGaiaRock_SusaActorPlacements[];
@@ -137,11 +137,11 @@ extern u32 gGaiaRock_LeafScript[];
 extern s32 gGaiaRock_WindScript[];
 
 void GaiaRock_StartWallTriggers(void);
-void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z);
+void StoneHead_Place(s32 id, s32 x, s32 y, s32 z);
 
-extern s32 gGaiaRock_StatueRiseScript[];
+extern s32 gStoneHead_RiseScript[];
 
-extern u32 gGaiaRock_DebrisScript[];
+extern u32 gDebris_Script[];
 extern u32 gGaiaRock_PillarScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -174,24 +174,21 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// (111, 50) of the wall's overhead layer, drawn at (47, 50); the face stays
 /// out, and the hold is solid rock, until the party enters another area.
 void GaiaRock_ClimbOntoLowestStoneFace(void) {
-  GaiaRock_StoneFaceBurstsOut(ACTOR_FIRST_RISING_STATUE,
-                              FLAG_FIRST_STATUE_RISEN);
+  StoneHead_BurstOut(ACTOR_FIRST_RISING_STATUE, FLAG_FIRST_STATUE_RISEN);
 }
 
 /// As GaiaRock_ClimbOntoLowestStoneFace, for the middle trap hold, a little
 /// higher and to the east: cell (113, 42) of the overhead layer, drawn at
 /// (49, 42).
 void GaiaRock_ClimbOntoMiddleStoneFace(void) {
-  GaiaRock_StoneFaceBurstsOut(ACTOR_SECOND_RISING_STATUE,
-                              FLAG_SECOND_STATUE_RISEN);
+  StoneHead_BurstOut(ACTOR_SECOND_RISING_STATUE, FLAG_SECOND_STATUE_RISEN);
 }
 
 /// As GaiaRock_ClimbOntoLowestStoneFace, for the highest trap hold, a little
 /// west of the middle one: cell (112, 33) of the overhead layer, drawn at (48,
 /// 33).
 void GaiaRock_ClimbOntoHighestStoneFace(void) {
-  GaiaRock_StoneFaceBurstsOut(ACTOR_THIRD_RISING_STATUE,
-                              FLAG_THIRD_STATUE_RISEN);
+  StoneHead_BurstOut(ACTOR_THIRD_RISING_STATUE, FLAG_THIRD_STATUE_RISEN);
 }
 
 #if !TLA_PATCH_1
@@ -652,16 +649,16 @@ s32 Scene_Initialize(void) {
       GaiaRock_StartWallTriggers();
     }
     if (GameFlag_Get(FLAG_FIRST_STATUE_RISEN)) {
-      GaiaRock_PlaceStatue(ACTOR_FIRST_RISING_STATUE, toFIXED(764),
-                           -toFIXED(391), toFIXED(424));
+      StoneHead_Place(ACTOR_FIRST_RISING_STATUE, toFIXED(764), -toFIXED(391),
+                      toFIXED(424));
     }
     if (GameFlag_Get(FLAG_SECOND_STATUE_RISEN)) {
-      GaiaRock_PlaceStatue(ACTOR_SECOND_RISING_STATUE, toFIXED(789),
-                           -toFIXED(248), toFIXED(424));
+      StoneHead_Place(ACTOR_SECOND_RISING_STATUE, toFIXED(789), -toFIXED(248),
+                      toFIXED(424));
     }
     if (GameFlag_Get(FLAG_THIRD_STATUE_RISEN)) {
-      GaiaRock_PlaceStatue(ACTOR_THIRD_RISING_STATUE, toFIXED(778),
-                           -toFIXED(119), toFIXED(424));
+      StoneHead_Place(ACTOR_THIRD_RISING_STATUE, toFIXED(778), -toFIXED(119),
+                      toFIXED(424));
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
     actor = Actor_GetById(FIELD_TREASURE_ACTOR);
@@ -692,102 +689,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/gaia_rock_trigger_wall_cell.c"
 
-/// Sets stone face id out of the wall at the hold under (x, y, z), in 16.16
-/// pixels, and makes that hold solid rock.
-void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
-  struct Actor *actor = Actor_Get(id);
-  struct MapCell *cell =
-      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2].cells;
-  s32 cellX = x / toFIXED(16);
-  s32 cellZ = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
+#include "shared/stone_head_place.h"
 
-  cell += cellX + (cellZ << 7);
-  cell->collisionCode = CELL_BEHAVIOR_WALL;
-  actor->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
-  actor->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
-  actor->y.fixed = actor->z.fixed - FIELD_CELL_ORIGIN(cellZ);
-  actor->motionFlags = 0;
-  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpriteFlags(actor, 0);
-}
-
-/// Stone face id bursts out of the wall of handholds under Felix in a shower
-/// of stones as the screen shakes. He flails, drops onto whatever ground is
-/// under him, the view settles on him, and he is left walking rather than
-/// climbing; flag then keeps the face out.
-void GaiaRock_StoneFaceBurstsOut(s32 id, s32 flag) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 gravity = leader->gravity;
-  struct Actor *statue;
-  s32 i;
-  s32 frame;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  statue = Actor_Get(id);
-  GaiaRock_PlaceStatue(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-  Actor_StartScript(statue, gGaiaRock_StatueRiseScript);
-  for (i = 0; i < STATUE_ROCKS; i++) {
-    struct Actor *debris =
-        FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
-                          leader->y.fixed + toFIXED(16), leader->z.fixed);
-
-    if (debris != 0) {
-      s32 angle;
-      s32 speed;
-      u32 size;
-      s32 scale;
-
-      Actor_StartScript(debris, gGaiaRock_DebrisScript);
-      angle = Random16();
-      speed = Random16();
-      size = Random16();
-      scale = (size >> 1) + FIXED_ONE / 8;
-      debris->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
-      debris->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
-      debris->acceleration = 0;
-      debris->scaleX = scale;
-      debris->scaleY = scale;
-      debris->gravity = toFIXED(33) / 100;
-      debris->bounce = FIXED_ONE / 2;
-    }
-  }
-  Event_PlaySound(SE_STATUE_RISE);
-  Event_PlaySound(SE_FLOOR_SWITCH);
-  MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SelectAnimation(leader, ANIM_LEADER_FLAIL);
-  FieldEvent_Wait(40);
-  Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader->gravity = toFIXED(33) / 100;
-  for (frame = 0; frame < 180; frame++) {
-    System_Wait(1);
-    if (leader->y.fixed <= leader->groundHeight)
-      break;
-  }
-  Event_PlaySound(SE_THUMP);
-  leader->gravity = gravity;
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
-                          ATTACHED_EFFECT_REMOVE);
-  Actor_SelectAnimation(leader, ANIM_LEADER_STILL);
-  MapGrid_SetShake(1, 4, 1);
-  System_Wait(10);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  System_Wait(20);
-  FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-  FieldCamera_WaitForArrival();
-  FieldEvent_Wait(20);
-  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-  Actor_SelectAnimation(leader, ANIM_STAND);
-  leader->velocityY = toFIXED(4);
-  System_Wait(20);
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-  Event_End();
-  Event_SetFlag(flag);
-}
+#include "shared/stone_head_burst_out.h"
 
 /// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRock_StartWallTriggers(void) {
@@ -970,7 +874,7 @@ s32 gGaiaRock_WindScript[] = {
     SC_RELEASE,
 };
 
-u32 gGaiaRock_DebrisScript[] = {
+u32 gDebris_Script[] = {
     SC_WAIT(40),
     SC_LABEL(1),
     SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
@@ -981,45 +885,5 @@ u32 gGaiaRock_DebrisScript[] = {
     SC_RELEASE,
 };
 
-s32 gGaiaRock_StatueRiseScript[] = {
-    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(4),
-    SC_WAIT(20),
-    SC_LOOP(3, SC_TOP),
-    SC_END,
-};
+#include "shared/stone_head_rise_script.c"
 // clang-format on

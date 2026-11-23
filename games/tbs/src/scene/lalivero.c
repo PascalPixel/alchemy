@@ -112,7 +112,7 @@ enum LaliveroActorId {
   /// belonging is kept here. No one may enter!"
   ACTOR_WHARF_GUARD,
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
-  /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
+  /// and Suhalla Gate. Here they stand half grown, block nothing and no
   /// trigger answers them.
   ACTOR_FIRST_PLANT,
   /// Placed off the map until needed.
@@ -168,8 +168,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// On the first visit to Lalivero, the young man sobbing for Sheba stops to say
 /// she was taken to the ruins, then turns away north and sobs again.
 static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
-  void Actor_FaceDirection();
-
   Actor_Get(actorId)->scaleX = FIXED_ONE;
   Actor_Get(actorId)->scaleY = FIXED_ONE;
   Event_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
@@ -886,14 +884,14 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 24;
 
-  // The three plants stand in animation 3 and block nothing.
-  Actor_SetAnimation(ACTOR_FIRST_PLANT, 3);
+  // The three plants stand half grown and block nothing.
+  Actor_SetAnimation(ACTOR_FIRST_PLANT, SPROUT_ANIMATION_HALF_GROWN);
   Actor_Get(ACTOR_FIRST_PLANT)->collisionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PLANT), 0);
-  Actor_SetAnimation(ACTOR_FIRST_PLANT + 1, 3);
+  Actor_SetAnimation(ACTOR_FIRST_PLANT + 1, SPROUT_ANIMATION_HALF_GROWN);
   Actor_Get(ACTOR_FIRST_PLANT + 1)->collisionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PLANT + 1), 0);
-  Actor_SetAnimation(ACTOR_FIRST_PLANT + 2, 3);
+  Actor_SetAnimation(ACTOR_FIRST_PLANT + 2, SPROUT_ANIMATION_HALF_GROWN);
   Actor_Get(ACTOR_FIRST_PLANT + 2)->collisionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_PLANT + 2), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BLACK_ORB), 0);
@@ -939,11 +937,11 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->sprite->flags = 0;
     actor->sprite->rotation = FACING_SOUTH;
-    MapGrid_CopyCellAttributes(20, 23, 1, 1, 13, 23);
-    MapGrid_CopyCellAttributes(20, 23, 1, 1, 14, 23);
-    MapGrid_CopyCellAttributes(20, 23, 1, 1, 78, 23);
-    MapGrid_CopyCellAttributes(20, 23, 1, 1, 17, 23);
-    MapGrid_CopyCellAttributes(20, 23, 1, 1, 18, 23);
+    MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 13, 23);
+    MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 14, 23);
+    MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 78, 23);
+    MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 17, 23);
+    MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 18, 23);
     if ((gMainRoutineWork.entrance == LALIVERO_FROM_WORLD_MAP_EAST ||
          gMainRoutineWork.entrance == LALIVERO_FROM_WORLD_MAP_WEST) &&
         !Event_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
@@ -976,10 +974,10 @@ s32 gLalivero_CryingScript[] = {
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
@@ -988,16 +986,17 @@ s32 gLalivero_CryingScript[] = {
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(80),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 struct SceneEntrance gLaliveroEntrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {LALIVERO_FROM_TIMBER_ROOMS_C_NORTHWEST, CONDITION_ALWAYS, 72, 0, 184,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {LALIVERO_FROM_TIMBER_ROOMS_B_WEST, CONDITION_ALWAYS, 152, 0, 216,

@@ -1,5 +1,5 @@
-
-// Colosseum Final 1, 2 and 3, and Venus Lighthouse.
+/// @file
+/// Colosseum Final 1, 2 and 3, and Venus Lighthouse: who stands at a place.
 
 /// Returns the placed actor (8 to 65) whose cell, and 16-pixel step of
 /// height, is that of the 16.16 position, or 0. self is not read.
@@ -11,17 +11,17 @@ static void *Actor_FindAtPosition(const struct FieldPosition *position,
 
   for (i = ACTOR_FIRST_PLACED;
        i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
-    struct Actor *p = slots[i];
+    struct Actor *actor = slots[i];
 
     // UB: Actor_ClearAll leaves unused slots null.
 #ifdef UBFIX
-    if (p == NULL)
+    if (actor == NULL)
       continue;
 #endif
-    if (FIELD_CELL(position->x) == FIELD_CELL(p->x.fixed) &&
-        FIELD_CELL(position->y) == FIELD_CELL(p->y.fixed) &&
-        FIELD_CELL(position->z) == FIELD_CELL(p->z.fixed)) {
-      return p;
+    if (FIELD_CELL(position->x) == FIELD_CELL(actor->x.fixed) &&
+        FIELD_CELL(position->y) == FIELD_CELL(actor->y.fixed) &&
+        FIELD_CELL(position->z) == FIELD_CELL(actor->z.fixed)) {
+      return actor;
     }
   }
   return 0;

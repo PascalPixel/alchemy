@@ -1,5 +1,7 @@
 /// @file
-/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+/// the rocks, weights and pillars on a stage that Isaac pushes, and finding
+/// what stands ahead of him.
 
 /// The leader pushes the actor standing in the next cell ahead one cell on
 /// (a rock, a weight or a stone pillar on the stages), when nothing solid
@@ -89,28 +91,28 @@ static void Colosso_PushActorAhead(void) {
 /// of the actor the player moves (straight ahead in the nearest of the
 /// four directions), or 0 when there is none.
 void *Colosso_FindActorAhead(void) {
-  struct Actor *record;
+  struct Actor *leader;
   s32 facing;
   struct FieldPosition position;
   struct Actor *occupant;
 
-  record = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  facing = FACING_NEAREST_CARDINAL(record->facing);
+  facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-  position.x = (record->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  position.y = record->y.fixed;
-  position.z = (record->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position.y = leader->y.fixed;
+  position.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   Vector_AddPolarOffset(toFIXED(16), facing, &position);
 
-  occupant = Actor_FindAtPosition(&position, record);
+  occupant = Actor_FindAtPosition(&position, leader);
   if (occupant == NULL) {
-    position.x = (record->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
-    position.y = record->y.fixed;
-    position.z = (record->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    position.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    position.y = leader->y.fixed;
+    position.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     Vector_AddPolarOffset(toFIXED(32), facing, &position);
 
-    occupant = Actor_FindAtPosition(&position, record);
+    occupant = Actor_FindAtPosition(&position, leader);
   }
 
   return occupant;

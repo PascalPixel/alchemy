@@ -33,7 +33,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Actor_SetSpritePriority(id, 2);
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   actor->facing = FACING_SOUTH;
-  Actor_SetSpriteFlags(actor, 3);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED);
   Actor_SelectAnimation(actor, ANIM_STILL);
   Actor_SelectAnimation(actor, ANIM_STAND);
   Actor_SetPositionFX(id, toFIXED(x), toFIXED(z));
@@ -44,8 +44,8 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
                       IO_WRITE_HALFWORD);
-  sprite->image.objectMode = 1;
-  sprite->shadow.objectMode = 1;
+  sprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+  sprite->shadow.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
   Sound_Play(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i < BLEND_WEIGHT_MAX; i += 2) {
     actor->scaleX = i * (FIXED_ONE / 16) + FIXED_ONE / 16;
@@ -65,23 +65,23 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   actor->scaleX = FIXED_ONE;
   actor->scaleY = FIXED_ONE;
   Event_Wait(13);
-  sprite->image.objectMode = 0;
-  sprite->shadow.objectMode = 0;
+  sprite->image.objectMode = OBJ_MODE_NORMAL;
+  sprite->shadow.objectMode = OBJ_MODE_NORMAL;
   Actor_SetAnimationAndWait(id, ANIM_NOD);
   Event_Wait(20);
 }
 
-/// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands
-/// (or turns south, nods and waits half a second), then returns to his kept
-/// position and facing with his motion stopped, and the outline colours are
-/// the field's again.
+/// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands if
+/// he was climbing, or else turns south, nods and waits half a second; then
+/// returns to his kept position and facing with his motion stopped, and the
+/// outline colours are the field's again.
 void Colosso_RestoreWarrior(s32 id) {
   struct ActorSystemWork *system;
   struct Actor *actor;
 
   system = gActorSystemWork;
   actor = Actor_GetById(id);
-  if (gMainRoutineWork.movementMode == 1) {
+  if (gMainRoutineWork.movementMode == 1) { // climbing
     gMainRoutineWork.movementMode = 0;
     Actor_SetAnimation(id, ANIM_STAND);
   } else {
@@ -110,23 +110,23 @@ void Colosso_RestoreWarrior(s32 id) {
 
 /// Stops the actor where it is: no velocity and no destination.
 void Actor_ResetMotionFields(s32 actorId) {
-  struct Actor *o = Actor_GetById(actorId);
+  struct Actor *actor = Actor_GetById(actorId);
 
-  Actor_StartIdle(o);
-  o->velocityX = 0;
-  o->velocityZ = 0;
-  o->targetX = ACTOR_NO_TARGET;
-  o->targetZ = ACTOR_NO_TARGET;
+  Actor_StartIdle(actor);
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
 }
 
 /// The guide's pointer: one 16x16 sprite centred on a point of the screen,
-/// shown for MARKER_SHOWN_FRAMES of every MARKER_BLINK_FRAMES, that can glide
+/// shown for POINTER_SHOWN_FRAMES of every POINTER_BLINK_FRAMES, that can glide
 /// from point to point.
-#define MARKER_SHOWN_FRAMES 13
-#define MARKER_BLINK_FRAMES 20
+#define POINTER_SHOWN_FRAMES 13
+#define POINTER_BLINK_FRAMES 20
 
 /// Loads the pointer's picture into a free VRAM block, once.
-static void Colosso_EnsureMarkerSlot(void) {
+static void Colosso_LoadPointer(void) {
   if (gColosso_MarkerSlot == -1) {
     gColosso_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
   }
@@ -148,7 +148,7 @@ extern s16 gColosso_MarkerFlip;
 
 /// The pointer's task: glide one step, then draw it while it blinks
 /// on (a glide keeps it on).
-static void Colosso_UpdateMarker(void) {
+static void Colosso_UpdatePointer(void) {
   s32 tile;
   s32 total;
   s32 step;
@@ -174,7 +174,7 @@ static void Colosso_UpdateMarker(void) {
       gColosso_MarkerSteps = 0;
     gColosso_MarkerBlink = 0;
   }
-  if (++gColosso_MarkerBlink <= MARKER_SHOWN_FRAMES) {
+  if (++gColosso_MarkerBlink <= POINTER_SHOWN_FRAMES) {
     s32 size = OBJ_SIZE_16X16;
 
     x = gColosso_MarkerX;
@@ -184,7 +184,7 @@ static void Colosso_UpdateMarker(void) {
     *dst++ = (y - 8) | OBJ_X(x - 8) | size | gColosso_MarkerFlip * OBJ_HFLIP;
     *dst = tile | OBJ_PRIORITY(1);
     Oam_AddSpriteAtDepth(oam, OAM_DEPTH_FRONT);
-  } else if (gColosso_MarkerBlink >= MARKER_BLINK_FRAMES) {
+  } else if (gColosso_MarkerBlink >= POINTER_BLINK_FRAMES) {
     gColosso_MarkerBlink = 0;
   }
 }
@@ -192,7 +192,7 @@ static void Colosso_UpdateMarker(void) {
 /// Shows the pointer at screen pixel (x, y), mirrored by style & 3 (1 left to
 /// right, 2 top to bottom); every caller passes 0.
 void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
-  Colosso_EnsureMarkerSlot();
+  Colosso_LoadPointer();
 
   gColosso_MarkerX = x;
   gColosso_MarkerY = y;
@@ -200,7 +200,7 @@ void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   gColosso_MarkerBlink = 0;
   gColosso_MarkerSteps = 0;
 
-  Task_AddFrame(Colosso_UpdateMarker, TASK_PASS_FRAME);
+  Task_AddFrame(Colosso_UpdatePointer, TASK_PASS_FRAME);
 }
 
 /// Glides the pointer to screen pixel (x, y) over duration frames.
@@ -212,17 +212,17 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
   gColosso_MarkerSteps = duration;
   gColosso_MarkerStep = 0;
 
-  Task_AddFrame(Colosso_UpdateMarker, TASK_PASS_FRAME);
+  Task_AddFrame(Colosso_UpdatePointer, TASK_PASS_FRAME);
 }
 
 /// Hides the pointer and frees its VRAM block.
 void Colosso_HidePointer(void) {
-  Task_Remove(Colosso_UpdateMarker);
+  Task_Remove(Colosso_UpdatePointer);
   VramCache_FreeEntry(gColosso_MarkerSlot);
   gColosso_MarkerSlot = -1;
 }
 
-/// Walks the actor at 2 pixels a frame towards pixel (x, z) and returns
+/// Runs the actor at 2 pixels a frame towards pixel (x, z) and returns
 /// at once.
 void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -240,7 +240,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   }
 }
 
-/// Walks the actor at 1.25 pixels a frame to pixel (x, z), waits until
+/// Runs the actor at 1.25 pixels a frame to pixel (x, z), waits until
 /// it arrives and stands it there.
 void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);

@@ -585,8 +585,6 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
   BattleEffect_DrawClippedCanvasLine(x, y, x1, y1, color);
 }
 
-struct StripQuad;
-
 /// Iris's runs: the pink petals (PinkPetalsTiles, fifteen pictures of a petal
 /// tumbling), the motes in work->particles, and the opening's streaks, each a
 /// head and the points that trail it.

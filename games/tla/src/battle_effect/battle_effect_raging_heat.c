@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
 /// The ring of fire's texture, 128x128, after the quarter of the circle of
 /// runes (64x64) that the pillar's picture then replaces.
 #define FIRE_RING_PIXELS (Ram_MapCellBuffer + 64 * 64)
@@ -265,24 +263,27 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 #undef RUNE_CIRCLE_RIGHTED_FRAME
 
 #define JUGGLE_FRAMES 122
-#define RING_CUE_FRAME 16   ///< the launch is heard
-#define RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
-#define RING_THROW_FRAME 64 ///< it flies at the targets
-#define RING_HIT_FRAME 88   ///< it strikes; sparks burst
+#define JUGGLE_RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
+#define JUGGLE_RING_CUE_FRAME 16   ///< the launch is heard
+#define JUGGLE_RING_THROW_FRAME 64 ///< it flies at the targets
+#define JUGGLE_RING_HIT_FRAME 88   ///< it strikes; sparks burst
 #define JUGGLE_SPARKS_PER_TARGET 128
 #define JUGGLE_SPARK_COUNT 768
 /// The ring's tilt toward the viewer, beside its turn.
 #define JUGGLE_TILT 500
+/// SmallFlameSheet's four pictures of a flame.
+#define JUGGLE_FLAME_WIDTH 16
+#define JUGGLE_FLAME_HEIGHT 64
 
 /// gJuggle_Styles[variant]: seven bytes for each strength.
 enum {
-  RING_LIFT_STEP,     ///< pixels the ring rises each frame
-  RING_LIFT_MAX,      ///< and its highest
-  RING_FLAMES,        ///< flames in the ring
-  RING_FLAME_SPACING, ///< their spacing round it
-  RING_SPARKS,        ///< sparks at each target
-  RING_SHAKE,         ///< frames the screen shakes at the hit
-  RING_BLITTER        ///< which of the pair draws the flames
+  JUGGLE_RING_LIFT_STEP,     ///< pixels the ring rises each frame
+  JUGGLE_RING_LIFT_MAX,      ///< and its highest
+  JUGGLE_RING_FLAMES,        ///< flames in the ring
+  JUGGLE_RING_FLAME_SPACING, ///< their spacing round it
+  JUGGLE_RING_SPARKS,        ///< sparks at each target
+  JUGGLE_RING_SHAKE,         ///< frames the screen shakes at the hit
+  JUGGLE_RING_BLITTER        ///< which of the pair draws the flames
 };
 
 /// A ring of small flames. The flames circle the caster in a ring that rises
@@ -332,24 +333,24 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   }
 
   for (frame = 0; frame != JUGGLE_FRAMES; frame++) {
-    if (frame == RING_CUE_FRAME)
+    if (frame == JUGGLE_RING_CUE_FRAME)
       Sound_PlayFar(SE_LAUNCH);
     if (frame == 0)
       lift = 0;
 
     // The ring rises over the caster, and follows it until it is thrown.
     EffectPosition_ProjectBattler(args->user, &caster);
-    if (frame >= RING_RISE_FRAME)
-      lift += gJuggle_Styles[args->variant][RING_LIFT_STEP];
-    if (lift > gJuggle_Styles[args->variant][RING_LIFT_MAX])
-      lift = gJuggle_Styles[args->variant][RING_LIFT_MAX];
-    if (frame < RING_THROW_FRAME) {
+    if (frame >= JUGGLE_RING_RISE_FRAME)
+      lift += gJuggle_Styles[args->variant][JUGGLE_RING_LIFT_STEP];
+    if (lift > gJuggle_Styles[args->variant][JUGGLE_RING_LIFT_MAX])
+      lift = gJuggle_Styles[args->variant][JUGGLE_RING_LIFT_MAX];
+    if (frame < JUGGLE_RING_THROW_FRAME) {
       ring->x = INTtoFIXED(caster.x);
       ring->y = INTtoFIXED(caster.y - lift - 32);
     } else {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
-      if (frame == RING_THROW_FRAME) {
+      if (frame == JUGGLE_RING_THROW_FRAME) {
         BattleEffect_GetTargetsMidpoint(&midpoint);
         ring->x = INTtoFIXED(caster.x);
         ring->y = INTtoFIXED(caster.y - lift - 32);
@@ -368,7 +369,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 
     // The flames: each one's place on the ring turned into the canvas, the
     // second eight on a ring tipped on its side.
-    for (i = 0; i != gJuggle_Styles[args->variant][RING_FLAMES]; i++) {
+    for (i = 0; i != gJuggle_Styles[args->variant][JUGGLE_RING_FLAMES]; i++) {
       s32 cel = (frame / 2 + i * 4) & 3;
       s32 *place;
       s32 x;
@@ -381,7 +382,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       if (i > 7)
         Matrix_RotateX(DEGtoANG(90));
       Matrix_RotateY(
-          (frame * 4 + i * gJuggle_Styles[args->variant][RING_FLAME_SPACING])
+          (frame * 4 +
+           i * gJuggle_Styles[args->variant][JUGGLE_RING_FLAME_SPACING])
           << 8);
       place = vector;
       place[0] = 0;
@@ -394,19 +396,22 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       place[0] = x + 64;
       y = FIXED_INTEGER_PART(place[1]);
       place[1] = y + 64;
-      blitters[gJuggle_Styles[args->variant][RING_BLITTER]](
-          canvas, work->sheet + cel * (16 * 64), x + 56, y + 16, 16, 64);
+      blitters[gJuggle_Styles[args->variant][JUGGLE_RING_BLITTER]](
+          canvas, work->sheet + cel * PICTURE_BYTES(JUGGLE_FLAME),
+          x + CANVAS_SIZE / 2 - JUGGLE_FLAME_WIDTH / 2, y + 16,
+          JUGGLE_FLAME_WIDTH, JUGGLE_FLAME_HEIGHT);
     }
 
     // The strike: sparks burst from every target.
-    if (frame == RING_HIT_FRAME) {
+    if (frame == JUGGLE_RING_HIT_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++) {
         EffectPosition_ProjectSprite(args->targets[i], &target);
         BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
-        for (j = 0; j != gJuggle_Styles[args->variant][RING_SPARKS]; j++) {
+        for (j = 0; j != gJuggle_Styles[args->variant][JUGGLE_RING_SPARKS];
+             j++) {
           struct Particle *spark =
               &((struct Particle *)
                     Ram_MapCellBuffer)[i * JUGGLE_SPARKS_PER_TARGET + j];
@@ -422,7 +427,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
           spark->variant = (Random16() & 15) + 24;
         }
       }
-      work->shakeFrames = gJuggle_Styles[args->variant][RING_SHAKE];
+      work->shakeFrames = gJuggle_Styles[args->variant][JUGGLE_RING_SHAKE];
     }
 
     // The sparks fly and burn down, drawn by turns with the two blitters.
@@ -488,10 +493,12 @@ void RagingHeat_FillGradientCanvas(void) {
 #undef EMBERS
 #undef RAGING_HEAT_FRAMES
 #undef JUGGLE_FRAMES
-#undef RING_CUE_FRAME
-#undef RING_RISE_FRAME
-#undef RING_THROW_FRAME
-#undef RING_HIT_FRAME
+#undef JUGGLE_RING_CUE_FRAME
+#undef JUGGLE_RING_RISE_FRAME
+#undef JUGGLE_RING_THROW_FRAME
+#undef JUGGLE_RING_HIT_FRAME
 #undef JUGGLE_SPARKS_PER_TARGET
 #undef JUGGLE_SPARK_COUNT
 #undef JUGGLE_TILT
+#undef JUGGLE_FLAME_WIDTH
+#undef JUGGLE_FLAME_HEIGHT

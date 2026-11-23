@@ -96,7 +96,7 @@ struct MenuPoint {
 /// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (260 bytes), reached
 /// as gBattleMenuWork.
 struct BattleMenuWork {
-  /// The sprites UpdateLinkSessionCountdown draws each frame: the chosen
+  /// The sprites BattleMenu_Update draws each frame: the chosen
   /// command's icon, the chosen ability's icon and the party member's portrait.
   struct MenuSprite icons[3];
   u8 iconShown[3]; ///< whether each of icons is drawn

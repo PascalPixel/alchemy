@@ -1,6 +1,12 @@
 #ifndef ALCHEMY_SCREENS_H
 #define ALCHEMY_SCREENS_H
 
+/// @file
+/// The menu object's routines (window/screens.c): window sprites and
+/// portraits, the party status window, the file list and saving, name entry,
+/// the joined-party messages, the battle menus, the icon menus and the debug
+/// menus.
+
 #include "edition.h"
 #include "types.h"
 #include "graphics/glyph.h"
@@ -102,20 +108,20 @@ struct PsynergyEntry;
 struct BattleCommandRowWork;
 
 UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void);
-UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
-                                         s32 pattern, s32 unused);
+UNREAD_RESULT RangeIcon_Draw(struct Window *window, s32 x, s32 y, s32 pattern,
+                             s32 unused);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 void Link_DrawPageArrows(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
-s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
+s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
-s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
+s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
 s32 WindowSprite_GetPointerTiles(s32 no);
 void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
-s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon);
+s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon);
 void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
                                     s32 tile);
 void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
@@ -128,9 +134,9 @@ s32 BattleCommandRow_Run(s32 mode);
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit);
 s32 PartyStatus_HighlightMembers(u16 *ids);
 UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value);
-s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
-                                     const struct PsynergyEntry *newGrid,
-                                     u16 *out, s32 *gained, s32 *lost);
+s32 BattleDjinnMenu_ListChangedAbilities(const struct PsynergyEntry *oldGrid,
+                                         const struct PsynergyEntry *newGrid,
+                                         u16 *out, s32 *gained, s32 *lost);
 UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
                                              s32 ability);
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
@@ -144,7 +150,7 @@ void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
-void UpdateLinkSessionCountdown(void);
+void BattleMenu_Update(void);
 s32 Battle_RefuseFlee(void);
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act);
 s32 Battle_CollectPartyCommands(struct BattleAction *out, u16 *in, s32 count);

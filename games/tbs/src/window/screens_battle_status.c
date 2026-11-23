@@ -591,7 +591,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         } while (0);
 
         for (j = 0; j < i; j++) {
-          Resource_LoadTableEntryToBuffer(statusKinds[j], statusSlots[j]);
+          StatusIcon_LoadIntoSlot(statusKinds[j], statusSlots[j]);
         }
         if (i == 0) {
           statusKinds[0] = OWNER_CONDITION_NORMAL;

@@ -180,7 +180,7 @@ const s8 gWindowSprite_WobbleOffsets[40] = {
     -4, 1, -3, 2, -2, 3, -1, 4,
 };
 
-/// Nothing in the game reads these 16 bytes.
+/// Unused: 16 bytes after the wobble that nothing reads.
 const u8 gWindowSprite_WobbleTail[16] = {
     4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };

@@ -137,7 +137,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           } else {
             rangePattern--;
           }
-          Window_DrawThreeTileColumn(window, 16, i * 2, rangePattern, 0);
+          RangeIcon_Draw(window, 16, i * 2, rangePattern, 0);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;

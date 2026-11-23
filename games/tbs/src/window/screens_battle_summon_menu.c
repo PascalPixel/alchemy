@@ -12,18 +12,21 @@
 #define SUMMON_COST_X 10
 #endif
 
+/// The summons a page of the list shows.
+#define SUMMON_LIST_ROWS 4
+
 /// The battle summon list: the summons the party holds enough Djinn for
-/// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
-/// those `standby` can pay for first, each with its Djinn cost by element, the
-/// others in TEXT_COLOR_RED.
+/// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), SUMMON_LIST_ROWS to
+/// a page, those `standby` can pay for first, each with its Djinn cost by
+/// element, the others in TEXT_COLOR_RED.
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   struct MenuSprite cursorStorage;
-  struct MenuSprite sprites[4];
-  u8 learnedSummons[33]; // The callable summons, in menu order
-  u8 orderedSummons[33]; // Those standby can pay for first
+  struct MenuSprite sprites[SUMMON_LIST_ROWS];
+  u8 learnedSummons[33]; // in menu order
+  u8 orderedSummons[33]; // those standby can pay for first
   u16 text[64];
-  s32 iconSlots[4];
-  u8 visibleSummons[4];
+  s32 iconSlots[SUMMON_LIST_ROWS];
+  u8 visibleSummons[SUMMON_LIST_ROWS];
   s32 glyph;
   s32 count;
   struct Window *window;
@@ -57,7 +60,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                          MENU_WINDOW_FLAGS);
 
   // Icon sprites for each row.
-  for (index = 0; index < 4; index++) {
+  for (index = 0; index < SUMMON_LIST_ROWS; index++) {
     s32 y = index * 2;
 
     sprite = &sprites[index];
@@ -65,7 +68,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     sprite->oam.f.x = window->x * 8 + 8;
     sprite->oam.f.y = (y + window->y) * 8 + 4;
   }
-  for (index = 0; index < 4; index++) {
+  for (index = 0; index < SUMMON_LIST_ROWS; index++) {
     s32 slot = VramCache_AllocEntry(128);
     iconSlots[index] = slot;
     sprites[index].oam.f.tile = VramCache_Reload(slot, -1);
@@ -187,24 +190,29 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
             }
             Text_SetColor(TEXT_COLOR_WHITE);
             visibleSummons[index++] = 1;
-            if (index <= 3 &&
+            if (index < SUMMON_LIST_ROWS &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)
               goto next;
           }
-          while (index <= 3)
+          while (index < SUMMON_LIST_ROWS)
             visibleSummons[index++] = 0;
         }
         drawnFirstEntry = firstEntry;
       }
 
-      // Page numbers
-      if (count > 4) {
-        for (index = 0; index < (count + 3) / 4; index++) {
+      // The page numbers.
+      if (count > SUMMON_LIST_ROWS) {
+        for (index = 0;
+             index < (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS;
+             index++) {
           tile = index + PAGE_NUMBER_TILE;
-          if (index == firstEntry / 4)
+          if (index == firstEntry / SUMMON_LIST_ROWS)
             tile = index + PAGE_NUMBER_LIT_TILE;
           Window_SetTilemapEntry(
-              window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
+              window, tile,
+              window->width -
+                  (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS + index - 2,
+              -1, 0);
         }
       }
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
@@ -214,7 +222,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     }
 
     // Each frame: the row icons and the cursor.
-    for (index = 0; index <= 3; index++) {
+    for (index = 0; index < SUMMON_LIST_ROWS; index++) {
       if (visibleSummons[index] != 0)
         Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
@@ -246,22 +254,27 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     }
 
     // Page numbers (current page blinking) and left/right arrows.
-    if (count > 4) {
-      for (index = 0; index < (count + 3) / 4; index++) {
+    if (count > SUMMON_LIST_ROWS) {
+      for (index = 0; index < (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS;
+           index++) {
         tile = index + PAGE_NUMBER_TILE;
-        if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
+        if ((gFrameCount & 15) <= 11 && index == firstEntry / SUMMON_LIST_ROWS)
           tile = index + PAGE_NUMBER_LIT_TILE;
         Window_SetTilemapEntry(
-            window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
+            window, tile,
+            window->width - (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS +
+                index - 2,
+            -1, 0);
       }
-      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
-                             window->width - (count + 3) / 4 - 3, -1, 0);
+      Window_SetTilemapEntry(
+          window, LIST_TILE_PAGES_LEFT,
+          window->width - (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS - 3,
+          -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
       Window_MarkTilemapRow(work, window->y - 1);
     }
 
-    // The keys.
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = gBattleMenuWork;
     pressed = gKeysPressed;
@@ -293,7 +306,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     if (repeated & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       selectedRow++;
-      if (selectedRow == 4 || firstEntry + selectedRow == count)
+      if (selectedRow == SUMMON_LIST_ROWS || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
     } else if (repeated & KEY_UP) {
@@ -301,25 +314,25 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       selectedRow--;
       if (selectedRow < 0) {
         // On the last page the cursor goes to its last entry.
-        if (firstEntry == ((count - 1) / 4) * 4)
+        if (firstEntry == ((count - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS)
           selectedRow = count - firstEntry - 1;
         else
-          selectedRow = 3;
+          selectedRow = SUMMON_LIST_ROWS - 1;
       }
       preferredRow = selectedRow;
     } else if (repeated & KEY_RIGHT) {
       // Next page, wrapping from last to first.
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
-      if (firstEntry + 4 >= count) {
+      if (firstEntry + SUMMON_LIST_ROWS >= count) {
         if (firstEntry != 0) {
           firstEntry = 0;
           selectedRow = preferredRow;
         }
       } else {
-        firstEntry += 4;
+        firstEntry += SUMMON_LIST_ROWS;
         selectedRow = preferredRow;
-        if (firstEntry == ((count - 1) / 4) * 4) {
+        if (firstEntry == ((count - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS) {
           selectedRow = count - firstEntry - 1;
           if (selectedRow > preferredRow)
             selectedRow = preferredRow;
@@ -330,10 +343,10 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {
-        firstEntry -= 4;
+        firstEntry -= SUMMON_LIST_ROWS;
         selectedRow = preferredRow;
       } else {
-        firstEntry = ((count - 1) / 4) * 4;
+        firstEntry = ((count - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS;
         selectedRow = preferredRow;
         if (firstEntry != 0) {
           selectedRow = count - firstEntry - 1;
@@ -345,9 +358,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
     wait(1);
   }
 
-  // Cleanup
   wait(1);
-  for (index = 0; index < 4; index++)
+  for (index = 0; index < SUMMON_LIST_ROWS; index++)
     VramCache_FreeEntry(iconSlots[index]);
   VramCache_FreeEntry((u16)cursorHandle);
   Window_Close(counts, 1);

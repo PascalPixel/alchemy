@@ -272,7 +272,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         drawnFirstEntry = firstEntry;
       }
       if (djinnCount > BATTLE_LIST_ROWS) {
-        for (j = 0; j < (listPages = ((djinnCount + 4) / BATTLE_LIST_ROWS));
+        for (j = 0; j < (listPages = ((djinnCount + BATTLE_LIST_ROWS - 1) /
+                                      BATTLE_LIST_ROWS));
              j++) {
           s32 tile = j + PAGE_NUMBER_TILE;
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
@@ -293,7 +294,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // R is held), and the page arrows, which give way to the plain frame
     // while R turns the preview's pages instead.
     if (djinnCount > BATTLE_LIST_ROWS) {
-      for (j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
+      for (j = 0; j < (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS;
+           j++) {
         s32 tile = j + PAGE_NUMBER_TILE;
         if ((gKeysHeld & KEY_R) || (gFrameCount & 15) <= 11) {
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
@@ -302,19 +304,25 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         }
         Window_SetTilemapEntry(
             listWindow, tile,
-            listWindow->width - ((djinnCount + 4) / BATTLE_LIST_ROWS) + j - 2,
+            listWindow->width -
+                ((djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS) + j -
+                2,
             -1, 0);
       }
       if ((gKeysHeld & KEY_R) == 0) {
         Window_SetTilemapEntry(
             listWindow, LIST_TILE_PAGES_LEFT,
-            listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
+            listWindow->width -
+                (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
+            -1, 0);
         Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
                                listWindow->width - 2, -1, 0);
       } else {
         Window_SetTilemapEntry(
             listWindow, WINDOW_TILE_BORDER_TOP,
-            listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
+            listWindow->width -
+                (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
+            -1, 0);
         Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
@@ -395,7 +403,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
               ((djinnCount - 1) / BATTLE_LIST_ROWS) * BATTLE_LIST_ROWS) {
             selectedRow = djinnCount - firstEntry - 1;
           } else {
-            selectedRow = 4;
+            selectedRow = BATTLE_LIST_ROWS - 1;
           }
         }
         preferredRow = selectedRow;

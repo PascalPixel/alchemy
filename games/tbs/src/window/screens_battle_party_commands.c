@@ -86,7 +86,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   smallIconSlot = VramCache_AllocEntry(512);
   state =
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
-  Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
+  CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
@@ -151,7 +151,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       wait(1);
     }
   }
-  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_FRAME);
+  Task_Add(BattleMenu_Update, TASK_PASS_FRAME);
 
   while (1) {
     PartyStatus_ClearHighlights();
@@ -292,8 +292,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       MenuSprite_Initialize(*iconSprite,
                             OBJ_SIZE_32X32 | OBJ_256_COLORS |
                                 OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-      iconSprite->oam.f.tile =
-          Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
+      iconSprite->oam.f.tile = CommandIcon_ReloadSlot(largeIconSlot, mode);
       if (mode == COMMAND_ICON_DJINN) {
         iconSprite->oam.f.x = 128;
       } else {
@@ -378,8 +377,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         /* FAKEMATCH(barrier): an empty asm. */
         __asm__ volatile("");
-        iconSprite->oam.f.tile =
-            Resource_LoadIndexedEntryToBuffer(parameter, handle);
+        iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(parameter, handle);
         state->iconShown[1] = 1;
         work->textPalette = BASIC_COLORS_PALETTE;
         if (ability->ppCost > unit->pp) {
@@ -463,7 +461,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
+        iconSprite->oam.f.tile = AbilityIcon_LoadIntoSlot(
             summon->abilityId & ACTION_ID_MASK, handle);
         state->iconShown[1] = 1;
         if (ok == 0) {
@@ -723,7 +721,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   }
   VramCache_FreeEntry(smallIconSlot);
   VramCache_FreeEntry(largeIconSlot);
-  Task_Remove(UpdateLinkSessionCountdown);
+  Task_Remove(BattleMenu_Update);
   if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.
     // UB: declared to return a value it never returns.

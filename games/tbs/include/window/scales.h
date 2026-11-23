@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_SCALES_H
 #define ALCHEMY_SCALES_H
 
+/// @file
+/// The window sprites' and cursors' motion curves, the window colour wheel, the
+/// settings and Pause menus' icons and colour presets, and the speakers'
+/// portraits (window/scales.c).
+
 #include "types.h"
 
 extern const u16 gWindowSprite_BounceScales[32];

@@ -14,11 +14,11 @@
 /// Unused: does nothing; the far-call table exports it.
 void Sound_NoOp(void) {}
 
-/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin),
-/// clears every player's last sound and sets the fixed output rate. As The
-/// Broken Seal's, but no music is sound 0 here.
+/// Starts the sound driver at power-on: no music, the volume and tempo ramps at
+/// rest, no player's last sound, and the fixed 31536 Hz output rate. As The
+/// Broken Seal's, but here no music is MUS_SILENCE, sound 0.
 void Sound_Initialize(void) {
-  u16 *playerVolume;
+  u16 *lastSound;
   s32 remaining;
 
   m4aSoundInit();
@@ -33,12 +33,12 @@ void Sound_Initialize(void) {
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
   gSound_UnreadByte = 0;
-  playerVolume = gMusicPlayerLastSound;
+  lastSound = gMusicPlayerLastSound;
   remaining = MUSIC_PLAYER_COUNT - 1;
   do {
     remaining--;
-    *playerVolume = 0;
-    playerVolume += 1;
+    *lastSound = 0;
+    lastSound += 1;
   } while (remaining >= 0);
   Sound_SetFixedSampleFreq(SOUND_MODE_FREQ_GAME);
 }
@@ -224,8 +224,8 @@ void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 /// player falls silent and the music begins to fade back in.
 u8 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
-/// Waits a frame at a time for jingle restoration, giving up after 300
-/// frames.
+/// Waits until a jingle has ended and the music has begun to come back, giving
+/// up after BGM_WAIT_TIMEOUT_FRAMES.
 void Sound_WaitForBgmRestore(void) {
   s32 framesWaited = 0;
 

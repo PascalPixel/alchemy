@@ -75,6 +75,15 @@
 #define REG_WAVE_RAM ((volatile u32 *)0x04000090)
 // The CGB channels' register bits, as GBATEK gives them.
 #define NRX2_ENVELOPE_UP 0x08 ///< NRx2: the envelope counts the volume up
+/// NRx2: the envelope's direction and pace, below the starting volume.
+#define NRX2_ENVELOPE 0x0F
+/// NR10: the sweep lowers the pitch; 8 alone is no sweep.
+#define NR10_SWEEP_DOWN 0x08
+/// NR43: the noise counter is 7 bits wide, a more tonal noise.
+#define NR43_WIDTH_7BIT 0x08
+/// ToneData.kind and CgbChannel.kind: a tone voice's frequency is rounded to
+/// the sound bias's resolution.
+#define CGB_KIND_BIAS_ROUNDING 0x08
 #define NRX4_LENGTH_STOP 0x40 ///< NRx4: the length counter stops the sound
 #define NRX4_RESTART 0x80     ///< NRx4: (re)starts the channel's sound
 /// NR30: plays wave RAM's second bank, so the CPU writes the first.
@@ -338,8 +347,8 @@ struct CgbChannel {
   u8 dummy4[8];                   ///< Unused by this driver, as in pret's.
 };
 
-/// SoundChannel.statusFlags: its envelope's stage (SOUND_CHANNEL_SF_ENV), its
-/// echo, and the note's stop and start.
+/// SoundChannel.state and CgbChannel.state: its envelope's stage
+/// (SOUND_CHANNEL_SF_ENV), its echo, and the note's stop and start.
 enum SoundChannelFlag {
   SOUND_CHANNEL_SF_ENV = 0x03,
   SOUND_CHANNEL_SF_IEC = 0x04,
@@ -357,7 +366,7 @@ enum SoundChannelEnvelope {
   SOUND_CHANNEL_SF_ENV_ATTACK
 };
 
-/// CgbChannel.modify: its volume or its pitch changed, to be written to the
+/// CgbChannel.modified: its volume or its pitch changed, to be written to the
 /// channel.
 enum CgbChannelModify { CGB_CHANNEL_MO_VOL = 1, CGB_CHANNEL_MO_PIT = 2 };
 
@@ -593,8 +602,8 @@ struct MusicPlayer {
 struct Song {
   const struct SongHeader *header;
   /// The row of gMPlayTable that plays it (enum MusicPlayerId); Sound_Play
-  /// gives a song on MUSIC_PLAYER_SE_LAST the first music player from 7 down
-  /// to 4 with no active track, else 7.
+  /// gives a song on MUSIC_PLAYER_SE_LAST the first idle music player from
+  /// there down to MUSIC_PLAYER_SE_FIRST, else MUSIC_PLAYER_SE_LAST.
   u16 ms;
   u16 me; ///< The same value as ms in every entry; nothing reads it.
 };

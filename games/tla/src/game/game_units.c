@@ -705,8 +705,8 @@ void Party_RestoreHpPp(s32 cureConditions) {
 }
 
 /// Restores the PP of each party member whose element group's lighthouse
-/// the party is inside: Venus or Mars for group 0, Mercury or Jupiter for the
-/// others. Nothing calls it or its far-call export.
+/// the party is inside: Venus or Mars for Isaac, Garet, Felix and Jenna,
+/// Mercury or Jupiter for the others. Nothing calls it or its far-call export.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
@@ -720,7 +720,7 @@ void Party_RestorePpOfLitElements(void) {
     unitId = gMainRoutineWork.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
-    if (elementGroup == 0) {
+    if (elementGroup == ELEMENT_GROUP_VENUS_MARS) {
       if (GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE) ||
           GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE)) {
         restorePp = 1;

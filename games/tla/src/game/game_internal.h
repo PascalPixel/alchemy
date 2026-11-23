@@ -67,6 +67,10 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 /// has no stock), and the most one counts.
 enum { ITEM_COUNTER_COUNT = 300, ITEM_COUNTER_MAX = 99 };
 
+/// A character's element group (gCharacter_ElementGroupTable): which two
+/// lighthouses Party_RestorePpOfLitElements restores its PP in.
+enum ElementGroup { ELEMENT_GROUP_VENUS_MARS, ELEMENT_GROUP_MERCURY_JUPITER };
+
 /// The marks on a unit's Psynergy slot of an action its class or an item gives
 /// it, cleared before the class's own are listed again.
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };

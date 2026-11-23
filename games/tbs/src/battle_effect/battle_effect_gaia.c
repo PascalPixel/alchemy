@@ -359,3 +359,20 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
+
+#undef GAIA_FRAMES
+#undef GAIA_WALL_WIDEN_FRAME
+#undef GAIA_WALL_STAND_FRAME
+#undef GAIA_WALL_SINK_FRAME
+#undef GAIA_ROCKS
+#undef GAIA_EARLY_ROCKS
+#undef GAIA_FIRST_ROCK
+#undef GAIA_LATE_ROCK_COLUMNS
+#undef GAIA_ROCK_STAGGER
+#undef GAIA_DUST
+#undef GAIA_DUST_SHOWN
+#undef GAIA_ROW_HEIGHT
+#undef GAIA_WALL_TOP_WIDTH
+#undef GAIA_WALL_TOP_HEIGHT
+#undef GAIA_WALL_FOOT_WIDTH
+#undef GAIA_WALL_FOOT_HEIGHT

@@ -1,5 +1,5 @@
 /// @file
-/// Gust, Flying Attack and the rush bursts.
+/// Gust, Flying Attack and the rush strikes.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -91,7 +91,7 @@ enum FlurryColumn {
 /// strike an arc or a wave with a flash and a spray of motes; the last knocks
 /// the target back.
 void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
-  struct ScreenPoint actorPos;
+  struct ScreenPoint userPos;
   struct ScreenPoint targetPos;
   struct ScreenPoint screen;
   s32 screenX;
@@ -177,10 +177,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                                  0);
 
   for (frame = 0; frame != gFlurry_Styles[mode][FLURRY_FRAMES]; frame++) {
-    s32 bursts = gFlurry_Styles[mode][FLURRY_STRIKES];
+    s32 strikes = gFlurry_Styles[mode][FLURRY_STRIKES];
 
-    Projection_ScaledUnit(work->args->user, &actorPos);
-    actorPos.x /= 2;
+    Projection_ScaledUnit(work->args->user, &userPos);
+    userPos.x /= 2;
 
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -198,7 +198,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     }
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-    for (i = 0; i != bursts; i++) {
+    for (i = 0; i != strikes; i++) {
       s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
@@ -218,12 +218,12 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
             draw[i & 1](canvas,
                         FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
-                        targetPos.x / 2 - 16, actorPos.y - WAVE_HEIGHT / 2,
+                        targetPos.x / 2 - 16, userPos.y - WAVE_HEIGHT / 2,
                         WAVE_WIDTH, WAVE_HEIGHT);
           else
             draw[i & 1](canvas,
                         FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
-                        targetPos.x / 2 - 32, actorPos.y - WAVE_HEIGHT / 2,
+                        targetPos.x / 2 - 32, userPos.y - WAVE_HEIGHT / 2,
                         WAVE_WIDTH, WAVE_HEIGHT);
         }
       }
@@ -232,7 +232,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 4);
-        if (i == bursts - 1) {
+        if (i == strikes - 1) {
           BattleMotion_ApplyKnockbackFar(work->args->targets[0],
                                          KNOCKBACK_HURL);
           work->shakeFrames = 8;

@@ -95,6 +95,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
              flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
              gBattleEffect_PuffArcPictureHeights[picture]);
 #endif
+        // Flare Wall stacks a flame 16 pixels higher, and Flare Storm another
+        // 16 above that.
         if (work->args->variant != EFFECT_VARIANT_BASIC) {
 #ifdef UBFIX
           width = gBattleEffect_PuffArcPictureWidths[picture];

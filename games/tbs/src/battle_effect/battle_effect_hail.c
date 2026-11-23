@@ -329,7 +329,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Shakes the battle view while the effect's shake lasts.
+/// Shakes the battle view by up to rangeX and rangeY pixels while the effect's
+/// shakeFrames last, then puts it back where it was.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
@@ -352,7 +353,12 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
+#undef HAIL_CHIPS
+#undef GROUND_FRAMES
+#undef HAIL_FRAMES
 #undef HAIL_CHIP_PICTURES
+#undef PORTAL_WIDTH
+#undef PORTAL_HEIGHT
 #undef HAIL_DJINNI_PICTURE
 #undef GROUND_DJINNI_PICTURE
 #undef GROUND_FIRST_CRACKLE

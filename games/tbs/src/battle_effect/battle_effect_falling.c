@@ -236,17 +236,15 @@ struct DropSplashBuffer {
 #define DOUSE_SPLASH_BUFFER ((struct DropSplashBuffer *)Ram_MapGridCellBuffer)
 
 /// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
-/// two sets of motes): the falling drop, a blue bubble; the small splash it
-/// lands in, as large as the drop; then the large splash.
+/// two sets of motes): the falling drop, a blue bubble; the white flash it
+/// lands in, as large as the drop; then the white splash that spreads.
 #define DOUSE_DROP_WIDTH 24
 #define DOUSE_DROP_HEIGHT 24
-#define DOUSE_LARGE_SPLASH_WIDTH 42
-#define DOUSE_LARGE_SPLASH_HEIGHT 42
-#define DOUSE_DROP_PICTURE (2 * MOTE_SET_BYTES)
-#define DOUSE_SMALL_SPLASH_PICTURE                                             \
-  (DOUSE_DROP_PICTURE + PICTURE_BYTES(DOUSE_DROP))
-#define DOUSE_LARGE_SPLASH_PICTURE                                             \
-  (DOUSE_SMALL_SPLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+#define DOUSE_BURST_PICTURE_WIDTH 42
+#define DOUSE_BURST_PICTURE_HEIGHT 42
+#define DOUSE_FALLING_PICTURE (2 * MOTE_SET_BYTES)
+#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 
 /// Drops of water fall diagonally onto the targets' side of the field, 8 pixels
 /// down and 4 across a frame, each bursting in a splash that throws up droplets
@@ -270,7 +268,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
-                             work->sheet + DOUSE_DROP_PICTURE, 1, 1);
+                             work->sheet + DOUSE_FALLING_PICTURE, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, work->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -341,7 +339,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       x = drop->x / 8;
       y = drop->y / 8;
       if (drop->variant == -1) {
-        drawDrop(canvas, work->sheet + DOUSE_DROP_PICTURE, x, y,
+        drawDrop(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
                  DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         if (drop->y <= FALLING_LAND_Y) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
@@ -378,15 +376,15 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                                      POSE_DAMAGE, k, 2);
         }
       } else {
-        // Four frames of the small splash, four of the large one.
+        // Four frames of the flash, four of the spreading splash.
         if (drop->variant >= 0 && drop->variant <= 3)
-          drawDrop(canvas, work->sheet + DOUSE_SMALL_SPLASH_PICTURE, x, y,
+          drawDrop(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
                    DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         else if (drop->variant <= 7)
-          drawDrop(canvas, work->sheet + DOUSE_LARGE_SPLASH_PICTURE,
-                   x - (DOUSE_LARGE_SPLASH_WIDTH - DOUSE_DROP_WIDTH) / 2,
-                   y - (DOUSE_LARGE_SPLASH_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
-                   DOUSE_LARGE_SPLASH_WIDTH, DOUSE_LARGE_SPLASH_HEIGHT);
+          drawDrop(canvas, work->sheet + DOUSE_BURST_PICTURE,
+                   x - (DOUSE_BURST_PICTURE_WIDTH - DOUSE_DROP_WIDTH) / 2,
+                   y - (DOUSE_BURST_PICTURE_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
+                   DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
         if (drop->variant <= FALLING_LANDED_LAST_FRAME)
           drop->variant++;
       }
@@ -424,8 +422,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 #undef DOUSE_SPLASH_BUFFER
 #undef DOUSE_DROP_WIDTH
 #undef DOUSE_DROP_HEIGHT
-#undef DOUSE_LARGE_SPLASH_WIDTH
-#undef DOUSE_LARGE_SPLASH_HEIGHT
-#undef DOUSE_DROP_PICTURE
-#undef DOUSE_SMALL_SPLASH_PICTURE
-#undef DOUSE_LARGE_SPLASH_PICTURE
+#undef DOUSE_BURST_PICTURE_WIDTH
+#undef DOUSE_BURST_PICTURE_HEIGHT
+#undef DOUSE_FALLING_PICTURE
+#undef DOUSE_FLASH_PICTURE
+#undef DOUSE_BURST_PICTURE

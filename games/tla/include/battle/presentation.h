@@ -87,7 +87,7 @@ struct AIEnemyRest {
 extern const u8 Model_DecodeCode[];
 extern u8 Model_DecodeCodeSize[]; ///< Model_DecodeCode's bytes
 
-void Animation_SkipToStopFar(void *record);
+void Sprite_SkipToStopFar(void *record);
 
 void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 

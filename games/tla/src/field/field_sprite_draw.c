@@ -31,7 +31,7 @@ enum SpritePictureCodec {
 /// and leaves the stop to run next; marks the sprite and each sprite animation
 /// changed. The battle's motion calls it before it releases a borrowed sprite
 /// buffer.
-void Animation_SkipToStop(struct Sprite *sprite) {
+void Sprite_SkipToStop(struct Sprite *sprite) {
   s32 i;
 
   for (i = 0; i < sprite->count; i++) {

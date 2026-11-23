@@ -54,7 +54,7 @@ struct Window *DebugSoundTest_Open(void) {
 
 extern const struct SoundTestValues gDebugSoundTest_StartValues;
 extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
-    SoundTest_SeString[], SoundTest_FxString[];
+    SoundTest_SeString[], SoundTest_EffectString[];
 
 s32 Sound_LoadReverbCode(s32 preset);
 
@@ -92,7 +92,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
       Text_DrawStringInWindow((u8 *)SoundTest_MusicString, (s32)window, 8, 0);
       Text_DrawStringInWindow((u8 *)SoundTest_JingleString, (s32)window, 8, 16);
       Text_DrawStringInWindow((u8 *)SoundTest_SeString, (s32)window, 8, 32);
-      Text_DrawStringInWindow((u8 *)SoundTest_FxString, (s32)window, 8, 48);
+      Text_DrawStringInWindow((u8 *)SoundTest_EffectString, (s32)window, 8, 48);
       MenuCursor_SetFar(&work->cursor, ((s16)window->x << 3) - 4,
                         ((s16)window->y << 3) + (cursor << 4) + 12, 3);
     }

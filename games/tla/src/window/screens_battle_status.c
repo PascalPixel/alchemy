@@ -12,9 +12,8 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-/// Room for the help line of an item and of a Djinni, and the second letter
-/// tile of the PP cost's label, as measured: the item line grows from German
-/// on, the Djinni line and the tile from French on.
+/// Room for the help line of an item and of a Djinni, as measured: the item
+/// line grows from German on, the Djinni line from French on.
 #if TLA_PATCH_2
 #define SUMMARY_ITEM_HELP_CAPACITY 52
 #else
@@ -22,10 +21,8 @@
 #endif
 #if TLA_PATCH_3
 #define SUMMARY_DJINN_HELP_CAPACITY 52
-#define SUMMARY_PP_LABEL_SECOND_TILE WINDOW_TILE(5)
 #else
 #define SUMMARY_DJINN_HELP_CAPACITY 32
-#define SUMMARY_PP_LABEL_SECOND_TILE WINDOW_TILE(30)
 #endif
 /// Room for a help line no edition lengthens: no items, an item that cannot
 /// be used, no Djinn, a Djinni ready to summon.
@@ -68,7 +65,7 @@ enum BattleSummaryLabel {
 #define OWNER_STATUS_LABEL(row) ((s32)MsgExp - OWNER_STATUS_LABEL_EXP + (row))
 
 /// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
-/// cursor stops in window_tables.s name; the status icons' places and the
+/// cursor stops in status_tables.c name; the status icons' places and the
 /// three list pages follow.
 enum BattleSummaryHelp {
   /// The name, whose help says how to switch party members with L and R.
@@ -139,6 +136,11 @@ enum BattleSummaryPage {
 #define STATUS_CURSOR_PSYNERGY 3   ///< the Psynergy page's rows
 #define STATUS_CURSOR_DJINN 4      ///< the Djinn page's grid
 #define STATUS_CURSOR_ITEMS 5      ///< the items page's rows
+
+/// The general group's stops (gOwnerStatus_StatCursors): nine for a member
+/// with Djinn, then the seven of one without.
+#define STATUS_STAT_STOPS 9
+#define STATUS_STAT_STOPS_WITHOUT_DJINN 7
 
 #if TLA_PATCH_2
 extern const u8 gOwnerStatus_NivString[];
@@ -294,9 +296,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     default:
       cursor.group = STATUS_CURSOR_GENERAL;
       if (hasDjinn != 0)
-        cursor.groupSize = 9;
+        cursor.groupSize = STATUS_STAT_STOPS;
       else
-        cursor.groupSize = 7;
+        cursor.groupSize = STATUS_STAT_STOPS_WITHOUT_DJINN;
       break;
     case OWNER_STATUS_HELP_ATTACK ... OWNER_STATUS_HELP_LUCK:
       cursor.group = STATUS_CURSOR_COMBAT_STATS;
@@ -326,6 +328,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // A turns the page; each list page starts its own group at the top.
     if (gInput.pressed & KEY_A) {
       page = (page + 1) % STATUS_PAGE_COUNT;
+      // XXX: page + 3 is the group of the page after the new one (the Djinn
+      // group on turning to Psynergy), so the position reset is the next
+      // page's; the switch above sets the group again from the help entry.
+      // Turning through the pages with each list's cursor moved would show
+      // whether a list keeps its place.
       cursor.group = page + 3;
       cursor.groupPositions[page + 3] = 0;
       cursor.groupSize = 1;
@@ -490,7 +497,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       s32 k = cursor.groupPositions[cursor.group];
 
       if (hasDjinn == 0)
-        k += 9;
+        k += STATUS_STAT_STOPS;
       stop = &gOwnerStatus_StatCursors[k];
       cursor.helpEntry = stop->entry;
       cursor.column = stop->column;
@@ -730,8 +737,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
               Window_SetTilemapEntry(statusWindow, WINDOW_TILE_PP_LABEL, 11,
                                      j * 2 + 8, 0);
-              Window_SetTilemapEntry(statusWindow, SUMMARY_PP_LABEL_SECOND_TILE,
-                                     12, j * 2 + 8, 0);
+              Window_SetTilemapEntry(statusWindow, WINDOW_TILE_PP_LABEL_END, 12,
+                                     j * 2 + 8, 0);
               iconSprites[j].oam.f.tile =
                   Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
               if (!(ability->flags & ABILITY_USABLE_IN_BATTLE))
@@ -773,7 +780,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         }
       } else if (page == STATUS_PAGE_DJINN) {
         // Djinn: each element's set ones, then those on standby or recovering
-        // (bit 16, the turns left above bit 17).
+        // (BATTLE_DJINN_UNSET, the turns left in BATTLE_DJINN_TURNS).
         s32 rowBase = 0;
         s32 shownBase = -1;
         s32 released = 0;
@@ -979,12 +986,12 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST),
                                   statusWindow, 0, 96);
           for (j = 0; j < ELEMENT_COUNT; j++) {
-            s32 pal = 1;
+            s32 iconRow = 1;
 
             if (hasDjinn != 0)
-              pal = 0;
+              iconRow = 0;
             Window_SetTilemapEntry(statusWindow, ELEMENT_ICON_TILE + j,
-                                   7 + j * 4, pal + 8, 0);
+                                   7 + j * 4, iconRow + 8, 0);
             if (hasDjinn != 0) {
               Text_DrawNumberInWindow(unit->djinnSetCounts[j], 1, statusWindow,
                                       40 + j * 32, 72);
@@ -1282,7 +1289,6 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
 #undef SUMMARY_ITEM_HELP_CAPACITY
 #undef SUMMARY_DJINN_HELP_CAPACITY
-#undef SUMMARY_PP_LABEL_SECOND_TILE
 #undef SUMMARY_HELP_TEXT_LENGTH
 #undef SUMMARY_STAT_VALUE_X
 #undef SUMMARY_DRAW_PAGE_MARKS

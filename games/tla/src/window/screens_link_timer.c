@@ -29,7 +29,9 @@ struct LinkSignature {
 /// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
 /// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
 /// that are shown (the chosen command's and ability's icons, the party member's
-/// portrait) and slides the page arrows.
+/// portrait) and slides the page arrows. In a link battle it also runs the
+/// timer: once the partner has chosen its commands, this side has 15 seconds,
+/// counted down in the "TIME" window, with a tone at each second.
 void BattleMenu_UpdateEachFrame(void) {
   struct BattleMenuWork *state =
       (struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork;
@@ -134,13 +136,13 @@ void BattleMenu_UpdateEachFrame(void) {
   }
 }
 
-/// Tests whether the party may not run from this battle: battle types 3 and
-/// 4 (the battles an event starts, and link battles; see
-/// BATTLE_TYPE_NO_ESCAPE in battle/battle_turn.c) and a party once
-/// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
-/// time to be running away!" until A or B is pressed or the link battle's
-/// time runs out, and returns 1; else returns 0. The Flee command asks it
-/// (Battle_CollectPartyCommands).
+/// Tests whether the party may not run from this battle: a link battle, battle
+/// type 3, which no battle sets, or a party once challenged
+/// (BattleWork.challengeFlag). When it may not, shows "This is no time to be
+/// running away!" until A or B is pressed or the link battle's time runs out,
+/// and returns 1; else returns 0. The Flee command asks it
+/// (Battle_CollectPartyCommands); in a BATTLE_TYPE_NO_ESCAPE battle the
+/// command row offers no Flee.
 s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
   s32 window;
@@ -150,8 +152,8 @@ s32 Battle_RefuseFlee(void) {
 
   battle = Ram_HeapSlots->battleWork;
   mode = gMainRoutineWork.battleType;
-  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE || mode <= 2 ||
-      (result = 1, mode > 4)) {
+  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE ||
+      mode <= BATTLE_TYPE_NO_ESCAPE || (result = 1, mode > BATTLE_TYPE_LINK)) {
     result = 0;
   }
   if (result == 0) {

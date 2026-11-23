@@ -1228,7 +1228,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   work->window = Window_Create(x, y, work->width, 3, WINDOW_FLAG_INSTANT);
 }
 
-/// Reads the signed command-position mapping used by the icon menu.
+/// Reads one entry of a field menu table (gMenu_TopEntryPositionByCommand).
 static __inline__ s32 IconMenu_ReadCommandPosition(s8 *table, s32 index) {
   return table[index];
 }
@@ -1342,6 +1342,7 @@ s32 FileList_SelectAction(void) {
   IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
+  // The icon position's action, from the group's row of six.
   if (result >= 0) {
     u32 twice = group * 2;
 

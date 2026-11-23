@@ -32,7 +32,7 @@ struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  s32 name;
+  s32 djinniSprite;
   struct Window *window;
   s32 sprite[3];
   s32 *entry;
@@ -43,7 +43,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   u32 cleared = 0;
 
   window = NULL;
-  name = gDjinn_ElementSprites[element & 3];
+  djinniSprite = gDjinn_ElementSprites[element & 3];
   entry = sprite;
   window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
 
@@ -52,7 +52,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     work->dirty = 1;
 
-    id = Portrait_GetForSpeaker(name);
+    id = Portrait_GetForSpeaker(djinniSprite);
     Icon_LoadWithPalette(id, cleared, &slot, &tile, PORTRAIT_PALETTE, cleared);
 
     // The portrait as a bare OAM entry, pushed each frame: a link word,
@@ -93,8 +93,9 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   }
 }
 
-/// Returns the portrait character of party member `index` (0-8), from
-/// gCharacter_SpriteTable; 0 for any other.
+/// Returns the sprite of party member `index` (ISAAC to PIERS), from
+/// gCharacter_SpriteTable, by which Portrait_GetForSpeaker finds its portrait;
+/// 0 past 8. Index 8 reads the halfword after the table's eight.
 s32 Party_GetMemberPortraitSprite(u32 index) {
   if (index > 8)
     return 0;
@@ -311,7 +312,11 @@ void Summon_ShowLearnedMessage(s32 summon) {
   while ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
   Window_Close(window, 2);
   wait(1);
+  // UB: resource is never set, so this frees whichever VRAM cache entry its
+  // stack word names; UBFIX frees nothing, as nothing was loaded.
+#ifndef UBFIX
   VramCache_FreeEntry(resource);
+#endif
 }
 
 #undef DJINN_JOIN_X

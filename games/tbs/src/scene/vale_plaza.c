@@ -173,6 +173,17 @@ extern u16 gValePlaza_DoorOpens[];
 /// Isaac it is gone.
 #define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD FLAG_AREA_TEMP_06
 
+/// Young Garet sprawled on his back, beaten, held on its one picture
+/// (garet_child.png).
+enum { ANIM_GARET_CHILD_SPRAWLED = 7 };
+
+/// The travelers' leap away after the battle, the same in Saturos's and
+/// Menardi's sprites (saturos.png, menardi.png).
+enum TravelerAnimation {
+  TRAVELER_ANIMATION_CROUCH = 5, ///< crouched low before the spring
+  TRAVELER_ANIMATION_LEAP = 6    ///< in the air, cape flying
+};
+
 /// The cells the plaza's triggers answer, besides its doors, whose behavior is
 /// their exit's number.
 enum ValePlazaCellBehavior {
@@ -462,10 +473,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gValePlaza_Triggers;
 }
 
-/// A burly grey-haired man standing on the shore in front of the Psynergy
-/// Stone asks whether
-/// Isaac meditates each day. He means on Mt. Aleph, and he stands there on the
-/// day the story begins.
+/// A burly grey-haired man on the shore in front of the Psynergy Stone asks
+/// whether Isaac meditates on Mt. Aleph each day. He stands there on the day
+/// the story begins.
 static void ValePlaza_AskAboutMeditation(void) {
   Event_Start();
   Event_SetMessageId(MsgValeMeditateOnMtAlephDaily);
@@ -508,8 +518,7 @@ static void ValePlaza_AskAboutTheTravelers(void) {
 #define TREMOR_STEP_FRAMES 10
 
 /// A strongman south-east of the Psynergy Stone's pond, near the town gate,
-/// shows Isaac his Psynergy and
-/// shakes the ground.
+/// shows Isaac his Psynergy and shakes the ground.
 static void ValePlaza_DemonstratePsynergy(void) {
   u32 frame;
   s32 message;
@@ -633,7 +642,7 @@ static void ValePlaza_TalkAboutFallenStone(void) {
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HUT_OWNER, ACTOR_PARTY_LEADER, 10);
   ValePlaza_SayThenWait(ACTOR_HUT_OWNER, 40);
-  Actor_SetMovementTypeById(ACTOR_HUT_OWNER, 2);
+  Actor_SetMovementTypeById(ACTOR_HUT_OWNER, MOVEMENT_TYPE_WANDER);
   Event_End();
 }
 
@@ -654,7 +663,8 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Actor_SetAttachedEffect(ACTOR_STORM_ROCK_LIFTING_BOY,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  // Charge the caster's display, then start both palette updates.
+  // The boy flashes white as he calls up his Psynergy, then he and the rock
+  // shift colours as it rises.
   Scene_StartEventPsynergy();
   for (frame = 0; frame < 40; frame++) {
     ValePlaza_FlashPsynergyPalette(Actor_Get(ACTOR_STORM_ROCK_LIFTING_BOY));
@@ -664,7 +674,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
                         TASK_PASS_FRAME);
   Task_AddFrame(ValePlaza_UpdateSmallRockPalette, TASK_PASS_FRAME);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
-  // Suspend ordinary movement while lifting the target a little each frame.
+  // The rock floats up a little each frame, kept from falling back.
   rock = Actor_Get(ACTOR_STORM_SMALL_ROCK);
   savedMotionFlags = rock->motionFlags;
   rock->motionFlags = 0;
@@ -843,18 +853,18 @@ static void ValePlaza_LeaveThroughTownGate(void) {
 /// Whirlwind on the ivy on the cliff behind the shop blows it away, uncovering
 /// the mouth of the small cave with the Power Bread.
 static void ValePlaza_BlowAwayFirstIvy(void) {
-  GameFlag_Set((FLAG_VALE_FIRST_IVY_BLOWN_AWAY));
+  GameFlag_Set(FLAG_VALE_FIRST_IVY_BLOWN_AWAY);
 }
 
 /// Whirlwind on the ivy at the foot of the cliff behind the shop, east of the
 /// cave's ivy, blows it away.
 static void ValePlaza_BlowAwaySecondIvy(void) {
-  GameFlag_Set((FLAG_VALE_SECOND_IVY_BLOWN_AWAY));
+  GameFlag_Set(FLAG_VALE_SECOND_IVY_BLOWN_AWAY);
 }
 
 /// Whirlwind on the ivy on the cliff behind the inn blows it away.
 static void ValePlaza_BlowAwayThirdIvy(void) {
-  GameFlag_Set((FLAG_VALE_THIRD_IVY_BLOWN_AWAY));
+  GameFlag_Set(FLAG_VALE_THIRD_IVY_BLOWN_AWAY);
 }
 
 /// Arriving in this part of Vale sets the scene up for the time of the story.
@@ -863,13 +873,13 @@ s32 Scene_Initialize(void) {
   s32 flag;
   FIXED verticalScale;
 
-  if (GameFlag_Get((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
+  if (GameFlag_Get(FLAG_VALE_FIRST_IVY_BLOWN_AWAY) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY, 0, 0);
   }
-  if (GameFlag_Get((FLAG_VALE_SECOND_IVY_BLOWN_AWAY)) != 0) {
+  if (GameFlag_Get(FLAG_VALE_SECOND_IVY_BLOWN_AWAY) != 0) {
     Actor_SetPosition(ACTOR_SECOND_IVY, 0, 0);
   }
-  if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
+  if (GameFlag_Get(FLAG_VALE_THIRD_IVY_BLOWN_AWAY) != 0) {
     Actor_SetPosition(ACTOR_THIRD_IVY, 0, 0);
   }
   switch (gMainRoutineWork.entrance) {
@@ -931,7 +941,8 @@ s32 Scene_Initialize(void) {
         actor = Actor_Get(ACTOR_STORM_SMALL_ROCK_SHADOW);
         actor->scaleX = 3 * FIXED_ONE / 5;
         actor->scaleY = 3 * FIXED_ONE / 5;
-        Actor_SetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
+        Actor_SetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN,
+                           YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_LIE);
       } else {
         if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
           Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, 331, 249);
@@ -1295,11 +1306,11 @@ static void ValePlaza_FightTravelers(void) {
   // The confrontation continues in battle; both outcomes return here.
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   {
-    const void *message = &SceneId_ValePlaza;
+    const void *scene = &SceneId_ValePlaza;
 
-    Event_SetAfterBattleDestination((s32)message,
+    Event_SetAfterBattleDestination((s32)scene,
                                     VALE_PLAZA_AFTER_TRAVELERS_BATTLE);
-    Event_SetDefeatDestination((s32)message, VALE_PLAZA_AFTER_TRAVELERS_BATTLE);
+    Event_SetDefeatDestination((s32)scene, VALE_PLAZA_AFTER_TRAVELERS_BATTLE);
   }
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 4);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
@@ -1328,7 +1339,7 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Actor_Get(ACTOR_PARTY_LEADER)->scaleX = -FIXED_ONE;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  Actor_SetAnimation(ACTOR_STORM_GARET, 7);
+  Actor_SetAnimation(ACTOR_STORM_GARET, ANIM_GARET_CHILD_SPRAWLED);
   Actor_Get(ACTOR_STORM_GARET)->sprite->rotation = DEGtoANG(30);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   {
@@ -1874,19 +1885,19 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
 
 #include "shared/event_psynergy.c"
 
-/// Updates the rock-lifting boy's Psynergy display.
+/// The rock-lifting boy's colours and sparks while his Psynergy lifts the rock.
 static void ValePlaza_UpdateRockLiftingBoyPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
       Actor_Get(ACTOR_STORM_ROCK_LIFTING_BOY));
 }
 
-/// Updates the demonstrating strongman's Psynergy display.
+/// The strongman's colours and sparks while his Psynergy shakes the ground.
 static void ValePlaza_UpdateShowingStrongmanPsynergy(void) {
   ValePlaza_CyclePsynergyPaletteAndSpawnEffects(
       Actor_Get(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
 }
 
-/// Updates the small rock's palette while it is lifted.
+/// The small rock shifting colours while the boy's Psynergy lifts it.
 static void ValePlaza_UpdateSmallRockPalette(void) {
   ValePlaza_CyclePsynergyPalette(Actor_Get(ACTOR_STORM_SMALL_ROCK));
 }
@@ -1969,7 +1980,7 @@ s32 gValePlaza_ChargedUpStrongmanActions[] = {
     SC_ANIMATION(ANIM_STAND),
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_MOTION, 3),
+    SC_SET(SW_MOTION, ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS),
     SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(214, 0, 763),
@@ -2027,25 +2038,25 @@ s32 gValePlaza_StormGaretLeapActions[] = {
 };
 
 s32 gValePlaza_FirstTravelerLeapAwayActions[] = {
-    SC_ANIMATION(5),
+    SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
     SC_WAIT(10),
-    SC_ANIMATION(6),
+    SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_MOVE(65, 0, 328),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ANIMATION(5),
+    SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
     SC_WAIT(10),
-    SC_ANIMATION(6),
+    SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, toFIXED(6)),
     SC_MOVE(31, 0, 338),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ANIMATION(5),
+    SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
     SC_WAIT(10),
-    SC_ANIMATION(6),
+    SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE(0, 0, 338),
@@ -2055,23 +2066,23 @@ s32 gValePlaza_FirstTravelerLeapAwayActions[] = {
 };
 
 s32 gValePlaza_SecondTravelerLeapAwayActions[] = {
-    SC_ANIMATION(5),
+    SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
     SC_WAIT(10),
-    SC_ANIMATION(6),
+    SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
     SC_SET(SW_VELOCITY_Y, toFIXED(6)),
     SC_MOVE(63, 0, 374),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ANIMATION(5),
+    SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
     SC_WAIT(10),
-    SC_ANIMATION(6),
+    SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
     SC_SET(SW_VELOCITY_Y, toFIXED(7)),
     SC_MOVE(17, 0, 338),
     SC_SYNC,
     SC_WAIT(5),
-    SC_ANIMATION(5),
+    SC_ANIMATION(TRAVELER_ANIMATION_CROUCH),
     SC_WAIT(10),
-    SC_ANIMATION(6),
+    SC_ANIMATION(TRAVELER_ANIMATION_LEAP),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE(0, 0, 338),
@@ -2160,7 +2171,7 @@ s32 gValePlaza_PartyDepartureActions[] = {
 s32 gValePlaza_HutOwnerSearchActions[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.05),
-    SC_SET(SW_COLLISION, 3),
+    SC_SET(SW_COLLISION, ACTOR_SOLID | ACTOR_PUSHABLE),
     SC_LABEL(1),
     SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
@@ -2271,7 +2282,7 @@ struct ActorPlacement gValePlaza_ActorPlacements[] = {
         252, 0, 480, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         408, 0, 560, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         392, 0, 712, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         56, 0, 616, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2317,13 +2328,13 @@ struct ActorPlacement gValePlaza_StormActorPlacements[] = {
         252, 0, 480, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         408, 0, 560, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         249, 0, 628, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         214, 0, 635, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         294, 0, 670, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         136, 0, 678, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         87, 0, 744, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2426,7 +2437,7 @@ struct ActorPlacement gValePlaza_ActorPlacementsAfterKalay[] = {
         267, 0, 744, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         328, 0, 681, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         391, 0, 716, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         56, 0, 617, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -2464,9 +2475,9 @@ struct Trigger gValePlaza_Triggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
     { TRIGGER_EXIT, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
     { TRIGGER_EXIT, VALE_PLAZA_TO_CHEST_CAVE, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_VALE_FIRST_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, FLAG_VALE_SECOND_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, FLAG_VALE_THIRD_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwayThirdIvy) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };
@@ -2527,9 +2538,9 @@ struct Trigger gValePlaza_TriggersAfterLeaving[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
     { TRIGGER_EXIT, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
     { TRIGGER_EXIT, VALE_PLAZA_TO_CHEST_CAVE, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_VALE_FIRST_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, FLAG_VALE_SECOND_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, FLAG_VALE_THIRD_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwayThirdIvy) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };
@@ -2568,9 +2579,9 @@ struct Trigger gValePlaza_TriggersAfterKalay[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
     { TRIGGER_EXIT, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
     { TRIGGER_EXIT, VALE_PLAZA_TO_CHEST_CAVE, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, FLAG_VALE_FIRST_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwayFirstIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, FLAG_VALE_SECOND_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwaySecondIvy) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, FLAG_VALE_THIRD_IVY_BLOWN_AWAY, EVENT(ValePlaza_BlowAwayThirdIvy) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };

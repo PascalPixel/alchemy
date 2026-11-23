@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
 /// Two corners of the mound: its upper edge, then its lower.
 struct MoundVertex {
   struct ModelVertex upper;
@@ -223,7 +221,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         struct FieldSprite *added = work->sprites[HAURES_FIRST_FLAME + i];
 
         added->priority = 1;
-        added->blendMode = 1;
+        added->blendMode = OBJ_MODE_SEMI_TRANSPARENT;
       }
     }
   }
@@ -243,7 +241,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
   sprite =
       EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
   ((struct FieldSprite **)work->sprites)[HAURES_STAMP] = sprite;
-  sprite->blendMode = 1;
+  sprite->blendMode = OBJ_MODE_SEMI_TRANSPARENT;
   STAMP_TILES(work) = gVramCacheEntries[sprite->slot].offset + OBJ_VRAM0;
   {
     u8 *c = work->sheet;
@@ -395,6 +393,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               -(Trig_Cos(i * HAURES_POOL_STEP) * (HAURES_POOL_WIDTH / 2)));
           gHaures_WingCorners[i].upper.y =
               FIXEDtoINT(-(Trig_Sin(i * HAURES_POOL_STEP) * HAURES_POOL_DEPTH));
+          // DEAD: lower.x is set again two lines on; the ROM keeps this
+          // store.
           gHaures_WingCorners[i].lower.x = i * 4 - 64;
           gHaures_WingCorners[i].upper.z = 0;
           gHaures_WingCorners[i].lower.x = FIXEDtoINT(
@@ -440,6 +440,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_RUMBLE);
       }
       if (frame <= 266) {
+        // DEAD: frame <= 639 always holds here; the ROM keeps the compare.
         if (frame <= 639) {
           // The drops fall one after another, each bursting into a flame where
           // it lands.
@@ -584,7 +585,6 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         bodyPlace[3] = 0;
         // The claw rises out of the mound amid violet puffs of embers.
         if (frame > 149) {
-
           position.x += velocity.x;
           position.y += velocity.y;
           if (frame <= 159) {
@@ -722,7 +722,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             model->mesh = gHaures_BurstMesh;
             Matrix_Initialize();
             Matrix_Translate(0, -toFIXED(4), 0);
-            Matrix_Scale(111072, 171072, FIXED_ONE * 2);
+            Matrix_Scale(toFIXED(1.69483), toFIXED(2.61036), FIXED_ONE * 2);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
@@ -966,7 +966,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       {
         s32 *variant = &EXTRA_PARTICLES->variant;
 
-        for (i = 0; i != HAURES_SPARK_COUNT; i++, variant += 7) {
+        for (i = 0; i != HAURES_SPARK_COUNT;
+             i++, variant += sizeof(struct Particle) / sizeof(s32)) {
           *variant = -1;
         }
       }

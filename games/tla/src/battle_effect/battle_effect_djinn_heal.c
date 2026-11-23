@@ -222,8 +222,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
             quad->z += toFIXED(1);
           else
             quad->z += toFIXED(3) / 4;
-          across = Trig_Sin(quad->x) * ((s16 *)&quad->z)[1];
-          deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
+          across = Trig_Sin(quad->x) * FIXED_INTEGER_PART(quad->z);
+          deep = Trig_Cos(quad->x) * FIXED_INTEGER_PART(quad->z);
           quad->x += TRIG_TURN / 128;
           Matrix_Translate(across, quad->y, deep);
           Matrix_Scale(scale, scale, scale);

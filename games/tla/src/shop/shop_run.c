@@ -28,10 +28,7 @@ s32 Shop_ListAvailableArtifacts(void) {
     s32 shopType = shop->shopType;
 
     if (shopType != SHOP_TYPE_GENERAL_STORE) {
-      // Unused: a type 4 would list every group's artifacts, as a general
-      // store does, but no stock row has it (shop_tables.c) and nothing else
-      // sets one.
-      if (shopType != 4) {
+      if (shopType != SHOP_TYPE_EVERY_GROUP) {
         if (shopType != Item_GetEquipmentGroupFar(itemId))
           continue;
       }
@@ -62,7 +59,8 @@ void Shop_InitializeWork(void) {
   shop = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ShopWork));
   Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
-  // The hand cursor's glides take 12 frames until a screen changes it
+  // The hand cursor's glides take SHOP_CURSOR_ENTER_FRAMES until a screen
+  // changes it.
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   Palette_LoadIconsIntoHighlightFar();
@@ -93,18 +91,18 @@ void Shop_InitializeWork(void) {
 /// Releases the item icon grid, stops the cursor task, frees the six cursor
 /// icons and the work block. Every counter closes with it.
 void Shop_ReleaseWork(void) {
-  struct ShopWork *state;
+  struct ShopWork *shop;
 
-  state = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuWork;
   ItemIconGrid_Release();
   Task_Remove(MenuCursor_Step);
   Message_CloseFinishedWindowsFar();
-  VramCache_FreeEntry(state->cursorIcon);
-  VramCache_FreeEntry(state->previousPageIcon);
-  VramCache_FreeEntry(state->nextPageIcon);
-  VramCache_FreeEntry(state->gemIcon);
-  VramCache_FreeEntry(state->statUpIcon);
-  VramCache_FreeEntry(state->statDownIcon);
+  VramCache_FreeEntry(shop->cursorIcon);
+  VramCache_FreeEntry(shop->previousPageIcon);
+  VramCache_FreeEntry(shop->nextPageIcon);
+  VramCache_FreeEntry(shop->gemIcon);
+  VramCache_FreeEntry(shop->statUpIcon);
+  VramCache_FreeEntry(shop->statDownIcon);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
@@ -122,7 +120,6 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 
   if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)
     stockRow = SHOP_STOCK_ROW_EMPTY;
-  // Seed this place's artifact stock before creating the shop UI.
   ShopStock_AddArtifacts(stockRow);
   Shop_InitializeWork();
   shop = Ram_HeapSlots->menuWork;
@@ -203,8 +200,8 @@ s32 Shop_OpenDebugShop(void) {
   return 0;
 }
 
-/// Waits one frame at a time until the sound driver has finished the last
-/// command. Called by the inn's sleep, the sanctum and events that wait for a
+/// Waits until the jingle playing has ended and the music it interrupted is
+/// back: the inn's night, the sanctum's healing and events that wait for a
 /// jingle.
 void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
@@ -212,8 +209,9 @@ void Sound_WaitForJingle(void) {
   }
 }
 
-/// Shows a shopkeeper's line, given as the weapon shop's, and waits for its
-/// window; the other shops say their own.
+/// Shows the shopkeeper's line `messageId` and waits until it is typed out.
+/// Lines are given as the weapon shop's: the armor shop, the item shop and the
+/// general store each say their own version, as many messages on.
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 resolvedMessage;
@@ -232,7 +230,7 @@ void Shop_ShowKeeperMessage(s32 messageId) {
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(resolvedMessage, 5, 0,
                         MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
-                            2);
+                            MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -264,7 +262,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0,
                         MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
-                            2);
+                            MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -311,10 +309,10 @@ s32 Sanctum_AskYesNo(s32 choice) {
 
 /// Moves a cursor over `count` entries laid out `columns` to a row by the
 /// d-pad: left and right wrap round, up and down stop at the ends. Plays the
-/// cursor sound when it moves. Returns 0 when it stayed, 1 when it moved
-/// within its page, 2 when it changed page. Called by every counter's lists.
+/// cursor sound when it moves. Returns how it moved (enum MenuGridMove), a page
+/// being one row of `columns`. Called by every counter's lists.
 s32 MenuGrid_MoveCursor(s32 *cursor, s32 count, s32 columns) {
-  s32 changed = 0;
+  s32 changed = MENU_GRID_STAYED;
   s32 previous = *cursor;
   s32 position = previous;
 
@@ -338,10 +336,10 @@ s32 MenuGrid_MoveCursor(s32 *cursor, s32 count, s32 columns) {
   }
   if (previous != position) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    changed = 1;
+    changed = MENU_GRID_MOVED;
   }
   if (previous / columns * columns != position / columns * columns)
-    changed = 2;
+    changed = MENU_GRID_CHANGED_PAGE;
   *cursor = position;
   return changed;
 }

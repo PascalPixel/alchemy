@@ -1,7 +1,11 @@
 /// @file
 /// The 380 enemies, by enemy id less ENEMY_ID_FIRST. Each name is the English
 /// release's; the name field itself is blank, and BattleUnit_Set takes the name
-/// from the messages.
+/// from the messages. An enemy leaves its item one time in 2^(itemChance - 1),
+/// 1 in 32 for 6, four times as likely with BattleEnemy_RecordDefeat's
+/// djinnBonus. elementPreset is a row of gEnemy_ElementPresetTable
+/// (element_table.c): the element it attacks with, its element levels, power
+/// and resistance.
 // Part of game.c.
 
 #include "game_internal.h"

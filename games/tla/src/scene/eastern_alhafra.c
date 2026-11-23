@@ -255,7 +255,7 @@ s32 Leader_CanPushObjectAhead();
 /// ahead of the leader on by a cell.
 s32 EasternAlhafra_PushObjectAhead();
 u16 gEasternAlhafra_WaveLines[2][DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
-void Actor_FallOverWithAnimationById();
+void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void Rope_Initialize(void);
 void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();

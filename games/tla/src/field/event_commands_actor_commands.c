@@ -146,17 +146,17 @@ void Actor_FallOverById(u32 id, u32 angle) {
   }
 }
 
-/// Actor_FallOverById with an animation (mode, -1 for none) and the fall
-/// moving the actor itself half a cell the way it falls.
-void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
+/// Actor_FallOverById with an animation of the actor's sheet (-1 for none)
+/// and the fall moving the actor itself half a cell the way it falls.
+void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation) {
   struct Actor *actor = Actor_GetById(id);
   struct Sprite *sprite = actor->sprite;
   FIXED position[3];
 
   if (actor == NULL || sprite == NULL)
     return;
-  if (mode != -1)
-    Actor_SelectAnimationFar(actor, mode);
+  if (animation != -1)
+    Actor_SelectAnimationFar(actor, animation);
   position[0] = actor->x.fixed;
   angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   position[2] = actor->z.fixed;

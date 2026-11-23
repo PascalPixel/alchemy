@@ -1,5 +1,6 @@
-/// Rises beside the watched actor, expanding and shrinking over half a
-/// sine wave.
+/// The first golden ring of a pair (StaffCredit_SpawnGrowingPair): it rises in
+/// front of the actor it watches, swelling and shrinking over half a sine
+/// wave, and is released after 32 frames.
 void Actor_GrowUp(struct Actor *actor) {
   struct Actor *anchor = actor->watchedActor;
   s32 frame = ++actor->timer;

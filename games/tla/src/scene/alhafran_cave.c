@@ -25,6 +25,7 @@
 #include "types.h"
 #include "macros.h"
 #include "field/scene_tables.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
@@ -149,13 +150,9 @@ extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
 struct EffectSprite gAlhafranCave_CrateSprite BSS_DATA ALIGNED(16);
+/// Cleared as Eoleo bursts into tears, beside the idle task added then; nothing
+/// reads it.
 s32 gAlhafranCave_ClearedWord BSS_DATA;
-
-/// Sets the behavior of the map cell under a 16.16 position.
-static __inline__ void MapGrid_SetCellBehavior_(FIXED x, FIXED z, s32 layer,
-                                                s32 behavior) {
-  MapGrid_SetCellBehavior(x, z, layer, behavior);
-}
 
 /// The current scene's actors: the cave's or the jail's.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -222,7 +219,8 @@ void AlhafranCave_RaiseBridgeCells(void) {
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 4);
   FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 4);
   MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 4);
-  MapGrid_SetCellBehavior_(toFIXED(384), toFIXED(288), 0, CELL_BEHAVIOR_WALL);
+  FieldMapGrid_SetCellBehavior(toFIXED(384), toFIXED(288), 0,
+                               CELL_BEHAVIOR_WALL);
   FieldMapGrid_SetCellHeight(toFIXED(288), toFIXED(384), 0, 4);
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 4);
 }
@@ -235,7 +233,7 @@ void AlhafranCave_LowerBridgeCells(void) {
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 0);
   FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 0);
   MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 0);
-  MapGrid_SetCellBehavior_(toFIXED(384), toFIXED(288), 0, 0);
+  FieldMapGrid_SetCellBehavior(toFIXED(384), toFIXED(288), 0, 0);
   FieldMapGrid_SetCellHeight(toFIXED(288), toFIXED(384), 0, 0);
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 0);
 }
@@ -283,7 +281,8 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 /// Sets up the cave or the jail.
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (gMainRoutineWork.next == SCENE_ALHAFRAN_CAVE)
     AlhafranCave_SetUpCave();
   else if (gMainRoutineWork.next == SCENE_ALHAFRA_JAIL)
@@ -293,14 +292,17 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ALHAFRAN_CAVE) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     AlhafranCave_SetUpCave();
   } else if (scene == SCENE_ALHAFRA_JAIL) {
     if (gMainRoutineWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
         gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE)
-      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+      gFieldWork->transition =
+          SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     else
-      gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+      gFieldWork->transition =
+          SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     AlhafranCave_SetUpJail();
   }
   return 0;

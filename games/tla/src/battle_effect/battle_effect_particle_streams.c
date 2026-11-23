@@ -193,7 +193,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       // The waves along the bottom.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
-          draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
+          draw[0](canvas, work->sheet,
+                  k * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH,
                   120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
@@ -648,14 +649,14 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// The burst's frame the damage is told from.
 #define PARTICLE_STREAMS_DAMAGE_FRAME 48
 
-/// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
+/// The pictures in FlameSheetB (RESOURCE_FLAME_SHEET_B), each starting
 /// where the one before ends: six flames, then three large and three small
 /// glows, each glow brighter at its centre than the one before. The fall draws
 /// only the six and the brightest glow of each size.
 #define PARTICLE_STREAMS_FLAME_SIZE 32
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
-/// Where each picture starts in ParticleStreamsSheet, in bytes.
+/// Where each picture starts in FlameSheetB, in bytes.
 enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
   PARTICLE_STREAMS_FLAMES = 0,
@@ -713,7 +714,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   s32 direction;
   struct BattleEffectWork *work;
 
-  /// Starts a landing where a fireball reaches the ground; it is never drawn.
+  // Starts a landing where a fireball reaches the ground; it is never drawn.
   void ParticleStreams_SpawnLanding(s32 x, s32 y, s32 velocityX) {
     s32 i;
 
@@ -731,7 +732,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
   }
 
-  /// Starts a flame; the fall starts its own inline.
+  // Unused: starts a flame; the fall starts its own inline.
   UNUSED void ParticleStreams_SpawnFlame(s32 x, s32 y) {
     s32 i;
 
@@ -760,7 +761,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   work = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 
-  // In Outer Space the Fusion Dragon leaps out of sight.
+  // In Outer Space the Fusion Dragon leaps out of sight. The stream then runs
+  // rightward (direction 1) when the party casts, else leftward (-1).
   direction = mode;
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
@@ -902,7 +904,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       s32 dividend;
       s32 glow;
       u16 *line;
-      s32 size;
+      s32 spriteScale;
       s32 x;
       s32 y;
       s32 hold;
@@ -972,9 +974,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       position[3] = 0;
       position[1] = toFIXED(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        size = growth + FIXED_ONE * 5 / 8;
-        scale.x = size;
-        scale.y = size;
+        spriteScale = growth + FIXED_ONE * 5 / 8;
+        scale.x = spriteScale;
+        scale.y = spriteScale;
         position[0] = INTtoFIXED(x) + toFIXED(80);
         position[2] = INTtoFIXED(64 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
@@ -982,9 +984,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale,
                                           0);
       } else {
-        size = growth + FIXED_ONE;
-        scale.x = size;
-        scale.y = size;
+        spriteScale = growth + FIXED_ONE;
+        scale.x = spriteScale;
+        scale.y = spriteScale;
         position[0] = INTtoFIXED(x) + toFIXED(96);
         position[2] = INTtoFIXED(96 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
@@ -999,9 +1001,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
 
           flame->variant = 0;
-          flame->x =
-              INTtoFIXED(x + 96) + Trig_Sin(angle) * 30 / FIXED_ONE * size;
-          flame->y = INTtoFIXED(y) - Trig_Cos(angle) * 30 / FIXED_ONE * size;
+          flame->x = INTtoFIXED(x + 96) +
+                     Trig_Sin(angle) * 30 / FIXED_ONE * spriteScale;
+          flame->y =
+              INTtoFIXED(y) - Trig_Cos(angle) * 30 / FIXED_ONE * spriteScale;
           break;
         }
       }
@@ -1119,7 +1122,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
-    s32 size = (frame + 464) << 8;
+    s32 dragonScale = (frame + 464) << 8;
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 elapsed = frame - PARTICLE_STREAMS_FLASH_FRAME;
     struct Scale scale;
@@ -1239,8 +1242,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     position[3] = 0;
     position[1] = toFIXED(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-      scale.x = size;
-      scale.y = size;
+      scale.x = dragonScale;
+      scale.y = dragonScale;
       position[0] = INTtoFIXED(x) + toFIXED(96);
       position[2] = INTtoFIXED(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);

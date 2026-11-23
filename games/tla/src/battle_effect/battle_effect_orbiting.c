@@ -1,11 +1,9 @@
 /// @file
-/// Swirling stars and target bursts.
+/// Swirling stars and target bursts, two effects no table names and nothing
+/// in the game reaches.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
-
-// Neither effect here is called or named by any table: nothing in the game
-// reaches them.
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64   ///< stars that swirl
@@ -21,8 +19,8 @@
 /// The angle star `i` turns each frame about its axis: each later star faster.
 #define SWIRLING_STAR_SPIN(i) (((i) + 32) * 8)
 
-/// Swirling stars: stars spin about a point above the field, each on its own
-/// axis, then are drawn back towards it.
+/// Unused: nothing calls it. Stars spin about a point above the field, each on
+/// its own axis, then are drawn back towards it.
 UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -108,8 +106,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 
 #define TARGET_BURSTS_FRAMES 96
 
-/// Target bursts: on each target in turn a burst flares while puffs of smoke
-/// scatter around it.
+/// Unused: nothing calls it. On each target in turn a burst flares while puffs
+/// of smoke scatter around it.
 UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

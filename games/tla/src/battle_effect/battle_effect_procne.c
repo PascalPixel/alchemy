@@ -109,7 +109,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 index;
   s32 slot;
   s32 size;
-  s32 span;
+  s32 moteSize;
   s32 dist;
   s32 arrived;
   s32 heading[8];
@@ -162,7 +162,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       point = &work->particles[index];
       point->z = 120;
       point->y = 0;
-      Random16();
+      Random16(); // a number drawn and not used
       point->velocityY = 0;
       point->velocityX = 0;
       point->variant = Random16() & 63;
@@ -404,9 +404,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 screen.y = FIXEDtoINT(screen.y) + FIXEDtoINT(wave.y) - 4;
                 screen.depth = FIXEDtoINT(screen.depth);
                 CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
-                span = PROCNE_SPARK_SIZE(screen.depth, 6);
+                moteSize = PROCNE_SPARK_SIZE(screen.depth, 6);
                 EFFECT_DRAW_MOTE(draw[1], canvas, graphics, screen.x, screen.y,
-                                 span);
+                                 moteSize);
                 point->x -= point->x / dist;
                 point->y -= point->y / dist;
                 point->z -= point->z / dist;
@@ -416,10 +416,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             }
 
             if (arrived > 0) {
-              span = arrived / 10 + 1;
-              draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
-                      (FIXEDtoINT(wave.x) >> 1) - span / 2 + 32,
-                      FIXEDtoINT(wave.y) - span - 4, span, span * 2);
+              moteSize = arrived / 10 + 1;
+              draw[1](
+                  canvas, graphics + gBattleEffect_MotePictures[moteSize - 1],
+                  (FIXEDtoINT(wave.x) >> 1) - moteSize / 2 + 32,
+                  FIXEDtoINT(wave.y) - moteSize - 4, moteSize, moteSize * 2);
             }
           }
 
@@ -462,9 +463,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                   screen.y = FIXEDtoINT(screen.y) + 56;
                   screen.depth = FIXEDtoINT(screen.depth);
                   CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
-                  span = PROCNE_SPARK_SIZE(screen.depth, 3);
+                  moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
                   EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x,
-                                   screen.y, span);
+                                   screen.y, moteSize);
                   spark[index].x += spark[index].velocityX;
                   spark[index].y += spark[index].velocityY;
 #ifdef BUGFIX
@@ -538,9 +539,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                       work->particles[index + PROCNE_COMET_PARTICLES].velocityY;
                   screen.depth = FIXEDtoINT(screen.depth);
                   CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
-                  span = PROCNE_SPARK_SIZE(screen.depth, 3);
+                  moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
                   EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x,
-                                   screen.y, span);
+                                   screen.y, moteSize);
                 }
               }
             }
@@ -626,6 +627,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define DRAGON_FIRE_BREATH_FRAME 128
 #define DRAGON_FIRE_FLASH_FRAME 160
 #define DRAGON_FIRE_FLASH_END_FRAME 176
+#define DRAGON_FIRE_TIAMAT_SPRITES 8  ///< the sprites that draw Tiamat
 #define DRAGON_FIRE_FIREBALLS 16      ///< falling fireballs
 #define DRAGON_FIRE_FIRST_FIREBALL 24 ///< the first in work->particles
 #define DRAGON_FIRE_FIRST_SPARK 40    ///< the first spark in work->particles
@@ -747,14 +749,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     if (mode == DRAGON_FIRE_TIAMAT) {
       BattleEffect_SelectLivingTargets(work->args);
       wait(1);
-      BattleEffect_SpawnObjects(8, SPRITE_TIAMAT, 2);
+      BattleEffect_SpawnObjects(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
     }
 
     for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
       // A or B skips to the flash.
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 &&
           frame < DRAGON_FIRE_FLASH_FRAME) {
-        // Tiamat's open jaws of the breath and the targets' reel of frame 138.
+        // What the breath would have done: Tiamat opens its jaws and the
+        // targets reel.
         if (mode == DRAGON_FIRE_TIAMAT) {
           Sprite_StartAnimationFar(work->sprites[TIAMAT_HEAD],
                                    TIAMAT_HEAD_BREATHING);
@@ -1050,7 +1053,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     }
     if (mode == DRAGON_FIRE_TIAMAT) {
-      for (i = 0; i != 8; i++)
+      for (i = 0; i != DRAGON_FIRE_TIAMAT_SPRITES; i++)
         Sprite_DestroyFar(work->sprites[i]);
     }
   }
@@ -1061,6 +1064,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 #undef DRAGON_FIRE_BREATH_FRAME
 #undef DRAGON_FIRE_FLASH_FRAME
 #undef DRAGON_FIRE_FLASH_END_FRAME
+#undef DRAGON_FIRE_TIAMAT_SPRITES
 #undef DRAGON_FIRE_FIREBALLS
 #undef DRAGON_FIRE_FIRST_FIREBALL
 #undef DRAGON_FIRE_FIRST_SPARK

@@ -7,8 +7,6 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-#undef GROUND_Y
-
 /// One of gPrism_Counts' three numbers for a variant.
 #define PRISM_COUNT(variant, column) gPrism_Counts[(variant) * 3 + (column)]
 #define PRISM_CRYSTAL_COUNT 0 ///< the crystals that fall
@@ -20,11 +18,11 @@
 #define PRISM_CAMERA_SLOWING 96
 #define PRISM_CAMERA_STOP 104
 /// The x in gPrism_ShardStarts under the middle of the crystal.
-#define SHARD_STARTS_MIDDLE_X 40
+#define PRISM_SHARD_MIDDLE_X 40
 #define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
 #define PRISM_SHARD_PICTURES                                                   \
-  PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
-#define SHATTERED 1      ///< a crystal's z once it has hit the ground
+  PICTURE_BYTES(CRYSTAL)  ///< the shards, after the crystal
+#define PRISM_SHATTERED 1 ///< a crystal's z once it has hit the ground
 /// The shard pictures gPrism_ShardPictures, _Widths and _Heights hold.
 #define PRISM_SHARD_PICTURE_COUNT 12
 
@@ -103,7 +101,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     if (frame <= PRISM_COUNT(args->variant, PRISM_FRAMES) - 8) {
       for (i = 0; i != PRISM_COUNT(args->variant, PRISM_CRYSTAL_COUNT); i++) {
         crystal = &work->particles[i];
-        if (crystal->z == SHATTERED) {
+        if (crystal->z == PRISM_SHATTERED) {
           // A shattered crystal's shards fly and spin, slowing down.
           for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
             picture =
@@ -140,13 +138,13 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
                                         FIXED_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
-            crystal->z = SHATTERED;
+            crystal->z = PRISM_SHATTERED;
             crystal->y = PRISM_GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
               shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-              shard->x = INTtoFIXED(gPrism_ShardStarts[j * 2] -
-                                    SHARD_STARTS_MIDDLE_X) +
-                         crystal->x;
+              shard->x =
+                  INTtoFIXED(gPrism_ShardStarts[j * 2] - PRISM_SHARD_MIDDLE_X) +
+                  crystal->x;
               shard->y = INTtoFIXED(gPrism_ShardStarts[j * 2 + 1]);
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
@@ -180,8 +178,9 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 #undef PRISM_CAMERA_TURN
 #undef PRISM_CAMERA_SLOWING
 #undef PRISM_CAMERA_STOP
-#undef SHARD_STARTS_MIDDLE_X
+#undef PRISM_SHARD_MIDDLE_X
 #undef PRISM_GROUND_Y
+#undef PRISM_SHATTERED
 
 /// The ramp's colours, one a canvas level.
 #define PHASE_RAMP_COLORS (CANVAS_LEVEL_BRIGHTEST + 1)

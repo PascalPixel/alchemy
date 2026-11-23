@@ -163,7 +163,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE, work->sheet, 0, 0);
   } else {
     switch (kind) {
-    case 0:
+    case 0: // a class with no attack effect slashes
     case ATTACK_EFFECT_SLASH:
     case ATTACK_EFFECT_RISING_SLASH:
     case ATTACK_EFFECT_RISING_SLASH_LOW:

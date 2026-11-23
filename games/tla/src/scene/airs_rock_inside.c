@@ -2489,7 +2489,7 @@ void AirsRockInside_StampWideCellUnderLeader(void) {
   }
 }
 
-extern u32 gAirsRockInside_OrbitSparkScript[];
+extern u32 gOrbitSpark_Script[];
 
 #define DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(name, n1, n2)                        \
   void name(void) {                                                            \
@@ -2508,21 +2508,7 @@ DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_HideRevealedDoors, 26, 90)
 /// lasts.
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_RevealDoors, 25, 89)
 
-/// Leaves a small spark where the orbiter is.
-void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
-  struct Actor *actor = FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
-                                          source->y.fixed, source->z.fixed);
-
-  actor->scaleY = FIXED_ONE * 2 / 5;
-  actor->scaleX = FIXED_ONE * 2 / 5;
-  actor->motionFlags = 0;
-  Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
-  Scene_SetActorSpritePriority(actor, 1);
-  Actor_SelectAnimation(actor, 1);
-  Actor_SetSpriteFlags(actor, 0);
-  Actor_SetBlendMode(actor, 1);
-  Actor_StartScript(actor, gAirsRockInside_OrbitSparkScript);
-}
+#include "shared/orbit_spark_spawn.h"
 
 /// An orbiter's update: circles 8 pixels above its anchor, closing in 4 pixels
 /// a step and leaving sparks, until its countdown ends; 1 once it is 2 pixels
@@ -2540,14 +2526,14 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
     return 0;
   if (orbiter->orbitRadius == toFIXED(2))
     return 1;
-  AirsRockInside_SpawnOrbitSpark(orbiter);
+  OrbitSpark_Spawn(orbiter);
   orbiter->orbitRadius -= toFIXED(4);
   orbiter->angle += (s16)orbiter->speed >> 1;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
   Vector_AddPolarOffset(orbiter->orbitRadius, orbiter->angle, &orbiter->x);
-  AirsRockInside_SpawnOrbitSpark(orbiter);
+  OrbitSpark_Spawn(orbiter);
   orbiter->orbitRadius -= toFIXED(4);
   return 1;
 }
@@ -3583,7 +3569,7 @@ s16 gAirsRockInside_CoinsChestPillars[] = {
     ACTOR_COINS_CHEST_PILLAR, ACTOR_COINS_CHEST_STATUE, -1,
 };
 
-u32 gAirsRockInside_OrbitSparkScript[] = {
+u32 gOrbitSpark_Script[] = {
     SC_WAIT(6),
     SC_RELEASE,
     SC_END,

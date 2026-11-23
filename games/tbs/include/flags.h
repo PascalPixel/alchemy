@@ -380,11 +380,12 @@
 #define FLAG_ALTIN_SLEEP_BOMB 0xf75
 
 // Altin Peak (SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit)
-/// AltinPeakFirstWaterBeast's water beast has been seen hopping along its first
-/// and its second route.
-#define FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN 0x904
-/// As FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, for the second route.
-#define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
+/// AltinPeakFirstWaterBeast's water beast has frozen the puddle in the gap
+/// between the cave's two ledges and hopped across it to the west ledge.
+#define FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP 0x904
+/// The same beast, once Isaac reached the east ledge by the gap, has hopped
+/// away to the west end of its ledge, where it spits water until its battle.
+#define FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY 0x905
 /// AltinPeakFallingRocks's boulder has fallen and rolled after the party leader
 /// into the wall at the bottom, leaving rubble; the scene redraws the rubble
 /// and the toppled log on later visits, and Force no longer topples the log.

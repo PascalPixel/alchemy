@@ -28,6 +28,12 @@
 /// The Death and Sword cards dissolve a step a frame from CARD_FLIGHT_FRAMES.
 #define CARD_DISSOLVE_FRAMES 16
 
+/// The Death Card's Reaper rises from REAPER_RISE_FRAME and swings at
+/// REAPER_SWING_FRAME; two frames of flash, then the red crescent and its four
+/// fading pictures, two frames each.
+#define REAPER_RISE_FRAME 52
+#define REAPER_SWING_FRAME 64
+
 /// Each puff of the Baffle Card's mist lives BAFFLE_PUFF_FRAMES, through
 /// BlueCloudPuffSheet's four pictures.
 #define BAFFLE_PUFF_FRAMES 16
@@ -86,8 +92,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
-  // Set up a tiled canvas, filled on the user's side, and a clipped MAX
-  // blitter (additive for the Sword Card), mirrored to face the targets.
+  // Set up a tiled canvas, filled on the user's side, and a blitter that keeps
+  // the brighter pixel (that adds, for the Sword Card), mirrored to face the
+  // targets.
   BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES)
     BattleEffect_StartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
@@ -234,7 +241,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
         if ((mode == CARD_DEATH || mode == CARD_SWORD) &&
             (frame >= CARD_FLIGHT_FRAMES - 8 && frame < CARD_FLIGHT_FRAMES))
           BattleEffect_StepPaletteToResource(RESOURCE_SMOKE_SHEET);
-        if (frame > 51) {
+        if (frame >= REAPER_RISE_FRAME) {
           if (mode == CARD_DEATH)
             BattleEffect_StepPaletteToResource(RESOURCE_RED_CRESCENT_SHEET_A);
           else
@@ -445,11 +452,11 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     }
 
     if (mode == CARD_DEATH) {
-      // The Reaper rises, and swings at frame 64: his scythe cuts a red
-      // crescent that fades in four pictures.
-      if (frame == 60)
+      // The Reaper rises and swings: his scythe cuts a red crescent that
+      // fades in four pictures.
+      if (frame == REAPER_SWING_FRAME - 4)
         Sound_PlayFar(SE_POWER_UP);
-      if (frame == 64) {
+      if (frame == REAPER_SWING_FRAME) {
         Sound_PlayFar(SE_CLATTER);
         EFFECT_SHOW_DAMAGE(-1);
         BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
@@ -458,14 +465,14 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
       }
-      if (frame > 51) {
-        if (frame <= 63) {
+      if (frame >= REAPER_RISE_FRAME) {
+        if (frame < REAPER_SWING_FRAME) {
           draw[0](canvas, work->sheet,
                   overflow + gCastingImpact_PictureX[args->side * 7],
                   gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
                   REAPER_SHEET_RAISED_HEIGHT);
         } else {
-          if (frame <= 67)
+          if (frame <= REAPER_SWING_FRAME + 3)
             draw[0](canvas, work->sheet,
                     overflow + gCastingImpact_PictureX[args->side * 7],
                     gCastingImpact_PictureY[0], REAPER_SHEET_RAISED_WIDTH,
@@ -474,30 +481,35 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                               overflow +
                                   gCastingImpact_PictureX[args->side * 7 + 1],
                               gCastingImpact_PictureY[1]);
-          if (frame >= 64 && frame <= 65)
+          if (frame >= REAPER_SWING_FRAME && frame <= REAPER_SWING_FRAME + 1)
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-          if (frame >= 66 && frame <= 67)
+          if (frame >= REAPER_SWING_FRAME + 2 &&
+              frame <= REAPER_SWING_FRAME + 3)
             EFFECT_DRAW_PICTURE(
                 draw[0], canvas, work->sheet, REAPER_SHEET_CRESCENT,
                 overflow + gCastingImpact_PictureX[args->side * 7 + 2],
                 gCastingImpact_PictureY[2]);
-          if (frame >= 68 && frame <= 69)
+          if (frame >= REAPER_SWING_FRAME + 4 &&
+              frame <= REAPER_SWING_FRAME + 5)
             EFFECT_DRAW_PICTURE(
                 draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_A,
                 overflow + gCastingImpact_PictureX[args->side * 7 + 3],
                 gCastingImpact_PictureY[3]);
-          if (frame >= 70 && frame <= 71)
+          if (frame >= REAPER_SWING_FRAME + 6 &&
+              frame <= REAPER_SWING_FRAME + 7)
             EFFECT_DRAW_PICTURE(
                 draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_B,
                 overflow + gCastingImpact_PictureX[args->side * 7 + 4],
                 gCastingImpact_PictureY[4]);
-          if (frame >= 72 && frame <= 73)
+          if (frame >= REAPER_SWING_FRAME + 8 &&
+              frame <= REAPER_SWING_FRAME + 9)
             EFFECT_DRAW_PICTURE(
                 draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_C,
                 overflow + gCastingImpact_PictureX[args->side * 7 + 5],
                 gCastingImpact_PictureY[5]);
-          if (frame >= 74 && frame <= 75)
+          if (frame >= REAPER_SWING_FRAME + 10 &&
+              frame <= REAPER_SWING_FRAME + 11)
             EFFECT_DRAW_PICTURE(
                 draw[0], canvas, Ram_MapCellBuffer, RED_CRESCENT_FADE_D,
                 overflow + gCastingImpact_PictureX[args->side * 7 + 6],
@@ -532,3 +544,5 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 #undef SWORD_CARD_SHARD_TOP
 #undef SWORD_CARD_SHARD_SPEED
 #undef SWORD_CARD_SHARD_DIMMING
+#undef REAPER_RISE_FRAME
+#undef REAPER_SWING_FRAME

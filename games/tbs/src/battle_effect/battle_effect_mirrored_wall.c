@@ -15,7 +15,8 @@ enum MirroredWallMode {
                          ///< colours
 };
 
-/// Builds the two usual canvas blitters.
+/// Builds the two usual canvas blitters, the lightening one and the additive
+/// one, both drawing mirrored when flip is nonzero.
 void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -58,7 +59,7 @@ void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
-  u8 *palette;
+  u8 *resource;
   s32 x;
   struct ScreenPoint screenPosition;
   BlitterPair draw;
@@ -70,15 +71,15 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  resource = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet);
+  resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   if (mode == MIRRORED_WALL_RECOVERY) {
-    palette = Resource_GetTableEntry(RESOURCE_FIREBALL_SHEET);
-    Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    resource = Resource_GetTableEntry(RESOURCE_FIREBALL_SHEET);
+    Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
   }
 
   Projection_Unit(work->args->targets[0], &screenPosition);
@@ -124,17 +125,20 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     if (frame == 8 && mode == MIRRORED_WALL_SPASM)
       Sound_PlayFar(SE_RECOVERY);
 
+    // The wall rises through its first three pictures, then flickers between
+    // the top two; each half is drawn mirrored about the canvas's middle.
     if (frame <= 31) {
       picture = frame / 4;
       if (picture > 2)
         picture = (picture & 1) + 1;
       if (frame <= 27) {
         draw[0](canvas, work->sheet + gMirroredWall_Pictures[picture],
-                64 - gMirroredWall_PictureWidths[picture],
+                CANVAS_SIZE / 2 - gMirroredWall_PictureWidths[picture],
                 (screenPosition.y - gMirroredWall_PictureHeights[picture]) + 8,
                 gMirroredWall_PictureWidths[picture],
                 gMirroredWall_PictureHeights[picture]);
-        draw[1](canvas, work->sheet + gMirroredWall_Pictures[picture], 64,
+        draw[1](canvas, work->sheet + gMirroredWall_Pictures[picture],
+                CANVAS_SIZE / 2,
                 (screenPosition.y - gMirroredWall_PictureHeights[picture]) + 8,
                 gMirroredWall_PictureWidths[picture],
                 gMirroredWall_PictureHeights[picture]);

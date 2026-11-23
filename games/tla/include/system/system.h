@@ -97,7 +97,7 @@ struct SpriteAnimation;
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id);
 #ifndef OWN_BattleMotion_ApproachTarget
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelFrames,
-                                 s32 initial_velocity_y);
+                                 s32 initialVelocityY);
 #endif
 void LuckyDice_Run(void);
 /// An empty function, reached only through an unnamed veneer in the object
@@ -125,12 +125,18 @@ s32 Stub_ReturnZero(s32 resourceId, const u8 *table);
 
 struct IoWriteQueue;
 
+/// The routine that carries out `count` queued register writes
+/// (Resource_ExecuteTransferCode, run from a copy on the stack).
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
-/// Keyed callbacks return a value (the target address is left in r0).
+/// A task's routine as the task passes call it: returning a value, where the
+/// task itself returns none (Task_RunPass's UB).
 typedef s32 (*TaskIntFunc)(void);
 
-typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
+/// The dot product of (ax, ay, az) and (bx, by, bz), in 16.16
+/// (RelocatedInnerProduct, run from a copy on the stack).
+typedef s32 (*DotProductRoutine)(s32 ax, s32 bx, s32 ay, s32 by, s32 az,
+                                 s32 bz);
 
 /// Sequence ids above the scene table's rows, as The Broken Seal's
 /// SEQUENCE_ values: the sequences other than the field sequence, which
@@ -155,16 +161,10 @@ enum GameStart {
   GAME_START_DEBUG_TITLE = 4             ///< SCENE_TITLE from entrance 8
 };
 
-/// The four backgrounds' scroll registers as words, horizontal and vertical
-/// together.
-struct BgScrollRegs {
-  u32 words[4];
-};
-
 /// A halfword in a record of its own, which Serial_StepBlockTransfer keeps its
 /// constant 1 in.
 struct SerialHalfword {
-  u16 v;
+  u16 value;
 };
 
 void Window_LoadGraphics(void);
@@ -172,7 +172,7 @@ void DebugText_Clear(void);
 
 void VramCache_Reset(void);
 
-void Matrix_RotateY(s32 ang);
+void Matrix_RotateY(s32 angle);
 
 s32 Trig_Atan(s32 x, s32 y);
 
@@ -188,14 +188,14 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);
 void Matrix_Scale(FIXED x, FIXED y, FIXED z);
-void Matrix_RotateZ(s32 ang);
+void Matrix_RotateZ(s32 angle);
 void Matrix_Pop(void);
 
 void Palette_LoadBasicSpriteColors(void);
 
 void Resource_ReservedNoOp(s32 unused);
 
-void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
+void Vector_AddPolarOffset(FIXED radius, s32 angle, FIXED *position);
 
 void Oam_AddSpriteAtDepthClamped(void *entry, s32 slot);
 

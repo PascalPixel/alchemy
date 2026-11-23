@@ -48,7 +48,7 @@ void Matrix_Initialize(void) {
 
 /// Resets the save pointer to the start of the workspace.
 void Matrix_RewindStack(void) {
-  gMatrixStackTop = Ram_HeapSlots->transformStack;
+  gMatrixStackTop = Ram_HeapSlots->matrixStack;
   gMatrixStackDepth = 0;
 }
 
@@ -354,7 +354,7 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
 void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
-  Dot3Fn dot;
+  DotProductRoutine dot;
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
@@ -373,7 +373,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   // Copy the dot-product routine to the stack and call it there.
   mul = Iwram_MulFX;
   /* FAKEMATCH(barrier): an empty asm sets dot to code, clobbers r3, r9. */
-  asm("" : "=r"(dot) : "0"((Dot3Fn)code) : "r3", "r9");
+  asm("" : "=r"(dot) : "0"((DotProductRoutine)code) : "r3", "r9");
   divide = Iwram_UnsignedDivideEntry;
   /* FAKEMATCH(barrier): an empty asm on divide, reads dot, clobbers r1. */
   asm("" : "+r"(divide) : "r"(dot) : "r1");

@@ -3,9 +3,11 @@
 
 #include "types.h"
 
-// A statement macro the whole game writes its registers through. An inline
-// function does the same; the macro is what gives the original's code.
-/// Writes a value to a 16-bit register or memory location.
+/// @file
+/// The register writes and reads the whole game makes through a local.
+
+/// Writes a value to a 16-bit register or memory location, through a local of
+/// its own.
 #define Io_Write16(v, reg)                                                     \
   do {                                                                         \
     u32 value_ = (v);                                                          \
@@ -20,11 +22,9 @@
 /// shape.
 #define Io_Write8(v, reg) Io_Write16(v, reg)
 
-// An expression macro (the name is ours) at seven sites, the saved background
-// controls of the battle's mosaic fade, the blend level of Gaia Rock's slate
-// and the blend weights of Anemos Inner Sanctum's symbol: the variable is
-// reached through its address.
-/// Reads a 16-bit register or memory location into a variable.
+/// Reads a 16-bit register or memory location into the variable at
+/// `variable`: the battle's mosaic fade saves its background controls so, and
+/// Gaia Rock's slate and Anemos Inner Sanctum's symbol their blend levels.
 #define Io_Read16(reg, variable) (*(variable) = *(reg))
 
 #endif

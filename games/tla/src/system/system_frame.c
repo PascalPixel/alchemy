@@ -366,13 +366,7 @@ void System_VBlankHandler(void) {
   // The display writes come first, while the blank lasts: OAM can be written
   // only in a blank, and a palette or scroll changed while lines are drawn
   // shows half changed.
-  {
-    volatile u16 *dma0 = REG_DMA0;
-
-    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma0[5] &= ~DMA_ENABLE;
-    dma0[5];
-  }
+  DMA0_STOP();
   if (gSerialExchangeActive != 0) {
     gLinkStatus =
         Serial_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);

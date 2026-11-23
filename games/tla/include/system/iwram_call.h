@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_IWRAM_CALL_H
 #define ALCHEMY_IWRAM_CALL_H
 
+/// @file
+/// The routines resident in IWRAM, called at their fixed addresses: the
+/// fixed-point multiply and divides, the square root, word fills and copies,
+/// the matrix multiply and the picture decoder.
+
 #include "fixed_math.h"
 #include "types.h"
 
@@ -109,12 +114,10 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
   return Iwram_CopyWordsEntry(destination, source, size);
 }
 
-/// Iwram_FillWords as a statement of its own, the call in a once-only block,
-/// which keeps the fill's entry and destination loaded ahead of its size. The
-/// name is ours: twelve fills in the battle, its effects and the field's
-/// Psynergy are written so, among them the battle camera's and the
-/// transition's curtain tiles, which The Broken Seal fills by DMA with its
-/// Dma_Fill32Cell block.
+/// Iwram_FillWords as a statement of its own, as twelve fills in the battle,
+/// its effects and the field's Psynergy are written: among them the battle
+/// camera's and the transition's curtain tiles, which The Broken Seal fills by
+/// DMA with Dma_Fill32Cell.
 #define IWRAM_FILL_WORDS(destination, size, value)                             \
   do {                                                                         \
     Iwram_FillWords(destination, size, value);                                 \
@@ -122,7 +125,7 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
 
 /// Iwram_CopyWords as a statement of its own, as IWRAM_FILL_WORDS is: the link
 /// code copies the Djinn recovery table into its send buffer so, in the lobby
-/// and in the battle, as The Broken Seal's does. The name is ours.
+/// and in the battle, as The Broken Seal's does.
 #define IWRAM_COPY_WORDS(destination, source, size)                            \
   do {                                                                         \
     Iwram_CopyWords(destination, source, size);                                \

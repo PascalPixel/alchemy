@@ -2,35 +2,33 @@
 #define ALCHEMY_INPUT_H
 
 /// @file
-/// The Lost Age's key input state: held, pressed and repeating keys.
-// The Broken Seal's input state is declared separately in system/input.h.
+/// The keypad state the VBlank interrupt keeps.
+///
+/// The VBlank handler reads the keypad into gInput, and
+/// Input_UpdateKeyRepeatAndDirection turns it into repeats after each frame
+/// (system/system_frame.c). held, pressed, repeat and repeatTimer are volatile
+/// because the VBlank handler sets them while the code it interrupts reads
+/// them; direction and previousDirection the key repeat rebuilds and reads each
+/// frame.
 
 #include "types.h"
 #include "static_assert.h"
 
-/// The keypad state the VBlank interrupt keeps (gInput): the keys held, newly
-/// pressed and repeating, the D-pad direction kept, and the repeat timer
-/// (Input_UpdateKeyRepeatAndDirection).
+/// The keypad state (gInput): the keys held, newly pressed and repeating, the
+/// D-pad direction kept, and the repeat timer.
 struct InputState {
-  // volatile: the VBlank handler sets it while the code it interrupts reads
-  // it, so it is no device.
-  volatile u32 held;
-  // volatile: the VBlank handler sets it while the code it interrupts reads
-  // it, so it is no device.
-  volatile u32 pressed;
-  u32 previousVblankHeld;
-  // volatile: the VBlank handler sets it while the code it interrupts reads
-  // it, so it is no device.
+  volatile u32 held;      ///< keys down now
+  volatile u32 pressed;   ///< keys that went down this frame
+  u32 previousVblankHeld; ///< held at the previous VBlank
+  /// Pressed keys, repeating while held: after 19 frames, then every 6.
   volatile u32 repeat;
-  // volatile: the key repeat rebuilds and reads it each frame, so it is no
-  // device.
+  /// repeat with at most one D-pad direction.
   volatile u32 direction;
-  // volatile: the key repeat updates and reads it each frame, so it is no
-  // device.
+  /// The D-pad direction kept: of several held, the one added last.
   volatile u32 previousDirection;
-  u32 previousHeld;
-  u32 pendingPressed;
-  // volatile: the VBlank handler counts it down while the key repeat reads it.
+  u32 previousHeld;   ///< held when the frame loop last read it
+  u32 pendingPressed; ///< presses since a reader last cleared it
+  /// Frames until the held keys repeat; -1 makes them repeat at once.
   volatile s32 repeatTimer;
 };
 

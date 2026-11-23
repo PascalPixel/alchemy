@@ -6,9 +6,12 @@
 #include "heap_release.h"
 #include "types.h"
 
-// Copies an ARM routine to RAM for execution. bytes is its linker-defined size.
+/// @file
+/// Copying an ARM routine to RAM to run it there: the decoders, the overlay
+/// loader's branch patcher and the battle effects' canvas routines.
 
-/// Allocates a heap copy; release it with Heap_Release when finished.
+/// Copies the routine `code`, `bytes` long (its linked size), into a block
+/// taken with Heap_Alloc and points `to` at it; Heap_Release frees it.
 #define RamCode_Load(to, code, bytes)                                          \
   do {                                                                         \
     u32 size_;                                                                 \
@@ -19,7 +22,7 @@
     Dma_Set((const void *)(code), (to), DMA_COPY_WORDS(size_ >> 2), REG_DMA3); \
   } while (0)
 
-/// Allocates a heap-slot copy; release it with HeapSlot_Release.
+/// As RamCode_Load, into heap slot `slot`'s block; HeapSlot_Release frees it.
 #define RamCode_LoadSlot(slot, code, bytes)                                    \
   do {                                                                         \
     u32 size_;                                                                 \

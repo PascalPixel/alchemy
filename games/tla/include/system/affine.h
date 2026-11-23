@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_AFFINE_H
 #define ALCHEMY_AFFINE_H
 
+/// @file
+/// Sprite rotation and scaling: a sprite's transform and the OAM matrices this
+/// frame hands out for it.
+
 #include "types.h"
 #include "static_assert.h"
 
@@ -36,6 +40,6 @@ extern u8 gOamMatrixCount;
 extern union AffineMatrix gOamMatrices[];
 
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source);
-s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale);
+s32 AffineMatrix_Build(s32 angle, s32 xScale, s32 yScale);
 
 #endif

@@ -2,14 +2,10 @@
 #define ALCHEMY_SYSTEM_CALL_H
 
 /// @file
-/// The system call layer: one typed inline for each of the main-image routines
-/// below that the scene and debug overlays import; every overlay call of them
-/// goes through it.
-///
-/// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device. An overlay writes
-/// `Task_AddFrame(func, TASK_PASS_FRAME)` and the inline calls Task_Add, which
-/// resolves to the overlay's import stub. event_inline.h includes this layer.
+/// The names the scene and debug overlays call these main-image routines by:
+/// one typed inline each, which calls the routine through the overlay's import
+/// stub. An overlay writes `Task_AddFrame(func, TASK_PASS_FRAME)` where the
+/// main image writes Task_Add. event_inline.h includes it.
 
 #include "field/event.h"
 #include "graphics/resource.h"

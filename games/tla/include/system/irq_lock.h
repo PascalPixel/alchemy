@@ -1,19 +1,21 @@
 #ifndef ALCHEMY_IRQ_LOCK_H
 #define ALCHEMY_IRQ_LOCK_H
 
+/// @file
+/// Turning interrupts off around a change the interrupt handlers also make,
+/// and back on as they were.
+
 #include "io_reg.h"
 #include "types.h"
 
-// The three steps take ime, a pointer to REG_IME. Disabling writes the
-// pointer's low halfword (0x0208, bit 0 clear) back through it.
-
-/// Saves the original IME value in saved.
+/// Saves IME through `ime`, a pointer to REG_IME, into `saved`.
 #define IME_SAVE(ime, saved)                                                   \
   do {                                                                         \
     (saved) = *(ime);                                                          \
   } while (0)
 
-/// Disables interrupts.
+/// Disables interrupts by writing the pointer's own low halfword through it:
+/// REG_IME's address ends in 0x208, whose bit 0 is clear.
 #define IME_DISABLE(ime)                                                       \
   do {                                                                         \
     *(ime) = (u16)(u32)(ime);                                                  \

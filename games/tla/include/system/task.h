@@ -14,8 +14,8 @@ enum TaskLimits { TASK_COUNT = 24 };
 
 typedef void (*TaskFunc)(void);
 
-/// A task: its routine's address, its priority (see TASK_PASS_) and its
-/// flags, where bit 0 keeps it running while overlay tasks are suspended.
+/// A task: its routine's address, its priority (see TASK_PASS_FRAME) and its
+/// flags (TASK_FLAG_KEEP_RUNNING).
 struct Task {
   u32 func;
   u16 priority;
@@ -57,15 +57,15 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 extern volatile u8 gTasksRunning;
 extern u8 gTasksInitialized; ///< 1 once the task table is set up
 /// The task table, run in priority order by each pass of wait().
-extern struct Task gTasks[];
+extern struct Task gTasks[TASK_COUNT];
 
 void PaletteCycle_Start(void);
 
 void Task_ResetAll(void);
-void Task_CopyWords(u32 *destination, u32 *source, u32 byte_count);
+void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount);
 void Task_Sort(void);
 s32 Task_Find(TaskFunc func);
-s32 Task_Add(TaskFunc func, s32 order);
+s32 Task_Add(TaskFunc func, s32 priority);
 void Task_Idle(void);
 void Task_Empty(void);
 s32 Task_Remove(TaskFunc func);

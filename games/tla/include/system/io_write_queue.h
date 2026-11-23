@@ -16,7 +16,7 @@
 /// empties it.
 struct IoWriteQueue {
   u16 count;
-  u16 pad;
+  u16 padding;
   u32 entries[IO_WRITE_QUEUE_SIZE][3];
 };
 
@@ -50,9 +50,10 @@ void IoWriteQueue_ClearBits16(u32 address, u32 value);
 void IoWriteQueue_ClearBits32(u32 address, u32 value);
 void IoWriteQueue_FlushPending(void);
 
-/// Disables interrupts to enqueue one I/O write; a write to a full queue is
-/// dropped. address: destination, value: value to write, control: delay frames
-/// << 16 or a DMA control word.
+/// Queues one register write with interrupts off; a write to a full queue is
+/// dropped. `control` is an IO_WRITE_ width, with IO_WRITE_SET or
+/// IO_WRITE_CLEAR, to write `value` to `address`; or a DMA control word, to
+/// copy by DMA 3 from `value` to `address`.
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \

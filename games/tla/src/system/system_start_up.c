@@ -13,14 +13,7 @@
 /// IWRAM code, loads the window graphics and the sound driver, then enters
 /// MainRoutine_Run and never returns.
 void System_Initialize(void) {
-  {
-    volatile u16 *dma0 = REG_DMA0;
-
-    // DMA0CNT_H: drop the HBlank repeat timing, then the enable bit
-    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma0[5] &= ~DMA_ENABLE;
-    dma0[5];
-  }
+  DMA0_STOP();
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
   // Clear IWRAM up to gCartridgeResetMarker; the stacks above it are in use.
   Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
@@ -28,7 +21,7 @@ void System_Initialize(void) {
   System_InstallIwramAndIrqs();
 #ifdef UBFIX
   gIoWriteQueue.count = 0;
-  gIoWriteQueue.pad = 0;
+  gIoWriteQueue.padding = 0;
 #else
   *(u32 *)&gIoWriteQueue.count = 0;
 #endif

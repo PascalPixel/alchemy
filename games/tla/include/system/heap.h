@@ -27,12 +27,12 @@ struct TightropeWork;
 /// The heap's 64 words in IWRAM (gHeapSlots, 0x03000000): the two pools' next
 /// free addresses, then each slot's block once allocated, else null.
 struct HeapSlots {
-  void *nextEwram;                     ///< the EWRAM pool's next free byte
-  void *nextIwram;                     ///< the IWRAM pool's next free byte
-  u8 *transformStack;                  ///< the 3D transform's one saved level
-  void *spriteAnimations;              ///< the actor system's sprite animations
-  void *sprites;                       ///< the actor system's sprite pool
-  void *actors;                        ///< the 64 actors (struct Actor)
+  void *nextEwram;        ///< the EWRAM pool's next free byte
+  void *nextIwram;        ///< the IWRAM pool's next free byte
+  u8 *matrixStack;        ///< Matrix_Push's save area, one matrix deep
+  void *spriteAnimations; ///< the actor system's sprite animations
+  void *sprites;          ///< the actor system's sprite pool
+  void *actors;           ///< the 64 actors (struct Actor)
   struct ActorSystemWork *actorSystem; ///< the actor system's work
   void *worldMapAffine;                ///< the world map's affine work
   /// The field map's scrolling work, or on the world map its perspective view
@@ -130,7 +130,7 @@ STATIC_ASSERT(offsetof(struct HeapSlots, menuWork) == 55 * 4);
 
 /// The heap slots shared across folders, by byte offset into gHeapSlots.
 enum HeapSlot {
-  HEAP_SLOT_MATRIX_STACK = offsetof(struct HeapSlots, transformStack),
+  HEAP_SLOT_MATRIX_STACK = offsetof(struct HeapSlots, matrixStack),
   HEAP_SLOT_SPRITE_ANIMATIONS = offsetof(struct HeapSlots, spriteAnimations),
   HEAP_SLOT_SPRITES = offsetof(struct HeapSlots, sprites),
   HEAP_SLOT_ACTORS = offsetof(struct HeapSlots, actors),

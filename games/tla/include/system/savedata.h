@@ -1,5 +1,9 @@
-#ifndef GUARD_SAVEDATA_H
-#define GUARD_SAVEDATA_H
+#ifndef ALCHEMY_SAVEDATA_H
+#define ALCHEMY_SAVEDATA_H
+
+/// @file
+/// The save signature and sector header template, and the link test strings
+/// nothing reads (system/savedata.c).
 
 #include "types.h"
 

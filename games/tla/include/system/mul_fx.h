@@ -7,8 +7,8 @@
 #include "fixed_math.h"
 #include "types.h"
 
-/// Multiplies 16.16 fixed-point values, returning the middle 32 product bits.
-/// Emits IwramMulFX's three instructions (smull, lsl, orr) at the call site.
+/// Multiplies 16.16 fixed-point values, returning the middle 32 product bits:
+/// IwramMulFX's three instructions written in place.
 CAMELOT_ASM("smull with RdLo and RdHi in any two registers, even over its "
             "inputs, where mulsidi3 "
             "pairs them (RdHi = RdLo + 1) apart from the inputs and "

@@ -572,7 +572,7 @@ void Serial_StepBlockTransfer(void) {
 
   // The partner's payload: of multiplayer ids 0 and 1, the one not ours
   id = ~(SIO_ID_OF(REG_SIOCNT)) & 1;
-  one.v = 1;
+  one.value = 1;
   own = &gSerialTransfer;
   peer = &gSerialPeerPayloads[id];
   // Both consoles must have been heard from this frame
@@ -602,7 +602,7 @@ void Serial_StepBlockTransfer(void) {
           gSerialReceivedSize += SERIAL_BLOCK_BYTES;
           own->flags = SERIAL_RECEIVE_DONE;
           own->status = 0;
-          own->active = one.v;
+          own->active = one.value;
           break;
         }
         gSerialBlockNumber =
@@ -611,7 +611,7 @@ void Serial_StepBlockTransfer(void) {
         // Out of step and already asked: bit 7 of active is the request to
         // rewind to the block number in its low bits
         if (own->active & SERIAL_BLOCK_REWIND) {
-          own->active = one.v;
+          own->active = one.value;
         } else if (own->active == 1) {
           own->active = 0;
           gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;

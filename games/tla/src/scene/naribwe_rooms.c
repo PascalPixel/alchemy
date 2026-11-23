@@ -49,7 +49,7 @@ enum NaribweRoomsActorId {
   /// "The fortune-teller lives at the highest house in Naribwe..."
   ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER = ACTOR_FIRST_PLACED,
   /// "We're a small village, but if we all cooperate..."
-  ACTOR_WOMAN_ON_COOPERATION,
+  ACTOR_WOMAN_ON_A_SMALL_VILLAGE,
   /// "I am a teller of fortunes. Would you have a reading?"
   ACTOR_FORTUNE_TELLER,
   /// "My father is a fortune-teller, not a witch doctor."
@@ -1093,7 +1093,7 @@ struct Trigger gNaribweRooms_Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsFortuneTellerLivesAtHighest)},
-    {TRIGGER_TALK, ACTOR_WOMAN_ON_COOPERATION, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_A_SMALL_VILLAGE, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsWereSmallVillage)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsIfYouDesireReadingStand)},
@@ -1114,7 +1114,7 @@ struct Trigger gNaribweRooms_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsFortuneTellerInNaribweHas)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_COOPERATION,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_A_SMALL_VILLAGE,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsAsLongAsWeListen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLER,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsItemsThatOneCarries)},
@@ -1151,7 +1151,7 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsIGuessThoseWarriorsLearned)},
-    {TRIGGER_TALK, ACTOR_WOMAN_ON_COOPERATION, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_A_SMALL_VILLAGE, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsOurFortuneTellerHasBeen)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsIfYouDesireReadingStand)},
@@ -1172,7 +1172,7 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsPowerOfFortuneTeller)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_COOPERATION,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_A_SMALL_VILLAGE,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsFortuneTellerSaidThatPower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FORTUNE_TELLER,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsItemsPlacedBeforeMe)},

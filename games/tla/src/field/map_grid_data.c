@@ -506,7 +506,7 @@ const struct MapResources gMaps[] = {
     {381, 382, {383, 384, 385}, 386}, // gabomba_statue_bone_armlet_chest
     {387, 388, {383, 384, 385}, 386}, // gabomba_statue_elixir_chest
     {389, 390, {383, 384, 385}, 386}, // gabomba_statue_steel
-    {391, 392, {383, 384, 385}, 386}, // gabomba_statue_turntable
+    {391, 392, {383, 384, 385}, 386}, // gabomba_statue_mouse
     {393, 394, {383, 384, 385}, 386}, // gabomba_statue_cogs
     {395, 396, {383, 384, 385}, 386}, // gabomba_statue_chamber_idol
     {397, 398, {399, 400, 401}, 402}, // gabomba_statue_arrows

@@ -138,7 +138,7 @@ gScenes:
 	scene GabombaStatueBoneArmletChest, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 110, 0
 	scene GabombaStatueElixirChest, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 111, 0
 	scene GabombaStatueSteel, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 112, 0
-	scene GabombaStatueTurntable, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 113, 0
+	scene GabombaStatueMouse, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 113, 0
 	scene GabombaStatueCogs, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 114, 0
 	scene GabombaStatueChamberIdol, 0x672, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 115, 0
 	scene GabombaStatueArrows, 0x671, AREA_GABOMBA_STATUE, SCENE_TYPE_OTHER, 116, 0

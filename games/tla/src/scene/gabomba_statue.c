@@ -99,13 +99,13 @@ enum {
   ACTOR_STEEL_ROPE_POST_B
 };
 enum {
-  ACTOR_TURNTABLE_GREEN_COGS = 8,
-  ACTOR_TURNTABLE_BLUE_COGS = 21,
-  ACTOR_TURNTABLE_RED_COGS = 29,
-  ACTOR_TURNTABLE_BLUE_PILLAR_A = 34,
-  ACTOR_TURNTABLE_BLUE_PILLAR_B,
-  ACTOR_TURNTABLE_PINK_DRUM_A = 37,
-  ACTOR_TURNTABLE_PINK_DRUM_B
+  ACTOR_MOUSE_GREEN_COGS = 8,
+  ACTOR_MOUSE_BLUE_COGS = 21,
+  ACTOR_MOUSE_RED_COGS = 29,
+  ACTOR_MOUSE_BLUE_PILLAR_A = 34,
+  ACTOR_MOUSE_BLUE_PILLAR_B,
+  ACTOR_MOUSE_PINK_DRUM_A = 37,
+  ACTOR_MOUSE_PINK_DRUM_B
 };
 enum {
   ACTOR_COGS_ROPE_POST_A = 8,
@@ -266,7 +266,7 @@ extern struct SceneRegion gGabombaStatue_PinionExitRegions[];
 extern struct SceneRegion gGabombaStatue_BoneArmletChestExitRegions[];
 extern struct SceneRegion gGabombaStatue_ElixirChestExitRegions[];
 extern struct SceneRegion gGabombaStatue_SteelExitRegions[];
-extern struct SceneRegion gGabombaStatue_TurntableExitRegions[];
+extern struct SceneRegion gGabombaStatue_MouseExitRegions[];
 extern struct SceneRegion gGabombaStatue_CogsExitRegions[];
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
@@ -280,8 +280,8 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
     return gGabombaStatue_ElixirChestExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_STEEL)
     return gGabombaStatue_SteelExitRegions;
-  if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
-    return gGabombaStatue_TurntableExitRegions;
+  if (scene == SCENE_GABOMBA_STATUE_MOUSE)
+    return gGabombaStatue_MouseExitRegions;
   if (scene == SCENE_GABOMBA_STATUE_COGS)
     return gGabombaStatue_CogsExitRegions;
   return NULL;
@@ -498,7 +498,7 @@ extern struct ActorPlacement gGabombaStatue_Placements[];
 extern struct ActorPlacement gGabombaStatue_BoneArmletChestActorPlacements[];
 extern struct ActorPlacement gGabombaStatue_ElixirChestActorPlacements[];
 extern struct ActorPlacement gGabombaStatue_SteelActorPlacements[];
-extern struct ActorPlacement gGabombaStatue_TurntableActorPlacements[];
+extern struct ActorPlacement gGabombaStatue_MouseActorPlacements[];
 extern struct ActorPlacement gGabombaStatue_CogsActorPlacements[];
 extern struct ActorPlacement gGabombaStatue_ArrowsActorPlacements[];
 extern struct ActorPlacement gGabombaStatue_PinionActorPlacements[];
@@ -513,8 +513,8 @@ const u8 *Scene_GetActorPlacements(void) {
     table = gGabombaStatue_ElixirChestActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_STEEL)
     table = gGabombaStatue_SteelActorPlacements;
-  else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
-    table = gGabombaStatue_TurntableActorPlacements;
+  else if (scene == SCENE_GABOMBA_STATUE_MOUSE)
+    table = gGabombaStatue_MouseActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_COGS)
     table = gGabombaStatue_CogsActorPlacements;
   else if (scene == SCENE_GABOMBA_STATUE_ARROWS)
@@ -836,7 +836,7 @@ void GabombaStatue_RideRoller(void) {
     }
     GabombaStatue_HopOffCog(actor, 0, sign * toFIXED(12), toFIXED(2));
   }
-  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_TURNTABLE)
+  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_MOUSE)
     return;
   x = FIELD_CELL(actor->x.fixed);
   if (FIELD_CELL(actor->z.fixed) != 15)
@@ -844,11 +844,11 @@ void GabombaStatue_RideRoller(void) {
   if (x == 28) {
     GabombaStatue_EndRide(actor);
     FieldEvent_SetExitRequest(
-        GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_A);
+        GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_A);
   } else if (x == 30) {
     GabombaStatue_EndRide(actor);
     FieldEvent_SetExitRequest(
-        GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_B);
+        GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_B);
   }
 }
 
@@ -1077,7 +1077,7 @@ extern struct Trigger gGabombaStatue_Triggers[];
 extern struct Trigger gGabombaStatue_BoneArmletChestTriggers[];
 extern struct Trigger gGabombaStatue_ElixirChestTriggers[];
 extern struct Trigger gGabombaStatue_SteelTriggers[];
-extern struct Trigger gGabombaStatue_TurntableTriggers[];
+extern struct Trigger gGabombaStatue_MouseTriggers[];
 extern struct Trigger gGabombaStatue_CogsTriggers[];
 extern struct Trigger gGabombaStatue_ArrowsTriggers[];
 extern struct Trigger gGabombaStatue_PinionTriggers[];
@@ -1092,8 +1092,8 @@ const u8 *Scene_GetTriggers(void) {
     table = gGabombaStatue_ElixirChestTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_STEEL)
     table = gGabombaStatue_SteelTriggers;
-  else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
-    table = gGabombaStatue_TurntableTriggers;
+  else if (scene == SCENE_GABOMBA_STATUE_MOUSE)
+    table = gGabombaStatue_MouseTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_COGS)
     table = gGabombaStatue_CogsTriggers;
   else if (scene == SCENE_GABOMBA_STATUE_ARROWS)
@@ -1256,19 +1256,19 @@ void GabombaStatue_ClimbDownSteelEastLadder(void) {
 /// Felix climbs down the ladder in the north of the mouse's room, at cell
 /// (24, 7), to Steel's room below, when he walks into it from the west, the
 /// east or the south.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(
-    GabombaStatue_ClimbDownTurntableNorthLadder, 7, 23, 25, 24, 8, 392, 112)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_ClimbDownMouseNorthLadder, 7,
+                                     23, 25, 24, 8, 392, 112)
 
 /// Felix climbs down the ladder in the west of the mouse's room, at cell
 /// (6, 9), to the west of Steel's room below, when he walks into it from the
 /// west, the east or the south.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_ClimbDownTurntableWestLadder,
-                                     9, 5, 7, 6, 10, 104, 146)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_ClimbDownMouseWestLadder, 9,
+                                     5, 7, 6, 10, 104, 146)
 
 /// Felix climbs down the ladder in the east of the mouse's room, beside its
 /// east blue cog at cell (42, 9), to the east of Steel's room below, when he
 /// walks into it from the east or the south.
-void GabombaStatue_ClimbDownTurntableEastLadder(void) {
+void GabombaStatue_ClimbDownMouseEastLadder(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
@@ -1757,12 +1757,12 @@ void GabombaStatue_TurnCogs(s32 direction) {
     GabombaStatue_SetCogTurn(ACTOR_STEEL_RED_COGS, direction, 2);
     GabombaStatue_SetCogTurn(ACTOR_STEEL_BLUE_PILLARS, direction, 3);
     GabombaStatue_SetCogTurn(ACTOR_STEEL_PINK_DRUMS, direction, 4);
-  } else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE) {
-    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_GREEN_COGS, direction, 0);
-    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_BLUE_COGS, direction, 1);
-    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_RED_COGS, direction, 2);
-    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_BLUE_PILLAR_B, direction, 3);
-    GabombaStatue_SetCogTurn(ACTOR_TURNTABLE_PINK_DRUM_B, direction, 4);
+  } else if (scene == SCENE_GABOMBA_STATUE_MOUSE) {
+    GabombaStatue_SetCogTurn(ACTOR_MOUSE_GREEN_COGS, direction, 0);
+    GabombaStatue_SetCogTurn(ACTOR_MOUSE_BLUE_COGS, direction, 1);
+    GabombaStatue_SetCogTurn(ACTOR_MOUSE_RED_COGS, direction, 2);
+    GabombaStatue_SetCogTurn(ACTOR_MOUSE_BLUE_PILLAR_B, direction, 3);
+    GabombaStatue_SetCogTurn(ACTOR_MOUSE_PINK_DRUM_B, direction, 4);
   } else if (scene == SCENE_GABOMBA_STATUE_COGS) {
     GabombaStatue_SetCogTurn(ACTOR_COGS_RED_COGS, direction, 0);
     GabombaStatue_SetCogTurn(ACTOR_COGS_PINION_A, direction, 1);
@@ -2430,11 +2430,10 @@ void GabombaStatue_InitializeSteel(void) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
     if ((u16)(entrance -
-              GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_SOUTHEAST_A) <=
-        1)
+              GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A) <= 1)
       GabombaStatue_LandFromFall();
     if (gMainRoutineWork.entrance ==
-        GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_SOUTHEAST_A)
+        GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A)
       Event_SetFlag(FLAG_LANDED_BESIDE_STEEL);
   }
 }
@@ -4053,7 +4052,7 @@ LATE_DATA struct SceneRegion gGabombaStatue_SteelExitRegions[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct SceneRegion gGabombaStatue_TurntableExitRegions[] = {
+LATE_DATA struct SceneRegion gGabombaStatue_MouseExitRegions[] = {
     {432, 16, 448, 448, 32, 464, CONDITION_ALWAYS, 4},
     {SCENE_TABLE_END},
 };
@@ -4080,18 +4079,18 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_ELIXIR_CHEST_NORTHEAST, GabombaStatueElixirChest, GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_NORTHEAST),
     SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_ELIXIR_CHEST_WEST, GabombaStatueElixirChest, GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_WEST),
     SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_ELIXIR_CHEST_EAST, GabombaStatueElixirChest, GABOMBA_STATUE_ELIXIR_CHEST_FROM_GABOMBA_STATUE_STEEL_EAST),
-    SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_TURNTABLE_NORTHWEST, GabombaStatueTurntable, GABOMBA_STATUE_TURNTABLE_FROM_GABOMBA_STATUE_STEEL_NORTHWEST),
-    SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_TURNTABLE_WEST, GabombaStatueTurntable, GABOMBA_STATUE_TURNTABLE_FROM_GABOMBA_STATUE_STEEL_WEST),
-    SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_TURNTABLE_EAST, GabombaStatueTurntable, GABOMBA_STATUE_TURNTABLE_FROM_GABOMBA_STATUE_STEEL_EAST),
-    SCENE_EXITS(GabombaStatueTurntable),
-    SCENE_EXIT(GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_NORTHWEST, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_NORTHWEST),
-    SCENE_EXIT(GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_WEST, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_WEST),
-    SCENE_EXIT(GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_EAST, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_EAST),
-    SCENE_EXIT(GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_COGS, GabombaStatueCogs, GABOMBA_STATUE_COGS_FROM_GABOMBA_STATUE_TURNTABLE),
-    SCENE_EXIT(GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_A, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_SOUTHEAST_A),
-    SCENE_EXIT(GABOMBA_STATUE_TURNTABLE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_B, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_TURNTABLE_SOUTHEAST_B),
+    SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_MOUSE_NORTHWEST, GabombaStatueMouse, GABOMBA_STATUE_MOUSE_FROM_GABOMBA_STATUE_STEEL_NORTHWEST),
+    SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_MOUSE_WEST, GabombaStatueMouse, GABOMBA_STATUE_MOUSE_FROM_GABOMBA_STATUE_STEEL_WEST),
+    SCENE_EXIT(GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_MOUSE_EAST, GabombaStatueMouse, GABOMBA_STATUE_MOUSE_FROM_GABOMBA_STATUE_STEEL_EAST),
+    SCENE_EXITS(GabombaStatueMouse),
+    SCENE_EXIT(GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_NORTHWEST, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_NORTHWEST),
+    SCENE_EXIT(GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_WEST, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_WEST),
+    SCENE_EXIT(GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_EAST, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_EAST),
+    SCENE_EXIT(GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_COGS, GabombaStatueCogs, GABOMBA_STATUE_COGS_FROM_GABOMBA_STATUE_MOUSE),
+    SCENE_EXIT(GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_A, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_A),
+    SCENE_EXIT(GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_STEEL_SOUTHEAST_B, GabombaStatueSteel, GABOMBA_STATUE_STEEL_FROM_GABOMBA_STATUE_MOUSE_SOUTHEAST_B),
     SCENE_EXITS(GabombaStatueCogs),
-    SCENE_EXIT(GABOMBA_STATUE_COGS_TO_GABOMBA_STATUE_TURNTABLE, GabombaStatueTurntable, GABOMBA_STATUE_TURNTABLE_FROM_GABOMBA_STATUE_COGS),
+    SCENE_EXIT(GABOMBA_STATUE_COGS_TO_GABOMBA_STATUE_MOUSE, GabombaStatueMouse, GABOMBA_STATUE_MOUSE_FROM_GABOMBA_STATUE_COGS),
     SCENE_EXIT(GABOMBA_STATUE_COGS_TO_GABOMBA_STATUE_CHAMBER_IDOL, GabombaStatueChamberIdol, GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_COGS),
     SCENE_EXITS(GabombaStatueArrows),
     SCENE_EXIT(GABOMBA_STATUE_ARROWS_TO_GABOMBA_STATUE_CHAMBER_IDOL_EAST, GabombaStatueChamberIdol, GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_ARROWS_EAST),
@@ -4179,7 +4178,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_SteelActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gGabombaStatue_TurntableActorPlacements[] = {
+LATE_DATA struct ActorPlacement gGabombaStatue_MouseActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_GREEN_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GREEN_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 184, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_GREEN_COG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 168, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -4310,10 +4309,10 @@ LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gGabombaStatue_TurntableTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownTurntableNorthLadder)},
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SECOND_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownTurntableWestLadder)},
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_THIRD_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownTurntableEastLadder)},
+LATE_DATA struct Trigger gGabombaStatue_MouseTriggers[] = {
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownMouseNorthLadder)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SECOND_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownMouseWestLadder)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_THIRD_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownMouseEastLadder)},
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},

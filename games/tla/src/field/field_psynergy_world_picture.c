@@ -47,6 +47,7 @@ void WorldPicture_Initialize(void) {
 
   markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   oam = (u32 *)work->markers;
+  // DEAD: the leader looked up and never used; the ROM keeps the calls.
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;

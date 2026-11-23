@@ -134,6 +134,14 @@ struct CycloneWork {
 /// The fist or hand at priority 1, not sorted by depth.
 #define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
 
+/// The World Map screen's marker tiles (WorldPicture_Initialize draws them).
+enum WorldMarkerTile {
+  WORLD_MARKER_TILE_PARTY = 0, ///< where the party is
+  WORLD_MARKER_TILE_SHIP = 2,
+  WORLD_MARKER_TILE_NEAREST =
+      3 ///< the larger dot on the place nearest the cursor
+};
+
 /// A 256-colour picture's size in the 16-colour tiles a sprite counts.
 #define OBJ_TILES_PER_8BPP_TILE (TILE_SIZE_8BPP / TILE_SIZE_4BPP)
 

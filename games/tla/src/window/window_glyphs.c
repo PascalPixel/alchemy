@@ -346,12 +346,13 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   }
 }
 
-/// Draws a string of 16-bit character codes straight into the UI tilemap, as
-/// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
-/// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in WindowWork.textBuffer.
-void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *window,
-                                    s32 offsetX, s32 offsetY) {
+/// Unused: draws a string of 16-bit character codes straight into the UI
+/// tilemap, as tiles, inside a window at tile (offsetX, offsetY) of its
+/// interior, writing both the work block's copy and VRAM. A NULL buffer draws
+/// the decoded text in WindowWork.textBuffer.
+UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
+                                           const struct Window *window,
+                                           s32 offsetX, s32 offsetY) {
   struct WindowWork *canvas = WINDOW_WORK;
   u32 cell;
 

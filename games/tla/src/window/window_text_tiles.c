@@ -1,5 +1,7 @@
 /// @file
-/// Text drawn as tiles, text tile ownership and divider lines.
+/// Text drawn as tilemap tiles of its own (the menus' labels, names and
+/// numbers), the text tiles taken and freed, divider lines, and the routines
+/// that draw a message, string or number into a window.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -183,8 +185,9 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_NEWLINE:
           x += TILE_TEXT_NEWLINE_WIDTH;
           break;
-        // Codes 11, 12, 14 and TEXT_ACTOR_NAME_START, which nothing in this
-        // game acts on, are skipped with their operands.
+        // The codes tile text does not act on are skipped with their
+        // operands, as are codes 11, 12 and 14, whose meaning is open
+        // (window_decode.c).
         case 14:
         case TEXT_WINDOW_STATE:
         case TEXT_ACTOR_NAME_START:
@@ -565,21 +568,21 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
-/// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
-/// figures with it, and set TEXT_COLOR_WHITE back after.
-void Text_SetColor(s32 param) {
+/// Sets the text colour (enum TextColor) of drawn text. The menus colour the
+/// HP figures with it, and set TEXT_COLOR_WHITE back after.
+void Text_SetColor(s32 color) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->colour = param & (PALETTE_COLORS - 1);
+  work->colour = color & (PALETTE_COLORS - 1);
 }
 
-/// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
-/// 5 a motion of glyph sprites. Reached only through a bare entry of the
-/// window far-call table.
-void Text_SetStyle(s32 value) {
+/// Sets the text style (enum TextStyle) of drawn text: outlined, or a motion
+/// of the glyph sprites. Reached only through a bare entry of the window
+/// far-call table.
+void Text_SetStyle(s32 style) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->outline = value;
+  work->outline = style;
 }
 
 /// Decodes a message and draws it into a text canvas window at pixel (x, y),
@@ -696,8 +699,8 @@ void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
   Heap_Release(buffer);
 }
 
-/// The number writers format the value in a 16-byte buffer and draw it with
-/// the matching string writer.
+/// Draws a number (width as String_FormatNumber) into a text canvas window at
+/// pixel (x, y).
 void Text_DrawNumber(s32 value, s32 width, s32 window, s32 x, s32 y) {
   u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 

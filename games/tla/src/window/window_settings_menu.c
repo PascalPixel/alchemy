@@ -1,5 +1,6 @@
 /// @file
-/// Window colours, the settings menu and the Pause menu.
+/// The window colours the player picks, the settings menu that picks them with
+/// the message speed, speech and auto-sleep, and the Pause menu.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -38,9 +39,6 @@ u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
 
 extern const u8 gWindowColor_WaveTable[];
 
-u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
-                          FIXED blueScale);
-
 /// The window colours the window colour settings set: WINDOW_PALETTE's colours
 /// from its background (shade 0, WINDOW_BACKGROUND_COLOR) to shade 6.
 #define WINDOW_SHADE(n)                                                        \
@@ -51,9 +49,10 @@ u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
     WINDOW_SHADE(n) = color_;                                                  \
   } while (0)
 
-/// Sets the window colours (WINDOW_SHADE) for a window color (0 to 23) and
-/// brightness (0 to 14, 7 neutral).
-void WindowColor_Apply(s32 phase, s32 brightness) {
+/// Sets the window colours (WINDOW_SHADE) for a window colour (0 to
+/// WINDOW_COLOR_COUNT - 1, a hue around the colour wheel) and brightness (0 to
+/// WINDOW_BRIGHTNESS_COUNT - 1, WINDOW_BRIGHTNESS_NEUTRAL the plain one).
+void WindowColor_Apply(s32 hue, s32 brightness) {
   s16 rgb[3];
   s16 step;
   s16 red;
@@ -61,7 +60,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 blue;
   s16 offset;
 
-  step = ((phase + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
+  step = ((hue + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
   green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -167,7 +166,6 @@ void SettingsMenu_InitializeWork(void) {
 }
 
 /// Stops the settings menu's per-frame task and frees its work block.
-/// The task goes first, since it reads the work block.
 void SettingsMenu_Release(void) {
   Task_Remove(SettingsMenu_AnimateCursors);
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
@@ -232,10 +230,10 @@ struct Window *SettingsMenu_Open(void) {
   work = Ram_HeapSlots->settingsMenu;
   win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
                       WINDOW_FLAG_INSTANT);
-  Window_DrawDividerLine((struct Window *)win, 0, 2, OPTION_DIVIDER_END, 2);
-  Window_DrawDividerLine((struct Window *)win, 0, 4, OPTION_DIVIDER_END, 4);
-  Window_DrawDividerLine((struct Window *)win, 0, 7, OPTION_DIVIDER_END, 7);
-  Window_DrawDividerLine((struct Window *)win, 0, 10, OPTION_DIVIDER_END, 10);
+  Window_DrawDividerLine(win, 0, 2, OPTION_DIVIDER_END, 2);
+  Window_DrawDividerLine(win, 0, 4, OPTION_DIVIDER_END, 4);
+  Window_DrawDividerLine(win, 0, 7, OPTION_DIVIDER_END, 7);
+  Window_DrawDividerLine(win, 0, 10, OPTION_DIVIDER_END, 10);
   msg = (s32)&MsgWindowColorLabel;
   Text_DrawMessageAsTiles(msg, win, 8, 0);
   msg++;
@@ -361,6 +359,9 @@ extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
     MsgWindowColorHelp[], MsgSleepModeHelp[];
 extern const u8 gSettingsMenu_HuePresets[], gSettingsMenu_BrightnessPresets[];
 
+/// The colour presets SELECT steps through (gSettingsMenu_HuePresets).
+#define SETTINGS_PRESET_COUNT 6
+
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void FieldMessage_Show(s32 message, s32 mode);
@@ -456,16 +457,14 @@ s32 SettingsMenu_Run(void) {
       MenuCursor_SetFar(&work->marker[1].cursor, x, y, 1);
 
       x = work->option[SETTINGS_ROW_MESSAGE_SPEED] + (s32)MsgMessageSpeedSlow;
-      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
-                                40, FIRST_CHOICE_RIGHT, 48);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 40,
+                                FIRST_CHOICE_RIGHT, 48);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 40);
       x = work->option[SETTINGS_ROW_SPEECH] + (s32)MsgSpeechOff;
-      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
-                                64, CHOICE_RIGHT, 72);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 64, CHOICE_RIGHT, 72);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 64);
       x = work->option[SETTINGS_ROW_AUTO_SLEEP] + (s32)MsgAutoSleepOff;
-      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
-                                88, CHOICE_RIGHT, 96);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 88, CHOICE_RIGHT, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
       // The windows show the edited colours at once.
       WindowColor_Apply(*windowColor, *brightness);
@@ -493,7 +492,7 @@ s32 SettingsMenu_Run(void) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
-      if (work->preset > 5)
+      if (work->preset > SETTINGS_PRESET_COUNT - 1)
         work->preset = 0;
       *windowColor = gSettingsMenu_HuePresets[work->preset];
       *brightness = gSettingsMenu_BrightnessPresets[work->preset];
@@ -531,8 +530,8 @@ s32 SettingsMenu_Run(void) {
     }
   }
 
-  Window_Close((struct Window *)helpWindow, 2);
-  Window_Close((struct Window *)settingsWindow, 2);
+  Window_Close(helpWindow, WINDOW_FLAG_INSTANT);
+  Window_Close(settingsWindow, WINDOW_FLAG_INSTANT);
   if (result == 0) {
     // "In Sleep Mode, press Select and the L and R Buttons to return to the
     // game."
@@ -569,10 +568,8 @@ void PauseMenu_AnimateCursor(void) {
 }
 
 /// Allocates the Pause menu's work block and starts its per-frame task.
-/// The Pause menu shares the settings menu's heap slot and cannot run
-/// concurrently: PauseMenu_Choose frees it before
-/// PauseMenu_Run opens the settings menu. The task runs in the
-/// frame pass.
+/// The Pause menu shares the settings menu's heap slot: PauseMenu_Choose frees
+/// it before PauseMenu_Run opens the settings menu.
 void PauseMenu_Initialize(void) {
   void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
                                    sizeof(struct OptionMenuWork));
@@ -582,7 +579,6 @@ void PauseMenu_Initialize(void) {
 }
 
 /// Stops the Pause menu's per-frame task and frees its work block.
-/// The task goes first, since it reads the work block.
 void PauseMenu_Release(void) {
   Task_Remove(PauseMenu_AnimateCursor);
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
@@ -592,8 +588,6 @@ extern u8 MsgSaveYourQuest[];
 extern u8 MsgChangeSettings[];
 extern u8 MsgRoughMenu[];
 extern const s8 gMenu_WorkspaceIcons[];
-
-s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
 #define PAUSE_MENU_ROWS 3        ///< Save your quest, Sleep and Change settings
 #define PAUSE_MENU_DEBUG_ROWS 3  ///< the entries added in debug mode
@@ -633,7 +627,7 @@ struct Window *PauseMenu_Open(void) {
   }
   win = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
-    Window_DrawDividerLine((struct Window *)win, 0, i * 3, 19, i * 3);
+    Window_DrawDividerLine(win, 0, i * 3, 19, i * 3);
   y = 4;
   if (settingsOnly == 0) {
     msg = (s32)MsgSaveYourQuest;
@@ -782,7 +776,7 @@ s32 PauseMenu_Choose(s32 initial) {
       }
     }
   }
-  Window_Close((struct Window *)window, 2);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   PauseMenu_Release();
   wait(1);
   if (result >= 0)

@@ -1,5 +1,7 @@
 /// @file
-/// Characters drawn into windows, and the per-frame sprite update.
+/// Characters drawn into windows, as glyph sprites, into a text canvas or as
+/// tilemap tiles, and the per-frame update that moves and shows the sprites
+/// windows carry.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -19,12 +21,6 @@ extern u8 Glyph_DrawCodeSize[];
 
 s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 
-/// A space's width in pixels, set by the font.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define SPACE_WIDTH 7
-#else
-#define SPACE_WIDTH 5
-#endif
 /// The page arrow's offset from the window's last inner tile, and a sprite
 /// glyph's from its text position, in pixels; the later editions moved both.
 #if TLA_PATCH_1
@@ -54,7 +50,8 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
 
-  if (mode != 1 && (window->flags & WINDOW_FLAG_TEXT_CANVAS) != 0) {
+  if (mode != GLYPH_DRAW_PAGE_ARROW &&
+      (window->flags & WINDOW_FLAG_TEXT_CANVAS) != 0) {
 #if LANGUAGE == LANGUAGE_JAPANESE
     u8 *font = NULL;
     GlyphRoutine draw;
@@ -105,7 +102,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     }
 #endif
   } else if (character == ' ') {
-    width = SPACE_WIDTH;
+    width = WINDOW_SPRITE_SPACE_WIDTH;
   } else {
     u32 tiles[32];
     struct WindowSprite *output;
@@ -196,8 +193,8 @@ done:
 #define GLYPH_SPRITE_OFFSET_Y (-2)
 #endif
 
-/// The sprite of a glyph a window carries, as the glyph sprites read it: its
-/// render slot link, its OAM position and its tile.
+/// The sprite of a glyph a window carries, as Glyph_DrawAsSprite reads it: its
+/// list link, its OAM position and its tile.
 struct GlyphSprite {
   struct GlyphSprite *next;
   u16 y : 8;
@@ -256,17 +253,6 @@ void Glyph_DrawToTiles(const void *source, void *destination) {
   Dma_Set(buffer, destination, DMA_COPY_WORDS(32), REG_DMA3);
 }
 
-// Where the glyph's sprite sits against the text position, in pixels, as in
-// Glyph_DrawAsSprite: the Japanese font's glyphs are drawn into their tiles
-// differently (see Text_DrawGlyphPair).
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-#define GLYPH_SPRITE_OFFSET_X 1
-#define GLYPH_SPRITE_OFFSET_Y 0
-#else
-#define GLYPH_SPRITE_OFFSET_X 2
-#define GLYPH_SPRITE_OFFSET_Y (-2)
-#endif
-
 /// Places a glyph sprite on the window at x, y as Glyph_DrawAsSprite does, but
 /// draws nothing, and returns the VRAM address of its tiles for the caller to
 /// fill, or NULL when no window sprite is free.
@@ -303,7 +289,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->y = sprite->oam.y;
   output->index = index;
   output->next = NULL;
-  /* FAKEMATCH(dead): active stored a second time with the 1 it already holds.
+  /* FAKEMATCH(dead): motion stored a second time with the 1 it already holds.
    */
   output->motion = WINDOW_SPRITE_MOTION_STILL;
   WindowSprite_AppendToList(&window->sprites, output);
@@ -413,10 +399,9 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   }
 }
 
-/// A window tilemap's width in tiles, and its entries over the screen's 20
-/// rows.
-#define TILEMAP_WIDTH 32
-#define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
+/// A window tilemap's width in tiles, and its entries over the screen's rows.
+#define TILEMAP_WIDTH BG_SCREEN_WIDTH
+#define TILEMAP_ENTRIES (TILEMAP_WIDTH * DISPLAY_TILE_HEIGHT)
 
 /// Writes value into a window's tilemap at tile (x, y) of its interior, with
 /// the palette mode names (TILEMAP_ENTRY_), or as it is for
@@ -477,14 +462,14 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 /// A window sprite's queued sprite as WindowSprite_UpdateScaleAnimation reads
 /// it.
 struct OutputSprite {
-  u32 link;
+  u32 next;
   u8 y;
   u8 affine : 2;
   u8 mode : 2;
-  u8 other : 4;
+  u8 mosaicColorsShape : 4;
   u16 x : 9;
   u16 affineIndex : 5;
-  u16 otherX : 2;
+  u16 size : 2;
   u16 tile;
 };
 extern const u16 gWindowSprite_BounceScales[];
@@ -534,8 +519,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
     if (scale > Q_8_8(1)) {
       sprite->affine = 3;
-      // x read through a u16 pointer, which loads it after the -8 is built;
-      // as (u16)windowSprite->x the two loads swap.
+      // Drawn at double size, so set 8 pixels up and left.
       sprite->x = *(u16 *)&windowSprite->x - 8;
       sprite->y = (u16)windowSprite->y - 8;
     } else {
@@ -569,7 +553,7 @@ struct AnimSprite {
 struct AnimOutput {
   struct AnimOutput *next;
   u8 kind;
-  u8 active;
+  u8 motion;
   u16 x;
   u16 y;
   u16 unused;
@@ -603,7 +587,7 @@ extern const s8 gWindowSprite_BounceOffsets[];
 
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
-/// its depth slot (WindowSprite.sentinel).
+/// its depth (WindowSprite.depth).
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;
@@ -623,7 +607,7 @@ void WindowSprite_UpdateAll(void) {
     while (phase = (gVBlankCount >> 2) & 7, output != NULL) {
       struct AnimSprite *sprite = &output->attr;
 
-      switch (output->active) {
+      switch (output->motion) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
           const u8 *tiles =
@@ -632,7 +616,7 @@ void WindowSprite_UpdateAll(void) {
           sprite->tile = VramCache_Load(work->glyphResource,
                                         PAGE_ARROW_FRAME_BYTES, tiles);
           output->index = sprite->tile;
-          sprite->mode = 0;
+          sprite->mode = OBJ_MODE_NORMAL;
           sprite->mosaic = 0;
           sprite->colors = 1;
           sprite->size = 0;
@@ -738,16 +722,17 @@ void WindowSprite_UpdateAll(void) {
         WindowSprite_UpdateScaleAnimation((struct WindowSprite *)output);
         break;
       }
-      if (output->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+      if (output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
         if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT)
           Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
-      } else if (output->active == WINDOW_SPRITE_MOTION_ON_SCREEN) {
+      } else if (output->motion == WINDOW_SPRITE_MOTION_ON_SCREEN) {
         s32 x = (s16)output->x;
         s32 y = (s16)output->y;
 
-        if ((u32)(x + 64) < 304 && (u32)(y + 64) < 224)
+        if ((u32)(x + 64) < DISPLAY_WIDTH + 64 &&
+            (u32)(y + 64) < DISPLAY_HEIGHT + 64)
           Oam_AddSpriteAtDepth(sprite, output->depth);
-      } else if (output->active != WINDOW_SPRITE_MOTION_HIDDEN) {
+      } else if (output->motion != WINDOW_SPRITE_MOTION_HIDDEN) {
         Oam_AddSpriteAtDepth(sprite, output->depth);
       }
       output = output->next;
@@ -755,7 +740,6 @@ void WindowSprite_UpdateAll(void) {
   }
 }
 
-#undef SPACE_WIDTH
 #undef ARROW_X
 #undef ARROW_Y
 #undef GLYPH_X

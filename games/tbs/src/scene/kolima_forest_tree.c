@@ -88,7 +88,7 @@ extern struct SceneExitRegion gKolimaForestTreeRegions[];
 extern u32 gKolimaForestTreeExits[];
 extern struct ActorPlacement gKolimaForestTreeActorPlacements[];
 extern struct Trigger gKolimaForestTreeTriggers[];
-extern s32 gKolimaForestTreeEffectScript[];
+extern s32 gKolimaForestTree_RepelRingScript[];
 
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.
@@ -144,14 +144,14 @@ static void Inventory_ReplaceItem(s32 oldItem, s32 newItem);
 /// Where Tret's sparks spring from (16.16 pixels), the frame of their cycle,
 /// whether a repelling spark plays its sound, and the frames of the healing
 /// palette's spread.
-s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
-s32 gKolimaForestTreeSparkFrame BSS_DATA;
-s32 gKolimaForestTreePlaySparkSound BSS_DATA;
-s32 gKolimaForestTreePaletteFrame BSS_DATA;
+s32 gKolimaForestTree_SparkOrigin[3] BSS_DATA ALIGNED(16);
+s32 gKolimaForestTree_SparkFrame BSS_DATA;
+s32 gKolimaForestTree_PlaySparkSound BSS_DATA;
+s32 gKolimaForestTree_PaletteFrame BSS_DATA;
 /// Unused: eight bytes after the palette frame that nothing reads.
 u8 gKolimaForestTree_UnusedAfterPaletteFrame[8] BSS_DATA;
-/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
-/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+/// The healthy colours, kept by KolimaPalette_SaveHealthy: the palette fade's
+/// 448 background and sprite colours, in the array's first half.
 u8 gKolimaPalette_Healthy[1792] BSS_DATA;
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 u8 gKolimaPalette_Cursed[896] BSS_DATA;
@@ -212,14 +212,18 @@ static void KolimaForestTree_TalkToLaurel(void) {
     KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
     Event_Wait(60);
     KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
+    // "Oh! You are the ones who resisted Tret's glamour?"
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(40);
+    // "I sense a great warmth within you..."
     Event_ShowMessage(ACTOR_LAUREL, 0);
     KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
     Event_Wait(80);
+    // "If you came to rescue Tret, you are already too late."
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
     KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
+    // "Soon, Tret will die, and we shall wither away without him...."
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
     GameFlag_Set(FLAG_MET_LAUREL);
   }
@@ -328,10 +332,10 @@ static void KolimaForestTree_RejectHermesWater(void) {
   PaletteFade_StartInterpolation(20);
   wait(40);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  gKolimaForestTreePlaySparkSound = 1;
+  gKolimaForestTree_PlaySparkSound = 1;
   Task_AddFrame(KolimaForestTree_SpawnRepelSpark, TASK_PASS_FRAME);
   wait(30);
-  gKolimaForestTreePlaySparkSound = 0;
+  gKolimaForestTree_PlaySparkSound = 0;
   FieldCamera_MoveTo(328, CAMERA_KEEP, 235, 1);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -382,7 +386,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Event_Wait(20);
 }
 
-/// Turns the companions together and pauses after the final facing change.
+/// Turns the four of them to facing together, then waits waitFrames.
 static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, facing, 0);
   Actor_FaceDirection(ACTOR_GARET, facing, 0);
@@ -429,7 +433,7 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_StartInterpolation(32);
   wait(40);
   // Carry the healing across the forest as its healthy colours return.
-  gKolimaForestTreePaletteFrame = 0;
+  gKolimaForestTree_PaletteFrame = 0;
   Task_AddFrame(KolimaForestTree_UpdateHealingPalette, TASK_PASS_FRAME);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -448,7 +452,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(326, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
-  while (gKolimaForestTreePaletteFrame != 24) {
+  while (gKolimaForestTree_PaletteFrame != 24) {
     wait(1);
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
@@ -485,6 +489,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
+  // "Hroooom... Life flows within me once again."
   Event_ShowMessage(ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -497,6 +502,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(20);
+  // "Tret..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(10);
@@ -509,19 +515,24 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
+  // "As you have recovered, so has our forest..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
+  // "I am sorry to have worried you so, Laurel."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
+  // "And you, young ones... Didn't you have a favor to ask of me?"
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    // "Yes, Tret... You must turn the people of Kolima into humans..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
+    // "Yes, that's right... I must hurry."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   } else {
     gFieldWork->message += 2;
@@ -529,16 +540,21 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+    // "Isaac! Did you forget? We need to save the people of Kolima!"
     Event_ShowMessage(ACTOR_GARET, 0);
     if (includeMia != 0) {
       Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+      // "Tret should be able to do it, now that his energy has returned."
       Event_ShowMessage(ACTOR_MIA, 0);
     } else {
       gFieldWork->message += 1;
     }
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+    // "Ask him to save everyone he turned into a tree!"
     Event_ShowMessage(ACTOR_IVAN, 0);
+    // "Please, Tret... You have to save those whom you turned into..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
+    // "That's right... I must hurry."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   }
   Scene_NodTogether();
@@ -553,12 +569,12 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   Event_Wait(60);
-  gKolimaForestTreeSparkFrame = 0;
+  gKolimaForestTree_SparkFrame = 0;
   // Tret sends out the power that frees Kolima's villagers.
-  gKolimaForestTreeSparkOrigin[0] = toFIXED(328);
-  gKolimaForestTreeSparkOrigin[1] = toFIXED(48);
+  gKolimaForestTree_SparkOrigin[0] = toFIXED(328);
+  gKolimaForestTree_SparkOrigin[1] = toFIXED(48);
   spawnOrbitSparks = KolimaForestTree_SpawnOrbitSparks;
-  gKolimaForestTreeSparkOrigin[2] = toFIXED(205);
+  gKolimaForestTree_SparkOrigin[2] = toFIXED(205);
   Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   Event_Wait(100);
   Task_Remove(spawnOrbitSparks);
@@ -577,11 +593,14 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(234, 0, 232, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
+  // "Tret did not always possess this horrible power."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
+  // "It only started when those strange gemstones fell from the sky."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
+  // "Gems from the sky... Do you think he means the Psynergy Stones?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -589,6 +608,8 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
   }
+  // Yes: "You really think Psynergy Stones caused all of this trouble?"
+  // No: "I know you don't want to believe it, but nothing else makes..."
   Event_ShowMessage(ACTOR_GARET, 0);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
@@ -602,16 +623,20 @@ static void KolimaForestTree_RestoreTret(void) {
   Scene_NodTogether();
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
+  // "Then all of a sudden... my fury overwhelmed me, and I was lost..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
+  // "The gem reached me when I was filled with sorrow..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
+  // "Our actions spoke our hearts' desires, but we had no idea..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
+  // "Those gems twisted my anger into a force beyond my control."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -622,25 +647,32 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(60);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(20);
+  // "Have any of the saplings been transformed by those stones, Tret?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET,
                               FACE_CHANGE_HALF_CLOSE_EYES);
   Event_Wait(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
+  // "No... Only the elder trees were affected by the falling..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_TRET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
+  // "There are others that this happened to?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
+  // "So the same thing could be happening elsewhere!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   Event_Wait(20);
+  // "You must have fought many monsters on your way here."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
+  // "Those monsters... Maybe they were just animals that were..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
+  // "Once, they were pure of heart... Hroom... Those gems have..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
@@ -654,30 +686,34 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   Event_Wait(60);
-  gKolimaForestTreeSparkFrame = 0;
+  gKolimaForestTree_SparkFrame = 0;
   // Laurel looks beyond the river and warns of the forest to the south.
-  gKolimaForestTreeSparkOrigin[0] = toFIXED(136);
-  gKolimaForestTreeSparkOrigin[1] = toFIXED(20);
+  gKolimaForestTree_SparkOrigin[0] = toFIXED(136);
+  gKolimaForestTree_SparkOrigin[1] = toFIXED(20);
   spawnOrbitSparks = KolimaForestTree_SpawnOrbitSparks;
-  gKolimaForestTreeSparkOrigin[2] = toFIXED(258);
+  gKolimaForestTree_SparkOrigin[2] = toFIXED(258);
   Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   Event_Wait(100);
   KolimaForestTree_FaceParty(FACING_SOUTHWEST, 40);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Oh! Laurel, you were given powers, too?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
+  // "Different from my own, but stemming from the same source."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
+  // "Laurel! What in the world are you doing?"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
+  // "Wait. You will soon see."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   Scene_NodTogether();
   Event_Wait(10);
@@ -688,18 +724,23 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_StartInterpolation(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
+  // "What did you see, Laurel?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
+  // "It's true... even the animals have become monsters. And..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
+  // "The river that feeds our forest?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   Event_Wait(20);
+  // "Yes... An evil forest has risen up to the south of the river."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
+  // "Will you be heading south across the river?"
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -715,6 +756,8 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
+  // Yes: "That area will only grow more dangerous as time passes..."
+  // No: "That's good... It would be foolish to risk your lives further."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
@@ -737,6 +780,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   Event_Wait(20);
+  // "May your roots dig deep and your branches reach high."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
@@ -795,7 +839,9 @@ s32 Scene_Initialize(void) {
 
 #include "shared/kolima_grow.c"
 
-/// Spawns the growing sparks that repel the party leader.
+/// Every fourth frame, a golden ring falls from Tret onto the leader as his
+/// wrathful side throws him back, with its sound while
+/// gKolimaForestTree_PlaySparkSound is set.
 static void KolimaForestTree_SpawnRepelSpark(void) {
   struct Actor *effect;
   struct Sprite *sprite;
@@ -804,7 +850,7 @@ static void KolimaForestTree_SpawnRepelSpark(void) {
   phase = gFrameCount & 3;
   if (phase != 0)
     return;
-  if (gKolimaForestTreePlaySparkSound != 0)
+  if (gKolimaForestTree_PlaySparkSound != 0)
     Sound_Play(SE_SPARKLE_FALL);
   effect = FieldActor_Create(SPRITE_GOLDEN_RINGS, toFIXED(326), toFIXED(32),
                              toFIXED(192));
@@ -820,18 +866,18 @@ static void KolimaForestTree_SpawnRepelSpark(void) {
   effect->motionFlags = phase;
   Actor_SelectAnimation(effect, 2);
   FieldActor_SetMoveTargetFX(effect, toFIXED(326), 0, toFIXED(240));
-  Actor_StartScript(effect, gKolimaForestTreeEffectScript);
+  Actor_StartScript(effect, gKolimaForestTree_RepelRingScript);
 }
 
 /// The healing palette's cycle: HEALTHY_FADE_FRAMES towards the healthy
-/// colours, then back towards the withered ones until HEALING_CYCLE_FRAMES.
+/// colours, then back towards the cursed ones until HEALING_CYCLE_FRAMES.
 #define HEALTHY_FADE_FRAMES 20
 #define HEALING_CYCLE_FRAMES 30
 
-/// Alternates the saved healthy and withered palettes over
-/// HEALING_CYCLE_FRAMES.
+/// Each frame of the healing: the forest's colours fade towards the healthy
+/// set, then back towards the cursed one, every HEALING_CYCLE_FRAMES.
 static void KolimaForestTree_UpdateHealingPalette(void) {
-  s32 step = gKolimaForestTreePaletteFrame;
+  s32 step = gKolimaForestTree_PaletteFrame;
 
   if (step == 0) {
     KolimaPalette_Restore(0);
@@ -840,10 +886,10 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
     KolimaPalette_Restore(1);
     PaletteFade_StartInterpolation(8);
   }
-  step = gKolimaForestTreePaletteFrame + 1;
-  gKolimaForestTreePaletteFrame = step;
+  step = gKolimaForestTree_PaletteFrame + 1;
+  gKolimaForestTree_PaletteFrame = step;
   if (step == HEALING_CYCLE_FRAMES) {
-    gKolimaForestTreePaletteFrame = 0;
+    gKolimaForestTree_PaletteFrame = 0;
   }
 }
 
@@ -955,8 +1001,8 @@ static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 change) {
 #define ORBIT_SPARK_FRAMES 120
 #define ORBIT_SPARK_TURN (TRIG_TURN * 3 / 256)
 
-/// Expands a spark along its spiral for ORBIT_SPARK_FRAMES, then releases its
-/// cache slot.
+/// Moves a sparkle out along its spiral, swelling, for ORBIT_SPARK_FRAMES; then
+/// it is gone.
 static void KolimaForestTree_UpdateOrbitSpark(struct Actor *spark) {
   s32 position[3];
   s32 age = spark->timer;
@@ -979,14 +1025,16 @@ static void KolimaForestTree_UpdateOrbitSpark(struct Actor *spark) {
   }
 }
 
-/// Emits six-spark rings at ten-frame intervals during each burst.
+/// Sends out a ring of six sparkles spiralling from
+/// gKolimaForestTree_SparkOrigin with a shimmer, every ten frames for the first
+/// 50 of each 121.
 static void KolimaForestTree_SpawnOrbitSparks(void) {
   struct Actor *spark;
   struct Sprite *previousSprite;
   u32 sparkIndex;
 
   previousSprite = NULL;
-  switch (gKolimaForestTreeSparkFrame) {
+  switch (gKolimaForestTree_SparkFrame) {
   case 0:
   case 10:
   case 20:
@@ -994,9 +1042,9 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   case 40:
     Sound_Play(SE_SHIMMER);
     for (sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
-      spark = FieldActor_Create(SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
-                                gKolimaForestTreeSparkOrigin[1],
-                                gKolimaForestTreeSparkOrigin[2]);
+      spark = FieldActor_Create(
+          SPRITE_SPARKLE, gKolimaForestTree_SparkOrigin[0],
+          gKolimaForestTree_SparkOrigin[1], gKolimaForestTree_SparkOrigin[2]);
       if (spark != NULL) {
         previousSprite =
             Sprite_ShareVramCacheEntry(spark->sprite, previousSprite);
@@ -1006,17 +1054,17 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
         Actor_SelectAnimation(spark, 1);
         spark->timer = 0;
         spark->userValue = DEGtoANG(sparkIndex * 60);
-        spark->targetX = gKolimaForestTreeSparkOrigin[0];
-        spark->targetY = gKolimaForestTreeSparkOrigin[1];
-        spark->targetZ = gKolimaForestTreeSparkOrigin[2];
+        spark->targetX = gKolimaForestTree_SparkOrigin[0];
+        spark->targetY = gKolimaForestTree_SparkOrigin[1];
+        spark->targetZ = gKolimaForestTree_SparkOrigin[2];
         spark->speedLimit = toFIXED(8) / 5;
         spark->update = KolimaForestTree_UpdateOrbitSpark;
       }
     }
     break;
   }
-  if (++gKolimaForestTreeSparkFrame > 120) {
-    gKolimaForestTreeSparkFrame = 0;
+  if (++gKolimaForestTree_SparkFrame > 120) {
+    gKolimaForestTree_SparkFrame = 0;
   }
 }
 
@@ -1118,7 +1166,7 @@ struct Trigger gKolimaForestTreeTriggers[] = {
 };
 // clang-format on
 
-s32 gKolimaForestTreeEffectScript[] = {
+s32 gKolimaForestTree_RepelRingScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE / 10),
     SC_CALL(FieldEffect_StretchUntilArrived),
     SC_LOOP(SC_FOREVER, SC_TOP),

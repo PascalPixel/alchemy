@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct MeshTriangle;
-
 #define GEODE_FRAMES 74
 
 /// The clod of earth: the battlefield's picture wrapped round a cylinder of
@@ -334,7 +332,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       texture.logWidth = 8;
       texture.logHeight = 7;
       texture.pixels = picture;
-      model->flags = 3;
+      model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
       model->kind = MODEL_TEXTURED;
       model->texture = &texture;
       model->mesh = mesh;

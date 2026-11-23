@@ -357,6 +357,12 @@ enum ModelKind {
   MODEL_SOLID_NARROW       ///< MODEL_SOLID into a narrow target
 };
 
+/// RenderModel.flags that the rasterizer kernels read: a one-sided model draws
+/// only the faces wound one way round on the screen, clockwise with
+/// MODEL_CLOCKWISE and anticlockwise without it, and skips the others.
+#define MODEL_ONE_SIDED 2
+#define MODEL_CLOCKWISE 1
+
 /// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
   (Matrix_Initialize(), Matrix_SetLookAt((camera)->eye, (camera)->focus))
@@ -580,7 +586,6 @@ enum RedCrescentPicture {
 #define FLARE_SET_BYTES 1540
 #define MOTE_PICTURES 10
 
-/// Clips overflow on all four sides.
 /// The columns of gTargetStrike_Styles, one row a style.
 enum TargetStrikeColumn {
   TARGET_STRIKE_KIND,           ///< STRIKE_KIND_SLASH or STRIKE_KIND_BITE
@@ -841,7 +846,8 @@ enum BreathKind {
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
 /// named for the effect that first plays it; Bone Charge plays Stun Muscle's.
 enum RushingStrikeMode {
-  RUSHING_STRIKE_BONE_CHARGE,
+  /// Unused: no wrapper passes it; the fire pillar's colours.
+  RUSHING_STRIKE_UNUSED,
   RUSHING_STRIKE_BRUTE_FORCE,
   RUSHING_STRIKE_ONSLAUGHT,
   RUSHING_STRIKE_HEADBUTT,
@@ -910,10 +916,10 @@ struct MeshTriangle {
 
 struct PoolEntry;
 struct SpriteScale;
-struct SpriteScale;
 struct StripQuad;
 
-// The parts' own routines, by the part that defines them.
+// The parts' routines that another part calls before their definition, by
+// the part that first calls them.
 
 // display.c
 void BattleEffect_AdvanceScrollOnInterval(void);
@@ -993,7 +999,6 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity);
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity);
-// BattleEffect_BuildBlitter itself.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
@@ -1738,7 +1743,7 @@ extern const u16 gIris_StripMesh[];
 extern const struct ModelVertex gIris_ConeCorners[];
 extern const u16 gIris_ConeMesh[];
 
-// The resources, by the first part that reads them.
+// The buffers and tables the parts share, by the first part that reads them.
 
 /// falling.c
 /// The cone's 64 vertices, stored at the buffer's constant address.

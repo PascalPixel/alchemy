@@ -73,7 +73,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
                              work->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES, 1,
                              0);
   switch (mode) {
-  case RUSHING_STRIKE_BONE_CHARGE:
+  case RUSHING_STRIKE_UNUSED:
     resource = RESOURCE_FIRE_PILLAR_SHEET_B;
     break;
   case RUSHING_STRIKE_BRUTE_FORCE:
@@ -239,7 +239,6 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
       // Living Armor's explosions rise, flashing and burning out.
       if (mode == RUSHING_STRIKE_LIVING_ARMOR) {
-
         for (i = 0; i != RUSHING_STRIKE_EXPLOSIONS; i++) {
           struct Particle *explosion = &work->particles[i];
           s32 life = explosion->variant;

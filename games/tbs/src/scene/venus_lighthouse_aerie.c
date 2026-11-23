@@ -524,9 +524,9 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
 
   arrivalPlatform = Actor_Get(ACTOR_RISING_PLATFORM);
   Event_Start();
-  VenusLighthouseAerie_ShowPartyMember(1, 0);
-  VenusLighthouseAerie_ShowPartyMember(2, 0);
-  VenusLighthouseAerie_ShowPartyMember(3, 0);
+  VenusLighthouseAerie_ShowPartyMember(ACTOR_GARET, 0);
+  VenusLighthouseAerie_ShowPartyMember(ACTOR_IVAN, 0);
+  VenusLighthouseAerie_ShowPartyMember(ACTOR_MIA, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   arrivalPlatform->motionFlags = 0;
@@ -581,9 +581,9 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_SetDestination(ACTOR_RISING_PLATFORM, 580, 338);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
-  VenusLighthouseAerie_ShowPartyMember(1, 1);
-  VenusLighthouseAerie_ShowPartyMember(2, 1);
-  VenusLighthouseAerie_ShowPartyMember(3, 1);
+  VenusLighthouseAerie_ShowPartyMember(ACTOR_GARET, 1);
+  VenusLighthouseAerie_ShowPartyMember(ACTOR_IVAN, 1);
+  VenusLighthouseAerie_ShowPartyMember(ACTOR_MIA, 1);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 492, 164);
   Actor_WalkTo(ACTOR_GARET, 514, 164);
   Actor_WalkTo(ACTOR_IVAN, 492, 140);

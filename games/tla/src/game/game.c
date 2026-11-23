@@ -13,15 +13,16 @@
 /// Broken Seal links as objects of their own, are parts here too, after the
 /// code. Where to start:
 ///
-///   Units           units.c: Unit_Calculate, Unit_SetHp, Unit_AddPp
-///   Items           inventory.c: Inventory_AddItem, Inventory_Equip,
+///   Units           game_units.c: Unit_Calculate, Unit_SetHp, Unit_AddPp
+///   Items           game_inventory.c: Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
-///   Levels          levels.c: Unit_LearnPsynergy, Unit_LevelUp
-///   Enemies, party  party.c: Party_AddMember, Party_AdjustCoins
-///   Classes         classes.c: Class_Determine, Unit_UpdateClass
-///   Battle maths    battle_arithmetic.c: Battle_GetElementMultiplier,
+///   Levels          game_levels.c: Unit_LearnPsynergy, Unit_LevelUp
+///   Enemies, party  game_party.c: Party_AddMember, Party_AdjustCoins
+///   Classes         game_classes.c: Class_Determine, Unit_UpdateClass
+///   Battle maths    game_battle_arithmetic.c: Battle_GetElementMultiplier,
 ///                   Battle_Random
-///   Djinn           djinn.c: Djinn_Give, Djinn_Set
+///   Djinn           game_djinn.c: Djinn_Give, Djinn_Set
+///   Put aside       game_snapshot.c: InventorySnapshot_Save
 
 #include "game_internal.h"
 

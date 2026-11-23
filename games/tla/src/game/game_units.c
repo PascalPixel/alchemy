@@ -1,5 +1,6 @@
 /// @file
-/// The party's units and their stats, a new game, the prologue, HP and PP.
+/// The party's units and their stats, a new game, HP and PP, and the data
+/// transfer from The Broken Seal up to Isaac's party joining at Contigo.
 // Part of game.c.
 
 #include "game_internal.h"
@@ -469,12 +470,13 @@ s32 Party_DrainPpFromFullest(void) {
   return ((s32 (*)(s32, s32))Unit_AddPp)(bestOwner, -1);
 }
 
-/// Takes count PP from the party, one at a time from the fullest member.
+/// Takes `count` PP from the party, one at a time from the fullest member.
 void Party_DrainPp(s32 count) {
   s32 i;
 
   for (i = 0; i < count; i++)
     Party_DrainPpFromFullest();
+  // The ratio is worked out again and not used.
   Party_GetPpRatio();
 }
 
@@ -660,7 +662,8 @@ void Party_SetLeaderFelix(void) {
 
 /// Gives Piers his two Mercury Djinn, Spring and Shade (Mercury 9 and 10),
 /// set, then evens out the party's Djinn and recalculates its members.
-/// Kibombo calls it when Piers joins.
+/// Kibombo calls it when Piers joins, and the world map
+/// (WORLD_MAP_PIERS_DJINN).
 void Party_GivePiersDjinn(void) {
   s32 i;
   s32 count;
@@ -773,10 +776,10 @@ void Party_BalanceDjinn(void) {
   s32 count = Party_CountMembers();
 
   for (;;) {
-    s32 lowNo = 0;
+    s32 lowOwner = 0;
     s32 high = 0;
     s32 low = DJINN_COUNT_ABOVE_ANY;
-    s32 highNo = 0;
+    s32 highOwner = 0;
     s32 i;
     s32 sum;
     s32 element;
@@ -797,19 +800,19 @@ void Party_BalanceDjinn(void) {
       }
       if (sum > high) {
         high = sum;
-        highNo = owner;
+        highOwner = owner;
       }
       if (sum < low) {
         low = sum;
-        lowNo = owner;
+        lowOwner = owner;
       }
     }
     if (high - low <= 1)
       break;
-    sum = Unit_FindLastDjinn(highNo, &element, &index);
+    sum = Unit_FindLastDjinn(highOwner, &element, &index);
     if (sum != 0)
       break;
-    Djinn_Transfer(highNo, element, index, lowNo);
+    Djinn_Transfer(highOwner, element, index, lowOwner);
   }
 }
 
@@ -877,11 +880,13 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     WindowColor_ApplyFar(state->windowHue, state->windowBrightness);
   }
 
-  j = MIA +
-      1; // A local reused for a second value: Isaac's party, the units moved.
+  // Isaac's party, the units moved (j reused).
+  j = MIA + 1;
   for (i = 0; i < (s32)j; i++) {
     struct Unit *unit = Unit_Get(i);
 
+    // The saved name is put aside and written back over the copy, so the
+    // unit takes The Broken Seal's name either way.
     memcpy(name, &units[i], sizeof(units->name));
     Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct Unit));
     memcpy(unit, name, sizeof(units->name));
@@ -1035,7 +1040,7 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
 /// ones and puts the party back.
 void DataTransfer_GiveDefaultDjinn(void) {
   s8 saved[8];
-  s8 counts[4];
+  s8 counts[ELEMENT_COUNT];
   s32 count;
   s32 remaining;
   s32 element;
@@ -1055,13 +1060,14 @@ void DataTransfer_GiveDefaultDjinn(void) {
   for (i = ISAAC; i <= MIA; i++)
     Party_AddMember(i);
   // Isaac's Flint and Mia's Fizz, which The Broken Seal gives at its start.
-  Djinn_AddFoundToOwner(ISAAC, ELEMENT_VENUS, 0);
-  Djinn_AddFoundToOwner(MIA, ELEMENT_MERCURY, 0);
+  Djinn_AddFoundToOwner(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
+  Djinn_AddFoundToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
 
-  counts[0] = 1;
-  counts[1] = 1;
-  counts[2] = 0;
-  counts[3] = 0;
+  // Each element's Djinn so far: Flint and Fizz.
+  counts[ELEMENT_VENUS] = 1;
+  counts[ELEMENT_MERCURY] = 1;
+  counts[ELEMENT_MARS] = 0;
+  counts[ELEMENT_JUPITER] = 0;
   remaining = DEFAULT_TRANSFER_DJINN;
   do {
     element = Random_Below(ELEMENT_COUNT);
@@ -1070,10 +1076,11 @@ void DataTransfer_GiveDefaultDjinn(void) {
       s8 low;
       s8 high;
 
+      // Would the elements' counts stay within one with this Djinni?
       counts[element]++;
-      low = 9;
+      low = 9; // above any element's count
       high = 0;
-      for (i = 0; i < 4; i++) {
+      for (i = 0; i < ELEMENT_COUNT; i++) {
         if (low > counts[i])
           low = counts[i];
         if (high < counts[i])

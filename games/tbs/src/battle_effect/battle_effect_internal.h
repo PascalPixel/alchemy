@@ -168,8 +168,9 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
   (BattleEffect_StartCanvasLayer(bgControl), REG_BG2PA = Q_8_8(1))
 
-/// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
-/// and blend mode.
+/// Builds a blitter for the 128x128 canvas (its width and height given to
+/// BattleEffect_BuildBlitter as powers of two) in heap slot `slot`, for one
+/// clip, mirror and blend mode.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
   BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 

@@ -662,13 +662,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
 
 #include "shared/vault_toggle.c"
 
-/// Walks to the exit's threshold and requests the room's transition.
-static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
-  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
-  Import_EventSetExitRequest(continuation);
-}
+#include "shared/vault_door_exit.c"
 
 /// Isaac opens the door of the house in the east, by the rope bridge (cell
 /// (25, 21)), the gem owner's, and goes in.

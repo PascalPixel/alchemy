@@ -329,8 +329,10 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   Event_Start();
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
+    // "It's the minotaur relief, with both eyes sparkling brightly."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else {
+    // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
       gFieldWork->fieldMenu = 1;
@@ -379,6 +381,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       MapGrid_CenterOnFollowedPoint();
       Event_Wait(40);
       message = MsgSolSanctumSetSmallGem;
+      // "Isaac set the small gem into the empty socket."
       FieldMessage_Show(message, 1);
       Event_Wait(20);
       Sound_Play(SE_STONE_RUMBLE);
@@ -387,6 +390,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
       MapGrid_CenterOnFollowedPoint();
       SolSanctumEntrance_ReactToOpeningPassage();
+      // "You hear the sound of shifting stone."
       FieldMessage_Show(message + 1, 1);
       GameFlag_Set(FLAG_ITEM_USED_UP);
       GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
@@ -404,12 +408,15 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   Event_Start();
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
+    // "It's the minotaur relief, with both eyes sparkling brightly."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
     work = gFieldWork;
+    // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     work->fieldMenu = 1;
   } else {
+    // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
   }
 
@@ -436,6 +443,7 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
     MapGrid_CenterOnFollowedPoint();
     Event_Wait(40);
     message = MsgSolSanctumSetSmallGem;
+    // "Isaac set the small gem into the empty socket."
     FieldMessage_Show(message, 1);
     Event_Wait(20);
     Sound_Play(SE_STONE_RUMBLE);
@@ -443,6 +451,7 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
     MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     MapGrid_CenterOnFollowedPoint();
     SolSanctumEntrance_ReactToOpeningPassage();
+    // "You hear the sound of shifting stone."
     FieldMessage_Show(message + 1, 1);
     GameFlag_Set(FLAG_ITEM_USED_UP);
     GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET);
@@ -1253,6 +1262,7 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
 /// Sol Entrance's setup gives this behaviour only then.
 static void SolSanctumEntrance_DoorTightlyLocked(void) {
   Event_Start();
+  // "The door is tightly locked."
   FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
   Event_End();
 }

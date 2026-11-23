@@ -295,6 +295,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   message = MsgSolSanctumVenusStarBagged;
+  // "...put the Venus Star in a Mythril Bag."
   FieldMessage_Show(message, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 20);
@@ -308,6 +309,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   Event_Wait(40);
   Actor_Jump(ACTOR_KRADEN, 4, 30);
   Event_SetMessageId(message - 1);
+  // "Good, good! Now, go fetch the others!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -398,6 +400,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   message = MsgSolSanctumPutMercuryStar;
+  // "...put the Mercury Star in a Mythril Bag."
   FieldMessage_Show(message, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 20);
@@ -411,6 +414,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   Event_Wait(40);
   Actor_Jump(ACTOR_KRADEN, 4, 30);
   Event_SetMessageId(message - 2);
+  // "Good, good! Now, go fetch the others!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -517,6 +521,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
       SolSanctumElementalStarRoom_PresentStar(ITEM_JUPITER_STAR, 232, 16, 464);
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
+  // "...put the Jupiter Star in a Mythril Bag."
   FieldMessage_Show(MsgSolSanctumJupiterStarBagged, 1);
 }
 
@@ -588,26 +593,33 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_SetMessageId(MsgSolSanctumLooksLikeTheyveSpottedUs);
+  // "It looks like they've spotted us."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
+  // "I thought we'd be safe until they'd gotten all the Elemental..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_Jump(ACTOR_KRADEN, 4, 10);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
+  // "You! You mean to steal the Elemental Stars!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 10);
+  // "Master Kraden... Are you calling us thieves?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 20);
+  // "As I recall, aren't you the one who stole our information?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST_SOUTHWEST, 80);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What will you do with us once you've got the Elemental Stars?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "I'm sure they'll do us in once they no longer need us!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   felix = Actor_Get(ACTOR_FELIX_MASKED);
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
@@ -622,6 +634,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   felix->motionFlags = 0;
   felix->y.fixed = toFIXED(40);
   Event_Wait(1);
+  // "Relax... You will not be hurt."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
@@ -660,6 +673,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_WalkToAndWait(ACTOR_FELIX_MASKED, 471, 306);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
+  // "That was our agreement, was it not?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_FELIX_MASKED, 20);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_KRADEN, 0);
@@ -673,16 +687,19 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHWEST, 10);
+  // "That all depends on how well they cooperate."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 30);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(10);
+  // "They'll be safe, as long as they hand over the Elemental Stars."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 30);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_Wait(20);
+  // "Isn't that enough?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 30);
   Actor_SetAnimationAndWait(ACTOR_FELIX_MASKED, ANIM_NOD);
   Event_Wait(20);
@@ -699,14 +716,18 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
+  // "You heard us... If you wish to save your friends, then give us..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 3);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(80);
+  // "Do you accept our terms?"
   Event_OpenMessage(ACTOR_MENARDI, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     SolSanctumElementalStarRoom_SkipMessages(1);
   }
+  // Yes: "No, Isaac! You must not give them the Elemental Stars!" No: "Very
+  // good, Isaac! You must not give them the Elemental Stars!"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -719,13 +740,16 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 10);
   Event_SetMessageId(MsgSolSanctumWhyDenyDont);
+  // "Why would you deny us? Don't you want your friends to be safe?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "What guarantee do we have once we've given you the Elemental..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 40);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
+  // "Guarantee... Ah. I have one."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 10);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -740,11 +764,13 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_FELIX_MASKED, FACING_SOUTH_SOUTHWEST, 40);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 40);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
+  // "You will have to remove your mask."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 20);
   Actor_RunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "Th- That means..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 10);
   Actor_FaceActor(ACTOR_SATUROS, ACTOR_FELIX_MASKED, 0);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_FELIX_MASKED, 0);
@@ -753,6 +779,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 10);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_NOD);
+  // "Ah, of course. A fine idea... He will be our guarantee."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
@@ -766,6 +793,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
+  // "Under the circumstances, we have little choice. Felix!.."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetAttachedEffect(ACTOR_FELIX_MASKED,
@@ -774,6 +802,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Event_Wait(40);
   Actor_SetPosition(ACTOR_GARET, 346, 440);
   wait(1);
+  // "What? What did he say, Isaac?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
@@ -789,10 +818,16 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
+  // "He called that guy Felix... That's what he said, isn't it?" Yes: "You
+  // heard it too? Felix? It can't be..." No: "But that's what I heard. Felix?
+  // It can't be..."
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(10);
+  // "That day... The Boulder... We saw him die, didn't we?" Yes: "You remember
+  // it, too, Isaac?.." No: "We searched for weeks, but we still couldn't find
+  // him."
   Event_AskYesNo(ACTOR_GARET, 0);
   Event_Wait(10);
   Event_SetMessageId(MsgSolSanctumMenardiDontYouWantThem);
@@ -815,18 +850,22 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
+  // "Felix... Wasn't that the name of your brother?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "But that accident... My brother, he..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 10);
   Actor_RunRepeatedMotion(ACTOR_FELIX_MASKED, 2);
   Event_Wait(80);
+  // "I'll do it."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_FELIX_MASKED, ANIM_NOD);
+  // "I'll . . .take off my mask."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 20);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -857,58 +896,73 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 3);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
+  // "I -It's not possible..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 3);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+  // "Is he..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
+  // "I know I've caused you much grief, Jenna."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(10);
+  // "It was a miracle that I survived that day..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 40);
   Actor_StartRepeatedMotion(ACTOR_SATUROS, 1);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_Wait(10);
+  // "We are the ones who saved him."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_NOD);
+  // "We saw him floating unconscious in the river as we passed."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 80);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
+  // "I've been with them ever since... I've experienced a lot."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 40);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
+  // "But why?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 10);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Why did you leave me all alone..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 80);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
+  // "Jenna..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX, 80);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(4);
+  // "My own brother... I thought you were dead!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_NOD);
+  // "Save this teary reunion for later."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
+  // "That's right. The Elemental Stars come first."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 10);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
+  // "Is this acceptable? Felix would never allow us to harm you..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 80);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHWEST, 40);
   Actor_StartRepeatedMotion(ACTOR_MENARDI, 2);
+  // "Felix will be our guarantee. Now, give us the Elemental Stars!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_MENARDI, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -942,6 +996,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
         item == ITEM_JUPITER_STAR)
       starCount++;
   }
+  // "We don't have any choice..."
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     messageA = MsgSolSanctumGuessTakeElemental;
@@ -949,6 +1004,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(10);
     if (starCount <= 2) {
+      // "I guess I should take the Elemental Stars to them."
       SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 30);
       Actor_WalkToAndWait(ACTOR_GARET, 252, 486);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -956,6 +1012,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
       FieldMessage_ShowCentered((messageA + 1), 1, 0);
     } else {
       Event_SetMessageId(MsgSolSanctumRightTake);
+      // "All right, I'll take them."
       SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 30);
     }
   } else {
@@ -964,6 +1021,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
       Event_SetMessageId(messageB);
       Actor_RunRepeatedMotion(ACTOR_GARET, 3);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+      // "If you don't hand them over, they won't let Jenna go!"
       SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Actor_RunRepeatedMotion(ACTOR_GARET, 1);
@@ -983,6 +1041,7 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
       Event_SetMessageId(MsgSolSanctumWontLetGo);
       Actor_RunRepeatedMotion(ACTOR_GARET, 3);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+      // "They won't let Jenna go if we don't hand them over!"
       SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 30);
@@ -1043,8 +1102,10 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_SetPosition(ACTOR_SATUROS, 469, 348);
   Event_Wait(20);
+  // "Oh, Alex... You're late!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 10);
+  // "Alex is another of our companions. Hand the stones to him."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 40);
   Actor_SetPosition(ACTOR_SATUROS, 507, 348);
@@ -1055,6 +1116,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.5);
   Actor_WalkToAndWait(ACTOR_GARET, 389, 468);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 60);
+  // "Oh, great. After we did all that work..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 20);
   FieldMessage_ShowCentered(MsgSolSanctumPermitRelieveElemental + 4, 1, 10);
   Actor_SetSpeed(ACTOR_GARET, 0.5);
@@ -1066,9 +1128,11 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Event_SetMessageId(MsgSolSanctumPermitRelieveElemental + 5);
+  // "I'm afraid I must apologize in advance..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
+  // "For you will be bringing us the remaining Elemental Star, as..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
@@ -1085,13 +1149,17 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   }
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  // "Wait a second!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 10);
+  // "You want us to grab the other one for you, too?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_RunRepeatedMotion(ACTOR_ALEX, 1);
+  // "Oh, did you not understand me?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "You said you'd set Jenna free once we gave you the Elemental..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 30);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHEAST, 40);
@@ -1105,7 +1173,9 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
+  // "No, my friend... We want you to bring us ALL the Elemental..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
+  // "Stop grumbling and bring us the last Star!"
   Event_OpenMessage(ACTOR_MENARDI, 0);
   FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(374, CAMERA_KEEP, 470, 1);
@@ -1134,9 +1204,11 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(20);
   Event_SetMessageId(MsgSolSanctumThankCooperation);
+  // "Thank you for your cooperation."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(10);
+  // "We'll be waiting for the rest."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 30);
   actor->motionFlags = 0;
   Actor_SetSpeed(ACTOR_ALEX, 2.4);
@@ -1275,6 +1347,7 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
       SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, 232, 16, 144);
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
+  // "...put the Mars Star in a Mythril Bag."
   FieldMessage_Show(MsgSolSanctumMarsStarBagged, 1);
   Actor_SetPosition(ACTOR_JENNA, 307, 277);
   Actor_SetPosition(ACTOR_KRADEN, 307, 277);
@@ -1339,6 +1412,7 @@ static void SolSanctumElementalStarRoom_TalkToKraden(void) {
       Event_SetMessageId(MsgSolSanctumKradenFetchTheOthers);
     Actor_FaceEachOther(ACTOR_KRADEN, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
+    // "Good, good. Now go fetch the others!"
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
   Event_End();
@@ -1362,6 +1436,7 @@ static void SolSanctumElementalStarRoom_TalkToJenna(void) {
       Event_SetMessageId(MsgSolSanctumJennaKradenIsGiddy);
     Actor_FaceEachOther(ACTOR_JENNA, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
+    // "Kraden, you're as giddy as a schoolgirl."
     Event_ShowMessage(ACTOR_JENNA, 0);
   }
   Event_End();
@@ -1412,6 +1487,7 @@ static void SolSanctumElementalStarRoom_TalkToAlex(void) {
 static void SolSanctumElementalStarRoom_KradenStopsPartyLeaving(void) {
   Event_Start();
   Event_SetMessageId(MsgSolSanctumNoStarsOutThere);
+  // "There aren't any Elemental Stars out there!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Event_End();
 }
@@ -1645,6 +1721,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 30);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
   Event_Wait(30);
+  // "Is that. . . the ocean?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 2.4);
   Actor_WalkToAndWait(ACTOR_KRADEN, 423, 306);
@@ -1665,6 +1742,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(40);
+  // "No, it couldn't be... The ocean has waves."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 30);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JENNA, 0);
@@ -1672,8 +1750,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "The ocean... What's that?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
+  // "The ocean is a thing of endless water at the end of the world."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
@@ -1681,6 +1761,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "You would not understand... Someday, I'll show it to you myself."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 10);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -1720,20 +1801,24 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(30);
+  // "The Elemental Stars..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 30);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
   Event_Wait(20);
+  // "They really exist... The Elemental Stars exist!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 30);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_WalkToAndWait(ACTOR_JENNA, 440, 346);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 10);
+  // "You taught us about those..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_WalkToAndWait(ACTOR_GARET, 495, 346);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 10);
+  // "Stones, wood, even us..."
   Event_OpenMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
@@ -1747,14 +1832,18 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 30);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+  // "As I have told you many times, the elements are the source of..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Earth, water, fire, and wind-these are the four elements."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+  // "Legend holds that the four Elemental Stars contain the purified..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "And now, those legendary stones are before us!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1840,6 +1929,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_SetMessageId(MsgSolSanctumKradenTheWisdomStone);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
   Actor_Jump(ACTOR_KRADEN, 4, 40);
+  // "The Wisdom Stone... the Stone of Sages."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1848,6 +1938,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "This stone dominates everything..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
@@ -1855,6 +1946,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
+  // "You understand now, don't you?"
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
@@ -1867,10 +1959,12 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
   Event_SetMessageId(MsgSolSanctumTheStarsHaveEnormousPower);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "I don't really get how it works, but they have enormous power..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_Jump(ACTOR_KRADEN, 4, 40);
+  // "Beyond enormous... With a single gem, one could conquer the..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1879,6 +1973,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
+  // "Now, perhaps, you begin to understand."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1886,10 +1981,12 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_Jump(ACTOR_GARET, 4, 40);
+  // "Don't scare us like that, Kraden..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 80);
+  // "Who can say what the truth is?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
@@ -1914,6 +2011,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
+  // "That's why I've been searching for the Elemental Stars..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 40);
   rising = Actor_Get(ACTOR_KRADEN);
@@ -1936,6 +2034,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_SetDestination(ACTOR_KRADEN, 471, 395);
   Actor_WaitForMoveById(ACTOR_KRADEN);
+  // "Now they lie before me..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 411);
@@ -1952,6 +2051,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  // "Whoa..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_KRADEN, 10);
   Actor_SetSpeed(ACTOR_KRADEN, 0.2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 471, 395);
@@ -1973,14 +2073,17 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+  // "Be careful, Kraden! It looks slippery."
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "But I must examine the Elemental Stars..."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 30);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 30);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 30);
+  // "Make the boys do it!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 20);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_Jump(ACTOR_GARET, 4, 0);
@@ -1996,6 +2099,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 30);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   Event_Wait(20);
+  // "Oh, I couldn't ask . . . Would you mind?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -2006,6 +2110,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 30);
+  // "He'd be glad to get the stones for you, right, Isaac?"
   Event_OpenMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   // Jenna keeps asking until Isaac agrees to collect the stars.
@@ -2021,6 +2126,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 30);
+  // "Thank you!"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 30);
@@ -2032,6 +2138,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
+  // "You'll need this, Isaac."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 60);
   rising->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -2040,14 +2147,17 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
   Event_SetMessageId(MsgSolSanctumTheBagsAreFromKradens);
+  // "You brought those from your cottage, right, Kraden?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_JENNA, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "What are those bags?"
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "They're made of woven threads of Mythril."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -2055,12 +2165,14 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+  // "I prepared them for just such an occasion."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
+  // "Now, go fetch the Elemental Stars and put them in those bags."
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -2180,12 +2292,14 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
 
   Sound_Play(MUS_TREASURE_FOUND);
   Item_ShowFound(ITEM_MYTHRIL_BAG, 3);
+  // "Isaac got four Mythril Bags."
   FieldMessage_Show(MsgSolSanctumGotFourMythrilBags, 1);
   do {
     freeSlots = 2 * INVENTORY_SLOTS - Inventory_Count(ISAAC);
     freeSlots -= Inventory_Count(GARET);
 
     if (freeSlots <= 3) {
+      // "You have too many items. Will you drop something?"
       FieldMessage_Show(MsgSolSanctumTooManyItems, 1);
       if (ItemPicker_Run(&itemOwner, &itemSlot) != -1)
         Inventory_Discard(itemOwner, itemSlot);

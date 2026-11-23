@@ -44,6 +44,18 @@ ends. Pages list places in that order, and
 
 Evidence: Camelot: the area names in the game's text.
 
+### Prologue
+
+The prologue is the stormy night three years before the journey, played
+before the story proper. Isaac and Garet are children. Huge rocks fall
+across Vale's paths in the storm, Garet joins Isaac, and the elders hold
+back the Boulder on Mt. Aleph with their Psynergy. When the night ends the game says `Three
+years later...` and the journey begins. The prologue is a scene of its
+own, Vale on that night (`SceneId_ValePrologue`), which stands in for Vale
+while it lasts ([Scenes](src/scene/README.md)).
+
+Evidence: Camelot: the debug scene label PLOGV00.
+
 ### Psynergy and PP
 
 ![Isaac casts Growth in battle: light gathers around him, then a spiked vine bursts out of the ground under Ivan](https://alchemy.pascalpixel.com/abilities/growth.gif)
@@ -613,6 +625,19 @@ map's tiles steps through pictures the same way
 Evidence: SGL's PICTURE, the picture data a sprite shows; plain English,
 since the time's パターン and コマ each mean other things too.
 
+### Texture
+
+A texture is a drawing that a surface is painted with. As the surface is
+drawn, the texture is mapped across it, stretched and turned with it. The
+World Map's ground is one: the land is laid on a plane that tilts away from
+the camera, and each row of the screen reads the texture at its own scale
+([Field code](src/field/README.md#the-world-map-in-perspective)). A
+[picture](#picture) is shown by a [sprite](#sprite-and-oam) as it was
+drawn; a texture is painted onto the surface it covers and takes its shape.
+
+Evidence: plain English and the period tradition, texture mapping
+(テクスチャ); The Lost Age's code's `ModelTexture`.
+
 ### Palette number
 
 A drawing on the cartridge does not hold colours. It holds numbers, and a
@@ -665,7 +690,7 @@ of a dungeon, a set of rooms, or the World Map. A few are screens instead,
 such as the Title and the File Screen. There are 201, each a row of the
 list `gScenes`: Vale is one, and the Sanctum's hall another, which is why
 the screen fades between them. Each has a short label Camelot gave it
-(`TITLE`, `WORLD`, `PLOGV00` for Vale on the stormy night of the prologue)
+(`TITLE`, `WORLD`, `PLOGV00` for Vale on the stormy night of the [prologue](#prologue))
 ([Field](field.md#scenes-and-areas)).
 
 Evidence: Camelot: The Lost Age's developer test message 05746 heads a location name シーン.
@@ -979,7 +1004,7 @@ the code that draws it.
 ### Unit
 
 A unit is one fighter in a battle, on either side: Isaac is a unit, and so
-is each enemy. The game keeps the same sheet of facts for every one of
+is each enemy. The game keeps the same set of facts for every one of
 them, its stats, Psynergy, items, Djinn and ailments, which the code calls
 `struct Unit`. A unit in the party is a party member
 ([Game rules](src/game/README.md#the-unit)).

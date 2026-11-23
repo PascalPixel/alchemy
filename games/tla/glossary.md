@@ -48,6 +48,18 @@ ends. Pages list places in that order.
 
 Evidence: Camelot: the area names in the game's text.
 
+### Prologue
+
+The prologue is the part of a new game played before the title comes up
+and the game with Felix begins. After the story crawl, headed `Prologue
+from Book One`, has told what happened in The Broken Seal, Jenna and
+Kraden come out of Venus Lighthouse, Alex sends them west, and they cross
+the Suhalla Gate on their way to Idejima. The title then plays its intro once more
+(`TITLE_FROM_IDEJIMA`) ([Scenes](src/scene/README.md)).
+
+Evidence: the game: "Prologue from Book One"; Camelot: The Broken Seal's
+debug scene label PLOGV00.
+
 ### Psynergy and PP
 
 ![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
@@ -629,6 +641,21 @@ map's tiles steps through pictures the same way
 Evidence: SGL's PICTURE, the picture data a sprite shows; plain English,
 since the time's パターン and コマ each mean other things too.
 
+### Texture
+
+A texture is the drawing a model's faces, or rows of the
+[battle effects](#battle-effect)' canvas, are painted with. A model is a
+shape of flat faces a battle effect turns in three dimensions, such as the
+rings, columns and whirlpools of the summons. As the model is drawn, the
+texture is mapped across each face, stretched and turned with it, and it
+can scroll across it, so a ring seems to spin
+([Battle effects](src/battle_effect/README.md#models)). A
+[picture](#picture) is shown by a [sprite](#sprite-and-oam) as it was
+drawn; a texture is painted onto a model and takes the shape of its faces.
+
+Evidence: plain English and the period tradition, texture mapping
+(テクスチャ); the code's `ModelTexture`.
+
 ### Palette number
 
 A drawing on the cartridge does not hold colours. It holds numbers, and a
@@ -994,7 +1021,7 @@ Evidence: Camelot: the credits' "Battle".
 ### Unit
 
 A unit is one fighter in a battle, on either side: Felix is a unit, and so
-is each enemy. The game keeps the same sheet of facts for every one of
+is each enemy. The game keeps the same set of facts for every one of
 them, its stats, Psynergy, items, Djinn and ailments, which the code reads
 with `Unit_Get`. A unit in the party is a party member
 ([Game rules](src/game/README.md#the-unit)).

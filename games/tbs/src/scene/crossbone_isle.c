@@ -361,6 +361,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_PIRATE_SHIP) {
     return gCrossboneIsle_PirateShipEntrances;
   }
+  // The nine floors share the tail of the Pirate Ship's table.
   return &gCrossboneIsle_PirateShipEntrances[2];
 }
 

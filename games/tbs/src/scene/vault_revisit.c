@@ -70,13 +70,13 @@ extern s32 gVault_GirlRoundTheWellRoute[];
 extern struct SceneEntrance gVaultRevisit_Entrances[];
 extern u32 gVaultRevisit_Exits[];
 extern struct ActorPlacement gVaultRevisit_ActorPlacements[];
-extern u16 gVaultRevisit_GemOwnersHouseDoorCells[];
-extern u16 gVaultRevisit_ChildsHouseDoorCells[];
-extern u16 gVaultRevisit_InnDoorCells[];
-extern u16 gVaultRevisit_ItemShopDoorCells[];
-extern u16 gVaultRevisit_WeaponAndArmorShopDoorCells[];
-extern u16 gVaultRevisit_MayorsHouseDoorCells[];
-extern u16 gVaultRevisit_JailDoorCells[];
+extern u16 gVault_GemOwnersHouseDoorCells[];
+extern u16 gVault_ChildsHouseDoorCells[];
+extern u16 gVault_InnDoorCells[];
+extern u16 gVault_ItemShopDoorCells[];
+extern u16 gVault_WeaponAndArmorShopDoorCells[];
+extern u16 gVault_MayorsHouseDoorCells[];
+extern u16 gVault_JailDoorCells[];
 extern struct Trigger gVaultRevisit_Triggers[];
 
 /// The townspeople, the dog and Sap, standing where vault.c places them.
@@ -437,7 +437,7 @@ static void VaultRevisit_RingBell(void) {
 /// (25, 21)), the gem owner's, and goes in.
 static void VaultRevisit_EnterGemOwnersHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_GemOwnersHouseDoorCells, 56, 19);
+  MapGrid_PlayMapEdit(gVault_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHEAST);
 }
 
@@ -445,7 +445,7 @@ static void VaultRevisit_EnterGemOwnersHouse(void) {
 /// child's home, and goes in.
 static void VaultRevisit_EnterChildsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_ChildsHouseDoorCells, 50, 18);
+  MapGrid_PlayMapEdit(gVault_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTH);
 }
 
@@ -453,7 +453,7 @@ static void VaultRevisit_EnterChildsHouse(void) {
 /// in.
 static void VaultRevisit_EnterInn(void) {
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_InnDoorCells, 44, 17);
+  MapGrid_PlayMapEdit(gVault_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_REVISIT_TO_LOG_ROOMS_B_SOUTHWEST);
 }
 
@@ -465,7 +465,7 @@ static void VaultRevisit_EnterItemShop(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_ItemShopDoorCells, 54, 13);
+  MapGrid_PlayMapEdit(gVault_ItemShopDoorCells, 54, 13);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -480,7 +480,7 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_WeaponAndArmorShopDoorCells, 49, 10);
+  MapGrid_PlayMapEdit(gVault_WeaponAndArmorShopDoorCells, 49, 10);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -491,7 +491,7 @@ static void VaultRevisit_EnterWeaponAndArmorShop(void) {
 /// north-west (cell (7, 10)), and goes in.
 static void VaultRevisit_EnterMayorsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_MayorsHouseDoorCells, 38, 6);
+  MapGrid_PlayMapEdit(gVault_MayorsHouseDoorCells, 38, 6);
   Vault_WalkThroughExit(120, 144, VAULT_REVISIT_TO_LOG_ROOMS_B_NORTHWEST);
 }
 
@@ -505,7 +505,7 @@ static void VaultRevisit_EnterJail(void) {
   struct Sprite *sprite = actor->sprite;
 
   Sound_Play(SE_DOOR_OPEN);
-  MapGrid_PlayMapEdit(gVaultRevisit_JailDoorCells, 35, 9);
+  MapGrid_PlayMapEdit(gVault_JailDoorCells, 35, 9);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -742,33 +742,7 @@ struct ActorPlacement gVaultRevisit_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-u16 gVaultRevisit_GemOwnersHouseDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 4), MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
-
-u16 gVaultRevisit_ChildsHouseDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 4), MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
-
-u16 gVaultRevisit_InnDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 4), MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
-
-u16 gVaultRevisit_ItemShopDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(42, 48, 2, 2, 4), MAPGRID_ANIMATION_STEP(40, 48, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
-
-u16 gVaultRevisit_WeaponAndArmorShopDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(42, 46, 2, 2, 4), MAPGRID_ANIMATION_STEP(40, 46, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
-
-u16 gVaultRevisit_MayorsHouseDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 4), MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
-
-u16 gVaultRevisit_JailDoorCells[] = {
-    MAPGRID_ANIMATION_STEP(35, 33, 2, 2, 4), MAPGRID_ANIMATION_STEP(33, 33, 2, 2, 4), MAPGRID_ANIMATION_STEPS_END,
-};
+#include "shared/vault_door_cells.c"
 
 struct Trigger gVaultRevisit_Triggers[] = {
     { TRIGGER_EXIT, CELL_BEHAVIOR_VAULT_SOUTH_GATE, CONDITION_ALWAYS, VAULT_REVISIT_TO_WORLD_MAP_SOUTH },

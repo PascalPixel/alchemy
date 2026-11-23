@@ -37,8 +37,6 @@
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "item_ids.h"
-
-void Leader_CenterInCell(void);
 #include "system/io_reg.h"
 #include "system/dma.h"
 #include "system/io_write.h"
@@ -65,6 +63,9 @@ void Leader_CenterInCell(void);
 #include "field/field_effect.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "macros.h"
+
+void Leader_CenterInCell(void);
 
 /// The energy block pushed into its gap: lightning has struck it, and the
 /// path's grooves light up to the Hover pad beyond.
@@ -74,7 +75,9 @@ void Leader_CenterInCell(void);
 #define FLAG_GRAY_BLOCK_DROPPED 0xa0d
 /// For this visit: Lash has tied the rope between the two tightrope posts.
 #define FLAG_JUPITER_LIGHTHOUSE_ROPE_TIED FLAG_SCENE_TEMP_00
-#include "macros.h"
+/// Set while Felix stands on the button by the upper doorway, which holds the
+/// trapdoor open.
+#define FLAG_TRAPDOOR_OPEN FLAG_SCENE_TEMP_02
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -133,6 +136,8 @@ struct Actor *gLightSpriteActors[16] BSS_DATA;
 struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
+/// leader steps on.
 struct CellTarget gCrackedTiles BSS_DATA;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -169,6 +174,18 @@ enum { ENTRANCE_AFTER_THE_FIGHT = 77, ENTRANCE_ISAAC_AND_IVAN_FALL = 99 };
 
 /// The energy block's gap: the cell it drops into and lights the path from.
 enum { ENERGY_BLOCK_GAP_CELL_X = 63, ENERGY_BLOCK_GAP_CELL_Z = 15 };
+/// The path from the energy block's gap lit, and the Hover pad at its end.
+#define JupiterLighthouse_LightPathToHoverPad()                                \
+  (MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42),                           \
+   MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84),                            \
+   FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160),                   \
+                                MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_HOVER))
+/// The trapdoor's four columns in front of the upper doorway, west to east.
+enum { TRAPDOOR_WEST_COLUMN = 49 };
+/// The trapdoor shown open, and its cells left open to fall through.
+#define JupiterLighthouse_LeaveTrapdoorOpen()                                  \
+  (MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76),                            \
+   MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44))
 /// The terraces' own cell behaviors.
 enum JupiterLighthouseRoomMCellBehavior {
   /// The west walkway's cells (13, 9) to (20, 9), in the west whirlwind's
@@ -319,10 +336,7 @@ void JupiterLighthouse_FlashSky(void) {
         (BLEND_WEIGHT_MAX - (i >> 1)) | BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     System_Wait(1);
   }
-  MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
-  MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-  FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160), 2,
-                               CELL_BEHAVIOR_HOVER);
+  JupiterLighthouse_LightPathToHoverPad();
   PaletteFade_ApplySource(PALETTE_TINT_WARM, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_Interpolate(60);
@@ -340,7 +354,7 @@ void JupiterLighthouse_FlashSky(void) {
   MapGrid_SetShake(0, 0, 0);
 }
 
-extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
+extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 /// Nothing visible happens as Felix starts to push the energy block, by
 /// walking into it or with Move. The cell the block stands on is kept at its
@@ -356,9 +370,9 @@ void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
 }
 
 /// MapGrid_SetCellHeight, as the block's landing calls it.
-static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 a,
-                                                       s32 b) {
-  MapGrid_SetCellHeight(x, z, a, b);
+static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 layer,
+                                                       s32 height) {
+  MapGrid_SetCellHeight(x, z, layer, height);
 }
 
 /// The energy block, pushed or Moved three cells east into the gap at cell (63,
@@ -469,7 +483,7 @@ void JupiterLighthouse_OpenFloor(void) {
 
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED))
     return;
-  GameFlag_Set(FLAG_SCENE_TEMP_02);
+  GameFlag_Set(FLAG_TRAPDOOR_OPEN);
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_CHEST_OPEN);
@@ -481,13 +495,13 @@ void JupiterLighthouse_OpenFloor(void) {
   Event_Wait(6);
   MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
   x = FIELD_CELL(actor->x.fixed);
-  if (x == 49)
+  if (x == TRAPDOOR_WEST_COLUMN)
     spot = 1;
-  if (x == 50)
+  if (x == TRAPDOOR_WEST_COLUMN + 1)
     spot = 2;
-  if (x == 51)
+  if (x == TRAPDOOR_WEST_COLUMN + 2)
     spot = 3;
-  if (x == 52)
+  if (x == TRAPDOOR_WEST_COLUMN + 3)
     spot = 4;
   if (actor->y.fixed != 0)
     spot = 0;
@@ -563,7 +577,7 @@ void JupiterLighthouse_OpenFloor(void) {
 void JupiterLighthouse_CloseFloor(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED) != 0)
     return;
-  Event_ClearFlag(FLAG_SCENE_TEMP_02);
+  Event_ClearFlag(FLAG_TRAPDOOR_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_CHEST_CLOSE);
@@ -740,9 +754,10 @@ extern u32 gJupiterLighthouse_ShebaArrivesEastScript[];
 extern u32 gJupiterLighthouse_KarstStepsUpScript[];
 
 /// Felix comes out by the aerie to find Jenna, Sheba, Piers and Kraden
-/// watching the fight, and the party is placed to watch with them; arg chooses
-/// between the two ways of arriving.
-void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
+/// watching the fight, and the party is placed to watch with them. `west`
+/// brings them out on the west side of the terrace; the scene only ever passes
+/// it set, so the east side's scripts go unused.
+void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
   struct Actor *actor;
   s32 angle;
 
@@ -755,7 +770,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_Wait(26);
   Event_PlaySound(SE_FLOOR_SWITCH);
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_FelixLooksAroundScript);
-  if (arg != 0) {
+  if (west != 0) {
     // "Ahhhh!!!" and "Mia!"
     FieldEvent_ShowTwoMessagesAndWait(ACTOR_MIA, 20, 9, 15, 8, ACTOR_GARET, 20,
                                       2, 15, 1, 25);
@@ -825,7 +840,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(ACTOR_FELIX, 1.2);
-  Actor_SetScript(ACTOR_FELIX, arg != 0
+  Actor_SetScript(ACTOR_FELIX, west != 0
                                    ? gJupiterLighthouse_FelixArrivesWestScript
                                    : gJupiterLighthouse_FelixArrivesEastScript);
   FieldEvent_Wait(30);
@@ -844,19 +859,19 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_SetSpeed(ACTOR_SHEBA, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetScript(ACTOR_KRADEN,
-                  arg != 0 ? gJupiterLighthouse_KradenArrivesWestScript
-                           : gJupiterLighthouse_KradenArrivesEastScript);
-  Actor_SetScript(ACTOR_PIERS, arg != 0
+                  west != 0 ? gJupiterLighthouse_KradenArrivesWestScript
+                            : gJupiterLighthouse_KradenArrivesEastScript);
+  Actor_SetScript(ACTOR_PIERS, west != 0
                                    ? gJupiterLighthouse_PiersArrivesWestScript
                                    : gJupiterLighthouse_PiersArrivesEastScript);
-  Actor_SetScript(ACTOR_JENNA, arg != 0
+  Actor_SetScript(ACTOR_JENNA, west != 0
                                    ? gJupiterLighthouse_JennaArrivesWestScript
                                    : gJupiterLighthouse_JennaArrivesEastScript);
-  Actor_SetScript(ACTOR_SHEBA, arg != 0
+  Actor_SetScript(ACTOR_SHEBA, west != 0
                                    ? gJupiterLighthouse_ShebaArrivesWestScript
                                    : gJupiterLighthouse_ShebaArrivesEastScript);
   FieldCamera_SetSpeed(0.5);
-  if (arg != 0) {
+  if (west != 0) {
     FieldCamera_MoveTo(677, -64, 287, 1);
     FieldCamera_WaitForArrival();
   } else {
@@ -1788,13 +1803,11 @@ s32 Scene_Initialize(void) {
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(32);
   actor->groundHeight = toFIXED(32);
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
-    MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
-    MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
+  if (Event_GetFlag(FLAG_TRAPDOOR_OPEN)) {
+    JupiterLighthouse_LeaveTrapdoorOpen();
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED)) {
-    MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
-    MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);
+    JupiterLighthouse_LeaveTrapdoorOpen();
     Actor_SetPosition(ACTOR_GRAY_BLOCK, 0, 0);
     if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL)) {
       if (!Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
@@ -1847,10 +1860,7 @@ s32 Scene_PrepareMap(void) {
   actor = Actor_Get(ACTOR_ENERGY_BLOCK);
   if (Event_GetFlag(FLAG_ENERGY_BLOCK_IN_GAP)) {
     Actor_SetPosition(ACTOR_ENERGY_BLOCK, 1016, 248);
-    MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
-    MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);
-    FieldMapGrid_SetCellBehavior(toFIXED(1040), toFIXED(160), 2,
-                                 CELL_BEHAVIOR_HOVER);
+    JupiterLighthouse_LightPathToHoverPad();
   }
   actor->motionFlags = 0;
   Call4(MapGrid_SetCellHeight, actor->x.fixed, actor->z.fixed, 0, -6);
@@ -1898,10 +1908,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -1914,6 +1920,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -1930,8 +1937,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTile_Step watches, and the cell it copies over the one the
-/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
@@ -1948,9 +1953,6 @@ struct CellTargetEntry;
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options);
 
 #include "shared/cracked_tile_drop_in.h"
 
@@ -1963,46 +1965,46 @@ void GameFlag_SetByte(s32 flag, s32 value);
 // clang-format off
 u32 gJupiterLighthouse_AgatioStepsUpScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 u32 gJupiterLighthouse_KarstStepsUpScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 u32 gJupiterLighthouse_KarstTurnsScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 u32 gJupiterLighthouse_KarstFacesSouthScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_END,
 };
 
 u32 gJupiterLighthouse_AgatioFacesEastScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_EAST),
     SC_END,
 };
 
 u32 gJupiterLighthouse_IsaacFacesWestScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_END,
 };
 
 u32 gJupiterLighthouse_IvanFacesNorthScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
@@ -2011,7 +2013,7 @@ u32 gJupiterLighthouse_FelixWaitsScript[] = {
     SC_SYNC,
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
@@ -2019,27 +2021,39 @@ u32 gJupiterLighthouse_KradenWaitsScript[] = {
     SC_SYNC,
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
-u32 gJupiterLighthouse_PiersStepsUpScript[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(699, 170), SC_SYNC,                
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ANIMATION(1),              
-      SC_END,                                                                  
-  };
+u32 gJupiterLighthouse_PiersStepsUpScript[] = {
+    SC_SYNC,
+    SC_MOVE_XZ(699, 170),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
-u32 gJupiterLighthouse_ShebaStepsUpScript[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(679, 170), SC_SYNC,                
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ANIMATION(1),              
-      SC_END,                                                                  
-  };
+u32 gJupiterLighthouse_ShebaStepsUpScript[] = {
+    SC_SYNC,
+    SC_MOVE_XZ(679, 170),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
-u32 gJupiterLighthouse_JennaStepsUpScript[] = {                                                               
-      SC_SYNC,    SC_MOVE_XZ(659, 170), SC_SYNC,                
-      SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTHEAST), SC_ANIMATION(1),              
-      SC_END,                                                                  
-  };
+u32 gJupiterLighthouse_JennaStepsUpScript[] = {
+    SC_SYNC,
+    SC_MOVE_XZ(659, 170),
+    SC_SYNC,
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 // clang-format on
 
 extern u32 gFieldEffect_LongScript[];
@@ -2057,12 +2071,19 @@ LATE_DATA s32 gJupiterLighthouse_ShowGustScript[] = {
 #define SCENE_ENTRANCES_SECTION LATE_DATA
 #include "shared/scene_entrances_default.c"
 
-LATE_DATA u32 gSceneExits[] = {                                                        
-      SCENE_EXITS(JupiterLighthouseRoomM),         SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_M_NORTH),    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_M_SOUTHWEST), 
-      SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_M_SOUTHEAST),  SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST, JupiterLighthouseRoomRedKey, JUPITER_LIGHTHOUSE_ROOM_RED_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_M_WEST),    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST, JupiterLighthouseRoomRedKey, JUPITER_LIGHTHOUSE_ROOM_RED_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_M_EAST),  
-      SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY, JupiterLighthouseRoomBlueKey, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_M),   SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_WHORL, JupiterLighthouseWhorl, JUPITER_LIGHTHOUSE_WHORL_FROM_JUPITER_LIGHTHOUSE_ROOM_M), SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_WEST, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_M_WEST), 
-      SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_M_EAST), SCENE_EXITS_END,                                
-  };
+LATE_DATA u32 gSceneExits[] = {
+    SCENE_EXITS(JupiterLighthouseRoomM),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_M_NORTH),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_M_SOUTHWEST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST, JupiterLighthouseRoomErinyesTunicChest, JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_FROM_JUPITER_LIGHTHOUSE_ROOM_M_SOUTHEAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST, JupiterLighthouseRoomRedKey, JUPITER_LIGHTHOUSE_ROOM_RED_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_M_WEST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST, JupiterLighthouseRoomRedKey, JUPITER_LIGHTHOUSE_ROOM_RED_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_M_EAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY, JupiterLighthouseRoomBlueKey, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_M),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_WHORL, JupiterLighthouseWhorl, JUPITER_LIGHTHOUSE_WHORL_FROM_JUPITER_LIGHTHOUSE_ROOM_M),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_WEST, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_M_WEST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST, JupiterLighthouseRoomLockedDoors, JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_M_EAST),
+    SCENE_EXITS_END,
+};
 
 LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SEEDLING, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2099,22 +2120,22 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
 };
 
 LATE_DATA struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_WHORL, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_WHORL},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_WEST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_M_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_EAST},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, CELL_BEHAVIOR_WEST_WHIRLWIND_PATH, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideUpperWhirlwind)},
     {TRIGGER_STEP, CELL_BEHAVIOR_EAST_WHIRLWIND_PATH, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_TRAPDOOR_BUTTON, FLAG_SCENE_TEMP_02, EVENT(JupiterLighthouse_OpenFloor)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_OFF_TRAPDOOR_BUTTON, IF_FLAG_SET(FLAG_SCENE_TEMP_02), EVENT(JupiterLighthouse_CloseFloor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRAPDOOR_BUTTON, FLAG_TRAPDOOR_OPEN, EVENT(JupiterLighthouse_OpenFloor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_OFF_TRAPDOOR_BUTTON, IF_FLAG_SET(FLAG_TRAPDOOR_OPEN), EVENT(JupiterLighthouse_CloseFloor)},
     {TRIGGER_TALK, ACTOR_ISAAC, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {TRIGGER_TALK, ACTOR_SHEBA, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
@@ -2149,20 +2170,20 @@ LATE_DATA u32 gJupiterLighthouse_MiaScript[] = {
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_ANIMATION(9),
     SC_WAIT(120),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(120),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 LATE_DATA u32 gJupiterLighthouse_IsaacFightsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(60),
     SC_MOVE_XZ(737, 202),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WAIT(4),
     SC_MOVE_XZ(776, 202),
     SC_CALL(JupiterLighthouse_PlayRandomBlowSound),
@@ -2170,13 +2191,13 @@ LATE_DATA u32 gJupiterLighthouse_IsaacFightsScript[] = {
 };
 
 LATE_DATA u32 gJupiterLighthouse_AgatioFightsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_SYNC,
     SC_ANIMATION(9),
     SC_WAIT(60),
     SC_MOVE_XZ(776, 202),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WAIT(4),
     SC_MOVE_XZ(737, 202),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -2185,18 +2206,18 @@ LATE_DATA u32 gJupiterLighthouse_AgatioFightsScript[] = {
 LATE_DATA u32 gJupiterLighthouse_IvanFightsScript[] = {
     SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_MOVE_XZ(731, 213),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WAIT(4),
     SC_MOVE_XZ(731, 232),
     SC_CALL(JupiterLighthouse_PlayRandomBlowSound),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(53),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 LATE_DATA u32 gJupiterLighthouse_KarstFightsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_CALL(JupiterLighthouse_StopFacingMotion),
     SC_MOVE_XZ(731, 232),
     SC_WAIT(4),
@@ -2207,13 +2228,17 @@ LATE_DATA u32 gJupiterLighthouse_KarstFightsScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-LATE_DATA u32 gJupiterLighthouse_FelixLooksAroundScript[] = {                                                               
-      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(20),                        
-      SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(20),                        
-      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(20),                        
-      SC_SET(SW_FACING, FACING_SOUTHEAST), SC_WAIT(20),                        
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+LATE_DATA u32 gJupiterLighthouse_FelixLooksAroundScript[] = {
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(20),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
 LATE_DATA u32 gJupiterLighthouse_FelixArrivesWestScript[] = {
     SC_ANIMATION(5),
@@ -2221,7 +2246,7 @@ LATE_DATA u32 gJupiterLighthouse_FelixArrivesWestScript[] = {
     SC_SYNC,
     SC_MOVE_XZ(744, 328),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
@@ -2232,46 +2257,46 @@ LATE_DATA u32 gJupiterLighthouse_FelixArrivesEastScript[] = {
     SC_SYNC,
     SC_MOVE_XZ(896, 328),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_END,
 };
 
-LATE_DATA u32 gJupiterLighthouse_KradenArrivesWestScript[] = {                                                               
-      SC_ANIMATION(2),                                                              
-      SC_MOVE_XZ(740, 312),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),                           
-      SC_END,                                                                  
-  };
+LATE_DATA u32 gJupiterLighthouse_KradenArrivesWestScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE_XZ(740, 312),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
-LATE_DATA u32 gJupiterLighthouse_KradenArrivesEastScript[] = {                                                               
-      SC_ANIMATION(2),                                                              
-      SC_MOVE_XZ(900, 312),                                     
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),                       
-      SC_END,                                                                  
-  };
+LATE_DATA u32 gJupiterLighthouse_KradenArrivesEastScript[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE_XZ(900, 312),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_END,
+};
 
-LATE_DATA u32 gJupiterLighthouse_PiersArrivesWestScript[] = {                                                               
-      SC_ANIMATION(5),                                                              
-      SC_MOVE_XZ(724, 312),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),                           
-      SC_END,                                                                  
-  };
+LATE_DATA u32 gJupiterLighthouse_PiersArrivesWestScript[] = {
+    SC_ANIMATION(5),
+    SC_MOVE_XZ(724, 312),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
-LATE_DATA u32 gJupiterLighthouse_PiersArrivesEastScript[] = {                                                               
-      SC_ANIMATION(5),                                                              
-      SC_MOVE_XZ(916, 312),                                     
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),                       
-      SC_END,                                                                  
-  };
+LATE_DATA u32 gJupiterLighthouse_PiersArrivesEastScript[] = {
+    SC_ANIMATION(5),
+    SC_MOVE_XZ(916, 312),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
+    SC_END,
+};
 
 LATE_DATA u32 gJupiterLighthouse_JennaArrivesWestScript[] = {
     SC_ANIMATION(5),
@@ -2280,7 +2305,7 @@ LATE_DATA u32 gJupiterLighthouse_JennaArrivesWestScript[] = {
     SC_ANIMATION(5),
     SC_MOVE_XZ(740, 344),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
@@ -2292,19 +2317,19 @@ LATE_DATA u32 gJupiterLighthouse_JennaArrivesEastScript[] = {
     SC_ANIMATION(5),
     SC_MOVE_XZ(900, 344),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_END,
 };
 
-LATE_DATA u32 gJupiterLighthouse_ShebaArrivesWestScript[] = {                                                               
-      SC_ANIMATION(5),                                                              
-      SC_MOVE_XZ(708, 328),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),                           
-      SC_END,                                                                  
-  };
+LATE_DATA u32 gJupiterLighthouse_ShebaArrivesWestScript[] = {
+    SC_ANIMATION(5),
+    SC_MOVE_XZ(708, 328),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_END,
+};
 
 LATE_DATA u32 gJupiterLighthouse_ShebaArrivesEastScript[] = {
     SC_ANIMATION(5),
@@ -2313,7 +2338,7 @@ LATE_DATA u32 gJupiterLighthouse_ShebaArrivesEastScript[] = {
     SC_ANIMATION(5),
     SC_MOVE_XZ(924, 328),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_END,
 };
@@ -2325,7 +2350,7 @@ LATE_DATA u32 gJupiterLighthouse_GatherAtFelixScript[] = {
 };
 
 LATE_DATA u32 gJupiterLighthouse_WalkToAerieScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(706, 172),
     SC_SYNC,
     SC_MOVE_XZ(682, 151),
@@ -2350,7 +2375,9 @@ LATE_DATA s32 gPaletteCycleFrame = -1;
 LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 

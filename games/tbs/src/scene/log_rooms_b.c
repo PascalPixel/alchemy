@@ -13,12 +13,11 @@
 ///
 /// The rooms, by entrance:
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
-///   house. He says a cat ate his precious stone, and his wife does not believe
-///   him. Arriving here sets him on the floor and takes the stone off his
-///   table. The 4-by-3 block of cells copied from (0, 120) to (8, 67) lies
-///   under the window of the map grid's layer 2, at the table. It draws the
-///   table bare, where the first visit's house (log_rooms_a.c) draws the
-///   sparkling stone on it.
+///   house. He wails that a cat ate his precious stone, and his wife says she
+///   saw the cat get up on the table and paw it. The big pale blue gem that
+///   stood on the round table in front of him on the first visit is gone:
+///   Scene_Initialize draws the table bare from a copy kept at map cell
+///   (0, 120) of the overhead layer.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
 ///   doubts the thieves were from Lunpa.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST and
@@ -37,13 +36,12 @@
 /// The Bones are how the party gets the dog in Vault to show its hidden
 /// passage. The girl's offer gives one Bone each time it is accepted.
 /// FLAG_VAULT_BONE_RECEIVED, shared with log_rooms_a.c, changes only her
-/// words. Searching the floor Bone (CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL,
-/// Vault_FindBone) gives another.
+/// words. Searching the Bone on the floor beside her
+/// (CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL, Vault_FindBone) gives another.
 ///
-/// While the leader stands beside the floor Bone,
-/// Vault_UpdateBoneProximityFlag sets FLAG_VAULT_LEADER_BESIDE_BONE. That
-/// disables her talk row, so that the A button there searches instead of
-/// talking.
+/// While Isaac stands beside that Bone, Vault_UpdateBoneProximityFlag sets
+/// FLAG_VAULT_LEADER_BESIDE_BONE, which turns her talk row off, so that the A
+/// button there picks the Bone up instead of talking to her.
 ///
 /// The shopkeepers open their shops only when spoken to across the counter.
 ///
@@ -150,23 +148,29 @@ static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
   LogRoomsB_ShowStandingActorDialogue(actorId);
 }
 
-/// The wife thought she saw the cat paw the gemstone on the table.
+/// In the gem owner's house, his wife says she saw the cat get up on the table
+/// and paw the gemstone, and then it was gone.
 static void LogRoomsB_WifeSawCatTakeGem(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE, MsgVaultThoughtSawCatGetUp);
 }
 
-/// The boy doubts the thieves were from Lunpa after all.
+/// In the house of the burly grey-haired man, a small boy points out that
+/// Dodonpa's henchmen never attacked Vault, so maybe the thieves were not from
+/// Lunpa after all.
 static void LogRoomsB_BoyDoubtsThievesWereFromLunpa(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_BOY, MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
 
-/// In the item shop, the husband would like to see Colosso in Tolbi once more
-/// before he dies.
+/// In the item shop, an old man with a cane says it is near time for Colosso to
+/// start in Tolbi, and he would like to go once more before he dies.
 static void LogRoomsB_HusbandLongsForColosso(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COLOSSO_HUSBAND, MsgVaultItsNearTimeForColosso);
 }
 
-/// In his house, the mayor welcomes Isaac back.
+/// The first time Isaac speaks to Vault's mayor after reaching Kalay, the
+/// mayor welcomes him back and warns that the thieves he caught have escaped
+/// from jail. Asked whether they have run into them, a Yes has him say to
+/// watch out for suspicious shadows, a No that it's good, but be careful.
 static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
@@ -193,7 +197,9 @@ static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_End();
 }
 
-/// After the welcome: those thieves really wanted revenge, so take care.
+/// Spoken to again after his welcome, Vault's mayor tells the party that the
+/// escaped thieves really wanted revenge on them, so they should take good care
+/// of themselves.
 static void LogRoomsB_WarnOfThievesRevenge(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_MAYOR, MsgVaultThoseGuysReallyWantedRevenge);
 }
@@ -204,8 +210,10 @@ static void LogRoomsB_UnusedOfferLeftoverBones(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
-/// The girl at the inn offers leftover bones from dinner, or more of them once
-/// one was taken (FLAG_VAULT_BONE_RECEIVED).
+/// At Vault's inn, the girl at the inn offers Isaac leftover bones from dinner,
+/// or asks "You want more bones?" once he has had one
+/// (FLAG_VAULT_BONE_RECEIVED). Accepting gives a Bone, unless his bags are full
+/// and she calls him a greedy lad.
 static void LogRoomsB_OfferBones(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
@@ -249,8 +257,8 @@ static void LogRoomsB_OfferBones(void) {
   Event_End();
 }
 
-/// Mind Read on the mayor before the welcome: he notices the party and
-/// welcomes Isaac back.
+/// Mind Read on Vault's mayor before he has welcomed Isaac back: he notices the
+/// party, and his welcome plays as if Isaac had spoken to him.
 static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
@@ -263,12 +271,13 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   LogRoomsB_WelcomeIsaacBack();
   paused = &Actor_Get(ACTOR_MAYOR)->paused;
   *paused = unpaused;
-  Actor_SetMovementTypeById(ACTOR_MAYOR, 2);
+  Actor_SetMovementTypeById(ACTOR_MAYOR, MOVEMENT_TYPE_WANDER);
 }
 
 #include "shared/vault_bone.c"
 
-/// Across the counter the weapon shop opens.
+/// Spoken to across the counter, Vault's weapon merchant opens his shop. From
+/// anywhere else he talks of the river of fire on the other side of Mt. Aleph.
 static void LogRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -286,8 +295,9 @@ static void LogRoomsB_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Across the counter the armor shop opens.
-/// From elsewhere the merchant says the eruption split the continent in two.
+/// Spoken to across the counter, Vault's armor merchant opens his shop. From
+/// anywhere else he says the volcano on Mt. Aleph has torn the continent in
+/// two.
 static void LogRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
@@ -305,8 +315,8 @@ static void LogRoomsB_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Across the counter the item shop opens.
-/// From elsewhere the merchant has had few customers lately.
+/// Spoken to across the counter, Vault's item merchant opens her shop. From
+/// anywhere else she says they haven't been getting many customers lately.
 static void LogRoomsB_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
@@ -324,7 +334,8 @@ static void LogRoomsB_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Across the counter the inn opens.
+/// Spoken to across the counter, Vault's innkeeper offers a room. From anywhere
+/// else he grumbles that there is nothing to do.
 static void LogRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -342,7 +353,9 @@ static void LogRoomsB_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// Mind Read on the girl at the inn shows what is on her mind.
+/// Mind Read on the girl at the inn: before she has given Isaac a Bone she is
+/// tempted to taste the cooking; after, she thinks Isaac really likes bones and
+/// wonders whether he has a calcium deficiency.
 static void LogRoomsB_ReadBoneGiverMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
@@ -354,10 +367,12 @@ static void LogRoomsB_ReadBoneGiverMind(void) {
   Event_End();
 }
 
-/// Returns the talk, Psynergy, examine trigger and exit table.
+/// The rooms' doors, people, Mind Reads and the things to search.
 const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 
-/// Opens the room through a window transition.
+/// Opens the room entered with the window transition. In the gem owner's house
+/// the table is drawn bare; at the inn the Bone is set on the floor beside the
+/// girl at the inn.
 s32 Scene_Initialize(void) {
   s32 entrance;
 
@@ -428,7 +443,7 @@ u32 gLogRoomsB_Exits[] = {
 struct ActorPlacement gLogRoomsB_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0, MOVEMENT_TYPE_STAND,
         160, 0, 136, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, 0, 3,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, 0, MOVEMENT_TYPE_WANDER_NEAR,
         152, 0, 72, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0, MOVEMENT_TYPE_STAND,
         456, 0, 184, FACING_EAST, TALK_FACING_PARTY, 0),

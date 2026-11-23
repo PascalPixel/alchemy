@@ -1,11 +1,14 @@
 /// @file
-/// Ground particles, motes, sparkles and lightning on the field.
+/// The weather of the field: the rain splashing round the leader and the
+/// lightning of the storm over Vale, the sparkles of light in Sol Sanctum, and
+/// rising motes of light that no scene starts.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 
-/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
-/// five halfwords each), played from the last down to the first.
+/// The frames of a raindrop's splash on the ground
+/// (gFieldEffect_GroundParticleFrames, five halfwords each), played from the
+/// last down to the first.
 #define GROUND_PARTICLE_FRAMES 16
 
 /// mote.png's 16 by 16 pictures, four tiles each: two of each size, the
@@ -15,7 +18,8 @@
 #define MOTE_MEDIUM 2
 #define MOTE_SMALL 4
 
-/// Task: animates the ground particles.
+/// Task of the rain: each drop splashes on the ground and starts again at a new
+/// spot within 128 pixels of the leader.
 void Weather_UpdateRain(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct WeatherWork *work = gWeatherWork;
@@ -106,9 +110,9 @@ void Weather_UpdateLightning(void) {
   }
 }
 
-/// Starts the ground particles (Weather_UpdateRain) with SE_AMBIENT_WATER:
-/// loads their tiles and puts 32 of them under the leader with staggered
-/// timers, drawn semi-transparent.
+/// Starts the rain (Weather_UpdateRain) with its sound, SE_AMBIENT_WATER: loads
+/// the splash tiles and puts 32 drops under the leader with staggered timers,
+/// drawn semi-transparent.
 void Weather_StartRain(void) {
   struct WeatherWork *work;
   s32 *leader;
@@ -157,7 +161,9 @@ union ParticleLinkWord {
   void *link;
 };
 
-/// Task: the floating motes.
+/// Task of the motes of light: each rises and shrinks for 120 frames, then
+/// starts again within 128 pixels of the leader, eight new ones a frame at
+/// most.
 void FieldMotes_Update(void) {
   struct WeatherWork *work = gWeatherWork;
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -263,7 +269,7 @@ void FieldMotes_Start(void) {
     mote->positionZ = z;
     mote->positionY = toFIXED(
         MapGrid_GetTerrainHeightFar(0, FIXEDtoINT((s32)p), FIXEDtoINT(z)));
-    // Staggered as the ground particles are.
+    // Staggered as the raindrops are.
     mote->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     mote++;
   }
@@ -273,7 +279,8 @@ void FieldMotes_Start(void) {
   Task_Add(FieldMotes_Update, TASK_PASS_FRAME);
 }
 
-/// Task: the sparkles.
+/// Task of the sparkles: now and then a burst of up to four twinkles on one
+/// spot within 128 pixels of the leader.
 void FieldEffect_UpdateSparkles(void) {
   struct WeatherWork *work;
   u32 spawned;
@@ -407,7 +414,7 @@ void FieldEffect_InitializeSparkles(void) {
     sparkle->positionZ = 0;
     sparkle->positionY = toFIXED(
         MapGrid_GetTerrainHeightFar(0, FIXEDtoINT((s32)attr), FIXEDtoINT(z)));
-    // Staggered as the ground particles are.
+    // Staggered as the raindrops are.
     sparkle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     i++;
     sparkle++;

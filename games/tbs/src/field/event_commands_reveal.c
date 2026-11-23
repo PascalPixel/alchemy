@@ -1,5 +1,6 @@
 /// @file
-/// Reveal.
+/// Reveal: the world turns grey but for a rippling window round the leader,
+/// which ends when the leader walks out of it or its time runs out.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"

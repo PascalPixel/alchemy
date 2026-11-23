@@ -72,7 +72,7 @@ void AquaRock_DrawRisingBubbles(void);
 void AquaRock_DrawFallingBubbles(void);
 void AquaRock_DrawBubbles(void);
 
-extern u32 gAquaRock_SplashScript[];
+extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 /// The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s).
 extern const u8 gAquaRock_MarkerTiles[];
@@ -264,7 +264,7 @@ struct Actor;
 void AquaRock_SetSparkleAnchor(s32 id);
 void AquaRock_SetBubbleAnchor(s32 id);
 void AquaRock_FlowWithStream(void);
-void AquaRock_SpawnSplash(struct Actor *actor);
+void Actor_SpawnWadingSplash(struct Actor *actor);
 void AquaRock_AddMoaiWater(s32 id);
 void Actor_EmitWaterDrop(struct Actor *actor);
 
@@ -757,7 +757,7 @@ void AquaRock_RideStreamUp(void) {
     ahead.z = leader->z.fixed + toFIXED(2);
     result = MapGrid_CheckCollision(leader, &ahead);
     if ((gFrameCount & 4) == 0)
-      AquaRock_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -768,7 +768,7 @@ void AquaRock_RideStreamUp(void) {
       do
         wait(1);
       while (leader->y.fixed != leader->groundHeight);
-      AquaRock_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       wait(3);
       return;
@@ -785,13 +785,13 @@ void AquaRock_RideStreamUp(void) {
       leader->motionFlags = 0;
       Actor_SetSpriteFlags(leader, 0);
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
-      AquaRock_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
       Event_Wait(5);
       for (i = 0; i < 60; i++) {
         leader->y.fixed += toFIXED(2);
         leader->facing += TRIG_TURN / 16;
         if (Random16() <= 4095)
-          AquaRock_SpawnSplash(leader);
+          Actor_SpawnWadingSplash(leader);
         wait(1);
       }
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
@@ -1045,7 +1045,7 @@ void AquaRock_ArriveFromInside(void) {
     actor->facing = angle;
     wait(1);
   }
-  AquaRock_SpawnSplash(actor);
+  Actor_SpawnWadingSplash(actor);
   actor->motionFlags = saved;
   actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -1080,7 +1080,7 @@ void AquaRock_ArriveUpStream(void) {
     actor->facing = angle;
     wait(1);
   }
-  AquaRock_SpawnSplash(actor);
+  Actor_SpawnWadingSplash(actor);
   actor->motionFlags = saved;
   actor->velocityY = toFIXED(12);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -1338,26 +1338,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// A splash at the actor's feet, on its sprite's priority.
-void AquaRock_SpawnSplash(struct Actor *actor) {
-  struct Actor *child = Import_ActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
-                                           actor->y.fixed + toFIXED(4),
-                                           actor->z.fixed + toFIXED(4));
-  struct FieldSprite *parentSprite = actor->sprite;
-
-  if (child != 0) {
-    struct FieldSprite *sprite = child->sprite;
-
-    child->groundHeight = actor->groundHeight;
-    Actor_StartScript(child, gAquaRock_SplashScript);
-    child->motionFlags = 0;
-    if (sprite != 0) {
-      Sprite_StartAnimation(sprite, 1);
-      sprite->flags = 0;
-      sprite->priority = parentSprite->priority;
-    }
-  }
-}
+#include "shared/actor_spawn_wading_splash.h"
 
 #include "shared/actor_emit_water_drop.h"
 
@@ -1388,7 +1369,7 @@ void AquaRock_FlowWithStream(void) {
   position[2] = leader->z.fixed + toFIXED(2);
   result = MapGrid_CheckCollision(leader, position);
   if ((gFrameCount & 4) == 0)
-    AquaRock_SpawnSplash(leader);
+    Actor_SpawnWadingSplash(leader);
   if (result < 0) {
     Actor_SetAttachedEffect(owner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1399,7 +1380,7 @@ void AquaRock_FlowWithStream(void) {
     do {
       wait(1);
     } while (leader->y.fixed != leader->groundHeight);
-    AquaRock_SpawnSplash(leader);
+    Actor_SpawnWadingSplash(leader);
     Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
     wait(3);
     return;
@@ -1466,7 +1447,7 @@ void AquaRock_SinkInside(s32 exit) {
     angle += TRIG_TURN / 16;
     actor->facing = angle;
     if ((i & 7) == 0)
-      AquaRock_SpawnSplash(Actor_GetById(ACTOR_WAY_INSIDE));
+      Actor_SpawnWadingSplash(Actor_GetById(ACTOR_WAY_INSIDE));
     wait(1);
   }
   Event_End();
@@ -1809,7 +1790,7 @@ s32 gAquaRock_SlowFishScript[] = {
 };
 
 /// A splash's script: it shows for 20 frames, then is released.
-u32 gAquaRock_SplashScript[] = {
+u32 gWadingSplash_Script[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };

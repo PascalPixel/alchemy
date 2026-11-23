@@ -155,7 +155,7 @@ void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
 void ApojiiIslands_InitializeHaze(void);
 void ApojiiIslands_EnterSeaOfTimeIsletHouse(void);
-void ApojiiIslands_SpawnSplash(struct Actor *actor);
+void Actor_SpawnWadingSplash(struct Actor *actor);
 s32 Actor_EmitMist(struct Actor *actor);
 void Leader_RiseFromWater(void);
 void ApojiiIslands_DrawCellMarkers(void);
@@ -219,7 +219,7 @@ u16 gApojiiIslands_UpperScrollX BSS_DATA;
 u16 gApojiiIslands_LowerScrollX BSS_DATA;
 /// The markers drawn over the spring once the Aqua Stone is woken.
 struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
-extern u32 gApojiiIslands_SplashScript[];
+extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 
 /// Creates an actor of `kind` at a point (Import_ActorCreate).
@@ -886,28 +886,7 @@ void ApojiiIslands_EnterSeaOfTimeIsletHouse(void) {
 // jumps; a render of Felix walking north into one would settle it.
 void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
-/// A splash at the actor's feet, on its sprite's priority.
-void ApojiiIslands_SpawnSplash(struct Actor *actor) {
-  struct Actor *child;
-  struct FieldSprite *parent;
-  struct FieldSprite *sprite;
-
-  child = (FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
-                             actor->y.fixed + toFIXED(4),
-                             actor->z.fixed + toFIXED(4)));
-  parent = actor->sprite;
-  if (child != NULL) {
-    sprite = child->sprite;
-    child->groundHeight = actor->groundHeight;
-    Actor_StartScript(child, gApojiiIslands_SplashScript);
-    child->motionFlags = 0;
-    if (sprite != NULL) {
-      Sprite_StartAnimation(sprite, 1);
-      sprite->flags = 0;
-      sprite->priority = parent->priority;
-    }
-  }
-}
+#include "shared/actor_spawn_wading_splash.h"
 
 #include "shared/actor_emit_water_drop.h"
 
@@ -928,7 +907,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
     position[2] = leader->z.fixed + toFIXED(2);
     result = MapGrid_CheckCollision(leader, position);
     if ((gFrameCount & 4) == 0)
-      ApojiiIslands_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -939,7 +918,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
       do {
         System_Wait(1);
       } while (leader->y.fixed != leader->groundHeight);
-      ApojiiIslands_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
       Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
       System_Wait(3);
     } else {
@@ -997,7 +976,7 @@ UNUSED void Leader_SpinAway(s32 entrance) {
     angle = leader->facing;
     leader->facing = angle + TRIG_TURN / 16;
     if ((i & 7) == 0)
-      ApojiiIslands_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
+      Actor_SpawnWadingSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
   }
   Event_End();
@@ -1236,7 +1215,7 @@ void ApojiiIslands_SetSparkleAnchor(s32 id) {
 #include "shared/field_effect_duration_scripts.c"
 
 /// A splash's script: it shows for 20 frames, then is released.
-u32 gApojiiIslands_SplashScript[] = {
+u32 gWadingSplash_Script[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };

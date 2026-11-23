@@ -122,7 +122,7 @@ void Actor_StartScript(struct Actor *actor, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
 void Field_TryJumpForward(void);
-void AquaRockInside_SpawnSplash(struct Actor *actor);
+void Actor_SpawnWadingSplash(struct Actor *actor);
 s32 Actor_EmitMist(struct Actor *actor);
 
 void AquaRockInside_DrainStream(void);
@@ -147,7 +147,7 @@ struct PillarWork gAquaRockInside_Pillars BSS_DATA;
 struct BeamWork gAquaRockInside_Splashes BSS_DATA;
 extern u32 gAquaRockInside_SparkScript[];
 extern u32 gAquaRockInside_SplashScript[];
-extern u32 gAquaRockInside_StreamSplashScript[];
+extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 /// The water pillars' tiles, compressed (graphics/aqua_rock_inside/tiles.s).
 extern const u8 gAquaRockInside_PillarTiles[];
@@ -1043,7 +1043,7 @@ void AquaRockInside_RideFalls(s32 value) {
     // away from the waterfall; whether the waterfall's own splash actor
     // (ACTOR_VIAL_CHEST_SPLASH) was meant, nothing in reach settles.
     if ((i & 7) == 0)
-      AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
+      Actor_SpawnWadingSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
   }
   Event_End();
@@ -1705,7 +1705,7 @@ void AquaRockInside_FallThroughWater(void) {
     Actor_SetSpriteFlags(actor, 0);
     System_Wait(1);
   }
-  AquaRockInside_SpawnSplash(actor);
+  Actor_SpawnWadingSplash(actor);
   Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   *flags = saved;
@@ -2154,26 +2154,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// A splash at the actor's feet, on its sprite's priority.
-void AquaRockInside_SpawnSplash(struct Actor *actor) {
-  struct Actor *child = FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
-                                          actor->y.fixed + toFIXED(4),
-                                          actor->z.fixed + toFIXED(4));
-  struct FieldSprite *source = actor->sprite;
-
-  if (child != 0) {
-    struct FieldSprite *sprite = child->sprite;
-
-    child->groundHeight = actor->groundHeight;
-    Actor_StartScript(child, gAquaRockInside_StreamSplashScript);
-    child->motionFlags = 0;
-    if (sprite != 0) {
-      Sprite_StartAnimation(sprite, 1);
-      sprite->flags = 0;
-      sprite->priority = source->priority;
-    }
-  }
-}
+#include "shared/actor_spawn_wading_splash.h"
 
 #include "shared/actor_emit_water_drop.h"
 
@@ -2203,7 +2184,7 @@ void AquaRockInside_FlowWithStream(void) {
   position[2] = actor->z.fixed + toFIXED(2);
   hit = MapGrid_CheckCollision(actor, position);
   if ((gFrameCount & 4) == 0)
-    AquaRockInside_SpawnSplash(actor);
+    Actor_SpawnWadingSplash(actor);
   if (hit < 0) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2214,7 +2195,7 @@ void AquaRockInside_FlowWithStream(void) {
     do {
       System_Wait(1);
     } while (actor->y.fixed != actor->groundHeight);
-    AquaRockInside_SpawnSplash(actor);
+    Actor_SpawnWadingSplash(actor);
     Actor_SelectAnimation(actor, ANIM_LEADER_SIT);
     System_Wait(3);
     return;
@@ -2267,7 +2248,7 @@ UNUSED void Leader_SpinAway(s32 entrance) {
     angle = leader->facing;
     leader->facing = angle + TRIG_TURN / 16;
     if ((i & 7) == 0)
-      AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
+      Actor_SpawnWadingSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
   }
   Event_End();
@@ -2883,8 +2864,8 @@ u16 gAquaRockInside_VialChestVentPillars[] ALIGNED(4) = {
     ACTOR_VIAL_CHEST_WEST_VENT_PILLAR, ACTOR_VIAL_CHEST_EAST_VENT_PILLAR, 0, 0,
 };
 
-/// A splash's script in a stream.
-u32 gAquaRockInside_StreamSplashScript[] = {
+/// A splash's script: it shows for 20 frames, then is released.
+u32 gWadingSplash_Script[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };

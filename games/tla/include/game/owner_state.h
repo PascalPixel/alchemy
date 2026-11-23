@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_OWNER_STATE_H
 #define ALCHEMY_OWNER_STATE_H
 
+/// @file
+/// Classes and Djinn as a unit holds them: the class definitions, the caps on
+/// a unit's stats, and the routines that set, give and recover Djinn.
+
 #include "types.h"
 #include "battle/battle_unit.h"
 #include "battle/battle_side.h"
@@ -60,7 +64,7 @@ enum ClassSeries {
 /// the abilities it teaches.
 struct ClassDefinition {
   long series;    ///< the series Class_Determine picks from
-  u8 required[4]; ///< each element's level needed, in tens
+  u8 required[4]; ///< the whole level needed in each element
   u8 hp;          ///< tenths of the base stat
   u8 pp;          ///< tenths of the base stat
   u8 atk;         ///< tenths of the base stat
@@ -84,7 +88,7 @@ void Unit_UpdateClass(s32 owner);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);
 
-const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index);
+const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 djinn);
 u16 Djinn_GetAbilityId(u32 element, u32 djinn);
 s32 Djinn_Give(s32 owner, s32 element, s32 djinn);
 s32 Djinn_GiveToParty(s32 element, s32 djinn);
@@ -93,7 +97,7 @@ s32 Djinn_Set(s32 owner, s32 element, s32 djinn);
 u32 Djinn_PutOnStandby(s32 owner, s32 element, s32 djinn);
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinn, s32 target);
 
-struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 which);
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide);
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinn);
 s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinn);
 s32 DjinnRecovery_CountStandby(u8 *counts);

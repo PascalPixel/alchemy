@@ -14,7 +14,7 @@
 /// The bit of its byte that holds `flag`: the low three bits of its number.
 #define GAME_FLAG_BIT(flag) (1 << ((flag) & 7))
 
-s32 GameFlag_Get();
+s32 GameFlag_Get(s32 flag);
 u32 GameFlag_Toggle(s32 flag);
 s32 GameFlag_GetByte(s32 flag);
 u32 GameFlag_SetByte(u32 flag, u8 value);

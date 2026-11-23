@@ -325,9 +325,13 @@ void MikasallaRooms_MeetGalahad(void);
 
 /// Felix talks to Galahad, the warrior in a golden helmet in Mikasalla's inn
 /// in a linked game: the first time, he introduces himself; after that, he
-/// says Isaac's enemies are gathering.
+/// thinks Isaac is in the Eastern Sea if the party said it knows him, and
+/// otherwise says Isaac's enemies are gathering.
 void MikasallaRooms_TalkToGalahad(void) {
   if (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
+    // "I think Isaac must be somewhere in the Eastern Sea right now..." or
+    // "Isaac's enemies are gathering now, to destroy him and erase their
+    // shame."
     FieldEvent_SetMessageId(
         Event_GetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC)
             ? (s32)MsgMikasallaInteriorsIThinkIsaacMust

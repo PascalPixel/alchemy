@@ -31,6 +31,7 @@
 #include "field/event_inline.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
+#include "field/map_grid.h"
 #include "djinn_ids.h"
 #include "text/msg_ids.h"
 
@@ -69,9 +70,9 @@ extern struct ActorPlacement gMikasalla_TunnelPlacements[];
 extern struct Trigger gMikasalla_TunnelTriggers[];
 
 extern struct Trigger gMikasalla_VillageTriggers[];
-extern s16 gMikasalla_DoorOpening[];
-extern s16 gMikasalla_ThirdDoorOpening[];
-extern s16 gMikasalla_WideDoorOpening[];
+extern u16 gMikasalla_DoorOpening[];
+extern u16 gMikasalla_ThirdDoorOpening[];
+extern u16 gMikasalla_WideDoorOpening[];
 extern s32 gMikasalla_ChickenPaces[];
 extern s32 gMikasalla_SheepPaces[];
 
@@ -117,15 +118,7 @@ void Mikasalla_ClimbDownLadder(void);
 
 extern u8 MsgFieldAreYouLookingForSomeone[];
 
-/// A door that opens with a cell animation: the animation and the cell it
-/// plays at.
-struct VillageDoor {
-  const void *script;
-  u16 x;
-  u16 z;
-};
-
-extern struct VillageDoor gMikasalla_Doors[];
+extern struct MapGridCellAnimation gMikasalla_Doors[];
 
 /// Felix walks north into one of the village's doors: the inn's, the northeast
 /// door at cell (20, 32); the general store's, to the northwest at (13, 36);
@@ -140,7 +133,7 @@ extern struct VillageDoor gMikasalla_Doors[];
 void Mikasalla_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 id;
-  s16 *choice;
+  s16 *exit;
   s32 index;
 
   Event_Start();
@@ -151,12 +144,12 @@ void Mikasalla_EnterDoor(void) {
     if (actor != NULL)
       actor->motionFlags = 0;
   }
-  choice = &work->stepTrigger;
-  index = *choice;
+  exit = &work->stepTrigger;
+  index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
-  MapGrid_AnimateCells(gMikasalla_Doors[index].script,
-                       gMikasalla_Doors[index].x, gMikasalla_Doors[index].z);
+  MapGrid_AnimateCells(gMikasalla_Doors[index].steps, gMikasalla_Doors[index].x,
+                       gMikasalla_Doors[index].y);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 
@@ -165,7 +158,7 @@ void Mikasalla_EnterDoor(void) {
     Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
     Event_Wait(10);
   }
-  Import_EventSetExitRequest(*choice);
+  Import_EventSetExitRequest(*exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -285,6 +278,9 @@ void Mikasalla_ClimbDownLadder(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  // XXX: what do the two cells copied to (72, 14) show, in both the village
+  // and the tunnels? A recording of each climb down, with the grid before and
+  // after, would settle it.
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
@@ -360,32 +356,33 @@ void Mikasalla_StepOntoLadderAhead(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-// clang-format off
-/// The doors' cell animations: most doors, the third door's own cells, and
-/// the fifth door, two cells wide.
-s16 gMikasalla_DoorOpening[] = {
-    81, 50, 1, 2, 6, 80, 50, 1,
-    2, 6, -1,
+/// The doors' openings: most doors, the east house's door with cells of its
+/// own, and the Sanctum's wide door, two cells across.
+u16 gMikasalla_DoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(81, 50, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(80, 50, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
-s16 gMikasalla_ThirdDoorOpening[] = {
-    79, 50, 1, 2, 6, 78, 50, 1,
-    2, 6, -1,
+u16 gMikasalla_ThirdDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(79, 50, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(78, 50, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
-s16 gMikasalla_WideDoorOpening[] = {
-    78, 52, 2, 2, 6, 78, 53, 2,
-    2, 6, -1, 0,
+u16 gMikasalla_WideDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(78, 52, 2, 2, 6),
+    MAPGRID_ANIMATION_STEP(78, 53, 2, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The village's doors that open with a cell animation as the party walks
-/// through.
-struct VillageDoor gMikasalla_Doors[] = {
-    {gMikasalla_DoorOpening, 84, 29},
-    {gMikasalla_DoorOpening, 77, 34},
-    {gMikasalla_ThirdDoorOpening, 86, 38},
-    {gMikasalla_DoorOpening, 75, 41},
+/// The village's doors, by exit number from the first (Mikasalla_EnterDoor):
+/// each opening and the cell it is drawn at.
+struct MapGridCellAnimation gMikasalla_Doors[] = {
+    {gMikasalla_DoorOpening, 84, 29},      {gMikasalla_DoorOpening, 77, 34},
+    {gMikasalla_ThirdDoorOpening, 86, 38}, {gMikasalla_DoorOpening, 75, 41},
     {gMikasalla_WideDoorOpening, 69, 27},
 };
 
+// clang-format off
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 456, 0, 584, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
@@ -401,213 +398,79 @@ struct SceneRegion gMikasalla_TunnelRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Mikasalla),
-    SCENE_EXIT_UNLESS(1, MikasallaRoomsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, MikasallaRoomsHouses, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, MikasallaRoomsHouses, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, MikasallaRoomsHouses, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, MikasallaRoomsSanctum, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, WorldMap, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHEAST, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_MIKASALLA_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHWEST, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_MIKASALLA_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_EAST, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_MIKASALLA_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_SOUTHWEST, MikasallaRoomsHouses, MIKASALLA_ROOMS_HOUSES_FROM_MIKASALLA_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM, MikasallaRoomsSanctum, MIKASALLA_ROOMS_SANCTUM_FROM_MIKASALLA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_MIKASALLA, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, Mikasalla, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, Mikasalla, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, Mikasalla, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, Mikasalla, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, MikasallaNorth, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, MikasallaNorth, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_NORTH_NORTH, MikasallaNorth, MIKASALLA_NORTH_FROM_MIKASALLA_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_TO_MIKASALLA_NORTH_SOUTH, MikasallaNorth, MIKASALLA_NORTH_FROM_MIKASALLA_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaNorth),
-    SCENE_EXIT_UNLESS(1, Mikasalla, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_NORTH_TO_MIKASALLA_SOUTH, Mikasalla, MIKASALLA_FROM_MIKASALLA_NORTH_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(MIKASALLA_NORTH_CAVE_LADDER, MikasallaNorth, MIKASALLA_NORTH_CHAMBER_HOLE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(MIKASALLA_NORTH_CHAMBER_HOLE, MikasallaNorth, MIKASALLA_NORTH_CAVE_LADDER, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Mikasalla, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_NORTH_TO_MIKASALLA_NORTH, Mikasalla, MIKASALLA_FROM_MIKASALLA_NORTH_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
+// clang-format on
 
-/// The chicken and the sheep pace back and forth, squashing as they turn.
-s32 gMikasalla_ChickenPaces[] = {                                                               
-      SC_SET(SW_COLLISION, 129),                                               
-      SC_ACCELERATION(0.2),                                                
-      SC_SPEED(0.6),                                                    
-      SC_LABEL(1),                                                             
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(120, 0, 648),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
-      SC_ADD(SW_FACING, -DEGtoANG(180)),                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(72, 0, 648),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
-      SC_ADD(SW_FACING, -DEGtoANG(180)),                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
-      SC_END,                                                                  
-  };
+/// One squash of an animal in the pen as it turns: it flattens to three
+/// quarters of its width and springs back over ten frames.
+#define PEN_SQUASH                                                             \
+  SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
+      SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16), SC_WAIT(2),                         \
+      SC_ADD(SW_SCALE_X, FIXED_ONE / 16), SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), \
+      SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                          \
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), SC_WAIT(4)
 
-/// The sheep's script: it wanders its pen.
-s32 gMikasalla_SheepPaces[] = {                                                               
-      SC_SET(SW_COLLISION, 129),                                               
-      SC_ACCELERATION(0.2),                                                
-      SC_SPEED(0.3),                                                    
-      SC_LABEL(1),                                                             
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(88, 0, 680),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
-      SC_ADD(SW_FACING, -DEGtoANG(180)),                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(120, 0, 680),                                      
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
-      SC_ADD(SW_FACING, -DEGtoANG(180)),                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),                                             
-      SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),                                              
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(2),                                                              
-      SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                                              
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),                                               
-      SC_WAIT(4),                                                              
-      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
-      SC_END,                                                                  
-  };
+/// An animal at one end of its pace stands a moment, turns round and squashes
+/// three times.
+#define PEN_TURN_ROUND                                                         \
+  SC_ANIMATION(ANIM_STAND), SC_WAIT(20), SC_ADD(SW_FACING, -DEGtoANG(180)),    \
+      PEN_SQUASH, PEN_SQUASH, PEN_SQUASH
+
+/// The chicken paces between x 72 and 120 on its row, turning at each end.
+s32 gMikasalla_ChickenPaces[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
+    SC_ACCELERATION(0.2),
+    SC_SPEED(0.6),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(120, 0, 648),
+    SC_SYNC,
+    PEN_TURN_ROUND,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(72, 0, 648),
+    SC_SYNC,
+    PEN_TURN_ROUND,
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+};
+
+/// The sheep paces its pen more slowly, between x 88 and 120.
+s32 gMikasalla_SheepPaces[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
+    SC_ACCELERATION(0.2),
+    SC_SPEED(0.3),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(88, 0, 680),
+    SC_SYNC,
+    PEN_TURN_ROUND,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(120, 0, 680),
+    SC_SYNC,
+    PEN_TURN_ROUND,
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+};
+// clang-format off
 
 /// The village (`enum MikasallaActorId`).
 struct ActorPlacement gMikasalla_VillagePlacements[] = {

@@ -138,19 +138,20 @@ const s32 gActor_RippleScript[] = {
     SC_RELEASE,
 };
 
-/// The yaw the World Map camera leans to for each state of the direction pad,
-/// in 1/65536 turns: Right -512 and Left 512, or -384 and 384 with Up or Down
-/// but not both; 0 otherwise.
+/// The yaw the World Map camera leans to for each state of the direction pad:
+/// a 128th of a turn for Right or Left, three quarters of that with Up or Down
+/// but not both; none otherwise.
 const s32 gWorldMap_KeyYaws[16] = {
-    0, -512, 512, 0,
-    0, -384, 384, 0,
-    0, -384, 384, 0,
+    0, -(TRIG_TURN / 128), TRIG_TURN / 128, 0,
+    0, -(TRIG_TURN * 3 / 512), TRIG_TURN * 3 / 512, 0,
+    0, -(TRIG_TURN * 3 / 512), TRIG_TURN * 3 / 512, 0,
     0, 0, 0, 0,
 };
 // clang-format on
 
-/// Set the actor's riseEnabled to 15 and lower it by one every 5 frames, then
-/// clear the horizontal scale and release the object.
+/// A puff of sand the leader leaves behind as he moves (SPRITE_SAND_PUFF): its
+/// riseEnabled byte counts down from 15 a step every 5 frames, 14 steps, then
+/// the puff is shrunk to nothing and goes.
 const s32 gActor_WakeScript[] = {
     SC_SET(SW_RISE_ENABLED, 15),
     SC_LABEL(1),

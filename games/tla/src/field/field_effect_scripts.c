@@ -10,7 +10,8 @@
 #include "field/screen_transition.h"
 #include "battle/battle.h"
 
-/// Grows from half size to full size, a step every 2 frames.
+/// The found item's picture growing in over the leader, from half size to full
+/// size, a step every 2 frames (field_sequence_item_display.c).
 const s32 gFieldEffect_ParticleEmitterScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 2),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 2),
@@ -62,7 +63,8 @@ const s32 gFieldEffect_RisingPulseScript[] = {
     SC_END,
 };
 
-/// Sinks a quarter pixel a frame for 60 frames, then disappears.
+/// A sparkle round the found item, sinking a quarter pixel a frame for 60
+/// frames before it goes (field_sequence_item_display.c).
 const s32 gBattleEffect_ParticleScript[] = {
     SC_ADD(SW_Y, -toFIXED(1) / 4),
     SC_WAIT(1),

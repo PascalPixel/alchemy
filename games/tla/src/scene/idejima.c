@@ -114,6 +114,9 @@ enum IdejimaActorId {
   ACTOR_NARRATOR
 };
 
+/// Kraden's sprite lying asleep on his side.
+enum { KRADEN_ANIMATION_ASLEEP = 5 };
+
 extern struct SceneEntrance gSceneEntrances[];
 extern u32 gIdejimaExits[];
 extern struct Trigger gIdejimaEvents[];
@@ -1229,7 +1232,7 @@ void Idejima_FindFelixAndSheba(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
   Actor_SetPosition(ACTOR_KRADEN, 176, 204);
-  Actor_SetAnimation(ACTOR_KRADEN, 5);
+  Actor_SetAnimation(ACTOR_KRADEN, KRADEN_ANIMATION_ASLEEP);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
   System_Wait(1);
   Event_StartScreenTransition();
@@ -1819,7 +1822,7 @@ void Idejima_LayDownTheOthers(void) {
     actor->motionFlags = 0;
     actor->y.fixed = toFIXED(12);
     actor->collisionFlags = 0;
-    Actor_SetAnimation(ACTOR_KRADEN, 5);
+    Actor_SetAnimation(ACTOR_KRADEN, KRADEN_ANIMATION_ASLEEP);
   }
   if (!Event_GetFlag(FLAG_IDEJIMA_JENNA_JOINED)) {
     struct Actor *actor;

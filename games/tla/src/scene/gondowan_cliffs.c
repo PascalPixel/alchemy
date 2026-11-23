@@ -60,7 +60,7 @@ extern struct SceneEntrance gGondowanCliffs_PassEntrances[];
 enum {
   /// The posts of the tightrope across the river, strung once Briggs is
   /// caught.
-  ACTOR_TIGHTROPE_POST_A = 8,
+  ACTOR_TIGHTROPE_POST_A = ACTOR_FIRST_PLACED,
   ACTOR_TIGHTROPE_POST_B,
   /// The posts of the rope Lash ties from the lower one up to the cliff.
   ACTOR_ROPE_POST_A,
@@ -77,17 +77,28 @@ enum {
   /// The two Kibombo warriors stranded by the river until Briggs is caught.
   ACTOR_FIRST_WARRIOR,
   ACTOR_SECOND_WARRIOR,
-  ACTOR_KINDLE = 21,
+  /// The boulder in the river channel, seen from the cliffs above until Grind
+  /// breaks it.
+  ACTOR_SEA_ROCK,
+  ACTOR_KINDLE,
   ACTOR_KRADEN
 };
 
-/// The river channel's actors: after the unseen one that resets the tile
-/// sprites, the tightrope's two posts and the boulder Grind breaks.
+/// The river channel's actors: the unseen one that resets the tile sprites,
+/// the tightrope's two posts and the boulder Grind breaks.
 enum {
-  ACTOR_PASS_TIGHTROPE_POST_A = 9,
+  ACTOR_PASS_TILE_SPRITE_RESET = ACTOR_FIRST_PLACED,
+  ACTOR_PASS_TIGHTROPE_POST_A,
   ACTOR_PASS_TIGHTROPE_POST_B,
   ACTOR_PASS_SEA_ROCK
 };
+
+/// The white dog's sprite curled up asleep in the grass.
+enum { DOG_ANIMATION_LYING = 4 };
+
+/// The cell behaviour of the patch of yellow sand beside the dog, cell
+/// (119, 45), where Scoop digs up the geyser.
+enum { CELL_BEHAVIOR_GEYSER_SAND = 10 };
 
 /// The river channel's entrance an event sends the party in by, aboard the
 /// ship.
@@ -533,7 +544,7 @@ s32 Scene_Initialize(void) {
       actor->y.fixed = height;
       actor->groundHeight = height;
     }
-    Actor_SetAnimation(ACTOR_DOG, 4);
+    Actor_SetAnimation(ACTOR_DOG, DOG_ANIMATION_LYING);
     if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER)) {
       MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
       Actor_SetPosition(ACTOR_STUMP, 1193, 530);
@@ -617,13 +628,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 
 #include "text/msg_ids.h"
 
-void GondowanCliffs_FreezeSecondPuddle(void);
-void GondowanCliffs_BlowAwayWeeds(void);
 extern s32 gGondowanCliffs_ResetTileSpriteScript[];
-
-void GondowanCliffs_FightKindle(void);
-void GondowanCliffs_FreezeFirstPuddle(void);
-void GondowanCliffs_TalkToDog(void);
 
 LATE_DATA s32 gGondowanCliffs_ResetTileSpriteScript[] = {
     SC_CALL(TileSprite_Reset),
@@ -715,7 +720,7 @@ LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayWeeds)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, EVENT(GondowanCliffs_LeapStumpIntoWater)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(GondowanCliffs_ScoopUpGeyser)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_GEYSER_SAND, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(GondowanCliffs_ScoopUpGeyser)},
     {TRIGGER_TABLE_END},
 };
 

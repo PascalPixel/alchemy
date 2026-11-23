@@ -1,14 +1,14 @@
 #ifndef ALCHEMY_RIDE_H
 #define ALCHEMY_RIDE_H
 
-#include "fixed_math.h"
-#include "types.h"
-#include "game/game.h"
-
 /// @file
 /// The work of the Mars Lighthouse rooms' flame throwers and of the fireballs
 /// that knock the leader back, or carry him along on a ride, when they hit him;
 /// it is kept in the inventory snapshot's spare space.
+
+#include "fixed_math.h"
+#include "types.h"
+#include "game/game.h"
 
 struct Actor;
 

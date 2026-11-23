@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_MARS_LIGHTHOUSE_AERIE_H
 
 /// @file
-/// What games/tla/src/scene/ declares for the files that use it, written once.
+/// Mars Lighthouse's aerie: its events and scripts, and the views of a sprite,
+/// an actor and the heap through which its rising rings and the Golden Sun's
+/// rise are drawn.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -33,15 +35,15 @@ struct OverlaySprite {
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
   u8 rotation[2];
-  u8 size[4]; ///< width, height and the x and y offsets
-  u8 frame;
-  u8 dirty;
-  u8 nextFrame;
+  u8 size[4];   ///< width, height and the x and y offsets
+  u8 frame;     ///< the animation number last selected
+  u8 dirty;     ///< nonzero redraws its pixels
+  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
   u8 layerCount;
 };
 
-/// struct Actor with its update hook a word, so that a store to it is ordered
-/// as a word's (MarsLighthouseAerie_WatchGoldenSunRise).
+/// struct Actor with its update hook stored as a plain word
+/// (MarsLighthouseAerie_WatchGoldenSunRise).
 struct OverlayActor {
   const s32 *script;
   s16 scriptCursor;
@@ -75,8 +77,7 @@ struct OverlayActor {
   s32 update;
 };
 
-/// The heap slots read as words, so that a read of the field work is ordered as
-/// a word's after the stores before it.
+/// The heap slots read as plain words, the field work's among them.
 struct HeapWords {
   u32 beforeFieldWork[27];
   s32 fieldWork;

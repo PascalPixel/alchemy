@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_SCENE_H
 
 /// @file
-/// What games/tla/src/scene/ declares for the files that use it, written once.
+/// What the scenes share: the views of actors, sprites and work they read in
+/// their own way, and the constants of the mechanisms several scenes keep
+/// copies of (geysers, vents, smoke, sparks, cracked tiles).
 
 #include "fixed_math.h"
 #include "types.h"
@@ -24,8 +26,6 @@ struct Particle;
 struct ParticleSprite;
 struct Position;
 struct Vector3;
-
-typedef s32 (*HandlerFn)(void);
 
 /// The actor word at 84 seen as bit fields, for one store (AirsRock_BlowGust).
 struct MotionView {
@@ -342,10 +342,10 @@ struct MarsLighthouseAerieSprite {
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
   u8 rotation[2];
-  u8 size[4]; ///< width, height and the x and y offsets
-  u8 frame;
-  u8 dirty;
-  u8 nextFrame;
+  u8 size[4];   ///< width, height and the x and y offsets
+  u8 frame;     ///< the animation number last selected
+  u8 dirty;     ///< nonzero redraws its pixels
+  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
 };
 
 /// One halfword read as a struct's field.
@@ -471,10 +471,10 @@ struct YampiDesertVisual {
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   u8 cacheFlags;
   u8 rotation[2];
-  u8 size[4]; ///< width, height and the x and y offsets
-  u8 frame;
-  u8 dirty;
-  u8 nextFrame;
+  u8 size[4];   ///< width, height and the x and y offsets
+  u8 frame;     ///< the animation number last selected
+  u8 dirty;     ///< nonzero redraws its pixels
+  u8 nextFrame; ///< the sprite flags (enum SpriteFlag)
   u8 layerCount;
 };
 
@@ -548,7 +548,8 @@ extern u8 gField_CachedTilesC[];
 #define CELL_KEY_X(key) ((key) >> 16)
 #define CELL_KEY_Z(key) ((key) & 0xffff)
 
-void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
+                         s32 stepY, s32 ampY);
 
 /// The scene's trigger of a kind for a target whose condition holds, or NULL
 /// (Scene_FindTrigger, through the overlay's own import row).

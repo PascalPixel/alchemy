@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_MARS_LIGHTHOUSE_STAR_ROOM_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// Mars Lighthouse's star room: its torches, fireballs and the Mars Star, and
+/// the knock-back, flame and crack routines it shares with the rooms that keep
+/// copies of them.
 
 #include "types.h"
 #include "field/cell_target.h"

@@ -2,7 +2,9 @@
 #define ALCHEMY_SCENE_AIRS_ROCK_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// What Air's Rock's outside (airs_rock.c) and inside (airs_rock_inside.c)
+/// share: the whirlwinds the statues breathe and the leader rides, and the
+/// outside's tables, events and scripts.
 
 #include "types.h"
 #include "field/scene_tables.h"

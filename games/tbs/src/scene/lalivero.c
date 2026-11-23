@@ -1,38 +1,33 @@
 /// @file
-/// Lalivero (SceneId_Lalivero), the town by Babi Lighthouse. Its buildings are
-/// timber_rooms_bc.c.
+/// Lalivero (SceneId_Lalivero), the walled desert town by Babi Lighthouse,
+/// with a gate in its north and south walls and a stone obelisk in a pool at
+/// its middle. Its houses, shops, inn and Sanctum are timber_rooms_bc.c.
 ///
-/// The story brings the party here twice. Scene_GetActorPlacements and
-/// Scene_GetTriggers choose the town's people and triggers for each visit by
-/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
+/// The story brings the party here twice, and the town's people and what
+/// answers the party change with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at
+/// Venus Lighthouse's aerie.
 ///
-/// On the first visit the party comes in from the World Map with Iodem, and
-/// Lalivero_WatchWoundedSoldiers plays once
-/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Two of Tolbi's soldiers lie beaten in
-/// the street and tell Iodem that Sheba's captors went to the ruins beneath
-/// Babi Lighthouse, with Faran after them. The townsfolk talk of Sheba, and the
-/// guard at the wharf lets no one by.
+/// The first time, the party walks in through the south gate with Iodem and
+/// finds two of Tolbi's soldiers lying beaten in the gateway
+/// (Lalivero_WatchWoundedSoldiers, once, FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN).
+/// They tell Iodem that Sheba's captors went to the ruins beneath Babi
+/// Lighthouse, with Faran after them. The townsfolk talk of Sheba, and the
+/// soldier at the door of the shack in the north-west lets no one in.
 ///
-/// On the second visit the party comes back through Faran's house. Its first
-/// step onto step trigger 50 plays Lalivero_IodemGivesBlackOrb
-/// (FLAG_IODEM_FAREWELL_SEEN), in which Iodem comes out of the house and gives
-/// the party the Black Orb that sails Babi's ship.
-/// Lalivero_TalkAboutIdejimaShip adds a few lines when FLAG_SAW_SHIP_AT_IDEJIMA
-/// is set.
+/// The second time, the party comes back from Venus Lighthouse into Faran's
+/// house in the south-west. A few steps out of its door Garet stops Isaac, for
+/// Iodem asked them to wait; Iodem comes out, talks of Lemuria and gives the
+/// party the Black Orb that sails Babi's ship (Lalivero_IodemGivesBlackOrb,
+/// once, FLAG_IODEM_FAREWELL_SEEN). If the party saw the ship at Idejima, they
+/// talk of it too (Lalivero_TalkAboutIdejimaShip). From then on the soldier at
+/// the shack lets the party in (FLAG_LALIVERO_WHARF_OPEN), Garet turns Isaac
+/// back from the south gate, and a sign and a wall close the north gate.
 ///
-/// The wharf's guard then lets the party through (FLAG_LALIVERO_WHARF_OPEN),
-/// step trigger 51 turns it back toward the ship, and a sign and three blocked
-/// cells close the north exit.
-///
-/// On both visits:
-///
-/// - Torch, a Mars Djinni, waits until it joins.
-/// - Lalivero_EnterDoor opens the door or the Sanctum's gate before the leader
-///   leaves by the touched step trigger's exit into SceneId_TimberRoomsB or
-///   SceneId_TimberRoomsC.
-/// - The World Map lies east and west.
-/// - A jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and
-///   a Warrior's Helm.
+/// On both visits Torch, a Mars Djinni, waits on a roof until spoken to, and a
+/// jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and a
+/// Warrior's Helm. Each door opens before Isaac walks in, and the hatches in
+/// two of the flat roofs lead down into Faran's house and the weapon and armor
+/// shop. Both gates lead out to the World Map.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -130,15 +125,25 @@ enum LaliveroActorId {
   ACTOR_BLACK_ORB
 };
 
-/// The door into the Lalivero Sanctum, a gate two cells wide.
-enum LaliveroCellBehavior { CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = 6 };
+/// The cells of the town the scene gives a meaning of its own. Each door's and
+/// roof hatch's cell is the number of the exit it leads by.
+enum LaliveroCellBehavior {
+  /// The Sanctum's door, a gate two cells wide.
+  CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = LALIVERO_TO_TIMBER_ROOMS_B_NORTHEAST,
+  /// Two cells a few steps from Faran's door, (6, 23) and (6, 24), where
+  /// Garet stops Isaac for Iodem's farewell.
+  CELL_BEHAVIOR_LALIVERO_OUTSIDE_FARANS_HOUSE = 50,
+  /// The south gateway, cells (12, 25) to (18, 25), where after the farewell
+  /// Garet turns Isaac back toward the ship.
+  CELL_BEHAVIOR_LALIVERO_SOUTH_GATE = 51
+};
 
 /// A cell of the wall along the town's south edge (CELL_BEHAVIOR_WALL), whose
 /// attributes Scene_Initialize copies onto cells the party may not cross.
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
-/// In Lalivero, on either visit, talking to Torch, a Mars Djinni, makes it join
-/// the party.
+/// Talking to Torch, a Mars Djinni on a roof in Lalivero, makes it join the
+/// party, on either visit.
 static void Lalivero_TalkToTorch(void) {
   Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
 }
@@ -160,9 +165,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLaliveroActorPlacements;
 }
 
-/// In Lalivero, on the first visit, the young man mourning Sheba stops sobbing
-/// to say she was taken to the ruins, faces north again and goes back to
-/// sobbing.
+/// On the first visit to Lalivero, the young man sobbing for Sheba stops to say
+/// she was taken to the ruins, then turns away north and sobs again.
 static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   void Actor_FaceDirection();
 
@@ -176,8 +180,8 @@ static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   Actor_SetScript(actorId, gLalivero_CryingScript);
 }
 
-/// In Lalivero, after Venus Lighthouse, the woman with fair hair asks whether
-/// the party is leaving Lalivero, and wishes it well either way.
+/// After Venus Lighthouse, the fair-haired woman in Lalivero asks whether the
+/// party is leaving Lalivero, and wishes it well either way.
 static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   s32 message = MsgLaliveroLeavingLalivero;
   Event_SetMessageId(message);
@@ -192,9 +196,9 @@ static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// In Lalivero, after Venus Lighthouse, the guard at the wharf's door ("I was
-/// told to let you in if you showed up...") lets the party through and steps
-/// aside (sets FLAG_LALIVERO_WHARF_OPEN).
+/// After Venus Lighthouse, the soldier at the door of the shack in the
+/// north-west of Lalivero says he was told to let the party in, and steps
+/// aside west of the door (FLAG_LALIVERO_WHARF_OPEN).
 static void Lalivero_WharfGuardLetsPartyThrough(void) {
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
@@ -206,7 +210,8 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
   Event_Wait(10);
 }
 
-/// The leader walks through one of Lalivero's doors.
+/// Walking north into one of Lalivero's doors opens it, or the Sanctum's gate,
+/// and Isaac walks in.
 static void Lalivero_EnterDoor(void) {
   s32 door = gFieldWork->stepTrigger;
   s32 x = gLaliveroDoorCells[door][0];
@@ -226,8 +231,9 @@ static void Lalivero_EnterDoor(void) {
   Import_EventSetExitRequest(door);
 }
 
-/// In Lalivero, a doorway with no door (step triggers 8 and 11) leaves by the
-/// touched step trigger's exit.
+/// Stepping onto the hatch in the flat roof of Faran's house (cell (6, 18)) or
+/// of the weapon and armor shop (cell (26, 15)) in Lalivero takes Isaac down
+/// inside.
 static void Lalivero_EnterDoorway(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->stepTrigger;
@@ -237,8 +243,10 @@ static void Lalivero_EnterDoorway(void) {
   Import_EventSetExitRequest(exit);
 }
 
-/// In Lalivero, on the first visit, arriving from the World Map, the party and
-/// Iodem find more of Tolbi's soldiers beaten in the street.
+/// On the first visit to Lalivero, walking in through the south gate with
+/// Iodem, the party finds two more of Tolbi's soldiers lying beaten in the
+/// gateway, who tell Iodem that Sheba's captors went to the ruins beneath Babi
+/// Lighthouse.
 static void Lalivero_WatchWoundedSoldiers(void) {
   struct Actor *leader;
 
@@ -455,8 +463,11 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_End();
 }
 
-/// In Lalivero, at step trigger 50 after Venus Lighthouse, Garet stops the
-/// leader, for Iodem asked them to wait.
+/// After Venus Lighthouse, a few steps out of Faran's house in the south-west
+/// of Lalivero (cells (6, 23) and (6, 24)), Garet stops Isaac, for Iodem asked
+/// them to wait. Iodem comes out of the house, talks of Lemuria and of Babi's
+/// promise, and gives the party the Black Orb that sails Babi's ship. Plays
+/// once.
 static void Lalivero_IodemGivesBlackOrb(void) {
   struct Actor *leader;
 
@@ -785,8 +796,9 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_End();
 }
 
-/// The ship the party saw at Idejima was not Babi's, which is here in
-/// Lalivero, but, Garet guesses, Saturos's.
+/// During Iodem's farewell, if the party saw the ship at Idejima, Iodem says it
+/// was not Babi's, which is here in Lalivero, and Garet guesses it was
+/// Saturos's.
 static void Lalivero_TalkAboutIdejimaShip(void) {
   Event_SetMessageId(MsgLaliveroThoughtShipWeSawAt);
   Event_Wait(20);
@@ -834,8 +846,9 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Event_ShowMessage(ACTOR_IVAN, 0);
 }
 
-/// In Lalivero, at step trigger 51 after Venus Lighthouse, Garet turns the
-/// leader back toward Babi's ship and the wharf the guard was keeping.
+/// After Iodem's farewell, walking out through Lalivero's south gate (cells
+/// (12, 25) to (18, 25)) makes Garet ask whether they are not taking Babi's
+/// ship, and Isaac steps back into town.
 static void Lalivero_TurnBackToTheShip(void) {
   Event_Start();
   Event_SetMessageId(MsgLaliveroWhereGoingArentWeTaking);
@@ -855,8 +868,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets Lalivero up as the party enters: the Black Orb Iodem will hold out,
-/// the wounded soldiers of the first visit (and its event), or the sign at
-/// the north exit after Venus Lighthouse.
+/// the wounded soldiers of the first visit (and their scene), or the sign at
+/// the closed north gate after Venus Lighthouse.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -1142,19 +1155,19 @@ u16 gLaliveroGateOpenSteps[] = {
 };
 
 struct Trigger gLaliveroTriggers[] = {
-    { TRIGGER_EXIT, 20, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
-    { TRIGGER_EXIT, 21, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { TRIGGER_EXIT, LALIVERO_TO_WORLD_MAP_EAST, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_EAST },
+    { TRIGGER_EXIT, LALIVERO_TO_WORLD_MAP_WEST, CONDITION_ALWAYS, LALIVERO_TO_WORLD_MAP_WEST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_WEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_NORTH, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, LALIVERO_TO_TIMBER_ROOMS_C_SOUTH, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_SOUTH, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
     { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
     { TRIGGER_TALK, ACTOR_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
     { TRIGGER_TALK, ACTOR_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT(Lalivero_TalkToVillagerTheyTookSheba) },
@@ -1188,19 +1201,19 @@ struct Trigger gLaliveroTriggers[] = {
 };
 
 struct Trigger gLaliveroTriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT(Lalivero_IodemGivesBlackOrb) },
-    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Lalivero_TurnBackToTheShip) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LALIVERO_OUTSIDE_FARANS_HOUSE, FLAG_IODEM_FAREWELL_SEEN, EVENT(Lalivero_IodemGivesBlackOrb) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LALIVERO_SOUTH_GATE, CONDITION_ALWAYS, EVENT(Lalivero_TurnBackToTheShip) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_C_NORTHWEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_WEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_C_NORTHEAST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_NORTH, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_C_SOUTHWEST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, LALIVERO_TO_TIMBER_ROOMS_C_SOUTH, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_SOUTH, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LALIVERO_TO_TIMBER_ROOMS_B_SOUTHEAST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoor) },
+    { TRIGGER_STEP, LALIVERO_TO_TIMBER_ROOMS_B_EAST_SOUTHEAST, CONDITION_ALWAYS, EVENT(Lalivero_EnterDoorway) },
     { TRIGGER_TALK, ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT(Lalivero_WharfGuardLetsPartyThrough) },
     { TRIGGER_TALK, ACTOR_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },

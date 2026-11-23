@@ -1,14 +1,25 @@
 /// @file
 /// Log rooms A (SceneId_LogRoomsA), a sheet of rooms drawn in logs, holds only
-/// Vault's rooms: the insides of the town's houses, shops and inn, and the
-/// inn's loft, while Hammet's Shaman's Rod is missing and just after it is
-/// found.
+/// Vault's rooms while Hammet's Shaman's Rod is missing and just after it is
+/// found: the insides of the town's houses, shops and inn, the inn's attic and
+/// its loft.
 ///
 /// Every room is on one map, each an entrance with a camera box of its
-/// own. Vault's doors (vault.c) lead to the entrances named for them. These
-/// are the gem owner's house, the child's house, the inn and its guests' room
-/// upstairs, the item shop, the weapon and armor shop, the mayor's house and a
-/// room with a crate. Behind the crate a way climbs to the inn's loft.
+/// own. Vault's doors (vault.c) lead to the entrances named for them:
+/// - the gem owner's house, nearest the town's lower gate, where a big pale
+///   blue gem stands on the round table;
+/// - the house of a burly grey-haired man and a small boy, in the middle of
+///   town;
+/// - the inn, with the guests' room and its two beds upstairs, where the
+///   three strangers stay;
+/// - the item shop, which is also the home of Grandpa and his wife;
+/// - the weapon and armor shop;
+/// - the mayor's house, where Ivan is.
+///
+/// The ladder outside up to the inn's broken roof (LOG_ROOMS_A_FROM_VAULT_WEST)
+/// comes into the attic, a small room with a big crate and a dark hole in the
+/// floor. Behind the crate is the way into the loft, where the thieves hid
+/// the stolen goods.
 ///
 /// The loft has actor placements and events of its own
 /// (Scene_GetActorPlacements and Scene_GetTriggers).
@@ -19,37 +30,36 @@
 ///   Isaac's mind (FLAG_VAULT_MET_IVAN) and asks for help with the rod. On a
 ///   yes he joins the party (LogRoomsA_IvanJoinsRodSearch,
 ///   FLAG_VAULT_IVAN_JOINED_ROD_SEARCH).
-/// - In the inn's guests' room the two suspects run from Ivan
-///   (LogRoomsA_ApproachSuspects). Stepping out, the party plans to corner
-///   one (LogRoomsA_DiscussSuspiciousGuests). The chase
-///   (LogRoomsA_StartCorneringSuspects) moves Ivan and the suspects along a
-///   network of stops (gLogRoomsA_Stops). Once one has been blocked for
-///   half a second, LogRoomsA_UpdateActorStops raises
-///   LOG_ROOMS_A_LEADER_CORNERED, _THIEF_CORNERED or _BOTH_CORNERED, and
-///   Ivan reads the cornered suspect's mind
+/// - In the guests' room upstairs at the inn, the two suspects see Ivan with
+///   the party and run from him round the beds
+///   (LogRoomsA_ApproachSuspects). Stepping back out of the room, the party
+///   plans to surround one of them (LogRoomsA_DiscussSuspiciousGuests).
+///   Going back in starts the chase (LogRoomsA_StartCorneringSuspects): Garet
+///   spreads his arms and Ivan follows, and the suspects dodge between spots
+///   round the beds (gLogRoomsA_Stops). Once one of them has been boxed in
+///   for half a second, Ivan reads both minds
 ///   (LogRoomsA_ReadCorneredSuspectsMinds, FLAG_VAULT_SUSPECTS_MIND_READ).
-///   Meanwhile the menus answer with Garet's refusal
-///   (FLAG_MENUS_RAISE_TRIGGER).
-/// - In the room with the crate, Move pushes the crate aside
-///   (LogRoomsA_CheckCrateMoved, FLAG_VAULT_CRATE_MOVED), and the way behind
-///   it climbs to the loft (LogRoomsA_ClimbToLoft). Freeing the villager tied
-///   up there brings out the three thieves, who attack
-///   (LogRoomsA_FreeVillagerAndFightThieves, FLAG_VAULT_THIEVES_ATTACKED). A
-///   loss returns to LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES and the party
-///   comes to in the Vault Sanctum (LogRoomsA_LoseToThieves). Coming back
-///   up replays the challenge (LogRoomsA_FightThievesAgain). A win
-///   returns to LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED
-///   (LogRoomsA_DefeatThieves, LogRoomsA_ReturnStolenGoods). The
-///   thieves are jailed (FLAG_VAULT_THIEVES_JAILED), the chests give back
-///   the stolen goods and the Shaman's Rod, and Ivan leaves the party to
-///   rescue Hammet from Lunpa.
+///   During the chase the menu only gets Garet's "We don't have time for
+///   that" (LogRoomsA_GaretHasNoTimeForMenu).
+/// - In the attic, Move pushes the crate aside (LogRoomsA_CheckCrateMoved,
+///   FLAG_VAULT_CRATE_MOVED), and the way behind it leads into the loft
+///   (LogRoomsA_ClimbToLoft). Cutting free the young man tied up there brings
+///   out the three thieves, who attack (LogRoomsA_FreeVillagerAndFightThieves,
+///   FLAG_VAULT_THIEVES_ATTACKED). After a loss the thieves gloat over the
+///   fallen party, which comes to in the Vault Sanctum
+///   (LogRoomsA_LoseToThieves). Coming back up replays the challenge
+///   (LogRoomsA_FightThievesAgain). After a win (LogRoomsA_DefeatThieves,
+///   LogRoomsA_ReturnStolenGoods) the mayor comes up and has the thieves
+///   taken to jail (FLAG_VAULT_THIEVES_JAILED), the chests give back the
+///   stolen goods and the Shaman's Rod, and Ivan leaves the party to rescue
+///   Hammet from Lunpa.
 /// - Once the thieves are jailed, the mayor gives the promised Water of Life
 ///   (FLAG_VAULT_WATER_OF_LIFE_RECEIVED) and the girl at the inn offers
-///   Bones (FLAG_VAULT_BONE_RECEIVED), with more on the floor beside her
+///   Bones (FLAG_VAULT_BONE_RECEIVED), with more on the barrel beside her
 ///   (Vault_FindBone) for the dog in town.
 ///
-/// The shops and the inn open across their counters when the leader faces
-/// north. Otherwise their keepers speak.
+/// The shops and the inn open across their counters when Isaac faces north.
+/// Spoken to from anywhere else, their keepers only talk.
 ///
 /// A jar, two barrels and a wooden box hold coins, a Sleep Bomb and a Mint,
 /// each found once, and two bookcases can be read.
@@ -57,13 +67,13 @@
 /// The cells the events answer are enum LogRoomsACellBehavior
 /// (log_rooms_a.h).
 ///
-/// LogRoomsA_ApproachSuspects plays once. Its cells are rewritten:
-/// - It copies CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR cells over the
-///   guests' room's CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM cells.
-/// - LogRoomsA_DiscussSuspiciousGuests makes them
-///   CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START.
-/// - Every later arrival with FLAG_VAULT_SUSPECTS_APPROACHED set rewrites
-///   them again.
+/// The three cells of the guests' room doorway, (14, 44) to (16, 44), change
+/// what they do as the story goes on. At first, stepping on them sets off
+/// LogRoomsA_ApproachSuspects. After it they are rewritten from copies kept
+/// lower on the map, so that stepping on them on the way out plays
+/// LogRoomsA_DiscussSuspiciousGuests, and after that, on the way back in,
+/// LogRoomsA_StartCorneringSuspects. Every later arrival with
+/// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again.
 
 #include "scene/log_rooms_a.h"
 #include "ability_ids.h"
@@ -383,9 +393,9 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
 }
 #endif
 
-/// Indoors in Vault, facing north or south across the gap in the roof, the
-/// leader jumps it.
-static void LogRoomsA_JumpAcrossRoofGap(void) {
+/// In the inn's attic, walking north or south at the dark hole in the floor
+/// (cells (41, 25) and (41, 27), either side of it), Isaac jumps across.
+static void LogRoomsA_JumpAcrossHoleInAtticFloor(void) {
   s32 x;
   s32 z;
 #if !TBS_PATCH_1
@@ -421,7 +431,8 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
   }
 }
 
-/// Once Move pushes the crate aside, the way up to the inn's loft opens.
+/// Move on the big crate in the inn's attic: once it has been pushed a cell
+/// west, to map column 42, the way behind it into the loft opens.
 static void LogRoomsA_CheckCrateMoved(void) {
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_CRATE)->x.fixed) == CRATE_MOVED_COLUMN) {
@@ -431,7 +442,10 @@ static void LogRoomsA_CheckCrateMoved(void) {
   Event_End();
 }
 
-/// In Vault's weapon and armor shop, across the counter the weapon shop opens.
+/// Spoken to across the counter of Vault's weapon and armor shop, the weapon
+/// merchant opens his shop. From anywhere else he says Hammet wasn't the only
+/// one robbed, or, once the thieves are jailed, that their stolen weapons were
+/// found rusted in the cemetery.
 static void LogRoomsA_TalkToWeaponMerchant(void) {
   s32 leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -449,7 +463,10 @@ static void LogRoomsA_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// In Vault's weapon and armor shop, across the counter the armor shop opens.
+/// Spoken to across the counter of Vault's weapon and armor shop, the armor
+/// merchant opens his shop. From anywhere else he is angry at the thieves, or,
+/// once they are jailed, warns the party to be prepared for the cave in Goma
+/// Range.
 static void LogRoomsA_TalkToArmorMerchant(void) {
   s32 leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -467,7 +484,10 @@ static void LogRoomsA_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// At Vault's inn, across the counter the inn opens.
+/// Spoken to across the counter of Vault's inn, the woman behind it offers a
+/// room. From anywhere else she thinks it unfair to accuse the polite guests
+/// upstairs, or, once they are jailed, is shocked they hid the stolen goods in
+/// the loft.
 static void LogRoomsA_TalkToInnkeeper(void) {
   s32 leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -487,9 +507,10 @@ static void LogRoomsA_TalkToInnkeeper(void) {
 
 #include "shared/vault_bone.c"
 
-/// At Vault's inn, while the party corners the suspects, Garet refuses to stop
-/// for anything else. "We don't have time for that, Isaac!"
-static void LogRoomsA_GaretRefusesToLeave(void) {
+/// Opening the menu while the party is cornering the suspects in the guests'
+/// room at Vault's inn only has Garet tell Isaac they don't have time for
+/// that.
+static void LogRoomsA_GaretHasNoTimeForMenu(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
 #endif
@@ -498,7 +519,8 @@ static void LogRoomsA_GaretRefusesToLeave(void) {
   Event_ShowMessage(ACTOR_GARET, 0);
 }
 
-/// At Vault's inn, Isaac checks the barrel but doesn't find anything.
+/// Searching the barrel beside the girl at the inn before the thieves are
+/// caught, Isaac doesn't find anything. Later the Bones are there.
 static void LogRoomsA_SearchEmptyBarrel(void) {
   Event_Start();
   FieldMessage_Show(MsgVaultIsaacCheckedBarrel, 1);
@@ -506,7 +528,7 @@ static void LogRoomsA_SearchEmptyBarrel(void) {
   Event_End();
 }
 
-/// In the inn's loft in Vault, Isaac checks the chest, but it is empty.
+/// Searching one of the three chests in the inn's loft, Isaac finds it empty.
 static void LogRoomsA_SearchEmptyChest(void) {
   Event_Start();
   FieldMessage_Show(MsgVaultIsaacCheckedChest, 1);
@@ -550,8 +572,9 @@ static void LogRoomsA_AskYesNoAndAnswer(s32 speakerId) {
   Event_ShowMessage(speakerId, 0);
 }
 
-/// In a house of Vault, the small boy asks about travel.
-/// "Hey, mister! Is it fun to see strange new places?"
+/// In the house in the middle of Vault, a small boy asks Isaac whether it is
+/// fun to see strange new places. A Yes has him dream of being an adventurer
+/// and sleeping in a tent; a No, wonder why bother then.
 static void LogRoomsA_BoyAsksAboutTravel(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultMisterFunSeeStrangeNew);
@@ -560,8 +583,10 @@ static void LogRoomsA_BoyAsksAboutTravel(void) {
   Event_End();
 }
 
-/// At the mayor's in Vault, a little girl offers to tell Ivan's secret.
-/// "Ivan has great powers. Wouldn't you like to know what they are?"
+/// Before Ivan has joined the party, a little girl at the mayor's house in
+/// Vault teases that Ivan has great powers and asks whether Isaac would like
+/// to know them. A Yes gets no way, it's their secret; a No, a warning not to
+/// say what he doesn't mean, as Ivan can tell in an instant.
 static void LogRoomsA_OfferIvansSecret(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIvanHasGreatPowersWouldnt);
@@ -570,7 +595,10 @@ static void LogRoomsA_OfferIvansSecret(void) {
   Event_End();
 }
 
-/// In Vault's item shop, across the counter the shop opens.
+/// Spoken to across the counter of Vault's item shop, the item merchant opens
+/// her shop. From anywhere else she asks whether the party arrived in town
+/// today, and finds them fishy on a No; once the thieves are jailed she says it
+/// will be a while before anyone can go to Kalay with the bridge out.
 static void LogRoomsA_TalkToItemMerchant(void) {
   s32 leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -588,7 +616,9 @@ static void LogRoomsA_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// The wife of the man with the sparkling rock talks about their rocks.
+/// In the gem owner's house, his wife wishes their rocks were gems, or, once
+/// the thieves are jailed, is thankful they were caught before they stole the
+/// gem.
 static void LogRoomsA_TalkAboutRocks(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -600,7 +630,9 @@ static void LogRoomsA_TalkAboutRocks(void) {
   Event_End();
 }
 
-/// Grandpa in the item shop talks about missing things.
+/// In Vault's item shop, Grandpa wonders whether he is missing something, or,
+/// once the thieves are jailed, says they hid the stolen treasure in the
+/// hotel's loft and more in the cemetery.
 static void LogRoomsA_TalkAboutMissingThings(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
@@ -612,7 +644,9 @@ static void LogRoomsA_TalkAboutMissingThings(void) {
   Event_End();
 }
 
-/// At his house in Vault, the mayor asks for someone to help Ivan.
+/// In his house, Vault's mayor asks whether someone could please help Ivan.
+/// Once Ivan has joined the party, he thanks Isaac the first time, and after
+/// that asks him to look after Ivan.
 static void LogRoomsA_MayorAsksHelpForIvan(void) {
   s32 thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
   Event_Start();
@@ -633,8 +667,8 @@ static void LogRoomsA_MayorAsksHelpForIvan(void) {
   Event_End();
 }
 
-/// At Vault's inn, the girl at the inn says the three strangers have fooled
-/// the innkeeper and his wife.
+/// Before the thieves are caught, the girl at Vault's inn says the three
+/// strangers have fooled the innkeeper and his wife.
 static void LogRoomsA_WarnAboutThreeStrangers(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseThreeStrangersSureHave);
@@ -642,7 +676,10 @@ static void LogRoomsA_WarnAboutThreeStrangers(void) {
   Event_End();
 }
 
-/// The suspected leader cries out and runs to his next spot. "Ow! Stop it!"
+/// Talking to, or reading the mind of, the suspect with long dark hair in the
+/// guests' room at Vault's inn makes him cry out to stop it and run round the
+/// beds to his next spot, on or back the way he was going by which side he is
+/// pushed from.
 static void LogRoomsA_SuspectedLeaderDodges(void) {
   struct Actor *suspect;
   u32 facing;
@@ -698,8 +735,9 @@ static inline void LogRoomsA_ApplySecondSuspectRoute(struct Actor *actor,
   actor->timer = actor->timer - routePair * 2 + routeDelta;
 }
 
-/// In the guests' room at Vault's inn, the suspected thief cries out and runs
-/// to his next spot. "No! Leave me alone!"
+/// Talking to, or reading the mind of, the suspect in purple in the guests'
+/// room at Vault's inn makes him cry out to be left alone and run to his next
+/// spot by the beds or in a corner, picked by the way he is pushed.
 static void LogRoomsA_SuspectedThiefDodges(void) {
   struct Actor *actor;
   u32 facing;
@@ -748,8 +786,10 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   Event_End();
 }
 
-/// The villager suspecting the neighbor asks whether the thieves came from
-/// Lunpa.
+/// Once the thieves are jailed, the burly grey-haired man in the house in the
+/// middle of Vault asks whether they came from Lunpa. A Yes has him say
+/// Lunpa's master Dodonpa is an awful man and catching his thieves means
+/// trouble; a No, that the Lunpans were noble thieves until Dodonpa.
 static void LogRoomsA_AskWhetherThievesCameFromLunpa(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultDidThoseThievesComeFrom);
@@ -757,8 +797,9 @@ static void LogRoomsA_AskWhetherThievesCameFromLunpa(void) {
   Event_End();
 }
 
-/// The boy says Father worries about the prisoners from Lunpa.
-/// He's in a house of Vault, and says it after the thieves are jailed.
+/// Once the thieves are jailed, the small boy in the house in the middle of
+/// Vault says his father is worried about the prisoners from Lunpa, and asks
+/// the party to protect them if Dodonpa's men attack.
 static void LogRoomsA_BoyWorriesAboutFather(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultMyFatherWorriedAboutThose);
@@ -766,8 +807,9 @@ static void LogRoomsA_BoyWorriesAboutFather(void) {
   Event_End();
 }
 
-/// At the mayor's in Vault after the thieves are jailed, a villager asks about
-/// defeating them. "I heard you defeated those thieves!"
+/// Once the thieves are jailed, a small boy at the mayor's house in Vault has
+/// heard the party defeated them. A Yes has him say you can't judge people by
+/// their looks; a No, that his father said it was them.
 static void LogRoomsA_AskAboutDefeatingThieves(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultHeardDefeatedThoseThieves);
@@ -775,7 +817,11 @@ static void LogRoomsA_AskAboutDefeatingThieves(void) {
   Event_End();
 }
 
-/// The mayor thanks Isaac and gives the promised Water of Life.
+/// Once the thieves are jailed, Vault's mayor thanks Isaac in his house and
+/// gives the promised Water of Life, or asks him to come back with fewer things
+/// if his bags are full. Then he asks whether the party is heading beyond Goma
+/// Range: a Yes gets directions to the cave in its mountains north-east of
+/// Vault, past which lies Bilibin; a No, that there is no other way out.
 static void LogRoomsA_MayorGivesWaterOfLife(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_VAULT_WATER_OF_LIFE_RECEIVED) == 0) {
@@ -810,8 +856,9 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
   Event_End();
 }
 
-/// At Vault's inn after the thieves are jailed, the girl at the inn offers
-/// leftover bones from dinner.
+/// Once the thieves are jailed, the girl at Vault's inn offers Isaac leftover
+/// bones from dinner, or asks whether he wants more. Accepting gives a Bone,
+/// unless his bags are full and she calls him a greedy lad.
 static void LogRoomsA_OfferBones(void) {
   Event_Start();
   LogRoomsA_FaceEachOtherAndWait(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 2);
@@ -852,9 +899,10 @@ static void LogRoomsA_OfferBones(void) {
   Event_End();
 }
 
-/// In a house of Vault, Mind Read on the wife of the man with the sparkling
-/// rock: let me see that rock, or maybe it is worthless.
-static void LogRoomsA_ReadMindOnRock(void) {
+/// Mind Read on the gem owner's wife in their house: she wants a look at that
+/// rock, or, once the thieves are jailed, wonders whether it is worthless and
+/// that is why they didn't steal it.
+static void LogRoomsA_ReadGemOwnersWifesMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Event_SetMessageId(MsgVaultOkMisterLetMeSee);
@@ -865,8 +913,9 @@ static void LogRoomsA_ReadMindOnRock(void) {
   Event_End();
 }
 
-/// In a house of Vault, Mind Read on the boy: what is the outside world
-/// like, or Father looks sad.
+/// Mind Read on the small boy in the house in the middle of Vault: he wonders
+/// what the outside world is like, or, once the thieves are jailed, thinks his
+/// father looks sad with worry.
 static void LogRoomsA_ReadBoysMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -878,9 +927,10 @@ static void LogRoomsA_ReadBoysMind(void) {
   Event_End();
 }
 
-/// In Vault's item shop, Mind Read on Grandpa: could they be thieves? Who can
-/// be trusted? Or nothing in the house was worth stealing.
-static void LogRoomsA_ReadMindOnThieves(void) {
+/// Mind Read on Grandpa in Vault's item shop: he wonders whether the party
+/// could be the thieves and doesn't know who to trust anymore. Once the thieves
+/// are jailed, he thinks nothing in their house was valuable enough to steal.
+static void LogRoomsA_ReadGrandpasMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Event_SetMessageId(MsgVaultCouldTheyThievesGoodDont);
@@ -891,8 +941,9 @@ static void LogRoomsA_ReadMindOnThieves(void) {
   Event_End();
 }
 
-/// At the mayor's in Vault, Mind Read on the mayor: a laugh, or the cave in
-/// the Goma Range is dangerous, but the party will be okay. "That tickles..."
+/// Mind Read on Vault's mayor in his house: he laughs that it tickles, being
+/// tickled by a boy, or, once the thieves are jailed, thinks the cave in the
+/// Goma Range is dangerous, but the party will be okay.
 static void LogRoomsA_ReadMayorMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -904,8 +955,10 @@ static void LogRoomsA_ReadMayorMind(void) {
   Event_End();
 }
 
-/// At Vault's inn, Mind Read on the girl at the inn: the master and his wife
-/// are blinded by money.
+/// Mind Read on the girl at Vault's inn: before the thieves are caught she
+/// thinks the master and his wife are blinded by money. After, she is tempted
+/// to taste the cooking, or, once Isaac has a Bone, wonders whether he has a
+/// calcium deficiency.
 static void LogRoomsA_ReadInnGirlsMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -919,8 +972,10 @@ static void LogRoomsA_ReadInnGirlsMind(void) {
   Event_End();
 }
 
-/// At the mayor's in Vault, talking to Ivan: the first time, he reads Isaac's
-/// mind, admits his strange powers and learns they are called Psynergy.
+/// Talking to Ivan at the mayor's house in Vault: the first time, he reads
+/// Isaac's mind, admits his strange powers, learns they are called Psynergy,
+/// and asks for help getting Master Hammet's rod back. Later he only asks
+/// again. A Yes has him join the party.
 static void LogRoomsA_MeetIvan(void) {
   struct Actor *actor;
 
@@ -1024,8 +1079,8 @@ static void LogRoomsA_MeetIvan(void) {
   Event_End();
 }
 
-/// Ivan thanks them, they exchange names, and he shows Isaac and Garet Mind
-/// Read.
+/// Ivan jumps for joy, thanks Isaac and Garet, reads their names from Isaac's
+/// mind, shows them Mind Read on each other, and joins the party.
 static void LogRoomsA_IvanJoinsRodSearch(void) {
   // Ivan jumps for joy: "Thank you. With your help, I believe we can recover
   // the rod." Then he asks their names.
@@ -1199,7 +1254,10 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Event_ShowMessage(ACTOR_IVAN, 0);
 }
 
-/// In the inn's loft in Vault, Isaac cuts the tied-up villager free.
+/// In the inn's loft, Isaac cuts free the young man tied up on the floor. He
+/// tells how he was whacked from behind while fixing the roof, and notices the
+/// chests; then the three thieves come in, tell of Lunpa and Dodonpa, ask to
+/// be let go, and attack.
 static void LogRoomsA_FreeVillagerAndFightThieves(void) {
   s32 base;
 
@@ -1407,15 +1465,15 @@ static void LogRoomsA_FreeVillagerAndFightThieves(void) {
   Event_End();
 }
 
-/// At Vault's inn, the party leaves the guests' room for the floor below
-/// (LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS).
+/// Going down the stairs from the inn's upstairs in Vault takes the party to
+/// the floor below.
 static void LogRoomsA_LeaveGuestsRoom(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN);
 }
 
-/// In Vault's room with the crate, the party climbs up into the inn's loft by
-/// the way behind the crate.
+/// Once the crate is pushed aside, walking east from the inn's attic through
+/// the way behind it (cell (45, 25)) takes the party into the loft.
 static void LogRoomsA_ClimbToLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
@@ -1424,7 +1482,9 @@ static void LogRoomsA_ClimbToLoft(void) {
   Import_EventSetExitRequest(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
 }
 
-/// Leaving the inn's loft, the party hears the tied-up villager groan.
+/// Walking west out of the inn's loft (cell (46, 25)) back into the attic;
+/// before the thieves have attacked, the tied-up young man groans as the party
+/// goes.
 static void LogRoomsA_LeaveLoft(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
@@ -1440,8 +1500,9 @@ static void LogRoomsA_LeaveLoft(void) {
   Import_EventSetExitRequest(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
 }
 
-/// In the guests' room at Vault's inn, the two suspects spot "that weird kid"
-/// with the party and run from him. "What do you want?"
+/// In the guests' room upstairs at Vault's inn, once Ivan is with the party,
+/// the two suspects at the west end of the room start, see that weird kid is
+/// with them, and run off round the beds.
 static void LogRoomsA_ApproachSuspects(void) {
   struct Actor *suspectedLeader;
   struct Actor *suspectedThief;
@@ -1487,7 +1548,10 @@ static void LogRoomsA_ApproachSuspects(void) {
   Event_End();
 }
 
-/// Stepping out of the guests' room at Vault's inn, the party talks it over.
+/// Stepping back out of the guests' room at Vault's inn after the suspects
+/// have run, the party talks it over: Mind Read is no use while they keep
+/// running, so Garet plans for the three to surround one of them, with Isaac
+/// in the lead.
 static void LogRoomsA_DiscussSuspiciousGuests(void) {
   struct Actor *suspectedLeader;
   struct Actor *suspectedThief;
@@ -1579,16 +1643,16 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   Event_End();
 }
 
-/// In the guests' room at Vault's inn, the party sets out to corner the two
-/// suspects.
+/// Walking back into the guests' room at Vault's inn after the plan, the
+/// party sets out to corner the two suspects.
 static void LogRoomsA_StartCorneringSuspects(void) {
   GameFlag_Set(FLAG_MENUS_RAISE_TRIGGER);
   GameFlag_Set(FLAG_VAULT_CORNERING_SUSPECTS);
   LogRoomsA_StartActorStops();
 }
 
-/// Has the suspects react to the party's return and resets their route states.
-/// "Hey, they're back!"
+/// The suspects see the party back, cry that they're coming for them
+/// one-on-one, and run to their first spots again.
 static void LogRoomsA_ResetSuspectRoutes(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
@@ -1623,8 +1687,8 @@ static void LogRoomsA_ResetSuspectRoutes(void) {
   MapGrid_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
-/// Sets the three party images to the priority used during the mind-reading
-/// event.
+/// Draws Isaac, Garet and Ivan in front of the room's furniture for the talk
+/// after the Mind Read.
 static inline void LogRoomsA_SetPartyImagePriority(void) {
   {
     struct Sprite *sprite = Actor_Get(ACTOR_PARTY_LEADER)->sprite;
@@ -1640,7 +1704,9 @@ static inline void LogRoomsA_SetPartyImagePriority(void) {
   }
 }
 
-/// Once a suspect is cornered, Garet calls Ivan and Ivan reads their minds.
+/// Once one of the suspects is boxed in for half a second in the guests' room
+/// at Vault's inn, he cries out, Garet calls Ivan, and Ivan reads their minds
+/// while they wonder what he is doing; the screen flashes green and purple.
 static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   s32 actorId;
   struct FieldWork *work;
@@ -1743,8 +1809,11 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   Event_End();
 }
 
-/// Shows the party's branching conversation about what Ivan learned: the
-/// stolen goods are hidden in the inn, which they must search.
+/// Outside the guests' room after the Mind Read, Ivan tells what he learned:
+/// it is them, and they hid the stolen goods somewhere in the inn. Garet says
+/// they have to search it. A Yes gets Garet's leave it to us; a No, another
+/// plea, from Garet and then Ivan, and after three Garet vouches for Isaac's
+/// sense of duty.
 static void LogRoomsA_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
@@ -1865,7 +1934,10 @@ static void LogRoomsA_DiscussMindReading(void) {
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
 }
 
-/// The fleeing suspects move on to their next spots.
+/// While the suspects are running from the party in the guests' room, Isaac
+/// stepping on one of the spots at the heads and feet of the beds (cells
+/// (4, 39) to (16, 43)) sends a suspect waiting at the matching spot on to the
+/// next.
 static void LogRoomsA_SuspectsRunFromParty(void) {
   switch (gFieldWork->stepTrigger) {
   case CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_SUSPECT_ROUTE:
@@ -1940,8 +2012,8 @@ static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
 
 #include "shared/vault_bone_proximity_flag.c"
 
-/// Arriving in any room of Vault's houses, shops and inn: restores the room
-/// for the story so far, and plays the loft's events.
+/// Arriving in any room of Vault's houses, shops and inn sets the room up for
+/// the story so far, and in the loft plays its events.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1971,7 +2043,7 @@ s32 Scene_Initialize(void) {
     break;
   case LOG_ROOMS_A_FROM_VAULT_SOUTHWEST:
   case LOG_ROOMS_A_INN_FROM_INN_UPSTAIRS:
-    // The inn: once the thieves are jailed, the Bone lies on the floor beside
+    // The inn: once the thieves are jailed, the Bone lies on the barrel beside
     // the girl at the inn; after the mind reading and before that, she is
     // out.
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
@@ -2087,7 +2159,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Keeps both suspects facing the leader while they evade the party.
+/// Every frame while the suspects are running from the party, both keep
+/// facing Isaac.
 static void LogRoomsA_FaceSuspectsTowardLeader(void) {
   struct Actor *origin = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *first = Actor_Get(ACTOR_SUSPECTED_LEADER);
@@ -2099,7 +2172,9 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
                              origin->x.fixed - second->x.fixed);
 }
 
-/// Shows the thieves' reaction after the party loses their battle.
+/// After a lost battle with the thieves in the inn's loft, the party lies
+/// collapsed while the thieves say these kids are nothing to worry about and
+/// keep the tied-up young man as their hostage.
 static void LogRoomsA_LoseToThieves(void) {
   s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
@@ -2153,8 +2228,8 @@ static void LogRoomsA_LoseToThieves(void) {
   Event_End();
 }
 
-/// Arranges the loft confrontation and restarts the thieves' battle. "They
-/// won't go away, will they? They're back!"
+/// Coming back up into the inn's loft after losing to the thieves, they are
+/// waiting: they complain the party won't go away, and attack again.
 static void LogRoomsA_FightThievesAgain(void) {
   // The thieves stand over the tied-up villager as the party comes up.
   Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
@@ -2217,7 +2292,9 @@ static s32 LogRoomsA_GetIvanVenusDjinnCount(void) {
 
 #include "shared/vault_djinn.c"
 
-/// Stages the defeated thieves and gathers the townspeople in the loft.
+/// After the battle in the inn's loft, the beaten thieves lie gasping on the
+/// floor. The freed young man runs for the mayor, who comes up with two
+/// strongmen; the thieves are tied up.
 static void LogRoomsA_DefeatThieves(void) {
   struct FieldWork *work;
   const s32 *actions;
@@ -2444,7 +2521,11 @@ static void LogRoomsA_DefeatThieves(void) {
   Event_End();
 }
 
-/// Returns the stolen goods and rod, thanks the party, and clears the loft.
+/// With the thieves tied up, the mayor has them taken down the ladder to
+/// jail. The chests give back his urn, the gold statue stolen from the
+/// Sanctum and Master Hammet's Shaman's Rod; the mayor tells that Hammet was
+/// kidnapped by Dodonpa of Lunpa, and Ivan takes the rod and leaves the
+/// party to rescue him.
 static void LogRoomsA_ReturnStolenGoods(void) {
   struct Actor *temporaryActor;
   struct Actor *actor;
@@ -3204,7 +3285,10 @@ static void LogRoomsA_UpdateActorStops(void) {
   }
 }
 
-/// Arranges the chase, constrains its camera, and starts the route task.
+/// Sets the chase in the guests' room going: Isaac walks in, Garet and Ivan
+/// step out beside him, Garet spreads his arms, and the camera is held on the
+/// room.
+
 static void LogRoomsA_StartActorStops(void) {
   Event_Start();
   FieldCamera_MoveTo(168, CAMERA_KEEP, 656, 1);
@@ -3769,9 +3853,9 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { TRIGGER_RAISED, LOG_ROOMS_A_LEADER_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_THIEF_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
     { TRIGGER_RAISED, LOG_ROOMS_A_BOTH_CORNERED, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadCorneredSuspectsMinds) },
-    { TRIGGER_RAISED, FIELD_RAISED_TRIGGER_MENUS, CONDITION_ALWAYS, EVENT(LogRoomsA_GaretRefusesToLeave) },
+    { TRIGGER_RAISED, FIELD_RAISED_TRIGGER_MENUS, CONDITION_ALWAYS, EVENT(LogRoomsA_GaretHasNoTimeForMenu) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB, CONDITION_ALWAYS, EVENT(LogRoomsA_ClimbToLoft) },
-    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LOG_ROOMS_A_ROOF_GAP, CONDITION_ALWAYS, EVENT(LogRoomsA_JumpAcrossRoofGap) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LOG_ROOMS_A_ROOF_GAP, CONDITION_ALWAYS, EVENT(LogRoomsA_JumpAcrossHoleInAtticFloor) },
     { TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_VAULT_CORNERING_SUSPECTS), 0 },
     { TRIGGER_TALK, ACTOR_IVAN, CONDITION_ALWAYS, EVENT(LogRoomsA_MeetIvan) },
     { TRIGGER_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
@@ -3802,10 +3886,10 @@ struct Trigger gLogRoomsA_Triggers[] = {
     { TRIGGER_TALK, ACTOR_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT(LogRoomsA_SuspectedLeaderDodges) },
     { TRIGGER_TALK, ACTOR_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT(LogRoomsA_SuspectedThiefDodges) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadMindOnRock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadGemOwnersWifesMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultHeyMaybeMyNeighborIsThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadBoysMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadMindOnThieves) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadGrandpasMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYouNeverBoughtMeAnythingWorth) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
@@ -3869,10 +3953,10 @@ struct Trigger gLogRoomsA_TriggersAfterThieves[] = {
     { TRIGGER_TALK, ACTOR_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultImShockedThoseGuestsOfOurs) },
     { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(LogRoomsA_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultEverybodysAfterMyRockTheyWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadMindOnRock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadGemOwnersWifesMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultTheReasonLunpaTurnedBadIs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadBoysMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadMindOnThieves) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT(LogRoomsA_ReadGrandpasMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadSomethingWorth) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },

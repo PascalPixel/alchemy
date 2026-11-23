@@ -1,33 +1,27 @@
 /// @file
-/// The wharf at the edge of Lalivero where Babi's ship lies sunk.
+/// The gangway out over the sea behind the shack in the north-west of
+/// Lalivero, where the Lemurian ship lies sunk (SceneId_LemurianShip, the area
+/// name Lemurian ship), and the game's last scene.
 ///
-/// This is the game's last scene: SceneId_LemurianShip, with the area name
-/// Lemurian ship. The party enters it from Faran's house (timber_rooms_bc.c)
-/// once Iodem has given it the Black Orb. Stepping back on cell behavior 1
-/// (LemurianShip_LeaveTheShip) returns there.
+/// The party comes in from the shack (timber_rooms_bc.c) once Iodem has given
+/// it the Black Orb and the guard lets it by. A long wooden gangway with rails
+/// runs north over the sea, and the ship lies beneath the water beside it, seen
+/// through the waves. Walking back off the gangway's south end goes back into
+/// the shack.
 ///
-/// Scene_Initialize prepares the map. It sinks the ship's two map layers
-/// 90 pixels, and puts the two pieces of the gangway and the party at sprite
-/// priority 1.
+/// Using the Black Orb at the gangway's north end raises the ship
+/// (LemurianShip_RaiseTheShip): the sea glows, spray rises, the screen shakes,
+/// and the ship comes up out of the water beside the gangway and rides the
+/// swell with a glow along its hull. The party then talks the journey over,
+/// with three yes-or-no questions, climbs aboard and sails away west as black
+/// bars close in from above and below (LemurianShip_SetSail). The game then
+/// fades to the staff credits and the clear screen (TITLE_FROM_LEMURIAN_SHIP),
+/// keeping the music (FLAG_KEEP_MUSIC_ONCE).
 ///
-/// It also starts the water's ripple (Ripple_Start). The ripple is a line
-/// scroll: an HBlank DMA of per-line scroll offsets for BG3. Reveal stops it
-/// while it shows the map.
-///
-/// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the leader the Black
-/// Orb. Only the debug scene selector reaches it.
-///
-/// When the player uses the Black Orb at the water's edge (cell behavior 10),
-/// LemurianShip_RaiseTheShip plays. The orb glows, spray rises and the ship
-/// comes up out of the water 90 pixels. The event adds Ship_UpdateSwell and
-/// ShipGlow_CyclePalette, which run to the end of the game.
-///
-/// Then LemurianShip_SetSail plays the departure:
-/// - Three yes-or-no questions each choose one of two replies.
-/// - The party boards.
-/// - The ship sails east as the curtains close (Curtain_Start).
-/// - The game goes to the clear screen by the title's
-///   TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
+/// The sunk ship is the map's two upper layers drawn 90 pixels low, under the
+/// sea's layer, which ripples by a line scroll (Ripple_Start). Reveal stops the
+/// ripple while it shows. Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB, which only
+/// the debug scene selector reaches, first gives the leader the Black Orb.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -143,28 +137,30 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShipActorPlacements;
 }
 
-/// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
-/// colour.
+/// Walking off the south end of the gangway to the Lemurian ship (cells (18,
+/// 20) to (20, 20)) goes back into the shack in Lalivero. The backdrop colour
+/// is cleared to black for the way out.
 static void LemurianShip_LeaveTheShip(void) {
   Import_EventSetExitRequest(gFieldWork->stepTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
-/// Lemurian ship: stops the water's ripple while Reveal shows the map.
+/// Casting Reveal on the gangway to the Lemurian ship stops the sea rippling
+/// while the grey circle of Reveal shows; there is nothing hidden here.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
-/// Starts the two-axis ripple with its original frequencies and amplitudes.
-/// Called by Scene_Initialize, and reached by Reveal as the spell ends.
+/// The sea around the gangway to the Lemurian ship ripples, from the moment the
+/// party arrives and again as Reveal ends. The ripple sways the sea's layer
+/// across and up and down at once (LineScroll_InitWave).
 static void Ripple_Start(void) {
   LineScroll_InitWave(0, FIXED_ONE * 4, FIXED_ONE, FIXED_ONE / 8, FIXED_ONE,
                       FIXED_ONE / 2, FIXED_ONE / 4);
 }
 
-/// The exit, Reveal and the Black Orb at the water's edge (cell behavior
-/// 10).
+/// The way back, Reveal, and the Black Orb at the gangway's north end.
 const struct Trigger *Scene_GetTriggers(void) { return gLemurianShipTriggers; }
 
-/// Makes the ship's glow ripple.
+/// Runs the glow along the risen ship's hull, a colour at a time.
 static void ShipGlow_CyclePalette(void) {
   u16 paletteIndex;
 
@@ -310,8 +306,14 @@ static s32 LemurianShip_IvanStepOnDeck(struct Actor *interpreter) {
   return 0;
 }
 
-/// Lemurian ship, the departure: the party talks the journey over, boards
-/// and sails away.
+/// On the gangway beside the risen Lemurian ship, Garet, Mia and Ivan step out
+/// and talk the journey over with Isaac, who answers three questions: whether
+/// the journey ends when they find Jenna, whether to find her before Lemuria,
+/// and whether they will be all right on the rough sea. Each answer picks one
+/// of two replies. Then all four hop up onto the deck, Mia last after a look
+/// back at the shore, and the ship sails away west as black bars close in
+/// from above and below and the ending theme plays, until the screen fades to
+/// the staff credits.
 static void LemurianShip_SetSail(void) {
   struct MapGridScrollWork *grid;
   struct Actor *ship;
@@ -538,9 +540,9 @@ static void LemurianShip_SetSail(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  // The ship sails east and the curtains close: the sea's layer scrolls
-  // faster while the gangway's north piece moves off with the ship, and the
-  // camera follows.
+  // The ship sails west and the curtains close: the sea's layer and the
+  // gangway's north piece slide away east past it, ever faster, and the camera
+  // pans along the deck to the stern.
   Sound_Play(MUS_THE_BROKEN_SEAL_ENDING);
   Sound_SetBgmTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
   Curtain_Start();
@@ -596,8 +598,12 @@ static inline s32 LemurianShip_WaveOffset(s32 angle, FIXED amplitude,
          base;
 }
 
-/// Lemurian ship: the Black Orb raises the sunken ship, and the party sets
-/// sail.
+/// Using the Black Orb at the north end of the gangway (cells (18, 12) to
+/// (20, 14)) raises the Lemurian ship. Isaac walks to the end and faces the
+/// sea; the water glows brighter and brighter, flashing three times, spray
+/// rises all over it and the screen shakes harder, and the ship slowly comes
+/// up out of the sea beside the gangway. A white flash, the puzzle-solved
+/// jingle, and the departure follows (LemurianShip_SetSail).
 static void LemurianShip_RaiseTheShip(void) {
   struct MapGridScrollWork *grid;
   s32 i;
@@ -692,7 +698,9 @@ static void LemurianShip_RaiseTheShip(void) {
   LemurianShip_SetSail();
 }
 
-/// Sets the Lemurian ship's map up.
+/// Lays the Lemurian ship under the sea: its two layers are lowered 90 pixels
+/// and drawn behind the sea's, which is blended over them, while the gangway
+/// and the party are drawn above. The sea starts rippling.
 s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
   // Each control is stored through its address, so it stays in the frame.

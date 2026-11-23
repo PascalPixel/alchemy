@@ -1,51 +1,59 @@
 /// @file
-/// Lunpa is the town of the noble thief's family, sealed by Dodonpa's men while
-/// he holds Hammet for ransom in Lunpa Fortress.
+/// Lunpa, the town the righteous thief Lunpa founded, and the Lunpa Fortress
+/// Gates above it. While Dodonpa, Donpa's son, holds Hammet in Lunpa Fortress,
+/// his men keep the town sealed: two guards stand outside the shut gate in the
+/// log palisade at the south end, where the road from the World Map ends, and
+/// turn the party away. The way in is through West Lunpa Cave, whose gate Frost
+/// opens; it comes out at the cave mouth in the town's north-west cliff (cell
+/// (7, 4)).
 ///
 /// Two areas share this overlay, each a scene of its own:
 ///
-/// - Lunpa (SceneId_Lunpa, area name Lunpa): the town. Two guards keep the road
-///   in from the World Map. Doors lead into the homes, shops, inn and temple
-///   (RockRooms, rock_rooms.c). Roads lead to West Lunpa Cave and up to
-///   the Lunpa Fortress Gates, and a hidden passage leads to Lunpa's hidden
-///   room (LUNPA_TO_STONE_ROOMS, in StoneRooms, whose area name there is
-///   Lunpa).
-/// - Lunpa Fortress Gates (SceneId_LunpaFortressGates, area name Lunpa Fortress
-///   Gates): the steps up to the fortress door, kept by two guards whom the
-///   party gets past under Cloak.
+/// - Lunpa (SceneId_Lunpa): the town. Doors lead into three homes, the weapon
+///   and armor shop, the item shop, the inn, the temple and the crate room
+///   (RockRooms, rock_rooms.c). The road out of the top of the town (cells
+///   (13, 0) to (16, 0)) climbs to the Lunpa Fortress Gates.
+/// - Lunpa Fortress Gates (SceneId_LunpaFortressGates): the slope up to the
+///   golden fortress door in the cliff. Two log palisades cross it, each with
+///   a gap in the middle, and two guards stand in the yard between them, just
+///   below the upper gap. The party slips past them under Cloak.
 ///
 /// The getters choose by gMainRoutineWork.next. The town's triggers also
 /// choose by FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress
 /// sets. Before it the townspeople live under Dodonpa's men
-/// (gLunpaSealedTriggers). After it they talk of the intruders
-/// (gLunpaReopenedTriggers). Both tables share the roads and doors
+/// (gLunpaSealedTriggers). After it they talk of the intruders in the
+/// fortress (gLunpaReopenedTriggers). Both tables share the roads and doors
 /// (LUNPA_ROADS_AND_DOORS) and Reveal's secrets (LUNPA_SECRETS).
 ///
-/// The town hides three things: a Psynergy Stone, a puddle that Frost freezes
-/// into a pillar to stand on, and the sparkle of a switch. Reveal shows them
-/// (Lunpa_RevealSecrets), and every entry and the end of Reveal hide them
-/// again (Lunpa_HideSecrets).
+/// Reveal turns the town grey and shows three secrets
+/// (Lunpa_RevealSecrets): a blue puddle between the two log pillars below the
+/// road to the gates, which Frost freezes into an ice pillar; a sparkle on the
+/// cliff at the west edge of town (cell (3, 16)), the switch that opens the
+/// passage to Lunpa's hidden room, searched from cell (3, 18) below it; and a
+/// Psynergy Stone, found by searching cell (7, 16), south of the inn. Every
+/// entry and the end of Reveal hide them again
+/// (Lunpa_HideSecrets). Searching the sparkle opens a dark cave mouth in the
+/// cliff beside it, and the passage can be walked into only while Reveal
+/// shows it (Lunpa_EnterHiddenPassage). The room beyond (StoneRooms) holds
+/// six chests.
 ///
-/// Searching the switch opens the passage to the hidden room. The passage can
-/// be walked through only while Reveal shows it (Lunpa_EnterHiddenPassage).
+/// At the gates, walking uncloaked into the yard before the guards
+/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND) makes them step into
+/// the upper gap and warn the party off. An uncloaked leader in that gap, or
+/// one still in the yard as Cloak fades, is caught and marched back down
+/// through the lower palisade (Lunpa_GuardsCatchParty).
 ///
-/// At the gates, stepping uncloaked on the ground before the guards
-/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND) brings them in front of
-/// the door. An uncloaked leader among them, or one still among them as Cloak
-/// fades, is marched back down the steps (Lunpa_GuardsCatchParty, raised as
-/// RAISED_PARTY_SPOTTED by Lunpa_WatchForUncloakedParty).
+/// A party caught inside the fortress is thrown out by the guards and down
+/// the slope (Lunpa_GuardsThrowIsaacOut). After the rescue it comes out of
+/// the fortress door and Isaac sneaks past the guards under Cloak
+/// (Lunpa_LeaderSneaksOut).
 ///
-/// A party caught in the fortress arrives by LUNPA_FORTRESS_GATES_AFTER_CAUGHT
-/// and is thrown down the steps. After the rescue it leaves the fortress by
-/// LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA and sneaks past under
-/// Cloak.
+/// Every arrival at the gates clears the fortress's puzzle and beaten-guard
+/// flags, so the fortress starts over.
 ///
-/// Every entry clears the fortress's puzzle and beaten-guard flags, so the
-/// fortress starts over.
-///
-/// Between Donpa's judgment and the reunion in West Lunpa Cave
-/// (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
-/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
+/// Between Donpa's judgment and the meeting with Bunza outside West Lunpa
+/// Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops Isaac from going back up
+/// through the upper gap (Lunpa_GaretTurnsIsaacBack).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -76,11 +84,12 @@ extern struct Trigger gGateTriggers[];
 
 // Lunpa's and the gates' entrances and exits are in scene_exits.h.
 
-/// The exit the gates' third road
-/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD) requests, which gGateExits
-/// has no row for. Scene_TakeExit, reaching the end of the gates' exits, falls
-/// back to the event of their first exit at entrance 0, so the road leads to
-/// LunpaFortressGroundFloor's default entrance.
+/// Unused: the exit of a third road out of the gates
+/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD), which no cell of the
+/// gates' map has. gGateExits has no row for it either: Scene_TakeExit,
+/// reaching the end of the gates' exits, would fall back to the event of
+/// their first exit at entrance 0, LunpaFortressGroundFloor's default
+/// entrance.
 enum { GATE_EXIT_THIRD = 3 };
 
 /// The first of the rooms in RockRooms that Lunpa's doors lead into.
@@ -100,7 +109,7 @@ enum LunpaCellBehavior {
   CELL_BEHAVIOR_LUNPA_ITEM_SHOP_DOOR,
   CELL_BEHAVIOR_LUNPA_INN_DOOR,
   CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR,
-  CELL_BEHAVIOR_LUNPA_EIGHTH_ROOM_DOOR,
+  CELL_BEHAVIOR_LUNPA_CRATE_ROOM_DOOR,
   CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE,
   CELL_BEHAVIOR_LUNPA_HIDDEN_SWITCH = 20,
   CELL_BEHAVIOR_LUNPA_WELL = 90,
@@ -109,7 +118,10 @@ enum LunpaCellBehavior {
   CELL_BEHAVIOR_LUNPA_PSYNERGY_STONE
 };
 
-/// The cell behaviors the Lunpa Fortress Gates' triggers answer.
+/// The cell behaviors the Lunpa Fortress Gates' triggers answer. The gates'
+/// map has no cell of the third road, the fortress approach or the well: the
+/// approach is raised by Lunpa_WatchForFortressApproach instead, and the other
+/// two rows never fire.
 enum LunpaFortressGatesCellBehavior {
   CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_DOOR = 1,
   CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_LUNPA_ROAD,
@@ -132,7 +144,7 @@ enum {
 /// from ACTOR_FIRST_PLACED. The townspeople are named by their sprites and by
 /// what they say before Donpa's judgment.
 enum LunpaActorId {
-  /// The puddle Reveal shows and Frost freezes into a pillar.
+  /// The blue puddle Reveal shows and Frost freezes into an ice pillar.
   ACTOR_HIDDEN_PUDDLE = ACTOR_FIRST_PLACED,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
   ACTOR_MAN_ASKING_HOW_LONG_IN_LUNPA,
@@ -264,21 +276,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLunpaActorPlacements;
 }
 
-/// Lunpa: Catch on the Nut floating over the town gives it to the party.
+/// Catch on the Nut in the tree just west of Lunpa's shut south gate, outside
+/// the palisade, brings it down to Isaac.
 static void Lunpa_CatchFloatingNut(void) {
   Scene_CatchNut(ACTOR_FLOATING_NUT, FLAG_LUNPA_NUT_CAUGHT);
 }
 
-/// Restores the cell behaviors of the frozen pillar's three cells,
-/// including its sides.
+/// Makes the frozen puddle's cell, (14, 4), and the cells either side of it
+/// into the ice pillar's top and sides, from copies kept at (17, 4) and
+/// (15, 3).
 static inline void Lunpa_ApplyFrozenPuddleCollision(void) {
   MapGrid_CopyCellAttributes(17, 4, 1, 1, 14, 4);
   MapGrid_CopyCellAttributes(15, 3, 1, 1, 15, 4);
   MapGrid_CopyCellAttributes(15, 3, 1, 1, 13, 4);
 }
 
-/// Lunpa: Frost on the puddle Reveal shows freezes it into a pillar the party
-/// can stand on.
+/// Frost on the blue puddle that Reveal shows between the two log pillars at
+/// the top of Lunpa (cell (14, 4)) freezes it into an ice pillar to stand on.
 static void Lunpa_FreezeHiddenPuddle(void) {
   struct Actor *pillar;
 
@@ -293,8 +307,8 @@ static void Lunpa_FreezeHiddenPuddle(void) {
   GameFlag_Set(FLAG_LUNPA_PUDDLE_FROZEN);
 }
 
-/// Every frame while the pillar stands: draw it under the leader once the
-/// leader is on top.
+/// Every frame while Reveal shows the puddle: once Isaac is up on the ice
+/// pillar, it is drawn under him.
 static void Lunpa_UpdateIcePillarDrawOrder(void) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
     Actor_Get(ACTOR_HIDDEN_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -303,8 +317,9 @@ static void Lunpa_UpdateIcePillarDrawOrder(void) {
   }
 }
 
-/// Draws the three map grid regions that make one picture of the hidden
-/// passage.
+/// Draws one picture of the hidden passage's cave mouth in the cliff at the
+/// west edge of town, from a set of copies kept at (sourceColumn, sourceRow).
+/// The second and third copies are the same mouth on the map's other layers.
 static inline void Lunpa_DrawHiddenPassagePicture(s32 sourceColumn,
                                                   s32 sourceRow) {
   MapGrid_CopyCells(sourceColumn, sourceRow, 3, 4, 1, 14);
@@ -312,8 +327,11 @@ static inline void Lunpa_DrawHiddenPassagePicture(s32 sourceColumn,
   MapGrid_CopyCells(sourceColumn + 6, sourceRow, 3, 4, 1, 46);
 }
 
-/// Lunpa, casting Reveal: the Psynergy Stone's spot, the hidden switch's
-/// sparkle, the puddle and, once opened, the passage to the hidden room show.
+/// Casting Reveal in Lunpa turns the town grey and shows its secrets: the blue
+/// puddle between the log pillars at the top of town, the sparkle of the
+/// hidden switch on the west cliff (or, once it has been pressed, the cave
+/// mouth it opened), and the Psynergy Stone's spot at cell (7, 16). Isaac
+/// standing on that spot is first walked a step south off it.
 static void Lunpa_RevealSecrets(void) {
   struct Actor *actor;
   s32 cellX;
@@ -357,7 +375,9 @@ static void Lunpa_RevealSecrets(void) {
   GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-/// Lunpa, as Reveal ends and on every entry: the secrets hide again.
+/// As Reveal ends, and on every arrival in Lunpa, the puddle, the sparkle, the
+/// cave mouth and the Psynergy Stone's spot are hidden again, and a frozen
+/// puddle thaws.
 static void Lunpa_HideSecrets(void) {
   Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
@@ -376,9 +396,9 @@ static void Lunpa_HideSecrets(void) {
   GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
-/// Searching the well (CELL_BEHAVIOR_LUNPA_WELL,
-/// CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_WELL), in Lunpa or at the Lunpa Fortress
-/// Gates: frogs croak in it.
+/// Searching the well in the middle of Lunpa (cells (16, 13) to (17, 14)),
+/// Isaac peers in and hears frogs inside. The gates' table has a row for a
+/// well too, but no cell there answers it.
 static void Lunpa_SearchWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -401,8 +421,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gLunpaSealedTriggers;
 }
 
-/// Lunpa, before Donpa's judgment: the west guard on the road in asks whether
-/// the party wants to enter Lunpa, and turns them away either way.
+/// Before Donpa's judgment, the guard on the left of Lunpa's shut south gate
+/// winces and asks whether the party wants to enter Lunpa, and sends them back
+/// where they came from whatever they answer.
 static void Lunpa_TalkToWestGuard(void) {
   Event_Start();
   Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -414,8 +435,11 @@ static void Lunpa_TalkToWestGuard(void) {
   Event_End();
 }
 
-/// Lunpa, before Donpa's judgment: the east guard on the road in wants
-/// Dodonpa's authorization.
+/// Before Donpa's judgment, the guard on the right of Lunpa's shut south gate
+/// says no one may enter without Dodonpa's authorization. Once Hammet's
+/// caravan has gone north to Lunpa (FLAG_LUNPA_GUARDS_SUSPECT_KALAY), he asks
+/// instead whether the party is from Kalay, and then whether they have come to
+/// save Hammet, and warns them off by their answers.
 static void Lunpa_TalkToEastGuard(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
@@ -439,7 +463,10 @@ static void Lunpa_TalkToEastGuard(void) {
   Event_End();
 }
 
-/// Lunpa: Mind Read on the east guard.
+/// Mind Read on the guard on the right of Lunpa's south gate. Before Donpa's
+/// judgment he fears Dodonpa will blame the guards for any trouble outsiders
+/// cause, or, once Hammet's caravan has come, trusts that the gate in the cave
+/// opens only from the inside; after it he thinks the merchant is harmless.
 static void Lunpa_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
@@ -460,8 +487,9 @@ static void Lunpa_ReadEastGuardsThoughts(void) {
   }
 }
 
-/// Lunpa, before Donpa's judgment: a man asks how long the party has been
-/// in Lunpa.
+/// Before Donpa's judgment, a young man with brown hair near the inn asks
+/// whether the party has been in Lunpa long, and takes a No to mean they are
+/// new members of Dodonpa's gang.
 static void Lunpa_AskAboutLengthOfStay(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerAAsksHowLong);
@@ -472,8 +500,8 @@ static void Lunpa_AskAboutLengthOfStay(void) {
   Event_End();
 }
 
-/// Lunpa, before Donpa's judgment: a stout man asks whether Dodonpa
-/// kidnapped Hammet for ransom.
+/// Before Donpa's judgment, a stout man in Lunpa asks whether it is true that
+/// Dodonpa kidnapped Hammet and extorted ransom for him.
 static void Lunpa_AskAboutHammetsKidnapping(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerCAsksAboutKidnapping);
@@ -484,8 +512,9 @@ static void Lunpa_AskAboutHammetsKidnapping(void) {
   Event_End();
 }
 
-/// Lunpa, before Donpa's judgment: a small boy asks whether the party wants
-/// to see Donpa, who is in the fortress.
+/// Before Donpa's judgment, a small boy at the top of Lunpa asks whether the
+/// party wants to see Donpa: he is in the fortress, or, on a No, impossible to
+/// see now.
 static void Lunpa_AskAboutSeeingDonpa(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerGAsksAboutDonpa);
@@ -496,8 +525,8 @@ static void Lunpa_AskAboutSeeingDonpa(void) {
   Event_End();
 }
 
-/// Lunpa, after Donpa's judgment: a woman shivers and complains that it
-/// has become colder.
+/// After Donpa's judgment, a woman with fair hair in Lunpa shivers and
+/// complains that it has gotten colder.
 static void Lunpa_ComplainAboutCold(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WOMAN_WITH_NO_FREEDOM, 3);
@@ -507,8 +536,9 @@ static void Lunpa_ComplainAboutCold(void) {
   Event_End();
 }
 
-/// Lunpa, after Donpa's judgment: a woman offers to explain the commotion
-/// at the fortress.
+/// After Donpa's judgment, a woman in a green dress in Lunpa offers to tell
+/// what caused the commotion at the fortress: someone snuck in to save Hammet
+/// and ran away.
 static void Lunpa_AskAboutFortressCommotion(void) {
   Event_Start();
   Event_SetMessageId(MsgLunpaVillagerDAsksAboutCommotion);
@@ -519,8 +549,10 @@ static void Lunpa_AskAboutFortressCommotion(void) {
   Event_End();
 }
 
-/// Lunpa Fortress Gates: the left guard hears someone while the party is
-/// cloaked.
+/// Talking to the left guard at the Lunpa Fortress Gates under Cloak, he
+/// could swear he just heard someone. Uncloaked, he grumbles that Dodonpa is
+/// devious; after Donpa's judgment, until the meeting with Bunza, he thinks
+/// he has seen the man with the party before, then decides it is impossible.
 static void Lunpa_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
@@ -541,7 +573,10 @@ static void Lunpa_TalkToLeftGuard(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-/// Lunpa Fortress Gates: the right guard boasts.
+/// Talking to the right guard at the Lunpa Fortress Gates, he boasts that not
+/// even a mouse could get in while he is on watch. Under Cloak he answers his
+/// partner that the place is kind of creepy; after Donpa's judgment he
+/// wonders how the warriors from Kalay got in.
 static void Lunpa_TalkToRightGuard(void) {
   if (gMainRoutineWork.cloaked != 0) {
     Event_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
@@ -553,7 +588,12 @@ static void Lunpa_TalkToRightGuard(void) {
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-/// Lunpa Fortress Gates: Mind Read on the left guard.
+/// Mind Read on the left guard at the Lunpa Fortress Gates: he thinks keeping
+/// Hammet to squeeze money out of Kalay is genius. After Donpa's judgment,
+/// until the meeting with Bunza, he turns to Isaac sure he has seen that man
+/// with him before (later, that the man following them looks like that
+/// merchant), then dismisses the thought.
+
 static void Lunpa_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
@@ -580,7 +620,9 @@ static void Lunpa_ReadLeftGuardsThoughts(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-/// Lunpa Fortress Gates: Mind Read on the right guard.
+/// Mind Read on the right guard at the Lunpa Fortress Gates: you would have
+/// to be a shadow to sneak past him. After Donpa's judgment he can't see how
+/// anyone got by them.
 static void Lunpa_ReadRightGuardsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_SetMessageId(MsgLunpaRightGuardReopenedThoughts);
@@ -590,9 +632,9 @@ static void Lunpa_ReadRightGuardsThoughts(void) {
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-/// Every frame at the Lunpa Fortress Gates after Donpa's judgment: stepping up
-/// to row 10 raises Garet's warning
-/// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
+/// Every frame at the Lunpa Fortress Gates between Donpa's judgment and the
+/// meeting with Bunza: Isaac stepping into the upper palisade's gap (map row
+/// 10) raises Garet's warning, Lunpa_GaretTurnsIsaacBack.
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
@@ -604,9 +646,9 @@ static void Lunpa_WatchForFortressApproach(void) {
   }
 }
 
-/// Lunpa Fortress Gates, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH
-/// after Donpa's judgment: Garet reminds the leader they cannot go into the
-/// fortress, and the leader steps back.
+/// After Donpa's judgment, walking up into the gap in the upper palisade at
+/// the Lunpa Fortress Gates, Garet reminds Isaac they can't go in there, and
+/// Isaac winces and steps back.
 static void Lunpa_GaretTurnsIsaacBack(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -622,8 +664,9 @@ static void Lunpa_GaretTurnsIsaacBack(void) {
   Event_End();
 }
 
-/// Lunpa, walking north into a doorway: the door opens and the leader goes
-/// into the home, shop, inn or temple behind it.
+/// Walking north into one of Lunpa's doors, it swings open and Isaac goes
+/// through into the home, shop, inn, temple or crate room behind it. The
+/// townspeople stand still meanwhile.
 static void Lunpa_EnterDoor(void) {
   struct FieldWork *work;
   struct Actor *placedActor;
@@ -657,8 +700,9 @@ static void Lunpa_EnterDoor(void) {
   Event_End();
 }
 
-/// Lunpa, CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the
-/// hidden room once opened, while Reveal shows it.
+/// Walking north into the cave mouth the hidden switch opened in Lunpa's west
+/// cliff (cell (2, 19)) takes Isaac into Lunpa's hidden room. It works only
+/// while Reveal shows the mouth; otherwise nothing happens there.
 static void Lunpa_EnterHiddenPassage(void) {
   if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
@@ -672,8 +716,9 @@ static void Lunpa_EnterHiddenPassage(void) {
   }
 }
 
-/// Lunpa Fortress Gates, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_DOOR:
-/// through the fortress door at the top of the steps, into Lunpa Fortress.
+/// Walking up to the golden door in the cliff at the top of the Lunpa
+/// Fortress Gates (cells (9, 5) and (10, 5)), it opens and Isaac goes into
+/// Lunpa Fortress.
 static void Lunpa_EnterFortress(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS);
   Event_Start();
@@ -695,17 +740,17 @@ static void Lunpa_EnterFortress(void) {
 
 static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
 
-/// Unused: plays the treasure jingle for Reveal uncovering something, until
-/// FLAG_LUNPA_SECRETS_HIDDEN is set.
-/// Nothing calls it.
+/// Unused: plays the treasure jingle while Reveal is shining. Nothing calls
+/// it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
     Sound_Play(MUS_TREASURE_FOUND);
   }
 }
 
-/// Lunpa: searching the switch Reveal shows opens the passage to the hidden
-/// room in five steps.
+/// Searching the sparkle Reveal shows on Lunpa's west cliff, from cell (3, 18)
+/// below it, makes the rock crumble away into a dark cave mouth, the passage
+/// to Lunpa's hidden room.
 static void Lunpa_PressHiddenSwitch(void) {
   if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) != 0) {
     return;
@@ -729,16 +774,20 @@ static void Lunpa_PressHiddenSwitch(void) {
   GameFlag_Set(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN);
 }
 
-/// Copies one open or blocked source cell across the three-cell gateway.
+/// Copies the cell at (sourceColumn, sourceRow) over the three cells (7, 11)
+/// to (9, 11) at the Lunpa Fortress Gates, just below the west half of the
+/// upper palisade.
 static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
   MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 7, 11);
   MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 8, 11);
   MapGrid_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
 }
 
-/// Lunpa Fortress Gates, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_GUARDED_GROUND:
-/// coming close uncloaked, the guards step in front of the fortress door and
-/// the gateway closes.
+/// Walking uncloaked into the yard between the palisades at the Lunpa
+/// Fortress Gates (cells (7, 11) to (14, 14)), the two guards cry out, step up
+/// into the upper palisade's gap and warn the party not to come any closer to
+/// the fortress. The three cells west of them are rewritten as Cloak's cast
+/// does.
 static void Lunpa_GuardsBlockGate(void) {
   if (gMainRoutineWork.cloaked == 0) {
     Event_Start();
@@ -766,14 +815,16 @@ static void Lunpa_GuardsBlockGate(void) {
 
 static void UNUSED Lunpa_DoNothing(void) {}
 
-/// Lunpa Fortress Gates, casting Cloak: the gateway closes behind the guards.
+/// Casting Cloak at the Lunpa Fortress Gates rewrites the three cells (7, 11)
+/// to (9, 11) from the one at (6, 11); Lunpa_CloakFades puts them back.
 static void Lunpa_CastCloak(void) {
   Lunpa_CopyGatewayCollision(6, 11);
   GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST);
 }
 
-/// Lunpa Fortress Gates, raised when the guards spot the party: they wonder
-/// how the party got there and march them back down to the foot of the steps.
+/// When the guards at the Lunpa Fortress Gates spot the party, they turn and
+/// shout who are you, wonder how anyone got past them, and march Isaac back
+/// out through the gap in the lower palisade.
 static void Lunpa_GuardsCatchParty(void) {
   struct Actor *leader;
   s32 warningMessageBase;
@@ -832,8 +883,8 @@ static void Lunpa_GuardsCatchParty(void) {
 
 static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
-/// Lunpa Fortress Gates, as Cloak fades: if the leader is still among the
-/// guards, the party is caught.
+/// As Cloak fades at the Lunpa Fortress Gates, a party still in the yard
+/// between the palisades is caught by the guards.
 static void Lunpa_CloakFades(void) {
 #if TBS_PATCH_1
   struct FieldWork *work;
@@ -859,8 +910,8 @@ static void Lunpa_CloakFades(void) {
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY);
 }
 
-/// Every frame at the Lunpa Fortress Gates: an uncloaked leader in front of
-/// the guards is spotted.
+/// Every frame at the Lunpa Fortress Gates: an uncloaked Isaac in the gap of
+/// the upper palisade is spotted by the guards.
 static void Lunpa_WatchForUncloakedParty(void) {
   struct FieldWork *work;
   struct Actor *leader;
@@ -875,7 +926,8 @@ static void Lunpa_WatchForUncloakedParty(void) {
   }
 }
 
-/// Every 16 frames while the leader is thrown: a puff of dust.
+/// Every 16 frames while Isaac is dragged and thrown: a puff of dust at his
+/// feet.
 static void Lunpa_KickUpLeaderDust(void) {
   struct Actor *leader;
   s32 dustAngle;
@@ -892,8 +944,10 @@ static void Lunpa_KickUpLeaderDust(void) {
   }
 }
 
-/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_CAUGHT, after being
-/// caught in the fortress: the guards throw the leader out and down the steps.
+/// Caught inside Lunpa Fortress, Isaac is dragged out of the door by the two
+/// guards, struggling, down through both palisades, and thrown sprawling onto
+/// the slope below. And don't come back, says one, and they return to their
+/// posts.
 static void Lunpa_GuardsThrowIsaacOut(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 160, 128);
@@ -981,9 +1035,9 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Event_End();
 }
 
-/// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA,
-/// after slipping out of the fortress: the leader casts Cloak and slips round
-/// the guards.
+/// After the rescue, Isaac comes out of the fortress door, casts Cloak in the
+/// upper palisade's gap and slips round behind the guards, west along the
+/// palisade and down the west side of the slope.
 static void Lunpa_LeaderSneaksOut(void) {
   Event_Start();
   Event_StartScreenTransition();
@@ -1011,7 +1065,9 @@ static void Lunpa_LeaderSneaksOut(void) {
   Event_End();
 }
 
-/// Sets Lunpa or the Lunpa Fortress Gates up.
+/// Sets up Lunpa (secrets hidden, the Nut in its tree) or the Lunpa Fortress
+/// Gates (the throw-out or the sneak-out, Garet's watch, the guards' watch and
+/// the fortress started over).
 s32 Scene_Initialize(void) {
   struct Actor *puddle;
 
@@ -1193,7 +1249,7 @@ struct ActorPlacement gGateActorPlacements[] = {
       DOOR(CELL_BEHAVIOR_LUNPA_ITEM_SHOP_DOOR),                                \
       DOOR(CELL_BEHAVIOR_LUNPA_INN_DOOR),                                      \
       DOOR(CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR),                                   \
-      DOOR(CELL_BEHAVIOR_LUNPA_EIGHTH_ROOM_DOOR), {                            \
+      DOOR(CELL_BEHAVIOR_LUNPA_CRATE_ROOM_DOOR), {                             \
     STEP_TRIGGER_WALKING_INTO(FACING_NORTH),                                   \
         CELL_BEHAVIOR_LUNPA_HIDDEN_PASSAGE, CONDITION_ALWAYS,                  \
         EVENT(Lunpa_EnterHiddenPassage)                                        \
@@ -1301,9 +1357,8 @@ struct Trigger gLunpaReopenedTriggers[] = {
 // clang-format off
 struct Trigger gGateTriggers[] = {
     { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
-    // XXX (no evidence): where the third road was meant to lead; gGateExits
-    // has no row for it, so the field sends it to LunpaFortressGroundFloor's
-    // default entrance.
+    // Unused: no cell of the gates' map has the third road's behavior.
+
     { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Lunpa_CastCloak) },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(Lunpa_CloakFades) },

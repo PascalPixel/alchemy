@@ -412,6 +412,15 @@ enum PsynergyPhase {
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
   ((u32)(phase) << PSYNERGY_PHASE_SHIFT | PSYNERGY_ON_ACTOR(ability))
 
+/// What Scene_SelectPsynergyTarget chooses: a cell behavior as it is, an
+/// actor's id with PSYNERGY_TARGET_ACTOR, or PSYNERGY_TARGET_ANYWHERE.
+enum PsynergyTarget {
+  PSYNERGY_TARGET_ACTOR = 0x100,
+  PSYNERGY_TARGET_ANYWHERE = 0x200,
+  PSYNERGY_TARGET_KIND = 0xff00, ///< which of the three
+  PSYNERGY_TARGET_ID = 0xff      ///< the cell behavior or actor
+};
+
 /// A Psynergy trigger on the cell behavior ahead, at one phase of the cast.
 #define PSYNERGY_PHASE_ON_CELL(ability, phase)                                 \
   ((u32)(phase) << PSYNERGY_PHASE_SHIFT | (ability) << 8 | TRIGGER_PSYNERGY)
@@ -468,5 +477,15 @@ struct SceneEntries {
   /// Map: the scene's own edits to its map before it is shown.
   s32 (*prepareMap)(void);
 };
+
+/// The bit that marks a song in gEncounter_BattleMusic; encounter keys have it
+/// clear.
+#define ENCOUNTER_BATTLE_MUSIC_MARKER 0x8000
+/// A song's row in gEncounter_BattleMusic, before the encounters that take it:
+/// the song (a MUS_ id) with ENCOUNTER_BATTLE_MUSIC_MARKER set.
+#define ENCOUNTER_BATTLE_MUSIC(song)                                           \
+  (s16)(ENCOUNTER_BATTLE_MUSIC_MARKER | (song))
+/// An encounter's row in gEncounter_BattleMusic: slot of encounter zone.
+#define ENCOUNTER_KEY(zone, slot) (((zone) << 4) + (slot))
 
 #endif

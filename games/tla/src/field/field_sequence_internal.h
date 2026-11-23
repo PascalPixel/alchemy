@@ -73,14 +73,6 @@
 /// No user named: Field_UsePsynergy takes the first party member, and
 /// Field_UseItem whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15
-/// What Scene_SelectPsynergyTarget chooses: a cell behavior as it is, an
-/// actor's id with PSYNERGY_TARGET_ACTOR, or PSYNERGY_TARGET_ANYWHERE.
-enum PsynergyTarget {
-  PSYNERGY_TARGET_ACTOR = 0x100,
-  PSYNERGY_TARGET_ANYWHERE = 0x200,
-  PSYNERGY_TARGET_KIND = 0xff00, ///< which of the three
-  PSYNERGY_TARGET_ID = 0xff      ///< the cell behavior or actor
-};
 
 /// The running scene's entry table, at the start of gOverlayArea.
 #define SCENE_ENTRIES ((struct SceneEntries *)gOverlayArea)
@@ -205,8 +197,8 @@ extern const s16 gParty_PairResolveRules[];
 
 extern const s32 gScene_BattleBackgroundRules[];
 
-/// The battle music table: each song as 0x8000 | song, followed by the
-/// encounters that use it as (zone << 4) + slot, ended by 0.
+/// The battle music table: each song as ENCOUNTER_BATTLE_MUSIC(song), followed
+/// by the encounters that use it as ENCOUNTER_KEY(zone, slot), ended by 0.
 extern const s16 gEncounter_BattleMusic[];
 
 /// The scene data's halfword offset of its bounds, from gMapScene.

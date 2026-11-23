@@ -48,6 +48,10 @@ enum BattleArenaCellBehavior {
   CELL_BEHAVIOR_BATTLE_ARENA_CIRCLE = 10,
 };
 
+/// The map's tileset animation of the iron gate in the north wall, run for
+/// eight frames as the party walks to it from the diamond mark.
+enum { BATTLE_ARENA_GATE_ANIMATION = 5 };
+
 s32 Scene_Initialize(void);
 extern u8 gBattleArena_SlotColumns[];
 extern struct SceneEntrance gBattleArenaEntrances[];
@@ -57,8 +61,8 @@ extern struct ActorPlacement gBattleArenaBattleActorPlacements[];
 extern struct Trigger gBattleArenaTriggers[];
 
 /// The attendant has asked the player to take part. Every
-/// LOBBY_ASK_AGAIN_CALLS-th call of BattleArena_AskToParticipate clears it so
-/// she asks again.
+/// BATTLE_ARENA_ASK_AGAIN_CALLS-th call of BattleArena_AskToParticipate clears
+/// it so she asks again.
 #define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_SCENE_TEMP_00
 /// The opponent has asked for a battle: its signature matches, and it stands
 /// asked or in the circle.
@@ -81,7 +85,7 @@ extern struct Trigger gBattleArenaTriggers[];
 /// This console is the link's child (multiplayer id 1), which receives the
 /// parties first.
 #define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_AREA_TEMP_02
-/// The link is up. Both consoles were heard (LOBBY_LINK_READY_MASK).
+/// The link is up. Both consoles were heard (BATTLE_ARENA_LINK_READY_MASK).
 #define FLAG_BATTLE_ARENA_LINK_UP FLAG_AREA_TEMP_03
 /// A linked battle has ended since the leader last walked south of z 224, so
 /// the party and the visitors speak of it.
@@ -98,32 +102,32 @@ enum { LEVEL_BONUS_MAX = 90 };
 // a block and ends a send only when its count reaches exactly 0.
 /// The bytes sent for each party member. They are a Unit (BATTLE_UNIT_SIZE, 332
 /// bytes) and the eight bytes after it, 17 blocks of 20.
-#define LOBBY_UNIT_RECORD_BYTES (17 * 20)
+#define BATTLE_ARENA_UNIT_RECORD_BYTES (17 * 20)
 /// The bytes sent for the Djinn recovery table after the party members. They
 /// are the table (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after
 /// it, 16 blocks of 20, two more than the table needs.
-#define LOBBY_RECOVERY_RECORD_BYTES (16 * 20)
+#define BATTLE_ARENA_RECOVERY_RECORD_BYTES (16 * 20)
 /// The party members a linked battle takes. A smaller party sends absent
 /// records.
-#define LOBBY_UNIT_RECORD_COUNT 3
+#define BATTLE_ARENA_UNIT_RECORD_COUNT 3
 /// gLinkStatus bits 0 and 1. Both consoles were heard this frame, as the battle
 /// code's LINK_BOTH_CONNECTED.
-#define LOBBY_LINK_READY_MASK 3
+#define BATTLE_ARENA_LINK_READY_MASK 3
 /// A record fails on the 25th frame it waits without a link or past the
 /// timeout.
-#define LOBBY_TRANSFER_RETRY_LIMIT 24
+#define BATTLE_ARENA_TRANSFER_RETRY_LIMIT 24
 /// Frames, about ten seconds, for the three party member records, and again for
 /// the recovery table.
-#define LOBBY_SEND_TIMEOUT_FRAMES 600
+#define BATTLE_ARENA_SEND_TIMEOUT_FRAMES 600
 /// Frames, about fifteen seconds, for all four records received.
-#define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
+#define BATTLE_ARENA_RECEIVE_TIMEOUT_FRAMES 900
 /// Frames without a link (BattleArena_WatchOpponent) or without the opponent's
 /// request (BattleArena_EnterBattle) before the Battle Arena gives the opponent
 /// up.
-#define LOBBY_PEER_WAIT_FRAMES 25
+#define BATTLE_ARENA_PEER_WAIT_FRAMES 25
 /// The calls of BattleArena_AskToParticipate after which the attendant asks
 /// again.
-#define LOBBY_ASK_AGAIN_CALLS 300
+#define BATTLE_ARENA_ASK_AGAIN_CALLS 300
 
 /// The wall board's digits, which show the most linked battles won in a row,
 /// and the most they show.
@@ -180,22 +184,22 @@ enum BattleArenaActorId {
 
 /// The words of gBattleArena_SlotValues, by slot. They are the signature, then
 /// the state a console publishes.
-enum LobbySlot {
-  LOBBY_SLOT_SIGNATURE = 0,
-  LOBBY_SLOT_ASKED = 1,     ///< has asked for a battle
-  LOBBY_SLOT_IN_CIRCLE = 2, ///< stands in the circle
-  LOBBY_SLOT_UNUSED = 3,
-  LOBBY_SLOT_IDLE = 4,
+enum BattleArenaSlot {
+  BATTLE_ARENA_SLOT_SIGNATURE = 0,
+  BATTLE_ARENA_SLOT_ASKED = 1,     ///< has asked for a battle
+  BATTLE_ARENA_SLOT_IN_CIRCLE = 2, ///< stands in the circle
+  BATTLE_ARENA_SLOT_UNUSED = 3,
+  BATTLE_ARENA_SLOT_IDLE = 4,
   /// Replaces the signature when no opponent answers the attendant and during
   /// a monster series.
-  LOBBY_SLOT_ALONE = 5
+  BATTLE_ARENA_SLOT_ALONE = 5
 };
 
 /// The Battle Arena's raised triggers (FieldWork.raisedTrigger).
 enum BattleArenaRaisedTrigger {
-  LOBBY_EVENT_NONE = 0,
-  LOBBY_EVENT_ASK_TO_PARTICIPATE = 1, ///< BattleArena_AskToParticipate
-  LOBBY_EVENT_DISCONNECTED = 2        ///< BattleArena_ReportLinkDisconnected
+  BATTLE_ARENA_EVENT_NONE = 0,
+  BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE = 1, ///< BattleArena_AskToParticipate
+  BATTLE_ARENA_EVENT_DISCONNECTED = 2 ///< BattleArena_ReportLinkDisconnected
 };
 
 /// gMainRoutineWork.linkTallies, as the Battle Arena keeps them.
@@ -218,10 +222,10 @@ enum LinkTally {
 /// The words the Battle Arena publishes in its link payload, by slot.
 ///
 /// The opponent compares them with its own (BattleArena_PeerSlotMatches), by
-/// enum LobbySlot. The signature is in the first column
+/// enum BattleArenaSlot. The signature is in the first column
 /// (gBattleArena_SlotColumns), the states in the second.
 ///
-/// In English and French LOBBY_SLOT_ALONE equals the signature and changes
+/// In English and French BATTLE_ARENA_SLOT_ALONE equals the signature and changes
 /// nothing. Elsewhere it is the signature's letters reversed.
 ///
 /// So while a console publishes it (no opponent answered, or a monster series
@@ -268,7 +272,7 @@ struct LinkPeerPayload {
 };
 
 /// Frames BattleArena_WatchOpponent has gone without a link, 0 to
-/// LOBBY_PEER_WAIT_FRAMES. It is 0 while linked.
+/// BATTLE_ARENA_PEER_WAIT_FRAMES. It is 0 while linked.
 static s32 sBattleArenaWaitFrames;
 
 /// What a Battle Arena handler's early exit returns.
@@ -276,9 +280,9 @@ static s32 sBattleArenaWaitFrames;
 /// The handlers return nothing there, leaving whatever the last call returned
 /// (UB). UBFIX returns 0, as the function ends that fall off do.
 #ifdef UBFIX
-#define LOBBY_NO_RESULT 0
+#define BATTLE_ARENA_NO_RESULT 0
 #else
-#define LOBBY_NO_RESULT
+#define BATTLE_ARENA_NO_RESULT
 #endif
 
 /// The Battle Arena's entrances, which FieldSequence_Run reads through
@@ -319,7 +323,8 @@ s32 Scene_GetActorPlacements(void) {
 static s32 BattleArena_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
-  if ((gLinkStatus & LOBBY_LINK_READY_MASK) == LOBBY_LINK_READY_MASK) {
+  if ((gLinkStatus & BATTLE_ARENA_LINK_READY_MASK) ==
+      BATTLE_ARENA_LINK_READY_MASK) {
     // 0 for the parent, 1 for the child.
     serialPlayerId = SIO_ID_OF(REG_SIOCNT);
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_UP);
@@ -367,18 +372,18 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed > toFIXED(224)) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
-  // While LOBBY_EVENT_DISCONNECTED waits, skip the opponent tracking.
-  if (work->raisedTrigger != LOBBY_EVENT_DISCONNECTED) {
-    BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE);
+  // While BATTLE_ARENA_EVENT_DISCONNECTED waits, skip the opponent tracking.
+  if (work->raisedTrigger != BATTLE_ARENA_EVENT_DISCONNECTED) {
+    BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE);
     if (!GameFlag_Get(FLAG_BATTLE_ARENA_LINK_UP)) {
-      // Without a link for more than LOBBY_PEER_WAIT_FRAMES frames, clear every
-      // console's received payload and go idle.
-      if (++sBattleArenaWaitFrames > LOBBY_PEER_WAIT_FRAMES) {
+      // Without a link for more than BATTLE_ARENA_PEER_WAIT_FRAMES frames,
+      // clear every console's received payload and go idle.
+      if (++sBattleArenaWaitFrames > BATTLE_ARENA_PEER_WAIT_FRAMES) {
         for (i = 0; i < 4; i++) {
           Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
         }
         sBattleArenaWaitFrames = 0;
-        BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+        BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
       }
     } else {
       sBattleArenaWaitFrames = 0;
@@ -386,12 +391,12 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
     // While linked: has the opponent asked for a battle, or stepped into the
     // circle?
     if (sBattleArenaWaitFrames == 0) {
-      if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
-          (BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
-           BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
+      if (BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE) &&
+          (BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_ASKED) ||
+           BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE))) {
         GameFlag_Set(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
-          work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
+          work->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
         }
         result = 1;
       } else {
@@ -402,30 +407,30 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
     if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED) &&
         GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE) &&
         !GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED)) {
-      work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
+      work->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
     }
   }
-  // LOBBY_PEER_WAIT_FRAMES frames without a link while a linked battle is being
-  // arranged: report the link lost.
+  // BATTLE_ARENA_PEER_WAIT_FRAMES frames without a link while a linked battle
+  // is being arranged: report the link lost.
   if ((Event_GetFlag(FLAG_BATTLE_ARENA_OPPONENT_ASKED) ||
        GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) &&
       !GameFlag_Get(FLAG_MONSTER_BATTLE) &&
-      !BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
-      sBattleArenaWaitFrames >= LOBBY_PEER_WAIT_FRAMES) {
-    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+      !BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE) &&
+      sBattleArenaWaitFrames >= BATTLE_ARENA_PEER_WAIT_FRAMES) {
+    work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   }
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED)) {
-    work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+    work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
   }
   RETURN_UNREAD(result);
 }
 
 /// Calls of BattleArena_AskToParticipate towards asking again, at
-/// LOBBY_ASK_AGAIN_CALLS. It is cleared on every arrival.
+/// BATTLE_ARENA_ASK_AGAIN_CALLS. It is cleared on every arrival.
 u32 gBattleArenaCallFrames;
 
 /// Once both linked players have agreed to a battle, the attendant behind the
@@ -433,9 +438,9 @@ u32 gBattleArenaCallFrames;
 /// circle!", and calls it again now and then while the player keeps her
 /// waiting.
 ///
-/// `BattleArena_WatchOpponent` raises it (LOBBY_EVENT_ASK_TO_PARTICIPATE) while
-/// both have agreed, and every LOBBY_ASK_AGAIN_CALLS calls the flag that keeps
-/// her quiet is cleared.
+/// `BattleArena_WatchOpponent` raises it
+/// (BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE) while both have agreed, and every
+/// BATTLE_ARENA_ASK_AGAIN_CALLS calls the flag that keeps her quiet is cleared.
 ///
 /// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
 /// FLAG_BATTLE_ARENA_ATTENDANT_ASKED is set and nothing is shown. The path that
@@ -447,7 +452,7 @@ static s32 BattleArena_AskToParticipate(void) {
   if (set != 0) {
     return set;
   }
-  if (++gBattleArenaCallFrames == LOBBY_ASK_AGAIN_CALLS) {
+  if (++gBattleArenaCallFrames == BATTLE_ARENA_ASK_AGAIN_CALLS) {
     gBattleArenaCallFrames = 0;
     GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   }
@@ -472,15 +477,15 @@ static s32 BattleArena_AskToParticipate(void) {
 /// disconnected.", and the arranging starts over.
 ///
 /// `BattleArena_WatchOpponent` and `BattleArena_EnterBattle` raise it
-/// (LOBBY_EVENT_DISCONNECTED).
+/// (BATTLE_ARENA_EVENT_DISCONNECTED).
 static s32 BattleArena_ReportLinkDisconnected(void) {
   struct FieldWork *work = gFieldWork;
 
-  BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+  BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
   GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
   Event_Start();
-  work->raisedTrigger = LOBBY_EVENT_NONE;
+  work->raisedTrigger = BATTLE_ARENA_EVENT_NONE;
   Event_SetMessageId(MsgLobbyLinkDisconnected);
   // "The link was disconnected."
   Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -511,16 +516,16 @@ static s32 BattleArena_ReceivePartyRecords(void) {
   s32 prefixLength;
   s32 i;
 
-  size = LOBBY_UNIT_RECORD_BYTES;
+  size = BATTLE_ARENA_UNIT_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
   result = 0;
-  timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
+  timeout = BATTLE_ARENA_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
   // Three records, each started at recordNext and waited for at recordTest,
   // then the recovery table at recovery. Each receive waits a frame at a time;
   // more than size bytes is an overrun and fewer once it ends a short record,
   // and once the timeout has run out, or while the link is not ready, every
-  // frame is a try, failing past LOBBY_TRANSFER_RETRY_LIMIT.
+  // frame is a try, failing past BATTLE_ARENA_TRANSFER_RETRY_LIMIT.
   goto recordNext;
 recordWait:
   if (gSerialReceivedSize > size) {
@@ -528,9 +533,9 @@ recordWait:
     goto done;
   }
   wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+  if (--timeout < 0 || (gLinkStatus & BATTLE_ARENA_LINK_READY_MASK) !=
+                           BATTLE_ARENA_LINK_READY_MASK) {
+    if (++tries > BATTLE_ARENA_TRANSFER_RETRY_LIMIT) {
       result = -1;
       goto done;
     }
@@ -570,7 +575,7 @@ recordTest:
   unit->name[UNIT_NAME_SIZE - 1] = 0;
   slot++;
 recordNext:
-  if (slot >= LOBBY_UNIT_RECORD_COUNT) {
+  if (slot >= BATTLE_ARENA_UNIT_RECORD_COUNT) {
     goto recovery;
   }
   // The opponent's party members become this battle's first three enemies.
@@ -582,14 +587,14 @@ recordNext:
   goto recordTest;
 recoveryWait:
   started = gSerialReceivedSize;
-  if (started > LOBBY_RECOVERY_RECORD_BYTES) {
+  if (started > BATTLE_ARENA_RECOVERY_RECORD_BYTES) {
     result = -1;
     goto done;
   }
   wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+  if (--timeout < 0 || (gLinkStatus & BATTLE_ARENA_LINK_READY_MASK) !=
+                           BATTLE_ARENA_LINK_READY_MASK) {
+    if (++tries > BATTLE_ARENA_TRANSFER_RETRY_LIMIT) {
       result = -1;
       goto done;
     }
@@ -598,7 +603,7 @@ recoveryTest:
   if (Serial_GetActiveTransfers() != 0) {
     goto recoveryWait;
   }
-  if (gSerialReceivedSize != LOBBY_RECOVERY_RECORD_BYTES) {
+  if (gSerialReceivedSize != BATTLE_ARENA_RECOVERY_RECORD_BYTES) {
     result = -1;
   } else {
     wait(2);
@@ -607,7 +612,7 @@ recoveryTest:
 recovery:
   // Then the recovery table, into the enemy side's (unit 131's record).
   Heap_Release(buffer);
-  size = LOBBY_RECOVERY_RECORD_BYTES;
+  size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
   tries = 0;
   if ((started = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
@@ -625,8 +630,8 @@ done:
 /// null destination only counts them.
 static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
   s32 memberCount = Party_CountMembers();
-  if (memberCount > LOBBY_UNIT_RECORD_COUNT)
-    memberCount = LOBBY_UNIT_RECORD_COUNT;
+  if (memberCount > BATTLE_ARENA_UNIT_RECORD_COUNT)
+    memberCount = BATTLE_ARENA_UNIT_RECORD_COUNT;
   if (memberCount > 0) {
 #ifndef UBFIX
     s16 *partyAddress = (s16 *)&gMainRoutineWork;
@@ -675,18 +680,18 @@ static s32 BattleArena_SendPartyRecords(void) {
   u32 size;
   struct DjinnRecoveryList *list;
 
-  size = LOBBY_UNIT_RECORD_BYTES;
+  size = BATTLE_ARENA_UNIT_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
   result = 0;
-  timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+  timeout = BATTLE_ARENA_SEND_TIMEOUT_FRAMES;
   memberCount = BattleArena_CopyPartyOwnerIds(memberIds);
   for (i = 7; i >= 0; i--) {
     peerSlots[i] = 0;
   }
   // Each send waits a frame at a time to finish. Once the timeout has run out,
   // or while the link is not ready, every frame is a try, and past
-  // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that does not
-  // start breaks out to the release; the waits inside leave by done.
+  // BATTLE_ARENA_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that
+  // does not start breaks out to the release; the waits inside leave by done.
   do {
     for (i = 0; i < memberCount; i++) {
       Iwram_CopyWords(buffer, Unit_Get(memberIds[i]), size);
@@ -703,9 +708,9 @@ static s32 BattleArena_SendPartyRecords(void) {
       }
       while (Serial_GetActiveTransfers() != 0) {
         wait(1);
-        if (--timeout < 0 ||
-            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+        if (--timeout < 0 || (gLinkStatus & BATTLE_ARENA_LINK_READY_MASK) !=
+                                 BATTLE_ARENA_LINK_READY_MASK) {
+          if (++tries > BATTLE_ARENA_TRANSFER_RETRY_LIMIT) {
             result = -1;
             goto done;
           }
@@ -714,15 +719,15 @@ static s32 BattleArena_SendPartyRecords(void) {
       wait(2);
     }
     // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE).
-    for (; i < LOBBY_UNIT_RECORD_COUNT; i++) {
+    for (; i < BATTLE_ARENA_UNIT_RECORD_COUNT; i++) {
       ((struct Unit *)buffer)->side = tries = 0;
       if ((started = Serial_StartSend(buffer, size)) == -1)
         break;
       while (Serial_GetActiveTransfers() != 0) {
         wait(1);
-        if (--timeout < 0 ||
-            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+        if (--timeout < 0 || (gLinkStatus & BATTLE_ARENA_LINK_READY_MASK) !=
+                                 BATTLE_ARENA_LINK_READY_MASK) {
+          if (++tries > BATTLE_ARENA_TRANSFER_RETRY_LIMIT) {
             result = -1;
             goto done;
           }
@@ -730,14 +735,14 @@ static s32 BattleArena_SendPartyRecords(void) {
       }
       wait(2);
     }
-    if (i < LOBBY_UNIT_RECORD_COUNT) {
+    if (i < BATTLE_ARENA_UNIT_RECORD_COUNT) {
       result = started;
       break;
     }
     Heap_Release(buffer);
 
     // Then the recovery table.
-    size = LOBBY_RECOVERY_RECORD_BYTES;
+    size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
     buffer = Heap_AllocEwram(size);
     IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTable(0), size);
     {
@@ -746,7 +751,7 @@ static s32 BattleArena_SendPartyRecords(void) {
 
       list = &((struct DjinnRecoveryTable *)buffer)->list;
       tries = 0;
-      timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+      timeout = BATTLE_ARENA_SEND_TIMEOUT_FRAMES;
       // Give each Djinni on the list its party member's number on the
       // opponent's side, and drop those of party members not sent (peerSlots
       // 0).
@@ -766,9 +771,9 @@ static s32 BattleArena_SendPartyRecords(void) {
       }
       while (Serial_GetActiveTransfers() != 0) {
         wait(1);
-        if (--timeout < 0 ||
-            (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-          if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+        if (--timeout < 0 || (gLinkStatus & BATTLE_ARENA_LINK_READY_MASK) !=
+                                 BATTLE_ARENA_LINK_READY_MASK) {
+          if (++tries > BATTLE_ARENA_TRANSFER_RETRY_LIMIT) {
             result = -1;
             goto done;
           }
@@ -830,8 +835,8 @@ check:
 /// once a battle is arranged starts it. For a monster battle the attendant says
 /// "Good luck!" and Isaac walks north through the iron gate, which lifts, into
 /// the arena. For a linked battle "Awaiting your opponent..." shows until the
-/// friend steps onto the mark too, and Isaac walks slowly
-/// to the gate while the two parties are traded over the cable.
+/// friend steps onto the mark too, and Isaac walks slowly to the gate while
+/// the two parties are traded over the cable.
 ///
 /// Before a battle is arranged, nothing happens on the mark. A lost link or a
 /// failed trade walks him back out and lets the attendant say so.
@@ -855,35 +860,35 @@ static s32 BattleArena_EnterBattle(void) {
     Event_Start();
   } else {
     if (!GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED))
-      return LOBBY_NO_RESULT;
+      return BATTLE_ARENA_NO_RESULT;
     if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED))
-      return LOBBY_NO_RESULT;
+      return BATTLE_ARENA_NO_RESULT;
     Event_Start();
     GameFlag_Set(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
-    if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IN_CIRCLE);
+    if (!BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE))
       window = Message_OpenWindow(MsgLobbyAwaitingOpponent, 5, 4,
                                   MESSAGE_WINDOW_ZOOM);
-    while (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
+    while (!BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE)) {
       wait(1);
       cancelEntry = 0;
       if (!GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED))
         cancelEntry = 1;
       if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED))
         cancelEntry = 1;
-      if (!BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE) &&
-          !BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED)) {
-        if (++missedFrames > LOBBY_PEER_WAIT_FRAMES)
+      if (!BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE) &&
+          !BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_ASKED)) {
+        if (++missedFrames > BATTLE_ARENA_PEER_WAIT_FRAMES)
           cancelEntry = 1;
       } else {
         missedFrames = 0;
       }
       if (cancelEntry) {
-        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+        work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
         GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
-        BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+        BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
         failed = 1;
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
         break;
@@ -893,7 +898,8 @@ static s32 BattleArena_EnterBattle(void) {
       Window_Close(window, 1);
     wait(5);
   }
-  // Suspend peer polling while transferring the party and entering battle.
+  // Stop watching the opponent while the parties are traded and the battle
+  // starts.
   if (!failed) {
     // HEAP_SLOT_ENEMY_UNITS is gEnemyUnits, the battle's enemy
     // units (ENEMY_UNITS_SIZE, battle/battle_run.c). While it is
@@ -904,9 +910,9 @@ static s32 BattleArena_EnterBattle(void) {
     savedWork =
         HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
     Task_Remove((TaskFunc)BattleArena_WatchOpponent);
-    TilesetAnim_Resume(5);
+    TilesetAnim_Resume(BATTLE_ARENA_GATE_ANIMATION);
     wait(8);
-    TilesetAnim_Pause(5);
+    TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {
       Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId(MsgLobbyGoodLuck);
@@ -919,35 +925,36 @@ static s32 BattleArena_EnterBattle(void) {
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 168);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     } else {
-      // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
-      // the parties are exchanged, then a half.
+      // Isaac walks to the gate at a crawl while the parties are traded, and
+      // at half pace once they are.
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 200);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
-      // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
+      // reporting the link lost (BATTLE_ARENA_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
         Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 200);
-        TilesetAnim_Resume(5);
+        TilesetAnim_Resume(BATTLE_ARENA_GATE_ANIMATION);
         wait(8);
-        TilesetAnim_Pause(5);
+        TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
-        BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-        BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+        BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
+        BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
         Task_AddFrame((TaskFunc)BattleArena_WatchOpponent, TASK_PASS_FRAME);
-        Task_SetFlags((TaskFunc)BattleArena_WatchOpponent, 1);
+        Task_SetFlags((TaskFunc)BattleArena_WatchOpponent,
+                      TASK_FLAG_KEEP_RUNNING);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
-        work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+        work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
         Event_End();
-        return LOBBY_NO_RESULT;
+        return BATTLE_ARENA_NO_RESULT;
       }
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1008,11 +1015,11 @@ static s32 BattleArena_ChooseBattleMode(void) {
   messageBase = MsgLobbyPleaseSpeakWhen;
   Event_Start();
   Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
-  if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
+  if (BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE) == 0) {
     wait(1);
   }
-  if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
-    BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
+  if (BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE) == 0) {
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ALONE);
     BattleArena_RestartLink();
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(messageBase + 5);
@@ -1033,7 +1040,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
       }
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
       GameFlag_Set(FLAG_LINK_BATTLE);
-      BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
       messageId = messageBase + 6;
       goto message;
     } else {
@@ -1043,7 +1050,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
   } else {
     // An opponent arrived while a monster battle waited: call it off.
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
-      BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
       Event_SetMessageId(MsgLobbyOpponentArrived);
       // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1052,11 +1059,8 @@ static s32 BattleArena_ChooseBattleMode(void) {
     }
     if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
       messageId = messageBase + 3;
-      /* The first branch's answers jump into this block's message tail, and an
-       * accepted challenge back into its opening: the listing keeps one copy of
-       * each. Written as if/else arms with their own message calls,
-       * cross-jumping folds the copies into the last arm instead (differ 51 to
-       * 55). */
+      // The lone player's answers above show their line here too, and an
+      // accepted request below comes back to open its own.
     message:
       Event_SetMessageId(messageId);
     open_message:
@@ -1077,7 +1081,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       if (Event_AskYesNoWithActorAnimation(0, 0) == YES) {
         // Yes, and the opponent is still there; else the link is lost.
-        if (BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE)) {
+        if (BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_SIGNATURE)) {
           GameFlag_Set(FLAG_LINK_BATTLE);
           GameFlag_Set(FLAG_LINK_BATTLE_ARRANGED);
           if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED)) {
@@ -1085,7 +1089,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
           } else {
             Event_SetMessageId(messageBase + 4);
           }
-          BattleArena_WriteSlotValue(LOBBY_SLOT_ASKED);
+          BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ASKED);
           GameFlag_Set(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
           goto open_message;
         } else {
@@ -1149,6 +1153,7 @@ static s32 BattleArena_TellLinkedWins(s32 actorId) {
   return 0;
 #endif
 }
+
 /// A developers' leftover: the white-bearded man in green stands south of the
 /// hall's wall, where the player can never walk. Talking to him shows "Choose
 /// your parameters here." and a number picked with Left and Right; A loads that
@@ -1434,7 +1439,6 @@ static s32 BattleArena_SaveBattleResults(void) {
 /// between "Saving Monster Battle results." and "Monster Battle results were
 /// saved.".
 static s32 BattleArena_SaveMonsterBattleResults(void) {
-  // See BattleArena_SaveBattleResults for the measured shared-helper trial.
   struct Window *window;
 
   Sound_Play(MUS_SAVED);
@@ -1487,14 +1491,15 @@ s32 Scene_Initialize(void) {
 
   gBattleArenaCallFrames = 0;
   sBattleArenaWaitFrames = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   BattleArena_DrawThreeDigitValue(
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
-  BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+  BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   wait(1);
-  TilesetAnim_Pause(5);
+  TilesetAnim_Pause(BATTLE_ARENA_GATE_ANIMATION);
 
   // The payload's halfwords 4 to 7 hold the link battle's phase word
   // ("VSST", "EDVS", "TUrn"); the Battle Arena puts TALK there.
@@ -1522,7 +1527,7 @@ s32 Scene_Initialize(void) {
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ALONE);
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_WINS]++;
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK]++;
     // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
@@ -1552,7 +1557,7 @@ s32 Scene_Initialize(void) {
       }
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {
-      // No: the series ends, and a new record (tally 2) is saved.
+      // No: the series ends, and a new best run is saved.
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       MessageArgument_Push(
@@ -1571,17 +1576,16 @@ s32 Scene_Initialize(void) {
         // "You won ... battle. Please speak to me when you wish to..."
         Event_OpenMessage(ACTOR_ATTENDANT, 0);
       }
-      BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+      BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
     }
     Event_End();
-    // A monster battle lost: the series ends, and a new
-    // record is saved.
+    // A monster battle lost: the series ends, and a new best run is saved.
   } else if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_MONSTER_LOSS) {
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    BattleArena_WriteSlotValue(LOBBY_SLOT_ALONE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ALONE);
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
     MessageArgument_Push(
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK],
@@ -1602,29 +1606,29 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = 0;
     GameFlag_Clear(FLAG_MONSTER_BATTLE);
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
     Event_End();
-    // A linked battle won: count the win and the run; a
-    // longer run is the board's new record. Saved.
+    // A linked battle won: count the win and the run; a longer run is the
+    // board's new record. Saved.
   } else if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_LINK_WIN) {
     s32 v;
 
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
-    // The battle broke off instead (Battle_Run set
-    // FLAG_AREA_TEMP_E8): report the link lost and restart it.
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
+    // The battle broke off instead (Battle_Run set FLAG_AREA_TEMP_E8): report
+    // the link lost and restart it.
     if (Event_GetFlag(FLAG_AREA_TEMP_E8)) {
       work = gFieldWork;
       GameFlag_Clear(FLAG_AREA_TEMP_E8);
-      work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
+      work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
       GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
       wait(20);
       BattleArena_RestartLink();
-      BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-      BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+      BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
+      BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
     } else {
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_WINS]++;
       v = gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
@@ -1638,16 +1642,15 @@ s32 Scene_Initialize(void) {
       GameFlag_Set(FLAG_BATTLE_ARENA_LINK_BATTLE_WON);
     }
     Event_End();
-    // A linked battle lost: count the loss and end the
-    // run. Saved.
+    // A linked battle lost: count the loss and end the run. Saved.
   } else if (gMainRoutineWork.entrance == BATTLE_ARENA_AFTER_LINK_LOSS) {
     s32 v;
 
     Event_Start();
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
     if ((v = GameFlag_Get(FLAG_MONSTER_BATTLE)) == 0) {
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_LOSSES]++;
       gMainRoutineWork.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
@@ -1675,12 +1678,12 @@ s32 Scene_Initialize(void) {
     }
     gMainRoutineWork.idleSleepEnabled = 0;
     gIdleSleepEnabled = 0;
-    BattleArena_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   }
   func = (TaskFunc)BattleArena_WatchOpponent;
   Task_AddFrame(func, TASK_PASS_FRAME);
-  Task_SetFlags(func, 1);
+  Task_SetFlags(func, TASK_FLAG_KEEP_RUNNING);
   if (gMainRoutineWork.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
       !GameFlag_Get(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
@@ -1705,7 +1708,7 @@ struct SceneEntrance gBattleArenaEntrances[] = {
     { BATTLE_ARENA_AFTER_MONSTER_WIN, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_MONSTER_LOSS, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_FROM_FILE_SCREEN, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
-    { 0, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
@@ -1849,9 +1852,9 @@ struct Trigger gBattleArenaTriggers[] = {
      EVENT(BattleArena_EnterBattle)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BATTLE_ARENA_WAY_OUT, CONDITION_ALWAYS,
      EVENT(BattleArena_LeaveArena)},
-    {TRIGGER_RAISED, LOBBY_EVENT_ASK_TO_PARTICIPATE, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE, CONDITION_ALWAYS,
      EVENT(BattleArena_AskToParticipate)},
-    {TRIGGER_RAISED, LOBBY_EVENT_DISCONNECTED, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, BATTLE_ARENA_EVENT_DISCONNECTED, CONDITION_ALWAYS,
      EVENT(BattleArena_ReportLinkDisconnected)},
     {TRIGGER_TABLE_END},
 };

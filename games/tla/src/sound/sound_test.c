@@ -26,17 +26,20 @@ void Sound_LoadReverbCode(s32 code);
 static const struct SoundTestCues sSoundTestCues = {
     {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST}};
 
-/// Unused: runs the sound test's three sound selectors and five mixer presets
-/// forever, from preset 3, with gSoundVBlankState.soundTestActive set.
+/// Unused: the sound test, which never returns. Up and Down choose a selector
+/// (music, jingles, sound effects), Left and Right step its sound by 1 and L
+/// and R by 10, A plays it, B silences the music and Start fades it, and Select
+/// fades the action sounds and steps the reverb code, from SOUND_REVERB_LONG,
+/// which this game's Sound_LoadReverbCode ignores.
 void SoundTest_Run(void) {
   struct SoundTestCues cues;
-  s32 preset;
+  s32 reverbCode;
   s32 row;
   s32 timer;
 
   cues = sSoundTestCues;
   row = 0;
-  preset = 3;
+  reverbCode = SOUND_REVERB_LONG;
   Io_Write32(0, &gBuildStamp[0]);
   gSoundVBlankState.soundTestActive = 1;
   timer = 20;
@@ -53,8 +56,8 @@ void SoundTest_Run(void) {
     }
 
     if (gInput.repeat & KEY_SELECT) {
-      preset = (preset + 1) % 5;
-      Sound_LoadReverbCode(preset);
+      reverbCode = (reverbCode + 1) % 5;
+      Sound_LoadReverbCode(reverbCode);
     }
     if (gInput.repeat & KEY_R)
       cues.cue[row] += 10;
@@ -85,8 +88,8 @@ void SoundTest_Run(void) {
   }
 }
 
-/// Replaces the audio command mask, or toggles its requested bits when
-/// flagged.
+/// Unused: replaces gSoundCommandMask, or flips the bits named with
+/// AUDIO_COMMAND_TOGGLE. Nothing calls it and nothing reads the mask.
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
@@ -97,8 +100,8 @@ void Sound_UpdateCommandMask(u32 command) {
     gSoundCommandMask = command;
 }
 
-/// Returns the music Sound_Play last chose: 0xff before any, MUS_SILENCE after
-/// a fade, else the last music.
+/// Returns the music Sound_Play last started: MUS_SILENCE before any and after
+/// a fade.
 u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 /// The sound ids gSoundFlags has a bit for.
@@ -142,7 +145,7 @@ void SoundFlag_Clear(s32 sound) {
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
-/// The fixed sample rate the sound test plays at.
+/// The fixed output rate Sound_Initialize sets for the whole game.
 enum {
   SOUND_FIXED_RATE = 31536, ///< samples a second: SOUND_MODE_FREQ_GAME's rate
   /// SOUND_FIXED_RATE over the 59.7275 VBlanks a second, rounded.

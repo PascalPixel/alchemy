@@ -182,6 +182,8 @@ u32 gMarsLighthouseAerie_FlickerRate BSS_DATA;
 struct SparkleWork gMarsLighthouseAerie_RisingRingsB BSS_DATA ALIGNED(16);
 struct SparkleWork gMarsLighthouseAerie_RisingRingsA BSS_DATA ALIGNED(16);
 u32 gMarsLighthouseAerie_BeaconFireFrame BSS_DATA;
+/// The teleport circle's shimmer, a palette cycle that PaletteCycle_Fade
+/// steps.
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
 u16 gPaletteCycleTimer BSS_DATA;
@@ -277,6 +279,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct Trigger *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_DRAGON_BEATEN)
     return (const struct Trigger *)gMarsLighthouseAerie_AfterBattlePlacements;
+  // From the fallen dragon, for the beacon's lighting, or back from Mercury
+  // Lighthouse: the three entrances that arrive at the beacon.
   if ((u16)(gMainRoutineWork.entrance - 3) <= 2)
     return (const struct Trigger *)gMarsLighthouseAerie_BeaconPlacements;
   return (const struct Trigger *)gMarsLighthouseAerie_Placements;
@@ -1291,8 +1295,8 @@ extern s32 gMarsLighthouseAerie_IsaacTurnScript[];
 extern s32 gMarsLighthouseAerie_GaretTurnScript[];
 extern s32 gMarsLighthouseAerie_MiaTurnScript[];
 
-/// The Doom Dragon falls, and the party finds who it was: Jenna's parents
-/// and Kraden's old friends, freed.
+/// The Doom Dragon falls, and the party finds who it was: Felix and Jenna's
+/// parents and Isaac's father, Kyle, freed.
 void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   s32 facing;
   struct Actor *actor, *mother, *father, *kyle;
@@ -2800,7 +2804,6 @@ void MarsLighthouseAerie_ClearCastOffer(void) {
   GameFlag_Clear(FLAG_ASKED_FOR_MARS_STAR);
 }
 
-// From patch 1, as is MarsLighthouseAerie_EndTalkWhileHalted.
 #if TLA_PATCH_1
 /// From patch 1: the one Halt holds speaks haltingly, with a pause before
 /// each character.
@@ -2812,7 +2815,6 @@ void MarsLighthouseAerie_StartTalkWhileHalted(s32 id) {
 }
 #endif
 
-// From patch 1; the Japanese overlay has no such function.
 #if TLA_PATCH_1
 
 /// From patch 1: the talk over, Halt's hold on its speaker ends, and with it
@@ -2831,7 +2833,8 @@ void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
 
 #endif
 
-/// Talking to Ivan.
+/// Felix talks to Ivan, who stands by the three: "Felix, I understand your
+/// loss..." From patch 1, if Halt holds him, he speaks haltingly.
 void MarsLighthouseAerie_TalkToIvan(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2851,7 +2854,8 @@ void MarsLighthouseAerie_TalkToIvan(void) {
   Event_End();
 }
 
-/// Talking to Jenna's mother.
+/// Felix talks to Jenna's mother as she lies dying: "Uhhhhnnn... Felix...
+/// I...can't see you, but I sense that you're..."
 void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2867,7 +2871,8 @@ void MarsLighthouseAerie_TalkToJennasMother(void) {
   Event_End();
 }
 
-/// Talking to Kyle.
+/// Felix talks to Kyle, Isaac's father, as he lies dying: "*Koff! Koff!*
+/// Felix... You made it back...alive..."
 void MarsLighthouseAerie_TalkToKyle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2883,7 +2888,8 @@ void MarsLighthouseAerie_TalkToKyle(void) {
   Event_End();
 }
 
-/// Talking to Jenna's father.
+/// Felix talks to Jenna's father as he lies dying: "Unnnn... Felix?
+/// ...Jenna? I am so happy...to have one last chance..."
 void MarsLighthouseAerie_TalkToJennasFather(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2899,7 +2905,6 @@ void MarsLighthouseAerie_TalkToJennasFather(void) {
   Event_End();
 }
 
-// From patch 1; the Japanese overlay has no such function.
 #if TLA_PATCH_1
 
 /// From patch 1: Halt on one of the three holds the speaker beside them.
@@ -2918,7 +2923,6 @@ void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker) {
 }
 #endif
 
-// These four, their rows, and MarsLighthouseAerie_HaltSpeaker are from patch 1.
 #if TLA_PATCH_1
 
 /// From patch 1: Ivan is held where he stands while he talks.

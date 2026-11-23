@@ -160,6 +160,18 @@ extern u16 gLemuria_WideDoorOpening[];
 /// Rope_Place keeps it tied.
 #define FLAG_LEMURIA_ROPE_TIED 0x962
 
+/// For this visit: each Scoop spot dug, by the treasure it holds. Only four
+/// spots have a trigger; the Water of Life, Nut, Bramble Seed and Vial are
+/// never dug.
+#define FLAG_WATER_OF_LIFE_DUG_UP FLAG_AREA_TEMP_00
+#define FLAG_NUT_DUG_UP FLAG_AREA_TEMP_01
+#define FLAG_BRAMBLE_SEED_DUG_UP FLAG_AREA_TEMP_02
+#define FLAG_LUCKY_MEDAL_DUG_UP FLAG_AREA_TEMP_03
+#define FLAG_RUSTY_SWORD_DUG_UP FLAG_AREA_TEMP_04
+#define FLAG_BONE_DUG_UP FLAG_AREA_TEMP_06
+#define FLAG_STAR_DUST_DUG_UP FLAG_AREA_TEMP_07
+#define FLAG_VIAL_DUG_UP FLAG_AREA_TEMP_08
+
 #include "shared/actor_is_facing_near.h"
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
@@ -324,7 +336,8 @@ void Lemuria_TalkToSpoiledChild(void) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaEveryoneSpoilsMeSoMuch);
   }
   Actor_SetAnimation(ACTOR_SPOILED_CHILD, 0);
-  // "Everyone spoils me so much... I don't ever want to grow up! But in..."
+  // "It has been many, many years since a new child was born in Lemuria." or,
+  // to Mind Read, "Everyone spoils me so much... I don't ever want to grow up!"
   FieldEvent_ShowMessageThenWait(ACTOR_SPOILED_CHILD, 0, 10);
   Event_End();
   actor->timer = 0;
@@ -351,7 +364,8 @@ void Lemuria_TalkToLonelyChild(void) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaAreThereOtherChildren);
   }
   Actor_SetAnimation(ACTOR_LONELY_CHILD, 0);
-  // "Are there other children in the lands beyond the Sea of Time? Are..."
+  // "We are the only children in Lemuria. I often wish there were other..." or,
+  // to Mind Read, "Are there other children in the lands beyond the Sea of..."
   FieldEvent_ShowMessageThenWait(ACTOR_LONELY_CHILD, 0, 10);
   Event_End();
   actor->timer = 0;
@@ -361,8 +375,7 @@ void Lemuria_TalkToLonelyChild(void) {
 
 /// Felix casts Cyclone on the lone clump of weeds south-east of the spring,
 /// cells (39, 67) to (40, 68): leaves whirl up and the clump is gone, leaving
-/// bare grass. The bare ground is copied over the clump from a spare patch of
-/// the map with `FieldTileCopies_CopyTouchedCells`.
+/// bare grass.
 void Lemuria_CycloneWestWeeds(void) {
   FieldTileCopies_CopyTouchedCells(37, 72, 2, 2, 39, 71, 2);
 }
@@ -450,50 +463,50 @@ void Lemuria_GrowVine(void) {
 /// Unused: Scoop digs up the Water of Life of Lemuria's first treasure spot. No
 /// trigger reaches it.
 void Lemuria_ScoopWaterOfLife(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_AREA_TEMP_00);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_WATER_OF_LIFE_DUG_UP);
 }
 
 /// Unused: Scoop digs up the Nut of Lemuria's second treasure spot. No trigger
 /// reaches it.
 void Lemuria_ScoopNut(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_NUT_DUG_UP);
 }
 
 /// Unused: Scoop digs up the Bramble Seed of Lemuria's third treasure spot. No
 /// trigger reaches it.
 void Lemuria_ScoopBrambleSeed(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_BRAMBLE_SEED_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground right of the Spring of Lemuria,
 /// where a butterfly flutters, cell (33, 61): he digs up a Lucky Medal.
 void Lemuria_ScoopLuckyMedal(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 3, FLAG_AREA_TEMP_03);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 3, FLAG_LUCKY_MEDAL_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground near Lunpa's tower in the east of
 /// the town, where a butterfly flutters, cell (55, 58): he digs up a Rusty
 /// Sword.
 void Lemuria_ScoopRustySword(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 4, FLAG_AREA_TEMP_04);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 4, FLAG_RUSTY_SWORD_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground near the dog, where a butterfly
 /// flutters, cell (23, 38): he digs up a Bone.
 void Lemuria_ScoopBone(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 6, FLAG_AREA_TEMP_06);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 6, FLAG_BONE_DUG_UP);
 }
 
 /// Felix casts Scoop on the patch of ground left of the palace, where a
 /// butterfly flutters, cell (18, 26): he digs up Star Dust.
 void Lemuria_ScoopStarDust(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 7, FLAG_AREA_TEMP_07);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 7, FLAG_STAR_DUST_DUG_UP);
 }
 
 /// Unused: Scoop digs up the Vial of Lemuria's ninth treasure spot. No trigger
 /// reaches it.
 void Lemuria_ScoopVial(s32 id) {
-  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 8, FLAG_AREA_TEMP_08);
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 8, FLAG_VIAL_DUG_UP);
 }
 
 s32 Party_FindOwnerWithAction();
@@ -615,9 +628,9 @@ void Lemuria_DrinkFromSpring(void) {
 }
 
 /// Felix talks to the man before the spring: "Do you wish to test your luck at
-/// the Spring of Lemuria?" Said yes, he tells the party how; said no, he steps
-/// aside so that the party can walk up to the spring. From then on he only
-/// wishes the party good luck.
+/// the Spring of Lemuria?" Said no, he will take a turn himself; said yes, he
+/// steps aside so that the party can walk up to the spring, and from then on
+/// he only wishes the party good luck.
 void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineWork.leaderActorId, 0);
@@ -640,11 +653,13 @@ void Lemuria_OfferSpringLuck(void) {
   Event_OpenMessage(ACTOR_MAN_AT_THE_SPRING, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
     FieldEvent_Wait(30);
+    // "Well, then, I'll just take a turn... If you change your mind, let me..."
     FieldEvent_ShowMessageThenWait(ACTOR_MAN_AT_THE_SPRING, 0, 0);
   } else {
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MAN_AT_THE_SPRING, 3);
     (gFieldWork->message)++;
+    // "Go ahead. Test your luck!"
     FieldEvent_ShowMessageThenWait(ACTOR_MAN_AT_THE_SPRING, 0, 5);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 464, 1040);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
@@ -743,10 +758,14 @@ void FieldEffect_StartBlankOverlay();
 void HangingVine_Place();
 void Actor_SetWideSprite();
 
+/// Sets up the town: the water's colours cycling, the two children walking
+/// together, the palace guards, the spring's man, Piers by his mother's grave,
+/// the ropes, the vine and Lunpa's opened window as the story leaves them.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, TASK_PASS_VBLANK);
   FieldEffect_StartBlankOverlay(0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SIGN), 0);
@@ -801,18 +820,19 @@ s32 Scene_Initialize(void) {
     HangingVine_Place(ACTOR_SPROUT, 1);
     Lemuria_GrowVine();
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
+  if (!Event_GetFlag(FLAG_LUCKY_MEDAL_DUG_UP)) {
     Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 3, 0);
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
+  if (!Event_GetFlag(FLAG_RUSTY_SWORD_DUG_UP)) {
     Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 4, 0);
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_06)) {
+  if (!Event_GetFlag(FLAG_BONE_DUG_UP)) {
     Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 6, 0);
   }
-  if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
+  if (!Event_GetFlag(FLAG_STAR_DUST_DUG_UP)) {
     Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 7, 0);
   }
+  // Lunpa has opened the window above his door.
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
     MapGrid_CopyCellsLayered(3, 1, 1, 1, 54, 45);
   }
@@ -1131,6 +1151,7 @@ void Lemuria_MarvelAtCity(void) {
   if (result == 0) {
     FieldEvent_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+    // "Any newcomer to our town would doubtless feel the same at first."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     gFieldWork->message++;
   } else {
@@ -1138,12 +1159,13 @@ void Lemuria_MarvelAtCity(void) {
     Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
     FieldEvent_Wait(10);
     gFieldWork->message++;
+    // "Ah! Yes, you marvel not at its present condition, but at the greater..."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   }
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 7);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN_STAND_IN, 7);
-  FieldActor_WatchAndSetScript(ACTOR_WEST_PALACE_GUARD, 7);
-  FieldActor_WatchAndSetScript(ACTOR_EAST_PALACE_GUARD, 7);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_PIERS);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN_STAND_IN, ACTOR_PIERS);
+  FieldActor_WatchAndSetScript(ACTOR_WEST_PALACE_GUARD, ACTOR_PIERS);
+  FieldActor_WatchAndSetScript(ACTOR_EAST_PALACE_GUARD, ACTOR_PIERS);
   FieldActor_SetSpritePriority(ACTOR_PIERS, 2);
   Actor_WalkByAndWait(ACTOR_PIERS, 32, 0);
   Actor_FaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
@@ -1151,14 +1173,18 @@ void Lemuria_MarvelAtCity(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "In ages past, Lemuria was a far lovelier, more grand, and more lively..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(10);
+  // "His Highness, the king, tells of days gone by, of a more brilliant..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Over the countless years, our people have lost vigor, enthusiasm..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
+  // "Lemuria as you see it is only a shadow of the city of legend."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
@@ -1168,23 +1194,29 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN_STAND_IN, 3);
   FieldEvent_Wait(10);
+  // "If only I had the chance to see the city in all its splendor. But how..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "King Hydros believes that our decay is related in some way to Alchemy."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   30);
+  // "Alchemy!?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 15);
   FieldActor_Jump(ACTOR_KRADEN_STAND_IN, 6, 23);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(10);
+  // "King Hydros wants to find a way to stop the ruin of Lemuria."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_WEST_PALACE_GUARD, 2);
   FieldEvent_Wait(10);
+  // "If there were anything we could do to help stop it, we would."
   FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_PALACE_GUARD, 2);
   FieldEvent_Wait(10);
+  // "But the senators are unwilling to take action! They're stubborn, and..."
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
@@ -1195,30 +1227,38 @@ void Lemuria_MarvelAtCity(void) {
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_KRADEN_STAND_IN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Senate? What is a senate?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "The senate is the group of elders who determine policy in Lemuria."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_WEST_PALACE_GUARD, 3);
   FieldEvent_Wait(10);
+  // "Lord Conservato holds the highest office in the senate."
   FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_EAST_PALACE_GUARD, 2);
   FieldEvent_Wait(10);
+  // "The senate usually opposes any new ideas or proposals introduced..."
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 45);
   Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(10);
+  // "Word of our arrival will never reach the king as long as Conservato..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_WEST_PALACE_GUARD, 3);
   FieldEvent_Wait(10);
+  // "And his conversations with the king are incredibly long."
   FieldEvent_ShowMessageThenWait(ACTOR_WEST_PALACE_GUARD, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_EAST_PALACE_GUARD, 4);
+  // "We have no choice but to wait patiently here."
   FieldEvent_ShowMessageThenWait(ACTOR_EAST_PALACE_GUARD, 0, 10);
   Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "Why don't we spend our time looking around Lemuria until then..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_EAST, 0);
@@ -1363,12 +1403,12 @@ u16 gLemuria_WindowOpening[] = {
 
 /// The opening of the door of Piers's uncle's house, at its place on the map
 /// grid.
-struct MapGridCellAnimation gLemuria_UnclesDoor = {(s32)gLemuria_DoorOpening,
-                                                   22, 47};
+struct MapGridCellAnimation gLemuria_UnclesDoor = {gLemuria_DoorOpening, 22,
+                                                   47};
 
 /// The opening of the door of the girl's house, at its place on the map grid.
-struct MapGridCellAnimation gLemuria_GirlsHouseDoor = {
-    (s32)gLemuria_DoorOpening, 35, 47};
+struct MapGridCellAnimation gLemuria_GirlsHouseDoor = {gLemuria_DoorOpening, 35,
+                                                       47};
 
 /// The Senate's door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_SenateDoor = {gLemuria_WideDoorOpening, 9,
@@ -1389,8 +1429,8 @@ struct MapGridCellAnimation gLemuria_PalaceUpperDoor = {
 
 /// The opening of the front door of Lunpa's tower, at its place on the map
 /// grid.
-struct MapGridCellAnimation gLemuria_LunpasDoor = {(s32)gLemuria_DoorOpening,
-                                                   54, 50};
+struct MapGridCellAnimation gLemuria_LunpasDoor = {gLemuria_DoorOpening, 54,
+                                                   50};
 
 struct Trigger gSceneEvents[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LEMURIA_TO_LEMURIA_ROOMS_WEST_A,
@@ -1542,15 +1582,15 @@ struct Trigger gSceneEvents[] = {
      CELL_BEHAVIOR_LEMURIA_HARD_NUT_WEEDS, CONDITION_ALWAYS,
      EVENT(Lemuria_CycloneHardNutWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-     CELL_BEHAVIOR_LEMURIA_LUCKY_MEDAL, FLAG_AREA_TEMP_03,
+     CELL_BEHAVIOR_LEMURIA_LUCKY_MEDAL, FLAG_LUCKY_MEDAL_DUG_UP,
      EVENT(Lemuria_ScoopLuckyMedal)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-     CELL_BEHAVIOR_LEMURIA_RUSTY_SWORD, FLAG_AREA_TEMP_04,
+     CELL_BEHAVIOR_LEMURIA_RUSTY_SWORD, FLAG_RUSTY_SWORD_DUG_UP,
      EVENT(Lemuria_ScoopRustySword)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-     CELL_BEHAVIOR_LEMURIA_BONE, FLAG_AREA_TEMP_06, EVENT(Lemuria_ScoopBone)},
+     CELL_BEHAVIOR_LEMURIA_BONE, FLAG_BONE_DUG_UP, EVENT(Lemuria_ScoopBone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-     CELL_BEHAVIOR_LEMURIA_STAR_DUST, FLAG_AREA_TEMP_07,
+     CELL_BEHAVIOR_LEMURIA_STAR_DUST, FLAG_STAR_DUST_DUG_UP,
      EVENT(Lemuria_ScoopStarDust)},
     {TRIGGER_TABLE_END},
 };

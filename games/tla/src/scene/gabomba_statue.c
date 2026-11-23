@@ -68,10 +68,12 @@ enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 /// is a black square (SPRITE_UNSEEN_BLOCK) at the top of a ladder up to the
 /// room above, held 36 pixels up in SPRITE_COLOR_HIDDEN, so that nothing of
 /// it shows (GabombaStatue_HideActor).
+///
+/// Drawn or hidden, the ladder-top blocks change nothing on screen:
+/// SPRITE_COLOR_HIDDEN draws every pixel of them transparent, and the display
+/// has no sprite window they could cut.
 enum { ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK = 8 };
-// Drawn or hidden, the ladder-top blocks change nothing on screen:
-// SPRITE_COLOR_HIDDEN draws every pixel of them transparent, and the display
-// has no sprite window they could cut.
+
 /// The Elixir chest's room.
 enum {
   ACTOR_FIRST_ROPE_POST_A = 8,
@@ -246,6 +248,7 @@ enum { ACTOR_STEEL = 33 };
 void GabombaStatue_FightSteel(void) {
   Field_RequestDjinnBattle(ACTOR_STEEL, DJINNI_STEEL);
 }
+
 /// A member of the party looking about: it turns between its two headings
 /// every 10 to 49 frames.
 s32 GabombaStatue_LookAround(struct Actor *actor) {
@@ -304,6 +307,10 @@ s32 GabombaStatue_FlashCog(struct Actor *actor) {
   return 1;
 }
 
+/// A room's ropes, by the index the rope routines take; the room of the
+/// flashing cog has two.
+enum { FIRST_ROPE, SECOND_ROPE };
+
 /// The steps of a cog tooth's turn: its phase, kept in the tooth's riseCounter,
 /// counts them, two degrees each.
 enum { COG_TOOTH_STEPS = 180 };
@@ -333,10 +340,13 @@ enum ChannelHeading {
   HEADING_NORTH
 };
 
-/// A path's tried headings, a bit each, once every one has been tried.
+/// A heading's bit in a set of headings.
+#define HEADING_BIT(heading) (1 << (heading))
+
+/// A path's tried headings once every one has been tried.
 #define HEADING_ALL_TRIED                                                      \
-  (1 << HEADING_EAST | 1 << HEADING_SOUTH | 1 << HEADING_WEST |                \
-   1 << HEADING_NORTH)
+  (HEADING_BIT(HEADING_EAST) | HEADING_BIT(HEADING_SOUTH) |                    \
+   HEADING_BIT(HEADING_WEST) | HEADING_BIT(HEADING_NORTH))
 
 /// The pieces of the channel, by the sides of the cell they join, which are
 /// also the rows of the cell pictures the map keeps for them.
@@ -406,7 +416,6 @@ enum { TURN_COUNTERCLOCKWISE, TURN_CLOCKWISE };
 /// A charge's step along the channel: where it heads and the piece under it.
 #define CHARGE_STEP(heading, piece) (((heading) << 8) + (piece))
 extern s32 gGabombaStatue_CogDirection;
-s32 __divsi3(s32 numerator, s32 denominator);
 
 /// Where the cog's tooth an actor rides is now: the rope's target hook, so that
 /// a rope tied to it follows the turning cog.
@@ -548,7 +557,7 @@ void GabombaStatue_LashRope(void) {
   s32 direction;
   s32 i;
 
-  if (Rope_GetState(0) == 1) {
+  if (Rope_GetState(FIRST_ROPE) == 1) { // tied from post to post
     direction = gGabombaStatue_CogDirection;
     GabombaStatue_TurnCogs(0);
     Event_SetFlag(FLAG_COGS_STOPPED);
@@ -565,14 +574,14 @@ struct Actor *GabombaStatue_FindCogUnder(struct Actor *origin, s32 id) {
   s32 i;
 
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-    struct Actor *object = Actor_Get(i);
+    struct Actor *cog = Actor_Get(i);
 
-    if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE &&
-        ((struct Sprite *)object->sprite)->entries[0] != NULL &&
-        ((struct Sprite *)object->sprite)->entries[0]->animationId == id) {
-      if (DIFF_WITHIN(object->x.fixed, origin->x.fixed, toFIXED(24) - 1) &&
-          DIFF_WITHIN(object->z.fixed, origin->z.fixed, toFIXED(24) - 1))
-        return object;
+    if (cog != NULL && cog->spriteStorageKind == ACTOR_SPRITE_ONE &&
+        ((struct Sprite *)cog->sprite)->entries[0] != NULL &&
+        ((struct Sprite *)cog->sprite)->entries[0]->animationId == id) {
+      if (DIFF_WITHIN(cog->x.fixed, origin->x.fixed, toFIXED(24) - 1) &&
+          DIFF_WITHIN(cog->z.fixed, origin->z.fixed, toFIXED(24) - 1))
+        return cog;
     }
   }
   return NULL;
@@ -588,14 +597,14 @@ struct Actor *GabombaStatue_FindCogAhead(struct Actor *origin, s32 id) {
   position[2] = origin->z.fixed;
   FieldVector_AddPolarOffset(16, origin->facing, position);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-    struct Actor *object = Actor_Get(i);
+    struct Actor *cog = Actor_Get(i);
 
-    if (object != NULL && object->spriteStorageKind == ACTOR_SPRITE_ONE &&
-        ((struct Sprite *)object->sprite)->entries[0] != NULL &&
-        ((struct Sprite *)object->sprite)->entries[0]->animationId == id) {
-      if (DIFF_WITHIN(object->x.fixed, position[0], toFIXED(24) - 1) &&
-          DIFF_WITHIN(object->z.fixed, position[2], toFIXED(24) - 1))
-        return object;
+    if (cog != NULL && cog->spriteStorageKind == ACTOR_SPRITE_ONE &&
+        ((struct Sprite *)cog->sprite)->entries[0] != NULL &&
+        ((struct Sprite *)cog->sprite)->entries[0]->animationId == id) {
+      if (DIFF_WITHIN(cog->x.fixed, position[0], toFIXED(24) - 1) &&
+          DIFF_WITHIN(cog->z.fixed, position[2], toFIXED(24) - 1))
+        return cog;
     }
   }
   return NULL;
@@ -650,7 +659,7 @@ void GabombaStatue_TurnWithCog(void) {
 /// Standing on a blue cog carries the leader round with it, unless a wall
 /// stops him.
 void GabombaStatue_RideBlueCog(void) {
-  struct Actor *actor, *table;
+  struct Actor *actor, *cog;
   struct Vector3 test;
   s32 step = -DEGtoANG(2);
   s32 turn;
@@ -661,32 +670,32 @@ void GabombaStatue_RideBlueCog(void) {
   if (gGabombaStatue_CogDirection == 0)
     return;
   actor = Actor_GetById(Party_GetLeaderActor());
-  table = GabombaStatue_FindCogUnder(actor, SPRITE_BLUE_COG);
+  cog = GabombaStatue_FindCogUnder(actor, SPRITE_BLUE_COG);
   turn = gGabombaStatue_CogDirection * step;
-  if (table != 0) {
-    if (table->y.fixed + toFIXED(16) > actor->y.fixed)
+  if (cog != 0) {
+    if (cog->y.fixed + toFIXED(16) > actor->y.fixed)
       return;
-    if (table->facing == FACING_WEST)
+    if (cog->facing == FACING_WEST)
       turn = -turn;
-    dx = actor->x.fixed - table->x.fixed;
-    dz = actor->z.fixed - table->z.fixed;
+    dx = actor->x.fixed - cog->x.fixed;
+    dz = actor->z.fixed - cog->z.fixed;
     back = -turn;
     {
       s32 s = Math_Sin(back);
       s32 c = Trig_Cos(back);
-      x = table->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
-      z = table->z.fixed - Iwram_MulFX(s, dx) + Iwram_MulFX(c, dz);
+      x = cog->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
+      z = cog->z.fixed - Iwram_MulFX(s, dx) + Iwram_MulFX(c, dz);
     }
     test.x = x + actor->velocityX;
-    test.y = table->y.fixed;
+    test.y = cog->y.fixed;
     test.z = z + actor->velocityZ;
     if (MapGrid_CheckCollision(actor, &test) == 0) {
       s32 s, c, angle;
       angle = DEGtoANG(30) - turn;
       s = Math_Sin(angle);
       c = Trig_Cos(angle);
-      tx = table->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
-      tz = table->z.fixed - Iwram_MulFX(s, dx) + Iwram_MulFX(c, dz);
+      tx = cog->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
+      tz = cog->z.fixed - Iwram_MulFX(s, dx) + Iwram_MulFX(c, dz);
       test.x = tx + actor->velocityX;
       test.z = tz + actor->velocityZ;
       if (MapGrid_CheckCollision(actor, &test) == 0) {
@@ -695,8 +704,8 @@ void GabombaStatue_RideBlueCog(void) {
         angle = back - DEGtoANG(30);
         s = Math_Sin(angle);
         c = Trig_Cos(angle);
-        tx = table->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
-        tz = table->z.fixed - Iwram_MulFX(s, dx) + Iwram_MulFX(c, dz);
+        tx = cog->x.fixed + Iwram_MulFX(c, dx) + Iwram_MulFX(s, dz);
+        tz = cog->z.fixed - Iwram_MulFX(s, dx) + Iwram_MulFX(c, dz);
         test.x = tx + actor->velocityX;
         test.z = tz + actor->velocityZ;
         if (MapGrid_CheckCollision(actor, &test) == 0) {
@@ -716,28 +725,28 @@ void GabombaStatue_RideSlidingCog(void) {
 
   if (*speed != 0) {
     struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
-    struct Actor *found = GabombaStatue_FindCogUnder(actor, SPRITE_RED_COG);
+    struct Actor *cog = GabombaStatue_FindCogUnder(actor, SPRITE_RED_COG);
     s32 dx = *speed * toFIXED(0.5);
 
-    if (found != NULL) {
-      FIXED diff, x, foundX;
+    if (cog != NULL) {
+      FIXED diff, x, cogX;
 
-      if (found->facing == FACING_WEST)
+      if (cog->facing == FACING_WEST)
         dx = -dx;
-      if (found->z.fixed - actor->z.fixed < -toFIXED(2))
-        actor->z.fixed = found->z.fixed + toFIXED(2);
-      if (found->z.fixed - actor->z.fixed > toFIXED(2))
-        actor->z.fixed = found->z.fixed - toFIXED(2);
+      if (cog->z.fixed - actor->z.fixed < -toFIXED(2))
+        actor->z.fixed = cog->z.fixed + toFIXED(2);
+      if (cog->z.fixed - actor->z.fixed > toFIXED(2))
+        actor->z.fixed = cog->z.fixed - toFIXED(2);
       x = actor->x.fixed + dx;
       actor->x.fixed = x;
-      foundX = found->x.fixed;
-      diff = foundX - x;
-      if (diff >= 0 ? diff >= toFIXED(20) : x - foundX >= toFIXED(20)) {
+      cogX = cog->x.fixed;
+      diff = cogX - x;
+      if (diff >= 0 ? diff >= toFIXED(20) : x - cogX >= toFIXED(20)) {
         s32 sign;
         FIXED offset;
 
         sign = 0;
-        offset = actor->x.fixed - foundX;
+        offset = actor->x.fixed - cogX;
         if (offset != 0) {
           sign = 1;
           if (offset <= 0)
@@ -753,7 +762,7 @@ void GabombaStatue_RideSlidingCog(void) {
 /// leader drops off it to the room below.
 void GabombaStatue_EndRide(struct Actor *actor) {
   u32 i;
-  struct MainRoutineWork *party;
+  struct MainRoutineWork *routine;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -762,12 +771,12 @@ void GabombaStatue_EndRide(struct Actor *actor) {
   actor->y.fixed = toFIXED(6);
   actor->z.fixed = toFIXED(247.25707);
   actor->facing = FACING_SOUTH;
-  party = &gMainRoutineWork;
-  Actor_SetAttachedEffect(party->leaderActorId,
+  routine = &gMainRoutineWork;
+  Actor_SetAttachedEffect(routine->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAnimation(party->leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
+  Actor_SetAnimation(routine->leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(party->leaderActorId, ANIM_LEADER_ARMS_RAISED);
+  Actor_SetAnimation(routine->leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(10);
   for (i = 0; i < 20; i++) {
     actor->scaleX -= FIXED_ONE * 3 / 256;
@@ -791,29 +800,29 @@ void GabombaStatue_EndRide(struct Actor *actor) {
 /// from its centre he hops off the end. A drum of the mouse's room carries
 /// him off its south end and down to Steel's room.
 void GabombaStatue_RideRoller(void) {
-  struct Actor *actor, *platform;
+  struct Actor *actor, *roller;
   s32 speed;
   FIXED d;
   s32 sign, x;
-  FIXED z, platformZ, offset;
+  FIXED z, rollerZ, offset;
 
   if (gGabombaStatue_CogDirection == 0)
     return;
   actor = Actor_Get(FieldParty_GetLeaderActor());
   speed = gGabombaStatue_CogDirection * toFIXED(0.5);
-  platform = GabombaStatue_FindCogUnder(actor, SPRITE_BLUE_PILLAR);
-  if (platform != 0) {
-    if (platform->x.fixed - actor->x.fixed < -toFIXED(2))
-      actor->x.fixed = platform->x.fixed + toFIXED(2);
-    if (platform->x.fixed - actor->x.fixed > toFIXED(2))
-      actor->x.fixed = platform->x.fixed - toFIXED(2);
+  roller = GabombaStatue_FindCogUnder(actor, SPRITE_BLUE_PILLAR);
+  if (roller != 0) {
+    if (roller->x.fixed - actor->x.fixed < -toFIXED(2))
+      actor->x.fixed = roller->x.fixed + toFIXED(2);
+    if (roller->x.fixed - actor->x.fixed > toFIXED(2))
+      actor->x.fixed = roller->x.fixed - toFIXED(2);
     z = actor->z.fixed + speed;
     actor->z.fixed = z;
-    platformZ = platform->z.fixed;
-    d = platformZ - z;
-    if (d >= 0 ? d >= toFIXED(20) : z - platformZ >= toFIXED(20)) {
+    rollerZ = roller->z.fixed;
+    d = rollerZ - z;
+    if (d >= 0 ? d >= toFIXED(20) : z - rollerZ >= toFIXED(20)) {
       sign = 0;
-      offset = actor->z.fixed - platformZ;
+      offset = actor->z.fixed - rollerZ;
       if (offset != 0) {
         sign = 1;
         if (offset <= 0)
@@ -822,20 +831,20 @@ void GabombaStatue_RideRoller(void) {
       GabombaStatue_HopOffCog(actor, 0, sign * toFIXED(12), toFIXED(2));
     }
   }
-  platform = GabombaStatue_FindCogUnder(actor, SPRITE_PINK_DRUM);
-  if (platform == 0)
+  roller = GabombaStatue_FindCogUnder(actor, SPRITE_PINK_DRUM);
+  if (roller == 0)
     return;
-  if (platform->x.fixed - actor->x.fixed < -toFIXED(2))
-    actor->x.fixed = platform->x.fixed + toFIXED(2);
-  if (platform->x.fixed - actor->x.fixed > toFIXED(2))
-    actor->x.fixed = platform->x.fixed - toFIXED(2);
+  if (roller->x.fixed - actor->x.fixed < -toFIXED(2))
+    actor->x.fixed = roller->x.fixed + toFIXED(2);
+  if (roller->x.fixed - actor->x.fixed > toFIXED(2))
+    actor->x.fixed = roller->x.fixed - toFIXED(2);
   z = actor->z.fixed - speed;
   actor->z.fixed = z;
-  platformZ = platform->z.fixed;
-  d = platformZ - z;
-  if (d >= 0 ? d >= toFIXED(20) : z - platformZ >= toFIXED(20)) {
+  rollerZ = roller->z.fixed;
+  d = rollerZ - z;
+  if (d >= 0 ? d >= toFIXED(20) : z - rollerZ >= toFIXED(20)) {
     sign = 0;
-    offset = actor->z.fixed - platformZ;
+    offset = actor->z.fixed - rollerZ;
     if (offset != 0) {
       sign = 1;
       if (offset <= 0)
@@ -1494,6 +1503,7 @@ void GabombaStatue_RestoreLadderTopBlocks(void) {
     Event_SetFlag(FLAG_LADDER_TOP_BLOCKS_DRAWN);
   }
 }
+
 /// Gives a room's ladder-top blocks SPRITE_COLOR_HIDDEN and holds them 36
 /// pixels up.
 #define DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(name, first, count)       \
@@ -1526,10 +1536,10 @@ DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
 void GabombaStatue_PauseCogsInMenus(void) {
   s32 step = ANIM_STEP_NORMAL;
   s32 open = 0;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
-  if (Event_GetFlag(FLAG_MENU_OPEN) || event->psynergy != 0) {
+  if (Event_GetFlag(FLAG_MENU_OPEN) || work->psynergy != 0) {
     open = 1;
     step = 0;
   }
@@ -1796,19 +1806,19 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 colorMode);
 /// Sets charge id circling the orb statue statueId from the angle given,
 /// tinted colorMode.
 void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
-  struct Actor *object = Actor_Get(id);
+  struct Actor *charge = Actor_Get(id);
   struct Actor *target = Actor_Get(statueId);
 
-  Actor_SelectAnimation(object, 0);
-  Actor_StartScript(object, gGabombaStatue_ChargeScript);
-  Actor_SetSpriteFlags(object, 0);
-  object->motionFlags = 0;
-  object->watchedActor = target;
+  Actor_SelectAnimation(charge, 0);
+  Actor_StartScript(charge, gGabombaStatue_ChargeScript);
+  Actor_SetSpriteFlags(charge, 0);
+  charge->motionFlags = 0;
+  charge->watchedActor = target;
   // riseCounter is its place on the circle, in 256ths of a turn, and
   // riseEnabled its own actor id until the run sets chargeState there.
-  object->riseCounter = angle / (TRIG_TURN / 256);
-  object->riseEnabled = id;
-  Actor_SetSpriteColorMode(object, colorMode);
+  charge->riseCounter = angle / (TRIG_TURN / 256);
+  charge->riseEnabled = id;
+  Actor_SetSpriteColorMode(charge, colorMode);
 }
 #undef DIFF_WITHIN
 #undef MARK
@@ -1885,7 +1895,6 @@ void GabombaStatue_LandFromFall(void) {
 
 extern u32 gGabombaStatue_LeaderFocusScript[];
 void Actor_PlaceOnActor(s32 id, s32 target);
-void GabombaStatue_ReleaseCharges(void);
 
 /// Coming up the hole into the arrows room as the ceremony starts below:
 /// Akafubu calls "Focus your energies!", and Kraden calls the party over to
@@ -2414,18 +2423,18 @@ void GabombaStatue_InitializeElixirChest(void) {
       !Event_GetFlag(FLAG_GABOMBA_SECOND_STAKE_POUNDED))
     Actor_Get(ACTOR_FLASHING_COG)->y.fixed = toFIXED(16);
   Rope_Initialize();
-  FieldRope_Place(0, FLAG_GABOMBA_FIRST_ROPE_TIED, ACTOR_FIRST_ROPE_POST_A,
-                  ACTOR_FIRST_ROPE_POST_B);
-  FieldRope_Place(1, FLAG_GABOMBA_SECOND_ROPE_TIED, ACTOR_SECOND_ROPE_POST_A,
-                  ACTOR_SECOND_ROPE_POST_B);
+  FieldRope_Place(FIRST_ROPE, FLAG_GABOMBA_FIRST_ROPE_TIED,
+                  ACTOR_FIRST_ROPE_POST_A, ACTOR_FIRST_ROPE_POST_B);
+  FieldRope_Place(SECOND_ROPE, FLAG_GABOMBA_SECOND_ROPE_TIED,
+                  ACTOR_SECOND_ROPE_POST_A, ACTOR_SECOND_ROPE_POST_B);
   GabombaStatue_HideElixirChestHoleShadows();
 }
 
 /// Sets up Steel's room: its rope, and the fall in from the mouse's room.
 void GabombaStatue_InitializeSteel(void) {
   Rope_Initialize();
-  FieldRope_Place(0, FLAG_GABOMBA_FIRST_ROPE_TIED, ACTOR_STEEL_ROPE_POST_A,
-                  ACTOR_STEEL_ROPE_POST_B);
+  FieldRope_Place(FIRST_ROPE, FLAG_GABOMBA_FIRST_ROPE_TIED,
+                  ACTOR_STEEL_ROPE_POST_A, ACTOR_STEEL_ROPE_POST_B);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
 
@@ -2441,7 +2450,7 @@ void GabombaStatue_InitializeSteel(void) {
 /// Sets up the room below the small idol's chamber: its rope, coiled.
 void GabombaStatue_InitializeCogs(void) {
   Rope_Initialize();
-  Value3((s32 (*)())GabombaStatue_CoilRope, 0, ACTOR_COGS_ROPE_POST_A,
+  Value3((s32 (*)())GabombaStatue_CoilRope, FIRST_ROPE, ACTOR_COGS_ROPE_POST_A,
          ACTOR_COGS_ROPE_POST_B);
 }
 
@@ -2586,6 +2595,7 @@ s32 GabombaStatue_IsCellTaken(u32 x, u32 z) {
     return 1 - NONZERO(code);
   }
 }
+
 /// Whether a cell beside channel cell (x, z) is taken.
 s32 GabombaStatue_HasTakenNeighbor(s32 x, s32 z) {
   s32 found;
@@ -2642,7 +2652,7 @@ enum { EAST_PATH_CELLS = 17, WEST_PATH_CELLS = 19, PATH_TO_CROSSING_CELLS = 4 };
 /// was laid from.
 s32 GabombaStatue_LayChannel(s32 seed) {
   struct SceneState *state = &gSceneState;
-  s32 row, col, n, blueShared, redShared, crossed, tries, left, mode;
+  s32 row, col, n, blueShared, redShared, crossed, tries, blocksLeft, westward;
   s32 piece, paths;
   struct PuzzleCell *cell;
 
@@ -2725,8 +2735,8 @@ retry:
     goto retry;
   // Breaks the circuit: a straight piece near the statues, on the eastward
   // paths or the westward ones, becomes a block with no piece on it.
-  mode = Random_Below(2);
-  left = CHANNEL_BLOCKS;
+  westward = Random_Below(2);
+  blocksLeft = CHANNEL_BLOCKS;
   for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
     col = Random_Below(CHANNEL_COLUMNS);
     row = (Random_Below(3)) + 5;
@@ -2734,11 +2744,13 @@ retry:
       piece = state->cells[row][col].kind;
       if ((u32)(piece - PIECE_NORTH_SOUTH) <= 1) {
         paths = state->cells[row][col].state;
-        if ((mode == 0 && (paths & (PATH_RED_EAST | PATH_BLUE_EAST)) != 0) ||
-            (mode == 1 && (paths & (PATH_BLUE_WEST | PATH_RED_WEST)) != 0)) {
+        if ((westward == 0 &&
+             (paths & (PATH_RED_EAST | PATH_BLUE_EAST)) != 0) ||
+            (westward == 1 &&
+             (paths & (PATH_BLUE_WEST | PATH_RED_WEST)) != 0)) {
           state->cells[row][col].kind = PIECE_STOP;
           state->cells[row][col].occupied = BLOCK_IN_PLACE;
-          left = CHANNEL_BLOCKS - 1;
+          blocksLeft = CHANNEL_BLOCKS - 1;
           break;
         }
       }
@@ -2770,13 +2782,13 @@ retry:
               break;
             }
             state->cells[row][col].occupied = BLOCK_IN_PLACE;
-            left--;
+            blocksLeft--;
             break;
           }
         }
       }
     }
-  // One curve, then straight pieces for the blocks left.
+  // One curve, then straight pieces for the blocks blocksLeft.
   for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
     col = Random_Below(CHANNEL_COLUMNS);
     row = Random_Below(CHANNEL_ROWS);
@@ -2785,12 +2797,12 @@ retry:
       if (piece == PIECE_EAST_SOUTH || piece == PIECE_WEST_NORTH ||
           piece == PIECE_SOUTH_WEST || piece == PIECE_NORTH_EAST) {
         state->cells[row][col].occupied = BLOCK_IN_PLACE;
-        left--;
+        blocksLeft--;
         break;
       }
     }
   }
-  for (n = 0; n < left; n++)
+  for (n = 0; n < blocksLeft; n++)
     for (tries = 1; tries <= CHANNEL_CELLS; tries++) {
       col = Random_Below(CHANNEL_COLUMNS);
       row = Random_Below(CHANNEL_ROWS);
@@ -3121,7 +3133,7 @@ void GabombaStatue_SetBlockAnimation(s32 mode) {
 }
 
 /// Turns every raised block a quarter turn.
-void GabombaStatue_TurnBlocks(s32 value) {
+void GabombaStatue_TurnBlocks(s32 direction) {
   struct SceneState *state = &gSceneState;
   s32 id;
 
@@ -3130,7 +3142,7 @@ void GabombaStatue_TurnBlocks(s32 value) {
 
     GabombaStatue_TurnBlockPiece(FIELD_CELL(actor->x.fixed) - state->originX,
                                  FIELD_CELL(actor->z.fixed) - state->originZ,
-                                 value);
+                                 direction);
   }
 }
 
@@ -3266,26 +3278,26 @@ void GabombaStatue_DrawRaisedBlocks(void) {
 
 /// Sets up the channel puzzle on entering the room, or redraws it when
 /// returning.
-s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
+s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 seed, s32 id) {
   struct SceneState *state = &gSceneState;
-  s32 count;
+  s32 laidSeed;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     GabombaStatue_LoadBlockPictures();
     GabombaStatue_RedrawChannel();
-    count = state->seed;
+    laidSeed = state->seed;
     Task_AddFrame(GabombaStatue_DrawRaisedBlocks, TASK_PASS_FRAME);
   } else {
     Iwram_ClearWordsEntry(state, sizeof(struct SceneState));
     state->originX = x;
     state->originZ = z;
     GabombaStatue_LoadBlockPictures();
-    count = GabombaStatue_LayChannel(value);
+    laidSeed = GabombaStatue_LayChannel(seed);
     GabombaStatue_SetBlocksRaised(id, 0);
     Task_AddFrame(GabombaStatue_DrawRaisedBlocks, TASK_PASS_FRAME);
   }
   Actor_Get(id)->retainSpriteCache = 2;
-  return count;
+  return laidSeed;
 }
 
 extern s32 gGabombaStatue_ChargeShrinkScript[];
@@ -3308,9 +3320,9 @@ void GabombaStatue_MoveCharge(struct Actor *charge, s32 step, s32 id) {
   s32 heading = *headingp;
   s32 angle = heading * DEGtoANG(90);
   s32 cell = row * CHANNEL_COLUMNS + col;
-  struct SceneState *board = &gSceneState;
-  s32 piece = board->cells[row][col].kind;
-  s32 goal = board->cells[row][col].occupied;
+  struct SceneState *state = &gSceneState;
+  s32 piece = state->cells[row][col].kind;
+  s32 goal = state->cells[row][col].occupied;
   s32 key = CHARGE_STEP(heading, piece);
   s32 d = step - MAPGRID_CELL_PIXELS / 2;
   s32 arc = step * (DEGtoANG(90) / CHARGE_STEPS_PER_CELL);
@@ -3319,8 +3331,8 @@ void GabombaStatue_MoveCharge(struct Actor *charge, s32 step, s32 id) {
   s32 z;
   s32 x;
 
-  x = FIELD_CELL_CENTER(board->originX + col);
-  z = FIELD_CELL_CENTER(board->originZ + row);
+  x = FIELD_CELL_CENTER(state->originX + col);
+  z = FIELD_CELL_CENTER(state->originZ + row);
   if (goal == BLOCK_RAISED) {
     heading = row = col = 0;
     if (charge->chargeState == CHARGE_RUNNING) {
@@ -3740,15 +3752,12 @@ void GabombaStatue_DrawClock(void) {
   }
 }
 
-s32 __divsi3(s32 numerator, s32 denominator);
-s32 __modsi3(s32 numerator, s32 denominator);
-
 /// Counts the clock down while no menu is open, and draws it.
 void GabombaStatue_CountDownShowingClock(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = CLOCK_WORK;
 
-  if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
+  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
       clock->timer > 0)
     clock->timer--;
   GabombaStatue_DrawClock();
@@ -3756,10 +3765,10 @@ void GabombaStatue_CountDownShowingClock(void) {
 
 /// Counts the clock down while no menu is open.
 void GabombaStatue_CountDown(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = CLOCK_WORK;
 
-  if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
+  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
       clock->timer > 0)
     clock->timer--;
 }
@@ -3876,9 +3885,13 @@ u32 gGabombaStatue_PinionReleaseScript[] = {
 // clang-format off
 /// Unused: gGabombaStatue_TurnedPieces from its second byte to its 21st.
 LATE_DATA u8 gGabombaStatue_UnusedTurnedPieces[] = {
-    0, 2, 2, 1, 1, 3, 3, 7, 5, 4,
-    6, 5, 7, 6, 4, 9, 9, 8, 8, 10,
-    10,
+    PIECE_NONE, PIECE_EAST_WEST, PIECE_EAST_WEST, PIECE_NORTH_SOUTH,
+    PIECE_NORTH_SOUTH, PIECE_CROSSING, PIECE_CROSSING, PIECE_NORTH_EAST,
+    PIECE_SOUTH_WEST, PIECE_EAST_SOUTH, PIECE_WEST_NORTH, PIECE_SOUTH_WEST,
+    PIECE_NORTH_EAST, PIECE_WEST_NORTH, PIECE_EAST_SOUTH,
+    PIECE_SOUTH_WEST_AND_NORTH_EAST, PIECE_SOUTH_WEST_AND_NORTH_EAST,
+    PIECE_EAST_SOUTH_AND_WEST_NORTH, PIECE_EAST_SOUTH_AND_WEST_NORTH,
+    PIECE_STOP, PIECE_STOP,
 };
 
 /// The step along each heading as (column, row).
@@ -3886,17 +3899,33 @@ LATE_DATA s8 gGabombaStatue_PathSteps[] = {
     1, 0, 0, 1, -1, 0, 0, -1,
 };
 
-/// The headings each piece joins, a bit each.
+/// The headings each piece joins, a bit each; a crossing, two curves and a
+/// stop let no new path in.
 LATE_DATA u8 gGabombaStatue_PieceJoins[] = {
-    0, 10, 5, 15, 3, 6, 12, 9,
-    15, 15, 15,
+    [PIECE_NONE] = 0,
+    [PIECE_NORTH_SOUTH] = HEADING_BIT(HEADING_SOUTH) | HEADING_BIT(HEADING_NORTH),
+    [PIECE_EAST_WEST] = HEADING_BIT(HEADING_EAST) | HEADING_BIT(HEADING_WEST),
+    [PIECE_CROSSING] = HEADING_ALL_TRIED,
+    [PIECE_EAST_SOUTH] = HEADING_BIT(HEADING_EAST) | HEADING_BIT(HEADING_SOUTH),
+    [PIECE_SOUTH_WEST] = HEADING_BIT(HEADING_SOUTH) | HEADING_BIT(HEADING_WEST),
+    [PIECE_WEST_NORTH] = HEADING_BIT(HEADING_WEST) | HEADING_BIT(HEADING_NORTH),
+    [PIECE_NORTH_EAST] = HEADING_BIT(HEADING_EAST) | HEADING_BIT(HEADING_NORTH),
+    [PIECE_EAST_SOUTH_AND_WEST_NORTH] = HEADING_ALL_TRIED,
+    [PIECE_SOUTH_WEST_AND_NORTH_EAST] = HEADING_ALL_TRIED,
+    [PIECE_STOP] = HEADING_ALL_TRIED,
 };
 
 /// The piece joining each heading a path enters a cell by (a row of four) to
 /// each it leaves by.
 LATE_DATA u8 gGabombaStatue_PieceTable[] = {
-    2, 5, 10, 6, 7, 1, 6, 10,
-    10, 4, 2, 7, 4, 10, 5, 1,
+    // Heading east, in by the west side; out east, south, back west, north.
+    PIECE_EAST_WEST, PIECE_SOUTH_WEST, PIECE_STOP, PIECE_WEST_NORTH,
+    // Heading south, in by the north side.
+    PIECE_NORTH_EAST, PIECE_NORTH_SOUTH, PIECE_WEST_NORTH, PIECE_STOP,
+    // Heading west, in by the east side.
+    PIECE_STOP, PIECE_EAST_SOUTH, PIECE_EAST_WEST, PIECE_NORTH_EAST,
+    // Heading north, in by the south side.
+    PIECE_EAST_SOUTH, PIECE_STOP, PIECE_SOUTH_WEST, PIECE_NORTH_SOUTH,
 };
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
@@ -4032,37 +4061,37 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LATE_DATA struct SceneRegion gGabombaStatue_PinionExitRegions[] = {
-    {784, 16, 80, 800, 32, 96, CONDITION_ALWAYS, 1},
-    {80, 48, 368, 96, 64, 384, CONDITION_ALWAYS, 2},
+    {784, 16, 80, 800, 32, 96, CONDITION_ALWAYS, GABOMBA_STATUE_PINION_TO_KIBOMBO_STATUE_GROUNDS},
+    {80, 48, 368, 96, 64, 384, CONDITION_ALWAYS, GABOMBA_STATUE_PINION_TO_GABOMBA_STATUE_BONE_ARMLET_CHEST},
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct SceneRegion gGabombaStatue_BoneArmletChestExitRegions[] = {
-    {464, 16, 240, 480, 32, 256, CONDITION_ALWAYS, 2},
+    {464, 16, 240, 480, 32, 256, CONDITION_ALWAYS, GABOMBA_STATUE_BONE_ARMLET_CHEST_TO_GABOMBA_STATUE_ELIXIR_CHEST},
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct SceneRegion gGabombaStatue_ElixirChestExitRegions[] = {
-    {528, 16, 64, 544, 32, 80, CONDITION_ALWAYS, 2},
-    {96, 16, 160, 112, 32, 176, CONDITION_ALWAYS, 3},
-    {672, 16, 160, 688, 32, 176, CONDITION_ALWAYS, 4},
+    {528, 16, 64, 544, 32, 80, CONDITION_ALWAYS, GABOMBA_STATUE_ELIXIR_CHEST_TO_GABOMBA_STATUE_STEEL_NORTHEAST},
+    {96, 16, 160, 112, 32, 176, CONDITION_ALWAYS, GABOMBA_STATUE_ELIXIR_CHEST_TO_GABOMBA_STATUE_STEEL_WEST},
+    {672, 16, 160, 688, 32, 176, CONDITION_ALWAYS, GABOMBA_STATUE_ELIXIR_CHEST_TO_GABOMBA_STATUE_STEEL_EAST},
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct SceneRegion gGabombaStatue_SteelExitRegions[] = {
-    {384, 16, 112, 400, 32, 128, CONDITION_ALWAYS, 4},
-    {96, 16, 144, 112, 32, 160, CONDITION_ALWAYS, 5},
-    {672, 16, 144, 688, 32, 160, CONDITION_ALWAYS, 6},
+    {384, 16, 112, 400, 32, 128, CONDITION_ALWAYS, GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_MOUSE_NORTHWEST},
+    {96, 16, 144, 112, 32, 160, CONDITION_ALWAYS, GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_MOUSE_WEST},
+    {672, 16, 144, 688, 32, 160, CONDITION_ALWAYS, GABOMBA_STATUE_STEEL_TO_GABOMBA_STATUE_MOUSE_EAST},
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct SceneRegion gGabombaStatue_MouseExitRegions[] = {
-    {432, 16, 448, 448, 32, 464, CONDITION_ALWAYS, 4},
+    {432, 16, 448, 448, 32, 464, CONDITION_ALWAYS, GABOMBA_STATUE_MOUSE_TO_GABOMBA_STATUE_COGS},
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct SceneRegion gGabombaStatue_CogsExitRegions[] = {
-    {304, 16, 144, 320, 32, 160, CONDITION_ALWAYS, 2},
+    {304, 16, 144, 320, 32, 160, CONDITION_ALWAYS, GABOMBA_STATUE_COGS_TO_GABOMBA_STATUE_CHAMBER_IDOL},
     {SCENE_TABLE_END},
 };
 
@@ -4374,11 +4403,21 @@ LATE_DATA struct Trigger gGabombaStatue_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Each piece turned a quarter turn counterclockwise and clockwise.
+/// Each piece turned a quarter turn counterclockwise and clockwise, a pair a
+/// piece in enum ChannelPiece's order.
 LATE_DATA u8 gGabombaStatue_TurnedPieces[] = {
-    0, 0, 2, 2, 1, 1, 3, 3,
-    7, 5, 4, 6, 5, 7, 6, 4,
-    9, 9, 8, 8, 10, 10, 11, 11,
+    PIECE_NONE, PIECE_NONE,
+    PIECE_EAST_WEST, PIECE_EAST_WEST,
+    PIECE_NORTH_SOUTH, PIECE_NORTH_SOUTH,
+    PIECE_CROSSING, PIECE_CROSSING,
+    PIECE_NORTH_EAST, PIECE_SOUTH_WEST,
+    PIECE_EAST_SOUTH, PIECE_WEST_NORTH,
+    PIECE_SOUTH_WEST, PIECE_NORTH_EAST,
+    PIECE_WEST_NORTH, PIECE_EAST_SOUTH,
+    PIECE_SOUTH_WEST_AND_NORTH_EAST, PIECE_SOUTH_WEST_AND_NORTH_EAST,
+    PIECE_EAST_SOUTH_AND_WEST_NORTH, PIECE_EAST_SOUTH_AND_WEST_NORTH,
+    PIECE_STOP, PIECE_STOP,
+    PIECE_SOCKET, PIECE_SOCKET,
 };
 
 LATE_DATA u32 gGabombaStatue_ChargeBurstScript[] = {

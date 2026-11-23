@@ -657,6 +657,7 @@ void CgbSound(void) {
             note->trigger = NRX4_RESTART;
           break;
         default:
+          // The noise voice keeps its counter width in wave, for NR43 bit 3.
           *lengthDutyRegister = note->length;
           *frequencyOrNoiseRegister = (u32)note->wave << 3;
         init_envelope:
@@ -724,6 +725,8 @@ void CgbSound(void) {
         } else if ((note->state & SOUND_CHANNEL_SF_ENV) ==
                    SOUND_CHANNEL_SF_ENV_SUSTAIN) {
         sustain:
+          // The sustain level is renewed every 7 VBlanks, taking in any change
+          // to the track's volume (CgbModVol).
           note->level = note->sustainLevel;
           note->counter = 7;
         } else if ((note->state & SOUND_CHANNEL_SF_ENV) ==
@@ -770,7 +773,8 @@ void CgbSound(void) {
   // Only changed pitch and volume settings reach the hardware.
   write:
     if (note->modified & CGB_CHANNEL_MO_PIT) {
-      if (channel < CGB_CHANNEL_NOISE && (note->kind & 8)) {
+      if (channel < CGB_CHANNEL_NOISE &&
+          (note->kind & CGB_KIND_BIAS_ROUNDING)) {
         s32 bias = REG_SOUNDBIAS_H;
 
         // At the sound bias's two finest resolutions the frequency is rounded
@@ -784,7 +788,7 @@ void CgbSound(void) {
         *frequencyOrNoiseRegister = note->frequency;
       else
         *frequencyOrNoiseRegister =
-            (*frequencyOrNoiseRegister & 8) | note->frequency;
+            (*frequencyOrNoiseRegister & NR43_WIDTH_7BIT) | note->frequency;
       // The frequency's top three bits go in the trigger register's low bits.
       note->trigger = (note->trigger & (NRX4_RESTART | NRX4_LENGTH_STOP)) +
                       *((u8 *)&note->frequency + 1);
@@ -805,12 +809,13 @@ void CgbSound(void) {
         }
       } else {
         // NRx2: the starting volume in the high nibble, the envelope below.
-        envelopeControl &= 0xf;
+        envelopeControl &= NRX2_ENVELOPE;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
         *triggerRegister = note->trigger | NRX4_RESTART;
-        // CGB_CHANNEL_SWEEP_SQUARE is restarted a second time unless NR10 bit 3
-        // is set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        if (channel == CGB_CHANNEL_SWEEP_SQUARE && !(*sweepOrWaveControl & 8))
+        // CGB_CHANNEL_SWEEP_SQUARE is restarted a second time when its sweep
+        // raises the pitch.
+        if (channel == CGB_CHANNEL_SWEEP_SQUARE &&
+            !(*sweepOrWaveControl & NR10_SWEEP_DOWN))
           *triggerRegister = note->trigger | NRX4_RESTART;
       }
     }
@@ -1111,8 +1116,8 @@ void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   finishSequence(player, track);
 }
 
-/// Reads an unaligned little-endian voice target address from the sequence
-/// (extended command 1).
+/// Sets the voice's sample or wave from the four bytes that follow, lowest
+/// first, which need not be word-aligned (extended command 1).
 void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   const u8 *source = track->cursor;
   union WordBytes targetAddress;

@@ -62,8 +62,7 @@ enum {
   TRIGGER_BUBBLE = 61,
   TRIGGER_FIRM_GROUND = 62,
   /// The buried Tear Stones' spots, in the cave behind the westernmost clump of
-  /// weeds
-  /// and in the cave north of the vents room.
+  /// weeds and in the cave north of the vents room.
   TRIGGER_FIRST_TEAR_STONE = 50,
   TRIGGER_SECOND_TEAR_STONE = 51,
   /// In the room below the vents: weeds Cyclone scatters, the weeds over the
@@ -77,11 +76,30 @@ enum {
   TRIGGER_STAR_DUST = 50
 };
 
+/// The doors between rooms that share one map, each numbered as the exit at
+/// its side and as the entrance the other side's exit leads to.
+enum {
+  /// The stairs down from the passage north of the vents room into the cave
+  /// of the second Tear Stone, and back up.
+  TEAR_STONES_PASSAGE_TO_CAVE = 8,
+  TEAR_STONES_CAVE_TO_PASSAGE = 9,
+  /// Past the pool, the way from the pillar's south room to the round spot's
+  /// north room, and back.
+  PILLAR_GAP_SOUTH_TO_NORTH_ROOM = 4,
+  PILLAR_GAP_NORTH_TO_SOUTH_ROOM = 5,
+  /// The Star Dust's three dark rooms: the first, below the Tremor room, the
+  /// middle one, and the last chamber.
+  STAR_DUST_FIRST_TO_MIDDLE_ROOM = 3,
+  STAR_DUST_MIDDLE_TO_FIRST_ROOM = 4,
+  STAR_DUST_MIDDLE_TO_LAST_CHAMBER = 5,
+  STAR_DUST_LAST_CHAMBER_TO_MIDDLE = 6
+};
+
 /// The swamp's actors outside (SceneId_TaopoSwampMud).
 enum TaopoSwampMudActorId {
   /// The five bushes of weeds Whirlwind blows away (SPRITE_WEEDS), each kept
-  /// gone by
-  /// its flag, FLAG_TAOPO_SWAMP_BUSH_BLOWN plus its id. Three of them cover
+  /// gone by its flag, FLAG_TAOPO_SWAMP_BUSH_BLOWN plus its id. Three of them
+  /// cover
   /// cave mouths at the foot of the cliffs, which open once they are gone.
   ACTOR_FIRST_BUSH = ACTOR_FIRST_PLACED,
   /// The westernmost bush, at cell (13, 8), over the cave of the first Tear
@@ -833,14 +851,14 @@ void TaopoSwamp_BlowAwayPuddle(s32 id) {
 /// four drops. Douse alone does not do it with Felix leading: cast from beside
 /// the spot it rains on it and leaves the puddle, and Frost cast on that
 /// puddle then only scatters its snowflakes, the puddle staying as it was.
-/// Douse runs this with the leader's actor (FieldPsynergy_Douse passes
-/// FieldEffectWork.firstActorId) and a drop with 0, and only a caster whose
-/// actor is 5 counts.
+/// Douse runs this with the caster's actor (FieldPsynergy_Douse passes
+/// FieldEffectWork.firstActorId) and a drop with 0, and of the casters only
+/// Jenna's actor counts.
 void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(id, 1);
-  if (caster == 5 ||
+  if (caster == ACTOR_JENNA ||
       FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
@@ -1275,9 +1293,8 @@ void TaopoSwamp_DripAtRandom(void) {
 #define ROCK_ROOM_VENT_CYCLE_FRAMES 240
 
 /// The vents room's cycle of VENT_CYCLE_FRAMES: two sets of vents blow in turn,
-/// and
-/// while the second blows with the east pillar over its vent, Flower is blown
-/// off its ledge.
+/// and while the second blows with the east pillar over its vent, Flower is
+/// blown off its ledge.
 void TaopoSwamp_CycleDjinniVents(void) {
   s32 timer = Vent_GetCounter();
 
@@ -1343,9 +1360,9 @@ void TaopoSwamp_CycleSpotVent(void) {
   }
   if ((u32)(timer - 11) <= 118) {
     if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
-      TaopoSwamp_ShatterIcePillar(8);
+      TaopoSwamp_ShatterIcePillar(ACTOR_GAP_PUDDLE);
     else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
-      TaopoSwamp_BlowAwayPuddle(8);
+      TaopoSwamp_BlowAwayPuddle(ACTOR_GAP_PUDDLE);
   }
   Vent_AdvanceCounter(VENT_CYCLE_FRAMES);
 }
@@ -1559,7 +1576,10 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
     FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_FRAME);
-    if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
+    // Only the north room has the round spot and its vents.
+    if (gMainRoutineWork.entrance ==
+            TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST ||
+        gMainRoutineWork.entrance == PILLAR_GAP_NORTH_TO_SOUTH_ROOM)
       Vents_Start(gTaopoSwampPillarGapVents, 0, TaopoSwamp_CycleSpotVent);
     piece = Actor_GetById(ACTOR_GAP_PUDDLE);
     piece->motionFlags = 0;
@@ -1583,8 +1603,13 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
   } else if (scene == SCENE_TAOPO_SWAMP_DRIPS) {
-    if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
-        gMainRoutineWork.entrance != 9) {
+    // Arriving by entrance 1, 3 or 5 the party is by the rope posts; by 2, 4
+    // or 9, by the round spot with its vents and drips.
+    if (gMainRoutineWork.entrance !=
+            TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_SOUTH &&
+        gMainRoutineWork.entrance != 4 &&
+        gMainRoutineWork.entrance !=
+            TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST) {
       Rope_Initialize();
       Call4(Rope_Place, 0, FLAG_TAOPO_SWAMP_ROPE_TIED, ACTOR_WEST_ROPE_POST,
             ACTOR_EAST_ROPE_POST);
@@ -1683,19 +1708,21 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     entrance = gMainRoutineWork.entrance;
-    if ((u32)(entrance - 2) <= 1) {
+    if (entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
+        entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
       if (Event_GetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
     }
-    if (entrance == 6) {
+    if (entrance == STAR_DUST_LAST_CHAMBER_TO_MIDDLE) {
       if (Event_GetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
     }
-    if ((u32)(entrance - 4) <= 1)
+    if (entrance == STAR_DUST_MIDDLE_TO_FIRST_ROOM ||
+        entrance == STAR_DUST_MIDDLE_TO_LAST_CHAMBER)
       BlendScript_Suspend();
   }
   return 0;
@@ -1768,7 +1795,10 @@ s32 Scene_Initialize(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInPillarGap, TASK_PASS_FRAME);
-    if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
+    // Only the north room has the round spot and its vents.
+    if (gMainRoutineWork.entrance ==
+            TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST ||
+        gMainRoutineWork.entrance == PILLAR_GAP_NORTH_TO_SOUTH_ROOM)
       Vents_Start(gTaopoSwampPillarGapVents, 0, TaopoSwamp_CycleSpotVent);
     piece = Actor_GetById(ACTOR_GAP_PUDDLE);
     piece->motionFlags = 0;
@@ -1794,8 +1824,13 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_TAOPO_SWAMP_DRIPS) {
     *effect =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-    if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
-        gMainRoutineWork.entrance != 9) {
+    // Arriving by entrance 1, 3 or 5 the party is by the rope posts; by 2, 4
+    // or 9, by the round spot with its vents and drips.
+    if (gMainRoutineWork.entrance !=
+            TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_SOUTH &&
+        gMainRoutineWork.entrance != 4 &&
+        gMainRoutineWork.entrance !=
+            TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST) {
       Rope_Initialize();
       Call4(Rope_Place, 0, FLAG_TAOPO_SWAMP_ROPE_TIED, ACTOR_WEST_ROPE_POST,
             ACTOR_EAST_ROPE_POST);
@@ -1900,19 +1935,21 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     entrance = gMainRoutineWork.entrance;
-    if ((u32)(entrance - 2) <= 1) {
+    if (entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
+        entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
       if (Event_GetFlag(FLAG_TAOPO_SWAMP_DARK_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
     }
-    if (entrance == 6) {
+    if (entrance == STAR_DUST_LAST_CHAMBER_TO_MIDDLE) {
       if (Event_GetFlag(FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED))
         TaopoSwamp_DarkenRoom(0);
       else
         TaopoSwamp_FocusMapMiddle(0);
     }
-    if ((u32)(entrance - 4) <= 1)
+    if (entrance == STAR_DUST_MIDDLE_TO_FIRST_ROOM ||
+        entrance == STAR_DUST_MIDDLE_TO_LAST_CHAMBER)
       BlendScript_Suspend();
   }
   return 0;
@@ -2002,7 +2039,7 @@ void TaopoSwamp_DarkenRoom(s32 fade) {
   }
   TaopoSwamp_FocusMapOn(100, 50);
   Io_Write16(BLEND_ALPHA(7, 12), (u16 *)&REG_BLDALPHA);
-  if (gMainRoutineWork.entrance == 6)
+  if (gMainRoutineWork.entrance == STAR_DUST_LAST_CHAMBER_TO_MIDDLE)
     FieldTask_AddFrame(TaopoSwamp_SparkleStarDust, TASK_PASS_FRAME);
 }
 
@@ -2298,8 +2335,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_MUD_EAST, TaopoSwampMud, TAOPO_SWAMP_MUD_FROM_TAOPO_SWAMP_TEAR_STONES_EAST),
     SCENE_EXIT(TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_VENTS_NORTH, TaopoSwampVents, TAOPO_SWAMP_VENTS_FROM_TAOPO_SWAMP_TEAR_STONES_NORTH),
     SCENE_EXIT(TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_VENTS_SOUTH, TaopoSwampVents, TAOPO_SWAMP_VENTS_FROM_TAOPO_SWAMP_TEAR_STONES_SOUTH),
-    SCENE_EXIT(8, TaopoSwampTearStones, 9),
-    SCENE_EXIT(9, TaopoSwampTearStones, 8),
+    SCENE_EXIT(TEAR_STONES_PASSAGE_TO_CAVE, TaopoSwampTearStones, TEAR_STONES_CAVE_TO_PASSAGE),
+    SCENE_EXIT(TEAR_STONES_CAVE_TO_PASSAGE, TaopoSwampTearStones, TEAR_STONES_PASSAGE_TO_CAVE),
     SCENE_EXITS(TaopoSwampFlower),
     SCENE_EXIT(TAOPO_SWAMP_FLOWER_TO_TAOPO_SWAMP_VENTS_WEST_A, TaopoSwampVents, TAOPO_SWAMP_VENTS_FROM_TAOPO_SWAMP_FLOWER_WEST_A),
     SCENE_EXIT(TAOPO_SWAMP_FLOWER_TO_TAOPO_SWAMP_VENTS_EAST_A, TaopoSwampVents, TAOPO_SWAMP_VENTS_FROM_TAOPO_SWAMP_FLOWER_EAST_A),
@@ -2322,8 +2359,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_POOL, TaopoSwampPool, TAOPO_SWAMP_POOL_FROM_TAOPO_SWAMP_PILLAR_GAP),
     SCENE_EXIT(TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_DRIPS_SOUTH, TaopoSwampDrips, TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_SOUTH),
     SCENE_EXIT(TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_DRIPS_NORTHWEST, TaopoSwampDrips, TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_NORTHWEST),
-    SCENE_EXIT(4, TaopoSwampPillarGap, 5),
-    SCENE_EXIT(5, TaopoSwampPillarGap, 4),
+    SCENE_EXIT(PILLAR_GAP_SOUTH_TO_NORTH_ROOM, TaopoSwampPillarGap, PILLAR_GAP_NORTH_TO_SOUTH_ROOM),
+    SCENE_EXIT(PILLAR_GAP_NORTH_TO_SOUTH_ROOM, TaopoSwampPillarGap, PILLAR_GAP_SOUTH_TO_NORTH_ROOM),
     SCENE_EXIT(TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_DRIPS_EAST_A, TaopoSwampDrips, TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST),
     SCENE_EXIT(TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_DRIPS_EAST_B, TaopoSwampDrips, TAOPO_SWAMP_DRIPS_FROM_TAOPO_SWAMP_PILLAR_GAP_EAST),
     SCENE_EXITS(TaopoSwampDrips),
@@ -2342,10 +2379,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT(TAOPO_SWAMP_LAVA_ROCKS_TO_TAOPO_SWAMP_TREMOR_WEST, TaopoSwampTremor, TAOPO_SWAMP_TREMOR_FROM_TAOPO_SWAMP_LAVA_ROCKS_WEST),
     SCENE_EXITS(TaopoSwampStarDust),
     SCENE_EXIT(TAOPO_SWAMP_STAR_DUST_TO_TAOPO_SWAMP_TREMOR, TaopoSwampTremor, TAOPO_SWAMP_TREMOR_FROM_TAOPO_SWAMP_STAR_DUST),
-    SCENE_EXIT(3, TaopoSwampStarDust, 4),
-    SCENE_EXIT(4, TaopoSwampStarDust, 3),
-    SCENE_EXIT(5, TaopoSwampStarDust, 6),
-    SCENE_EXIT(6, TaopoSwampStarDust, 5),
+    SCENE_EXIT(STAR_DUST_FIRST_TO_MIDDLE_ROOM, TaopoSwampStarDust, STAR_DUST_MIDDLE_TO_FIRST_ROOM),
+    SCENE_EXIT(STAR_DUST_MIDDLE_TO_FIRST_ROOM, TaopoSwampStarDust, STAR_DUST_FIRST_TO_MIDDLE_ROOM),
+    SCENE_EXIT(STAR_DUST_MIDDLE_TO_LAST_CHAMBER, TaopoSwampStarDust, STAR_DUST_LAST_CHAMBER_TO_MIDDLE),
+    SCENE_EXIT(STAR_DUST_LAST_CHAMBER_TO_MIDDLE, TaopoSwampStarDust, STAR_DUST_MIDDLE_TO_LAST_CHAMBER),
     SCENE_EXITS_END,
 };
 
@@ -2452,8 +2489,8 @@ struct Trigger gTaopoSwampTearStonesTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_MUD_EAST},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_VENTS_NORTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, TAOPO_SWAMP_TEAR_STONES_TO_TAOPO_SWAMP_VENTS_SOUTH},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, TEAR_STONES_PASSAGE_TO_CAVE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, TEAR_STONES_CAVE_TO_PASSAGE},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), TRIGGER_SECOND_TEAR_STONE, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1), EVENT(TaopoSwamp_ScoopSecondTearStone)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), TRIGGER_FIRST_TEAR_STONE, FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0), EVENT(TaopoSwamp_ScoopFirstTearStone)},
     {TRIGGER_TABLE_END},
@@ -2511,8 +2548,8 @@ struct Trigger gTaopoSwampPillarGapTriggers[] = {
      TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_DRIPS_SOUTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS,
      TAOPO_SWAMP_PILLAR_GAP_TO_TAOPO_SWAMP_DRIPS_NORTHWEST},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, PILLAR_GAP_SOUTH_TO_NORTH_ROOM},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, PILLAR_GAP_NORTH_TO_SOUTH_ROOM},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), TRIGGER_PAST_SPOT_GUST,
      CONDITION_ALWAYS, EVENT(TaopoSwamp_DropToLowerFloor)},
     {TRIGGER_STEP, TRIGGER_PAST_SPOT_GUST, CONDITION_ALWAYS,
@@ -2615,10 +2652,10 @@ struct Trigger gTaopoSwampLavaRocksTriggers[] = {
 struct Trigger gTaopoSwampStarDustTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS,
      TAOPO_SWAMP_STAR_DUST_TO_TAOPO_SWAMP_TREMOR},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, STAR_DUST_FIRST_TO_MIDDLE_ROOM},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, STAR_DUST_MIDDLE_TO_FIRST_ROOM},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, STAR_DUST_MIDDLE_TO_LAST_CHAMBER},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, STAR_DUST_LAST_CHAMBER_TO_MIDDLE},
     {EXAMINE_TRIGGER(EXAMINE_GROUND), TRIGGER_STAR_DUST,
      FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP, EVENT(TaopoSwamp_ShowSparkleMessage)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_DARK_ROCK,

@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_SOUND_DRIVER_SYMBOLS_H
 #define ALCHEMY_SOUND_DRIVER_SYMBOLS_H
 
+/// @file
+/// What the game sets over the sound driver: the music's player, the sound
+/// numbers Sound_Play takes and their ranges, the music players by row, the
+/// mixer's reverb codes, and the music's volume and tempo ramps.
+
 #include "sounds.h"
 #include "types.h"
 
@@ -9,8 +14,8 @@ struct MusicPlayerInfo;
 /// ends.
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 
-/// Sound_UpdateCommandMask's command: the new gSoundCommandMask, or
-/// with AUDIO_COMMAND_TOGGLE the bits to flip in it.
+/// Sound_UpdateCommandMask's command: the new gSoundCommandMask, or with
+/// AUDIO_COMMAND_TOGGLE the bits to flip in it. Nothing sends one.
 enum AudioCommandMask {
   AUDIO_COMMAND_TOGGLE = 0x80,
   AUDIO_COMMAND_MASK = 0x7f
@@ -45,7 +50,7 @@ enum MusicPlayerId {
   MUSIC_PLAYER_BGM = 1,       ///< gMPlayInfo_BGM
   MUSIC_PLAYER_MENU_SE = 2,   ///< gMPlayInfo_MenuSE
   MUSIC_PLAYER_ACTION_SE = 3, ///< gMPlayInfo_ActionSE
-  /// The first music player a sound on MUSIC_PLAYER_SE_LAST may borrow.
+  /// The lowest music player a sound on MUSIC_PLAYER_SE_LAST may borrow.
   MUSIC_PLAYER_SE_FIRST = 4,
   MUSIC_PLAYER_SE5 = 5, ///< gMPlayInfo_SE5
   /// A sound on it takes the first idle music player from here down to

@@ -16,6 +16,7 @@
 /// before it to show a round carving, and Teleport there carries the party up
 /// to the aerie. Once the lighthouse has thawed, the gallery's arched doorways
 /// light purple as Felix walks up to them.
+
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
@@ -97,6 +98,25 @@ enum {
   CELL_BEHAVIOR_JUPITER_DOORWAY = 26
 };
 
+/// The hall's doorways, in the order of their step cells
+/// (gMarsLighthouseRoomM_Doorway).
+enum { DOORWAY_VENUS, DOORWAY_MERCURY, DOORWAY_MARS, DOORWAY_JUPITER };
+
+/// The hall's other cells: the carving Teleport is cast on, the four
+/// inscriptions, and the steps up from the stairs where the dragon statue
+/// speaks.
+enum {
+  CELL_AERIE_CARVING = 1,
+  CELL_EARTH_INSCRIPTION = 30,
+  CELL_WATER_INSCRIPTION,
+  CELL_FIRE_INSCRIPTION,
+  CELL_WIND_INSCRIPTION,
+  CELL_BEFORE_DRAGON_STATUE
+};
+
+/// The beacon ledge's doorway back into its tower.
+#define CELL_LEDGE_DOORWAY 1
+
 /// The inscriptions' colours: BG palettes 8 and 9 hold six for each element,
 /// the hall's four inscriptions glowing in them once that element's flame is
 /// lit, and the ledge's inscription takes its tower's six into palette 13.
@@ -176,7 +196,7 @@ void Actor_Blink(struct Actor *actor);
 extern u32 gCrumbs_Script[];
 extern u32 gEmbers_Script[];
 
-extern s32 gMarsLighthouseRoomM_StatueScript[];
+extern s32 gMarsLighthouseRoomM_TorchScript[];
 
 void Actor_Release(void *handle);
 void FieldCamera_MoveToActorById(s32 a, s32 b);
@@ -186,6 +206,8 @@ void Teleport_PlaySparks(void);
 struct HallColors {
   u16 colors[2 * PALETTE_COLORS];
 };
+/// The teleport circle's shimmer, a palette cycle that PaletteCycle_Fade
+/// steps.
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
 u16 gPaletteCycleTimer BSS_DATA;
@@ -226,20 +248,21 @@ void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 void Teleport_StopShimmer(void);
 
-/// The ledge's torch and Blaze's mark start with their sprite flags clear.
-s32 MarsLighthouseRoomM_SetUpStatue(struct Actor *actor) {
+/// A script call of the beacon ledge's torch and of Blaze's mark above it:
+/// they stand without a shadow.
+s32 MarsLighthouseRoomM_SetUpTorch(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
 /// Shows a flame on its torch, 14 pixels up, in its element's animation.
-s32 MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
+s32 MarsLighthouseRoomM_ShowFlame(s32 id, s32 animation) {
   struct Actor *actor = Actor_Get(id);
 
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(14);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SelectAnimation(actor, value);
+  Actor_SelectAnimation(actor, animation);
 #ifdef UBFIX
   return 0;
 #endif
@@ -254,13 +277,13 @@ void Flame_UpdateLanding(struct Actor *actor);
 
 extern s32 gScriptedPart_Script[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
-extern struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[];
-extern struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[];
+extern struct ActorPlacement gMarsLighthouseRoomM_FlamePlacements[];
+extern struct ActorPlacement gMarsLighthouseRoomM_InscriptionsPlacements[];
 
 extern struct Trigger gMarsLighthouseRoomM_Triggers[];
-extern struct Trigger gMarsLighthouseRoomM_Room6Triggers[];
-extern struct Trigger gMarsLighthouseRoomM_Room1Triggers[];
-extern struct Trigger gMarsLighthouseRoomM_Room5Triggers[];
+extern struct Trigger gMarsLighthouseRoomM_FlameTriggers[];
+extern struct Trigger gMarsLighthouseRoomM_InscriptionsTriggers[];
+extern struct Trigger gMarsLighthouseRoomM_LedgesTriggers[];
 extern s32 gMarsLighthouseRoomM_FlamePuffSwellScript[];
 extern s32 gMarsLighthouseRoomM_FlamePuffThrownScript[];
 
@@ -283,9 +306,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME)
-    return gMarsLighthouseRoomM_Room6Placements;
+    return gMarsLighthouseRoomM_FlamePlacements;
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS)
-    return gMarsLighthouseRoomM_Room1Placements;
+    return gMarsLighthouseRoomM_InscriptionsPlacements;
   return gMarsLighthouseRoomM_Placements;
 }
 
@@ -510,23 +533,23 @@ void MarsLighthouseRoomM_FadeDoorway(void) {
                   BLEND_WEIGHT_MAX - gMarsLighthouseRoomM_DoorwayBlend),
       IO_WRITE_HALFWORD);
   if (gMarsLighthouseRoomM_DoorwayBlend == 0) {
-    if (gMarsLighthouseRoomM_Doorway == 0)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_VENUS)
       MapGrid_CopyCellAttributes(34, 8, 3, 3, 17, 8);
-    if (gMarsLighthouseRoomM_Doorway == 1)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_MERCURY)
       MapGrid_CopyCellAttributes(30, 8, 3, 3, 8, 8);
-    if (gMarsLighthouseRoomM_Doorway == 2)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_MARS)
       MapGrid_CopyCellAttributes(34, 8, 3, 3, 17, 8);
-    if (gMarsLighthouseRoomM_Doorway == 3)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_JUPITER)
       MapGrid_CopyCellAttributes(30, 8, 3, 3, 8, 8);
   }
   if (gMarsLighthouseRoomM_DoorwayBlend == BLEND_WEIGHT_MAX) {
-    if (gMarsLighthouseRoomM_Doorway == 0)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_VENUS)
       MapGrid_CopyCellAttributes(34, 0, 3, 3, 17, 8);
-    if (gMarsLighthouseRoomM_Doorway == 1)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_MERCURY)
       MapGrid_CopyCellAttributes(30, 4, 3, 3, 8, 8);
-    if (gMarsLighthouseRoomM_Doorway == 2)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_MARS)
       MapGrid_CopyCellAttributes(34, 4, 3, 3, 17, 8);
-    if (gMarsLighthouseRoomM_Doorway == 3)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_JUPITER)
       MapGrid_CopyCellAttributes(30, 0, 3, 3, 8, 8);
   }
 }
@@ -553,22 +576,22 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
     *flash = 0;
   else
     *flash = BLEND_WEIGHT_MAX;
-  if (gMarsLighthouseRoomM_Doorway == 0)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_VENUS)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 67);
-  if (gMarsLighthouseRoomM_Doorway == 1)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_MERCURY)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 72);
-  if (gMarsLighthouseRoomM_Doorway == 2)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_MARS)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 17, 72);
-  if (gMarsLighthouseRoomM_Doorway == 3)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_JUPITER)
     MapGrid_CopyCellsLayered(0, 122, 3, 3, 8, 67);
   gMarsLighthouseRoomM_Doorway = next / 2;
-  if (gMarsLighthouseRoomM_Doorway == 0)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_VENUS)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
-  if (gMarsLighthouseRoomM_Doorway == 1)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_MERCURY)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
-  if (gMarsLighthouseRoomM_Doorway == 2)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_MARS)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 72);
-  if (gMarsLighthouseRoomM_Doorway == 3)
+  if (gMarsLighthouseRoomM_Doorway == DOORWAY_JUPITER)
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }
 
@@ -629,13 +652,13 @@ void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
     step = (cell - CELL_BEHAVIOR_VENUS_DOORWAY) / 2;
     gMarsLighthouseRoomM_Doorway = step;
     gMarsLighthouseRoomM_DoorwayStep = cell;
-    if (step == 0)
+    if (step == DOORWAY_VENUS)
       MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
-    if (gMarsLighthouseRoomM_Doorway == 1)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_MERCURY)
       MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
-    if (gMarsLighthouseRoomM_Doorway == 2)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_MARS)
       MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 72);
-    if (gMarsLighthouseRoomM_Doorway == 3)
+    if (gMarsLighthouseRoomM_Doorway == DOORWAY_JUPITER)
       MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
   }
   IO_WRITE_QUEUE_PUSH(
@@ -668,14 +691,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME)
-    return gMarsLighthouseRoomM_Room6Triggers;
+    return gMarsLighthouseRoomM_FlameTriggers;
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS)
-    return gMarsLighthouseRoomM_Room1Triggers;
+    return gMarsLighthouseRoomM_InscriptionsTriggers;
   if (scene == SCENE_MARS_LIGHTHOUSE_MERCURY_LEDGE ||
       scene == SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
       scene == SCENE_MARS_LIGHTHOUSE_VENUS_LEDGE)
-    return gMarsLighthouseRoomM_Room5Triggers;
+    return gMarsLighthouseRoomM_LedgesTriggers;
   return gMarsLighthouseRoomM_Triggers;
 }
 
@@ -746,6 +769,7 @@ s32 Scene_Initialize(void) {
         FieldCamera_MoveTo(224, 16, 216, 1);
         FieldCamera_WaitForArrival();
         FieldEvent_Wait(40);
+        // unset is zero here: the mouth stands still and watches nothing.
         actor = Actor_Get(ACTOR_STATUE_MOUTH);
         actor->motionFlags = unset;
         actor->y.fixed = toFIXED(16);
@@ -1315,7 +1339,7 @@ s32 Fireball_CarryLeader(void) {
     s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
                                                        leader->z.fixed);
 
-    if (kind != 7) {
+    if (kind != TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {
@@ -1368,8 +1392,8 @@ void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 mode);
 
 #include "shared/actor_park.h"
 
-s32 gMarsLighthouseRoomM_StatueScript[] = {
-    SC_CALL(MarsLighthouseRoomM_SetUpStatue),
+s32 gMarsLighthouseRoomM_TorchScript[] = {
+    SC_CALL(MarsLighthouseRoomM_SetUpTorch),
     SC_END,
 };
 
@@ -1424,16 +1448,16 @@ struct ActorPlacement gMarsLighthouseRoomM_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[] = {
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomM_StatueScript, 504, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, 7, 504, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomM_StatueScript, 504, 0, 112, FACING_EAST, TALK_FACING_KEEP, 0),
+struct ActorPlacement gMarsLighthouseRoomM_FlamePlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomM_TorchScript, 504, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 504, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, (s32)gMarsLighthouseRoomM_TorchScript, 504, 0, 112, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 232, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[] = {
+struct ActorPlacement gMarsLighthouseRoomM_InscriptionsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_ROBED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROBED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 184, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_ROBED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 216, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -1442,9 +1466,9 @@ struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[] = {
     ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 224, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 224, 0, 144, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1455,18 +1479,18 @@ struct Trigger gMarsLighthouseRoomM_Triggers[] = {
 /// The beacon ledge inscription's glow, in frames; -1 before it starts.
 s32 gMarsLighthouseRoomM_LedgeCycleFrame = -1;
 
-struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_LeaveLedge)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_StartBlazeOnTorch)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_WatchBlazeReachFlame)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_LightFlame)},
+struct Trigger gMarsLighthouseRoomM_FlameTriggers[] = {
+    {TRIGGER_STEP, CELL_LEDGE_DOORWAY, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_LeaveLedge)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LEDGE_TORCH, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_StartBlazeOnTorch)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_LEDGE_BLAZE_TARGET, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_WatchBlazeReachFlame)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), ACTOR_LEDGE_BLAZE_TARGET, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_LightFlame)},
     {TRIGGER_TABLE_END},
 };
 
 /// The hall inscriptions' glow, in frames; -1 before it starts.
 s32 gMarsLighthouseRoomM_HallCycleFrame = -1;
 
-struct Trigger gMarsLighthouseRoomM_Room1Triggers[] = {
+struct Trigger gMarsLighthouseRoomM_InscriptionsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -1480,24 +1504,24 @@ struct Trigger gMarsLighthouseRoomM_Room1Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 21, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 22, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 23, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 24, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 25, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 26, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {TRIGGER_STEP, 27, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_TeleportToAerie)},
-    {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadEarthInscription)},
-    {TRIGGER_EXAMINE, 31, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadWaterInscription)},
-    {TRIGGER_EXAMINE, 32, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadFireInscription)},
-    {TRIGGER_EXAMINE, 33, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadWindInscription)},
-    {TRIGGER_STEP, 34, FLAG_TOLD_TO_LIGHT_FLAMES, EVENT(MarsLighthouseRoomM_HearDragonStatue)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_DOORWAY, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_DOORWAY + 1, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_DOORWAY, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_DOORWAY + 1, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MARS_DOORWAY, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MARS_DOORWAY + 1, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_JUPITER_DOORWAY, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_JUPITER_DOORWAY + 1, IF_FLAG_SET(FLAG_MARS_LIGHTHOUSE_THAWED), EVENT(MarsLighthouseRoomM_StepTowardDoorway)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), CELL_AERIE_CARVING, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_TeleportToAerie)},
+    {TRIGGER_EXAMINE, CELL_EARTH_INSCRIPTION, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadEarthInscription)},
+    {TRIGGER_EXAMINE, CELL_WATER_INSCRIPTION, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadWaterInscription)},
+    {TRIGGER_EXAMINE, CELL_FIRE_INSCRIPTION, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadFireInscription)},
+    {TRIGGER_EXAMINE, CELL_WIND_INSCRIPTION, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomM_ReadWindInscription)},
+    {TRIGGER_STEP, CELL_BEFORE_DRAGON_STATUE, FLAG_TOLD_TO_LIGHT_FLAMES, EVENT(MarsLighthouseRoomM_HearDragonStatue)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gMarsLighthouseRoomM_Room5Triggers[] = {
+struct Trigger gMarsLighthouseRoomM_LedgesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},

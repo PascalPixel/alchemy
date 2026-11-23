@@ -30,11 +30,12 @@
 
 /// The cell behaviours the village's and the islet's trigger tables answer:
 /// the bank of the stream north of the hut by the Aqua Stone's pool, which
-/// Felix jumps across walking north; the weeds Cyclone scatters; and the weeds
+/// Felix jumps across walking north; the weeds Cyclone scatters; the weeds
 /// over a buried treasure, the village's Herb and Mint and the islet's Bramble
-/// Seed.
+/// Seed; and the edge of Haze's ledge, which Felix jumps down walking south.
 enum {
   CELL_BEHAVIOR_STREAM_BANK = 33,
+  CELL_BEHAVIOR_HAZE_LEDGE_EDGE = 40,
   CELL_BEHAVIOR_WEEDS = 21,
   CELL_BEHAVIOR_WEEDS_OVER_HERB = 22,
   CELL_BEHAVIOR_WEEDS_OVER_MINT = 23,
@@ -135,14 +136,14 @@ enum ApojiiIslandsHazeActorId {
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
-void Irq_SetHandler(s32 a, s32 b, void *callback);
+void Irq_SetHandler(s32 irq, s32 vcount, void *callback);
 void Actor_StartScript(struct Actor *actor, const void *data);
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
-void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void Shop_Run(s32 a, s32 b);
-void Inn_CheckIn(s32 a, s32 b);
+void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId);
+void Shop_Run(s32 stockRow, s32 keeper);
+void Inn_CheckIn(s32 innId, s32 keeper);
 
 void ApojiiIslands_CycleFallsColors(void);
 void ApojiiIslands_CycleSeaColors(void);
@@ -361,12 +362,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back
 /// up).
 void ApojiiIslands_SinkIntoSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
 }
 
 /// Sand ends: the leader is back on the ground layer.
 void ApojiiIslands_RiseFromSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
 extern s32 gApojiiIslands_FallsCycleFrame;
@@ -707,7 +708,7 @@ s32 ApojiiIslands_MindReadSon(void) {
 
 /// Walking south off Haze's ledge jumps the leader down.
 void ApojiiIslands_JumpDownLedge(void) {
-  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 1, 5);
+  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_STAND, 5);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -803,11 +804,11 @@ void Scroll_HBlank(void) {
   }
 }
 
-/// Each frame, follows the third map layer's scroll for the split, the water
+/// Each frame, follows the overhead layer's scroll for the split, the water
 /// below it drifting west a pixel every fourth frame.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+  struct MapLayer *layer = &((struct MapWork *)Ram_HeapSlots->mapGrid)
+                                ->layers[MAPGRID_LAYER_OVERHEAD];
   s16 y = FIXEDtoINT(layer->y);
 
   gApojiiIslands_SplitLine = 1448 - y;
@@ -1353,14 +1354,15 @@ struct Trigger gApojiiIslands_ShopsTriggers[] = {
 };
 
 /// Haze's islet's ways into the water, its ledge, Haze, Lash on the rope and
-/// Cyclone on the weeds.
+/// Cyclone on the weeds. Each way down into the water to the cave is the cell
+/// behaviour of the exit it leaves by, which Leader_SinkAway takes.
 struct Trigger gApojiiIslands_HazeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_NORTH},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_SOUTH},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 40, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpDownLedge)},
+    {TRIGGER_STEP, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_CAVE_SOUTHWEST, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
+    {TRIGGER_STEP, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_CAVE_SOUTHEAST, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
+    {TRIGGER_STEP, APOJII_ISLANDS_HAZE_TO_APOJII_ISLANDS_CAVE_NORTH, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_HAZE_LEDGE_EDGE, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpDownLedge)},
     {TRIGGER_TALK, ACTOR_HAZE, CONDITION_ALWAYS, EVENT(ApojiiIslands_HazeJoinsParty)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FALLS_ROPE_POST, FLAG_HAZE_ROPE_TIED, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterHazeWeeds)},

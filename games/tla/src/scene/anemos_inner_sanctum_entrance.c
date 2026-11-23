@@ -36,9 +36,13 @@
 /// party returns.
 #define FLAG_DULLAHAN_FOUGHT FLAG_SCENE_TEMP_01
 
-/// The map's cell behaviour for the cells where Hover, cast once the six
-/// blocks stand in their places, opens the way down.
-enum { CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER = 77 };
+/// The last room's cell behaviours: its floor, where walking into a block
+/// pushes it, and the cells where Hover, cast once the six blocks stand in
+/// their places, floats the party across the gap.
+enum {
+  CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_BLOCK_FLOOR = 33,
+  CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER = 77
+};
 
 /// A glow's value with this bit drawn mirrored left to right; its low three
 /// bits are its frame.
@@ -49,8 +53,8 @@ enum { CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER = 77 };
 enum { GLOW_DEPTH = 58 };
 
 void AnemosInnerSanctumEntrance_PlaceBlocks(void);
-void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
-void Actor_PlaceOnActor(s32 id, s32 a);
+void AnemosInnerSanctumEntrance_SetLightPicture(u16 picture);
+void Actor_PlaceOnActor(s32 id, s32 target);
 void Field_TryJumpForward(void);
 #include "field/field.h"
 #include "field/event_inline.h"
@@ -96,8 +100,8 @@ enum AnemosInnerSanctumEntranceActorId {
   ACTOR_SYMBOL_BLOCK_E,
   ACTOR_SYMBOL_BLOCK_F,
   ///@}
-  /// The light the shadow keeps: a white ball that swells over him once the
-  /// Dullahan is beaten.
+  /// The light the shadow keeps, a blue orb: once the Dullahan is beaten it
+  /// flashes white, swells over him and rises.
   ACTOR_LIGHT,
   /// The fourteen coiled dragon statues, drawn without shadows by their
   /// script.
@@ -109,12 +113,12 @@ enum AnemosInnerSanctumEntranceActorId {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-extern s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[];
-extern s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[];
+extern s32 gAnemosInnerSanctumEntrance_LightGrowsScript[];
+extern s32 gAnemosInnerSanctumEntrance_LightShrinksScript[];
 extern s32 gAnemosInnerSanctumEntrance_ShadowScript[];
 extern s8 gAnemosInnerSanctumEntrance_BlockOrder[];
 void AnemosInnerSanctumEntrance_StartLightSprites(void);
-void AnemosInnerSanctumEntrance_SetLightPriority(u16 value);
+void AnemosInnerSanctumEntrance_SetLightPriority(u16 priority);
 void AnemosInnerSanctumEntrance_OpenTheWay(void);
 
 extern s32 gAnemosInnerSanctumEntrance_DragonStatueScript[];
@@ -180,7 +184,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
 
 /// Back from beating the Dullahan, the shadow and his light flash white, and
 /// the light swells and rises over him while he shrinks away.
-void AnemosInnerSanctumEntrance_GlowRises(void) {
+void AnemosInnerSanctumEntrance_LightRises(void) {
   struct Actor *actor = Actor_GetById(ACTOR_LIGHT);
 
   actor->motionFlags = 0;
@@ -197,10 +201,10 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   wait(1);
   Actor_SetMovementTypeById(ACTOR_SHADOW,
                             gAnemosInnerSanctumEntrance_ShadowScript);
-  Actor_SetMovementTypeAndWaitById(ACTOR_LIGHT,
-                                   gAnemosInnerSanctumEntrance_GlowGrowsScript);
   Actor_SetMovementTypeAndWaitById(
-      ACTOR_LIGHT, gAnemosInnerSanctumEntrance_GlowShrinksScript);
+      ACTOR_LIGHT, gAnemosInnerSanctumEntrance_LightGrowsScript);
+  Actor_SetMovementTypeAndWaitById(
+      ACTOR_LIGHT, gAnemosInnerSanctumEntrance_LightShrinksScript);
   Event_Wait(10);
   Event_End();
 }
@@ -237,7 +241,7 @@ extern s8 gAnemosInnerSanctumEntrance_BlockSpots[];
 /// visit.
 ///
 /// Each block has its own spot, in gAnemosInnerSanctumEntrance_BlockSpots.
-void AnemosInnerSanctumEntrance_MoveBlock(s32 a, s32 b) {
+void AnemosInnerSanctumEntrance_MoveBlock(s32 unused, s32 block) {
   s32 i;
 
   const s8 *x = gAnemosInnerSanctumEntrance_BlockSpots;
@@ -271,7 +275,7 @@ void AnemosInnerSanctumEntrance_MoveBlock(s32 a, s32 b) {
 /// down (cells (7, 25) to (17, 30)); only up on the blocks, which he walks on
 /// as platforms, or on the step at cell (12, 25) and the landing at cell
 /// (12, 9) north of the gap, each 16 pixels down.
-void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
+void AnemosInnerSanctumEntrance_StepWhilePushing(s32 behavior) {
   struct MainRoutineWork *party;
   s32 held = Leader_CanPushObjectAhead();
 
@@ -279,7 +283,7 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   if (held) {
     if (Field_FindNearbyTalkTarget(party->leaderActorId) != -1) {
       Leader_PushObjectAhead();
-      AnemosInnerSanctumEntrance_MoveBlock(0, a);
+      AnemosInnerSanctumEntrance_MoveBlock(0, behavior);
     }
   } else {
     if (Actor_GetById(party->leaderActorId)->y.fixed > -toFIXED(28))
@@ -419,7 +423,7 @@ s32 Scene_Initialize(void) {
   if (Flag_Test(FLAG_DULLAHAN_FOUGHT)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    AnemosInnerSanctumEntrance_GlowRises();
+    AnemosInnerSanctumEntrance_LightRises();
     GameFlag_Clear(FLAG_DULLAHAN_FOUGHT);
   }
   return 0;
@@ -526,31 +530,33 @@ void AnemosInnerSanctumEntrance_StartLightSprites(void) {
   gAnemosInnerSanctumEntrance_LightPicture = 0;
 }
 
-void LightSprites_Add(s32 id, s32 value) {
+/// Gives actor `id` a glow: `glow` is its frame, with LIGHT_SPRITE_MIRRORED to
+/// draw it mirrored.
+void LightSprites_Add(s32 id, s32 glow) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != NULL) {
-    actor->timer = value;
+    actor->timer = glow;
     gLightSpriteActors[gLightSpriteCount] = actor;
     gLightSpriteCount++;
   }
 }
 
 /// Sets the glow sprites' priority; -1 takes each actor's own.
-void AnemosInnerSanctumEntrance_SetLightPriority(u16 value) {
-  gLightSpritePriority = value;
+void AnemosInnerSanctumEntrance_SetLightPriority(u16 priority) {
+  gLightSpritePriority = priority;
 }
 
 /// Chooses the glows' picture: 0 the still glow, 1 the five-frame flicker.
-void AnemosInnerSanctumEntrance_SetLightPicture(u16 value) {
-  gAnemosInnerSanctumEntrance_LightPicture = value;
+void AnemosInnerSanctumEntrance_SetLightPicture(u16 picture) {
+  gAnemosInnerSanctumEntrance_LightPicture = picture;
 }
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-/// The blue orb's rise: it grows and climbs for 40 frames.
-s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[] = {
+/// The light's rise: it grows and climbs for 40 frames.
+s32 gAnemosInnerSanctumEntrance_LightGrowsScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
     SC_ADD(SW_Y, -toFIXED(1) / 4),
@@ -559,8 +565,8 @@ s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[] = {
     SC_END,
 };
 
-/// The blue orb shrinking back as it sinks, then gone to the origin.
-s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[] = {
+/// The light shrinking back as it sinks, then gone.
+s32 gAnemosInnerSanctumEntrance_LightShrinksScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_ADD(SW_Y, toFIXED(1) / 4),
@@ -571,7 +577,7 @@ s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[] = {
     SC_END,
 };
 
-/// The shadow shrinking away for 40 frames, then gone to the origin.
+/// The shadow shrinking away for 40 frames, then gone.
 s32 gAnemosInnerSanctumEntrance_ShadowScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
@@ -616,11 +622,29 @@ LATE_DATA s32 gAnemosInnerSanctumEntrance_DragonStatueScript[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(AnemosInnerSanctumEntrance),
-    SCENE_EXIT_UNLESS(1, ContigoGeoglyph, 23, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AnemosInnerSanctumDragonSkinChest, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, ContigoGeoglyph, 22, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, ContigoGeoglyph, 24, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AnemosInnerSanctumOrihalconChest, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_NORTHEAST,
+        ContigoGeoglyph,
+        CONTIGO_GEOGLYPH_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST,
+        EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        ANEMOS_INNER_SANCTUM_ENTRANCE_TO_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST,
+        AnemosInnerSanctumDragonSkinChest,
+        ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE,
+        EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_NORTH,
+                      ContigoGeoglyph,
+                      CONTIGO_GEOGLYPH_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTH,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_SOUTH,
+                      ContigoGeoglyph,
+                      CONTIGO_GEOGLYPH_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE_SOUTH,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(
+        ANEMOS_INNER_SANCTUM_ENTRANCE_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST,
+        AnemosInnerSanctumOrihalconChest,
+        ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_ENTRANCE,
+        EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -647,7 +671,8 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
                     136, 0, 456, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
     ACTOR_PLACEMENT(SPRITE_SYMBOL_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     232, 0, 472, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_COILED_DRAGON_STATUE, CONDITION_ALWAYS,
                     (s32)gAnemosInnerSanctumEntrance_DragonStatueScript, 152, 0,
@@ -702,12 +727,18 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_EmptyTriggers[] = {
 /// The scene's exits, the last room's floor for pushing, Move on each block and
 /// Hover on the blocks' cells.
 LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {STEP_TRIGGER_WALKING, 33, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_NORTHEAST},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
+     ANEMOS_INNER_SANCTUM_ENTRANCE_TO_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS,
+     ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_NORTH},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
+     ANEMOS_INNER_SANCTUM_ENTRANCE_TO_CONTIGO_GEOGLYPH_SOUTH},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
+     ANEMOS_INNER_SANCTUM_ENTRANCE_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST},
+    {STEP_TRIGGER_WALKING,
+     CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_BLOCK_FLOOR, CONDITION_ALWAYS,
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
     {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER,
      CONDITION_ALWAYS, EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},

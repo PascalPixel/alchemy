@@ -242,8 +242,8 @@ extern u8 gInventorySnapshot[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// An urn torch starts with its sprite flags clear.
-s32 MarsLighthouseEntrance_SetUpStatue(struct Actor *actor) {
+/// An urn torch's script call: the torches stand without a shadow.
+s32 MarsLighthouseEntrance_SetUpTorch(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -328,6 +328,8 @@ void Teleport_PlaySparks(void);
 /// clears it as the ride ends. The rooms of this overlay have no whirlwind,
 /// and nothing here but Scene_Initialize's clear touches it.
 s32 gWhirlwindRiding BSS_DATA;
+/// The teleport circle's shimmer, a palette cycle that PaletteCycle_Fade
+/// steps.
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
 u16 gPaletteCycleTimer BSS_DATA;
@@ -1002,7 +1004,8 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(arg);
@@ -1087,7 +1090,8 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(
@@ -1229,18 +1233,18 @@ void Ride_SetEntryCount(s32 index, s16 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void);
 extern s32 gMarsLighthouseEntrance_DragonFaceAtLeft[];
-extern s16 gMarsLighthouseEntrance_FugueIceCones[];
+extern u16 gMarsLighthouseEntrance_FugueIceCones[];
 extern u16 gMarsLighthouseEntrance_LapisBeamTargets[];
 extern u16 gMarsLighthouseEntrance_LapisBeamStops[];
-extern s16 gMarsLighthouseEntrance_LapisIceCones[];
+extern u16 gMarsLighthouseEntrance_LapisIceCones[];
 extern u16 gMarsLighthouseEntrance_BalmBeamTargets[];
 extern u16 gMarsLighthouseEntrance_BalmBeamStops[];
-extern s16 gMarsLighthouseEntrance_BalmIceCones[];
+extern u16 gMarsLighthouseEntrance_BalmIceCones[];
 extern u16 gMarsLighthouseEntrance_ValkyrieUpperBeamTargets[];
 extern u16 gMarsLighthouseEntrance_ValkyrieUpperBeamStops[];
 extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[];
 extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[];
-extern s16 gMarsLighthouseEntrance_ValkyrieIceCones[];
+extern u16 gMarsLighthouseEntrance_ValkyrieIceCones[];
 extern u16 gTeleportCircle_PaletteSlots[];
 extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
@@ -1253,7 +1257,8 @@ s32 Scene_Initialize(void) {
   s32 i;
 
   gWhirlwindRiding = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
   if (scene == SCENE_MARS_LIGHTHOUSE_OUTSIDE) {
@@ -1879,7 +1884,8 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   table->shown = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
@@ -1905,51 +1911,58 @@ void GameFlag_SetByte(s32 flag, s32 value);
 #include "shared/actor_set_cell_open.h"
 
 // clang-format off
-s32 gMarsLighthouseEntrance_LapisWestFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_MOVE(200, 0, 112),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_MOVE(104, 0, 112),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+/// The flame chamber's two moving dragon heads, each sliding along the north
+/// wall and pausing at each end.
+s32 gMarsLighthouseEntrance_LapisWestFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(200, 0, 112),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(104, 0, 112),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-s32 gMarsLighthouseEntrance_LapisEastFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_MOVE(232, 0, 112),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_MOVE(296, 0, 112),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+s32 gMarsLighthouseEntrance_LapisEastFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(232, 0, 112),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(296, 0, 112),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
-s32 gMarsLighthouseEntrance_BalmFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SET(SW_MOTION, 2),                                                    
-      SC_SET(SW_Y, toFIXED(48)),                                                
-      SC_SET(SW_GROUND, toFIXED(48)),                                           
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_MOVE(904, 0, 528),                                      
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_MOVE(840, 0, 528),                                      
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+/// The dragon head in Balm's rooms, raised on its wall, sliding back and forth
+/// above the urn torch.
+s32 gMarsLighthouseEntrance_BalmFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
+    SC_SET(SW_Y, toFIXED(48)),
+    SC_SET(SW_GROUND, toFIXED(48)),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_MOVE(904, 0, 528),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_MOVE(840, 0, 528),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
+/// The Valkyrie Mail rooms' dragon heads: the one on the south circle's room's
+/// wall slides back and forth over the urn torch; the long hall's dragon face
+/// stays raised on its wall until it wakes.
 s32 gMarsLighthouseEntrance_ValkyrieWestFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SET(SW_Y, toFIXED(48)),
     SC_SET(SW_GROUND, toFIXED(48)),
     SC_SPEED(0.5),
@@ -1967,16 +1980,18 @@ s32 gMarsLighthouseEntrance_ValkyrieWestFlameThrowerRoute[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-s32 gMarsLighthouseEntrance_ValkyrieEastFlameThrowerRoute[] = {                                                               
-      SC_SET(SW_STEERING, 0),                                                  
-      SC_SET(SW_MOTION, 0),                                                   
-      SC_SET(SW_Y, toFIXED(32)),                                                
-      SC_SET(SW_GROUND, toFIXED(32)),                                           
-      SC_SPEED(0.5),                                                
-      SC_ACCELERATION(0.03125),                                                 
-      SC_END,                                                                  
-  };
+s32 gMarsLighthouseEntrance_ValkyrieEastFlameThrowerRoute[] = {
+    SC_SET(SW_STEERING, 0),
+    SC_SET(SW_MOTION, 0),
+    SC_SET(SW_Y, toFIXED(32)),
+    SC_SET(SW_GROUND, toFIXED(32)),
+    SC_SPEED(0.5),
+    SC_ACCELERATION(0.03125),
+    SC_END,
+};
 
+/// The woken dragon face crawls west along the long hall's north wall, rising
+/// and dropping as it goes, and stops breathing fire at the west end.
 s32 gMarsLighthouseEntrance_DragonFaceGoesLeft[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 0),
@@ -2057,6 +2072,7 @@ s32 gMarsLighthouseEntrance_DragonFaceGoesLeft[] = {
     SC_END,
 };
 
+/// The dragon face already at the long hall's west end, as Felix comes back.
 s32 gMarsLighthouseEntrance_DragonFaceAtLeft[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 0),
@@ -2078,10 +2094,10 @@ s32 gMarsLighthouseEntrance_DragonFaceAtLeft[] = {
 /// throwers for FlameThrowers_Start, each with its flame's kind and reach, with
 /// the actors their flames stop at, 1 where reaching one calls the routine
 /// FlameThrowers_Start is given.
-s16 gMarsLighthouseEntrance_FugueIceCones[] = {
+u16 gMarsLighthouseEntrance_FugueIceCones[] = {
     ACTOR_FUGUE_ICE_CONE_A, 7, FLAG_SCENE_TEMP_00,
     ACTOR_FUGUE_ICE_CONE_B, 7, FLAG_SCENE_TEMP_01,
-    -1,
+    ACTOR_LIST_END,
 };
 u16 gMarsLighthouseEntrance_LapisBeamTargets[] = {
     ACTOR_LAPIS_FLAME_THROWER_A, FLAME_FORWARD | 3, ACTOR_LAPIS_FLAME_THROWER_B, FLAME_FORWARD | 3,
@@ -2091,10 +2107,10 @@ u16 gMarsLighthouseEntrance_LapisBeamTargets[] = {
 u16 gMarsLighthouseEntrance_LapisBeamStops[] = {
     ACTOR_PUSHED_STATUE, 0, 0,
 };
-s16 gMarsLighthouseEntrance_LapisIceCones[] = {
+u16 gMarsLighthouseEntrance_LapisIceCones[] = {
     ACTOR_LAPIS_ICE_CONE_A, 7, FLAG_SCENE_TEMP_02,
     ACTOR_LAPIS_ICE_CONE_B, 7, FLAG_SCENE_TEMP_03,
-    -1,
+    ACTOR_LIST_END,
 };
 u16 gMarsLighthouseEntrance_BalmBeamTargets[] = {
     ACTOR_BALM_FLAME_THROWER, FLAME_FORWARD | 3, 0,
@@ -2102,13 +2118,13 @@ u16 gMarsLighthouseEntrance_BalmBeamTargets[] = {
 u16 gMarsLighthouseEntrance_BalmBeamStops[] = {
     ACTOR_BALM_TORCH, 1, 0,
 };
-s16 gMarsLighthouseEntrance_BalmIceCones[] = {
+u16 gMarsLighthouseEntrance_BalmIceCones[] = {
     ACTOR_BALM_ICE_CONE_A, 7, FLAG_SCENE_TEMP_04,
     ACTOR_BALM_ICE_CONE_B, 7, FLAG_SCENE_TEMP_05,
     ACTOR_BALM_ICE_CONE_C, 7, FLAG_SCENE_TEMP_06,
     ACTOR_BALM_ICE_CONE_D, 7, FLAG_SCENE_TEMP_07,
     ACTOR_BALM_ICE_CONE_E, 7, FLAG_SCENE_TEMP_08,
-    -1,
+    ACTOR_LIST_END,
 };
 u16 gMarsLighthouseEntrance_ValkyrieUpperBeamTargets[] = {
     ACTOR_UPPER_FLAME_THROWER, FLAME_FORWARD | 3, 0,
@@ -2122,23 +2138,29 @@ u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[] = {
 u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[] = {
     ACTOR_LOWER_TORCH, 1, 0,
 };
-s16 gMarsLighthouseEntrance_ValkyrieIceCones[] = {
+u16 gMarsLighthouseEntrance_ValkyrieIceCones[] = {
     ACTOR_VALKYRIE_ICE_CONE_A, 7, FLAG_SCENE_TEMP_10,
     ACTOR_VALKYRIE_ICE_CONE_B, 7, FLAG_SCENE_TEMP_11,
     ACTOR_VALKYRIE_ICE_CONE_C, 7, FLAG_SCENE_TEMP_12,
     ACTOR_VALKYRIE_ICE_CONE_D, 7, FLAG_SCENE_TEMP_13,
     ACTOR_VALKYRIE_ICE_CONE_E, 7, FLAG_SCENE_TEMP_14,
     ACTOR_VALKYRIE_ICE_CONE_F, 7, FLAG_SCENE_TEMP_15,
-    -1, 0,
+    ACTOR_LIST_END,
 };
 
-s32 gMarsLighthouseEntrance_ValkyrieUpperFireballPath[] = {                                                               
-      SC_CALL(Actor_PopUpSlow), SC_MOVE(112, 32, 728),             
-      SC_SYNC,        SC_MOVE(112, 22, 728),             
-      SC_SYNC,        SC_MOVE(128, 22, 728),             
-      SC_SYNC,        SC_CALL(Actor_Park),                                          
-      SC_END,                                                                  
-  };
+/// The sparkles' ways from each urn torch to where its fireball sets off; at the
+/// end of some, the routine the fireball's arrival calls.
+s32 gMarsLighthouseEntrance_ValkyrieUpperFireballPath[] = {
+    SC_CALL(Actor_PopUpSlow),
+    SC_MOVE(112, 32, 728),
+    SC_SYNC,
+    SC_MOVE(112, 22, 728),
+    SC_SYNC,
+    SC_MOVE(128, 22, 728),
+    SC_SYNC,
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 s32 gMarsLighthouseEntrance_ValkyrieLowerFireballPath[] = {
     SC_CALL(Actor_PopUpSlow),
@@ -2153,13 +2175,17 @@ s32 gMarsLighthouseEntrance_ValkyrieLowerFireballPath[] = {
     SC_END,
 };
 
-s32 gMarsLighthouseEntrance_BalmFireballPath[] = {                                                               
-      SC_CALL(Actor_PopUpSlow), SC_MOVE(872, 32, 576),             
-      SC_SYNC,        SC_MOVE(872, 30, 576),             
-      SC_SYNC,        SC_MOVE(872, 30, 584),             
-      SC_SYNC,        SC_CALL(Actor_Park),                                          
-      SC_END,                                                                  
-  };
+s32 gMarsLighthouseEntrance_BalmFireballPath[] = {
+    SC_CALL(Actor_PopUpSlow),
+    SC_MOVE(872, 32, 576),
+    SC_SYNC,
+    SC_MOVE(872, 30, 576),
+    SC_SYNC,
+    SC_MOVE(872, 30, 584),
+    SC_SYNC,
+    SC_CALL(Actor_Park),
+    SC_END,
+};
 
 s32 gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet[] = {
     SC_CALL(Actor_PopUp),
@@ -2211,8 +2237,8 @@ s32 gMarsLighthouseEntrance_FireballToLapisIceSheet[] = {
 #define TELEPORT_CIRCLE_FIRST_ENTRY 137
 #include "shared/teleport_circle_palette.c"
 
-s32 gMarsLighthouseEntrance_StatueScript[] = {
-    SC_CALL(MarsLighthouseEntrance_SetUpStatue),
+s32 gMarsLighthouseEntrance_TorchScript[] = {
+    SC_CALL(MarsLighthouseEntrance_SetUpTorch),
     SC_END,
 };
 
@@ -2347,8 +2373,9 @@ struct ActorPlacement gMarsLighthouseEntrance_FuguePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS,
                     gMarsLighthouseEntrance_IceConeScript, 136, 0, 424,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, 800, MOVEMENT_TYPE_STAND, 648, 0, 376,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, FLAG_AREA_TEMP_20,
+                    MOVEMENT_TYPE_STAND, 648, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
 #if !TLA_PATCH_1
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_FUGUE),
                     MOVEMENT_TYPE_STAND, 664, 0, 424, FACING_SOUTH,
@@ -2368,13 +2395,13 @@ struct ActorPlacement gMarsLighthouseEntrance_LapisPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_LapisEastFlameThrowerRoute, 280, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 552, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 88, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 552, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 552, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 840, 0, 672, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 480, 0, 704, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2385,7 +2412,7 @@ struct ActorPlacement gMarsLighthouseEntrance_LapisPlacements[] = {
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_BalmPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_BalmFlameThrowerRoute, 840, 0, 528, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 872, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 872, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 792, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 792, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 840, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2404,10 +2431,10 @@ struct ActorPlacement gMarsLighthouseEntrance_BalmPlacements[] = {
 
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 72, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 904, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 72, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 72, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH_LIT, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 904, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 856, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ICE_CRACK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 240, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPARKLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIREBALL, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2419,9 +2446,9 @@ struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[] = {
 struct ActorPlacement gMarsLighthouseEntrance_ValkyriePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_ValkyrieWestFlameThrowerRoute, 120, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DRAGON_HEAD, CONDITION_ALWAYS, gMarsLighthouseEntrance_ValkyrieEastFlameThrowerRoute, 792, 0, 128, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 56, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_TORCH, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_TorchScript, 56, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 200, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, gMarsLighthouseEntrance_IceConeScript, 360, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),

@@ -55,7 +55,7 @@ struct Bubble {
 /// free bubble, which way they go (up the stream when positive) and the
 /// bubbles.
 struct AquaRockBubbles {
-  struct Actor *object;
+  struct Actor *anchor;
   u16 vramEntry;
   u16 next;
   s16 direction;
@@ -76,8 +76,8 @@ extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 /// The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s).
 extern const u8 gAquaRock_MarkerTiles[];
-extern s16 gAquaRock_SlopesRegions[];
-extern s16 gAquaRock_MistSabreChestRegions[];
+extern struct SceneRegion gAquaRock_SlopesRegions[];
+extern struct SceneRegion gAquaRock_MistSabreChestRegions[];
 extern struct ActorPlacement gAquaRock_Placements[];
 extern struct ActorPlacement gAquaRock_SlopesPlacements[];
 extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
@@ -124,6 +124,10 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 /// The trigger StepIntoCurrent raises for a leader the current carries over
 /// the edge of the falls (AquaRock_DropDownFalls).
 #define TRIGGER_DROP_DOWN_FALLS 44
+
+/// The slopes' map animations of the streams their Water Stone turns, two
+/// each: running downhill, and turned back to run uphill.
+enum { STREAMS_DOWNHILL_ANIMATION = 5, STREAMS_UPHILL_ANIMATION = 7 };
 
 /// The cell behaviours the rooms' trigger tables answer: the streams the top's
 /// west and east red moai pour, the heads of the two lower red moai's streams,
@@ -314,7 +318,7 @@ struct AquaRockBubbles gAquaRock_Bubbles BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u8 *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_MOAI)
@@ -628,7 +632,7 @@ void AquaRock_StopFlashing(struct Actor *actor) {
   actor->update = 0;
 }
 
-void TilesetAnim_Pause(s32 layer);
+void TilesetAnim_Pause(s32 channel);
 
 /// Douse on the slopes' Water Stone: it flickers, the screen flashes four
 /// colours and turns white, and the streams turn back to run uphill, bubbles
@@ -660,20 +664,20 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     GameFlag_Set(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK);
     MapGrid_CopyCells(64, 64, 1, 2, 51, 82);
     MapGrid_CopyCells(66, 64, 1, 2, 115, 18);
-    TilesetAnim_Pause(5);
-    TilesetAnim_Pause(6);
-    TilesetAnim_Resume(7);
-    TilesetAnim_Resume(8);
+    TilesetAnim_Pause(STREAMS_DOWNHILL_ANIMATION);
+    TilesetAnim_Pause(STREAMS_DOWNHILL_ANIMATION + 1);
+    TilesetAnim_Resume(STREAMS_UPHILL_ANIMATION);
+    TilesetAnim_Resume(STREAMS_UPHILL_ANIMATION + 1);
     actor->update = (ObjectUpdate)AquaRock_StopFlashing;
     AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
   } else {
     GameFlag_Clear(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK);
     MapGrid_CopyCells(65, 64, 1, 2, 51, 82);
     MapGrid_CopyCells(67, 64, 1, 2, 115, 18);
-    TilesetAnim_Pause(7);
-    TilesetAnim_Pause(8);
-    TilesetAnim_Resume(5);
-    TilesetAnim_Resume(6);
+    TilesetAnim_Pause(STREAMS_UPHILL_ANIMATION);
+    TilesetAnim_Pause(STREAMS_UPHILL_ANIMATION + 1);
+    TilesetAnim_Resume(STREAMS_DOWNHILL_ANIMATION);
+    TilesetAnim_Resume(STREAMS_DOWNHILL_ANIMATION + 1);
     actor->update = (ObjectUpdate)AquaRock_StopFlashing;
     AquaRock_SetBubbleAnchor(0);
   }
@@ -695,10 +699,10 @@ void AquaRock_MovePillar(s32 unused, s32 id) {
     s32 column;
     s32 row;
 
-    struct Actor *first = Actor_GetById(ACTOR_MOAI_PILLAR);
+    struct Actor *pillar = Actor_GetById(ACTOR_MOAI_PILLAR);
 
-    column = FIELD_CELL(first->x.fixed);
-    row = FIELD_CELL(first->z.fixed);
+    column = FIELD_CELL(pillar->x.fixed);
+    row = FIELD_CELL(pillar->z.fixed);
     GameFlag_SetByte(FLAG_PILLAR_COLUMN, column);
     GameFlag_SetByte(FLAG_PILLAR_ROW, row);
     Event_ClearFlag(FLAG_PILLAR_BEFORE_WEST_MOAI);
@@ -1188,6 +1192,13 @@ void AquaRock_MoaiStepAside(void) {
   GameFlag_Set(FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE);
 }
 
+/// Sets up the room the party comes into, Retreat leading back to the slopes'
+/// south shore. On the slopes: the moai's colours and water, the pillars where
+/// they were left, the guardian moai aside once they have moved, the streams,
+/// and the bubbles and sparkles of a Doused Water Stone. In the Mist Sabre
+/// chest's room: its frozen puddles and dropped rocks, its Water Stone's
+/// bubbles and the way inside it opens, and the party's arrival up the stream
+/// or from inside.
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
   struct MapWorkGroundEffects *map =
@@ -1195,9 +1206,10 @@ s32 Scene_Initialize(void) {
   s32 id, x, z;
   s16 *entrance;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_MOAI;
-  gMainRoutineWork.retreatEntrance = 1;
+  gMainRoutineWork.retreatEntrance = AQUA_ROCK_MOAI_FROM_WORLD_MAP_SOUTH;
   map->wading = MAP_WADING_UPPER_LEVEL;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   if (scene == SCENE_AQUA_ROCK_MOAI) {
@@ -1244,10 +1256,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
       AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
       GroundParticles_SetAnchor(ACTOR_WATER_STONE);
-      TilesetAnim_Pause(5);
-      TilesetAnim_Pause(6);
-      TilesetAnim_Resume(7);
-      TilesetAnim_Resume(8);
+      TilesetAnim_Pause(STREAMS_DOWNHILL_ANIMATION);
+      TilesetAnim_Pause(STREAMS_DOWNHILL_ANIMATION + 1);
+      TilesetAnim_Resume(STREAMS_UPHILL_ANIMATION);
+      TilesetAnim_Resume(STREAMS_UPHILL_ANIMATION + 1);
       Actor_GetById(ACTOR_WATER_STONE)->update = AquaRock_StopFlashing;
     }
     Actor_SetSpritePriority(ACTOR_WATER_STONE, 1);
@@ -1298,10 +1310,10 @@ s32 Scene_Initialize(void) {
         AquaRock_SetBubbleAnchor(ACTOR_BUBBLE_MARKER);
         GroundParticles_SetAnchor(ACTOR_BUBBLE_MARKER);
       } else {
-        TilesetAnim_Pause(7);
-        TilesetAnim_Pause(8);
-        TilesetAnim_Resume(5);
-        TilesetAnim_Resume(6);
+        TilesetAnim_Pause(STREAMS_UPHILL_ANIMATION);
+        TilesetAnim_Pause(STREAMS_UPHILL_ANIMATION + 1);
+        TilesetAnim_Resume(STREAMS_DOWNHILL_ANIMATION);
+        TilesetAnim_Resume(STREAMS_DOWNHILL_ANIMATION + 1);
       }
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BUBBLE_MARKER), 0);
     } else {
@@ -1350,10 +1362,12 @@ void AquaRock_AddMoaiWater(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != 0) {
-    u8 *meta = Sprite_AddAnimation(actor->sprite, SPRITE_MOAI_WATER);
+    struct SpriteAnimation *water =
+        (struct SpriteAnimation *)Sprite_AddAnimation(actor->sprite,
+                                                      SPRITE_MOAI_WATER);
 
-    meta[5] = 0;
-    meta[6] = 0;
+    water->colorMode = SPRITE_COLOR_NORMAL;
+    water->priority = 0;
     Actor_SelectAnimation(actor, 0);
     Actor_SelectAnimation(actor, 2);
   }
@@ -1474,7 +1488,7 @@ void AquaRock_DrawRisingBubbles(void) {
   struct Bubble *entry;
   s32 i, x, y, z, screenX, screenY;
 
-  if (Random16() < 4096 && (source = work->object) != 0) {
+  if (Random16() < 4096 && (source = work->anchor) != 0) {
     entry = &work->bubbles[work->next];
     entry->x = source->x.fixed + Random16() * 3 * 16 - toFIXED(24);
     entry->y = source->y.fixed;
@@ -1541,7 +1555,7 @@ void AquaRock_DrawFallingBubbles(void) {
   struct Bubble *bubble;
   s32 i, x, y, depth, screenX, screenY, z, row;
 
-  if (Random16() < 4096 && (source = work->object) != 0) {
+  if (Random16() < 4096 && (source = work->anchor) != 0) {
     bubble = &work->bubbles[work->next];
     bubble->x = source->x.fixed + Random16() * 3 * 8 - toFIXED(12);
     bubble->y = source->y.fixed;
@@ -1614,9 +1628,9 @@ void AquaRock_SetBubbleAnchor(s32 id) {
   struct AquaRockBubbles *work = &gAquaRock_Bubbles;
 
   if (id == 0) {
-    work->object = 0;
+    work->anchor = 0;
   } else {
-    work->object = Actor_GetById(id);
+    work->anchor = Actor_GetById(id);
     if (id == ACTOR_MIST_SABRE_WATER_STONE)
       work->direction = -1;
     else
@@ -1708,20 +1722,27 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
 #define SCENE_ENTRANCES_SECTION LATE_DATA
 #include "shared/scene_entrances_default.c"
 
-/// The slopes' exit regions.
-LATE_DATA s16 gAquaRock_SlopesRegions[] = {
-    176, 424, 544, 192, 440, 560, -1, 2,
-    272, 424, 544, 288, 440, 560, -1, 3,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+/// The slopes' exit regions: the two ways up into the Mist Sabre chest's room.
+LATE_DATA struct SceneRegion gAquaRock_SlopesRegions[] = {
+    {176, 424, 544, 192, 440, 560, CONDITION_ALWAYS,
+     AQUA_ROCK_MOAI_TO_AQUA_ROCK_MIST_SABRE_CHEST_A},
+    {272, 424, 544, 288, 440, 560, CONDITION_ALWAYS,
+     AQUA_ROCK_MOAI_TO_AQUA_ROCK_MIST_SABRE_CHEST_B},
+    {SCENE_TABLE_END},
 };
 
-/// The Mist Sabre chest's room's exit regions.
-LATE_DATA s16 gAquaRock_MistSabreChestRegions[] = {
-    48, -56, 960, 64, -40, 976, -1, 2,
-    144, -56, 960, 160, -40, 976, -1, 3,
-    236, -108, 956, 260, -84, 980, -1, 7,
-    268, -108, 956, 292, -84, 980, -1, 7,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+/// The Mist Sabre chest's room's exit regions: the ways back down to the
+/// slopes.
+LATE_DATA struct SceneRegion gAquaRock_MistSabreChestRegions[] = {
+    {48, -56, 960, 64, -40, 976, CONDITION_ALWAYS,
+     AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_A},
+    {144, -56, 960, 160, -40, 976, CONDITION_ALWAYS,
+     AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_B},
+    {236, -108, 956, 260, -84, 980, CONDITION_ALWAYS,
+     AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_D},
+    {268, -108, 956, 292, -84, 980, CONDITION_ALWAYS,
+     AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_D},
+    {SCENE_TABLE_END},
 };
 
 LATE_DATA u32 gSceneExits[] = {
@@ -1803,7 +1824,7 @@ LATE_DATA struct Trigger gAquaRock_Triggers[] = {
 /// The slopes' exits, currents and streams, Move on the pillars and Douse on
 /// the dry moai and the Water Stone.
 LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_MOAI_TO_WORLD_MAP_SOUTH},
     {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_SPARKLING_PASSAGE, CONDITION_ALWAYS, EVENT(AquaRock_EnterSparklingPassage)},
     {TRIGGER_STEP, CELL_BEHAVIOR_WEST_MOAI_STREAM, FLAG_PILLAR_BEFORE_WEST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
     {TRIGGER_STEP, CELL_BEHAVIOR_EAST_MOAI_STREAM, FLAG_PILLAR_BEFORE_EAST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
@@ -1823,9 +1844,9 @@ LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
 /// The Mist Sabre chest's room's way inside, exits, streams, puddles to Frost,
 /// rocks to drop and Water Stone to Douse.
 LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(AquaRock_SinkInside)},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_STEP, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST, CONDITION_ALWAYS, EVENT(AquaRock_SinkInside)},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_A},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, AQUA_ROCK_MIST_SABRE_CHEST_TO_AQUA_ROCK_MOAI_B},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},

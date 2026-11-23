@@ -2,8 +2,9 @@
 #define ALCHEMY_SOUND_H
 
 /// @file
-/// The sound tables (CGB codes, frequency steps, samples a VBlank) and the
-/// sound routines.
+/// The game's sound: Sound_Play and the music's volume and tempo ramps
+/// (sound_play.c), the sound test and the heard-sound flags (sound_test.c),
+/// and the sound driver's routines and pitch tables beneath them.
 
 #include "types.h"
 #include "edition.h"
@@ -127,10 +128,9 @@ extern s32 gBuildStamp[];
 extern u8 gBgmFadeRequested;
 /// Set by the resident mixer whenever it clips a sample: when a sum overflows,
 /// IwramSoundNormalizeChannels saturates the samples and stores the clip mask
-/// (0x80008000) here, through pc.
+/// (0x80008000) here. Only the sound test reads it.
 extern s32 gSoundMixerClipped;
-/// An EWRAM byte Sound_Initialize clears and nothing else
-/// names.
+/// An EWRAM byte Sound_Initialize clears and nothing reads.
 extern u8 gSound_UnreadByte;
 void m4aSoundInit(void);
 void m4aSongNumStart(u16 id);
@@ -154,7 +154,7 @@ void Sound_ResumeAllMusicPlayers(void);
 void Sound_UpdateCommandMask(u32 command);
 u16 Sound_GetCurrentBgm(void);
 void Sound_WaitForBgmRestore(void);
-s32 Sound_GetReverbCode(s32 command);
+s32 Sound_GetReverbCode(s32 sound);
 
 /// The music playing, which Sound_Play sets from each music id it starts.
 extern u16 gCurrentBgm;
@@ -170,11 +170,9 @@ struct SoundTestCues {
   s32 cue[3];
 };
 
-void Sound_WaitForBgmRestore(void);
-
 /// The mixer's PCM output: SoundDriver_EnterVBlankUpdate hands it to
 /// IwramSoundMixEntry, and Sound_SetFixedSampleFreq clears it and points DMA 1
-/// at its start and DMA 2 0xc60 bytes in.
+/// at its start (the right speaker) and DMA 2 at its second half (the left).
 extern u8 gMixerPcmBuffer[];
 
 enum {
@@ -203,7 +201,8 @@ void Sound_SetFixedSampleFreq(u32 mode);
 /// Plays the field's and the battle's action sounds (MUSIC_PLAYER_ACTION_SE);
 /// SOUND_FADE_OUT_ACTION_SE fades it.
 extern struct MusicPlayerInfo gMPlayInfo_ActionSE;
-/// One of the sound effects' shared players (MUSIC_PLAYER_SE5).
+/// One of the sound effects' shared players (MUSIC_PLAYER_SE5); both fades,
+/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE, fade it.
 extern struct MusicPlayerInfo gMPlayInfo_SE5;
 /// Plays jingles; the music returns once it stops.
 extern struct MusicPlayerInfo gMPlayInfo_Jingle;

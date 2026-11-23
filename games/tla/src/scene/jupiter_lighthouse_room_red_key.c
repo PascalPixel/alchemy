@@ -275,21 +275,21 @@ void Orb_SpawnRising(void) {
   }
 }
 
-extern s32 gJupiterLighthouse_PulseStep;
-extern s32 gJupiterLighthouse_PulseOn;
+extern s32 gJupiterLighthouse_SparksPerFrame;
+extern s32 gJupiterLighthouse_SparkSoundOn;
 
 void JupiterLighthouse_AddSparks();
 
-/// A frame task while the spark ring pulses: adds the step's sparks, with the
-/// rising sound while the pulse is on.
-void JupiterLighthouse_PulseAscend(void) {
-  if (gJupiterLighthouse_PulseOn != 0)
+/// A frame task while the lighthouse wakes: adds this frame's sparks to the
+/// ring, with the rising sound until the tower starts to shake.
+void JupiterLighthouse_FeedSparkRing(void) {
+  if (gJupiterLighthouse_SparkSoundOn != 0)
     Event_PlaySound(SE_ASCEND);
-  JupiterLighthouse_AddSparks(gJupiterLighthouse_PulseStep);
+  JupiterLighthouse_AddSparks(gJupiterLighthouse_SparksPerFrame);
 }
 
 extern u32 gJupiterLighthouse_BringInScript[];
-extern s32 gJupiterLighthouse_PulseScript[];
+extern s32 gJupiterLighthouse_NarrowBeamScript[];
 
 void JupiterLighthouse_EndSparkRing(void);
 
@@ -347,22 +347,22 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   to[1] = 0;
   to[2] = toFIXED(574);
   JupiterLighthouse_StartSparkRing(from, to);
-  gJupiterLighthouse_PulseStep = 0;
-  gJupiterLighthouse_PulseOn = 1;
-  Task_AddFrame(JupiterLighthouse_PulseAscend, TASK_PASS_FRAME);
+  gJupiterLighthouse_SparksPerFrame = 0;
+  gJupiterLighthouse_SparkSoundOn = 1;
+  Task_AddFrame(JupiterLighthouse_FeedSparkRing, TASK_PASS_FRAME);
   for (i = 0; i < RING_PULSES; i++) {
-    gJupiterLighthouse_PulseStep = 0;
+    gJupiterLighthouse_SparksPerFrame = 0;
     System_Wait((RING_PULSES - i) / 2);
-    gJupiterLighthouse_PulseStep = 1;
+    gJupiterLighthouse_SparksPerFrame = 1;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(1, 1, 1);
-  gJupiterLighthouse_PulseStep = 1;
+  gJupiterLighthouse_SparksPerFrame = 1;
   FieldEvent_Wait(90);
   MapGrid_SetShake(3, 3, 1);
-  gJupiterLighthouse_PulseStep = 3;
-  gJupiterLighthouse_PulseOn = 0;
+  gJupiterLighthouse_SparksPerFrame = 3;
+  gJupiterLighthouse_SparkSoundOn = 0;
   FieldEvent_Wait(40);
   JupiterLighthouse_BringInBeam(ACTOR_LOWER_BEAM);
   JupiterLighthouse_BringInBeam(ACTOR_UPPER_BEAM);
@@ -390,13 +390,13 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId),
                        SPRITE_FLAG_SHADOW);
-  Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_PulseScript);
-  Actor_SetScript(ACTOR_UPPER_BEAM, gJupiterLighthouse_PulseScript);
-  gJupiterLighthouse_PulseStep = 2;
+  Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_NarrowBeamScript);
+  Actor_SetScript(ACTOR_UPPER_BEAM, gJupiterLighthouse_NarrowBeamScript);
+  gJupiterLighthouse_SparksPerFrame = 2;
   FieldEvent_Wait(30);
-  gJupiterLighthouse_PulseStep = 1;
+  gJupiterLighthouse_SparksPerFrame = 1;
   FieldEvent_Wait(30);
-  gJupiterLighthouse_PulseStep = 0;
+  gJupiterLighthouse_SparksPerFrame = 0;
   FieldActor_WaitForScriptEndById(ACTOR_LOWER_BEAM);
   FieldActor_WaitForScriptEndById(ACTOR_UPPER_BEAM);
   Actor_GetById(ACTOR_LOWER_BEAM)->scaleX = 0;
@@ -406,7 +406,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(30);
   MapGrid_SetShake(0, 0, 1);
-  FieldTask_Remove(JupiterLighthouse_PulseAscend);
+  FieldTask_Remove(JupiterLighthouse_FeedSparkRing);
   JupiterLighthouse_EndSparkRing();
   FieldEvent_Wait(30);
   a->motionFlags = 0;
@@ -531,9 +531,10 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   Actor_SetAnimation(target, ANIM_STAND);
 }
 
-/// On the way to the fight by the aerie, Alex appears behind Felix, asks
-/// whether he will light the beacon, tells him to save his friends and heals
-/// the party; from then on there are no encounters and Retreat is blocked.
+/// On the way to the fight by the aerie, Alex's voice stops Felix, who looks
+/// about; Alex appears before him, asks whether he will light the beacon, tells
+/// him to save his friends and heals the party. From then on there are no
+/// encounters and Retreat is blocked.
 void JupiterLighthouse_AlexHealsTheParty(void) {
   s32 angle;
 
@@ -601,10 +602,12 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldEvent_Wait(30);
   JupiterLighthouse_HealTarget(ACTOR_ALEX, ACTOR_FELIX);
   Party_RestoreHpPp(1);
+  // "Everyone recovered fully."
   Message_ShowCentered((s16)gFieldWork->message++, 5);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
+  // "There you go! Consider it a gift. You can still make it. Go on..."
   FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY);
   Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
@@ -642,6 +645,7 @@ s32 Scene_Initialize(void) {
   SET_ACTOR_POSITION(actor, toFIXED(680), toFIXED(64), toFIXED(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
+    // The floor as the activation left it.
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
     Task_AddFrame(Orb_SpawnRising, TASK_PASS_FRAME);
@@ -680,7 +684,7 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Restarts the palette cycle at the given frame.
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -768,17 +772,15 @@ void JupiterLighthouse_UpdateSparkRing(void) {
   }
 }
 
-/// Adds count sparks to the spark ring, each with a random angle from 135
-/// degrees across three quarters of a turn, the cosine and negated sine of it
-/// at 64 pixels as its swing, a random duration of 16 to 31 frames and an age
-/// of 0.
+/// Sends count new sparks along the ring, each swinging up to 64 pixels out to
+/// a random side (never straight down) and taking 16 to 31 frames to arrive.
 void JupiterLighthouse_AddSparks(s32 count) {
   struct SparkWork *work = Ram_HeapSlots->menuWork;
   struct Spark *spark;
   s32 angle;
   s32 i;
   FIXED radius;
-  s32 speed;
+  s32 duration;
 
   if (count > 0) {
     i = count;
@@ -786,10 +788,10 @@ void JupiterLighthouse_AddSparks(s32 count) {
       spark = &work->sparks[work->next];
       angle = ((Random16() * 3) >> 2) + DEGtoANG(135);
       radius = toFIXED(64);
-      speed = ((Random16() << 4) >> 16) + 16;
+      duration = ((Random16() << 4) >> 16) + 16;
       spark->dx = FIXEDtoINT(Iwram_MulFX(Trig_Cos(angle), radius));
       spark->dy = FIXEDtoINT(-Iwram_MulFX(Math_Sin(angle), radius));
-      spark->duration = speed;
+      spark->duration = duration;
       spark->age = 0;
       work->next++;
       work->next %= ACTIVATION_SPARKS;
@@ -852,6 +854,7 @@ void JupiterLighthouse_EndSparkRing(void) {
 
 #include "shared/light_sprites_draw.h"
 
+/// The light sprites' buffers come from the field heap.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_init_a.h"
@@ -915,6 +918,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void);
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The beam of light widens over 32 frames.
 u32 gJupiterLighthouse_BringInScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_WAIT(1),
@@ -922,7 +926,8 @@ u32 gJupiterLighthouse_BringInScript[] = {
     SC_END,
 };
 
-s32 gJupiterLighthouse_PulseScript[] = {                                                               
+/// The beam of light narrows away over 140 frames.
+s32 gJupiterLighthouse_NarrowBeamScript[] = {                                                               
       SC_ADD(SW_SCALE_X, -960),                                                 
       SC_WAIT(1),                                                              
       SC_LOOP(140, SC_TOP),                                                     
@@ -969,9 +974,10 @@ struct ActorPlacement gActorPlacements[] = {
 
 #include "shared/orb_rising_script.c"
 
-/// The spark ring's pulse: its step, and whether it still rises.
-s32 gJupiterLighthouse_PulseStep = 0;
-s32 gJupiterLighthouse_PulseOn = 1;
+/// How many sparks the ring takes each frame, and whether the rising sound
+/// plays with them.
+s32 gJupiterLighthouse_SparksPerFrame = 0;
+s32 gJupiterLighthouse_SparkSoundOn = 1;
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},

@@ -113,9 +113,9 @@
 #define FLAG_PLATFORMS_SWAYING 0xa63
 /// The three stone heads that burst out of the altar room's wall of handholds
 /// under Felix; each stays out until the party enters another area.
-#define FLAG_STATUE_A_RISEN FLAG_AREA_TEMP_03
-#define FLAG_STATUE_B_RISEN FLAG_AREA_TEMP_04
-#define FLAG_STATUE_C_RISEN FLAG_AREA_TEMP_05
+#define FLAG_WEST_STONE_HEAD_RISEN FLAG_AREA_TEMP_03
+#define FLAG_MIDDLE_STONE_HEAD_RISEN FLAG_AREA_TEMP_04
+#define FLAG_EAST_STONE_HEAD_RISEN FLAG_AREA_TEMP_05
 /// Where the first altar's room's two stumps were Moved to, kept so that they
 /// stay there (GaiaRockInside_RecordStumpSpots).
 #define FLAG_STUMP_SPOTS FLAG_SCENE_TEMP_10
@@ -240,9 +240,9 @@ enum {
   ACTOR_HANGING_VINE = 10,
   /// The three stone heads that burst out of the wall of handholds under Felix
   /// (StoneHead_BurstOut).
-  ACTOR_STATUE_A = 11,
-  ACTOR_STATUE_B = 12,
-  ACTOR_STATUE_C = 13,
+  ACTOR_WEST_STONE_HEAD = 11,
+  ACTOR_MIDDLE_STONE_HEAD = 12,
+  ACTOR_EAST_STONE_HEAD = 13,
   ACTOR_ALTAR_DOLL = 14,
   /// The altar the cobweb holds up; Cyclone tears the web and it falls a floor
   /// (GaiaRockInside_CycloneClearsCobweb).
@@ -323,8 +323,6 @@ extern struct ActorPlacement gGaiaRockInside_TwinAltarsActorPlacements[];
 extern struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[];
 extern struct ActorPlacement gGaiaRockInside_AltarActorPlacements[];
 extern s32 gGaiaRockInside_SquashYScript[];
-
-void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 
 extern u32 gGaiaRockInside_LeaderStepsBackScript[];
 extern s32 gGaiaRockInside_AltarShakesScript[];
@@ -719,7 +717,7 @@ const void *Scene_GetActorPlacements(void) {
     return gGaiaRockInside_PlatformsActorPlacements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR)
     return gGaiaRockInside_AltarActorPlacements;
-  if (gMainRoutineWork.entrance > 8)
+  if (gMainRoutineWork.entrance >= ENTRANCE_LAIR)
     return gGaiaRockInside_LairPlacements;
   return gGaiaRockInside_Placements;
 }
@@ -734,11 +732,11 @@ const void *Scene_GetActorPlacements(void) {
 /// about twice a second stretches along its arrow with a drip, sideways here
 /// and up and down in GaiaRockInside_PulseUpDownArrow.
 void GaiaRockInside_PulseSidewaysArrow(struct Actor *actor) {
-  s32 value = 0;
+  s32 colorMode = 0;
 
   if ((gGaiaRockInside_ArrowFrame & 7) <= 0)
-    value = 7;
-  Actor_SetSpriteColorMode(actor, value & 7);
+    colorMode = 7;
+  Actor_SetSpriteColorMode(actor, colorMode & 7);
   if ((gGaiaRockInside_ArrowFrame & 31) == 0) {
     actor->scaleX = FIXED_ONE;
     Actor_StartScript(actor, gGaiaRockInside_SquashXScript);
@@ -749,11 +747,11 @@ void GaiaRockInside_PulseSidewaysArrow(struct Actor *actor) {
 
 /// As GaiaRockInside_PulseSidewaysArrow, for an arrow pointing up or down.
 void GaiaRockInside_PulseUpDownArrow(struct Actor *actor) {
-  s32 value = 0;
+  s32 colorMode = 0;
 
   if ((gGaiaRockInside_ArrowFrame & 7) <= 0)
-    value = 7;
-  Actor_SetSpriteColorMode(actor, value & 7);
+    colorMode = 7;
+  Actor_SetSpriteColorMode(actor, colorMode & 7);
   if ((gGaiaRockInside_ArrowFrame & 31) == 0) {
     actor->scaleY = FIXED_ONE;
     Actor_StartScript(actor, gGaiaRockInside_SquashYScript);
@@ -877,7 +875,7 @@ extern struct CellPoint gGaiaRockInside_CobwebCells[12];
 /// altars' room below as the east altar, and brings the party back to the
 /// pit's edge.
 void GaiaRockInside_CycloneClearsCobweb(void) {
-  struct Actor *guard;
+  struct Actor *altar;
   struct Actor *leader;
   s16 count;
   s16 i;
@@ -897,7 +895,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   }
   if (count <= 0)
     return;
-  guard = Actor_Get(ACTOR_FALLING_ALTAR);
+  altar = Actor_Get(ACTOR_FALLING_ALTAR);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -922,8 +920,8 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   OverlayObject_PrepareObject(toFIXED(724), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(724), 0, toFIXED(490), SPRITE_CRATE);
   Event_PlaySound(SE_DUST_PUFF);
-  guard->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  ((struct FieldSprite *)guard->sprite)->priority = 3;
+  altar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  ((struct FieldSprite *)altar->sprite)->priority = 3;
   FieldEvent_Wait(10);
   Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
   ObjectTable_Snapshot();
@@ -1160,9 +1158,9 @@ extern s32 gLesson_AdeptSettleScript[];
 /// Felix touches the slate in the lair and learns Sand: the screen warms to
 /// gold, the slate and then Felix rise among circling sparks, a white flash,
 /// and they settle again.
-void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
-  struct Actor *a = Actor_GetById(idA);
-  struct Actor *b = Actor_GetById(idB);
+void GaiaRockInside_FelixLearnsSand(s32 tabletId, s32 adeptId) {
+  struct Actor *tablet = Actor_GetById(tabletId);
+  struct Actor *adept = Actor_GetById(adeptId);
   s32 i;
   s16 *angle;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -1172,26 +1170,26 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveWithinMapBounds(INTtoFIXED(a->x.part[0].integer),
-                                  INTtoFIXED(a->y.part[0].integer),
-                                  INTtoFIXED(a->z.part[0].integer), 1);
+  FieldCamera_MoveWithinMapBounds(INTtoFIXED(tablet->x.part[0].integer),
+                                  INTtoFIXED(tablet->y.part[0].integer),
+                                  INTtoFIXED(tablet->z.part[0].integer), 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
-  a->motionFlags = 0;
-  a->acceleration = toFIXED(1) / 5;
-  a->speedLimit = toFIXED(1) / 5;
-  Actor_SetMovementTypeById(idA, gLesson_TabletRiseScript);
+  tablet->motionFlags = 0;
+  tablet->acceleration = toFIXED(1) / 5;
+  tablet->speedLimit = toFIXED(1) / 5;
+  Actor_SetMovementTypeById(tabletId, gLesson_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
-  Actor_ConfigureSpriteColor(idA, SPRITE_COLOR_BLINK);
+  Actor_ConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != TABLET_RISING_SPARKS; i++) {
-    struct Actor *spark =
-        Import_ActorCreate(SPRITE_PARTICLE, a->x.fixed, a->y.fixed, a->z.fixed);
+    struct Actor *spark = Import_ActorCreate(SPRITE_PARTICLE, tablet->x.fixed,
+                                             tablet->y.fixed, tablet->z.fixed);
     Sound_Play(SE_GLITTER);
     spark->x.fixed += INTtoFIXED((Random16() & 31) - 16);
     spark->y.fixed += INTtoFIXED((Random16() & 15) - 8);
@@ -1216,15 +1214,15 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
   for (i = 0; i != LEARN_SPARKS; i++) {
-    struct Actor *spark =
-        FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
+    struct Actor *spark = FieldActor_Create(SPRITE_PARTICLE, adept->x.fixed,
+                                            adept->y.fixed, adept->z.fixed);
     Sound_Play(SE_SPARKS);
     angle = &spark->timer;
     *angle = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->riseBaseY = toFIXED(122);
-    spark->watchedActor = b;
+    spark->watchedActor = adept;
     spark->riseCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, 2);
@@ -1235,20 +1233,20 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
     FieldVector_AddPolarOffsetFX(spark->riseBaseY, *angle, &spark->x.fixed);
     Actor_StartScript(spark, gGaiaRockInside_CirclingSparkScript);
     if (i == 3) {
-      Actor_SetSpriteColorById(idB, SPRITE_COLOR_BLINK);
-      b->motionFlags = 0;
-      b->acceleration = toFIXED(1) / 5;
-      b->speedLimit = toFIXED(1) / 5;
-      Actor_SetMovementTypeById(idB, gLesson_AdeptRiseScript);
+      Actor_SetSpriteColorById(adeptId, SPRITE_COLOR_BLINK);
+      adept->motionFlags = 0;
+      adept->acceleration = toFIXED(1) / 5;
+      adept->speedLimit = toFIXED(1) / 5;
+      Actor_SetMovementTypeById(adeptId, gLesson_AdeptRiseScript);
     }
     wait(LEARN_SPARK_INTERVAL);
   }
   Sound_Play(SE_SHIMMER);
   wait(16);
   for (i = 2; i != ORBIT_HALF_TURN; i += 2) {
-    struct Actor *spark =
-        FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
-                          b->y.fixed + toFIXED(i) - toFIXED(8), b->z.fixed);
+    struct Actor *spark = FieldActor_Create(
+        SPRITE_PARTICLE, adept->x.fixed,
+        adept->y.fixed + toFIXED(i) - toFIXED(8), adept->z.fixed);
     spark->timer = Random16();
     spark->userValue = TRIG_TURN / 32;
     spark->riseCounter = i;
@@ -1256,7 +1254,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
     spark->bounce = spark->x.fixed;
     spark->riseBaseY = 0;
     spark->gravity = spark->z.fixed;
-    spark->watchedActor = b;
+    spark->watchedActor = adept;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
@@ -1271,16 +1269,16 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
-  Actor_ConfigureSpriteColor(idA, 0);
-  Actor_ConfigureSpriteColor(idB, 0);
+  Actor_ConfigureSpriteColor(tabletId, 0);
+  Actor_ConfigureSpriteColor(adeptId, 0);
   Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
-  Actor_SetMovementTypeById(idA, gLesson_TabletSettleScript);
-  Actor_SetMovementTypeById(idB, gLesson_AdeptSettleScript);
-  b->update = Actor_EmitBubbles;
+  Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
+  Actor_SetMovementTypeById(adeptId, gLesson_AdeptSettleScript);
+  adept->update = Actor_EmitBubbles;
   wait(120);
-  b->update = 0;
+  adept->update = 0;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
@@ -1442,14 +1440,14 @@ void GaiaRockInside_RaiseSandTablet(void) {
   // after a battle lost (11 and 12) send the party on to the restart point
   // before the player has control; and later visits come by entrance 9,
   // whose table lacks this trigger.
-  struct Actor *person;
+  struct Actor *tablet;
   struct Actor *actor;
   u16 level;
   s32 i;
 
   if (GameFlag_Get(FLAG_SAND_TABLET_RAISED) || GameFlag_Get(FLAG_LEARNED_SAND))
     return;
-  person = Actor_Get(ACTOR_SAND_TABLET);
+  tablet = Actor_Get(ACTOR_SAND_TABLET);
   Io_Read16(&REG_BLDALPHA, &level);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1471,7 +1469,7 @@ void GaiaRockInside_RaiseSandTablet(void) {
   for (i = 0; i < TABLET_RISE_PIXELS; i++) {
     if (i == TABLET_RISE_PIXELS / 2)
       GaiaRockInside_RingOfDust();
-    person->z.fixed -= toFIXED(1);
+    tablet->z.fixed -= toFIXED(1);
     FieldEvent_Wait(2);
   }
   Event_SetFlag(FLAG_SAND_TABLET_RAISED);
@@ -1513,12 +1511,13 @@ void GaiaRockInside_ChallengeSerpent(void) {
     // "The serpent, with its eyes closed, looks almost alive."
     Message_ShowCentered((s32)MsgGaiaRockInsideTheSerpentWithItsEyes, 1);
   } else {
-    s32 a = Event_GetFlag(FLAG_ALTAR_ROOM_SUNBEAM);
-    s32 b = Event_GetFlag(FLAG_WEST_ALTAR_SUNBEAM);
-    s32 c = Event_GetFlag(FLAG_EAST_ALTAR_SUNBEAM);
+    s32 altarRoomBeam = Event_GetFlag(FLAG_ALTAR_ROOM_SUNBEAM);
+    s32 westAltarBeam = Event_GetFlag(FLAG_WEST_ALTAR_SUNBEAM);
+    s32 eastAltarBeam = Event_GetFlag(FLAG_EAST_ALTAR_SUNBEAM);
     s32 scene;
 
-    count = a + b + c + Event_GetFlag(FLAG_BUSHES_SUNBEAM);
+    count = altarRoomBeam + westAltarBeam + eastAltarBeam +
+            Event_GetFlag(FLAG_BUSHES_SUNBEAM);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
     FieldEvent_SetAfterBattleDestination(scene, ENTRANCE_SERPENT_BEATEN);
@@ -1689,22 +1688,22 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
 /// Serpent lives the game first shows the beam falling into the lair. The
 /// east altar's and the altar room's are alike.
 void GaiaRockInside_PlaceDollOnWestAltar(void) {
-  struct Actor *actor;
-  struct Actor *partner;
+  struct Actor *face;
+  struct Actor *doll;
   struct Actor *leader;
   s32 i;
 
-  actor = Actor_GetById(ACTOR_WEST_FACE);
-  partner = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
+  face = Actor_GetById(ACTOR_WEST_FACE);
+  doll = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
-  Actor_SetSpritePriorityDirect(partner, 1);
+  Actor_SetSpritePriorityDirect(doll, 1);
   Actor_PlaceOnActor(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_TWIN_ALTARS_DOLL, 528, 372);
-  partner->velocityY = toFIXED(6);
+  doll->velocityY = toFIXED(6);
   Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Wait(45);
   Actor_FaceActorById(ACTOR_WEST_FACE, gMainRoutineWork.leaderActorId, 0);
@@ -1718,7 +1717,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Sound_Play(SE_TABLET_RISE_HIGH);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeedAndAcceleration(ACTOR_WEST_FACE, 0.25, 0.05);
@@ -1726,17 +1725,17 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     MapGrid_CopyCellAttributes(27, 23, 1, 1, 28, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 29, 22);
     i = 0;
-    if (actor->arrivalAxis != 0) {
+    if (face->arrivalAxis != 0) {
       do {
-        actor->velocityY = Random16();
+        face->velocityY = Random16();
         wait(1);
         if (++i >= FACE_SLIDE_FRAMES_MAX)
           break;
-      } while (actor->arrivalAxis != 0);
+      } while (face->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
     for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Sound_Play(SE_EYES_GLOW);
@@ -1747,7 +1746,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
                                leader->x.part[0].integer,
                                leader->z.part[0].integer);
-    partner->velocityY = toFIXED(6);
+    doll->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -1762,7 +1761,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     }
   } else {
     for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -1773,7 +1772,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
                                leader->x.part[0].integer,
                                leader->z.part[0].integer);
-    partner->velocityY = toFIXED(6);
+    doll->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
     Event_End();
@@ -1785,22 +1784,22 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
 /// and lets in its beam, as on the west altar
 /// (GaiaRockInside_PlaceDollOnWestAltar).
 void GaiaRockInside_PlaceDollOnEastAltar(void) {
-  struct Actor *actor;
-  struct Actor *partner;
+  struct Actor *face;
+  struct Actor *doll;
   struct Actor *leader;
   s32 i;
 
-  actor = Actor_GetById(ACTOR_EAST_FACE);
-  partner = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
+  face = Actor_GetById(ACTOR_EAST_FACE);
+  doll = Actor_GetById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
-  Actor_SetSpritePriorityDirect(partner, 1);
+  Actor_SetSpritePriorityDirect(doll, 1);
   Actor_PlaceOnActor(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_TWIN_ALTARS_DOLL, 672, 372);
-  partner->velocityY = toFIXED(6);
+  doll->velocityY = toFIXED(6);
   Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
   Event_Wait(45);
   Actor_FaceActorById(ACTOR_EAST_FACE, gMainRoutineWork.leaderActorId, 0);
@@ -1814,7 +1813,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Sound_Play(SE_TABLET_RISE_HIGH);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeedAndAcceleration(ACTOR_EAST_FACE, 0.25, 0.05);
@@ -1822,17 +1821,17 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     MapGrid_CopyCellAttributes(35, 23, 1, 1, 36, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 37, 22);
     i = 0;
-    if (actor->arrivalAxis != 0) {
+    if (face->arrivalAxis != 0) {
       do {
-        actor->velocityY = Random16();
+        face->velocityY = Random16();
         wait(1);
         if (++i >= FACE_SLIDE_FRAMES_MAX)
           break;
-      } while (actor->arrivalAxis != 0);
+      } while (face->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
     for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Sound_Play(SE_EYES_GLOW);
@@ -1843,7 +1842,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
                                leader->x.part[0].integer,
                                leader->z.part[0].integer);
-    partner->velocityY = toFIXED(6);
+    doll->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -1858,7 +1857,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     }
   } else {
     for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -1869,7 +1868,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
       Actor_SetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
                                leader->x.part[0].integer,
                                leader->z.part[0].integer);
-    partner->velocityY = toFIXED(6);
+    doll->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
     Actor_SetPosition(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
     Event_End();
@@ -1882,22 +1881,22 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
 /// (GaiaRockInside_PlaceDollOnWestAltar). It is the first beam the walkthrough
 /// lets in.
 void GaiaRockInside_PlaceDollOnAltarAltar(void) {
-  struct Actor *actor;
-  struct Actor *partner;
+  struct Actor *face;
+  struct Actor *doll;
   struct Actor *leader;
   s32 i;
 
-  actor = Actor_GetById(ACTOR_ALTAR_FACE);
-  partner = Actor_GetById(ACTOR_ALTAR_DOLL);
+  face = Actor_GetById(ACTOR_ALTAR_FACE);
+  doll = Actor_GetById(ACTOR_ALTAR_DOLL);
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
-  Actor_SetSpritePriorityDirect(partner, 1);
+  Actor_SetSpritePriorityDirect(doll, 1);
   Actor_PlaceOnActor(ACTOR_ALTAR_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_ALTAR_DOLL, 336, 396);
-  partner->velocityY = toFIXED(6);
+  doll->velocityY = toFIXED(6);
   Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
   Event_Wait(45);
   Actor_FaceActorById(ACTOR_ALTAR_FACE, gMainRoutineWork.leaderActorId, 0);
@@ -1911,7 +1910,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Sound_Play(SE_TABLET_RISE_HIGH);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Actor_SetSpeedAndAcceleration(ACTOR_ALTAR_FACE, 0.25, 0.05);
@@ -1919,17 +1918,17 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     Map_CopyCellAttributeRect(27, 15, 2, 1, 23, 23);
     Map_CopyCellAttributeRect(25, 25, 1, 1, 25, 23);
     i = 0;
-    if (actor->arrivalAxis != 0) {
+    if (face->arrivalAxis != 0) {
       do {
-        actor->velocityY = Random16();
+        face->velocityY = Random16();
         wait(1);
         if (++i >= FACE_SLIDE_FRAMES_MAX)
           break;
-      } while (actor->arrivalAxis != 0);
+      } while (face->arrivalAxis != 0);
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
     for (i = 0; i < FACE_SETTLE_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Sound_Play(SE_EYES_GLOW);
@@ -1939,7 +1938,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(ACTOR_ALTAR_DOLL, leader->x.part[0].integer,
                                leader->z.part[0].integer);
-    partner->velocityY = toFIXED(6);
+    doll->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
     Actor_SetPosition(ACTOR_ALTAR_DOLL, 0, 0);
     if (!GameFlag_Get(FLAG_SERPENT_SLAIN)) {
@@ -1954,7 +1953,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     }
   } else {
     for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
-      actor->velocityY = Random16();
+      face->velocityY = Random16();
       wait(1);
     }
     Event_Wait(30);
@@ -1964,7 +1963,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
     if (leader != NULL)
       Actor_SetDestinationById(ACTOR_ALTAR_DOLL, leader->x.part[0].integer,
                                leader->z.part[0].integer);
-    partner->velocityY = toFIXED(6);
+    doll->velocityY = toFIXED(6);
     Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
     Actor_SetPosition(ACTOR_ALTAR_DOLL, 0, 0);
     Event_End();
@@ -2015,20 +2014,20 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
 /// stone faces outside, he does not fall to the floor: he stays standing up
 /// there beside the head.
 void GaiaRockInside_ClimbOntoWestStoneHead(void) {
-  StoneHead_BurstOut(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
+  StoneHead_BurstOut(ACTOR_WEST_STONE_HEAD, FLAG_WEST_STONE_HEAD_RISEN);
 }
 
 /// As GaiaRockInside_ClimbOntoWestStoneHead, for the middle trap hold, a
 /// little lower and to the east: drawn at cell (28, 39), cell (28, 103) of the
 /// overhead layer.
 void GaiaRockInside_ClimbOntoMiddleStoneHead(void) {
-  StoneHead_BurstOut(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
+  StoneHead_BurstOut(ACTOR_MIDDLE_STONE_HEAD, FLAG_MIDDLE_STONE_HEAD_RISEN);
 }
 
 /// As GaiaRockInside_ClimbOntoWestStoneHead, for the east trap hold: drawn at
 /// cell (35, 39), cell (35, 103) of the overhead layer.
 void GaiaRockInside_ClimbOntoEastStoneHead(void) {
-  StoneHead_BurstOut(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
+  StoneHead_BurstOut(ACTOR_EAST_STONE_HEAD, FLAG_EAST_STONE_HEAD_RISEN);
 }
 
 extern struct Trigger gGaiaRockInside_Triggers[];
@@ -2053,7 +2052,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gGaiaRockInside_AltarTriggers;
   if (gMainRoutineWork.entrance == ENTRANCE_LAIR)
     return gGaiaRockInside_LairTriggers;
-  if (gMainRoutineWork.entrance > 9)
+  if (gMainRoutineWork.entrance > ENTRANCE_LAIR)
     return gGaiaRockInside_SlainLairTriggers;
   return gGaiaRockInside_Triggers;
 }
@@ -2182,63 +2181,63 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
 /// a picture for each one of its pair alone and one for both, and a strip
 /// between the sides that changes with what each shows.
 void GaiaRockInside_DrawSunbeams(void) {
-  u8 a = GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM);
-  u8 third = GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM);
-  s32 b = GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM);
-  s8 first = a;
-  s8 sideThird = third;
-  u8 sumLeft = b + first;
-  s32 d = GameFlag_Get(FLAG_BUSHES_SUNBEAM);
-  u8 sumRight = sideThird + d;
-  s8 left = sumLeft;
-  s8 right = sumRight;
+  u8 altarRoomBeam = GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM);
+  u8 eastAltarBeam = GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM);
+  s32 westAltarBeam = GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM);
+  s8 altarRoomShown = altarRoomBeam;
+  s8 eastAltarShown = eastAltarBeam;
+  u8 westSum = westAltarBeam + altarRoomShown;
+  s32 bushesBeam = GameFlag_Get(FLAG_BUSHES_SUNBEAM);
+  u8 eastSum = eastAltarShown + bushesBeam;
+  s8 westBeams = westSum;
+  s8 eastBeams = eastSum;
 
-  if (left != 0) {
-    if (left == 2) {
+  if (westBeams != 0) {
+    if (westBeams == 2) {
       MapGrid_CopyCellsLayered(74, 115, 7, 12, 24, 76);
-      if (right == 0)
+      if (eastBeams == 0)
         return;
-      if (right == 2)
+      if (eastBeams == 2)
         MapGrid_CopyCellsLayered(71, 110, 1, 3, 30, 85);
-      else if (sideThird != 0)
+      else if (eastAltarShown != 0)
         MapGrid_CopyCellsLayered(67, 110, 1, 3, 30, 85);
       else
         MapGrid_CopyCellsLayered(79, 110, 1, 3, 30, 85);
-    } else if (first != 0) {
+    } else if (altarRoomShown != 0) {
       MapGrid_CopyCellsLayered(66, 95, 7, 12, 24, 76);
-      if (right == 0)
+      if (eastBeams == 0)
         return;
-      if (right == 2)
+      if (eastBeams == 2)
         MapGrid_CopyCellsLayered(81, 110, 1, 3, 30, 85);
-      else if (sideThird != 0)
+      else if (eastAltarShown != 0)
         MapGrid_CopyCellsLayered(75, 110, 1, 3, 30, 85);
       else
         MapGrid_CopyCellsLayered(65, 110, 1, 3, 30, 85);
     } else {
       MapGrid_CopyCellsLayered(69, 82, 5, 12, 26, 76);
-      if (right == 0)
+      if (eastBeams == 0)
         return;
-      if (right == 2)
+      if (eastBeams == 2)
         MapGrid_CopyCellsLayered(69, 110, 1, 3, 30, 85);
-      else if (sideThird != 0)
+      else if (eastAltarShown != 0)
         MapGrid_CopyCellsLayered(73, 110, 1, 3, 30, 85);
       else
         MapGrid_CopyCellsLayered(77, 110, 1, 3, 30, 85);
     }
   }
-  if (right == 0)
+  if (eastBeams == 0)
     return;
-  if (right == 2) {
+  if (eastBeams == 2) {
     MapGrid_CopyCellsLayered(83, 115, 6, 12, 31, 76);
-    if (left == 0)
+    if (westBeams == 0)
       MapGrid_CopyCellsLayered(82, 124, 1, 3, 30, 85);
-  } else if (sideThird != 0) {
+  } else if (eastAltarShown != 0) {
     MapGrid_CopyCellsLayered(76, 82, 4, 12, 31, 76);
-    if (left == 0)
+    if (westBeams == 0)
       MapGrid_CopyCellsLayered(75, 91, 1, 3, 30, 85);
   } else {
     MapGrid_CopyCellsLayered(82, 82, 6, 12, 31, 76);
-    if (left == 0)
+    if (westBeams == 0)
       MapGrid_CopyCellsLayered(81, 91, 1, 3, 30, 85);
   }
 }
@@ -2252,7 +2251,7 @@ void GaiaRockInside_DrawSunbeams(void) {
 #define Test(flag) Event_GetFlag(flag)
 extern u32 gGaiaRockInside_SerpentGlowScript[];
 extern u32 gGaiaRockInside_SerpentSmokeScript[];
-extern u32 gGaiaRockInside_KushinadaScript[];
+extern u32 gGaiaRockInside_AltarShadowScript[];
 extern s32 gGaiaRockInside_SusaFeedsSerpentScript[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
@@ -2300,7 +2299,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (work->next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     early = &work->entrance;
-    if (work->entrance > 8) {
+    if (work->entrance >= ENTRANCE_LAIR) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SERPENT), 0);
       GaiaRockInside_DrawSunbeams();
     }
@@ -2344,7 +2343,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimationById(ACTOR_SERPENT, 3);
         Sound_Play(SE_SEA_OF_TIME_OPENS);
         MapGrid_SetShake(2, 2, 1);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         Event_Wait(120);
         Actor_SetAnimationById(ACTOR_SERPENT, 1);
         Event_Wait(60);
@@ -2416,10 +2415,13 @@ s32 Scene_Initialize(void) {
             Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
             Event_Wait(40);
             Event_SetMessageId((s32)MsgFieldAtLastTheSerpentHas);
+            // "At last... The serpent has finally had its fill. This is the..."
             Event_ShowMessageAndWait(ACTOR_SUSA, 0);
             Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
+            // "I will defeat you before the next full moon and rescue..."
             Event_ShowMessageAndWait(ACTOR_SUSA, 0);
             Actor_SetAnimationById(ACTOR_SUSA, 8);
+            // "All right, you so-called guardian! Let's see what you've got!"
             Event_ShowMessageAndWait(
                 SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
             susa->speedLimit = toFIXED(3) / 2;
@@ -2483,6 +2485,7 @@ s32 Scene_Initialize(void) {
             Actor_SetAttachedEffect(ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
             Actor_WaitForMoveById(ACTOR_SUSA);
+            // "That's weird... It didn't even react..."
             Event_ShowMessageAndWait(ACTOR_SUSA, 0);
             Event_Wait(15);
             Actor_SetAnimationSpeed(serpent, 0);
@@ -2537,7 +2540,7 @@ s32 Scene_Initialize(void) {
             Actor_GetById(ACTOR_SUSA)->steeringFlags &= ~ACTOR_FACES_MOTION;
             Actor_WalkToById(ACTOR_SUSA, 432, 320);
             Event_Wait(10);
-            MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
+            MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
             Actor_SetAnimationById(ACTOR_SUSA, 5);
             Event_Wait(30);
             FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
@@ -2548,6 +2551,8 @@ s32 Scene_Initialize(void) {
             Event_Wait(20);
             Actor_SetMovementTypeById(ACTOR_SUSA, movement);
             Event_Wait(20);
+            // "Feeding the serpent Dragonsbane isn't weakening it enough
+            // for..."
             Event_ShowMessageAndWait(
                 SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_SUSA, 0);
             FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
@@ -2585,7 +2590,7 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_CASK, 0, 0);
         Actor_SetAnimationById(ACTOR_SERPENT, 3);
         Actor_GetById(ACTOR_KRADEN)->speedLimit = scale = toFIXED(1);
-        slow = FACING_WEST;
+        slow = toFIXED(1) / 2;
         susa = Actor_GetById(ACTOR_SUSA);
         susa->speedLimit = slow;
         Actor_SetPosition(ACTOR_KRADEN, 440, 312);
@@ -2599,8 +2604,10 @@ s32 Scene_Initialize(void) {
         Event_WaitTransitionFrames();
         Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
         Event_PlaySound(SE_SEA_OF_TIME_OPENS);
+        // "It looks like the dragon is in bad shape, but it doesn't seem..."
         Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
         Event_PlaySound(SE_SEA_OF_TIME_OPENS);
+        // "Even though the serpent's been defeated, I can't rest!"
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
         Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2623,6 +2630,7 @@ s32 Scene_Initialize(void) {
         Actor_FaceActorById(ACTOR_SUSA, ACTOR_SERPENT, 0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetAnimationById(ACTOR_SUSA, 8);
+        // "Be still, serpent, and I will grant you peace."
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         susa->speedLimit = toFIXED(3) / 2;
         Actor_SetDestination(ACTOR_SUSA, 488, 328);
@@ -2660,19 +2668,23 @@ s32 Scene_Initialize(void) {
         PaletteFade_StartInterpolation(10);
         Event_Wait(10);
         Actor_FaceActorById(ACTOR_SUSA, *owner, 0);
+        // "And with this, Kushinada's life has been spared."
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
+        // "You have my sincerest thanks."
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
         Actor_SetAnimationById(ACTOR_SUSA, ANIM_WALK);
         Actor_WalkTo(ACTOR_SUSA, 488, 392);
         Actor_StartRepeatedMotion(ACTOR_KRADEN, 1);
         Event_Wait(5);
+        // "Where are you going?"
         Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
         Actor_WaitForMoveById(ACTOR_SUSA);
         Actor_SetAnimationById(ACTOR_SUSA, ANIM_STILL);
         Actor_FaceActorById(ACTOR_SUSA, ACTOR_KRADEN, 0);
         Event_Wait(15);
+        // "To Kushinada, of course."
         Event_ShowMessageAndWait(ACTOR_SUSA, 0);
         Actor_SetAnimationAndWait(ACTOR_SUSA, ANIM_NOD);
         Actor_FaceDirection(ACTOR_SUSA, FACING_SOUTH, 0);
@@ -2728,7 +2740,7 @@ s32 Scene_Initialize(void) {
           Event_Wait(2);
         }
         GameFlag_Set(FLAG_SAND_TABLET_RAISED);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.899993896484375);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         actor->x.fixed = 0;
         actor->z.fixed = 0;
         Event_Wait(1);
@@ -2756,11 +2768,12 @@ s32 Scene_Initialize(void) {
         s32 *lead = &room->leaderActorId;
 
         Actor_FaceActorById(ACTOR_SUSA, *lead, 0);
-        FieldActor_SetAnimation(*lead, 19);
+        FieldActor_SetAnimation(*lead, ANIM_COLLAPSE);
       }
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_SetMessageId((s32)MsgFieldYouYouCannotFightThe);
+      // "You! You cannot fight the serpent! Not while it's still in full..."
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
@@ -2775,13 +2788,14 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_CASK, 0, 0);
       Actor_SetPosition(ACTOR_SUSA, 430, 320);
       Actor_SetAnimationById(ACTOR_SUSA, 5);
-      Actor_SetAnimationById(room->leaderActorId, 19);
+      Actor_SetAnimationById(room->leaderActorId, ANIM_COLLAPSE);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Event_Wait(30);
       Value2((s32 (*)())Actor_StartRepeatedMotion, ACTOR_SUSA, 2);
       Event_Wait(30);
       Event_SetMessageId((s32)MsgFieldLikeISaidTheSerpent);
+      // "Like I said, the serpent can't be defeated by just weakening it..."
       Event_ShowMessageAndWait(ACTOR_SUSA, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
@@ -2883,7 +2897,7 @@ s32 Scene_Initialize(void) {
                                 actor->z.fixed);
       if (other != NULL) {
         Actor_SetSpriteFlags(other, 0);
-        Actor_StartScript(other, gGaiaRockInside_KushinadaScript);
+        Actor_StartScript(other, gGaiaRockInside_AltarShadowScript);
         Actor_SelectAnimation(other, 1);
         Actor_SetSpriteColorMode(other, SPRITE_COLOR_BLACK);
         // The high byte of its OAM attribute 2: drawn at priority 3.
@@ -2906,7 +2920,9 @@ s32 Scene_Initialize(void) {
     if (!Test(FLAG_ALTAR_FELL))
       Actor_SetPosition(ACTOR_EAST_ALTAR, 0, 0);
 #if TLA_PATCH_1
-    if (!Test(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 3)
+    if (!Test(FLAG_KEEP_PARTY_POSITION) &&
+        gMainRoutineWork.entrance ==
+            GAIA_ROCK_INSIDE_TWIN_ALTARS_FROM_GAIA_ROCK_INSIDE_ALTAR_SOUTHEAST_A)
       GaiaRockInside_RaiseDust();
 #endif
   } else if (work->next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
@@ -2914,12 +2930,15 @@ s32 Scene_Initialize(void) {
     GaiaRockInside_TurnFaceToAltar(ACTOR_ALTAR_FACE, ACTOR_ALTAR);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       GaiaRockInside_StartWallTriggers();
-    if (Test(FLAG_STATUE_A_RISEN))
-      StoneHead_Place(ACTOR_STATUE_A, toFIXED(384), toFIXED(75), toFIXED(680));
-    if (Test(FLAG_STATUE_B_RISEN))
-      StoneHead_Place(ACTOR_STATUE_B, toFIXED(463), toFIXED(51), toFIXED(680));
-    if (Test(FLAG_STATUE_C_RISEN))
-      StoneHead_Place(ACTOR_STATUE_C, toFIXED(565), toFIXED(55), toFIXED(680));
+    if (Test(FLAG_WEST_STONE_HEAD_RISEN))
+      StoneHead_Place(ACTOR_WEST_STONE_HEAD, toFIXED(384), toFIXED(75),
+                      toFIXED(680));
+    if (Test(FLAG_MIDDLE_STONE_HEAD_RISEN))
+      StoneHead_Place(ACTOR_MIDDLE_STONE_HEAD, toFIXED(463), toFIXED(51),
+                      toFIXED(680));
+    if (Test(FLAG_EAST_STONE_HEAD_RISEN))
+      StoneHead_Place(ACTOR_EAST_STONE_HEAD, toFIXED(565), toFIXED(55),
+                      toFIXED(680));
     if (Test(FLAG_ALTAR_ROOM_SUNBEAM)) {
       s32 width;
       s32 height;
@@ -3013,7 +3032,7 @@ s32 Scene_PrepareMap(void) {
         plant->collisionFlags = 1;
         GameFlag_Set(FLAG_PLANT_POINTING);
       }
-    } else if (gMainRoutineWork.entrance > 8) {
+    } else if (gMainRoutineWork.entrance >= ENTRANCE_LAIR) {
       struct MapLayer *layer;
 
       gPath->current = 1;
@@ -3318,8 +3337,9 @@ restart:
 /// fourteenth into the Serpent's lair.
 void GaiaRockInside_TakeMazeExit(s32 direction) {
   s32 *state = &gPath->current;
-  u8 *row = (u8 *)state + *state * 8;
-  s32 next = row[((direction - 1) & 3) + 6];
+  // The step's PathStep.next, read by its offset from the path's start.
+  u8 *row = (u8 *)state + *state * sizeof(PathStep);
+  s32 next = row[((direction - 1) & 3) + offsetof(Path, steps[0].next)];
 
   switch (next) {
   case MAZE_BACK:
@@ -3537,7 +3557,9 @@ u32 gGaiaRockInside_SerpentSmokeScript[] = {
     SC_END,
 };
 
-u32 gGaiaRockInside_KushinadaScript[] = {
+/// The dark shadow under the east altar as it drops into the twin altars'
+/// room.
+u32 gGaiaRockInside_AltarShadowScript[] = {
     SC_WAIT(1),
     SC_END,
 };
@@ -3967,9 +3989,9 @@ struct Trigger gGaiaRockInside_AltarTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_COBWEB_LEDGE, CONDITION_ALWAYS, EVENT(GaiaRockInside_JumpDownCobwebPit)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_STONE_HEAD, FLAG_STATUE_A_RISEN, EVENT(GaiaRockInside_ClimbOntoWestStoneHead)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_MIDDLE_STONE_HEAD, FLAG_STATUE_B_RISEN, EVENT(GaiaRockInside_ClimbOntoMiddleStoneHead)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_STONE_HEAD, FLAG_STATUE_C_RISEN, EVENT(GaiaRockInside_ClimbOntoEastStoneHead)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_STONE_HEAD, FLAG_WEST_STONE_HEAD_RISEN, EVENT(GaiaRockInside_ClimbOntoWestStoneHead)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MIDDLE_STONE_HEAD, FLAG_MIDDLE_STONE_HEAD_RISEN, EVENT(GaiaRockInside_ClimbOntoMiddleStoneHead)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_STONE_HEAD, FLAG_EAST_STONE_HEAD_RISEN, EVENT(GaiaRockInside_ClimbOntoEastStoneHead)},
     {TRIGGER_TALK, ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
     {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnAltarAltar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_VINE, CONDITION_ALWAYS, 0},

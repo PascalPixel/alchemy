@@ -6,7 +6,8 @@
 #include "types.h"
 #include "sound/sound.h"
 
-/// A jump table entry.
+/// An entry of gMPlayJumpTableTemplate, whose helpers take other parameters
+/// than the song commands.
 typedef void (*SoundFunc)();
 
 // clang-format off
@@ -127,8 +128,7 @@ const u8 gCgb3Vol[] = {
 };
 
 /// The ticks each length code 0 to 48 stands for; MPlayMain and ply_note
-/// (mplay_main.s) read it for the lengths of
-/// their waits and notes.
+/// (mplay_main.s) read it for the lengths of their waits and notes.
 const u8 gClockTable[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23, 24, 28, 30, 32, 36, 40, 42, 44,
@@ -138,8 +138,8 @@ const u8 gClockTable[] = {
 
 /// The extended commands, song byte 0xCD and then the index: 1, 2 and 4 to 11
 /// set a field of the track's voice or its notes' echo, and 0 and 3 end the
-/// track (ply_xxx). pret's later library adds ply_xwait and ply_xcmd_0D as 12
-/// and 13; this one stops at 11.
+/// track (ply_xxx). Later versions of the driver add 12 and 13; this one stops
+/// at 11.
 const MPlayFunc gXcmdTable[] = {
     ply_xxx,
     ply_xwave,

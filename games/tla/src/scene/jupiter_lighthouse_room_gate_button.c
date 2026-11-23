@@ -324,7 +324,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 // Unused: the cracked tiles' routines, found, cracked and fallen through; this
 // room has no cracked tiles, and nothing here calls them.
-#include "shared/cracked_tile_find_lower.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 

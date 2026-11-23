@@ -297,7 +297,7 @@ void WorldPicture_UpdateMarkers(void) {
       if (tile == WORLD_MAP_MARKER_NONE)
         continue;
       if (tile == WORLD_MAP_MARKER_SHIP) {
-        if (!GameFlag_Get(FLAG_SHIP_SAILABLE))
+        if (!GameFlag_Get(FLAG_SHIP_CAN_SAIL))
           continue;
         if (gMainRoutineWork.ownerOverride != 0)
           continue;

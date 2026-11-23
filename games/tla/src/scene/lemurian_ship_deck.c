@@ -291,7 +291,7 @@ static inline void LemurianShipDeck_PlaceFacing(s32 id, s32 x, s32 z,
 /// answer to Piers's wish to see Vale changes Kraden's reply), and Kraden ends,
 /// "To the open sea, Felix!" The player then steers the ship on the world map.
 ///
-/// It runs from entrance 10 and sets FLAG_SHIP_SAILABLE.
+/// It runs from entrance 10 and sets FLAG_SHIP_CAN_SAIL.
 void LemurianShipDeck_TakeTheTiller(void) {
   s32 turn;
 
@@ -425,7 +425,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_WaitTransitionFrames();
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
   gMainRoutineWork.ownerOverride = 1;
-  Event_SetFlag(FLAG_SHIP_SAILABLE);
+  Event_SetFlag(FLAG_SHIP_CAN_SAIL);
   FieldEvent_SetExitRequest(LEMURIAN_SHIP_TILLER_TO_WORLD_MAP_C);
 }
 

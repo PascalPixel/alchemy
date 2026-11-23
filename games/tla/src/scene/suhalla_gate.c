@@ -230,11 +230,11 @@ s32 Scene_Initialize(void) {
 }
 
 /// Unused: copies the cliffs' cell as their set-up does, and sets
-/// FLAG_SHIP_SAILABLE, which the Lemurian Ship's deck sets once the party can
+/// FLAG_SHIP_CAN_SAIL, which the Lemurian Ship's deck sets once the party can
 /// sail it; no trigger runs it.
 UNUSED void SuhallaGate_OpenCliffsCell(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
-  Event_SetFlag(FLAG_SHIP_SAILABLE);
+  Event_SetFlag(FLAG_SHIP_CAN_SAIL);
 }
 
 /// Walking into the door in the rock at the road's west end, cell (8, 18), the

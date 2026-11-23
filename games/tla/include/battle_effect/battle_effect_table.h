@@ -2,16 +2,16 @@
 #define ALCHEMY_BATTLE_EFFECT_TABLE_H
 
 /// @file
-/// The records and columns the battle effect tables are written in.
+/// The rows and columns of the battle effects' tables, which effect_table.c
+/// fills and the effects read.
 
 #include "types.h"
 
-/// How each element card's sparks move: the kernel's gravity and damping, and
-/// how many steps (each drawn) a frame.
+/// How each element card's sparks move (gElementCards_SparkMotions).
 struct SparkMotion {
-  s32 gravity;
-  s32 damping;
-  s32 steps;
+  s32 gravity; ///< added to the y speed each step, 16.16 pixels
+  s32 damping; ///< the speed kept each step, in sixty-fourths
+  s32 steps;   ///< steps a frame, the spark drawn at each
 };
 
 /// The columns of gFume_Levels, one row per Fume level (effect->variant): the

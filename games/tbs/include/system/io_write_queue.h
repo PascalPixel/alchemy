@@ -35,6 +35,8 @@ extern struct IoWriteQueue gIoWriteQueue;
 /// Clears the value's bits in the register instead of storing it.
 #define IO_WRITE_CLEAR (8 << 16)
 
+/// Queue one register write of a width (8, 16 or 32 bits): a store, or the
+/// value's bits set or cleared (system/system_io_write_queue.c).
 void IoWriteQueue_Store8(u32 address, u32 value);
 void IoWriteQueue_Store16(u32 address, u32 value);
 void IoWriteQueue_Store32(u32 address, u32 value);
@@ -70,7 +72,6 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 
 /// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime
 /// variable while disabling and restoring interrupts.
-// The count is read and written as in IO_WRITE_QUEUE_PUSH.
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \
     struct IoWriteQueue *q;                                                    \

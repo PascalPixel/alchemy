@@ -43,18 +43,18 @@ const u16 gMath_SinQuarter[256] = {
     65457, 65476, 65492, 65505, 65516, 65525, 65531, 65535,
 };
 
-/// floor(i * 2π)
+/// Unused: floor(i * 2π) for i from 0 to 7; nothing reads it.
 const u16 gMath_TwoPiSteps[8] = {
     0, 6, 12, 18, 25, 31, 37, 43,
 };
 
-/// The sine at 0, 90, 180 and 270 degrees, in 16.16.
+/// Unused: the sine at 0, 90, 180 and 270 degrees, in 16.16; nothing reads it.
 const s32 gMath_QuadrantSin[4] = {
     0, toFIXED(1), 0, toFIXED(-1),
 };
 
-/// Tangents scaled by 256: index i is tan(i * 45 / 128 degrees),
-/// so index 128 is tan(45 degrees).
+/// Tangents scaled by 256: index i is about tan(i * 45 / 128 degrees), so
+/// index 128 is tan(45 degrees); the last entries before 90 degrees run high.
 /// Trig_Atan starts its binary search at index 127.
 const u16 gMath_TanTable[258] = {
     0, 1, 3, 4, 6, 7, 9, 11,

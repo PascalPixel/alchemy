@@ -19,8 +19,8 @@ void Heap_Initialize(void) {
   work->heap.nextEwram = gEwramHeap;
 }
 
-/// Returns the IWRAM bytes left to allocate, up to gCartridgeResetMarker
-/// (0x03007800), the same end the allocators test.
+/// Returns the IWRAM bytes left to allocate, up to Ram_IwramHeapEnd (the
+/// address of gCartridgeResetMarker), the end the allocators test.
 s32 Heap_GetRemainingIwram(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 
@@ -35,9 +35,9 @@ s32 Heap_GetRemainingEwram(void) {
   return EWRAM_END - (s32)work->heap.nextEwram;
 }
 
-/// Returns heap slot `kind`'s block, first allocating `size` bytes for it
+/// Returns heap slot `slot`'s block, first allocating `size` bytes for it
 /// (rounded up to words), from IWRAM when they fit and EWRAM otherwise.
-void *HeapSlot_Alloc(s32 kind, s32 size) {
+void *HeapSlot_Alloc(s32 slot, s32 size) {
   union HeapState *work;
   s32 alignedSize;
   u32 address;
@@ -46,7 +46,7 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
   u32 cachedAddress;
 
   work = (union HeapState *)gHeapSlots;
-  cachedAddress = (u32)work->slots[kind];
+  cachedAddress = (u32)work->slots[slot];
   if (cachedAddress == 0) {
     cachedAddress = (u32)work->heap.nextIwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
@@ -59,11 +59,11 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
         return NULL;
       }
       work->heap.nextEwram = (void *)nextAddress;
-      work->slots[kind] = (void *)address;
+      work->slots[slot] = (void *)address;
       return (void *)address;
     }
     work->heap.nextIwram = (void *)next;
-    work->slots[kind] = (void *)cachedAddress;
+    work->slots[slot] = (void *)cachedAddress;
     return (void *)cachedAddress;
   }
   return (void *)cachedAddress;
@@ -71,7 +71,7 @@ void *HeapSlot_Alloc(s32 kind, s32 size) {
 
 /// As HeapSlot_Alloc, but tries EWRAM first, for blocks that need
 /// room more than speed: the battle, shop and save work, among others.
-void *HeapSlot_AllocEwram(s32 kind, s32 size) {
+void *HeapSlot_AllocEwram(s32 slot, s32 size) {
   union HeapState *work;
   u32 alignedSize;
   u32 next;
@@ -80,7 +80,7 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
   u32 cachedAddress;
 
   work = (union HeapState *)gHeapSlots;
-  cachedAddress = (u32)work->slots[kind];
+  cachedAddress = (u32)work->slots[slot];
   if (cachedAddress == 0) {
     address = (u32)work->heap.nextEwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
@@ -92,11 +92,11 @@ void *HeapSlot_AllocEwram(s32 kind, s32 size) {
         return NULL;
       }
       work->heap.nextIwram = (void *)nextAddress;
-      work->slots[kind] = (void *)address;
+      work->slots[slot] = (void *)address;
       return (void *)address;
     }
     work->heap.nextEwram = (void *)next;
-    work->slots[kind] = (void *)address;
+    work->slots[slot] = (void *)address;
     return (void *)address;
   }
   return (void *)cachedAddress;

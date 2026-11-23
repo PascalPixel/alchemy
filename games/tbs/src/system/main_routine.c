@@ -1,6 +1,5 @@
 /// @file
 /// The main routine and scene changes: exits, returns from battle, entering.
-/// It is the first code of bank 04, linked before the field sequence's object.
 
 #include "system/main_routine.h"
 #include "flags.h"
@@ -22,7 +21,7 @@
 /// exit table gives the first exit of that kind (or of any kind) whose flag, if
 /// it has one, is not set.
 void Scene_TakeExit(s32 exitId) {
-  s16 currentMap;
+  s16 currentScene;
   const u32 *exitTable;
   const u32 *firstExit;
   u32 word;
@@ -33,7 +32,7 @@ void Scene_TakeExit(s32 exitId) {
   s32 kind;
   s32 flag;
 
-  currentMap = gMainRoutineWork.next;
+  currentScene = gMainRoutineWork.next;
   exitTable = gOverlayArea.exits();
   destinationScene = EXIT_KEEP_DESTINATION;
   destinationEntrance = 0;
@@ -48,7 +47,7 @@ void Scene_TakeExit(s32 exitId) {
     sceneId &= EXIT_SCENE_MASK;
     if (sceneId == SCENE_EXITS_END)
       break;
-    if (sceneId != currentMap)
+    if (sceneId != currentScene)
       continue;
 
     firstExit = exitTable;
@@ -209,6 +208,7 @@ void MainRoutine_Run(s32 mode) {
                        gMainRoutineWork.windowBrightness);
   VramCache_Reset();
   Task_ResetAll();
+  // DEAD: a second reset of the empty task table; the ROM keeps its call.
   Task_ResetAll();
   for (;;) {
     // FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_STOP_ACTION_SE for one scene
@@ -220,14 +220,7 @@ void MainRoutine_Run(s32 mode) {
     record = &table[gMainRoutineWork.next];
     entrance = gMainRoutineWork.entrance;
 
-    // Stop DMA 0, which a scene may have left running for an HBlank effect.
-    {
-      volatile u16 *dma0 = REG_DMA0;
-
-      dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-      dma0[5] &= ~DMA_ENABLE;
-      dma0[5];
-    }
+    Dma0_Stop();
     // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
     // heap block the last scene, battle or minigame left.
     Task_ResetAll();
@@ -292,7 +285,7 @@ void Scene_LoadOverlay(s32 unused) {
 }
 
 /// The scene id's row of gScenes.
-#define MAP_HEADER(id) (&gScenes[id])
+#define SCENE_ROW(id) (&gScenes[id])
 
 /// FLAG_AREA_VISITED has a flag for each of 128 areas.
 #define AREA_VISITED_MASK 0x7f
@@ -300,7 +293,7 @@ void Scene_LoadOverlay(s32 unused) {
 /// Updates the flags and state that last for one scene or one area, on entering
 /// the current scene.
 void Scene_Arrive(s32 unused, s32 keep) {
-  s32 area = MAP_HEADER(gMainRoutineWork.next)->area;
+  s32 area = SCENE_ROW(gMainRoutineWork.next)->area;
   s32 flag;
 
   if (keep == 0) {
@@ -338,7 +331,7 @@ void Scene_Arrive(s32 unused, s32 keep) {
   }
   gMainRoutineWork.area = area;
   GameFlag_SetFar(FLAG_AREA_VISITED(area & AREA_VISITED_MASK));
-  gMainRoutineWork.sceneType = MAP_HEADER(gMainRoutineWork.next)->sceneType;
+  gMainRoutineWork.sceneType = SCENE_ROW(gMainRoutineWork.next)->sceneType;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
@@ -349,5 +342,5 @@ void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 
 #undef EXIT_DEFAULT_SCENE_MASK
 #undef AREA_VISITED_MASK
-#undef MAP_HEADER
+#undef SCENE_ROW
 #undef MAIN_ROUTINE_DEFINE_RUN_MINIGAME

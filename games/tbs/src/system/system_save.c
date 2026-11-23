@@ -5,8 +5,6 @@
 #include "system_internal.h"
 #include "macros.h"
 
-// Saving.
-
 /// The save code's timer, retries, sectors and checksum.
 enum {
   SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
@@ -91,8 +89,10 @@ s32 Save_InitializeWork(void) {
   return 0;
 }
 
-/// Picks the free sector to write part `mode` to, at random.
-u32 Save_SelectWriteSector(s32 mode) {
+/// Picks the free sector to write part `partId` to, at random, or returns
+/// SAVE_SECTOR_COUNT for none. The last free sector is kept for replacing a
+/// part that already has a copy.
+u32 Save_SelectWriteSector(s32 partId) {
   u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
   u32 index;
@@ -111,7 +111,7 @@ u32 Save_SelectWriteSector(s32 mode) {
   if (count != 0) {
     if (count == 1) {
       index = empty[0];
-      if (Save_FindLatestSector(mode) == SAVE_SECTOR_COUNT) {
+      if (Save_FindLatestSector(partId) == SAVE_SECTOR_COUNT) {
         index = SAVE_SECTOR_COUNT;
       }
     } else {
@@ -138,7 +138,8 @@ u32 Save_WriteSector(s32 sector) {
   return NONZERO(result);
 }
 
-/// Reads flash sector `index` into the workspace's sector buffer.
+/// Reads flash sector `index` into the workspace's sector buffer. Returns 0
+/// when its checksum is good.
 s32 Save_ReadSector(s32 index) {
   struct SaveWork *work;
   struct SaveSectorHeader header;
@@ -193,7 +194,8 @@ s32 Save_WritePart(s32 partId, void *source) {
     return 1;
 
   if (header.counter > SAVE_COUNTER_LIMIT) {
-    // Counter order is ordinary, not modular.
+    // Past the limit the count starts again at 1, rewritten over the old
+    // copy: the scan compares counters plainly, so a wrapped one would lose.
     header.counter = 1;
     START_DMA(&header, &work->slot.part.header, DMA_COPY_WORDS(4));
     WAIT_DMA();
@@ -343,9 +345,9 @@ u32 Save_GetLatestCounter(s32 partId) {
 }
 
 /// Reads the summary at the start of each of the three save files into the
-/// workspace's summary table for the file list, and four bytes from offset
-/// 0x110 of each file's second part into its secondPartPlayTime (zero when it
-/// has none).
+/// workspace's summary table for the file list, and each file's second copy
+/// of the play time, from SAVE_SECOND_PLAY_TIME_OFFSET in its second part,
+/// into its secondPartPlayTime (zero when it has none).
 s32 Save_LoadFileSummaries(void) {
   struct SaveWork *work;
   struct SaveFileSummary *summary;

@@ -45,8 +45,8 @@ static __inline__ void Matrix_SetUnit(void *matrix) {
                    : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
-/// The games order the unit-matrix register setup differently before the same
-/// stores.
+/// Matrix_SetUnit's register setup, with the zero register left to the
+/// caller's operand.
 #define MATRIX_UNIT_REGISTER_SETUP                                             \
   "mov r0, %1\n\tmov r1, #128\n\tmov r2, #0\n\tmov %0, #0\n\t"                 \
   "mov r4, #0\n\tlsl r1, r1, #9\n\t"

@@ -12,7 +12,8 @@
 #include "fixed_math.h"
 #include "types.h"
 
-/// Fixed addresses of IWRAM-resident routines.
+/// The IWRAM-resident routines at their fixed addresses, each called through
+/// the inline below it.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 #define Iwram_ClearWordsEntry                                                  \
@@ -104,10 +105,9 @@ static inline s32 Iwram_CopyWords(volatile void *destination,
   return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
 }
 
-/// Iwram_CopyWords as a statement of its own, the call in a once-only block:
-/// the link code copies the Djinn recovery table into its send buffer so, in
-/// the battle and in the arena, as The Lost Age does there and in its twelve
-/// IWRAM_FILL_WORDS fills. The name is ours, The Lost Age's.
+/// Iwram_CopyWords as a statement of its own: how the link battle and the
+/// Battle Arena copy the Djinn recovery table into the send buffer, as The
+/// Lost Age writes it there and in its IWRAM_FILL_WORDS fills.
 #define IWRAM_COPY_WORDS(destination, source, size)                            \
   do {                                                                         \
     Iwram_CopyWords(destination, source, size);                                \

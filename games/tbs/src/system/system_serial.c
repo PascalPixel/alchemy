@@ -4,8 +4,6 @@
 
 #include "system_internal.h"
 
-// The link cable.
-
 enum {
   /// A packet: its number, missing mask, checksum and the 24-byte payload.
   SERIAL_PACKET_HALFWORDS = 14,
@@ -84,8 +82,8 @@ void Serial_EnableTransferTimer(void) {
     state->transferEnabled = 1;
 }
 
-/// Disables the serial and timer 3 interrupts, stops the transfer timer and
-/// clears gSerialWork.transferEnabled. Nothing in the game calls it.
+/// Unused: disables the serial and timer 3 interrupts, stops the transfer
+/// timer and clears gSerialWork.transferEnabled.
 void Serial_DisableTransfer(void) {
   struct SerialWork *state;
 
@@ -119,9 +117,10 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
     // a child connects at once.
     if (multiplayerId == 0 &&
         (mode = control & (SIO_START | SIO_MULTI_SD)) == SERIAL_MODE_CLOCKING) {
-      u8 serialError = control & SIO_MULTI_SI;
+      u8 siPin = control & SIO_MULTI_SI;
 
-      if (serialError == 0 && gSerialWork.sendIndex == -1) {
+      // SI low: this console is the parent.
+      if (siPin == 0 && gSerialWork.sendIndex == -1) {
 
         Io_Write16(0, &REG_IME);
         {
@@ -174,9 +173,10 @@ s32 Serial_PollStatus(void) {
     u8 mode = control & (SIO_START | SIO_MULTI_SD);
 
     if (mode == SERIAL_MODE_CLOCKING) {
-      u8 serialError = control & SIO_MULTI_SI;
+      u8 siPin = control & SIO_MULTI_SI;
 
-      if (serialError == 0 && gSerialWork.sendIndex == -1) {
+      // SI low: this console is the parent.
+      if (siPin == 0 && gSerialWork.sendIndex == -1) {
 
         Io_Write16(0, &REG_IME);
         {
@@ -244,47 +244,48 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
 /// Builds the packet to send in sendBuffer[0]: [0] the packet number, [1] the
 /// consoles not yet heard from, [2] the checksum and [4] the 24-byte payload.
 void Serial_PrepareSendPacket(void *payload) {
-  struct SerialWork *sr;
+  struct SerialWork *serial;
   u32 i;
   u32 sum;
 
-  sr = SERIAL_RUNTIME;
+  serial = &gSerialWork;
   {
-    u8 *pkt;
-    u8 cur;
-    u8 recv;
+    u8 *packet;
+    u8 currentMask;
+    u8 receivedMask;
 
-    pkt = (u8 *)sr->sendBuffer[0];
-    pkt[0] = sr->packetNumber;
-    cur = sr->currentMask;
-    recv = sr->receivedMask;
+    packet = (u8 *)serial->sendBuffer[0];
+    packet[0] = serial->packetNumber;
+    currentMask = serial->currentMask;
+    receivedMask = serial->receivedMask;
     sum = 0;
-    pkt[1] = recv ^ cur;
-    *(u16 *)(pkt + 2) = sum;
-    Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);
+    packet[1] = receivedMask ^ currentMask;
+    *(u16 *)(packet + 2) = sum;
+    Dma_Set(payload, packet + 4, DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4),
+            REG_DMA3);
   }
   {
-    u16 *pkt;
-    u32 v;
+    u16 *packet;
+    u32 halfword;
 
-    pkt = sr->sendBuffer[0];
+    packet = serial->sendBuffer[0];
     for (i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
-      v = *pkt;
-      pkt++;
-      sum += v;
+      halfword = *packet;
+      packet++;
+      sum += halfword;
     }
   }
   {
-    u16 **sendBuffers = sr->sendBuffer;
+    u16 **sendBuffers = serial->sendBuffer;
 
     ((struct SerialPacket *)sendBuffers[0])->checksum = ~sum;
   }
 
   // Stop timer 3, rewind the send position and start the timer again
-  if (sr->mode != 0)
+  if (serial->mode != 0)
     REG_TM3CNT_H = 0;
-  sr->sendIndex = -1;
-  if (sr->mode != 0 && sr->transferEnabled != 0)
+  serial->sendIndex = -1;
+  if (serial->mode != 0 && serial->transferEnabled != 0)
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
 }
 
@@ -336,7 +337,7 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
 /// The serial and timer 3 interrupt, installed by Serial_Initialize: each one
 /// moves a halfword.
 void Serial_HandleTransferInterrupt(void) {
-  u16 recv[4];
+  u16 received[4];
   volatile u32 *sioControl;
   s32 channel;
 
@@ -346,13 +347,13 @@ void Serial_HandleTransferInterrupt(void) {
   {
     volatile u16 *multi = (volatile u16 *)REG_SIODATA32;
 
-    recv[0] = multi[0];
-    recv[1] = multi[1];
-    recv[2] = multi[2];
-    recv[3] = multi[3];
+    received[0] = multi[0];
+    received[1] = multi[1];
+    received[2] = multi[2];
+    received[3] = multi[3];
   }
 #else
-  *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
+  *(u64 *)received = *(volatile u64 *)REG_SIODATA32;
 #endif
   sioControl = &REG_SIOCNT;
   // A packet heard while SIO_ERROR is set is refused (SERIAL_CHANNEL_ERROR,
@@ -379,13 +380,13 @@ void Serial_HandleTransferInterrupt(void) {
     s32 receiveIndex;
     u16 *incoming;
 
-    if (recv[channel] == SERIAL_IDLE_HALFWORD &&
+    if (received[channel] == SERIAL_IDLE_HALFWORD &&
         gSerialWork.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
       gSerialWork.receiveIndex[channel] = -1;
     } else {
       receiveIndex = gSerialWork.receiveIndex[channel];
       incoming = gSerialWork.incomingBuffer[channel];
-      incoming[receiveIndex] = recv[channel];
+      incoming[receiveIndex] = received[channel];
       if (receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
         u16 *swap = gSerialWork.readyBuffer[channel];
 
@@ -463,8 +464,8 @@ s32 Serial_StartReceive(void *destination) {
   return 0;
 }
 
-/// Each waits a frame at a time until `pending` is 0, giving up after 600000
-/// frames: the send, then the receive.
+/// Each waits a frame at a time until `pending` is 0, giving up after
+/// SERIAL_TRANSFER_TIMEOUT_FRAMES: the send, then the receive.
 #define SERIAL_DEFINE_WAIT(name, pending)                                      \
   void name(void) {                                                            \
     u32 count = 0;                                                             \
@@ -483,7 +484,7 @@ SERIAL_DEFINE_WAIT(Serial_WaitForSend, gSerialSendSource)
 SERIAL_DEFINE_WAIT(Serial_WaitForReceive, gSerialReceiveDestination)
 
 /// Waits until both the send and the receive have finished, giving up after
-/// 600000 frames. Reached through the far-call table.
+/// SERIAL_TRANSFER_TIMEOUT_FRAMES. Reached through the far-call table.
 void Serial_WaitForTransfers(void) {
   u32 count;
 

@@ -8,7 +8,7 @@
 
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)  ///< mode, layers, windows
 #define REG_DISPSTAT (*(volatile u16 *)0x04000004) ///< blank flags and IRQs
-// DISPSTAT's interrupt enables, as pret names them; each is
+// DISPSTAT's interrupt enables; each is
 // DISPSTAT_VBLANK_INTR shifted by its IRQ_ number.
 #define DISPSTAT_VBLANK_INTR 0x0008 ///< at the start of each VBlank
 #define DISPSTAT_HBLANK_INTR 0x0010 ///< at the end of each line
@@ -187,7 +187,7 @@ enum DisplayControl {
 /// DMA channel 3's registers as words: the channel Dma_Set copies with.
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
-/// Palette RAM, as pret names it: the background colours, then the sprites'.
+/// Palette RAM: the background colours, then the sprites'.
 #define PLTT 0x05000000
 #define BG_PLTT_SIZE 512 ///< bytes of background colours, 256 of them
 #define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
@@ -229,16 +229,14 @@ enum DisplayControl {
 #define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
 #define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 
-/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
-/// pret names it.
+/// The start of the 32 KB of IWRAM, the CPU's fast internal work memory.
 #define IWRAM_START 0x03000000
-/// The start of the 256 KB of EWRAM, the slower external work memory, as pret
-/// names it.
+/// The start of the 256 KB of EWRAM, the slower external work memory.
 #define EWRAM_START 0x02000000
-/// The end of EWRAM, as pret names it: the limit the EWRAM heap's allocators
+/// The end of EWRAM: the limit the EWRAM heap's allocators
 /// test.
 #define EWRAM_END 0x02040000
-/// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
+/// Video RAM: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
@@ -270,7 +268,7 @@ enum DisplayControl {
 #define PIXELS_4BPP(color) ((color) * 0x11111111u)
 /// A word of four 8-bit pixels, all colour `color`.
 #define PIXELS_8BPP(color) ((color) * 0x01010101)
-/// Sprite tile memory, as pret names it: the 32 KB of sprite tiles after the
+/// Sprite tile memory: the 32 KB of sprite tiles after the
 /// four character blocks.
 #define OBJ_VRAM0 (VRAM + 0x10000)
 
@@ -279,7 +277,7 @@ enum DisplayControl {
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e) ///< timer 3's control
 
-/// TMxCNT_H flags, as pret names them.
+/// TMxCNT_H flags.
 #define TIMER_INTR_ENABLE 0x0040
 #define TIMER_ENABLE 0x0080 ///< starts the timer counting
 #define TIMER_256CLK 0x0002 ///< counts every 256 cycles, 65536 times a second
@@ -296,7 +294,7 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)   ///< keys for the keypad IRQ
 #define REG_RCNT (*(volatile u16 *)0x04000134)     ///< the serial port's mode
 
-// SIOCNT flags, as pret names them.
+// SIOCNT flags.
 #define SIO_115200_BPS 0x0003 ///< multiplayer's fastest baud rate
 #define SIO_MULTI_SI                                                           \
   0x0004 ///< multiplayer: this console's SI pin, clear on the parent
@@ -319,7 +317,7 @@ enum DisplayControl {
 #define RCNT_SIO_MODE 0x0000
 #define RCNT_GPIO_MODE 0x8000 ///< the port as general-purpose pins
 
-/// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+/// DMAxCNT_H flags. A 32-bit control word takes them
 /// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
 #define DMA_DEST_INC 0x0000    ///< destination steps up
 #define DMA_DEST_DEC 0x0020    ///< destination steps down
@@ -466,7 +464,7 @@ enum KeyMask {
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012) ///< BG0's vertical scroll
 /// Direct sound's mixing: volumes, speakers, timers and FIFO resets.
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
-// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
+// SOUNDCNT_H flags: the mixing volumes, then each direct
 // sound channel's speakers, timer and FIFO reset.
 #define SOUND_CGB_MIX_FULL 0x0002 ///< the four tone channels at full volume
 #define SOUND_A_MIX_FULL 0x0004   ///< direct sound A at full, not half
@@ -519,7 +517,7 @@ enum KeyMask {
 /// WAITCNT_SRAM_8: the wait the flash routines read the chip with;
 /// programming and erasing use the chip's wait[0], then restore it.
 #define WAITCNT_SRAM_SLOWEST 0x0003
-/// WAITCNT's SRAM wait bits, as pret names them.
+/// WAITCNT's SRAM wait bits.
 #define WAITCNT_SRAM_MASK 0x0003
 #define REG_IME (*(volatile u16 *)0x04000208) ///< all interrupts' master switch
 

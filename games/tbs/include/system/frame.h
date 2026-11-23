@@ -5,11 +5,9 @@
 /// The frame loop's globals: the VBlanks a frame takes, the CPU load
 /// display and the VBlank flags.
 ///
-/// wait() (system/system_frame.c) and the VBlank handler share these cells.
-/// gVBlankDone and gFrameCount are volatile because an interrupt handler uses
-/// them too, and the cells wait() reads and writes each frame by nature; the
-/// other volatiles are devices, and each tag names the function that differs
-/// without one.
+/// wait() (system/system_frame.c) and the VBlank handler share these cells;
+/// those marked volatile are changed by an interrupt or counted by wait() while
+/// other code reads them.
 
 #include "types.h"
 
@@ -32,8 +30,7 @@ extern u16 gFrameVBlanks;
 extern volatile u16 gLastFrameVBlanks;
 /// Bit 0 is set by the VBlank handler; wait() clears it and halts until
 /// it is set again.
-// volatile: the VBlank handler sets it while wait() halts on it, so it is
-// no device.
+// volatile: the VBlank handler sets it while wait() halts on it.
 extern volatile u16 gVBlankDone;
 extern u32 gCpuLoadTimer; ///< Frames gCpuLoadPeak is still held.
 /// The highest CPU load in the last 30 frames: the scanline the frame's work
@@ -41,10 +38,10 @@ extern u32 gCpuLoadTimer; ///< Frames gCpuLoadPeak is still held.
 extern u32 gCpuLoadPeak;
 /// Frames wait() has finished.
 // volatile: the VBlank pass reads it (WorldMap_ApplyAffinePage picks
-// the world map's affine page by it) while wait() counts it, so it is no
-// device.
+// the world map's affine page by it) while wait() counts it.
 extern volatile u32 gFrameCount;
 extern u32 gVBlankCount; ///< Counted up by every VBlank.
+/// A routine for the next VBlank alone: the handler clears it, then calls it.
 extern void (*gVBlankCallback)(void);
 
 /// Nonzero: wait() counts no idle time and ignores sleep requests.
@@ -52,20 +49,20 @@ extern volatile u8 gSleepDisabled;
 /// Sleep after three idle minutes.
 extern volatile u8 gIdleSleepEnabled;
 /// 1: sleep this frame; more: count down to it.
-// volatile: wait() counts it down and reads it each frame, so it is no device.
+// volatile: wait() counts it down and reads it each frame.
 extern volatile u8 gSleepRequested;
 /// Debug builds: Start+Select pauses the frame loop.
 // volatile: Actor_UpdatePlayerControl and FieldSequence_Run each read it
-// again after an earlier test, so it is no device.
+// again after an earlier test.
 extern volatile u8 gDebugMode;
 extern u8 gDebugPaused; ///< The debug pause is on.
 /// Set by the keypad interrupt; wait() performs the soft reset.
 extern u8 gResetRequested;
 /// Frames since a key was last held.
-// volatile: wait() counts it and reads it each frame, so it is no device.
+// volatile: wait() counts it and reads it each frame.
 extern volatile u16 gIdleFrames;
 /// Frames L and R have been held together; three seconds request sleep.
-// volatile: wait() counts it and reads it each frame, so it is no device.
+// volatile: wait() counts it and reads it each frame.
 extern volatile u16 gSleepComboFrames;
 /// Written by the soft reset just before it restarts the cartridge, and
 /// cleared by System_Initialize; nothing else reads it.

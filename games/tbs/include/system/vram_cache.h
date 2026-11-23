@@ -53,4 +53,7 @@ STATIC_ASSERT(offsetof(struct VramCacheEntry, offset) == 2);
 /// The cache entries by number: the slot a sprite or loaded picture holds.
 extern struct VramCacheEntry gVramCacheEntries[];
 
+/// VramCache_Load's source that clears the entry's VRAM instead of copying.
+#define VRAM_CACHE_CLEAR ((const void *)-1)
+
 #endif

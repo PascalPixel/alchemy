@@ -2,7 +2,8 @@
 #define ALCHEMY_RAM_BUFFER_H
 
 /// @file
-/// The work pointers in the gHeapSlots table, by name.
+/// The buffers and IWRAM variables the code reaches at fixed addresses, and
+/// the work pointers of gHeapSlots by name.
 
 #include "types.h"
 #include "version.h"
@@ -49,8 +50,8 @@
   FIXED_ADDRESS((u8 *), 0x03001b10, gVramCacheEntries)
 #endif
 
-/// Work pointers in the gHeapSlots table. Their users include heap.h,
-/// which the sound library's include path cannot reach.
+/// Work pointers in gHeapSlots, by name; a file that uses one includes
+/// system/heap.h for the slot numbers.
 #define Ram_MapGridWork ((void **)&gHeapSlots[HEAP_SLOT_MAP_GRID])
 #define Ram_CameraWork ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
 #define Ram_FieldWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD])

@@ -2,7 +2,7 @@
 #define ALCHEMY_HEAP_RELEASE_H
 
 /// @file
-/// The heaps: allocating and freeing blocks.
+/// Releasing heap blocks, and the two pools' space.
 
 #include "edition.h"
 #include "types.h"

@@ -268,14 +268,17 @@ void wait(s32 frames) {
   }
 }
 
-/// Frames a key is held before it first repeats, and between later repeats
+/// Frames a key is held before it first repeats, and between later repeats.
 #define INPUT_KEY_REPEAT_FIRST 19
 #define INPUT_KEY_REPEAT_NEXT 6
 
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank, called by wait().
+/// Works out this frame's repeating and newly pressed keys, once a frame after
+/// VBlank (wait()). Held keys repeat after INPUT_KEY_REPEAT_FIRST frames, then
+/// every INPUT_KEY_REPEAT_NEXT; gKeysRepeatDirected is that repeat with at
+/// most one D-pad direction, the newer of two held and none of four.
 void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay = gKeyRepeatTimer;
   u32 keys;
@@ -354,13 +357,7 @@ void System_VBlankHandler(void) {
   // The display writes come first, while the blank lasts: OAM can be written
   // only in a blank, and a palette or scroll changed while lines are drawn
   // shows half changed.
-  {
-    volatile u16 *dma0 = REG_DMA0;
-
-    dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma0[5] &= ~DMA_ENABLE;
-    dma0[5];
-  }
+  Dma0_Stop();
   if (gSerialExchangeActive != 0) {
     gLinkStatus =
         Serial_ExchangePayloads((void *)&gSerialTransfer, gSerialPeerPayloads);
@@ -424,8 +421,8 @@ s32 Sound_LoadReverbCode(s32 code) {
   return 0;
 }
 
+/// Unused: two empty routines after the reverb loader, which nothing calls.
 UNUSED void Sound_ReservedNoOpA(void) {}
-
 UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,

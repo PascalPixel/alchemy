@@ -17,15 +17,16 @@ struct ScreenTransitionState;
 /// read it through their own struct while they are open.
 #define gMenuWork (*(void **)&gHeapSlots[HEAP_SLOT_MENU])
 
-// Read heap slots in gHeapSlots order through their own names.
-/// HEAP_SLOT_FIELD_BLEND onwards.
+/// The heap slots from HEAP_SLOT_FIELD_BLEND on: gFieldBlendWork[0] is the
+/// field's colour blend work.
 #define gFieldBlendWork (*(void *(*)[]) & gHeapSlots[HEAP_SLOT_FIELD_BLEND])
-/// HEAP_SLOT_SCREEN_TRANSITION under its own name.
+/// The screen transition's work, heap slot HEAP_SLOT_SCREEN_TRANSITION.
 #define gScreenTransitionWork                                                  \
   (*(struct ScreenTransitionState **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
 /// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.
 #define gBattleEntryTimer (*(s32 **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
-/// HEAP_SLOT_FIELD_EFFECT: points to a scene-specific structure.
+/// The running Psynergy effect's work (struct FieldEffectWork), heap slot
+/// HEAP_SLOT_FIELD_EFFECT.
 #define gFieldEffectWork (*(void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
 // EWRAM buffers

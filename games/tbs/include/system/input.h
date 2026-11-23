@@ -20,8 +20,9 @@ extern volatile u32 gKeysPressed;
 extern volatile u32 gKeysRepeat;
 /// gKeysRepeat with at most one D-pad direction.
 extern volatile u32 gKeysRepeatDirected;
-/// The D-pad direction gKeysRepeatDirected keeps: of several held, the one
-/// added last.
+/// The D-pad direction the repeat last settled on: when a second direction is
+/// added, gKeysRepeatDirected drops this one and keeps the new one.
+/// KEYS_HORIZONTAL, both left and right, stands for none.
 extern volatile u32 gKeysDirection;
 
 // Kept by the frame loop and the key repeat.

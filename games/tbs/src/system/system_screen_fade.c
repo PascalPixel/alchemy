@@ -1,5 +1,7 @@
 /// @file
-/// Screen fades through the blend registers.
+/// Screen fades through the blend registers: the screen brightens toward white
+/// or darkens toward black, BLDY running from 0, the picture as drawn, to
+/// FADE_LEVEL_MAX, all white or all black, one step each VBlank.
 // Part of system.c.
 
 #include "system_internal.h"
@@ -10,7 +12,7 @@ enum {
   FADE_LAYER_MASK = BLDCNT_TGT1_ALL,
   FADE_BRIGHTEN = BLDCNT_EFFECT_LIGHTEN,
   FADE_DARKEN = BLDCNT_EFFECT_DARKEN,
-  FADE_LEVEL_MAX = 16 ///< BLDY's strongest level: all white or all black.
+  FADE_LEVEL_MAX = BLEND_FADE_MAX ///< BLDY's strongest: all white or black
 };
 
 /// Steps the screen fade once a VBlank, called by System_VBlankHandler: sets
@@ -48,14 +50,7 @@ void ScreenFade_Update(void) {
   }
 }
 
-// Screen fades. ScreenFade_Update moves the fade one step each VBlank.
-// The brightness (BLDY) runs from 0, the picture as drawn, to 16, all white
-// or all black.
-//   gScreenFadeToWhite     : 0 fades toward black, 1 toward white
-//   gScreenFadeLayers      : the BLDCNT layers the fade covers
-//   gScreenFadeVBlanksLeft : VBlanks until the fade ends
-
-/// Fades BG1 to BG3, the sprites and the backdrop (0x3e) from the current
+/// Fades BG1 to BG3, the sprites and the backdrop from the current
 /// target brightness to `level` over `vblanks` VBlanks.
 #define FADE_DEFINE_BLEND(name, brighten, level)                               \
   void name(s32 vblanks) {                                                     \
@@ -79,8 +74,8 @@ FADE_DEFINE_BLEND(ScreenFade_ToWhite, 1, FADE_LEVEL_MAX)
 /// Fades in from white.
 FADE_DEFINE_BLEND(ScreenFade_FromWhite, 1, 0)
 
-/// Starts a fade of any layers by setting the gBlend globals ScreenFade_Update
-/// steps. Reached through the far-call table.
+/// Starts a fade of any layers by setting the gScreenFade globals
+/// ScreenFade_Update steps. Reached through the far-call table.
 ///   bright  : 0 toward black, 1 toward white
 ///   layer   : the BLDCNT layers to fade (low six bits)
 ///   start   : the starting brightness; above 16, the current target

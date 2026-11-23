@@ -1,9 +1,9 @@
 /// @file
 /// The title: the Nintendo and Camelot logos, the intro, and the starts it
-/// leads to, the prologue with Jenna or the game with Felix; entrance 8 plays
-/// the story crawl a new game opens with, over Vale in the rain, and entrance
-/// 10, which nothing reaches, keeps The Broken Seal's Golden Sun logo with "To
-/// Be Continued" revealed under it.
+/// leads to, the prologue with Jenna or the game with Felix. TITLE_STORY_CRAWL
+/// plays the story crawl a new game opens with, over Vale in the rain, and
+/// TITLE_TO_BE_CONTINUED, which nothing reaches, keeps The Broken Seal's Golden
+/// Sun logo with "To Be Continued" revealed under it.
 #include "resource_ids.h"
 #include "scene_ids.h"
 #include "types.h"
@@ -113,6 +113,8 @@ s32 Scene_Initialize(void) {
       Event_PlaySound(MUS_SILENCE);
       Title_ShowNintendoLogo(0);
       Title_ShowCamelotLogo(0);
+      // With no save file the intro is skipped. Left alone, the title fades
+      // out and the logos play again after two seconds, or a key press.
       if (Save_ScanFileSummaries() > 0) {
         Event_PlaySound(MUS_MAIN_THEME_TITLE);
         TitleIntro_Run(1);
@@ -130,7 +132,7 @@ s32 Scene_Initialize(void) {
       }
       break;
     }
-    Event_SetDestination(SCENE_CLEAR, 1);
+    Event_SetDestination(SCENE_CLEAR, CLEAR_FROM_TITLE);
   } else {
     if (gMainRoutineWork.entrance == TITLE_PROLOGUE) {
       Event_PlaySound(MUS_MAIN_THEME_TITLE);
@@ -225,7 +227,8 @@ void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Shows the Golden Sun logo for entrance 10: its "To Be Continued" lettering
+/// Shows the Golden Sun logo for TITLE_TO_BE_CONTINUED: its "To Be Continued"
+/// lettering
 /// is revealed from the left while the logo brightens out of black.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;

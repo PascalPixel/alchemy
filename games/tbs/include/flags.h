@@ -51,6 +51,12 @@
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
+/// The next field scene starts where the party was, as after a battle: the
+/// scene's flags are not reset, the actors come back from their snapshot,
+/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
+/// one (a random battle clears it, so the scene's own music plays).
+/// FieldSequence_Run clears it once the scene starts.
+#define FLAG_KEEP_PARTY_POSITION 0x109
 // The party is inside a lighthouse, where the Adepts of its element regain PP
 // faster (game_units.c). Each lighthouse's scenes set its flag on every
 // arrival, and Scene_Arrive clears all four when the party enters another area,
@@ -81,6 +87,9 @@
 /// The party is in a town (SCENE_TYPE_TOWN); the scene loader sets and
 /// clears it, and the Colosso's log sets it as it ends.
 #define FLAG_IN_TOWN 0x123
+/// The scene shows its area's name once it is on screen; entering a new
+/// area sets it.
+#define FLAG_SHOW_AREA_NAME 0x12f
 // Set as a file continues from its last Sanctum by the player's choice
 // (the file screen's Scene_Initialize); nothing in the game reads either, by
 // name, by number or as part of a byte.
@@ -161,6 +170,8 @@
 /// DJINN_TUTORIAL_CLOSE (DjinnMenu_Run). With only the first, Flint says
 /// "After a Djinni has been used to summon, it must spend time in recovery."
 #define FLAG_DJINN_LESSON_PART_A 0x16f
+/// The next layout keeps the palette and tiles already loaded, once.
+#define FLAG_KEEP_LAYER_GRAPHICS 0x170
 /// The second part flag; with only this one set, Flint begins with "Each
 /// Djinni has different powers."
 #define FLAG_DJINN_LESSON_PART_B 0x171
@@ -185,9 +196,8 @@
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
 /// (Actor_UpdatePlayerControl). Nothing in the game sets it.
 #define FLAG_FAST_WALK 0x17f
-/// The areas the party has visited, one flag for each, set by
-/// Scene_Arrive as the party enters the section; the world map
-/// screen shows a marker for each.
+/// The areas the party has visited, one flag for each, set by Scene_Arrive as
+/// the party enters the area; the world map screen shows a marker for each.
 #define FLAG_AREA_VISITED(group) (0x180 + (group))
 /// A scene's own flags, cleared on every ordinary entry (Scene_Arrive): puzzles
 /// reset when the party walks back in.
@@ -207,19 +217,8 @@
 /// Plus a row of the shop stock table: that place's artifacts are in stock,
 /// for the shop counter's Artifacts list.
 #define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
-/// Set while the Colosso holds the party's equipment (the inventory snapshot).
-#define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
-/// The next field scene starts where the party was, as after a battle: the
-/// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
-/// one (a random battle clears it, so the scene's own music plays).
-/// FieldSequence_Run clears it once the scene starts.
-#define FLAG_KEEP_PARTY_POSITION 0x109
-/// The scene shows its area's name once it is on screen; entering a new
-/// area sets it.
-#define FLAG_SHOW_AREA_NAME 0x12f
-/// The next layout keeps the palette and tiles already loaded, once.
-#define FLAG_KEEP_LAYER_GRAPHICS 0x170
+
+// The story's flags, from 0x800, and the treasures', from 0xec0.
 /// Kraden has talked Isaac, Garet and Jenna into a secret look at Sol Sanctum
 /// and come out of his cottage ready to go (ValeKradensCottage_KradenSetsOff).
 /// Until then Jenna stops Isaac on the path to Mt. Aleph; afterwards Kraden,
@@ -518,6 +517,8 @@
 /// Isaac has won his second match, in Colosseum Final 2; from then on the
 /// passages east of the waiting room lead to Colosseum Final 3.
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
+/// Set while the Colosso holds the party's equipment (the inventory snapshot).
+#define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 // XXX: no code of this game reads it; a reader would say what it changes.
 /// The soldiers have taken the party into the colosseum on the finals day.
 #define FLAG_COLOSSEUM_FINALS_ENTERED 0x93f

@@ -280,7 +280,7 @@ s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds);
 void BattleObject_Put(void);
 void BattleUnit_ListAllAndSubmit(void);
 s32 BattleObject_GetPalette(s32 unitId);
-s32 Enemy_HasSpriteRoom(s32 classId);
+s32 Enemy_HasSpriteRoom(s32 enemyId);
 s32 EnemySprite_LoadIntoSlots(s32 unitId);
 UNREAD_RESULT BattleObject_ReleaseSpriteSlots(s32 unitId);
 s32 BattleUnit_GetWeaponKind(s32 itemId);
@@ -489,9 +489,9 @@ void BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #else
 s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 #endif
-s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused);
+s32 BattleEnemy_ClaimNameLetter(s32 enemyId, s32 unused);
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId);
-UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId);
+UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 enemyId);
 s32 BattleFormation_GetRandomMember(s32 formationId);
 s32 BattleFormation_BuildEnemyList(s32 formationId);
 

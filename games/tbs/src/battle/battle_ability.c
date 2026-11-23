@@ -213,22 +213,22 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   // 3. Calling an ally; Speed Surge is an enemy splitting in two.
   if (ability->effect == ABILITY_EFFECT_CALL_ALLY ||
       ability->effect == ABILITY_EFFECT_CALL_HELP) {
-    s32 classId;
+    s32 enemyId;
     s32 newUnitId;
 
-    classId = actor->id;
+    enemyId = actor->id;
     newUnitId = Enemy_GetFreeUnitId();
     if (ability->effect == ABILITY_EFFECT_CALL_HELP)
-      classId = BattleFormation_GetRandomMember(battle->formation);
-    if (hit != 0 && Enemy_HasSpriteRoom(classId) != 0 && newUnitId >= 0) {
+      enemyId = BattleFormation_GetRandomMember(battle->formation);
+    if (hit != 0 && Enemy_HasSpriteRoom(enemyId) != 0 && newUnitId >= 0) {
       s32 suffix;
 
       // The newcomer's name letter; on the first duplicate the enemy
       // already there takes a letter too.
-      suffix = BattleEnemy_ClaimNameLetter(classId, 1);
+      suffix = BattleEnemy_ClaimNameLetter(enemyId, 1);
       if (suffix & ENEMY_LETTER_FIRST_TOO)
-        BattleEnemy_LetterFirstOfKind(classId);
-      BattleUnit_SetFar(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
+        BattleEnemy_LetterFirstOfKind(enemyId);
+      BattleUnit_SetFar(newUnitId, enemyId, suffix & ENEMY_LETTER_MASK);
       // Fill a removed enemy's place in the list, or append the newcomer.
       {
         s32 i;

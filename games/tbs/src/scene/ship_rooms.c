@@ -2949,7 +2949,7 @@ static void ShipRooms_ShowRowing(void) {
   Event_Wait(30);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
-  ShipRooms_InstallRowingDeckActors(ANIMATION_STEP_NORMAL);
+  ShipRooms_InstallRowingDeckActors(SPRITE_ANIMATION_STEP_NORMAL);
   Event_Wait(80);
   ShipRooms_InstallRowingDeckActors(0);
   Event_Wait(60);
@@ -2957,7 +2957,7 @@ static void ShipRooms_ShowRowing(void) {
   Event_Wait(30);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
-  ShipRooms_InstallRowingDeckActors(ANIMATION_STEP_NORMAL);
+  ShipRooms_InstallRowingDeckActors(SPRITE_ANIMATION_STEP_NORMAL);
   Event_Wait(80);
   ShipRooms_InstallRowingDeckActors(0);
   Event_Wait(90);
@@ -3268,38 +3268,38 @@ static void ShipRooms_InstallRowingDeckActors(u32 animationStep) {
 }
 
 /// Sets a passenger at the oars rowing at a pace of their own beside the
-/// oarsmen's ANIMATION_STEP_NORMAL: the head guide and the sweating passenger
-/// as fast, the stared-at passenger and the warrior a quarter faster, the
-/// second guide and the ticket grumbler at half, and the lady, the muscle
+/// oarsmen's SPRITE_ANIMATION_STEP_NORMAL: the head guide and the sweating
+/// passenger as fast, the stared-at passenger and the warrior a quarter faster,
+/// the second guide and the ticket grumbler at half, and the lady, the muscle
 /// admirer and the old man at a quarter.
 static void ShipRooms_PoseActor(s32 id) {
   switch (id) {
   case ACTOR_ROWING_SECOND_GUIDE:
     Actor_SetAnimation(id, ANIM_SECOND_GUIDE_ROW);
-    Actor_SetAnimationSpeedById(id, ANIMATION_STEP_NORMAL / 2);
+    Actor_SetAnimationSpeedById(id, SPRITE_ANIMATION_STEP_NORMAL / 2);
     break;
   case ACTOR_ROWING_HEAD_GUIDE:
   case ACTOR_ROWING_SWEATING_PASSENGER:
     Actor_SetAnimation(id, ANIM_ROW);
-    Actor_SetAnimationSpeedById(id, ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeedById(id, SPRITE_ANIMATION_STEP_NORMAL);
     break;
   case ACTOR_ROWING_STARED_AT_PASSENGER:
   case ACTOR_ROWING_WARRIOR:
     Actor_SetAnimation(id, ANIM_ROW);
-    Actor_SetAnimationSpeedById(id, ANIMATION_STEP_NORMAL * 5 / 4);
+    Actor_SetAnimationSpeedById(id, SPRITE_ANIMATION_STEP_NORMAL * 5 / 4);
     break;
   case ACTOR_ROWING_TICKET_GRUMBLER:
     Actor_SetAnimation(id, YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_ROW);
-    Actor_SetAnimationSpeedById(id, ANIMATION_STEP_NORMAL / 2);
+    Actor_SetAnimationSpeedById(id, SPRITE_ANIMATION_STEP_NORMAL / 2);
     break;
   case ACTOR_ROWING_LADY:
   case ACTOR_ROWING_MUSCLE_ADMIRER:
     Actor_SetAnimation(id, ANIM_ROW);
-    Actor_SetAnimationSpeedById(id, ANIMATION_STEP_NORMAL / 4);
+    Actor_SetAnimationSpeedById(id, SPRITE_ANIMATION_STEP_NORMAL / 4);
     break;
   case ACTOR_ROWING_OLD_MAN:
     Actor_SetAnimation(id, OLD_MAN_WITH_CANE_ANIMATION_ROW);
-    Actor_SetAnimationSpeedById(id, ANIMATION_STEP_NORMAL / 4);
+    Actor_SetAnimationSpeedById(id, SPRITE_ANIMATION_STEP_NORMAL / 4);
     break;
   }
 }
@@ -3976,7 +3976,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), 0);
-  ShipRooms_InstallRowingDeckActors(ANIMATION_STEP_NORMAL);
+  ShipRooms_InstallRowingDeckActors(SPRITE_ANIMATION_STEP_NORMAL);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
@@ -4157,7 +4157,7 @@ static void ShipRooms_ReachIsland(void) {
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROWING_KAJA), 0);
-  ShipRooms_InstallRowingDeckActors(ANIMATION_STEP_NORMAL);
+  ShipRooms_InstallRowingDeckActors(SPRITE_ANIMATION_STEP_NORMAL);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);

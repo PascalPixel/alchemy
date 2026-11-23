@@ -145,7 +145,7 @@ enum {
   ANIM_FEIZHI_CROUCH = 5,
   /// SPRITE_TURNING_ROCK's mossy rock (turning_rock.png's frame 1). Its first
   /// animations show picture 0, a purple glow.
-  TURNING_ROCK_ANIMATION_MOSSY = 2,
+  ANIM_TURNING_ROCK_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,
   ANIM_MONK_MEDITATE = 5
 };
@@ -943,7 +943,7 @@ s32 Scene_Initialize(void) {
     Scene_QueueMusic(SE_AMBIENT_WIND);
     Actor_SetAnimation(ACTOR_MEDITATING_MONK, ANIM_MONK_MEDITATE);
     Actor_SetAnimation(ACTOR_MONK_SENSING_ANXIETY, ANIM_MONK_MEDITATE);
-    Actor_SetAnimation(ACTOR_MOSSY_ROCK, TURNING_ROCK_ANIMATION_MOSSY);
+    Actor_SetAnimation(ACTOR_MOSSY_ROCK, ANIM_TURNING_ROCK_MOSSY);
     MapGrid_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_HideChest();
     if (GameFlag_Get(FLAG_HSU_RESCUED)) {

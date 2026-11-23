@@ -1818,7 +1818,7 @@ static void ColosseumEntrance_InitializeContestants(void) {
   Actor_SetSpriteColorById(ACTOR_NAVAMPA, SPRITE_COLOR_RBG);
   Actor_SetSpriteColorById(ACTOR_BUFORD, SPRITE_COLOR_GREY);
   // Each warrior paces at his own speed, so that none move in step: 10 to 60
-  // against ANIMATION_STEP_NORMAL's 16, while Satrage stands still.
+  // against SPRITE_ANIMATION_STEP_NORMAL's 16, while Satrage stands still.
   Actor_SetAnimationSpeedById(ACTOR_AZART, 10);
   Actor_SetAnimationSpeedById(ACTOR_GALAHAD, 20);
   Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STILL);

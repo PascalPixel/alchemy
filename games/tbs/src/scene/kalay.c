@@ -1087,11 +1087,11 @@ static void Kalay_StopTrackingLeader(void) {
 /// Stepping from a hall of the Kalay Tunnel back into its narrow corridors,
 /// the faint green glow drifts after Isaac over the floor again.
 static void Kalay_StartTrackingLeader(void) {
-  struct FadeOverlayWork *overlay;
+  struct FadeOverlayWork *work;
 
   if (Event_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
-    overlay = gFadeOverlayWork;
-    overlay->actor = Actor_Get(ACTOR_PARTY_LEADER);
+    work = gFadeOverlayWork;
+    work->actor = Actor_Get(ACTOR_PARTY_LEADER);
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 }
@@ -1242,7 +1242,7 @@ static void Kalay_PrepareTunnelPassage(void) {
 /// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom).
 static void Kalay_PrepareTunnelTreasureRoom(void) {
   s32 following;
-  struct FadeOverlayWork *overlay;
+  struct FadeOverlayWork *work;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1250,12 +1250,12 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
   // The overlay follows the leader except on the way down from the town.
 #if TBS_PATCH_1
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    overlay = gFadeOverlayWork;
+    work = gFadeOverlayWork;
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (following != 0)
       following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
-    overlay->actor = (struct Actor *)following;
+    work->actor = (struct Actor *)following;
   } else {
     Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gMainRoutineWork.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
@@ -1266,12 +1266,12 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
 #else
   Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    overlay = gFadeOverlayWork;
+    work = gFadeOverlayWork;
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (following != 0)
       following = (s32)Actor_Get(ACTOR_PARTY_LEADER);
-    overlay->actor = (struct Actor *)following;
+    work->actor = (struct Actor *)following;
   } else if (gMainRoutineWork.entrance ==
              KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
     gFadeOverlayWork->actor = NULL;

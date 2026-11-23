@@ -1247,15 +1247,15 @@ static void CrossboneIsleSteppingStones_FreezeSecondPuddle(void) {
 static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   struct Actor *leader;
   struct Actor *puddle;
-  struct FieldEffectWork *effects;
+  struct FieldEffectWork *effectWork;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   puddle = Actor_Get(ACTOR_THIRD_PUDDLE);
-  effects = gFieldEffectWork;
+  effectWork = gFieldEffectWork;
   if (FIELD_CELL(puddle->x.fixed) == FIELD_CELL(leader->x.fixed) &&
       FIELD_CELL(puddle->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
-    effects->childMode = 1;
+    effectWork->childMode = 1;
   } else {
     GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
   }

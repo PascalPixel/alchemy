@@ -1,5 +1,5 @@
 /// @file
-/// Froth and Whirlwind.
+/// Froth's bubbles that burst into vortices, and Whirlwind's tornadoes.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -9,7 +9,8 @@
 
 #define WHIRLWIND_FRAMES 80 ///< frames of the tornadoes
 
-/// The vortex's three halves, then the bubble picture.
+/// Froth's sheet: the vortex's three pictures, each its left half (the right is
+/// drawn mirrored), then the bubble.
 #define FROTH_VORTEX_HALF_WIDTH 16
 #define FROTH_VORTEX_HALF_HEIGHT 64
 #define FROTH_BUBBLE_PICTURE_WIDTH 12
@@ -73,7 +74,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
-  // The bubbles start at the user's chest with random velocities.
+  // The bubbles start at the top of the user, at random velocities.
   source = BattleObject_GetFar(args->user)->object;
   y = source->y + BattleUnit_GetEffectHeightFar(args->user);
   for (i = 0; i != FROTH_BUBBLE_SLOTS; i++) {

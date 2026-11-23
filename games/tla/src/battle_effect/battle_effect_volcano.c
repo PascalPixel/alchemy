@@ -1,15 +1,12 @@
 /// @file
-/// Volcano.
+/// Volcano: pillars of fire scroll up among the targets over a flickering
+/// flame, each erupting in a fountain of sparks and spitting more.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
-
-// The fire pillars stand among the targets and scroll a column of fire up over
-// a flickering flame; each erupts in a fountain of sparks and keeps spitting
-// more.
 
 #define VOLCANO_FRAMES 96
 /// The frames the pillars burn, and the strongest variant's camera turns.

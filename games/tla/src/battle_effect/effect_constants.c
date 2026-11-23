@@ -1,6 +1,7 @@
 /// @file
-/// The constants the battle effects copy into their locals, after the effect
-/// code and in its order: scales, points and widths.
+/// The constants the battle effects copy into their locals, in the order of
+/// the effects that read them: mostly the scales their sprites are placed at,
+/// and a few corners, points and widths.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -8,13 +9,14 @@
 #include "battle_effect/battle_effect.h"
 #include "graphics/render_placement.h"
 
-/// The unit scale (FIXED_ONE across and down) most effects start from.
+/// A sprite drawn at its own size, which most effects place theirs at.
 #define UNIT_SCALE {FIXED_ONE, FIXED_ONE}
 
 /// Cruel Ruin's scale for the summon, copied each frame before it is placed.
 const struct Scale gCruelRuin_UnitScale = UNIT_SCALE;
 
-/// Eclipse's scale for the summon, copied each frame before it is placed.
+/// Eclipse's scale for the dragon's sprites, copied each frame before they are
+/// placed.
 const struct Scale gEclipse_Scales = UNIT_SCALE;
 
 /// Unused: two more scales after Eclipse's, each word 0x55555556 (2^32 / 3
@@ -24,7 +26,7 @@ const struct Scale gEclipse_UnusedScales[2] = {
     {0x55555556, 0x55555556},
 };
 
-/// The comets' unit scale.
+/// The comets' scale.
 const struct Scale gProcne_UnitScale = UNIT_SCALE;
 
 /// Unused: three words after Procne's scale, 2^32 / 36 and twice 2^32 / 90,
@@ -48,6 +50,7 @@ const s16 gThor_Points[6][2] = {
 /// The scale each of Gaia's rocks starts from before it grows.
 const struct Scale gGaia_UnitScale = UNIT_SCALE;
 
+/// The white flake's scale as it flutters away at Ulysses's end.
 const struct SpriteScale gUlysses_ParticleScale = {{UNIT_SCALE}};
 
 /// The ship's scale in Ulysses, copied each frame it sails.
@@ -62,7 +65,7 @@ const struct Scale gFormationObjects_LargeScale = {
     FIXED_ONE * 5 / 4,
 };
 
-/// One to one.
+/// The statue's scale in Ramses.
 const struct SpriteScale gRamses_UnitScale = {{UNIT_SCALE}};
 
 /// The formation objects' scale in Judgment.
@@ -97,20 +100,22 @@ const struct Scale gCharon_RevealScale = UNIT_SCALE;
 /// Charon's scale in the finale.
 const struct Scale gCharon_FinaleScale = UNIT_SCALE;
 
+/// Flora's scale.
 const struct Scale gFlora_UnitScale = UNIT_SCALE;
 
-/// The scale of Daedalus's waves.
+/// The scale of the forest canopy Daedalus flies over.
 const struct Scale gDaedalus_CanopyScale = UNIT_SCALE;
 
-/// The scale of Daedalus's ship.
+/// The scale of the pieces of Daedalus's machine.
 const struct Scale gDaedalus_MachineScale = UNIT_SCALE;
 
-/// The scale of Daedalus's particles, a tenth larger.
+/// The scale of Daedalus's missiles, a tenth larger than their pictures.
 const struct Scale gDaedalus_MissileScale = {
     FIXED_ONE * 11 / 10,
     FIXED_ONE * 11 / 10,
 };
 
+/// The rocket's scale in Daedalus's second strike, twice its size.
 const struct Scale gDaedalusStrike_RocketScale = {FIXED_ONE * 2, FIXED_ONE * 2};
 
 /// Coatlicue's scale.

@@ -2546,13 +2546,7 @@ void Vent_Puff(s32 *position, s32 base) {
 
 #include "shared/vents_start.h"
 
-/// Unused: whether vent index is blowing now.
-UNUSED s32 Vent_IsBlowing(s32 index) {
-  struct VentWork *work;
-
-  work = VENT_WORK;
-  return VENT_AT(work, index)->entries[0].active;
-}
+#include "shared/vent_is_blowing.h"
 
 /// Starts or stops vent index's gust.
 s32 Vent_SetBlowing(s32 index, s32 blowing) {
@@ -2567,13 +2561,7 @@ s32 Vent_GetCounter(void) { return VENT_WORK->counter; }
 
 #include "shared/vent_advance_counter.h"
 
-/// Unused: sets the speed of vent index's gust, in 16.16 pixels a frame.
-UNUSED void Vent_SetGust(s32 index, s32 value) {
-  struct VentWork *work;
-
-  work = VENT_WORK;
-  VENT_AT(work, index)->entries[0].value = value;
-}
+#include "shared/vent_set_gust.h"
 
 #include "shared/vent_set_id.h"
 

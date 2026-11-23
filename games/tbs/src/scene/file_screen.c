@@ -55,7 +55,6 @@ extern u16 gFileScreen_PasswordFlags[];
 extern u16 gFileScreen_PasswordKeyItems[];
 extern u16 gFileScreen_PasswordStackItems[];
 
-// Edition-specific text and window layout values.
 /// The password buffer: a Gold password is 260 symbols
 /// (FileScreen_EncodePassword) in every edition, which the Japanese buffer
 /// holds exactly.
@@ -417,9 +416,9 @@ static s32 FileScreen_IsRetreatBlocked(void) {
   return -NONZERO(mapDifference);
 }
 
-/// A view of the scene state that names its copy of the play time, checked
-/// against the loaded game's.
-struct SaveMenuMapLocalState {
+/// The loaded file's scene state as Continue reads it: the play time it holds
+/// must match the file's own, or the data is corrupted.
+struct FileScreenLoadedSceneState {
   u8 mapAndInventory[256]; ///< gSceneLocalState, then gInventorySnapshot
   /// The play time in frames, which Save_BuildFileSummary copies here
   /// when saving.
@@ -586,7 +585,8 @@ menu_top:;
       GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
       GameFlag_Set(FLAG_SAVE_RESTARTED_AT_SANCTUM);
     } else if (state->playTime !=
-               ((struct SaveMenuMapLocalState *)gSceneLocalState)->playTime) {
+               ((struct FileScreenLoadedSceneState *)gSceneLocalState)
+                   ->playTime) {
       // "Some data is corrupted and cannot be recovered."
       FieldMessage_Show(MsgSaveDataCorrupted,
                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_LOWER);

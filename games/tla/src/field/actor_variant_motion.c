@@ -1,5 +1,6 @@
 /// @file
-/// The speaker definitions and the actors' variant scripts.
+/// Data the field keeps here in ROM order: the speakers' voices, the actors'
+/// bounce, the dust puffs' scripts and a blinking actor's colours.
 
 #include "types.h"
 #include "macros.h"
@@ -7,47 +8,82 @@
 #include "field/actor_script.h"
 #include "field/sprite.h"
 
-/// 243 rows searched by ID by Speaker_FindDefinition, followed by one more
-/// row; word-aligned, as an array of structures is.
+/// Each sprite's voice as it speaks and the lines it says while Halted, as
+/// halfword pairs of a sprite id and a struct SpeakerDefinition's two bytes
+/// (screen_transition.h): Speaker_FindDefinition searches the first 243 rows
+/// by sprite id and gives the last, the default, for any other sprite.
+#define SPEAKER(sprite, voice) {sprite, voice}
+/// A sprite with no voice that Halt never stops (SPEAKER_VOICE_NONE and
+/// SPEAKER_HALTED_LINES_NONE).
+#define SPEAKER_SILENT(sprite) {sprite, -1}
 // clang-format off
 const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
-    {0, 16},   {1, 16},   {2, 16},   {3, 12},   {4, 28},   {5, 12},   {6, 12},
-    {16, 28},  {17, 8},   {18, 8},   {19, 24},  {20, 16},  {21, 24},  {22, 8},
-    {23, 12},  {24, 28},  {25, 24},  {26, 28},  {27, 28},  {28, 28},  {29, 16},
-    {30, 12},  {31, 24},  {32, 12},  {33, 28},  {34, 24},  {35, 24},  {36, 20},
-    {37, 20},  {38, 8},   {39, 8},   {40, 16},  {41, 28},  {42, 24},  {43, 24},
-    {44, 28},  {45, 24},  {46, 28},  {47, 16},  {48, 12},  {49, 12},  {50, 16},
-    {51, 16},  {52, 28},  {53, 16},  {54, 12},  {55, 24},  {59, 20},  {60, 28},
-    {61, 20},  {62, 28},  {63, 12},  {64, 28},  {65, 20},  {66, 20},  {67, 16},
-    {68, 28},  {69, 8},   {70, 12},  {71, 16},  {72, 12},  {73, 28},  {74, 20},
-    {75, 24},  {76, 20},  {77, 8},   {78, 4},   {79, 16},  {80, 28},  {81, 4},
-    {82, 20},  {83, 28},  {84, 16},  {85, 28},  {86, 12},  {87, 28},  {88, 16},
-    {89, 12},  {90, 28},  {91, 8},   {92, 4},   {93, 28},  {94, 16},  {95, 12},
-    {96, 28},  {97, 20},  {98, 24},  {99, 20},  {100, 8},  {101, 4},  {102, 28},
-    {103, 16}, {104, 28}, {105, 28}, {106, 8},  {107, 16}, {108, 20}, {109, 16},
-    {110, 12}, {111, 12}, {112, 16}, {113, 16}, {114, 28}, {115, 28}, {116, 20},
-    {117, 16}, {118, 28}, {119, 28}, {120, 12}, {121, 16}, {122, 20}, {123, 20},
-    {124, 24}, {125, 20}, {126, 8},  {127, 4},  {128, 20}, {129, 20}, {130, 20},
-    {131, 28}, {132, 4},  {133, 28}, {134, 28}, {135, 20}, {136, 8},  {137, 28},
-    {138, 4},  {139, 24}, {140, 20}, {141, 28}, {142, 20}, {143, 20}, {144, 28},
-    {145, 20}, {146, 8},  {147, 4},  {148, 24}, {149, 24}, {150, 20}, {151, 8},
-    {152, 4},  {153, 16}, {154, 24}, {155, 28}, {156, 20}, {157, 16}, {158, 16},
-    {159, 24}, {160, 28}, {161, 4},  {162, 8},  {163, 4},  {164, 24}, {165, 20},
-    {166, 20}, {167, 8},  {168, 4},  {169, 28}, {170, 28}, {171, 24}, {172, 12},
-    {173, 20}, {174, 28}, {175, 16}, {176, 20}, {177, 16}, {178, 8},  {179, 4},
-    {180, 28}, {181, 24}, {182, 24}, {183, 24}, {184, 16}, {185, 28}, {186, 4},
-    {188, 24}, {189, 0},  {190, 12}, {191, 8},  {192, 16}, {193, 28}, {194, 20},
-    {195, 28}, {196, 20}, {187, 28}, {197, 24}, {198, 12}, {199, 28}, {200, 20},
-    {201, 24}, {202, 28}, {211, 28}, {205, 28}, {203, 0},  {204, 0},  {206, 28},
-    {209, 20}, {210, 16}, {212, 28}, {213, 16}, {214, 28}, {215, 28}, {216, 0},
-    {217, 12}, {218, 4},  {219, 8},  {220, 16}, {221, 28}, {222, 16}, {223, 28},
-    {224, 28}, {225, 28}, {226, 28}, {227, 28}, {228, 16}, {232, 28}, {231, 28},
-    {233, 28}, {235, 0},  {344, 28}, {236, 16}, {237, 24}, {238, 28}, {229, 16},
-    {230, 28}, {234, 28}, {235, 4},  {239, 28}, {240, 28}, {241, 28}, {56, 24},
-    {57, 16},  {58, 28},  {246, 16}, {243, 16}, {245, 16}, {244, 16}, {487, -1},
-    {255, -1}, {450, -1}, {325, -1}, {489, -1}, {421, -1}, {0, 16},
+    SPEAKER(0, 16), SPEAKER(1, 16), SPEAKER(2, 16), SPEAKER(3, 12),
+    SPEAKER(4, 28), SPEAKER(5, 12), SPEAKER(6, 12), SPEAKER(16, 28),
+    SPEAKER(17, 8), SPEAKER(18, 8), SPEAKER(19, 24), SPEAKER(20, 16),
+    SPEAKER(21, 24), SPEAKER(22, 8), SPEAKER(23, 12), SPEAKER(24, 28),
+    SPEAKER(25, 24), SPEAKER(26, 28), SPEAKER(27, 28), SPEAKER(28, 28),
+    SPEAKER(29, 16), SPEAKER(30, 12), SPEAKER(31, 24), SPEAKER(32, 12),
+    SPEAKER(33, 28), SPEAKER(34, 24), SPEAKER(35, 24), SPEAKER(36, 20),
+    SPEAKER(37, 20), SPEAKER(38, 8), SPEAKER(39, 8), SPEAKER(40, 16),
+    SPEAKER(41, 28), SPEAKER(42, 24), SPEAKER(43, 24), SPEAKER(44, 28),
+    SPEAKER(45, 24), SPEAKER(46, 28), SPEAKER(47, 16), SPEAKER(48, 12),
+    SPEAKER(49, 12), SPEAKER(50, 16), SPEAKER(51, 16), SPEAKER(52, 28),
+    SPEAKER(53, 16), SPEAKER(54, 12), SPEAKER(55, 24), SPEAKER(59, 20),
+    SPEAKER(60, 28), SPEAKER(61, 20), SPEAKER(62, 28), SPEAKER(63, 12),
+    SPEAKER(64, 28), SPEAKER(65, 20), SPEAKER(66, 20), SPEAKER(67, 16),
+    SPEAKER(68, 28), SPEAKER(69, 8), SPEAKER(70, 12), SPEAKER(71, 16),
+    SPEAKER(72, 12), SPEAKER(73, 28), SPEAKER(74, 20), SPEAKER(75, 24),
+    SPEAKER(76, 20), SPEAKER(77, 8), SPEAKER(78, 4), SPEAKER(79, 16),
+    SPEAKER(80, 28), SPEAKER(81, 4), SPEAKER(82, 20), SPEAKER(83, 28),
+    SPEAKER(84, 16), SPEAKER(85, 28), SPEAKER(86, 12), SPEAKER(87, 28),
+    SPEAKER(88, 16), SPEAKER(89, 12), SPEAKER(90, 28), SPEAKER(91, 8),
+    SPEAKER(92, 4), SPEAKER(93, 28), SPEAKER(94, 16), SPEAKER(95, 12),
+    SPEAKER(96, 28), SPEAKER(97, 20), SPEAKER(98, 24), SPEAKER(99, 20),
+    SPEAKER(100, 8), SPEAKER(101, 4), SPEAKER(102, 28), SPEAKER(103, 16),
+    SPEAKER(104, 28), SPEAKER(105, 28), SPEAKER(106, 8), SPEAKER(107, 16),
+    SPEAKER(108, 20), SPEAKER(109, 16), SPEAKER(110, 12), SPEAKER(111, 12),
+    SPEAKER(112, 16), SPEAKER(113, 16), SPEAKER(114, 28), SPEAKER(115, 28),
+    SPEAKER(116, 20), SPEAKER(117, 16), SPEAKER(118, 28), SPEAKER(119, 28),
+    SPEAKER(120, 12), SPEAKER(121, 16), SPEAKER(122, 20), SPEAKER(123, 20),
+    SPEAKER(124, 24), SPEAKER(125, 20), SPEAKER(126, 8), SPEAKER(127, 4),
+    SPEAKER(128, 20), SPEAKER(129, 20), SPEAKER(130, 20), SPEAKER(131, 28),
+    SPEAKER(132, 4), SPEAKER(133, 28), SPEAKER(134, 28), SPEAKER(135, 20),
+    SPEAKER(136, 8), SPEAKER(137, 28), SPEAKER(138, 4), SPEAKER(139, 24),
+    SPEAKER(140, 20), SPEAKER(141, 28), SPEAKER(142, 20), SPEAKER(143, 20),
+    SPEAKER(144, 28), SPEAKER(145, 20), SPEAKER(146, 8), SPEAKER(147, 4),
+    SPEAKER(148, 24), SPEAKER(149, 24), SPEAKER(150, 20), SPEAKER(151, 8),
+    SPEAKER(152, 4), SPEAKER(153, 16), SPEAKER(154, 24), SPEAKER(155, 28),
+    SPEAKER(156, 20), SPEAKER(157, 16), SPEAKER(158, 16), SPEAKER(159, 24),
+    SPEAKER(160, 28), SPEAKER(161, 4), SPEAKER(162, 8), SPEAKER(163, 4),
+    SPEAKER(164, 24), SPEAKER(165, 20), SPEAKER(166, 20), SPEAKER(167, 8),
+    SPEAKER(168, 4), SPEAKER(169, 28), SPEAKER(170, 28), SPEAKER(171, 24),
+    SPEAKER(172, 12), SPEAKER(173, 20), SPEAKER(174, 28), SPEAKER(175, 16),
+    SPEAKER(176, 20), SPEAKER(177, 16), SPEAKER(178, 8), SPEAKER(179, 4),
+    SPEAKER(180, 28), SPEAKER(181, 24), SPEAKER(182, 24), SPEAKER(183, 24),
+    SPEAKER(184, 16), SPEAKER(185, 28), SPEAKER(186, 4), SPEAKER(188, 24),
+    SPEAKER(189, 0), SPEAKER(190, 12), SPEAKER(191, 8), SPEAKER(192, 16),
+    SPEAKER(193, 28), SPEAKER(194, 20), SPEAKER(195, 28), SPEAKER(196, 20),
+    SPEAKER(187, 28), SPEAKER(197, 24), SPEAKER(198, 12), SPEAKER(199, 28),
+    SPEAKER(200, 20), SPEAKER(201, 24), SPEAKER(202, 28), SPEAKER(211, 28),
+    SPEAKER(205, 28), SPEAKER(203, 0), SPEAKER(204, 0), SPEAKER(206, 28),
+    SPEAKER(209, 20), SPEAKER(210, 16), SPEAKER(212, 28), SPEAKER(213, 16),
+    SPEAKER(214, 28), SPEAKER(215, 28), SPEAKER(216, 0), SPEAKER(217, 12),
+    SPEAKER(218, 4), SPEAKER(219, 8), SPEAKER(220, 16), SPEAKER(221, 28),
+    SPEAKER(222, 16), SPEAKER(223, 28), SPEAKER(224, 28), SPEAKER(225, 28),
+    SPEAKER(226, 28), SPEAKER(227, 28), SPEAKER(228, 16), SPEAKER(232, 28),
+    SPEAKER(231, 28), SPEAKER(233, 28), SPEAKER(235, 0), SPEAKER(344, 28),
+    SPEAKER(236, 16), SPEAKER(237, 24), SPEAKER(238, 28), SPEAKER(229, 16),
+    SPEAKER(230, 28), SPEAKER(234, 28), SPEAKER(235, 4), SPEAKER(239, 28),
+    SPEAKER(240, 28), SPEAKER(241, 28), SPEAKER(56, 24), SPEAKER(57, 16),
+    SPEAKER(58, 28), SPEAKER(246, 16), SPEAKER(243, 16), SPEAKER(245, 16),
+    SPEAKER(244, 16), SPEAKER_SILENT(487), SPEAKER_SILENT(255), SPEAKER_SILENT(450),
+    SPEAKER_SILENT(325), SPEAKER_SILENT(489), SPEAKER_SILENT(421), SPEAKER(0, 16),
 };
-/// Each bounce is 128 bytes, 32 words.
+#undef SPEAKER
+#undef SPEAKER_SILENT
+
+/// One bounce of the squash: wider and shorter, then back over three steps.
 #define VARIANT_BOUNCE                                                         \
   SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \

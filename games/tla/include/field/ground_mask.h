@@ -2,7 +2,8 @@
 #define ALCHEMY_GROUND_MASK_H
 
 /// @file
-/// What The Lost Age's code declares for the files that use it, written once.
+/// The ground mask's work, and the ground particles and the rain that the
+/// weather work holds.
 
 #include "fixed_math.h"
 #include "types.h"

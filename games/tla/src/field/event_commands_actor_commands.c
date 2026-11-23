@@ -13,8 +13,8 @@
 
 struct Actor *Actor_GetById(u32 objectId);
 
-/// Clears an actor's destination, puts it under script control and
-/// stands it still.
+/// Clears an actor's destination, starts its idle script and stands it
+/// still.
 void Actor_ClearDestinationAndStand(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -40,23 +40,23 @@ void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
   }
 }
 
-/// Turns actor objectId to angle through gActor_StepAngleScript, which steps
-/// it round, and waits for the script to end.
-void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
-  struct Actor *actor = Actor_Lookup(objectId);
+/// Turns an actor a step toward angle (gActor_StepAngleScript) and waits for
+/// the script to end.
+void Actor_FaceDirectionAndRefreshById(s32 actorId, s32 angle) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->timer = angle;
     Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
-    Actor_WaitForScriptEndById(objectId);
+    Actor_WaitForScriptEndById(actorId);
   }
 }
 
 /// The event command "set actor sprite priority": fixes the priority of the
 /// actor's sprite and its shadow, which then no longer follow its depth:
 /// clears ACTOR_PRIORITY_AUTOMATIC.
-void Actor_SetSpritePriority(u32 objectId, s32 priority) {
-  struct Actor *actor = Actor_Lookup(objectId);
+void Actor_SetSpritePriority(u32 actorId, s32 priority) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL &&
       (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {

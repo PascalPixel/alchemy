@@ -1,5 +1,6 @@
 /// @file
-/// A Djinni joining the party, and the field effect sprites.
+/// A Djinni's battle start and its joining the party, the field effect
+/// sprites' slots, and a Jupiter Djinni's light.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -212,13 +213,13 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
     return;
   Event_Start();
   if (actor != -1) {
-    if (element == 0)
+    if (element == ELEMENT_VENUS)
       Djinn_RunVenusJoinEffect(actor);
-    else if (element == 1)
+    else if (element == ELEMENT_MERCURY)
       Djinn_RunMercuryJoinEffect(actor);
-    else if (element == 2)
+    else if (element == ELEMENT_MARS)
       Djinn_RunMarsJoinEffect(actor);
-    else if (element == 3)
+    else if (element == ELEMENT_JUPITER)
       Djinn_RunJupiterJoinEffect(actor);
   }
   WorldMap_Freeze();
@@ -253,32 +254,33 @@ void Djinn_RestoreActorAfterBattle(void) {
     if (scene - DJINNI_BATTLE_EVENT_FIRST <=
             ELEMENT_COUNT * DJINN_PER_ELEMENT &&
         party->sequenceResult > 0) {
-      s32 *owner;
+      s32 *leaderId;
 
-      for (id = ACTOR_FIRST_PLACED, owner = &party->leaderActorId;
+      for (id = ACTOR_FIRST_PLACED, leaderId = &party->leaderActorId;
            id <= FIELD_ACTOR_COUNT - 1; id++) {
-        struct ActorPlacement *desc =
+        struct ActorPlacement *placement =
             (struct ActorPlacement *)Scene_FindActorPlacement(id);
-        struct Actor *obj;
+        struct Actor *actor;
 
-        if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
-                                scene - DJINNI_BATTLE_EVENT_FIRST)
+        if (placement == NULL || placement->condition - FLAG_DJINN_FIRST !=
+                                     scene - DJINNI_BATTLE_EVENT_FIRST)
           continue;
-        obj = Actor_Lookup(id);
-        if (obj == NULL)
+        actor = Actor_Lookup(id);
+        if (actor == NULL)
           continue;
         if (flags == 0) {
-          obj->groundHeight = flags;
-          obj->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-          Actor_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
+          actor->groundHeight = flags;
+          actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+          Actor_SetPositionAndResetMotionFar(actor, placement->x, placement->y,
+                                             placement->z);
         } else {
-          struct Actor *selection = Actor_Lookup(*owner);
+          struct Actor *leader = Actor_Lookup(*leaderId);
 
-          Actor_SetPositionAndResetMotionFar(obj, selection->x.fixed,
-                                             selection->y.fixed,
-                                             selection->z.fixed - toFIXED(32));
+          Actor_SetPositionAndResetMotionFar(actor, leader->x.fixed,
+                                             leader->y.fixed,
+                                             leader->z.fixed - toFIXED(32));
         }
-        Actor_SelectAnimationFar(obj, ANIM_STAND);
+        Actor_SelectAnimationFar(actor, ANIM_STAND);
       }
     }
   }
@@ -289,8 +291,8 @@ void Djinn_RestoreActorAfterBattle(void) {
 /// fled, -1 when it lost), as The Broken Seal's; a mimic chest's event
 /// (CONDITION_FLAG_SET) falls through to the clear.
 void Djinn_ResolvePending(s32 shown) {
-  struct MainRoutineWork *st = &gMainRoutineWork;
-  s16 *pending = &st->pendingDjinni;
+  struct MainRoutineWork *work = &gMainRoutineWork;
+  s16 *pending = &work->pendingDjinni;
   s32 kind = *pending & DJINN_PENDING_KIND_MASK;
   s32 flag = *pending & DJINN_PENDING_EVENT_MASK;
 
@@ -300,14 +302,16 @@ void Djinn_ResolvePending(s32 shown) {
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
-      if (st->sequenceResult > 0 && st->sequenceResult != BATTLE_OUTCOME_FLED)
+      if (work->sequenceResult > 0 &&
+          work->sequenceResult != BATTLE_OUTCOME_FLED)
         return;
       GameFlag_Set(flag -
                    (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
       *pending = kind;
       return;
     } else if (kind == CONDITION_FLAG_SET) {
-      if (st->sequenceResult > 0 && st->sequenceResult != BATTLE_OUTCOME_FLED)
+      if (work->sequenceResult > 0 &&
+          work->sequenceResult != BATTLE_OUTCOME_FLED)
         GameFlag_Set(flag);
     } else
       return;
@@ -316,7 +320,7 @@ void Djinn_ResolvePending(s32 shown) {
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT) {
       flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
-      if (st->sequenceResult > 0) {
+      if (work->sequenceResult > 0) {
         s32 djinn = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinn / DJINN_PER_ELEMENT;
         s32 index = djinn % DJINN_PER_ELEMENT;

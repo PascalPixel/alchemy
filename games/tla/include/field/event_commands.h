@@ -2,7 +2,9 @@
 #define ALCHEMY_FIELD_EVENT_COMMANDS_H
 
 /// @file
-/// What games/tla/src/field/ declares for the files that use it, written once.
+/// What the event commands share with the field and the scenes: the field
+/// Psynergy's casts and their works, the Djinn's join effects, the World
+/// Picture's state, and the encounter zones of the story's battles.
 
 #include "types.h"
 #include "system/vector3.h"
@@ -360,8 +362,6 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z);
 void Party_LearnAbility(s32 unit, s32 ability);
 void Party_RemoveMemberRestored(s32 owner);
 
-struct Actor;
-
 void FieldEffect_CheckCloakTile(void);
 
 void FieldPsynergy_MarkWorldMapTilesUsed(void);
@@ -394,8 +394,6 @@ void FieldPsynergy_UpdateMindReadWave(void);
 void FieldPsynergy_RestoreMindReadPalette(void);
 
 void FieldEffect_ArmBg0HBlankDma(void);
-
-struct Actor;
 
 /// Three coordinates of a burst piece's place, x, y and z, filled in turn as
 /// Vector_AddPolarOffset reads them.

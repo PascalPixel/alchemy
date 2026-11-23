@@ -6,6 +6,7 @@
 /// the battle environments that take it (gWorldMap_EncounterRules); a Djinni
 /// zone's, the Djinn whose battles it holds (gEncounter_AreaEntryTable).
 
+#include "battle/formations.h"
 #include "field/encounter_zone.h"
 
 /// Each encounter zone's battles, a row a zone, the zone the ground under the
@@ -54,7 +55,8 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {45, 46, 47},
         .weights = {10, 10, 10},
     },
-    // zone 9
+    // Story battles: at Venus Lighthouse's entrance (slot 0), Suhalla Gate (1
+    // to 3), the Kandorean Temple (4) and on the World Map (5)
     {
         .formations = {49, 50, 51, 52, 53, 637},
         .weights = {10, 10, 10, 10, 10, 10},
@@ -64,19 +66,21 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {55, 56},
         .weights = {10, 10},
     },
-    // zone 11
+    // ENCOUNTER_TABLE_AQUA_JELLIES
     {
         .formations = {58, 59},
         .weights = {50, 10},
     },
-    // zone 12
+    // ENCOUNTER_TABLE_SERPENT
     {
         .formations = {61, 62, 63, 64, 65, 66, 67},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
-    // zone 13
+    // ENCOUNTER_TABLE_MOAPA
     {
-        .formations = {69, 70, 71, 72, 73, 74, 75, 76},
+        .formations = {69, 70, 71, 72, 73, FORMATION_KARST_AND_AGATIO_A,
+                       FORMATION_KARST_AND_AGATIO_B,
+                       FORMATION_KARST_AND_AGATIO_C},
         .weights = {10, 10, 10, 10, 10, 10, 10, 10},
     },
     // World Map, encounter region 1: beach, shallows and grassland
@@ -697,25 +701,26 @@ const struct EncounterZone gEncounterZones[] = {
     },
     // ENCOUNTER_ZONE_SCRIPTED
     {
-        .formations = {77, 78, 635, 636, 638},
+        .formations = {77, FORMATION_DOOM_DRAGON_A, 635, 636,
+                       FORMATION_KARST_AND_AGATIO_VS_ISAAC},
         .weights = {10, 10, 10, 10, 10},
     },
-    // zone 103
+    // ENCOUNTER_TABLE_HIDDEN_BOSSES
     {
         .formations = {631, 632, 633, 634},
         .weights = {10, 10, 10, 10},
     },
-    // zone 104
+    // The Mimics' battles, slots 0 to 7 (ENCOUNTER_ZONE_MIMIC)
     {
         .formations = {651, 652, 653, 654, 655, 656, 657, 658},
         .weights = {10, 10, 10, 10, 10, 10, 10, 10},
     },
-    // zone 105
+    // The Mimics' battles, slot 8 on
     {
         .formations = {659},
         .weights = {10},
     },
-    // zone 106
+    // ENCOUNTER_TABLE_MAD_PLANTS
     {
         .formations = {641, 642, 643, 644, 645},
         .weights = {10, 10, 10, 10, 10},
@@ -727,14 +732,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {451, 452, 453, 454, 455, 456, 457, 458},
         .weights = {20, 20, 20, 10},
     },
-    // zone 108
+    // Zone 108: no encounter rule or scene names it
     {
         .rate = 35,
         .level = 34,
         .formations = {495, 496, 497, 498, 501, 502, 503, 504},
         .weights = {5, 3, 15, 15, 15, 3, 15, 15},
     },
-    // zone 109
+    // Zone 109: no encounter rule or scene names it
     {
         .rate = 10,
         .level = 34,

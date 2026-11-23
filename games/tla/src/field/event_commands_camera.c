@@ -1,23 +1,22 @@
 /// @file
-/// The event camera.
+/// The event commands that move the camera and wait for it.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 #include "macros.h"
 
-/// The event command "camera move to", as The Broken Seal's
-/// FieldCamera_MoveWithinMapBounds: sends the camera to the requested axes,
+/// The event command "camera move to": sends the camera to the requested axes,
 /// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
-/// screen never shows past its edge. With useSetter 0 the camera jumps there
-/// at once; otherwise it travels at its own speed.
+/// screen never shows past its edge. With pan 0 the camera cuts there at once;
+/// otherwise it pans there at its own speed.
 void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
-                                     FIXED requestedZ, s32 useSetter) {
-  s32 shouldUseSetter;
-  struct FieldWork *runtimeBlock;
+                                     FIXED requestedZ, s32 pan) {
+  s32 panning;
+  struct FieldWork *work;
   s32 minimumX;
   FIXED minimumZ;
   s32 maximumX;
-  FIXED objectZOffset;
+  FIXED height;
   FIXED maximumZ;
   FIXED positionX;
   FIXED positionZ;
@@ -27,19 +26,19 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
 
   positionX = requestedX;
   positionY = requestedY;
-  shouldUseSetter = useSetter;
+  panning = pan;
   positionZ = requestedZ;
-  runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  actor = runtimeBlock->camera;
+  work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  actor = work->camera;
   map = Ram_HeapSlots->mapGrid;
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom, the z limits moved
   // down the map by its height.
   minimumX = map->minX + toFIXED(120);
-  objectZOffset = actor->y.fixed;
-  minimumZ = map->minZ + objectZOffset + toFIXED(96);
+  height = actor->y.fixed;
+  minimumZ = map->minZ + height + toFIXED(96);
   maximumX = map->maxX - toFIXED(120);
-  maximumZ = map->maxZ + objectZOffset - toFIXED(64);
+  maximumZ = map->maxZ + height - toFIXED(64);
   map->origin = &actor->x.fixed;
   Actor_StartIdleFar(actor);
   if (positionX == -1) {
@@ -63,10 +62,10 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   if (positionZ > maximumZ) {
     positionZ = maximumZ;
   }
-  if (shouldUseSetter == 0) {
+  if (panning == 0) {
     SET_ACTOR_POSITION(actor, positionX, positionY, positionZ);
     wait(1U);
-    if (runtimeBlock->mode != ACTOR_SYSTEM_WORLD_MAP) {
+    if (work->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
@@ -76,20 +75,20 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
 
 /// The event command "camera move to actor": FieldCamera_MoveWithinMapBounds to
 /// the actor's x and z.
-void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
-  struct Actor *obj = Actor_Lookup(id);
+void FieldCamera_MoveToActorById(s32 actorId, s32 pan) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (obj != NULL)
-    FieldCamera_MoveWithinMapBounds(obj->x.fixed, -1, obj->z.fixed, use_setter);
+  if (actor != NULL)
+    FieldCamera_MoveWithinMapBounds(actor->x.fixed, -1, actor->z.fixed, pan);
 }
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
-void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
-  struct Actor *obj = Actor_Lookup(id);
+void FieldCamera_MoveToActor(s32 actorId, s32 pan) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (obj != NULL)
-    FieldCamera_MoveWithinMapBounds(obj->x.fixed, obj->y.fixed, obj->z.fixed,
-                                    use_setter);
+  if (actor != NULL)
+    FieldCamera_MoveWithinMapBounds(actor->x.fixed, actor->y.fixed,
+                                    actor->z.fixed, pan);
 }
 
 /// The event command "camera wait for move": waits (at most 600 frames) for
@@ -101,7 +100,8 @@ void FieldCamera_WaitForArrival(void) {
   Event_Wait(2);
 }
 
-/// The event command "get view centre": returns the camera actor.
+/// The event command "get camera": returns the camera's own actor, which the
+/// view centres on.
 struct Actor *FieldCamera_GetActor(void) {
   return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
                                                   sizeof(struct FieldWork)))

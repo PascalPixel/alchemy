@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_MAP_GRID_H
 #define ALCHEMY_MAP_GRID_H
 
+/// @file
+/// The map grid: its layers and cells, the cell behaviors and attributes the
+/// field reads, its tile animations and blend script, and the world map's
+/// collision and battle environments.
+
 #include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"
@@ -100,6 +105,9 @@ enum CellBehavior {
 
 /// MapCell.attributeB's bits.
 enum MapCellAttribute {
+  /// Scoop digs here, or everywhere else where the scene's attributes turn it
+  /// round (FieldWork.sceneAttributeLow, MapGrid_CanScoop).
+  MAP_CELL_SCOOP = 0x01,
   /// Pushing against the cell pushes the actor ahead (Field_RunPushCell).
   MAP_CELL_PUSH = 0x02,
   /// Random battles here roll on the scene's second encounter zone

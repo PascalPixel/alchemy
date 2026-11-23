@@ -2,8 +2,8 @@
 #define ALCHEMY_FIELD_OBJECT_H
 
 /// @file
-/// What games/tla/src/field/actor_*.c declare for the files that use it,
-/// written once.
+/// The field's actors, ropes, tightropes and hanging vines, field effects and
+/// palette fades, as the scenes and the event commands call them.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -65,6 +65,15 @@ extern const u8 gAnimationFacing_EightPictures[8];
 extern const struct ActorPlacement gField_DefaultPlacements[];
 
 void PaletteFade_Initialize(void);
+
+/// The arrival Entrance_PlayArrival played, for the way the last scene was
+/// left.
+enum EntranceArrival {
+  ARRIVAL_NONE = 0,        ///< none: the scene plays its own
+  ARRIVAL_STAIRS_UP = 1,   ///< up stairs, ANIM_LEADER_ARRIVE
+  ARRIVAL_STAIRS_DOWN = 2, ///< down stairs, ANIM_LEADER_ARRIVE_ALTERNATE
+  ARRIVAL_FALLING = 3      ///< falling in from above
+};
 
 s32 Entrance_PlayArrival(void);
 void Exit_StartStairsDown(void);

@@ -172,11 +172,11 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   scene->angle8 = (user->facing + FACING_STEP) & TRIG_TURN * 7 / 8;
   scene->child = target;
   if (user != NULL) {
-    u8 terrain;
+    u8 priorityFlags;
 
-    terrain = user->priorityFlags;
+    priorityFlags = user->priorityFlags;
 
-    scene->savedPriorityFlags = terrain;
+    scene->savedPriorityFlags = priorityFlags;
     scene->savedSpritePriority =
         ((struct Sprite *)user->sprite)->image.priority;
   }
@@ -309,24 +309,25 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
     ((struct WorldMapView *)heap->mapGrid)->tileBufferUsed = mode;
 }
 
-/// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase
-/// taken from the frame count, id and value, then the shared scene, the first
-/// hue step and its colour fade, with FieldPsynergy_UpdateMindReadWave run each
-/// frame.
-void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
+/// Starts Mind Read's wave between the caster and the one it reads
+/// (HEAP_SLOT_MIND_READ): a hue taken from the frame count, the field faded
+/// toward it, the message window greyed for thoughts, and
+/// FieldPsynergy_UpdateMindReadWave run each frame.
+void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId) {
   struct MindReadWork *work;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   work->hue = (gFrameCount * 2) % HUE_DEGREES;
-  work->sourceId = id;
-  work->targetId = value;
+  work->sourceId = casterId;
+  work->targetId = targetId;
   work->delay = 8;
   work->counter = 0;
   FieldPsynergy_FadeToCastColor();
   FieldEffect_AdvanceHueCycle();
-  PaletteFade_SetTarget(
-      RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
+  PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) |
+                            PALETTE_TINT_CUSTOM,
+                        PALETTES_BG);
   PaletteFade_StartInterpolation(8);
   FieldPsynergy_GreyMindReadPalette();
   Task_Add((TaskFunc)FieldPsynergy_UpdateMindReadWave, TASK_PASS_FRAME);
@@ -346,10 +347,9 @@ void FieldPsynergy_StopMindReadWave(void) {
 
 #define MIND_READ_GREY RGB(28, 28, 28) ///< a thought window's light grey
 
-/// Turns WINDOW_COLOR_WHITE and WINDOW_PALETTE's colours from
-/// WINDOW_COLOR_BLACK to WINDOW_COLOR_LIGHT_GREY grey (all but colour 2), so
-/// messages show as thoughts, and starts the BG0 line scroll
-/// (FieldEffect_ArmBg0HBlankDma) at each VBlank.
+/// Greys the message window's white and most of its other colours
+/// (MIND_READ_GREY), so messages read as thoughts, and starts the BG0 line
+/// scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 

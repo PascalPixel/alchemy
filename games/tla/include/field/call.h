@@ -5,11 +5,6 @@
 /// The call layer of the scene files that have not yet moved to
 /// event_inline.h: Call1 to Call11 call a routine with that many arguments,
 /// Value0 to Value4 return its int result.
-///
-/// It is a habit of the whole game written once, as event_inline.h is: a layer,
-/// not a compiler-steering device. Each call passes its arguments through the
-/// inline's own parameters, so where a scene calls a routine again with the
-/// same constant, the constant is built again for each call, as the ROM shows.
 
 #include "types.h"
 

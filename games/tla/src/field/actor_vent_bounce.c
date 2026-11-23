@@ -1,10 +1,10 @@
 /// @file
-/// The motion of an object a vent throws out, shared by overlays 678 and 67C.
-/// scene/scene.h, which the including scene reads first, gives it struct
-/// VentWork, VENT_WORK, DIFF and the two functions' names, VENT_TOUCHING and
-/// VENT_BOUNCE.
+/// The motion of a thing a vent throws out, which Aqua Rock's inside and Taopo
+/// Swamp each keep a copy of. scene/scene.h, which the including scene reads
+/// first, gives it struct VentWork, VENT_WORK, DIFF and the two routines'
+/// names, VENT_TOUCHING and VENT_BOUNCE.
 
-/// Whether object a rests on object b: within 12 pixels of it in x and 8 in z,
+/// Whether actor a rests on actor b: within 12 pixels of it in x and 8 in z,
 /// and above it by less than 16 pixels.
 s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x.fixed, b->x.fixed) < toFIXED(12)) {
@@ -16,9 +16,9 @@ s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
   return 0;
 }
 
-/// Moves the object by its velocities, slows it in x and z, grows and spins
-/// its sprite, and stops its fall in z when it lands on the leader or on one
-/// of the objects the vent work lists.
+/// Moves the thing by its velocities, slows it in x and z, grows and spins its
+/// sprite, and stops its fall in z when it lands on the leader or on one of
+/// the actors the vent work lists.
 void VENT_BOUNCE(struct Actor *actor) {
   struct VentWork *work = VENT_WORK;
   struct Actor *other = Actor_GetById(gMainRoutineWork.leaderActorId);

@@ -15,11 +15,10 @@
 #define MOTE_MEDIUM 2
 #define MOTE_SMALL 4
 
-/// Unused: nothing calls GroundParticles_StartFar. The Broken Seal's
-/// Weather_StartRain, kept whole: 64 sprites placed at the leader's position on
-/// the terrain, their tiles decoded into VRAM, the blend set, and
-/// GroundParticles_Update scheduled to move them. The Lost Age's rain is
-/// Weather_StartRain.
+/// Unused: nothing calls GroundParticles_StartFar. The Broken Seal's rain,
+/// kept whole where this game has its own Weather_StartRain: 64 sprites placed
+/// at the leader's position on the terrain, their tiles decoded into VRAM, the
+/// blend set, and GroundParticles_Update scheduled to move them.
 void GroundParticles_Start(void) {
   struct WeatherWork *work;
   s32 *leader;
@@ -51,7 +50,7 @@ void GroundParticles_Start(void) {
     z = leader[2];
     particle->posX = x;
     particle->posZ = z;
-    particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
+    particle->posY = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND, x, z);
     particle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     particle++;
   }
@@ -80,7 +79,7 @@ void RisingParticles_Update(void) {
       y = FIXED_ONE * 80 - Random16() * 20;
       particle->posX = x;
       particle->posZ = y;
-      particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
+      particle->posY = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND, x, y);
       particle->timer = 120;
       particle->drift = 0;
     }
@@ -116,7 +115,8 @@ void RisingParticles_Update(void) {
   }
 }
 
-/// Starts the rising particles: allocates and clears heap slot
+/// Starts the rising particles, as the Northern Reaches does: allocates and
+/// clears heap slot
 /// HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM, sets each of the 64
 /// particles' sprite words and places it on the ground at a random point of the
 /// strip (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2
@@ -151,7 +151,7 @@ void RisingParticles_Start(void) {
     z = toFIXED(80) - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
-    particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
+    particle->posY = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND, x, z);
     particle->drift = 0;
     particle->timer = i * 2;
   }
@@ -159,8 +159,10 @@ void RisingParticles_Start(void) {
   Task_Add(RisingParticles_Update, priority);
 }
 
-/// The Broken Seal's routine with 64 motes in HEAP_SLOT_WEATHER, started by
-/// FieldMotes_Start.
+/// Task of FieldMotes_Start: moves and draws the 64 motes in HEAP_SLOT_WEATHER.
+/// Up to eight a frame start within 128 pixels of the point the view follows
+/// and live 120 frames, rising, shrinking at 90 and 60 frames left and
+/// flickering every 8 frames; FLAG_WEATHER_HELD holds them where they are.
 void FieldMotes_Update(void) {
   struct WeatherWork *work = Ram_HeapSlots->weather;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -220,7 +222,7 @@ void FieldMotes_Update(void) {
       y = leader[2] + (Random16() << 8) - toFIXED(128);
       mote->posX = x;
       mote->posZ = y;
-      mote->posY = MapGrid_GetTerrainHeightFar(0, x, y);
+      mote->posY = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND, x, y);
       mote->timer = 120;
       mote->delay = 0;
       spawned++;

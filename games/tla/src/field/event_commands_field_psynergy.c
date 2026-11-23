@@ -1,5 +1,5 @@
 /// @file
-/// Helpers the field Psynergy kinds share: map cells, spawned objects and
+/// Helpers the field Psynergy kinds share: map cells, spawned actors and
 /// particles, and the field's tint.
 // Part of event_commands.c.
 
@@ -33,18 +33,19 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
     cells = &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
                                                (((z / toFIXED(32)) & 31) << 5)];
   } else {
-    if (layer <= 2)
+    if (layer <= MAPGRID_LAYER_OVERHEAD)
       cells = map->layers[layer].cells;
     else
       cells = (struct MapCell *)Ram_MapCellBuffer;
-    cells = &cells[x / toFIXED(16) + (z / toFIXED(16)) * 128];
+    cells = &cells[x / toFIXED(MAPGRID_CELL_PIXELS) +
+                   (z / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE];
   }
   return cells;
 }
 
 /// Whether the Scoop can dig at (x, z): on the world map, sand; elsewhere not
-/// on a Cyclone cell, water or raised ground, and then on sand, or where
-/// attribute bit 1 is set (clear, when FieldWork.sceneAttributeLow is set).
+/// on a Cyclone cell, water or raised ground, and then on sand, or on a
+/// MAP_CELL_SCOOP cell (any other, where FieldWork.sceneAttributeLow is set).
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -57,8 +58,8 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   if (MapGrid_IsSandCell(x, z, layer) != 0)
     return 1;
   if (event->sceneAttributeLow == 0)
-    return MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
-  return ~MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
+    return MapGrid_GetCellAt(x, z, layer)->attributeB & MAP_CELL_SCOOP;
+  return ~MapGrid_GetCellAt(x, z, layer)->attributeB & MAP_CELL_SCOOP;
 }
 
 /// Whether Cloak can hide the leader on the cell at (x, z): the overhead
@@ -203,8 +204,8 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
   return -1;
 }
 
-/// Moves the object from 16 pixels above the effect's main object to (x, y,
-/// z), growing it from 0.25 to 1.
+/// Moves the actor from 16 pixels above the caster to (x, y, z), growing it
+/// from a quarter to full size.
 void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *mainActor = scene->mainActor;
@@ -226,8 +227,8 @@ void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   }
 }
 
-/// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
-/// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
+/// FieldPsynergy_GrowFromCaster backwards: moves the actor from (x, y, z) to
+/// 16 pixels above the caster, shrinking it from full size to a quarter.
 void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   struct Actor *mainActor =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
@@ -333,30 +334,29 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   return actor;
 }
 
-/// Sets the movement state and animation timer steps of every actor but the
-/// player's and except.
-void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
-                           s32 action) {
-  s16 *activeObjectId;
-  struct Actor *object;
-  s32 objectId;
+/// Pauses or resumes every actor but the Halted one and excluded, and sets
+/// their animation speed, as Sand stills the field around the leader.
+void Actor_SetOthersPaused(struct Actor *excluded, s32 paused,
+                           s32 animationSpeed) {
+  s16 *haltedId;
+  struct Actor *actor;
+  s32 actorId;
 
-  objectId = 0;
-  activeObjectId = &gMainRoutineWork.haltedActor;
+  actorId = 0;
+  haltedId = &gMainRoutineWork.haltedActor;
   do {
-    object = Actor_Lookup(objectId);
-    if (objectId != *activeObjectId && object != NULL &&
-        object != excludedObject) {
-      object->paused = groupMode;
-      Actor_SetAnimationSpeedFar(object, action);
+    actor = Actor_Lookup(actorId);
+    if (actorId != *haltedId && actor != NULL && actor != excluded) {
+      actor->paused = paused;
+      Actor_SetAnimationSpeedFar(actor, animationSpeed);
     }
-    objectId++;
+    actorId++;
     // BUG: one past the actor table: Actor_Lookup(FIELD_ACTOR_COUNT) reads the
     // step trigger and push cell requests as an actor.
 #ifdef BUGFIX
-  } while (objectId < FIELD_ACTOR_COUNT);
+  } while (actorId < FIELD_ACTOR_COUNT);
 #else
-  } while (objectId <= FIELD_ACTOR_COUNT);
+  } while (actorId <= FIELD_ACTOR_COUNT);
 #endif
 }
 
@@ -381,7 +381,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
             DMA_COPY_WORDS(BG_CHANNELS / 2), REG_DMA3);
   Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
           REG_DMA3);
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | color, 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | color, PALETTES_BG);
   GameFlag_Set(FLAG_PSYNERGY_TINTED);
   PaletteFade_StartInterpolation(frames);
 }
@@ -393,11 +393,11 @@ void Field_StartPaletteTransition(s32 frames) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 savedPalettes = (s32)work->savedFadeTarget;
 
-  PaletteFade_SetTarget(savedPalettes, 2);
+  PaletteFade_SetTarget(savedPalettes, PALETTES_OBJECTS);
   if (work->revealActive != 0)
-    PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   else
-    PaletteFade_SetTarget(savedPalettes, 1);
+    PaletteFade_SetTarget(savedPalettes, PALETTES_BG);
   GameFlag_Clear(FLAG_PSYNERGY_TINTED);
   PaletteFade_StartInterpolation(frames);
 }
@@ -414,44 +414,44 @@ void FieldPsynergy_FadeToCastColor(void) {
   tint = gFrameCount & 7;
   animation = scene->fieldPsynergy;
   if (animation == FIELD_PSYNERGY_POUND)
-    tint = 0;
+    tint = PSYNERGY_TINT_BLUE;
   if (animation == FIELD_PSYNERGY_BLAZE)
-    tint = 2;
+    tint = PSYNERGY_TINT_RED;
   if (animation == FIELD_PSYNERGY_SAND)
-    tint = 7;
+    tint = PSYNERGY_TINT_GREY;
   if (animation == FIELD_PSYNERGY_CYCLONE)
-    tint = 0;
+    tint = PSYNERGY_TINT_BLUE;
   if (animation == FIELD_PSYNERGY_SCOOP)
-    tint = 5;
+    tint = PSYNERGY_TINT_YELLOW;
   if (animation == FIELD_PSYNERGY_ARROW)
-    tint = 0;
+    tint = PSYNERGY_TINT_BLUE;
   if (animation == FIELD_PSYNERGY_PARCH)
-    tint = 7;
+    tint = PSYNERGY_TINT_GREY;
   if (animation == FIELD_PSYNERGY_TREMOR)
-    tint = 6;
+    tint = PSYNERGY_TINT_DARK_GREY;
   if (animation == FIELD_PSYNERGY_GRIND)
-    tint = 0;
+    tint = PSYNERGY_TINT_BLUE;
   if (animation == FIELD_PSYNERGY_BURST)
-    tint = 7;
+    tint = PSYNERGY_TINT_GREY;
   if (scene->fieldPsynergy == FIELD_PSYNERGY_TELEPORT)
-    tint = 6;
+    tint = PSYNERGY_TINT_DARK_GREY;
 
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(0)))
-    tint = 0;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(1)))
-    tint = 1;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(2)))
-    tint = 2;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(3)))
-    tint = 3;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(4)))
-    tint = 4;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(5)))
-    tint = 5;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(6)))
-    tint = 6;
-  if (GameFlag_Get(FLAG_PSYNERGY_TINT(7)))
-    tint = 7;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_BLUE)))
+    tint = PSYNERGY_TINT_BLUE;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_GREEN)))
+    tint = PSYNERGY_TINT_GREEN;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_RED)))
+    tint = PSYNERGY_TINT_RED;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_CYAN)))
+    tint = PSYNERGY_TINT_CYAN;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_MAGENTA)))
+    tint = PSYNERGY_TINT_MAGENTA;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_YELLOW)))
+    tint = PSYNERGY_TINT_YELLOW;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_DARK_GREY)))
+    tint = PSYNERGY_TINT_DARK_GREY;
+  if (GameFlag_Get(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_GREY)))
+    tint = PSYNERGY_TINT_GREY;
   Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
 #undef Actor_SetAnimationSpeedFar

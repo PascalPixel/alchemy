@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_SPRITE_H
 #define ALCHEMY_FIELD_SPRITE_H
 
+/// @file
+/// An actor's sprite as the field's scenes read it.
+
 #include "fixed_math.h"
 #include "types.h"
 

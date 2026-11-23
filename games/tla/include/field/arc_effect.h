@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_ARC_EFFECT_H
 #define ALCHEMY_ARC_EFFECT_H
 
+/// @file
+/// The swelling arcs a field Psynergy shows over its target.
+
 #include "types.h"
 #include "field/effect_sprite.h"
 

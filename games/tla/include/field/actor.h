@@ -114,13 +114,13 @@ enum ArrivalAxis {
 
 union FieldObject;
 
-/// An object's per-frame hook, called with the object (Actor_UpdateAllThumb).
+/// An actor's per-frame hook, called with the actor (Actor_UpdateAllThumb).
 typedef void (*ObjectUpdate)(union FieldObject *object);
 
-/// A field object: its script, position, motion toward a target, sprites and
-/// update hook.
+/// An actor on the field: its script, position, motion toward a target,
+/// sprites and update hook.
 struct Actor {
-  const s32 *script;        ///< the object script it runs; null when it is free
+  const s32 *script;        ///< the actor script it runs; null when it is free
   s16 scriptCursor;         ///< the script cursor, in words
   u16 facing;               ///< 1/65536 turns
   struct FieldCoordinate x; ///< 16.16 fixed-point pixels
@@ -271,7 +271,7 @@ struct Actor {
   /// Two halfwords whose meaning depends on what runs the actor.
   union {
     struct {
-      /// The parameter its action script reads (a follow distance or an
+      /// The parameter its actor script reads (a follow distance or an
       /// angle to face).
       s16 timer;
       /// The side of the player's next footprint, or scene scratch.
@@ -316,9 +316,9 @@ struct Actor {
       s16 chargeRow;
     };
   };
-  /// The object its action script follows or faces.
+  /// The actor its actor script follows or faces.
   struct Actor *watchedActor;
-  ObjectUpdate update; ///< the object's per-frame hook
+  ObjectUpdate update; ///< the actor's per-frame hook
   /// What a carrier moved this frame, which Actor_MoveWithCarriers adds to
   /// an actor riding it, and that actor's carrier.
   s32 stepX;
@@ -338,7 +338,7 @@ void Actor_MoveHalfwayTowardTargetCopy(struct Actor *actor);
 struct Actor *Actor_Lookup(u32 objectId);
 void Actor_StartIdleFar(struct Actor *);
 void Actor_SetMoveTargetFar(struct Actor *, s32, s32, s32);
-/// Waits up to 600 frames for a field object's movement target to be unset.
+/// Waits up to 600 frames for an actor to reach its movement target.
 void Actor_WaitForMoveFar(struct Actor *);
 /// Switches every sprite of an actor, one or a group of four, to an animation.
 void Actor_SelectAnimationFar(struct Actor *, s32);

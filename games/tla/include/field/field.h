@@ -52,15 +52,11 @@ s32 Field_CheckSpheresOverlap(FIXED *a, s32 radius_a, FIXED *b, s32 radius_b);
 #define DISSOLVE_STEPS (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
 
 struct Sprite;
-struct ScreenPoint;
 struct Particle;
-struct Actor;
-struct Actor;
 struct SceneEntrance;
 struct Trigger;
 struct ActorPlacement;
 struct SceneRegion;
-struct Actor;
 
 extern u32 gDriftScene_SpawnScript[];
 extern u32 gSceneExits[];
@@ -84,7 +80,6 @@ s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 struct BattleEffectParams;
 void BattleEffect_RunFlurry(struct BattleEffectParams *effect, s32 variant);
 void BattleEffect_StopMainActor(void);
-struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
 void Field_StartPaletteTransition(s32 frames);
@@ -184,7 +179,6 @@ extern u8 gWorldMapPackedPictures[];
 /// The still picture's palettes, one for each of its modes.
 extern u8 gWorldMapPalettes[];
 
-struct Sprite;
 struct Window;
 struct ScriptOperands;
 struct SpritePlacement;
@@ -196,9 +190,10 @@ typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 typedef void (*OutlineFn)(u32 w, u32 h, void *pixels, u32 edge, u32 fill);
 
-/// A command handler takes the object and returns nonzero to go on with
-/// the script this frame, zero to stop. The handlers take different views
-/// of the object, so the type leaves the parameters unspecified.
+/// An actor script command's handler: it takes the actor and returns nonzero
+/// to go on with the script this frame, zero to stop. The handlers take
+/// different views of the actor, so the type leaves the parameters
+/// unspecified.
 typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
@@ -212,19 +207,6 @@ struct OamWords {
 
 /// An affine sprite's matrix, of the 32, in its attr01 word.
 #define OBJ_AFFINE_MATRIX(n) ((n) << 25)
-
-// The casino's four-dice game, built
-// like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
-// for a bet of ten coins a level. A pair, two pairs, a triple or four of a kind
-// (SuperLuckyDice_ScoreDice, banners Slots_OnePairBanner to
-// Slots_PerfectBanner) pays 1, 2, 3 or 8 times the bet; a win offers a
-// double-up round (state 5, Slots_DoubleUpBanner and Slots_CashOutBanner):
-// guess whether the next total is higher or lower than this one (state 1,
-// Slots_HigherBanner and Slots_LowerBanner) for twice the winnings, up to five
-// rounds, the last the final game; a miss loses everything. Winnings are
-// counted into the coins a coin a frame (state 4). The dice bounce off the
-// dome's round wall, settle to a face and are drawn back to front with their
-// shadows; palettes of the banners pulse with SuperLuckyDice_BrightenColors.
 
 /// A die of the dice game: its place and velocity, 16.16, and its variant.
 struct DiceParticle {
@@ -433,7 +415,7 @@ struct TightropeSlot {
 /// the nearest.
 #define ROPE_NODE_DISTANCE_NONE (1 << 28)
 
-/// The tightropes' work, heap slot 160.
+/// The tightropes' work (HEAP_SLOT_TIGHTROPE).
 struct TightropeWork {
   struct Actor
       *recoilFrom; ///< the posts Tightrope_Untie gives Tightrope_Recoil
@@ -497,7 +479,8 @@ struct RisingParticle {
   u8 unusedAfterTimer[2]; ///< no code names it
 };
 
-/// Heap slot 0x74 while the rising particles run.
+/// HEAP_SLOT_WEATHER while the rising particles run: their tiles' VRAM cache
+/// entry and first tile, and the particles.
 struct RisingParticleWork {
   s32 vramEntry;
   s32 tile;
@@ -557,7 +540,7 @@ struct RopeSlot {
   struct RopeNode *head;
 };
 
-/// The ropes' work, heap slot 156.
+/// The ropes' work (HEAP_SLOT_ROPE).
 struct RopeWork {
   struct Actor *recoilFrom; ///< the posts Rope_Untie gives Rope_Recoil
   struct Actor *recoilTo;
@@ -871,9 +854,6 @@ extern u32 gScanlinePitch;
 
 extern const s16 gGroundParticles_Offsets[];
 
-void Actor_UpdateAllMotion(void);
-
-void Actor_UpdateAllThumb(void);
 void Actor_MoveWithCarriers(void);
 
 void ActorSystem_PlaceSprites(void);

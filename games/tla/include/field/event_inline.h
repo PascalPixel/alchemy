@@ -6,9 +6,7 @@
 /// by its own name, passing it on to the main image's import
 /// (Actor_FaceEachOther calls Actor_TurnToFaceEachOther).
 ///
-/// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device. An event writes
-/// `Actor_FaceEachOther(4, 8, 30);` and the inline makes the
+/// An event writes `Actor_FaceEachOther(4, 8, 30);` and the inline makes the
 /// call. Where an inline would have its routine's name, the routine keeps it
 /// and the inline takes the Field prefix, as FieldActor_Jump does, or Event in
 /// place of a Field the routine's name already has (EventCamera_GetActor).
@@ -184,7 +182,7 @@ static inline void FieldActor_WaitForScriptEndById(s32 actorId) {
   Actor_WaitForScriptEndById(actorId);
 }
 
-/// Sets a sprite param of an actor's sprite (Actor_SetSpriteColor).
+/// Sets the colour mode of an actor's sprite (Actor_SetSpriteColor).
 static inline void FieldActor_SetSpriteColor(struct Actor *actor, s32 param) {
   Actor_SetSpriteColor(actor, param);
 }

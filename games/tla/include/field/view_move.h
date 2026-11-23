@@ -1,18 +1,19 @@
 #ifndef ALCHEMY_VIEW_MOVE_H
 #define ALCHEMY_VIEW_MOVE_H
 
+/// @file
+/// The view's swing as Tremor and Grind shake the ground. Its work sits in
+/// HEAP_SLOT_BATTLE_EFFECT: ViewMove_Start opens the map's view bounds and
+/// keeps the old ones, ViewMove_Swing swings the view centre each frame, and
+/// ViewMove_End puts the bounds back. ViewMove_SaveNearbySprites gathers the
+/// nearby actors whose sprites rock with the view, and
+/// ViewMove_RestoreNearbySprites sets them back.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 
 struct Actor;
-
-// The view moves of the field Psynergy scenes (kinds 19 and 27). Their work
-// sits in HEAP_SLOT_BATTLE_EFFECT: ViewMove_Start opens the map's
-// view bounds and keeps the old ones, ViewMove_Swing swings the view centre
-// each frame, and ViewMove_End puts the bounds back.
-// ViewMove_SaveNearbySprites gathers the nearby objects whose sprites shake
-// with the view, and ViewMove_RestoreNearbySprites sets them back.
 
 /// Directions a view move swings in.
 #define VIEW_MOVE_X 1

@@ -10,9 +10,9 @@
 #include "fixed_math.h"
 #include "flags.h"
 
-/// Writes the object's position on screen, in pixels, to position[0] and
-/// position[1]; an animated object is raised by its frame box. Returns -1 when
-/// the object does not exist.
+/// Writes the actor's position on screen, in pixels, to position[0] and
+/// position[1]; an actor with a sprite is raised by its frame box. Returns -1
+/// when the actor does not exist.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
 #ifdef UBFIX
@@ -100,17 +100,17 @@ void Field_StartEncounterTransition(s32 unused) {
 
 void *Sprite_AddAnimationFar(void *, s32);
 
-/// The Broken Seal's Exit_PrepareAnimation for any actor: centres actor id on
-/// its cell at the cell's south edge, stops it, hides its shadow and plays
-/// ANIM_LEADER_LEAVE_ALTERNATE (side 1) or ANIM_LEADER_LEAVE over 18 frames,
+/// Exit_PrepareAnimation for any actor: centres the actor on its cell at the
+/// cell's south edge, stops it, hides its shadow and plays ANIM_LEADER_LEAVE
+/// (side 1) or ANIM_LEADER_LEAVE_ALTERNATE over 18 frames,
 /// its sprite gaining the doorway (SPRITE_DOORWAY) as a second part.
-void Exit_PrepareActorAnimation(s32 id, s32 side) {
+void Exit_PrepareActorAnimation(s32 actorId, s32 side) {
   struct Actor *actor;
   struct Sprite *sprite;
   struct SpriteAnimation *doorway;
   s32 animation;
 
-  actor = Actor_Lookup(id);
+  actor = Actor_Lookup(actorId);
   sprite = actor->sprite;
   animation = (side != 1);
   animation = ANIM_LEADER_LEAVE - animation;
@@ -184,22 +184,21 @@ void Exit_StartStairsDown(void) {
 /// doorway (SPRITE_DOORWAY) and walks 8 pixels south.
 void Entrance_EndArrivalAnimation(s32 animation) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct Sprite *spriteAnimation = leader->sprite;
-  struct SpriteAnimation *eff =
-      (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
-                                                       SPRITE_DOORWAY);
-  spriteAnimation->flags = 0;
-  eff->colorMode = SPRITE_COLOR_HIDDEN;
+  struct Sprite *sprite = leader->sprite;
+  struct SpriteAnimation *doorway =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
+  sprite->flags = 0;
+  doorway->colorMode = SPRITE_COLOR_HIDDEN;
   leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   leader->z.fixed &= FIELD_CELL_MASK;
   Actor_SelectAnimationFar(leader, animation);
   wait(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
-  spriteAnimation->count = 1;
-  SpriteAnimation_ClearFar(spriteAnimation->entries[1]);
-  spriteAnimation->entries[1] = NULL;
-  spriteAnimation->flags = SPRITE_FLAG_SHADOW;
+  sprite->count = 1;
+  SpriteAnimation_ClearFar(sprite->entries[1]);
+  sprite->entries[1] = NULL;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = FIXED_ONE;
   leader->speedLimit = FIXED_ONE;
   Actor_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
@@ -208,24 +207,23 @@ void Entrance_EndArrivalAnimation(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through a
-/// stairs-up exit (FLAG_ARRIVAL_STAIRS_UP, ANIM_LEADER_ARRIVE, returns 1) or a
-/// stairs-down one (FLAG_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE,
-/// returns 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING,
-/// returns 3).
+/// stairs-up exit (FLAG_ARRIVAL_STAIRS_UP) or a stairs-down one
+/// (FLAG_ARRIVAL_STAIRS_DOWN), or falling in from 160 pixels above
+/// (FLAG_ARRIVE_FALLING). Returns the enum EntranceArrival it played.
 s32 Entrance_PlayArrival(void) {
-  s32 result = 0;
+  s32 result = ARRIVAL_NONE;
   s32 flag = FLAG_ARRIVAL_STAIRS_UP;
 
   if (GameFlag_Get(flag) != 0) {
     Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
     GameFlag_Clear(flag);
-    result = 1;
+    result = ARRIVAL_STAIRS_UP;
   } else {
     flag = FLAG_ARRIVAL_STAIRS_DOWN;
     if (GameFlag_Get(flag) != 0) {
       Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
       GameFlag_Clear(flag);
-      result = 2;
+      result = ARRIVAL_STAIRS_DOWN;
     } else {
       flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_Get(flag) != 0) {
@@ -245,7 +243,7 @@ s32 Entrance_PlayArrival(void) {
         Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAN_BACK);
         Event_Wait(15);
         FieldCamera_FollowActor(id, 1);
-        result = 3;
+        result = ARRIVAL_FALLING;
       }
     }
   }

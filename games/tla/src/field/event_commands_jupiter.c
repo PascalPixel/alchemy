@@ -1,5 +1,7 @@
 /// @file
-/// A Jupiter Djinni joining the party.
+/// A Jupiter Djinni joining the party, and per-frame updates the field effects
+/// share: a pulse, a quickening spin, a slow shrink, and a Mars Djinni's
+/// sparks.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -13,9 +15,9 @@
 #include "macros.h"
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
-/// of sight and bursts into a light particle for each of the effect work's,
-/// which circle and close in on the leader, who turns to the camera and raises
-/// its arms (ANIM_LEADER_ARMS_RAISED).
+/// of sight and bursts into PSYNERGY_EFFECT_SLOT_COUNT lights, which circle
+/// and close in on the leader, who turns to the camera and raises its arms
+/// (ANIM_LEADER_ARMS_RAISED).
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;

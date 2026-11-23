@@ -79,6 +79,7 @@ enum WestLunpaCaveCellBehavior {
   CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE = 10
 };
 
+/// The cave's actors, numbered in the order of gCaveActorPlacements.
 enum CaveActorId {
   /// Placed at the map's top-left corner, off every part of the cave the
   /// screen shows, so the player never sees it

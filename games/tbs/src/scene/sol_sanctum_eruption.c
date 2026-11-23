@@ -74,6 +74,8 @@ u8 gSolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
 s32 gEmberState[EMBER_COUNT] BSS_DATA;
 s32 gEmberTimer BSS_DATA;
 u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
+/// The elemental arcs the chamber throws out: each one's actor, and its age in
+/// frames, 0 for none.
 struct Actor *gArcEffects[12] BSS_DATA;
 s32 gArcEffectTimers[10] BSS_DATA;
 s32 gEmberMask BSS_DATA;

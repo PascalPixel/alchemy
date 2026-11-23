@@ -327,6 +327,7 @@ enum StormNightAreaFlag {
 // - FLAG_VALE_ON_BRIDGE (scene/vale.h, as Vale has it): the leader is on the
 //   rope bridge over the river.
 
+/// 0 while the westernmost elder strains at the Boulder, 1 once he lets go.
 static s32 sShakeDone;
 static s32 sShakeShift;
 

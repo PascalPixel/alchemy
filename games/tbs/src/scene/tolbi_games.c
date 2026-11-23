@@ -111,6 +111,7 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category);
 static void TolbiSpring_InitializeTossSimulation(void);
 static s32 TolbiSpring_RunToss(s32 tossKind);
 
+/// What the player throws into the spring, chosen by Menu_SelectCoinsOrMedals.
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
 /// The people and boards of the Lucky Dice tent and the Lucky Wheels room,

@@ -229,7 +229,7 @@
 /// Kraden has welcomed everyone to it; until then that welcome plays at
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 #define FLAG_SOL_SANCTUM_ENTERED 0x802
-/// In the hall of Sol Sanctum's first relief, Kraden has recalled the hidden
+/// In Sol Sanctum's statue hall, Kraden has recalled the hidden
 /// passage Saturos and Menardi spoke of and the four have agreed to look for
 /// it together; until then his talk plays each time the party enters the hall.
 #define FLAG_SEARCHING_FOR_HIDDEN_PASSAGE 0x804

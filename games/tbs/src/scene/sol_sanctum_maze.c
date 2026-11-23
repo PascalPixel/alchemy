@@ -5,7 +5,7 @@
 /// It is reached from two rooms of SceneId_SolSanctumReliefs
 /// (sol_sanctum_entrance.c) and leads back to them.
 /// SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH goes to the room of steps off
-/// the first relief room, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to
+/// the statue hall, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to
 /// the second relief room.
 ///
 /// It places nobody. Its one event besides the exits is the chest

@@ -29,12 +29,13 @@ enum LogRoomsACellBehavior {
   CELL_BEHAVIOR_LOG_ROOMS_A_GUESTS_ROOM_DOOR = 20,
   /// In the guests' room, where the party sets out to corner the suspects.
   CELL_BEHAVIOR_LOG_ROOMS_A_CORNERING_START = 21,
-  /// The way up behind the crate to the inn's loft.
-  CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB = 26,
-  /// The way back down from the loft.
-  CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT = 27,
-  /// The gap in the roof, which the leader jumps.
-  CELL_BEHAVIOR_LOG_ROOMS_A_ROOF_GAP = 40,
+  /// The way east behind the crate from the inn's attic into the loft.
+  CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_WAY_IN = 26,
+  /// The way west out of the loft, back into the attic.
+  CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_WAY_OUT = 27,
+  /// Either side of the dark hole in the attic's floor, which the leader
+  /// jumps.
+  CELL_BEHAVIOR_LOG_ROOMS_A_ATTIC_FLOOR_HOLE = 40,
   /// The barrel beside the girl at the inn, where the Bones are once the
   /// thieves are jailed.
   CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL = 41,

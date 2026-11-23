@@ -73,6 +73,8 @@ UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 /// YellowRingSheet's ring, drawn as two mirrored halves.
 #define CYBELE_RING_HALF_WIDTH 20
 #define CYBELE_RING_HALF_HEIGHT 24
+/// Where each picture starts in ThornVineSheet, in bytes: a vine's tip, then
+/// its stem.
 enum ThornVineSheetPicture {
   CYBELE_VINE_STEM = CYBELE_VINE_WIDTH * CYBELE_VINE_TIP_HEIGHT,
   /// a thinner vine: its tip, then its stem

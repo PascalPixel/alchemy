@@ -204,6 +204,8 @@ s32 Party_AdjustCoins(s32 amount);
 void Party_SetLeaderJenna(void);
 void Party_SetLeaderFelix(void);
 
+/// The party's inventories, shortcuts and order as InventorySnapshot_Save puts
+/// them aside for the Trial Road, with spare room after them.
 extern u8 gInventorySnapshot[];
 /// Where gInventorySnapshot's spare space begins, past the party's equipment
 /// InventorySnapshot_Save keeps and the Trial Road's state: the scenes keep

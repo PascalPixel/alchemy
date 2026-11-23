@@ -66,7 +66,7 @@
 	export WindowSystem_InitField, WindowSystem_InitFieldFar
 	export Task_Find, Task_FindFar
 	export Sprite_SetAnimationTimers, Sprite_SetAnimationTimersFar
-	export Import_ActorSetMode, Actor_SelectAnimationFar
+	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
 	export GameFlag_GetByte, GameFlag_GetByteFar
 	export Import_ActorStartScript, Actor_StartScriptFar
 	export GameFlag_SetByte, GameFlag_SetByteFar
@@ -362,7 +362,7 @@
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export Camera_WorldToScreen, Camera_WorldToScreenFar
 	export Import_HangingVinePlace, HangingVine_PlaceFar
-	export Event_ClearInvalidPackedValues, Party_ClearUnusableShortcutsFar
+	export Party_ClearUnusableShortcuts, Party_ClearUnusableShortcutsFar
 	export Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar
 	export Actor_WalkByById, Actor_WalkByByIdFar
 	export Actor_WalkByAndWaitById, Actor_WalkByAndWaitByIdFar

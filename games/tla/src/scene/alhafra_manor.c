@@ -360,6 +360,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Counts one more weird answer Felix gives (Event_CountAnswer, through the
+/// overlay's own import row).
 void AlhafraManor_CountAnswer(void);
 
 /// Walks actor `id` to the controlled character's cell, when it has one.

@@ -142,7 +142,12 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half);
 void FieldPsynergy_WhirlwindOnTarget(s32 unused);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s32 Scene_HasPsynergyTrigger(s32 effectId);
+/// Field_AdvanceWithGravity3D for x and y alone: the third word is left as it
+/// is, and the velocities follow it.
 void Field_AdvanceWithGravity2D(s32 *vector, s32 damping, s32 gravity);
+/// Moves a point (three 16.16 coordinates, their velocities after them) by its
+/// velocity, then adds gravity to the second velocity and scales each by
+/// damping / 64.
 void Field_AdvanceWithGravity3D(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, u32 mode);

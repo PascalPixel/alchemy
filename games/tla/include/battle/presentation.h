@@ -93,6 +93,8 @@ void Sprite_RemoveAnimationAtFar(void *record, s32 slot);
 
 s32 SpriteAnimation_SumCommandLengthsFar(s32 id, s32 animation, s32 timedCount);
 
+/// Writes size BGR555 colours of source to destination scaled by value / 256,
+/// at most 1.0: a palette dimmed toward black.
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 
 void BattleMessage_OpenFar(s32 message);

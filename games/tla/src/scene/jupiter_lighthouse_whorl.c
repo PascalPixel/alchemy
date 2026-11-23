@@ -126,6 +126,7 @@ enum JupiterLighthouseWhorlCellBehavior {
 /// The way in from the bridge's floor, through its west arch.
 #define ENTRANCE_FROM_BRIDGE_FLOOR 12
 
+/// The whorl's actors, numbering its placement table.
 enum JupiterLighthouseWhorlActorId {
   ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_WEST_STAKE,

@@ -10,9 +10,9 @@
 // Effect tables after the particle pictures.
 //--------------------------------------------------------------------------
 
-// Six words of zero. The functions that read them also write to them (wave
-// phases and two flags), but they lie in the cartridge, so the writes are
-// lost and each stays zero.
+/// Six words of zero. The functions that read them also write to them (wave
+/// phases and two flags), but they lie in the cartridge, so the writes are
+/// lost and each stays zero.
 const s32 gRope_LashPhase = 0;
 const s32 gRope_UntiePhase = 0;
 const s32 gRope_DebugSwinging = 0;
@@ -33,6 +33,8 @@ const s32 gBattleEffect_UntargetedObjectScript[] = {
     SC_RELEASE,
 };
 
+/// The field effects' three scripts by how long an effect lasts: short, medium
+/// and long.
 const s32 *const gFieldEffect_DurationScripts[3] = {
     gFieldEffect_ShortEffectScript,
     gFieldEffect_MediumEffectScript,

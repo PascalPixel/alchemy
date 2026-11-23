@@ -619,11 +619,11 @@ enum DjinniEntranceAnchor {
 #define DJINNI_ENTRANCE_SIDE(packed) (((packed) >> 4) & 1)
 #define DJINNI_ENTRANCE_ANCHOR(packed) (((packed) >> 5) & 0xf)
 
-// A row of gQuake_Timings, one for each variant.
+/// A row of gQuake_Timings, one for each variant.
 enum {
-  TIMING_FRAMES,      // the whole effect
-  TIMING_RISE_FRAMES, // how long each pillar stands
-  TIMING_SHAKE        // the camera shake
+  TIMING_FRAMES,      ///< the whole effect
+  TIMING_RISE_FRAMES, ///< how long each pillar stands
+  TIMING_SHAKE        ///< the camera shake
 };
 
 /// The four rock pillars' heights, in pixels.
@@ -650,23 +650,23 @@ struct FourSpans {
   } spans[4];
 };
 
-// A row of gFrost_Timings, one for each variant.
+/// A row of gFrost_Timings, one for each variant.
 enum {
-  RISE_MOTES,   // the rising motes
-  RISE_COLUMNS, // the pillars
-  RISE_FRAME    // the frame they burst
+  RISE_MOTES,   ///< the rising motes
+  RISE_COLUMNS, ///< the pillars
+  RISE_FRAME    ///< the frame they burst
 };
 
-// A row of gEruption_Counts, one for each variant.
+/// A row of gEruption_Counts, one for each variant.
 enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
-// Places in the sheet.
+/// Places in the sheet.
 enum VolleyBSheet {
-  VOLLEY_B_SHOTS = 0,      // the mode's own shot pictures
-  VOLLEY_B_BEAM = 4096,    // the beam, doubled to 48 wide
-  VOLLEY_B_GLOW = 5266,    // mode 20's glows
-  VOLLEY_B_PICTURE = 3158, // the mode's picture
-  VOLLEY_B_DJINNI = 26048  // the 20x40 Djinni
+  VOLLEY_B_SHOTS = 0,      ///< the mode's own shot pictures
+  VOLLEY_B_BEAM = 4096,    ///< the beam, doubled to 48 wide
+  VOLLEY_B_GLOW = 5266,    ///< mode 20's glows
+  VOLLEY_B_PICTURE = 3158, ///< the mode's picture
+  VOLLEY_B_DJINNI = 26048  ///< the 20x40 Djinni
 };
 
 /// A growing column, laid over struct Particle in work->particles.

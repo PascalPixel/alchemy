@@ -50,6 +50,8 @@ extern struct Trigger gChampa_TriggersOnceBriggsSailed[];
 extern u16 gChampa_NoDoor[];
 extern u16 gChampa_SanctumDoorOpening[];
 s32 Tightrope_Place();
+/// Closes at once the portrait window of a speaker, if one is open
+/// (Portrait_CloseWindow, through the overlay's own import row).
 s32 Window_CloseMatchingId();
 
 /// Sends an actor walking to where another stands, if it is on the map.

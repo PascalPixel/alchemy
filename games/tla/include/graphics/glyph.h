@@ -6,8 +6,10 @@
 #include "static_assert.h"
 
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// A glyph's height in rows of pixels: 12 in Japanese.
 enum { FONT_GLYPH_ROWS = 12 };
 #else
+/// A glyph's height in rows of pixels: 15 outside Japanese.
 enum { FONT_GLYPH_ROWS = 15 };
 #endif
 

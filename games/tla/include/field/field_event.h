@@ -26,7 +26,11 @@ void Sound_PlayFar(s32 cue);
 
 void Import_EventSetExitRequest(s32 countdown);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Import_ActorSetMode(struct Actor *actor, s32 mode);
+/// Starts an animation on an actor's sprite (Actor_SelectAnimation, through the
+/// overlay's own import row).
+void Import_ActorSelectAnimation(struct Actor *actor, s32 animation);
+/// Gives an actor a script and starts it from the top (Actor_StartScript,
+/// through the overlay's own import row).
 void Import_ActorStartScript(struct Actor *actor, const void *script);
 
 #endif

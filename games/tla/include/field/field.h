@@ -695,7 +695,12 @@ void Camera_ResetViewDefaults(void);
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
                                 s32 count);
 
+/// Copies size bytes of 8-bit pixels from source to destination, then halves
+/// each colour number left in source, so a drawing fades as it is shown: Lucky
+/// Wheels' trails (CANVAS_FADE_HALF).
 void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
+/// ColorBuffer_HalveNonzero, taking each colour number to three quarters, for
+/// the trails that fade more slowly.
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
                                            s32 size);
 
@@ -732,6 +737,9 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value);
 void SpriteViewer_SetGridColumnNumber(s32 slot, s32 value);
 void SpriteViewer_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *out);
 
+/// The work value handlers of gActorScript_OperandHandlerTable, one an SW_
+/// value: each sets, adds to or compares (into conditionResult) the actor field
+/// it names; positions, targets, velocities and gravity are 16.16 pixels.
 void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
 void ActorScript_SetOrCompareCursor(struct ScriptOperands *state, s32 operation,

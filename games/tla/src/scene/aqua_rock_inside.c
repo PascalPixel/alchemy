@@ -325,6 +325,7 @@ enum AquaRockInsideWaterOfLifeChestActorId {
   ACTOR_WATER_OF_LIFE_CHEST_PUDDLE
 };
 
+/// Steam's room (gAquaRockInside_SteamPlacements).
 enum AquaRockInsideSteamActorId {
   ACTOR_STEAM_ROOM_MOAI = ACTOR_FIRST_PLACED,
   /// The pillar pushed off its ledge (AquaRockInside_PushPillarOffLedge).
@@ -333,6 +334,7 @@ enum AquaRockInsideSteamActorId {
   ACTOR_STEAM
 };
 
+/// The Aquarius Stone's room (gAquaRockInside_AquariusStonePlacements).
 enum AquaRockInsideAquariusStoneActorId {
   ACTOR_AQUARIUS_STONE_WATER_STONE = ACTOR_FIRST_PLACED,
   /// Two hidden actors where the stone appears; the second shows it
@@ -341,6 +343,7 @@ enum AquaRockInsideAquariusStoneActorId {
   ACTOR_AQUARIUS_STONE
 };
 
+/// The Rusty Sword chest's room (gAquaRockInside_RustySwordChestPlacements).
 enum AquaRockInsideRustySwordChestActorId {
   ACTOR_RUSTY_SWORD_CHEST_WATER_STONE = ACTOR_FIRST_PLACED,
   ACTOR_RUSTY_SWORD_CHEST_MOAI,
@@ -354,11 +357,14 @@ enum AquaRockInsideRustySwordChestActorId {
   ACTOR_RUSTY_SWORD_CHEST = 64
 };
 
+/// The Crystal Powder chest's room
+/// (gAquaRockInside_CrystalPowderChestPlacements).
 enum AquaRockInsideCrystalPowderChestActorId {
   ACTOR_CRYSTAL_POWDER_CHEST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_CRYSTAL_POWDER_CHEST_WATER_STONE
 };
 
+/// The Vial chest's room (gAquaRockInside_VialChestPlacements).
 enum AquaRockInsideVialChestActorId {
   /// The pillar Moved before the Moai (AquaRockInside_BlockMoaiWithPillar).
   ACTOR_VIAL_CHEST_MOAI_PILLAR = ACTOR_FIRST_PLACED,
@@ -375,11 +381,13 @@ enum AquaRockInsideVialChestActorId {
   ACTOR_VIAL_CHEST_PUDDLE_C
 };
 
+/// The tightrope's room (gAquaRockInside_TightropePlacements).
 enum AquaRockInsideTightropeActorId {
   ACTOR_TIGHTROPE_WEST_POST = ACTOR_FIRST_PLACED,
   ACTOR_TIGHTROPE_EAST_POST
 };
 
+/// The Tear Stone's room (gAquaRockInside_TearStonePlacements).
 enum AquaRockInsideTearStoneActorId {
   ACTOR_TEAR_STONE_WATER_STONE = ACTOR_FIRST_PLACED,
   ACTOR_TEAR_STONE_MOAI,

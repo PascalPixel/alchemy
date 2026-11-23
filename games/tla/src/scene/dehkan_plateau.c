@@ -237,6 +237,7 @@ enum DehkanPlateauFullMetalVestChestCellBehavior {
   CELL_BEHAVIOR_FULL_METAL_VEST_CHEST_OFF_CRACK
 };
 
+/// The Themis' Axe chest's stretch.
 enum DehkanPlateauThemisAxeChestCellBehavior {
   CELL_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_ON = 6,
   CELL_BEHAVIOR_THEMIS_AXE_CHEST_BLOCKS_OFF,
@@ -251,6 +252,7 @@ enum DehkanPlateauThemisAxeChestCellBehavior {
   CELL_BEHAVIOR_CANNON_FLEES_EAST
 };
 
+/// The rope bridge's stretch.
 enum DehkanPlateauTightropesCellBehavior {
   CELL_BEHAVIOR_TIGHTROPES_BLOCKS_ON = 7,
   CELL_BEHAVIOR_TIGHTROPES_BLOCKS_OFF,
@@ -276,17 +278,20 @@ enum DehkanPlateauTightropesCellBehavior {
   CELL_BEHAVIOR_CANNON_CRACKS_PILLARS
 };
 
+/// The Mint chest's stretch.
 enum DehkanPlateauMintChestCellBehavior {
   CELL_BEHAVIOR_MINT_CHEST_BLOCKS_ON = 8,
   CELL_BEHAVIOR_MINT_CHEST_BLOCKS_OFF
 };
 
+/// The Pound Cube's cave.
 enum DehkanPlateauPoundCubeCellBehavior {
   /// Where the Pound Cube lies once Cannon has dropped it, cell (15, 5),
   /// copied there from the spare cell (0, 0).
   CELL_BEHAVIOR_POUND_CUBE = 12
 };
 
+/// Cannon's cave.
 enum DehkanPlateauCannonCellBehavior {
   CELL_BEHAVIOR_CANNON_ROOM_BLOCKS_ON = 5,
   CELL_BEHAVIOR_CANNON_ROOM_BLOCKS_OFF,

@@ -34,6 +34,7 @@
 #define ICE_SHARDS(variant) gFalling_IceCounts[(variant) * 2]
 #define ICE_FRAMES(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
+/// The shards or drops that can fall at once, and their puffs as they land.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 /// A falling shard or drop keeps falling while its y, in eighths of a pixel, is

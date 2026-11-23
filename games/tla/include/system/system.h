@@ -14,6 +14,8 @@
 void wait(s32 frames);
 void System_WaitForFrameInterrupt(void);
 void Oam_ResetFrame(void);
+/// The BIOS's SoundBias: Off ramps the sound output's bias down before the
+/// console sleeps, On back up once it wakes, so the speaker does not click.
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 u32 Random16(void);
@@ -93,28 +95,21 @@ extern const u8 Resource_PatchThumbBranch[];
 s32 _call_via_r3(s32, u8 *, u8, s32);
 struct SpriteAnimation;
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id);
-s32 BattleEffect_FindMatchingEvent(s32, s32, void *);
-void BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 #ifndef OWN_BattleMotion_ApproachTarget
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travel_divisor,
                                  s32 initial_velocity_y);
 #endif
-#ifndef OWN_BattleMotion_InterpolatePosition
-void BattleMotion_InterpolatePosition(struct BattleObject *start_slot,
-                                      struct BattleObject *end_slot,
-                                      s32 progress);
-#endif
 void LuckyDice_Run(void);
-void Actor_WaitForValue16Far(struct Actor *);
 /// An empty function, reached only through an unnamed veneer in the object
 /// bank's far-call table.
 void Actor_NoOp(void);
-void Actor_SetMotionActionCallback(struct Actor *, s32);
 void Overlay_Load(u32 index, void *destination);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 void SpriteAnimation_Clear(void *destination);
 void String_FormatHex(u32);
 
+/// The Game Pak interrupt's handler, in IWRAM: stops the console for good once
+/// the cartridge is pulled (the BIOS's Stop, again after any wake).
 void Iwram_Halt(void);
 
 /// The cartridge's language, from its header (System_GetLanguage).
@@ -252,10 +247,18 @@ extern u8 *gSoundInfoPointer;
 #define SOUND_INFO_BYTE(info, member)                                          \
   ((info)[offsetof(struct SoundInfo, member)])
 
+/// SoundMain as the frame wait runs it: steps the music players and the CGB
+/// channels and starts the IWRAM mixer on this VBlank's PCM, returning 0; it
+/// returns 1 with nothing done when the stack is too deep or the driver busy.
 s32 SoundDriver_EnterVBlankUpdate(void);
 
+/// The resident mixer in IWRAM, which the frame wait runs after
+/// SoundDriver_EnterVBlankUpdate returns 0.
 void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 
+/// The VBlank handler's sound step, as m4aSoundVSync: counts down the PCM
+/// buffer's VBlanks and, as it wraps, restarts the two sound DMAs, which then
+/// read from the buffer's start again.
 void SoundDriver_VSyncRefresh(void);
 
 void ScreenFade_Update(void);

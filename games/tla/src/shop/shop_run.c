@@ -271,8 +271,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   shop->cursor.anchor->motion = savedCursorMode;
 }
 
-// The shop's Yes/No menu: one column further left in German, Spanish and
-// Italian.
+/// The shop's Yes/No menu: one column further left in German, Spanish and
+/// Italian.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define SHOP_CONFIRM_MENU_X 6

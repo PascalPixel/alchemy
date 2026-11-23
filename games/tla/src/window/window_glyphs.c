@@ -175,8 +175,8 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   return width;
 }
 
-// German, Spanish, French, and Italian count ten pixels for every character up
-// to TEXT_LAST_FONT_CODE but the space, and nothing for those above it.
+/// German, Spanish, French, and Italian count ten pixels for every character up
+/// to TEXT_LAST_FONT_CODE but the space, and nothing for those above it.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define WIDE_WIDTH_FIXED 1

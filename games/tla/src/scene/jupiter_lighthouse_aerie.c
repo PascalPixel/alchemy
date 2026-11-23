@@ -104,6 +104,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 }
 extern s32 gPaletteCyclePausesInEvents;
 s32 gWhirlwindRiding BSS_DATA;
+/// A copy of the room's cycling palette, BG palette CYCLE_PALETTE, which the
+/// cycle takes its colours from (JupiterLighthouse_LoadPalettes).
 u16 gPaletteCycleColors[16] BSS_DATA;
 /// Palette 13's first two colours; it is copied whole, with the unlit colours
 /// after them.

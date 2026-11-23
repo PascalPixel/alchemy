@@ -45,6 +45,8 @@ static inline void Scene_QueueIoWrite16(u32 address, u32 value) {
 /// The gauge's levels of PP, and what it shows: empty, its level, or its
 /// level flashing when PP is low.
 #define GAUGE_LEVELS 30
+/// What the gauge shows, kept as kind plus level: nothing, the level, or the
+/// level blinking low.
 enum { GAUGE_EMPTY = 0, GAUGE_SHOWN = 100, GAUGE_LOW = 200 };
 
 extern u32 gStaffCredit_GlowColorModes[];

@@ -227,8 +227,8 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_HELP_WINDOW_WIDTH 8
 #endif
 
-// The help window reopened after a payout; in Spanish it is a tile narrower
-// than the one Lucky Dice opens with, for the same two lines.
+/// The help window reopened after a payout; in Spanish it is a tile narrower
+/// than the one Lucky Dice opens with, for the same two lines.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define DICE_REOPENED_HELP_WINDOW_X 21
 #define DICE_REOPENED_HELP_WINDOW_WIDTH 9
@@ -274,6 +274,8 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_RESULT_LABEL_CENTER_X 632
 #endif
 
+/// The dice thrown, and the sprites drawn for them: the dice, then their
+/// shadows.
 #define DICE_COUNT 2
 #define DICE_RESULT_COUNT 4
 /// The result: one number every 5 frames, then 20 frames in the lettering,

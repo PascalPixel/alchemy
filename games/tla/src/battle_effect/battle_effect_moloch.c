@@ -453,6 +453,7 @@ void Iris_ChangeBackdrop(void) {
 #define IRIS_DOT_HEIGHT 4
 #define IRIS_SPRAY_WIDTH 8
 #define IRIS_SPRAY_HEIGHT 32
+/// Where each run of pictures starts in IrisSplashSheet, in bytes.
 enum IrisSplashPicture {
   IRIS_LARGE_RINGS = 0,
   IRIS_SMALL_RINGS = IRIS_LARGE_RINGS +

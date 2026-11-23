@@ -293,6 +293,8 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 
 void Leader_CenterInCell(void);
 
+/// 0 when two spheres overlap, else -1 (Field_CheckSpheresOverlap, through the
+/// overlay's own import row).
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
 
@@ -1614,7 +1616,7 @@ void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 #undef position
 #undef WORK
 #undef MapLayer
-#undef Camera_SetBounds
+#undef FieldCamera_MoveWithinMapBounds_
 void Actor_StartScript(struct Actor *actor, const void *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SET_MODE Actor_SelectAnimation

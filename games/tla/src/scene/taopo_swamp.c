@@ -235,6 +235,9 @@ extern s32 gTaopoSwamp_PoolFrames;
 extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
 void TaopoSwamp_DarkenRoom(s32 fade);
+/// Shows message in an event; when someone in the party has Scoop, the field
+/// menu then opens (Event_ShowMessageAndOfferScoop, through the overlay's own
+/// import row).
 void TaopoSwamp_ShowMessage(s32 message);
 void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority);
 s32 Vent_GetCounter(void);
@@ -2541,6 +2544,9 @@ struct Trigger gTaopoSwampDripsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The cooled pool's countdowns: the steam puffs still to rise, one a frame
+/// (TaopoSwamp_PuffSteam); the frames the passage takes to dry, eight to a row
+/// (TaopoSwamp_OpenPassage); and the pool's flickers (TaopoSwamp_FlickerPool).
 s32 gTaopoSwamp_SteamPuffs = 112;
 
 s32 gTaopoSwamp_PassageRows = 120;

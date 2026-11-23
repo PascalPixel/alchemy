@@ -27,6 +27,8 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 
+/// The flags of a composite draw: clip the picture at the canvas's edges, and
+/// mirror it.
 enum {
   COMPOSITE_CLIP_X = 1,
   COMPOSITE_CLIP_Y = 2,
@@ -34,14 +36,8 @@ enum {
   COMPOSITE_FLIP_Y = 8,
   COMPOSITE_FLIP = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
-enum {
-  COMPOSITE_COPY,
-  COMPOSITE_TRANSPARENT,
-  COMPOSITE_MAX,
-  COMPOSITE_ADDITIVE
-};
-// BattleEffect_BuildBlitter builds additive for 0, max for 1, transparent for
-// 2.
+/// BattleEffect_BuildBlitter builds additive for 0, max for 1, transparent for
+/// 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 s32 BattleEffect_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift,
                               s32 flags, u32 mode);

@@ -25,8 +25,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+/// Stops the leader where it stands (Leader_StopMoving, through the overlay's
+/// own import row).
 void Import_LeaderStopMoving(void);
-void Import_EventResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 a);
 
 void Rock_Spawn(s32 x, s32 y, s32 z, s32 frames);
@@ -37,10 +38,6 @@ void PaletteFade_SetSource(s32 color, s32 b);
 
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
   PaletteFade_SetSource(color, b);
-}
-
-static inline void TundariaTower_SetWork(FIXED a, FIXED b, FIXED c) {
-  MapGrid_SetScreenShake(a, b, c);
 }
 
 #endif

@@ -31,11 +31,11 @@
 /// be used, no Djinn, a Djinni ready to summon.
 #define SUMMARY_HELP_CAPACITY 32
 
-// Japanese text is shorter: its help lines and Psynergy descriptions take
-// smaller buffers, and its stat numbers sit one tile further left. It decodes
-// the item, Psynergy and Djinn lines raw where the other languages copy them
-// expanded (BATTLE_MENU_MESSAGE_COPY); the lines that take a number are copied
-// expanded in every language.
+/// Japanese text is shorter: its help lines and Psynergy descriptions take
+/// smaller buffers, and its stat numbers sit one tile further left. It decodes
+/// the item, Psynergy and Djinn lines raw where the other languages copy them
+/// expanded (BATTLE_MENU_MESSAGE_COPY); the lines that take a number are copied
+/// expanded in every language.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SUMMARY_HELP_TEXT_LENGTH 64
 #define SUMMARY_STAT_VALUE_X 176

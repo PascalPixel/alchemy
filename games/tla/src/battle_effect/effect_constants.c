@@ -68,6 +68,7 @@ const struct SpriteScale gRamses_UnitScale = {{UNIT_SCALE}};
 /// The formation objects' scale in Judgment.
 const struct Scale gJudgment_UnitScale = UNIT_SCALE;
 
+/// Kirin's scale as he bounds in and lifts away.
 const struct SpriteScale gKirin_SweepScale = {{UNIT_SCALE}};
 
 /// Kirin's scale while he charges, before it is changed by frame.

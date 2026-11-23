@@ -30,7 +30,7 @@ struct StripQuad;
 /// Until this frame the circle of runes is tipped further and rights itself.
 #define RUNE_CIRCLE_RIGHTED_FRAME 48
 
-// gRagingHeat_Styles[variant]: four bytes for each strength.
+/// gRagingHeat_Styles[variant]: four bytes for each strength.
 enum {
   RAGING_HEAT_BURSTS,    ///< bursts of fire drawn where the pillar lands
   RAGING_HEAT_SPREAD,    ///< how far apart they fly
@@ -274,7 +274,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 /// The ring's tilt toward the viewer, beside its turn.
 #define JUGGLE_TILT 500
 
-// gJuggle_Styles[variant]: seven bytes for each strength.
+/// gJuggle_Styles[variant]: seven bytes for each strength.
 enum {
   RING_LIFT_STEP,     ///< pixels the ring rises each frame
   RING_LIFT_MAX,      ///< and its highest

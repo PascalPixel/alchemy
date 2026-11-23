@@ -506,6 +506,8 @@ extern const u16 Field_ExplosionPalette[];
 
 void FieldPsynergy_StartCast(void);
 
+/// Counts one more weird answer Felix gives (Event_CountAnswer, through the
+/// overlay's own import row).
 void EasternAlhafraShip_CountAnswer();
 
 /// A geyser's compressed tiles (graphics/field/geyser.png).
@@ -548,6 +550,8 @@ extern u8 gField_CachedTilesC[];
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
+/// The scene's trigger of a kind for a target whose condition holds, or NULL
+/// (Scene_FindTrigger, through the overlay's own import row).
 s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
 /// The World Picture's third set of compressed tiles

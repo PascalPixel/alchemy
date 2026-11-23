@@ -181,6 +181,8 @@ static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
   return actor->z.part[0].integer;
 }
 
+/// Sets the layer 2 cell at (x, z), 16.16 pixels, to the ground height there
+/// plus offset, in height steps, with `height` keeping it.
 #define SET_CELL_HEIGHT(x, z)                                                  \
   height = CELL_HEIGHT_STEPS(GetHeight(x, z)) + offset;                        \
   FieldMapGrid_SetCellHeight(x, z, 2, height)

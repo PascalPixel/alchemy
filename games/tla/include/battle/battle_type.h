@@ -4,6 +4,7 @@
 #include "static_assert.h"
 #include "battle/battle_unit.h"
 
+/// The most targets one action has (BattlePlan), and a plan's size in bytes.
 enum { BATTLE_TARGET_CAPACITY = 14, BATTLE_PLAN_SIZE = 100 };
 
 /// One action, laid out for BattleAbility_ApplyToTarget to apply target by

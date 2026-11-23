@@ -330,7 +330,7 @@ void ShamanVillage_TalkToInnkeeper(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SET_MODE Import_ActorSetMode
+#define EFFECT_SET_MODE Import_ActorSelectAnimation
 #define EFFECT_SET_SCRIPT Import_ActorStartScript
 #include "../field/field_effect_spawn.c"
 #undef EFFECT_SET_MODE
@@ -563,7 +563,7 @@ void ShamanVillage_BlowAwaySand(void) {
       spark->gravity = toFIXED(3) / 2;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
-      Import_ActorSetMode((struct Actor *)spark, 7);
+      Import_ActorSelectAnimation((struct Actor *)spark, 7);
       Import_ActorStartScript((struct Actor *)spark, gFieldEffect_MediumScript);
       Actor_SetSpriteFlags(spark, 0);
       FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
@@ -2879,7 +2879,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     actor->scaleY = FIXED_ONE / 2;
     *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
     actor->update = Smoke_Drift;
-    Import_ActorSetMode(actor, 5);
+    Import_ActorSelectAnimation(actor, 5);
     Actor_SetBlendMode(actor, 1);
   }
 }

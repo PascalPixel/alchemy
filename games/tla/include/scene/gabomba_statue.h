@@ -72,8 +72,6 @@ s32 GabombaStatue_GetPuzzleSeed(void);
 s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
 void GabombaStatue_FindBrokenCell(u32 *x_out, u32 *z_out);
 
-void Import_ActorRelease(struct Actor *actor);
-
 extern u32 gGabombaStatue_LookAtChannelScript[];
 
 void GabombaStatue_DrawCogCells(void);
@@ -112,7 +110,11 @@ void GabombaStatue_ClimbDownLadder(s32 x, s32 z);
 s32 GabombaStatue_GetClock(void);
 extern u32 gGabombaStatue_CogShapes[];
 
+/// Coils a rope at its first post (Rope_Coil, through the overlay's own import
+/// row).
 void GabombaStatue_CoilRope(s32 index, s32 a, s32 b);
+/// Places a rope between its posts, tied when its flag is set, else coiled
+/// (Rope_Place, through the overlay's own import row).
 void GabombaStatue_PlaceRope(s32 index, s32 flag, s32 a, s32 b);
 
 #endif

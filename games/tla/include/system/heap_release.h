@@ -11,13 +11,14 @@ void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void *Heap_Alloc(s32 size);
 void *Heap_AllocEwram(s32 size);
-void Heap_ReleaseEwram(void *buffer);
 /// Releases `buffer`, a block taken with no heap slot, and every later block of
 /// its pool, as HeapSlot_Release does.
 void Heap_Release(void *buffer);
 void Heap_FillFreeWords(u32 value);
 void Heap_Initialize(void);
 
+/// A block of size bytes from the allocator given (Heap_Alloc or
+/// Heap_AllocEwram), with no heap slot.
 static __inline__ void *Heap_CallAlternatePool(void *(*allocate)(s32),
                                                s32 size) {
   // The size passes through the inline's parameter and is built again at the

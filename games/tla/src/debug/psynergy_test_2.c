@@ -36,7 +36,7 @@
 #include "system/task.h"
 #include "fixed_math.h"
 
-// The battle the step on cell behavior 30 starts, once.
+/// The battle the step on cell behavior 30 starts, once.
 #define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
 
 /// The room's actors, numbered in the order of gActorPlacements.

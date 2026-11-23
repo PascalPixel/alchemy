@@ -57,6 +57,8 @@ struct DmaRegisters {
                 CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4));             \
   }
 
+/// Starts a transfer on DMA channel `channel`: its source, destination and
+/// control written in one store.
 CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc "
             "pattern emits")
 static __inline__ void Dma_Set(const void *source, void *destination,

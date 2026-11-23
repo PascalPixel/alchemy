@@ -91,10 +91,10 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "shared/tables.h"
 #include "shared/tundaria_tower.h"
 
-// The lava rises in three parts of the volcano, each when a statue's fireball
-// strikes the great stone face there, and drains when a floor switch by that
-// part's gate is pressed; the flags hold the state until the party comes back
-// in from outside.
+/// The lava rises in three parts of the volcano, each when a statue's fireball
+/// strikes the great stone face there, and drains when a floor switch by that
+/// part's gate is pressed; the flags hold the state until the party comes back
+/// in from outside.
 #define FLAG_ENTRANCE_FLOODED FLAG_AREA_TEMP_00
 #define FLAG_FURY_FLOODED FLAG_AREA_TEMP_01
 #define FLAG_LOWER_ROOMS_FLOODED FLAG_AREA_TEMP_02
@@ -122,6 +122,8 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 // when Felix stops on it, and its flag keeps the stone behind it raised.
 #define FLAG_ANY_MARKER_LIT FLAG_SCENE_TEMP_00
 #define FLAG_MARKER_LIT(marker) (FLAG_SCENE_TEMP_00 + (marker))
+/// The trigger a numbered stone of the Blaze tablet's room raises, less its
+/// number.
 enum { STEP_CELL_TRIGGER_BASE = 200 };
 
 /// The cell behaviours the rooms' maps mark their spots with, which the

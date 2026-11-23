@@ -4,6 +4,8 @@
 #include "edition.h"
 #include "static_assert.h"
 
+/// The most events a playback queues (BattlePlaybackWork's opcodes and
+/// operands).
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
 /// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the

@@ -140,7 +140,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   offset = 0;
   size = 2;
   for (i = 0; i != SURGE_CIRCLES; i++) {
-    // As an integer sum, the offset first.
     BattleEffect_DrawShadedCircles((u8 *)(offset + (s32)cells), size,
                                    FIXED_ONE);
     circles[i] = offset;
@@ -234,8 +233,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       index <<= 1;
-      // The entry's and each picture's address as an integer sum, the offset
-      // first.
       entry = (s16 *)(index + (s32)circles);
       half = size >> 1;
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(

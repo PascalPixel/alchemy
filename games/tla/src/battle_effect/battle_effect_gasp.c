@@ -907,7 +907,6 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         i = 0;
         twice = frame * 2;
-        // The puff's address as an integer sum, the offset first.
         p = (void *)(twice * sizeof(struct Particle) + (s32)work->particles);
         p->x = INTtoFIXED(from.x / 2);
         p->y = INTtoFIXED(from.y + 8);

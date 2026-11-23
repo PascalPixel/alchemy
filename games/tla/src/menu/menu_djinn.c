@@ -969,7 +969,7 @@ extern u8 gDjinnMenu_TextLevel[];
 
 s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
 
-void Menu_SetPageArrowsB(s32 index, s32 count);
+void Menu_SetPageArrowsLeftRight(s32 index, s32 count);
 void DjinnFigures_SetSlotFacing(s32 index, s32 facing);
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 
@@ -1121,7 +1121,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             }
           }
         }
-        Menu_SetPageArrowsB(memberColumn, menu->memberCount);
+        Menu_SetPageArrowsLeftRight(memberColumn, menu->memberCount);
 #if !TLA_PATCH_1
         wait(1);
 #endif

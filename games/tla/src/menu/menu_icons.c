@@ -1,6 +1,7 @@
 /// @file
 /// The stat arrows and the other icons the menus load into VRAM blocks, the
-/// five menu icons, and which party members the screens offer.
+/// party and Djinn figures, the five status icons, and the statuses the
+/// Status screens list.
 // Part of menu.c.
 
 #include "menu_internal.h"
@@ -72,15 +73,15 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
   }
 }
 
-/// Creates the stat change arrow from the up or down arrow resource the
-/// menu loaded.
+/// Shows a stat change arrow, up or down (enum StatArrow), at (x, y) of
+/// window. Returns 1, or -1 when no window sprite is free.
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
   struct ItemMenuWork *data = Ram_HeapSlots->menuWork;
 
-  if (variant == 0)
+  if (variant == STAT_ARROW_UP)
     resource = (u16)data->resourceSlots[0];
   else
     resource = (u16)data->resourceSlots[1];
@@ -106,7 +107,7 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
   u32 resource;
   struct ItemMenuWork *data = Ram_HeapSlots->menuWork;
 
-  if (variant == 0) {
+  if (variant == STAT_ARROW_UP) {
     resource = (u16)data->resourceSlots[0];
     y -= 3;
   } else {
@@ -167,7 +168,7 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
 
 /// Shows the up arrow when the page of four starting at `index`'s page has one
 /// above it and the down arrow when one follows, among `count` entries.
-void Menu_SetPageArrowsA(s32 index, s32 count) {
+void Menu_SetPageArrowsUpDown(s32 index, s32 count) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct WindowSprite *arrow;
 
@@ -188,9 +189,9 @@ void Menu_SetPageArrowsA(s32 index, s32 count) {
   }
 }
 
-/// As Menu_SetPageArrowsA, with the arrows hopping left and right: the Djinn
-/// menu's columns of party members.
-void Menu_SetPageArrowsB(s32 index, s32 count) {
+/// As Menu_SetPageArrowsUpDown, with the arrows hopping left and right: the
+/// Djinn menu's columns of party members.
+void Menu_SetPageArrowsLeftRight(s32 index, s32 count) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct WindowSprite *arrow;
 
@@ -214,12 +215,12 @@ void Menu_SetPageArrowsB(s32 index, s32 count) {
 /// Sets the page arrows for `index` and sets the chosen party member's figure
 /// apart from the others on its page of four: its y MENU_MEMBER_CHOSEN_Y,
 /// theirs MENU_MEMBER_Y.
-void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
+void Menu_MarkChosenMember(s32 unused, s32 index, s32 count) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 top = index / 4 * 4;
   s32 i;
 
-  Menu_SetPageArrowsA(index, count);
+  Menu_SetPageArrowsUpDown(index, count);
   for (i = 0; i <= 3; i++) {
     if (top + i == index)
       menu->memberY[i] = MENU_MEMBER_CHOSEN_Y;
@@ -228,7 +229,7 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
   }
 }
 
-/// A VBlank task while the party figures show: places each party member's
+/// A task while the party figures show: places each party member's
 /// figure at its menu position and scale through the projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
@@ -262,7 +263,7 @@ s32 Party_GetCharacterSpriteFar(s32 id);
 /// Menu_CreateOwnerEntryObjects for two characters (-1 for none): their
 /// figures in entries 0 and 1, as the Djinn preview shows the pair a Djinni
 /// passes between.
-void Menu_CreatePairEntryObjects(s32 first, s32 second) {
+void Menu_CreatePairFigures(s32 first, s32 second) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   struct Sprite *figure;
   s32 id;
@@ -360,13 +361,13 @@ void Menu_ReleaseEntryObjects(void) {
 }
 
 /// Shows the Djinn figures of the top row (nonzero) or hides them (0).
-void DjinnFigures_SetShown(s32 hidden) {
+void DjinnFigures_SetShown(s32 shown) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
-  menu->figuresShown = hidden;
+  menu->figuresShown = shown;
 }
 
-/// A VBlank task while the Djinn figures show: places each at its position,
+/// A task while the Djinn figures show: places each at its position,
 /// depth and scale; a positive scale eases a quarter of the way to full size
 /// each frame, a negative one holds at its size.
 void DjinnFigures_UpdateTopRow(void) {
@@ -504,7 +505,7 @@ void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
     menu->figureScales[index] = scale;
 }
 
-/// Queues the item menu's five menu icons for drawing while they show.
+/// A task: queues the five status icons for drawing while they show.
 void MenuIcon_PushSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot;
@@ -512,7 +513,7 @@ void MenuIcon_PushSlots(void) {
 
   if (menu->menuIconsShown != 0) {
     slot = menu->menuIcons;
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < CHARACTER_AILMENT_COUNT; i++) {
       Oam_AddSpriteAtDepth(slot, OAM_DEPTH_WINDOW);
       slot++;
     }
@@ -521,9 +522,9 @@ void MenuIcon_PushSlots(void) {
 
 extern u16 gStatusScreen_CommandIcons[5];
 
-/// Loads the Status screen's five command icons (gStatusScreen_CommandIcons)
-/// into free VRAM entries, gives each slot its sprite attributes and tile,
-/// keeps the entries for MenuIcon_ReleaseSlots and starts MenuIcon_PushSlots.
+/// Loads the five status icons (gStatusScreen_CommandIcons), one for each
+/// status MenuPanel_DrawEntryList lists, into free VRAM cache slots, and starts
+/// drawing them (MenuIcon_PushSlots).
 void MenuIcon_LoadSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot = menu->menuIcons;
@@ -533,7 +534,7 @@ void MenuIcon_LoadSlots(void) {
   s32 i;
   s32 offset = 0;
 
-  for (i = 0; i < 5; i++) {
+  for (i = 0; i < CHARACTER_AILMENT_COUNT; i++) {
     entry = VramCache_FindFreeEntry();
     if (entry < VRAM_CACHE_ENTRY_COUNT) {
       u32 *attributes;
@@ -555,8 +556,7 @@ void MenuIcon_LoadSlots(void) {
   Task_Add(MenuIcon_PushSlots, TASK_PASS_FRAME + 10);
 }
 
-/// Stops MenuIcon_PushSlots and frees the five command icons' entries
-/// MenuIcon_LoadSlots took in the sprite cache.
+/// Stops drawing the five status icons and frees their VRAM cache slots.
 void MenuIcon_ReleaseSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 *resource;
@@ -564,11 +564,11 @@ void MenuIcon_ReleaseSlots(void) {
 
   Task_Remove(MenuIcon_PushSlots);
   resource = menu->menuIconSlots;
-  for (i = 0; i < 5; i++)
+  for (i = 0; i < CHARACTER_AILMENT_COUNT; i++)
     VramCache_FreeEntry(*resource++);
 }
 
-/// Moves command icon index to screen position (x, y).
+/// Moves status icon index to screen position (x, y).
 void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -576,15 +576,16 @@ void MenuIcon_SetSlot(s32 index, u32 x, s32 y) {
   menu->menuIcons[index].attr.y = y;
 }
 
-/// Shows the five command icons MenuIcon_PushSlots draws (1) or hides them (0).
+/// Shows the five status icons (1) or hides them (0).
 void MenuIcon_SetActive(s32 active) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   menu->menuIconsShown = active;
 }
 
-/// Lists usable entries with icons and names, or "none" when no entries
-/// qualify.
+/// Lists the statuses enabled marks into panel from (x, y), one a 16-pixel row
+/// with its icon, or "Your status is normal." when there are none; the icons
+/// of the others go off screen.
 void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
@@ -592,7 +593,7 @@ void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
   s32 iconY = (s16)panel->y * 8 + y + 8;
   s32 i;
 
-  for (i = 0; i <= 4; i++) {
+  for (i = 0; i < CHARACTER_AILMENT_COUNT; i++) {
     if (enabled[i] != 0) {
       MenuIcon_SetSlot(i, iconX, iconY);
       Text_DrawMessageAsTilesFar((s32)MsgStatusNameDown + i, panel, x + 16, y);
@@ -607,8 +608,8 @@ void MenuPanel_DrawEntryList(struct Window *panel, s32 x, s32 y,
     Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
-/// Fills ailments[0..4] with party member memberId's statuses:
-/// down (only when requested is 1), poison or venom, curse and haunt.
+/// Fills ailments (enum UnitStatus) with party member memberId's statuses,
+/// down only when requested is 1, and returns how many they have.
 s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   struct Unit *unit;
   s32 ailmentIndex;
@@ -616,7 +617,7 @@ s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   s32 poison;
 
   unit = Unit_Get(memberId);
-  for (ailmentIndex = 0; ailmentIndex < 5; ailmentIndex++)
+  for (ailmentIndex = 0; ailmentIndex < CHARACTER_AILMENT_COUNT; ailmentIndex++)
     ailments[ailmentIndex] = 0;
 
   count = 0;

@@ -437,7 +437,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->memberWindow, ownerIndex, ownerCount);
+      Menu_MarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
       redraw = 0;
     }
     MenuCursor_Position((ownerIndex % 4) * 24 - 10, 16);
@@ -457,7 +457,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex++;
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
-        Menu_HighlightPageEntry(menu->memberWindow, ownerIndex, ownerCount);
+        Menu_MarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
       }
@@ -467,7 +467,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex--;
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
-        Menu_HighlightPageEntry(menu->memberWindow, ownerIndex, ownerCount);
+        Menu_MarkChosenMember(menu->memberWindow, ownerIndex, ownerCount);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
       }
@@ -526,7 +526,7 @@ s32 PsynergyMenu_ChooseMember(void) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->memberWindow, selection, count);
+      Menu_MarkChosenMember(menu->memberWindow, selection, count);
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);

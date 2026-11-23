@@ -1072,7 +1072,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->mainWindow, selection, count);
+      Menu_MarkChosenMember(menu->mainWindow, selection, count);
     }
     MenuCursor_Position(selection % 4 * 24 - 10, 16);
     wait(1);
@@ -1190,7 +1190,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->mainWindow, selection, count);
+      Menu_MarkChosenMember(menu->mainWindow, selection, count);
       if (mode == ITEM_TARGET_GIVE) {
         ItemMenu_RefreshMember(menu->memberIds[selection], 1);
         Window_DrawDividerLineFar(window, 0, 9, 16, 9);
@@ -1265,7 +1265,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   selection = menu->sideIndex[0];
   count = menu->sideCount[0];
   Menu_CreateOwnerEntryObjects(selection / 4 * 4);
-  Menu_HighlightPageEntry(menu->mainWindow, selection, count);
+  Menu_MarkChosenMember(menu->mainWindow, selection, count);
   menu->pageArrows[0]->motion = ICON_HIDDEN;
   menu->pageArrows[1]->motion = ICON_HIDDEN;
   return (s8)result;
@@ -3046,7 +3046,7 @@ s32 ItemMenu_RunList(s32 pane) {
                 Unit_Get(menu->sideMember[pane]), menu->items, 0);
           } while (menu->itemCount == 0);
           Menu_CreateOwnerEntryObjects(member / 4 * 4);
-          Menu_HighlightPageEntry(menu->mainWindow, member, count);
+          Menu_MarkChosenMember(menu->mainWindow, member, count);
           menu->pageArrows[0]->motion = ICON_HIDDEN;
           menu->pageArrows[1]->motion = ICON_HIDDEN;
           wait(1);

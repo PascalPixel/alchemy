@@ -7,7 +7,7 @@
 #include "menu_internal.h"
 #include "sounds.h"
 
-void Menu_CreatePairEntryObjects(s32 first, s32 second);
+void Menu_CreatePairFigures(s32 first, s32 second);
 
 /// The Djinni figures of a give or trade preview hop across between the two
 /// party members once every DJINN_PREVIEW_HOP_PERIOD frames, a few frames into
@@ -83,7 +83,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   Party_ListMembersFar(owners);
   first = owners[menu->selectedColumn[0]];
   second = owners[menu->selectedColumn[1]];
-  Menu_CreatePairEntryObjects(first, second);
+  Menu_CreatePairFigures(first, second);
   for (memberIndex = 0; memberIndex < 4; memberIndex++)
     menu->memberY[memberIndex] = MENU_FIGURE_HIDDEN_Y;
   menu->memberX[0] = 16;

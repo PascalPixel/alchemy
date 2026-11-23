@@ -498,7 +498,7 @@ void Text_UseExtraTilesFar(s32 flag);
 /// Marks the text tiles the tilemap shows and frees those it no longer shows.
 void Window_MarkVisibleTextTilesFar(void);
 void Menu_CreateOwnerEntryObjects(s32 first);
-void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
+void Menu_MarkChosenMember(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 /// Loads entry id's icon of kind mode into sprite tile slot slot (a free one
 /// when -1).

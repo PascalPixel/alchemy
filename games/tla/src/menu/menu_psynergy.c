@@ -428,7 +428,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
+      Menu_MarkChosenMember(menu->auxiliaryWindow, selection, count);
       if (!GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) && !shown) {
         WindowSprite_ClearListFar(menu->infoWindow);
 #if TLA_PATCH_1
@@ -545,7 +545,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
           Menu_CreateOwnerEntryObjects(selection / 4 * 4);
           wait(1);
         }
-        Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
+        Menu_MarkChosenMember(menu->auxiliaryWindow, selection, count);
         if (!GameFlag_Get(FLAG_INFO_WINDOW_HOLDS_MESSAGE) && !shown) {
           // The Japanese release clears the info window; from patch 1 it
           // redraws the window's saved rectangle.
@@ -595,7 +595,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   selection = menu->tabIndex[0];
   count = menu->tabCounts[0];
   Menu_CreateOwnerEntryObjects(selection / 4 * 4);
-  Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
+  Menu_MarkChosenMember(menu->auxiliaryWindow, selection, count);
   menu->pageArrows[0]->motion = ICON_HIDDEN;
   menu->pageArrows[1]->motion = ICON_HIDDEN;
   return result;
@@ -1203,7 +1203,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;
         Menu_CreateOwnerEntryObjects(member / 4 * 4);
-        Menu_HighlightPageEntry(menu->auxiliaryWindow, member, ownerCount);
+        Menu_MarkChosenMember(menu->auxiliaryWindow, member, ownerCount);
         menu->pageArrows[0]->motion = ICON_HIDDEN;
         menu->pageArrows[1]->motion = ICON_HIDDEN;
         wait(1);

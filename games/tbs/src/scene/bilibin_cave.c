@@ -20,7 +20,8 @@
 /// leaves the Bilibin Cave Entrance, into the cave or out to the World Map,
 /// since both are other areas.
 ///
-/// The cells beside the low mouth switch its way in off and on again
+/// The cliff-top path passes just above the low mouth, and its cells there
+/// switch the mouth's way in off and on again
 /// (BilibinCave_CloseLowerCaveMouth, BilibinCave_OpenLowerCaveMouth).
 ///
 /// Inside, in SceneId_BilibinCaveRapier, the high mouth leads to the chest of
@@ -227,23 +228,20 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gBilibinCaveTriggersOther;
 }
 
-/// Nothing visible happens when Isaac steps onto a cell beside the low cave
-/// mouth at the Bilibin Cave Entrance, cells (20, 13..14) west of it and
-/// (22, 13..14) east of it. The game quietly turns off the mouth's way into
-/// the cave, cell (21, 14), so that crossing from one side to the other does
-/// not take him in.
-///
-/// XXX: whether these cells are the high path from the vine, drawn above the
-/// mouth, or the ground in front of it; a render of Isaac walking from the
-/// vine's top toward the high mouth would settle it.
+/// Nothing visible happens when Isaac, on the grassy path along the cliff top
+/// from the vine toward the high cave mouth at the Bilibin Cave Entrance,
+/// steps onto the stretch drawn just above the low mouth, cells (20, 13..14)
+/// and (22, 13..14). The game quietly turns off the low mouth's way into the
+/// cave, cell (21, 14), which lies between them in the map, so that walking
+/// along the path over it does not take him in.
 static void BilibinCave_CloseLowerCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
-/// Nothing visible happens when Isaac steps a cell further out from the low
-/// cave mouth at the Bilibin Cave Entrance, cells (19, 12..13) and
-/// (23, 12..13). The game turns the mouth's way into the cave, cell (21, 14),
-/// back on.
+/// Nothing visible happens when Isaac walks on along the cliff-top path past
+/// that stretch at the Bilibin Cave Entrance, cells (19, 12..13) and
+/// (23, 12..13). The game turns the low mouth's way into the cave, cell
+/// (21, 14), back on.
 static void BilibinCave_OpenLowerCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }

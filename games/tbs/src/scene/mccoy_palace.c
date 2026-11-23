@@ -534,8 +534,10 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
 /// at the gate. Both nod, and the captain tells Isaac "You are always welcome
 /// in the palace of Lord McCoy." before walking off up the stairs.
 ///
-/// XXX: which way the player usually meets it is unchecked; a recording would
-/// need the chests brought out and a reward taken in one visit.
+/// It can play only in the visit the reward is taken in: the row takes the
+/// cells its trigger answers only while the chests stand out before the gate
+/// (McCoyPalace_OpenRewardChestRow), and once a reward is taken a later visit
+/// does not bring them out again.
 static void McCoyPalace_CaptainSeesPartyOff(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Event_Start();

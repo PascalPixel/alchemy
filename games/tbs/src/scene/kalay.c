@@ -1096,20 +1096,19 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-/// Nothing visible happens on its own when Isaac steps onto cell (15, 51) or
-/// (44, 51) in the Kalay Tunnel; from there on he is drawn
-/// in front of or behind the scenery by where he stands again
-/// (ACTOR_PRIORITY_AUTOMATIC). XXX: what he passes in front of or behind
-/// between these cells and their neighbours west; a recording of Isaac walking
-/// east across (14, 51) and (15, 51) would settle it.
+/// Nothing visible happens when Isaac, back from hopping a water channel on
+/// the Kalay Tunnel's narrow ledges, steps onto cell (15, 51) or (44, 51);
+/// from there on he is drawn in front of or behind the scenery by where he
+/// stands again (ACTOR_PRIORITY_AUTOMATIC).
 static void Kalay_FreeLeaderPriority(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Nothing visible happens on its own when Isaac steps onto cell (14, 51) or
-/// (43, 51) in the Kalay Tunnel; from there on he stays
-/// drawn in front of or behind the scenery as he was, wherever he stands,
-/// until he reaches the cell east of it.
+/// Nothing visible happens when Isaac steps onto cell (14, 51) or (43, 51),
+/// at the end of a narrow ledge in the Kalay Tunnel where a channel of water
+/// runs south out of the pool beside it. From there he stays drawn as he was
+/// until he is back on the cell east of it: hopping the channel and back, he
+/// is drawn whole in front of the water and the ledges' edges.
 static void Kalay_FixLeaderPriority(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }

@@ -1452,13 +1452,13 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
 /// into the dragon statue's dark room (cells (14, 17) to (16, 17)); the fade
 /// overlay the room started takes him up again.
 ///
-/// The overlay (field/field_sequence_ground_mask.c) draws a translucent square
-/// on the ground beside him wherever the ground just south of it stands higher
-/// than his feet. It runs only when he came in from the room of Ki or up the
-/// middle passage, and coming up the passage starts it with no one to follow.
-// XXX: what the overlay's squares look like in the dark room; no render of
-// Isaac beside raised ground there has shown one. A render with the sprite list
-// printed while he walks below the top ledge would settle it.
+/// The overlay (field/field_sequence_ground_mask.c) covers him with squares
+/// the colour of the floor wherever the ground just south of him stands
+/// higher than his feet: walking along the south side of the room's sunken
+/// middle floor, he shows only from the knees down. It runs only when he came
+/// in from the room of Ki or up the middle passage, and coming up the passage
+/// starts it with no one to follow; come in any other way, he walks there
+/// whole.
 static void FuchinFallsCave_FadeOverlayFollowsLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
@@ -1521,9 +1521,10 @@ static void ImilFuchinFalls_PrepareRoom(void) {
         gMainRoutineWork.entrance <=
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR) {
       // Two hidden crates on the west ledge by the stairs down, at cells
-      // (9, 28) and (11, 28).
-      // XXX: what they are for; Isaac walks over both cells in a render, and
-      // nothing shows there. A render with them removed would settle it.
+      // (9, 28) and (11, 28). Isaac walks over both cells and nothing shows.
+      // XXX (no evidence): what they are for; nothing in the scene reads them
+      // again, and no recording can take them away to compare (a probe hides
+      // an actor only in its photo, where these show nothing already).
       FuchinFallsCave_CreateHiddenActor(toFIXED(156), 0, toFIXED(452),
                                         SPRITE_CRATE);
       FuchinFallsCave_CreateHiddenActor(toFIXED(188), 0, toFIXED(452),

@@ -1168,12 +1168,11 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 
 /// Nothing visible happens when Isaac walks onto the lowest floor of the
 /// seventh floor's side room, among the brown pits, for example cell (54, 15)
-/// in its north east. The game starts the fade overlay on him, which draws
-/// semi-transparent marks at his sides wherever the ground beside him rises
-/// above his feet, and sets his `riseCounter`.
-///
-/// XXX: what the marks hide on this floor; a render of Isaac walking past a
-/// raised edge here, with the overlay and without, would settle it.
+/// in its north east. The game starts the fade overlay on him and sets his
+/// `riseCounter`. From then on, walking on the brown floor along the raised
+/// pink ground south of it, he shows only from the waist up: the overlay
+/// covers the rest in the colour of the raised ground, as if he stood behind
+/// it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   gFadeOverlayWork->actor = leader;

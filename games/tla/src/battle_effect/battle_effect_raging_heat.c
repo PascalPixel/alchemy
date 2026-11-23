@@ -18,7 +18,7 @@ struct StripQuad;
 /// The pillar starts to fall and the ring of fire to spread.
 #define RAGING_HEAT_PILLAR_FRAME 56
 /// FlashBurstSheet's pictures, after the circle of runes (128x128) in the
-/// effect's sheet.
+/// effect's sprite sheet.
 #define RAGING_HEAT_FLASH_BURST_PICTURES (128 * 128)
 /// The bursts the pillar sets out where it lands; the variant draws the first
 /// RAGING_HEAT_BURSTS of them.

@@ -492,11 +492,12 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 #define SWIRL_STEP_DIVISOR 532
 
 /// Unused: reached only from BattleEffect_RunBackgroundFadeIn, which nothing
-/// refers to. A turning cloud swirl on BG2: the cloud sheet is drawn once into
-/// the canvas in the battle background's colours and copied twice across the
-/// map buffer; then BG2 turns about the screen while BG1 scrolls, the palette
-/// flashes white at the start, steps toward BlueFlameSheet's colours every
-/// fourth frame and from frame 120 dims. B starts it over and A ends it.
+/// refers to. A turning cloud swirl on BG2: the cloud sprite sheet is drawn
+/// once into the canvas in the battle background's colours and copied twice
+/// across the map buffer; then BG2 turns about the screen while BG1 scrolls,
+/// the palette flashes white at the start, steps toward BlueFlameSheet's
+/// colours every fourth frame and from frame 120 dims. B starts it over and A
+/// ends it.
 void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   BlitterPair sheetDraw;
   s32 savedScrollX;
@@ -526,8 +527,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   REG_BG1CNT |= 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // The cloud sheet, moved to the battle background's palettes (which take
-  // EmberStreakSheet's colours), drawn into the canvas.
+  // The cloud sprite sheet, moved to the battle background's palettes (which
+  // take EmberStreakSheet's colours), drawn into the canvas.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   palette = Resource_GetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);

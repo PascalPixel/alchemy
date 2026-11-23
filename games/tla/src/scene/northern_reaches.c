@@ -118,10 +118,10 @@ struct ExplosionSpark {
 #define ICE_SHARD_COUNT 54
 /// How long a shard flies, in frames.
 #define ICE_SHARD_FRAMES 60
-/// The buffer a sheet is unpacked into.
+/// The buffer a sprite sheet is unpacked into.
 #define SHEET_BUFFER_SIZE 4096
 
-/// The shattering's work: the shards' sheet, and each shard's sprite and
+/// The shattering's work: the shards' sprite sheet, and each shard's sprite and
 /// motion.
 struct IceWallWork {
   u8 sheet[SHEET_BUFFER_SIZE];
@@ -440,8 +440,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
     shard->age = 0;
     shard++;
   }
-  /* FAKEMATCH(temporary): size, the sheet's size held in a local before the
-   * sparks are allocated; as SHEET_BUFFER_SIZE at the allocation. */
+  /* FAKEMATCH(temporary): size, the sprite sheet's size held in a local before
+   * the sparks are allocated; as SHEET_BUFFER_SIZE at the allocation. */
   size = SHEET_BUFFER_SIZE;
   sparks =
       Heap_AllocEwram(EXPLOSION_SPARK_COUNT * sizeof(struct ExplosionSpark));

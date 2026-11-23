@@ -64,7 +64,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   wait(8);
 
   // A clipped, mirrored blitter keeping the brighter for the sparks; the
-  // ring's texture, the spark sheet and the blue flame's colours.
+  // ring's texture, the spark sprite sheet and the blue flame's colours.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

@@ -409,7 +409,8 @@ struct WaterTriangle {
 #define WATER_SHEET_SMOKE 12288
 #define WATER_SHEET_SMOKE_PICTURE_COUNT 6
 
-/// Where the 32x32 picture at the sheet's start is mirrored into a 64x64 one.
+/// Where the 32x32 picture at the sprite sheet's start is mirrored into a 64x64
+/// one.
 #define WATER_SHEET_MIRRORED 1024
 
 #define DREAMTIDE_FRAMES 48

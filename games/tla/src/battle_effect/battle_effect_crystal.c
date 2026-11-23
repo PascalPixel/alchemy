@@ -28,7 +28,7 @@
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
 #define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 26048
 
-/// A Venus Djinni appears and its small picture dives onto the target; a
+/// A Venus Djinni appears and its small sprite dives onto the target; a
 /// glowing cog spins and grows flat on the ground under the targets while
 /// orbs of light rise around them, pulsing, and each target flashes white as
 /// it is healed.

@@ -3,9 +3,9 @@
 
 /// @file
 /// The Lost Age's copy of the battle effect work.
-// The Broken Seal's block with the 64 particles in front of the sheet, the two
-// affine scales after the BG2 reference point, 64 object slots and one more
-// word before the effect.
+// The Broken Seal's block with the 64 particles in front of the sprite sheet,
+// the two affine scales after the BG2 reference point, 64 object slots and one
+// more word before the effect.
 
 #include "field/particle.h"
 #include "battle/battle_effect_params.h"

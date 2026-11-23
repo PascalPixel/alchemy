@@ -5,8 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The pictures in the slash sheet (Atalanta's arrows of light): five flash
-/// pictures, then the shaft in three parts, each in its own size.
+/// The pictures in the slash sprite sheet (Atalanta's arrows of light): five
+/// flash pictures, then the shaft in three parts, each in its own size.
 #define ATALANTA_SHAFT_FLASH_A_WIDTH 14
 #define ATALANTA_SHAFT_FLASH_A_HEIGHT 28
 #define ATALANTA_SHAFT_FLASH_B_WIDTH 23

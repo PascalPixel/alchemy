@@ -28,7 +28,7 @@ void BattleEffect_RunBlast(struct BattleEffectParams *args) {
   BattleEffect_RunEruption(args, ERUPTION_BLAST);
 }
 
-/// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
+/// The mote pictures in the sprite sheet: two sets, MOTE_SET_BYTES apart.
 #define ERUPTION_FIELD_MOTE_PICTURES 12800
 
 /// The puffs of smoke given a start, of which the variant's count in

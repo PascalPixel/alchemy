@@ -191,7 +191,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           work->sheet[src];
     }
   }
-  // The glints' sheet takes the orb's place.
+  // The glints' sprite sheet takes the orb's place.
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS_AND_WAVES)
     Resource_LoadAndDecompress(RESOURCE_BLUE_ARC_SHEET_A,

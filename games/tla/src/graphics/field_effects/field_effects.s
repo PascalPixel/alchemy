@@ -93,7 +93,7 @@ FieldEffect_BowDraw:
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15;
 @ its callback FieldPsynergy_UpdateBurst copies the 16 colours of Data_080f0fa0 to OBJ
 @ palette 15, and the picture carries them. Overlays 685, 6a6 and 6a7 load
-@ the sheet too.
+@ the sprite sheet too.
 	.global FieldEffect_Explosion
 FieldEffect_Explosion:
 	.incbin "games/tla/src/graphics/field_effects/explosion.4bpp16x16.lz"
@@ -117,9 +117,9 @@ FieldEffect_SparkleFade:
 @ sprites of them, each with the 256-colour bit cleared and OBJ palette 15.
 @ Its callback FieldPsynergy_UpdateRing steps every sprite through the four pictures, four
 @ frames a picture, and each frame writes sixteen colours it computes to OBJ
-@ palette 15. The game stores no palette for this sheet: ring_waves.png carries the
-@ first row of the shared OBJ palette, which the 256-colour sheets of this
-@ folder carry whole.
+@ palette 15. The game stores no palette for this sprite sheet: ring_waves.png
+@ carries the first row of the shared OBJ palette, which the 256-colour sprite
+@ sheets of this folder carry whole.
 	.global FieldEffect_RingWaves
 FieldEffect_RingWaves:
 	.incbin "games/tla/src/graphics/field_effects/ring_waves.4bpp16x16.lz"

@@ -52,8 +52,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  // The boulder sheet is unpacked first and the crystal sheet over it; Prism
-  // draws only the crystal's pictures.
+  // The boulder sprite sheet is unpacked first and the crystal sprite sheet
+  // over it; Prism draws only the crystal's pictures.
   Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side, draw);

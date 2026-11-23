@@ -2,13 +2,13 @@
 #define ALCHEMY_SPRITE_IDS_H
 
 /// @file
-/// Sprite numbers, named where their sheet is. A sprite's picture is
+/// Sprite numbers, named where their sprite sheet is. A sprite's picture is
 /// src/graphics/sprite/<name>.png, its id's name in lowercase without SPRITE_
 /// (jenna.png for SPRITE_JENNA).
 
 /// Sprite ids, one for each row of the sprite table (sprite/sprites.tsv) in
 /// order. A party member's field sprite shares its character number, so the
-/// field draws a character id as its sprite. A row whose sheet keeps its
+/// field draws a character id as its sprite. A row whose sprite sheet keeps its
 /// number (spr_013.png) has no name here; the next named row's number is
 /// written after it.
 enum SpriteId {
@@ -176,11 +176,11 @@ enum SpriteId {
   SPRITE_POSEIDON = 159,
   SPRITE_LEMURIAN_MAN,
   SPRITE_GIRL_WITH_RED_BOW,
-  /// A turtle in a 32-pixel sheet, standing alone and with a child riding it;
-  /// it stands on one of the islets of the turtle trade.
+  /// A turtle in a 32-pixel sprite sheet, standing alone and with a child
+  /// riding it; it stands on one of the islets of the turtle trade.
   SPRITE_SMALL_TURTLE,
-  /// A smaller turtle in a 16-pixel sheet, the one the islets' trade spawns
-  /// wading.
+  /// A smaller turtle in a 16-pixel sprite sheet, the one the islets' trade
+  /// spawns wading.
   SPRITE_TURTLE_SMALL,
   SPRITE_LEMURIAN_OLD_WOMAN,
   SPRITE_LEMURIAN_IN_TEAL,

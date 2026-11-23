@@ -34,8 +34,8 @@
 #define FLASH_BURST_PICTURE_FRAMES 4
 
 /// Six twinkling stars (a 24 by 48 picture mirrored both ways from the
-/// sheet's two halves) are thrown up from the caster, each at a target in
-/// turn; from frame 8 * i + 11 each is pulled toward its target and bursts
+/// sprite sheet's two halves) are thrown up from the caster, each at a target
+/// in turn; from frame 8 * i + 11 each is pulled toward its target and bursts
 /// once it has passed it, into four flash bursts and 32 sparks, knocking the
 /// target back.
 ///
@@ -64,7 +64,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET, work->sheet, 1, 1);
 
-  // The star: each half of the sheet's 24-wide picture mirrored left to
+  // The star: each half of the sprite sheet's 24-wide picture mirrored left to
   // right and top to bottom.
   for (i = 0; i != 2; i++) {
     u8 *picture =

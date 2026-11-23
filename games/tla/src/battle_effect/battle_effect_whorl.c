@@ -17,8 +17,8 @@ struct StripQuad;
 #define TWISTING_COLUMN_ROWS (TWISTING_COLUMN_QUADS + 1)
 #define TWISTING_COLUMN_VERTICES (TWISTING_COLUMN_ROWS * 2)
 
-/// The column's transformed corners, its strip's mesh and the second sheet, in
-/// the map cell buffer.
+/// The column's transformed corners, its strip's mesh and the second sprite
+/// sheet, in the map cell buffer.
 #define TWISTING_COLUMN_TRANSFORMED (Ram_MapCellBuffer + 4096)
 #define TWISTING_COLUMN_MESH (Ram_MapCellBuffer + 8192)
 #define TWISTING_COLUMN_SHEET (Ram_MapCellBuffer + 16384)
@@ -101,7 +101,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   s32 shade;
   s32 i;
   s32 j;
-  // Where the sheets' palettes are copied.
+  // Where the sprite sheets' palettes are copied.
   void *palette = (void *)BG_PLTT;
   void *vertices = TWISTING_COLUMN_TRANSFORMED;
   u8 *sheet = TWISTING_COLUMN_SHEET;

@@ -55,13 +55,13 @@ facing any way.
 A party member's sprite is named for the character whose number it
 shares; another takes the name The Broken Seal gives the same picture,
 or is named for who wears it or what it shows. An enemy's battle
-sprite, which has animations and no sheet of its own, is named for the
+sprite, which has animations and no sprite sheet of its own, is named for the
 first class that uses it (`battle_dread_hound.tsv`). One that nothing
 names yet keeps its row's number, as `spr_013.png` does.
 `include/sprite_ids.h` gives each named row its `SPRITE_` id.
 
 Every figure the field or a battle can draw has a row in the sprite table,
-`sprite/sprites.tsv`: its size, a scale it is drawn at, its sheet and its
+`sprite/sprites.tsv`: its size, a scale it is drawn at, its sprite sheet and its
 animations. There are 716, and the Japanese edition has a table of its
 own beside it.
 
@@ -94,10 +94,10 @@ Three things worth knowing if you want to make one:
 
 A town is not painted as one picture. It is built from a
 [tileset](../../glossary.md#tileset): a palette of 14 short lists of 16
-colours, and sheets of 512 tiles each. The [map](../../glossary.md#map)
+colours, and tile sheets of 512 tiles each. The [map](../../glossary.md#map)
 says which tile goes where ([Maps](../map/README.md#cells)).
 
-A map does not name a tileset as a whole. Each palette and each sheet is a
+A map does not name a tileset as a whole. Each palette and each tile sheet is a
 resource of its own, so maps borrow freely. The cheapest borrowing is the
 same tiles under new colours: `tileset/palettes/` holds 72 palettes with no
 tiles of their own.
@@ -116,7 +116,7 @@ next.
   pictures are often different sizes, so each is a PNG of its own
   ([Battle effects](../battle_effect/README.md)). `summon/` holds the
   pictures the summons are drawn from.
-- `font/` holds the letters: one sheet for each language, a letter to a 16
+- `font/` holds the letters: one font sheet for each language, a letter to a 16
   by 16 square, with a table of widths beside it so that an `i` takes less
   room than a `W`. The staff credits have a font of their own, in
   `credits/`.

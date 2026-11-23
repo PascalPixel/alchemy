@@ -496,9 +496,9 @@ s32 Speaker_GetVoice(s32 object);
 extern const u16 Field_ExplosionPalette[];
 /// The sparks of the explosion that Loho's cannon blast and the Northern
 /// Reaches' shattered ice wall throw over the screen: how many, a spark's life
-/// in frames (the explosion sheet's eight pictures, four frames each), the
-/// sprite palette their colours are loaded into (Field_ExplosionPalette), and
-/// their depth slot among the field's sprites.
+/// in frames (the explosion sprite sheet's eight pictures, four frames each),
+/// the sprite palette their colours are loaded into (Field_ExplosionPalette),
+/// and their depth slot among the field's sprites.
 #define EXPLOSION_SPARK_COUNT 96
 #define EXPLOSION_SPARK_FRAMES 32
 #define EXPLOSION_SPARK_PALETTE 15

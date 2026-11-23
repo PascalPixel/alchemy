@@ -37,7 +37,7 @@ UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 /// How far right of the screen's left edge the canvas shows until the chips
 /// fly, in pixels.
 #define CYBELE_CANVAS_X 32
-/// The order the picture dissolves in: shuffled runs of the canvas's columns,
+/// The order the canvas dissolves in: shuffled runs of the canvas's columns,
 /// row y taking run y % CYBELE_DISSOLVE_RUNS.
 #define CYBELE_DISSOLVE_RUNS 8
 /// The dissolve clears CYBELE_DISSOLVE_PIXELS pixels a frame from each of the
@@ -65,8 +65,8 @@ UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #define CYBELE_DUST_SPREAD ((TRIG_TURN + 4) / 5)
 #define CYBELE_DUST_LAST_FRAME 26
 
-/// The vine pictures in the thorn vine sheet, below a tip at 0; the flowers,
-/// thorns and sparks follow.
+/// The vine pictures in the thorn vine sprite sheet, below a tip at 0; the
+/// flowers, thorns and sparks follow.
 #define CYBELE_VINE_WIDTH 24
 #define CYBELE_VINE_TIP_HEIGHT 8
 #define CYBELE_VINE_STEM_HEIGHT 64
@@ -84,7 +84,7 @@ enum ThornVineSheetPicture {
 
 /// Cybele drops in at the right and thorns fly from her mouth; flowering
 /// vines grow out of the ground, lifting the targets while sparks flash around
-/// them; then the picture greys and dissolves pixel by pixel, the targets
+/// them; then the canvas greys and dissolves pixel by pixel, the targets
 /// drop, each landing on a spreading ring in a cloud of dust, and Cybele bursts
 /// away in a flash. A or B skips to the drop.
 ///
@@ -392,7 +392,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    // The picture dissolves pixel by pixel from the top.
+    // The canvas dissolves pixel by pixel from the top.
     if (frame > 232) {
       s32 row = frame * 2 - 496;
 

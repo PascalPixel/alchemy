@@ -272,7 +272,7 @@ void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
 #define GATHERING_SPIRITS_SWAY 16
 /// A layer's BGnHOFS and BGnVOFS as one word, as an HBlank DMA writes them.
 #define BG_OFFSETS(horizontal, vertical) ((horizontal) | (vertical) << 16)
-/// The spirits' pictures, three of the sheet's four drawn.
+/// The spirits' pictures, three of the sprite sheet's four drawn.
 #define SPIRIT_WIDTH 20
 #define SPIRIT_HEIGHT 32
 

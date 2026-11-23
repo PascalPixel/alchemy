@@ -127,8 +127,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gSeaOfTime_SwirlsPlacements[];
 
 /// The Lemurian ship the party sails, and the rocks that rise in the last
-/// stretch. The ship's row places it blank, and it wears the ship's sheet
-/// (`SPRITE_WINGED_SHIP`) on the water.
+/// stretch. The ship's row places it blank, and it wears the ship's sprite
+/// sheet (`SPRITE_WINGED_SHIP`) on the water.
 enum {
   ACTOR_SHIP = ACTOR_FIRST_PLACED,
   /// The grey rocks that rise out of the last stretch's north part once

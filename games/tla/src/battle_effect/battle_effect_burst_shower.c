@@ -37,7 +37,7 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_CHAR
 };
 
-/// Where the burst shower keeps its pictures in the effect's sheet: the
+/// Where the burst shower keeps its pictures in the effect's sprite sheet: the
 /// notes, hearts or smoke of the modes that load them first, at 0.
 enum BurstShowerSheet {
   BURST_SHOWER_BUBBLE = 4096,  ///< the bubble, each row written twice

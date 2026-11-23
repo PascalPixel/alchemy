@@ -99,9 +99,9 @@ enum KandoreanTempleChestbeaterRoomActorId {
   /// (gKandoreanTemple_PillarActors).
   ACTOR_BOILING_POT = ACTOR_FIRST_PLACED,
   /// The red embers the pot boils over: an actor in the pot's sprite at the
-  /// pot's place, in its animation 2, the sheet's last picture alone. It is
-  /// drawn underfoot with no shadow, hidden under the pot, and stays glowing on
-  /// the floor where the pot stood when the pot is chucked aside.
+  /// pot's place, in its animation 2, the sprite sheet's last picture alone. It
+  /// is drawn underfoot with no shadow, hidden under the pot, and stays glowing
+  /// on the floor where the pot stood when the pot is chucked aside.
   ACTOR_EMBERS_UNDER_THE_POT,
   /// The sign by the hot floor, which tells of Master Poi's trial.
   ACTOR_POIS_SIGN,

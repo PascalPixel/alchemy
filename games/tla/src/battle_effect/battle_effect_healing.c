@@ -7,7 +7,7 @@
 
 #define HEALING_SPARKS 512 ///< sparks in PARTICLES
 
-/// Where the Djinni's picture is decoded in the work sheet, in bytes.
+/// Where the Djinni's picture is decoded in the work sprite sheet, in bytes.
 #define HEALING_DJINNI_PICTURE 4096
 /// How far the Djinni sways to either side, in screen pixels.
 #define HEALING_DJINNI_SWAY 20
@@ -71,7 +71,7 @@ void BattleEffect_RunWish(struct BattleEffectParams *args) {
 }
 
 /// A ring of healing motes below each target closes in on it, in the blast
-/// sheet's colours.
+/// sprite sheet's colours.
 ///
 /// Abilities: Cure, Cure Well, Potent Cure, Corn, Flower, Worms.
 void BattleEffect_RunCure(struct BattleEffectParams *args) {
@@ -122,8 +122,8 @@ void BattleEffect_RunTonic(struct BattleEffectParams *args) {
 }
 
 /// After a Venus Djinni appears, sparkles burst up and out from each target's
-/// feet, their colours turning from the blast sheet's to cyan, and go out one
-/// by one.
+/// feet, their colours turning from the blast sprite sheet's to cyan, and go
+/// out one by one.
 ///
 /// Abilities: Salt.
 void BattleEffect_RunSalt(struct BattleEffectParams *args) {
@@ -264,7 +264,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, resource, SHEET_PALETTE_BYTES);
 
   // The Djinni: its 40x40 picture on a canvas at its own width, the small
-  // sheet's 20x40 one on a canvas at twice its width.
+  // sprite sheet's 20x40 one on a canvas at twice its width.
   if (doubleWidth == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
       resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);

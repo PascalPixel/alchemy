@@ -10,14 +10,15 @@
 #define MIRRORED_WALL_DRAW_FRAMES 28 ///< frames the wall's cels are drawn
 
 /// The wall's three 64x64 cels, each a half wall and its mirror image, built
-/// at the start of the sheet; EarthWallSheet decodes behind them, at
+/// at the start of the sprite sheet; EarthWallSheet decodes behind them, at
 /// PICTURE_OFFSET.
 #define CEL_SIZE 4096
 #define PICTURE_OFFSET 16384
 
 /// EarthWallSheet's three half walls of flame, each taller than the last
-/// (earth_wall_11.png to _13.png): where each begins in the decoded sheet, and
-/// its size. The Broken Seal's mirrored wall draws the same three pictures.
+/// (earth_wall_11.png to _13.png): where each begins in the decoded sprite
+/// sheet, and its size. The Broken Seal's mirrored wall draws the same three
+/// pictures.
 #define EARTH_WALL_LOW 2702
 #define EARTH_WALL_LOW_WIDTH 17
 #define EARTH_WALL_LOW_HEIGHT 49
@@ -208,8 +209,8 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
 /// The opening's mote copies: DAEDALUS_MOTE_COPIES copies of
 /// ParticleSpritesA's mote DAEDALUS_MOTE, 4 pixels wide and 8 tall, in the
-/// battle sheet's heap slot, the first DAEDALUS_MOTE_DIM_FIRST levels dimmer
-/// than the mote and each next DAEDALUS_MOTE_DIM_STEP more. Nothing in
+/// battle sprite sheet's heap slot, the first DAEDALUS_MOTE_DIM_FIRST levels
+/// dimmer than the mote and each next DAEDALUS_MOTE_DIM_STEP more. Nothing in
 /// Daedalus draws them.
 #define DAEDALUS_MOTE 3
 #define DAEDALUS_MOTE_BYTES ((DAEDALUS_MOTE + 1) * (DAEDALUS_MOTE + 1) * 2)
@@ -518,7 +519,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       view->busy = 1;
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);
-      // The dimmed mote copies, from the work's sheet.
+      // The dimmed mote copies, from the work's sprite sheet.
       off = offsetof(struct BattleEffectWork, sheet);
       n = DAEDALUS_MOTE;
       for (j = 0; j != DAEDALUS_MOTE_COPIES; j++) {

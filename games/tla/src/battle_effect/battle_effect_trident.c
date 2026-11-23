@@ -49,7 +49,7 @@ extern const struct Scale gTrident_UnitScale;
 #define TRIDENT_GROUND_DISC 19590
 
 /// Where JaggedStreakSheet is decoded in the effect's pictures, after the
-/// tornado sheet's glints: three pictures of a jagged bolt,
+/// tornado sprite sheet's glints: three pictures of a jagged bolt,
 /// JAGGED_STREAK_WIDTH by JAGGED_STREAK_HEIGHT.
 #define TRIDENT_JAGGED_STREAKS GLINT_SET_BYTES
 /// Seven bolts spin in, one every 4 frames from TRIDENT_FIRST_BOLT_FRAME,

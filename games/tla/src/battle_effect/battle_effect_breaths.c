@@ -13,8 +13,8 @@ enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 /// FlameBandTexture, wrapped round the rings of flame, unpacked into the map
 /// cell buffer's second 16 KB.
 #define FLAME_RING_TEXTURE (Ram_MapCellBuffer + 16384)
-/// The Beam's 16 fading rings of 32x32, one after another in the sheet, and the
-/// glow every breath draws at the mouth after them.
+/// The Beam's 16 fading rings of 32x32, one after another in the sprite sheet,
+/// and the glow every breath draws at the mouth after them.
 #define BEAM_RING_SIZE 32
 #define BEAM_RING_COUNT 16
 #define BEAM_RING_BYTES (BEAM_RING_SIZE * BEAM_RING_SIZE)
@@ -69,8 +69,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
   // Set up the canvas, the sparks, the colours (blue for the pikes, orange
   // otherwise) and the rings of flame's texture, then each breath's own
-  // sheet: the Beam computes its fading rings, each row lit by a half turn
-  // of a sine and each ring 4 levels dimmer.
+  // sprite sheet: the Beam computes its fading rings, each row lit by a half
+  // turn of a sine and each ring 4 levels dimmer.
   if (mode != BREATH_BEAM)
     BattleEffect_StartCanvasLayer(0);
   else

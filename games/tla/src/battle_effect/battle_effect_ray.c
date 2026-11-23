@@ -14,7 +14,7 @@ enum {
   RAY_SPARKS_PER_BOLT, ///< sparks each bolt throws a frame
 };
 
-#define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
+#define RAY_PICTURES 1550 ///< the bolt pictures in the sprite sheet
 #define RAY_COUNT 4       ///< bolts
 
 /// The level the canvas flashes to every five frames while the bolts strike.

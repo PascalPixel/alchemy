@@ -131,7 +131,7 @@ void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_CRUCIBLE_FIRE);
 }
 
-/// Where each picture sits in the sheet.
+/// Where each picture sits in the sprite sheet.
 enum StatBoostSheet {
   STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
   STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
@@ -139,7 +139,7 @@ enum StatBoostSheet {
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
 };
 
-/// When the first target's flares burst and its picture appears, with the
+/// When the first target's flares burst and its sprite appears, with the
 /// damage; each later target follows STAT_BOOST_TARGET_DELAY frames behind.
 /// Crucible Fire starts at STAT_BOOST_CRUCIBLE_FIRE_FRAME, after the flares.
 #define STAT_BOOST_BURST_FRAME 52
@@ -574,7 +574,7 @@ enum StatReductionMode {
   STAT_REDUCTION_DULL    ///< a dagger, in the glow orb's colours
 };
 
-/// Breaks the dagger picture into fading shards as Dull does, in the pink
+/// Breaks the dagger sprite into fading shards as Dull does, in the pink
 /// burst's colours; no effect table entry reaches it.
 UNUSED void BattleEffect_RunUnusedStatReduction(void *action) {
   BattleEffect_RunStatReduction(action, STAT_REDUCTION_UNUSED);
@@ -663,7 +663,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     xOffset = 0;
   }
 
-  // The shards start in a grid where the picture was, in rows 6 pixels apart
+  // The shards start in a grid where the sprite was, in rows 6 pixels apart
   // up from 10 below its centre, four to a row 2 pixels apart from 2 to one
   // side (dagger) or 8 apart from 16 (shield), and fly away from the user's
   // side, scattering and rising.
@@ -739,7 +739,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                          x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2,
                          SHIELD_WIDTH, SHIELD_HEIGHT);
         }
-        // The chime as the picture breaks.
+        // The chime as the sprite breaks.
         /* FAKEMATCH(temporary): the target's frame worked out again, here and
          * for the shards' fade below; as targetFrame. */
         if (frame - j * STAT_REDUCTION_TARGET_DELAY == 24)

@@ -947,7 +947,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
 
 #define HURRICANE_FRAMES 68
 
-/// The streak the effect draws into the work sheet: one pixel of level
+/// The streak the effect draws into the work sprite sheet: one pixel of level
 /// HURRICANE_STREAK_LEVEL a row, a pixel further over every 16 rows, slanting
 /// as the streaks fall. The first HURRICANE_STREAKS of the work's particles
 /// fall as streaks, one more each frame, and a streak whose foot reaches

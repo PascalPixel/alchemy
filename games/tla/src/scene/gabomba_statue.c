@@ -3610,8 +3610,8 @@ void GabombaStatue_FindBrokenCell(u32 *x_out, u32 *z_out) {
   }
 }
 
-/// The clock's digit sheet: the pictures of 0 to 9 and the colon, 8 by 16
-/// pixels each, then the five shown.
+/// The clock's digit sprite sheet: the pictures of 0 to 9 and the colon, 8 by
+/// 16 pixels each, then the five shown.
 enum {
   CLOCK_PICTURE_BYTES = 64,
   CLOCK_SHEET_PICTURES = 11,
@@ -3624,7 +3624,7 @@ enum {
 /// The offering's countdown clock, MM:SS:T drawn as sprites: the digits that
 /// change shrink and grow back each second as it ticks.
 struct ClockWork {
-  u8 *tiles;  ///< the digit sheet
+  u8 *tiles;  ///< the digit sprite sheet
   u8 *digits; ///< the five digit pictures, as loaded
   u8 old[8];
   u8 now[8];
@@ -3704,7 +3704,8 @@ void GabombaStatue_DrawClock(void) {
   GabombaStatue_FormatClock(*timer + 50, digit);
   GabombaStatue_FormatClock(*timer + 60, clock->old);
   GabombaStatue_FormatClock(*timer, clock->now);
-  // old and now walk the sheet and the pictures here, the digit lists below.
+  // old and now walk the sprite sheet and the pictures here, the digit lists
+  // below.
   for (i = 0; i < CLOCK_SHOWN_PICTURES; i++) {
     Iwram_CopyWordsEntry(
         now, old + *digit * CLOCK_PICTURE_BYTES - '0' * CLOCK_PICTURE_BYTES,

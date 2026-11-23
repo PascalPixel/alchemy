@@ -34,7 +34,7 @@
 /// tornado turns round it every 32.
 #define WHIRLWIND_SWEEP_SWAY 16
 
-/// The tornado pictures, after the six glint pictures in the sheet.
+/// The tornado pictures, after the six glint pictures in the sprite sheet.
 #define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
 #define WHIRLWIND_SECTION_BYTES PICTURE_BYTES(TORNADO_STRIP)
 
@@ -59,8 +59,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   s32 i;
   s8 *landed;
 
-  // Set up: the canvas layer, the vortex sheet and two blitters, the one on
-  // the right mirrored. landed is nonzero once a bubble has struck.
+  // Set up: the canvas layer, the vortex sprite sheet and two blitters, the one
+  // on the right mirrored. landed is nonzero once a bubble has struck.
   landed = (s8 *)Ram_MapCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -203,8 +203,8 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  // Set up: the canvas layer, the tornado sheet and two max blitters, the
-  // second mirrored.
+  // Set up: the canvas layer, the tornado sprite sheet and two max blitters,
+  // the second mirrored.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));

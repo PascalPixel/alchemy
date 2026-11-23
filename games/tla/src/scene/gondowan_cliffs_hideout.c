@@ -110,7 +110,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The fire marker's script: it shows its sheet's blank first picture.
+/// The fire marker's script: it shows its sprite sheet's blank first picture.
 u32 gGondowanCliffsHideout_FireMarkerScript[] = {
     SC_ANIMATION(0),
     SC_END,

@@ -415,8 +415,8 @@ void Iris_ChangeBackdrop(void) {
   gBgScroll[1].x = 0;
 }
 
-/// Iris's sheet, work->sheet: the mote set and its fading copies, then the
-/// drops' pictures (eight of each size, each a shaded circle mirrored and
+/// Iris's sprite sheet, work->sheet: the mote set and its fading copies, then
+/// the drops' pictures (eight of each size, each a shaded circle mirrored and
 /// dimmer than the last), later overwritten by the strips' and the glow's
 /// 32x64 textures.
 #define IRIS_MOTE_FADES 8
@@ -437,9 +437,9 @@ void Iris_ChangeBackdrop(void) {
 #define IRIS_PILLAR_TEXTURE_SIZE 16
 #define IRIS_PILLAR_CIRCLE 1000
 
-/// The splashes' pictures, in the particle sheet (Ram_HeapSlots->battleSheet):
-/// IRIS_RING_FADES fades each of a large and a small ring mote, IRIS_DOT_FADES
-/// of a dot and the spray's column.
+/// The splashes' pictures, in the particle sprite sheet
+/// (Ram_HeapSlots->battleSheet): IRIS_RING_FADES fades each of a large and a
+/// small ring mote, IRIS_DOT_FADES of a dot and the spray's column.
 #define IRIS_RING_FADES 3
 #define IRIS_DOT_FADES 8
 /// How much dimmer each fade of a ring mote and of a dot is than the last.
@@ -1007,7 +1007,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     return slot;
   }
 
-  // The motes: a sheet cell, fading after 32 frames with bit 4, or a
+  // The motes: a sprite sheet cell, fading after 32 frames with bit 4, or a
   // textured quad spinning up with bit 8.
   void DrawParticles(void) {
     struct ModelTexture texture;
@@ -2465,8 +2465,8 @@ struct MeshFace {
 /// the heap's vertex buffer) in place, then draws each front-facing face of the
 /// mesh at the start of the effect work as an affine-textured triangle: uvs
 /// gives each face's three texture corners (16.16), the texture is the effect
-/// sheet, textureShift its row length as a power of two. Coordinates are offset
-/// by 64 pixels into the canvas.
+/// sprite sheet, textureShift its row length as a power of two. Coordinates are
+/// offset by 64 pixels into the canvas.
 UNUSED void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount,
                                     s32 (*uvs)[3][2], s32 textureShift) {
   s32 i;

@@ -370,7 +370,8 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
                        (n)]
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
-#define LOBBED_SHELLS_SMOKE_PICTURES 16000 ///< the smoke pictures in the sheet
+#define LOBBED_SHELLS_SMOKE_PICTURES                                           \
+  16000 ///< the smoke pictures in the sprite sheet
 /// GoldShellSheet's shell as it tumbles, upright and then turned on its side.
 #define LOBBED_SHELL_WIDTH 24
 #define LOBBED_SHELL_HEIGHT 32

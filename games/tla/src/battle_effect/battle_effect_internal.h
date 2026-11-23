@@ -277,12 +277,12 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// as it comes back after an effect: as dark as the canvas's fade left it.
 #define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
-/// A sheet resource opens with its 64 colours, ahead of its compressed
+/// A sprite sheet resource opens with its 64 colours, ahead of its compressed
 /// pictures.
 #define SHEET_PALETTE_COLORS 64
 #define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
 
-/// Loads a sheet's colours into the background palette.
+/// Loads a sprite sheet's colours into the background palette.
 #define LOAD_BG_PALETTE(resource)                                              \
   {                                                                            \
     void *palette = Resource_GetTableEntry(resource);                          \
@@ -294,8 +294,8 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The damping that keeps a particle's whole speed.
 #define PARTICLE_DAMPING_NONE DAMPING_SCALE
 
-/// The bytes of a sheet picture, one byte a pixel, from its name's _WIDTH and
-/// _HEIGHT.
+/// The bytes of a sprite sheet picture, one byte a pixel, from its name's
+/// _WIDTH and _HEIGHT.
 #define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
 
 /// Draws picture `name` of `sheet` at its own size, its top left at (x, y).
@@ -367,10 +367,10 @@ enum ModelKind {
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
   (Matrix_Initialize(), Matrix_SetLookAt((camera)->eye, (camera)->focus))
 
-// The sheets' pictures, as The Broken Seal names them: this game draws the same
-// sheets at the same sizes.
+// The sprite sheets' pictures, as The Broken Seal names them: this game draws
+// the same sprite sheets at the same sizes.
 
-/// The bytes of the six glint pictures that open the tornado sheet.
+/// The bytes of the six glint pictures that open the tornado sprite sheet.
 #define GLINT_SET_BYTES                                                        \
   (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
 
@@ -446,8 +446,8 @@ enum RedCrescentPicture {
 #define FIRE_STREAK_HEIGHT 72
 #define FIRE_BURST_WIDTH 40
 #define FIRE_BURST_HEIGHT 80
-/// The small Djinn sheets' pictures are SMALL_DJINNI_WIDTH wide; Mercury's and
-/// Venus's are shorter than SMALL_DJINNI_HEIGHT.
+/// The small Djinn sprite sheets' pictures are SMALL_DJINNI_WIDTH wide;
+/// Mercury's and Venus's are shorter than SMALL_DJINNI_HEIGHT.
 #define MERCURY_SMALL_DJINNI_HEIGHT 34
 #define VENUS_SMALL_DJINNI_HEIGHT 38
 /// FireBlobSheet's blobs and CrystalSheet's crystal.
@@ -467,7 +467,7 @@ enum RedCrescentPicture {
 /// variant.
 #define SHARD_TURN 96
 /// PaletteRampImage's shard pictures (drawn through gStatChange_ShardPictures),
-/// where the stat reduction and the Sword Card decode them in the sheet,
+/// where the stat reduction and the Sword Card decode them in the sprite sheet,
 /// followed by DIMMED_COPIES - 1 copies of them, each darker than the one
 /// before.
 #define STAT_REDUCTION_SHARD_PICTURES 9600
@@ -504,16 +504,17 @@ enum RedCrescentPicture {
 #define RUNE_TEXTURE_SIZE 64
 #define RUNE_TEXTURE_RUNE (8 * RUNE_TEXTURE_SIZE + 8)
 
-/// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
-/// and its kind), and the one picture of the small sheets.
+/// A Djinni's picture: each frame of the full Djinn sprite sheets
+/// (VenusDjinnSheet and its kind), and the one picture of the small sprite
+/// sheets.
 #define DJINNI_WIDTH 40
 #define DJINNI_HEIGHT 40
 #define SMALL_DJINNI_WIDTH 20
 #define SMALL_DJINNI_HEIGHT 40
 
-/// The pictures of the sheets several effects share, each sheet's pictures
-/// all one size: SmokeSheet's puffs, FlashBurstSheet's bursts, SkullSheet's
-/// skulls and the tornado strips after TornadoSheet's glints.
+/// The pictures of the sprite sheets several effects share, each sprite sheet's
+/// pictures all one size: SmokeSheet's puffs, FlashBurstSheet's bursts,
+/// SkullSheet's skulls and the tornado strips after TornadoSheet's glints.
 #define SMOKE_PUFF_WIDTH 24
 #define SMOKE_PUFF_HEIGHT 48
 /// A puff of SmokeSheet's lives through its six pictures, four frames each.
@@ -1780,10 +1781,10 @@ enum FlurryArcs {
 };
 /// Whose palette a flurry takes, its FLURRY_PALETTE.
 enum FlurryPalette {
-  FLURRY_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
+  FLURRY_PALETTE_MARS_DJINNI, ///< the Mars Djinni sprite sheet's
   FLURRY_PALETTE_LIME,
   FLURRY_PALETTE_BLUE_ARC,
-  FLURRY_PALETTE_EMBER ///< the ember streak sheet's
+  FLURRY_PALETTE_EMBER ///< the ember streak sprite sheet's
 };
 /// What else a flurry plays around its target, its FLURRY_EXTRA.
 enum FlurryExtra {

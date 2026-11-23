@@ -19,7 +19,7 @@
 /// Wrapping columns of water.
 #define NEREID_COLUMNS 3
 #define NEREID_DROPS PARTICLE_POOL_COUNT ///< drops of spray in PARTICLES
-#define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
+#define NEREID_COLUMN_PICTURE 1764 ///< the column of water in the sprite sheet
 /// The canvas line below which a falling drop has sunk into the waves.
 #define NEREID_WAVES_Y 104
 /// Particles given a place and a delay that nothing reads.

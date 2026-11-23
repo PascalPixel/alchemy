@@ -340,7 +340,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   }
 }
 
-/// The fragment pictures in the sheet, four of 12x24, after the flash.
+/// The fragment pictures in the sprite sheet, four of 12x24, after the flash.
 #define IMPACT_BURST_SHARD_PICTURES 23000
 #define IMPACT_BURST_FRAGMENT_WIDTH 12 ///< each fragment picture's width
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24
@@ -648,10 +648,10 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// The burst's frame the damage is told from.
 #define PARTICLE_STREAMS_DAMAGE_FRAME 48
 
-/// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
-/// where the one before ends: six flames, then three large and three small
-/// glows, each glow brighter at its centre than the one before. The fall draws
-/// only the six and the brightest glow of each size.
+/// The pictures in the flame sprite sheet (ResourceId_FlameSheetB), each
+/// starting where the one before ends: six flames, then three large and three
+/// small glows, each glow brighter at its centre than the one before. The fall
+/// draws only the six and the brightest glow of each size.
 #define PARTICLE_STREAMS_FLAME_SIZE 32
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
@@ -692,7 +692,7 @@ enum ParticleStreamsSheetPicture {
 /// background brightens from PARTICLE_STREAMS_BRIGHTEN_DELAY frames after it.
 #define PARTICLE_STREAMS_FLASH_FRAME 16
 #define PARTICLE_STREAMS_BRIGHTEN_DELAY 20
-/// The blast sheet's flash pictures, each shown two frames.
+/// The blast sprite sheet's flash pictures, each shown two frames.
 #define PARTICLE_STREAMS_FLASH_PICTURES 7
 /// An ember's depth is held between these: the nearest are drawn as mote 9,
 /// each PARTICLE_STREAMS_EMBER_SIZE_DEPTH deeper a size smaller.
@@ -700,7 +700,7 @@ enum ParticleStreamsSheetPicture {
 #define PARTICLE_STREAMS_EMBER_FAR 799
 #define PARTICLE_STREAMS_EMBER_SIZE_DEPTH 64
 
-/// The mote pictures in the blast sheet, after its seven blast pictures
+/// The mote pictures in the blast sprite sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
 #define PARTICLE_STREAMS_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
 

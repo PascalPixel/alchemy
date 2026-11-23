@@ -47,7 +47,7 @@ enum NaribweActorId {
   ACTOR_WEST_BRAZIER,
   ACTOR_EAST_BRAZIER,
   /// Unseen actors held 24 pixels over the braziers: the exclamation bubble's
-  /// sheet, whose first animation draws nothing.
+  /// sprite sheet, whose first animation draws nothing.
   ACTOR_OVER_WEST_BRAZIER,
   ACTOR_OVER_EAST_BRAZIER,
   /// "Don't tell me you just came back from Kibombo!"

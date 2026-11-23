@@ -29,19 +29,19 @@
 
 /// The glow that flickers about the head of Thor's hammer while his bolts
 /// strike (RESOURCE_VIOLET_MOTE_SHEET's picture, after the second part's
-/// sheet), a quarter drawn four times mirrored.
+/// sprite sheet), a quarter drawn four times mirrored.
 #define THOR_HAMMER_GLOW_PICTURE 24576
 #define THOR_HAMMER_GLOW_PICTURE_HEIGHT 24
-/// The light fan, at the first part's sheet start, drawn twice mirrored.
+/// The light fan, at the first part's sprite sheet start, drawn twice mirrored.
 #define THOR_LIGHT_FAN_WIDTH 32
 #define THOR_LIGHT_FAN_HEIGHT 96
-/// The second part's sheet: the pillar of lightning in two pictures, then
-/// the bolts.
+/// The second part's sprite sheet: the pillar of lightning in two pictures,
+/// then the bolts.
 #define THOR_BOLT_WIDTH 72
 #define THOR_BOLT_HEIGHT 72
 
-/// Where Thor keeps the dimmed copies of the mote pictures in its sheet, which
-/// its ring darkens through once the beam has fallen.
+/// Where Thor keeps the dimmed copies of the mote pictures in its sprite sheet,
+/// which its ring darkens through once the beam has fallen.
 #define THOR_DIMMED_MOTES 10000
 
 #define THOR_SPRITES 9 ///< Thor's sprites, in SUMMON_FORMATION_THOR
@@ -222,8 +222,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     if (gInput.repeat & (KEY_A | KEY_B)) {
       break;
     }
-    // The colours cycle, stepping twice a frame toward the blast sheet's, then
-    // the Mercury, Mars and Jupiter Djinn sheets', 16 frames each.
+    // The colours cycle, stepping twice a frame toward the blast sprite
+    // sheet's, then the Mercury, Mars and Jupiter Djinn sprite sheets', 16
+    // frames each.
     for (i = 0; i != 2; i++) {
       if ((frame & 63) <= 15) {
         BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);

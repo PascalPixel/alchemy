@@ -6,8 +6,8 @@
 #include "sounds.h"
 
 #define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
-/// The rock picture in the sheet; the sheet starts with the 40x16 strip of
-/// ground cut from the background.
+/// The rock picture in the sprite sheet; the sprite sheet starts with the 40x16
+/// strip of ground cut from the background.
 #define QUAKE_WALL_PICTURE 7680
 
 /// The byte of pixel (x, y) in the battle background's tiles, laid out 32 to a

@@ -69,8 +69,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas and a clipped MAX blitter, mirrored to face the
-  // target; mirror the rune's corner into the sheet; load the sparks, the
-  // sword and the ring of fire.
+  // target; mirror the rune's corner into the sprite sheet; load the sparks,
+  // the sword and the ring of fire.
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
@@ -314,8 +314,8 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
   BattleEffect_RunElementCards(args, CARD_THUNDER);
 }
 
-/// A card's picture, CARD_WIDTH by CARD_HEIGHT, at its sheet's start; the
-/// Bramble Card's sheet has its three vines after it, 32 by 128 as
+/// A card's picture, CARD_WIDTH by CARD_HEIGHT, at its sprite sheet's start;
+/// the Bramble Card's sprite sheet has its three vines after it, 32 by 128 as
 /// JaggedStreakSheet's streaks are.
 #define CARD_STREAK_WIDTH 32
 #define CARD_STREAK_HEIGHT 128
@@ -614,7 +614,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // This frame's models: the card, then the pictures.
+    // This frame's models: the card, then the textures.
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     texture.logWidth = 5;

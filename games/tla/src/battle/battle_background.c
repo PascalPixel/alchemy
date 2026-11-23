@@ -667,8 +667,8 @@ struct Ring {
 #define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
 #define STAR_FIELD_RING_SIZE 32
 #define STAR_FIELD_FRAMES 45 ///< the frames a cast's glow lasts
-/// The blue ring sheet's colours, before its pictures; an element's palette
-/// replaces them.
+/// The blue ring sprite sheet's colours, before its pictures; an element's
+/// palette replaces them.
 #define STAR_FIELD_COLORS 64
 /// The sparks and rings move in 1/1024 canvas pixels: STAR_FIELD_PIXEL to a
 /// pixel.
@@ -677,7 +677,7 @@ struct Ring {
 
 /// The star field's work, for the 45 frames of a cast's glow.
 struct SparkWork {
-  /// The blue ring sheet's pictures, the sparks' and the rings'.
+  /// The blue ring sprite sheet's pictures, the sparks' and the rings'.
   u8 sheet[4544];
   struct Spark sparks[STAR_FIELD_SPARKS];
   struct Ring rings[STAR_FIELD_RINGS];
@@ -694,8 +694,8 @@ struct SparkWork {
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
-// The star tables: each picture's size and sheet offset, and the ring's four
-// pictures.
+// The star tables: each picture's size and sprite sheet offset, and the ring's
+// four pictures.
 extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
 extern const s32 gElementGlow_RingPictures[];

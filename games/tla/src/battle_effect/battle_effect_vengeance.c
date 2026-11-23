@@ -27,8 +27,8 @@ struct StripQuad;
 #define VENGEANCE_NOCK_FRAMES 4
 /// The frames a struck arrow stays in the target, its flame out.
 #define VENGEANCE_STUCK_FRAMES 4
-/// Vengeance's sheet: the archer twice, her bow drawn and its string at rest
-/// after a shot, then the flame around an arrow's head, the arrow, and her
+/// Vengeance's sprite sheet: the archer twice, her bow drawn and its string at
+/// rest after a shot, then the flame around an arrow's head, the arrow, and her
 /// shoulder, drawn again over a nocked arrow so that its end passes behind it.
 #define VENGEANCE_ARCHER_WIDTH 88
 #define VENGEANCE_ARCHER_HEIGHT 96
@@ -395,10 +395,10 @@ struct Shears {
 
 #define LIFE_SHEAR_FRAMES 90
 #define LIFE_SHEAR_SNIP_FRAME 50 ///< the shears snap shut through the target
-/// Life Shear's sheet, decoded into the map cell buffer: a woman leaping and
-/// the same woman striking, then the shears' two blades, each with its pivot
-/// ring and handle loop (a pale one 128 by 64 and an orange one 128 by 32),
-/// and the flame the flash is made of, 32 by 32.
+/// Life Shear's sprite sheet, decoded into the map cell buffer: a woman leaping
+/// and the same woman striking, then the shears' two blades, each with its
+/// pivot ring and handle loop (a pale one 128 by 64 and an orange one 128 by
+/// 32), and the flame the flash is made of, 32 by 32.
 #define LIFE_SHEAR_WOMAN_WIDTH 55
 #define LIFE_SHEAR_WOMAN_HEIGHT 88
 #define LIFE_SHEAR_STRIKING                                                    \
@@ -743,7 +743,7 @@ void BattleEffect_RunDjinnStorm(struct BattleEffectParams *args) {
 /// How far the column leans back.
 #define GEYSER_TILT 2000
 
-/// Copies a sheet's 64 colours into the background palette.
+/// Copies a sprite sheet's 64 colours into the background palette.
 static inline void CopyPalette(const void *palette) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 }
@@ -1353,8 +1353,8 @@ struct MeshVertex;
     }                                                                          \
   } while (0)
 
-/// Coatlicue's pictures in the effect's sheet: CogTexture's quarter mirrored
-/// into a whole cog, 128 by 128; ScaleTexture, 128 by 16; then
+/// Coatlicue's pictures in the effect's sprite sheet: CogTexture's quarter
+/// mirrored into a whole cog, 128 by 128; ScaleTexture, 128 by 16; then
 /// BubbleAnimationSheet's fifteen pictures and a copy of them at half
 /// brightness.
 #define COATLICUE_COG 0

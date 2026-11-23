@@ -58,7 +58,6 @@ void Statue_FlashUnderBurst(struct Actor *actor);
 
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count);
 void MagmaRock_StartFallingRocks(void);
-void MagmaRock_EndFallingRocks(void);
 
 void MagmaRock_BurstStatue(s32 mode, s32 cue);
 
@@ -70,11 +69,12 @@ extern s16 gMagmaRock_CrumblingPillars[];
 
 void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 
+/// Lays a tightrope between its two posts (Tightrope_Place, through the
+/// overlay's own import row).
 void MagmaRock_PlaceTightrope();
 s32 Field_TryJumpForward(void);
 
 void Dust_Scatter(s32 spread);
-void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer);
 extern u32 gRubble_SprayScript[];
 
 extern u32 gRubble_BurstScript[];
@@ -99,7 +99,5 @@ void MagmaRock_PushPillarWest(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
-
-s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
 
 #endif

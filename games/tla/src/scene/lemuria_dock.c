@@ -36,6 +36,8 @@ enum {
   ACTOR_CANNON
 };
 
+/// A door the leader walks into: the cell animation that opens it and the cell
+/// (x, z) it plays at.
 struct WarpTarget {
   s32 script; ///< the door's cell animation
   u16 x;

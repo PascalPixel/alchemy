@@ -35,11 +35,14 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_StartScript(struct Actor *actor, const void *script);
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param);
 s32 Field_FindNearbyTalkTarget(s32 id);
-s32 Import_FieldTryJumpForward(void);
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
+/// Cyclone scatters the bushes or weeds it touches (Cyclone_CopyTouchedCells,
+/// through the overlay's own import row).
 void TrialRoad_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
                                 s32 height, s32 toX, s32 toZ);
+/// A Mad Plant springs out of the cleared bushes and leaps at the leader
+/// (MadPlant_LeapAtLeader, through the overlay's own import row).
 void Import_MadPlantLeapAtLeader(s32 sprite, s32 x, s32 z);
 
 /// Cyclone scatters the bushes or weeds it touches (Cyclone_CopyTouchedCells):

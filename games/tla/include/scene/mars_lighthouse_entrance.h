@@ -17,8 +17,6 @@ s32 Leader_KnockBack(void);
 
 void Ride_SpawnForward();
 
-s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value);
-
 void MarsLighthouseEntrance_DrawLapisCrackedSheet(void);
 
 void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void);

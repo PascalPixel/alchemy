@@ -214,6 +214,7 @@ enum AirsRockInsideHallActorId {
   ACTOR_HALL_FIRST_WHIRLWIND
 };
 
+/// The Vial chest's room (gAirsRockInside_VialChestPlacements).
 enum AirsRockInsideVialChestActorId {
   ACTOR_VIAL_CHEST_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_VIAL_CHEST_EAST_PILLAR,
@@ -221,6 +222,8 @@ enum AirsRockInsideVialChestActorId {
   ACTOR_VIAL_CHEST_WEST_PILLAR
 };
 
+/// The Clarity Circlet chest's room
+/// (gAirsRockInside_ClarityCircletChestPlacements).
 enum AirsRockInsideClarityCircletChestActorId {
   ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A,
@@ -230,6 +233,7 @@ enum AirsRockInsideClarityCircletChestActorId {
   ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C
 };
 
+/// The tightropes' room (gAirsRockInside_TightropesPlacements).
 enum AirsRockInsideTightropesActorId {
   ACTOR_TIGHTROPES_NORTH_WIND_STONE = ACTOR_FIRST_PLACED,
   ACTOR_TIGHTROPES_PILLAR,
@@ -250,6 +254,7 @@ enum AirsRockInsideTightropesActorId {
 /// The Reveal tablet (SPRITE_SLATE), which rises as Sheba reads it.
 #define ACTOR_REVEAL_TABLET ACTOR_FIRST_PLACED
 
+/// The Elixir chest's room (gAirsRockInside_ElixirChestPlacements).
 enum AirsRockInsideElixirChestActorId {
   /// The stone pillar AirsRockInside_MoveElixirChestPillar moves.
   ACTOR_ELIXIR_CHEST_PILLAR = ACTOR_FIRST_PLACED,
@@ -263,6 +268,7 @@ enum AirsRockInsideElixirChestActorId {
   ACTOR_ELIXIR_CHEST_POST_F
 };
 
+/// The paired stakes' room (gAirsRockInside_PairedStakesPlacements).
 enum AirsRockInsidePairedStakesActorId {
   ACTOR_PAIRED_STAKES_PILLAR = ACTOR_FIRST_PLACED,
   /// The three pillars pushed among the stakes.
@@ -279,6 +285,7 @@ enum AirsRockInsidePairedStakesActorId {
   ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE
 };
 
+/// The room of the face vents (gAirsRockInside_FaceVentsPlacements).
 enum AirsRockInsideFaceVentsActorId {
   ACTOR_FACE_VENTS_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_FACE_VENTS_SECOND_PILLAR,
@@ -289,6 +296,7 @@ enum AirsRockInsideFaceVentsActorId {
   ACTOR_FACE_VENTS_PILLAR_B
 };
 
+/// The coins chest's room (gAirsRockInside_CoinsChestPlacements).
 enum AirsRockInsideCoinsChestActorId {
   ACTOR_COINS_CHEST_WIND_STONE = ACTOR_FIRST_PLACED,
   ACTOR_COINS_CHEST_PILLAR,

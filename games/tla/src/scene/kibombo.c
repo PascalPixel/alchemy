@@ -1075,6 +1075,8 @@ void Kibombo_PiersThanksParty(void) {
   Event_End();
 }
 
+/// Counts one more weird answer Felix gives (Event_CountAnswer, through the
+/// overlay's own import row).
 void Kibombo_CountAnswer(void);
 void Kibombo_CarryBlackCrystal(void);
 void Kibombo_CrowdBows(void);

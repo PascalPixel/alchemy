@@ -92,6 +92,7 @@ enum {
   ENTRANCE_SMALL_ROOM_SOUTH_END
 };
 
+/// The exits, each to the entrance of the same name.
 enum {
   EXIT_TO_CORRIDOR_WEST_DOORWAY = 1,
   EXIT_TO_HALL_SOUTH_END,

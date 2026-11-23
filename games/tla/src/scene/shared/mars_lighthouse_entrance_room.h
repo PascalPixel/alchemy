@@ -45,7 +45,8 @@ static inline struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static inline void Camera_SetBounds(FIXED x, FIXED y, FIXED z, s32 use_setter) {
+static inline void FieldCamera_MoveWithinMapBounds_(FIXED x, FIXED y, FIXED z,
+                                                    s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 

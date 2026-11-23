@@ -113,7 +113,9 @@ enum {
   ACTOR_SIXTH_PUDDLE,
   ACTOR_SEVENTH_PUDDLE
 };
+/// The stream cave's puddle.
 enum { ACTOR_STREAM_PUDDLE = ACTOR_FIRST_PLACED };
+/// The last cave's seated idol, and Kraden.
 enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 
 /// Each puddle Frost has frozen into a pillar, by the puddles above.

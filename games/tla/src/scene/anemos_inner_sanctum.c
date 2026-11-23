@@ -163,6 +163,7 @@ enum AnemosInnerSanctumElevatorActorId {
   ACTOR_ELEVATOR_SECOND_PILLAR
 };
 
+/// The round switches' room.
 enum AnemosInnerSanctumSwitchesActorId {
   ACTOR_SWITCHES_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_SWITCHES_BOULDER, ///< SPRITE_ROUND_BOULDER
@@ -176,6 +177,7 @@ enum AnemosInnerSanctumSwitchesActorId {
   ACTOR_SWITCHES_SWITCH_MARKER
 };
 
+/// The Orihalcon chest's room.
 enum AnemosInnerSanctumOrihalconChestActorId {
   ACTOR_ORIHALCON_CHEST_LIFT = ACTOR_FIRST_PLACED,
   ACTOR_ORIHALCON_CHEST_FIRST_PILLAR,

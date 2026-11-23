@@ -606,11 +606,11 @@ void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
-  Camera_SetBounds(toFIXED(168), 0, toFIXED(664), 1);
+  FieldCamera_MoveWithinMapBounds_(toFIXED(168), 0, toFIXED(664), 1);
   FieldCamera_WaitForArrival();
   System_Wait(10);
   FieldCamera_SetSpeed(4);
-  Camera_SetBounds(toFIXED(472), 0, toFIXED(664), 1);
+  FieldCamera_MoveWithinMapBounds_(toFIXED(472), 0, toFIXED(664), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(90);
   Event_End();
@@ -780,7 +780,7 @@ void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
-  Camera_SetBounds(toFIXED(872), -1, toFIXED(168), 1);
+  FieldCamera_MoveWithinMapBounds_(toFIXED(872), -1, toFIXED(168), 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 264, 1);

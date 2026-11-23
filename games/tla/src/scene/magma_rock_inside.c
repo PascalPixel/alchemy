@@ -122,6 +122,8 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 // when Felix stops on it, and its flag keeps the stone behind it raised.
 #define FLAG_ANY_MARKER_LIT FLAG_SCENE_TEMP_00
 #define FLAG_MARKER_LIT(marker) (FLAG_SCENE_TEMP_00 + (marker))
+/// The trigger a numbered stone of the Blaze tablet's room raises, less its
+/// number.
 enum { STEP_CELL_TRIGGER_BASE = 200 };
 
 /// The cell behaviours the rooms' maps mark their spots with, which the

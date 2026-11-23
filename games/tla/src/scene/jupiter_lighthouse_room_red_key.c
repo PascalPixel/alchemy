@@ -111,6 +111,9 @@ void JupiterLighthouse_UpdateSparkRing(void);
 
 void Actor_PlaceBlocks(void *data);
 
+/// Fills an effect sprite: its OAM attributes, its tiles and its size from its
+/// shape, pivoted at (pivotX, pivotY) (EffectSprite_Init, through the overlay's
+/// own import row).
 void JupiterLighthouse_InitSparkSprite(struct EffectSprite *sprite, s32 pivotX,
                                        s32 pivotY, u32 attributes, s32 tile);
 
@@ -146,6 +149,8 @@ struct FieldEffect;
 
 void Actor_PlaceMovedBlock(void);
 void MapGrid_SetAttributeBAt();
+/// Queues an effect sprite for this frame at its depth, turned and scaled about
+/// its pivot (EffectSprite_Draw, through the overlay's own import row).
 void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

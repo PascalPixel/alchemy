@@ -73,6 +73,7 @@ enum { ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK = 8 };
 // change nothing on screen, since SPRITE_COLOR_HIDDEN draws every pixel of
 // them transparent and the display has no sprite window they could cut, so
 // nothing the player sees tells what they were meant to do.
+/// The Elixir chest's room.
 enum {
   ACTOR_FIRST_ROPE_POST_A = 8,
   ACTOR_FIRST_ROPE_POST_B,
@@ -89,6 +90,7 @@ enum {
   ACTOR_ELIXIR_WEST_LADDER_TOP_BLOCK,
   ACTOR_ELIXIR_EAST_LADDER_TOP_BLOCK
 };
+/// Steel's room.
 enum {
   ACTOR_STEEL_GREEN_COGS = 8,
   ACTOR_STEEL_BLUE_COGS = 15,
@@ -98,6 +100,7 @@ enum {
   ACTOR_STEEL_ROPE_POST_A = 31,
   ACTOR_STEEL_ROPE_POST_B
 };
+/// The mouse's room.
 enum {
   ACTOR_MOUSE_GREEN_COGS = 8,
   ACTOR_MOUSE_BLUE_COGS = 21,
@@ -107,6 +110,7 @@ enum {
   ACTOR_MOUSE_PINK_DRUM_A = 37,
   ACTOR_MOUSE_PINK_DRUM_B
 };
+/// The cogs' room.
 enum {
   ACTOR_COGS_ROPE_POST_A = 8,
   ACTOR_COGS_ROPE_POST_B,
@@ -136,6 +140,7 @@ enum {
   ACTOR_BLOCK_F,
   ACTOR_BLOCK_G
 };
+/// The hall of pinions.
 enum {
   ACTOR_PINION_A = 8,
   ACTOR_PINION_B,
@@ -455,6 +460,8 @@ struct SpriteView {
   u32 attribute2;
 };
 
+/// The channel puzzle's work: its grid of pieces, laid from a random seed, and
+/// the blocks and arrows drawn over it.
 struct SceneState {
   struct PuzzleCell cells[CHANNEL_ROWS][CHANNEL_COLUMNS];
   s32 seed; ///< the random seed the channel was laid from
@@ -1504,13 +1511,16 @@ void GabombaStatue_RestoreLadderTopBlocks(void) {
     GabombaStatue_RestoreLadderTopBlocks();                                    \
   }
 
+/// The Bone Armlet chest's room, as it is set up: its one ladder-top block.
 DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
     GabombaStatue_HideBoneArmletChestHoleShadow,
     ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK, 1)
 
+/// The Elixir chest's room, as it is set up: its two ladder-top blocks.
 DEFINE_GABOMBA_STATUE_HIDE_LADDER_TOP_BLOCKS(
     GabombaStatue_HideElixirChestHoleShadows,
     ACTOR_ELIXIR_WEST_LADDER_TOP_BLOCK, 2)
+
 /// Each frame: while a menu or Psynergy is up, the cogs and the rope posts
 /// stand still.
 void GabombaStatue_PauseCogsInMenus(void) {
@@ -3609,6 +3619,8 @@ enum {
 /// The depth the clock is drawn at, in front of the room's actors.
 #define CLOCK_DEPTH 236
 
+/// The offering's countdown clock, MM:SS:T drawn as sprites: the digits that
+/// change shrink and grow back each second as it ticks.
 struct ClockWork {
   u8 *tiles;  ///< the digit sheet
   u8 *digits; ///< the five digit pictures, as loaded

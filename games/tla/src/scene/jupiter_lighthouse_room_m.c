@@ -141,7 +141,7 @@ void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
 
-s32 Event_ClearInvalidPackedValues();
+void Party_ClearUnusableShortcuts(void);
 void HangingVine_Place(s32 id, s32 mode);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
@@ -1756,7 +1756,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   FieldEvent_Wait(20);
 #if TLA_PATCH_1
-  Event_ClearInvalidPackedValues();
+  Party_ClearUnusableShortcuts();
 #endif
   Actor_WalkToAndWait(ACTOR_FELIX, 664, 70);
   Event_End();

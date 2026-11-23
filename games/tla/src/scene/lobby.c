@@ -118,6 +118,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
+/// One linked console's published words, as the link exchange last received
+/// them: its signature, then its state (gLinkLobby_SlotColumns gives each
+/// LobbySlot's word).
 struct LinkPeer {
   s32 values[6];
 };
@@ -1201,6 +1204,8 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
 void Event_Start(void);
+/// Leaves for an entrance of a scene (Event_SetDestination, through the
+/// overlay's own import row).
 void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);

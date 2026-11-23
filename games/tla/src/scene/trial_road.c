@@ -262,6 +262,7 @@ enum {
   TRIAL_ROAD_CAVE_ROCK_TO_EAST_PASSAGE = 1,
   TRIAL_ROAD_CAVE_ROCK_TO_WEST_CAVE = 2
 };
+/// The entrances, one for each way above.
 enum {
   TRIAL_ROAD_CAVE_ROCK_WEST_CAVE_FROM_EAST_PASSAGE = 1,
   TRIAL_ROAD_CAVE_ROCK_EAST_PASSAGE_FROM_WEST_CAVE = 2
@@ -642,7 +643,7 @@ extern u32 gTrialRoad_GaspHopScript[];
 
 u16 gTrialRoad_PaletteCycleColors[16] BSS_DATA;
 
-void PaletteCycle_StepAt(void);
+void TrialRoad_StepPaletteCycle(void);
 void TrialRoad_OpenSummitGate();
 void TrialRoad_PlaceMoapaAtPeak(void);
 void TrialRoad_BeatMoapa(void);
@@ -2063,7 +2064,10 @@ static inline void PaletteCycle_SetFrame(s32 value) {
   gTrialRoad_PaletteCycleFrame = value;
 }
 
-void PaletteCycle_StepAt(void) {
+/// Each frame: turns the summit's five purples over by one every four frames
+/// and writes the first four of them to BG palette 5's colours 2 to 5; it
+/// pauses while a Psynergy other than Hover, Reveal or the menu is up.
+void TrialRoad_StepPaletteCycle(void) {
   u16 colors[16];
   s32 phase = (gTrialRoad_PaletteCycleFrame / 4) % 5;
   s32 i;
@@ -2111,7 +2115,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
                     32);
   if (mode == 1) {
     PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_StepAt, TASK_PASS_FRAME);
+    Task_Add(TrialRoad_StepPaletteCycle, TASK_PASS_FRAME);
   }
 }
 

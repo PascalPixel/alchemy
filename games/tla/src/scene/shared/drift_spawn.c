@@ -10,6 +10,10 @@
 #include "field/field_event.h"
 #include "field/event.h"
 
+/// An emote sprite (its animation 1) at (x, y, z), 16.16 pixels, turned by
+/// value, with the SE_LIGHT_APPEAR sound; its script keeps it 46 frames and
+/// releases it. Idejima and the Shaman Village each spawn a pair, tilted either
+/// way, in a conversation.
 void DriftScene_SpawnObject(x, y, z, value) s32 x, y, z;
 s16 value;
 {
@@ -21,7 +25,7 @@ s16 value;
   if (object != 0) {
     sprite = object->sprite;
     Sound_Play(SE_LIGHT_APPEAR);
-    Import_ActorSetMode(object, 1);
+    Import_ActorSelectAnimation(object, 1);
     Import_ActorStartScript(object, gDriftScene_SpawnScript);
     object->motionFlags = 0;
     sprite->flags = 0;

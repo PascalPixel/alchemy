@@ -90,6 +90,8 @@ extern u8 gStaffCredit_BeaconPalettes[];
 extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
+/// Scrolls the credits from the page CREDITS_FROM_PAGE gives (Credits_Run,
+/// through the overlay's own import row).
 void StaffCredit_RunCredits(s32 value);
 s32 WorldMap_GetBlockCellBehavior(s32 *position);
 

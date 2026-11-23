@@ -29,9 +29,13 @@ extern u8 gMPlayMemAccArea[];
 void m4aMPlayAllContinue(void);
 void MPlayContinue(struct MusicPlayerInfo *player);
 void m4aMPlayAllStop(void);
+/// The high word of the 64-bit product of two words: a 32-bit fraction's share
+/// of a value, as MidiKeyToFreq takes the step between two keys.
 u32 umul3232H32(u32 left, u32 right);
 void SoundInit(struct SoundInfo *work);
 void m4aSoundVSyncOn(void);
+/// The sound driver's work each VBlank: steps the music players (the MPlayMain
+/// chain), then mixes the next buffer through SoundMainRAM in IWRAM.
 void SoundMain(void);
 void m4aSoundMode(u32 mode);
 void SampleFreqSet(u32 mode);
@@ -44,20 +48,35 @@ void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
                u8 count);
 void FadeOutBody(struct MusicPlayerInfo *player);
 void m4aMPlayStop(struct MusicPlayerInfo *player);
+/// Advances one music player by its tempo's ticks for this VBlank, running the
+/// commands of each track that falls due; MPlayOpen links it into the chain.
 void MPlayMain(struct MusicPlayerInfo *player);
 void TrkVolPitSet(struct MusicPlayerInfo *player,
                   struct MusicPlayerTrack *track);
+/// A note command: keys a note on the track's voice for the command's length
+/// (SoundInfo.noteOn).
 void ply_note(u32 command, struct MusicPlayerInfo *player,
               struct MusicPlayerTrack *track);
 void ply_memacc(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+/// EOT, the version MPlayExtender installs: releases the track's tied note of
+/// the key the command names, or of its last key.
 void ply_endtie(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+/// LFOS and MOD, the versions MPlayExtender installs: set the track's vibrato
+/// speed and depth, a 0 stopping the vibrato at once.
 void ply_lfos(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void ply_mod(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+/// Silences a track: every note still on its chain stops at once, a CGB
+/// channel switched off with it.
 void TrackStop(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+/// The mixer's code as the ROM holds it, which m4aSoundInit copies to IWRAM
+/// (Ram_SoundMixer) to run from there.
 void SoundMainRAM_Rom(void);
 void DummyFunc(void);
+/// Copies the driver's jump table, gMPlayJumpTableTemplate, into table.
 void MPlayJumpTableCopy(MPlayFunc *table);
+/// Takes a note off its track's chain (ClearChain, through the jump table).
 void RealClearChain(struct SoundChannel *note);
+/// Clears 64 bytes (Clear64byte, through the jump table).
 void SoundMainBTM(void *block);
 /// The CGB channels' notes, which SoundInit hands the driver
 /// (SoundInfo.cgbNotes).
@@ -70,8 +89,8 @@ extern char gNumMusicPlayers[];
 /// (sound/music_player_table.s).
 extern char gMaxLines[];
 
-// The song commands (gMPlayJumpTableTemplate) and the extended commands
-// (gXcmdTable), each called with the music player and the track.
+/// The song commands (gMPlayJumpTableTemplate) and the extended commands
+/// (gXcmdTable), each called with the music player and the track.
 void ply_fine(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void ply_goto(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void ply_patt(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
@@ -115,6 +134,9 @@ extern s32 gSoundMixerClipped;
 extern u8 gSound_UnreadByte;
 void m4aSoundInit(void);
 void m4aSongNumStart(u16 id);
+/// The driver's VBlank step (Sound_VSync): counts down the PCM buffer's
+/// VBlanks and, as it wraps, restarts the two sound DMAs, which then read from
+/// the buffer's start again.
 void m4aSoundVSync(void);
 
 void Sound_Play(s32 id);

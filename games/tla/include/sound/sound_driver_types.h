@@ -167,6 +167,8 @@ enum CgbChannelId {
   CGB_CHANNEL_NOISE = 4         ///< noise (NR41 to NR44)
 };
 
+/// What a track's LFO sways (the MODT command): its pitch, its volume or its
+/// pan.
 enum SoundModulationTarget {
   SOUND_MODULATION_PITCH,
   SOUND_MODULATION_VOLUME,
@@ -181,6 +183,8 @@ enum {
   SOUND_MODULATION_SEMITONE = 16
 };
 
+/// MusicPlayerInfo.fadeOV's flags: a fade out that pauses the song rather than
+/// stopping it, and a fade in.
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
 #define SOUND_FADE_FULL_VOLUME 256
@@ -332,6 +336,8 @@ struct CgbChannel {
   u8 dummy4[8];                   ///< Unused by this driver, as in pret's.
 };
 
+/// SoundChannel.statusFlags: its envelope's stage (SOUND_CHANNEL_SF_ENV), its
+/// echo, and the note's stop and start.
 enum SoundChannelFlag {
   SOUND_CHANNEL_SF_ENV = 0x03,
   SOUND_CHANNEL_SF_IEC = 0x04,
@@ -341,6 +347,7 @@ enum SoundChannelFlag {
       SOUND_CHANNEL_SF_IEC | SOUND_CHANNEL_SF_ENV
 };
 
+/// The envelope's stage, in SOUND_CHANNEL_SF_ENV's bits.
 enum SoundChannelEnvelope {
   SOUND_CHANNEL_SF_ENV_RELEASE,
   SOUND_CHANNEL_SF_ENV_SUSTAIN,
@@ -348,8 +355,12 @@ enum SoundChannelEnvelope {
   SOUND_CHANNEL_SF_ENV_ATTACK
 };
 
+/// CgbChannel.modify: its volume or its pitch changed, to be written to the
+/// channel.
 enum CgbChannelModify { CGB_CHANNEL_MO_VOL = 1, CGB_CHANNEL_MO_PIT = 2 };
 
+/// MusicPlayerTrack.flags: a volume or a pitch to set or recompute, a track
+/// just started, and a track in use.
 enum MusicPlayerTrackFlag {
   MPT_FLG_VOLSET = 1,
   MPT_FLG_VOLCHG = 3,
@@ -359,12 +370,15 @@ enum MusicPlayerTrackFlag {
   MPT_FLG_EXIST = 0x80
 };
 
+/// MusicPlayerInfo.status: the tracks still playing, and the pause bit.
 enum MusicPlayerStatus {
   MUSICPLAYER_STATUS_TRACK =
       0x0000ffff, ///< the tracks active after the last tick
   MUSICPLAYER_STATUS_PAUSE = 0x80000000
 };
 
+/// The MEMACC command's operations on the music players' shared work bytes:
+/// set, add or subtract a value or another byte, or branch on comparing them.
 enum MemAccOp {
   MEMACC_SET = 0,
   MEMACC_ADD,

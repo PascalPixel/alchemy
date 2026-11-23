@@ -7,11 +7,9 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-// The lightning pillars throw their sparks into one pool in PARTICLES, as
-// Volcano's fire pillars do, and the sparks bounce off the ground.
-
-#define PLASMA_SPARK_COUNT                                                     \
-  PARTICLE_POOL_COUNT ///< sparks in PARTICLES, shared by every pillar
+/// The lightning pillars throw their sparks into one pool in PARTICLES, as
+/// Volcano's fire pillars do.
+#define PLASMA_SPARK_COUNT PARTICLE_POOL_COUNT
 /// The ground the sparks fly up from and bounce off.
 #define PLASMA_GROUND_Y 104
 
@@ -200,6 +198,9 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 #define SPARK_GROUPS_FLASH_LIFE 25
 /// The ground the sparks bounce off.
 #define SPARK_GROUPS_GROUND_Y 108
+/// Burst i is centred at the origin plus its offset less this, across the
+/// screen; when the party casts, at the origin less its offset plus this.
+#define SPARK_GROUPS_CENTRE_SHIFT 28
 
 /// One to three bursts go off: each flashes, rings itself with smaller flashes
 /// that fade, and throws out sparks that bounce on the ground, knocking the
@@ -276,11 +277,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       if (args->side == EFFECT_SIDE_PARTY)
         spark->x = INTtoFIXED(
             originX - gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
-            28);
+            SPARK_GROUPS_CENTRE_SHIFT);
       else
         spark->x = INTtoFIXED(
             originX + gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
-            28);
+            SPARK_GROUPS_CENTRE_SHIFT);
       spark->y = INTtoFIXED(originY);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
@@ -330,14 +331,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           draw[0](canvas, work->sheet,
                   originX -
                       gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
-                      12,
+                      SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
                   originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
         else
           draw[0](canvas, work->sheet,
                   originX +
                       gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
-                      44,
+                      SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
                   originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
       }
@@ -352,10 +353,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           y = FIXED_INTEGER_PART(point->y) + originY;
           if (args->side == EFFECT_SIDE_PARTY)
             x = FIXED_INTEGER_PART(point->x) + originX -
-                gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] + 28;
+                gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
+                SPARK_GROUPS_CENTRE_SHIFT;
           else
             x = FIXED_INTEGER_PART(point->x) + originX +
-                gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] - 28;
+                gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
+                SPARK_GROUPS_CENTRE_SHIFT;
           if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
                     work->sheet + gPlasma_FlashPictures[point->variant / 3] *
@@ -430,3 +433,4 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 #undef SPARK_GROUPS_FLASH_DRAWN
 #undef SPARK_GROUPS_FLASH_LIFE
 #undef SPARK_GROUPS_GROUND_Y
+#undef SPARK_GROUPS_CENTRE_SHIFT

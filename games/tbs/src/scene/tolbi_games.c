@@ -357,6 +357,10 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   s32 question = MsgTolbiLuckyMedal;
   Event_SetMessageId(question);
   // "Do you have a Lucky Medal?"
+  // Yes: "Oh, you do? How...lucky! That means you'll be extra lucky if you
+  // toss it in the fountain!"
+  // No: "Hmm... If I were going to try my luck, I'd want to use a Lucky
+  // Medal."
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
@@ -376,6 +380,9 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
   Event_SetMessageId(question);
   // "Is this yer first time to play Lucky Dice?"
+  // Yes: "Once ya start playing, ya won't want to stop. There's no other game
+  // in all the lands that's this much fun."
+  // No: "Lucky Dice is all the rage in Tolbi. You can play it year-round."
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
@@ -558,6 +565,7 @@ s32 Scene_Initialize(void) {
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+            // "You won ...! Here you go.", then "And you won ...! Here you go."
             Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
             Item_ShowFound(item, 3);
             Party_GiveItem(item, 0);

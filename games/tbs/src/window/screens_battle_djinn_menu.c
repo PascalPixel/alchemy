@@ -93,7 +93,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
-  listWindow = Window_Create(21, 9, 9, 11, 6);
+  listWindow = Window_Create(21, 9, 9, 11, MENU_WINDOW_FLAGS);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_GetFar(member);
 

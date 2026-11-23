@@ -110,9 +110,9 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// While a party member's commands are chosen (Battle_CollectPartyCommands):
 /// the screen x of the party member's portrait sprite, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define BATTLE_CLASS_ICON_X 0
+#define BATTLE_PORTRAIT_X 0
 #else
-#define BATTLE_CLASS_ICON_X 4
+#define BATTLE_PORTRAIT_X 4
 #endif
 
 /// Where "Attack" is written in its window once chosen, in pixels.
@@ -130,8 +130,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_SUMMON_ICON_X 104
 #endif
 
-/// The chosen summon's window, and the columns of its first Djinn cost: the
-/// element icon, then the count.
+/// The chosen summon's window, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_WINDOW_WIDTH 17
 #else
@@ -147,6 +146,9 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_SUMMON_ELEMENT_COLUMN 10
 #define BATTLE_SUMMON_COST_COLUMN 11
 #endif
+
+/// How the menus open their windows: at once, with no zoom.
+#define MENU_WINDOW_FLAGS (WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD)
 
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
@@ -355,10 +357,8 @@ struct BattleCommandRowWork {
   s32 commandKinds[6];
 };
 
-// The Djinn menu's blinking tile, and where each element's Djinn count sits in
-// the party status window, in tiles, to blink while the Djinni under the
-// cursor is of that element, on standby and ready to summon (djinn_blink.s,
-// window_labels.s).
+// The Djinn menu's blinking arrow (djinn_blink.s), and where each element's
+// standby count sits in the party status window (window_labels.s).
 /// The arrow tile BattleDjinnMenu_Run copies to the two BG tiles from
 /// DJINN_MENU_ARROW_TILE each frame: the first blinks (four frames shown, four
 /// blank), the second stays.
@@ -368,8 +368,9 @@ extern const u8 gDjinnMenu_BlinkTile[32];
 #define DJINN_MENU_ARROW_TILE 808
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
-/// Where each element's Djinn stand in the battle Djinn menu's icon window, a
-/// two-by-two grid of tiles.
+/// Where each element's standby Djinn count sits in the party status window's
+/// Djinn column, a two-by-two grid of tiles: it blinks while the Djinni under
+/// the Djinn menu's cursor is of that element, on standby and ready to summon.
 extern const u8 gDjinnMenu_ElementXOffsets[4];
 extern const u8 gDjinnMenu_ElementYOffsets[4];
 

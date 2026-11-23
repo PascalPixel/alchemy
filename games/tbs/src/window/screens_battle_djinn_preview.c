@@ -182,9 +182,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     Window_Close(win, 1);
 
   if (page == 0)
-    win = Window_Create(0, 8, 21, 11, 6);
+    win = Window_Create(0, 8, 21, 11, MENU_WINDOW_FLAGS);
   else
-    win = Window_Create(0, 5, 21, 14, 6);
+    win = Window_Create(0, 5, 21, 14, MENU_WINDOW_FLAGS);
   if (win == NULL)
     return NULL;
 

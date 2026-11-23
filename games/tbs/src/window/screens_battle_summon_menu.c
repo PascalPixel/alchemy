@@ -50,11 +50,11 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   description = Window_Create(0, 4, 30, 4,
                               WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                   WINDOW_FLAG_BORDERED_CANVAS);
-  counts = Window_Create(20, 8, 10, 3, 6);
+  counts = Window_Create(20, 8, 10, 3, MENU_WINDOW_FLAGS);
   mask = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  window =
-      Window_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
+  window = Window_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9,
+                         MENU_WINDOW_FLAGS);
 
   // Icon sprites for each row.
   for (index = 0; index < 4; index++) {

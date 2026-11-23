@@ -241,7 +241,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile = Portrait_Load(unit->id, smallIconSlot);
-      iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
+      iconSprite->oam.f.x = BATTLE_PORTRAIT_X;
       iconSprite->oam.f.y = 128;
       iconSprite->oam.f.palette = PORTRAIT_PALETTE;
       state->iconShown[2] = 1;
@@ -305,7 +305,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       switch (mode) {
       case COMMAND_ICON_ATTACK:
         // Attack: one enemy, range 1; COMMAND_ATTACK.
-        commandWindow = Window_Create(11, 17, 11, 3, 6);
+        commandWindow = Window_Create(11, 17, 11, 3, MENU_WINDOW_FLAGS);
         Text_DrawMessageAsTiles(MsgCommandName, commandWindow,
                                 BATTLE_COMMAND_NAME_X, 0);
         state->icons[0].oam.f.x = 64;
@@ -369,7 +369,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
         work = WINDOW_WORK;
-        commandWindow = Window_Create(8, 17, 18, 3, 6);
+        commandWindow = Window_Create(8, 17, 18, 3, MENU_WINDOW_FLAGS);
         state->icons[0].oam.f.x = 40;
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
@@ -446,7 +446,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         summon = SummonDefinition_Get(mode);
         ability = Ability_Get(summon->abilityId);
         handle = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
+        commandWindow = Window_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3,
+                                      MENU_WINDOW_FLAGS);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j]) {
@@ -536,7 +537,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (Djinn_IsSetFar(unitId, element, index) != 0) {
           ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
-          commandWindow = Window_Create(11, 17, 10, 3, 6);
+          commandWindow = Window_Create(11, 17, 10, 3, MENU_WINDOW_FLAGS);
           state->icons[0].oam.f.x = 64;
           Window_SetTilemapEntry(commandWindow,
                                  element + LIST_TILE_SUMMON_ELEMENT, 0, 0, 0);
@@ -564,7 +565,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           target = mode;
           break;
         }
-        commandWindow = Window_Create(11, 17, 10, 3, 6);
+        commandWindow = Window_Create(11, 17, 10, 3, MENU_WINDOW_FLAGS);
         state->icons[0].oam.f.x = 64;
         Text_SetColor(TEXT_COLOR_RED);
         Window_SetTilemapEntry(commandWindow,
@@ -640,7 +641,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
+        commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3,
+                                      MENU_WINDOW_FLAGS);
         state->icons[0].oam.f.x = 48;
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);

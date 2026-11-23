@@ -5,7 +5,6 @@
 /// Windows, the messages that type into them, and the window renderer's
 /// work.
 
-#include "window/window.h"
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "tbs_edition.h"
@@ -204,6 +203,9 @@ struct OptionMenuWork;
 enum {
   WINDOW_FLAG_OPEN = 0x1,    ///< the window slot is in use
   WINDOW_FLAG_INSTANT = 0x2, ///< opens and closes at once, with no zoom
+  /// Passed with WINDOW_FLAG_INSTANT by the menus (MENU_WINDOW_FLAGS);
+  /// Window_Create does not keep it.
+  WINDOW_FLAG_UNREAD = 0x4,
   /// text is drawn into a canvas of bitmap tiles (Window_MapTextCanvasTiles)
   WINDOW_FLAG_TEXT_CANVAS = 0x8,
   /// the canvas has a border and a filled background; without it the canvas is
@@ -271,8 +273,8 @@ enum {
 enum TextColor {
   TEXT_COLOR_RED = 2,
   TEXT_COLOR_YELLOW = 4,
-  TEXT_COLOR_PINK =
-      9, ///< in BASIC_COLORS_PALETTE; WINDOW_PALETTE shows it white
+  /// In BASIC_COLORS_PALETTE; WINDOW_PALETTE shows it white.
+  TEXT_COLOR_PINK = 9,
   TEXT_COLOR_GREY = 14,
   TEXT_COLOR_WHITE = 15, ///< a message's colour at start
 };

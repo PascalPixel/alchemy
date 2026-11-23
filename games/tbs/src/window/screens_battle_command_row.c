@@ -51,10 +51,11 @@ s32 BattleCommandRow_Run(s32 mode) {
     selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_UNSET;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
-    selectionUi->window = Window_Create(20, 17, 10, 3, 6);
+    selectionUi->window = Window_Create(20, 17, 10, 3, MENU_WINDOW_FLAGS);
   else
-    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
-                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
+    selectionUi->window =
+        Window_Create(WINDOW_X, COMMAND_ROW_TOP, DISPLAY_TILE_WIDTH - WINDOW_X,
+                      3, MENU_WINDOW_FLAGS);
   selectionUi->drawnIndex = -1;
   // The commands, as listed above. tradeCount counts the party's standby
   // Djinn.

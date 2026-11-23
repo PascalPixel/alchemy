@@ -60,11 +60,11 @@ s32 ColossoMenu_Choose(s32 unused) {
           DMA_COPY_WORDS(8), REG_DMA3);
   palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   while (1) {
-    Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
-                           HIGHLIGHT_PALETTE);
+    Window_SetInteriorPalette(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
+                              HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTextTileRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
-                           WINDOW_PALETTE);
+    Window_SetInteriorPalette(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1,
+                              WINDOW_PALETTE);
     if (moved) {
       moved = 0;
       MenuCursor_SetFar(&cursor, window->x * 8 - 3,

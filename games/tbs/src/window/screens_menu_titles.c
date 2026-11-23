@@ -402,7 +402,7 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
 /// the heading (UpdateLinkSessionCountdown), which keeps the window in
 /// BattleMenuWork.timerWindow until the commands are chosen.
 struct Window *Link_CreateCountdownLabelWindow(void) {
-  struct Window *win = Window_Create(0, 0, 6, 4, 6);
+  struct Window *win = Window_Create(0, 0, 6, 4, MENU_WINDOW_FLAGS);
 
   LINK_COUNTDOWN_DRAW_HEADING(gLink_TimeLabelString, win, 0, 0);
   return win;

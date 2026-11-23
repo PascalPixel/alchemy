@@ -15,8 +15,8 @@
   Window_PutGlyph(window, glyph, x, y)
 #endif
 
-/// The party status window (enum PartyStatusFlag, battle_status.h) sits at the
-/// top right of the screen.
+/// The party status window's columns, in tiles: one for each party member, and
+/// the Djinn column on their left (enum PartyStatusFlag, battle_status.h).
 #define PARTY_STATUS_COLUMN_WIDTH 6
 #define PARTY_STATUS_DJINN_WIDTH 5
 
@@ -74,8 +74,8 @@ void PartyStatus_CreateWindow(s32 flags) {
   released = 0;
   *hold = 1;
   PartyStatus_BuildLayoutBounds(flags);
-  layout->window =
-      Window_Create(layout->x, layout->y, layout->width, layout->height, 6);
+  layout->window = Window_Create(layout->x, layout->y, layout->width,
+                                 layout->height, MENU_WINDOW_FLAGS);
   PartyStatus_Draw(flags);
   *hold = released;
 }
@@ -136,6 +136,12 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 /// shadow.
 #define BAR_TILE_COLOR 14
 #define BAR_TILE_SHADOW_COLOR 1
+/// The colours they become, in HIGHLIGHT_PALETTE: the filled part of the bar
+/// and its shadow, and the empty part and its shadow.
+#define BAR_FILLED_COLOR 8
+#define BAR_FILLED_SHADOW_COLOR 13
+#define BAR_EMPTY_COLOR 2
+#define BAR_EMPTY_SHADOW_COLOR 12
 /// A 4bpp tile row: eight pixels of four bits, one word.
 #define TILE_ROW_BITS 32
 
@@ -166,12 +172,12 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   for (i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
     tile = work->tilemap[y * BG_SCREEN_WIDTH + x];
-    bar = PIXELS_4BPP(2);
-    shadow = PIXELS_4BPP(12);
+    bar = PIXELS_4BPP(BAR_EMPTY_COLOR);
+    shadow = PIXELS_4BPP(BAR_EMPTY_SHADOW_COLOR);
     tile &= TILE_NUMBER_MASK;
     if (length > 7) {
-      bar = PIXELS_4BPP(8);
-      shadow = PIXELS_4BPP(13);
+      bar = PIXELS_4BPP(BAR_FILLED_COLOR);
+      shadow = PIXELS_4BPP(BAR_FILLED_SHADOW_COLOR);
       // UB: at a length of zero the shift below is by 32, which the GBA
       // takes as zero.
 #ifdef UBFIX
@@ -180,9 +186,10 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     } else if (length >= 0) {
 #endif
       bar <<= length * 4;
-      bar |= PIXELS_4BPP(8) >> (TILE_ROW_BITS - length * 4);
+      bar |= PIXELS_4BPP(BAR_FILLED_COLOR) >> (TILE_ROW_BITS - length * 4);
       shadow <<= length * 4;
-      shadow |= PIXELS_4BPP(13) >> (TILE_ROW_BITS - length * 4);
+      shadow |=
+          PIXELS_4BPP(BAR_FILLED_SHADOW_COLOR) >> (TILE_ROW_BITS - length * 4);
     }
     for (row = 0; row <= (fullLength != 0 ? 2 : 0); row++) {
       pixels = *TILE_ROW_FROM_BOTTOM(tile, row);
@@ -346,12 +353,13 @@ void PartyStatus_Close(void) {
   HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);
 }
 
-/// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the `width` x
-/// `height` tile rectangle at (x, y) inside `window`, clipped to the screen:
-/// bit 12 is the lowest bit of the entry's palette number, so this switches the
-/// rectangle between two palettes, such as 15 and 14.
-void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
-                               s32 width, s32 height, u32 set) {
+/// Unused: sets (`set` 1) or clears (0) the lowest bit of the palette number of
+/// the tilemap entries of the `width` x `height` tile rectangle at (x, y)
+/// inside `window`, clipped to the screen, so switching the rectangle between
+/// two palettes, such as WINDOW_PALETTE and HIGHLIGHT_PALETTE.
+UNUSED void Window_SetInteriorPaletteBit(const struct Window *window, s32 x,
+                                         s32 y, s32 width, s32 height,
+                                         u32 set) {
   struct WindowWork *work = WINDOW_WORK;
 
   x += window->x + 1;

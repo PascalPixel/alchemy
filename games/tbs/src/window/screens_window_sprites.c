@@ -59,7 +59,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
   sprite->index = slot;
   // The sprite owns the slot, which is freed with it.
   sprite->kind = WINDOW_SPRITE_ICON;
-  sprite->motion = 1;
+  sprite->motion = WINDOW_SPRITE_MOTION_STILL;
   WindowSprite_AppendToList(&window->sprites, sprite);
   return sprite;
 }
@@ -216,12 +216,12 @@ void Portrait_Reload(u32 side, s32 character, s32 unused) {
   }
 }
 
-/// Switches the window sprite `out` to animation `mode` from its first step.
-/// Does nothing when `out` is NULL.
-void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
-  if (out != NULL) {
-    out->motion = mode;
-    out->animationStep = 0;
+/// Switches `sprite` to motion `mode` (WINDOW_SPRITE_MOTION_) from its first
+/// step. Does nothing when `sprite` is NULL.
+void WindowSprite_SetMotion(struct WindowSprite *sprite, s32 mode) {
+  if (sprite != NULL) {
+    sprite->motion = mode;
+    sprite->animationStep = 0;
   }
 }
 

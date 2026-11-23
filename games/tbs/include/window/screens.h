@@ -25,7 +25,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
 struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
-void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
+void WindowSprite_SetMotion(struct WindowSprite *sprite, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
 void ScanlineWindow_FillSpans(void *spans);
 void BgScreen_FillRect(s32 x, s32 y, u32 width, u32 height, s32 value);
@@ -37,8 +37,8 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
                                    s32 length);
 void PartyStatus_Draw(s32 flags);
 void PartyStatus_Close(void);
-void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
-                               s32 width, s32 height, u32 set);
+void Window_SetInteriorPaletteBit(const struct Window *window, s32 x, s32 y,
+                                  s32 width, s32 height, u32 set);
 
 struct SaveFileSummary;
 
@@ -74,8 +74,8 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
 s32 NameEntry_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
-void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
-                            s32 width, s32 height, u32 palette);
+void Window_SetInteriorPalette(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 palette);
 void NameEntry_LoadPointingHandTiles(s32 slot);
 void NameEntry_LoadCaretTiles(s32 slot);
 s32 Text_SetString(const u8 *str);
@@ -125,7 +125,7 @@ void CommandRow_PutBg1InFront(void);
 void Graphics_InstallBg1VCountHandler(void);
 struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y);
 s32 BattleCommandRow_Run(s32 mode);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit);
 s32 PartyStatus_HighlightMembers(u16 *ids);
 UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,

@@ -82,10 +82,13 @@ void Window_CopyTilemapRegion(const struct Window *window, const void *source) {
   Heap_Release(buffer);
 }
 
-/// Like Window_SetTextTileBitRect, but ORs all of `palette` into the palette
-/// number of each entry (bits 12-15) after clearing only its lowest bit.
-void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
-                            s32 width, s32 height, u32 palette) {
+/// Puts the tilemap entries of the `width` x `height` tile rectangle at (x, y)
+/// inside `window` in `palette`, clipped to the screen: the key or choice
+/// under the cursor flashes so between WINDOW_PALETTE and HIGHLIGHT_PALETTE.
+/// Only the palette number's lowest bit is cleared before `palette` is ORed
+/// in, as those two differ in it alone.
+void Window_SetInteriorPalette(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
 
   x += window->x + 1;
@@ -209,7 +212,7 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
   text[length++] = TEXT_COLOR_COMMAND;
   text[length++] = TEXT_COLOR_RED;
 
-  while (length <= 6) {
+  while (length < NAME_MAX_LETTERS + 2) {
     text[length++] = '_';
   }
 
@@ -338,11 +341,11 @@ s32 NameEntry_EditMemberName(s32 member) {
         width = NAME_END_KEY_WIDTH;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                           HIGHLIGHT_PALETTE);
+    Window_SetInteriorPalette(keyboardWindow, keyColumn, keyRow, width, 1,
+                              HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                           WINDOW_PALETTE);
+    Window_SetInteriorPalette(keyboardWindow, keyColumn, keyRow, width, 1,
+                              WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(&keyCursor.cursor,
@@ -603,11 +606,11 @@ s32 NameEntry_EditMemberName(s32 member) {
         width = 3;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                           HIGHLIGHT_PALETTE);
+    Window_SetInteriorPalette(keyboardWindow, keyColumn, keyRow, width, 1,
+                              HIGHLIGHT_PALETTE);
     wait(1);
-    Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
-                           WINDOW_PALETTE);
+    Window_SetInteriorPalette(keyboardWindow, keyColumn, keyRow, width, 1,
+                              WINDOW_PALETTE);
     if (cursorDirty) {
       cursorDirty = 0;
       MenuCursor_SetFar(&keyCursor.cursor,

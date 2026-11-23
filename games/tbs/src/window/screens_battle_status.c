@@ -168,7 +168,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   cursorPosition.x = 0;
   cursorPosition.y = 0;
   // The stat grid and its explanation have separate lifetimes and redraws.
-  statusWindow = Window_Create(0, 0, 30, 20, 6);
+  statusWindow = Window_Create(0, 0, 30, 20, MENU_WINDOW_FLAGS);
   helpWindow = Window_Create(0, 14, 30, 6,
                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
   Window_MarkVisibleTextTiles();

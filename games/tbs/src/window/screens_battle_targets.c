@@ -57,22 +57,24 @@
       if (anchor + TARGET_CONDITION_LIST_WIDTH_SPANISH - 7 >                   \
           DISPLAY_TILE_WIDTH - 1)                                              \
         helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH_SPANISH; \
-      conditionWindow =                                                        \
-          Window_Create(helpColumn, helpRow,                                   \
-                        TARGET_CONDITION_LIST_WIDTH_SPANISH, count + 2, 6);    \
+      conditionWindow = Window_Create(helpColumn, helpRow,                     \
+                                      TARGET_CONDITION_LIST_WIDTH_SPANISH,     \
+                                      count + 2, MENU_WINDOW_FLAGS);           \
     } else {                                                                   \
       if (anchor + TARGET_CONDITION_LIST_WIDTH - 7 > DISPLAY_TILE_WIDTH - 1)   \
         helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH;         \
-      conditionWindow = Window_Create(                                         \
-          helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);     \
+      conditionWindow =                                                        \
+          Window_Create(helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH,      \
+                        count + 2, MENU_WINDOW_FLAGS);                         \
     }                                                                          \
   }
 #else
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
     TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH);                        \
-    conditionWindow = Window_Create(                                           \
-        helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);       \
+    conditionWindow =                                                          \
+        Window_Create(helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH,        \
+                      count + 2, MENU_WINDOW_FLAGS);                           \
   }
 #endif
 
@@ -414,20 +416,22 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                   DISPLAY_TILE_WIDTH - 1)
                 helpColumn =
                     DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_ITALIAN;
-              conditionWindow = Window_Create(
-                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_ITALIAN, 3, 6);
+              conditionWindow =
+                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH_ITALIAN,
+                                3, MENU_WINDOW_FLAGS);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
               if (anchor + TARGET_SET_DJINNI_WIDTH_SPANISH - 4 >
                   DISPLAY_TILE_WIDTH - 1)
                 helpColumn =
                     DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_SPANISH;
-              conditionWindow = Window_Create(
-                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_SPANISH, 3, 6);
+              conditionWindow =
+                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH_SPANISH,
+                                3, MENU_WINDOW_FLAGS);
             } else {
               if (anchor + TARGET_SET_DJINNI_WIDTH - 4 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH;
-              conditionWindow =
-                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+              conditionWindow = Window_Create(
+                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, MENU_WINDOW_FLAGS);
             }
           }
 #else
@@ -438,8 +442,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #else
             TARGET_HELP_COLUMN(4, TARGET_SET_DJINNI_WIDTH);
 #endif
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+            conditionWindow = Window_Create(
+                helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, MENU_WINDOW_FLAGS);
 #endif
             Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
@@ -447,8 +451,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case TARGET_HINT_HP:
             TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH,
+                                            3, MENU_WINDOW_FLAGS);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
@@ -479,8 +483,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case TARGET_HINT_PP:
             TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH,
+                                            3, MENU_WINDOW_FLAGS);
             Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PpString,
                                     conditionWindow, 0, 0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
@@ -490,16 +494,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case TARGET_HINT_REVIVE:
             TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(
+                helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, MENU_WINDOW_FLAGS);
             if (unit->hp != 0)
               goto no_condition;
             Text_DrawMessageAsTiles(MsgTargetDowned, conditionWindow, 0, 0);
             break;
           case TARGET_HINT_CURE_POISON:
             TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(
+                helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, MENU_WINDOW_FLAGS);
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0, 0);

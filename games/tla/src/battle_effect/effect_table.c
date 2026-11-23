@@ -2,15 +2,23 @@
 /// Battle effect tables, in the order of the effect code that reads them. Each
 /// is read only by the effect its prefix names, except the gBattleEffect_
 /// tables, which many effects share. Picture offsets count bytes from the start
-/// of a sheet; widths and heights are pixels. A mesh is a list of triangles,
-/// each three vertex numbers and their texture coordinates; corners are signed
-/// x, y and z bytes.
+/// of a sheet; widths and heights are pixels; corners are signed x, y and z
+/// bytes.
 
 #include "types.h"
 #include "fixed_math.h"
+#include "battle/battle_effect_work.h"
 #include "battle/render_model.h"
 #include "battle_effect/battle_effect.h"
 #include "battle_effect/battle_effect_table.h"
+
+/// One triangle of a textured mesh, as the textured renderers read it: its
+/// three corners, by number in the model's corner list, and the texture point
+/// (u across, v down, in texels) each corner shows.
+#define MESH_FACE(a, b, c, ua, va, ub, vb, uc, vc)                             \
+  (a) | (b) << 8, (c), (ua) | (va) << 8, (ub) | (vb) << 8, (uc) | (vc) << 8, 0
+/// A face of no corners ends a textured mesh.
+#define MESH_END 0, 0, 0, 0, 0, 0
 
 /// Each mote size's picture: its byte offset in the particle sheet, by size.
 const u16 gBattleEffect_MotePictures[] = {0,   2,   10,  28,  60,
@@ -211,7 +219,8 @@ const u8 gCruelRuin_StreakStepY[] = {16, 4, 16, 24};
 const u8 gCruelRuin_StreakEndY[] = {96, 96, 96, 120};
 
 /// Each streak's roll.
-const s32 gCruelRuin_StreakRolls[] = {36864, DEGtoANG(225), 36864, 36864};
+const s32 gCruelRuin_StreakRolls[] = {DEGtoANG(202.5), DEGtoANG(225),
+                                      DEGtoANG(202.5), DEGtoANG(202.5)};
 
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gEclipse_GlintFlips[] = {0, 4, 8, 12};
@@ -223,12 +232,14 @@ const u8 gEclipse_TileObjects[] = {8, 9, 25, 14, 15, 20, 21};
 const u8 gEclipse_FillFrames[] = {148, 160, 162, 164, 170, 174, 178, 182, 188,
                                   194, 196, 200, 202, 206, 208, 210, 220};
 
-/// The canvas fills of the opening flash, four brightness levels a word, one a
-/// frame.
+/// The level the canvas is filled with at each of gEclipse_FillFrames.
 const u32 gEclipse_FillLevels[] = {
-    404232216, 269488144, 269488144, 404232216, 741092396, 741092396,
-    741092396, 741092396, 741092396, 741092396, 269488144, 269488144,
-    269488144, 741092396, 741092396, 269488144, 269488144};
+    CANVAS_FILL_WORD(24), CANVAS_FILL_WORD(16), CANVAS_FILL_WORD(16),
+    CANVAS_FILL_WORD(24), CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44),
+    CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44),
+    CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(16), CANVAS_FILL_WORD(16),
+    CANVAS_FILL_WORD(16), CANVAS_FILL_WORD(44), CANVAS_FILL_WORD(44),
+    CANVAS_FILL_WORD(16), CANVAS_FILL_WORD(16)};
 
 /// Each sprite's x, in pixels.
 const u8 gEclipse_ObjectX[] = {0,   32,  64,  96,  160, 192, 0,   32,
@@ -412,7 +423,7 @@ const u16 gPlasma_Shapes[][5] = {{128, 1, 16, 0, 0},  {255, 1, 16, 0, 0},
                                  {192, 3, 0, 24, 48}, {340, 1, 16, 24, 48},
                                  {32, 1, 16, 0, 0},   {200, 1, 16, 24, 48}};
 
-/// Each flash picture's byte offset in Plasma's sheet.
+/// The flash burst's picture for each three frames of a flash, by number.
 const u8 gPlasma_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 
 /// Volcano's counts, by variant.
@@ -447,479 +458,336 @@ const u8 gZagan_RingGrowth[] = {5, 8, 7, 3};
 /// Each dust ring's height.
 const s8 gZagan_RingHeights[] = {32, 12, -24, 0};
 
-/// One handler for each battle effect, by effect less one; 0 where none.
-void (*const gBattleEffect_Handlers[])(struct BattleEffectParams *args) = {
-    BattleEffect_RunQuake,                 // 1
-    BattleEffect_RunSpire,                 // 2
-    BattleEffect_RunGaia,                  // 3
-    BattleEffect_RunGrowth,                // 4
-    BattleEffect_RunThorn,                 // 5
-    BattleEffect_RunFrost,                 // 6
-    BattleEffect_RunIce,                   // 7
-    BattleEffect_RunPrism,                 // 8
-    BattleEffect_RunDouse,                 // 9
-    BattleEffect_RunFroth,                 // 10
-    BattleEffect_RunFlare,                 // 11
-    BattleEffect_RunFire,                  // 12
-    BattleEffect_RunVolcano,               // 13
-    BattleEffect_RunBlast,                 // 14
-    BattleEffect_RunNova,                  // 15
-    BattleEffect_RunBolt,                  // 16
-    BattleEffect_RunRay,                   // 17
-    BattleEffect_RunPlasma,                // 18
-    BattleEffect_RunSlash,                 // 19
-    BattleEffect_RunWhirlwind,             // 20
-    BattleEffect_RunCure,                  // 21
-    BattleEffect_RunPly,                   // 22
-    BattleEffect_RunWish,                  // 23
-    BattleEffect_RunCurePoison,            // 24
-    BattleEffect_RunRevive,                // 25
-    BattleEffect_RunImpact,                // 26
-    BattleEffect_RunDull,                  // 27
-    BattleEffect_RunGuard,                 // 28
-    BattleEffect_RunImpair,                // 29
-    BattleEffect_RunWard,                  // 30
-    BattleEffect_RunWeaken,                // 31
-    BattleEffect_RunTaint,                 // 32
-    BattleEffect_RunDelude,                // 33
-    BattleEffect_RunUnusedOrbitingSpirals, // 34
-    BattleEffect_RunHeartrender,           // 35
-    BattleEffect_RunParalyze,              // 36
-    BattleEffect_RunSleep,                 // 37
-    BattleEffect_RunBind,                  // 38
-    BattleEffect_RunHaunt,                 // 39
-    BattleEffect_RunCondemn,               // 40
-    BattleEffect_RunCurse,                 // 41
-    BattleEffect_RunDrain,                 // 42
-    BattleEffect_RunBreak,                 // 43
-    BattleEffect_RunWish,                  // 44
-    BattleEffect_RunWish,                  // 45
-    BattleEffect_RunImpact,                // 46
-    BattleEffect_RunImpair,                // 47
-    0,                                     // 48
-    BattleEffect_RunDragonCloud,           // 49
-    BattleEffect_RunDemonNight,            // 50
-    BattleEffect_RunHelmSplitter,          // 51
-    BattleEffect_RunQuickStrike,           // 52
-    BattleEffect_RunDeathPlunge,           // 53
-    BattleEffect_RunShuriken,              // 54
-    BattleEffect_RunAnnihilation,          // 55
-    BattleEffect_RunPunji,                 // 56
-    BattleEffect_RunCuttingEdge,           // 57
-    BattleEffect_RunRagnarok,              // 58
-    BattleEffect_RunHeatWave,              // 59
-    BattleEffect_RunPlanetDiver,           // 60
-    BattleEffect_RunTitanBlade,            // 61
-    BattleEffect_RunShiningStar,           // 62
-    BattleEffect_RunBlizzard,              // 63
-    BattleEffect_RunDemonFire,             // 64
-    BattleEffect_RunVorpalSlash,           // 65
-    BattleEffect_RunDrown,                 // 66
-    BattleEffect_RunUnusedTriangleStrike,  // 67
-    BattleEffect_RunAstralBlast,           // 68
-    BattleEffect_RunHeartbreak,            // 69
-    0,                                     // 70
-    BattleEffect_RunAura,                  // 71
-    BattleEffect_RunFume,                  // 72
-    BattleEffect_RunBeam,                  // 73
-    BattleEffect_RunRagingHeat,            // 74
-    BattleEffect_RunCool,                  // 75
-    BattleEffect_RunSabreDance,            // 76
-    BattleEffect_RunBackstab,              // 77
-    BattleEffect_RunJuggle,                // 78
-    BattleEffect_RunFlameCard,             // 79
-    BattleEffect_RunWhiplash,              // 80
-    BattleEffect_RunPoisonFlow,            // 81
-    BattleEffect_RunFirePuppet,            // 82
-    BattleEffect_RunDiamondDust,           // 83
-    BattleEffect_RunDiamondBerg,           // 84
-    BattleEffect_RunPlumeEdge,             // 85
-    BattleEffect_RunThunderMine,           // 86
-    BattleEffect_RunFrostCard,             // 87
-    BattleEffect_RunBrambleCard,           // 88
-    BattleEffect_RunThunderCard,           // 89
-    BattleEffect_RunBaffleCard,            // 90
-    BattleEffect_RunSwordCard,             // 91
-    BattleEffect_RunSleepCard,             // 92
-    BattleEffect_RunDeathCard,             // 93
-    0,                                     // 94
-    0,                                     // 95
-    0,                                     // 96
-    0,                                     // 97
-    0,                                     // 98
-    0,                                     // 99
-    BattleEffect_RunStoneJustice,          // 100
-    BattleEffect_RunHeavyDivide,           // 101
-    0,                                     // 102
-    BattleEffect_RunWyrdCurse,             // 103
-    BattleEffect_RunAcheronsGrief,         // 104
-    BattleEffect_RunHurricane,             // 105
-    BattleEffect_RunDreamtide,             // 106
-    BattleEffect_RunLetheAlbion,           // 107
-    BattleEffect_RunRisingDragon,          // 108
-    BattleEffect_RunBoostHack,             // 109
-    BattleEffect_RunRadiantFire,           // 110
-    BattleEffect_RunFireDance,             // 111
-    BattleEffect_RunBlazeRush,             // 112
-    BattleEffect_RunShred,                 // 113
-    BattleEffect_RunPurgatory,             // 114
-    BattleEffect_RunSoulShatter,           // 115
-    BattleEffect_RunAgingGas,              // 116
-    BattleEffect_RunMadZephyr,             // 117
-    BattleEffect_RunLunarSlash,            // 118
-    BattleEffect_RunNirvana,               // 119
-    BattleEffect_RunLightSurge,            // 120
-    BattleEffect_RunVoidBeam,              // 121
-    BattleEffect_RunLegend,                // 122
-    BattleEffect_RunLiquifier,             // 123
-    BattleEffect_RunMegiddo,               // 124
-    BattleEffect_RunOdyssey,               // 125
-    BattleEffect_RunVengeance,             // 126
-    BattleEffect_RunThornyGrave,           // 127
-    BattleEffect_RunPlanetary,             // 128
-    BattleEffect_RunLifeShear,             // 129
-    0,                                     // 130
-    0,                                     // 131
-    0,                                     // 132
-    0,                                     // 133
-    0,                                     // 134
-    0,                                     // 135
-    0,                                     // 136
-    0,                                     // 137
-    0,                                     // 138
-    0,                                     // 139
-    0,                                     // 140
-    0,                                     // 141
-    0,                                     // 142
-    0,                                     // 143
-    0,                                     // 144
-    0,                                     // 145
-    0,                                     // 146
-    0,                                     // 147
-    0,                                     // 148
-    0,                                     // 149
-    0,                                     // 150
-    0,                                     // 151
-    0,                                     // 152
-    0,                                     // 153
-    0,                                     // 154
-    0,                                     // 155
-    0,                                     // 156
-    0,                                     // 157
-    0,                                     // 158
-    0,                                     // 159
-    0,                                     // 160
-    0,                                     // 161
-    0,                                     // 162
-    0,                                     // 163
-    0,                                     // 164
-    0,                                     // 165
-    0,                                     // 166
-    0,                                     // 167
-    0,                                     // 168
-    0,                                     // 169
-    0,                                     // 170
-    0,                                     // 171
-    0,                                     // 172
-    0,                                     // 173
-    0,                                     // 174
-    0,                                     // 175
-    0,                                     // 176
-    0,                                     // 177
-    0,                                     // 178
-    0,                                     // 179
-    0,                                     // 180
-    BattleEffect_RunCrucibleFire,          // 181
-    BattleEffect_RunReverseStar,           // 182
-    0,                                     // 183
-    0,                                     // 184
-    0,                                     // 185
-    0,                                     // 186
-    0,                                     // 187
-    0,                                     // 188
-    0,                                     // 189
-    0,                                     // 190
-    0,                                     // 191
-    0,                                     // 192
-    0,                                     // 193
-    0,                                     // 194
-    0,                                     // 195
-    0,                                     // 196
-    0,                                     // 197
-    0,                                     // 198
-    0,                                     // 199
-    BattleEffect_RunGranite,               // 200
-    BattleEffect_RunRevive,                // 201
-    BattleEffect_RunVine,                  // 202
-    BattleEffect_RunGround,                // 203
-    BattleEffect_RunPly,                   // 204
-    BattleEffect_RunSleet,                 // 205
-    BattleEffect_RunWish,                  // 206
-    BattleEffect_RunHail,                  // 207
-    BattleEffect_RunTonic,                 // 208
-    BattleEffect_RunDew,                   // 209
-    BattleEffect_RunImpact,                // 210
-    BattleEffect_RunGuard,                 // 211
-    BattleEffect_RunPsyCrystal,            // 212
-    BattleEffect_RunFlash,                 // 213
-    BattleEffect_RunTorch,                 // 214
-    BattleEffect_RunWard,                  // 215
-    BattleEffect_RunZephyr,                // 216
-    BattleEffect_RunKite,                  // 217
-    BattleEffect_RunBind,                  // 218
-    BattleEffect_RunGust,                  // 219
-    BattleEffect_RunIron,                  // 220
-    BattleEffect_RunSteam,                 // 221
-    BattleEffect_RunShade,                 // 222
-    BattleEffect_RunImpact,                // 223
-    BattleEffect_RunCoal,                  // 224
-    BattleEffect_RunCure,                  // 225
-    BattleEffect_RunSalt,                  // 226
-    BattleEffect_RunSpring,                // 227
-    BattleEffect_RunBreath,                // 228
-    BattleEffect_RunEther,                 // 229
-    BattleEffect_RunBalm,                  // 230
-    BattleEffect_RunTinder,                // 231
-    BattleEffect_RunWhorl,                 // 232
-    BattleEffect_RunGale,                  // 233
-    BattleEffect_RunWaft,                  // 234
-    0,                                     // 235
-    BattleEffect_RunCore,                  // 236
-    BattleEffect_RunMud,                   // 237
-    BattleEffect_RunHaze,                  // 238
-    BattleEffect_RunPetra,                 // 239
-    BattleEffect_RunRime,                  // 240
-    BattleEffect_RunLull,                  // 241
-    BattleEffect_RunGasp,                  // 242
-    BattleEffect_RunFugue,                 // 243
-    BattleEffect_RunCrystal,               // 244
-    BattleEffect_RunEddy,                  // 245
-    BattleEffect_RunCannon,                // 246
-    BattleEffect_RunAroma,                 // 247
-    BattleEffect_RunReflux,                // 248
-    BattleEffect_RunDjinnCounter,          // 249
-    BattleEffect_RunMold,                  // 250
-    BattleEffect_RunMeld,                  // 251
-    BattleEffect_RunShine,                 // 252
-    BattleEffect_RunGeode,                 // 253
-    BattleEffect_RunSerac,                 // 254
-    BattleEffect_RunSpark,                 // 255
-    BattleEffect_RunFury,                  // 256
-    BattleEffect_RunChar,                  // 257
-    0,                                     // 258
-    0,                                     // 259
-    0,                                     // 260
-    0,                                     // 261
-    0,                                     // 262
-    0,                                     // 263
-    0,                                     // 264
-    0,                                     // 265
-    0,                                     // 266
-    0,                                     // 267
-    0,                                     // 268
-    0,                                     // 269
-    0,                                     // 270
-    0,                                     // 271
-    0,                                     // 272
-    0,                                     // 273
-    0,                                     // 274
-    0,                                     // 275
-    0,                                     // 276
-    0,                                     // 277
-    0,                                     // 278
-    0,                                     // 279
-    BattleEffect_RunVenus,                 // 280
-    BattleEffect_RunMercury,               // 281
-    BattleEffect_RunMars,                  // 282
-    BattleEffect_RunJupiter,               // 283
-    0,                                     // 284
-    0,                                     // 285
-    0,                                     // 286
-    0,                                     // 287
-    0,                                     // 288
-    0,                                     // 289
-    0,                                     // 290
-    0,                                     // 291
-    0,                                     // 292
-    0,                                     // 293
-    0,                                     // 294
-    0,                                     // 295
-    0,                                     // 296
-    0,                                     // 297
-    0,                                     // 298
-    0,                                     // 299
-    BattleEffect_RunSonicWave,             // 300
-    BattleEffect_RunShriek,                // 301
-    BattleEffect_RunBansheeHowl,           // 302
-    BattleEffect_RunCrazyVoice,            // 303
-    BattleEffect_RunWarCry,                // 304
-    BattleEffect_RunWickedHowl,            // 305
-    BattleEffect_RunWingBeat,              // 306
-    BattleEffect_RunWingFlutter,           // 307
-    BattleEffect_RunRumble,                // 308
-    BattleEffect_RunBoneChiller,           // 309
-    BattleEffect_RunGust,                  // 310
-    BattleEffect_RunBoneCharge,            // 311
-    BattleEffect_RunMysticFlame,           // 312
-    BattleEffect_RunNumbingSting,          // 313
-    BattleEffect_RunBruteForce,            // 314
-    BattleEffect_RunStickyGoo,             // 315
-    BattleEffect_RunCannibalFang,          // 316
-    BattleEffect_RunBearClaw,              // 317
-    BattleEffect_RunPoisonousBite,         // 318
-    BattleEffect_RunFlyingAttack,          // 319
-    BattleEffect_RunUndeadSword,           // 320
-    BattleEffect_RunRansack,               // 321
-    BattleEffect_RunStickyPoison,          // 322
-    BattleEffect_RunPoisonousBite,         // 323
-    BattleEffect_RunElectricBite,          // 324
-    BattleEffect_RunPoisonTail,            // 325
-    BattleEffect_RunOnslaught,             // 326
-    BattleEffect_RunVampiricFang,          // 327
-    BattleEffect_RunBacteriaRush,          // 328
-    BattleEffect_RunFlyingAttack,          // 329
-    BattleEffect_RunRottenBlood,           // 330
-    0,                                     // 331
-    BattleEffect_RunDoubleFang,            // 332
-    BattleEffect_RunMortalBlow,            // 333
-    BattleEffect_RunFreebiteRush,          // 334
-    BattleEffect_RunTwinBeaks,             // 335
-    BattleEffect_RunRabidFang,             // 336
-    BattleEffect_RunAcidBite,              // 337
-    BattleEffect_RunDynamite,              // 338
-    BattleEffect_RunHeadbutt,              // 339
-    BattleEffect_RunPoisonInk,             // 340
-    0,                                     // 341
-    BattleEffect_RunBearClaw,              // 342
-    BattleEffect_RunRansack,               // 343
-    BattleEffect_RunSoothingStar,          // 344
-    BattleEffect_RunSpiderWeb,             // 345
-    BattleEffect_RunHeartrender,           // 346
-    BattleEffect_RunMadSpatter,            // 347
-    BattleEffect_RunSpasm,                 // 348
-    BattleEffect_RunSleepStar,             // 349
-    BattleEffect_RunDecompose,             // 350
-    BattleEffect_RunHaunting,              // 351
-    BattleEffect_RunCure,                  // 352
-    BattleEffect_RunBerserk,               // 353
-    BattleEffect_RunCurse,                 // 354
-    0,                                     // 355
-    0,                                     // 356
-    0,                                     // 357
-    0,                                     // 358
-    0,                                     // 359
-    0,                                     // 360
-    0,                                     // 361
-    0,                                     // 362
-    0,                                     // 363
-    0,                                     // 364
-    0,                                     // 365
-    0,                                     // 366
-    0,                                     // 367
-    0,                                     // 368
-    0,                                     // 369
-    0,                                     // 370
-    0,                                     // 371
-    0,                                     // 372
-    0,                                     // 373
-    0,                                     // 374
-    0,                                     // 375
-    0,                                     // 376
-    0,                                     // 377
-    0,                                     // 378
-    0,                                     // 379
-    BattleEffect_RunSmokeBomb,             // 380
-    BattleEffect_RunWingStroke,            // 381
-    BattleEffect_RunPoisonBeat,            // 382
-    BattleEffect_RunSpinningBeat,          // 383
-    BattleEffect_RunOuterSpace,            // 384
-    BattleEffect_RunDragonDriver,          // 385
-    BattleEffect_RunDrainFang,             // 386
-    BattleEffect_RunSevereBlow,            // 387
-    BattleEffect_RunThrash,                // 388
-    BattleEffect_RunRecovery,              // 389
-    BattleEffect_RunEchoCut,               // 390
-    BattleEffect_RunWateryGrave,           // 391
-    BattleEffect_RunRagingFlood,           // 392
-    BattleEffect_RunHydroSlash,            // 393
-    BattleEffect_RunMightyPress,           // 394
-    BattleEffect_RunSlaver,                // 395
-    BattleEffect_RunCounterRush,           // 396
-    BattleEffect_RunDjinnfest,             // 397
-    BattleEffect_RunHeatKiss,              // 398
-    BattleEffect_RunAngleSpike,            // 399
-    BattleEffect_RunFireBreath,            // 400
-    BattleEffect_RunWaterBreath,           // 401
-    BattleEffect_RunIceBlessing,           // 402
-    BattleEffect_RunDarkBreath,            // 403
-    BattleEffect_RunAcidBreath,            // 404
-    BattleEffect_RunStormBreath,           // 405
-    BattleEffect_RunEvilBlessing,          // 406
-    BattleEffect_RunDeadlyGas,             // 407
-    BattleEffect_RunSandBreath,            // 408
-    BattleEffect_RunDesertGasp,            // 409
-    BattleEffect_RunBlackIce,              // 410
-    BattleEffect_RunTyphoonBlow,           // 411
-    BattleEffect_RunToxicBreath,           // 412
-    BattleEffect_RunGravelBlow,            // 413
-    BattleEffect_RunBlastBreath,           // 414
-    BattleEffect_RunDarksolGasp,           // 415
-    BattleEffect_RunFireBreath,            // 416
-    0,                                     // 417
-    0,                                     // 418
-    0,                                     // 419
-    0,                                     // 420
-    BattleEffect_RunManeater,              // 421
-    BattleEffect_RunUrFlash,               // 422
-    BattleEffect_RunCrusherGrip,           // 423
-    BattleEffect_RunVanishClaw,            // 424
-    BattleEffect_RunTwinShear,             // 425
-    BattleEffect_RunTripleChomp,           // 426
-    BattleEffect_RunDoublestep,            // 427
-    BattleEffect_RunPoisonGel,             // 428
-    BattleEffect_RunDelude,                // 429
-    BattleEffect_RunRisingVenom,           // 430
-    BattleEffect_RunSack,                  // 431
-    BattleEffect_RunFireDanceUnleash,      // 432
-    BattleEffect_RunStunMuscle,            // 433
-    BattleEffect_RunRollingFlame,          // 434
-    BattleEffect_RunCage,                  // 435
-    BattleEffect_RunPhoenix,               // 436
-    BattleEffect_RunHumanHunt,             // 437
-    BattleEffect_RunUnusedHeavyBite,       // 438
-    BattleEffect_RunUnusedFlashBite,       // 439
-    BattleEffect_RunPoisonTail,            // 440
-    BattleEffect_RunKillSting,             // 441
-    BattleEffect_RunBeastNeedle,           // 442
-    BattleEffect_RunPoisonSting,           // 443
-    BattleEffect_RunStunSting,             // 444
-    BattleEffect_RunDemonEye,              // 445
-    BattleEffect_RunEmu,                   // 446
-    BattleEffect_RunOceanFist,             // 447
-    BattleEffect_RunCallDullahan,          // 448
-    BattleEffect_RunGhostSoldier,          // 449
-    BattleEffect_RunRisingDragonEnemy,     // 450
-    BattleEffect_RunTrueCollide,           // 451
-    BattleEffect_RunStarMine,              // 452
-    BattleEffect_RunFormicAcid,            // 453
-    BattleEffect_RunClawAttack,            // 454
-    BattleEffect_RunBeatDance,             // 455
-    BattleEffect_RunUnusedSparkBite,       // 456
-    BattleEffect_RunLivingArmor,           // 457
-    BattleEffect_RunHeatStun,              // 458
-    BattleEffect_RunEarthForce,            // 459
-    BattleEffect_RunGuardAura,             // 460
-    BattleEffect_RunDjinnBlast,            // 461
-    BattleEffect_RunDjinnStorm,            // 462
-    BattleEffect_RunMineBall,              // 463
-    BattleEffect_RunElementSwap,           // 464
-    BattleEffect_RunDjinnStun,             // 465
-    BattleEffect_RunMysticCall,            // 466
-    BattleEffect_RunClarionCry,            // 467
-    BattleEffect_RunPsyBoost,              // 468
-    BattleEffect_RunStrongHit,             // 469
-    BattleEffect_RunChillBreath,           // 470
-    BattleEffect_RunStormBreathStrong,     // 471
+/// One handler for each battle effect, by its kind less one; the kinds with
+/// no handler are left empty.
+void (*const gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1])(
+    struct BattleEffectParams *args) = {
+    [BATTLE_EFFECT_QUAKE - 1] = BattleEffect_RunQuake,
+    [BATTLE_EFFECT_SPIRE - 1] = BattleEffect_RunSpire,
+    [BATTLE_EFFECT_GAIA - 1] = BattleEffect_RunGaia,
+    [BATTLE_EFFECT_GROWTH - 1] = BattleEffect_RunGrowth,
+    [BATTLE_EFFECT_THORN - 1] = BattleEffect_RunThorn,
+    [BATTLE_EFFECT_FROST - 1] = BattleEffect_RunFrost,
+    [BATTLE_EFFECT_ICE - 1] = BattleEffect_RunIce,
+    [BATTLE_EFFECT_PRISM - 1] = BattleEffect_RunPrism,
+    [BATTLE_EFFECT_DOUSE - 1] = BattleEffect_RunDouse,
+    [BATTLE_EFFECT_FROTH - 1] = BattleEffect_RunFroth,
+    [BATTLE_EFFECT_FLARE - 1] = BattleEffect_RunFlare,
+    [BATTLE_EFFECT_FIRE - 1] = BattleEffect_RunFire,
+    [BATTLE_EFFECT_VOLCANO - 1] = BattleEffect_RunVolcano,
+    [BATTLE_EFFECT_BLAST - 1] = BattleEffect_RunBlast,
+    [BATTLE_EFFECT_NOVA - 1] = BattleEffect_RunNova,
+    [BATTLE_EFFECT_BOLT - 1] = BattleEffect_RunBolt,
+    [BATTLE_EFFECT_RAY - 1] = BattleEffect_RunRay,
+    [BATTLE_EFFECT_PLASMA - 1] = BattleEffect_RunPlasma,
+    [BATTLE_EFFECT_SLASH - 1] = BattleEffect_RunSlash,
+    [BATTLE_EFFECT_WHIRLWIND - 1] = BattleEffect_RunWhirlwind,
+    [BATTLE_EFFECT_CURE - 1] = BattleEffect_RunCure,
+    [BATTLE_EFFECT_PLY - 1] = BattleEffect_RunPly,
+    [BATTLE_EFFECT_WISH - 1] = BattleEffect_RunWish,
+    [BATTLE_EFFECT_CURE_POISON - 1] = BattleEffect_RunCurePoison,
+    [BATTLE_EFFECT_REVIVE - 1] = BattleEffect_RunRevive,
+    [BATTLE_EFFECT_IMPACT - 1] = BattleEffect_RunImpact,
+    [BATTLE_EFFECT_DULL - 1] = BattleEffect_RunDull,
+    [BATTLE_EFFECT_GUARD - 1] = BattleEffect_RunGuard,
+    [BATTLE_EFFECT_IMPAIR - 1] = BattleEffect_RunImpair,
+    [BATTLE_EFFECT_WARD - 1] = BattleEffect_RunWard,
+    [BATTLE_EFFECT_WEAKEN - 1] = BattleEffect_RunWeaken,
+    [BATTLE_EFFECT_TAINT - 1] = BattleEffect_RunTaint,
+    [BATTLE_EFFECT_DELUDE - 1] = BattleEffect_RunDelude,
+    [BATTLE_EFFECT_UNUSED_ORBITING_SPIRALS -
+     1] = BattleEffect_RunUnusedOrbitingSpirals,
+    [BATTLE_EFFECT_UNUSED_HEARTRENDER - 1] = BattleEffect_RunHeartrender,
+    [BATTLE_EFFECT_PARALYZE - 1] = BattleEffect_RunParalyze,
+    [BATTLE_EFFECT_SLEEP - 1] = BattleEffect_RunSleep,
+    [BATTLE_EFFECT_BIND - 1] = BattleEffect_RunBind,
+    [BATTLE_EFFECT_HAUNT - 1] = BattleEffect_RunHaunt,
+    [BATTLE_EFFECT_CONDEMN - 1] = BattleEffect_RunCondemn,
+    [BATTLE_EFFECT_CURSE - 1] = BattleEffect_RunCurse,
+    [BATTLE_EFFECT_DRAIN - 1] = BattleEffect_RunDrain,
+    [BATTLE_EFFECT_BREAK - 1] = BattleEffect_RunBreak,
+    [BATTLE_EFFECT_REGENERATE - 1] = BattleEffect_RunWish,
+    [BATTLE_EFFECT_REFLECT - 1] = BattleEffect_RunWish,
+    [BATTLE_EFFECT_UNUSED_IMPACT - 1] = BattleEffect_RunImpact,
+    [BATTLE_EFFECT_UNUSED_IMPAIR - 1] = BattleEffect_RunImpair,
+    [BATTLE_EFFECT_DRAGON_CLOUD - 1] = BattleEffect_RunDragonCloud,
+    [BATTLE_EFFECT_DEMON_NIGHT - 1] = BattleEffect_RunDemonNight,
+    [BATTLE_EFFECT_HELM_SPLITTER - 1] = BattleEffect_RunHelmSplitter,
+    [BATTLE_EFFECT_QUICK_STRIKE - 1] = BattleEffect_RunQuickStrike,
+    [BATTLE_EFFECT_DEATH_PLUNGE - 1] = BattleEffect_RunDeathPlunge,
+    [BATTLE_EFFECT_SHURIKEN - 1] = BattleEffect_RunShuriken,
+    [BATTLE_EFFECT_ANNIHILATION - 1] = BattleEffect_RunAnnihilation,
+    [BATTLE_EFFECT_PUNJI - 1] = BattleEffect_RunPunji,
+    [BATTLE_EFFECT_CUTTING_EDGE - 1] = BattleEffect_RunCuttingEdge,
+    [BATTLE_EFFECT_RAGNAROK - 1] = BattleEffect_RunRagnarok,
+    [BATTLE_EFFECT_HEAT_WAVE - 1] = BattleEffect_RunHeatWave,
+    [BATTLE_EFFECT_PLANET_DIVER - 1] = BattleEffect_RunPlanetDiver,
+    [BATTLE_EFFECT_TITAN_BLADE - 1] = BattleEffect_RunTitanBlade,
+    [BATTLE_EFFECT_SHINING_STAR - 1] = BattleEffect_RunShiningStar,
+    [BATTLE_EFFECT_BLIZZARD - 1] = BattleEffect_RunBlizzard,
+    [BATTLE_EFFECT_DEMON_FIRE - 1] = BattleEffect_RunDemonFire,
+    [BATTLE_EFFECT_VORPAL_SLASH - 1] = BattleEffect_RunVorpalSlash,
+    [BATTLE_EFFECT_DROWN - 1] = BattleEffect_RunDrown,
+    [BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE -
+     1] = BattleEffect_RunUnusedTriangleStrike,
+    [BATTLE_EFFECT_ASTRAL_BLAST - 1] = BattleEffect_RunAstralBlast,
+    [BATTLE_EFFECT_HEARTBREAK - 1] = BattleEffect_RunHeartbreak,
+    [BATTLE_EFFECT_AURA - 1] = BattleEffect_RunAura,
+    [BATTLE_EFFECT_FUME - 1] = BattleEffect_RunFume,
+    [BATTLE_EFFECT_BEAM - 1] = BattleEffect_RunBeam,
+    [BATTLE_EFFECT_RAGING_HEAT - 1] = BattleEffect_RunRagingHeat,
+    [BATTLE_EFFECT_COOL - 1] = BattleEffect_RunCool,
+    [BATTLE_EFFECT_SABRE_DANCE - 1] = BattleEffect_RunSabreDance,
+    [BATTLE_EFFECT_BACKSTAB - 1] = BattleEffect_RunBackstab,
+    [BATTLE_EFFECT_JUGGLE - 1] = BattleEffect_RunJuggle,
+    [BATTLE_EFFECT_FLAME_CARD - 1] = BattleEffect_RunFlameCard,
+    [BATTLE_EFFECT_WHIPLASH - 1] = BattleEffect_RunWhiplash,
+    [BATTLE_EFFECT_POISON_FLOW - 1] = BattleEffect_RunPoisonFlow,
+    [BATTLE_EFFECT_FIRE_PUPPET - 1] = BattleEffect_RunFirePuppet,
+    [BATTLE_EFFECT_DIAMOND_DUST - 1] = BattleEffect_RunDiamondDust,
+    [BATTLE_EFFECT_DIAMOND_BERG - 1] = BattleEffect_RunDiamondBerg,
+    [BATTLE_EFFECT_PLUME_EDGE - 1] = BattleEffect_RunPlumeEdge,
+    [BATTLE_EFFECT_THUNDER_MINE - 1] = BattleEffect_RunThunderMine,
+    [BATTLE_EFFECT_FROST_CARD - 1] = BattleEffect_RunFrostCard,
+    [BATTLE_EFFECT_BRAMBLE_CARD - 1] = BattleEffect_RunBrambleCard,
+    [BATTLE_EFFECT_THUNDER_CARD - 1] = BattleEffect_RunThunderCard,
+    [BATTLE_EFFECT_BAFFLE_CARD - 1] = BattleEffect_RunBaffleCard,
+    [BATTLE_EFFECT_SWORD_CARD - 1] = BattleEffect_RunSwordCard,
+    [BATTLE_EFFECT_SLEEP_CARD - 1] = BattleEffect_RunSleepCard,
+    [BATTLE_EFFECT_DEATH_CARD - 1] = BattleEffect_RunDeathCard,
+    [BATTLE_EFFECT_STONE_JUSTICE - 1] = BattleEffect_RunStoneJustice,
+    [BATTLE_EFFECT_HEAVY_DIVIDE - 1] = BattleEffect_RunHeavyDivide,
+    [BATTLE_EFFECT_WYRD_CURSE - 1] = BattleEffect_RunWyrdCurse,
+    [BATTLE_EFFECT_ACHERONS_GRIEF - 1] = BattleEffect_RunAcheronsGrief,
+    [BATTLE_EFFECT_HURRICANE - 1] = BattleEffect_RunHurricane,
+    [BATTLE_EFFECT_DREAMTIDE - 1] = BattleEffect_RunDreamtide,
+    [BATTLE_EFFECT_LETHE_ALBION - 1] = BattleEffect_RunLetheAlbion,
+    [BATTLE_EFFECT_RISING_DRAGON - 1] = BattleEffect_RunRisingDragon,
+    [BATTLE_EFFECT_BOOST_HACK - 1] = BattleEffect_RunBoostHack,
+    [BATTLE_EFFECT_RADIANT_FIRE - 1] = BattleEffect_RunRadiantFire,
+    [BATTLE_EFFECT_FIRE_DANCE - 1] = BattleEffect_RunFireDance,
+    [BATTLE_EFFECT_BLAZE_RUSH - 1] = BattleEffect_RunBlazeRush,
+    [BATTLE_EFFECT_SHRED - 1] = BattleEffect_RunShred,
+    [BATTLE_EFFECT_PURGATORY - 1] = BattleEffect_RunPurgatory,
+    [BATTLE_EFFECT_SOUL_SHATTER - 1] = BattleEffect_RunSoulShatter,
+    [BATTLE_EFFECT_AGING_GAS - 1] = BattleEffect_RunAgingGas,
+    [BATTLE_EFFECT_MAD_ZEPHYR - 1] = BattleEffect_RunMadZephyr,
+    [BATTLE_EFFECT_LUNAR_SLASH - 1] = BattleEffect_RunLunarSlash,
+    [BATTLE_EFFECT_NIRVANA - 1] = BattleEffect_RunNirvana,
+    [BATTLE_EFFECT_LIGHT_SURGE - 1] = BattleEffect_RunLightSurge,
+    [BATTLE_EFFECT_VOID_BEAM - 1] = BattleEffect_RunVoidBeam,
+    [BATTLE_EFFECT_LEGEND - 1] = BattleEffect_RunLegend,
+    [BATTLE_EFFECT_LIQUIFIER - 1] = BattleEffect_RunLiquifier,
+    [BATTLE_EFFECT_MEGIDDO - 1] = BattleEffect_RunMegiddo,
+    [BATTLE_EFFECT_ODYSSEY - 1] = BattleEffect_RunOdyssey,
+    [BATTLE_EFFECT_VENGEANCE - 1] = BattleEffect_RunVengeance,
+    [BATTLE_EFFECT_THORNY_GRAVE - 1] = BattleEffect_RunThornyGrave,
+    [BATTLE_EFFECT_PLANETARY - 1] = BattleEffect_RunPlanetary,
+    [BATTLE_EFFECT_LIFE_SHEAR - 1] = BattleEffect_RunLifeShear,
+    [BATTLE_EFFECT_CRUCIBLE_FIRE - 1] = BattleEffect_RunCrucibleFire,
+    [BATTLE_EFFECT_REVERSE_STAR - 1] = BattleEffect_RunReverseStar,
+    [BATTLE_EFFECT_GRANITE - 1] = BattleEffect_RunGranite,
+    [BATTLE_EFFECT_QUARTZ - 1] = BattleEffect_RunRevive,
+    [BATTLE_EFFECT_VINE - 1] = BattleEffect_RunVine,
+    [BATTLE_EFFECT_GROUND - 1] = BattleEffect_RunGround,
+    [BATTLE_EFFECT_FIZZ - 1] = BattleEffect_RunPly,
+    [BATTLE_EFFECT_SLEET - 1] = BattleEffect_RunSleet,
+    [BATTLE_EFFECT_SPRITZ - 1] = BattleEffect_RunWish,
+    [BATTLE_EFFECT_HAIL - 1] = BattleEffect_RunHail,
+    [BATTLE_EFFECT_TONIC - 1] = BattleEffect_RunTonic,
+    [BATTLE_EFFECT_DEW - 1] = BattleEffect_RunDew,
+    [BATTLE_EFFECT_FORGE - 1] = BattleEffect_RunImpact,
+    [BATTLE_EFFECT_CORONA - 1] = BattleEffect_RunGuard,
+    [BATTLE_EFFECT_PSY_CRYSTAL - 1] = BattleEffect_RunPsyCrystal,
+    [BATTLE_EFFECT_FLASH - 1] = BattleEffect_RunFlash,
+    [BATTLE_EFFECT_TORCH - 1] = BattleEffect_RunTorch,
+    [BATTLE_EFFECT_BREEZE - 1] = BattleEffect_RunWard,
+    [BATTLE_EFFECT_ZEPHYR - 1] = BattleEffect_RunZephyr,
+    [BATTLE_EFFECT_KITE - 1] = BattleEffect_RunKite,
+    [BATTLE_EFFECT_LUFF - 1] = BattleEffect_RunBind,
+    [BATTLE_EFFECT_GUST - 1] = BattleEffect_RunGust,
+    [BATTLE_EFFECT_IRON - 1] = BattleEffect_RunIron,
+    [BATTLE_EFFECT_STEAM - 1] = BattleEffect_RunSteam,
+    [BATTLE_EFFECT_SHADE - 1] = BattleEffect_RunShade,
+    [BATTLE_EFFECT_KINDLE - 1] = BattleEffect_RunImpact,
+    [BATTLE_EFFECT_COAL - 1] = BattleEffect_RunCoal,
+    [BATTLE_EFFECT_FLOWER - 1] = BattleEffect_RunCure,
+    [BATTLE_EFFECT_SALT - 1] = BattleEffect_RunSalt,
+    [BATTLE_EFFECT_SPRING - 1] = BattleEffect_RunSpring,
+    [BATTLE_EFFECT_BREATH - 1] = BattleEffect_RunBreath,
+    [BATTLE_EFFECT_ETHER - 1] = BattleEffect_RunEther,
+    [BATTLE_EFFECT_BALM - 1] = BattleEffect_RunBalm,
+    [BATTLE_EFFECT_TINDER - 1] = BattleEffect_RunTinder,
+    [BATTLE_EFFECT_WHORL - 1] = BattleEffect_RunWhorl,
+    [BATTLE_EFFECT_GALE - 1] = BattleEffect_RunGale,
+    [BATTLE_EFFECT_WAFT - 1] = BattleEffect_RunWaft,
+    [BATTLE_EFFECT_CORE - 1] = BattleEffect_RunCore,
+    [BATTLE_EFFECT_MUD - 1] = BattleEffect_RunMud,
+    [BATTLE_EFFECT_HAZE - 1] = BattleEffect_RunHaze,
+    [BATTLE_EFFECT_PETRA - 1] = BattleEffect_RunPetra,
+    [BATTLE_EFFECT_RIME - 1] = BattleEffect_RunRime,
+    [BATTLE_EFFECT_LULL - 1] = BattleEffect_RunLull,
+    [BATTLE_EFFECT_GASP - 1] = BattleEffect_RunGasp,
+    [BATTLE_EFFECT_FUGUE - 1] = BattleEffect_RunFugue,
+    [BATTLE_EFFECT_CRYSTAL - 1] = BattleEffect_RunCrystal,
+    [BATTLE_EFFECT_EDDY - 1] = BattleEffect_RunEddy,
+    [BATTLE_EFFECT_CANNON - 1] = BattleEffect_RunCannon,
+    [BATTLE_EFFECT_AROMA - 1] = BattleEffect_RunAroma,
+    [BATTLE_EFFECT_REFLUX - 1] = BattleEffect_RunReflux,
+    [BATTLE_EFFECT_DJINN_COUNTER - 1] = BattleEffect_RunDjinnCounter,
+    [BATTLE_EFFECT_MOLD - 1] = BattleEffect_RunMold,
+    [BATTLE_EFFECT_MELD - 1] = BattleEffect_RunMeld,
+    [BATTLE_EFFECT_SHINE - 1] = BattleEffect_RunShine,
+    [BATTLE_EFFECT_GEODE - 1] = BattleEffect_RunGeode,
+    [BATTLE_EFFECT_SERAC - 1] = BattleEffect_RunSerac,
+    [BATTLE_EFFECT_SPARK - 1] = BattleEffect_RunSpark,
+    [BATTLE_EFFECT_FURY - 1] = BattleEffect_RunFury,
+    [BATTLE_EFFECT_CHAR - 1] = BattleEffect_RunChar,
+    [BATTLE_EFFECT_VENUS - 1] = BattleEffect_RunVenus,
+    [BATTLE_EFFECT_MERCURY - 1] = BattleEffect_RunMercury,
+    [BATTLE_EFFECT_MARS - 1] = BattleEffect_RunMars,
+    [BATTLE_EFFECT_JUPITER - 1] = BattleEffect_RunJupiter,
+    [BATTLE_EFFECT_SONIC_WAVE - 1] = BattleEffect_RunSonicWave,
+    [BATTLE_EFFECT_SHRIEK - 1] = BattleEffect_RunShriek,
+    [BATTLE_EFFECT_BANSHEE_HOWL - 1] = BattleEffect_RunBansheeHowl,
+    [BATTLE_EFFECT_CRAZY_VOICE - 1] = BattleEffect_RunCrazyVoice,
+    [BATTLE_EFFECT_WAR_CRY - 1] = BattleEffect_RunWarCry,
+    [BATTLE_EFFECT_WICKED_HOWL - 1] = BattleEffect_RunWickedHowl,
+    [BATTLE_EFFECT_WING_BEAT - 1] = BattleEffect_RunWingBeat,
+    [BATTLE_EFFECT_WING_FLUTTER - 1] = BattleEffect_RunWingFlutter,
+    [BATTLE_EFFECT_RUMBLE - 1] = BattleEffect_RunRumble,
+    [BATTLE_EFFECT_BONE_CHILLER - 1] = BattleEffect_RunBoneChiller,
+    [BATTLE_EFFECT_RAPID_SMASH - 1] = BattleEffect_RunGust,
+    [BATTLE_EFFECT_BONE_CHARGE - 1] = BattleEffect_RunBoneCharge,
+    [BATTLE_EFFECT_MYSTIC_FLAME - 1] = BattleEffect_RunMysticFlame,
+    [BATTLE_EFFECT_NUMBING_STING - 1] = BattleEffect_RunNumbingSting,
+    [BATTLE_EFFECT_BRUTE_FORCE - 1] = BattleEffect_RunBruteForce,
+    [BATTLE_EFFECT_STICKY_GOO - 1] = BattleEffect_RunStickyGoo,
+    [BATTLE_EFFECT_CANNIBAL_FANG - 1] = BattleEffect_RunCannibalFang,
+    [BATTLE_EFFECT_BEAR_CLAW - 1] = BattleEffect_RunBearClaw,
+    [BATTLE_EFFECT_POISONOUS_BITE - 1] = BattleEffect_RunPoisonousBite,
+    [BATTLE_EFFECT_FLYING_ATTACK - 1] = BattleEffect_RunFlyingAttack,
+    [BATTLE_EFFECT_UNDEAD_SWORD - 1] = BattleEffect_RunUndeadSword,
+    [BATTLE_EFFECT_RANSACK - 1] = BattleEffect_RunRansack,
+    [BATTLE_EFFECT_STICKY_POISON - 1] = BattleEffect_RunStickyPoison,
+    [BATTLE_EFFECT_POISON_FANG - 1] = BattleEffect_RunPoisonousBite,
+    [BATTLE_EFFECT_ELECTRIC_BITE - 1] = BattleEffect_RunElectricBite,
+    [BATTLE_EFFECT_POISON_TAIL - 1] = BattleEffect_RunPoisonTail,
+    [BATTLE_EFFECT_ONSLAUGHT - 1] = BattleEffect_RunOnslaught,
+    [BATTLE_EFFECT_VAMPIRIC_FANG - 1] = BattleEffect_RunVampiricFang,
+    [BATTLE_EFFECT_BACTERIA_RUSH - 1] = BattleEffect_RunBacteriaRush,
+    [BATTLE_EFFECT_SWIFT_STRIKE - 1] = BattleEffect_RunFlyingAttack,
+    [BATTLE_EFFECT_ROTTEN_BLOOD - 1] = BattleEffect_RunRottenBlood,
+    [BATTLE_EFFECT_DOUBLE_FANG - 1] = BattleEffect_RunDoubleFang,
+    [BATTLE_EFFECT_MORTAL_BLOW - 1] = BattleEffect_RunMortalBlow,
+    [BATTLE_EFFECT_FREEBITE_RUSH - 1] = BattleEffect_RunFreebiteRush,
+    [BATTLE_EFFECT_TWIN_BEAKS - 1] = BattleEffect_RunTwinBeaks,
+    [BATTLE_EFFECT_RABID_FANG - 1] = BattleEffect_RunRabidFang,
+    [BATTLE_EFFECT_ACID_BITE - 1] = BattleEffect_RunAcidBite,
+    [BATTLE_EFFECT_DYNAMITE - 1] = BattleEffect_RunDynamite,
+    [BATTLE_EFFECT_HEADBUTT - 1] = BattleEffect_RunHeadbutt,
+    [BATTLE_EFFECT_POISON_INK - 1] = BattleEffect_RunPoisonInk,
+    [BATTLE_EFFECT_COUNTERSTRIKE - 1] = BattleEffect_RunBearClaw,
+    [BATTLE_EFFECT_MAD_DASH - 1] = BattleEffect_RunRansack,
+    [BATTLE_EFFECT_SOOTHING_STAR - 1] = BattleEffect_RunSoothingStar,
+    [BATTLE_EFFECT_SPIDER_WEB - 1] = BattleEffect_RunSpiderWeb,
+    [BATTLE_EFFECT_HEARTRENDER - 1] = BattleEffect_RunHeartrender,
+    [BATTLE_EFFECT_MAD_SPATTER - 1] = BattleEffect_RunMadSpatter,
+    [BATTLE_EFFECT_SPASM - 1] = BattleEffect_RunSpasm,
+    [BATTLE_EFFECT_SLEEP_STAR - 1] = BattleEffect_RunSleepStar,
+    [BATTLE_EFFECT_DECOMPOSE - 1] = BattleEffect_RunDecompose,
+    [BATTLE_EFFECT_HAUNTING - 1] = BattleEffect_RunHaunting,
+    [BATTLE_EFFECT_WORMS - 1] = BattleEffect_RunCure,
+    [BATTLE_EFFECT_BERSERK - 1] = BattleEffect_RunBerserk,
+    [BATTLE_EFFECT_LUCID_PROPHECY - 1] = BattleEffect_RunCurse,
+    [BATTLE_EFFECT_SMOKE_BOMB - 1] = BattleEffect_RunSmokeBomb,
+    [BATTLE_EFFECT_WING_STROKE - 1] = BattleEffect_RunWingStroke,
+    [BATTLE_EFFECT_POISON_BEAT - 1] = BattleEffect_RunPoisonBeat,
+    [BATTLE_EFFECT_SPINNING_BEAT - 1] = BattleEffect_RunSpinningBeat,
+    [BATTLE_EFFECT_OUTER_SPACE - 1] = BattleEffect_RunOuterSpace,
+    [BATTLE_EFFECT_DRAGON_DRIVER - 1] = BattleEffect_RunDragonDriver,
+    [BATTLE_EFFECT_DRAIN_FANG - 1] = BattleEffect_RunDrainFang,
+    [BATTLE_EFFECT_SEVERE_BLOW - 1] = BattleEffect_RunSevereBlow,
+    [BATTLE_EFFECT_THRASH - 1] = BattleEffect_RunThrash,
+    [BATTLE_EFFECT_RECOVERY - 1] = BattleEffect_RunRecovery,
+    [BATTLE_EFFECT_ECHO_CUT - 1] = BattleEffect_RunEchoCut,
+    [BATTLE_EFFECT_WATERY_GRAVE - 1] = BattleEffect_RunWateryGrave,
+    [BATTLE_EFFECT_RAGING_FLOOD - 1] = BattleEffect_RunRagingFlood,
+    [BATTLE_EFFECT_HYDRO_SLASH - 1] = BattleEffect_RunHydroSlash,
+    [BATTLE_EFFECT_MIGHTY_PRESS - 1] = BattleEffect_RunMightyPress,
+    [BATTLE_EFFECT_SLAVER - 1] = BattleEffect_RunSlaver,
+    [BATTLE_EFFECT_COUNTER_RUSH - 1] = BattleEffect_RunCounterRush,
+    [BATTLE_EFFECT_DJINNFEST - 1] = BattleEffect_RunDjinnfest,
+    [BATTLE_EFFECT_HEAT_KISS - 1] = BattleEffect_RunHeatKiss,
+    [BATTLE_EFFECT_ANGLE_SPIKE - 1] = BattleEffect_RunAngleSpike,
+    [BATTLE_EFFECT_FIRE_BREATH - 1] = BattleEffect_RunFireBreath,
+    [BATTLE_EFFECT_WATER_BREATH - 1] = BattleEffect_RunWaterBreath,
+    [BATTLE_EFFECT_ICE_BLESSING - 1] = BattleEffect_RunIceBlessing,
+    [BATTLE_EFFECT_DARK_BREATH - 1] = BattleEffect_RunDarkBreath,
+    [BATTLE_EFFECT_ACID_BREATH - 1] = BattleEffect_RunAcidBreath,
+    [BATTLE_EFFECT_STORM_BREATH - 1] = BattleEffect_RunStormBreath,
+    [BATTLE_EFFECT_EVIL_BLESSING - 1] = BattleEffect_RunEvilBlessing,
+    [BATTLE_EFFECT_DEADLY_GAS - 1] = BattleEffect_RunDeadlyGas,
+    [BATTLE_EFFECT_SAND_BREATH - 1] = BattleEffect_RunSandBreath,
+    [BATTLE_EFFECT_DESERT_GASP - 1] = BattleEffect_RunDesertGasp,
+    [BATTLE_EFFECT_BLACK_ICE - 1] = BattleEffect_RunBlackIce,
+    [BATTLE_EFFECT_TYPHOON_BLOW - 1] = BattleEffect_RunTyphoonBlow,
+    [BATTLE_EFFECT_TOXIC_BREATH - 1] = BattleEffect_RunToxicBreath,
+    [BATTLE_EFFECT_GRAVEL_BLOW - 1] = BattleEffect_RunGravelBlow,
+    [BATTLE_EFFECT_BLAST_BREATH - 1] = BattleEffect_RunBlastBreath,
+    [BATTLE_EFFECT_DARKSOL_GASP - 1] = BattleEffect_RunDarksolGasp,
+    [BATTLE_EFFECT_FLAME_BREATH - 1] = BattleEffect_RunFireBreath,
+    [BATTLE_EFFECT_MANEATER - 1] = BattleEffect_RunManeater,
+    [BATTLE_EFFECT_UR_FLASH - 1] = BattleEffect_RunUrFlash,
+    [BATTLE_EFFECT_CRUSHER_GRIP - 1] = BattleEffect_RunCrusherGrip,
+    [BATTLE_EFFECT_VANISH_CLAW - 1] = BattleEffect_RunVanishClaw,
+    [BATTLE_EFFECT_TWIN_SHEAR - 1] = BattleEffect_RunTwinShear,
+    [BATTLE_EFFECT_TRIPLE_CHOMP - 1] = BattleEffect_RunTripleChomp,
+    [BATTLE_EFFECT_DOUBLESTEP - 1] = BattleEffect_RunDoublestep,
+    [BATTLE_EFFECT_POISON_GEL - 1] = BattleEffect_RunPoisonGel,
+    [BATTLE_EFFECT_MUCOUS_GEL - 1] = BattleEffect_RunDelude,
+    [BATTLE_EFFECT_RISING_VENOM - 1] = BattleEffect_RunRisingVenom,
+    [BATTLE_EFFECT_SACK - 1] = BattleEffect_RunSack,
+    [BATTLE_EFFECT_FIRE_DANCE_UNLEASH - 1] = BattleEffect_RunFireDanceUnleash,
+    [BATTLE_EFFECT_STUN_MUSCLE - 1] = BattleEffect_RunStunMuscle,
+    [BATTLE_EFFECT_ROLLING_FLAME - 1] = BattleEffect_RunRollingFlame,
+    [BATTLE_EFFECT_CAGE - 1] = BattleEffect_RunCage,
+    [BATTLE_EFFECT_PHOENIX - 1] = BattleEffect_RunPhoenix,
+    [BATTLE_EFFECT_HUMAN_HUNT - 1] = BattleEffect_RunHumanHunt,
+    [BATTLE_EFFECT_UNUSED_HEAVY_BITE - 1] = BattleEffect_RunUnusedHeavyBite,
+    [BATTLE_EFFECT_UNUSED_FLASH_BITE - 1] = BattleEffect_RunUnusedFlashBite,
+    [BATTLE_EFFECT_POISON_STING_TAIL - 1] = BattleEffect_RunPoisonTail,
+    [BATTLE_EFFECT_KILL_STING - 1] = BattleEffect_RunKillSting,
+    [BATTLE_EFFECT_BEAST_NEEDLE - 1] = BattleEffect_RunBeastNeedle,
+    [BATTLE_EFFECT_POISON_STING - 1] = BattleEffect_RunPoisonSting,
+    [BATTLE_EFFECT_STUN_STING - 1] = BattleEffect_RunStunSting,
+    [BATTLE_EFFECT_DEMON_EYE - 1] = BattleEffect_RunDemonEye,
+    [BATTLE_EFFECT_EMU - 1] = BattleEffect_RunEmu,
+    [BATTLE_EFFECT_OCEAN_FIST - 1] = BattleEffect_RunOceanFist,
+    [BATTLE_EFFECT_CALL_DULLAHAN - 1] = BattleEffect_RunCallDullahan,
+    [BATTLE_EFFECT_GHOST_SOLDIER - 1] = BattleEffect_RunGhostSoldier,
+    [BATTLE_EFFECT_RISING_DRAGON_ENEMY - 1] = BattleEffect_RunRisingDragonEnemy,
+    [BATTLE_EFFECT_TRUE_COLLIDE - 1] = BattleEffect_RunTrueCollide,
+    [BATTLE_EFFECT_STAR_MINE - 1] = BattleEffect_RunStarMine,
+    [BATTLE_EFFECT_FORMIC_ACID - 1] = BattleEffect_RunFormicAcid,
+    [BATTLE_EFFECT_CLAW_ATTACK - 1] = BattleEffect_RunClawAttack,
+    [BATTLE_EFFECT_BEAT_DANCE - 1] = BattleEffect_RunBeatDance,
+    [BATTLE_EFFECT_UNUSED_SPARK_BITE - 1] = BattleEffect_RunUnusedSparkBite,
+    [BATTLE_EFFECT_LIVING_ARMOR - 1] = BattleEffect_RunLivingArmor,
+    [BATTLE_EFFECT_HEAT_STUN - 1] = BattleEffect_RunHeatStun,
+    [BATTLE_EFFECT_EARTH_FORCE - 1] = BattleEffect_RunEarthForce,
+    [BATTLE_EFFECT_GUARD_AURA - 1] = BattleEffect_RunGuardAura,
+    [BATTLE_EFFECT_DJINN_BLAST - 1] = BattleEffect_RunDjinnBlast,
+    [BATTLE_EFFECT_DJINN_STORM - 1] = BattleEffect_RunDjinnStorm,
+    [BATTLE_EFFECT_MINE_BALL - 1] = BattleEffect_RunMineBall,
+    [BATTLE_EFFECT_ELEMENT_SWAP - 1] = BattleEffect_RunElementSwap,
+    [BATTLE_EFFECT_DJINN_STUN - 1] = BattleEffect_RunDjinnStun,
+    [BATTLE_EFFECT_MYSTIC_CALL - 1] = BattleEffect_RunMysticCall,
+    [BATTLE_EFFECT_CLARION_CRY - 1] = BattleEffect_RunClarionCry,
+    [BATTLE_EFFECT_PSY_BOOST - 1] = BattleEffect_RunPsyBoost,
+    [BATTLE_EFFECT_STRONG_HIT - 1] = BattleEffect_RunStrongHit,
+    [BATTLE_EFFECT_CHILL_BREATH - 1] = BattleEffect_RunChillBreath,
+    [BATTLE_EFFECT_STORM_BREATH_STRONG - 1] = BattleEffect_RunStormBreathStrong,
 };
 
 /// The poses Cybele's sprites take, a pair for each pose.
@@ -1397,7 +1265,7 @@ const u8 gCastingImpact_SquallGlintFlips[] = {0, 4, 8, 12};
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gCastingImpact_SapGlintFlips[] = {0, 4, 8, 12};
 
-/// Each bite picture's byte offset in the casting impacts' sheet.
+/// The fangs' picture for each two of their first eight frames, by number.
 const u8 gCastingImpact_BitePictures[] = {0, 1, 2, 3};
 
 /// Each Raiden's Wrath picture's byte offset in the casting impacts' sheet.
@@ -1525,7 +1393,7 @@ const u8 gHelmSplitter_ImpactBurstPictureHeights[] = {96, 96, 90, 74,
 const u16 gHelmSplitter_ImpactBurstPictures[] = {0,     4608,  9216,  13356,
                                                  16020, 18684, 20668, 22020};
 
-/// Each orbit's point, x and y.
+/// Each orbit's point, x, y and z, in pixels; x and z are halved.
 const s16 gParticleStreams_OrbitPoints[][3] = {
     {-64, -96, 24}, {-48, -120, 32}, {-32, -80, -48}, {-16, -72, -24},
     {16, -80, 16},  {32, -112, -32}, {48, -96, 56}};
@@ -1556,17 +1424,17 @@ const u16 gRamses_PuffSizes[] = {16, 32, 48, 48, 48, 48, 48};
 /// The strike columns' x, three for each side.
 const u8 gRagnarok_StrikeColumns[] = {32, 24, 0, 96, 104, 128};
 
-/// Each flash picture's byte offset in Ragnarok's sheet.
+/// The flash burst's picture for each three frames of a flash, by number.
 const u8 gRagnarok_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 
-/// Each flash picture's byte offset in Titan Blade's sheet.
+/// The flash burst's picture for each three frames of a flash, by number.
 const u8 gTitanBlade_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 
 /// The dust's four gravities.
 const s32 gTitanBlade_DustGravity[] = {toFIXED(0.5), toFIXED(0.25),
                                        toFIXED(0.25), toFIXED(0.125)};
 
-/// Each burst picture's byte offset in Judgment's sheet.
+/// The sprite each 32x32 cell of the shield's sheet is copied into, in order.
 const u8 gJudgment_BurstPictures[] = {0, 1, 2,  3,  4,  5,  6,
                                       7, 9, 10, 11, 13, 14, 0};
 
@@ -1593,7 +1461,8 @@ const s32 gNeptune_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
 const u16 gUndeadSword_SparkPictures[] = {0,    256,  1280, 3584,
                                           5888, 8192, 10496};
 
-/// Each spark's size, in pixels.
+/// Each spark picture's size, in pixels; the six words after the seventh are
+/// never read.
 const u16 gUndeadSword_SparkSizes[] = {16,   32,   48,   48,  48,   48,  48,
                                        1536, 2312, 2053, 775, 8224, 8224};
 
@@ -1610,12 +1479,14 @@ const u8 gDiamondBerg_RingGrowth[4] = {6, 7, 6, 8};
 const s8 gDiamondBerg_RingHeights[4] = {32, 16, -8, -24};
 
 /// Each flash's roll.
-const s16 gDiamondBerg_ShardRolls[8] = {8192, 24576, 8192, 24576,
-                                        8192, 24576, 8192, 24576};
+const s16 gDiamondBerg_ShardRolls[8] = {
+    DEGtoANG(45), DEGtoANG(135), DEGtoANG(45), DEGtoANG(135),
+    DEGtoANG(45), DEGtoANG(135), DEGtoANG(45), DEGtoANG(135)};
 
 /// Each flash's pitch.
-const s16 gDiamondBerg_ShardPitches[8] = {-2048, -2048, -2048, -2048,
-                                          -2048, -2048, -2048, -2048};
+const s16 gDiamondBerg_ShardPitches[8] = {
+    -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25),
+    -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25), -DEGtoANG(11.25)};
 
 /// The frame each ring starts on.
 const u8 gGeode_WaveStarts[] = {0, 6, 8, 9};
@@ -1688,7 +1559,7 @@ const u8 gMegaera_GlintFlips[] = {0, 4, 8, 12};
 /// How the glints are blended, by variant.
 const u8 gMegaera_GlintModes[] = {1, 1, 0, 0};
 
-/// Each pillar's size, in pixels.
+/// Each pillar's full scale, in 65536ths, which its growth multiplies.
 const s32 gLightSurge_PillarSizes[4] = {18000, 12000, 30000, 40000};
 
 /// Each pillar's shade.
@@ -1706,11 +1577,10 @@ const s32 gDjinniCharge_DebrisGravity[4] = {-8192, -4096, -2048, -1024};
 /// How far along its path the streak's head is at each step, in sixteenths.
 const s8 gGaspFamily_StreakSteps[] = {0, 0, 1, 2, 4, 6, 9, 12, 16, 0, 0, 0};
 
-/// The streak's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gGaspFamily_StreakMesh[] = {769, 2,  31,   7967, 7936, 0, 256, 2,
-                                      0,   31, 7936, 0,    0,    0, 0,   0,
-                                      0,   0,  0,    0,    0,    0, 0,   0};
+/// The streak's mesh.
+const u16 gGaspFamily_StreakMesh[] = {MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31),
+                                      MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31),
+                                      MESH_END, MESH_END};
 
 /// Gasp Family's counts, by variant.
 const u8 gGaspFamily_Counts[] = {32, 64, 255};
@@ -1736,52 +1606,80 @@ const struct ModelVertex gBattleEffect_CylinderCorners[] = {
     {0, 8, -31},  {-13, 8, -29},  {-23, 8, -22},  {-30, 8, -12},
     {-32, 8, 0},  {-30, 8, 13},   {-23, 8, 23},   {-13, 8, 30}};
 
-/// The band's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// The band's mesh.
 const u16 gCastingImpact_BandMesh[] = {
-    2305, 8,  31,  3871, 3840, 0, 256,  8,  0,  31,  3840, 0,
-    2562, 9,  63,  3903, 3872, 0, 513,  9,  32, 63,  3872, 0,
-    2819, 10, 95,  3935, 3904, 0, 770,  10, 64, 95,  3904, 0,
-    3076, 11, 127, 3967, 3936, 0, 1027, 11, 96, 127, 3936, 0,
-    3333, 12, 31,  3871, 3840, 0, 1284, 12, 0,  31,  3840, 0,
-    3590, 13, 63,  3903, 3872, 0, 1541, 13, 32, 63,  3872, 0,
-    3847, 14, 95,  3935, 3904, 0, 1798, 14, 64, 95,  3904, 0,
-    2048, 15, 127, 3967, 3936, 0, 7,    15, 96, 127, 3936, 0,
-    0,    0,  0,   0,    0,    0};
+    MESH_FACE(1, 9, 8, 31, 0, 31, 15, 0, 15),
+    MESH_FACE(0, 1, 8, 0, 0, 31, 0, 0, 15),
+    MESH_FACE(2, 10, 9, 63, 0, 63, 15, 32, 15),
+    MESH_FACE(1, 2, 9, 32, 0, 63, 0, 32, 15),
+    MESH_FACE(3, 11, 10, 95, 0, 95, 15, 64, 15),
+    MESH_FACE(2, 3, 10, 64, 0, 95, 0, 64, 15),
+    MESH_FACE(4, 12, 11, 127, 0, 127, 15, 96, 15),
+    MESH_FACE(3, 4, 11, 96, 0, 127, 0, 96, 15),
+    MESH_FACE(5, 13, 12, 31, 0, 31, 15, 0, 15),
+    MESH_FACE(4, 5, 12, 0, 0, 31, 0, 0, 15),
+    MESH_FACE(6, 14, 13, 63, 0, 63, 15, 32, 15),
+    MESH_FACE(5, 6, 13, 32, 0, 63, 0, 32, 15),
+    MESH_FACE(7, 15, 14, 95, 0, 95, 15, 64, 15),
+    MESH_FACE(6, 7, 14, 64, 0, 95, 0, 64, 15),
+    MESH_FACE(0, 8, 15, 127, 0, 127, 15, 96, 15),
+    MESH_FACE(7, 0, 15, 96, 0, 127, 0, 96, 15),
+    MESH_END};
 
-/// The geyser's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gGeyser_Mesh[] = {
-    2305, 8,  31,  16159, 16128, 0, 256,  8,  0,  31,  16128, 0,
-    2562, 9,  63,  16191, 16160, 0, 513,  9,  32, 63,  16160, 0,
-    2819, 10, 95,  16223, 16192, 0, 770,  10, 64, 95,  16192, 0,
-    3076, 11, 127, 16255, 16224, 0, 1027, 11, 96, 127, 16224, 0,
-    3333, 12, 31,  16159, 16128, 0, 1284, 12, 0,  31,  16128, 0,
-    3590, 13, 63,  16191, 16160, 0, 1541, 13, 32, 63,  16160, 0,
-    3847, 14, 95,  16223, 16192, 0, 1798, 14, 64, 95,  16192, 0,
-    2048, 15, 127, 16255, 16224, 0, 7,    15, 96, 127, 16224, 0,
-    0,    0,  0,   0,     0,     0};
+/// The geyser's mesh.
+const u16 gGeyser_Mesh[] = {MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
+                            MESH_FACE(0, 1, 8, 0, 0, 31, 0, 0, 63),
+                            MESH_FACE(2, 10, 9, 63, 0, 63, 63, 32, 63),
+                            MESH_FACE(1, 2, 9, 32, 0, 63, 0, 32, 63),
+                            MESH_FACE(3, 11, 10, 95, 0, 95, 63, 64, 63),
+                            MESH_FACE(2, 3, 10, 64, 0, 95, 0, 64, 63),
+                            MESH_FACE(4, 12, 11, 127, 0, 127, 63, 96, 63),
+                            MESH_FACE(3, 4, 11, 96, 0, 127, 0, 96, 63),
+                            MESH_FACE(5, 13, 12, 31, 0, 31, 63, 0, 63),
+                            MESH_FACE(4, 5, 12, 0, 0, 31, 0, 0, 63),
+                            MESH_FACE(6, 14, 13, 63, 0, 63, 63, 32, 63),
+                            MESH_FACE(5, 6, 13, 32, 0, 63, 0, 32, 63),
+                            MESH_FACE(7, 15, 14, 95, 0, 95, 63, 64, 63),
+                            MESH_FACE(6, 7, 14, 64, 0, 95, 0, 64, 63),
+                            MESH_FACE(0, 8, 15, 127, 0, 127, 63, 96, 63),
+                            MESH_FACE(7, 0, 15, 96, 0, 127, 0, 96, 63),
+                            MESH_END};
 
-/// The ripple's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// The ripple's mesh.
 const u16 gBattleEffect_CylinderMesh[] = {
-    4353, 16, 15,  3855, 3840, 0, 256,  16, 0,   15,  3840, 0,
-    4610, 17, 31,  3871, 3855, 0, 513,  17, 15,  31,  3855, 0,
-    4867, 18, 47,  3887, 3871, 0, 770,  18, 31,  47,  3871, 0,
-    5124, 19, 63,  3903, 3887, 0, 1027, 19, 47,  63,  3887, 0,
-    5381, 20, 15,  3855, 3840, 0, 1284, 20, 0,   15,  3840, 0,
-    5638, 21, 31,  3871, 3855, 0, 1541, 21, 15,  31,  3855, 0,
-    5895, 22, 47,  3887, 3871, 0, 1798, 22, 32,  47,  3871, 0,
-    6152, 23, 63,  3903, 3887, 0, 2055, 23, 47,  63,  3887, 0,
-    6409, 24, 79,  3919, 3904, 0, 2312, 24, 64,  79,  3904, 0,
-    6666, 25, 95,  3935, 3919, 0, 2569, 25, 79,  95,  3919, 0,
-    6923, 26, 111, 3951, 3935, 0, 2826, 26, 95,  111, 3935, 0,
-    7180, 27, 127, 3967, 3951, 0, 3083, 27, 111, 127, 3951, 0,
-    7437, 28, 79,  3919, 3904, 0, 3340, 28, 64,  79,  3904, 0,
-    7694, 29, 95,  3935, 3919, 0, 3597, 29, 79,  95,  3919, 0,
-    7951, 30, 111, 3951, 3935, 0, 3854, 30, 96,  111, 3935, 0,
-    4096, 31, 127, 3967, 3951, 0, 15,   31, 111, 127, 3951, 0,
-    0,    0,  0,   0,    0,    0};
+    MESH_FACE(1, 17, 16, 15, 0, 15, 15, 0, 15),
+    MESH_FACE(0, 1, 16, 0, 0, 15, 0, 0, 15),
+    MESH_FACE(2, 18, 17, 31, 0, 31, 15, 15, 15),
+    MESH_FACE(1, 2, 17, 15, 0, 31, 0, 15, 15),
+    MESH_FACE(3, 19, 18, 47, 0, 47, 15, 31, 15),
+    MESH_FACE(2, 3, 18, 31, 0, 47, 0, 31, 15),
+    MESH_FACE(4, 20, 19, 63, 0, 63, 15, 47, 15),
+    MESH_FACE(3, 4, 19, 47, 0, 63, 0, 47, 15),
+    MESH_FACE(5, 21, 20, 15, 0, 15, 15, 0, 15),
+    MESH_FACE(4, 5, 20, 0, 0, 15, 0, 0, 15),
+    MESH_FACE(6, 22, 21, 31, 0, 31, 15, 15, 15),
+    MESH_FACE(5, 6, 21, 15, 0, 31, 0, 15, 15),
+    MESH_FACE(7, 23, 22, 47, 0, 47, 15, 31, 15),
+    MESH_FACE(6, 7, 22, 32, 0, 47, 0, 31, 15),
+    MESH_FACE(8, 24, 23, 63, 0, 63, 15, 47, 15),
+    MESH_FACE(7, 8, 23, 47, 0, 63, 0, 47, 15),
+    MESH_FACE(9, 25, 24, 79, 0, 79, 15, 64, 15),
+    MESH_FACE(8, 9, 24, 64, 0, 79, 0, 64, 15),
+    MESH_FACE(10, 26, 25, 95, 0, 95, 15, 79, 15),
+    MESH_FACE(9, 10, 25, 79, 0, 95, 0, 79, 15),
+    MESH_FACE(11, 27, 26, 111, 0, 111, 15, 95, 15),
+    MESH_FACE(10, 11, 26, 95, 0, 111, 0, 95, 15),
+    MESH_FACE(12, 28, 27, 127, 0, 127, 15, 111, 15),
+    MESH_FACE(11, 12, 27, 111, 0, 127, 0, 111, 15),
+    MESH_FACE(13, 29, 28, 79, 0, 79, 15, 64, 15),
+    MESH_FACE(12, 13, 28, 64, 0, 79, 0, 64, 15),
+    MESH_FACE(14, 30, 29, 95, 0, 95, 15, 79, 15),
+    MESH_FACE(13, 14, 29, 79, 0, 95, 0, 79, 15),
+    MESH_FACE(15, 31, 30, 111, 0, 111, 15, 95, 15),
+    MESH_FACE(14, 15, 30, 96, 0, 111, 0, 95, 15),
+    MESH_FACE(0, 16, 31, 127, 0, 127, 15, 111, 15),
+    MESH_FACE(15, 0, 31, 111, 0, 127, 0, 111, 15),
+    MESH_END};
 
 /// The ring's corners, as signed x, y and z.
 const struct ModelVertex gGeode_RingCorners[] = {
@@ -1797,21 +1695,28 @@ const struct ModelVertex gBattleEffect_RingCorners[] = {
     {0, 0, 32},   {22, 0, 22},    {31, 0, 0},   {22, 0, -22},
     {0, 0, -31},  {-22, 0, -22},  {-31, 0, 0},  {-22, 0, 22}};
 
-/// The ring's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// The ring's mesh.
 const u16 gBattleEffect_RingMesh[] = {
-    2305, 8,  31,  16159, 16128, 0, 256,  8,  0,  31,  16128, 0,
-    2562, 9,  63,  16191, 16160, 0, 513,  9,  31, 63,  16160, 0,
-    2819, 10, 95,  16223, 16192, 0, 770,  10, 63, 95,  16192, 0,
-    3076, 11, 127, 16255, 16224, 0, 1027, 11, 95, 127, 16224, 0,
-    3333, 12, 31,  16159, 16128, 0, 1284, 12, 0,  31,  16128, 0,
-    3590, 13, 63,  16191, 16160, 0, 1541, 13, 31, 63,  16160, 0,
-    3847, 14, 95,  16223, 16192, 0, 1798, 14, 63, 95,  16192, 0,
-    2048, 15, 127, 16255, 16224, 0, 7,    15, 95, 127, 16224, 0,
-    0,    0,  0,   0,     0,     0};
+    MESH_FACE(1, 9, 8, 31, 0, 31, 63, 0, 63),
+    MESH_FACE(0, 1, 8, 0, 0, 31, 0, 0, 63),
+    MESH_FACE(2, 10, 9, 63, 0, 63, 63, 32, 63),
+    MESH_FACE(1, 2, 9, 31, 0, 63, 0, 32, 63),
+    MESH_FACE(3, 11, 10, 95, 0, 95, 63, 64, 63),
+    MESH_FACE(2, 3, 10, 63, 0, 95, 0, 64, 63),
+    MESH_FACE(4, 12, 11, 127, 0, 127, 63, 96, 63),
+    MESH_FACE(3, 4, 11, 95, 0, 127, 0, 96, 63),
+    MESH_FACE(5, 13, 12, 31, 0, 31, 63, 0, 63),
+    MESH_FACE(4, 5, 12, 0, 0, 31, 0, 0, 63),
+    MESH_FACE(6, 14, 13, 63, 0, 63, 63, 32, 63),
+    MESH_FACE(5, 6, 13, 31, 0, 63, 0, 32, 63),
+    MESH_FACE(7, 15, 14, 95, 0, 95, 63, 64, 63),
+    MESH_FACE(6, 7, 14, 63, 0, 95, 0, 64, 63),
+    MESH_FACE(0, 8, 15, 127, 0, 127, 63, 96, 63),
+    MESH_FACE(7, 0, 15, 95, 0, 127, 0, 96, 63),
+    MESH_END};
 
-/// The triangle's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// A solid triangle's mesh, as the solid renderers read it, a word a face: the
+/// face of corners 0, 1 and 2, and the empty face that ends it.
 const u16 gBattleEffect_TriangleMesh[] = {256, 2, 0, 0};
 
 /// A small triangle lying on the ground: its three corners.
@@ -1846,57 +1751,61 @@ const struct ModelVertex gLegend_WingCorners[] = {
 const struct ModelVertex gBattleEffect_GroundSquareCorners[] = {
     {-64, 0, -64}, {64, 0, -64}, {-64, 0, 64}, {64, 0, 64}};
 
-/// A small square's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// A small square's mesh.
 const u16 gBattleEffect_SmallSquareMesh[] = {
-    769, 2, 31, 7967, 7936, 0, 256, 2, 0, 31, 7936, 0, 0, 0, 0, 0, 0, 0};
+    MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31),
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31), MESH_END};
 
 /// The small square's mesh with its triangles wound the other way.
 const u16 gBattleEffect_SmallSquareMeshReversed[] = {
-    256, 2, 0, 31, 7936, 0, 769, 2, 31, 7967, 7936, 0, 0, 0, 0, 0, 0, 0};
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 31),
+    MESH_FACE(1, 3, 2, 31, 0, 31, 31, 0, 31), MESH_END};
 
-/// A column's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// A column's mesh.
 const u16 gBattleEffect_ColumnMesh[] = {
-    769, 2, 31, 30495, 30464, 0, 256, 2, 0, 31, 30464, 0, 0, 0, 0, 0, 0, 0};
+    MESH_FACE(1, 3, 2, 31, 0, 31, 119, 0, 119),
+    MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 119), MESH_END};
 
-/// The sword's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gHeavyBlow_SwordMesh[] = {256,   2,     0, 31, 32512, 0, 769, 2, 31,
-                                    32543, 32512, 0, 0,  0,     0, 0,   0, 0};
+/// The sword's mesh.
+const u16 gHeavyBlow_SwordMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 127),
+                                    MESH_FACE(1, 3, 2, 31, 0, 31, 127, 0, 127),
+                                    MESH_END};
 
-/// A tall quad's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gBattleEffect_TallMesh[] = {
-    256, 2, 256, 287, 16128, 0, 769, 2, 287, 16159, 16128, 0, 0, 0, 0, 0, 0, 0,
-    256, 2, 0,   15,  16128, 0, 769, 2, 15,  16143, 16128, 0, 0, 0, 0, 0, 0, 0};
+/// A tall quad's mesh.
+const u16 gBattleEffect_TallMesh[] = {MESH_FACE(0, 1, 2, 0, 1, 31, 1, 0, 63),
+                                      MESH_FACE(1, 3, 2, 31, 1, 31, 63, 0, 63),
+                                      MESH_END,
+                                      MESH_FACE(0, 1, 2, 0, 0, 15, 0, 0, 63),
+                                      MESH_FACE(1, 3, 2, 15, 0, 15, 63, 0, 63),
+                                      MESH_END};
 
-/// The band's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gHaures_BandMesh[] = {256,  2,    0, 63, 7936, 0, 769, 2, 63,
-                                7999, 7936, 0, 0,  0,    0, 0,   0, 0};
+/// The band's mesh.
+const u16 gHaures_BandMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 63, 0, 0, 31),
+                                MESH_FACE(1, 3, 2, 63, 0, 63, 31, 0, 31),
+                                MESH_END};
 
-/// The burst's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gCatastrophe_ForkMesh[] = {256,   2,     0, 31, 12032, 0, 769, 2, 31,
-                                     12063, 12032, 0, 0,  0,     0, 0,   0, 0};
+/// The burst's mesh.
+const u16 gCatastrophe_ForkMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 47),
+                                     MESH_FACE(1, 3, 2, 31, 0, 31, 47, 0, 47),
+                                     MESH_END};
 
-/// A square's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// A square's mesh.
 const u16 gBattleEffect_SquareMesh[] = {
-    769, 2, 319, 16191, 16129, 0, 256, 2, 257, 319, 16129, 0, 0, 0, 0, 0, 0, 0};
+    MESH_FACE(1, 3, 2, 63, 1, 63, 63, 1, 63),
+    MESH_FACE(0, 1, 2, 1, 1, 63, 1, 1, 63), MESH_END};
 
-/// A large square's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// A large square's mesh.
 const u16 gBattleEffect_LargeSquareMesh[] = {
-    769, 2, 127, 32639, 32512, 0, 256, 2, 0, 127, 32512, 0, 0, 0, 0, 0, 0, 0};
+    MESH_FACE(1, 3, 2, 127, 0, 127, 127, 0, 127),
+    MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 127), MESH_END};
 
-/// The burst's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gHaures_BurstMesh[] = {
-    769, 2, 47,   18223, 18176, 0, 256, 2, 0,    47,    18176, 0,
-    0,   0, 0,    0,     0,     0, 769, 2, 4143, 12079, 12048, 0,
-    256, 2, 4112, 4143,  12048, 0, 0,   0, 0,    0,     0,     0};
+/// The burst's mesh.
+const u16 gHaures_BurstMesh[] = {MESH_FACE(1, 3, 2, 47, 0, 47, 71, 0, 71),
+                                 MESH_FACE(0, 1, 2, 0, 0, 47, 0, 0, 71),
+                                 MESH_END,
+                                 MESH_FACE(1, 3, 2, 47, 16, 47, 47, 16, 47),
+                                 MESH_FACE(0, 1, 2, 16, 16, 47, 16, 16, 47),
+                                 MESH_END};
 
 /// The swing's pictures: their widths; the tables after it give their heights
 /// and offsets, and the fist's heights, y offsets and offsets.
@@ -1949,10 +1858,10 @@ const s8 gFlora_BloomX[] = {16, 16, 16, -16};
 /// Each bloom's y, in pixels.
 const s8 gFlora_BloomY[] = {0, 0, 0, 12, 0, 0};
 
-/// The dagger's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gSabreDance_DaggerMesh[] = {256,  2,    6, 25, 7942, 0, 769, 2, 25,
-                                      7961, 7942, 0, 0,  0,    0, 0,   0, 0};
+/// The dagger's mesh.
+const u16 gSabreDance_DaggerMesh[] = {MESH_FACE(0, 1, 2, 6, 0, 25, 0, 6, 31),
+                                      MESH_FACE(1, 3, 2, 25, 0, 25, 31, 6, 31),
+                                      MESH_END};
 
 /// The dagger, 32 by 80 pixels from (-16, -16) to (16, 64), the point down: its
 /// four corners.
@@ -1982,7 +1891,7 @@ const s8 gDaedalus_ShakeOffsets[] = {0,  -1, 1,  -1, 0,  2,  1,  0,
                                      -1, -1, -2, -2, -3, -3, -4, -4,
                                      -4, -3, -3, -3, -2, -2, -1, -1};
 
-/// Each drift picture's byte offset in Daedalus's sheet.
+/// A bird's picture for each four frames of its wing beat, by number.
 const u8 gDaedalus_WingBeatPictures[] = {0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
 
 /// The frame each drift starts on.
@@ -2026,20 +1935,19 @@ const u16 gDaedalus_DiveStarts[] = {0,  24, 8,  52, 16, 40, 36, 28,
 /// The seven strike frames.
 const u8 gDaedalusStrike_HitFrames[] = {80, 84, 86, 88, 90, 92, 94};
 
-/// By level: which of the seven blades strike.
+/// By level: which of the seven arrows strike.
 const u8 gVengeance_ArrowStrikes[][7] = {
     {0, 0, 1, 0, 0, 0, 1}, {1, 0, 1, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}};
 
-/// The blade's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gLifeShear_PaleBladeMesh[] = {769, 2, 3711, 13695, 13568, 0,
-                                        256, 2, 3584, 3711,  13568, 0,
-                                        0,   0, 0,    0,     0,     0};
+/// The blade's mesh.
+const u16 gLifeShear_PaleBladeMesh[] = {
+    MESH_FACE(1, 3, 2, 127, 14, 127, 53, 0, 53),
+    MESH_FACE(0, 1, 2, 0, 14, 127, 14, 0, 53), MESH_END};
 
-/// The handle's mesh: each triangle's three corners and their texture
-/// coordinates.
+/// The handle's mesh.
 const u16 gLifeShear_OrangeBladeMesh[] = {
-    769, 2, 127, 8063, 7936, 0, 256, 2, 0, 127, 7936, 0, 0, 0, 0, 0, 0, 0};
+    MESH_FACE(1, 3, 2, 127, 0, 127, 31, 0, 31),
+    MESH_FACE(0, 1, 2, 0, 0, 127, 0, 0, 31), MESH_END};
 
 /// The scythe, 128 by 32 pixels: its four corners.
 const struct ModelVertex gLifeShear_BladeCorners[] = {
@@ -2174,7 +2082,7 @@ const u8 gCatastrophe_ForkX[] = {16, 96, 20, 40, 50, 10, 96};
 /// Each burst's y, in pixels.
 const u8 gCatastrophe_ForkY[] = {64, 80, 30, 40, 80, 60, 20};
 
-/// Each burst picture's byte offset in Catastrophe's sheet.
+/// Each fork's picture of lightning, by number.
 const u8 gCatastrophe_ForkPictures[] = {0, 1, 0, 1, 0, 0, 1, 0};
 
 /// The canvas flash frames.
@@ -2193,7 +2101,8 @@ const u8 gCatastrophe_StrikeY[] = {92,  92,  92,  120, 120, 120, 154, 154, 154,
                                    154, 154, 154, 220, 240, 0,   120, 100, 100,
                                    140, 120, 154, 154, 154, 184, 220, 0,   0};
 
-/// The strike frames.
+/// The strike frames, a row of steps for each of the three strikes; 65535 ends
+/// a row, a frame that never comes.
 const u16 gCatastrophe_StrikeFrames[] = {
     492, 506, 526, 528, 542, 562, 572, 578, 598, 600, 608, 65535, 0,
     504, 518, 526, 546, 548, 554, 562, 564, 570, 590, 594, 596,   65535,
@@ -2434,7 +2343,7 @@ const u8 gLiquifier_SplashStarts[] = {18, 21, 16, 17, 22, 19, 23, 18};
 /// Each splash's height.
 const u8 gLiquifier_SplashHeights[] = {40, 56, 70, 48, 64, 80, 58, 64, 72};
 
-/// Each flame picture's byte offset in Canvas Burst's sheet.
+/// The flame's picture for each three frames of its life, by number.
 const u8 gCanvasBurst_FlamePictures[] = {5, 5, 4, 3, 2, 1, 0};
 
 /// Each flash's pitch.
@@ -2485,20 +2394,21 @@ const s32 gIris_SplashRadii[] = {24, 16};
 /// Each splash's offset in y.
 const u8 gIris_SplashOffsetsY[] = {7, 5, 0, 0};
 
-/// The pillar's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gIris_PillarMesh[] = {
-    256,  2,    0, 15,  3840, 0,    258,  3,    3840, 15, 3855, 0, 770, 4, 3584,
-    3599, 3840, 0, 772, 5,    3840, 3599, 3855, 0,    0,  0,    0, 0,   0, 0};
+/// The pillar's mesh.
+const u16 gIris_PillarMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 15, 0, 0, 15),
+                                MESH_FACE(2, 1, 3, 0, 15, 15, 0, 15, 15),
+                                MESH_FACE(2, 3, 4, 0, 14, 15, 14, 0, 15),
+                                MESH_FACE(4, 3, 5, 0, 15, 15, 14, 15, 15),
+                                MESH_END};
 
 /// The particle's corners, as signed x, y and z.
 const struct ModelVertex gIris_ParticleCorners[] = {
     {-4, -8, 0}, {4, -8, 0}, {-4, 8, 0}, {4, 8, 0}};
 
-/// The particle's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gIris_ParticleMesh[] = {256, 2,     0, 31, 16128, 0, 258, 3, 16128,
-                                  31,  16159, 0, 0,  0,     0, 0,   0, 0};
+/// The particle's mesh.
+const u16 gIris_ParticleMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 63),
+                                  MESH_FACE(2, 1, 3, 0, 63, 31, 0, 31, 63),
+                                  MESH_END};
 
 /// The psynergy sound frames.
 const u8 gIris_PsynergySoundFrames[] = {84,  93,  108, 111, 116, 132,
@@ -2567,23 +2477,26 @@ const struct ModelVertex gIris_RightStripCorners[] = {
     {35, -64, 0}, {72, -64, 0}, {28, -32, 0}, {66, -32, 0}, {18, 0, 0},
     {51, 0, 0},   {6, 32, 0},   {33, 32, 0},  {-12, 64, 0}, {9, 64, 0}};
 
-/// The strip's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gIris_StripMesh[] = {
-    256,   2,     0,     31,   3840, 0,     258,   3,     3840, 31,   3871,
-    0,     770,   4,     3840, 3871, 7936,  0,     772,   5,    7936, 3871,
-    7967,  0,     1284,  6,    7936, 7967,  12032, 0,     1286, 7,    12032,
-    7967,  12063, 0,     1798, 8,    12032, 12063, 16128, 0,    1800, 9,
-    16128, 12063, 16159, 0,    0,    0,     0,     0,     0,    0};
+/// The strip's mesh.
+const u16 gIris_StripMesh[] = {MESH_FACE(0, 1, 2, 0, 0, 31, 0, 0, 15),
+                               MESH_FACE(2, 1, 3, 0, 15, 31, 0, 31, 15),
+                               MESH_FACE(2, 3, 4, 0, 15, 31, 15, 0, 31),
+                               MESH_FACE(4, 3, 5, 0, 31, 31, 15, 31, 31),
+                               MESH_FACE(4, 5, 6, 0, 31, 31, 31, 0, 47),
+                               MESH_FACE(6, 5, 7, 0, 47, 31, 31, 31, 47),
+                               MESH_FACE(6, 7, 8, 0, 47, 31, 47, 0, 63),
+                               MESH_FACE(8, 7, 9, 0, 63, 31, 47, 31, 63),
+                               MESH_END};
 
 /// The cone's corners, as signed x, y and z.
 const struct ModelVertex gIris_ConeCorners[] = {
     {0, -40, 0}, {-5, -4, 0},  {5, -4, 0},  {-10, 16, 0},
     {10, 16, 0}, {-20, 32, 0}, {20, 32, 0}, {0, 0, 0}};
 
-/// The cone's mesh: each triangle's three corners and their texture
-/// coordinates.
-const u16 gIris_ConeMesh[] = {1,    7,  7936, 0,  7951, 0,  513,  3,  0,    31,
-                              7936, 0,  515,  4,  7936, 31, 7967, 0,  1027, 5,
-                              0,    31, 7936, 0,  1029, 6,  7936, 31, 7967, 0,
-                              7,    2,  7951, 31, 7967, 0};
+/// The cone's mesh.
+const u16 gIris_ConeMesh[] = {MESH_FACE(1, 0, 7, 0, 31, 0, 0, 15, 31),
+                              MESH_FACE(1, 2, 3, 0, 0, 31, 0, 0, 31),
+                              MESH_FACE(3, 2, 4, 0, 31, 31, 0, 31, 31),
+                              MESH_FACE(3, 4, 5, 0, 0, 31, 0, 0, 31),
+                              MESH_FACE(5, 4, 6, 0, 31, 31, 0, 31, 31),
+                              MESH_FACE(7, 0, 2, 15, 31, 31, 0, 31, 31)};

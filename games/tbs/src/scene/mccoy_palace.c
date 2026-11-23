@@ -1,52 +1,50 @@
-/// @file McCoy's Palace in Bilibin.
+/// @file McCoy's Palace in Bilibin, the home of the town's chief.
 ///
-/// The scene is SceneId_McCoyPalace, with the area name McCoy's Palace, which
-/// its grounds share (mccoy_palace_grounds.c).
+/// The palace is one scene, SceneId_McCoyPalace, sharing the area name McCoy's
+/// Palace with its grounds (mccoy_palace_grounds.c). Its rooms are side by
+/// side on one map, each in its own camera box: the entrance hall with its red
+/// carpet, McCoy's room at the carpet's top, Lady McCoy's room with a bedroom
+/// through each of its two back doors, the landings and small tower rooms
+/// at the hall's four corners, and the treasure room below, reached from the
+/// west of the hall.
 ///
-/// The party comes in from the grounds by
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST. Or it comes straight into
-/// McCoy's room by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, which the red
-/// carpet's door (step trigger 9) also reaches.
+/// The party first comes in by the front door once the east guard on the
+/// grounds lets it in. A man in the hall says to follow the red carpet, and
+/// walking through the door at its top (McCoyPalace_WalkThroughDoor) brings
+/// Isaac before McCoy, a stout red-haired man who speaks with a heavy accent
+/// and a portrait. Before Kolima's curse is lifted this is the first audience
+/// (McCoyPalace_AudienceWithMcCoy): McCoy asks whether the party will save
+/// Kolima. If Isaac says no, he is sent away and can come back to change his
+/// mind. If he says yes, McCoy tosses him the key to the barricades, then
+/// takes it back, deciding they are too young, and his captain sees the party
+/// out. Outside his door the captain is sorry, and lets slip that
+/// the barricade on the way to Kolima may not need a key
+/// (McCoyPalace_CaptainHintsAtBarricade); from then on the people speak as if
+/// the party had been turned away (FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY).
 ///
-/// Its people follow three story flags:
+/// Once the curse is lifted, the guards on the grounds march the party
+/// straight into McCoy's room, where McCoy thanks it
+/// (McCoyPalace_McCoyRewardsParty). His lines differ as the party has met him
+/// before or not. The captain then leads it down to the treasure room, where
+/// four chests stand in a row before the barred gate
+/// (McCoyPalace_PresentRewardChests): from west to east a Vial, a Potion, a
+/// Psy Crystal and a Water of Life. Only one may be taken
+/// (McCoyPalace_ClaimReward); the others are then locked. Heading back up the
+/// stairs without a reward, the captain stops Isaac and sends him back to the
+/// chests; once he has one, the captain bids the party farewell. When the
+/// party comes back later, the four chests are gone, and which one it opened
+/// was only ever kept in the scene's temporary flags (FLAG_TOOK_VIAL and the
+/// others).
+///
+/// The palace's people follow three story flags,
 /// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, FLAG_KOLIMA_CURSE_LIFTED and
-/// FLAG_MCCOY_PALACE_REWARD_TAKEN. The flags decide what they say and how
-/// they turn when talked to (Scene_GetActorPlacements).
+/// FLAG_MCCOY_PALACE_REWARD_TAKEN, which decide what they say and how they
+/// turn when talked to (Scene_GetActorPlacements).
 ///
-/// Arriving in McCoy's room before the curse is lifted plays
-/// McCoyPalace_AudienceWithMcCoy. McCoy asks whether the party can save
-/// Kolima.
-/// - A refusal sends it away (FLAG_MCCOY_PALACE_JOB_REFUSED) to come back
-///   later.
-/// - An acceptance ends with McCoy taking back the key to the barricades and
-///   the captain seeing the party out (FLAG_CAPTAIN_SEEING_PARTY_OUT).
-///
-/// Outside McCoy's door the captain then plays
-/// McCoyPalace_CaptainHintsAtBarricade, which sets
-/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY.
-///
-/// Once the curse is lifted, the grounds' guards bring the party into McCoy's
-/// room, and McCoyPalace_McCoyRewardsParty plays until
-/// FLAG_MCCOY_PALACE_PARTY_REWARDED. McCoy's lines differ as the party has met
-/// him before or not.
-///
-/// The captain takes the party to the treasure room (FLAG_REWARD_OFFERED),
-/// where McCoyPalace_PresentRewardChests shows four chests. A search of one
-/// gives its Vial, Potion, Psy Crystal or Water of Life
-/// (McCoyPalace_ClaimReward), and the others are then locked.
-///
-/// The chest taken from is kept only in scene temp flags (FLAG_TOOK_VIAL and
-/// the others). So once the party has left the palace, all four search as
-/// locked.
-///
-/// Leaving without a reward (step trigger 51), the captain walks the leader
-/// back. Leaving with it (step trigger 50), he sees the party off
-/// (FLAG_PARTY_SEEN_OFF).
-///
-/// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
-/// and a bookcase the list of McCoy's gifts to his wife.
-///
-/// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
+/// A barrel by the chimney in the hall holds an Elixir and one in the
+/// small room at the south-west corner a Smoke Bomb. The wardrobe in the east
+/// bedroom holds Lady McCoy's silk negligee, and the bookcase in the west
+/// bedroom the long list of gifts McCoy has bought her.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -88,7 +86,9 @@ enum McCoyPalaceActorId {
   /// don't offend Lord McCoy!" Later: "I heard you received a spectacular
   /// reward."
   ACTOR_VILLAGER_DO_NOT_OFFEND_MCCOY,
-  /// A woman with fair hair.
+  /// A woman with fair hair in the hall who asks whether the party is willing
+  /// to go to Kolima Forest. Later: "Lady McCoy is quite upset that the palace
+  /// construction was halted."
   ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST,
   /// A young man with brown hair who speaks of the old tree in Kolima Forest.
   /// Later: "Things are looking grim south of Goma Range..."
@@ -104,12 +104,15 @@ enum McCoyPalaceActorId {
   /// A woman with fair hair who screams when spoken to ("AAAAH!!!"). Mind Read:
   /// "Oh, no! This nightgown has a hole... Milady will be furious!"
   ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
-  /// An old man with a cane.
+  /// An old man with a cane in the north-east tower room. "You can see Kolima
+  /// pretty well from here." Later he praises the party.
   ACTOR_OLD_MAN_PRAISING_THE_WARRIORS,
-  /// A soldier in a spiked helmet.
+  /// A soldier in a spiked helmet in the south-east tower room. "Hmm. It seems
+  /// the curse of the tree has not yet come to Bilibin." Later he says he
+  /// watched the party go to Kolima.
   ACTOR_SOLDIER_WATCHING_KOLIMA,
-  /// A soldier in a spiked helmet who shows the treasure room's chests, as the
-  /// captain asks.
+  /// A soldier in a spiked helmet who guards the treasure room's barred gate,
+  /// and shows the party the four chests when the captain brings it down.
   ACTOR_SOLDIER_SHOWING_THE_REWARD,
   /// McCoy, the chief of Bilibin, a stout man with red hair in a pink tunic.
   ACTOR_LORD_MCCOY,
@@ -121,6 +124,35 @@ enum McCoyPalaceActorId {
   ACTOR_POTION_CHEST,
   ACTOR_PSY_CRYSTAL_CHEST,
   ACTOR_WATER_OF_LIFE_CHEST
+};
+
+/// The cells the triggers answer besides the exits, whose cell behaviors are
+/// their exits' numbers.
+enum McCoyPalaceCellBehavior {
+  /// The row just in front of the four reward chests, cells (38, 46) to
+  /// (41, 46), copied there from (42, 55) to (45, 55) when the chests are
+  /// brought out.
+  CELL_BEHAVIOR_MCCOY_PALACE_BEFORE_REWARD_CHESTS = 50,
+  /// The treasure room's floor at the foot of its stairs, cell (36, 47), one
+  /// step before the way out.
+  CELL_BEHAVIOR_MCCOY_PALACE_FOOT_OF_TREASURE_STAIRS = 51,
+  /// The four reward chests' cells, (38, 45) to (41, 45) from west to east,
+  /// copied there from (38, 55) to (41, 55) when the chests are brought out.
+  CELL_BEHAVIOR_MCCOY_PALACE_VIAL_CHEST = 100,
+  CELL_BEHAVIOR_MCCOY_PALACE_POTION_CHEST = 101,
+  CELL_BEHAVIOR_MCCOY_PALACE_PSY_CRYSTAL_CHEST = 102,
+  CELL_BEHAVIOR_MCCOY_PALACE_WATER_OF_LIFE_CHEST = 103,
+  /// The barrel by the chimney in the hall, cell (23, 40), with an Elixir.
+  CELL_BEHAVIOR_MCCOY_PALACE_ELIXIR_BARREL = 120,
+  /// The barrel in the small room at the south-west corner, cell (45, 29), with
+  /// a Smoke Bomb.
+  CELL_BEHAVIOR_MCCOY_PALACE_SMOKE_BOMB_BARREL = 121,
+  /// The east bedroom's wardrobe, cells (17, 3) to (18, 4), with Lady McCoy's
+  /// silk negligee.
+  CELL_BEHAVIOR_MCCOY_PALACE_WARDROBE = 200,
+  /// The west bedroom's bookcase, cells (9, 3) to (10, 4), with the list of
+  /// McCoy's gifts to his wife.
+  CELL_BEHAVIOR_MCCOY_PALACE_BOOKCASE = 201
 };
 
 /// The palace's temporary flags.
@@ -167,7 +199,9 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
-/// The people of McCoy's Palace.
+/// The people of McCoy's Palace. Once the party has its reward, the woman in
+/// Lady McCoy's nightgown no longer turns when spoken to, and the old man and
+/// the soldiers in the tower rooms and the treasure room turn to the party.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
@@ -203,8 +237,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMcCoyPalaceNoTriggers;
 }
 
-/// McCoy's Palace, before the reward: a woman with fair hair asks about going
-/// to Kolima. "Oh, are you willing to go to Kolima Forest?"
+/// Before the reward, the woman with fair hair in the hall asks "Oh, are you
+/// willing to go to Kolima Forest?" On yes she has lost count of the warriors
+/// McCoy has hired to end the curse, and not one has come back; on no, the
+/// party does not look too strong, but that may be for the best.
 static void McCoyPalace_AskAboutGoingToKolima(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinYouWillingGoKolimaForest);
@@ -215,8 +251,9 @@ static void McCoyPalace_AskAboutGoingToKolima(void) {
   Event_End();
 }
 
-/// McCoy's Palace, after the reward: the woman with Lady McCoy's silk
-/// nightgown screams, then turns to the party. "AAAAH!!!"
+/// After the reward, the woman in Lady McCoy's nightgown in the east bedroom
+/// winces and screams "AAAAH!!!" when spoken to, then turns: "Oh! For
+/// a second, I thought you were milady. You really startled me!"
 static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
   Event_Start();
   Actor_ShowEmote(ACTOR_VILLAGER_IN_MILADYS_NIGHTGOWN,
@@ -235,8 +272,10 @@ static void McCoyPalace_TalkToWomanInMiladysNightgown(void) {
   Event_End();
 }
 
-/// McCoy's Palace, after the reward: the old man praises the party the first
-/// time, then warns of the holy tree.
+/// After the reward, the old man with a cane in the north-east tower room tells
+/// Isaac "You are a fine warrior." Spoken to again before the party leaves
+/// McCoy's Palace, he worries instead: "It's very reckless for such young
+/// warriors to face the holy tree..."
 static void McCoyPalace_TalkToOldManPraisingTheWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinFineWarrior);
@@ -248,8 +287,10 @@ static void McCoyPalace_TalkToOldManPraisingTheWarriors(void) {
   Event_End();
 }
 
-/// McCoy's Palace, after the reward: a soldier saw the party go to Kolima.
-/// "I was watching from here. After all that fuss, you still went to Kolima?"
+/// After the reward, the soldier in the south-east tower room asks "I was
+/// watching from here. After all that fuss, you still went to Kolima?" On yes
+/// he does not know how they lifted the curse, but they are the best; on no he
+/// calls Isaac a liar, for he saw them walk through the barricade.
 static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasWatchingFromHereAfter);
@@ -260,10 +301,16 @@ static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
   Event_End();
 }
 
-/// McCoy's Palace, the treasure room: the soldier who keeps the treasure.
+/// The soldier at the treasure room's barred gate shows off what lies behind
+/// it: "What do you think? These are Bilibin's great treasures. Whoever ends
+/// the curse can claim these as his own." While the party is choosing its
+/// reward he says "You may choose only one item, but I trust that all of them
+/// will prove useful," and once it has one, that it was indeed the greatest of
+/// treasures.
 ///
-/// Unused: with FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED set he would say `Pick
-/// any one of the four treasures.` instead.
+/// Unused: a line the game never shows, "Pick any one of the four
+/// treasures.", would follow his boast if FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED
+/// were set, and nothing sets it.
 static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
   Event_Start();
 
@@ -284,8 +331,10 @@ static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
   Event_End();
 }
 
-/// McCoy's Palace, after the reward: Mind Read on the old man shows two
-/// thoughts.
+/// After the reward, Mind Read on the old man with a cane in the north-east
+/// tower room hears "Sometimes, we need children to remind us of our own
+/// responsibilities." Read again before the party leaves McCoy's Palace, he
+/// thinks "You looked very courageous walking toward Kolima."
 static void McCoyPalace_ReadOldMansThoughtsOnTheWarriors(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinSometimesWeNeedChildrenRemind);
@@ -297,8 +346,12 @@ static void McCoyPalace_ReadOldMansThoughtsOnTheWarriors(void) {
   Event_End();
 }
 
-/// McCoy's Palace, the treasure room: Mind Read on the soldier who keeps the
-/// treasure, whose thoughts follow the curse and the reward.
+/// Mind Read on the soldier at the treasure room's barred gate. Before the
+/// curse is lifted he thinks "What good is treasure if you get turned into a
+/// tree?" Once it is lifted: "Are we really giving our treasure to these
+/// wimps?" While the party chooses: "Nonetheless...if your luck is sour, you
+/// may end up an item you do not need." After the reward he thinks they got a
+/// pretty nice reward but were just unlucky.
 static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
   Event_Start();
 
@@ -317,15 +370,23 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
   Event_End();
 }
 
-/// McCoy's Palace, step triggers 9, 12 and 13: walking north through a door
-/// opens it with a sound, the leader walks through and the next room loads.
+/// Walking north into the door at the top of the hall's red carpet (cells
+/// (15, 39) and (16, 39)) opens it, and Isaac walks through into McCoy's room.
+/// The two doors at the back of Lady McCoy's room, cells (6, 23) and (19, 23),
+/// open the same way into the west and east bedrooms.
+///
+/// McCoy's door opens with `SE_THUMP` and the bedroom doors with
+/// `SE_DOOR_OPEN`, the door's opening being the map's tile animations 1 and 2,
+/// let run for the walk. After the captain has come out of McCoy's door
+/// (McCoyPalace_CaptainHintsAtBarricade) it stands open, so walking back in
+/// makes no sound and plays no opening.
 static void McCoyPalace_WalkThroughDoor(void) {
   struct FieldWork *work;
   s32 hideDoorLayers;
 
   work = gFieldWork;
   hideDoorLayers = 0;
-  if (work->stepTrigger == 9) {
+  if (work->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM) {
     if (GameFlag_Get(FLAG_MCCOYS_DOOR_OPEN) == 0) {
       Sound_Play(SE_THUMP);
       hideDoorLayers = 1;
@@ -342,7 +403,7 @@ static void McCoyPalace_WalkThroughDoor(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (work->stepTrigger == 9)
+  if (work->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM)
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   else
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -353,22 +414,22 @@ static void McCoyPalace_WalkThroughDoor(void) {
   TilesetAnim_Pause(2);
 }
 
-/// The chest is empty. "Isaac checked the chest... but it was empty."
+/// "Isaac checked the chest... but it was empty."
 static void McCoyPalace_ShowChestEmpty(void) {
   Event_Start();
   FieldMessage_Show(MsgBilibinIsaacCheckedChestButWas, 1);
   Event_End();
 }
 
-/// The chest is locked. "The treasure chest is locked."
+/// "The treasure chest is locked."
 static void McCoyPalace_ShowChestLocked(void) {
   Event_Start();
   FieldMessage_Show(MsgBilibinTreasureChestLocked, 1);
   Event_End();
 }
 
-/// Searching a reward chest after the reward: the chosen one is empty, the
-/// others locked.
+/// After the reward, the chest the party opened searches as empty and the other
+/// three as locked.
 static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
   if (GameFlag_Get(chestFlag) != 0) {
     McCoyPalace_ShowChestEmpty();
@@ -377,8 +438,8 @@ static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
   }
 }
 
-/// McCoy's Palace, the treasure room: searching the first reward chest gives
-/// a Vial, while no reward is taken.
+/// Searching the westmost of the four reward chests in the treasure room
+/// (cell (38, 45)) gives a Vial, if the party has not yet chosen its reward.
 static void McCoyPalace_SearchVialChest(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_VIAL);
@@ -387,8 +448,8 @@ static void McCoyPalace_SearchVialChest(void) {
   }
 }
 
-/// McCoy's Palace, the treasure room: searching the second reward chest gives
-/// a Potion, while no reward is taken.
+/// Searching the second reward chest from the west in the treasure room (cell
+/// (39, 45)) gives a Potion, if the party has not yet chosen its reward.
 static void McCoyPalace_SearchPotionChest(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_POTION);
@@ -397,8 +458,8 @@ static void McCoyPalace_SearchPotionChest(void) {
   }
 }
 
-/// McCoy's Palace, the treasure room: searching the third reward chest gives
-/// a Psy Crystal, while no reward is taken.
+/// Searching the third reward chest from the west in the treasure room (cell
+/// (40, 45)) gives a Psy Crystal, if the party has not yet chosen its reward.
 static void McCoyPalace_SearchPsyCrystalChest(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_PSY_CRYSTAL);
@@ -408,8 +469,8 @@ static void McCoyPalace_SearchPsyCrystalChest(void) {
   }
 }
 
-/// McCoy's Palace, the treasure room: searching the fourth reward chest gives
-/// a Water of Life, while no reward is taken.
+/// Searching the eastmost of the four reward chests in the treasure room (cell
+/// (41, 45)) gives a Water of Life, if the party has not yet chosen its reward.
 static void McCoyPalace_SearchWaterOfLifeChest(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_WATER_OF_LIFE);
@@ -419,7 +480,9 @@ static void McCoyPalace_SearchWaterOfLifeChest(void) {
   }
 }
 
-/// The chest opens and gives its item.
+/// The chest opens and gives its item, and the other three lock. If no one in
+/// the party has room for it, the lid peeks open and shuts again, and the
+/// party can still choose.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
@@ -444,8 +507,9 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
   Event_End();
 }
 
-/// McCoy's Palace, step trigger 51, leaving the treasure room without a reward:
-/// the captain walks the leader back.
+/// Walking to the foot of the treasure room's stairs (cell (36, 47)) without
+/// a reward makes the captain call out "Please take your reward before your
+/// depart!", and Isaac walks back toward the chests.
 static void McCoyPalace_CaptainAsksPartyToChoose(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
@@ -465,8 +529,13 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
   }
 }
 
-/// McCoy's Palace, step trigger 50, leaving the treasure room with a reward:
-/// the captain sees the party off.
+/// Once Isaac has his reward, walking along the row in front of the chests
+/// (cells (38, 46) to (41, 46)) makes the captain step up beside the soldier
+/// at the gate. Both nod, and the captain tells Isaac "You are always welcome
+/// in the palace of Lord McCoy." before walking off up the stairs.
+///
+/// XXX: which way the player usually meets it is unchecked; a recording would
+/// need the chests brought out and a reward taken in one visit.
 static void McCoyPalace_CaptainSeesPartyOff(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Event_Start();
@@ -494,7 +563,8 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
   }
 }
 
-/// The four reward chests stand in a row.
+/// The four reward chests stand in a row before the barred gate, from west to
+/// east the Vial, the Potion, the Psy Crystal and the Water of Life.
 static inline void McCoyPalace_PositionRewardChests(void) {
   Actor_SetPosition(ACTOR_VIAL_CHEST, 616, 728);
   Actor_SetPosition(ACTOR_POTION_CHEST, 632, 728);
@@ -502,13 +572,18 @@ static inline void McCoyPalace_PositionRewardChests(void) {
   Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST, 664, 728);
 }
 
-/// The cells before the chest row can be walked on.
+/// The chests' cells and the row in front of them take the behaviors the
+/// triggers answer, copied from the spare cells at (38, 55) to (45, 55).
 static inline void McCoyPalace_OpenRewardChestRow(void) {
   MapGrid_CopyCellAttributes(38, 55, 4, 1, 38, 45);
   MapGrid_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 }
 
-/// Sets McCoy's Palace up.
+/// Sets McCoy's Palace up and plays the story's scenes: the first audience on
+/// entering McCoy's room, the captain's hint outside his door after it, the
+/// reward once the curse is lifted, and the chests in the treasure room. A
+/// return from a battle while the party is choosing puts the
+/// chests straight back in their row.
 s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
@@ -583,9 +658,12 @@ static inline void McCoyPalace_PrepareCompanionApproach(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
 }
 
-/// McCoy's Palace, through McCoy's door before the curse is lifted, the first
-/// audience: the captain announces the party and McCoy asks whether they can
-/// save Kolima.
+/// The first audience, on walking through McCoy's door before Kolima's curse
+/// is lifted: the captain announces the party, McCoy calls Isaac closer and
+/// asks whether they will go to Kolima Forest. On no he sends them away as
+/// too young, and a return lets Isaac change his mind. On yes he tosses Isaac
+/// the key to the barricades, then, seeing how young the party is, takes it
+/// back and has his captain see them out.
 static void McCoyPalace_AudienceWithMcCoy(void) {
   struct Actor *actor;
 
@@ -1079,10 +1157,10 @@ leave:
   Event_End();
 }
 
-/// McCoy's Palace, at MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM after the
-/// first audience: outside McCoy's door, his captain is sorry the party was
-/// rejected, asks them not to go to Kolima and lets slip that the barricade may
-/// not need a key.
+/// Back in the hall after the first audience, McCoy's door opens behind the
+/// party and the captain comes out. He is sorry Isaac was rejected, asks him to
+/// promise not to go to Kolima, lets slip "That barricade... You may not need
+/// a key.", and leaves down the red carpet.
 static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_Start();
   Event_StartScreenTransition();
@@ -1155,8 +1233,10 @@ static void McCoyPalace_FaceCompanionsForAudience(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
 }
 
-/// McCoy's Palace, once Kolima's curse is lifted: brought in under arrest, the
-/// party is thanked by McCoy and sent to choose a reward.
+/// Once Kolima's curse is lifted, the guards march the party into McCoy's room
+/// as if under arrest. McCoy thanks Isaac, explains he only feared they would
+/// not stop by on the way back, and has the captain take them down to the
+/// treasure room to choose a reward.
 static void McCoyPalace_McCoyRewardsParty(void) {
   struct Actor *viewCenter;
   struct Actor *actor;
@@ -1441,9 +1521,10 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_End();
 }
 
-/// McCoy's Palace, at MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM, the
-/// treasure room: the captain shows the four chests and the soldier who keeps
-/// the treasure explains that only one may be chosen.
+/// In the treasure room, the captain walks the party up to four chests in a
+/// row before the barred gate. He tells the soldier at the gate that Lord
+/// McCoy ordered Isaac and his companions brought here, and the soldier says
+/// "You may select a single item from among these four chests."
 static void McCoyPalace_PresentRewardChests(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1729,11 +1810,11 @@ struct Trigger gMcCoyPalaceTriggers[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, MCCOY_PALACE_ENTRANCE_ROOM_TO_TREASURE_ROOM },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHWEST_LANDING },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, MCCOY_PALACE_ENTRANCE_ROOM_TO_NORTHEAST_LANDING },
-    { STEP_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(McCoyPalace_WalkThroughDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM, CONDITION_ALWAYS, EVENT(McCoyPalace_WalkThroughDoor) },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_WEST },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_ENTRANCE_ROOM_EAST },
-    { STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(McCoyPalace_WalkThroughDoor) },
-    { STEP_TRIGGER_FACING(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(McCoyPalace_WalkThroughDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_WEST_BEDROOM, CONDITION_ALWAYS, EVENT(McCoyPalace_WalkThroughDoor) },
+    { STEP_TRIGGER_FACING(FACING_NORTH), MCCOY_PALACE_LADY_MCCOYS_ROOM_TO_EAST_BEDROOM, CONDITION_ALWAYS, EVENT(McCoyPalace_WalkThroughDoor) },
     { TRIGGER_EXIT, 14, CONDITION_ALWAYS, MCCOY_PALACE_SOUTHWEST_LANDING_TO_ENTRANCE_ROOM },
     { TRIGGER_EXIT, 15, CONDITION_ALWAYS, MCCOY_PALACE_SOUTHWEST_LANDING_TO_SOUTHWEST_TOWER },
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, MCCOY_PALACE_SOUTHEAST_LANDING_TO_SOUTHEAST_TOWER },
@@ -1796,16 +1877,16 @@ struct Trigger gMcCoyPalaceTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SOLDIER_SHOWING_THE_REWARD, CONDITION_ALWAYS, EVENT(McCoyPalace_ReadRewardSoldiersThoughts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchVialChest) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 101, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchPotionChest) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 102, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchPsyCrystalChest) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 103, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchWaterOfLifeChest) },
-    { TRIGGER_STEP, 50, FLAG_PARTY_SEEN_OFF, EVENT(McCoyPalace_CaptainSeesPartyOff) },
-    { TRIGGER_STEP, 51, FLAG_PARTY_SEEN_OFF, EVENT(McCoyPalace_CaptainAsksPartyToChoose) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 120, FLAG_MCCOY_PALACE_BARREL_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 121, FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeIsaacPut)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASheetOfPaperTitled)) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_MCCOY_PALACE_VIAL_CHEST, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchVialChest) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_MCCOY_PALACE_POTION_CHEST, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchPotionChest) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_MCCOY_PALACE_PSY_CRYSTAL_CHEST, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchPsyCrystalChest) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_MCCOY_PALACE_WATER_OF_LIFE_CHEST, CONDITION_ALWAYS, EVENT(McCoyPalace_SearchWaterOfLifeChest) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MCCOY_PALACE_BEFORE_REWARD_CHESTS, FLAG_PARTY_SEEN_OFF, EVENT(McCoyPalace_CaptainSeesPartyOff) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MCCOY_PALACE_FOOT_OF_TREASURE_STAIRS, FLAG_PARTY_SEEN_OFF, EVENT(McCoyPalace_CaptainAsksPartyToChoose) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_MCCOY_PALACE_ELIXIR_BARREL, FLAG_MCCOY_PALACE_BARREL_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_MCCOY_PALACE_SMOKE_BOMB_BARREL, FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_WARDROBE), CELL_BEHAVIOR_MCCOY_PALACE_WARDROBE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeIsaacPut)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_MCCOY_PALACE_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASheetOfPaperTitled)) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on

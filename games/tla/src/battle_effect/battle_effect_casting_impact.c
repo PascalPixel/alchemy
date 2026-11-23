@@ -1525,7 +1525,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 6)
           Sound_PlayFar(SE_RISE_WITH_SPARKS);
       } else if (kind == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
-        // A flame column falls onto the target and sparks fly from it.
+        // A blue column falls onto the target and sparks fly from it.
         s32 count;
         EFFECT_RELEASE_BLITTERS();
         if (frame >= 0 && frame < 24) {

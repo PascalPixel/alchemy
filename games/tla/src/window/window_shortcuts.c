@@ -46,7 +46,7 @@ void AreaNameWindow_Update(void) {
   work = TIMED_NOTICE_WORK;
   work->noticeFrames = framesLeft = work->noticeFrames - 1;
   if (framesLeft == 0) {
-    Window_Close(work->noticeWindow, 2);
+    Window_Close(work->noticeWindow, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
   }
 }
@@ -57,7 +57,7 @@ void AreaNameWindow_Hide(void) {
 
   window = TIMED_NOTICE_WORK->noticeWindow;
   if (window != NULL && window->flags != 0) {
-    Window_Close(window, 2);
+    Window_Close(window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
   }
 }

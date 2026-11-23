@@ -120,7 +120,7 @@ enum AlhafraJailActorId {
   ACTOR_CHAUCHA,
   /// "Everything's so boring here... Why doesn't anybody do anything...?"
   ACTOR_BORED_GUARD,
-  ACTOR_JAILER
+  ACTOR_GUARD
 };
 
 /// The jail's way up through the hole the crate hides, from the tunnel behind
@@ -452,7 +452,7 @@ void AlhafranCave_SetUpJail(void) {
     Actor_SetPosition(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 0, 0);
     Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
-    Actor_SetPosition(ACTOR_JAILER, 0, 0);
+    Actor_SetPosition(ACTOR_GUARD, 0, 0);
     Actor_Get(ACTOR_BORED_GUARD)->update = AlhafranCave_TakeLeadersLayer;
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetPosition(ACTOR_BORED_GUARD, 0, 0);
@@ -476,7 +476,7 @@ void AlhafranCave_SetUpJail(void) {
     Actor_SetPosition(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 0, 0);
     Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
-    Actor_SetPosition(ACTOR_JAILER, 0, 0);
+    Actor_SetPosition(ACTOR_GUARD, 0, 0);
     Actor_Get(ACTOR_BORED_GUARD)->update = AlhafranCave_TakeLeadersLayer;
   }
   if (gMainRoutineWork.entrance == ENTRANCE_UNDER_CRATE &&
@@ -511,7 +511,7 @@ extern u8 MsgYouHereTo[];
 void AlhafranCave_CycleKeyColors(void);
 
 /// Felix walks west into the jail after Briggs is caught (cells (49, 16) to
-/// (49, 19)): the jailer asks if he is here to see Briggs, and Briggs's wife
+/// (49, 19)): the guard asks if he is here to see Briggs, and Briggs's wife
 /// Chaucha and their son Eoleo visit him. Eoleo lifts the cell's key off the
 /// guard's table with Psynergy of his own until Briggs cries out his name,
 /// then bursts into tears, and Chaucha takes him home. It happens once, and
@@ -536,7 +536,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetSpeed(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 1);
   FieldEvent_SetMessageId((s32)MsgYouHereTo);
   // "You here to see Briggs?"
-  FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 800, 288);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 264, 1);
@@ -573,35 +573,35 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetAnimation(ACTOR_EOLEO, ANIM_NOD);
-  FieldActor_StartRepeatedMotion(ACTOR_JAILER, 3);
-  Actor_SetAttachedEffect(ACTOR_JAILER,
+  FieldActor_StartRepeatedMotion(ACTOR_GUARD, 3);
+  Actor_SetAttachedEffect(ACTOR_GUARD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  EventCamera_FollowActor(ACTOR_JAILER, 1);
+  EventCamera_FollowActor(ACTOR_GUARD, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetSpeed(ACTOR_JAILER, 1.5);
-  Actor_SetScript(ACTOR_JAILER, gAlhafranCave_GuardStepsAsideScript);
+  Actor_SetSpeed(ACTOR_GUARD, 1.5);
+  Actor_SetScript(ACTOR_GUARD, gAlhafranCave_GuardStepsAsideScript);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_SOUTH_SOUTHEAST, 0);
-  FieldActor_WaitForScriptEndById(ACTOR_JAILER);
+  FieldActor_WaitForScriptEndById(ACTOR_GUARD);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_EAST, 0);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Now, wait a second..."
-  FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_JAILER, ANIM_SHAKE_HEAD);
+  FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_GUARD, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(10);
   // "First of all, it's not disgusting. It's nutritious! And besides..."
-  FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
-  Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
+  Actor_FaceDirection(ACTOR_GUARD, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmote(ACTOR_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "You're IN JAIL! What did you expect, gourmet cuisine?"
-  FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
   eoleo = Actor_Get(ACTOR_EOLEO);
   key = Actor_Get(ACTOR_JAIL_KEY);
   Event_StartColorTransition(8, RGB(16, 16, 4));
@@ -671,7 +671,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
                       0);
   Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GUARD, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(ACTOR_EOLEO, 3);
@@ -691,7 +691,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
                       FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_JAILER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GUARD, FACING_WEST, 0);
   FieldEvent_Wait(40);
   Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_SHAKE_HEAD);
@@ -714,7 +714,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
                       0);
   Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GUARD, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_NORTH_NORTHEAST, 0);
@@ -738,7 +738,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
                       FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_JAILER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GUARD, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_EOLEO,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -746,9 +746,9 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 20);
   gAlhafranCave_ClearedWord = 0;
   Task_AddFrame(AlhafranCave_IdleTask, TASK_PASS_FRAME);
-  Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "I don't know why he's crying! You're his mother! Can't you do..."
-  FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, ANIM_NOD);
@@ -790,10 +790,10 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(30);
   // "We'll be back again later. Will that be all right?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_JAILER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GUARD, ANIM_NOD);
   FieldEvent_Wait(10);
   // "Yeah, yeah. That's fine."
-  FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   // "We'll come back soon, dear."
@@ -809,7 +809,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
   FieldEvent_Wait(20);
-  FieldActor_WatchAndSetScript(ACTOR_JAILER, ACTOR_EOLEO);
+  FieldActor_WatchAndSetScript(ACTOR_GUARD, ACTOR_EOLEO);
   Actor_WalkBy(ACTOR_CHAUCHA, 0, -16);
   Actor_WalkByAndWait(ACTOR_EOLEO, 0, -16);
   Actor_WalkBy(ACTOR_CHAUCHA, 52, 0);
@@ -837,11 +837,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
                       0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_EOLEO);
-  FieldActor_Stop(ACTOR_JAILER);
+  FieldActor_Stop(ACTOR_GUARD);
   FieldActor_Stop(ACTOR_FELIX);
   Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
   Actor_SetPosition(ACTOR_EOLEO, 0, 0);
-  Actor_SetMovementType(Actor_Get(ACTOR_JAILER),
+  Actor_SetMovementType(Actor_Get(ACTOR_GUARD),
                         MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
@@ -973,13 +973,13 @@ struct Trigger gAlhafranCave_JailTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BORED_GUARD, FLAG_ALHAFRA_MAST_CLEARED, MSGNO(MsgIDonTKnow)},
     {TRIGGER_TALK, ACTOR_BORED_GUARD, CONDITION_ALWAYS, MSGNO(MsgBeforeIKnew)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BORED_GUARD, CONDITION_ALWAYS, MSGNO(MsgNoMatterHow)},
-    {TRIGGER_TALK, ACTOR_JAILER, CONDITION_ALWAYS, MSGNO(MsgIVeBeen)},
+    {TRIGGER_TALK, ACTOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgIVeBeen)},
     {TRIGGER_TALK, ACTOR_BRIGGS, CONDITION_ALWAYS, EVENT(AlhafranCave_TalkToBriggs)},
     {TRIGGER_TALK, ACTOR_CREWMAN_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIHatePrison)},
     {TRIGGER_TALK, ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgItSoundsLike)},
     {TRIGGER_TALK, ACTOR_CREWMAN_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgEverythingWouldHave)},
     {TRIGGER_TALK, ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgISawYou)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JAILER, CONDITION_ALWAYS, MSGNO(MsgItSSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgItSSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS, CONDITION_ALWAYS, MSGNO(MsgHasStrangePowers)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIMNotStaying)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},

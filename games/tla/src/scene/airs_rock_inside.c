@@ -59,12 +59,12 @@
 #define FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED 0x89f
 /// Set once Move has left the paired stakes room's pillar on (43, 87).
 #define FLAG_AIRS_ROCK_PAIRED_STAKES_PILLAR_PLACED 0x8d0
-/// Set once Move has left the face warp room's first pillar on (35, 59).
-#define FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED 0x8d1
+/// Set once Move has left the face vents room's first pillar on (35, 59).
+#define FLAG_AIRS_ROCK_FACE_VENTS_FIRST_PILLAR_PLACED 0x8d1
 /// Its second, on (45, 105).
-#define FLAG_AIRS_ROCK_FACE_WARP_SECOND_PILLAR_PLACED 0x8d2
+#define FLAG_AIRS_ROCK_FACE_VENTS_SECOND_PILLAR_PLACED 0x8d2
 /// Its third, on (23, 77).
-#define FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED 0xa8f
+#define FLAG_AIRS_ROCK_FACE_VENTS_THIRD_PILLAR_PLACED 0xa8f
 /// Set once Move has left the coins chest room's pillar on (45, 33).
 #define FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED 0x8d3
 
@@ -81,7 +81,7 @@
 #define FLAG_STAKE_C_DOWN FLAG_SCENE_TEMP_02
 #define FLAG_STAKE_D_DOWN FLAG_SCENE_TEMP_03
 
-/// The face warp room's vents kept still by where Move leaves a pillar
+/// The face vents room's vents kept still by where Move leaves a pillar
 /// (AirsRockInside_FinishPushingPillar): the vent beside each puffs in its
 /// turn (AirsRockInside_PuffVents).
 #define FLAG_SOUTHEAST_VENT_STILL FLAG_SCENE_TEMP_00
@@ -157,12 +157,12 @@ enum AirsRockInsideCellBehavior {
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STAKE_TOP = 212
 };
 
-/// The face warp room's six vents, by the cell in front of each on the ground
+/// The face vents room's six vents, by the cell in front of each on the ground
 /// layer: south of the room the west and east one, in its middle the west and
 /// east one, in its north the west and east one. A vent's puff reaching the
 /// leader there blows him down to the place below it
-/// (AirsRockInside_RideFaceWarp).
-enum AirsRockInsideFaceWarpVent {
+/// (AirsRockInside_RideFaceVent).
+enum AirsRockInsideFaceVentsVent {
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_SOUTHWEST_VENT = 50,
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_SOUTHEAST_VENT,
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_MIDDLE_WEST_VENT,
@@ -279,14 +279,14 @@ enum AirsRockInsidePairedStakesActorId {
   ACTOR_PAIRED_STAKES_SOUTH_WIND_STONE
 };
 
-enum AirsRockInsideFaceWarpActorId {
-  ACTOR_FACE_WARP_FIRST_PILLAR = ACTOR_FIRST_PLACED,
-  ACTOR_FACE_WARP_SECOND_PILLAR,
-  ACTOR_FACE_WARP_WIND_STONE,
-  ACTOR_FACE_WARP_STATUE,
-  ACTOR_FACE_WARP_THIRD_PILLAR,
-  ACTOR_FACE_WARP_PILLAR_A,
-  ACTOR_FACE_WARP_PILLAR_B
+enum AirsRockInsideFaceVentsActorId {
+  ACTOR_FACE_VENTS_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_FACE_VENTS_SECOND_PILLAR,
+  ACTOR_FACE_VENTS_WIND_STONE,
+  ACTOR_FACE_VENTS_STATUE,
+  ACTOR_FACE_VENTS_THIRD_PILLAR,
+  ACTOR_FACE_VENTS_PILLAR_A,
+  ACTOR_FACE_VENTS_PILLAR_B
 };
 
 enum AirsRockInsideCoinsChestActorId {
@@ -359,7 +359,7 @@ extern s16 gAirsRockInside_VialChestPillars[];
 extern s16 gAirsRockInside_ClarityCircletChestPillars[];
 extern s16 gAirsRockInside_TightropesPillars[];
 extern s16 gAirsRockInside_PairedStakesPillars[];
-extern s16 gAirsRockInside_FaceWarpPillars[];
+extern s16 gAirsRockInside_FaceVentsPillars[];
 extern s16 gAirsRockInside_CoinsChestPillars[];
 
 void Actor_LiftTargetBlock(const s16 *list);
@@ -375,7 +375,7 @@ extern struct Trigger gAirsRockInside_TightropesTriggers[];
 extern struct Trigger gAirsRockInside_RevealTabletTriggers[];
 extern struct Trigger gAirsRockInside_ElixirChestTriggers[];
 extern struct Trigger gAirsRockInside_PairedStakesTriggers[];
-extern struct Trigger gAirsRockInside_FaceWarpTriggers[];
+extern struct Trigger gAirsRockInside_FaceVentsTriggers[];
 extern struct Trigger gAirsRockInside_CoinsChestTriggers[];
 extern struct Trigger gAirsRockInside_PsynergyStoneTriggers[];
 
@@ -415,7 +415,7 @@ void AirsRockInside_ReadTabletFacingEast(void);
 void AirsRockInside_MoveElixirChestPillar(void);
 void AirsRockInside_PoundPairedStakesStake(s32 mode, s32 step);
 void AirsRockInside_StepOntoStake(void);
-void AirsRockInside_RideFaceWarp(void);
+void AirsRockInside_RideFaceVent(void);
 void AirsRockInside_CheckPsynergyStone(void);
 void AirsRockInside_IgnoreStep(void);
 
@@ -464,7 +464,7 @@ void Pillar_Place(s16 *list) {
 extern struct ActorPlacement gAirsRockInside_TightropesPlacements[];
 extern struct ActorPlacement gAirsRockInside_ElixirChestPlacements[];
 extern struct ActorPlacement gAirsRockInside_PairedStakesPlacements[];
-extern struct ActorPlacement gAirsRockInside_FaceWarpPlacements[];
+extern struct ActorPlacement gAirsRockInside_FaceVentsPlacements[];
 extern struct ActorPlacement gAirsRockInside_CoinsChestPlacements[];
 
 void TilesetAnim_SuspendAll(void);
@@ -1135,9 +1135,9 @@ void AirsRockInside_UpdateVentPuff(struct Actor *actor) {
       actor->riseBaseY = 0;
       actor->z.fixed = other->z.fixed - toFIXED(8);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
     for (i = 0; i != 3; i++) {
-      struct Actor *pillar = Actor_GetById(i + ACTOR_FACE_WARP_THIRD_PILLAR);
+      struct Actor *pillar = Actor_GetById(i + ACTOR_FACE_VENTS_THIRD_PILLAR);
 
       if (Position_FlatDistance(&pillar->x.fixed, pos) <= 8) {
         actor->speedLimit = -actor->speedLimit >> 1;
@@ -1175,7 +1175,7 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
 /// A task: on two frames in eight, while no menu, Psynergy or item is in use, a
 /// vent puffs steam (AirsRockInside_PuffVent). In the Clarity Circlet chest
 /// room the west vent puffs, or on odd frames the east one until its pillar is
-/// placed; in the face warp room a vent near the leader puffs, the scene's
+/// placed; in the face vents room a vent near the leader puffs, the scene's
 /// flags passing over a vent a pillar has blocked.
 void AirsRockInside_PuffVents(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1198,7 +1198,7 @@ void AirsRockInside_PuffVents(void) {
     else
       x = toFIXED(280);
     AirsRockInside_PuffVent(x, 0, toFIXED(616));
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
     if (frame & 1) {
       if (FIELD_HALF_CELL(
               Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed) > 41) {
@@ -1389,8 +1389,8 @@ void AirsRockInside_BlowGust(void) {
       if (FIELD_HALF_CELL(gust->x.fixed) == FIELD_HALF_CELL(actor->x.fixed) &&
           carried == 0)
         PICK_UP(actor, GUST_DROP(312, 296));
-    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
-      actor = Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR);
+    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
+      actor = Actor_GetById(ACTOR_FACE_VENTS_SECOND_PILLAR);
       if (FIELD_CELL(gust->x.fixed) == FIELD_CELL(actor->x.fixed) &&
           FIELD_CELL(gust->z.fixed) == FIELD_CELL(actor->z.fixed) &&
           carried == 0)
@@ -1432,7 +1432,7 @@ void AirsRockInside_BlowGust(void) {
       actor->groundHeight = -toFIXED(32);
       MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
-    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
+    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
       MapGrid_CopyCellAttributes(19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(actor);
       wait(1);
@@ -1651,8 +1651,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gAirsRockInside_ElixirChestPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES)
     return gAirsRockInside_PairedStakesPlacements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
-    return gAirsRockInside_FaceWarpPlacements;
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS)
+    return gAirsRockInside_FaceVentsPlacements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
     return gAirsRockInside_CoinsChestPlacements;
   return gAirsRockInside_Placements;
@@ -2103,8 +2103,8 @@ void AirsRockInside_StartPushingPillar(void) {
     FieldMapGrid_SetCellHeight(toFIXED(608), toFIXED(336), 2, 0);
     MapGrid_SetCellHeight(toFIXED(624), toFIXED(336), 2, 0);
     Actor_LiftTargetBlock(gAirsRockInside_PairedStakesPillars);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
-    Actor_LiftTargetBlock(gAirsRockInside_FaceWarpPillars);
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
+    Actor_LiftTargetBlock(gAirsRockInside_FaceVentsPillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     Actor_GetById(ACTOR_COINS_CHEST_STATUE)->timer = 0;
     Actor_LiftTargetBlock(gAirsRockInside_CoinsChestPillars);
@@ -2115,8 +2115,8 @@ void AirsRockInside_StartPushingPillar(void) {
 /// left over lower ground drops onto it with a thump, and one left in the
 /// place it belongs stays there on later visits, as a shortcut or a step.
 ///
-/// In the paired statues' room and the face warp room the cells along the
-/// pillar's rows are marked or cleared again, which in the face warp room
+/// In the paired statues' room and the face vents room the cells along the
+/// pillar's rows are marked or cleared again, which in the face vents room
 /// decides which vents it keeps still.
 void AirsRockInside_FinishPushingPillar(void) {
   struct Actor *pushed =
@@ -2182,14 +2182,14 @@ void AirsRockInside_FinishPushingPillar(void) {
       else
         Actor_GetById(ACTOR_PAIRED_STAKES_STAKE_C)->riseEnabled = 0;
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
     if (x == 35 && z == 59)
-      GameFlag_Set(FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED);
+      GameFlag_Set(FLAG_AIRS_ROCK_FACE_VENTS_FIRST_PILLAR_PLACED);
     if (x == 45 && z == 105)
-      GameFlag_Set(FLAG_AIRS_ROCK_FACE_WARP_SECOND_PILLAR_PLACED);
+      GameFlag_Set(FLAG_AIRS_ROCK_FACE_VENTS_SECOND_PILLAR_PLACED);
     if (x == 23 && z == 77) {
       GameFlag_Set(FLAG_SOUTHEAST_VENT_STILL);
-      GameFlag_Set(FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED);
+      GameFlag_Set(FLAG_AIRS_ROCK_FACE_VENTS_THIRD_PILLAR_PLACED);
     }
     if (z == 59 && (x == 67 || x == 71 || x == 73))
       GameFlag_Set(FLAG_MIDDLE_WEST_VENT_STILL);
@@ -2201,12 +2201,12 @@ void AirsRockInside_FinishPushingPillar(void) {
       GameFlag_Clear(FLAG_NORTHEAST_VENT_STILL);
     MapCell_SetAttributes(
         MAPGRID_LAYER_OVERHEAD,
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->x.fixed),
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->z.fixed), 0);
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_FIRST_PILLAR)->x.fixed),
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_FIRST_PILLAR)->z.fixed), 0);
     MapCell_SetAttributes(
         MAPGRID_LAYER_OVERHEAD,
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->z.fixed), 0);
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_SECOND_PILLAR)->x.fixed),
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_SECOND_PILLAR)->z.fixed), 0);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     if (x == 45 && z == 33)
       GameFlag_Set(FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED);
@@ -2928,16 +2928,16 @@ void AirsRockInside_StepOntoStake(void) {
   Event_End();
 }
 
-/// A vent's puff has reached the leader in the face warp room: standing in
+/// A vent's puff has reached the leader in the face vents room: standing in
 /// front of a vent, he is blown down to the place below it with a chime.
-void AirsRockInside_RideFaceWarp(void) {
-  s16 *warp;
+void AirsRockInside_RideFaceVent(void) {
+  s16 *vent;
   s32 x, z;
 
   x = 0;
   z = 0;
-  warp = &gFieldWork->stepTrigger;
-  if (*warp == 0)
+  vent = &gFieldWork->stepTrigger;
+  if (*vent == 0)
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2946,7 +2946,7 @@ void AirsRockInside_RideFaceWarp(void) {
       ~ACTOR_FACES_MOTION;
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(4),
                            toFIXED(2));
-  switch (*warp) {
+  switch (*vent) {
   case CELL_BEHAVIOR_AIRS_ROCK_INSIDE_SOUTHWEST_VENT:
     // DEAD: the leader looked up twice, both results unused; the ROM keeps
     // both calls.
@@ -3018,8 +3018,8 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gAirsRockInside_ElixirChestTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES)
     return gAirsRockInside_PairedStakesTriggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
-    return gAirsRockInside_FaceWarpTriggers;
+  if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS)
+    return gAirsRockInside_FaceVentsTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
     return gAirsRockInside_CoinsChestTriggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE)
@@ -3476,38 +3476,38 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(38, 98, 1, 1, 38, 99);
       MapGrid_CopyCellAttributes(38, 35, 1, 1, 38, 37);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
     Scene_QueueMusic(SE_AMBIENT_STREAM);
     REG_BLDALPHA = BLEND_ALPHA(8, 12);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_FRAME);
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED))
-      Actor_SetPositionFX(ACTOR_FACE_WARP_FIRST_PILLAR, toFIXED(280),
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_VENTS_FIRST_PILLAR_PLACED))
+      Actor_SetPositionFX(ACTOR_FACE_VENTS_FIRST_PILLAR, toFIXED(280),
                           toFIXED(472));
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_SECOND_PILLAR_PLACED))
-      Actor_SetPositionFX(ACTOR_FACE_WARP_SECOND_PILLAR, toFIXED(360),
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_VENTS_SECOND_PILLAR_PLACED))
+      Actor_SetPositionFX(ACTOR_FACE_VENTS_SECOND_PILLAR, toFIXED(360),
                           toFIXED(840));
-    if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED)) {
-      Actor_SetPositionFX(ACTOR_FACE_WARP_THIRD_PILLAR, toFIXED(184),
+    if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_VENTS_THIRD_PILLAR_PLACED)) {
+      Actor_SetPositionFX(ACTOR_FACE_VENTS_THIRD_PILLAR, toFIXED(184),
                           toFIXED(616));
       GameFlag_Set(FLAG_SOUTHEAST_VENT_STILL);
     }
-    Actor_SetSpritePriority(ACTOR_FACE_WARP_SECOND_PILLAR, 2);
-    Actor_PlaceBlocks(gAirsRockInside_FaceWarpPillars);
+    Actor_SetSpritePriority(ACTOR_FACE_VENTS_SECOND_PILLAR, 2);
+    Actor_PlaceBlocks(gAirsRockInside_FaceVentsPillars);
     MapCell_SetAttributes(
         MAPGRID_LAYER_OVERHEAD,
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->x.fixed),
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_FIRST_PILLAR)->z.fixed), 0);
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_FIRST_PILLAR)->x.fixed),
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_FIRST_PILLAR)->z.fixed), 0);
     MapCell_SetAttributes(
         MAPGRID_LAYER_OVERHEAD,
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->x.fixed),
-        FIELD_CELL(Actor_GetById(ACTOR_FACE_WARP_SECOND_PILLAR)->z.fixed), 0);
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_SECOND_PILLAR)->x.fixed),
+        FIELD_CELL(Actor_GetById(ACTOR_FACE_VENTS_SECOND_PILLAR)->z.fixed), 0);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_FACE_WARP_STATUE),
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_FACE_VENTS_STATUE),
                            SPRITE_COLOR_GREY);
     else
-      AirsRockInside_WakeStatue(Actor_GetById(ACTOR_FACE_WARP_STATUE), 8, 0);
-    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FACE_WARP_STATUE), 0);
+      AirsRockInside_WakeStatue(Actor_GetById(ACTOR_FACE_VENTS_STATUE), 8, 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FACE_VENTS_STATUE), 0);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED))
@@ -3573,10 +3573,10 @@ s16 gAirsRockInside_PairedStakesPillars[] = {
     -1,
 };
 
-s16 gAirsRockInside_FaceWarpPillars[] = {
-    ACTOR_FACE_WARP_THIRD_PILLAR, ACTOR_FACE_WARP_FIRST_PILLAR,
-    ACTOR_FACE_WARP_SECOND_PILLAR, ACTOR_FACE_WARP_PILLAR_A,
-    ACTOR_FACE_WARP_PILLAR_B, -1,
+s16 gAirsRockInside_FaceVentsPillars[] = {
+    ACTOR_FACE_VENTS_THIRD_PILLAR, ACTOR_FACE_VENTS_FIRST_PILLAR,
+    ACTOR_FACE_VENTS_SECOND_PILLAR, ACTOR_FACE_VENTS_PILLAR_A,
+    ACTOR_FACE_VENTS_PILLAR_B, -1,
 };
 
 s16 gAirsRockInside_CoinsChestPillars[] = {
@@ -3719,7 +3719,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(6, AirsRockInsidePsynergyStone, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, AirsRockInsidePsynergyStone, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, AirsRockInsidePairedStakes, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, AirsRockInsideFaceWarp, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRockInsideFaceVents, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, AirsRockEntrance, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, AirsRockInsideHall, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, AirsRockInsideHall, 5, EXIT_FLAG_NONE),
@@ -3746,8 +3746,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, AirsRockInsideHall, 4, EXIT_FLAG_NONE),
     SCENE_EXITS(AirsRockInsidePairedStakes),
     SCENE_EXIT_UNLESS(1, AirsRockInsideHall, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRockInsideFaceWarp, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRockInsideFaceWarp),
+    SCENE_EXIT_UNLESS(2, AirsRockInsideFaceVents, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockInsideFaceVents),
     SCENE_EXIT_UNLESS(1, AirsRockInsideHall, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AirsRockInsidePairedStakes, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(AirsRockInsideCoinsChest),
@@ -3843,7 +3843,7 @@ struct ActorPlacement gAirsRockInside_PairedStakesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAirsRockInside_FaceWarpPlacements[] = {
+struct ActorPlacement gAirsRockInside_FaceVentsPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_WIND_STONE, CONDITION_ALWAYS, (s32)gAirsRockInside_WindStoneScript, 3, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -4014,26 +4014,26 @@ struct Trigger gAirsRockInside_PairedStakesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAirsRockInside_FaceWarpTriggers[] = {
+struct Trigger gAirsRockInside_FaceVentsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_RAISED, TRIGGER_PUFF_REACHES_LEADER, CONDITION_ALWAYS, EVENT(AirsRockInside_RideFaceWarp)},
+    {TRIGGER_RAISED, TRIGGER_PUFF_REACHES_LEADER, CONDITION_ALWAYS, EVENT(AirsRockInside_RideFaceVent)},
     {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_THIRD_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_WARP_THIRD_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_FIRST_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_WARP_FIRST_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_SECOND_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_WARP_SECOND_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_WARP_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_WARP_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_FACE_WARP_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_WARP_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_VENTS_THIRD_PILLAR, FLAG_AIRS_ROCK_FACE_VENTS_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_VENTS_THIRD_PILLAR, FLAG_AIRS_ROCK_FACE_VENTS_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_VENTS_FIRST_PILLAR, FLAG_AIRS_ROCK_FACE_VENTS_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_VENTS_FIRST_PILLAR, FLAG_AIRS_ROCK_FACE_VENTS_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_VENTS_SECOND_PILLAR, FLAG_AIRS_ROCK_FACE_VENTS_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_VENTS_SECOND_PILLAR, FLAG_AIRS_ROCK_FACE_VENTS_SECOND_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_VENTS_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_VENTS_PILLAR_A, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_VENTS_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_VENTS_PILLAR_B, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_FACE_VENTS_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_VENTS_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_VENTS_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_BlowGust)},
     {TRIGGER_TABLE_END},
 };
 

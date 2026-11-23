@@ -172,7 +172,7 @@ enum FileMenuMode {
   /// The title's Battle: files that have found a Djinni.
   FILE_LIST_EXTRA,
   FILE_LIST_CLEARED, ///< the title's Send: cleared files only
-  /// The title's Update: files saved before FLAG_REUNITED was set.
+  /// The title's Update: files saved before FLAG_REUNION was set.
   FILE_LIST_UPDATE
 };
 

@@ -918,7 +918,7 @@ Resource_DirectoryTable:
 	resource , Field_AirsRockInsideRevealTablet
 	resource , Field_AirsRockInsideElixirChest
 	resource , Field_AirsRockInsidePairedStakes
-	resource , Field_AirsRockInsideFaceWarp
+	resource , Field_AirsRockInsideFaceVents
 	resource , Field_AirsRockInsideCoinsChest
 	resource , Field_AirsRockInsidePsynergyStone
 	resource , Tileset_AirsRockInsidePsynergyStonePalette

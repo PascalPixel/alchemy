@@ -642,7 +642,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
         return gContigo_ShopsPlacements;
       if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
-          GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
+          GameFlag_Get(FLAG_REUNION_AT_CONTIGO) == 0)
         return gContigo_ShopsPlacementsReunion;
     }
     return gContigo_ShopsPlacementsBeforeReunion;
@@ -2341,7 +2341,7 @@ void Contigo_TheReunion(void) {
   Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_JoinLeaderScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_JoinLeaderScript);
   Party_AddIsaacsParty();
-  GameFlag_Set(FLAG_REUNITED_AT_CONTIGO);
+  GameFlag_Set(FLAG_REUNION_AT_CONTIGO);
   Event_End();
 }
 
@@ -2752,7 +2752,7 @@ void Contigo_InitializeShops(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
     if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
-        GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
+        GameFlag_Get(FLAG_REUNION_AT_CONTIGO) == 0)
       Contigo_TheReunion();
   } else if (gMainRoutineWork.entrance ==
              CONTIGO_SHOPS_FROM_ATTEKA_INLET_GEODE) {
@@ -2763,7 +2763,7 @@ void Contigo_InitializeShops(void) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
       Actor_SetMovementTypeById(ACTOR_OLD_MAN_ON_HESPERIA,
                                 gContigo_ShiverScript);
-    if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) != 0) {
+    if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO) != 0) {
       Actor_SetPosition(ACTOR_WORN_OUT_WORKER, 0, 0);
       Actor_SetPosition(ACTOR_WORKER_ON_THE_PROPHECIES, 0, 0);
       Actor_SetPosition(ACTOR_OLD_MAN_TOO_OLD_TO_HELP, 0, 0);

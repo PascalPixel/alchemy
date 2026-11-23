@@ -231,7 +231,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {321, 322, 323, 324, 325, 326, 327},
         .weights = {5, 5, 8, 14, 16, 20, 20},
     },
-    // Air's Rock: SceneId_AirsRockInsideHall, its other entrances, SceneId_AirsRockInsideVialChest, SceneId_AirsRockInsideClarityCircletChest, SceneId_AirsRockInsidePairedStakes, SceneId_AirsRockInsideFaceWarp
+    // Air's Rock: SceneId_AirsRockInsideHall, its other entrances, SceneId_AirsRockInsideVialChest, SceneId_AirsRockInsideClarityCircletChest, SceneId_AirsRockInsidePairedStakes, SceneId_AirsRockInsideFaceVents
     {
         .rate = 65,
         .level = 11,

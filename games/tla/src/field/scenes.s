@@ -112,7 +112,7 @@ gScenes:
 	scene AirsRockInsideRevealTablet, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 85, 0
 	scene AirsRockInsideElixirChest, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 86, 0
 	scene AirsRockInsidePairedStakes, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 87, 0
-	scene AirsRockInsideFaceWarp, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 88, 0
+	scene AirsRockInsideFaceVents, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 88, 0
 	scene AirsRockInsideCoinsChest, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 89, 0
 	scene AirsRockInsidePsynergyStone, 0x664, AREA_AIRS_ROCK_INSIDE, SCENE_TYPE_OTHER, 90, 0
 	scene Alhafra, 0x665, AREA_ALHAFRA, SCENE_TYPE_TOWN, 91, 1

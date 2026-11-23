@@ -365,8 +365,8 @@ extern s16 gDehkanPlateau_ThemisAxeChestStakes[];
 extern s16 gDehkanPlateau_TightropesStakes[];
 extern s16 gDehkanPlateau_PoundCubeStakes[];
 extern s16 gDehkanPlateau_CannonStakes[];
-extern s16 gDehkanPlateau_ThemisAxeChestMovablePillars[];
-extern s16 gDehkanPlateau_TightropesMovablePillars[];
+extern s16 gDehkanPlateau_ThemisAxeChestPillars[];
+extern s16 gDehkanPlateau_TightropesPillars[];
 
 /// Talking to Cannon in his cave starts the battle with him.
 void DehkanPlateau_FightCannon(void) {
@@ -595,7 +595,7 @@ void DehkanPlateau_DropFullMetalVestChestPillarIntoGap(void) {
 
 /// Move takes hold of the Themis Axe's stretch's stone pillar.
 void DehkanPlateau_LiftThemisAxeChestPillar(void) {
-  Actor_LiftTargetBlock(gDehkanPlateau_ThemisAxeChestMovablePillars);
+  Actor_LiftTargetBlock(gDehkanPlateau_ThemisAxeChestPillars);
 }
 
 /// Moved or pushed to the gap's edge in the Themis Axe's stretch, the stone
@@ -620,7 +620,7 @@ void DehkanPlateau_PlaceThemisAxeChestPillar(void) {
 
 /// Move takes hold of the rope bridge's stretch's stone pillar.
 void DehkanPlateau_LiftTightropesPillar(void) {
-  Actor_LiftTargetBlock(gDehkanPlateau_TightropesMovablePillars);
+  Actor_LiftTargetBlock(gDehkanPlateau_TightropesPillars);
 }
 
 /// Moved or pushed to the gap's edge on the raised ground of the rope
@@ -1758,7 +1758,7 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
         Actor_GetById(ACTOR_THEMIS_AXE_CHEST_PILLAR), toFIXED(840), 0,
         toFIXED(120));
   } else {
-    Actor_PlaceBlocks(gDehkanPlateau_ThemisAxeChestMovablePillars);
+    Actor_PlaceBlocks(gDehkanPlateau_ThemisAxeChestPillars);
   }
   DehkanPlateau_RestoreThemisAxeChestCracks();
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
@@ -1806,7 +1806,7 @@ void DehkanPlateau_InitializeTightropes(void) {
   DehkanPlateau_InitializeRopes();
   Rope_Place(0, FLAG_TIGHTROPES_ROPE_LASHED, ACTOR_TIGHTROPES_ROPE_LOW_POST,
              ACTOR_TIGHTROPES_ROPE_HIGH_POST);
-  Actor_PlaceBlocks(gDehkanPlateau_TightropesMovablePillars);
+  Actor_PlaceBlocks(gDehkanPlateau_TightropesPillars);
   if (Actor_GetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (s32)-toFIXED(8))
     Actor_SetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 1);
   else
@@ -2214,11 +2214,11 @@ s16 gDehkanPlateau_CannonStakes[] = {
 };
 
 /// The stone pillars Move takes hold of.
-s16 gDehkanPlateau_ThemisAxeChestMovablePillars[] = {
+s16 gDehkanPlateau_ThemisAxeChestPillars[] = {
     ACTOR_THEMIS_AXE_CHEST_PILLAR, ACTOR_LIST_END,
 };
 
-s16 gDehkanPlateau_TightropesMovablePillars[] = {
+s16 gDehkanPlateau_TightropesPillars[] = {
     ACTOR_TIGHTROPES_PILLAR, ACTOR_LIST_END,
 };
 

@@ -99,18 +99,18 @@ u8 gFalling_Counts[][4] = {
 
 // battle_effect_streaks.c: Falling streak timing and motion rows.
 
-/// Each streak style's effect, hit, motion and shake, by the STREAKS_
+/// Each streak style's effect, hit, motion and shake, by the STREAK_
 /// columns (battle_effect_streaks.c).
-s8 gStreaks_Styles[][4] = {
-    // STREAKS_ANIMATE, STREAKS_HIT, STREAKS_MOTION, STREAKS_SHAKE
-    {0, 1, 0, 0},  // STREAKS_STYLE_EMBER
-    {0, 1, 4, 0},  // STREAKS_STYLE_LIME
-    {0, 1, -1, 1}, // STREAKS_STYLE_VIOLET
-    {1, 1, -1, 1}, // STREAKS_STYLE_RED
-    {1, 1, 4, 0},  // STREAKS_STYLE_CYAN
+s8 gStreak_Styles[][4] = {
+    // STREAK_ANIMATE, STREAK_HIT, STREAK_MOTION, STREAK_SHAKE
+    {0, 1, 0, 0},  // STREAK_STYLE_EMBER
+    {0, 1, 4, 0},  // STREAK_STYLE_LIME
+    {0, 1, -1, 1}, // STREAK_STYLE_VIOLET
+    {1, 1, -1, 1}, // STREAK_STYLE_RED
+    {1, 1, 4, 0},  // STREAK_STYLE_CYAN
 };
 /// Pixels the target trembles by, frame by frame.
-s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
+s8 gStreak_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 
 // battle_effect_target_strike.c: Target strike timing, motion and pictures.
 

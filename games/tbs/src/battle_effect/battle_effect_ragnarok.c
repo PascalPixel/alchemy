@@ -31,7 +31,7 @@
 #define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
 #define BLADE_LAST_FRAME 39
 #define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
-#define RESULTS_FRAME 40
+#define RESULT_FRAME 40
 
 /// A huge flaming blade swings down over the targets and light bursts over
 /// them twice.
@@ -62,7 +62,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
   // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(user, SPRITE_ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
 
   Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
@@ -111,7 +111,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     if (frame == 18) {
       Sound_PlayFar(SE_CRASH);
     }
-    if (frame == RESULTS_FRAME) {
+    if (frame == RESULT_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
@@ -249,7 +249,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Actor_SetAnimationSpeedFar(user, SPRITE_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -272,4 +272,4 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 #undef BLADE_HOLD_FRAME
 #undef BLADE_LAST_FRAME
 #undef FIRST_STRIKE_FRAME
-#undef RESULTS_FRAME
+#undef RESULT_FRAME

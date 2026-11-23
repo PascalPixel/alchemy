@@ -71,8 +71,8 @@ enum {
 };
 extern u8 gFalling_Counts[][4];
 
-extern s8 gStreaks_Styles[][4];
-extern s8 gStreaks_Tremble[];
+extern s8 gStreak_Styles[][4];
+extern s8 gStreak_Tremble[];
 extern u8 gTargetStrike_Styles[][7];
 extern u8 gTargetStrike_Widths[];
 extern u8 gTargetStrike_Heights[];

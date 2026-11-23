@@ -599,7 +599,9 @@ void AnkohlRuins_PushStoneFaceOffLedge(s32 unused, s32 objectId) {
 /// A pushed half face, or Felix, falls to the ground below and lands, the cue
 /// sounding if there is one: it falls for at most a second, and ten frames
 /// after it lands it stands still again. Gaia Rock's GaiaRock_DropPillar is
-/// the same routine.
+/// the same routine in every edition but the Japanese, whose
+/// GaiaRock_DropPillar plays no cue and tests for landing before counting the
+/// frame down.
 void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   s32 frames = 60;
   struct Actor *actor = Actor_Get(id);

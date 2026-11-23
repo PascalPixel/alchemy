@@ -62,7 +62,7 @@ struct SpriteAnimation {
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
   u8 scriptOffset; ///< byte offset of the next command in script
   u8 step;         ///< taken off timer each frame;
-                   ///< SPRITE_ANIMATION_STEP_NORMAL is normal speed
+                   ///< ANIM_STEP_NORMAL is normal speed
   u8 picture;      ///< picture shown, pictureBase plus the facing offset;
                    ///< SPRITE_PICTURE_NONE for none
   u8 pictureBase;  ///< picture the script chose, before facing;
@@ -71,7 +71,7 @@ struct SpriteAnimation {
 
 /// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it:
 /// a timed command's frames run as written.
-#define SPRITE_ANIMATION_STEP_NORMAL 16
+#define ANIM_STEP_NORMAL 16
 
 /// A sprite picture cache: the tag of the animation loaded into it (slot number
 /// and animation id) and the buffer holding its pictures.

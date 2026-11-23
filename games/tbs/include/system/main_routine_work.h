@@ -50,7 +50,7 @@ enum BattleType {
 };
 
 /// The most coins the party carries, and the most shop credit.
-#define COINS_MAX 999999
+#define COIN_MAX 999999
 
 /// The most Game Tickets counted in PartyHoldings.shopGifts, the last of the
 /// Game Ticket's credit costs that is used.
@@ -64,7 +64,7 @@ struct PartyHoldings {
   /// The summons the party can call, bit n for summon n: the
   /// DjinnRecoveryTable's summonMask.
   u32 summonMask;
-  s32 coins; ///< 0 to COINS_MAX (Party_AdjustCoins)
+  s32 coins; ///< 0 to COIN_MAX (Party_AdjustCoins)
   /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
   /// Djinn_GetRecoveryTable.
   u8 djinnRecovery[260];

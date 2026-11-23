@@ -156,7 +156,7 @@ enum ImilFuchinFallsActorId {
 
 enum {
   /// Three times normal animation speed.
-  IMIL_SLIDE_ANIMATION_STEP = SPRITE_ANIMATION_STEP_NORMAL * 3
+  IMIL_SLIDE_ANIMATION_STEP = ANIM_STEP_NORMAL * 3
 };
 
 /// The cells the rooms' step and search triggers answer, by the cell behaviour

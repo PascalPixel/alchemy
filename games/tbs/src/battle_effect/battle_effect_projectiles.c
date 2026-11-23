@@ -238,7 +238,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
 }
 
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST                                  \
-  (SPRITE_ANIMATION_STEP_NORMAL * 3) ///< the user's, while firing
+  (ANIM_STEP_NORMAL * 3) ///< the user's, while firing
 
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
@@ -289,7 +289,7 @@ BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   Actor_SelectAnimationFar(user, POSE_LEAP);
   Actor_SetAnimationSpeedFar(user, PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
   BattleEffect_RunProjectileVolley(args, mode);
-  Actor_SetAnimationSpeedFar(user, SPRITE_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
 }
 
 /// From the user's action pose, one large comet in ice colours flies at each

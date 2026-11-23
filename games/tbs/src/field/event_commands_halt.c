@@ -190,7 +190,7 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
       Actor_SetSpriteColorModeFar(actor, state->pausedPose);
     }
     actor->paused = 0;
-    Actor_SetAnimationSpeedFar(actor, SPRITE_ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
   }
 }
 

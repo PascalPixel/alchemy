@@ -1567,7 +1567,7 @@ static void Actor_SteerByPad(struct Actor *actor) {
     turn = -FACING_STEP;
   actor->facing = facing + turn;
   Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, SPRITE_ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
 }
 
 static void Leader_SlideOnIce(void) {
@@ -1613,7 +1613,7 @@ static void Leader_SlideOnIce(void) {
     subject->timer = 0;
     FieldActor_SetMoveTargetFX(subject, x, subject->y.fixed, z);
     Actor_SelectAnimation(subject, ANIM_WALK);
-    Actor_SetAnimationSpeed(subject, SPRITE_ANIMATION_STEP_NORMAL * 3);
+    Actor_SetAnimationSpeed(subject, ANIM_STEP_NORMAL * 3);
     Actor_WaitForMove(subject);
     subject->update = Actor_SteerByPad;
 

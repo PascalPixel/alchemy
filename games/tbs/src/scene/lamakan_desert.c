@@ -879,8 +879,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->facing =
       FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + DEGtoANG(180));
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
-  Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER,
-                              SPRITE_ANIMATION_STEP_NORMAL * 3 / 2);
+  Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, ANIM_STEP_NORMAL * 3 / 2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   Actor_Get(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))LamakanDesert_KickUpSand;

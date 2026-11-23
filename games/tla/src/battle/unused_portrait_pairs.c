@@ -1,15 +1,15 @@
 /// @file
-/// Unused: two tables pairing a speaker with a portrait, which no code names.
-/// The window code's own, gPortrait_CharacterMap and gPortrait_SpriteMap,
-/// hold the same pairs and are the ones the game reads.
+/// Unused: a copy of the speakers' portrait maps, linked among the battle code
+/// and read by nothing. The message window looks portraits up in its own
+/// gPortrait_CharacterMap and gPortrait_SpriteMap, which hold the same pairs.
 
 #include "sprite_ids.h"
 #include "types.h"
 #include "game/character_ids.h"
 
 // clang-format off
-/// {character, portrait} pairs, as in gPortrait_CharacterMap.
-const s16 gBattle_UnusedCharacterIdPairs[][2] = {
+/// {character, portrait} pairs, ending in -1, as in gPortrait_CharacterMap.
+const s16 gBattle_UnusedCharacterPortraits[][2] = {
     {ISAAC, 0},
     {GARET, 1},
     {IVAN, 2},
@@ -21,9 +21,10 @@ const s16 gBattle_UnusedCharacterIdPairs[][2] = {
     {-1, -1},
 };
 
-/// {sprite, portrait} pairs, as in gPortrait_SpriteMap, whose portraits
-/// Portrait_GetForSpeaker returns plus 128.
-const s16 gBattle_UnusedActorKindIdPairs[][2] = {
+/// {sprite, portrait} pairs, ending in -1, as in gPortrait_SpriteMap: the
+/// Djinn, shopkeepers, townspeople and named people who speak with a portrait,
+/// each portrait counted from PORTRAIT_FIRST_SPRITE_PORTRAIT.
+const s16 gBattle_UnusedSpritePortraits[][2] = {
     {SPRITE_JUPITER_DJINNI, 0},
     {SPRITE_VENUS_DJINNI, 1},
     {SPRITE_MARS_DJINNI, 2},

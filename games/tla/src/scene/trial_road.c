@@ -147,6 +147,9 @@ enum TrialRoadCell {
 /// Set while the outer blue chest stands open for an item: it opens only when
 /// Moapa reached the door first.
 #define FLAG_OUTER_CHEST_OPEN FLAG_SCENE_TEMP_86
+/// Set once the doorway Felix came out of at the summit has shut behind him
+/// (TrialRoad_ShutSummitDoorway).
+#define FLAG_SUMMIT_DOORWAY_SHUT FLAG_SCENE_TEMP_83
 /// Set once Lift has raised the rock at the summit cave's mouth.
 #define FLAG_CAVE_ROCK_LIFTED FLAG_SCENE_TEMP_89
 /// Set once Gasp has stopped mirroring Felix and hopped away to where he can
@@ -314,8 +317,8 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 #define FLAG_WEEDS_BLOWN_AWAY_BASE (FLAG_AREA_TEMP_27 - ACTOR_WEEDS_A)
 
 /// The log stage's logs' flags, FLAG_SCENE_TEMP_53 to FLAG_SCENE_TEMP_55, set
-/// once each has been pushed.
-#define FLAG_LOG_PUSHED_BASE (FLAG_SCENE_TEMP_53 - ACTOR_UPPER_LOG)
+/// once each has rolled off the edge into the water.
+#define FLAG_LOG_IN_WATER_BASE (FLAG_SCENE_TEMP_53 - ACTOR_UPPER_LOG)
 /// The fountain stage's vents' flags, FLAG_AREA_TEMP_63 to FLAG_AREA_TEMP_65,
 /// set once each has been uncovered.
 #define FLAG_VENT_UNCOVERED_BASE (FLAG_AREA_TEMP_63 - ACTOR_WEST_VENT)
@@ -409,7 +412,8 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 mode);
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
 
-  if ((u32)(direction - 1) <= 1) {
+  if (direction == CELL_LEFT_PATH_STAIRS_DOWN ||
+      direction == CELL_RIGHT_PATH_STAIRS_DOWN) {
     if (state->stage[0] <= 0) {
       if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
 #ifdef UBFIX
@@ -422,6 +426,8 @@ void TrialRoad_TakeStairs(s32 direction) {
           Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, -16);
         return;
       }
+      // Out to the trial grounds: the stairs' exits to them are numbered
+      // four on from the stairs' cells.
       Import_EventSetExitRequest(direction + 4);
     } else {
       state->stage[0]--;
@@ -429,7 +435,7 @@ void TrialRoad_TakeStairs(s32 direction) {
     }
     Event_PlaySound(SE_MAP_EXIT);
   }
-  if ((u32)(direction - 3) <= 1) {
+  if (direction == CELL_LEFT_PATH_DOOR || direction == CELL_RIGHT_PATH_DOOR) {
     state->stage[0]++;
     if (state->stage[0] > 3) {
       if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT) &&
@@ -437,6 +443,7 @@ void TrialRoad_TakeStairs(s32 direction) {
         Event_SetFlag(FLAG_PARTY_FIRST_AT_PEAK);
       Event_PlaySound(SE_STAIRS_UP);
       Exit_StartStairsUp();
+      // Up to the summit, by the exits numbered four on from the doors'.
       Import_EventSetExitRequest(direction + 4);
     } else {
       Import_EventSetExitRequest(direction);
@@ -536,13 +543,13 @@ void TrialRoad_AddPillarTop(s32 id);
 void TrialRoad_SetPillarTopLift(s32 id, s32 value);
 void TrialRoad_OpenVentCell(s32 id);
 void TrialRoad_CheckLeaderOnPillars(void);
-void TrialRoad_CheckStakesCovered(s32 a, s32 b);
+void TrialRoad_CheckStakesCovered(s32 unused, s32 id);
 void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame);
 void TrialRoad_StepOntoStake(s32 id, s32 other, s32 flag, s32 side);
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis);
 void TrialRoad_UncoverVent(s32 id, s32 phase, s32 frame);
 void Leader_CheckCrumblingStep(const u16 *table);
-void TrialRoad_CrumblePillar(const void *data, s32 a);
+void TrialRoad_CrumblePillar(const void *data, s32 id);
 
 void TrialRoad_ClearGiveUpAsked(void);
 
@@ -635,10 +642,10 @@ void TrialRoad_RaiseStake(s32 id);
 
 void TrialRoad_BlockLogs(void);
 
-void TrialRoad_StartFountains(s32 a, s32 b);
+void TrialRoad_StartFountains(s32 unused, s32 shape);
 
 void Tightrope_Initialize(void);
-void Tightrope_Place(s32 a, s32 b, s32 c);
+void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
 
 extern u32 gTrialRoad_GaspHopScript[];
 
@@ -646,7 +653,7 @@ extern u32 gTrialRoad_GaspHopScript[];
 u16 gTrialRoad_PaletteCycleColors[16] BSS_DATA;
 
 void TrialRoad_StepPaletteCycle(void);
-void TrialRoad_OpenSummitGate();
+void TrialRoad_ShutSummitDoorway();
 void TrialRoad_PlaceMoapaAtPeak(void);
 void TrialRoad_BeatMoapa(void);
 void TrialRoad_LoseToMoapa(void);
@@ -661,7 +668,8 @@ s32 TrialRoad_RivalIsWaiting(void);
 void TrialRoad_PlayRivalRecording(s32 resource);
 void TrialRoad_DealStageOrder(u32 seed);
 
-void Map_CopyRawCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Map_CopyRawCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
+                          s32 dstY);
 
 void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId);
 
@@ -684,7 +692,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Dust_Scatter(s32 value);
 void Leader_SetCellShapeAt(s32 offset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
-void Actor_SetCellShape(s32 a, s32 b, s32 c);
+void Actor_SetCellShape(s32 level, s32 layer, s32 id);
 
 void TrialRoad_DriftDust(union FieldObject *object);
 
@@ -778,8 +786,8 @@ s32 TrialRoad_OfferToGiveUp(void) {
   return 0;
 }
 
-/// Nothing visible happens when Felix steps off the give-up button; the game
-/// lets the button ask again next time he steps on it.
+/// Stepping off the give-up button lets it ask again next time Felix steps on
+/// it.
 void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_GIVE_UP_ASKED); }
 
 /// Standing on the switch in front of the door at the top of a stage (cell
@@ -875,8 +883,7 @@ void TrialRoad_ExamineChest(s32 id) {
   }
 }
 
-/// Nothing happens when Felix walks around the switch once the chests have
-/// opened.
+/// Walking around the switch once the chests have opened does nothing.
 void TrialRoad_StepOffSwitch(void) {}
 
 /// Lets Felix jump onto the top of the pillar standing at the actor's cell
@@ -961,23 +968,23 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
 /// Defines a push or Move trigger's event that, while the leader is on foot,
 /// calls onFoot with the pushed actor.
 #define DEFINE_TRIAL_ROAD_ON_FOOT(name, onFoot)                                \
-  void name(s32 a, s32 id) {                                                   \
+  void name(s32 unused, s32 id) {                                              \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
     u8 mode;                                                                   \
                                                                                \
     mode = party->movementMode;                                                \
                                                                                \
-    if (mode == 0)                                                             \
+    if (mode == LEADER_MOVEMENT_WALK)                                          \
       onFoot(id);                                                              \
   }
 
-/// Nothing visible happens as a pillar starts to slide; Felix can no longer
-/// jump onto the place it is leaving.
+/// As a pillar starts to slide, Felix can no longer jump onto the place it is
+/// leaving.
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_ClearJumpUnderPushedPillar,
                           TrialRoad_ClearJumpCellUnder)
 
-/// Nothing visible happens as a pushed or Moved pillar stops; Felix can now
-/// jump onto its top where it stands.
+/// Once a pushed or Moved pillar stops, Felix can jump onto its top where it
+/// stands.
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_SetJumpUnderPushedPillar,
                           TrialRoad_SetJumpCellUnder)
 
@@ -1023,9 +1030,9 @@ void TrialRoad_JumpAcrossGap(void) {
     Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING, 0);
 }
 
-/// Nothing visible happens as one of the torch stage's two stone pillars
-/// starts to slide; Felix can no longer jump onto the place it is leaving.
-void TrialRoad_ClearJumpUnderTorchStagePillar(s32 a, s32 id) {
+/// As one of the torch stage's two stone pillars starts to slide, Felix can no
+/// longer jump onto the place it is leaving.
+void TrialRoad_ClearJumpUnderTorchStagePillar(s32 unused, s32 id) {
   if ((u32)(id - ACTOR_PILLAR_A) <= ACTOR_PILLAR_B - ACTOR_PILLAR_A)
     TrialRoad_ClearJumpCellUnder(id);
 }
@@ -1034,7 +1041,7 @@ void TrialRoad_ClearJumpUnderTorchStagePillar(s32 a, s32 id) {
 /// cells (13, 27) and (19, 27), melts it to a puddle Felix can jump across.
 /// A stone pillar pushed in the torch stage can be jumped onto where it
 /// stops.
-void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
+void TrialRoad_MeltIceBesideTorch(s32 unused, s32 id) {
   s32 x;
 
   if ((u32)(id - ACTOR_PILLAR_A) <= ACTOR_PILLAR_B - ACTOR_PILLAR_A) {
@@ -1077,7 +1084,7 @@ void TrialRoad_JumpMeltedPuddle(void) {
 
 /// Frost on a melted puddle in the torch stage freezes it into a pillar of ice
 /// again, which Felix can stand on.
-void TrialRoad_FreezePuddle(s32 a, s32 id) {
+void TrialRoad_FreezePuddle(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   TrialRoad_SetPillarTopLift(id, PILLAR_HEIGHT);
@@ -1088,7 +1095,7 @@ void TrialRoad_FreezePuddle(s32 a, s32 id) {
 
 /// Whirlwind on the weeds at the foot of one of the two overgrown pillars in
 /// the weeds stage blows it away, and the pillar can then be pushed or Moved.
-void TrialRoad_BlowAwayWeeds(s32 a, s32 id) {
+void TrialRoad_BlowAwayWeeds(s32 unused, s32 id) {
   PUSH_BLOCKED(Actor_GetById(id - (ACTOR_WEEDS_A - ACTOR_PILLAR_A))) = 0;
   Event_SetFlag(id + FLAG_WEEDS_BLOWN_AWAY_BASE);
 }
@@ -1131,7 +1138,7 @@ extern s8 gTrialRoad_PoundPartners[4];
 /// After Move or a push, notes each stake whose partner has a pillar standing
 /// on it: stepping on that stake can no longer raise the partner
 /// (TrialRoad_StepOntoStake).
-void TrialRoad_CheckStakesCovered(s32 a, s32 b) {
+void TrialRoad_CheckStakesCovered(s32 unused, s32 pushedId) {
   s32 id;
 
   for (id = ACTOR_WEST_STAKE; id <= ACTOR_EAST_STAKE; id++) {
@@ -1355,9 +1362,9 @@ void TrialRoad_BlockLogs(void) {
   TrialRoad_BlockLogCells(ACTOR_UPPER_LOG, 0);
   TrialRoad_BlockLogCells(ACTOR_LOWER_LOG, 0);
   TrialRoad_BlockLogCells(ACTOR_EAST_LOG, 1);
-  if (Event_GetFlag(FLAG_SCENE_TEMP_53))
+  if (Event_GetFlag(FLAG_LOG_IN_WATER_BASE + ACTOR_UPPER_LOG))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 23);
-  if (Event_GetFlag(FLAG_SCENE_TEMP_54))
+  if (Event_GetFlag(FLAG_LOG_IN_WATER_BASE + ACTOR_LOWER_LOG))
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 26);
 }
 
@@ -1460,7 +1467,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     *&actor->priorityFlags = mode = ACTOR_PRIORITY_UNDERFOOT;
     Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_LOG_FALL);
-    GameFlag_Set(id + FLAG_LOG_PUSHED_BASE);
+    GameFlag_Set(id + FLAG_LOG_IN_WATER_BASE);
   }
   Event_Wait(15);
   Event_End();
@@ -1502,7 +1509,7 @@ void TrialRoad_PushEastLogSouth(void) {
 void TrialRoad_PushEastLogSouthOrClimbDown(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->movementMode == 2)
+  if (party->movementMode == LEADER_MOVEMENT_KEYS)
     Field_ClimbDown();
   else
     TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
@@ -1595,13 +1602,13 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion_priority.c"
 
 /// Walking in the sand stage's stream carries Felix south a pixel a frame,
-/// throwing up spray, unless he is sunk with Sand.
+/// throwing up spray, unless he is crossing the tightrope above it.
 void TrialRoad_DriftWithStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   s32 velocity[3];
 
-  if (gMainRoutineWork.movementMode == 4)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_TIGHTROPE)
     return;
   leader->z.fixed += toFIXED(1);
   if ((gFrameCount & 7) != 0)
@@ -1676,7 +1683,7 @@ DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 /// cell (77, 18) (or (82, 18) on the right) the walking rules of the cell
 /// beside it. Coming back to the summit while the race is on, the door is
 /// shut again, without the sound.
-void TrialRoad_OpenSummitGate(s32 sound) {
+void TrialRoad_ShutSummitDoorway(s32 sound) {
   if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     if (gTrialRoadState->mirrored == 0) {
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
@@ -1688,7 +1695,7 @@ void TrialRoad_OpenSummitGate(s32 sound) {
     if (sound)
       Event_PlaySound(SE_ITEM_BREAK);
   }
-  Event_SetFlag(FLAG_SCENE_TEMP_83);
+  Event_SetFlag(FLAG_SUMMIT_DOORWAY_SHUT);
 }
 
 /// At the summit during the race, stepping onto the top of the peak, cell
@@ -1718,7 +1725,7 @@ void TrialRoad_ChallengeMoapa(void) {
 
 /// Moving or pushing the summit's stone pillar, at cell (7, 20), one cell east
 /// into column 8 settles it there for good.
-void TrialRoad_SetSummitPillar(s32 a, s32 id) {
+void TrialRoad_SetSummitPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (FIELD_CELL(actor->x.fixed) == 8) {
@@ -2150,8 +2157,8 @@ void TrialRoad_SetUpPeak(void) {
     TrialRoad_LoseToMoapa();
     Import_EventSetExitRequest(TRIAL_ROAD_SUMMIT_AFTER_DEFEAT);
   } else if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_83))
-      TrialRoad_OpenSummitGate(0);
+    if (Event_GetFlag(FLAG_SUMMIT_DOORWAY_SHUT))
+      TrialRoad_ShutSummitDoorway(0);
     if (Event_GetFlag(FLAG_PARTY_FIRST_AT_PEAK))
       TrialRoad_LeaveMoapaWaiting();
     else
@@ -4186,7 +4193,7 @@ void TrialRoad_OpenChests(void);
 void TrialRoad_JumpForward(void);
 void TrialRoad_BlowAwayPoundStageWeeds(void);
 void TrialRoad_StandOnBlock(void);
-void TrialRoad_OpenSummitGate(s32 sound);
+void TrialRoad_ShutSummitDoorway(s32 sound);
 void TrialRoad_StepOffSwitch(void);
 
 /// Unused: the digits 0 to 9 and A to F, four to a word.
@@ -4879,8 +4886,8 @@ LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
-    {TRIGGER_STEP, CELL_SUMMIT_DOORWAY, FLAG_SCENE_TEMP_83,
-     EVENT(TrialRoad_OpenSummitGate)},
+    {TRIGGER_STEP, CELL_SUMMIT_DOORWAY, FLAG_SUMMIT_DOORWAY_SHUT,
+     EVENT(TrialRoad_ShutSummitDoorway)},
     {TRIGGER_STEP, CELL_LEFT_PATH_SUMMIT,
      IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
      EVENT(TrialRoad_ChallengeMoapa)},

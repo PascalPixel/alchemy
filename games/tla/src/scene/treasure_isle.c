@@ -203,7 +203,7 @@ void TreasureIsle_CycleWaterColors(void);
 
 void Tightrope_Initialize(void);
 
-s32 Tightrope_Place(s32 a, s32 b, s32 c);
+s32 Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId);
 
 s32 Field_TryJumpForward();
 

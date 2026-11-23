@@ -261,7 +261,7 @@ UNUSED struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
 
 struct Actor;
 
-void AquaRock_SetSparkleAnchor(s32 id);
+void GroundParticles_SetAnchor(s32 id);
 void AquaRock_SetBubbleAnchor(s32 id);
 void Leader_FlowWithStream(void);
 void Actor_SpawnWadingSplash(struct Actor *actor);
@@ -642,9 +642,9 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
   actor->update = (ObjectUpdate)Actor_FlickerChild;
   wait(30);
   if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK) == 0)
-    AquaRock_SetSparkleAnchor(ACTOR_WATER_STONE);
+    GroundParticles_SetAnchor(ACTOR_WATER_STONE);
   else
-    AquaRock_SetSparkleAnchor(0);
+    GroundParticles_SetAnchor(0);
   for (i = 0; i < 4; i++) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
@@ -949,7 +949,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   Event_ResolvePendingActions(0);
   actor->update = (ObjectUpdate)Actor_FlickerChild;
   wait(30);
-  AquaRock_SetSparkleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
+  GroundParticles_SetAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   Sound_Play(SE_SHIMMER);
   for (i = 0; i < 4; i++) {
     PaletteFade_SetTarget(Random16() & 0x7fff, 0);
@@ -1243,7 +1243,7 @@ s32 Scene_Initialize(void) {
     GroundParticles_Start();
     if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
       AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
-      AquaRock_SetSparkleAnchor(ACTOR_WATER_STONE);
+      GroundParticles_SetAnchor(ACTOR_WATER_STONE);
       TilesetAnim_Pause(5);
       TilesetAnim_Pause(6);
       TilesetAnim_Resume(7);
@@ -1296,7 +1296,7 @@ s32 Scene_Initialize(void) {
       GroundParticles_Start();
       if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
         AquaRock_SetBubbleAnchor(ACTOR_BUBBLE_MARKER);
-        AquaRock_SetSparkleAnchor(ACTOR_BUBBLE_MARKER);
+        GroundParticles_SetAnchor(ACTOR_BUBBLE_MARKER);
       } else {
         TilesetAnim_Pause(7);
         TilesetAnim_Pause(8);
@@ -1311,7 +1311,7 @@ s32 Scene_Initialize(void) {
           AquaRock_StopFlashing;
       if (GameFlag_Get(FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED)) {
         AquaRock_SetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
-        AquaRock_SetSparkleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
+        GroundParticles_SetAnchor(ACTOR_MIST_SABRE_WATER_STONE);
         Actor_SetPosition(ACTOR_WAY_INSIDE, 264, 792);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_WAY_INSIDE), 0);
         Actor_GetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
@@ -1628,15 +1628,7 @@ void AquaRock_SetBubbleAnchor(s32 id) {
 
 #include "shared/ground_particles_start.h"
 
-/// Ties the sparkles to the actor `id`, or to none.
-void AquaRock_SetSparkleAnchor(s32 id) {
-  struct GroundParticleWork *work = Ram_HeapSlots->weather;
-  struct Actor *actor = Actor_GetById(id);
-
-  work->leader = NULL;
-  if (id != 0 && actor != 0)
-    work->leader = &actor->x.fixed;
-}
+#include "shared/ground_particles_set_anchor.h"
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"

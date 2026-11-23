@@ -1,11 +1,11 @@
 /// @file
 /// Kolima Forest's pool above the floodgate (SceneId_KolimaForestFloodgate),
-/// the fourth of the forest's five screens. The party comes in from the cliffs
+/// the fourth of the forest's five scenes. The party comes in from the cliffs
 /// to the west (SceneId_KolimaForestCliff) and goes on by the path north to
 /// Tret (SceneId_KolimaForestTree).
 ///
-/// A river pool fills most of the screen, with five logs floating on it. At
-/// the bottom of the screen, by the floodgate and a sign that reads "Do not
+/// A river pool fills most of the scene, with five logs floating on it. At
+/// the bottom of the scene, by the floodgate and a sign that reads "Do not
 /// touch Floodgate Switch!", the Floodgate Switch drains the pool and fills it
 /// again. Drained, the pool is a grassy riverbed with the logs lying on it,
 /// and walking into a log rolls it ahead until it hits something. Filled, the
@@ -66,12 +66,14 @@ u16 *gKolimaForestFloodgate_BankLogWest BSS_DATA;
 /// The bend's water level in gSceneLocalState's second halfword: 1 high (the
 /// logs float), 0 low; the floodgate switch flips it.
 s16 *gKolimaForestFloodgate_WaterHigh BSS_DATA;
+/// Unused: four bytes nothing reads or writes.
 u8 gKolimaForestFloodgate_UnusedAfterMap[4] BSS_DATA;
-/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
-/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
+/// The healthy colours, kept by KolimaPalette_SaveHealthy: the palette fade's
+/// 448 background and sprite colours, in the array's first half.
 u8 gKolimaPalette_Healthy[1792] BSS_DATA;
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 u8 gKolimaPalette_Cursed[896] BSS_DATA;
+/// Unused: 896 bytes nothing reads or writes.
 u8 gKolimaForestFloodgate_UnusedAfterCursed[896] BSS_DATA;
 /// BG1 to BG3's scroll, captured each frame and moved down to where the
 /// river's new level is drawn (NEW_LEVEL_OFFSET).
@@ -119,8 +121,8 @@ enum {
   /// The upright log on the grass west of the pool, which slides between
   /// cell columns 4 and 6.
   ACTOR_BANK_LOG = ACTOR_FIRST_PLACED,
-  /// The water at the floodgate, which bursts as it opens and churns as it
-  /// closes.
+  /// The water at the floodgate, which churns out as the gate lifts and
+  /// bursts as it drops shut.
   ACTOR_FLOODGATE_SPRAY,
   ACTOR_SIGN
 };
@@ -213,9 +215,10 @@ static void KolimaForestFloodgate_MarkBankLogCells(void) {
 /// Draws the pool full or drained and each log floating on it or lying on the
 /// riverbed, and gives the pool the cells of that level.
 static void KolimaForestFloodgate_DrawWaterLevel(void) {
-  struct Actor *piece;
+  struct Actor *log;
   struct FloodgateLog *record = gKolimaForestFloodgate_Logs;
 
+  // The floodgate, shut over the full pool or lifted over the drained one.
   if (*gKolimaForestFloodgate_WaterHigh != 0) {
     MapGrid_CopyCells(65, 53, 2, 1, 79, 29);
     MapGrid_CopyCells(65, 40, 2, 4, 15, 28);
@@ -223,6 +226,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
     MapGrid_CopyCells(65, 50, 2, 5, 79, 25);
   }
 
+  // The pool's water or its riverbed, on both layers, and its cells.
   if (*gKolimaForestFloodgate_WaterHigh != 0) {
     MapGrid_CopyCells(0, 32, 32, 32, 32, 0);
     MapGrid_CopyCells(32, 32, 32, 32, 64, 0);
@@ -235,14 +239,13 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
 
   // Each log floats or rests, and on high water its four cells are drawn.
   for (; record->sprite != -1; record++) {
-    piece = record->actor;
+    log = record->actor;
 
     if (*gKolimaForestFloodgate_WaterHigh == 1) {
-      Actor_SelectAnimation(piece, 4);
-      piece->priorityFlags =
-          ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
-      piece->motionFlags = 0;
-      piece->y.fixed = toFIXED(26);
+      Actor_SelectAnimation(log, 4);
+      log->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
+      log->motionFlags = 0;
+      log->y.fixed = toFIXED(26);
 
       if (record->vertical != 0) {
         MapGrid_CopyCells(68, 40, 1, 4, record->x + 32, record->z);
@@ -250,10 +253,10 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
         MapGrid_CopyCells(70, 40, 4, 1, record->x + 32, record->z);
       }
     } else {
-      Actor_SelectAnimation(piece, 1);
-      piece->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-      piece->motionFlags = ACTOR_FALLS;
-      piece->y.fixed = 0;
+      Actor_SelectAnimation(log, 1);
+      log->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+      log->motionFlags = ACTOR_FALLS;
+      log->y.fixed = 0;
     }
   }
 
@@ -323,6 +326,8 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   FieldCamera_WaitForArrival();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Sound_Play(SE_CRUNCH);
+  // The switch's lever turns, then the gate drops shut, or lifts, a picture at
+  // a time.
   if (*gKolimaForestFloodgate_WaterHigh == 0) {
     Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, 256, 462);
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
@@ -478,13 +483,14 @@ s32 Scene_Initialize(void) {
 
   gKolimaForestFloodgate_BankLogWest = (u16 *)gSceneLocalState;
   gKolimaForestFloodgate_WaterHigh = (s16 *)gSceneLocalState + 1;
-  // The return flag and water level occupy the first two halfwords.
+  // The bank log's place and the water level take the first two halfwords.
   gKolimaForestFloodgate_Logs =
       (struct FloodgateLog *)(gSceneLocalState + 2 * sizeof(u16));
   MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
   MapGrid_CopyCellAttributes(0, 0, 32, 32, 0, 64);
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
+    // The five logs and the end of the list, six records of three words.
     Dma_Set(gKolimaForestFloodgate_DefaultLogs, gKolimaForestFloodgate_Logs,
             DMA_COPY_WORDS(18), REG_DMA3);
     *gKolimaForestFloodgate_BankLogWest = 0;
@@ -563,27 +569,27 @@ void KolimaForestFloodgate_MarkLogCells(const struct FloodgateLog *records,
 
 /// The log lying across the cell, or none.
 static struct FloodgateLog *
-KolimaForestFloodgate_FindLogAt(struct FloodgateLog *run, s32 x, s32 y) {
-  for (; run->sprite != -1; run++) {
-    s32 x0 = run->x;
+KolimaForestFloodgate_FindLogAt(struct FloodgateLog *log, s32 x, s32 y) {
+  for (; log->sprite != -1; log++) {
+    s32 x0 = log->x;
     s32 x1 = x0;
-    s32 y0 = run->z;
+    s32 y0 = log->z;
     s32 y1 = y0;
 
-    if (run->vertical == 0)
+    if (log->vertical == 0)
       x1 += 3;
     else
       y1 += 3;
 
     if (x >= x0 && x <= x1 && y >= y0 && y <= y1)
-      return run;
+      return log;
   }
   return 0;
 }
 
 /// Whether four cells from the one given, across or down, are free for a log:
 /// none is a wall or has a shape other than flat ground.
-static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
+static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 vertical) {
   s32 i;
 
   for (i = 0; i <= 3; i++) {
@@ -594,7 +600,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
         *(cell->shape * 4 + gMapGridShapes) != 0) {
       return -1;
     }
-    if (mode == 0) {
+    if (vertical == 0) {
       x++;
     } else {
       z++;
@@ -606,10 +612,10 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
 /// Finds the log ahead of the leader and rolls it on, a cell at a time, up to
 /// LOG_ROLL_MAX_CELLS cells or until a cell is not free. The leader follows its
 /// shove.
-static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
+static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs) {
   struct Actor *actor;
   struct FieldWork *work;
-  struct FloodgateLog *run;
+  struct FloodgateLog *log;
   s32 point[3];
   s32 facing;
   s32 moved;
@@ -624,34 +630,34 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
              actor->y.fixed, (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
   Vector_AddPolarOffset(toFIXED(16), facing, point);
-  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / toFIXED(16),
+  log = KolimaForestFloodgate_FindLogAt(logs, point[0] / toFIXED(16),
                                         point[2] / toFIXED(16));
-  if (run == NULL)
+  if (log == NULL)
     return;
   for (i = 0; i < LOG_ROLL_MAX_CELLS; i++) {
-    point[0] = FIELD_CELL_ORIGIN(run->x);
-    point[2] = FIELD_CELL_ORIGIN(run->z);
+    point[0] = FIELD_CELL_ORIGIN(log->x);
+    point[2] = FIELD_CELL_ORIGIN(log->z);
     Vector_AddPolarOffset(toFIXED(16), facing, point);
     if (KolimaForestFloodgate_CheckLogFits(
-            point[0] / toFIXED(16), point[2] / toFIXED(16), run->vertical) != 0)
+            point[0] / toFIXED(16), point[2] / toFIXED(16), log->vertical) != 0)
       break;
     moved = 1;
-    if (run->vertical == 0) {
+    if (log->vertical == 0) {
       x = point[0] + toFIXED(32);
       z = point[2] + toFIXED(8);
     } else {
       x = point[0] + toFIXED(8);
       z = point[2] + toFIXED(32);
     }
-    run->x = point[0] / toFIXED(16);
-    run->z = point[2] / toFIXED(16);
+    log->x = point[0] / toFIXED(16);
+    log->z = point[2] / toFIXED(16);
   }
   if (moved == 0)
     return;
   SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
              actor->y.fixed, (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
   Vector_AddPolarOffset(toFIXED(8), facing, point);
-  actor = run->actor;
+  actor = log->actor;
   quarter = facing / (DEGtoANG(90));
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);

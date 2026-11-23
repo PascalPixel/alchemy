@@ -28,6 +28,10 @@
 #define ICON_BROWSER_PAGE_ICONS 32
 #define ICON_BROWSER_COLUMNS 8
 
+/// What the debug scene selector's keys return besides a scene.
+#define DEBUG_SCENE_GO -1     ///< A: go to the scene and entrance shown
+#define DEBUG_SCENE_CANCEL -2 ///< B: close without going
+
 /// What the icon browser shows, which L and R change.
 enum IconBrowserMode {
   ICON_BROWSER_ITEMS,
@@ -36,9 +40,7 @@ enum IconBrowserMode {
   ICON_BROWSER_MODES
 };
 
-/// Schedules the debug scene and entrance selector;
-/// TASK_PASS_FRAME is a task priority, not a number of frames to wait.
-/// Nothing in the game calls it.
+/// Unused: runs the debug scene and entrance selector as a task.
 UNUSED void DebugSceneSelect_Schedule(void) {
   Task_Add((TaskFunc)DebugSceneSelect_Run, TASK_PASS_FRAME);
 }
@@ -88,13 +90,13 @@ s16 DebugSceneSelect_Run(void) {
   for (;;) {
     result = DebugSceneSelect_HandleRowInput(window, sceneId, &entrance,
                                              &selectedField);
-    if (result == -1) {
+    if (result == DEBUG_SCENE_GO) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
       Event_SetDestinationFar(sceneId, entrance);
       RETURN_UNREAD(result);
     }
-    if (result == -2) {
+    if (result == DEBUG_SCENE_CANCEL) {
       MenuArrow_Release(cursorSlot);
       Window_Close(window, 2);
       RETURN_UNREAD(result);
@@ -107,15 +109,16 @@ s16 DebugSceneSelect_Run(void) {
   }
 }
 
-/// Edits the debug scene or entrance, returning -1 to exit and -2 to cancel.
-/// L and R move a scene by DEBUG_MENU_JUMP and set its entrance to 0; an
-/// entrance moved past either end wraps by DEBUG_ENTRANCE_WRAP.
+/// Edits the debug scene or entrance by one frame's keys, returning the scene,
+/// DEBUG_SCENE_GO or DEBUG_SCENE_CANCEL. L and R move a scene by
+/// DEBUG_MENU_JUMP and set its entrance to 0; an entrance moved past either end
+/// wraps by DEBUG_ENTRANCE_WRAP.
 s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
                                     s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
-    return -1;
+    return DEBUG_SCENE_GO;
   if (gKeysRepeat & KEY_B)
-    return -2;
+    return DEBUG_SCENE_CANCEL;
   if (gKeysRepeat & KEY_DOWN) {
     *selectedField ^= 1;
   } else if (gKeysRepeat & KEY_UP) {
@@ -173,8 +176,8 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
 /// Shows a 16x16 flag grid per page and processes input until closed. Starts on
 /// page 8 and always returns 0.
 s32 DebugFlagEditor_Run(void) {
-  struct MenuSprite cursorSprite; // Cursor sprite
-  s32 cursor[2];                  // Cursor column and row
+  struct MenuSprite cursorSprite;
+  s32 cursor[2]; // column and row
   s32 cursorSlot;
   s32 page;
   struct Window *window;
@@ -309,17 +312,17 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
   return 0;
 }
 
-/// Reserved menu entry. Nothing calls it.
-void Menu_ReservedNoOp(void) {}
+/// Unused: an empty routine nothing calls.
+UNUSED void Menu_ReservedNoOp(void) {}
 
-/// Sets the Djinni's collected flag, then adds it to the specified party
-/// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
+/// Marks the Djinni found (FLAG_DJINNI), then gives it to party member
+/// `member`.
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
-  GameFlag_SetFar((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
+  GameFlag_SetFar(FLAG_DJINNI(element * DJINN_PER_ELEMENT + index));
   Djinn_GiveFar(member, element, index);
 }
 
-/// Handles Save, Sleep and Options from the Pause menu. A cancelled save
+/// The Pause menu: Save your quest, Sleep or Change settings. A cancelled save
 /// or settings menu reopens the Pause menu; cancelling the Pause menu returns
 /// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
 /// 0. The field reaches it by far call (field/field_sequence_run.c).

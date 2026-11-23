@@ -40,8 +40,8 @@ struct IconMenuWork {
   /// icon by its command name.
   s16 labelBase;
   s16 row; ///< tiles
-  /// The selection the explanation was last drawn for; 0xffff draws it anew.
-  s16 previousMode;
+  /// The selection the explanation was last drawn for; -1 draws it anew.
+  s16 drawnSelection;
 };
 
 STATIC_ASSERT(sizeof(struct IconMenuEntry) == 20);
@@ -50,7 +50,7 @@ STATIC_ASSERT(sizeof(struct IconMenuWork) == 152);
 STATIC_ASSERT(offsetof(struct IconMenuWork, window) == 120);
 STATIC_ASSERT(offsetof(struct IconMenuWork, selection) == 140);
 STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 146);
-STATIC_ASSERT(offsetof(struct IconMenuWork, previousMode) == 150);
+STATIC_ASSERT(offsetof(struct IconMenuWork, drawnSelection) == 150);
 
 /// Heap slot 58: the icon menu while one is open.
 #define gIconMenuWork                                                          \

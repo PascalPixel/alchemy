@@ -206,12 +206,12 @@ enum YesNo { YES = 0, NO = 1 };
 s32 FieldMenu_SelectCommand(s32 selection);
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command);
 s32 FileList_SelectAction(void);
-void Menu_DrawModeLabel(void);
-void Menu_DrawModeIndicator(void);
+void PasswordLevel_DrawHelp(void);
+void TransferMethod_DrawHelp(void);
 s32 IconMenu_ChooseSendOption(s32 mode);
 s32 Menu_SelectShopCommand(s32 selection);
 s32 Menu_SelectSanctumService(s32 selection);
-s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
+s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection);
 s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
@@ -223,8 +223,8 @@ void DebugSceneSelect_Run(void);
 #else
 s16 DebugSceneSelect_Run(void);
 #endif
-s32 DebugSceneSelect_HandleRowInput(struct Window *arg, s16 value, s16 *sub,
-                                    s16 *mode);
+s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
+                                    s16 *entrance, s16 *selectedField);
 s32 DebugFlagEditor_Run(void);
 void String_FormatHexDigits(u32 value, u32 count, u8 *out);
 void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);

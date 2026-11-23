@@ -96,15 +96,15 @@ void LineScroll_BuildPage(void) {
         row[scanline * 6 + 4] = x3;
       }
     } else {
-      u16 a = x1;
-      u16 b = x2;
+      u16 bg1 = x1;
+      u16 bg2 = x2;
 
       waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
         wave = LINE_SCROLL_WAVE(phase, amplitude);
-        row[0] = a + wave;
-        row[2] = b + wave;
+        row[0] = bg1 + wave;
+        row[2] = bg2 + wave;
         row[4] = waveX3 + wave;
         row += 6;
         phase += step;
@@ -120,15 +120,15 @@ void LineScroll_BuildPage(void) {
         row[scanline * 6 + 4] = y3;
       }
     } else {
-      u16 a = y1;
-      u16 b = y2;
+      u16 bg1 = y1;
+      u16 bg2 = y2;
       waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
         wave = LINE_SCROLL_WAVE(phase, amplitude);
-        *row = a + wave;
+        *row = bg1 + wave;
         row += 2;
-        *row = b + wave;
+        *row = bg2 + wave;
         row += 2;
         *row = waveY3 + wave;
         row += 2;
@@ -190,9 +190,10 @@ static inline void WaitDma(volatile struct DmaRegisters *channel) {
 }
 
 /// Starts the line scroll: its work (heap slot HEAP_SLOT_LINE_SCROLL) holds the
-/// mode and, for x and y, the wave's frequency, its step each frame and its
-/// amplitude; two tasks, one in the vertical blank pass and one in the frame
-/// pass, build and send each frame's line offsets.
+/// mode and, for x and y, how fast the wave runs from frame to frame, its step
+/// from one scanline to the next and its amplitude; two tasks, one in the
+/// vertical blank pass and one in the frame pass, build and send each frame's
+/// line offsets.
 void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
                          s32 stepY, s32 ampY) {
   struct LineScrollWork *work;

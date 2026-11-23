@@ -1,5 +1,6 @@
 /// @file
-/// A Mars Djinni joining the party.
+/// A Mars Djinni joining the party, the fast shrink that ends a spin, and a
+/// Venus Djinni's motes and particles.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -36,8 +37,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   FieldEffect_InitializeSlots();
   effectWork = Ram_HeapSlots->fieldEffectWork;
-  // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
-  // event_commands_mercury.c spells out for its blue.
+  // Tint the screen red.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
   wait(30);
   // Turn to face the camera (FACING_SOUTH), then bounce three times, a rising

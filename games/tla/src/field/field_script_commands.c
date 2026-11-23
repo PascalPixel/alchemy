@@ -1200,7 +1200,7 @@ UNUSED void Actor_SetUpdate(struct Actor *actor, void (*update)(void)) {
     actor->update = update;
 }
 
-// The heading of each direction-pad combination, -1 for none.
+/// The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
 /// SC_HOVER: the leader hovering (the Hover Psynergy), moved by the direction
@@ -1223,6 +1223,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   movementAnimation = ANIM_WALK;
   collision = 0;
   actor->motionFlags = ACTOR_FLOATS;
+  // Hovering, the dash button changes only the animation, not the speed.
   if (gInput.held & gMainRoutineWork.dashKeys) {
     actor->speedLimit = toFIXED(1) / 2;
     actor->acceleration = toFIXED(1) / 8;
@@ -1385,6 +1386,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
       (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
       (gInput.pressed & gMainRoutineWork.secondShortcutKeys))
     pressed = 1;
+  // While hovering the menus and shortcuts are refused with a buzz.
   if (pressed) {
     Sound_PlayFar(SE_MENU_CANCEL);
   } else {

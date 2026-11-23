@@ -79,7 +79,7 @@
 
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
-struct Actor *Actor_GetById(u32 objectId);
+struct Actor *Actor_GetById(u32 actorId);
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 
@@ -103,13 +103,14 @@ struct SceneRegionEntry {
 };
 
 /// A row of the scenes' encounter rules (gScene_EncounterRules): a scene and
-/// entrance (-1 any) and, while a flag is clear, the two values it selects.
-struct SceneMusicEntry {
+/// entrance and, while a flag is clear, the encounter zones of its two kinds of
+/// ground.
+struct SceneEncounterRule {
   s16 scene;
-  s16 entrance; // -1 any
-  s16 flag;     // -1 none; the entry applies while the flag is clear
-  u8 first;
-  u8 second;
+  s16 entrance;  ///< -1 for any
+  s16 flag;      ///< -1 for none; the rule applies while the flag is clear
+  u8 groundZone; ///< ordinary ground
+  u8 secondZone; ///< MAP_CELL_SECOND_ZONE cells
 };
 
 /// A world map encounter rule, ended by kind -1.
@@ -179,7 +180,7 @@ struct MapRegion {
 
 /// Each scene's encounters by scene, entrance and flag, ended by scene -1
 /// (encounter_rules.s).
-extern const struct SceneMusicEntry gScene_EncounterRules[];
+extern const struct SceneEncounterRule gScene_EncounterRules[];
 
 extern struct TerrainRule gWorldMap_EncounterRules[];
 

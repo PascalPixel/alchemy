@@ -817,7 +817,7 @@ enum SoundId {
   /// Lucky Wheels: a wheel stopped.
   SE_LUCKY_WHEELS_STOP,
   /// Plays on player 3 as the Wise One appears in the Sanctum, as the
-  /// eruption's materialization tint fades in, and as the leader rises on Venus
+  /// eruption's pale tint fades in, and as the leader rises on Venus
   /// Lighthouse's platforms.
   SE_MATERIALIZE,
   /// The Venus Star bouncing three times as Saturos throws it into the beacon

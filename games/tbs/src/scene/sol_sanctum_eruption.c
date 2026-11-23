@@ -130,9 +130,9 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner);
 static void SolSanctumEruption_UpdateElementalArcs(void);
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z);
 static void SolSanctumEruption_RestoreCornerCellAttributes(void);
-static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
-                                                      s32 waitFrames);
-static void SolSanctumEruption_FlashMaterializingActor(struct Actor *actor);
+static void SolSanctumEruption_SetPaleTint(s32 enabled, s32 frames,
+                                           s32 waitFrames);
+static void SolSanctumEruption_FlashWiseOne(struct Actor *actor);
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
@@ -261,16 +261,16 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // Off screen, Menardi: "What happened?" Saturos: "Not again!" Jenna: the
   // water's gone. Alex: without the Elemental Stars the chamber is
   // collapsing. Kraden: is this the "terrible retribution"?
-  SolSanctumEruption_SetMaterializationTint(1, 20, 20);
-  SolSanctumEruption_SetMaterializationTint(0, 20, 40);
+  SolSanctumEruption_SetPaleTint(1, 20, 20);
+  SolSanctumEruption_SetPaleTint(0, 20, 40);
   Event_SetMessageId(MsgSolSanctumJennaWhatHappened);
   // "What's the matter? What happened?"
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   // "No! Not again!"
   Event_ShowMessage(ACTOR_SATUROS, 0);
-  SolSanctumEruption_SetMaterializationTint(1, 20, 0);
+  SolSanctumEruption_SetPaleTint(1, 20, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
-  SolSanctumEruption_SetMaterializationTint(0, 20, 0);
+  SolSanctumEruption_SetPaleTint(0, 20, 0);
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -280,11 +280,11 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 30);
-  SolSanctumEruption_SetMaterializationTint(1, 20, 0);
+  SolSanctumEruption_SetPaleTint(1, 20, 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  SolSanctumEruption_SetMaterializationTint(0, 20, 20);
+  SolSanctumEruption_SetPaleTint(0, 20, 20);
   // The Wise One, a floating rock, appears over the chamber and the quake
   // stops.
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), 0);
@@ -329,7 +329,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Event_SetMessageId(MsgSolSanctumKradenCouldThatBeThe);
   // "Could that be... the Wise One?!?"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
-  SolSanctumEruption_SetMaterializationTint(1, 20, 0);
+  SolSanctumEruption_SetPaleTint(1, 20, 0);
   sparkles->stopped = 0;
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(1, 2, 1);
@@ -338,16 +338,16 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  SolSanctumEruption_SetMaterializationTint(0, 20, 60);
+  SolSanctumEruption_SetPaleTint(0, 20, 60);
   // Alex: "Such power... Incredible!" Garet: "!!!" Jenna: "Wow..."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 30);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_NORTHWEST, 40);
-  SolSanctumEruption_SetMaterializationTint(1, 20, 20);
-  SolSanctumEruption_SetMaterializationTint(0, 20, 20);
+  SolSanctumEruption_SetPaleTint(1, 20, 20);
+  SolSanctumEruption_SetPaleTint(0, 20, 20);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 30);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST_SOUTHEAST, 40);
-  SolSanctumEruption_SetMaterializationTint(1, 20, 20);
-  SolSanctumEruption_SetMaterializationTint(0, 20, 20);
+  SolSanctumEruption_SetPaleTint(1, 20, 20);
+  SolSanctumEruption_SetPaleTint(0, 20, 20);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 30);
   // Embers start to rain from the Wise One.
   SolSanctumEruption_ResetEmberEmission();
@@ -840,7 +840,7 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
 }
 
 /// Ends the Wise One's palette animation and clears its attached effect.
-static inline void SolSanctumEruption_FinishMaterialization(void) {
+static inline void SolSanctumEruption_StopWiseOnePalette(void) {
   Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 3);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);
   wait(1);
@@ -1054,11 +1054,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   // A violent tremor throws them aside.
   Sound_Play(MUS_DUNGEON_THEME);
-  SolSanctumEruption_SetMaterializationTint(1, 4, 0);
+  SolSanctumEruption_SetPaleTint(1, 4, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(5, 5, 1);
   Event_Wait(10);
-  SolSanctumEruption_SetMaterializationTint(0, 40, 0);
+  SolSanctumEruption_SetPaleTint(0, 40, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpeed(ACTOR_GARET, 2);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
@@ -1144,7 +1144,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
 
-  SolSanctumEruption_SetMaterializationTint(1, 20, 0);
+  SolSanctumEruption_SetPaleTint(1, 20, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(40);
@@ -1165,7 +1165,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(100);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_Wait(20);
-  SolSanctumEruption_SetMaterializationTint(1, 10, 0);
+  SolSanctumEruption_SetPaleTint(1, 10, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(20);
@@ -1178,7 +1178,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_SetDestination(ACTOR_PARTY_LEADER, 256, 150);
   Actor_SetDestination(ACTOR_GARET, 231, 180);
   Actor_WaitForMoveById(ACTOR_GARET);
-  SolSanctumEruption_SetMaterializationTint(0, 40, 0);
+  SolSanctumEruption_SetPaleTint(0, 40, 0);
   Event_Wait(20);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1219,7 +1219,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Scene_StartEventPsynergy();
   Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
@@ -1240,7 +1240,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 1;
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  SolSanctumEruption_FinishMaterialization();
+  SolSanctumEruption_StopWiseOnePalette();
   Event_Wait(60);
   // The Wise One: "The volcano will soon erupt... I cannot hold it long."
   // and, after drifting closer, "You must leave this place."
@@ -1303,23 +1303,23 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     ItemDisplay_ShowPicture(star, 3);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
-  SolSanctumEruption_SetMaterializationTint(1, 20, 0);
+  SolSanctumEruption_SetPaleTint(1, 20, 0);
   for (frame = 0; frame < 24; frame++) {
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
     star->scaleX = 2 * FIXED_ONE / 5;
     star->scaleY = 2 * FIXED_ONE / 5;
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
     star->scaleX = FIXED_ONE;
     star->scaleY = FIXED_ONE;
   }
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
-  SolSanctumEruption_SetMaterializationTint(0, 20, 0);
+  SolSanctumEruption_SetPaleTint(0, 20, 0);
   // The Wise One: "Return it to its bag." and the Elemental Stars are moving
   // away from here.
   Event_SetMessageId(MsgSolSanctumReturnStarToBag);
@@ -1398,7 +1398,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
@@ -1417,7 +1417,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   SolSanctumEruption_DrawSecondCollapseTiles(0);
   MapGrid_SetShake(1, 1, 1);
-  SolSanctumEruption_FinishMaterialization();
+  SolSanctumEruption_StopWiseOnePalette();
   Event_Wait(60);
 
   MapGrid_SetShake(4, 4, 1);
@@ -1432,7 +1432,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
   for (frame = 0; frame < 40; frame++) {
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
@@ -1459,12 +1459,12 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(20);
   Sound_Play(SE_TREMOR);
   Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
-  SolSanctumEruption_FinishMaterialization();
+  SolSanctumEruption_StopWiseOnePalette();
   Event_Wait(60);
   Actor_MoveToAndWait(ACTOR_WISE_ONE, 184, 87);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Event_Wait(10);
-  SolSanctumEruption_FinishMaterialization();
+  SolSanctumEruption_StopWiseOnePalette();
   Sound_Play(SE_RUMBLE);
   Event_Wait(100);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1482,7 +1482,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_Wait(20);
   for (frame = 0; frame < 40; frame++) {
-    SolSanctumEruption_FlashMaterializingActor(wiseOne);
+    SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
@@ -1752,9 +1752,9 @@ static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
   MapGrid_CopyCellAttributes(43, 28, 1, 1, 44, 28);
 }
 
-/// Fades the sprite palette into or out of the materialization tint.
-static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
-                                                      s32 waitFrames) {
+/// Fades the backgrounds into or out of the pale tint the room flashes.
+static void SolSanctumEruption_SetPaleTint(s32 enabled, s32 frames,
+                                           s32 waitFrames) {
   if (enabled == 1) {
     Sound_Play(SE_MATERIALIZE);
     PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(18, 18, 14), PALETTES_BG);
@@ -1769,7 +1769,7 @@ static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
 }
 
 /// Flashes the palette and spawns paired vertical effects every sixteen frames.
-static void SolSanctumEruption_FlashMaterializingActor(struct Actor *actor) {
+static void SolSanctumEruption_FlashWiseOne(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetColorMode(actor, 7);
   } else {

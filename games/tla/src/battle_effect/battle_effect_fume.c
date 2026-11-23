@@ -93,7 +93,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  // Default: set for real below, at the plume's last segment.
+  // The head's place, set at the plume's last segment.
   endX = 0;
   endY = 0;
   EffectPosition_ProjectBattler(args->user, &caster);

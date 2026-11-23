@@ -1904,33 +1904,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/actors_set_cells_open.h"
 
-/// Finds the current target's table row and shrinks it.
-UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-
-  for (; *list != ACTOR_LIST_END; list += 3) {
-    s32 entry = *list;
-    s32 id = work->secondActorId;
-
-    if (id == entry) {
-      struct Actor *actor = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        actor->scaleY -= FIXED_ONE * 31 / 256;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, actor->layer);
-        actor->scaleY = FIXED_ONE;
-      }
-      break;
-    }
-  }
-}
+#include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 

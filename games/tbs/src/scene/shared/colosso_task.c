@@ -1,12 +1,13 @@
-#include "system/affine.h"
-#include "system/dma.h"
-
+/// @file
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the large lettering a race starts with. It reads "The 1st Match", "3", "2",
 /// "1", "GO", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
 /// (enum ColossoLetteringPicture). Each picture is
 /// COLOSSO_LETTERING_PICTURE_BYTES of tiles after the palettes.
-///
+
+#include "system/affine.h"
+#include "system/dma.h"
+
 /// The lettering moves by a script of 16-bit words, a command and its values:
 enum ColossoLetteringCommand {
   /// x, speed: put the lettering at x pixels from the centre, moving speed /

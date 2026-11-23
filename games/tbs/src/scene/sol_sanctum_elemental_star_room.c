@@ -178,8 +178,8 @@ enum SolSanctumElementalStarRoomCellBehavior {
 
 /// Draws a sunken pillar risen, as bagging a star raises three of them into
 /// stepping stones: its picture, 3 by 4 cells on the overhead layer, then
-/// OPEN_RISEN_PILLAR. The events play the rise (gSolSanctumElementalStarRoom_
-/// StarCells) where this draws its last picture.
+/// OPEN_RISEN_PILLAR. The events play the rise (gSolSanctum_StarCells) where
+/// this draws its last picture.
 #define DRAW_RISEN_PILLAR(column, row)                                         \
   (MapGrid_CopyCellsTo(83, 40, RISEN_PILLAR_LEFT(column), row, 3, 4),          \
    OPEN_RISEN_PILLAR(column, row))
@@ -1062,19 +1062,19 @@ static void SolSanctumElementalStarRoom_FelixRemovesMask(void) {
   actor->acceleration = toFIXED(2);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(6);
-  Actor_SetAnimation(ACTOR_GARET, 7);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
   Actor_MoveToAndWait(ACTOR_GARET, 312, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(6);
-  Actor_SetAnimation(ACTOR_GARET, 7);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
   Actor_MoveToAndWait(ACTOR_GARET, 342, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(6);
-  Actor_SetAnimation(ACTOR_GARET, 7);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
   Actor_MoveToAndWait(ACTOR_GARET, 376, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
 }
@@ -1229,19 +1229,19 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   actor->acceleration = toFIXED(2);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(6);
-  Actor_SetAnimation(ACTOR_GARET, 7);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
   Actor_MoveToAndWait(ACTOR_GARET, 342, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(6);
-  Actor_SetAnimation(ACTOR_GARET, 7);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
   Actor_MoveToAndWait(ACTOR_GARET, 312, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = toFIXED(6);
-  Actor_SetAnimation(ACTOR_GARET, 7);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
   Actor_MoveToAndWait(ACTOR_GARET, 278, 480);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
@@ -2197,15 +2197,16 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 
 /// Sets up the Elemental Star Room.
 s32 Scene_Initialize(void) {
-  u32 ringActorId;
+  u32 lightActorId;
 
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  ringActorId = ACTOR_FIRST_FLOATING_LIGHT;
+  lightActorId = ACTOR_FIRST_FLOATING_LIGHT;
   do {
-    Actor_Get(ringActorId)->collisionFlags = 0;
-    Actor_SetSpritePriority(ringActorId++, 1);
-  } while (ringActorId <= ACTOR_LAST_FLOATING_LIGHT);
+    Actor_Get(lightActorId)->collisionFlags = 0;
+    Actor_SetSpritePriority(lightActorId++, 1);
+  } while (lightActorId <= ACTOR_LAST_FLOATING_LIGHT);
+  // It asks for 16 lights; the task keeps the ten the room places.
   SolSanctum_StartFloatingLights(ACTOR_FIRST_FLOATING_LIGHT, 16);
   if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     Actor_SetPosition(ACTOR_KRADEN, 456, 360);
@@ -2239,6 +2240,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Shows the event's next line at the speaker, then waits the frames.
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames) {
   Event_ShowMessage(speaker, 0);

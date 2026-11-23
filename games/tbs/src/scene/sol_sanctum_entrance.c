@@ -298,7 +298,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// next picture of it from a spare part of the map.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Event_Start();
-  // The door opens over three frames.
+  // The door opens in three steps.
   Sound_Play(SE_BOOM);
   MapGrid_CopyCellsTo(16, 28, 21, 3, 3, 2);
   wait(10);
@@ -821,8 +821,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// entrance hall, looks round and asks if this is their first time here; the
 /// answer gets "Take a good look at it" or "I doubt that...".
 static void SolSanctumEntrance_IntroduceSanctum(void) {
-  struct Actor *leader;
-
   Event_Start();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
@@ -857,8 +855,6 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_Jump(ACTOR_KRADEN, 4, 20);
-  // Kraden: "This is your first time here, right?" Yes: "Take a good look at
-  // it." No: "I doubt that..."
   Event_SetMessageId(MsgSolSanctumKradenFirstTimeAtSol);
   // "This is the entrance to Sol Sanctum. This is your first time..."
   // Yes: "It's an important relic of our past. Take a good look at it."
@@ -1149,7 +1145,6 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
-  // Kraden: "More statues... It doesn't look like we can reach them".
   Event_SetMessageId(MsgSolSanctumMoreStatuesOutOfReach);
   // "More statues... Hmm... It doesn't look like we can reach..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);

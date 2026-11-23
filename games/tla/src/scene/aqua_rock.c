@@ -1362,10 +1362,12 @@ void AquaRock_AddMoaiWater(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != 0) {
-    u8 *meta = Sprite_AddAnimation(actor->sprite, SPRITE_MOAI_WATER);
+    struct SpriteAnimation *water =
+        (struct SpriteAnimation *)Sprite_AddAnimation(actor->sprite,
+                                                      SPRITE_MOAI_WATER);
 
-    meta[5] = 0;
-    meta[6] = 0;
+    water->colorMode = SPRITE_COLOR_NORMAL;
+    water->priority = 0;
     Actor_SelectAnimation(actor, 0);
     Actor_SelectAnimation(actor, 2);
   }

@@ -218,7 +218,10 @@ void Daila_TalkBeenBefore(void) {
     Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaBeenBefore;
     Event_SetMessageId(msg);
-    // "You don't look familiar. Have you been to Daila before?"
+    // "You don't look familiar. Have you been to Daila before?" Yes:
+    // "Strange... I just don't remember ever seeing you around here before."
+    // No: "Well then, welcome to Daila, the northernmost town on the continent
+    // of Indra!"
     FieldMessage_ShowAtActor(ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
@@ -246,7 +249,9 @@ void Daila_TalkIndraMoved(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaIndraMoved;
   Event_SetMessageId(msg);
-  // "Didn't it feel like all of Indra moved when that wave hit?"
+  // "Didn't it feel like all of Indra moved when that wave hit?" Yes: "I knew
+  // it! You felt it, too!..." No: "Wow... The wave must have knocked you silly
+  // if you didn't notice it..."
   FieldMessage_ShowAtActor(ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -277,7 +282,8 @@ void Daila_TalkBoat(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaWantBoat;
   Event_SetMessageId(msg);
-  // "Hm? You want a boat?"
+  // "Hm? You want a boat?" Yes: "What kind of insensitive jerk are you?..."
+  // No: "Of course not! The tidal wave ruined all our boats..."
   FieldMessage_ShowAtActor(BOAT_ASKER, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -318,7 +324,10 @@ void Daila_TalkHip(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaHurtHip;
   Event_SetMessageId(msg);
-  // "I bet you thought it was the wave that knocked me over and hurt my..."
+  // "I bet you thought it was the wave that knocked me over and hurt my hip,
+  // huh?" Yes: "It'd take more than a little water to knock this old-timer
+  // down!..." No: "Nobody believes me when I tell them the continent
+  // moved..."
   FieldMessage_ShowAtActor(ACTOR_FALLEN_OLD_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);

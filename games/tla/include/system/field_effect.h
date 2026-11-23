@@ -163,16 +163,7 @@ struct EffectOptions {
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 24);
 STATIC_ASSERT(offsetof(struct EffectOptions, update) == 36);
 
-void Effect_SetPriority(struct FieldEffect *effect, s32 priority);
-struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type);
-struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type);
 void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object);
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                  s32 velocityZ, u32 flags,
-                  const struct EffectOptions *options);
-void Effect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                          s32 velocityZ, u32 flags,
-                          const struct EffectOptions *options);
 
 struct EffectOptions;
 

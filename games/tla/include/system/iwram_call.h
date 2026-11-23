@@ -60,6 +60,8 @@ static inline void Iwram_MultiplyMatrix(const FIXED *matrix) {
   Iwram_MultiplyMatrixEntry(matrix);
 }
 
+/// Writes to result the 16.16 point vector moved by the current matrix: turned
+/// by its 3 by 3 part, then offset by its translation.
 static inline s32 Iwram_TransformVector(const void *vector, s32 *result) {
   return Iwram_TransformVectorEntry(vector, result);
 }
@@ -73,6 +75,10 @@ static inline u32 Iwram_UnsignedDivide(u32 dividend, u32 divisor) {
   return Iwram_UnsignedDivideEntry(dividend, divisor);
 }
 
+/// Unpacks a PICTURE_FORMAT_COMPRESSED picture into destination, a byte above
+/// 223 leaving that many less 223 bytes there untouched, and returns NULL; one
+/// whose first halfword is 0 is not packed, and comes back as the data after
+/// that halfword for the caller to decode.
 static inline void *Iwram_Decompress(const void *source, void *destination) {
   return Iwram_DecompressEntry(source, destination);
 }

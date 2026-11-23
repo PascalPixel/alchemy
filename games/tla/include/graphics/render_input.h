@@ -8,8 +8,6 @@
 
 struct Window;
 
-void Window_SetTileAttributeRect(const struct Window *window, s32 x, s32 y,
-                                 s32 width, s32 height, u32 field);
 s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
                                    s32 resource);
 

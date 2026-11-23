@@ -207,6 +207,7 @@ extern u8 gLinkExchangeState;
 /// Serial_WaitForStatusMask and the link screens poll it.
 extern volatile u16 gLinkStatus;
 
+/// status, with LINK_STATUS_ERROR set when the link's last transfer failed.
 static inline s32 Serial_AddErrorFlag(s32 status) {
   if (gSerialWork.transferError != 0)
     status |= LINK_STATUS_ERROR;

@@ -44,6 +44,7 @@ typedef s32 FIXED;
 /// angle.
 #define TRIG_ANGLE_MASK (TRIG_TURN - 1)
 
+/// The sine of `angle`, a whole turn being TRIG_TURN, in 16.16.
 FIXED Trig_Sin(s32 angle);
 /// The cosine of `angle`, a whole turn being TRIG_TURN, in 16.16; it falls
 /// through into Trig_Sin a quarter turn on.

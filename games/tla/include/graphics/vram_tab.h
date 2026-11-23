@@ -5,6 +5,8 @@
 #include "edition.h"
 #include "static_assert.h"
 
+/// The VRAM cache's sizes: its entries, the 64-byte blocks of sprite VRAM it
+/// hands out, and the markers of a free block and a free entry.
 enum VramBlockLimits {
   VRAM_CACHE_ENTRY_COUNT = 96,
   VRAM_BLOCK_COUNT = 512,

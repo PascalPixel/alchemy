@@ -26,6 +26,8 @@ STATIC_ASSERT(offsetof(struct OamUsage, limit) == 2);
 /// The OAM entries the frame's list holds and the most it may; wait() empties
 /// it each frame.
 extern struct OamUsage gOamUsage;
+/// Builds this frame's OAM list in work, a frame-scratch block of OAM_SIZE,
+/// running its ARM kernel from a copy on the stack.
 void Render_BuildOamList(void *work);
 
 #endif

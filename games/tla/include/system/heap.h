@@ -21,12 +21,11 @@ struct BattleWork;
 struct MapWork;
 struct ActorSystemWork;
 struct ScreenTransitionState;
-
-/// The heap's 64 words in IWRAM (gHeapSlots, 0x03000000): the two pools' next
-/// free addresses, then each slot's block once allocated, else null.
 struct RopeWork;
 struct TightropeWork;
 
+/// The heap's 64 words in IWRAM (gHeapSlots, 0x03000000): the two pools' next
+/// free addresses, then each slot's block once allocated, else null.
 struct HeapSlots {
   void *nextEwram;                     ///< the EWRAM pool's next free byte
   void *nextIwram;                     ///< the IWRAM pool's next free byte

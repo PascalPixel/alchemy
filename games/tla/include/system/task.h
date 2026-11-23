@@ -9,6 +9,7 @@
 #include "static_assert.h"
 #include "system/io_reg.h"
 
+/// How many tasks can run at once.
 enum TaskLimits { TASK_COUNT = 24 };
 
 typedef void (*TaskFunc)(void);

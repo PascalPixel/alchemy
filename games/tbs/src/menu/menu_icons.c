@@ -4,9 +4,9 @@
 
 #include "menu_internal.h"
 
-/// Loads each menu icon resource whose cache slot was acquired: the Djinn
-/// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the
-/// work's resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
+/// Loads the Djinn menu's up and down arrows (djinn_arrow_up and
+/// djinn_arrow_down) into two free VRAM blocks, kept in the work's
+/// resourceSlots[0] and [1] for Icon_DrawVariantWithTileOffset.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -39,10 +39,10 @@ void IconMenu_ReleaseArrows(void) {
   VramCache_FreeEntry(menu->resourceSlots[1]);
 }
 
-/// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in a
-/// GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER, which is released again.
-s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
+/// Loads the Psynergy icon of ability abilityId into VRAM block slot, building
+/// it (Ability_LoadGlyphFar) in a GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER,
+/// which is released again. Returns the block's first tile.
+s32 Icon_LoadResourceIntoSlot(s32 abilityId, s32 slot) {
   s32 decodedResource;
   s32 selectedSlot;
   s32 firstTile;
@@ -51,23 +51,23 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   allocation =
       HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   selectedSlot = slot;
-  Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &decodedResource, 1);
+  Ability_LoadGlyphFar(abilityId, 0, &selectedSlot, &decodedResource, 1);
   firstTile = VramCache_Reload(slot, (s32)allocation->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return firstTile;
 }
 
-/// Loads an icon into a free cache slot and creates its sprite when possible:
-/// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
-/// preview's Psynergy lists. Returns no value; callers ignore it.
+/// Shows ability abilityId's Psynergy icon at (x, y) of window, in a free VRAM
+/// block, for the Djinn preview's Psynergy lists; with no block free, nothing.
+/// Returns no value; callers ignore it.
 s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
-                                  s32 resourceId) {
+                                  s32 abilityId) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
   // VRAM_CACHE_ENTRY_COUNT means no slot was free.
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
-    Icon_LoadResourceIntoSlot(resourceId, slot);
+    Icon_LoadResourceIntoSlot(abilityId, slot);
     WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
 #ifdef UBFIX
@@ -102,9 +102,9 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
   return 1;
 }
 
-/// Creates an arrow with the vertical adjustment for its resource variant: as
-/// Icon_CreateStatChangeArrow, raised 3 pixels for the up arrow (variant 0) and
-/// 4 for the down arrow.
+/// Shows the Djinn menu's up arrow (variant 0) or down arrow at (x, y) of
+/// window, as Icon_CreateStatChangeArrow does, raised 3 pixels for the up
+/// arrow and 4 for the down one.
 s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;

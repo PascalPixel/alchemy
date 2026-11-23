@@ -342,13 +342,12 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
 void StatusScreen_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void StatusScreen_ShowMemberStatus(s32 member, s32 frame);
 s32 StatusScreen_SelectCommand(void);
-void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
+void StatusScreen_DrawSelectionCursor(s32 side, s32 selected, u8 *entries,
                                       s32 invert);
 void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
                                       const u8 *entries);
-void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
-                                            s32 messageVariant,
-                                            s32 preserveVariant);
+void StatusScreen_ShowMemberProgressMessage(struct Window *destination, s32 row,
+                                            s32 hasDjinn);
 void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                      s32 mode);
 void Menu_BusyWait(void);
@@ -434,7 +433,7 @@ void DjinnFigures_UpdateBottomRow(void);
 void DjinnFigures_InitializeBottomRow(s32 window, s32 unused);
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase);
-s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation);
+s32 DjinnFigures_ReplaceSlot(s32 index, s32 element, s32 animation);
 void Menu_StartPartyFiguresStanding(void);
 
 s32 PsynergyList_RunCompareLoop(u32 mode);
@@ -444,9 +443,9 @@ s32 Djinn_CheckGiveBalance(s32 sourceMemberColumn, s32 targetMemberColumn);
 void Djinn_CountOwned(u8 *ownedCounts);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void IconMenu_ReleaseArrows(void);
-s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot);
+s32 Icon_LoadResourceIntoSlot(s32 abilityId, s32 slot);
 s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
-                                  s32 resourceId);
+                                  s32 abilityId);
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant);
 s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,

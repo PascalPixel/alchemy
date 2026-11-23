@@ -489,7 +489,7 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   }
 }
 
-/// PsynergyList_Diff' marks on an action id: Psynergy the change gives,
+/// PsynergyList_Diff's marks on an action id: Psynergy the change gives,
 /// drawn in TEXT_COLOR_YELLOW, and Psynergy it takes away, in TEXT_COLOR_RED.
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST 0x4000
@@ -671,7 +671,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
         Window_SetTilemapEntryFar(
             menu->listWindow,
             DJINN_ELEMENT(entries[listIndex]) + DJINN_ELEMENT_TILE,
-            row * DJINN_COLUMN_TILES + 1, lineIndex + 2, 0);
+            row * DJINN_COLUMN_TILES + 1, lineIndex + 2, TILEMAP_ENTRY_PLAIN);
         Text_DrawMessageAsTilesFar(
             MsgDjinnName +
                 DJINN_ELEMENT(entries[listIndex]) * DJINN_PER_ELEMENT +
@@ -1013,9 +1013,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (mode == DJINN_SELECT_ACTION) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
-        Window_SetTilemapEntryFar(
-            menu->helpWindow,
-            DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 0, 0, 0);
+        Window_SetTilemapEntryFar(menu->helpWindow,
+                                  DJINN_ELEMENT(menu->pairEntries[0]) +
+                                      DJINN_ELEMENT_TILE,
+                                  0, 0, TILEMAP_ENTRY_PLAIN);
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(
             DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -1029,9 +1030,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
             DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
                 DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
             MESSAGE_ARGUMENT_ABILITY);
-        Window_SetTilemapEntryFar(
-            menu->helpWindow,
-            DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 6, 0, 0);
+        Window_SetTilemapEntryFar(menu->helpWindow,
+                                  DJINN_ELEMENT(menu->pairEntries[0]) +
+                                      DJINN_ELEMENT_TILE,
+                                  6, 0, TILEMAP_ENTRY_PLAIN);
         Text_DrawMessageAsTilesFar(MsgDjinnOwnerLabel + 1, menu->helpWindow, 56,
                                    0);
 #endif
@@ -1809,7 +1811,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
         Window_SetTilemapEntryFar(window,
                                   WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP +
                                               DJINN_CHANGE_ARROW_TILE),
-                                  x + 2, 5, 0);
+                                  x + 2, 5, TILEMAP_ENTRY_PLAIN);
       }
       column = x;
       if (originalUnit->classId != unit->classId)
@@ -1818,10 +1820,10 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
       // the window font's digit n in WINDOW_PALETTE.
       for (i = 0; i < DJINN_ELEMENTS; i++) {
         Window_SetTilemapEntryFar(window, DJINN_ELEMENT_TILE + i,
-                                  column + i * 2, y + 5, 0);
-        Window_SetTilemapEntryFar(window,
-                                  unit->djinnSetCounts[i] + WINDOW_TILE('0'),
-                                  column + i * 2 + 1, y + 5, 0);
+                                  column + i * 2, y + 5, TILEMAP_ENTRY_PLAIN);
+        Window_SetTilemapEntryFar(
+            window, unit->djinnSetCounts[i] + WINDOW_TILE('0'),
+            column + i * 2 + 1, y + 5, TILEMAP_ENTRY_PLAIN);
       }
 #if LANGUAGE != LANGUAGE_JAPANESE
       iconX = x * 8 + 70;

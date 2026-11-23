@@ -561,8 +561,9 @@ s32 PartyMemberChooser_RunRearrange(void) {
   return result;
 }
 
-/// The party member chooser (menu page 3): Left and Right choose a party
-/// member, showing their status and Psynergy icons; A chooses and B backs out.
+/// The party member chooser (STATUS_SCREEN_PAGE_CHOOSER): Left and Right choose
+/// a party member, showing their status and Psynergy icons; A chooses and B
+/// backs out.
 s32 PsynergyMenu_ChooseMember(void) {
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 memberIndex = menu->tabIndex[0];
@@ -881,10 +882,10 @@ s32 StatusScreen_SelectCommand(void) {
 }
 
 /// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
-/// status page: in side 0 the selected status row, as wide as its label
-/// (gStatusScreen_CursorWidths); in side 1 one of the first four status rows
+/// status page: on side 0 the selected status row, as wide as its label
+/// (gStatusScreen_CursorWidths); on side 1 one of the first four stat rows
 /// or of the rows below.
-void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
+void StatusScreen_DrawSelectionCursor(s32 side, s32 selected, u8 *entries,
                                       s32 invert) {
   struct StatusScreenWork *menu = gMenuWork;
   s32 count;
@@ -894,7 +895,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   s32 palette;
   u8 width;
 
-  if (mode == 0) {
+  if (side == 0) {
     y = selected * 2 + 5;
     x = 0;
     width = 5;
@@ -954,26 +955,25 @@ typedef u64 ExperienceDifference;
 typedef u32 ExperienceDifference;
 #endif
 
-/// Writes the help text of status entry messageVariant into destination: the
-/// entries skip Djinn when the party has none (preserveVariant 0); the
-/// experience entry says how many points the next level needs, or, at level 99,
-/// gives the plain experience text.
-void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
-                                            s32 messageVariant,
-                                            s32 preserveVariant) {
+/// Writes the help text of the status page's right-hand row `row` into
+/// destination: the rows skip the Djinn row when the party has no Djinn
+/// (hasDjinn 0); the experience row says how many points the next level needs,
+/// or, at level 99, gives the plain experience text.
+void StatusScreen_ShowMemberProgressMessage(struct Window *destination, s32 row,
+                                            s32 hasDjinn) {
   struct StatusScreenWork *menu = gMenuWork;
   void *buffer;
 
   // Entry 4 is the Djinn row's help: without Djinn the rows below it come
   // one entry earlier.
-  if (preserveVariant == 0 && messageVariant > 3) {
-    messageVariant++;
+  if (hasDjinn == 0 && row > 3) {
+    row++;
   }
-  if (messageVariant == 1) {
+  if (row == 1) {
     struct Unit *member = Unit_GetFar(menu->selectedIds[0]);
 
     if (member->level == UNIT_LEVEL_MAX) {
-      messageVariant = 8; // "These are your experience points."
+      row = 8; // "These are your experience points."
     } else {
       ExperienceDifference remaining =
           Unit_GetExperienceForLevelFar(menu->selectedIds[0],
@@ -984,8 +984,7 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
   }
 
   buffer = Heap_Alloc(STATUS_HELP_TEXT_MAX * 2);
-  Message_CopyExpandedFar(messageVariant + MsgProgressHelp, buffer,
-                          STATUS_HELP_TEXT_MAX);
+  Message_CopyExpandedFar(row + MsgProgressHelp, buffer, STATUS_HELP_TEXT_MAX);
   Text_DrawWideStringAtOffsetFar(buffer, destination, 0, -1);
   Heap_Release(buffer);
 }
@@ -1169,7 +1168,7 @@ s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   s32 poison;
 
   unit = Unit_GetFar(memberId);
-  for (ailmentIndex = 0; ailmentIndex < 5; ailmentIndex++)
+  for (ailmentIndex = 0; ailmentIndex < CHARACTER_AILMENT_COUNT; ailmentIndex++)
     ailments[ailmentIndex] = 0;
 
   count = 0;
@@ -1289,9 +1288,11 @@ void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
 
   iconIndex = range * 2;
   tile = iconIndex + RANGE_ICON_TILE + 1;
-  Window_SetTilemapEntryFar(window, TILE_HFLIP | tile, x, y, 0);
-  Window_SetTilemapEntryFar(window, iconIndex + RANGE_ICON_TILE, x + 1, y, 0);
-  Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
+  Window_SetTilemapEntryFar(window, TILE_HFLIP | tile, x, y,
+                            TILEMAP_ENTRY_PLAIN);
+  Window_SetTilemapEntryFar(window, iconIndex + RANGE_ICON_TILE, x + 1, y,
+                            TILEMAP_ENTRY_PLAIN);
+  Window_SetTilemapEntryFar(window, tile, x + 2, y, TILEMAP_ENTRY_PLAIN);
 }
 
 /// Updates the Psynergy page for the row under the cursor: the Psynergy's
@@ -1323,6 +1324,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
                           PSYNERGY_ABILITY_MASK);
 #if LANGUAGE != LANGUAGE_JAPANESE
     Window_ClearInteriorTilesFar(window, 0, 96, 224, 104);
+    // row holds where it can be used meanwhile: 2 for the field, 1 for battle.
     row = 0;
     if (ability->fieldPsynergy != 0 ||
         (ability->flags & ABILITY_USABLE_IN_FIELD) != 0) {
@@ -1362,7 +1364,8 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
           Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                  row * 2 + LIST_FIRST_ROW, 0);
+                                  row * 2 + LIST_FIRST_ROW,
+                                  TILEMAP_ENTRY_PLAIN);
         Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
                                   HIGHLIGHT_PALETTE);
         Render_SetTilemapFlagRect(window, 25, row * 2 + LIST_FIRST_ROW, 3, 1,
@@ -1643,7 +1646,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
                                INVENTORY_ITEM_ID_MASK);
       if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27,
-                                  rowIndex * 2 + 1, 0);
+                                  rowIndex * 2 + 1, TILEMAP_ENTRY_PLAIN);
         Render_SetTilemapFlagRect(window, 14, rowIndex * 2 + 1, 13, 1,
                                   HIGHLIGHT_PALETTE);
       } else {

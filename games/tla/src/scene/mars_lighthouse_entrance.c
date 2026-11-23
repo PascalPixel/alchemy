@@ -703,8 +703,9 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
 /// Felix examines the Teleport Lapis chest, on the ledge above the north
 /// circle; besides the chest opening as usual, Retreat stops working, and
 /// casting it answers "Retreat... It doesn't work here."
-// XXX: when Retreat works again (on leaving the room, or on the next scene
-// start); a render that casts Retreat after leaving the ledge would settle it.
+/// Retreat works again once the party enters another scene: every ordinary
+/// arrival clears the flag (Scene_Arrive), but walking on within this scene
+/// does not.
 void MarsLighthouseEntrance_BlockRetreatAtChest(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
 }

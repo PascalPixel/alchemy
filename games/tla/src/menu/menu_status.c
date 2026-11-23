@@ -45,6 +45,8 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define DJINN_LIST_COLUMN_WIDTH 56
 #define DJINN_LIST_FIGURE_X(element) (32 + (element) * DJINN_LIST_COLUMN_WIDTH)
 #define DJINN_LIST_FIGURE_Y 56
+/// The rows of each element's column on a page of the Djinn list.
+#define DJINN_LIST_PAGE_ROWS 9
 /// The window map entry of the first element icon, in palette 1 as
 /// TILEMAP_ENTRY_ICON gives it; the four elements follow it in order.
 #define STATUS_ELEMENT_TILE (BG_TILE_PALETTE(1) | 1)
@@ -95,7 +97,6 @@ s32 StatusScreen_SelectMember(s32 slot);
 /// -1.
 s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = Ram_HeapSlots->menuWork;
-  // Default: result is set for real before it is read.
   s32 result = 0;
 
   do {
@@ -291,8 +292,9 @@ s32 StatusScreen_SelectMember(s32 slot) {
   return result;
 }
 
-/// Shows every Djinn the party has found, a column of seven for each element,
-/// until A, B or Select, then puts the screen back.
+/// The Djinn list Select opens from the party row: every Djinni the party has
+/// found, a column for each element, nine a page over two pages, The Lost Age's
+/// own first and The Broken Seal's after them, until A, B or Select.
 void DjinnMenu_ShowCurrentList(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 page;
@@ -330,9 +332,11 @@ void DjinnMenu_ShowCurrentList(void) {
       Window_DrawDividerLineFar(window, 0, 11, 28, 11);
       PagedList_DrawPageNumbers(window, pages, 1, page, 28);
       for (element = 0; element < 4; element++) {
-        for (row = 0; row <= 8; row++) {
+        for (row = 0; row < DJINN_LIST_PAGE_ROWS; row++) {
+          // page * 9: a page of DJINN_LIST_PAGE_ROWS.
           djinn =
-              element * DJINN_PER_ELEMENT + (row + (page * 8 + page) + 7) % 18;
+              element * DJINN_PER_ELEMENT +
+              (row + (page * 8 + page) + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST;
           if (GameFlag_Get(FLAG_DJINNI(djinn))) {
             Window_SetTilemapEntryFar(
                 window, STATUS_ELEMENT_TILE + element,
@@ -587,7 +591,10 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
                                  s32 originY);
 
-/// Its callers pass four values it does not read.
+/// Sets up the party row of the Status menu and the party member chooser: the
+/// top-left window with the hand cursor and the party's figures, no other
+/// window yet, and an 8 by 2 cursor grid. Its callers pass four values it does
+/// not read.
 void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
                              s32 unusedD) {
   struct StatusScreenWork *work = Ram_HeapSlots->menuWork;
@@ -603,19 +610,11 @@ void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
   work->rowCount = 2;
 }
 
-/// The character menu work block, as this function reads it.
-typedef struct {
-  u8 padding[15];
-  u8 field0f;
-} Object0f;
+void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode);
 
-void StatusScreen_DrawStatusAilments(s32, s32,
-                                     s32); ///< draws the status ailments
-
-/// Creates the status window and its side object the first time, spawns the
-/// icon entries in mode 3, then draws the status ailments (with 0x100 when the
-/// window was just made). The work block holds the window at 0x28, the object
-/// at 0x170 and the mode at 0x21c. frame is not used.
+/// Shows party member resource's status in the party row's status window,
+/// opening it the first time with the party member's portrait (and, for the
+/// party member chooser, the Psynergy icons). frame is not used.
 void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
@@ -633,8 +632,8 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   if (created != 0) {
     object = Portrait_CreateFar(resource, 0, 0, handle, 0, 0);
     state->statusCursor = object;
-    if ((((Object0f *)object)->field0f = OAM_DEPTH_WINDOW, state->page) ==
-        STATUS_SCREEN_PAGE_CHOOSER) {
+    if ((((struct WindowSprite *)object)->depth = OAM_DEPTH_WINDOW,
+         state->page) == STATUS_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries(state, handle);
     }
     StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_NO_CLEAR);
@@ -658,7 +657,10 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
                                       const u8 *entries);
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full);
 
-/// The party member's status page.
+/// The Status menu's status page: Up and Down choose one of the party member's
+/// statuses, whose advice the help window gives, Right the other column, its
+/// entries explained in turn; L and R change party member. Returns 1 for A, -1
+/// for B.
 s32 StatusScreen_SelectCommand(void) {
   struct StatusScreenWork *menu;
   s32 pane;
@@ -715,6 +717,7 @@ s32 StatusScreen_SelectCommand(void) {
         if (pane == 0) {
           selected = (selected + limit) % limit;
           if (hasAilments == 0) {
+            // "A:Psynergy" and "L-R:Switch characters"
             Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 1, window, 0,
                                        -24);
             Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window,
@@ -820,7 +823,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     x = 0;
     width = 5;
     count = 0;
-    for (index = 0; index <= 4; index++) {
+    for (index = 0; index < CHARACTER_AILMENT_COUNT; index++) {
       if (entries[index] != 0) {
         if (selected == count) {
           width = gStatusScreen_CursorWidths[index];
@@ -852,7 +855,7 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
   s32 labelCount = 0;
   s32 labelIndex;
 
-  for (labelIndex = 0; labelIndex <= 4; labelIndex++) {
+  for (labelIndex = 0; labelIndex < CHARACTER_AILMENT_COUNT; labelIndex++) {
     if (entries[labelIndex] != 0) {
       if (selected == labelCount) {
         s32 messageId = MsgStatusAdvice + labelIndex * 2;
@@ -884,23 +887,38 @@ void Message_CopyExpandedFar(s32 messageId, void *buffer, s32 length);
 /// all at once.
 void Text_DrawWideStringAtOffsetFar(void *text, void *window, s32 x, s32 y);
 
-/// Writes the help text of status entry messageVariant into destination: the
-/// entries skip Djinn when the party has none (preserveVariant 0); the
-/// experience entry says how many points the next level needs, or, at level 99,
-/// gives the plain experience text. The text is copied into a heap buffer of
-/// STATUS_HELP_TEXT_MAX characters, freed before returning.
+/// The help lines of the status page's right-hand column, counted from
+/// MsgYourNameAndLevelExperience.
+enum StatusHelp {
+  STATUS_HELP_NAME_AND_LEVEL = 0, ///< "Your name and level. Experience..."
+  /// "Experience points. You need ... more to reach the next level."
+  STATUS_HELP_EXPERIENCE = 1,
+  STATUS_HELP_HP = 2,     ///< "Your current and max Hit Points..."
+  STATUS_HELP_PP = 3,     ///< "Your Psynergy Points..."
+  STATUS_HELP_DJINN = 4,  ///< "Your Djinn. This also shows which ones are set."
+  STATUS_HELP_LEVELS = 5, ///< "Elemental Levels indicate..."
+  STATUS_HELP_POWER = 6,  ///< "Power reflects the damage you..."
+  STATUS_HELP_RESIST = 7, ///< "Resist reflects your defensive..."
+  /// "These are your experience points.", at the highest level.
+  STATUS_HELP_EXPERIENCE_AT_MAX = 8
+};
+
+/// Writes help line help of the status page's right-hand column into window,
+/// skipping the Djinn line unless full says the party has Djinn. The
+/// experience line says how many points the next level needs, or at the
+/// highest level only what they are.
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
   struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
   u8 *buffer;
 
-  if (full == 0 && help > 3)
+  if (full == 0 && help > STATUS_HELP_PP)
     help++;
-  if (help == 1) {
+  if (help == STATUS_HELP_EXPERIENCE) {
     u8 *owner = &menu->selectedIds[0];
     struct Unit *state = Unit_Get(*owner);
 
     if (state->level == UNIT_LEVEL_MAX)
-      help = 8;
+      help = STATUS_HELP_EXPERIENCE_AT_MAX;
     else
       MessageArgument_PushFar(
           Unit_GetExperienceForLevelFar(*owner, state->level + 1) -
@@ -1033,7 +1051,7 @@ extern const u8 gMenu_PpString[];
 #define STAT_LABEL(stat)                                                       \
   ((s32)MsgExpLabel - (MSGNO(MsgExpLabel) - MSGNO(MsgStatLabel) - (stat)))
 
-/// Draws the top rows of party member memberId's status page into window: name,
+/// Draws the top rows of party member owner's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right.
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
@@ -1065,8 +1083,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  // "Attack", "Defense", "Agility" and "Luck", each counted back from
-  // MsgExpLabel as the ROM counts them.
+  // "Attack", "Defense", "Agility" and "Luck".
   Text_DrawMessageAsTilesFar(STAT_LABEL(0), window, 152, 0);
   Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
   Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
@@ -1095,7 +1112,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 
 /// Fills result with the item list of the party member in side index for the
 /// equipment pages: their unit, the menu's item count, and the page and row of
-/// the item chosen last for them, STATUS_EQUIP_PAGE_SIZE items to a page.
+/// the item chosen last for them, PAGE_ROWS items to a page.
 /// Returns 1.
 s32 PagedList_Build(struct PagedList *result, s32 index) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
@@ -1277,6 +1294,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     Text_DrawMessageAsTilesFar(CAN_BE_USED_MESSAGE, window, 0,
                                row * 8 + USABLE_TOP);
 #else
+    // row holds where it works for now: 2 in the field, 1 in battle.
     if (ability->fieldPsynergy != 0 ||
         (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       row = 2;
@@ -1383,6 +1401,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, PAGE_ICONS_X, PAGE_ICONS_Y);
   PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
+  // "PP"
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                              STATUS_PSYNERGY_PP_HEADING_X, 0);
 
@@ -1419,6 +1438,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   }
 
   if (menu->psynergyCount == 0) {
+    // "You have no Psynergy."
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseForR - 1, window, 96,
                                EMPTY_MESSAGE_Y);
   }
@@ -1477,6 +1497,7 @@ s32 PsynergyMenu_SelectAction(void) {
   listNeedsRedraw = 1;
   Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
+  // "A:Item" and "L-R:Switch characters"
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   Menu_BuildPatternTiles();
@@ -1484,7 +1505,7 @@ s32 PsynergyMenu_SelectAction(void) {
     if (refresh) {
       if (refresh == 2) {
         menu->psynergyCount = PsynergyMenu_CollectActions(
-            Unit_Get(menu->memberIds[0]), menu->psynergies, 0);
+            Unit_Get(menu->memberIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
         PagedList_Build(&state, 0);
         ItemMenu_HideAllIcons();
         PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
@@ -1699,7 +1720,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
 #define STAT_X 72
 #endif
 
-/// Draws one page of the member's items into window: five names a page, or
+/// Draws one page of the member's items into window: PAGE_ROWS names, or
 /// "no items", then the member's name, Attack and Defense.
 s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
@@ -1793,6 +1814,7 @@ s32 ItemMenu_SelectItem(void) {
   Window_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10,
                         WINDOW_FLAG_INSTANT);
   Menu_SpawnIconEntries(menu, menu->questionWindow);
+  // "A:Status" and "L-R:Switch characters"
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
@@ -1894,9 +1916,8 @@ void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
   }
 }
 
-/// Writes the name of each equipped item of the inventory into window, on the
-/// row of its equipment slot: item type 1 on the first row, 4 on the second,
-/// 3 on the third and 2 on the fourth.
+/// Writes the name of each equipped item of the inventory into window, below
+/// its slot's label: the weapon, the helm, the shield, then the armor.
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
   s32 i;
   s32 item;

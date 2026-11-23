@@ -2,14 +2,14 @@
 #define ALCHEMY_WORLD_MAP_H
 
 /// @file
-/// The world map screen's work and the destinations it marks.
+/// The map screen's work and the destinations it marks.
 
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "field/world_map_marker.h"
 
-/// gWorldMapWork, the world map screen's state while it is open: its
+/// gWorldMapWork, the map screen's state while it is open: its
 /// resources, the cursor and the marker sprites.
 struct WorldMapWork {
   u16 vramBlock;          ///< owns the marker tiles
@@ -25,7 +25,7 @@ struct WorldMapWork {
   s32 *cursor;                        ///< the cursor the picture scrolls to
   FIXED scrollX;                      ///< the picture's scroll, 16.16 pixels
   s32 scrollZ;
-  /// The box of the place name the World Picture shows, in pixels.
+  /// The box of the place name the map screen shows, in pixels.
   struct {
     s16 x;
     s16 y;
@@ -33,7 +33,7 @@ struct WorldMapWork {
     s16 height;
   } nameBox;
   s16 centered; ///< nonzero draws resource 35 at the origin
-                ///< (WorldMapPicture_Draw)
+                ///< (MapScreen_Draw)
   u16 mode;     ///< 0 to look, nonzero to choose a destination
   /// Where the nearest-place search looks from in place of the cursor, 16.16
   /// pixels, when nonzero; the field code only ever clears it.
@@ -63,7 +63,7 @@ enum WorldMapMarkerKind {
 /// zero flag.
 struct FlagEntry {
   u8 flag;
-  u8 value; ///< its markers: low nibble, high nibble on the World Picture
+  u8 value; ///< its markers: low nibble, high nibble on the map screen
   /// The actor the World Map places there (WorldMap_UpdatePlacedActors): its
   /// sprite, place in pixels and facing, and the flag it is shown by (-1
   /// always; bit 12 set: shown while the rest is set, else while clear).
@@ -75,7 +75,7 @@ struct FlagEntry {
   s16 shownFlag;
   ///@}
   /// The scene and entrance whose arrival marks it visited
-  /// (WorldMap_MarkPlaceVisited), and whose area name the World Picture shows
+  /// (WorldMap_MarkPlaceVisited), and whose area name the map screen shows
   /// for it; an entrance of -1 matches any.
   s16 visitScene;
   s16 visitEntrance;
@@ -87,37 +87,37 @@ STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 12);
 STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 16);
 STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
 
-/// gMainRoutineWork.worldPictureFlag under a label of its own,
-/// gWorldPictureChoice: the destination last chosen on the world map. Written
-/// through the member, WorldPicture_Show compiles otherwise.
+/// gMainRoutineWork.mapScreenFlag under a label of its own,
+/// gMapScreenChoice: the destination last chosen on the map screen. Written
+/// through the member, MapScreen_Show compiles otherwise.
 struct WorldMapChoice {
   s16 flag; ///< the chosen FlagEntry's flag; -1 when cancelled
 };
 
 extern struct WorldMapWork gWorldMapWork;
 /// The destination last chosen on the world map (struct WorldMapChoice).
-extern struct WorldMapChoice gWorldPictureChoice;
+extern struct WorldMapChoice gMapScreenChoice;
 const struct FlagEntry *FlagEntries_GetTable(void);
 
 /// The most places FlagEntries_GetTable lists.
-#define WORLD_PICTURE_PLACE_COUNT 128
+#define MAP_SCREEN_PLACE_COUNT 128
 /// The step trigger the actor of gWorldMap_PlacedActors' first place raises
 /// when touched; each next place's actor raises the next.
 #define STEP_TRIGGER_AREA_BASE 100
-/// BG1's world picture of 256 colours: 32 by 24 tiles from char block 1 on,
+/// BG1's map screen image, of 256 colours: 32 by 24 tiles from char block 1 on,
 /// which it scrolls through, wrapping, its map numbering them from the fifth
-/// row, where the still picture starts.
-#define WORLD_PICTURE_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
-#define WORLD_PICTURE_TILE_ROWS 24
-#define WORLD_PICTURE_MAP_START (4 * BG_SCREEN_WIDTH)
+/// row, where the still image starts.
+#define MAP_SCREEN_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+#define MAP_SCREEN_TILE_ROWS 24
+#define MAP_SCREEN_MAP_START (4 * BG_SCREEN_WIDTH)
 
 /// A World Map position, in whole pixels, as a point on the world map
 /// picture.
-#define WORLD_PICTURE_X(x) ((x) * 853 / 16384 - 269)
-#define WORLD_PICTURE_Y(z) ((z) * 640 / 16384 - 112)
+#define MAP_SCREEN_X(x) ((x) * 853 / 16384 - 269)
+#define MAP_SCREEN_Y(z) ((z) * 640 / 16384 - 112)
 
-/// The depth the world map picture's markers and cursor are drawn at.
-#define WORLD_PICTURE_MARKER_DEPTH 246
+/// The depth the map screen's markers and cursor are drawn at.
+#define MAP_SCREEN_MARKER_DEPTH 246
 u32 WorldMapPlace_GetMarker(const struct FlagEntry *place);
 
 #endif

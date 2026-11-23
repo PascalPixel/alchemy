@@ -438,8 +438,8 @@ s32 Party_ApplyPoisonDamage(void) {
 
 /// On the World Map, with no area graphics already pending: marks them
 /// pending, pauses the camera's actor and, when a screen transition is
-/// running, ends it at once and waits 2 frames; then shows the still picture
-/// (WorldMap_StartStillPictureFar).
+/// running, ends it at once and waits 2 frames; then shows the still image
+/// (WorldMap_StartStillImageFar).
 void WorldMap_Freeze(void) {
   struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
 
@@ -458,7 +458,7 @@ void WorldMap_Freeze(void) {
       state->step = 0;
       wait(2);
     }
-    WorldMap_StartStillPictureFar();
+    WorldMap_StartStillImageFar();
   }
 }
 

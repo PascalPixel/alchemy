@@ -7,8 +7,8 @@
 /// too.
 
 // world_map.h first: battle.h names struct WorldMapWork, and a struct declared
-// before its definition keeps a smaller alignment, which world_picture.c's
-// copies of it show.
+// before its definition keeps a smaller alignment, which
+// field_psynergy_map_screen.c's copies of it show.
 #include "field/world_map.h"
 #include "window/message_argument.h"
 #include "field/perspective.h"

@@ -38,16 +38,16 @@
 /// with one row of gWorldMap_GraphicsResources.
 #define WORLD_MAP_REGION_GROUP 10
 
-/// The still picture on BG1 (WorldMap_StartStillPicture): 32 by 20 of the
-/// world picture's tiles, from its fifth row on.
-#define STILL_PICTURE_TILES_ACROSS 32
-#define STILL_PICTURE_TILE_ROWS 20
-#define STILL_PICTURE_FIRST_TILE                                               \
-  (WORLD_PICTURE_FIRST_TILE + 4 * STILL_PICTURE_TILES_ACROSS)
-/// While the still picture shows, the perspective's window lies below the
+/// The still image on BG1 (WorldMap_StartStillImage): 32 by 20 of the
+/// map screen image's tiles, from its fifth row on.
+#define STILL_IMAGE_TILES_ACROSS 32
+#define STILL_IMAGE_TILE_ROWS 20
+#define STILL_IMAGE_FIRST_TILE                                                 \
+  (MAP_SCREEN_FIRST_TILE + 4 * STILL_IMAGE_TILES_ACROSS)
+/// While the still image shows, the perspective's window lies below the
 /// screen, so no line is drawn in perspective.
-#define STILL_PICTURE_WINDOW_TOP 200
-#define STILL_PICTURE_WINDOW_BOTTOM 255
+#define STILL_IMAGE_WINDOW_TOP 200
+#define STILL_IMAGE_WINDOW_BOTTOM 255
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
@@ -319,26 +319,26 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   // BG1's map (screen block 5) is filled with the window tiles' black tile,
-  // and screen block 6 numbers the picture's tiles in rows, two a word: the
-  // still picture's, then on round the picture.
+  // and screen block 6 numbers the map screen image's tiles in rows, two a
+  // word: the still image's, then on round the image.
   Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE_COMMAND_PANEL), BG_SCREEN_BLOCK(5),
              24 * BG_SCREEN_WIDTH * sizeof(u16));
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
-  tilePair = TILE_PAIR(STILL_PICTURE_FIRST_TILE);
-  for (row = 0; row < STILL_PICTURE_TILE_ROWS; row++) {
-    for (column = 0; column < STILL_PICTURE_TILES_ACROSS / 2; column++) {
+  tilePair = TILE_PAIR(STILL_IMAGE_FIRST_TILE);
+  for (row = 0; row < STILL_IMAGE_TILE_ROWS; row++) {
+    for (column = 0; column < STILL_IMAGE_TILES_ACROSS / 2; column++) {
       *screenTiles++ = tilePair;
       tilePair += TILE_PAIR_STEP;
     }
   }
-  tilePair = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
-  for (row = 0; row < WORLD_PICTURE_TILE_ROWS; row++) {
+  tilePair = TILE_PAIR(MAP_SCREEN_FIRST_TILE);
+  for (row = 0; row < MAP_SCREEN_TILE_ROWS; row++) {
     for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
       *screenTiles++ = tilePair;
       tilePair += TILE_PAIR_STEP;
     }
   }
-  tilePair = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
+  tilePair = TILE_PAIR(MAP_SCREEN_FIRST_TILE);
   for (row = 0; row < 4; row++) {
     for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
       *screenTiles++ = tilePair;
@@ -390,10 +390,10 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
   // DISPCNT_MODE_2 (the affine ground) for the rows of the whole screen;
-  // DISPCNT_MODE_0 for the still picture's, which lie below it.
+  // DISPCNT_MODE_0 for the still image's, which lie below it.
   mode = 0;
   windowTop = perspective->shownTop;
-  if (windowTop < STILL_PICTURE_WINDOW_TOP) {
+  if (windowTop < STILL_IMAGE_WINDOW_TOP) {
     u16 bottom = perspective->shownBottom;
 
     mode = (bottom != 0) << 1;
@@ -479,7 +479,7 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
 
 /// Each frame: follows the followed point with the screen shake, draws the rows
 /// and columns that came into view, and recomputes the projection and the
-/// ground plane for the current pitch and yaw; while the still picture shows,
+/// ground plane for the current pitch and yaw; while the still image shows,
 /// only BG1 shakes.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -549,7 +549,7 @@ void WorldMap_UpdateView(void) {
   cameraPosition[0] = perspective->viewX;
   cameraPosition[1] = 0;
   cameraPosition[2] = perspective->viewY;
-  if (perspective->stillPictureShown != 0) {
+  if (perspective->stillImageShown != 0) {
     gBgScroll[1].x = shakeOffsetX / FIXED_ONE;
     gBgScroll[1].y = shakeOffsetY / FIXED_ONE;
     return;

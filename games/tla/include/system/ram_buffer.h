@@ -33,25 +33,25 @@
 /// where the symbol would combine the two loads.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
-/// The world map screen's scroll (x, then y, 16.16 pixels).
-/// WorldMapPicture_UpdateScroll reads it at constant addresses: the y word
+/// The map screen's scroll (x, then y, 16.16 pixels).
+/// MapScreen_UpdateScroll reads it at constant addresses: the y word
 /// loads from its own literal, or as the x word's address plus 4 where that is
 /// live, which only constants give.
 #define Ram_WorldMapScroll                                                     \
-  FIXED_ADDRESS((s32 *), 0x0202a630, gWorldPicture_ScrollX)
+  FIXED_ADDRESS((s32 *), 0x0202a630, gMapScreen_ScrollX)
 
-/// The world map screen's work. Its setup (WorldPicture_Initialize) reaches it
+/// The map screen's work. Its setup (MapScreen_Initialize) reaches it
 /// at a constant address: the work's fields are read again after stores to the
 /// screen values whose addresses it passes out, which only a constant gives.
 #define Ram_WorldMapWork                                                       \
   FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
-/// Where WorldMapPicture_UpdateScroll reads the cursor from (x, then y, 16.16
+/// Where MapScreen_UpdateScroll reads the cursor from (x, then y, 16.16
 /// pixels): the setup points it at the work's cursor.
 #define Ram_WorldMapCursor                                                     \
-  FIXED_ADDRESS((s32 **), 0x0202a62c, gWorldPicture_Cursor)
+  FIXED_ADDRESS((s32 **), 0x0202a62c, gMapScreen_Cursor)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \
-  FIXED_ADDRESS((s32 *), 0x0202a64c, gWorldPicture_CursorStartX)
+  FIXED_ADDRESS((s32 *), 0x0202a64c, gMapScreen_CursorStartX)
 
 /// The map's shape grid, a byte a cell, which MapGrid_LoadMap decodes from
 /// the map header's shapes and the field's actor cells read.

@@ -103,7 +103,7 @@ struct ActionDescriptor {
   u8 flags;
 };
 
-s32 WorldPicture_Show(s32 mode);
+s32 MapScreen_Show(s32 mode);
 void WorldMap_ZoomOutWhileLHeld(void);
 void BattleBackground_SelectForEnvironment(s32 terrain);
 s32 GameFlag_IsConditionActive(s32 condition);

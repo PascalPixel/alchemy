@@ -172,11 +172,11 @@ enum ActorCreateKind {
 /// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
 #define ACTOR_CREATE_KIND(kind) ((kind) << 12)
 
-/// The world map's still picture (story.s): its tiles, packed (tagged LZ).
+/// The world map's still image (story.s): its tiles, packed (tagged LZ).
 extern u8 gWorldMapPackedTiles[];
-/// The still picture's tile map, packed (tagged LZ), decoded after its tiles.
+/// The still image's tile map, packed (tagged LZ), decoded after its tiles.
 extern u8 gWorldMapPackedPictures[];
-/// The still picture's palettes, one for each of its modes.
+/// The still image's palettes, one for each of its modes.
 extern u8 gWorldMapPalettes[];
 
 struct Window;

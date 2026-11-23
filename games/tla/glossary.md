@@ -145,8 +145,8 @@ Evidence: plain English; the project's own word.
 Each game was released in Japanese, English, German, Spanish, French and
 Italian, and each release is an edition (`tla-ja` to `tla-it`). The five
 other than the Japanese are the international editions. They differ in more
-than their text: when the cursor on the world picture reaches a new marker,
-the Japanese edition draws its name at once, and the others six
+than their text: when the cursor on the [map screen](#map-screen) reaches a
+new marker, the Japanese edition draws its name at once, and the others six
 [frames](#frame) later.
 
 Evidence: plain English; the project's own word.
@@ -746,22 +746,35 @@ A map is the ground a [scene](#scene) is drawn on: a grid of
 
 Evidence: Camelot: the credits' "Maps".
 
-### Still picture
+### Still image
 
-On the World Map the land tilts away from the party. The tilt is drawn in a
-special way that leaves no [background layer](#background-layer) for
-[windows](#window) to appear on.
-
-So when a menu or a conversation opens there, the game stops. It draws the
-tilted view once, as a picture that stands still, on an ordinary layer.
-That frees a layer for the windows, and the still picture is what the
-player sees behind them
+A still image is a whole screen drawn once and then shown standing still.
+The game shows one on the World Map whenever a menu or a conversation opens
+there. The land's tilt is drawn in a way that leaves no
+[background layer](#background-layer) for [windows](#window) to appear on,
+so the game stops, draws the tilted view once onto an ordinary layer, and
+shows that still image behind the windows until they close
 ([Field code](src/field/README.md#the-world-map-in-perspective)).
 
-It is not the map of the whole world. That is the world picture
-([Field code](src/field/README.md#the-world-picture)).
+It is not the [map screen](#map-screen), the map of the whole world that R
+opens.
 
-Evidence: plain English for what the player sees, the view standing still.
+Evidence: plain English: an image that stands still.
+
+### Map screen
+
+The map screen is the map of the whole world that R opens on the World Map.
+It is drawn flat, with a marker on each town or dungeon the party has
+visited and a cursor that L and R step from one marker to the next, naming
+the place it rests on. Select shows the whole world at once, and A or B
+closes it. The World Map is a [scene](#scene), the land the party walks and
+sails on, drawn tilted away from it. The map screen is no scene: it is a
+chart of that land, shown without leaving the World Map, and nobody walks on
+it ([Field code](src/field/README.md#the-map-screen)).
+
+Evidence: the game: "This place doesn't seem to appear on the map..."
+(`MsgNotOnMap`), which it shows there; plain English: map screen, since a
+[map](#map) is a scene's ground.
 
 ### Rooms map
 
@@ -1141,7 +1154,7 @@ Evidence: Camelot: the settings label メッセージスピード ("Message" in 
 
 The screens are the Title, the File Screen, the Pause menu, the field menu
 with its Psynergy, Djinn, Item and Status screens, the settings menu, name
-entry and the world picture. The File Screen is where a
+entry and the [map screen](#map-screen). The File Screen is where a
 [file](#file-and-part) is chosen, copied or erased, and the Pause menu is
 what Start opens on the field ([Interface](interface.md)).
 

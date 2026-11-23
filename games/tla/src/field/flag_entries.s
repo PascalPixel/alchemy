@@ -4,7 +4,7 @@
 @ The World Map's places (struct FlagEntry), which FlagEntries_GetTable
 @ returns; a place number of 0 ends the list. Each row: the place number,
 @ whose flag is 0x180 + place; its markers (low nibble, and high nibble on
-@ the World Picture); the actor the World Map shows there, its sprite, place
+@ the map screen); the actor the World Map shows there, its sprite, place
 @ in pixels, facing in degrees and the flag it is shown by (-1 always; with
 @ 0x1000 shown while the flag is set, else while it is clear); the scene and
 @ entrance whose arrival marks the place visited (WorldMap_MarkPlaceVisited,

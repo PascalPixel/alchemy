@@ -1,5 +1,5 @@
 /// @file
-/// The World Map picture's cursor headings (WorldPicture_UpdateMarkers).
+/// The map screen's cursor headings (MapScreen_UpdateMarkers).
 
 #include "fixed_math.h"
 #include "types.h"

@@ -221,7 +221,7 @@ struct MainRoutineWork {
   u8 unusedAfterTransferredCoins[44]; ///< no code names it
   u16 forgeItem; ///< the item left at the forge (Forge_SetItem)
   /// Teleport's destination: SCENE_WORLD_MAP once a place is chosen on the
-  /// world picture (WorldPicture_Show), -1 after cancelling.
+  /// map screen (MapScreen_Show), -1 after cancelling.
   s16 teleportScene;
   /// The chosen place's flag, which the world map takes as its entrance; -1
   /// after cancelling.

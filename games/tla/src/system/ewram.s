@@ -23,8 +23,8 @@ gPartyDjinnRecovery:
 	.space 0x00000002
 	.space 0x0000000c
 	.space 0x00000048
-	.global gWorldPictureChoice
-gWorldPictureChoice:
+	.global gMapScreenChoice
+gMapScreenChoice:
 	.space 0x00000004
 	.space 0x0000001c
 	.global gCharacterUnits
@@ -492,47 +492,47 @@ gMapGridAnimTiles:
 gWorldMapWork:
 	.space 0x00000004
 	.space 0x0000061c
-	.global gWorldPicture_CursorMarker
-gWorldPicture_CursorMarker:
+	.global gMapScreen_CursorMarker
+gMapScreen_CursorMarker:
 	.space 0x0000000c
-	.global gWorldPicture_Cursor
-gWorldPicture_Cursor:
+	.global gMapScreen_Cursor
+gMapScreen_Cursor:
 	.space 0x00000004
-	.global gWorldPicture_ScrollX
-gWorldPicture_ScrollX:
+	.global gMapScreen_ScrollX
+gMapScreen_ScrollX:
 	.space 0x00000004
-	.global gWorldPicture_ScrollY
-gWorldPicture_ScrollY:
+	.global gMapScreen_ScrollY
+gMapScreen_ScrollY:
 	.space 0x00000004
-	.global gWorldPicture_NameBox
-gWorldPicture_NameBox:
+	.global gMapScreen_NameBox
+gMapScreen_NameBox:
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
-	.global gWorldPicture_Zoomed
-gWorldPicture_Zoomed:
+	.global gMapScreen_Zoomed
+gMapScreen_Zoomed:
 	.space 0x00000002
-	.global gWorldPicture_FirstListOnly
-gWorldPicture_FirstListOnly:
+	.global gMapScreen_FirstListOnly
+gMapScreen_FirstListOnly:
 	.space 0x00000002
-	.global gWorldPicture_GlideTargetX
-gWorldPicture_GlideTargetX:
+	.global gMapScreen_GlideTargetX
+gMapScreen_GlideTargetX:
 	.space 0x00000004
-	.global gWorldPicture_GlideTargetY
-gWorldPicture_GlideTargetY:
+	.global gMapScreen_GlideTargetY
+gMapScreen_GlideTargetY:
 	.space 0x00000004
-	.global gWorldPicture_CursorStartX
-gWorldPicture_CursorStartX:
+	.global gMapScreen_CursorStartX
+gMapScreen_CursorStartX:
 	.space 0x00000004
-	.global gWorldPicture_CursorStartY
-gWorldPicture_CursorStartY:
+	.global gMapScreen_CursorStartY
+gMapScreen_CursorStartY:
 	.space 0x00000004
-	.global gWorldPicture_NameRedrawPending
-gWorldPicture_NameRedrawPending:
+	.global gMapScreen_NameRedrawPending
+gMapScreen_NameRedrawPending:
 	.space 0x00000002
-	.global gWorldPicture_NameRedrawDelay
-gWorldPicture_NameRedrawDelay:
+	.global gMapScreen_NameRedrawDelay
+gMapScreen_NameRedrawDelay:
 	.space 0x000019aa
 	.global gMapGridShapes
 gMapGridShapes:

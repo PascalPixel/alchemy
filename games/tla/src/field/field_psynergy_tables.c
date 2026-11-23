@@ -57,7 +57,7 @@ const s32 gSummonTablet_SquashScript[] = {
 };
 
 /// The World Map markers' blend weight in sixteenths, against the picture's
-/// 16 less it ((gFrameCount >> 1) & 31, WorldPicture_UpdateMarkers): solid
+/// 16 less it ((gFrameCount >> 1) & 31, MapScreen_UpdateMarkers): solid
 /// for 32 frames, then down to half and back over the next 32; as The Broken
 /// Seal's.
 const u8 gWorldMap_MarkerBlendCycle[32] = {

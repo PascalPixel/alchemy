@@ -132,10 +132,10 @@
 /// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_WORLD_MAP_LEFT 0x11c ///< the current scene is not the World Map
-/// The leader stands in the corner of the World Map that the world map picture
-/// leaves out (WorldPicture_GetLeaderPoint): "This place doesn't seem to
+/// The leader stands in the corner of the World Map that the map screen
+/// leaves out (MapScreen_GetLeaderPoint): "This place doesn't seem to
 /// appear on the map..."
-#define FLAG_LEADER_OFF_MAP_PICTURE 0x11e
+#define FLAG_LEADER_OFF_MAP_SCREEN 0x11e
 /// The leader falls into the next scene from above, as after jumping down a
 /// ledge into it.
 #define FLAG_ARRIVE_FALLING 0x122

@@ -194,7 +194,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 }
 
 /// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM.
-void WorldMap_PresentStillPicture(void) {
+void WorldMap_PresentStillImage(void) {
   Io_Write16(BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
                  BGCNT_WRAP | BGCNT_SIZE(2),
              &REG_BG3CNT);
@@ -204,17 +204,17 @@ void WorldMap_PresentStillPicture(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
   Dma_Set(Ram_MapCellBuffer,
-          BG_CHAR_BLOCK(0) + STILL_PICTURE_FIRST_TILE * TILE_SIZE_8BPP,
-          DMA_COPY_WORDS(STILL_PICTURE_TILES_ACROSS * STILL_PICTURE_TILE_ROWS *
+          BG_CHAR_BLOCK(0) + STILL_IMAGE_FIRST_TILE * TILE_SIZE_8BPP,
+          DMA_COPY_WORDS(STILL_IMAGE_TILES_ACROSS * STILL_IMAGE_TILE_ROWS *
                          TILE_SIZE_8BPP / 4),
           REG_DMA3);
 }
 
-/// Freezes the world map's perspective view as a still picture on BG1: decodes
+/// Freezes the world map's perspective view as a still image on BG1: decodes
 /// the area's tiles again where a field Psynergy used their buffer, saves BG1's
 /// tiles, draws the current affine frame into pixels and hands the window and
 /// VBlank to it.
-void WorldMap_StartStillPicture(void) {
+void WorldMap_StartStillImage(void) {
   struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
@@ -234,10 +234,10 @@ void WorldMap_StartStillPicture(void) {
   wait(1);
   TileMap_DrawRowsFromRam(affineWork->pages[gFrameCount & 1],
                           Ram_MapCellBuffer);
-  perspective->windowTop = STILL_PICTURE_WINDOW_TOP;
-  perspective->windowBottom = STILL_PICTURE_WINDOW_BOTTOM;
-  gVBlankCallback = WorldMap_PresentStillPicture;
-  perspective->stillPictureShown = 1;
+  perspective->windowTop = STILL_IMAGE_WINDOW_TOP;
+  perspective->windowBottom = STILL_IMAGE_WINDOW_BOTTOM;
+  gVBlankCallback = WorldMap_PresentStillImage;
+  perspective->stillImageShown = 1;
 }
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
@@ -253,7 +253,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
           DMA_COPY_WORDS(4 * WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 }
 
-/// Reloads the world map area's palette and tiles after the still picture, puts
+/// Reloads the world map area's palette and tiles after the still image, puts
 /// the default cells back and returns to the perspective view.
 s32 WorldMap_LoadAreaGraphics(void) {
   struct WorldMapView *perspective;
@@ -279,7 +279,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   // The VBlank copies the tiles back and the next frame shows the ground;
-  // only then is the still picture's buffer refilled with the cells.
+  // only then is the still image's buffer refilled with the cells.
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
@@ -290,12 +290,12 @@ s32 WorldMap_LoadAreaGraphics(void) {
   perspective->animationActive = 0;
   Task_ResumeAll(TilesetAnim_Update);
   perspective->viewHeld = 0;
-  perspective->stillPictureShown = 0;
+  perspective->stillImageShown = 0;
   WorldMap_UpdateRegionTint(perspective->tintRegion, 0);
   wait(1);
 }
 
-/// Puts the default world map cells back after the still picture and returns to
+/// Puts the default world map cells back after the still image and returns to
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective =
@@ -445,14 +445,14 @@ void TilesetAnim_StartAll(const u16 *script) {
     Task_Add(TilesetAnim_Update, TASK_PASS_FRAME);
 }
 
-/// Suspends the tileset animations, unless the world map's still picture is
+/// Suspends the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapWork *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
-/// Resumes the tileset animations, unless the world map's still picture is
+/// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapWork *)Ram_HeapSlots->mapGrid)->animationActive == 0)

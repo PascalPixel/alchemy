@@ -15,7 +15,7 @@
 /// Marks the world map place the party has just entered as visited: sets
 /// FLAG_PLACE_VISITED of the first place whose visitScene is `id` and whose
 /// visitEntrance is `variant` (or any, for -1). The main routine calls it at
-/// every scene entry; WorldPicture_Show offers the marked places.
+/// every scene entry; MapScreen_Show offers the marked places.
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 
@@ -323,7 +323,7 @@ void Scene_SetRestartPoint(void) {
 
 /// Where the party comes out on the world map after reaching scene and
 /// entrance (Teleport's choice calls it). With FLAG_SHIP_CAN_SAIL set (the
-/// party has the ship, whose mooring the world map screen marks), finds the
+/// party has the ship, whose mooring the map screen marks), finds the
 /// first rule of gParty_PairResolveRules for scene and entrance (-1 on either
 /// side matches any entrance) and copies its position, x and z in 16.16 and the
 /// third value as is, to gMainRoutineWork.shipX, shipZ and shipFacing.

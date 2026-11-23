@@ -465,12 +465,11 @@ void MagmaRock_StartPushingPillar(void) {
   // columns 15 and 17 of rows 20 to 23, the upper pillar's cell (15, 22)
   // among them, and columns 14, 16 and 18 of rows 23 to 26, the lower
   // pillar's (16, 25) among them; the copies rewrite map.txt's (78, 21) to
-  // (81, 26).
-  // XXX: what they stop while no pillar moves. The leader stands on layer 0
-  // whichever way he enters (entrances 2 and 4), and a walk staged at cells
-  // (15, 20) and (16, 20) put him on a wall where he could not move; walking
-  // the leader down the slide past the pillars, from the top, before and
-  // after a push would settle it.
+  // (81, 26). While no pillar moves, those of columns 15 and 17 stop a climb
+  // down those columns from the ledge on row 27, as Field_ClimbDown tests the
+  // wall's face below him: standing on cell (15, 27) Felix holds Down and
+  // stays at the ledge's edge, while from cell (16, 27) he climbs down the
+  // pegs to the cave mouth above the four cracked pillars.
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1037,19 +1036,19 @@ void MagmaRock_IgniteStatue(void) {
 
 /// Burst goes off at a cracked pillar: rocks fly up round it while the
 /// explosions shake the ground, the pillar crumbles to a stump, and the last
-/// blast takes it away. Rocks are thrown one a frame during the shaking
+/// blast takes it away. Felix's own Burst at a cracked pillar runs it through
+/// the pillar's rows; a statue that spits fire runs it as its fireball
+/// explodes on the cracked pillar in its way. On the cliff's high west level,
+/// Felix's Burst at the statue on cell (16, 34) has it flash white and spit a
+/// fireball east, and the fireball's blast breaks the cracked pillar on cell
+/// (22, 34) this way. The statue's rows that run it come after the
+/// MagmaRock_TargetStatue rows, which take Felix's own Burst and are passed
+/// over while the fireball's blast plays (FLAG_FIRE_BURST_PLAYING); they set
+/// no flag for the pillar. Rocks are thrown one a frame during the shaking
 /// (BURST_STAGE_SMALL_BLAST) and eight at the last blast
 /// (BURST_STAGE_GREAT_BLAST), which moves the target out of the scene; the
 /// stump is the pillar's animation from PILLAR_CRUMBLE_FRAME.
 void MagmaRock_BurstStatue(s32 stage, s32 frame) {
-  // XXX: what the rows that run this on a statue that spits fire show. They
-  // come after the MagmaRock_TargetStatue rows, which take Felix's own Burst,
-  // so they answer as a fireball explodes (FLAG_FIRE_BURST_PLAYING). Burst
-  // staged on the low east level's statues from cells (53, 40) and (49, 39)
-  // ran past four minutes in the recorder; cast on the slide's west statue of
-  // the pair from cell (13, 31) facing west (--limit 50), the blasts go off at
-  // the statue but it neither blinks nor fires, so no fireball lands. A render
-  // of a fireball landing on such a statue would settle it.
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (frame == 0)
@@ -1300,8 +1299,9 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
 
 /// Burst breaks the north-west one of the four cracked pillars in front of the
 /// slide's cave mouth (cell (15, 31)), or the cracked pillar on the cliff's
-/// high west level (cell (22, 34)) as its statue's fireball lands on it.
-/// Either sets `FLAG_CRACKED_PILLAR_A_BURST`.
+/// high west level (cell (22, 34)). Either sets `FLAG_CRACKED_PILLAR_A_BURST`.
+/// The high west statue's fireball breaks that pillar through the statue's own
+/// rows instead (MagmaRock_BurstStatue), not this.
 DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarA,
                                ACTOR_CRACKED_PILLAR_A,
                                ACTOR_HIGH_WEST_CRACKED_PILLAR_A,

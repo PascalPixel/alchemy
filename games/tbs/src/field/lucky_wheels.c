@@ -76,40 +76,7 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
-/// Writes count RGB555 colours from src to dst scaled by scale (16.16,
-/// FIXED_ONE keeps them). Returns 0.
-s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
-  s32 remaining;
-  u32 color;
-  u32 red;
-  u32 green;
-  u32 blue;
-
-  if (count > 0) {
-    u32 redMask = RGB(31, 0, 0);
-    u32 greenMask = RGB(0, 31, 0);
-    u32 blueMask = RGB(0, 0, 31);
-
-    // Each channel is scaled where it stands, and keeps the top 16 bits.
-    remaining = count;
-    do {
-      color = *src;
-      red = color & redMask;
-      green = color & greenMask;
-      blue = blueMask & color;
-      red *= scale;
-      green *= scale;
-      blue *= scale;
-      color = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
-      color |= FIXEDtoINT(blue) & blueMask;
-      *dst = color;
-      src++;
-      dst++;
-      remaining--;
-    } while (remaining != 0);
-  }
-  return 0;
-}
+#include "palette_scale.c"
 
 /// A VBlank-pass task: on a VBlank after the canvas is ready (transferPending),
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
@@ -1401,8 +1368,8 @@ void LuckyWheels_Run(void) {
             REG_DMA3);
     Dma_Set((void *)OBJ_PLTT, shade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
             REG_DMA3);
-    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
-    LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
+    Palette_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
+    Palette_ScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
@@ -1427,12 +1394,12 @@ void LuckyWheels_Run(void) {
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= LUCKY_WHEELS_FADE_FRAMES) {
-        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
-                                frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                                BG_PLTT_COLORS);
-        LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT,
-                                frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                                BG_PLTT_COLORS);
+        Palette_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
+                            frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                            BG_PLTT_COLORS);
+        Palette_ScaleRgb555(bgShade, (u16 *)BG_PLTT,
+                            frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                            BG_PLTT_COLORS);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
         s32 phase =
@@ -1550,14 +1517,14 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != LUCKY_WHEELS_FADE_FRAMES + 1; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
-                              FIXED_ONE -
-                                  j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                              BG_PLTT_COLORS);
-      LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT,
-                              FIXED_ONE -
-                                  j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
-                              BG_PLTT_COLORS);
+      Palette_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
+                          FIXED_ONE -
+                              j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                          BG_PLTT_COLORS);
+      Palette_ScaleRgb555(bgShade, (u16 *)BG_PLTT,
+                          FIXED_ONE -
+                              j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                          BG_PLTT_COLORS);
       wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);

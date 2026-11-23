@@ -746,7 +746,7 @@ static void Lunpa_EnterFortress(void) {
   Event_End();
 }
 
-static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
+static void UNUSED Lunpa_TryJumpForward(void) { Field_TryJumpForward(); }
 
 /// Unused: plays the treasure jingle while Reveal is shining. Nothing calls
 /// it.
@@ -889,6 +889,8 @@ static void Lunpa_GuardsCatchParty(void) {
   Task_AddFrame(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
 }
 
+/// Puts back the three cells (7, 11) to (9, 11) that Cloak and the guards at
+/// the door rewrite, from the cell at (7, 12).
 static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
 /// As Cloak fades at the Lunpa Fortress Gates, a party still in the yard

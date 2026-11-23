@@ -864,6 +864,8 @@ static s16 sCurtainVramSlot;
   (*word++ = 0, *word++ = (attributes), *word++ = (tile))
 #endif
 
+/// Task, each frame from Curtain_Start: closes the curtains a pixel more, until
+/// they rest.
 static void Curtain_Close(void) {
 #ifdef UBFIX
   struct MenuSprite *part;

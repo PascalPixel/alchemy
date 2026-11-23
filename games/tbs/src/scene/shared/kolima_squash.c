@@ -1,8 +1,8 @@
 /// @file
-/// Kolima and Kolima Forest: Tret's glamour presses the party flat as the
-/// curse falls, and lets them up again.
+/// Kolima and Kolima Forest: the party quivers under Tret's curse as it falls,
+/// and is set back to its own size as each collapses.
 
-/// Each party member squashes and wobbles until released.
+/// Each party member squashes and wobbles until another script takes over.
 s32 gKolima_PartySquashActions[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
@@ -19,6 +19,7 @@ s32 gKolima_PartySquashActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// Back to full size as the party member collapses.
 s32 gKolima_PartyRestoreScaleActions[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_SET(SW_SCALE_Y, FIXED_ONE),

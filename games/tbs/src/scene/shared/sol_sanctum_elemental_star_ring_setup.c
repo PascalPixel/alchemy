@@ -1,10 +1,19 @@
-#include "system/dma.h"
-
+/// @file
 /// Sol Sanctum's Elemental Star room and its eruption: the ten lights that
 /// float in the room, actors in a row from the first the map passes, each
-/// pulsing and drifting on its own path from the tables gSolSanctum_Ring*, by
-/// its index.
+/// pulsing and drifting on its own path from the tables gSolSanctum_Ring*
+/// (sol_sanctum_elemental_star_ring_tables.c), by its index.
+
+#include "system/dma.h"
+
+/// The most lights the task keeps.
 enum { SOL_SANCTUM_RING_MAX = 10 };
+
+/// A light moves every this many frames.
+#define SOL_SANCTUM_LIGHT_STEP_FRAMES 3
+/// Shrunk to a tenth, a light is hidden for this many of its steps while it
+/// drifts on unseen, then shows again where it has drifted to.
+#define SOL_SANCTUM_LIGHT_HIDDEN_STEPS 24
 
 /// One floating light: its actor, its drift and its pulsing scale, and
 /// where it is while hidden.
@@ -13,13 +22,15 @@ struct SolSanctumRingEntry {
   FIXED x; ///< 16.16 fixed-point pixels
   FIXED y; ///< 16.16 fixed-point pixels
   FIXED z; ///< 16.16 fixed-point pixels
+  /// Its drift on each axis, which grows at random each step; the light
+  /// swings by the sine of it.
   s32 speedX;
   s32 speedY;
   s32 speedZ;
   FIXED scale;     ///< 16.16 fixed point, where FIXED_ONE is full size
   FIXED scaleStep; ///< 16.16 fixed point
-  u8 timer;
-  u8 hold;
+  u8 timer;        ///< frames to its next step
+  u8 hold;         ///< steps it has left hidden
 };
 
 /// The floating lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per
@@ -29,7 +40,9 @@ struct SolSanctumRingList {
   u16 count;
 };
 
-/// A task, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS.
+/// A task: every SOL_SANCTUM_LIGHT_STEP_FRAMES each light pulses between a
+/// tenth of its size and its largest scale and drifts, swinging about on a
+/// sine of its drift speed on each axis it drifts on.
 static void SolSanctum_UpdateRing(void) {
   struct SolSanctumRingList *list = HeapSlot_AllocEwram(
       HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(struct SolSanctumRingList));
@@ -68,7 +81,7 @@ static void SolSanctum_UpdateRing(void) {
       FIXED dx;
       FIXED dy;
 
-      timer = 3;
+      timer = SOL_SANCTUM_LIGHT_STEP_FRAMES;
       if (hold == 0) {
         scale += step;
         if (scale >= gSolSanctum_RingMaxScales[i]) {
@@ -76,7 +89,7 @@ static void SolSanctum_UpdateRing(void) {
         } else if (scale <= FIXED_ONE / 10) {
           step = gSolSanctum_RingScaleSteps[i];
           scale = FIXED_ONE / 10;
-          hold = 24;
+          hold = SOL_SANCTUM_LIGHT_HIDDEN_STEPS;
           x = actor->x.fixed;
           y = actor->y.fixed;
           z = actor->z.fixed;
@@ -157,8 +170,8 @@ static void SolSanctum_UpdateRing(void) {
   }
 }
 
-/// Starts the floating lights: count actors (at most 10) from first,
-/// each drawn translucent and starting at its largest scale.
+/// Starts the floating lights: count actors (at most SOL_SANCTUM_RING_MAX)
+/// from first, each drawn translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is set up through its effect view (union ActorOrEffect); the
   // task reads it as an actor.
@@ -189,7 +202,7 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
       Actor_SetBlendMode(Actor_GetById(first), ACTOR_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctum_RingMaxScales[i];
       entry->scaleStep = -gSolSanctum_RingScaleSteps[i];
-      entry->timer = 3;
+      entry->timer = SOL_SANCTUM_LIGHT_STEP_FRAMES;
       i++;
       entry++;
       first++;

@@ -1,12 +1,15 @@
+/// @file
+/// Twenty-four scenes, and the main image's field Psynergy
+/// (event_commands_whirlwind.c, with EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn,
+/// which places a small effect moving at a velocity, its script one of
+/// gFieldEffect_DurationScripts and its options chosen by the EFFECT_USE_
+/// flags.
+
 #include "field/field_effect.h"
 #include "gamepak/far_call.h"
 
-// Twenty-four scenes, and the main image's field Psynergy
-// (event_commands_whirlwind.c, with EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn,
-// which places a small effect moving at a velocity, its script one of
-// gFieldEffect_DurationScripts and its options chosen by the EFFECT_USE_ flags.
-
-/// Integrates linear motion, scale changes and rotation once per effect frame.
+/// An effect's update routine: move by its velocity, and grow and spin at its
+/// rates.
 void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {
   struct FieldEffect *effect = (struct FieldEffect *)actor;
   effect->x += effect->velocity.x;
@@ -17,13 +20,10 @@ void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {
   effect->sprite->rotation += effect->spin;
 }
 
-// Compile the effect-spawning body once for the resident far-call version
-// and once for each overlay's direct-call version.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/// Starts with linear motion and the leader's draw order; options can override
-/// it.
+/// Sets the effect moving at its velocity, drawn at the leader's sprite
+/// priority, with no growth or spin until the options give them.
 static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
                                                 struct Sprite *sprite,
                                                 struct Actor *leader,
@@ -40,12 +40,13 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
 
 /// Defines `name`, which places a field effect at (x, y, z) moving at the
 /// velocity given, with its duration script, and applies the options that
-/// `flags` asks for; `create`, `set_mode` and `set_script` are the actor
-/// routines it reaches them through.
-#define EFFECT_SPAWN(name, create, set_mode, set_script)                       \
+/// `flags` asks for; `create`, `selectAnimation` and `startScript` are the
+/// actor routines it reaches them through, called directly in an overlay and
+/// through far calls in the main image.
+#define EFFECT_SPAWN(name, create, selectAnimation, startScript)               \
   void name(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,  \
             u32 flags, const struct EffectOptions *options) {                  \
-    struct Actor *party = Actor_Get(ACTOR_PARTY_LEADER);                       \
+    struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);                      \
     struct FieldEffect *effect;                                                \
     struct Sprite *sprite;                                                     \
     const s32 *script;                                                         \
@@ -58,13 +59,13 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       return;                                                                  \
                                                                                \
     sprite = effect->sprite;                                                   \
-    set_mode(effect, (flags + 1) & EFFECT_SCRIPT_MASK);                        \
-    set_script((void *)effect,                                                 \
-               gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);      \
+    selectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);                 \
+    startScript((void *)effect,                                                \
+                gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);     \
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
     effect->update = FieldEffect_UpdateMotionScaleAndSpin;                     \
-    FieldEffect_InitializeMotion(effect, sprite, party, velocityX, velocityY,  \
+    FieldEffect_InitializeMotion(effect, sprite, leader, velocityX, velocityY, \
                                  velocityZ);                                   \
                                                                                \
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == NULL)                  \
@@ -94,8 +95,8 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       }                                                                        \
     }                                                                          \
     if ((flags & EFFECT_USE_SCRIPT) != 0) {                                    \
-      set_mode(effect, 1);                                                     \
-      set_script((void *)effect, options->script);                             \
+      selectAnimation(effect, 1);                                              \
+      startScript((void *)effect, options->script);                            \
     }                                                                          \
     if ((flags & EFFECT_USE_ROTATION) != 0)                                    \
       sprite->rotation = options->rotation;                                    \
@@ -106,11 +107,9 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   }
 
 #ifdef EFFECT_SPAWN_RESIDENT
-/// The resident version uses far calls into the main image.
 EFFECT_SPAWN(FieldEffect_SpawnResident, Actor_CreateFar,
              Actor_SelectAnimationFar, Actor_StartScriptFar)
 #else
-/// Each overlay includes its own copy of this version.
 EFFECT_SPAWN(FieldEffect_Spawn, FieldActor_Create, Actor_SelectAnimation,
              Actor_StartScript)
 #endif

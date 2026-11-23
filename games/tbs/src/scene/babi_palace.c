@@ -30,7 +30,10 @@
 /// The code: the court (SceneId_BabiPalaceEntrance) and the palace's rooms on
 /// one map (SceneId_BabiPalace) share this overlay and one exit table, and each
 /// chooses one of three actor and trigger tables by FLAG_BABI_SAVED and
-/// FLAG_COLOSSO_OVER.
+/// FLAG_COLOSSO_OVER. The exits name the rooms by what each shows: the statue
+/// room is the entrance hall, the carpet room the crossroads, the meeting room
+/// the throne room, the oven room the room west of the soldiers' room, with its
+/// stove, and the round rooms the small eight-sided rooms up the stairs.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -227,6 +230,9 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_BEDS = 70,
   /// The well in the court, south-west of the palace door.
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90,
+  /// The barrel in the eight-sided room up the east stairs, cell (34, 61),
+  /// with a Lucky Medal in it.
+  CELL_BEHAVIOR_BABI_PALACE_LUCKY_MEDAL_BARREL = 100,
   /// The shelf at the north wall of the big bedroom, cells (24, 3) and (25, 3):
   /// "The armor looks heavy."
   CELL_BEHAVIOR_BABI_PALACE_ARMOR_SHELF = 200,
@@ -575,15 +581,15 @@ static void BabiPalace_OfferCloakBall(void) {
 static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiGetUp);
-  Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
-  Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = ACTOR_SPRITE_NONE;
+  Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = ACTOR_SPRITE_NONE;
   wait(1);
   REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   // "Isaac! Get up, Isaac!"
   Event_ShowMessage(-1, 0);
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
-  Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 1;
+  Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = ACTOR_SPRITE_ONE;
+  Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = ACTOR_SPRITE_ONE;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetPosition(ACTOR_GARET, 120, 104);
@@ -864,9 +870,8 @@ static void BabiPalace_RestInPalaceBeds(void) {
 /// While Babi is missing, walking north up the passage towards the red carpet,
 /// cell (32, 26) or (33, 26), Isaac stops short of the carpet as Iodem walks in
 /// from the west hall and two soldiers hurry up to him, back from Altmiller
-/// Cave: Babi has been gone since
-/// last night, and he has slipped into that cave before. Iodem then leaves for
-/// the colosseum in Babi's stead. It plays once.
+/// Cave: Babi has been gone since last night, and he has slipped into that cave
+/// before. Iodem then leaves for the colosseum in Babi's stead. It plays once.
 static void BabiPalace_HearSoldiersReport(void) {
   GameFlag_Set(FLAG_IODEM_HEARD_SOLDIERS);
   Event_Start();
@@ -1227,8 +1232,10 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Event_Wait(30);
+  // "Isaac..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
+  // "Huh?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(30);
@@ -1239,6 +1246,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_WalkByAndWait(ACTOR_MIA, 32, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Event_Wait(10);
+  // "You've awakened."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= toFIXED(3);
   Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= toFIXED(3);
@@ -1250,10 +1258,12 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Colosso? Duh! That ended long ago!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  // "You fell into a deep sleep... Don't you remember?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(-1, 0) == 0) {
     Event_Wait(10);
@@ -1262,6 +1272,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     Actor_Jump(ACTOR_GARET, 4, 13);
     Actor_Jump(ACTOR_GARET, 4, 30);
+    // "Oh, gimme a break. You were out cold! You don't remember a..."
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
@@ -1272,6 +1283,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_Jump(ACTOR_GARET, 4, 13);
     Actor_Jump(ACTOR_GARET, 4, 30);
     gFieldWork->message++;
+    // "Of course he doesn't! He was out cold! ...You had us worried!"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -1288,6 +1300,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "I'm sorry for shouting at you."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
@@ -1298,16 +1311,19 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
+  // "You fought brilliantly to the end, Isaac. Babi was singing..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
+  // "Are you okay now? In body and mind?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(-1, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_NOD);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+    // "He'd better be all right, after sleeping this long. Sheesh!"
     Event_ShowMessage(ACTOR_GARET, 0);
     pick = 0;
     gFieldWork->message++;
@@ -1318,6 +1334,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     gFieldWork->message++;
     pick = 1;
+    // "If you feel out of sorts, it's probably because you slept..."
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -1334,6 +1351,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "I'm sorry for shouting again."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
@@ -1344,15 +1362,18 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
+  // "Babi said he wanted to see you when you came to, Isaac."
   Event_ShowMessage(ACTOR_MIA, 0);
   if (pick == 0) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
+    // "If you're okay, shall we go see Babi?"
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(30);
+    // "You're fine! Aren't you, Isaac?"
     Event_ShowMessage(ACTOR_GARET, 0);
     gFieldWork->message += 2;
   } else {
@@ -1360,10 +1381,12 @@ static void BabiPalace_WakeAfterFinals(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "I'm not sure Isaac's up to it just yet."
     Event_ShowMessage(ACTOR_IVAN, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
+    // "What is it? Feeling weak? Fresh air and a walk will fix..."
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
@@ -1371,6 +1394,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "I'm more worried about what Babi wants. Let's get going!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_IVAN, ACTOR_MIA, 40);
@@ -1392,10 +1416,12 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(20);
+  // "Are you sure you should be getting up so suddenly like that?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "He's fine. He doesn't want to lounge around all day!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
@@ -1403,6 +1429,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Event_Wait(30);
+  // "I see. Let's go see Babi then."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -3035,7 +3062,7 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_BABI_PALACE_LUCKY_MEDAL_BARREL, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TABLE_END },
 };
 
@@ -3101,7 +3128,7 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_BABI_PALACE_LUCKY_MEDAL_BARREL, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TABLE_END },
 };
 
@@ -3176,7 +3203,7 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_BABI_PALACE_LUCKY_MEDAL_BARREL, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TABLE_END },
 };
 

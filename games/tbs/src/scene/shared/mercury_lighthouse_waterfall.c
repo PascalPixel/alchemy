@@ -6,17 +6,17 @@
 /// vanishes, and after half a second the screen fades and the party takes that
 /// exit.
 static void MercuryLighthouse_WalkIntoWaterfall(s32 exit) {
-  struct Actor *v = Actor_GetById(ACTOR_PARTY_LEADER);
+  struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
-  v->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
-  v->speedLimit = toFIXED(1) / 5;
+  leader->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
+  leader->speedLimit = toFIXED(1) / 5;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_ConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_PARTY_LEADER), 0);
-  v->update = 0;
+  leader->update = NULL;
   Event_Wait(30);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

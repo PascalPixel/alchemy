@@ -4,9 +4,9 @@
 
 #include "field_effect_vertical.c"
 
-/// Spawns a pair of rings of light on the actor, one rising and one falling
-/// (field_effect_vertical.c), sharing the field effect's cached tiles, with
-/// the sound the includer names as PSYNERGY_RINGS_SOUND.
+/// Sets off a golden ring around the actor, its two halves
+/// (field_effect_vertical.c) drawn from the Psynergy's cached tiles, with the
+/// sound the includer names as PSYNERGY_RINGS_SOUND.
 static void Scene_SpawnPsynergyRings(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;

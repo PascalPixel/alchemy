@@ -298,7 +298,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// next picture of it from a spare part of the map.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Event_Start();
-  // The door opens over three frames.
+  // The door opens in three steps.
   Sound_Play(SE_BOOM);
   MapGrid_CopyCellsTo(16, 28, 21, 3, 3, 2);
   wait(10);
@@ -329,8 +329,10 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   Event_Start();
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
+    // "It's the minotaur relief, with both eyes sparkling brightly."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else {
+    // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
       gFieldWork->fieldMenu = 1;
@@ -379,6 +381,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       MapGrid_CenterOnFollowedPoint();
       Event_Wait(40);
       message = MsgSolSanctumSetSmallGem;
+      // "Isaac set the small gem into the empty socket."
       FieldMessage_Show(message, 1);
       Event_Wait(20);
       Sound_Play(SE_STONE_RUMBLE);
@@ -387,6 +390,7 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
       MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
       MapGrid_CenterOnFollowedPoint();
       SolSanctumEntrance_ReactToOpeningPassage();
+      // "You hear the sound of shifting stone."
       FieldMessage_Show(message + 1, 1);
       GameFlag_Set(FLAG_ITEM_USED_UP);
       GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
@@ -404,12 +408,15 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   Event_Start();
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
+    // "It's the minotaur relief, with both eyes sparkling brightly."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
     work = gFieldWork;
+    // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     work->fieldMenu = 1;
   } else {
+    // "It's a relief of a minotaur..."
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
   }
 
@@ -436,6 +443,7 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
     MapGrid_CenterOnFollowedPoint();
     Event_Wait(40);
     message = MsgSolSanctumSetSmallGem;
+    // "Isaac set the small gem into the empty socket."
     FieldMessage_Show(message, 1);
     Event_Wait(20);
     Sound_Play(SE_STONE_RUMBLE);
@@ -443,6 +451,7 @@ static void SolSanctumEntrance_SetSecondSmallJewel(void) {
     MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
     MapGrid_CenterOnFollowedPoint();
     SolSanctumEntrance_ReactToOpeningPassage();
+    // "You hear the sound of shifting stone."
     FieldMessage_Show(message + 1, 1);
     GameFlag_Set(FLAG_ITEM_USED_UP);
     GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET);
@@ -812,8 +821,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// entrance hall, looks round and asks if this is their first time here; the
 /// answer gets "Take a good look at it" or "I doubt that...".
 static void SolSanctumEntrance_IntroduceSanctum(void) {
-  struct Actor *leader;
-
   Event_Start();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
@@ -848,8 +855,6 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_Jump(ACTOR_KRADEN, 4, 20);
-  // Kraden: "This is your first time here, right?" Yes: "Take a good look at
-  // it." No: "I doubt that..."
   Event_SetMessageId(MsgSolSanctumKradenFirstTimeAtSol);
   // "This is the entrance to Sol Sanctum. This is your first time..."
   // Yes: "It's an important relic of our past. Take a good look at it."
@@ -1140,7 +1145,6 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
-  // Kraden: "More statues... It doesn't look like we can reach them".
   Event_SetMessageId(MsgSolSanctumMoreStatuesOutOfReach);
   // "More statues... Hmm... It doesn't look like we can reach..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
@@ -1253,6 +1257,7 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
 /// Sol Entrance's setup gives this behaviour only then.
 static void SolSanctumEntrance_DoorTightlyLocked(void) {
   Event_Start();
+  // "The door is tightly locked."
   FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
   Event_End();
 }

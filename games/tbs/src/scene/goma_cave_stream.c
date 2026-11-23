@@ -26,10 +26,9 @@
 ///
 ///   Vale's VALE_PLAZA_TO_CHEST_CAVE leads in at
 ///   GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA, which shows no area name.
-///   Its only way out is the cell behavior 1 cell at its south tip, cell
-///   (38, 55) in goma_cave_stream's map.txt, two cells south of the arrival.
-///   That cell leads back to the plaza
-///   (GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA).
+///   Its only way out is the exit cell at its south tip, cell (38, 55) in
+///   goma_cave_stream's map.txt, two cells south of the arrival, which leads
+///   back to the plaza (GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA).
 ///
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
 ///   river. It has no actors and only its two exits. They lead back south
@@ -91,7 +90,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gGomaCaveStreamEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gGomaCaveStreamAndBridgeExits; }
 
@@ -102,8 +101,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gGomaCaveStreamActorPlacements;
 }
 
-/// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
-/// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED).
+/// Isaac casts Move on the stump by the stream: once it has been pushed onto
+/// column 24 it leaps into the water, and the cells where it comes to lie
+/// change.
 static void GomaCaveStream_MoveStump(void) {
   if (Actor_Get(ACTOR_STUMP)->x.fixed / toFIXED(16) == 24) {
     GomaCaveStream_LeapStump(ACTOR_STUMP);
@@ -144,8 +144,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The leaping stump's update routine turns its sprite a fixed amount per
-/// frame.
+/// Spins the leaping stump a thirty-second of a turn each frame.
 static void GomaCaveStream_SpinStump(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
 

@@ -12,7 +12,8 @@
 /// following half a turn of sine.
 #define SPARK_RISE_FRAMES 32
 
-/// Raises the spark while its scale follows a half-sine pulse.
+/// An actor script call for a charging spark: it rises with the leader,
+/// swelling and shrinking, and is released after SPARK_RISE_FRAMES.
 static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
   struct Actor *anchor = effect->watchedActor;
   s16 step = ++effect->timer;
@@ -31,7 +32,8 @@ static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
   return 1;
 }
 
-/// Grows the moving light over the first sixteen script frames.
+/// An actor script call for the light that flies ahead to a hop's landing
+/// cell: it grows to three quarters of its size over 16 frames.
 static s32 MercuryLighthouse_GrowLight(struct Actor *actor) {
   s16 frame;
 
@@ -44,7 +46,8 @@ static s32 MercuryLighthouse_GrowLight(struct Actor *actor) {
   return 1;
 }
 
-/// Expands the released light before its script removes it.
+/// An actor script call for a light that goes out: it swells to half as large
+/// again over 16 frames before its script releases it.
 static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
   s16 frame;
 
@@ -57,8 +60,9 @@ static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
   return 1;
 }
 
-/// Follows the watched actor and alternates the light's animation
-/// parameter.
+/// An actor script call for the column of light: it glides after the leader,
+/// an eighth of the way each frame up to 2 pixels, and flickers white every
+/// two frames.
 static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   struct Actor *leader;
   FIXED targetZ;
@@ -103,48 +107,48 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
     actor->z.fixed += deltaZ;
   }
 
-  // Alternate the light's draw parameter every two frames and redraw it.
   {
     struct Sprite *sprite = actor->sprite;
     struct SpriteAnimation *entry = sprite->entries[0];
 
-    entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
+    entry->colorMode = ((gFrameCount >> 1) & 1) * SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
   }
   return 1;
 }
 
-/// Places the two spark animations on the selected actor.
+/// A pair of charging sparks rises around the leader, one in front and one
+/// behind, with SE_PSYNERGY_START.
 static void MercuryLighthouse_SpawnSparkPair(void) {
-  struct Actor *point;
+  struct Actor *leader;
   struct Actor *spark;
   struct Sprite *sprite;
 
-  point = gFieldWork->actors[gMainRoutineWork.leaderActorId];
-  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
-                            point->z.fixed);
+  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+                            leader->y.fixed, leader->z.fixed);
   if (spark != NULL) {
-    spark->groundHeight = point->groundHeight;
+    spark->groundHeight = leader->groundHeight;
     sprite = spark->sprite;
     Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = point;
+    spark->watchedActor = leader;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 2);
       sprite->flags = 0;
       sprite->image.priority = 1;
     }
   }
-  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, point->x.fixed, point->y.fixed,
-                            point->z.fixed);
+  spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
+                            leader->y.fixed, leader->z.fixed);
   if (spark != NULL) {
-    spark->groundHeight = point->groundHeight;
+    spark->groundHeight = leader->groundHeight;
     sprite = spark->sprite;
     Actor_StartScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedActor = point;
+    spark->watchedActor = leader;
     spark->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     if (sprite != NULL) {
       Sprite_StartAnimation(sprite, 1);
@@ -271,10 +275,10 @@ void MercuryLighthouse_HopAcrossPool(void) {
   pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   pos[1].fixed = actor->groundHeight;
   pos[2].fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  from = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) << 7) +
+  from = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
                         pos[0].fixed / toFIXED(16)];
   Vector_AddPolarOffset(toFIXED(32), angle, &pos[0].fixed);
-  to = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) << 7) +
+  to = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
                       pos[0].fixed / toFIXED(16)];
   if (from->behavior != state->poolBehavior &&
       to->behavior == state->poolBehavior && state->levels == 0)
@@ -365,15 +369,15 @@ void MercuryLighthouse_HopAcrossPool(void) {
 /// a blue ripple spreads from him every 10 to 39 frames.
 void MercuryLighthouse_RippleAroundLeader(void) {
   struct MercuryLighthouseLights *state;
-  struct Actor *point;
+  struct Actor *leader;
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  point = gFieldWork->actors[gMainRoutineWork.leaderActorId];
+  leader = gFieldWork->actors[gMainRoutineWork.leaderActorId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {
-    MercuryLighthouse_SpawnRipple(point);
+    MercuryLighthouse_SpawnRipple(leader);
     state->rippleTimer = (Random_Below(30)) + 10;
   }
 }

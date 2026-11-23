@@ -61,6 +61,18 @@ extern u32 gLogRoomsC_Exits[];
 extern struct ActorPlacement gLogRoomsC_ActorPlacements[];
 extern struct Trigger gLogRoomsC_Triggers[];
 
+/// The cells the jar, the barrel and the three bookcases answer.
+enum LogRoomsCCellBehavior {
+  CELL_BEHAVIOR_LOG_ROOMS_C_JAR = 100,
+  CELL_BEHAVIOR_LOG_ROOMS_C_BARREL = 101,
+  /// "The Holy Tree of Kolima Forest."
+  CELL_BEHAVIOR_LOG_ROOMS_C_HOLY_TREE_BOOKCASE = 200,
+  /// "Dictionary of Trees and Flowers."
+  CELL_BEHAVIOR_LOG_ROOMS_C_TREES_BOOKCASE = 201,
+  /// "The Art of Logging."
+  CELL_BEHAVIOR_LOG_ROOMS_C_LOGGING_BOOKCASE = 202
+};
+
 /// Kolima's shops and inn, as Shop_Run and Inn_CheckIn number them.
 enum {
   KOLIMA_WEAPON_SHOP = 13,
@@ -232,7 +244,7 @@ s32 Scene_Initialize(void) {
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
-  // The residents remain visible as trees, with their sprite flags cleared.
+  // While the curse lasts, the trees cast no shadow.
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     for (actorId = ACTOR_FIRST_VILLAGER; actorId <= ACTOR_LAST_VILLAGER;
          actorId++) {
@@ -272,7 +284,8 @@ s32 Scene_Initialize(void) {
 }
 
 struct SceneEntrance gLogRoomsC_Entrances[] = {
-    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP,
      CONDITION_ALWAYS, 128, 0, 192, FACING_EAST, 0, 16, 56, 256, 216, 0},
     {LOG_ROOMS_C_WEAPON_AND_ARMOR_SHOP_SECOND_FLOOR_FROM_WEAPON_AND_ARMOR_SHOP_THIRD_FLOOR,
@@ -438,11 +451,11 @@ struct Trigger gLogRoomsC_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_QUIET_VILLAGE, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsHowAmISupposedToCharge) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUMBERJACK_FROM_IMIL, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsTheVillagersWereRightINever) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT_GUEST, CONDITION_ALWAYS, MSGNO(MsgKolimaInteriorsIfOnlyIdLeftTownA) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_KOLIMA_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EXAMINE_TRIGGER(EXAMINE_BARREL), 101, FLAG_KOLIMA_COINS, FIND_COINS(7) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheHoly)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledDictionaryOf)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheArt)) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_LOG_ROOMS_C_JAR, FLAG_KOLIMA_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LOG_ROOMS_C_BARREL, FLAG_KOLIMA_COINS, FIND_COINS(7) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_C_HOLY_TREE_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheHoly)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_C_TREES_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledDictionaryOf)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_LOG_ROOMS_C_LOGGING_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKolimaInteriorsTheresABookEntitledTheArt)) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on

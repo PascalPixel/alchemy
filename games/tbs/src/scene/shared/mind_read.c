@@ -6,13 +6,13 @@ static void Scene_StartMindRead(s32 casterId, s32 targetId) {
   FieldPsynergy_LoadResources(ABILITY_MIND_READ, 1);
   FieldPsynergy_SetupActorPair(casterId, targetId);
   FieldPsynergy_StartCast();
-  FieldPsynergy_RunHandler(1);
+  FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
   wait(1);
 }
 
 /// Finishes Mind Read and releases its effect actors.
 static void Scene_EndMindRead(void) {
-  FieldPsynergy_RunHandler(2);
+  FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH);
   FieldPsynergy_StopCasterUpdate();
   FieldPsynergy_End();
 }

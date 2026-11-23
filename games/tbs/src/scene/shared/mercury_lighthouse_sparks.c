@@ -1,9 +1,9 @@
-
-// Mercury Lighthouse and its entrance: the trail of sparks the leader leaves
-// while passing between floors.
+/// @file
+/// Mercury Lighthouse and its entrance: the trail of sparks the leader leaves
+/// while passing between floors.
 
 /// The leader's update routine while passing: each frame a small spark rises
-/// from a point that sweeps across the leader's chest, in palette 7 or 5 by
+/// from a point that sweeps across the leader's chest, white and tinted by
 /// turns.
 static UNREAD_RESULT MercuryLighthouse_TrailSparks(struct Actor *actor) {
   struct EffectOptions options;

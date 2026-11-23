@@ -1,15 +1,16 @@
 /// @file
 /// Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the World
-/// Map and Venus Lighthouse's aerie: the pair of rising particles that
-/// WorldMap_CreateAttachedEffects attaches to a glowing actor, each an
-/// update routine that lives VERTICAL_EFFECT_FRAMES.
+/// Map and Venus Lighthouse's aerie: the golden ring that rises around someone
+/// using Psynergy, as the main image's event_commands_arcs.c draws it. The
+/// ring is two arcs of SPRITE_GOLDEN_RINGS, its back half under the caster and
+/// its front half, the same arc upside down, in front.
 
-/// How long each particle of the pair lives, in frames, growing and shrinking
-/// over half a sine wave.
+/// How long a ring lives, in frames, swelling and shrinking over half a sine
+/// wave.
 #define VERTICAL_EFFECT_FRAMES 32
 
-/// Rises beside the watched actor, expanding and shrinking over half a
-/// sine wave.
+/// The ring's back half: it rises a pixel a frame on the watched actor, up to
+/// 13 pixels south of it while small.
 static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
   struct Actor *anchor;
   s32 frame;
@@ -32,8 +33,7 @@ static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
   actor->z.fixed = anchor->z.fixed + (FIXED_ONE - amplitude) * 5 + toFIXED(8);
 }
 
-/// Mirrors the rising particle vertically and passes behind the watched
-/// actor.
+/// The ring's front half, the back half's arc upside down, rising with it.
 static void FieldEffect_AnimateVerticalNegative(struct Actor *actor) {
   struct Actor *anchor;
   s32 frame;

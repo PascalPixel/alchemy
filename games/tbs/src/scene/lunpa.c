@@ -88,7 +88,7 @@ extern struct Trigger gGateTriggers[];
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD), which no cell of the
 /// gates' map has. gGateExits has no row for it either: Scene_TakeExit,
 /// reaching the end of the gates' exits, would fall back to the event of
-/// their first exit at entrance 0, LunpaFortressGroundFloor's default
+/// their first exit at ENTRANCE_DEFAULT, LunpaFortressGroundFloor's default
 /// entrance.
 enum { GATE_EXIT_THIRD = 3 };
 
@@ -483,12 +483,13 @@ static void Lunpa_ReadEastGuardsThoughts(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) == 0) {
     thoughts = GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
     if (thoughts == 0) {
+      // "If outsiders cause any trouble in the village, Dodonpa will..."
       thoughts = MsgLunpaEastGuardFearsBlame;
     } else {
+      // "Even if they enter through the cave, they can't get into..."
       thoughts = MsgLunpaEastGuardTrustsCaveGate;
     }
     Event_SetMessageId(thoughts);
-    // "Even if they enter through the cave, they can't get into..."
     Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   } else {
     Event_SetMessageId(MsgLunpaEastGuardThinksMerchantHarmless);
@@ -603,7 +604,6 @@ static void Lunpa_TalkToRightGuard(void) {
 /// until the meeting with Bunza, he turns to Isaac sure he has seen that man
 /// with him before (later, that the man following them looks like that
 /// merchant), then dismisses the thought.
-
 static void Lunpa_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
@@ -1141,7 +1141,7 @@ s32 Scene_Initialize(void) {
   {(entrance), CONDITION_ALWAYS, (x), 0, (z), (facing), 0, 32, 48, 272, 344, 0}
 
 struct SceneEntrance gLunpaEntrances[] = {
-    LUNPA_ENTRANCE(0, 172, 149, FACING_SOUTH),
+    LUNPA_ENTRANCE(ENTRANCE_DEFAULT, 172, 149, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_WORLD_MAP, 224, 472, FACING_NORTH),
     LUNPA_ENTRANCE(LUNPA_FROM_LUNPA_FORTRESS_GATES, 232, 32, FACING_SOUTH),
     LUNPA_ENTRANCE(LUNPA_FROM_WEST_LUNPA_CAVE, 120, 104, FACING_SOUTH),
@@ -1158,7 +1158,7 @@ struct SceneEntrance gLunpaEntrances[] = {
 };
 
 struct SceneEntrance gGateEntrances[] = {
-    GATE_ENTRANCE(0, 152, 328, FACING_NORTH),
+    GATE_ENTRANCE(ENTRANCE_DEFAULT, 152, 328, FACING_NORTH),
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_GROUND_FLOOR, 160,
                   104, FACING_SOUTH),
     GATE_ENTRANCE(LUNPA_FORTRESS_GATES_FROM_LUNPA, 152, 328, FACING_NORTH),
@@ -1378,7 +1378,6 @@ struct Trigger gLunpaReopenedTriggers[] = {
 struct Trigger gGateTriggers[] = {
     { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_LUNPA_ROAD, CONDITION_ALWAYS, LUNPA_FORTRESS_GATES_TO_LUNPA },
     // Unused: no cell of the gates' map has the third road's behavior.
-
     { TRIGGER_EXIT, CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_THIRD_ROAD, CONDITION_ALWAYS, GATE_EXIT_THIRD },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Lunpa_CastCloak) },
     { PSYNERGY_ANYWHERE(ABILITY_CLOAK, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(Lunpa_CloakFades) },

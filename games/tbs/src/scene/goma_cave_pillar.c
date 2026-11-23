@@ -22,13 +22,13 @@
 /// (FLAG_GOMA_CAVE_STUMP_FELL), where it opens the way east, back up to Forge.
 /// A chest on the ledge east of the west pillar holds a Lucky Medal.
 ///
-/// The man beside Forge fought it and lost it: `Did you see something strange
-/// over there? I fought it, but it fled.` Talking to Forge makes him jump in
+/// The man beside Forge fought it and lost it: "Did you see something strange
+/// over there? I fought it, but it fled." Talking to Forge makes him jump in
 /// surprise, and the Djinni's battle begins. After a win he fidgets while
 /// Forge joins the party, then is amazed and walks away for good
 /// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
 /// the room is entered again (FLAG_DJINNI_HIDING(DJINNI_FORGE)), and the man
-/// says `Hmmm... It must be hiding somewhere again...`.
+/// says "Hmmm... It must be hiding somewhere again...".
 ///
 /// All three moved things are area temp flags, so the room is as it started
 /// again once the party leaves Goma Cave's four scenes.
@@ -133,8 +133,8 @@ static void GomaCavePillar_FightForge(void) {
 /// Moves a fragment of dust by its two rates each frame, in the plane its
 /// place names.
 static void GomaCavePillar_UpdateFragment(struct Actor *fragment) {
-  // The actor's speed and acceleration slots carry the two selected axis
-  // steps.
+  // GomaCavePillar_SpawnFragment keeps the two rates in speedLimit and
+  // acceleration, and the plane in userValue.
   s16 plane = (s16)fragment->userValue;
 
   switch (plane) {
@@ -255,60 +255,41 @@ static void GomaCavePillar_MoveWestPillar(void) {
   Event_End();
 }
 
-/// While the stump teeters, dust falls from it: one fragment every eighth
-/// frame, two on every sixteenth.
-static void GomaCavePillar_DropStumpFragments(void) {
-  s32 framePhase;
+/// Drops one fragment of dust from somewhere along the stump's width, falling
+/// at a random speed of up to four tenths of a pixel a frame.
+static inline void GomaCavePillar_DropStumpFragment(void) {
   FIXED fixedX;
   FIXED fixedZ;
   struct Actor *heightSource;
-  struct Actor *firstXSource;
-  s32 firstRandomX, firstStyle, firstSpeedBand, firstBandScaled,
-      firstFallingSpeed;
-  struct Actor *secondXSource;
-  s32 secondRandomX, secondStyle, secondSpeedBand, secondBandScaled,
-      secondFallingSpeed;
+  struct Actor *xSource;
+  s32 randomX, style, speedBand, bandScaled, fallingSpeed;
 
-  framePhase = gFrameCount & 7;
-  if (framePhase == 0) {
-    firstXSource = Actor_Get(ACTOR_STUMP);
-    firstRandomX = Random_Next();
-    fixedX = firstXSource->x.fixed;
-    fixedX += INTtoFIXED((u32)firstRandomX * 12 >> 16);
-    heightSource = Actor_GetById(ACTOR_STUMP);
-    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
-    fixedZ += toFIXED(6);
-    firstSpeedBand = Random_Below(5);
-    // These shifts produce speedBand * 6553: a tenth-pixel falling step.
-    firstBandScaled =
-        (((firstSpeedBand << 1) + firstSpeedBand) << 2) + firstSpeedBand;
-    firstFallingSpeed = (firstBandScaled << 6) - firstBandScaled;
-    firstFallingSpeed <<= 3;
-    firstFallingSpeed += firstSpeedBand;
-    firstStyle = Random_Below(2);
-    firstFallingSpeed = -firstFallingSpeed;
-    GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
-                                 firstFallingSpeed, firstStyle, framePhase);
-    framePhase = gFrameCount & 15;
-    if (framePhase == 0) {
-      secondXSource = Actor_Get(ACTOR_STUMP);
-      secondRandomX = Random_Next();
-      fixedX = secondXSource->x.fixed;
-      fixedX += INTtoFIXED((u32)secondRandomX * 12 >> 16);
-      heightSource = Actor_GetById(ACTOR_STUMP);
-      fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
-      fixedZ += toFIXED(6);
-      secondSpeedBand = Random_Below(5);
-      secondBandScaled =
-          (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
-      secondFallingSpeed = (secondBandScaled << 6) - secondBandScaled;
-      secondFallingSpeed <<= 3;
-      secondFallingSpeed += secondSpeedBand;
-      secondStyle = Random_Below(2);
-      secondFallingSpeed = -secondFallingSpeed;
-      GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
-                                   secondFallingSpeed, secondStyle, framePhase);
-    }
+  xSource = Actor_Get(ACTOR_STUMP);
+  randomX = Random_Next();
+  fixedX = xSource->x.fixed;
+  fixedX += INTtoFIXED((u32)randomX * 12 >> 16);
+  heightSource = Actor_GetById(ACTOR_STUMP);
+  fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
+  fixedZ += toFIXED(6);
+  speedBand = Random_Below(5);
+  // These shifts produce speedBand * 6553: a tenth-pixel falling step.
+  bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
+  fallingSpeed = (bandScaled << 6) - bandScaled;
+  fallingSpeed <<= 3;
+  fallingSpeed += speedBand;
+  style = Random_Below(2);
+  fallingSpeed = -fallingSpeed;
+  GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
+                               fallingSpeed, style, PLANE_XY);
+}
+
+/// While the stump teeters, dust falls from it: one fragment every eighth
+/// frame, two on every sixteenth.
+static void GomaCavePillar_DropStumpFragments(void) {
+  if ((gFrameCount & 7) == 0) {
+    GomaCavePillar_DropStumpFragment();
+    if ((gFrameCount & 15) == 0)
+      GomaCavePillar_DropStumpFragment();
   }
 }
 
@@ -376,7 +357,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     style = Random_Below(2);
     fallingSpeed = -fallingSpeed;
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, 0,
-                                 fallingSpeed, style, 0);
+                                 fallingSpeed, style, PLANE_XY);
     Event_Wait(20);
     // It lands below; the shake dies down before the map grid cells change.
     Sound_Play(SE_CAST);
@@ -536,7 +517,8 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Actor_RunRepeatedMotion(ACTOR_WITNESS, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Event_SetMessageId(MsgGomaGotWowThatsPrettyImpressive);
-  // "You got it? Wow, that's pretty impressive! Keep your eyes..."
+  // "You got it? Wow, that's pretty impressive!"
+  // "Keep your eyes peeled for others like it."
   Event_ShowMessage(ACTOR_WITNESS, 0);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Event_Wait(30);
@@ -568,8 +550,8 @@ s32 Scene_Initialize(void) {
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
-  // The cells GomaCavePillar_PushStumpOver copies as it sets the flag, redrawn
-  // on arrival.
+  // The cells GomaCavePillar_PushStumpOver copies as it sets the flag, copied
+  // again on each arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     Actor_SetPosition(ACTOR_STUMP, 0, 0);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
@@ -639,7 +621,7 @@ s32 gGomaCavePillar_FragmentScriptLong[] = {
 };
 
 struct SceneEntrance gGomaCavePillar_Entrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_WEST, CONDITION_ALWAYS, 88, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST, CONDITION_ALWAYS, 584, 0, 184, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },
     { GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 8, 8, 728, 504, 0 },

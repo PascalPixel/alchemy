@@ -4,7 +4,9 @@
 
 #include "flags.h"
 
-/// The scene opens in the window transition over 16 frames.
+/// The scene opens in the window transition over 16 frames; after the
+/// eruption the ground rumbles and shakes, and the weather's sparkles start
+/// (FieldEffect_InitializeSparkles).
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

@@ -1,3 +1,18 @@
+/// @file
+/// Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
+/// Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
+/// Cave, Kolima Forest (SceneId_KolimaForestEntrance to
+/// SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
+/// entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): things
+/// pushed a cell at a time, such as stone pillars, and logs and other large
+/// things that roll until they meet something, redrawn into the map grid where
+/// they stop.
+///
+/// A large thing is a log, a pipe or a fallen column, lying west to east or
+/// north to south: one of six footprints, by its sprite
+/// (gPushedActor_FootprintKinds), with its edges in
+/// gPushedActor_FootprintBounds (pushed_actor_tables.c).
+
 #include "field/map_grid_scroll.h"
 #include "scene/actor_step.h"
 #include "system/point.h"
@@ -53,8 +68,8 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
 
 /// The leader pushes what stands in front of them a cell on, unless
 /// something solid is beyond it or on top of it, the ground beyond refuses it
-/// or it is still moving: after a quarter second's push (animation 8) it and
-/// the leader slide one cell together, with SE_PUSH.
+/// or it is still moving: after a quarter second's push it and the leader
+/// slide one cell together, with SE_PUSH.
 UNUSED static void PushedActor_AdvancePair(void) {
   struct FieldPosition dst;
   struct Actor *lead;
@@ -72,14 +87,14 @@ UNUSED static void PushedActor_AdvancePair(void) {
 
   Actor_StepFrom(&dst, next, gPushedActor_DirectionSteps[dir]);
   blocker = PushedActor_FindAtTile(&dst, next);
-  if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
+  if (blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + toFIXED(16);
   dst.z = next->z.fixed;
   blocker = PushedActor_FindAtTile(&dst, next);
-  if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
+  if (blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
   next->layer = 2;
@@ -311,8 +326,8 @@ found:
   return 1;
 }
 
-/// Rolls the large thing to the position probe found: the leader pushes
-/// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
+/// Rolls the large thing to the position probe found: the leader pushes, the
+/// thing rolls (its sheet's animation 3 or 2, by the direction) with
 /// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
 /// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked
 /// (CELL_BEHAVIOR_WALL) at its new place, through the map grid's layer 1

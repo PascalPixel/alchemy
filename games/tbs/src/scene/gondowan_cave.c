@@ -262,7 +262,8 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     Event_Wait(10);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
     Event_SetMessageId(MsgKaragolWhyGoingBackIsaacDo);
-    // "Why are you going back, Isaac? Do you need to get something..."
+    // "Why are you going back, Isaac?"
+    // "Do you need to get something you left behind?"
     Event_OpenMessage(ACTOR_IODEM, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       // "I see... In that case, I shall wait here for you to return."
@@ -287,7 +288,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetPosition(ACTOR_IODEM, 0, 0);
       Event_Wait(30);
-      // Isaac steps back off the step trigger.
+      // Isaac steps back south off the gate.
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -309,7 +310,7 @@ static void GondowanCave_IodemComesAlong(void) {
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Event_SetMessageId(MsgKaragolIveBeenWaitingForIsaac);
-  // "I've been waiting for you, Isaac! We should go to Babi..."
+  // "I've been waiting for you, Isaac! We should go to Babi Lighthouse soon."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   {
@@ -341,16 +342,20 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
   // "Do you wish to cross into Gondowan?"
   Event_OpenMessage(ACTOR_FIRST_SOLDIER, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    // Yes: "I won't stop you, but I wouldn't go unless I had business there."
+    // "I'd go to Tolbi and watch Colosso. That's what I'd do."
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
-        // The shorter answer, without the advice to watch Colosso.
+        // Once Colosso is over, the shorter answer eight messages on: "I
+        // won't stop you, but I wouldn't go unless I had business there!"
         Event_SetMessageId(firstMessage + 8);
       }
     }
     Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   } else {
     gFieldWork->message++;
-    // "That's a good idea. They wouldn't let you into Babi..."
+    // No: "That's a good idea. They wouldn't let you into Babi Lighthouse,
+    // anyway."
     Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   }
 }
@@ -409,16 +414,13 @@ static void GondowanCave_JumpCrevice(void) { Field_TryJumpForward(); }
 /// so the water there becomes one too. Once it has leapt Move on it no longer
 /// runs this.
 static void GondowanCave_MoveStump(void) {
+  // DEAD: the stump looked up and dropped; the ROM keeps its call.
   Actor_Get(ACTOR_STUMP);
   Event_Start();
-  {
-    struct Actor *actor = Actor_Get(ACTOR_STUMP);
-
-    if (FIELD_CELL(actor->x.fixed) < STUMP_COLUMN) {
-      GondowanCave_LeapIntoWater(ACTOR_STUMP);
-      MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
-      GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
-    }
+  if (FIELD_CELL(Actor_Get(ACTOR_STUMP)->x.fixed) < STUMP_COLUMN) {
+    GondowanCave_LeapIntoWater(ACTOR_STUMP);
+    MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
+    GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
   }
   Event_End();
 }
@@ -442,11 +444,7 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
 static void GondowanCave_MovePillar(void) {
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_PILLAR)->x.fixed) >= PILLAR_DROP_COLUMN) {
-    s32 destinationCellX = 107;
-    s32 destinationCellZ = 17;
-
-    MapGrid_CopyCellAttributes(108, 17, 1, 1, destinationCellX,
-                               destinationCellZ);
+    MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     Event_Wait(8);
     GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
     Sound_Play(SE_CAST);
@@ -458,7 +456,7 @@ static void GondowanCave_MovePillar(void) {
 /// Unused: an empty function nothing refers to.
 static UNUSED void GondowanCave_UnusedNoOpA(void) {}
 
-/// Turns the sprite while the actor is in the air.
+/// Spins the leaping actor a sixty-fourth of a turn each frame.
 static void GondowanCave_RotateLeapingActor(struct Actor *actor) {
   actor->sprite->rotation -= TRIG_TURN / 64;
 }
@@ -511,12 +509,12 @@ static void GondowanCave_LeapIntoWater(s32 actorId) {
     particleVelocity.z -= particleVelocity.z / 2;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       particleVelocity.x, particleVelocity.y,
-                      particleVelocity.z, 0, 0);
+                      particleVelocity.z, 0, NULL);
   }
   Actor_SetDestination(actorId, 440, 308);
   Actor_WaitForMoveById(actorId);
   GondowanCave_WaitToLand(actor, toFIXED(32));
-  actor->update = 0;
+  actor->update = NULL;
   actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);
   Actor_SetAnimation(actorId, STUMP_ANIMATION_SPLASH);
@@ -641,7 +639,6 @@ struct ActorPlacement gGondowanPassageActorPlacementsWithIodem[] = {
         120, 0, 120, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_SOLDIER_IN_SPIKED_HELMET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         184, 0, 120, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    // Iodem
     ACTOR_PLACEMENT(SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         152, 0, 232, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     { SCENE_TABLE_END },

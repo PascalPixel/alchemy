@@ -6,7 +6,7 @@
 /// The room is reached only from the room above (goma_cave_pillar.c). Its
 /// three exits lead back up to that room's
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
-/// triggers of its own.
+/// events of its own.
 ///
 /// Its one placed actor is the stump the party pushes over the edge up there
 /// with Move. Once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL), entering finds

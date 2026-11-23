@@ -1,4 +1,5 @@
-/// @file McCoy's Palace in Bilibin, the home of the town's chief.
+/// @file
+/// McCoy's Palace in Bilibin, the home of the town's chief.
 ///
 /// The palace is one scene, SceneId_McCoyPalace, sharing the area name McCoy's
 /// Palace with its grounds (mccoy_palace_grounds.c). Its rooms are side by
@@ -66,8 +67,8 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gPalace_FacingActions[];
-extern s32 gPalace_PacingActions[];
+extern s32 gMcCoyPalaceTurnTowardWatched[];
+extern s32 gMcCoyPalaceCaptainStepsBesideMcCoy[];
 extern struct SceneEntrance gMcCoyPalaceEntrances[];
 extern u32 gMcCoyPalaceExits[];
 extern struct ActorPlacement gMcCoyPalaceNoActorPlacements[];
@@ -189,7 +190,7 @@ static void McCoyPalace_CaptainTalksAboutBarricade(void);
 static void McCoyPalace_McCoyRewardsParty(void);
 static void McCoyPalace_PresentRewardChests(void);
 
-// The shared facing routine precedes the scene's entry points.
+// Scene_TurnTowardTarget, the call gMcCoyPalaceTurnTowardWatched makes.
 #include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -377,26 +378,26 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
 /// open the same way into the west and east bedrooms.
 ///
 /// McCoy's door opens with `SE_THUMP` and the bedroom doors with
-/// `SE_DOOR_OPEN`, the door's opening being the map's tile animations 1 and 2,
+/// `SE_DOOR_OPEN`; the doors' opening is the map's tileset animations 1 and 2,
 /// let run for the walk. After the captain has come out of McCoy's door
 /// (McCoyPalace_CaptainTalksAboutBarricade) it stands open, so walking back in
 /// makes no sound and plays no opening.
 static void McCoyPalace_WalkThroughDoor(void) {
   struct FieldWork *work;
-  s32 hideDoorLayers;
+  s32 playDoorOpening;
 
   work = gFieldWork;
-  hideDoorLayers = 0;
+  playDoorOpening = 0;
   if (work->stepTrigger == MCCOY_PALACE_ENTRANCE_ROOM_TO_MCCOYS_ROOM) {
     if (GameFlag_Get(FLAG_MCCOYS_DOOR_OPEN) == 0) {
       Sound_Play(SE_THUMP);
-      hideDoorLayers = 1;
+      playDoorOpening = 1;
     }
   } else {
     Sound_Play(SE_DOOR_OPEN);
-    hideDoorLayers = 1;
+    playDoorOpening = 1;
   }
-  if (hideDoorLayers != 0) {
+  if (playDoorOpening != 0) {
     TilesetAnim_Resume(1);
     TilesetAnim_Resume(2);
   }
@@ -938,7 +939,7 @@ accepted:
     } while (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 1);
   }
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-  // Resolve Garet\'s objections before McCoy dismisses the party.
+  // Garet gets over his anger before McCoy dismisses the party.
   Event_SetMessageId(MsgBilibinWellDontLet);
   // "Well, don't let him get to you. We'll just have to prove we..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0, 10);
@@ -1096,16 +1097,16 @@ accepted:
   Event_Wait(20);
   FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                 gPalace_FacingActions);
+                                 gMcCoyPalaceTurnTowardWatched);
   FieldActor_WatchAndStartScript(ACTOR_GARET,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                 gPalace_FacingActions);
+                                 gMcCoyPalaceTurnTowardWatched);
   FieldActor_WatchAndStartScript(ACTOR_IVAN,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                 gPalace_FacingActions);
+                                 gMcCoyPalaceTurnTowardWatched);
   FieldActor_WatchAndStartScript(ACTOR_MIA,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                 gPalace_FacingActions);
+                                 gMcCoyPalaceTurnTowardWatched);
   Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
@@ -1124,7 +1125,7 @@ accepted:
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldActor_WatchAndStartScript(ACTOR_CAPTAIN,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                 gPalace_FacingActions);
+                                 gMcCoyPalaceTurnTowardWatched);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
@@ -1279,9 +1280,12 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 2);
+  // Each line of this audience is written twice, the first for a party McCoy
+  // turned away before (FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY), the second
+  // for one he meets for the first time; the event steps over the other. Here
+  // "We've brought the warriors, milord." or "We brought the warriors, as you
+  // ordered, milord."
   Event_SetMessageId(MsgBilibinWeveBroughtWarriorsMilord);
-  // Adjacent variants depend on whether McCoy's earlier request was declined.
-
   advanceAlternateReply = 1;
   if (Event_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
     gFieldWork->message++;
@@ -1293,7 +1297,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   }
 
   FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
-  Actor_SetScript(ACTOR_CAPTAIN, gPalace_PacingActions);
+  Actor_SetScript(ACTOR_CAPTAIN, gMcCoyPalaceCaptainStepsBesideMcCoy);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1407,6 +1411,8 @@ static void McCoyPalace_McCoyRewardsParty(void) {
                                  20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
   // McCoy explains his caution and offers a choice from the treasury.
+  // XXX: McCoy's line opens over the captain, without his portrait; staging
+  // this audience would show whether the window is the captain's.
   Event_SetMessageId(MsgBilibinWasButWorriedYehMight);
   // "I was but worried yeh might nae stop here on yer way back."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -1502,7 +1508,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_WatchAndStartScript(ACTOR_PARTY_LEADER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
-                                 gPalace_FacingActions);
+                                 gMcCoyPalaceTurnTowardWatched);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);
@@ -1567,7 +1573,8 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_SetAnimation(ACTOR_CAPTAIN, ANIM_STAND);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_CAPTAIN, 1);
-  // The captain and the keeper explain that only one chest may be chosen.
+  // The captain and the soldier at the gate explain that only one chest may
+  // be chosen.
   Event_SetMessageId(MsgBilibinLordMccoyOrdered);
   // "Lord McCoy ordered that Isaac and his companions be brought..."
   Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
@@ -1582,12 +1589,14 @@ static void McCoyPalace_PresentRewardChests(void) {
   Event_End();
 }
 
-s32 gPalace_FacingActions[] = {
+/// Keeps turning the actor toward the one it watches.
+s32 gMcCoyPalaceTurnTowardWatched[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gPalace_PacingActions[] = {
+/// The captain walks up beside McCoy and turns south.
+s32 gMcCoyPalaceCaptainStepsBesideMcCoy[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(842, 0, 696),
     SC_SYNC,

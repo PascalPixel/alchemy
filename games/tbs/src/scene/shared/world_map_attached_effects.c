@@ -1,10 +1,11 @@
+/// @file
+/// Vale and the World Map: the golden ring that rises around someone using
+/// Psynergy.
+
 #include "field/field_psynergy_work.h"
 
-// Vale and the World Map: the particles that rise around a glowing
-// actor.
-
-/// Attaches two rising particles to the actor, sharing the effect's
-/// cached tiles.
+/// Sets off a golden ring around the actor: its two halves
+/// (field_effect_vertical.c), drawn from the Psynergy's cached tiles.
 void WorldMap_CreateAttachedEffects(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;

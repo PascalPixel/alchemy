@@ -1,13 +1,15 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
-/// the hop east onto the scene's third placed actor.
+/// the hop east from the bank onto the log floating in the river
+/// (ACTOR_RIVER_LOG, which each scene names).
 
-/// Hops the leader to the pixel of the 16.16 position request, unless something
-/// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
-/// and lands while that actor plays its animation 7; the leader then
-/// dips a pixel twice, its height and its ground height together, and rises
-/// back. Returns 1 after a hop.
-static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
+/// The log's animation as the leader lands on it, one of its sheet's.
+#define RIVER_LOG_LANDING_ANIMATION 7
+
+/// Hops the leader to the 16.16 position request, unless something blocks the
+/// way: the leader crouches and jumps, lands on the log as it plays its
+/// landing animation, sinks two pixels and rises back. Returns 1 after a hop.
+static s32 KolimaForest_HopTo(struct FieldPosition *request) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   u8 saved = actor->motionFlags;
   s32 ret = FieldActor_CheckMovementCollision(actor, request);
@@ -30,7 +32,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = ret;
-    Actor_SetAnimation(ACTOR_FIRST_PLACED + 2, 7);
+    Actor_SetAnimation(ACTOR_RIVER_LOG, RIVER_LOG_LANDING_ANIMATION);
     actor->y.fixed -= toFIXED(1);
     actor->groundHeight -= toFIXED(1);
     wait(2);
@@ -49,7 +51,9 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
   return 0;
 }
 
-/// Step trigger 11, walking east: hop 30 pixels east of the leader.
+/// Walking east off the bank, the leader hops onto the log: 30 pixels east,
+/// or, in every edition but the Japanese, to the middle of the cell 40 pixels
+/// east.
 static void KolimaForest_HopEast(void) {
   struct FieldPosition target;
 #if !TBS_PATCH_1
@@ -57,13 +61,13 @@ static void KolimaForest_HopEast(void) {
   target.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
-  struct Actor *p = Actor_GetById(gMainRoutineWork.leaderActorId);
-  u32 base = p->x.fixed & FIELD_CELL_MASK;
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  u32 base = leader->x.fixed & FIELD_CELL_MASK;
 
   target.x = base + toFIXED(8);
-  target.y = p->y.fixed;
-  target.z = (p->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  target.y = leader->y.fixed;
+  target.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   target.x = base + toFIXED(40);
 #endif
-  PushedActor_RunStepEffect(&target);
+  KolimaForest_HopTo(&target);
 }

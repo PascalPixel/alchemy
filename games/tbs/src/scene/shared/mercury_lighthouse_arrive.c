@@ -14,7 +14,8 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Event_Start();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     actor->motionFlags = 0;
-    Actor_SetPositionFX(0, INTtoFIXED(actor->x.part[0].integer),
+    Actor_SetPositionFX(ACTOR_PARTY_LEADER,
+                        INTtoFIXED(actor->x.part[0].integer),
                         INTtoFIXED(actor->z.part[0].integer) + -toFIXED(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);

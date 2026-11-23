@@ -25,7 +25,7 @@
 /// The cracked tiles the including map watches, in its own table.
 extern struct CellTarget gCrackedTiles;
 
-struct Actor *Actor_GetById(u32 objectId);
+struct Actor *Actor_GetById(u32 actorId);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
 
@@ -74,6 +74,8 @@ void CrackedTile_Update(void) {
   screenY = FIXEDtoINT(screenY);
   screenY += HOLE_MASK_TOP;
   depth = height + SCENE_SPRITE_DEPTH;
+  // On screen, or within the mask's size of it: x from -15 to 319, y from
+  // -15 to 239.
   if ((u32)(screenX + HOLE_MASK_WIDTH - 1) > 334 || screenY < -15 ||
       screenY > 239)
     return;

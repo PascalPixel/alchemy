@@ -1,8 +1,8 @@
 /// @file
-/// Map ground: the height curve of each cell kind, the world map's terrain
-/// behaviour and the small tables after them, then the battle formation's
-/// placement scale; then the field object scripts the field starts by itself,
-/// the script command table and the work value handlers.
+/// Map ground: the height function of each cell kind, the world map's battle
+/// environments and the sprite viewer's small tables after them; then the
+/// actor scripts the field starts by itself, the actor script command table
+/// and the work value handlers; then each map's resources.
 
 #include "types.h"
 #include "system/io_reg.h"
@@ -13,8 +13,8 @@
 #include "field/map_grid.h"
 
 //--------------------------------------------------------------------------
-// Map terrain: the height curve of each cell kind, the world map's
-// terrain behaviour, and the small tables after them.
+// Map terrain: the height function of each cell kind, the world map's
+// battle environments, and the small tables after them.
 //--------------------------------------------------------------------------
 
 /// Each height function reads only the arguments it needs, so the type
@@ -94,28 +94,29 @@ const u8 gWorldMap_TerrainBehaviorTable[80] = {
 };
 #undef ENV
 
-/// Eight colours (BGR555).
+/// The sprite viewer's backdrops, which B steps through: black, blue, green,
+/// red, dark grey, grey, white and dark red.
 const u16 gSpriteViewer_BackdropColors[8] = {
     RGB(0, 0, 0),    RGB(0, 0, 31),   RGB(0, 31, 0),
     RGB(31, 0, 0),   RGB(7, 7, 7),    RGB(15, 15, 15),
     RGB(31, 31, 31), RGB(15, 0, 0),
 };
 
-/// Stops for a number from 0 to 715 that steps by one or skips: a skip
-/// forward goes to the next stop above it, back to the last stop below.
-/// (u16)-1 ends the list.
+/// The sprite ids the sprite viewer's fast step (Start held with L or R)
+/// stops at: a skip forward goes to the next stop above the sprite shown,
+/// back to the last stop below it. (u16)-1 ends the list.
 const u16 gSpriteViewer_SkipStops[10] = {
     0, 16, 243, 247, 250, 490, 526, 642, 671, (u16)-1,
 };
 // clang-format on
 
-/// Eight directions at a radius of 40 (x, y).
+/// Unused: nothing refers to it. Eight directions at a radius of 40 (x, y).
 const s8 gWorldMap_DirectionOffsets[8][2] = {
     {0, -40}, {28, -28}, {40, 0},  {28, 28},
     {0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
 };
 
-/// Two 1.0s (16.16).
+/// Unused: nothing refers to it. A scale of 1 on both axes (16.16).
 const u32 gWorldMap_UnitScale[2] = {
     FIXED_ONE,
     FIXED_ONE,
@@ -125,8 +126,8 @@ const u32 gWorldMap_UnitScale[2] = {
 const struct SpriteScale gSpriteViewer_Scale = {{{FIXED_ONE, FIXED_ONE}}};
 
 //--------------------------------------------------------------------------
-// Field object scripts: the ones the field starts by itself, the command
-// table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
+// Actor scripts: the ones the field starts by itself, the command table and
+// the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 
 s32 ActorScript_Wait();

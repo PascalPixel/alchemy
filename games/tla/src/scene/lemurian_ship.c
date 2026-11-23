@@ -1654,11 +1654,13 @@ void LemurianShip_MatchCratePriority(void) {
                           ((struct FieldSprite *)leader->sprite)->priority);
 }
 
-/// The room of the crate on the ledge.
+/// The room of the crate on the ledge. Flag 0x8, which would give cell
+/// (16, 46) the ledge floor of cell (14, 46) as the crate's drop does, is set
+/// by no code of the game, so on entering the room that cell is always the
+/// map's own, 32 pixels down beside the ledge's edge (render probe --only
+/// scene --scene LemurianShipCabins --entrance 16 --cells 12,44,18,48, with
+/// FLAG_CRATE_DROPPED set or not).
 void LemurianShip_SetUpLedgeRoom(void) {
-  // XXX (no evidence): whether flag 0x8 is a slip for FLAG_CRATE_DROPPED, which
-  // the drop sets; no code of the game sets flag 0x8, and nothing in reach
-  // shows which flag was meant.
   if (Event_GetFlag(0x8))
     MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
   Actor_PlaceBlocks(gLemurianShip_Crate);

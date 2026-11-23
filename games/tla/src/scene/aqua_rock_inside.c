@@ -1044,9 +1044,10 @@ void AquaRockInside_RideFalls(s32 value) {
       Event_FinishScreenTransition();
     speed += toFIXED(1) / 4;
     actor->y.fixed += speed;
-    // XXX (no evidence): the splashes are made at the third puddle's place,
-    // away from the waterfall; whether the waterfall's own splash actor
-    // (ACTOR_VIAL_CHEST_SPLASH) was meant, nothing in reach settles.
+    // Every eighth frame a wading splash is made at the third puddle's place,
+    // not the waterfall's: that puddle is not on stage until the Moai is
+    // blocked, and then lies at (808, 744), in another camera box of the
+    // room, so none shows on screen as he rises.
     if ((i & 7) == 0)
       Actor_SpawnWadingSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);

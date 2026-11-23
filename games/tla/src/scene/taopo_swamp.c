@@ -829,17 +829,16 @@ void TaopoSwamp_BlowAwayPuddle(s32 id) {
 
 /// A drop from the ceiling, or Douse, on the round spot in the drips room, cell
 /// (25, 27), shows a puddle there, which Frost can freeze once it has caught
-/// four drops.
+/// four drops. Douse alone does not do it with Felix leading: cast from beside
+/// the spot it rains on it and leaves the puddle, and Frost cast on that
+/// puddle then only scatters its snowflakes, the puddle staying as it was.
+/// Douse runs this with the leader's actor (FieldPsynergy_Douse passes
+/// FieldEffectWork.firstActorId) and a drop with 0, and only a caster whose
+/// actor is 5 counts.
 void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   FieldActor_SetSpritePriority(id, 3);
   Actor_Get(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetAnimation(id, 1);
-  // XXX (no evidence): does Douse alone let Frost freeze this puddle? Douse
-  // runs this with the leader's actor (FieldPsynergy_Douse passes
-  // FieldEffectWork.firstActorId) and a drop with 0, so caster == 5 holds only
-  // while actor 5 leads, where PSYNERGY_PHASE_ACTS is also 5; casting Frost
-  // on the puddle Douse leaves before four drops have fallen would settle it,
-  // but no ground within Frost's reach of the spot lets it be cast.
   if (caster == 5 ||
       FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);

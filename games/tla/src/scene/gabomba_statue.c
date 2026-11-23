@@ -69,10 +69,9 @@ enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 /// room above, held 36 pixels up in SPRITE_COLOR_HIDDEN, so that nothing of
 /// it shows (GabombaStatue_HideActor).
 enum { ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK = 8 };
-// XXX (no evidence): what the ladder-top blocks are for; drawn or hidden they
-// change nothing on screen, since SPRITE_COLOR_HIDDEN draws every pixel of
-// them transparent and the display has no sprite window they could cut, so
-// nothing the player sees tells what they were meant to do.
+// Drawn or hidden, the ladder-top blocks change nothing on screen:
+// SPRITE_COLOR_HIDDEN draws every pixel of them transparent, and the display
+// has no sprite window they could cut.
 /// The Elixir chest's room.
 enum {
   ACTOR_FIRST_ROPE_POST_A = 8,

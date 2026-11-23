@@ -977,8 +977,8 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_SHIP_SAILABLE);
     Event_SetFlag(FLAG_SHIP_FLIES);
     Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
-    // XXX (no evidence): what flag 0x11d is; no code of this game reads it,
-    // and only these two debug arrivals set it.
+    // Flag 0x11d changes nothing: no code of this game reads it, and only
+    // these two debug arrivals set it.
     Event_SetFlag(0x11d);
     Event_SetDestination(SCENE_WORLD_MAP,
                          WORLD_MAP_FROM_NORTHERN_REACHES_NORTH);

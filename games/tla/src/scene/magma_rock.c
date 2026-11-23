@@ -466,8 +466,11 @@ void MagmaRock_StartPushingPillar(void) {
   // among them, and columns 14, 16 and 18 of rows 23 to 26, the lower
   // pillar's (16, 25) among them; the copies rewrite map.txt's (78, 21) to
   // (81, 26).
-  // XXX: what they stop while no pillar moves; walking the leader along the
-  // slide's pillars before and after a push would settle it.
+  // XXX: what they stop while no pillar moves. The leader stands on layer 0
+  // whichever way he enters (entrances 2 and 4), and a walk staged at cells
+  // (15, 20) and (16, 20) put him on a wall where he could not move; walking
+  // the leader down the slide past the pillars, from the top, before and
+  // after a push would settle it.
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1043,8 +1046,10 @@ void MagmaRock_BurstStatue(s32 stage, s32 frame) {
   // come after the MagmaRock_TargetStatue rows, which take Felix's own Burst,
   // so they answer as a fireball explodes (FLAG_FIRE_BURST_PLAYING). Burst
   // staged on the low east level's statues from cells (53, 40) and (49, 39)
-  // ran past four minutes in the recorder; a render of a fireball landing on
-  // such a statue would settle it.
+  // ran past four minutes in the recorder; cast on the slide's west statue of
+  // the pair from cell (13, 31) facing west (--limit 50), the blasts go off at
+  // the statue but it neither blinks nor fires, so no fireball lands. A render
+  // of a fireball landing on such a statue would settle it.
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (frame == 0)

@@ -61,10 +61,10 @@ void Camera_SetSpeedParameters(FIXED speed, FIXED acceleration);
 void FieldCamera_MoveWithinMapBounds(FIXED x, FIXED y, FIXED z, s32 pan);
 void FieldCamera_MoveToActorById(s32 actorId, s32 glide);
 void FieldCamera_WaitForArrival(void);
-void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
-                       s32 dst_y);
+void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
+                       s32 dstY);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
-                               s32 dst_x, s32 dst_y);
+                               s32 dstX, s32 dstY);
 void MapGrid_SetScreenShake(FIXED horizontal, FIXED vertical, FIXED decay);
 s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);

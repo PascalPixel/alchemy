@@ -17,6 +17,10 @@
 /// shattering opening's, so no frame shows it.
 #define BATTLE_ZOOM_BEFORE_OPENING 190
 
+/// The camera's yaw as a battle starts, and as each turn's commands are
+/// chosen: about 56 degrees, a little past YAW_PARTY_ACTION.
+#define YAW_TURN_START (TRIG_TURN * 5 / 32)
+
 /// Fights the battle against the enemy formation enemyGroup, from the opening
 /// to the end. Returns the number of enemies defeated when the party won or the
 /// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
@@ -86,7 +90,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // The camera's starting view, then the enemies.
   SET_VECTOR(focus, 0, toFIXED(64), 0);
   SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
-  camera->yaw = TRIG_TURN * 5 / 32;
+  camera->yaw = YAW_TURN_START;
   camera->pitch = TRIG_TURN * 5 / 16;
   camera->distance = toFIXED(256);
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
@@ -120,8 +124,12 @@ s32 Battle_Run(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, TASK_PASS_FRAME - 1);
 
-  // The battle music: the song an event set for this battle, or the usual
-  // battle songs.
+  // The battle music: the music an event or encounter set for this battle,
+  // and in a link battle Test Your Skills after it; with none set, two other
+  // pieces in turn.
+  // XXX: which piece is heard when two are started one after the other; a
+  // recording of a link battle and of a battle with no music of its own would
+  // settle it.
   cue = gMainRoutineWork.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);
@@ -184,7 +192,7 @@ s32 Battle_Run(s32 enemyGroup) {
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
     // The camera eases back to its starting yaw over 60 frames, and the
     // party status window is drawn with or without its Djinn column.
-    view->targetYaw = TRIG_TURN * 5 / 32;
+    view->targetYaw = YAW_TURN_START;
     view->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 

@@ -482,7 +482,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant);
 void BattleBackground_RestorePalette(void);
 void Irq_RemoveVCountHandler(void);
 
-s32 BattleFormation_AverageLevel(s32 recordId);
+s32 BattleFormation_AverageLevel(s32 formationId);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
 #ifdef UBFIX
 void BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
@@ -492,8 +492,8 @@ s32 BattleEnemy_AdjustLevel(s32 unitId, s32 levels);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused);
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId);
 UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId);
-s32 BattleFormation_GetRandomMember(s32 recordId);
-s32 BattleFormation_BuildEnemyList(s32 recordId);
+s32 BattleFormation_GetRandomMember(s32 formationId);
+s32 BattleFormation_BuildEnemyList(s32 formationId);
 
 u32 BattleSprite_GetDefeatSound(s32 index);
 s32 BattleSprite_GetSprite(s32 index);

@@ -341,9 +341,11 @@ void AirsRock_MoveFirstPillar(void) {
 // set, so that the room puts it there as on the party's return, Move cast from
 // cell (34, 54) on the second level shows the hand pushing west but the right
 // pillar stays put; with the left pillar's own Move played first, the cast
-// started nothing. A play that
-// Moves the left pillar west first, then the right, then walks on would settle
-// it.
+// started nothing. Staged on the ledge north of the left pillar, cell (32, 53)
+// of the overhead layer (--at-px 520,856,2), Move cast south with west held
+// shows the hand pressing but neither pillar moves and no event runs. A play
+// that Moves the left pillar west first, then the right, then walks on would
+// settle it.
 void AirsRock_MoveSecondPillar(void) {
   struct Actor *actor;
   struct Actor *leader;

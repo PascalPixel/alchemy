@@ -8,9 +8,10 @@
 /// the entrance it leads to face each other, and a door's two sides usually
 /// share its number in each scene. Where two scenes share several doors, each
 /// is named by the compass point it lies at on the map of the place the other
-/// opens off. Exits between rooms of one map keep their numbers, as do most
-/// entrances no exit leads to; one another scene's event sends the party to is
-/// named for that scene or for the moment it is reached (CLEAR_FROM_EPILOGUE,
+/// opens off; doors that no compass point tells apart yet take letters
+/// (GONDOWAN_CLIFFS_TO_WORLD_MAP_A and _B). An entrance that another scene's
+/// event sends the party to is named for that scene or for the moment it is
+/// reached (CLEAR_FROM_EPILOGUE,
 /// YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE).
 
 /// The entrance a scene's table lists first: Scene_TakeExit sends the

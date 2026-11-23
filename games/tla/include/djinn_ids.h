@@ -1,11 +1,12 @@
 #ifndef ALCHEMY_DJINN_IDS_H
 #define ALCHEMY_DJINN_IDS_H
 
-#include "sprite_ids.h"
-
 /// @file
 /// Djinn numbers, named from the English release.
 
+#include "sprite_ids.h"
+
+/// The numbers each element's Djinn take, its spares among them.
 #define DJINN_PER_ELEMENT 20
 /// The first of each element's two spares, after its eighteen Djinn (a
 /// DJINNI_INDEX): the text names the spares after the element ("Earth18").

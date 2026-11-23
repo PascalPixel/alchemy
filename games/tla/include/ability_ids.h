@@ -1,10 +1,10 @@
 #ifndef ALCHEMY_ABILITY_IDS_H
 #define ALCHEMY_ABILITY_IDS_H
 
-#include "djinn_ids.h"
-
 /// @file
 /// Ability numbers, named from the English release.
+
+#include "djinn_ids.h"
 
 /// Ability numbers, one for each row of gAbilityDefinitions (ability_table.c)
 /// in order. Each ability's name is the message MsgAbilityName plus its
@@ -260,6 +260,8 @@ enum AbilityId {
   ABILITY_CORN,
   ABILITY_AURORA_FIELD = 298,
   ABILITY_DJINN_COUNTER,
+  /// Flint's, the first of the Djinn's: a Djinni's ability is this plus its
+  /// DjinniId.
   ABILITY_DJINNI_FIRST,
   ABILITY_GRANITE,
   ABILITY_QUARTZ,

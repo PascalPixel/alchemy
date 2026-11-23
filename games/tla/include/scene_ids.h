@@ -10,6 +10,8 @@
 /// SceneId_DailaFlooded, and the exit tables name a scene by its place
 /// (SCENE_EXIT).
 
+#include "types.h"
+
 extern char SceneId_Title;
 #define SCENE_TITLE ((s32)&SceneId_Title)
 extern char SceneId_WorldMap;

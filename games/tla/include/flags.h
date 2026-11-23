@@ -13,12 +13,12 @@
 #define FLAG_SUMMON_TABLET(summon) (summon)
 
 /// The first of the 80 Djinn flags, DJINNI_FLINT's.
-#define FLAG_DJINN_FIRST 48
+#define FLAG_DJINN_FIRST 0x30
 /// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
 /// FLAG_DJINN_FIRST.
 #define FLAG_DJINNI(djinni) (FLAG_DJINN_FIRST + (djinni))
 /// The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's.
-#define FLAG_DJINN_HIDING_FIRST 128
+#define FLAG_DJINN_HIDING_FIRST 0x80
 /// Set while `djinni` is hiding, its DjinniId counting from
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
 /// fled Djinni battle.

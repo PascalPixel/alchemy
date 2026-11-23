@@ -24,6 +24,7 @@ enum {
   IRQ_COUNT
 };
 
+/// The bits of IE and IF for the interrupts the game handles.
 #define INTR_FLAG_VBLANK (1 << IRQ_VBLANK)
 #define INTR_FLAG_TIMER3 (1 << IRQ_TIMER3)
 #define INTR_FLAG_SERIAL (1 << IRQ_SERIAL)

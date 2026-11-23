@@ -167,6 +167,7 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
+/// The upper halfword of value, its whole pixels.
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 /// A place on the World Map, in pixels, as a place on the picture, 300 pixels
 /// to every 640.
@@ -624,6 +625,7 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
 /// The world map cursor's position (x, then y, 16.16 pixels).
 extern FIXED *gWorldPicture_Cursor;
 
+/// The world map screen's scroll, x then y.
 #define SCROLL_X Ram_WorldMapScroll[0]
 #define SCROLL_Y Ram_WorldMapScroll[1]
 

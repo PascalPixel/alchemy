@@ -29,7 +29,7 @@ enum FieldShortcutKind {
 /// them.
 #define GROUND_EFFECTS_FOOTPRINTS_MASK 0x03
 
-#define FIELD_SHORTCUT_KEYS gKeysHeld
+/// How far ahead of the leader the world map tests the ground, 16.16 pixels.
 #define WORLD_MAP_PROBE_RADIUS toFIXED(8)
 
 /// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed

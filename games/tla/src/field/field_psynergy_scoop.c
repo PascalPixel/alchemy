@@ -28,6 +28,7 @@
 #define SCOOP_FIND_CHANCE (FIXED_ONE / 16)
 #define SCOOP_ITEM_CHANCE (FIXED_ONE * 3 / 4)
 
+/// Moves the work on to its next phase, its timer restarted.
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
 /// Task of the Scoop: plays the dig on the anchor phase by phase.

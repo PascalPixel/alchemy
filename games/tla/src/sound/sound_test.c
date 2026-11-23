@@ -142,6 +142,7 @@ void SoundFlag_Clear(s32 sound) {
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
+/// The fixed sample rate the sound test plays at.
 enum {
   SOUND_FIXED_RATE = 31536, ///< samples a second: SOUND_MODE_FREQ_GAME's rate
   /// SOUND_FIXED_RATE over the 59.7275 VBlanks a second, rounded.

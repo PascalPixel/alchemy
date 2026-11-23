@@ -4,6 +4,8 @@
 #include "system/heap.h"
 #include "types.h"
 
+/// EWRAM's buffers at fixed addresses: the map's cells, the decode buffer, the
+/// map's collision shapes, its scene points and the BG tiles.
 #define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)

@@ -344,7 +344,7 @@ void FieldPsynergy_StopMindReadWave(void) {
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
 
-#define MIND_READ_GREY RGB(28, 28, 28)
+#define MIND_READ_GREY RGB(28, 28, 28) ///< a thought window's light grey
 
 /// Turns WINDOW_COLOR_WHITE and WINDOW_PALETTE's colours from
 /// WINDOW_COLOR_BLACK to WINDOW_COLOR_LIGHT_GREY grey (all but colour 2), so

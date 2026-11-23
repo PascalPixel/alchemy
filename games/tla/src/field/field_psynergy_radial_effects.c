@@ -1343,6 +1343,7 @@ void BattleEffect_EndArcEffect(void) {
   HeapSlot_Release(HEAP_SLOT_ARC_EFFECT);
 }
 
+/// Moves the work on to its next phase, its timer restarted.
 #define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 /// Of the BOW_SPARK_COUNT sparks, those the bow throws off.
 #define BOW_SPARKS_THROWN 10

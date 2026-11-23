@@ -12,6 +12,7 @@ enum WaterSheetMode { WATER_SHEET_DREAMTIDE, WATER_SHEET_WATERY_GRAVE };
 /// The wind funnel's modes (BattleEffect_RunWindFunnel).
 enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
 
+/// The sparks, and the frames each lasts.
 #define UNDEAD_SWORD_SPARK_COUNT 16
 #define UNDEAD_SWORD_SPARK_LIFE 28
 /// LimeColumnSheet: one column of light, 14 by 80.
@@ -21,9 +22,9 @@ enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
 #define UNDEAD_SWORD_SPARK_SHEET PICTURE_BYTES(LIME_COLUMN)
 
 #define UNDEAD_SWORD_FRAMES 54 ///< frames of the columns
-#define BURST_HIT_FRAME 10
-#define COLUMN_RISE_FRAME 8 ///< the columns break the ground
-#define COLUMN_PEAK_FRAME 31
+#define BURST_HIT_FRAME 10     ///< the targets are hit
+#define COLUMN_RISE_FRAME 8    ///< the columns break the ground
+#define COLUMN_PEAK_FRAME 31   ///< the columns stop rising
 /// The canvas line the columns stand on and the sparks start from.
 #define UNDEAD_SWORD_GROUND 112
 
@@ -387,6 +388,7 @@ struct WaterTriangle {
   u32 v2 : 8;
 };
 
+/// The water's grid of quads, across and down.
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
 /// A quad of the grid spans this many texels across and down; the texture

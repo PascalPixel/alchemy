@@ -140,6 +140,7 @@ struct Window *SaveProgress_Close(struct Window *window) {
   return window;
 }
 
+/// Stops DMA channel n.
 #define DMA_STOP(n)                                                            \
   do {                                                                         \
     volatile u16 *dma = REG_DMA0 + (n) * 6;                                    \

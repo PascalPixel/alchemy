@@ -587,6 +587,7 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 
 struct StripQuad;
 
+/// Halfword n of the point p.
 #define HALF(p, n) (((s16 *)(p))[n])
 
 /// Iris's runs: the pink petals (PinkPetalsTiles, fifteen pictures of a petal
@@ -752,6 +753,7 @@ extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
+/// Point j of streak i of the iris's streaks.
 #define STREAK(i, j)                                                           \
   (((struct IrisPoint *)IRIS_STREAK_POINTS)[(i) * IRIS_STREAK_LENGTH + (j)])
 /// BG palette 6, where the fade's colours are written.
@@ -2408,6 +2410,7 @@ struct MeshFace {
   s32 padding[4];
 };
 
+/// The size of v.
 #define DIFF_ABS(v) ((v) >= 0 ? (v) : -(v))
 
 /// One textured scanline at canvas row y, from xA to xB, keeping the brighter

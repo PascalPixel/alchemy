@@ -44,7 +44,7 @@ STATIC_ASSERT(offsetof(struct LzPackWork, inputCursor) == 17464);
 /// The packer has no cell of its own for its work pointer: it borrows the flash
 /// library's, which IdentifyFlash sets again before the flash code reads it.
 extern struct LzPackWork *gWaitForFlashWrite;
-#define gLzPackWork gWaitForFlashWrite
+#define gLzPackWork gWaitForFlashWrite ///< the packer's name for it
 
 void LzPack_ResetSlotBuckets(void);
 void LzPack_InsertSlotNode(s32 slot);

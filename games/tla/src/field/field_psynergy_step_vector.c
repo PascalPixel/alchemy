@@ -357,7 +357,7 @@ struct VanishSparksWork {
 };
 
 #define SPARK_LIFE 50
-#define PHASE_DONE 999
+#define PHASE_DONE 999 ///< the vanish's phases are over
 /// RESOURCE_SPARKLE_FADE's sparkles, each smaller and fainter than the last.
 #define SPARKLE_PICTURES 4
 /// The frames the sparks keep coming, and the frames the object then takes to

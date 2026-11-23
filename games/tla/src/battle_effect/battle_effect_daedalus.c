@@ -201,6 +201,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define IWRAM_COPY_WORDS_LINKED                                                \
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 
+/// Where the effect's pictures are decoded before they are copied to OBJ VRAM.
 #define DECODE_BUFFER Ram_MapCellBuffer
 /// The particles the sky scene, the fall and the second strike's sparks keep in
 /// EXTRA_PARTICLES.

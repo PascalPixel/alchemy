@@ -699,8 +699,8 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode) {
 
 /// Actor_WatchAndStartScript's targetId: the actor to watch, and a flag to keep
 /// the watcher's own motion.
-#define ACTOR_WATCH_ACTOR_MASK 0xff
 enum ActorWatchFlag { ACTOR_WATCH_KEEP_MOTION = 0x10000 };
+#define ACTOR_WATCH_ACTOR_MASK 0xff ///< the actor's bits
 /// The distance, in pixels, a follower stays behind the actor it watches
 /// (Actor_MoveTowardTarget reads it from the follower's timer).
 #define FOLLOW_DISTANCE 40

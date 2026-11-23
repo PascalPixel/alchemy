@@ -312,8 +312,11 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #define SUFFIX_START 0
 #endif
 
+/// The symbol decoder RamCode_Load copies to RAM to run, and its size, as this
+/// symbol's address.
 extern const u8 Text_DecodeSymbolCode[];
 extern u8 Text_DecodeSymbolCodeSize[];
+
 extern u8 MsgClassName[], MsgItemName[], MsgAbilityName[], MsgDebugAreaName[];
 
 #if TLA_PATCH_2

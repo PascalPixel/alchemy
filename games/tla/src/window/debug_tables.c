@@ -16,6 +16,8 @@ extern const u8 DebugWarp_KaoruSpecial3Name[];
 extern const u8 DebugWarp_KaoruSpecial2Name[];
 extern const u8 DebugWarp_KaoruSpecial1Name[];
 
+/// A row's handler, cast to the row's type unless UBFIX gives the row the
+/// handler's own.
 #ifdef UBFIX
 #define WARP(handler) handler
 #else

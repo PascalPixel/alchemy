@@ -22,6 +22,7 @@
 #include "field/field_sequence_event.h"
 #include "game/owner_state.h"
 
+/// The actor script commands' limits, angles and distances.
 enum {
   SCRIPT_LABEL_SEARCH_WORDS = 1024, ///< script words a jump searches
   SCRIPT_BLOCKED_MOVE_FRAMES = 60,  ///< refused frames SC_SYNC waits through
@@ -577,6 +578,7 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
   return 1;
 }
 
+/// How far apart a and b are.
 #define DISTANCE(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 /// SC_CAMERA: keeps the camera actor on its leader (watchedActor), clamped so

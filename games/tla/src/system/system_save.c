@@ -10,6 +10,7 @@
 /// clears when the transfer is done.
 #define DMA3_BUSY (DMA_ENABLE << 16)
 
+/// Starts DMA 3 copying from source_ to destination_ with control_.
 #define SAVE_START_DMA(source_, destination_, control_)                        \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 

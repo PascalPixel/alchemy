@@ -81,6 +81,7 @@
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 
+/// The x of the first command icon's sprite.
 #define COMMAND_ICON_X(state) ((state)->icons[0].oam.f.x)
 
 /// Collects the party's commands for a turn into `commands`, one for each of

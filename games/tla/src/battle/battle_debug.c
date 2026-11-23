@@ -11,8 +11,7 @@
 #include "system/system.h"
 #include "resource_ids.h"
 
-/// Unused: nothing refers to it. Runs random encounters one after another,
-/// forever.
+/// Unused: runs random encounters one after another, forever.
 UNUSED void DebugBattle_RunForever(void) {
   for (;;)
     Battle_Run(0);
@@ -25,7 +24,7 @@ UNUSED void DebugBattle_RunForever(void) {
 /// begins.
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
-  struct Snapshot *snap = &gScriptedBattle_Snapshot;
+  struct Snapshot *snapshot = &gScriptedBattle_Snapshot;
   s32 i = 0;
   u8 *ids = gScriptedBattle_Units;
   struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
@@ -33,11 +32,11 @@ void ScriptedBattle_SaveUnits(void) {
   for (; i <= 4; i++, copies++) {
     struct Unit *unit = Unit_Get(ids[i]);
 
-    snap->listed[i] = 0;
+    snapshot->listed[i] = 0;
     if (BattleUnit_IsListed(ids[i])) {
-      snap->listed[i] = 1;
+      snapshot->listed[i] = 1;
       if (i > 2) {
-        snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
+        snapshot->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         {
           struct SnapshotVitals *pv;
           u32 pp;
@@ -56,8 +55,8 @@ void ScriptedBattle_SaveUnits(void) {
         }
       }
       if (i <= 2) {
-        for (j = 0; j < 4; j++)
-          snap->summonBoosts[i][j] = unit->summonBoost[j];
+        for (j = 0; j < ELEMENT_COUNT; j++)
+          snapshot->summonBoosts[i][j] = unit->summonBoost[j];
       }
       copies->curse = unit->curse;
       copies->poison = unit->poison;
@@ -94,16 +93,17 @@ void ScriptedBattle_SaveUnits(void) {
 void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
-  struct Snapshot *snap = &gScriptedBattle_Snapshot;
+  struct Snapshot *snapshot = &gScriptedBattle_Snapshot;
   struct SnapshotCopy *copies = gScriptedBattle_SnapshotBytes;
 
   for (i = 0; i <= 4; i++, copies++) {
     struct Unit *unit = Unit_Get(gScriptedBattle_Units[i]);
 
-    if (BattleUnit_IsListed(gScriptedBattle_Units[i]) && snap->listed[i] != 0) {
+    if (BattleUnit_IsListed(gScriptedBattle_Units[i]) &&
+        snapshot->listed[i] != 0) {
       if (i <= 2) {
-        for (j = 0; j < 4; j++)
-          unit->summonBoost[j] = snap->summonBoosts[i][j];
+        for (j = 0; j < ELEMENT_COUNT; j++)
+          unit->summonBoost[j] = snapshot->summonBoosts[i][j];
       }
       unit->curse = copies->curse;
       unit->poison = copies->poison;
@@ -131,7 +131,7 @@ void ScriptedBattle_RestoreUnits(void) {
       unit->agilityStage = copies->agilityStage;
       unit->challenge = copies->challenge;
       if (i > 2) {
-        Unit_SetHpFar(unit, snap->vitals[i].hp);
+        Unit_SetHpFar(unit, snapshot->vitals[i].hp);
         Unit_SetPpFar(unit, gScriptedBattle_Snapshot.vitals[i].pp);
       }
     }
@@ -272,7 +272,7 @@ void DebugBattle_RunMenu(void) {
   s32 set;
   s32 loadedSet;
   struct InputState *input;
-  struct MainRoutineWork *m;
+  struct MainRoutineWork *mainWork;
   u16 *backdropId;
 
   MainRoutineWork_InitializeDefaultsFar();
@@ -326,12 +326,12 @@ restart:
         GameFlag_Set(FLAG_LINK_BATTLE);
       Unit_CalculateFar(ISAAC);
       *backdropId = RESOURCE_COLOSSO_BACKDROP;
-      m = &gMainRoutineWork;
+      mainWork = &gMainRoutineWork;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_Set(FLAG_DJINN_LESSON);
       GameFlag_Set(FLAG_DEBUG_BATTLE);
       if (startModeSet)
-        m->battleType = BATTLE_TYPE_DEBUG;
+        mainWork->battleType = BATTLE_TYPE_DEBUG;
       Battle_Run(encounter);
       // Rebuild what the battle replaced, then return to the chooser.
       gDebugTextEnabled = 1;

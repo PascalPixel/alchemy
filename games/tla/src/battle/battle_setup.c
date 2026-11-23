@@ -21,7 +21,7 @@ void Matrix_SetTranslation(FIXED *position);
 /// and refreshes the background's zoom.
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
   struct Point eyeOffset;
   s32 *focus;
   s16 delta;
@@ -44,11 +44,11 @@ void BattleCamera_Update(void) {
     }
   }
 
-  if (transition->frames != 0) {
-    delta = transition->targetYaw - camera->yaw;
+  if (background->frames != 0) {
+    delta = background->targetYaw - camera->yaw;
     delta /= CAMERA_YAW_EASE;
     camera->yaw += delta;
-    transition->frames--;
+    background->frames--;
   }
 
   focus = camera->focus;
@@ -65,7 +65,7 @@ void BattleCamera_Update(void) {
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
-  if (transition->flag == 0) {
+  if (background->flag == 0) {
     BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
@@ -225,8 +225,9 @@ void BattleParty_ClearGuards(void) {
   }
 }
 
-/// Adds to the trade offers every djinn an active owner can offer that is
-/// not offered yet; owners past ALLY_MAX offer on the second side.
+/// As a battle starts, lists every Djinni a fighting party member holds unset
+/// that its side's Djinn recovery list lacks, on standby: the party's on the
+/// party's list, a link opponent's (past ALLY_MAX) on the opponent's.
 void DjinnRecovery_Reconcile(void) {
   u16 owners[10];
   s32 count;
@@ -273,28 +274,28 @@ void BattleSummon_UpdateAvailability(void) {
   u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];
   s32 partySize;
-  s32 element;
+  s32 i; // an element, then a summon
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
   availableMask = Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask &
                   SUMMON_MASK_LEARNED;
 
-  for (element = 0; element < ELEMENT_COUNT; element++) {
-    totals[element] = 0;
+  for (i = 0; i < ELEMENT_COUNT; i++) {
+    totals[i] = 0;
     {
       s32 partySlot;
 
       for (partySlot = 0; partySlot < partySize; partySlot++) {
         struct Unit *member = Unit_Get(partyMembers[partySlot]);
 
-        totals[element] += member->djinnHeldCounts[element];
+        totals[i] += member->djinnHeldCounts[i];
       }
     }
   }
 
-  for (element = 0; element <= SUMMON_THOR; element++) {
-    const struct SummonDefinition *summon = SummonDefinition_Get(element);
+  for (i = 0; i <= SUMMON_THOR; i++) {
+    const struct SummonDefinition *summon = SummonDefinition_Get(i);
     s32 elementsMet;
 
     if (summon != 0) {
@@ -314,7 +315,7 @@ void BattleSummon_UpdateAvailability(void) {
       }
 
       if (elementsMet == ELEMENT_COUNT)
-        availableMask |= 1u << element;
+        availableMask |= 1u << i;
     }
   }
 

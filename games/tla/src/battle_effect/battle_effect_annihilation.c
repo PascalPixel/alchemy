@@ -1,5 +1,6 @@
 /// @file
-/// Annihilation.
+/// Annihilation: a fire streak from the user, then a burst of fire and shards
+/// on the target.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"

@@ -8,6 +8,19 @@
 #include "battle/battle.h"
 #include "battle/presentation.h"
 
+/// What a level up raised, as places in the halfwords Unit_TryLevelUp fills
+/// (struct LevelUpResult's fields, read here as an array): each is shown when
+/// it is not 0.
+enum LevelUpGain {
+  GAIN_HP = 2,
+  GAIN_PP,
+  GAIN_ATTACK,
+  GAIN_DEFENSE,
+  GAIN_AGILITY,
+  GAIN_LUCK,
+  GAIN_COUNT
+};
+
 /// Returns an item's rank among the spoils, by which the four kept are chosen
 /// and handed out best first: its item id (INVENTORY_ITEM_ID_MASK's nine
 /// bits), with ITEM_RARE's bit above it and ITEM_INDISPENSABLE's above that;
@@ -52,25 +65,25 @@ void BattleSpoils_Clear(void) {
     items[index] = 0;
 }
 
-/// The scan looks for the first of FIRST_DIGIT_COUNT character codes from
-/// FIRST_DIGIT_BASE: the digits 1 to 9 outside Japan, and the codes 65 to 90 in
-/// the Japanese release.
+/// The name suffixes the scan reads back (NAME_SUFFIX_COUNT of them): the
+/// digits 1 to 9 outside Japan, and the letters A to Z in the Japanese release.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define FIRST_DIGIT_BASE 65
+#define FIRST_DIGIT_BASE 'A'
 #define FIRST_DIGIT_COUNT 26
 #else
-#define FIRST_DIGIT_BASE 49
+#define FIRST_DIGIT_BASE '1'
 #define FIRST_DIGIT_COUNT 9
 #endif
 
-/// Returns the first digit among the characters of the name s, counted from 1,
-/// or FIRST_DIGIT_COUNT when there is none.
-s32 String_FindFirstDigit(u8 *s) {
+/// Returns an enemy name's suffix: its first digit less one (its first
+/// letter's place in the alphabet in Japanese), or FIRST_DIGIT_COUNT when it
+/// has none.
+s32 String_FindFirstDigit(u8 *name) {
   s32 i;
 
   for (i = 0; i < UNIT_NAME_SIZE - 1; i++) {
-    if ((u8)(s[i] - FIRST_DIGIT_BASE) <= FIRST_DIGIT_COUNT - 1)
-      return s[i] - FIRST_DIGIT_BASE;
+    if ((u8)(name[i] - FIRST_DIGIT_BASE) <= FIRST_DIGIT_COUNT - 1)
+      return name[i] - FIRST_DIGIT_BASE;
   }
   return FIRST_DIGIT_COUNT;
 }
@@ -122,7 +135,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   const struct EnemyDefinition *enemy;
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
-  s32 itemOrClassIndex;
+  s32 itemIndex;
   s32 dropShift;
   s32 classSlot;
   s32 lowestItemPriority;
@@ -183,14 +196,14 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   if (enemy->item == 0 || enemy->itemChance == 0)
     return 0;
-  itemOrClassIndex = 0;
+  itemIndex = 0;
   if (spoils->items[0] != enemy->item) {
     do {
-      if (++itemOrClassIndex > 3)
+      if (++itemIndex > 3)
         break;
-    } while (spoils->items[itemOrClassIndex] != enemy->item);
+    } while (spoils->items[itemIndex] != enemy->item);
   }
-  if (itemOrClassIndex == 4) {
+  if (itemIndex == 4) {
     dropShift = enemy->itemChance;
     if (djinnBonus != 0)
       dropShift -= 2;
@@ -200,11 +213,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     if ((FIXED_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
       lowestSlot = -1;
       lowestItemPriority = SPOILS_RANK_CEILING;
-      for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
-        itemPriority = BattleSpoils_RankItem(spoils->items[itemOrClassIndex]);
+      for (itemIndex = 0; itemIndex <= 3; itemIndex++) {
+        itemPriority = BattleSpoils_RankItem(spoils->items[itemIndex]);
         if (itemPriority < lowestItemPriority) {
           lowestItemPriority = itemPriority;
-          lowestSlot = itemOrClassIndex;
+          lowestSlot = itemIndex;
         }
       }
       if ((s32)BattleSpoils_RankItem(enemy->item) > lowestItemPriority)
@@ -226,7 +239,7 @@ void Battle_AwardSpoils(void) {
   s32 unitId;
   struct Unit *unit;
   struct Unit *backup;
-  s32 cnt;
+  s32 entry;
   u32 learned;
   s32 j;
   s32 best;
@@ -234,7 +247,7 @@ void Battle_AwardSpoils(void) {
   s32 slot;
   u16 *found;
   s32 value;
-  s16 gains[8];
+  s16 gains[GAIN_COUNT];
   u16 units[10];
 
   spoils = &Ram_HeapSlots->battleWork->spoils;
@@ -265,8 +278,8 @@ void Battle_AwardSpoils(void) {
       // "<name> is now a level N ..."
       BattleMessage_ShowAndWaitFar((s32)MsgLevelUp);
       BattleMessage_WaitForAdvance();
-      for (cnt = 0; cnt < PSYNERGY_SLOTS; cnt++) {
-        learned = unit->psynergy[cnt].encodedAction;
+      for (entry = 0; entry < PSYNERGY_SLOTS; entry++) {
+        learned = unit->psynergy[entry].encodedAction;
         // A class ability the copy lacks is newly learned.
         if ((learned & ACTION_ID_MASK) &&
             (learned >> PSYNERGY_FROM_CLASS_SHIFT)) {
@@ -287,34 +300,34 @@ void Battle_AwardSpoils(void) {
           }
         }
       }
-      if (gains[2] != 0) {
-        MessageArgument_PushFar(gains[2], MESSAGE_ARGUMENT_NUMBER);
+      if (gains[GAIN_HP] != 0) {
+        MessageArgument_PushFar(gains[GAIN_HP], MESSAGE_ARGUMENT_NUMBER);
         // "Maximum HP rises by N!"
         BattleMessage_ShowAndWaitFar((s32)MsgMaxHpRises);
         BattleMessage_WaitForAdvance();
       }
-      if (gains[3] != 0) {
-        MessageArgument_PushFar(gains[3], MESSAGE_ARGUMENT_NUMBER);
+      if (gains[GAIN_PP] != 0) {
+        MessageArgument_PushFar(gains[GAIN_PP], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgMaxPpRises);
         BattleMessage_WaitForAdvance();
       }
-      if (gains[4] != 0) {
-        MessageArgument_PushFar(gains[4], MESSAGE_ARGUMENT_NUMBER);
+      if (gains[GAIN_ATTACK] != 0) {
+        MessageArgument_PushFar(gains[GAIN_ATTACK], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgAttackRises);
         BattleMessage_WaitForAdvance();
       }
-      if (gains[5] != 0) {
-        MessageArgument_PushFar(gains[5], MESSAGE_ARGUMENT_NUMBER);
+      if (gains[GAIN_DEFENSE] != 0) {
+        MessageArgument_PushFar(gains[GAIN_DEFENSE], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgDefenseRises);
         BattleMessage_WaitForAdvance();
       }
-      if (gains[6] != 0) {
-        MessageArgument_PushFar(gains[6], MESSAGE_ARGUMENT_NUMBER);
+      if (gains[GAIN_AGILITY] != 0) {
+        MessageArgument_PushFar(gains[GAIN_AGILITY], MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar((s32)MsgAgilityRises);
         BattleMessage_WaitForAdvance();
       }
-      if (gains[7] != 0) {
-        MessageArgument_PushFar(gains[7], MESSAGE_ARGUMENT_NUMBER);
+      if (gains[GAIN_LUCK] != 0) {
+        MessageArgument_PushFar(gains[GAIN_LUCK], MESSAGE_ARGUMENT_NUMBER);
         // "Luck rises by N!"
         BattleMessage_ShowAndWaitFar((s32)MsgLuckRises);
         BattleMessage_WaitForAdvance();

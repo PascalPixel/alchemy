@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_SIDE_H
 #define ALCHEMY_BATTLE_SIDE_H
 
+/// @file
+/// The two sides of a battle, their unit lists, and the Djinn each side has on
+/// standby or recovering.
+
 #include "edition.h"
 #include "static_assert.h"
 
@@ -61,8 +65,9 @@ struct DjinnRecoveryList {
 };
 
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
-/// party's inside gMainRoutineWork from summonMask on, the enemies' in unit
-/// 0x83.
+/// party's inside gMainRoutineWork from summonMask on, the link opponent's in
+/// the fourth enemy unit (FIRST_ENEMY_UNIT + 3), which an opponent of three
+/// never fills.
 struct DjinnRecoveryTable {
   /// The summons the side can call, bit n for summon n (summon_table.c).
   u32 summonMask;

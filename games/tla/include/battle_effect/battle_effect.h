@@ -286,15 +286,6 @@ enum {
 /// A row of gEruption_Counts, one for each variant.
 enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
-/// Places in the sheet.
-enum VolleyBSheet {
-  VOLLEY_B_SHOTS = 0,      ///< the mode's own shot pictures
-  VOLLEY_B_BEAM = 4096,    ///< the beam, doubled to 48 wide
-  VOLLEY_B_GLOW = 5266,    ///< mode 20's glows
-  VOLLEY_B_PICTURE = 3158, ///< the mode's picture
-  VOLLEY_B_DJINNI = 26048  ///< the 20x40 Djinni
-};
-
 /// A growing column, laid over struct Particle in work->particles.
 struct DualColumn {
   s32 x;                   ///< the root on the canvas

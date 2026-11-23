@@ -1,17 +1,13 @@
 /// @file
-/// The battle object, the battle bank's C as The Broken Seal's battle.c is:
-/// the debug routines, a battle's setup, link battles, the whole battle, the
-/// battle sprites and objects, the units' movements, auto battle, a turn's
-/// actions and the start of an action's staging, then a unit's motion
-/// graphics, the strongest unit, applying an ability to its targets, playback,
-/// the end of a turn, the screen transitions, the background, camera and
-/// highlights, enemy formations and the spoils. battle_internal.h holds what
-/// the parts share; the parts under battle/ are included here in the order
-/// their code has in the ROM. Camelot's own files are not recoverable: the ROM
-/// shows one object, and these parts are ours, cut where The Broken Seal's
-/// are. BattleMotion_CallBeast (motion_graphics.c) calls BattleObject_Reset
-/// (placement.c) with the object alone, leaving the second argument register
-/// as BattleObject_Get left it, so it calls the routine through a view.
+/// The battle bank's code, as one object in parts: the debug routines, a
+/// battle's setup, link battles, the whole battle, the battle sprites and
+/// objects, the units' movements, auto battle, a turn's actions and the start
+/// of an action's staging, then a unit's motion graphics, the strongest unit,
+/// applying an ability to its targets, playback, the end of a turn, the screen
+/// transitions, the background, camera and highlights, enemy formations and
+/// the spoils. The parts are cut where The Broken Seal's are and included in
+/// the order their code lies in the bank; battle_internal.h holds what they
+/// share.
 
 #include "battle_internal.h"
 #include "graphics/output.h"
@@ -30,9 +26,8 @@
 #include "battle_turn.c"
 #include "battle_staging.c"
 
-// The views the parts above keep end here; the parts below see the names as
-// their headers declare them.
-#undef GameFlag_GetByte
+// The view battle_turn.c keeps ends here; the parts below see the name as its
+// header declares it.
 #undef Unit_CalculateFar
 
 #include "battle_motion_graphics.c"
@@ -45,5 +40,3 @@
 #include "battle_background.c"
 #include "battle_formation.c"
 #include "battle_spoils.c"
-
-#undef BattleObject_Reset

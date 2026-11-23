@@ -44,17 +44,17 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   s32 recoveryIndex;
   s32 i;
   s32 sideMask;
-  s32 enemySide;
+  s32 recoveryTable;
 
   standbyCount = 0;
   sideMask = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDE_MASK_ENEMIES;
   unitCount = BattleUnit_ListIds(sideMask, unitIds);
-  enemySide = DJINN_RECOVERY_PARTY;
+  recoveryTable = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
-    enemySide = DJINN_RECOVERY_OPPONENT;
-  list = &Djinn_GetRecoveryTableFar(enemySide)->list;
+    recoveryTable = DJINN_RECOVERY_OPPONENT;
+  list = &Djinn_GetRecoveryTableFar(recoveryTable)->list;
   if (counts != 0)
     for (i = 0; i < ELEMENT_COUNT; i++)
       counts[i] = 0;

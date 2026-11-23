@@ -1,5 +1,7 @@
 /// @file
-/// The breaths, and the crescent slash of Human Hunt and Echo Cut.
+/// The monsters' breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and
+/// Blast Breath), the crescent slash of Human Hunt and Echo Cut, and the
+/// four-way mirrored blit many effects draw their glows with.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -114,7 +116,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_DUST_CLOUD_SHEET, work->sheet, 1, 0);
   }
 
-  // A clipped MAX blitter facing the targets, and a clipped additive one.
+  // A blitter that keeps the brighter pixel, facing the targets, and an
+  // additive one.
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -529,8 +532,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   struct ScreenPoint position;
 
-  // Set up the canvas and a clipped MAX blitter, mirrored to face the target
-  // and flipped upside down for Echo Cut.
+  // Set up the canvas and a blitter that keeps the brighter pixel, mirrored to
+  // face the target and flipped upside down for Echo Cut.
   BattleEffect_StartTiledCanvas(0);
   if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
     flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
@@ -646,8 +649,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Draws a quarter picture, `size` pixels tall and half as wide, four times
-/// into the canvas, mirrored about (x, y), at its maximum: a shape centred
-/// there, round at the canvas's double width.
+/// into the canvas, mirrored about (x, y) and keeping the brighter pixel: a
+/// whole glow or disc centred there, round at the canvas's double width.
 void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;
@@ -689,6 +692,7 @@ void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
 #undef BREATH_FLASH_SLANT
 #undef BREATH_RING_SLANT
 #undef BREATH_RING_START_SCALE
+#undef BREATH_RING_GROWTH
 #undef BLAST_BREATH_JET_ANGLE
 #undef CRESCENT_SLASH_FRAMES
 #undef GREY_CRESCENT_SIZE

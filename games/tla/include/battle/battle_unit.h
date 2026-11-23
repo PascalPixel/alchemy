@@ -226,7 +226,7 @@ enum AbilityEffect {
 /// An ability's definition, a row of gAbilityDefinitions: its
 /// targeting, kind, element, effect, range, PP cost and power.
 struct AbilityDefinition {
-  u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF
+  u8 targetMode; ///< enum AbilityTarget
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 kind (ABILITY_FORMULA_MASK, enum AbilityFormula).
   u8 flags;
@@ -302,7 +302,7 @@ struct BattleAIState {
   unsigned initialized : 1;
   unsigned selection : 3; ///< the place in its action list, 0 to 7
   unsigned form : 2; ///< the Dullahan's form, 0 to 2 (gBattleAI_DullahanForms)
-  unsigned remaining : 26; ///< not used here
+  unsigned remaining : 26; ///< no code names it
 };
 
 /// A full HP or PP gauge (Unit.hpGauge, Unit.ppGauge): the gauge is the
@@ -390,9 +390,8 @@ struct Unit {
   /// CLASS_NONE marks an enemy, and code throughout tests it to tell the two
   /// apart.
   u8 classId;
-  /// BATTLE_SIDE_NONE (0), BATTLE_SIDE_ENEMY (1) or BATTLE_SIDE_PARTY (2).
-  /// Enemies 9 to 66 and 369 to 377 are put on side 2 (the BattleUnit_Set
-  /// draft).
+  /// An enum BattleSide. BattleUnit_Set puts the Djinn the party fights
+  /// (enemies 9 to 66 and 369 to 377) on the party's side.
   u8 side;
   /// 0 to 4: each guard effect raises it to its own level and no lower;
   /// Defend's is 1.
@@ -434,10 +433,12 @@ struct Unit {
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;
-  u8 immobile;             ///< set by ABILITY_EFFECT_GROUND
-  u8 agilityTurns;         ///< the Agility change's turns left, 5 when cast
-  s8 agilityStage;         ///< the Agility stage, -4 to 8 (twice the Agility)
-  s8 challenge;            ///< set by the challenge effect
+  u8 immobile;     ///< set by ABILITY_EFFECT_GROUND
+  u8 agilityTurns; ///< the Agility change's turns left, 5 when cast
+  s8 agilityStage; ///< the Agility stage, -4 to 8 (twice the Agility)
+  /// Set by ABILITY_EFFECT_CHALLENGE, which no ability has: the unit will not
+  /// flee.
+  s8 challenge;
   u8 paddingBeforeEnemyId; ///< up to the halfword enemyId starts on
   /// Who the unit is: an enemy's id (BattleUnit_Set), or a character's id
   /// (copied from id at a new game) for Unit_UpdateClass and the experience

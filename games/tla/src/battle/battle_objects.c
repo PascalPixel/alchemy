@@ -9,7 +9,7 @@
 #include "system/system.h"
 #include "macros.h"
 
-/// The status icons' bits in BattleObject.activeStatuses
+/// The status icons' bits in BattleObject.activeStatuses.
 #define ICON_POISON 0x01
 #define ICON_VENOM 0x02 ///< deadly poison
 #define ICON_STUN 0x04
@@ -17,29 +17,30 @@
 #define ICON_SLEEP 0x10
 #define ICON_DELUSION 0x20
 #define ICON_HAUNT 0x40
-#define ICON_GRIM_REAPER 6 ///< the curse's turns left, 1 to 7, as bits 7 to 13
+/// The curse's turns left, 1 to 7, shown as bits 7 to 13.
+#define ICON_GRIM_REAPER_SHIFT 6
 
 /// Builds the status icon bits of unit id's statuses into its battle object's
 /// activeStatuses, which BattleStatusIcon_Cycle shows; an object marked
 /// visible keeps its bits. A stun shows no icon on the Serpent, the Kraken or
 /// the Fusion Dragon.
-void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
+void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *object) {
   u32 flags = 0;
 
-  if (output->visible == 0) {
-    struct Unit *state = Unit_Get(id);
-    s8 mode = state->poison;
+  if (object->visible == 0) {
+    struct Unit *unit = Unit_Get(id);
+    s8 poison = unit->poison;
 
-    if (mode == POISON_NORMAL)
+    if (poison == POISON_NORMAL)
       flags = ICON_POISON;
     // Deadly poison: poison is ICON_VENOM.
-    if (mode == POISON_VENOM)
-      flags |= mode;
-    if (state->delusion != 0)
+    if (poison == POISON_VENOM)
+      flags |= poison;
+    if (unit->delusion != 0)
       flags |= ICON_DELUSION;
-    if (state->stun != 0) {
+    if (unit->stun != 0) {
       flags |= ICON_STUN;
-      switch (state->enemyId) {
+      switch (unit->enemyId) {
       case ENEMY_SERPENT:
       case ENEMY_SERPENT_ONE_BEAM:
       case ENEMY_SERPENT_TWO_BEAMS:
@@ -53,15 +54,15 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
         break;
       }
     }
-    if (state->psySeal != 0)
+    if (unit->psySeal != 0)
       flags |= ICON_PSY_SEAL;
-    if (state->haunt != 0)
+    if (unit->haunt != 0)
       flags |= ICON_HAUNT;
-    if (state->sleep != 0)
+    if (unit->sleep != 0)
       flags |= ICON_SLEEP;
-    if (state->grimReaper != 0)
-      flags |= 1 << (state->grimReaper + ICON_GRIM_REAPER);
-    output->activeStatuses = flags;
+    if (unit->grimReaper != 0)
+      flags |= 1 << (unit->grimReaper + ICON_GRIM_REAPER_SHIFT);
+    object->activeStatuses = flags;
   }
 }
 
@@ -75,15 +76,15 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
 #define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
 #define ICON_ANIMATION_WIDE SPRITE_STATUS_WIDE_POISON
 
-/// Cycles the status icon over the slot's conditions every 80 frames, and
-/// switches at once when the shown condition ends.
+/// Shows the unit's status icons in turn, each for ICON_CYCLE_FRAMES, and
+/// moves on at once when the shown status ends.
 void BattleStatusIcon_Cycle(struct BattleObject *slot) {
   struct SpriteAnimation *icon;
-  struct Sprite *rec;
+  struct Sprite *sprite;
   struct MotionObject *owner;
-  s32 anim;
+  s32 animation;
   s32 handle;
-  s32 prev;
+  s32 shown;
   s32 changed = 0;
 
   if (slot->cycleTimer >= 0)
@@ -93,19 +94,19 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
       (slot->animationEntry != 0 &&
        (((s16)slot->activeStatuses >> slot->selectedCondition) & 1) == 0) ||
       slot->cycleTimer == 0) {
-    anim = -1;
+    animation = -1;
     owner = slot->object;
     if ((s16)slot->activeStatuses != 0) {
-      prev = slot->selectedCondition;
-      for (anim = prev + 1;; anim++) {
-        if (anim > ICON_MAX - 1)
-          anim = 0;
-        if ((((s16)slot->activeStatuses >> anim) & 1) != 0)
+      shown = slot->selectedCondition;
+      for (animation = shown + 1;; animation++) {
+        if (animation > ICON_MAX - 1)
+          animation = 0;
+        if ((((s16)slot->activeStatuses >> animation) & 1) != 0)
           break;
       }
 
-      if (prev != anim || slot->animationEntry == 0) {
-        slot->selectedCondition = anim;
+      if (shown != animation || slot->animationEntry == 0) {
+        slot->selectedCondition = animation;
         changed = 1;
       }
       slot->cycleTimer = ICON_CYCLE_FRAMES;
@@ -113,22 +114,22 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
       changed = 1;
     }
 
-    rec = GetMotionRecord(owner, 0);
-    if (rec != 0) {
-      if (anim >= 0) {
-        if (rec->width == 32)
-          anim += ICON_ANIMATION_NARROW;
+    sprite = GetMotionRecord(owner, 0);
+    if (sprite != 0) {
+      if (animation >= 0) {
+        if (sprite->width == 32)
+          animation += ICON_ANIMATION_NARROW;
         else
-          anim += ICON_ANIMATION_WIDE;
+          animation += ICON_ANIMATION_WIDE;
       }
 
       if (slot->animationEntry != 0 && changed != 0) {
-        Sprite_RemoveAnimationFar(rec, (s32)slot->animationEntry);
+        Sprite_RemoveAnimationFar(sprite, (s32)slot->animationEntry);
         slot->animationEntry = 0;
       }
 
-      if (anim >= 0 && changed != 0) {
-        handle = Sprite_AddAnimationFar(rec, anim);
+      if (animation >= 0 && changed != 0) {
+        handle = Sprite_AddAnimationFar(sprite, animation);
         slot->animationEntry = (struct SpriteAnimation *)handle;
         if (handle == -1)
           slot->animationEntry = 0;
@@ -139,9 +140,9 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
         }
       }
 
-      rec->dirty = 1;
-      if (anim >= 0)
-        slot->animation = anim;
+      sprite->dirty = 1;
+      if (animation >= 0)
+        slot->animation = animation;
       else
         slot->animation = 0;
     }
@@ -152,18 +153,21 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
 /// sway a little out of step with its neighbours': from two steps below normal
 /// speed to one above, by its id.
 void BattleObject_UpdatePose(s32 id) {
-  struct Unit *state;
+  struct Unit *unit;
   s32 value;
 
-  state = Unit_Get(id);
+  unit = Unit_Get(id);
   value = POSE_STANDING;
-  if (state->hp != 0) {
-    if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
-      value = (state->side != BATTLE_SIDE_ENEMY) * 4;
+  if (unit->hp != 0) {
+    if (unit->sleep != 0 || unit->stun != 0 || unit->immobile != 0)
+      value = (unit->side != BATTLE_SIDE_ENEMY) * POSE_PARTY_HELD;
   } else {
-    s32 changed = state->side ^ value;
+    // Downed: an enemy (whose side is POSE_STANDING's number) keeps
+    // POSE_ENEMY_DOWN, a party member takes the pose before it,
+    // POSE_PARTY_HELD.
+    s32 changed = unit->side ^ value;
     value = NONZERO(changed);
-    value = 5 - value;
+    value = POSE_ENEMY_DOWN - value;
   }
 
   Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, value);
@@ -171,38 +175,35 @@ void BattleObject_UpdatePose(s32 id) {
                              ANIM_STEP_NORMAL - 2 + (id & 3));
 }
 
-/// Releases all graphics the object owns and marks it as having none.
-/// no: object ID.
-void ReleaseBattleObjectRecords(s32 no) {
+/// Destroys a unit's sprites, its status icon and shadow with them, leaving its
+/// battle object with none.
+void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObject *slot;
   struct MotionObject *object;
   s32 i;
-  void *rec;
+  void *sprite;
 
-  slot = BattleObject_Get(no);
+  slot = BattleObject_Get(unitId);
   if (slot != NULL) {
     object = slot->object;
     if (object != NULL) {
       slot->animationEntry = 0;
       slot->shadowEntry = 0;
-      for (i = 0; (rec = GetMotionRecord(object, i)) != NULL; i += 1) {
-        Sprite_DestroyFar(rec);
+      for (i = 0; (sprite = GetMotionRecord(object, i)) != NULL; i += 1) {
+        Sprite_DestroyFar(sprite);
       }
-      object->recordStorageKind = ACTOR_SPRITE_NONE; // No graphics.
+      object->recordStorageKind = ACTOR_SPRITE_NONE;
       object->records = NULL;
     }
   }
 }
 
-/// Readies the sprites of the units in list: releases those of every place
-/// list lacks, then creates each listed unit's sprites (body, weapon, status
-/// icon and shadow; or the two parts of a two-part enemy) unless it has
-/// them, building its status icons and setting its pose. With refreshPoses,
-/// sets every listed unit's pose again afterwards. Called by BattleObject_Put
-/// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
-/// entry transition code, and through its far stub by
-/// BattleEffect_SelectLivingTargets. Writes the actors' sprites, their storage
-/// kind and height, and the battle objects' icon and shadow entries.
+/// Readies the sprites of the units in unitIds (ended by BATTLE_UNIT_LIST_END):
+/// with releaseOthers, first destroys those of every unit not listed; then
+/// creates each listed unit's sprites (body, overlay, status icon and shadow;
+/// or the two parts of a two-part enemy) unless it has them, builds its status
+/// icons and sets its pose. With refreshPoses, sets every listed unit's pose
+/// again afterwards.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
                                       s32 releaseOthers) {
   s32 unitIndex;
@@ -333,8 +334,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   }
 }
 
-/// Spawns the battle objects of the units in list, ended by 0xff, refreshing
-/// those that exist when refresh is set.
+/// Readies the sprites of the units in list, ended by BATTLE_UNIT_LIST_END, and
+/// destroys every other unit's; with refresh, sets the listed units' poses
+/// again.
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
   BattleObject_SpawnObjectsForList(list, refresh, 1);
 }
@@ -374,7 +376,7 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
 void BattleObject_UpdateSpritePriorities(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 unitIds[UNIT_MAX];
-  struct MotionObject *objects[14];
+  struct MotionObject *objects[UNIT_MAX];
   s32 partyCount;
   s32 enemyCount;
   s32 partyPriority, enemyPriority;
@@ -384,8 +386,9 @@ void BattleObject_UpdateSpritePriorities(void) {
   struct Sprite *record;
   struct Sprite **records;
 
-  partyCount = BattleUnit_ListIds(1, unitIds);
-  enemyCount = BattleUnit_ListIds(2, &unitIds[partyCount]);
+  partyCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, unitIds);
+  enemyCount =
+      BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, &unitIds[partyCount]);
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
@@ -493,8 +496,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   }
 }
 
-/// Detaches the scripts from every sprite of a unit's actor. Nothing in the
-/// source calls it.
+/// Unused: detaches the scripts from every sprite of a unit's actor.
 void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   s32 storageKind;
   s32 remaining;
@@ -502,7 +504,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   void *recordGroup;
 
   if (object != NULL) {
-    storageKind = object->recordStorageKind & 0xF;
+    storageKind = object->recordStorageKind & ACTOR_SPRITE_KIND_MASK;
     switch (storageKind) {
     case ACTOR_SPRITE_ONE:
       ResetMotionRecordGroup(object->records);
@@ -548,16 +550,16 @@ s32 BattleObject_MarkForRelease(s32 objectId) {
 
 /// Releases the actor of every battle object marked for release.
 void BattleMotion_DestroyAllSlotObjects(void) {
-  s32 no;
+  s32 unitId;
   s32 i;
   struct BattleObject *slot;
 
   for (i = 0; i < UNIT_MAX; i += 1) {
-    no = i + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
+    unitId = i + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
     if (i <= ALLY_MAX) {
-      no = i;
+      unitId = i;
     }
-    slot = BattleObject_FindSlot(no);
+    slot = BattleObject_FindSlot(unitId);
     if ((slot != NULL) && (slot->active != 0)) {
       Actor_ReleaseFar((struct Actor *)slot->object);
       slot->object = NULL;
@@ -566,29 +568,30 @@ void BattleMotion_DestroyAllSlotObjects(void) {
   }
 }
 
-/// Writes a battle object's anchor to out, at height 0.
-s32 Battle_GetWorkEntryPair(s32 no, struct Point *out) {
-  struct BattleWork *state = Ram_HeapSlots->battleWork;
+/// Unused: writes the anchor of the battle object in place `slot` to out, at
+/// height 0.
+s32 Battle_GetWorkEntryPair(s32 slot, struct Point *out) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 result;
 
-  out->x = state->slots[no].anchorX;
+  out->x = battle->slots[slot].anchorX;
   out->y = 0;
   result = 0;
-  out->z = state->slots[no].anchorZ;
+  out->z = battle->slots[slot].anchorZ;
   return result;
 }
 
 /// Sets up the camera's view for projecting points, tilted further while
 /// commands are chosen.
 UNREAD_RESULT BattleCamera_ApplyTransform(void) {
-  struct BattleCamera *state = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
   Matrix_Initialize();
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_MultiplyMatrix(gBattleCamera_CommandMatrix);
-    Matrix_LookAt(state->eye, state->focus);
+    Matrix_LookAt(camera->eye, camera->focus);
   } else {
-    Matrix_SetLookAt(state->eye, state->focus);
+    Matrix_SetLookAt(camera->eye, camera->focus);
   }
 }
 
@@ -633,24 +636,24 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 
 /// Puts the battle camera at its default view of the battlefield's centre.
 void BattleCamera_SetDefaultView(void) {
-  struct BattleCamera *state = Ram_HeapSlots->cameraWork;
-  struct Point transfer;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct Point eyeOffset;
 
   // A pitch of -1/128 of a turn, 510 pixels away.
-  state->yaw = TRIG_TURN * 3 / 16;
-  state->pitch = TRIG_TURN - TRIG_TURN / 128;
-  state->distance = BATTLE_CAMERA_DISTANCE;
-  SET_VECTOR(state->focus, 0, 0, 0);
-  state->followPosition = 0;
-  state->followEye = 0;
+  camera->yaw = TRIG_TURN * 3 / 16;
+  camera->pitch = TRIG_TURN - TRIG_TURN / 128;
+  camera->distance = BATTLE_CAMERA_DISTANCE;
+  SET_VECTOR(camera->focus, 0, 0, 0);
+  camera->followPosition = 0;
+  camera->followEye = 0;
 
   Matrix_Initialize();
-  Matrix_TranslateVector(&state->focus[0]);
-  Matrix_RotateY((s16)state->yaw);
-  Matrix_RotateX((s16)state->pitch);
+  Matrix_TranslateVector(&camera->focus[0]);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
 
-  SET_POSITION(&transfer, 0, 0, state->distance);
-  Iwram_TransformVector(&transfer, (s32 *)state);
+  SET_POSITION(&eyeOffset, 0, 0, camera->distance);
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 }
 
 /// Returns a unit's battle object, through its place, or null for a unit with

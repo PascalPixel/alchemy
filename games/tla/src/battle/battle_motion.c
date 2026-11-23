@@ -183,9 +183,9 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelFrames,
   s32 x = startX + stepX;
   s32 z = startZ + stepZ;
   // The distance is taken in 1/256 pixels, so its square fits 32 bits.
-  s32 cellX = stepX >> 8;
-  s32 cellZ = stepZ >> 8;
-  s32 sum = cellX * cellX + cellZ * cellZ;
+  s32 coarseX = stepX >> 8;
+  s32 coarseZ = stepZ >> 8;
+  s32 sum = coarseX * coarseX + coarseZ * coarseZ;
   s32 dist;
 
   if (sum != 0)
@@ -271,8 +271,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
 /// Unused: plays the hit flash on a unit's sprite and waits ten frames. Only a
 /// single-sprite actor takes it.
-void BattleMotion_PlayHitFlash(s32 slot) {
-  struct BattleObject *battleObject = BattleObject_Get(slot);
+void BattleMotion_PlayHitFlash(s32 unitId) {
+  struct BattleObject *battleObject = BattleObject_Get(unitId);
   struct SpriteAnimation *effect;
 
   if (battleObject->object != NULL) {
@@ -297,8 +297,8 @@ void BattleMotion_PlayHitFlash(s32 slot) {
 /// Projects the point above a unit where its battle effects play
 /// (BattleUnit_GetEffectHeight) onto the screen, into screen, scaled as its
 /// sprite is. Returns 0.
-s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
-  struct MotionObject *object = BattleObject_Get(slot)->object;
+s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *screen) {
+  struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
   FIXED scale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -307,21 +307,22 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
 
   BattleCamera_ApplyTransform();
   scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), record->scale);
-  screen[1] -= Iwram_MulFX(scale, FIXEDtoINT(BattleUnit_GetEffectHeight(slot)));
+  screen[1] -=
+      Iwram_MulFX(scale, FIXEDtoINT(BattleUnit_GetEffectHeight(unitId)));
   return 0;
 }
 
 /// Projects the point above a unit onto the screen, into screen: the target
 /// cursor's place, EFFECT_HEIGHT_SMALL up for a small enemy and
 /// EFFECT_HEIGHT_LARGE for others, scaled as the sprite is. Returns 0.
-s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
-  struct MotionObject *object = BattleObject_Get(slot)->object;
+s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *screen) {
+  struct MotionObject *object = BattleObject_Get(unitId)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
   FIXED scale;
 
   BattleCamera_ApplyTransform();
   scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), record->scale);
-  if (BattleSprite_IsSmall(Unit_Get(slot)->enemyId) != 0)
+  if (BattleSprite_IsSmall(Unit_Get(unitId)->enemyId) != 0)
     screen[1] -= Iwram_MulFX(scale, EFFECT_HEIGHT_SMALL);
   else
     screen[1] -= Iwram_MulFX(scale, EFFECT_HEIGHT_LARGE);

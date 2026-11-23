@@ -43,7 +43,6 @@ struct Unit;
 struct Actor;
 struct MotionObject;
 struct FieldParticle;
-struct Actor;
 struct AreaNameRule;
 
 extern const s8 gBattleEffect_RandomChildValues[];
@@ -53,7 +52,8 @@ extern u16 gBattleUnit_WeaponKinds[];
 s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot);
 struct BattleObject;
 #ifndef OWN_BattleObject_Make
-void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y);
+void BattleObject_Make(struct BattleObject *battleObject, s32 unitId, s32 x,
+                       s32 y);
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
@@ -115,10 +115,7 @@ void BattleMessage_CloseFar(void);
 void UpdateRisingParticleBurst(void *object);
 
 struct Sprite;
-struct BattleActionRecord;
 struct PaletteFade;
-struct BattleObject;
-struct Actor;
 struct PendingEvent;
 struct MapMusicRule;
 struct WorldMapWork;
@@ -221,10 +218,7 @@ enum BattlePose {
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
 };
 
-struct BattleActionRecord;
-struct BattlePlan;
 struct BattlePresentationWork;
-struct BattleActionRecord;
 
 s32 AutoBattle_ShowDefend(s16 *);
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);

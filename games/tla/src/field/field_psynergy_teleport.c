@@ -1,5 +1,6 @@
 /// @file
-/// Teleport: its whirl and sparks.
+/// Teleport: the leader leaving in a burst of sparks and arriving in a whirl
+/// of them, and the cast that opens the picture of the world.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -19,6 +20,20 @@
 /// frame TELEPORT_SPIN_ACCELERATION (1/65536 turns) faster than the last.
 #define TELEPORT_SPIN_FRAMES 50
 #define TELEPORT_SPIN_ACCELERATION 60
+
+/// The stages of Teleport_PlayWhirl.
+enum WhirlStage {
+  WHIRL_FALLS_IN = 0, ///< more and more sparks fall in round the hidden leader
+  WHIRL_LEADER_GROWS = 1,
+  WHIRL_DIES_AWAY = 2
+};
+
+/// The stages of Teleport_PlaySparks.
+enum SparkStage {
+  SPARKS_BURST = 0, ///< more and more sparks burst from the spinning leader
+  SPARKS_LEADER_SHRINKS = 1,
+  SPARKS_DIE_AWAY = 2
+};
 
 /// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
 /// then the 100 sparks and their sprites.
@@ -72,7 +87,7 @@ void Teleport_PlayWhirl(void) {
   Actor_SetSpriteFlagsFar(actor, 0);
 
   count = 2;
-  state = 0;
+  state = WHIRL_FALLS_IN;
   next = 0;
   frame = 0;
   do {
@@ -118,30 +133,30 @@ void Teleport_PlayWhirl(void) {
     }
 
     switch (state) {
-    case 0:
+    case WHIRL_FALLS_IN:
       if (frame == 20)
         count = 3;
       if (frame == 30) {
         count = 5;
-        state = 1;
+        state = WHIRL_LEADER_GROWS;
         frame = -1;
       }
       break;
-    case 1:
+    case WHIRL_LEADER_GROWS:
       actor->facing += DEGtoANG(45);
       actor->scaleX = FIXED_ONE * frame / 30;
       if (actor->scaleX > FIXED_ONE)
         actor->scaleX = FIXED_ONE;
       actor->scaleY = actor->scaleX;
       if (frame == 40) {
-        state = 2;
+        state = WHIRL_DIES_AWAY;
         frame = -1;
       }
       break;
-    case 2:
+    case WHIRL_DIES_AWAY:
       if (frame == 0) {
         actor->facing = DEGtoANG(90);
-        Actor_SetSpriteFlagsFar(actor, 1);
+        Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
         count = 3;
       }
       if (frame == 10)
@@ -225,7 +240,7 @@ void Teleport_PlaySparks(void) {
   }
 
   count = 2;
-  state = 0;
+  state = SPARKS_BURST;
   next = 0;
   frame = 0;
   do {
@@ -270,7 +285,7 @@ void Teleport_PlaySparks(void) {
     }
 
     switch (state) {
-    case 0:
+    case SPARKS_BURST:
       if (frame == 10)
         Sound_PlayFar(SE_KOLIMA_BRIDGE_POST);
       actor->facing += DEGtoANG(45);
@@ -280,11 +295,11 @@ void Teleport_PlaySparks(void) {
         count = 4;
       if (frame == 60) {
         count = 5;
-        state = 1;
+        state = SPARKS_LEADER_SHRINKS;
         frame = -1;
       }
       break;
-    case 1:
+    case SPARKS_LEADER_SHRINKS:
       actor->facing += DEGtoANG(45);
       actor->scaleX = FIXED_ONE - FIXED_ONE * frame / 30;
       if (actor->scaleX < 0)
@@ -292,11 +307,11 @@ void Teleport_PlaySparks(void) {
       actor->scaleY = actor->scaleX;
       Actor_SetSpriteFlagsFar(actor, 0);
       if (frame == 30) {
-        state = 2;
+        state = SPARKS_DIE_AWAY;
         frame = -1;
       }
       break;
-    case 2:
+    case SPARKS_DIE_AWAY:
       count = 0;
       if (frame == 20)
         state = FIELD_PSYNERGY_FINISHED;
@@ -323,6 +338,7 @@ void FieldPsynergy_TeleportOnTarget(void) {}
 /// Teleport: raises FIELD_RAISED_TRIGGER_TELEPORT, which shows the picture of
 /// the whole world for the player to choose where to go.
 void FieldPsynergy_Teleport(void) {
+  // DEAD: the leader looked up and never used; the ROM keeps the calls.
   Actor_Lookup(Party_GetLeaderActor());
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }

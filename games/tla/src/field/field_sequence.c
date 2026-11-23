@@ -5,10 +5,10 @@
 /// triggers, the actor a field Psynergy or item aims at, using items and
 /// Psynergy on the field, and the map's treasure spots.
 /// field_sequence_internal.h holds the includes and the declarations the parts
-/// share; the code is in the files under field_sequence/, included here in ROM
-/// order. The ROM shows one object; the parts are ours, cut where The Broken
-/// Seal's are. The main routine, the first code of the same bank, is its own
-/// object linked just before this one (../system/main_routine.c). After the
+/// share; the code is in the field_sequence_*.c files beside it, included here
+/// in ROM order. The ROM shows one object; the parts are ours, cut where The
+/// Broken Seal's are. The main routine, the first code of the same bank, is its
+/// own object linked just before this one (../system/main_routine.c). After the
 /// treasure spots follow the screen transitions and, as The Broken Seal's
 /// event_commands.c begins, the event commands.
 
@@ -37,11 +37,10 @@
 #include "game/game_flags.h"
 
 // The object's functions its parts call before their definitions.
-void Actor_SetHorizontalPositionWithTerrain(u32 objectId, FIXED x, FIXED z);
-void Actor_PlaceOnActor(u32 objectId, u32 otherId);
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
+void Actor_PlaceOnActor(u32 actorId, u32 otherId);
 
-// The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
-// parts").
+// The event commands' parts, as The Broken Seal's event_commands.c begins.
 #include "field_sequence_event.c"
 #include "field_sequence_requests.c"
 #include "field_sequence_actor_commands.c"

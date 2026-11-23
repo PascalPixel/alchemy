@@ -14,13 +14,16 @@
 /// colours.
 #define HOVER_GLOW_WAVE_LENGTH 96
 #define HOVER_GLOW_STEPS 24
+/// The brightness level at which HoverGlow_GetColor leaves the wave as it is.
+#define HOVER_GLOW_NEUTRAL_LEVEL 7
 
 /// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
 /// read a third of a turn apart for red, green and blue.
 extern const u8 gHoverGlow_Levels[];
 
 /// The colour of Hover's glow (HoverGlow_Update) for a step of
-/// its 24-step cycle and a brightness level (7 is neutral): three channels of
+/// its 24-step cycle and a brightness level (HOVER_GLOW_NEUTRAL_LEVEL leaves
+/// it as it is): three channels of
 /// the wave, each raised or lowered by the level and held to 0..31, packed as
 /// RGB555.
 s32 HoverGlow_GetColor(s32 counter, s32 level) {
@@ -37,7 +40,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   wave = gHoverGlow_Levels;
   phase = step * (HOVER_GLOW_WAVE_LENGTH / HOVER_GLOW_STEPS);
   redLevel = wave[(s16)(phase % HOVER_GLOW_WAVE_LENGTH)];
-  bias = level - 7;
+  bias = level - HOVER_GLOW_NEUTRAL_LEVEL;
   red = redLevel + bias;
   green = wave[(phase + HOVER_GLOW_WAVE_LENGTH / 3) % HOVER_GLOW_WAVE_LENGTH] +
           bias;
@@ -67,6 +70,8 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 #define GLOW_FULL 112
 /// The glow's strength set as the ring grows, before the glow is held.
 #define GLOW_RISING 100
+/// The field Psynergy the glow asks for when it runs out: Hover, without
+/// paying PP.
 #define GLOW_SPENT_CUE (ABILITY_HOVER | ACT_PACKED)
 /// The frames the ring under the leader takes to grow, or to shrink away.
 #define HOVER_RING_GROW_FRAMES 32
@@ -95,7 +100,7 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
 void HoverGlow_Update(void) {
   struct HoverWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *player = Actor_Lookup(Party_GetLeaderActor());
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   u16 *palette;
   FIXED position[3];
   s32 level;
@@ -107,21 +112,21 @@ void HoverGlow_Update(void) {
   // The glow's strength.
   if (MapGrid_IsHoverCell(player->x.fixed, player->z.fixed, player->layer) ==
       0) {
-    if (event->glowHeld != 0)
-      event->glow--;
+    if (field->glowHeld != 0)
+      field->glow--;
   } else {
-    event->glow = GLOW_FULL;
+    field->glow = GLOW_FULL;
   }
 
   if (work->fading == 1) {
-    level = event->glow;
+    level = field->glow;
     if (level > GLOW_FULL)
       level = GLOW_FULL;
     if (level < 0)
       level = 0;
     work->scale = level * (FIXED_ONE / 2) / GLOW_FULL + FIXED_ONE / 2;
     if (level == 0)
-      event->psynergy = GLOW_SPENT_CUE;
+      field->psynergy = GLOW_SPENT_CUE;
   }
 
   // Cycle the glow's colours; the last takes the 15th's level.
@@ -165,7 +170,7 @@ void FieldPsynergy_Hover(void) {
   struct HoverWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct HoverWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainActor;
   struct PendingEvent *pending;
   struct EffectSprite *sprite;
@@ -209,9 +214,11 @@ void FieldPsynergy_Hover(void) {
     blocked = 1;
   } else {
     for (n = 0; n < FIELD_ACTOR_COUNT; n++) {
-      other = event->actors[n];
+      other = field->actors[n];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & ACTOR_SOLID) && other != scene->mainActor) {
+        // DEAD: the overlap test reads the actors themselves; the ROM keeps
+        // the stores.
         position[0] = other->x.fixed;
         position[1] = other->groundHeight;
         position[2] = other->z.fixed;
@@ -248,10 +255,10 @@ void FieldPsynergy_Hover(void) {
     player->motionFlags = 0;
     player->y.fixed = player->groundHeight;
     work->scale = 0;
-    event->glowHeld = 0;
+    field->glowHeld = 0;
     // DEAD: HoverGlow_Update holds the glow at GLOW_FULL from the next frame,
     // the leader standing on a hover cell; the ROM keeps the store.
-    event->glow = GLOW_RISING;
+    field->glow = GLOW_RISING;
     for (i = 0; i < HOVER_RING_GROW_FRAMES; i++) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
@@ -264,8 +271,8 @@ void FieldPsynergy_Hover(void) {
     player->gravity = toFIXED(3);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_HOVER;
     work->fading = 1;
-    event->glowHeld = 1;
-    event->glow = GLOW_FULL;
+    field->glowHeld = 1;
+    field->glow = GLOW_FULL;
   }
 }
 

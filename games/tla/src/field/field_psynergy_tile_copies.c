@@ -21,18 +21,17 @@
 #define CYCLONE_ARC_PIXELS 30
 #define CYCLONE_ARC_PIXEL_STEP 368
 
-/// For each cell the Cyclone touched (the event work's point list from
-/// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
-/// (x, z) of the layer, copies the matching cell picture from the rectangle at
-/// (toX, toZ) over it, opens it (layer 2's collision 0) and records the copy
-/// in gSceneLocalState, up to 64. Trial Road, Gaia Rock and the Gabomba
-/// catacombs call it after a Cyclone.
+/// Clears the weeds the Cyclone blew away: for each cell it touched (the field
+/// work's list from FieldPsynergy_GatherNearbyCells) inside the width by
+/// height rectangle at (x, z) of the layer, copies the matching cell picture
+/// from the rectangle at (toX, toZ) over it, opens it on layer 2 and records
+/// the copy in gTouchCopies, up to 64. Gaia Rock calls it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
-  struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
+  struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
   s32 lift;
   s32 scrollX = FIELD_CELL(layer->offsetX);
   s32 scrollZ = FIELD_CELL(layer->offsetY);
@@ -83,8 +82,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 
 /// A Mad Plant (sprite) springs out of the bushes cleared at the cell (x, z):
 /// it grows, turns to the leader, hops twice and leaps at the leader in an arc
-/// before the battle. The Gabomba Catacombs, Taopo Swamp, Gaia Rock,
-/// Jupiter Lighthouse and Trial Road each hide one.
+/// before the battle. The Gabomba Catacombs, Taopo Swamp and Gaia Rock each
+/// hide one.
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
@@ -166,9 +165,9 @@ void ParticleBurst_Start(void) {
   struct ParticleBurstWork *work =
       (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
-  struct BurstCell *cell = (struct BurstCell *)event->psynergyCells;
+  struct BurstCell *cell = (struct BurstCell *)field->psynergyCells;
   FIXED dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
   FIXED dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);
   s32 heading = (u16)Trig_Atan(dz, dx);

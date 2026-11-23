@@ -131,8 +131,8 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
   }
 }
 
-/// Shrinks an event-selected Whirlwind target each frame; below half size,
-/// moves it to the origin, stops it and removes the update.
+/// Per-frame update of Whirlwind's target: it shrinks a 512th a frame and,
+/// below half its size, is put away at the map's origin.
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
   s32 scale;
 
@@ -152,9 +152,11 @@ void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 void BattleEffect_AgeAndCueAtEighty(struct Actor *actor);
 
-/// Whirlwind: carries an orb from the caster to the Psynergy's position over
-/// ten frames, growing it from a quarter size, then plays out what it does
-/// there.
+/// Whirlwind: a whirlwind orb flies from the caster to the spot over ten
+/// frames, growing from a quarter size. With nothing to blow it whooshes away;
+/// on a target, leaves circle it while the target shrinks away; on sprouting
+/// leaves the leaves scatter, and there or on a seedling the vine swings
+/// (HangingVine_Swing).
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainActor;
@@ -284,8 +286,8 @@ void FieldPsynergy_Whirlwind(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Per-frame update: counts the actor's frames and, at frame 80, plays
-/// SE_WHOOSH and stops itself.
+/// Per-frame update of Whirlwind's orb once it has done its work: it whooshes
+/// on its 80th frame.
 void BattleEffect_AgeAndCueAtEighty(struct Actor *actor) {
   if (actor->timer == 80) {
     actor->update = 0;
@@ -442,16 +444,17 @@ void FieldPsynergy_Halt(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Per-frame update of a paused actor: gives its sprite one of the table's
-/// eight params at random.
+/// Per-frame update of an actor held by Halt: its sprite flickers through the
+/// colour modes of gBattleEffect_RandomChildValues at random.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   const s8 *table = gBattleEffect_RandomChildValues;
   s32 random = Random16();
   Actor_SetSpriteColorModeFar(actor, table[(u32)(random * 8) >> 16]);
 }
 
-/// Pauses actor id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gMainRoutineWork.
+/// Holds an actor still under Halt, keeping its per-frame update and its first
+/// animation's colour mode in gMainRoutineWork for
+/// FieldPsynergy_ResumeHaltedActor.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
   struct SpriteAnimation *entry;
@@ -472,7 +475,8 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   }
 }
 
-/// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
+/// Lets a halted actor move again, with the update and colour mode kept by
+/// FieldPsynergy_HaltActor.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -598,11 +602,21 @@ void FieldPsynergy_Catch(void) {
 
 void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
-/// Task of the Lash: its scattering particles along the rope.
+/// The stages of Lash's hand on a rope (ScatterWork.phase).
+enum LashPhase {
+  LASH_HAND_SHAKES = 0, ///< trembling over the rope's end
+  LASH_HAND_STILL = 1,
+  LASH_HAND_PULLS = 2, ///< on the rope's end until the rope is tied
+  LASH_HAND_RISES = 3,
+  LASH_HAND_GONE = 4 ///< its sparkles die away
+};
+
+/// Task of the Lash on a rope: the hand trembles, takes the rope's end and
+/// rises away, scattering sparkles all the while.
 void FieldPsynergy_UpdateLash(void) {
   struct ScatterWork *work = (struct ScatterWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor = work->actor;
   struct Vector3 position;
   struct EffectSprite *sprite;
@@ -646,7 +660,7 @@ void FieldPsynergy_UpdateLash(void) {
   }
 
   switch (work->phase) {
-  case 0: {
+  case LASH_HAND_SHAKES: {
     s32 a = Random16();
     s32 b = Random16();
     s32 c, d;
@@ -664,17 +678,17 @@ void FieldPsynergy_UpdateLash(void) {
     }
     break;
   }
-  case 1:
+  case LASH_HAND_STILL:
     Actor_SetPositionAndResetMotionFar(actor, scene->x, scene->y, scene->z);
     if (work->timer == 6) {
       work->phase++;
       work->timer = -1;
     }
     break;
-  case 2:
+  case LASH_HAND_PULLS:
     if (work->timer == 0)
       work->flash = 1;
-    Rope_GetEndNodePosition(event->targetX, &position);
+    Rope_GetEndNodePosition(field->targetX, &position);
     SET_ACTOR_POSITION(actor, position.x, position.y - toFIXED(4), position.z);
     if (work->hit != 0) {
       work->phase++;
@@ -685,7 +699,7 @@ void FieldPsynergy_UpdateLash(void) {
       work->timer = -1;
     }
     break;
-  case 3:
+  case LASH_HAND_RISES:
     Actor_SelectAnimationFar(actor, 3);
     work->spawnCount = 3;
     actor->y.fixed += work->timer * toFIXED(2);
@@ -694,7 +708,7 @@ void FieldPsynergy_UpdateLash(void) {
       work->timer = -1;
     }
     break;
-  case 4:
+  case LASH_HAND_GONE:
     actor->scaleX = 0;
     work->spawnCount = 0;
     if (work->timer == 30)
@@ -708,7 +722,7 @@ void FieldPsynergy_UpdateLash(void) {
 /// Lash runs as if cast on nothing (enabled), else the field work keeps the
 /// rope and its ends. Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 second;
   s32 first;
@@ -716,9 +730,9 @@ void FieldPsynergy_LashOnTarget(s32 value) {
   if (Rope_FindById(value, &first, &second)) {
     work->enabled = 1;
   } else {
-    state->targetY = value;
-    state->targetZ = first;
-    state->targetX = second;
+    field->targetY = value;
+    field->targetZ = first;
+    field->targetX = second;
   }
   FieldPsynergy_Lash();
 }
@@ -735,7 +749,7 @@ void FieldPsynergy_Lash(void) {
   struct ScatterWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ScatterWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
   struct Actor *actor;
   struct EffectSprite *sprite;
@@ -799,7 +813,7 @@ void FieldPsynergy_Lash(void) {
     } else {
       wait(6);
       work->actor = actor;
-      work->phase = 0;
+      work->phase = LASH_HAND_SHAKES;
       work->timer = 0;
       work->next = 0;
       work->spawnCount = 1;
@@ -808,7 +822,7 @@ void FieldPsynergy_Lash(void) {
       while (work->phase != FIELD_PSYNERGY_FINISHED) {
         if (work->flash == 1) {
           Sound_PlayFar(SE_LASH);
-          Rope_Lash(event->targetX, event->targetY, event->targetZ);
+          Rope_Lash(field->targetX, field->targetY, field->targetZ);
           work->hit = 1;
           Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
         }
@@ -897,7 +911,9 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   }
 }
 
-/// Spins the main actor and shrinks it while 24 particles fly out, one a frame.
+/// Retreat ("Return to the dungeon's entrance."): the caster turns to face the
+/// player, raises their arms, spins faster and faster and shrinks away while
+/// sparks fly up the screen, one a frame.
 void FieldPsynergy_Retreat(void) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
@@ -1140,8 +1156,8 @@ void FieldPsynergy_Avoid(void) {
   angle = actor->facing;
   flags = group->flags;
   slot = VramCache_FindFreeEntry();
-  // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
-  // distance is 2,400 pixels in 16.16.
+  // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end, and
+  // monsters stay away for the next 2,400 pixels the leader walks.
   effectWork->arcTileSlot = slot;
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 256, tiles);
@@ -1248,8 +1264,6 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode) {
   }
 }
 
-// The arc effect's next pair of scaled sprites.
-
 /// Sets up the current group's two arc sprites from the effect's tiles, at the
 /// target's priority, then restarts that group's age, records the target and
 /// switches to the other group.
@@ -1350,6 +1364,16 @@ void BattleEffect_EndArcEffect(void) {
 /// While the thrown sparks repeat, each starts again after this many frames.
 #define BOW_SPARK_FRAMES 10
 
+/// The stages of the Arrow (BowWork.phase).
+enum ArrowPhase {
+  ARROW_BOW_GROWS = 0, ///< the bow grows and turns to face ahead
+  ARROW_BOW_DRAWN = 1, ///< the arrow is drawn back and loosed
+  ARROW_FLIES = 2,     ///< until it strikes or has flown 80 pixels
+  ARROW_STOPS = 3,
+  ARROW_FALLS = 4,      ///< a struck arrow quivers; a spent one shrinks away
+  ARROW_BOW_SHRINKS = 5 ///< ends once the bow is gone
+};
+
 /// Task of the Arrow, the field Psynergy of the unused ability "A??" (named
 /// here for the bow it draws and the arrow it looses): the bow and the flaming
 /// arrow.
@@ -1357,7 +1381,7 @@ void FieldPsynergy_UpdateArrow(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleEffect;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
@@ -1369,7 +1393,7 @@ void FieldPsynergy_UpdateArrow(void) {
 
 again:
   switch (work->phase) {
-  case 0:
+  case ARROW_BOW_GROWS:
     if (work->timer == 0) {
       work->sparking = 0;
       work->sparksRepeat = 1;
@@ -1381,7 +1405,7 @@ again:
       BOW_NEXT_PHASE(work);
     }
     break;
-  case 1:
+  case ARROW_BOW_DRAWN:
     if (work->timer == 0) {
       sprite = &work->arrow;
       sprite->scaleX = sprite->scaleY = FIXED_ONE;
@@ -1406,7 +1430,7 @@ again:
       BOW_NEXT_PHASE(work);
     }
     break;
-  case 2:
+  case ARROW_FLIES:
     motion = &work->arrowMotion;
     if (work->timer == 90) {
       BOW_NEXT_PHASE(work);
@@ -1443,7 +1467,7 @@ again:
       goto again;
     }
     for (objectIndex = 0; objectIndex < FIELD_ACTOR_COUNT; objectIndex++) {
-      actor = event->actors[objectIndex];
+      actor = field->actors[objectIndex];
       if (actor != NULL && actor->script != NULL &&
           (actor->collisionFlags & ACTOR_SOLID) && actor != scene->mainActor &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &actor->x.fixed,
@@ -1455,7 +1479,7 @@ again:
       }
     }
     break;
-  case 3:
+  case ARROW_STOPS:
     if (work->done != 0) {
       work->arrowMoving = 0;
     } else {
@@ -1470,7 +1494,7 @@ again:
     motion->velocityZ = pos[2];
     BOW_NEXT_PHASE(work);
     break;
-  case 4:
+  case ARROW_FALLS:
     sprite = &work->arrow;
     if (work->done != 0) {
       if (work->timer < 32) {
@@ -1500,7 +1524,7 @@ again:
       }
     }
     break;
-  case 5:
+  case ARROW_BOW_SHRINKS:
     if (work->bowShrinking == 0)
       work->phase = FIELD_PSYNERGY_FINISHED;
     break;
@@ -1623,8 +1647,8 @@ again:
   work->timer++;
 }
 
-/// Effect 29 cast on a target: runs the effect. Nothing calls it; the
-/// targeted dispatch has no case for animation 29.
+/// The Arrow cast on a target: runs FieldPsynergy_Arrow. Nothing calls it, as
+/// the dispatch of Psynergy cast on a target has no case for the Arrow.
 void FieldPsynergy_ArrowOnTarget(void) { FieldPsynergy_Arrow(); }
 
 /// The Arrow: a bow grows in front of the caster and draws, throwing off
@@ -1634,7 +1658,7 @@ void FieldPsynergy_Arrow(void) {
   struct BowWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct BowMotion *motion;
@@ -1725,14 +1749,14 @@ void FieldPsynergy_Arrow(void) {
   work->bowShrinking = 0;
   work->done = 0;
   work->result = -1;
-  work->phase = 0;
+  work->phase = ARROW_BOW_GROWS;
   work->timer = 0;
   Task_Add(FieldPsynergy_UpdateArrow, TASK_PASS_FRAME);
   while (work->phase != FIELD_PSYNERGY_FINISHED)
     wait(1);
   Task_Remove(FieldPsynergy_UpdateArrow);
   if (work->done != 0 && work->result != -1)
-    event->psynergyHitObject = work->result;
+    field->psynergyHitObject = work->result;
   VramCache_FreeEntry(arrowSlot);
   VramCache_FreeEntry(bowSlot);
   FieldPsynergy_FadeFromCastColor();
@@ -1740,18 +1764,17 @@ void FieldPsynergy_Arrow(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// Looks at 21 map cells around the effect owner, at the tile offsets of
-/// gFieldPsynergy_NearbyCellOffsets (signed x, z byte pairs), on the owner's
-/// layer. Each cell of a CycloneCellKind that Field_MeasurePsynergyHeight
-/// accepts for the effect's id is listed as a tile in the field work's points,
-/// which end with -1, -1; a CYCLONE_CELL_BURST cell also sets CycloneWork.kind,
-/// and the last carry and lift cells are kept in pixels, centred on their tile,
-/// as cycloneCarryX, Z and cycloneLiftX, Z.
+/// Finds what Cyclone reaches: of the 21 cells round the caster
+/// (gFieldPsynergy_NearbyCellOffsets) on its layer, those of a CycloneCellKind
+/// within reach are listed, as cells, in the field work's points, which end
+/// with -1, -1. A cell to blow away (CYCLONE_CELL_BURST) also sets
+/// CycloneWork.kind; the last carry and lift cells are kept as the pixels of
+/// their centres, in cycloneCarryX, Z and cycloneLiftX, Z.
 void FieldPsynergy_GatherNearbyCells(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct PointWork *event = Ram_HeapSlots->fieldWork;
+  struct PointWork *field = Ram_HeapSlots->fieldWork;
   struct CycloneWork *work = Ram_HeapSlots->battleEffect;
-  s16 *points = event->points;
+  s16 *points = field->points;
   struct Actor *owner = effect->mainActor;
   FIXED position[3];
   FIXED x, z;
@@ -1760,10 +1783,10 @@ void FieldPsynergy_GatherNearbyCells(void) {
   s32 count = 0;
 
   work->kind = count;
-  event->cycloneCarryX = -1;
-  event->cycloneCarryZ = -1;
-  event->cycloneLiftX = -1;
-  event->cycloneLiftZ = -1;
+  field->cycloneCarryX = -1;
+  field->cycloneCarryZ = -1;
+  field->cycloneLiftX = -1;
+  field->cycloneLiftZ = -1;
   for (i = 0; i < FIELD_PSYNERGY_NEARBY_CELLS; i++) {
     x = owner->x.fixed +
         FIELD_CELL_ORIGIN(gFieldPsynergy_NearbyCellOffsets[i * 2]);
@@ -1784,13 +1807,13 @@ void FieldPsynergy_GatherNearbyCells(void) {
     if (kind == CYCLONE_CELL_CARRY &&
         Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner, position) !=
             -1) {
-      event->cycloneCarryX = FIXEDtoINT(x);
-      event->cycloneCarryZ = FIXEDtoINT(z);
-      event->cycloneCarryX =
-          (event->cycloneCarryX & ~(MAPGRID_CELL_PIXELS - 1)) +
+      field->cycloneCarryX = FIXEDtoINT(x);
+      field->cycloneCarryZ = FIXEDtoINT(z);
+      field->cycloneCarryX =
+          (field->cycloneCarryX & ~(MAPGRID_CELL_PIXELS - 1)) +
           MAPGRID_CELL_PIXELS / 2;
-      event->cycloneCarryZ =
-          (event->cycloneCarryZ & ~(MAPGRID_CELL_PIXELS - 1)) +
+      field->cycloneCarryZ =
+          (field->cycloneCarryZ & ~(MAPGRID_CELL_PIXELS - 1)) +
           MAPGRID_CELL_PIXELS / 2;
       points[count * 2] = x / toFIXED(16);
       points[count * 2 + 1] = z / toFIXED(16);
@@ -1799,11 +1822,11 @@ void FieldPsynergy_GatherNearbyCells(void) {
     if (kind == CYCLONE_CELL_LIFT &&
         Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner, position) !=
             -1) {
-      event->cycloneLiftX = FIXEDtoINT(x);
-      event->cycloneLiftZ = FIXEDtoINT(z);
-      event->cycloneLiftX = (event->cycloneLiftX & ~(MAPGRID_CELL_PIXELS - 1)) +
+      field->cycloneLiftX = FIXEDtoINT(x);
+      field->cycloneLiftZ = FIXEDtoINT(z);
+      field->cycloneLiftX = (field->cycloneLiftX & ~(MAPGRID_CELL_PIXELS - 1)) +
                             MAPGRID_CELL_PIXELS / 2;
-      event->cycloneLiftZ = (event->cycloneLiftZ & ~(MAPGRID_CELL_PIXELS - 1)) +
+      field->cycloneLiftZ = (field->cycloneLiftZ & ~(MAPGRID_CELL_PIXELS - 1)) +
                             MAPGRID_CELL_PIXELS / 2;
       points[count * 2] = x / toFIXED(16);
       points[count * 2 + 1] = z / toFIXED(16);
@@ -1814,13 +1837,10 @@ void FieldPsynergy_GatherNearbyCells(void) {
   points[count * 2 + 1] = -1;
 }
 
-// Runs the field events an effect touched.
-
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-/// Resolves each cell in the event work's touched list to an event id at the
-/// owner's layer, sorts the distinct ids and runs each one's event for the
-/// effect's kind.
+/// Runs the place's Psynergy event once for each kind of cell Cyclone touched
+/// (FieldWork.psynergyCells), lowest cell behaviour first.
 void FieldPsynergy_RunTouchedEvents(void) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct TouchCell *cells = (struct TouchCell *)gFieldWork->psynergyCells;
@@ -1873,13 +1893,13 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 /// falls in the width by height window at (windowX, windowZ) of layerIndex
 /// (counted from the layer's scroll and the leader's height) takes the cell
 /// picture from the same place of the window at (sourceX, sourceZ), is opened
-/// on layer 2, and is recorded (up to 64) in gSceneLocalState to be made again.
+/// on layer 2, and is recorded (up to 64) in gTouchCopies to be made again.
 void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                                  s32 height, s32 windowX, s16 windowZ,
                                  s32 layerIndex) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
+  struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = &map->layers[layerIndex];

@@ -450,8 +450,8 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
 
 /// Kicks up a dust puff (SPRITE_DUST_CLOUD) where source stands: it flies off
 /// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
-/// one of two animations, drawn at source's priority.
-void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
+/// one of two animations, drawn at source's priority, in colorMode unless 0.
+void FieldEffect_SpawnDustPuff(struct Actor *source, s32 colorMode) {
   struct Actor *actor;
   struct Sprite *child;
   s32 speed;
@@ -472,8 +472,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
       break;
     }
 
-    if (param != 0)
-      Actor_SetSpriteColor(actor, param);
+    if (colorMode != 0)
+      Actor_SetSpriteColor(actor, colorMode);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
     // toFIXED(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
@@ -496,10 +496,10 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// Makes an actor jump down off a ledge in front of it: it shows pose for 10
 /// frames, hops 12 pixels south from the middle of its 16-pixel column, turns
 /// toward FACING_SOUTH_SOUTHWEST while sinking 28 pixels with a dust puff every
-/// other frame (none when param is -1), then jumps on to 16 pixels south of
-/// where it started and lands, waiting at most 180 frames for it unless param
-/// has LEDGE_JUMP_NO_LANDING_WAIT.
-void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
+/// other frame in the colour mode dust (none when dust is -1), then jumps on to
+/// 16 pixels south of where it started and lands, waiting at most 180 frames
+/// for it unless dust has LEDGE_JUMP_NO_LANDING_WAIT.
+void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 dust) {
   struct Actor *actor = Actor_GetById(actorId);
   FIXED startZ = actor->z.fixed;
   FIXED x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
@@ -529,8 +529,8 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     actor->y.fixed -= toFIXED(2);
     actor->targetY = actor->y.fixed;
     wait(1);
-    if (param != -1 && (frame & 1))
-      FieldEffect_SpawnDustPuff(actor, param);
+    if (dust != -1 && (frame & 1))
+      FieldEffect_SpawnDustPuff(actor, dust);
   }
 
   // Jump 16 pixels forward, following the ground and falling again.
@@ -538,7 +538,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   actor->velocityY = toFIXED(3);
   Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + toFIXED(16));
   Actor_WaitForMoveFar(actor);
-  if (param & LEDGE_JUMP_NO_LANDING_WAIT) {
+  if (dust & LEDGE_JUMP_NO_LANDING_WAIT) {
     wait(4);
     return;
   }
@@ -583,7 +583,7 @@ void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
 }
 
 /// Turns two actors to face each other, at most 1/16 turn a frame each,
-/// until both do (at most 60 frames). Only Actor_TurnToFaceEachOther calls it.
+/// until both do (at most 60 frames).
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
   s32 firstTargetAngle;
   s32 secondTargetAngle;
@@ -639,20 +639,20 @@ void Actor_ReleaseById(s32 actorId) {
   }
 }
 
-/// The event command "set actor sprite param": gives every sprite animation of
-/// the actor param (Actor_SetSpriteColor); with SPRITE_COLOR_BLINK the actor
-/// blinks instead (Actor_UpdateBlink).
-void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
+/// The event command "set actor sprite colour": gives every sprite animation of
+/// the actor the colour mode (Actor_SetSpriteColor); with SPRITE_COLOR_BLINK
+/// the actor blinks instead (Actor_UpdateBlink).
+void Actor_ConfigureSpriteColor(s32 actorId, s32 colorMode) {
   struct Actor *actor;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    if (param & SPRITE_COLOR_BLINK) {
+    if (colorMode & SPRITE_COLOR_BLINK) {
       actor->update = Actor_UpdateBlink;
       return;
     }
     actor->update = NULL;
-    Actor_SetSpriteColor(actor, param);
+    Actor_SetSpriteColor(actor, colorMode);
   }
 }
 

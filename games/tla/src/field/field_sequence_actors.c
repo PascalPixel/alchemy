@@ -20,23 +20,28 @@ enum {
   DJINN_FLAG_COUNT = ELEMENT_COUNT * DJINN_PER_ELEMENT
 };
 
-/// A placement row's sprite: 0 to 7 is a party member, who keeps that actor id;
-/// one up to this takes the next free slot, and one above it, which no table
-/// names, takes the slot of the row before.
+/// A placement row's sprite: below PLACEMENT_PARTY_COUNT a party member, who
+/// keeps that actor id; one up to PLACEMENT_SPRITE_MAX takes the next free
+/// slot, and one above it, which no table names, takes the slot of the row
+/// before.
+#define PLACEMENT_PARTY_COUNT 8
 #define PLACEMENT_SPRITE_MAX 9989
+/// A placement's character after the party: the ship.
+#define PLACEMENT_SHIP 8
 
 /// The ids Actor_Lookup answers: more than the FIELD_ACTOR_COUNT slots.
 #define LOOKUP_ID_COUNT 192
 
-/// Picks the sprite a scene placement's character id shows: character 8, the
-/// ship, is SPRITE_WINGED_SHIP_SMALL on the world map and SPRITE_WINGED_SHIP
-/// elsewhere, each one's flying picture once FLAG_SHIP_FLIES is set.
+/// Picks the sprite a scene placement's character id shows: the ship
+/// (PLACEMENT_SHIP) is SPRITE_WINGED_SHIP_SMALL on the world map and
+/// SPRITE_WINGED_SHIP elsewhere, each one's flying picture once FLAG_SHIP_FLIES
+/// is set.
 s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
   sprite = character;
-  if (sprite <= 8) {
-    if (sprite == 8) {
+  if (sprite <= PLACEMENT_SHIP) {
+    if (sprite == PLACEMENT_SHIP) {
       sprite = SPRITE_WINGED_SHIP_SMALL;
       if (gMainRoutineWork.mapId != SCENE_CLEAR)
         sprite = SPRITE_WINGED_SHIP;
@@ -75,7 +80,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
     s32 condition;
     s32 spriteId;
 
-    if (entry->sprite <= 7)
+    if (entry->sprite <= PLACEMENT_PARTY_COUNT - 1)
       actorIndex = entry->sprite;
     else if (entry->sprite <= PLACEMENT_SPRITE_MAX)
       actorIndex = slot++;
@@ -202,7 +207,7 @@ s32 ScenePoint_GetPosition(s32 id, FIXED *position) {
   return -1;
 }
 
-/// Releases the actor in slot actorIndex of the event work's table, if there
+/// Releases the actor in slot actorIndex of the field work's table, if there
 /// is one, and empties the slot.
 void Actor_ReleaseAtIndex(u32 actorIndex) {
   struct FieldWork *work = gFieldWork;
@@ -336,17 +341,17 @@ s32 Actor_FindLastActiveId(void) {
 
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
-void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
+void Scene_AssignViewFlags(struct ViewedPlacement *entry) {
   struct MapWork *view = Ram_HeapSlots->mapGrid;
 
   GameFlag_Clear(FLAG_IN_VIEW);
   GameFlag_Set(FLAG_OUT_OF_VIEW);
-  while (entry->id != -1) {
+  while (entry->sprite != -1) {
     s32 x;
     s32 z;
 
     // A placement with a flag of its own keeps it.
-    if (entry->flag != 0) {
+    if (entry->condition != 0) {
       entry++;
       continue;
     }
@@ -354,9 +359,9 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
     z = entry->z;
     if (view->minX <= x && x <= view->maxX && view->minZ <= z &&
         z <= view->maxZ)
-      entry->flag = FLAG_IN_VIEW;
+      entry->condition = FLAG_IN_VIEW;
     else
-      entry->flag = FLAG_OUT_OF_VIEW;
+      entry->condition = FLAG_OUT_OF_VIEW;
     entry++;
   }
 }
@@ -390,15 +395,15 @@ struct Actor *Actor_Lookup(u32 actorId) {
 void ObjectTable_Snapshot(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - ACTOR_SNAPSHOT_CAPACITY;
-  u8 *frames = (u8 *)&gSnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
-  u8 *nextFrames = frames + ACTOR_SNAPSHOT_CAPACITY;
-  u8 *priorities = frames + 2 * ACTOR_SNAPSHOT_CAPACITY;
+  u8 *animations = (u8 *)&gSnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
+  u8 *spriteFlags = animations + ACTOR_SNAPSHOT_CAPACITY;
+  u8 *priorities = animations + 2 * ACTOR_SNAPSHOT_CAPACITY;
   u32 count = 0;
   struct Actor *actor;
   struct Sprite *sprite;
   s32 i;
-  u32 frame;
-  u32 next;
+  u32 animation;
+  u32 flags;
   u32 priority;
   s32 limit = FIELD_ACTOR_COUNT;
 
@@ -410,16 +415,16 @@ void ObjectTable_Snapshot(void) {
     Dma_Set(actor, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       sprite = actor->sprite;
-      frame = sprite->lastNo;
-      next = sprite->flags;
+      animation = sprite->lastNo;
+      flags = sprite->flags;
       priority = sprite->image.priority;
     } else {
-      frame = 0;
-      next = 0;
+      animation = 0;
+      flags = 0;
       priority = 0;
     }
-    *frames++ = frame;
-    *nextFrames++ = next;
+    *animations++ = animation;
+    *spriteFlags++ = flags;
     *priorities++ = priority;
     count++;
     copy++;
@@ -435,9 +440,9 @@ void ObjectTable_Snapshot(void) {
 void Actor_Restore(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - ACTOR_SNAPSHOT_CAPACITY;
-  u8 *frames = (u8 *)&gSnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
-  u8 *nextFrames = frames + ACTOR_SNAPSHOT_CAPACITY;
-  u8 *priorities = frames + 2 * ACTOR_SNAPSHOT_CAPACITY;
+  u8 *animations = (u8 *)&gSnapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
+  u8 *spriteFlags = animations + ACTOR_SNAPSHOT_CAPACITY;
+  u8 *priorities = animations + 2 * ACTOR_SNAPSHOT_CAPACITY;
   s32 count;
   struct Actor *actor;
   struct Sprite *sprite;
@@ -455,8 +460,8 @@ void Actor_Restore(void) {
       sprite = actor->sprite;
       Dma_Set(copy, actor, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
       actor->sprite = sprite;
-      Actor_SelectAnimationFar(actor, *frames);
-      Actor_SetSpriteFlagsFar(actor, *nextFrames);
+      Actor_SelectAnimationFar(actor, *animations);
+      Actor_SetSpriteFlagsFar(actor, *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
@@ -473,8 +478,8 @@ void Actor_Restore(void) {
       }
     }
     copy++;
-    frames++;
-    nextFrames++;
+    animations++;
+    spriteFlags++;
     count++;
     priorities++;
     if (count > ACTOR_SNAPSHOT_CAPACITY - 1)
@@ -483,5 +488,7 @@ void Actor_Restore(void) {
   }
 }
 
+#undef PLACEMENT_PARTY_COUNT
 #undef PLACEMENT_SPRITE_MAX
+#undef PLACEMENT_SHIP
 #undef LOOKUP_ID_COUNT

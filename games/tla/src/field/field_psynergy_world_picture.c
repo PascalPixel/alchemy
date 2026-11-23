@@ -47,6 +47,7 @@ void WorldPicture_Initialize(void) {
 
   markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   oam = (u32 *)work->markers;
+  // DEAD: the leader looked up and never used; the ROM keeps the calls.
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;
@@ -168,13 +169,13 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
 /// map, the picture's fixed point (264, 16).
 void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
   s32 x;
   s32 z;
 
   GameFlag_Clear(FLAG_LEADER_OFF_MAP_PICTURE);
-  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     actor = Actor_Lookup(leader);
     if (actor == 0)
       return;

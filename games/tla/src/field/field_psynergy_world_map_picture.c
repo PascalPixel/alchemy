@@ -76,6 +76,7 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   u32 state;
   struct WorldMapWork *work = Ram_WorldMapWork;
 
+  // DEAD: the leader looked up and never used; the ROM keeps the call.
   Party_GetLeaderActor();
   places = FlagEntries_GetTable();
   bestDistance = 8192 * 8192;
@@ -173,6 +174,10 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 /// to every 640.
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
+/// The names a marker shows besides its place's own.
+#define MARKER_NAME_PARTY -1 ///< "Present location"
+#define MARKER_NAME_SHIP -2  ///< "Boat"
+
 /// Each frame of the world map screen: moves the cursor with the d-pad, faster
 /// the longer it is held, or glides it toward its target; draws a marker at
 /// each place visited, at the ship once it sails and at the party; with the
@@ -214,6 +219,7 @@ void WorldPicture_UpdateMarkers(void) {
   s32 flag;
   s32 i;
 
+  // DEAD: the leader looked up and never used; the ROM keeps the call.
   Party_GetLeaderActor();
   work = Ram_WorldMapWork;
   marker = work->markers;
@@ -288,8 +294,8 @@ void WorldPicture_UpdateMarkers(void) {
         break;
       place = &places[WORLD_PICTURE_PLACE_COUNT];
       i = WORLD_PICTURE_PLACE_COUNT;
-      name = -1;
-      tile = 0;
+      name = MARKER_NAME_PARTY;
+      tile = WORLD_MARKER_TILE_PARTY;
       always = 0;
       WorldPicture_GetLeaderPoint(&placeX, &placeY);
     } else {
@@ -304,8 +310,8 @@ void WorldPicture_UpdateMarkers(void) {
           continue;
         if (gMainRoutineWork.ownerOverride != 0)
           continue;
-        name = -2;
-        tile = 2;
+        name = MARKER_NAME_SHIP;
+        tile = WORLD_MARKER_TILE_SHIP;
         always = 0;
         placeX = WORLD_PICTURE_X(FIXEDtoINT(gMainRoutineWork.shipX));
         placeY = WORLD_PICTURE_Y(FIXEDtoINT(gMainRoutineWork.shipZ));
@@ -372,7 +378,7 @@ void WorldPicture_UpdateMarkers(void) {
 
   if (nearest != -1 && (gFrameCount & 15) <= 7) {
     marker->objectMode = 0;
-    marker->tile = tileBase + 3;
+    marker->tile = tileBase + WORLD_MARKER_TILE_NEAREST;
     if (gWorldPicture_Zoomed == 0) {
       marker->x = nearestX - FIXEDtoINT(scrollX) - 2;
       marker->y = nearestY - FIXEDtoINT(scrollY) - 2;
@@ -411,9 +417,9 @@ void WorldPicture_UpdateMarkers(void) {
       WindowSprite_PrepareForRedrawFar(work->window);
 #endif
       if (nearest != -1) {
-        if (nearestName == -1)
+        if (nearestName == MARKER_NAME_PARTY)
           nearestName = (s32)MsgPresentLocation;
-        else if (nearestName == -2)
+        else if (nearestName == MARKER_NAME_SHIP)
           nearestName = (s32)MsgBoat;
         else
           nearestName = Area_GetNameIndex(nearestName, nearestEntrance) +
@@ -473,6 +479,8 @@ void WorldPicture_UpdateMarkers(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
 }
 #undef WORLD_MAP_NAME_LEFT
+#undef MARKER_NAME_PARTY
+#undef MARKER_NAME_SHIP
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
@@ -719,20 +727,28 @@ extern s32 gWorldPicture_ScrollY; ///< as gWorldPicture_ScrollX
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 
-/// The world map screen, over the map-cell buffer, until A or B closes it: in
-/// mode 0 the player looks (FIELD_RAISED_TRIGGER_WORLD_PICTURE); in mode 1, for
-/// Teleport, A chooses the place whose name shows and B cancels
-/// (FIELD_RAISED_TRIGGER_TELEPORT). While Start is held the cursor glides to
-/// the party, and back when it is let go; R and L step it between the places,
-/// and Select shows the whole world or the scrolling picture.
+/// What the world map screen is shown for (WorldPicture_Show).
+enum WorldPictureMode {
+  /// The player looks (FIELD_RAISED_TRIGGER_WORLD_PICTURE).
+  WORLD_PICTURE_LOOK = 0,
+  /// Teleport (FIELD_RAISED_TRIGGER_TELEPORT): A chooses the place whose
+  /// name shows and B cancels.
+  WORLD_PICTURE_TELEPORT = 1
+};
+
+/// The world map screen, over the map-cell buffer, until A or B closes it, to
+/// look or to choose where to Teleport (enum WorldPictureMode). While Start is
+/// held the cursor glides to the party, and back when it is let go; R and L
+/// step it between the places, and Select shows the whole world or the
+/// scrolling picture.
 s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
   u8 savedFlags[ARRAY_COUNT(((struct MapWork *)NULL)->anim)];
   s32 screenX;
   s32 screenY;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ActorSystemWork *objects = Ram_HeapSlots->actorSystem;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct ActorSystemWork *actorSystem = Ram_HeapSlots->actorSystem;
   s16 blend;
   s32 messageShown = 0;
   s32 zoomed = 0;
@@ -758,11 +774,11 @@ s32 WorldPicture_Show(s32 mode) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   work->mode = mode;
-  if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP)
+  if (mode != WORLD_PICTURE_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP)
     ObjectTable_Snapshot();
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    savedDelay = event->transitionFrames;
-    event->transitionFrames = 6;
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    savedDelay = field->transitionFrames;
+    field->transitionFrames = 6;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     layer = map->anim;
@@ -771,7 +787,7 @@ s32 WorldPicture_Show(s32 mode) {
       layer->paused = 1;
       layer++;
     }
-    objects->suspended = 1;
+    actorSystem->suspended = 1;
     wait(1);
     ((struct WorldMapView *)map)->viewHeld = 1;
     do {
@@ -780,15 +796,15 @@ s32 WorldPicture_Show(s32 mode) {
       blend = REG_BLDALPHA;
     } while (0);
   } else {
-    Io_Write8(1, &event->camera->paused);
-    savedDelay = event->transitionFrames;
-    event->transitionFrames = 6;
-    event->transition = 0;
+    Io_Write8(1, &field->camera->paused);
+    savedDelay = field->transitionFrames;
+    field->transitionFrames = 6;
+    field->transition = 0;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Task_ResetAll();
     WindowSystem_InitFieldFar();
-    objects->suspended = 1;
+    actorSystem->suspended = 1;
     wait(1);
     blend = REG_BLDALPHA;
     // BG1's map numbers the picture's tiles as WorldMap_LoadGraphics does,
@@ -821,7 +837,6 @@ s32 WorldPicture_Show(s32 mode) {
                    DISPCNT_OBJ_ON,
                &REG_DISPCNT);
   }
-  // Default: no pointer yet.
   wayX = NULL;
   cursorX = NULL;
   cursorZ = NULL;
@@ -922,7 +937,7 @@ s32 WorldPicture_Show(s32 mode) {
         break;
       }
       if (input->repeat & KEY_A) {
-        if (mode == 0)
+        if (mode == WORLD_PICTURE_LOOK)
           goto done;
         if (work->shown == -1)
           continue;
@@ -934,7 +949,7 @@ s32 WorldPicture_Show(s32 mode) {
         goto done;
       }
       if (input->repeat & KEY_B) {
-        if (mode != 0) {
+        if (mode != WORLD_PICTURE_LOOK) {
           routine->teleportScene = -1;
           {
             /* FAKEMATCH(temporary): none, -1 held in a local; as -1 at its
@@ -951,8 +966,8 @@ s32 WorldPicture_Show(s32 mode) {
 done:
   WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    event->exit = EXIT_KEEP_DESTINATION;
+  if (mode != WORLD_PICTURE_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP) {
+    field->exit = EXIT_KEEP_DESTINATION;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
     WorldMap_LoadAreaGraphicsFar();
@@ -962,14 +977,14 @@ done:
       layer->paused = savedFlags[i];
       layer++;
     }
-    objects->suspended = 0;
+    actorSystem->suspended = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
     ((struct WorldMapView *)map)->viewHeld = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    event->transitionFrames = savedDelay;
-    event->camera->paused = 0;
+    field->transitionFrames = savedDelay;
+    field->camera->paused = 0;
   }
   return 0;
 }

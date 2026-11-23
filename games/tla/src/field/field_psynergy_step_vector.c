@@ -1,6 +1,6 @@
 /// @file
-/// Stepping effect vectors, the canvas a field effect draws into, the
-/// colour buffer fades and the field particles.
+/// The canvas a field effect draws into and its darkening, an actor appearing
+/// in a whirl of sparks, and the field particles that fly to their targets.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -345,40 +345,39 @@ void BattleEffect_EndCanvasSprite(void) {
   HeapSlot_Release(HEAP_SLOT_CANVAS_SPRITE);
 }
 
-/// The sparks that circle an actor as it vanishes.
-#define VANISH_SPARK_COUNT 64
+/// The sparks that circle an actor as it appears.
+#define APPEAR_SPARK_COUNT 64
 
 /// Actor_VanishInSparks's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the spark
 /// picture, and the sparks that circle the actor and their sprites.
-struct VanishSparksWork {
+struct AppearSparksWork {
   u8 picture[1024];
-  struct WhirlSpark sparks[VANISH_SPARK_COUNT];
-  struct EffectSprite sprites[VANISH_SPARK_COUNT];
+  struct WhirlSpark sparks[APPEAR_SPARK_COUNT];
+  struct EffectSprite sprites[APPEAR_SPARK_COUNT];
 };
 
 #define SPARK_LIFE 50
 #define PHASE_DONE 999 ///< the vanish's phases are over
 /// RESOURCE_SPARKLE_FADE's sparkles, each smaller and fainter than the last.
 #define SPARKLE_PICTURES 4
-/// The frames the sparks keep coming, and the frames the object then takes to
-/// widen back to full width.
-#define VANISH_SPAWN_FRAMES 10
-#define VANISH_WIDEN_FRAMES 64
+/// The frames the sparks keep coming, and the frames the actor then takes to
+/// widen from nothing to full width.
+#define APPEAR_SPAWN_FRAMES 10
+#define APPEAR_WIDEN_FRAMES 64
 
-/// An object vanishes in a whirl of sparks: VANISH_SPARK_COUNT sparkles
-/// (RESOURCE_SPARKLE_FADE) circle out from it, each rising and closing in for
-/// SPARK_LIFE frames. VANISH_SPAWN_FRAMES in, the sparks stop coming and the
-/// object spins and widens from nothing back to full width over
-/// VANISH_WIDEN_FRAMES, when its sprite and its child flags come back; then it
-/// ends.
-void Actor_VanishInSparks(s32 objectId) {
-  struct VanishSparksWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct VanishSparksWork));
+/// An actor appears in a whirl of sparks, as Alex does on Venus Lighthouse:
+/// APPEAR_SPARK_COUNT sparkles (RESOURCE_SPARKLE_FADE) circle round where it
+/// stands, each rising and closing in for SPARK_LIFE frames. The actor spins
+/// and widens from nothing to full width over APPEAR_WIDEN_FRAMES, when its
+/// shadow shows again, and the sparks stop coming APPEAR_SPAWN_FRAMES later.
+void Actor_VanishInSparks(s32 actorId) {
+  struct AppearSparksWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct AppearSparksWork));
   s32 phase;
   s32 entry;
   s32 tiles;
   s32 spawning;
-  struct Actor *actor = Actor_Lookup(objectId);
+  struct Actor *actor = Actor_Lookup(actorId);
   s32 depth = BattleEffect_GetObjectDepth(actor);
   s32 angle = (u16)actor->facing;
   struct WhirlSpark *spark;
@@ -394,7 +393,7 @@ void Actor_VanishInSparks(s32 objectId) {
 
   i = 0;
   spark = work->sparks;
-  for (; i < VANISH_SPARK_COUNT; i++, spark++) {
+  for (; i < APPEAR_SPARK_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
     // Set up as Teleport's sparks are; each draw picks its sparkle again.
     EffectSprite_Init(sprite, 4, 4, 0,
@@ -429,11 +428,11 @@ void Actor_VanishInSparks(s32 objectId) {
         next++;
         spark->angle = sparkAngle;
         spark->radius = radius;
-        next %= VANISH_SPARK_COUNT;
+        next %= APPEAR_SPARK_COUNT;
       }
     }
     spark = work->sparks;
-    for (i = 0; i < VANISH_SPARK_COUNT; i++, spark++) {
+    for (i = 0; i < APPEAR_SPARK_COUNT; i++, spark++) {
       if (spark->age >= 0) {
         sprite = &work->sprites[i];
         if ((u32)spark->age < SPARK_LIFE) {
@@ -464,25 +463,25 @@ void Actor_VanishInSparks(s32 objectId) {
     }
     switch (phase) {
     case 0:
-      if (frame == VANISH_SPAWN_FRAMES) {
+      if (frame == APPEAR_SPAWN_FRAMES) {
         phase = 1;
         frame = -1;
       }
       break;
     case 1:
-      if (frame < VANISH_WIDEN_FRAMES) {
+      if (frame < APPEAR_WIDEN_FRAMES) {
         actor->facing -= FACING_STEP;
-        actor->scaleX = frame * (FIXED_ONE / VANISH_WIDEN_FRAMES);
+        actor->scaleX = frame * (FIXED_ONE / APPEAR_WIDEN_FRAMES);
         if (actor->scaleX > FIXED_ONE)
           actor->scaleX = FIXED_ONE;
       }
-      if (frame == VANISH_WIDEN_FRAMES) {
+      if (frame == APPEAR_WIDEN_FRAMES) {
         actor->facing = angle;
-        Actor_SetSpriteFlagsFar(actor, 1);
+        Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
       }
-      if (frame == VANISH_SPAWN_FRAMES)
+      if (frame == APPEAR_SPAWN_FRAMES)
         spawning = 0;
-      if (frame == VANISH_WIDEN_FRAMES + VANISH_SPAWN_FRAMES)
+      if (frame == APPEAR_WIDEN_FRAMES + APPEAR_SPAWN_FRAMES)
         phase = PHASE_DONE;
       break;
     }
@@ -620,10 +619,9 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
   effect->state = 0;
 }
 
-/// Starts slot effect as a particle of resource object kind at (x, z): clears
-/// it, creates its sprite in front, and sets it moving at up to 2 pixels a
-/// frame toward its target at full size, turning a limited step at a time and
-/// stopping on arrival, with a random value and z lifting the sprite.
+/// Starts a field particle with a sprite of the given kind at (x, z), at full
+/// size and in front of everything: it will fly to its target at up to 2
+/// pixels a frame, turning a limited step at a time, and stop there.
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z) {
   struct Sprite *animation;
@@ -653,7 +651,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   effect->render = 1;
   effect->active = 1;
   effect->randomValue = Random16();
-  effect->flags = 4;
+  effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
   FieldParticle_SetActorMode(effect, 1);
 }
 

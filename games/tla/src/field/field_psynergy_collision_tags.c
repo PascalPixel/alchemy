@@ -5,11 +5,6 @@
 
 #include "field_psynergy_internal.h"
 
-/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
-/// pillar, held, and the puddle.
-#define PUDDLE_ANIMATION_FROZEN 0
-#define PUDDLE_ANIMATION_PUDDLE 1
-
 /// Sets up Alhafra's and the Alhafran Cave's puddles as FlagBlock_PlaceAll
 /// does, and marks the open cells on each puddle's four sides a gap to jump
 /// across (MapGrid_MarkJumpIfOpen), so the leader jumps onto a frozen one.
@@ -60,21 +55,21 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
 /// pixels, open and a gap to jump across, and the flag set. The field work
 /// remembers the block.
 void FlagBlock_ApplyFlags(struct ActorFlag *list) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   u8 *grid = gMapShapeGrid;
 
-  event->movedBlock = NULL;
+  field->movedBlock = NULL;
   for (; list->actor != ACTOR_LIST_END; list++) {
     s32 change = 0;
     struct Actor *actor = Actor_GetById(list->actor);
-    u8 frame = ((struct Sprite *)actor->sprite)->lastNo;
+    u8 animation = ((struct Sprite *)actor->sprite)->lastNo;
     u16 flag = list->flag;
 
     if (GameFlag_Get(flag)) {
-      if (frame != PUDDLE_ANIMATION_FROZEN)
+      if (animation != PUDDLE_ANIMATION_FROZEN)
         change = 1;
     } else {
-      if (frame != PUDDLE_ANIMATION_PUDDLE)
+      if (animation != PUDDLE_ANIMATION_PUDDLE)
         change = 1;
     }
     if (change) {
@@ -83,17 +78,17 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
                                   .cells;
       u8 *shapes;
       s32 slot;
-      u32 key;
+      u32 kind;
       s32 height;
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Actor_GetCellIndex(actor);
-      key = MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed,
-                                      actor->z.fixed);
+      kind = MapGrid_GetTerrainKindFar(actor->layer, actor->x.fixed,
+                                       actor->z.fixed);
       height = CELL_HEIGHT_STEPS(MapGrid_GetTerrainHeightFar(
           actor->layer, actor->x.fixed, actor->z.fixed));
 
-      event->movedBlock = actor;
+      field->movedBlock = actor;
       if (GameFlag_Get(flag)) {
         height -= CELL_HEIGHT_STEPS(toFIXED(32));
         GameFlag_Clear(flag);
@@ -105,7 +100,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
         cells += slot;
         shapes += slot;
-        *shapes = MapCollision_FindOrAddTag(actor->layer, key, height);
+        *shapes = MapCollision_FindOrAddTag(actor->layer, kind, height);
         if (GameFlag_Get(flag)) {
           s32 bits;
 
@@ -151,6 +146,3 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 key, s32 height) {
     i++;
   }
 }
-
-#undef PUDDLE_ANIMATION_FROZEN
-#undef PUDDLE_ANIMATION_PUDDLE

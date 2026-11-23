@@ -51,7 +51,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   u8 *groundZones = work->encounterZones;
   u32 first = 0;
   u32 second = 0;
-  const struct SceneMusicEntry *rule = gScene_EncounterRules;
+  const struct SceneEncounterRule *rule = gScene_EncounterRules;
   u32 i;
 
   if (useRules != 0) {
@@ -62,8 +62,8 @@ void Encounter_SelectMapZones(s32 useRules) {
         continue;
       if (rule->flag != -1 && GameFlag_Get(rule->flag))
         continue;
-      first = rule->first;
-      second = rule->second;
+      first = rule->groundZone;
+      second = rule->secondZone;
       break;
     }
   }
@@ -184,12 +184,12 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   // Draw one of the zone's formations by weight.
   work->encounterBias = 0;
   sum = 0;
-  for (i = 0; i < 8; i++)
+  for (i = 0; i < (s32)ARRAY_COUNT(entry->weights); i++)
     sum += entry->weights[i];
   if (sum == 0)
     return 0;
   pick = Random_Below(sum);
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < (s32)ARRAY_COUNT(entry->weights); i++) {
     pick -= entry->weights[i];
     if (pick < 0)
       break;

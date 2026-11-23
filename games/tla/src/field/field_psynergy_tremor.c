@@ -30,8 +30,8 @@
 #define SWAY_SHAKE toFIXED(4)              // sprites shake only past this
 #define STRONG_SWAY_HOLD_FRAMES 40
 
-/// The stages of Tremor's strong sway: it grows, holds, shrinks and settles,
-/// and SWAY_DONE ends it.
+/// The stages of a sway of the view (Tremor's and Grind's): it grows, holds,
+/// shrinks and settles, and SWAY_DONE ends it.
 enum {
   SWAY_GROW,
   SWAY_HOLD,
@@ -64,7 +64,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   struct TremorWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *target = scene->child;
   struct Sprite *targetSprite = target->sprite;
   s32 tiles;
@@ -122,7 +122,7 @@ void FieldPsynergy_TremorOnTarget(void) {
         Sound_PlayFar(SE_JUMP);
 
       // Shake the gathered objects' sprites with the view.
-      if (event->mode == ACTOR_SYSTEM_MAP) {
+      if (field->mode == ACTOR_SYSTEM_MAP) {
         for (i = 0; i < work->view.count; i++) {
           struct Sprite *sprite = work->view.objects[i]->sprite;
           s32 rotation = work->view.spriteRotations[i];
@@ -217,7 +217,7 @@ void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct TremorWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   s32 frameCount;
   s32 phase;
   s32 i;
@@ -241,7 +241,7 @@ void FieldPsynergy_Tremor(void) {
       Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
-    if (event->mode == ACTOR_SYSTEM_MAP) {
+    if (field->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->count; i++) {
         struct Sprite *sprite = work->objects[i]->sprite;
         s32 rotation = work->spriteRotations[i];

@@ -1,5 +1,6 @@
 /// @file
-/// Grind: the view swayed up and down.
+/// Grind: the screen shakes up and down while spray rises round the target,
+/// a sea rock is ground away, and the plain sway Grind makes at nothing.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -128,7 +129,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
   amplitude = toFIXED(2);
-  phase = 0;
+  phase = SWAY_GROW;
   timer = 0;
   do {
     if (spraying) {
@@ -192,7 +193,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
     ViewMove_Swing(VIEW_MOVE_Z, counter++, amplitude);
     switch (phase) {
-    case 0:
+    case SWAY_GROW:
       if (timer == 40 && mode != GRIND_ON_TARGET)
         spraying = 1;
       amplitude += toFIXED(1) / 10;
@@ -201,23 +202,23 @@ void FieldPsynergy_GrindOnTarget(void) {
         timer = -1;
       }
       break;
-    case 1:
+    case SWAY_HOLD:
       if (isSeaRock == 0) {
         if (timer == 50) {
-          phase = 2;
+          phase = SWAY_SHRINK;
           timer = -1;
         }
         if (pending != NULL)
           ((void (*)(s32, s32, s32))pending->value)(0, timer, selector);
       } else {
         if (timer == animation->height * 3) {
-          phase = 2;
+          phase = SWAY_SHRINK;
           timer = -1;
         }
         animating = 1;
       }
       break;
-    case 2:
+    case SWAY_SHRINK:
       if (isSeaRock == 1)
         animating = 0;
       if (timer == 5 && mode != GRIND_ON_TARGET)
@@ -228,15 +229,15 @@ void FieldPsynergy_GrindOnTarget(void) {
         timer = -1;
       }
       break;
-    case 3:
+    case SWAY_SETTLE:
       amplitude = 0;
       if (timer == 0)
-        phase = FIELD_PSYNERGY_FINISHED;
+        phase = SWAY_DONE;
       break;
     }
     wait(1);
     timer++;
-  } while (phase != FIELD_PSYNERGY_FINISHED);
+  } while (phase != SWAY_DONE);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   ViewMove_End();
   FieldPsynergy_FadeFromCastColor();

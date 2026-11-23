@@ -22,6 +22,15 @@
 /// The glow under the fist, 64 pixels square in 16 colours.
 #define POUND_GLOW_SIZE 64
 
+/// The stages of the fist's fall (PoundWork.state).
+enum PoundStage {
+  POUND_FALLS = 0,       ///< the fist comes down; it lands on the eighth frame
+  POUND_SHINE_GROWS = 1, ///< the shine spreads, its colours cycling
+  POUND_SHINE_HOLDS = 2,
+  POUND_SETTLES = 3, ///< the shaking stops
+  POUND_LIFTS = 4    ///< the fist rises off the ground
+};
+
 /// Pound's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
 /// shine's 32 sparks, the glow under the fist, the fist itself and the stage of
 /// its fall.
@@ -34,10 +43,11 @@ struct PoundWork {
   s16 state;   ///< the stage of the fall; FIELD_PSYNERGY_FINISHED once it ends
   s16 timer;   ///< frames into the stage
   s8 sparkles; ///< nonzero draws the sparks
-  s8 fading;   ///< set on the frame the fist lands, passed to the event
+  s8 landed;   ///< set on the frame the fist lands, passed to the event
 };
 
-/// Task of the Pound: its shine's colours and particles, each frame.
+/// Task of a Pound that comes down: the fist falls and lands with a shake,
+/// the shine spreads round it with its sparks, then the fist lifts again.
 void FieldPsynergy_UpdatePound(void) {
   struct PoundWork *work = Ram_HeapSlots->battleEffect;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
@@ -47,8 +57,8 @@ void FieldPsynergy_UpdatePound(void) {
   s32 red, green;
   s32 *frames;
 
-  work->fading = 0;
-  if (work->state == 1) {
+  work->landed = 0;
+  if (work->state == POUND_SHINE_GROWS) {
     // Each colour is a 32nd of a turn further along the cycle, which moves on
     // every other frame.
     /* FAKEMATCH(temporary): the frame count read through a pointer kept across
@@ -81,7 +91,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
   }
   switch (work->state) {
-  case 0:
+  case POUND_FALLS:
     work->actor->y.fixed -= toFIXED(7) / 2;
     if (work->timer == 8) {
       canvas->scaleX = FIXED_ONE / 8;
@@ -89,14 +99,14 @@ void FieldPsynergy_UpdatePound(void) {
       MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
       Sound_PlayFar(SE_POUND);
       work->sparkles = 1;
-      work->fading = 1;
+      work->landed = 1;
     }
     if (work->timer == 8) {
       work->state++;
       work->timer = -1;
     }
     break;
-  case 1:
+  case POUND_SHINE_GROWS:
     canvas->scaleX += FIXED_ONE / 16;
     canvas->scaleY = canvas->scaleX;
     if (canvas->scaleX > toFIXED(4) / 5 - 1) {
@@ -106,14 +116,14 @@ void FieldPsynergy_UpdatePound(void) {
       work->timer = -1;
     }
     break;
-  case 2:
+  case POUND_SHINE_HOLDS:
     canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
     if (work->timer == 32) {
       work->state++;
       work->timer = -1;
     }
     break;
-  case 3:
+  case POUND_SETTLES:
     if (work->timer == 0)
       MapGrid_SetScreenShakeFar(1, 1, 1);
     if (work->timer == 10) {
@@ -121,7 +131,7 @@ void FieldPsynergy_UpdatePound(void) {
       work->timer = -1;
     }
     break;
-  case 4:
+  case POUND_LIFTS:
     work->actor->y.fixed += toFIXED(3) / 2;
     if (work->timer == 13)
       work->state = FIELD_PSYNERGY_FINISHED;
@@ -130,12 +140,12 @@ void FieldPsynergy_UpdatePound(void) {
   work->timer++;
 }
 
-/// Per-frame callback: until done, moves the effect object down 2.5 pixels
-/// and shrinks it by 1/64 each frame, marking done at frame 8.
-void BattleEffect_SinkAndShrinkObject(void) {
+/// Task of a Pound that cannot come down: the fist sinks 2.5 pixels and
+/// shrinks by 1/64 a frame for 8 frames, before it shatters.
+void Pound_SinkFist(void) {
   struct PoundWork *work = Ram_HeapSlots->battleEffect;
 
-  if (work->state == 0) {
+  if (work->state == POUND_FALLS) {
     struct Actor *actor = work->actor;
 
     actor->y.fixed += -(toFIXED(5) / 2);
@@ -161,11 +171,11 @@ void FieldPsynergy_Pound(void) {
   struct PoundWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct PoundWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainActor;
   struct Actor *actor;
-  struct Actor *shine;
+  struct Actor *fist;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct EffectSprite *glow;
@@ -198,13 +208,13 @@ void FieldPsynergy_Pound(void) {
     lift = child->y.fixed - child->groundHeight + toFIXED(32);
   }
   if (scene->enabled != 0) {
-    // As x != -1 this splits the -1 and loses the mvns.
+    // Field_MeasurePsynergyHeight returns -1 where the spot is out of reach.
     spot =
         ~Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x);
     inReach = NONZERO(spot);
     if (inReach == 1) {
       for (j = 0; j < FIELD_ACTOR_COUNT; j++) {
-        actor = event->actors[j];
+        actor = field->actors[j];
         if (actor != NULL && actor->script != NULL &&
             (actor->collisionFlags & ACTOR_SOLID) &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &actor->x.fixed,
@@ -222,22 +232,22 @@ void FieldPsynergy_Pound(void) {
 
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
-  shine = Actor_Spawn(SPRITE_POUND_FIST, 0, 0, 0);
-  work->actor = shine;
-  if (shine != NULL) {
-    shine->motionFlags = 0;
-    if (event->psynergyDrawFlags & 2) {
-      if ((shine->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+  fist = Actor_Spawn(SPRITE_POUND_FIST, 0, 0, 0);
+  work->actor = fist;
+  if (fist != NULL) {
+    fist->motionFlags = 0;
+    if (field->psynergyDrawFlags & PSYNERGY_DRAW_FIXED_PRIORITY) {
+      if ((fist->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
           ACTOR_SPRITE_ONE) {
-        ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
-        shine->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        ((struct EffectSprite *)fist->sprite)->oam.priority = 1;
+        fist->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       }
     } else {
-      shine->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+      fist->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
-    shine->facing = caster->facing;
-    Actor_SelectAnimationFar(shine, 2);
-    if (!(event->psynergyDrawFlags & 1))
+    fist->facing = caster->facing;
+    Actor_SelectAnimationFar(fist, 2);
+    if (!(field->psynergyDrawFlags & PSYNERGY_DRAW_NO_SCENE_SPRITE))
       FieldPsynergy_StartSceneSprite();
 
     BattleEffect_StartCanvasSprite();
@@ -301,27 +311,27 @@ void FieldPsynergy_Pound(void) {
       sprite->scaleY = sprite->scaleX = FIXED_ONE * 4 / 5;
     }
     wait(1);
-    FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
-    Actor_SelectAnimationFar(shine, 1);
+    FieldPsynergy_GrowFromCaster(fist, scene->x, scene->y + lift, scene->z);
+    Actor_SelectAnimationFar(fist, 1);
     wait(15);
     riseFrames = 24;
     do {
-      shine->y.fixed += toFIXED(1) / 2;
+      fist->y.fixed += toFIXED(1) / 2;
       riseFrames--;
       wait(1);
     } while (riseFrames >= 0);
     wait(15);
-    work->state = 0;
+    work->state = POUND_FALLS;
     work->timer = 0;
     work->sparkles = 0;
     if (!inReach) {
-      Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_FRAME);
+      Task_Add(Pound_SinkFist, TASK_PASS_FRAME);
       while (work->state != FIELD_PSYNERGY_FINISHED)
         wait(1);
-      Task_Remove(BattleEffect_SinkAndShrinkObject);
+      Task_Remove(Pound_SinkFist);
       for (j = 0; j < POUND_SHATTER_PIECES; j++)
-        BattleEffect_SpawnScatterParticle(shine->x.fixed, shine->y.fixed,
-                                          shine->z.fixed);
+        BattleEffect_SpawnScatterParticle(fist->x.fixed, fist->y.fixed,
+                                          fist->z.fixed);
       Sound_PlayFar(SE_MENU_ERROR);
       wait(1);
     } else {
@@ -332,22 +342,22 @@ void FieldPsynergy_Pound(void) {
       frame = 0;
       while (work->state != FIELD_PSYNERGY_FINISHED) {
         wait(1);
-        scene->stage = work->fading;
+        scene->stage = work->landed;
         scene->frame = frame;
-        if (event->mode != ACTOR_SYSTEM_WORLD_MAP &&
-            !(event->psynergyDrawFlags & 1)) {
+        if (field->mode != ACTOR_SYSTEM_WORLD_MAP &&
+            !(field->psynergyDrawFlags & PSYNERGY_DRAW_NO_SCENE_SPRITE)) {
           glow = &work->glow;
           EffectSprite_Draw(glow);
         }
-        Field_RunPsynergyEvent(pending, work->fading, frame++);
+        Field_RunPsynergyEvent(pending, work->landed, frame++);
       }
       Task_Remove(FieldPsynergy_UpdatePound);
       wait(10);
       Sound_PlayFar(SE_MENU_ERROR);
-      FieldPsynergy_ShrinkToCaster(shine, shine->x.fixed, shine->y.fixed,
-                                   shine->z.fixed);
+      FieldPsynergy_ShrinkToCaster(fist, fist->x.fixed, fist->y.fixed,
+                                   fist->z.fixed);
     }
-    Actor_ReleaseFar(shine);
+    Actor_ReleaseFar(fist);
     VramCache_FreeEntry(starEntry);
     VramCache_FreeEntry(glowEntry);
     BattleEffect_EndCanvasSprite();

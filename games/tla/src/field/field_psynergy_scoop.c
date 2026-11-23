@@ -1,5 +1,5 @@
 /// @file
-/// Scoop: digging, the object dropped at the effect's anchor and the item dug
+/// Scoop: the giant hand digging, the actor dropped from it and the item dug
 /// up.
 // Part of field_psynergy.c.
 
@@ -28,13 +28,38 @@
 #define SCOOP_FIND_CHANCE (FIXED_ONE / 16)
 #define SCOOP_ITEM_CHANCE (FIXED_ONE * 3 / 4)
 
+/// The kinds of dig (ScoopWork.mode).
+enum ScoopMode {
+  SCOOP_EARTH = 0,  ///< at nothing: earth is thrown up
+  SCOOP_FINDS = 1,  ///< at nothing, one time in sixteen: something turns up
+  SCOOP_TARGET = 2, ///< on a target: the place's Scoop event runs
+  SCOOP_SPARKLE = 3 ///< at nothing where lit: sparkles rise
+};
+
+/// The stages of a dig (ScoopWork.phase).
+enum ScoopPhase {
+  SCOOP_DIGS = 0,
+  SCOOP_HAND_RISES = 1,
+  SCOOP_SETTLES = 2 ///< what was dug up shows, then the dig ends
+};
+
+/// Why the hand cannot dig.
+enum ScoopFailure {
+  SCOOP_CAN_DIG = 0,
+  SCOOP_ACTOR_IN_WAY = 1,
+  SCOOP_OUT_OF_REACH = 2,
+  SCOOP_HARD_GROUND = 3,
+  SCOOP_WALL = 4
+};
+
 /// Moves the work on to its next phase, its timer restarted.
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-/// Task of the Scoop: plays the dig on the anchor phase by phase.
+/// Task of the Scoop: the hand digs and rises, then the earth, sparkles or
+/// dust it threw up show, each kind of dig at its own pace.
 void Scoop_Update(void) {
   struct ScoopWork *work;
-  struct Actor *anchor;
+  struct Actor *hand;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
   u8 *vram;
@@ -44,24 +69,24 @@ void Scoop_Update(void) {
   s32 i;
 
   work = Ram_HeapSlots->battleEffect;
-  anchor = work->actor;
-  if (work->mode == 0) {
+  hand = work->actor;
+  if (work->mode == SCOOP_EARTH) {
     switch (work->phase) {
-    case 0:
+    case SCOOP_DIGS:
       if (work->timer == 1)
         work->other->scaleX = FIXED_ONE;
       if (work->timer == 4)
         NEXT_PHASE(work);
       break;
-    case 1:
+    case SCOOP_HAND_RISES:
       if (work->timer == 8)
-        Actor_SelectAnimationFar(anchor, 3);
+        Actor_SelectAnimationFar(hand, 3);
       if (work->timer <= 15)
-        anchor->y.fixed += toFIXED(23) / 10;
+        hand->y.fixed += toFIXED(23) / 10;
       if (work->timer == 28)
         NEXT_PHASE(work);
       break;
-    case 2:
+    case SCOOP_SETTLES:
       if (work->timer == 25)
         work->other->scaleX = 0;
       if (work->timer == 50)
@@ -69,7 +94,7 @@ void Scoop_Update(void) {
       break;
     }
     phase = &work->phase;
-    if (*phase == 2) {
+    if (*phase == SCOOP_SETTLES) {
       picture = work->picture;
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
@@ -79,7 +104,7 @@ void Scoop_Update(void) {
       sprite = &work->pictureSprite;
       EffectSprite_Draw(sprite);
     }
-    if (*phase == 2) {
+    if (*phase == SCOOP_SETTLES) {
       for (i = 0, particle = work->particles; i < SCOOP_DRAWN_DUST;
            i++, particle++) {
         sprite = &work->sprites[i];
@@ -89,30 +114,30 @@ void Scoop_Update(void) {
         particle->timer++;
       }
     }
-  } else if (work->mode == 3) {
+  } else if (work->mode == SCOOP_SPARKLE) {
     switch (work->phase) {
-    case 0:
+    case SCOOP_DIGS:
       if (work->timer == 1)
         work->other->scaleX = FIXED_ONE;
       if (work->timer == 4)
         NEXT_PHASE(work);
       break;
-    case 1:
+    case SCOOP_HAND_RISES:
       if (work->timer == 8)
         Actor_SelectAnimationFar(work->actor, 3);
       if (work->timer <= 15)
-        anchor->y.fixed += toFIXED(23) / 10;
+        hand->y.fixed += toFIXED(23) / 10;
       if (work->timer == 28)
         NEXT_PHASE(work);
       break;
-    case 2:
+    case SCOOP_SETTLES:
       if (work->timer == 70)
         work->other->scaleX = 0;
       if (work->timer == 90)
         work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
-    if (work->phase == 2) {
+    if (work->phase == SCOOP_SETTLES) {
       for (i = 0, particle = work->particles; i < SCOOP_PARTICLE_COUNT;
            i++, particle++) {
         if (particle->timer >= 0 && particle->timer < 45) {
@@ -127,38 +152,38 @@ void Scoop_Update(void) {
         particle->timer++;
       }
     }
-  } else if (work->mode == 1) {
+  } else if (work->mode == SCOOP_FINDS) {
     switch (work->phase) {
-    case 0:
+    case SCOOP_DIGS:
       if (work->timer == 8)
         NEXT_PHASE(work);
       break;
-    case 1:
+    case SCOOP_HAND_RISES:
       if (work->timer == 0)
         Actor_SelectAnimationFar(work->actor, 4);
-      anchor->y.fixed += toFIXED(23) / 10;
+      hand->y.fixed += toFIXED(23) / 10;
       if (work->timer == 15)
         NEXT_PHASE(work);
       break;
-    case 2:
+    case SCOOP_SETTLES:
       if (work->timer == 20)
         work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
   } else {
     switch (work->phase) {
-    case 0:
+    case SCOOP_DIGS:
       if (work->timer == 8)
         NEXT_PHASE(work);
       break;
-    case 1:
+    case SCOOP_HAND_RISES:
       if (work->timer == 0)
         Actor_SelectAnimationFar(work->actor, 4);
-      anchor->y.fixed += toFIXED(23) / 10;
+      hand->y.fixed += toFIXED(23) / 10;
       if (work->timer == 15)
         NEXT_PHASE(work);
       break;
-    case 2:
+    case SCOOP_SETTLES:
       if (work->timer == 30)
         work->phase = FIELD_PSYNERGY_FINISHED;
       break;
@@ -189,10 +214,10 @@ void FieldPsynergy_Scoop(void) {
   struct ScoopWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
-  struct Actor *other = NULL;
-  struct Actor *actor;
+  struct Actor *boulder = NULL;
+  struct Actor *hand;
   struct Actor *target;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
@@ -204,64 +229,64 @@ void FieldPsynergy_Scoop(void) {
   s32 pictureTile;
   FIXED pos[3];
   s32 failed;
-  s8 *alternate;
+  s8 *lit;
   s32 stage;
   s32 frame;
   s32 i;
 
-  if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode != ACTOR_SYSTEM_WORLD_MAP) {
     SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
                  caster->y.fixed,
                  (caster->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
     Vector_AddPolarOffset(toFIXED(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
-  actor = Actor_Spawn(SPRITE_SCOOP_HAND, 0, 0, 0);
-  work->actor = actor;
-  if (actor != NULL) {
-    actor->motionFlags = 0;
-    if (event->psynergyDrawFlags & 2) {
-      if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+  hand = Actor_Spawn(SPRITE_SCOOP_HAND, 0, 0, 0);
+  work->actor = hand;
+  if (hand != NULL) {
+    hand->motionFlags = 0;
+    if (field->psynergyDrawFlags & PSYNERGY_DRAW_FIXED_PRIORITY) {
+      if ((hand->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
           ACTOR_SPRITE_ONE) {
-        ((struct EffectSprite *)actor->sprite)->oam.priority = 1;
-        actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        ((struct EffectSprite *)hand->sprite)->oam.priority = 1;
+        hand->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       }
     } else {
-      actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+      hand->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
-    actor->facing = caster->facing;
-    Actor_SelectAnimationFar(actor, 0);
-    alternate = &scene->lit;
-    if (*alternate != 0)
-      Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_GREY);
-    if (*alternate == 0)
-      other = Actor_Spawn(SPRITE_BROWN_BOULDER, scene->x, scene->y, scene->z);
+    hand->facing = caster->facing;
+    Actor_SelectAnimationFar(hand, 0);
+    lit = &scene->lit;
+    if (*lit != 0)
+      Actor_SetSpriteColorModeFar(hand, SPRITE_COLOR_GREY);
+    if (*lit == 0)
+      boulder = Actor_Spawn(SPRITE_BROWN_BOULDER, scene->x, scene->y, scene->z);
     else
-      other = Actor_Spawn(SPRITE_GREY_BOULDER, scene->x, scene->y, scene->z);
-    work->other = other;
-    if (other != NULL) {
-      other->z.fixed += toFIXED(3);
-      other->motionFlags = 0;
-      other->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
-      other->scaleX = 0;
-      if (!(event->psynergyDrawFlags & 1))
+      boulder = Actor_Spawn(SPRITE_GREY_BOULDER, scene->x, scene->y, scene->z);
+    work->other = boulder;
+    if (boulder != NULL) {
+      boulder->z.fixed += toFIXED(3);
+      boulder->motionFlags = 0;
+      boulder->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+      boulder->scaleX = 0;
+      if (!(field->psynergyDrawFlags & PSYNERGY_DRAW_NO_SCENE_SPRITE))
         FieldPsynergy_StartSceneSprite();
       Sound_PlayFar(SE_ITEM_BREAK);
-      FieldPsynergy_GrowFromCaster(actor, scene->x, scene->y + toFIXED(32),
+      FieldPsynergy_GrowFromCaster(hand, scene->x, scene->y + toFIXED(32),
                                    scene->z);
       wait(10);
-      Actor_SelectAnimationFar(actor, 1);
+      Actor_SelectAnimationFar(hand, 1);
       wait(15);
       for (i = 0; i < 10; i++) {
-        actor->y.fixed += -(toFIXED(5) / 2);
+        hand->y.fixed += -(toFIXED(5) / 2);
         wait(1);
       }
-      Actor_SelectAnimationFar(actor, 2);
+      Actor_SelectAnimationFar(hand, 2);
       Sound_PlayFar(SE_WATER);
 
-      failed = 0;
+      failed = SCOOP_CAN_DIG;
       for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
-        target = event->actors[i];
+        target = field->actors[i];
         if (target != NULL && target->script != NULL &&
             (Actor_GetSpriteIdFar(target) == SPRITE_STAKE ||
              (target->collisionFlags & ACTOR_SOLID)) &&
@@ -269,39 +294,39 @@ void FieldPsynergy_Scoop(void) {
             ((struct Sprite *)target->sprite)->count != 0 &&
             FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                        target->radius - 2) >= 0) {
-          failed = 1;
+          failed = SCOOP_ACTOR_IN_WAY;
           break;
         }
       }
       if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) ==
           CELL_BEHAVIOR_WALL)
-        failed = 4;
+        failed = SCOOP_WALL;
       if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster,
                                       &scene->x) == -1)
-        failed = 2;
+        failed = SCOOP_OUT_OF_REACH;
       if (MapGrid_CanScoop(scene->x, scene->z, caster->layer) == 0)
-        failed = 3;
+        failed = SCOOP_HARD_GROUND;
       if (failed) {
         wait(2);
         for (i = 0; i < SCOOP_SPARKLES; i++)
-          BattleEffect_SpawnScatterParticle(actor->x.fixed, actor->y.fixed,
-                                            actor->z.fixed);
+          BattleEffect_SpawnScatterParticle(hand->x.fixed, hand->y.fixed,
+                                            hand->z.fixed);
         Sound_PlayFar(SE_MENU_ERROR);
         wait(1);
       } else {
 
         if (scene->enabled != 0) {
           if (Random16() < SCOOP_FIND_CHANCE)
-            work->mode = 1;
-          else if (*alternate == 0)
-            work->mode = 0;
+            work->mode = SCOOP_FINDS;
+          else if (*lit == 0)
+            work->mode = SCOOP_EARTH;
           else
-            work->mode = 3;
+            work->mode = SCOOP_SPARKLE;
         } else {
-          work->mode = 2;
+          work->mode = SCOOP_TARGET;
         }
 
-        if (work->mode == 0) {
+        if (work->mode == SCOOP_EARTH) {
           Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A),
                               work);
           particleEntry = VramCache_FindFreeEntry();
@@ -314,8 +339,8 @@ void FieldPsynergy_Scoop(void) {
             EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
             sprite->oam.fullColor = 1;
             sprite->oam.palette = 0;
-            sprite->oam.priority = BattleEffect_GetObjectPriority(other);
-            sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
+            sprite->oam.priority = BattleEffect_GetObjectPriority(boulder);
+            sprite->depth = BattleEffect_GetObjectDepth(boulder) + 1;
             sprite->scaleY = sprite->scaleX = FIXED_ONE / 5;
             SET_POSITION(particle, scene->x, scene->y, scene->z);
             Vector_AddPolarOffset(toFIXED(2), Random16(), &particle->x);
@@ -326,8 +351,8 @@ void FieldPsynergy_Scoop(void) {
                                   &particle->velocityX);
             particle->timer = -i * 2;
           }
-        } else if (work->mode == 2) {
-          if (*alternate == 0)
+        } else if (work->mode == SCOOP_TARGET) {
+          if (*lit == 0)
             data = Resource_GetTableEntry(RESOURCE_DUST_PUFF_A);
           else
             data = Resource_GetTableEntry(RESOURCE_DUST_PUFF_B);
@@ -342,8 +367,8 @@ void FieldPsynergy_Scoop(void) {
             EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
             sprite->oam.fullColor = 1;
             sprite->oam.palette = 0;
-            sprite->oam.priority = BattleEffect_GetObjectPriority(other);
-            sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
+            sprite->oam.priority = BattleEffect_GetObjectPriority(boulder);
+            sprite->depth = BattleEffect_GetObjectDepth(boulder) + 1;
             SET_POSITION(particle, scene->x, scene->y, scene->z);
             Vector_AddPolarOffset(toFIXED(2), Random16(), &particle->x);
             particle->velocityX = 0;
@@ -352,7 +377,7 @@ void FieldPsynergy_Scoop(void) {
             Vector_AddPolarOffset(toFIXED(1), Random16(), &particle->velocityX);
             particle->timer = -i;
           }
-        } else if (work->mode == 3) {
+        } else if (work->mode == SCOOP_SPARKLE) {
           Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_SPARKLE),
                               work);
           particleEntry = VramCache_FindFreeEntry();
@@ -365,8 +390,8 @@ void FieldPsynergy_Scoop(void) {
             EffectSprite_Init(sprite, 4, 4, 0, particleTile + (i & 1) * 2);
             sprite->oam.fullColor = 1;
             sprite->oam.palette = 0;
-            sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
-            sprite->depth = BattleEffect_GetObjectDepth(actor) - 1;
+            sprite->oam.priority = BattleEffect_GetObjectPriority(hand);
+            sprite->depth = BattleEffect_GetObjectDepth(hand) - 1;
             SET_POSITION(particle, scene->x, scene->y + toFIXED(40), scene->z);
             Vector_AddPolarOffset(Random16() * 4 + toFIXED(3), Random16(),
                                   &particle->x);
@@ -376,7 +401,7 @@ void FieldPsynergy_Scoop(void) {
           }
         }
 
-        if (work->mode == 0) {
+        if (work->mode == SCOOP_EARTH) {
           Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SCOOP_EARTH),
                               work);
           pictureEntry = VramCache_FindFreeEntry();
@@ -389,14 +414,14 @@ void FieldPsynergy_Scoop(void) {
               BattleEffect_GetObjectPriority(scene->mainActor);
           sprite->oam.fullColor = 1;
           sprite->oam.palette = 0;
-          pos[0] = actor->x.fixed;
-          pos[1] = actor->y.fixed + toFIXED(32);
-          pos[2] = actor->z.fixed;
+          pos[0] = hand->x.fixed;
+          pos[1] = hand->y.fixed + toFIXED(32);
+          pos[2] = hand->z.fixed;
           Camera_WorldToScreen(pos);
           sprite->x = pos[0];
           sprite->y = pos[2];
         }
-        if (work->mode == 0 || work->mode == 3) {
+        if (work->mode == SCOOP_EARTH || work->mode == SCOOP_SPARKLE) {
           wait(6);
           work->other->scaleX = FIXED_ONE;
           wait(4);
@@ -404,14 +429,14 @@ void FieldPsynergy_Scoop(void) {
           wait(10);
         }
 
-        work->phase = 0;
+        work->phase = SCOOP_DIGS;
         work->timer = 0;
         {
           s32 order = TASK_PASS_FRAME;
 
           Task_Add(Scoop_Update, order);
         }
-        if (work->mode == 1) {
+        if (work->mode == SCOOP_FINDS) {
           frame = 0;
           while (work->phase != FIELD_PSYNERGY_FINISHED) {
             if (frame == 24)
@@ -440,8 +465,8 @@ void FieldPsynergy_Scoop(void) {
         }
         Task_Remove(Scoop_Update);
         Sound_PlayFar(SE_MENU_ERROR);
-        FieldPsynergy_ShrinkToCaster(actor, actor->x.fixed, actor->y.fixed,
-                                     actor->z.fixed);
+        FieldPsynergy_ShrinkToCaster(hand, hand->x.fixed, hand->y.fixed,
+                                     hand->z.fixed);
         if (particleEntry != VRAM_CACHE_ENTRY_COUNT)
           VramCache_FreeEntry(particleEntry);
         if (pictureEntry != VRAM_CACHE_ENTRY_COUNT)
@@ -449,27 +474,26 @@ void FieldPsynergy_Scoop(void) {
       }
     }
   }
-  Actor_ReleaseFar(actor);
-  Actor_ReleaseFar(other);
+  Actor_ReleaseFar(hand);
+  Actor_ReleaseFar(boulder);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// Puts object id at the effect's anchor (if any) and lets it fall under
-/// gravity, waits 50 frames, then asks for its talk, which opens it without its
+/// Drops an actor from Scoop's hand (if there is one) to fall to the ground,
+/// waits 50 frames, then asks for its talk, which opens it without its
 /// "checked the ..." message (FIELD_TALK_SILENT).
 void BattleEffect_DropObjectAtAnchor(s32 id) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *anchor;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct Actor *hand;
   struct Actor *actor;
 
-  anchor = ((struct ScoopWork *)Ram_HeapSlots->battleEffect)->actor;
+  hand = ((struct ScoopWork *)Ram_HeapSlots->battleEffect)->actor;
   actor = Actor_GetById(id);
-  if (anchor != NULL) {
-    SET_ACTOR_POSITION(actor, anchor->x.fixed, anchor->y.fixed,
-                       anchor->z.fixed);
+  if (hand != NULL) {
+    SET_ACTOR_POSITION(actor, hand->x.fixed, hand->y.fixed, hand->z.fixed);
   }
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (field->mode == ACTOR_SYSTEM_WORLD_MAP) {
     actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = 0;
   } else {
@@ -477,36 +501,36 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   }
   actor->gravity = toFIXED(9) / 100;
   wait(50);
-  event->talk = id | FIELD_TALK_SILENT;
+  field->talk = id | FIELD_TALK_SILENT;
 }
 
 struct Unit *Unit_Get(u32 unitId);
 extern const u16 gScoop_DugItems[16];
 
-/// SCOOPED_ITEM_ACTOR at the anchor, fetched or spawned (SPRITE_UNSEEN_MARKER),
+/// SCOOPED_ITEM_ACTOR at the hand, fetched or spawned (SPRITE_UNSEEN_MARKER),
 /// shows what Scoop dug up: three times in four one of gScoop_DugItems's
 /// sixteen items (a coin when there is no room for it), else coins up to twice
 /// the leader's level; it then drops (BattleEffect_DropObjectAtAnchor).
 void Scoop_DigUpItem(void) {
   struct ScoopWork *work = Ram_HeapSlots->battleEffect;
-  struct Actor *anchor;
-  struct FieldWork *event;
+  struct Actor *hand;
+  struct FieldWork *field;
   struct Unit *unit;
   struct Actor *actor;
   s32 item;
   s32 id = SCOOPED_ITEM_ACTOR;
 
-  anchor = work->actor;
-  event = Ram_HeapSlots->fieldWork;
+  hand = work->actor;
+  field = Ram_HeapSlots->fieldWork;
   unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
   actor = Actor_GetById(id);
   if (actor == NULL) {
-    actor = Actor_CreateFar(SPRITE_UNSEEN_MARKER, anchor->x.fixed,
-                            anchor->y.fixed, anchor->z.fixed);
+    actor = Actor_CreateFar(SPRITE_UNSEEN_MARKER, hand->x.fixed, hand->y.fixed,
+                            hand->z.fixed);
     if (actor == NULL)
       return;
-    event->actors[id] = actor;
+    field->actors[id] = actor;
   }
   if (Random16() < SCOOP_ITEM_CHANCE) {
     item = gScoop_DugItems[Random_Below(ARRAY_COUNT(gScoop_DugItems))];
@@ -515,9 +539,9 @@ void Scoop_DigUpItem(void) {
   } else {
     item = (Random_Below(unit->level * 2) + 1) | SCOOPED_COINS;
   }
-  SET_ACTOR_POSITION(actor, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
+  SET_ACTOR_POSITION(actor, hand->x.fixed, hand->y.fixed, hand->z.fixed);
   Actor_ShowItemIconById(id, item);
-  event->scoopedItem = item;
+  field->scoopedItem = item;
   BattleEffect_DropObjectAtAnchor(id);
 }
 #undef NEXT_PHASE

@@ -30,14 +30,14 @@
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *field = gFieldWork;
 
   if (gDebugMode != 0) {
     if (gInput.pressed & KEY_L) {
-      runtime->fastForward = 0;
+      field->fastForward = 0;
     }
     if (gInput.pressed & KEY_R) {
-      runtime->fastForward = -1;
+      field->fastForward = -1;
     }
   }
 }
@@ -72,19 +72,19 @@ void Leader_StopMoving(void) {
 /// state, and starts the debug fast-forward task with the leader as the
 /// message speaker.
 void Event_Start(void) {
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   AreaNameWindow_HideFar();
   Leader_StopMoving();
-  if (state->busy != 0)
+  if (field->busy != 0)
     Event_ResolveAllPendingActions();
-  state->choiceMessage = 0;
-  state->choiceWidth = 0;
-  state->choiceSelection = 0;
-  state->transitionFrames = MAP_TRANSITION_FRAMES;
-  state->fastForward = 0;
-  state->unusedAfterMessage = -1;
-  state->unusedBeforeCamera[0] = -1;
-  state->unusedBeforeCamera[1] = -1;
+  field->choiceMessage = 0;
+  field->choiceWidth = 0;
+  field->choiceSelection = 0;
+  field->transitionFrames = MAP_TRANSITION_FRAMES;
+  field->fastForward = 0;
+  field->unusedAfterMessage = -1;
+  field->unusedBeforeCamera[0] = -1;
+  field->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
   // clears it, and nothing in either game's code, tables or cleared ranges of
@@ -92,8 +92,8 @@ void Event_Start(void) {
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    state->speaker = party->leaderActorId;
-    state->messageWindow = 0;
+    field->speaker = party->leaderActorId;
+    field->messageWindow = 0;
   }
 }
 
@@ -141,6 +141,7 @@ void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 /// Adds unit to the party. With announce nonzero it also shows `<name> joined
 /// your party.` (Party_ShowJoinedMessage, which receives announce too).
 void Event_AddPartyMember(s32 unit, s32 announce) {
+  // DEAD: the unit looked up and never used; the ROM keeps the call.
   Unit_Get(unit);
   Party_AddMemberFar(unit);
   if (announce != 0) {
@@ -148,12 +149,21 @@ void Event_AddPartyMember(s32 unit, s32 announce) {
   }
 }
 
-/// Adds two units to the party and announces them together.
+/// Adds two units to the party and announces them together ("<a> and <b>
+/// joined your party.", Party_ShowPairJoinedMessage).
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
+
+/// What Party_CheckShortcut finds wrong with a shortcut.
+enum ShortcutProblem {
+  SHORTCUT_USABLE = 0,
+  SHORTCUT_NO_SUCH_MEMBER = -1,
+  SHORTCUT_MEMBER_AWAY = -2, ///< not in the party
+  SHORTCUT_NOT_LEARNED = -3  ///< the member does not know the Psynergy
+};
 
 /// Checks an L or R button shortcut, packed as the party member in bits 10 to
 /// 13 and the Psynergy in bits 0 to 9.
@@ -162,20 +172,20 @@ s32 Party_CheckShortcut(u32 shortcut) {
   s32 ability = ABILITY_ID(shortcut);
 
   if (member > ALLY_MAX)
-    return -1;
+    return SHORTCUT_NO_SUCH_MEMBER;
   if (GameFlag_Get(FLAG_IN_PARTY(member)) == 0)
-    return -2;
+    return SHORTCUT_MEMBER_AWAY;
   if (Unit_KnowsPsynergyFar(member, ability) == 0)
-    return -3;
-  return 0;
+    return SHORTCUT_NOT_LEARNED;
+  return SHORTCUT_USABLE;
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
 /// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
+  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != SHORTCUT_USABLE)
     gMainRoutineWork.firstShortcut = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != 0)
+  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != SHORTCUT_USABLE)
     gMainRoutineWork.secondShortcut = 0;
 }
 
@@ -212,6 +222,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// Checks whether the party can carry one more of item; when it cannot, says
 /// so and returns -1, else 0.
 s32 Party_CheckItemLimit(s32 item) {
+  // DEAD: the count never used; the ROM keeps the call.
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
@@ -448,19 +459,19 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// The event command "open screen": starts the event's screen transition and
 /// sets transitionActive.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *field = gFieldWork;
 
-  ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
-  runtime->transitionActive = 1;
+  ScreenTransition_Start(field->transition, field->transitionFrames);
+  field->transitionActive = 1;
 }
 
 /// The event command "close screen": finishes the event's screen transition
 /// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *field = gFieldWork;
 
-  ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
-  runtime->transitionActive = 0;
+  ScreenTransition_Finish(field->transition, field->transitionFrames);
+  field->transitionActive = 0;
 }
 
 /// The event command "wait for screen": waits as long as the transition runs
@@ -479,10 +490,10 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 /// Makes the event leave and records sceneId and entrance as the restart
 /// point.
 void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->exit = EXIT_KEEP_DESTINATION;
+  field->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
   party->restartScene = sceneId;
   party->restartEntrance = entrance;
@@ -491,8 +502,8 @@ void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
 /// The event command "request exit": sets the field's exit request
 /// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 request) {
-  struct FieldWork *state = gFieldWork;
-  state->exit = request;
+  struct FieldWork *field = gFieldWork;
+  field->exit = request;
 }
 
 #undef GIFT_RECEIVED_MESSAGE_MODE

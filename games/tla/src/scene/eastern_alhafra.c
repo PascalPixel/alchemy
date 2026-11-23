@@ -254,6 +254,8 @@ s32 Leader_CanPushObjectAhead();
 /// Leader_PushObjectAhead through this overlay's own veneer: pushes the object
 /// ahead of the leader on by a cell.
 s32 EasternAlhafra_PushObjectAhead();
+/// The harbour water's two tables of BG1 offsets, a halfword a screen line: one
+/// an HBlank DMA reads while the other is filled for the next frame.
 u16 gEasternAlhafra_WaveLines[2][DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void Rope_Initialize(void);
@@ -2607,6 +2609,7 @@ u16 gEasternAlhafra_ShipDoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// The ship's door opening as Felix walks into it.
 struct MapGridCellAnimation gEasternAlhafra_ShipDoor = {
     .steps = gEasternAlhafra_ShipDoorOpening, .x = 16, .y = 17,
 };

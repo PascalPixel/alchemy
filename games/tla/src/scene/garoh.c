@@ -112,6 +112,8 @@ extern s16 gGaroh_DoorFrames[];
 extern s16 gGaroh_WideDoorFrames[];
 extern s16 gGaroh_TallDoorFrames[];
 void Garoh_LashRope(void);
+/// BG2's horizontal offset for each screen line while the path's layer ripples
+/// by night (Garoh_WaveHypnosSwordChestLayer).
 u16 gGaroh_WaveLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
 /// The village's people by night and by day (SceneId_Garoh), numbering the
@@ -837,6 +839,8 @@ void Garoh_SinkPillar(s32 id, struct Actor *actor) {
   Garoh_ScatterDustRing(saved);
 }
 
+/// Defines a check that sinks pillar actorId (Garoh_SinkPillar) once it stands
+/// on cell (cellX, cellZ), and sets flag so it sinks once.
 #define DEFINE_GAROH_TRIGGER_AT_CELL(name, actorId, flag, cellX, cellZ)        \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(actorId);                                  \
@@ -1137,6 +1141,8 @@ void Garoh_PopQuestionMarks(s32 id) {
   FieldEvent_Wait(20);
 }
 
+/// Defines Reveal's effect played on actor at the cave's passage: the effect's
+/// phase, and the passage's 3 by 3 cells redrawn from column fromX.
 #define DEFINE_GAROH_PLAY_EFFECT(name, phase, fromX)                           \
   void name(s32 actor) {                                                       \
     FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);                            \
@@ -2824,6 +2830,7 @@ extern u32 gFieldEffect_MediumScript[];
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The four pillars Move pushes, ended by -1.
 s16 gGaroh_Pillars[] = {
     ACTOR_FIRST_PILLAR, ACTOR_SECOND_PILLAR, ACTOR_THIRD_PILLAR,
     ACTOR_FOURTH_PILLAR, -1, 0,
@@ -3013,21 +3020,23 @@ struct ActorPlacement gGaroh_WerewolfCaveActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The village's doors opening, as MAPGRID_ANIMATION_STEP rows: two steps of six
+/// frames each: a door, the shop's wide door, the sanctum's tall door.
 s16 gGaroh_DoorFrames[] = {
     82, 32, 1, 2, 6, 80, 32, 1,
     2, 6, -1,
 };
-
 s16 gGaroh_WideDoorFrames[] = {
     82, 35, 1, 2, 6, 80, 35, 1,
     2, 6, -1,
 };
-
 s16 gGaroh_TallDoorFrames[] = {
     78, 32, 2, 2, 6, 78, 35, 2,
     2, 6, -1, 0,
 };
 
+/// The doors Felix walks into, a row for each exit from the first: the opening
+/// and the cell it plays at.
 struct MapGridCellAnimation gGaroh_Doors[] = {
     {gGaroh_DoorFrames, 78, 21},
     {gGaroh_DoorFrames, 0, 0},

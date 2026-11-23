@@ -712,6 +712,10 @@ void DehkanPlateau_ForgetFall(void) {
   }
 }
 
+/// Defines a routine that restores a stretch's count cracks, listed in cracks
+/// and drawn open with pictures: on a return the opened ones are drawn open;
+/// otherwise each crack listed as cracked sets its flag, and the fall is
+/// forgotten.
 #define DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(name, cracks, count, pictures)    \
   void name(void) {                                                            \
     const u16 *cell = &cracks[0][0];                                           \
@@ -1899,6 +1903,11 @@ void DehkanPlateau_InitializeTightropes(void) {
 
 extern u16 gDehkanPlateau_FallLandingCells[];
 
+/// Defines a routine that draws, in a cave below the cracks, where the party
+/// landed under the crack it fell through (gDehkanPlateau_FallLandingCells):
+/// the floor cell from (sourceX, sourceZ), a column of five cells from
+/// (columnSourceX, columnSourceZ), and four cells from (sourceX, belowSourceZ),
+/// belowOffsetZ rows below that column on the lower layer.
 #define DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(name, sourceX, sourceZ,            \
                                             columnSourceX, columnSourceZ,      \
                                             belowOffsetZ, belowSourceZ)        \
@@ -2167,7 +2176,6 @@ s16 gDehkanPlateau_FullMetalVestChestCrumblingPillars[] = {
     ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR + 2, FLAG_PILLAR_CRACKED(2),
     ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_ThemisAxeChestCrumblingPillars[] = {
     ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
     ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
@@ -2182,7 +2190,6 @@ s16 gDehkanPlateau_ThemisAxeChestCrumblingPillars[] = {
     ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR + 10, FLAG_PILLAR_CRACKED(10),
     ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_TightropesCrumblingPillars[] = {
     ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0),
     ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 1, FLAG_PILLAR_CRACKED(1),
@@ -2190,7 +2197,6 @@ s16 gDehkanPlateau_TightropesCrumblingPillars[] = {
     ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3, FLAG_PILLAR_CRACKED(3),
     ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_CannonCrumblingPillar[] = {
     ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, FLAG_PILLAR_CRACKED(0), ACTOR_LIST_END,
 };
@@ -2200,22 +2206,18 @@ s16 gDehkanPlateau_FullMetalVestChestStakes[] = {
     ACTOR_FULL_METAL_VEST_CHEST_STAKE, 1,
     FLAG_FULL_METAL_VEST_CHEST_STAKE_POUNDED, ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_ThemisAxeChestStakes[] = {
     ACTOR_THEMIS_AXE_CHEST_STAKE, 1, FLAG_THEMIS_AXE_CHEST_STAKE_POUNDED,
     ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_TightropesStakes[] = {
     ACTOR_TIGHTROPES_STAKE, 1, FLAG_TIGHTROPES_STAKE_POUNDED,
     ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_PoundCubeStakes[] = {
     ACTOR_POUND_CUBE_STAKE, 1, FLAG_POUND_CUBE_STAKE_POUNDED,
     ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_CannonStakes[] = {
     ACTOR_CANNON_ROOM_STAKE, 1, FLAG_CANNON_ROOM_STAKE_POUNDED,
     ACTOR_LIST_END,
@@ -2225,7 +2227,6 @@ s16 gDehkanPlateau_CannonStakes[] = {
 s16 gDehkanPlateau_ThemisAxeChestPillars[] = {
     ACTOR_THEMIS_AXE_CHEST_PILLAR, ACTOR_LIST_END,
 };
-
 s16 gDehkanPlateau_TightropesPillars[] = {
     ACTOR_TIGHTROPES_PILLAR, ACTOR_LIST_END,
 };
@@ -2241,15 +2242,12 @@ s16 gDehkanPlateau_TightropesVinePillars[] = {
 u16 gDehkanPlateau_FullMetalVestChestCrackPictures[] = {
     4, 33, 5, 33,
 };
-
 u16 gDehkanPlateau_ThemisAxeChestCrackPictures[] = {
     68, 33, 69, 33,
 };
-
 u16 gDehkanPlateau_TightropesCrackPictures[] = {
     69, 51, 70, 51,
 };
-
 u16 gDehkanPlateau_PoundCubeCrackPictures[] = {
     65, 64, 64, 64,
 };
@@ -2259,17 +2257,14 @@ u16 gDehkanPlateau_FullMetalVestChestHolePictures[] = {
     1, 36, 2, 36, 3, 36, 4, 36,
     5, 36, 6, 36, 7, 36, 8, 36,
 };
-
 u16 gDehkanPlateau_ThemisAxeChestHolePictures[] = {
     65, 36, 66, 36, 67, 36, 68, 36,
     69, 36, 70, 36, 71, 36, 72, 36,
 };
-
 u16 gDehkanPlateau_TightropesHolePictures[] = {
     66, 54, 67, 54, 68, 54, 69, 54,
     70, 54, 71, 54, 72, 54, 73, 54,
 };
-
 u16 gDehkanPlateau_PoundCubeHolePictures[] = {
     64, 66, 65, 66, 66, 66, 67, 66,
     68, 66,
@@ -2293,7 +2288,6 @@ u16 gDehkanPlateau_FullMetalVestChestCracks[][6] = {
     {1, 122, 16, 0, 122, 52},
     {0, 122, 18, 5, 122, 54},
 };
-
 u16 gDehkanPlateau_ThemisAxeChestCracks[][6] = {
     {1, 105, 4, 0, 41, 36},
     {0, 109, 17, 0, 45, 49},
@@ -2304,7 +2298,6 @@ u16 gDehkanPlateau_ThemisAxeChestCracks[][6] = {
     {0, 114, 18, 0, 50, 50},
     {0, 105, 6, 0, 41, 38},
 };
-
 u16 gDehkanPlateau_TightropesCracks[][6] = {
     {1, 91, 11, 0, 27, 43},
     {0, 92, 11, 0, 28, 43},
@@ -2313,7 +2306,6 @@ u16 gDehkanPlateau_TightropesCracks[][6] = {
     {1, 109, 7, 0, 45, 39},
     {1, 112, 6, 0, 48, 38},
 };
-
 u16 gDehkanPlateau_PoundCubeCracks[][6] = {
     {1, 13, 8, 2, 13, 72},
     {0, 13, 9, 0, 13, 73},

@@ -535,6 +535,7 @@ extern s8 gGabombaStatue_RopeStopSteps[];
 /// The frames the cog's tooth takes to settle as the rope pulls taut.
 enum { ROPE_STOP_FRAMES = 25 };
 
+/// Whether a and b are at most limit apart.
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 

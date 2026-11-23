@@ -3088,6 +3088,7 @@ typedef struct {
 /// Takes size bytes of EWRAM's heap (Heap_AllocEwram).
 static inline void *BumpAllocEwram(s32 size) { return Heap_AllocEwram(size); }
 
+/// The maze grid's cell at (x, y), and its address.
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
 #define AT_ADDRESS(x, y)                                                       \
   ((PathCell *)(((y) * GRID_WIDTH + (x)) * 4 + (s32)grid))

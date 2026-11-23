@@ -858,6 +858,7 @@ void AlhafranCave_CycleKeyColors(void) { Actor_CycleSpriteColors(); }
 #include "shared/actor_set_cell_open.h"
 
 // clang-format off
+/// The puddle Frost freezes into a pillar, and the flag set while it stands.
 s16 gAlhafranCave_Puddles[] = {
     ACTOR_CAVE_PUDDLE, FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN, -1, 0,
 };
@@ -891,6 +892,8 @@ u32 gAlhafranCave_VisitorsLeaveScript[] = {
     SC_END,
 };
 
+/// The jail's stake that Pound sinks: its actor, its kind and the flag set once
+/// it is sunk.
 u16 gAlhafranCave_PoundStakes[] = {
     ACTOR_JAIL_STAKE, 1, FLAG_JAIL_STAKE_POUNDED, ACTOR_LIST_END,
 };

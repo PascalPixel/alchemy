@@ -4044,18 +4044,7 @@ struct Trigger gGaiaRockInside_AltarTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Each rock of a rising statue's burst flies for 40 frames, then blinks for
-/// 20 and is gone.
-u32 gDebris_Script[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
 #include "shared/stone_head_rise_script.c"
 // clang-format on

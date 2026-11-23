@@ -985,7 +985,7 @@ void TaopoSwamp_FlickerPool(void) {
     FieldTask_Remove(TaopoSwamp_FlickerPool);
 }
 
-extern u32 gTaopoSwamp_TremorPillarScript[];
+extern u32 gDebris_Script[];
 
 /// Tremor on the pillar with the huge rock pile on top, in the middle of the
 /// Tremor room: the pile rolls off and lands with a thump, a glowing red rock
@@ -1036,7 +1036,7 @@ void TaopoSwamp_TremorPillar(void) {
       angle = Random16();
       speed = Random16();
       scale = (Random16() >> 2) + FIXED_ONE / 16;
-      Actor_StartScript(clod, gTaopoSwamp_TremorPillarScript);
+      Actor_StartScript(clod, gDebris_Script);
       Actor_SetSpriteFlags(clod, 0);
       clod->velocityY = (angle << 2) + toFIXED(2);
       cosine = Trig_Cos(angle);
@@ -2269,16 +2269,7 @@ u32 gTaopoSwamp_PuffSteamScript[] = {
     SC_RELEASE,
 };
 
-u32 gTaopoSwamp_TremorPillarScript[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
 u32 gTaopoSwamp_SparkFades[] = {
     SC_WAIT(30),

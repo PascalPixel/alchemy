@@ -662,7 +662,7 @@ void MarsLighthouseRoomF_BlazeTorch(void) {
   MarsLighthouseRoomF_ShootFireballAtWall();
 }
 
-extern u32 gMarsLighthouseRoomF_RubbleScriptA[];
+extern u32 gDebris_Script[];
 extern u32 gMarsLighthouseRoomF_RubbleScriptB[];
 
 /// The pieces of wall MarsLighthouseRoomF_ScatterRubble throws.
@@ -688,7 +688,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
       s32 scale = (Random16() >> 1) + FIXED_ONE / 4;
 
       if (Random16() <= 32767)
-        Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
+        Actor_StartScript(actor, gDebris_Script);
       else
         Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
       Actor_SetSpriteFlags(actor, 0);
@@ -1906,19 +1906,9 @@ s16 gMarsLighthouseRoomF_StatueFlameThrowers[] = {
     ACTOR_HIDDEN_FLAME_THROWER_B, 0,
 };
 
-/// A piece of rubble lies a while, blinks ten times and is gone.
-u32 gMarsLighthouseRoomF_RubbleScriptA[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
-/// As gMarsLighthouseRoomF_RubbleScriptA, two frames later.
+/// As gDebris_Script, two frames later.
 u32 gMarsLighthouseRoomF_RubbleScriptB[] = {
     SC_WAIT(42),
     SC_LABEL(1),

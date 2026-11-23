@@ -466,7 +466,7 @@ void MarsLighthouseEntrance_StartPoundIceCone(s32 mode, s32 index) {
   MarsLighthouseEntrance_PoundIceCone(mode, index);
 }
 
-extern u32 gMarsLighthouseEntrance_IceChipScript[];
+extern u32 gDebris_Script[];
 
 /// Throws six chips of ice from an actor as its ice cracks or breaks.
 void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
@@ -487,7 +487,7 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
       angle = Random16();
       radius = Random16();
       scale = (Random16() >> 1) + FIXED_ONE / 4;
-      Actor_StartScript(actor, gMarsLighthouseEntrance_IceChipScript);
+      Actor_StartScript(actor, gDebris_Script);
       Actor_SetSpriteFlags(actor, 0);
       actor->velocityY = angle * 4 + toFIXED(2);
       actor->velocityZ = Iwram_MulFX(radius * 8, Trig_Cos(angle));
@@ -2195,17 +2195,7 @@ s32 gMarsLighthouseEntrance_DragonFaceAtLeft[] = {
     SC_END,
 };
 
-/// A chip of ice flies for 40 frames, blinks ten times and is gone.
-u32 gMarsLighthouseEntrance_IceChipScript[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
 s16 gMarsLighthouseEntrance_FugueIceCones[] = {
     ACTOR_FUGUE_ICE_CONE_A, 7, FLAG_SCENE_TEMP_00,

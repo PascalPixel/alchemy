@@ -521,13 +521,22 @@ void DehkanPlateau_SetBlocksShown(s32 show) {
 }
 
 /// Nothing visible happens when Felix steps onto the cells that run this, at
-/// the foot of a cliff in five of the rooms (in the first, the column of cells
-/// (34, 45) to (34, 50)): the game starts drawing the room's unseen blocks, and
-/// notes them shown. The blocks are clear squares beside the cliff that decide
-/// whether Felix is drawn in front of it or behind it there.
-// XXX: which of the two the blocks give, and where each room's cells lie on
-// screen; a recording of Felix walking past the cliff both ways would settle
-// it (the recorder cannot reach the cells).
+/// the foot of a cliff in five of the rooms: the game starts drawing the
+/// room's unseen blocks again, and notes them shown. In the first room these
+/// cells lie beside those that stop drawing them (DehkanPlateau_HideBlocks),
+/// on the ways onto the terrace south of the pillars: (34, 13) to (34, 18)
+/// beside (35, 13) to (35, 18); (47, 17), (47, 18) to (49, 18), (46, 20) and
+/// (47, 20) beside (46, 17) to (46, 19), (47, 19) and (48, 19); and (38, 28)
+/// and (39, 28) beside (37, 29) to (39, 29). The blocks stand on the terrace,
+/// between cells (38, 25) and (46, 21), see-through and without collision
+/// (Actor_Hide). Walking south from the terrace down the neck past (38, 28)
+/// and (38, 29), which hides them, and back up, which shows them, Felix is
+/// drawn whole both ways. Walking east across the terrace from cell (41, 24)
+/// with them shown, he is hidden below the shoulders by the ground south of
+/// him.
+// XXX: whether the blocks or that ground hide him there; the same walk with
+// the blocks hidden (come onto the terrace across (35, 13) to (35, 18) from
+// the west) would settle it.
 void DehkanPlateau_ShowBlocks(void) {
   DehkanPlateau_SetBlocksShown(1);
   GameFlag_Set(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);

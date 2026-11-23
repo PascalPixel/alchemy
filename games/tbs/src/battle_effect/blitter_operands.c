@@ -21,10 +21,10 @@
       ARM_IMMEDIATE_BIT(12), ARM_IMMEDIATE_BIT(13), ARM_IMMEDIATE_BIT(14),     \
       ARM_IMMEDIATE_BIT(15)
 
-/// Two identical tables; the first has no references.
+/// Unused: a copy of gBattleEffect_BitOperands that nothing reads.
 u16 gUnused_BitOperands[] = {ARM_IMMEDIATE_POWERS};
-/// The operand for 1 << n, by n from 0 to 15: BattleEffect_BuildBlitter
-/// (battle_effect_blitter.c) adds entry widthShift, the canvas width as a power
-/// of two (7 for the 128-pixel canvas), to horizontal clip template words 8 and
-/// 11, counting from 0.
+/// The operand for 1 << n, by n from 0 to 15. BattleEffect_BuildBlitter
+/// (battle_effect_blitter.c) adds the entry for the canvas width's power of two
+/// (7 for the 128-pixel canvas) to two of the instructions that clip a picture
+/// at the canvas's left and right edges, so that they hold the width.
 u16 gBattleEffect_BitOperands[] = {ARM_IMMEDIATE_POWERS};

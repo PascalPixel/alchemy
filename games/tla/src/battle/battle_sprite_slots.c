@@ -9,8 +9,8 @@
 #include "gamepak/far_call/field.h"
 #include "battle/presentation.h"
 
-/// Readies every unit's battle graphics, releasing those of departed units,
-/// and resets everyone's display mode and motion.
+/// Readies every unit's sprites, destroying those of units no longer in the
+/// battle, and sets each unit's pose again.
 void BattleObject_Put(void) {
   s16 list[UNIT_MAX];
 
@@ -18,8 +18,8 @@ void BattleObject_Put(void) {
   BattleActor_SpawnObjectsForList(list, 1);
 }
 
-/// Readies every unit's battle graphics, releasing those of departed units,
-/// and keeps their display modes and motions.
+/// Readies every unit's sprites, destroying those of units no longer in the
+/// battle, and leaves the poses of units that have sprites as they are.
 void BattleUnit_ListAllAndSubmit(void) {
   s16 list[UNIT_MAX];
 
@@ -73,7 +73,6 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 sprite;
   u8 *spriteBuffers;
 
-  // Default: nothing loaded.
   result = spritePart = 0;
   sprite = BattleSprite_GetSprite(unit->enemyId);
   // Once for the sprite, and again for its second part if it has one.
@@ -144,18 +143,17 @@ void BattleObject_ReleaseSpriteSlots(s32 unitId) {
 /// Returns the kind (enum BattleWeaponKind) of the weapon whose item id is
 /// itemId, which picks a party member's weapon sprite.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
-  s32 assignmentIndex;
+  s32 row;
   u32 assignment;
   s32 weaponKind;
 
-  for (assignmentIndex = 0;; assignmentIndex++) {
-    if (itemId ==
-        (gBattleUnit_WeaponKinds[assignmentIndex] & WEAPON_ITEM_MASK)) {
-      assignment = gBattleUnit_WeaponKinds[assignmentIndex];
+  for (row = 0;; row++) {
+    if (itemId == (gBattleUnit_WeaponKinds[row] & WEAPON_ITEM_MASK)) {
+      assignment = gBattleUnit_WeaponKinds[row];
       weaponKind = assignment >> WEAPON_KIND_SHIFT;
       break;
     }
-    if ((s16)gBattleUnit_WeaponKinds[assignmentIndex] == -1) {
+    if ((s16)gBattleUnit_WeaponKinds[row] == -1) {
       weaponKind = WEAPON_KIND_NONE;
       break;
     }
@@ -171,34 +169,32 @@ s32 BattleUnit_GetWeaponSprite(s32 owner) {
   s32 result = 0;
 
   if (slot >= 0) {
-    s32 index;
-
-    index = BattleUnit_GetWeaponKind(unit->inventory[slot] &
-                                     INVENTORY_ITEM_ID_MASK);
+    s32 kind = BattleUnit_GetWeaponKind(unit->inventory[slot] &
+                                        INVENTORY_ITEM_ID_MASK);
     switch (unit->enemyId) {
     case ISAAC:
-      result = gBattleUnit_WeaponAnimationsIsaac[index];
+      result = gBattleUnit_WeaponAnimationsIsaac[kind];
       break;
     case GARET:
-      result = gBattleUnit_WeaponAnimationsGaret[index];
+      result = gBattleUnit_WeaponAnimationsGaret[kind];
       break;
     case IVAN:
-      result = gBattleUnit_WeaponAnimationsIvan[index];
+      result = gBattleUnit_WeaponAnimationsIvan[kind];
       break;
     case MIA:
-      result = gBattleUnit_WeaponAnimationsMia[index];
+      result = gBattleUnit_WeaponAnimationsMia[kind];
       break;
     case JENNA:
-      result = gBattleUnit_WeaponAnimationsJenna[index];
+      result = gBattleUnit_WeaponAnimationsJenna[kind];
       break;
     case FELIX:
-      result = gBattleUnit_WeaponAnimationsFelix[index];
+      result = gBattleUnit_WeaponAnimationsFelix[kind];
       break;
     case SHEBA:
-      result = gBattleUnit_WeaponAnimationsSheba[index];
+      result = gBattleUnit_WeaponAnimationsSheba[kind];
       break;
     case PIERS:
-      result = gBattleUnit_WeaponAnimationsPiers[index];
+      result = gBattleUnit_WeaponAnimationsPiers[kind];
       break;
     }
   }

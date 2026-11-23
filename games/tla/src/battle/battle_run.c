@@ -39,9 +39,9 @@ void BattleParty_SwapInReserves(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 
-  if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
+  if (BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
     return;
-  count = actorCount = BattleUnit_ListIds(1, actors);
+  count = actorCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, actors);
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
   if (count > reserveCount)
     count = reserveCount;
@@ -150,10 +150,10 @@ void Sound_LoadReverbCode(s32 preset);
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct BattleWork *battle;
-  struct BattleBackgroundWork *transition;
+  struct BattleBackgroundWork *background;
   s32 enemyCount;
   u8 *enemyUnitDestination;
-  s32 round;
+  s32 turn;
   s32 actionCount;
   s32 i;
   s32 result;
@@ -166,17 +166,17 @@ s32 Battle_Run(s32 enemyGroup) {
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
-  transition = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
+  background = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
                                    sizeof(struct BattleBackgroundWork));
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
   Task_ResetAll();
-  transition->targetYaw = YAW_PARTY_ACTION;
-  transition->frames = 0;
-  transition->flag = 1;
-  transition->unusedAfterFlag[0] = 0;
-  transition->unusedAfterFlag[1] = 0;
+  background->targetYaw = YAW_PARTY_ACTION;
+  background->frames = 0;
+  background->flag = 1;
+  background->unusedAfterFlag[0] = 0;
+  background->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   // XXX (no evidence): what flag 0x169 marks; it is set as every battle
@@ -277,11 +277,11 @@ s32 Battle_Run(s32 enemyGroup) {
     battle->firstStrike = FIRST_STRIKE_ENEMIES;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
-  transition->flag = 0;
+  background->flag = 0;
   gCpuLoadDisplayEnabled = 0;
   Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
 
-  for (round = 1;; round++) {
+  for (turn = 1;; turn++) {
     if (BattleUnit_ListLivingIds(BATTLE_SIDE_MASK_PARTY, 0) == 0)
       BattleParty_SwapInReserves();
     Battle_TurnStartNoOp();
@@ -290,8 +290,8 @@ s32 Battle_Run(s32 enemyGroup) {
       battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
-    transition->targetYaw = TRIG_TURN * 5 / 32;
-    transition->frames = 60;
+    background->targetYaw = TRIG_TURN * 5 / 32;
+    background->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
@@ -354,6 +354,7 @@ s32 Battle_Run(s32 enemyGroup) {
         battle->daedalusFromEnemies = queue >> 1;
         queue &= 1;
         battle->daedalusStrikes--;
+        // The strike is the summoner's side's: unit 0's or the first enemy's.
         battle->actions[i].unitId = queue << 7;
         battle->actions[i].command = COMMAND_DAEDALUS;
         battle->actions[i].parameter = 0;
@@ -379,7 +380,7 @@ s32 Battle_Run(s32 enemyGroup) {
     BattleMotion_DestroyAllSlotObjects();
     if ((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
          enemyGroup == FORMATION_KARST_AND_AGATIO_B) &&
-        round == 2)
+        turn == 2)
       goto won;
     if (battle->isLink != 0) {
       if (LinkBattle_SyncTurn() < 0)

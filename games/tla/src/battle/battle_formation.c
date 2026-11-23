@@ -367,7 +367,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 
 /// The enemy sprite slots an enemy of the class takes: one for a small enemy,
 /// two for any other.
-#define ENEMY_SPRITE_SLOTS(classId) (2 - (BattleSprite_IsSmall(classId) != 0))
+#define ENEMY_SLOTS_TAKEN(classId) (2 - (BattleSprite_IsSmall(classId) != 0))
 
 /// Builds the battle's enemies from a formation and returns how many there are:
 /// each member its fewest times and at random up to its most while the sprite
@@ -409,12 +409,12 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   if (memberIndex == FORMATION_MEMBERS)
     record = &gFormations[1];
 
-  freeSpriteSlots = ARRAY_COUNT(battle->spriteSlots);
+  freeSpriteSlots = ENEMY_SPRITE_SLOTS;
   enemyCount = 0;
   for (i = 0; i < FORMATION_MEMBERS; i++) {
     if (record->minimumCounts[i] != 0) {
       s32 requiredSlots =
-          ENEMY_SPRITE_SLOTS(record->memberIds[i] + ENEMY_ID_FIRST);
+          ENEMY_SLOTS_TAKEN(record->memberIds[i] + ENEMY_ID_FIRST);
 
       freeSpriteSlots -= requiredSlots * record->minimumCounts[i];
     }
@@ -429,7 +429,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     additionalRoom = maximum - minimum;
     if (additionalRoom > 0) {
       s32 memberSlots =
-          ENEMY_SPRITE_SLOTS(record->memberIds[i] + ENEMY_ID_FIRST);
+          ENEMY_SLOTS_TAKEN(record->memberIds[i] + ENEMY_ID_FIRST);
 
       fittingCount = freeSpriteSlots / memberSlots;
       if (fittingCount < additionalRoom)
@@ -445,7 +445,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     for (i = 0; i < FORMATION_MEMBERS; i++) {
       classId = record->memberIds[i] + ENEMY_ID_FIRST;
       if (extraCounts[i] != 0) {
-        spriteSlots = ENEMY_SPRITE_SLOTS(classId);
+        spriteSlots = ENEMY_SLOTS_TAKEN(classId);
         if (spriteSlots > freeSpriteSlots) {
           extraCounts[i] = 0;
         } else {

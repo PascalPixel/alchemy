@@ -276,7 +276,7 @@ extern struct ActorPlacement gMarsLighthouseEntrance_SolBladePlacements[];
 /// The waking dragon face in the Valkyrie Mail rooms' long hall has crawled
 /// to its west end and stops breathing fire.
 s32 MarsLighthouseEntrance_DryDragonFace(void) {
-  Ride_SetEntryState(0, FLAME_THROWER_DRY | 1);
+  Ride_SetEntry(0, FLAME_THROWER_DRY | 1);
   return 0;
 }
 
@@ -1018,7 +1018,7 @@ void MarsLighthouseEntrance_WakeDragonFace(void) {
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(ACTOR_DRAGON_FACE,
                   gMarsLighthouseEntrance_DragonFaceGoesLeft);
-  Ride_SetEntryState(0, FLAME_FORWARD | 3);
+  Ride_SetEntry(0, FLAME_FORWARD | 3);
   Flag_Set(FLAG_DRAGON_FACE_AWAKE);
 }
 
@@ -1144,12 +1144,12 @@ void MarsLighthouseEntrance_PulseDragonFire(void) {
 
   if (gMarsLighthouseEntrance_DragonFireTimer < 60) {
     if (*state == 0) {
-      Ride_SetEntryState(0, FLAME_FORWARD | 3);
+      Ride_SetEntry(0, FLAME_FORWARD | 3);
       *state = 1;
     }
   } else {
     if (((struct HalfwordField *)state)->value == 1) {
-      Ride_SetEntryState(0, FLAME_THROWER_DRY | 3);
+      Ride_SetEntry(0, FLAME_THROWER_DRY | 3);
       *state = 0;
     }
   }
@@ -1225,8 +1225,8 @@ extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[];
 extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[];
 extern s16 gMarsLighthouseEntrance_ValkyrieIceCones[];
 extern s16 gMarsLighthouseEntrance_FadeSlots[];
-extern s16 gMarsLighthouseEntrance_FadeColorsFrom[];
-extern s16 gMarsLighthouseEntrance_FadeColorsTo[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gMarsLighthouseEntrance_FadeOrder[];
 
 s32 Scene_Initialize(void) {
@@ -1377,7 +1377,7 @@ s32 Scene_Initialize(void) {
       if (entrance == VALKYRIE_NORTH_FROM_MIDDLE_WEST) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
                         gMarsLighthouseEntrance_DragonFaceAtLeft);
-        Ride_SetEntryState(0, FLAME_FORWARD | 3);
+        Ride_SetEntry(0, FLAME_FORWARD | 3);
         Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_FRAME);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
@@ -1419,8 +1419,8 @@ s32 Scene_Initialize(void) {
       entrance == VALKYRIE_SOUTH_CIRCLE)
     Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Palette_SetColorsFade((s32)gMarsLighthouseEntrance_FadeSlots,
-                        (s32)gMarsLighthouseEntrance_FadeColorsFrom,
-                        (s32)gMarsLighthouseEntrance_FadeColorsTo,
+                        (s32)gTeleportCircle_Colors,
+                        (s32)gTeleportCircle_ShimmerColors,
                         (s32)gMarsLighthouseEntrance_FadeOrder);
   return 0;
 }
@@ -1548,29 +1548,12 @@ void FlameThrowers_Puff(void);
 
 #include "shared/ride_set_entry_value.c"
 
-/// The flame throwers' counter, which Ride_StepCounter steps.
+/// The flame throwers' counter, which Ride_AdvanceCounter steps.
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
-/// Steps the counter, wrapping at `limit`, unless the field is handling an
-/// event; returns it.
-UNUSED s32 Ride_StepCounter(s32 limit) {
-  struct FlameHitWork *work = RIDE_WORK;
+#include "shared/ride_advance_counter.h"
 
-  if (!Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-    if (++work->counter >= limit)
-      work->counter = 0;
-  }
-  return work->counter;
-}
-
-/// Sets flame thrower `index`'s flame (enum FlameThrowerFlags) and reach.
-void Ride_SetEntryState(s32 index, s32 value) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct RideEntry *entry = &work->entries[index];
-
-  entry->reach = INTtoFIXED(value & FLAME_THROWER_REACH_BITS);
-  entry->flags = value & FLAME_THROWER_FLAG_BITS;
-}
+#include "shared/ride_set_entry.h"
 
 #include "shared/ride_set_entry_count.c"
 
@@ -1906,33 +1889,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/actors_set_cells_open.h"
 
-/// Finds the current target's table row and shrinks it.
-UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-
-  for (; *list != ACTOR_LIST_END; list += 3) {
-    s32 entry = *list;
-    s32 id = work->secondActorId;
-
-    if (id == entry) {
-      struct Actor *actor = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        actor->scaleY -= FIXED_ONE * 31 / 256;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, actor->layer);
-        actor->scaleY = FIXED_ONE;
-      }
-      break;
-    }
-  }
-}
+#include "shared/pound_sink_target.h"
 
 #include "shared/actor_set_cell_open.h"
 
@@ -2251,17 +2208,7 @@ s16 gMarsLighthouseEntrance_FadeSlots[] = {
     137, 138, 139, 140, 141, 142, 143, -1,
 };
 
-s16 gMarsLighthouseEntrance_FadeColorsFrom[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
-
-s16 gMarsLighthouseEntrance_FadeColorsTo[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+#include "shared/teleport_circle_colors.c"
 
 u16 gMarsLighthouseEntrance_FadeOrder[] ALIGNED(4) = {
     142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,

@@ -1,0 +1,77 @@
+/// Draws each geyser's column as sprites, a piece every 16 pixels of its height
+/// and a bobbing top, at most GEYSER_SPRITES of them.
+void Geyser_Draw(void) {
+  struct GeyserWork *work = GEYSER_WORK;
+  struct Geyser *entry = work->entries;
+  s32 i;
+  u32 tile = gVramCacheEntries[work->entry].offset >> 5;
+  s32 frame;
+  u32 *oam = work->block;
+  s32 count = 0;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  s32 *view = &map->viewX;
+  s32 viewX, viewZ, originY;
+  struct Actor *actor;
+  s32 pieceY, x;
+  FIXED y;
+  s32 screenY;
+  FIXED z;
+  s32 depth;
+  u32 *p;
+
+  viewX = view[0];
+  viewX &= FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
+  originY = map->origin[1];
+  for (i = 0; i < GEYSER_ENTRIES; i++, entry++) {
+    if (entry->id == 0 || entry->height == 0)
+      continue;
+    actor = Actor_GetById(entry->id);
+    frame = (gFrameCount % 12) / 3 * 8 + 32;
+    for (pieceY = 0; pieceY < entry->height; pieceY += 16) {
+      if (count >= GEYSER_SPRITES)
+        continue;
+      x = actor->x.fixed - viewX;
+      y = actor->y.fixed + toFIXED(pieceY) - originY;
+      z = actor->z.fixed - viewZ - originY;
+      screenY = z - y;
+      x = FIXEDtoINT(x) - 8;
+      screenY = FIXEDtoINT(screenY) - 16;
+      depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
+      if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
+        continue;
+      x &= OBJ_X_MASK;
+      screenY &= OBJ_Y_MASK;
+      p = oam;
+      *p++ = 0;
+      *p++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+      *p = (tile + frame) | OBJ_PRIORITY(2);
+      Oam_AddSpriteAtDepthClamped(oam, depth);
+      oam += 3;
+      count++;
+    }
+    if (count >= GEYSER_SPRITES)
+      continue;
+    x = actor->x.fixed - viewX;
+    y = actor->y.fixed + toFIXED(entry->height) - originY;
+    z = actor->z.fixed - viewZ - originY;
+    screenY = z - y;
+    x = FIXEDtoINT(x) - 8;
+    screenY =
+        FIXEDtoINT(screenY + Math_MulFX(-toFIXED(2), Trig_Sin(entry->phase)) -
+                   toFIXED(2)) -
+        4;
+    depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
+    if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
+      continue;
+    x &= OBJ_X_MASK;
+    screenY &= OBJ_Y_MASK;
+    p = oam;
+    *p++ = 0;
+    *p++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    *p = (tile + frame - 32) | OBJ_PRIORITY(2);
+    Oam_AddSpriteAtDepthClamped(oam, depth);
+    oam += 3;
+    count++;
+  }
+}

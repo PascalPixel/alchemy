@@ -1128,55 +1128,11 @@ void GaiaRockInside_ReadSusasMind(void) {
   Event_End();
 }
 
-extern u32 gGaiaRockInside_SparkScript[];
+extern u32 gOrbitSpark_Script[];
 
-/// Leaves a small spark where an orbiting one is, released after 6 frames: the
-/// orbit's trail.
-void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
-  struct Actor *spark =
-      FieldActor_Create(SPRITE_PARTICLE, source->x, source->y, source->z);
+#include "shared/orbit_spark_spawn.h"
 
-  spark->scaleY = FIXED_ONE * 2 / 5;
-  spark->scaleX = FIXED_ONE * 2 / 5;
-  spark->motionFlags = 0;
-  FieldActor_SetSpriteColor(spark, 2);
-  Scene_SetActorSpritePriority(spark, 1);
-  Actor_SelectAnimation(spark, 1);
-  Actor_SetSpriteFlags(spark, 0);
-  Actor_SetBlendMode(spark, 1);
-  Actor_StartScript(spark, (s32)gGaiaRockInside_SparkScript);
-}
-
-/// Turns an orbiting object by half its speed and puts it out from its anchor,
-/// raised 8 pixels, by its radius.
-static inline void Orbiter_Step(struct Orbiter *orbiter, struct Actor *anchor) {
-  orbiter->angle += (s16)orbiter->speed >> 1;
-  orbiter->x = anchor->x.fixed;
-  orbiter->y = anchor->y.fixed + toFIXED(8);
-  orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle,
-                               &orbiter->x);
-}
-
-/// Steps an orbiting object around its anchor: turns it by half its speed, puts
-/// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
-/// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
-/// takes a second, shrinking step. Returns 1 while it runs.
-s32 Orbiter_Spiral(struct Orbiter *orbiter) {
-  struct Actor *anchor = orbiter->anchor;
-
-  Orbiter_Step(orbiter, anchor);
-  if (--orbiter->countdown == 0)
-    return 0;
-  if (orbiter->orbitRadius == toFIXED(2))
-    return 1;
-  GaiaRockInside_SpawnSpark(orbiter);
-  orbiter->orbitRadius -= toFIXED(4);
-  Orbiter_Step(orbiter, anchor);
-  GaiaRockInside_SpawnSpark(orbiter);
-  orbiter->orbitRadius -= toFIXED(4);
-  return 1;
-}
+#include "shared/orbiter_spiral.h"
 
 // Moves around in a circle.
 #include "shared/orbit_update.h"
@@ -3527,7 +3483,7 @@ struct CellPoint gGaiaRockInside_CobwebCells[] = {
     {{44, 27}}, {{43, 27}}, {{41, 26}}, {{40, 24}}, {{40, 23}}, {{41, 21}},
 };
 
-u32 gGaiaRockInside_SparkScript[] = {
+u32 gOrbitSpark_Script[] = {
     SC_WAIT(6),
     SC_RELEASE,
     SC_END,

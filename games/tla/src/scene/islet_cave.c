@@ -48,7 +48,7 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
-void IsletCave_ArriveWhirling(void);
+void Teleport_ArriveWhirling(void);
 
 s32 List_CountEntries(u16 *list);
 
@@ -115,92 +115,7 @@ void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
 
-/// Gives the Teleport circles their colours and keeps the lists for their
-/// shimmer, then saves the palettes as the fade's source. Arriving in the cave
-/// by Teleport, the party then arrives whirling on a circle.
-void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
-                       u16 *cycleSlots) {
-  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
-
-  gPaletteSlots = slots;
-  gPaletteColors = colours;
-  gPaletteCycleColors = cycleColours;
-  gPaletteCycleSlots = cycleSlots;
-  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-    int index = *slots++;
-    int red = *colours++;
-    int green = *colours++;
-    int blue = *colours++;
-    SET_RGB(BG_PLTT[index], red, green, blue);
-  }
-  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
-          DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
-  if (gMainRoutineWork.teleportState == 2)
-    IsletCave_ArriveWhirling();
-}
-
-/// Starts the Teleport circle's shimmer at its slow pace, as Teleport is cast:
-/// its colours run round it, the first step after 16 frames, each after a
-/// frame less, down to two.
-void IsletCave_StartShimmer(void) {
-  gPaletteCycleIndex = 0;
-  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
-  gPaletteCycleDelay = 15;
-  gPaletteCycleTimer = 16;
-  gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-/// Stops the circle's shimmer, leaving the next transition a backdrop fade.
-void IsletCave_StopShimmer(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Task_Remove(PaletteCycle_Fade);
-}
-
-/// Starts the circle's shimmer at a step every two frames, as the party
-/// arrives.
-void IsletCave_StartFastShimmer(void) {
-  gPaletteCycleIndex = 0;
-  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
-  gPaletteCycleDelay = 2;
-  gPaletteCycleTimer = 2;
-  gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-#include "shared/list_count_entries.h"
-
-#include "shared/palette_cycle_fade.h"
-
-/// The party arrives in the cave by Teleport from another place: the cave
-/// fades in grey while the circle shimmers and the whirl plays, then its
-/// colours come back.
-void IsletCave_ArriveWhirling(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 saved;
-
-  saved = work->transition;
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  IsletCave_StartFastShimmer();
-  Teleport_PlayWhirl();
-  wait(40);
-  IsletCave_StopShimmer();
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
-  PaletteFade_StartInterpolation(16);
-  wait(16);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    party->teleportState = 0;
-  }
-  work->transition = saved;
-}
+#include "shared/teleport_shimmer.c"
 
 #include "text/msg_ids.h"
 
@@ -327,10 +242,10 @@ void IsletCave_FinishTeleport(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 effect = work->transition;
 
-  IsletCave_StartFastShimmer();
+  Teleport_StartFastShimmer();
   Teleport_PlayWhirl();
   wait(40);
-  IsletCave_StopShimmer();
+  Teleport_StopShimmer();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
@@ -344,7 +259,7 @@ void IsletCave_FinishTeleport(void) {
 /// sparks carry Felix off, and he comes down on the other circle at (x, z).
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, x, z)                                \
   void name(void) {                                                            \
-    IsletCave_StartShimmer();                                                  \
+    Teleport_StartShimmer();                                                   \
     Teleport_PlaySparks();                                                     \
                                                                                \
     gMainRoutineWork.teleportState = 1;                                        \
@@ -457,8 +372,8 @@ void IsletCave_OpenDoorAndEnter(void) {
 }
 
 extern u16 gIsletCave_PaletteSlots[];
-extern u16 gIsletCave_PaletteColors[];
-extern u16 gIsletCave_CycleColors[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gIsletCave_CycleSlots[];
 extern s32 gIsletCave_TremorTargetScript[];
 
@@ -474,8 +389,8 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_ISLET_CAVE_HALLS) {
     IsletCave_PlaceLogs();
-    Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
-                      gIsletCave_CycleColors, gIsletCave_CycleSlots);
+    Palette_SetColorsFade(gIsletCave_PaletteSlots, gTeleportCircle_Colors,
+                          gTeleportCircle_ShimmerColors, gIsletCave_CycleSlots);
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
@@ -958,9 +873,7 @@ void IsletCave_RideThirdLogWest(void);
 // clang-format off
 u16 gIsletCave_PaletteSlots[] = {9, 10, 11, 12, 13, 14, 15, 65535};
 
-u16 gIsletCave_PaletteColors[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
-
-u16 gIsletCave_CycleColors[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
+#include "shared/teleport_circle_colors.c"
 
 u16 gIsletCave_CycleSlots[] = {                                                               
       14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  

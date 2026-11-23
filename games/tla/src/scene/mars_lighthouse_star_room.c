@@ -1320,17 +1320,9 @@ void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 
-s32 Ride_GetEntryValue(s32 index) {
-  struct FlameHitWork *work = RIDE_WORK;
+#include "shared/ride_get_entry_value.c"
 
-  return (work->entries + index)->active;
-}
-
-void Ride_SetEntryValue(s32 index, s16 value) {
-  struct FlameHitWork *work = RIDE_WORK;
-
-  (work->entries + index)->active = value;
-}
+#include "shared/ride_set_entry_value.c"
 
 s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
@@ -1442,25 +1434,7 @@ extern u32 gEmbers_Script[];
 
 #include "shared/actor_roll_and_crumble.c"
 
-/// Sends an actor along a scripted path from another; at its end the path
-/// launches launchedId ahead of it, facing launchFacing (Actor_Park).
-void Actor_Attach(s32 sourceId, s32 id, s32 launchedId, s32 launchFacing,
-                  const void *script) {
-  struct Actor *source = Actor_Get(sourceId);
-  struct Actor *actor = Actor_Get(id);
-
-  FieldActor_SetPositionAndResetMotion(actor, source->x.fixed, source->y.fixed,
-                                       source->z.fixed);
-  Actor_StartScript(actor, script);
-  Actor_SetSpriteFlags(actor, 0);
-  actor->motionFlags = 0;
-  Actor_SelectAnimation(actor, 1);
-  actor->watchedActor = source;
-  actor->timer = 0;
-  actor->userValue = launchFacing;
-  actor->launchedActorId = launchedId;
-  actor->update = Actor_HoldDuringEvent;
-}
+#include "shared/actor_attach.c"
 
 #include "shared/actor_launch_ahead.h"
 

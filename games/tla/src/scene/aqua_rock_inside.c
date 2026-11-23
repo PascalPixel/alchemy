@@ -145,7 +145,7 @@ s32 Vent_AdvanceCounter(s32 limit);
 extern s32 gAquaRockInside_SpringLevel;
 struct PillarWork gAquaRockInside_Pillars BSS_DATA;
 struct BeamWork gAquaRockInside_Splashes BSS_DATA;
-extern u32 gAquaRockInside_SparkScript[];
+extern u32 gOrbitSpark_Script[];
 extern u32 gAquaRockInside_SplashScript[];
 extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
@@ -1273,52 +1273,9 @@ void AquaRockInside_ParchLastPool(void) {
   Event_ClearFlag(FLAG_PARCH_TABLET_POOL_LEFT);
 }
 
-/// A small glowing spark at the actor, running gAquaRockInside_SparkScript.
-void AquaRockInside_SpawnSpark(struct Actor *actor) {
-  struct Actor *child = Import_ActorCreate_(SPRITE_PARTICLE, actor->x.fixed,
-                                            actor->y.fixed, actor->z.fixed);
+#include "shared/orbit_spark_spawn.h"
 
-  child->scaleY = FIXED_ONE * 2 / 5;
-  child->scaleX = FIXED_ONE * 2 / 5;
-  child->motionFlags = 0;
-  FieldActor_SetSpriteColor(child, SPRITE_COLOR_RBG);
-  Scene_SetActorSpritePriority(child, 1);
-  Actor_SelectAnimation(child, 1);
-  Actor_SetSpriteFlags(child, 0);
-  Actor_SetBlendMode(child, 1);
-  Actor_StartScript(child, gAquaRockInside_SparkScript);
-}
-
-/// Turns an orbiting object by half its speed and puts it out from its anchor,
-/// raised 8 pixels, by its radius.
-static inline void Orbiter_Step(struct Orbiter *orbiter, struct Actor *anchor) {
-  orbiter->angle += (s16)orbiter->speed >> 1;
-  orbiter->x = anchor->x.fixed;
-  orbiter->y = anchor->y.fixed + toFIXED(8);
-  orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFX(orbiter->orbitRadius, orbiter->angle,
-                               &orbiter->x);
-}
-
-/// Steps an orbiting object round its anchor: returns 0 once its countdown
-/// runs out; else, unless its radius is down to 2 pixels, it leaves a spark,
-/// closes 4 pixels and steps again, leaving another and closing 4 more.
-/// Returns 1 while it runs.
-s32 Orbiter_Spiral(struct Orbiter *orbiter) {
-  struct Actor *anchor = orbiter->anchor;
-
-  Orbiter_Step(orbiter, anchor);
-  if (--orbiter->countdown == 0)
-    return 0;
-  if (orbiter->orbitRadius == toFIXED(2))
-    return 1;
-  AquaRockInside_SpawnSpark(orbiter);
-  orbiter->orbitRadius -= toFIXED(4);
-  Orbiter_Step(orbiter, anchor);
-  AquaRockInside_SpawnSpark(orbiter);
-  orbiter->orbitRadius -= toFIXED(4);
-  return 1;
-}
+#include "shared/orbiter_spiral.h"
 
 // Moves around in a circle.
 #include "shared/orbit_update.h"
@@ -2627,7 +2584,7 @@ UNUSED void Vent_SetGust(s32 index, s32 value) {
 u8 gAquaRockInside_SpringLevelCells[SPRING_LEVELS * 2] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
 /// A spark's script.
-u32 gAquaRockInside_SparkScript[] = {
+u32 gOrbitSpark_Script[] = {
     SC_WAIT(6),
     SC_RELEASE,
     SC_END,

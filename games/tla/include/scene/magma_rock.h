@@ -54,7 +54,7 @@ extern s16 gMagmaRock_SalamanderTailLowWestStatues[];
 extern s16 gMagmaRock_SalamanderTailLowEastStatues[];
 extern s16 gMagmaRock_StatueStatues[];
 
-void MagmaRock_FlashStatue(struct Actor *actor);
+void Statue_FlashUnderBurst(struct Actor *actor);
 
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count);
 void MagmaRock_StartFallingRocks(void);

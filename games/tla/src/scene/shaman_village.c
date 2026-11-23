@@ -2858,26 +2858,10 @@ void ShamanVillage_SetUpNorthEnd(void) {
       ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
 
-/// A smoke puff's update: it drifts on in x ever faster, rises half a pixel a
-/// frame and grows, and is released when the frames its creator counted into
-/// watchedActor run out.
-void ShamanVillage_DriftSmoke(struct Actor *actor) {
-  s32 step;
-
-  actor->x.fixed += actor->timer << 8;
-
-  actor->y.fixed += toFIXED(1) / 2;
-
-  step = FIXED_ONE / 50;
-  actor->scaleX += step;
-  actor->scaleY += step;
-  actor->timer += 2;
-  if (--*(s32 *)&actor->watchedActor == 0)
-    Actor_Release(actor);
-}
+#include "shared/smoke_drift.h"
 
 /// Puffs a blended cloud of smoke at x, y, z, half its size, that
-/// ShamanVillage_DriftSmoke moves for SMOKE_FRAMES.
+/// Smoke_Drift moves for SMOKE_FRAMES.
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *actor =
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
@@ -2894,7 +2878,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
     *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-    actor->update = ShamanVillage_DriftSmoke;
+    actor->update = Smoke_Drift;
     Import_ActorSetMode(actor, 5);
     Actor_SetBlendMode(actor, 1);
   }

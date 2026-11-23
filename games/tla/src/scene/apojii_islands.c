@@ -163,7 +163,7 @@ void ApojiiIslands_StartCellMarkers(void);
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel);
 void GroundParticles_Draw(void);
 void GroundParticles_Start(void);
-void ApojiiIslands_SetSparkleAnchor(s32 id);
+void GroundParticles_SetAnchor(s32 id);
 
 /// The markers the woken Aqua Stone lays over the spring: at most this many.
 #define CELL_MARKERS 128
@@ -512,7 +512,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   wait(30);
   Sound_Play(MUS_AQUA_ROCK);
   GroundParticles_Start();
-  ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
+  GroundParticles_SetAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
   do {
@@ -1134,15 +1134,7 @@ extern s16 gGroundParticleFrames[];
 
 #include "shared/ground_particles_start.h"
 
-/// Ties the sparkles to the actor `id`, or to none.
-void ApojiiIslands_SetSparkleAnchor(s32 id) {
-  struct GroundParticleWork *work = Ram_HeapSlots->weather;
-  struct Actor *actor = Actor_Get(id);
-
-  work->leader = NULL;
-  if (id != 0 && actor != 0)
-    work->leader = &actor->x.fixed;
-}
+#include "shared/ground_particles_set_anchor.h"
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"

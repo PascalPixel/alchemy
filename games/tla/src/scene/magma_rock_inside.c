@@ -283,23 +283,7 @@ enum MagmaRockInsideBlazeTabletActorId {
   ACTOR_TORCH_FLAME
 };
 
-/// Creates a hidden effect actor at a place: no motion, never targeted, drawn
-/// under the actors.
-struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
-  struct Actor *actor = FieldActor_Create(kind, x, y, z);
-
-  if (actor != NULL) {
-    Scene_SetActorSpritePriority(actor, 1);
-    actor->motionFlags = 0;
-    actor->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(actor, 0);
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
-    actor->priorityFlags |=
-        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
-    return actor;
-  }
-  return NULL;
-}
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect_move.c"
 
@@ -330,13 +314,13 @@ extern s16 gMagmaRockInside_CrackedPillarsPillars[];
 
 extern s16 gMagmaRockInside_EmberStonePillars[];
 
-void MagmaRockInside_MarkBlockCells(u16 *ids);
+void Blocks_MarkCells(u16 *ids);
 
 void MagmaRockInside_WaitForLanding(struct Actor *actor);
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
-s32 MagmaRockInside_FindStatue(u16 *table);
+s32 Statue_FindUnderBurst(u16 *table);
 
 s32 Position_FlatDistance(FIXED *from, FIXED *to);
 
@@ -468,41 +452,7 @@ void MagmaRockInside_WaitForLanding(struct Actor *actor) {
 
 #include "shared/map_cell_set.c"
 
-/// For each pillar of a list ended by ACTOR_LIST_END: clears its mark and,
-/// where it stands on a climbable cell (MAP_CELL_CLIMBABLE, as draining the
-/// lava leaves its cell), walls off the cells north and south of it and sets
-/// the mark.
-void MagmaRockInside_MarkBlockCells(u16 *ids) {
-  struct Actor *actor;
-  u8 *blocked;
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x, z;
-
-  for (; *ids != ACTOR_LIST_END; ids++) {
-    actor = Actor_Get(*ids);
-    blocked = &actor->riseEnabled;
-    *blocked = 0;
-    if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
-                              FIELD_CELL(actor->z.fixed)) &
-        MAP_CELL_CLIMBABLE) {
-      map = Ram_HeapSlots->mapGrid;
-      if (map == NULL)
-        return;
-      cells = &map->layers[MAPGRID_LAYER_OVERHEAD].cells;
-      z = FIELD_CELL(actor->z.fixed - actor->y.fixed);
-      x = FIELD_CELL(actor->x.fixed);
-      cell = *cells;
-      cell += x + ((z + 1) << 7);
-      cell->collisionCode = CELL_BEHAVIOR_WALL;
-      cell = *cells;
-      cell += x + ((z - 1) << 7);
-      cell->collisionCode = CELL_BEHAVIOR_WALL;
-      *blocked = 1;
-    }
-  }
-}
+#include "shared/blocks_mark_cells.c"
 
 // Clears the object's mark and the cells ahead of and behind it that the mark
 // blocked.
@@ -636,7 +586,7 @@ void MagmaRockInside_FinishPushingPillar(void) {
   Actor_PlaceMovedBlock();
   scene = gMainRoutineWork.next;
   if (scene == SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST) {
-    MagmaRockInside_MarkBlockCells(gMagmaRockInside_SalamanderTailChestPillars);
+    Blocks_MarkCells(gMagmaRockInside_SalamanderTailChestPillars);
     if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
         actor->y.fixed) {
       actor->layer = 2;
@@ -666,7 +616,7 @@ void MagmaRockInside_FinishPushingPillar(void) {
       actor->layer = 0;
     }
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE) {
-    MagmaRockInside_MarkBlockCells(gMagmaRockInside_EmberStonePillars);
+    Blocks_MarkCells(gMagmaRockInside_EmberStonePillars);
     if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
         actor->y.fixed) {
       struct Actor *copy;
@@ -770,36 +720,9 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
       &options);
 }
 
-/// A statue's update while Burst is cast at it: it blinks red on the frames
-/// its mask picks.
-void MagmaRockInside_FlashStatue(struct Actor *actor) {
-  if (gFrameCount & actor->flashMask)
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
-  else
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
-}
+#include "shared/statue_flash_under_burst.h"
 
-/// Looks up the cell Burst is cast at in an (actor, cell, value) table ended by
-/// ACTOR_LIST_END: on a match, makes the row's statue the target and returns
-/// its value.
-s32 MagmaRockInside_FindStatue(u16 *table) {
-  struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
-  s32 result = 0;
-  s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(watch->x),
-                                   FIELD_CELL(watch->z)) >>
-             8;
-  u32 id;
-
-  for (; *table != ACTOR_LIST_END; result = *table++) {
-    id = *table++;
-    if (cell == *table++) {
-      watch->child = Actor_Get(id);
-      result = *table;
-      break;
-    }
-  }
-  return result;
-}
+#include "shared/statue_find_under_burst.h"
 
 /// Nothing visible happens as Felix starts casting Burst at a fire-spitting
 /// statue; the game finishes what the field still had pending, so that the
@@ -811,7 +734,7 @@ void MagmaRockInside_ResolveBeforeBurst(void) {
 extern s16 gMagmaRockInside_Statues[];
 extern s16 gMagmaRockInside_CrackedPillarsStatues[];
 
-void MagmaRockInside_FlashStatue(struct Actor *actor);
+void Statue_FlashUnderBurst(struct Actor *actor);
 
 /// As Felix casts Burst at the small statue beside a great stone face, the
 /// statue blinks red, slowly through the small explosions and faster at the
@@ -834,18 +757,18 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *actor;
 
-    MagmaRockInside_FindStatue(table);
+    Statue_FindUnderBurst(table);
     actor = watch->child;
     actor->flashMask = 4;
-    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
   if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *actor;
 
-    MagmaRockInside_FindStatue(table);
+    Statue_FindUnderBurst(table);
     actor = watch->child;
     actor->flashMask = 2;
-    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)Statue_FlashUnderBurst;
   }
 }
 
@@ -2841,12 +2764,7 @@ UNUSED void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
 // it copy actor 9's visual attributes.
 #include "shared/pillar_restore.h"
 
-/// Puts an actor where another stands and moves the other away.
-void MagmaRockInside_TakePlaceOf(struct Actor *actor, struct Actor *target) {
-  FieldActor_SetPositionAndResetMotion(actor, target->x.fixed, target->y.fixed,
-                                       target->z.fixed);
-  FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
-}
+#include "shared/actor_take_place_of.h"
 
 /// Unused: stepping onto a crumbling floor, as on Magma Rock's outside: the
 /// first time it shakes and cracks, the second time it gives way with the
@@ -2881,7 +2799,7 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
       Event_Start();
       if (!Event_GetFlag(flag)) {
         Actor_SelectAnimation(partner, 1);
-        MagmaRockInside_TakePlaceOf(partner, trap);
+        Actor_TakePlaceOf(partner, trap);
         wait(1);
         Event_PlaySound(SE_CHEST_CLOSE);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
@@ -2894,14 +2812,14 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
         wait(4);
         FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
         Dust_Scatter(0);
-        MagmaRockInside_TakePlaceOf(trap, partner);
+        Actor_TakePlaceOf(trap, partner);
         wait(1);
         Event_SetFlag(flag);
       } else {
         second = flag + 1;
         if (!Event_GetFlag(second)) {
           Actor_SelectAnimation(partner, 0);
-          MagmaRockInside_TakePlaceOf(partner, trap);
+          Actor_TakePlaceOf(partner, trap);
           wait(1);
           leader->motionFlags = 0;
           Event_PlaySound(SE_PUSH);
@@ -3225,7 +3143,7 @@ s16 gMagmaRockInside_FuryPillars[] = {
 };
 
 /// The cracked pillars' room's three statues, as (actor, the cell Burst is cast
-/// at, unused) rows ended by -1 (MagmaRockInside_FindStatue).
+/// at, unused) rows ended by -1 (Statue_FindUnderBurst).
 s16 gMagmaRockInside_CrackedPillarsStatues[] = {
     ACTOR_STATUE, CELL_STATUE, -1,
     ACTOR_LOWER_WEST_STATUE, CELL_LOWER_WEST_STATUE, -1,

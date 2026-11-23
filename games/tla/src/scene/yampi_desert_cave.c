@@ -538,25 +538,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
 
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-/// Places the stakes already sunk: each entry of the list (actor, kind,
-/// flag) loses its collision, and its cell opens. A struct of three halfwords
-/// would be padded to 8 bytes, so the list is read as u16 triples.
-void YampiDesertCave_PlaceStakes(const u16 *list) {
-  const u16 *entry;
-
-  if (list[0] == ACTOR_LIST_END)
-    return;
-  for (entry = list; entry[0] != ACTOR_LIST_END; entry += 3) {
-    u32 id = entry[0];
-    struct Actor *actor = Actor_GetById(id);
-    s16 kind = entry[1];
-    s16 flag = entry[2];
-
-    actor->collisionFlags &= ~ACTOR_SOLID;
-    Actor_SetSpriteFlags(actor, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
-  }
-}
+#include "shared/pillar_place.h"
 
 // Finds the current target's table row and shrinks it.
 #include "shared/pound_sink_target.h"
@@ -874,8 +856,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 extern s16 gYampiDesertCave_CircleSlots[];
-extern u16 gYampiDesertCave_CircleColors[];
-extern u16 gYampiDesertCave_CircleCycleColors[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
@@ -886,9 +868,9 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
-    Palette_SetColorsFade(
-        gYampiDesertCave_CircleSlots, gYampiDesertCave_CircleColors,
-        gYampiDesertCave_CircleCycleColors, gYampiDesertCave_CircleCycleSlots);
+    Palette_SetColorsFade(gYampiDesertCave_CircleSlots, gTeleportCircle_Colors,
+                          gTeleportCircle_ShimmerColors,
+                          gYampiDesertCave_CircleCycleSlots);
     Actor_DisableById(ACTOR_CHEST_ROOM_FIRST_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_SECOND_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_THIRD_LOG);
@@ -947,7 +929,7 @@ s32 Scene_Initialize(void) {
     YampiDesertCave_SetLogCells(ACTOR_CRYSTAL_ROOM_SECOND_LOG);
     YampiDesertCave_SetLogCells(ACTOR_CRYSTAL_ROOM_THIRD_LOG);
     YampiDesertCave_SetLogCells(ACTOR_CRYSTAL_ROOM_FOURTH_LOG);
-    YampiDesertCave_PlaceStakes(gYampiDesertCaveCrystalStakes);
+    Pillar_Place(gYampiDesertCaveCrystalStakes);
     if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_STAKE_POUNDED))
       MapGrid_CopyCellAttributes(48, 12, 1, 1, 46, 12);
     if (Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST))
@@ -1035,19 +1017,7 @@ s16 gYampiDesertCave_CircleSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
-/// The circles' colours, as red, green and blue for each entry.
-u16 gYampiDesertCave_CircleColors[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
-
-/// The shimmer's colours, which it moves round the entries.
-u16 gYampiDesertCave_CircleCycleColors[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+#include "shared/teleport_circle_colors.c"
 
 /// The shimmer's steps: for each, the palette entries its colours go to.
 u16 gYampiDesertCave_CircleCycleSlots[] = {

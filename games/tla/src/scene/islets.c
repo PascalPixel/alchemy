@@ -2584,16 +2584,7 @@ s32 gIslets_EnterDoorScript[] = {
     SC_END,
 };
 
-u16 gPushKinds[PUSH_KINDS] = {
-    SPRITE_LOG_WEST_EAST,           SPRITE_LOG_NORTH_SOUTH,
-    SPRITE_PIPE_WEST_EAST,          SPRITE_PIPE_NORTH_SOUTH,
-    SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
-};
-
-s8 gPushFootprints[][4] = {
-    {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0},
-    {-8, -32, 8, 32}, {-32, -8, 32, 8}, {-8, -32, 8, 32},
-};
+#include "shared/push_kinds.c"
 
 #include "shared/push_leader_steps.c"
 

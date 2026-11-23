@@ -283,23 +283,7 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 #include "system/task.h"
 #include "system/frame.h"
 
-/// Creates a hidden, still actor of `type` at a point, untargeted and drawn
-/// underfoot.
-struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
-  struct Actor *actor = FieldActor_Create(type, x, y, z);
-
-  if (actor != NULL) {
-    Scene_SetActorSpritePriority(actor, 1);
-    actor->motionFlags = 0;
-    actor->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(actor, 0);
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
-    actor->priorityFlags |=
-        ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
-    return actor;
-  }
-  return NULL;
-}
+#include "shared/scene_create_imported_actor.h"
 
 #include "../field/field_effect_move.c"
 

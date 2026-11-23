@@ -2093,19 +2093,7 @@ void Kibombo_RaiseEmbers(void) {
   }
 }
 
-/// A cloud of smoke's update: drifts sideways and up, swelling, until its
-/// SMOKE_FRAMES are out.
-void Kibombo_UpdateSmoke(struct Actor *actor) {
-  actor->x.fixed += actor->timer << 8;
-
-  actor->y.fixed += toFIXED(1) / 2;
-
-  actor->scaleX += FIXED_ONE / 50;
-  actor->scaleY += FIXED_ONE / 50;
-  actor->timer += 2;
-  if (--*(s32 *)&actor->watchedActor == 0)
-    Actor_Release(actor);
-}
+#include "shared/smoke_drift.h"
 
 /// Smoke rises from the cooking fire every 64 frames.
 void Kibombo_RaiseSmoke(void) {
@@ -2123,7 +2111,7 @@ void Kibombo_RaiseSmoke(void) {
       actor->scaleX = FIXED_ONE / 2;
       actor->scaleY = FIXED_ONE / 2;
       *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-      actor->update = (ObjectUpdate)Kibombo_UpdateSmoke;
+      actor->update = (ObjectUpdate)Smoke_Drift;
       Actor_SelectAnimation(actor, 5);
       Actor_SetBlendMode(actor, 1);
     }

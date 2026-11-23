@@ -227,7 +227,7 @@ extern u8 MsgSettlementsDontTellMeYoureHere[];
 
 extern s16 gSettlements_FallsObjects[];
 
-void Settlements_SpawnSmoke(s32 x, s32 y, s32 z);
+void Smoke_Spawn(s32 x, s32 y, s32 z);
 void Settlements_CycleWaterColors(void);
 void Scroll_StartHBlank(void);
 void Settlements_SinkPillar(void);
@@ -244,7 +244,7 @@ void Rope_Lash(s32 a, s32 b, s32 c);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 void Settlements_ClimbDownLadder(void);
-void Settlements_DriftSmoke(struct Actor *actor);
+void Smoke_Drift(struct Actor *actor);
 void Actor_Release(struct Actor *actor);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
@@ -609,48 +609,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSettlements_Triggers;
 }
 
-/// A puff of chimney smoke each frame: it drifts sideways ever faster, rises
-/// and grows, and is gone when its frames run out.
-void Settlements_DriftSmoke(struct Actor *actor) {
-  s32 step;
+#include "shared/smoke_drift.h"
 
-  actor->x.fixed += actor->timer << 8;
-
-  actor->y.fixed += toFIXED(1) / 2;
-
-  step = FIXED_ONE / 50;
-  actor->scaleX += step;
-  actor->scaleY += step;
-  actor->timer += 2;
-  if (--*(s32 *)&actor->watchedActor == 0)
-    Actor_Release(actor);
-}
-
-/// Adds one white puff of chimney smoke, as Prox's roofs do.
-void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
-
-  if (actor != NULL) {
-    actor->retainSpriteCache = 2;
-    actor->motionFlags = 0;
-    actor->timer = 0;
-    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
-    ((struct FieldSprite *)actor->sprite)->priority = 1;
-    Actor_SetSpriteFlags(actor, 0);
-    actor->scaleX = FIXED_ONE / 2;
-    actor->scaleY = FIXED_ONE / 2;
-    *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-    actor->update = (ObjectUpdate)Settlements_DriftSmoke;
-    Actor_SelectAnimation(actor, 5);
-    Actor_SetBlendMode(actor, 1);
-  }
-}
+#include "shared/smoke_spawn.h"
 
 /// A task on Kalt Island: a puff from the house's chimney every 64 frames.
 void Settlements_PuffChimneySmoke(void) {
   if ((gFrameCount & 63) == 0)
-    Settlements_SpawnSmoke(toFIXED(248), toFIXED(48), toFIXED(256));
+    Smoke_Spawn(toFIXED(248), toFIXED(48), toFIXED(256));
 }
 
 /// The apple each frame: it sways up to two pixels either side of its spot and

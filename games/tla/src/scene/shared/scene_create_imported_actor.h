@@ -1,4 +1,5 @@
-/// Scene_CreateActor through the imported creator, with extra priority flags.
+/// Creates a hidden, still actor of `type` at a point, untargeted and drawn
+/// underfoot: Scene_CreateActor with the extra priority flags.
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor = Import_ActorCreate(type, x, y, z);
 

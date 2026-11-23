@@ -194,6 +194,7 @@ void MainRoutine_Run(s32 mode) {
   debug = gDebugMode;
   if (debug && mode == GAME_START_DEBUG_VALE) {
     gMainRoutineWork.next = SCENE_VALE_PLAZA;
+    // Entrance 1, the value mode holds here.
     gMainRoutineWork.entrance = mode;
   } else if (debug && mode == GAME_START_DEBUG_FILE_SCREEN) {
     gMainRoutineWork.next = SCENE_FILE_SCREEN;

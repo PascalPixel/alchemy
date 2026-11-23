@@ -309,7 +309,7 @@ extern u32 gShamanVillage_ReturnToLeaderAtSandScript[];
 void ShamanVillage_SetUpTrialGrounds(void);
 void ShamanVillage_SetUpNorthEnd(void);
 void ShamanVillage_SetUpVillage(void);
-void ShamanVillage_SetUpInn(void);
+void ShamanVillage_SetUpHouses(void);
 void ShamanVillage_SetUpSanctum(void);
 void Party_RestoreHpPp(s32 mode);
 void ShamanVillage_TalkToEastKnight(void);
@@ -2474,6 +2474,8 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_MOAPA, 4);
   // "It's difficult enough for me. I expect you will find it quite..."
+  // Yes: "You seem confident, but it is your ignorance speaking."
+  // No: "So... You are not as sure of yourselves as you first seemed."
   Event_OpenMessage(ACTOR_MOAPA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -2485,13 +2487,16 @@ void ShamanVillage_ShebaClearsSand(void) {
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimationAndWait(ACTOR_MOAPA, 4);
+    // "You seem confident, but it is your ignorance speaking."
     Event_ShowMessage(ACTOR_MOAPA, 0);
   } else {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimationAndWait(ACTOR_MOAPA, 4);
     gFieldWork->message++;
+    // "So... You are not as sure of yourselves as you first seemed."
     Event_ShowMessage(ACTOR_MOAPA, 0);
     Actor_SetAnimation(ACTOR_MOAPA, 3);
+    // "But I will permit this. Follow me, and I shall explain."
     Event_ShowMessage(ACTOR_MOAPA, 0);
   }
   Actor_WalkToAndWait(ACTOR_MOAPA, 212, 582);
@@ -2635,9 +2640,9 @@ void ShamanVillage_EnterLowerEastHouse(void) {
 }
 
 /// Once Moapa is beaten, Felix walks north into the door of the upper of the
-/// two houses on the village's east side (cell (28, 23)) and goes in; the
-/// walkthrough's way to Aroma climbs its stairs and out to the north-east.
-/// Before, the door is locked.
+/// two houses on the village's east side (cell (28, 23)) and goes in; its
+/// stairs lead up and out to the north-east, on the way to Aroma. Before, the
+/// door is locked.
 void ShamanVillage_EnterUpperEastHouse(void) {
   ShamanVillage_EnterDoor(43, 40, 28, 17, 1, 2);
 }
@@ -2779,7 +2784,7 @@ s32 Scene_Initialize(void) {
   else if (scene == SCENE_SHAMAN_VILLAGE)
     ShamanVillage_SetUpVillage();
   else if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
-    ShamanVillage_SetUpInn();
+    ShamanVillage_SetUpHouses();
   else if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     ShamanVillage_SetUpSanctum();
   return 0;
@@ -2794,7 +2799,7 @@ void ShamanVillage_SetUpTrialGrounds(void) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
     FieldActor_SetSpriteColor(
-        ((struct Actor *)Actor_GetById(ACTOR_TWISTER_ROCK)), 6);
+        ((struct Actor *)Actor_GetById(ACTOR_TWISTER_ROCK)), SPRITE_COLOR_GREY);
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Actor_SetPositionAndFacing(ACTOR_MOAPA, toFIXED(168), toFIXED(568),
                                FACING_SOUTH);
@@ -2963,7 +2968,7 @@ void ShamanVillage_SetUpVillage(void) {
 /// The houses: Moapa and his household as the story leaves them. Brought back
 /// from the battle with Moapa, the party wakes in a bed with its HP and PP
 /// restored and Felix gets up and walks on; the first time sets Moapa beaten.
-void ShamanVillage_SetUpInn(void) {
+void ShamanVillage_SetUpHouses(void) {
   u32 i;
 
   gFieldWork->transition =

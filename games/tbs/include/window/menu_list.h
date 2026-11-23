@@ -18,6 +18,7 @@
 #include "window/screens.h"
 #include "window/window.h"
 
+/// The items a battle's item list shows at once, two tiles a row.
 enum { BATTLE_LIST_ROWS = 5 };
 
 /// A menu sprite: a list link and its OAM attributes, as two words or as

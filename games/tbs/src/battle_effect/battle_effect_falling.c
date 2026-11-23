@@ -26,6 +26,8 @@
 // shattering into sparkle and drops bursting in a splash that throws up
 // droplets.
 
+/// The shards or drops that fall, and the slots for the sparkle or splash
+/// they burst into, which follow them in PARTICLES.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 /// A falling shard or drop keeps falling while its y, in eighths of a pixel, is

@@ -148,8 +148,6 @@ extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 Matrix_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
-s32 FarCall_LuckyWheelsTable(s32 entrance);
-s32 FarCall_LuckyDiceTable(s32 entrance);
 
 // The field effects' scripts and tables (field/field_sequence_tables.c,
 // movement_scripts.c, field_effect_tables.c and spark_tiles.s).

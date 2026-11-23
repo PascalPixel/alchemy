@@ -4,6 +4,10 @@
 
 #include "event_commands_internal.h"
 
+/// Whirlwind's motes: the ring that spreads from the caster, the motes that
+/// circle the wind 8 pixels out, a 32nd of a turn a frame, for 121 frames
+/// before they wander off for 101, the target shrinking to half its size, and
+/// the orb's 10 frames from caster to target.
 enum {
   WHIRLWIND_RADIAL_DIRECTIONS = 16,
   WHIRLWIND_ORBIT_PARTICLES = 16,

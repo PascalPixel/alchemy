@@ -21,10 +21,10 @@ enum WindFunnelMode { WIND_FUNNEL_WAFT, WIND_FUNNEL_AROMA };
 /// Where BlastSheet is decoded, after the column.
 #define UNDEAD_SWORD_SPARK_SHEET PICTURE_BYTES(LIME_COLUMN)
 
-#define UNDEAD_SWORD_FRAMES 54 ///< frames of the columns
-#define BURST_HIT_FRAME 10     ///< the targets are hit
-#define COLUMN_RISE_FRAME 8    ///< the columns break the ground
-#define COLUMN_PEAK_FRAME 31   ///< the columns stop rising
+#define UNDEAD_SWORD_FRAMES 54     ///< frames of the columns
+#define UNDEAD_SWORD_HIT_FRAME 10  ///< the targets are hit
+#define UNDEAD_SWORD_RISE_FRAME 8  ///< the columns break the ground
+#define UNDEAD_SWORD_PEAK_FRAME 31 ///< the columns stop rising
 /// The canvas line the columns stand on and the sparks start from.
 #define UNDEAD_SWORD_GROUND 112
 
@@ -83,7 +83,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != UNDEAD_SWORD_FRAMES; frame++) {
     // The hit: the damage shown, a shake, knock-back and a flash.
-    if (frame == BURST_HIT_FRAME) {
+    if (frame == UNDEAD_SWORD_HIT_FRAME) {
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
@@ -92,9 +92,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     }
 
     // The columns: up 12 pixels a frame until frame 31, then down 6.
-    if (frame >= COLUMN_RISE_FRAME) {
-      if (frame <= COLUMN_PEAK_FRAME)
-        height = (frame - COLUMN_RISE_FRAME) * 12;
+    if (frame >= UNDEAD_SWORD_RISE_FRAME) {
+      if (frame <= UNDEAD_SWORD_PEAK_FRAME)
+        height = (frame - UNDEAD_SWORD_RISE_FRAME) * 12;
       else
         height = 272 - frame * 6;
       if (height > 0) {
@@ -125,7 +125,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     BattleEffect_FetchRectangleBlitters(args->side, draw);
     for (i = 0, particle = work->particles; i != UNDEAD_SWORD_SPARK_COUNT;
          i++) {
-      if (frame >= i / 2 + COLUMN_RISE_FRAME &&
+      if (frame >= i / 2 + UNDEAD_SWORD_RISE_FRAME &&
           particle->variant <= UNDEAD_SWORD_SPARK_LIFE) {
         s32 drawX;
         s32 drawY;
@@ -146,7 +146,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     }
     EFFECT_RELEASE_BLITTERS();
 
-    if (frame < COLUMN_RISE_FRAME)
+    if (frame < UNDEAD_SWORD_RISE_FRAME)
       BattleCamera_Shake(4, 4);
     else
       BattleCamera_Shake(16, 16);
@@ -195,7 +195,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   s32 geyserY;
   DrawRectangle draw[2];
   struct ScreenPoint position;
-  struct Particle *step;
+  struct Particle *particle;
   s32 i;
 
   work = Ram_HeapSlots->battleEffect;
@@ -231,12 +231,12 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         s32 speed = (Random16() & 0x3ff) + 32;
         s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
-        step = &work->particles[i];
-        step->x = INTtoFIXED(position.x / 2);
-        step->y = INTtoFIXED(position.y);
-        step->velocityX = (Trig_Sin(angle) * speed) >> 8;
-        step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 8;
-        step->variant = -i;
+        particle = &work->particles[i];
+        particle->x = INTtoFIXED(position.x / 2);
+        particle->y = INTtoFIXED(position.y);
+        particle->velocityX = (Trig_Sin(angle) * speed) >> 8;
+        particle->velocityY = -(Trig_Cos(angle) * speed * 2) >> 8;
+        particle->variant = -i;
       }
       target->verticalMotionStrength = 0;
       target->y = 0;
@@ -253,12 +253,12 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         s32 speed = (Random16() & 0x3ff) + 32;
         s32 angle = Random16();
 
-        step = &PARTICLES[PLUME_EDGE_FIRST_DROP + i];
-        step->x = INTtoFIXED(position.x / 2);
-        step->y = INTtoFIXED(position.y - 16);
-        step->velocityX = (Trig_Sin(angle) * speed) >> 7;
-        step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
-        step->variant = (Random16() & 7) + 48;
+        particle = &PARTICLES[PLUME_EDGE_FIRST_DROP + i];
+        particle->x = INTtoFIXED(position.x / 2);
+        particle->y = INTtoFIXED(position.y - 16);
+        particle->velocityX = (Trig_Sin(angle) * speed) >> 7;
+        particle->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
+        particle->variant = (Random16() & 7) + 48;
       }
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -280,33 +280,36 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
 
     // The drops fall and shrink: a drop is drawn at its life / 6 pixels wide,
     // two pixels at the least.
-    step = PARTICLES;
-    for (i = 0; i != PLUME_EDGE_FIRST_DROP + PLUME_EDGE_DROPS; i++, step++) {
-      if (step->variant >= 0) {
-        s32 size = step->variant / 6;
+    particle = PARTICLES;
+    for (i = 0; i != PLUME_EDGE_FIRST_DROP + PLUME_EDGE_DROPS;
+         i++, particle++) {
+      if (particle->variant >= 0) {
+        s32 size = particle->variant / 6;
 
         if (size < 2)
           size = 2;
-        step->variant--;
-        Particle_AdvanceWithGravity2D(step, 60, toFIXED(1) / 8);
-        EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXED_INTEGER_PART(step->x),
-                         FIXED_INTEGER_PART(step->y), size);
+        particle->variant--;
+        Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 8);
+        EFFECT_DRAW_MOTE(draw[0], canvas, sheet,
+                         FIXED_INTEGER_PART(particle->x),
+                         FIXED_INTEGER_PART(particle->y), size);
       }
     }
 
     // Each puff of foam billows out and fades through its six pictures.
     for (i = 0; i != PLUME_EDGE_FOAM_PUFFS; i++) {
-      step = &work->particles[i];
-      step->variant++;
-      if (step->variant >= 0 && step->variant < PLUME_EDGE_FOAM_FRAMES) {
-        s32 picture = step->variant / 3;
+      particle = &work->particles[i];
+      particle->variant++;
+      if (particle->variant >= 0 &&
+          particle->variant < PLUME_EDGE_FOAM_FRAMES) {
+        s32 picture = particle->variant / 3;
 
-        Particle_AdvanceWithGravity2D(step, 60, -toFIXED(1) / 8);
+        Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 8);
         draw[0](canvas,
                 work->sheet + PLUME_EDGE_FOAM_PICTURES +
                     picture * PICTURE_BYTES(FLASH_BURST),
-                FIXED_INTEGER_PART(step->x) - FLASH_BURST_WIDTH / 2,
-                FIXED_INTEGER_PART(step->y) - FLASH_BURST_HEIGHT / 2,
+                FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+                FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
                 FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
@@ -360,8 +363,6 @@ void BattleEffect_RunDreamtide(struct BattleEffectParams *args) {
 void BattleEffect_RunWateryGrave(struct BattleEffectParams *args) {
   BattleEffect_RunWaterSheet(args, WATER_SHEET_WATERY_GRAVE);
 }
-
-struct StripQuad;
 
 /// A corner of the water sheet: x, y and depth, a byte each.
 struct WaterVertex {
@@ -433,7 +434,7 @@ struct WaterTriangle {
 #define WATER_SHEET_START_X 128
 #define WATER_SHEET_END_X (-64)
 
-/// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
+/// The body of Dreamtide and Watery Grave: a sheet of
 /// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
 /// the targets in waves while the camera turns; Dreamtide strikes the first
 /// target with two splashes at frame 17, Watery Grave strikes every target
@@ -644,7 +645,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     phase = frame * 2;
     row = 1;
     angle = frame * (TRIG_TURN / 32);
-    for (; row != 7; row++) {
+    for (; row != WATER_ROWS - 1; row++) {
       for (column = 0; column != WATER_COLUMNS; column++) {
         s32 amplitude = (16 - column) * height / 32;
         s32 y = (FIXEDtoINT(Trig_Sin(angle + column * WATER_WAVE_COLUMN_PHASE +
@@ -652,7 +653,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
                             amplitude)) -
                 amplitude;
 
-        WATER_VERTICES[row * 16 + column].y = y + 64;
+        WATER_VERTICES[row * WATER_COLUMNS + column].y = y + 64;
       }
     }
     // A puff bobs at half the waves' height, with the row it rises in: the
@@ -696,7 +697,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     model->shade = shade;
     model->scrollU = (frame + phase) & TEXTURE_SCROLL_MASK;
     model->scrollV = TEXTURE_SCROLL_MASK & ~frame;
-    Render_TransformVertices(gMapGridCellBuffer, vertices, 128);
+    Render_TransformVertices(gMapGridCellBuffer, vertices,
+                             WATER_ROWS * WATER_COLUMNS);
     Render_DrawModelList(model);
 
     if (frame == 0) {
@@ -715,8 +717,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     }
     if (mode == WATER_SHEET_WATERY_GRAVE) {
       for (i = 0; i != WATERY_GRAVE_PUFFS; i++) {
-        struct Particle *step = &work->particles[i];
-        s32 picture = step->variant;
+        struct Particle *smoke = &work->particles[i];
+        s32 picture = smoke->variant;
         struct ScreenPoint *position;
 
         if (picture < 0) {
@@ -724,7 +726,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         }
         /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
-        if (EffectPosition_ProjectPoint(step, position) == 0 &&
+        if (EffectPosition_ProjectPoint(smoke, position) == 0 &&
             FIXED_INTEGER_PART(position->depth) > WATERY_GRAVE_PUFF_DEPTH) {
           s32 x = FIXED_INTEGER_PART(position->x);
           s32 y;
@@ -736,10 +738,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
                   work->sheet + WATER_SHEET_SMOKE +
                       picture * PICTURE_BYTES(SMOKE_PUFF),
                   x + 52, y + 40, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-          Particle_AdvanceWithGravity3D(step, 62, -toFIXED(1) / 8);
+          Particle_AdvanceWithGravity3D(smoke, 62, -toFIXED(1) / 8);
         }
-        if (++step->variant == WATER_SHEET_SMOKE_PICTURE_COUNT) {
-          step->variant = 0;
+        if (++smoke->variant == WATER_SHEET_SMOKE_PICTURE_COUNT) {
+          smoke->variant = 0;
         }
       }
     } else {
@@ -832,7 +834,7 @@ void BattleEffect_RunAroma(struct BattleEffectParams *args) {
 /// Aroma's three funnels stand one above another, this far apart.
 #define AROMA_FUNNEL_SPACING 16
 
-/// The body of Waft (mode 0) and Aroma (mode 1): after the Jupiter Djinni's
+/// The body of Waft and Aroma: after the Jupiter Djinni's
 /// entrance a small Djinni bobs and rises, while three funnels of wind, each a
 /// band whose head moves and whose tail follows where the head has been, twist
 /// over the targets and take on Waft's cyan or Aroma's tan; Waft strikes the
@@ -1123,8 +1125,12 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
 #define DIAMOND_BERG_BLOW_SHARDS 8
 #define DIAMOND_BERG_SHARD_GROUND 104
 #define DIAMOND_BERG_SHARD_SPIN 1024
-/// The ripples of frost lean towards the camera.
+/// The ripples of frost lean towards the camera, each starting at about a
+/// quarter of its size and growing by its row's growth times
+/// DIAMOND_BERG_RIPPLE_GROWTH a frame.
 #define DIAMOND_BERG_RIPPLE_TILT 3000
+#define DIAMOND_BERG_RIPPLE_START_SCALE (FIXED_ONE * 131 / 512)
+#define DIAMOND_BERG_RIPPLE_GROWTH 1400
 
 /// An iceberg drops onto the target and is driven down in eight blows (every
 /// eighth frame from 31), each throwing eight shards and flaring a ring; the
@@ -1324,7 +1330,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         if (frame <= start) {
           continue;
         }
-        scale = (frame - start) * gDiamondBerg_RingGrowth[k] * 1400 + 16768;
+        scale = (frame - start) * gDiamondBerg_RingGrowth[k] *
+                    DIAMOND_BERG_RIPPLE_GROWTH +
+                DIAMOND_BERG_RIPPLE_START_SCALE;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -1394,9 +1402,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef LIME_COLUMN_HEIGHT
 #undef UNDEAD_SWORD_SPARK_SHEET
 #undef UNDEAD_SWORD_FRAMES
-#undef BURST_HIT_FRAME
-#undef COLUMN_RISE_FRAME
-#undef COLUMN_PEAK_FRAME
+#undef UNDEAD_SWORD_HIT_FRAME
+#undef UNDEAD_SWORD_RISE_FRAME
+#undef UNDEAD_SWORD_PEAK_FRAME
 #undef UNDEAD_SWORD_GROUND
 #undef PLUME_EDGE_FOAM_PICTURES
 #undef PLUME_EDGE_FRAMES
@@ -1464,3 +1472,5 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef DIAMOND_BERG_SHARD_GROUND
 #undef DIAMOND_BERG_SHARD_SPIN
 #undef DIAMOND_BERG_RIPPLE_TILT
+#undef DIAMOND_BERG_RIPPLE_START_SCALE
+#undef DIAMOND_BERG_RIPPLE_GROWTH

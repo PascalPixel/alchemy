@@ -1,6 +1,6 @@
 /// @file
-/// Triple Chomp, and the starts of Beam, Rolling Flame, Ghost Soldier and Blast
-/// Breath.
+/// Triple Chomp, and the entry points of Beam, Rolling Flame, Ghost Soldier and
+/// Blast Breath.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -20,8 +20,8 @@
 #define TRIPLE_CHOMP_BITE_SPARK_SLOTS 128
 
 /// Each bite's ring, FireRingTexture on a square: the first three particles
-/// hold where each is drawn. A ring swells from a quarter of its size by
-/// TRIPLE_CHOMP_RING_GROWTH a frame for TRIPLE_CHOMP_RING_FRAMES, drawn whole
+/// hold where each is spark. A ring swells from a quarter of its size by
+/// TRIPLE_CHOMP_RING_GROWTH a frame for TRIPLE_CHOMP_RING_FRAMES, spark whole
 /// for the first half and then losing TRIPLE_CHOMP_RING_FADE of its shade a
 /// frame.
 #define BITE_RING(bite) (&work->particles[bite])
@@ -47,7 +47,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   struct RenderModel *model;
   struct ModelTexture texture;
   struct ScreenPoint position;
-  struct Particle *drawn;
+  struct Particle *spark;
   s32 i;
   s32 j;
   u8 *pixels = Ram_MapCellBuffer;
@@ -154,25 +154,25 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
       }
     }
 
-    // Each spark is drawn and moved twice a frame, shrinking as it dies.
-    drawn = EXTRA_PARTICLES;
+    // Each spark is spark and moved twice a frame, shrinking as it dies.
+    spark = EXTRA_PARTICLES;
     for (i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++) {
-      s32 left = drawn->variant;
+      s32 life = spark->variant;
 
-      if (left >= 0) {
-        s32 size = (left >> 2) + 3;
+      if (life >= 0) {
+        s32 size = (life >> 2) + 3;
 
         EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
-                         FIXED_INTEGER_PART(drawn->x),
-                         FIXED_INTEGER_PART(drawn->y), size);
-        Particle_AdvanceWithGravity2D(drawn, 62, 0);
+                         FIXED_INTEGER_PART(spark->x),
+                         FIXED_INTEGER_PART(spark->y), size);
+        Particle_AdvanceWithGravity2D(spark, 62, 0);
         EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
-                         FIXED_INTEGER_PART(drawn->x),
-                         FIXED_INTEGER_PART(drawn->y), size);
-        Particle_AdvanceWithGravity2D(drawn, 62, 0);
-        drawn->variant--;
+                         FIXED_INTEGER_PART(spark->x),
+                         FIXED_INTEGER_PART(spark->y), size);
+        Particle_AdvanceWithGravity2D(spark, 62, 0);
+        spark->variant--;
       }
-      drawn++;
+      spark++;
     }
 
     Heap_Release(model);

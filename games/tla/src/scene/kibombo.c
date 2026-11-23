@@ -2781,9 +2781,6 @@ void Kibombo_EnterVent(void) {
 /// During the ceremony the screen shows the Great Gabomba's face close up, its
 /// fires flickering, for about three seconds or until A, B or Start is held,
 /// then goes dark and returns to the grounds.
-///
-/// The flicker is `Kibombo_FlickerStatueFires`, run for up to 160 frames after
-/// a wait of 20.
 void Kibombo_GazeAtStatue(void) {
   u32 i;
 

@@ -7,12 +7,15 @@
 #include "item_ids.h"
 #include "game/game.h"
 
+/// The name field of an enemy's row, left blank: fourteen spaces.
+#define BLANK_NAME "              "
+
 // clang-format off
 /// The enemies, by enemy id less ENEMY_ID_FIRST.
 const struct EnemyDefinition gEnemy_Definitions[] = {
     // ???
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
@@ -24,7 +27,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Vermin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 1,
         .hp = 20,
         .atk = 23,
@@ -42,7 +45,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Vermin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 36,
         .atk = 32,
@@ -60,7 +63,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mad Vermin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 131,
         .atk = 164,
@@ -78,7 +81,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 1,
         .hp = 17,
         .atk = 21,
@@ -96,7 +99,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 30,
         .atk = 30,
@@ -114,7 +117,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rabid Bat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 125,
         .atk = 190,
@@ -132,7 +135,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wild Mushroom
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 1,
         .hp = 18,
         .atk = 22,
@@ -150,7 +153,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wild Mushroom
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 34,
         .atk = 31,
@@ -168,7 +171,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Death Cap
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 117,
         .atk = 159,
@@ -186,7 +189,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Slime
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 2,
         .hp = 22,
         .atk = 22,
@@ -204,7 +207,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Slime
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 32,
         .atk = 34,
@@ -222,7 +225,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ooze
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 9,
         .hp = 72,
         .atk = 72,
@@ -240,7 +243,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Slime Beast
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 99,
         .atk = 134,
@@ -258,7 +261,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ghost
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 56,
         .pp = 6,
@@ -281,7 +284,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ghost Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 161,
         .pp = 19,
@@ -301,7 +304,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Horned Ghost
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 236,
         .pp = 32,
@@ -321,7 +324,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lich
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 900,
         .pp = 52,
@@ -342,7 +345,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Zombie
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 4,
         .hp = 55,
         .atk = 41,
@@ -360,7 +363,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Undead
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 165,
         .atk = 180,
@@ -378,7 +381,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wight
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 192,
         .atk = 205,
@@ -396,7 +399,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bandit
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 7,
         .hp = 244,
         .atk = 46,
@@ -418,7 +421,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Thief
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 6,
         .hp = 110,
         .atk = 42,
@@ -438,7 +441,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Brigand
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 421,
         .atk = 251,
@@ -459,7 +462,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Skeleton
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 60,
         .atk = 46,
@@ -477,7 +480,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bone Fighter
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 122,
         .atk = 131,
@@ -495,7 +498,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Skull Warrior
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 283,
         .pp = 16,
@@ -515,7 +518,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Will Head
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 54,
         .atk = 42,
@@ -533,7 +536,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Death Head
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 12,
         .hp = 128,
         .pp = 15,
@@ -553,7 +556,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Willowisp
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 209,
         .pp = 12,
@@ -573,7 +576,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 6,
         .hp = 49,
         .atk = 52,
@@ -591,7 +594,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Armored Rat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 147,
         .atk = 193,
@@ -609,7 +612,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Plated Rat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 203,
         .atk = 262,
@@ -627,7 +630,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat Soldier
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 6,
         .hp = 69,
         .atk = 56,
@@ -645,7 +648,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat Fighter
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 143,
         .atk = 146,
@@ -666,7 +669,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat Warrior
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 208,
         .atk = 226,
@@ -687,7 +690,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Drone Bee
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 7,
         .hp = 63,
         .atk = 68,
@@ -705,7 +708,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fighter Bee
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 116,
         .atk = 155,
@@ -723,7 +726,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Warrior Bee
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 164,
         .atk = 221,
@@ -741,7 +744,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Troll
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 7,
         .hp = 101,
         .atk = 73,
@@ -760,7 +763,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cave Troll
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 212,
         .atk = 199,
@@ -779,7 +782,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Brutal Troll
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 291,
         .atk = 273,
@@ -798,7 +801,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Spider
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 69,
         .atk = 75,
@@ -816,7 +819,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tarantula
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 108,
         .atk = 144,
@@ -834,7 +837,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Recluse
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 27,
         .hp = 221,
         .atk = 323,
@@ -852,7 +855,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gnome
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 85,
         .pp = 5,
@@ -872,7 +875,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gnome Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 162,
         .pp = 24,
@@ -892,7 +895,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gnome Wizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 215,
         .pp = 32,
@@ -912,7 +915,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ghoul
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 9,
         .hp = 99,
         .atk = 93,
@@ -930,7 +933,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fiendish Ghoul
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 609,
         .atk = 199,
@@ -948,7 +951,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cannibal Ghoul
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 249,
         .atk = 274,
@@ -966,7 +969,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mauler
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 9,
         .hp = 109,
         .atk = 99,
@@ -984,7 +987,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ravager
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 189,
         .atk = 185,
@@ -1002,7 +1005,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Grisly
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 800,
         .atk = 208,
@@ -1020,7 +1023,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cuttle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 80,
         .atk = 96,
@@ -1038,7 +1041,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Calamar
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 104,
         .atk = 130,
@@ -1056,7 +1059,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Man o' War
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 137,
         .atk = 193,
@@ -1074,7 +1077,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Harpy
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 105,
         .atk = 104,
@@ -1092,7 +1095,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Virago
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 185,
         .atk = 199,
@@ -1110,7 +1113,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Harridan
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 231,
         .pp = 29,
@@ -1130,7 +1133,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Siren
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 116,
         .pp = 12,
@@ -1150,7 +1153,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Succubus
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 529,
         .pp = 56,
@@ -1170,7 +1173,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Nightmare
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 258,
         .pp = 28,
@@ -1190,7 +1193,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mole
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 96,
         .atk = 119,
@@ -1208,7 +1211,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mad Mole
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 156,
         .atk = 197,
@@ -1226,7 +1229,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mole Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 199,
         .pp = 14,
@@ -1245,7 +1248,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Dirge
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 91,
         .atk = 122,
@@ -1263,7 +1266,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Foul Dirge
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 149,
         .atk = 177,
@@ -1281,7 +1284,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Vile Dirge
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 173,
         .atk = 228,
@@ -1299,7 +1302,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ape
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 290,
         .atk = 128,
@@ -1317,7 +1320,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Killer Ape
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 1000,
         .pp = 45,
@@ -1338,7 +1341,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Dirty Ape
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 230,
         .atk = 236,
@@ -1356,7 +1359,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Grub
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 102,
         .atk = 154,
@@ -1374,7 +1377,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Worm
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 132,
         .atk = 196,
@@ -1392,7 +1395,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Acid Maggot
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 160,
         .atk = 255,
@@ -1410,7 +1413,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Orc
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 148,
         .atk = 156,
@@ -1428,7 +1431,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Orc Captain
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 231,
         .atk = 248,
@@ -1450,7 +1453,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Orc Lord
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 278,
         .pp = 18,
@@ -1473,7 +1476,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Salamander
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 212,
         .pp = 18,
@@ -1493,7 +1496,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Earth Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 1550,
         .pp = 48,
@@ -1514,7 +1517,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Thunder Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 456,
         .atk = 347,
@@ -1532,7 +1535,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Manticore
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 1700,
         .pp = 83,
@@ -1553,7 +1556,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Magicore
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 321,
         .pp = 34,
@@ -1573,7 +1576,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Manticore King
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 348,
         .pp = 33,
@@ -1593,7 +1596,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Kobold
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 220,
         .atk = 230,
@@ -1615,7 +1618,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Goblin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 268,
         .atk = 289,
@@ -1637,7 +1640,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Hobgoblin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 650,
         .atk = 203,
@@ -1659,7 +1662,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gargoyle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 176,
         .pp = 21,
@@ -1679,7 +1682,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Clay Gargoyle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 209,
         .pp = 24,
@@ -1699,7 +1702,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ice Gargoyle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 304,
         .pp = 21,
@@ -1719,7 +1722,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gryphon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 1100,
         .pp = 36,
@@ -1740,7 +1743,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wild Gryphon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 370,
         .pp = 8,
@@ -1760,7 +1763,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wise Gryphon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .pp = 33,
         .atk = 22,
@@ -1777,7 +1780,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Golem
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 266,
         .atk = 217,
@@ -1795,7 +1798,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Earth Golem
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 298,
         .atk = 299,
@@ -1813,7 +1816,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Grand Golem
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 476,
         .atk = 367,
@@ -1831,7 +1834,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Dread Hound
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 252,
         .atk = 211,
@@ -1849,7 +1852,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cerebus
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 35,
         .hp = 2200,
         .pp = 42,
@@ -1870,7 +1873,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fenrir
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 406,
         .atk = 357,
@@ -1888,7 +1891,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Stone Soldier
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 179,
         .pp = 6,
@@ -1907,7 +1910,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Boulder Beast
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 27,
         .hp = 211,
         .pp = 14,
@@ -1926,7 +1929,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Raging Rock
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .pp = 14,
         .atk = 22,
@@ -1942,7 +1945,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Chimera
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 1350,
         .pp = 48,
@@ -1963,7 +1966,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Chimera Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 413,
         .pp = 28,
@@ -1982,7 +1985,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .experience = 362,
     },
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
@@ -1998,7 +2001,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Amaze
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 2,
         .hp = 28,
         .atk = 25,
@@ -2017,7 +2020,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Amaze
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 39,
         .atk = 36,
@@ -2036,7 +2039,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Creeper
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 89,
         .pp = 6,
@@ -2056,7 +2059,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Spirit
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 116,
         .pp = 11,
@@ -2076,7 +2079,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Zombie
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 4,
         .hp = 55,
         .atk = 41,
@@ -2088,6 +2091,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
     },
+    // Three spare rows, each named "?" in the text.
     {
         .name = "",
     },
@@ -2099,7 +2103,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Kraken
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 2400,
         .pp = 46,
@@ -2120,7 +2124,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mystery Man
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 3000,
         .pp = 260,
@@ -2136,7 +2140,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Saturos
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 1200,
         .pp = 160,
@@ -2157,7 +2161,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Saturos
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 38,
         .hp = 3000,
         .pp = 260,
@@ -2176,7 +2180,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mystery Woman
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 2600,
         .pp = 300,
@@ -2192,7 +2196,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Menardi
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 38,
         .hp = 2600,
         .pp = 300,
@@ -2211,7 +2215,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lizard Man
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 129,
         .atk = 106,
@@ -2229,7 +2233,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lizard Fighter
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 212,
         .atk = 204,
@@ -2247,7 +2251,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lizard King
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 2000,
         .pp = 52,
@@ -2268,7 +2272,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Living Statue
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 540,
         .pp = 34,
@@ -2288,7 +2292,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Hydros Statue
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 19,
         .hp = 1300,
         .pp = 80,
@@ -2309,7 +2313,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Azart
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 450,
         .atk = 206,
@@ -2327,7 +2331,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Azart
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 450,
         .atk = 206,
@@ -2345,7 +2349,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Satrage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 570,
         .atk = 228,
@@ -2363,7 +2367,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Satrage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 570,
         .atk = 228,
@@ -2381,7 +2385,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Navampa
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 820,
         .atk = 274,
@@ -2399,7 +2403,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Navampa
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 820,
         .atk = 232,
@@ -2417,7 +2421,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ant Lion
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 400,
         .pp = 32,
@@ -2437,7 +2441,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Roach
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 211,
         .pp = 27,
@@ -2457,7 +2461,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Doodle Bug
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
@@ -2472,7 +2476,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Toadonpa
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 27,
         .hp = 2800,
         .atk = 266,
@@ -2492,7 +2496,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Poison Toad
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 34,
         .hp = 2250,
         .atk = 363,
@@ -2510,7 +2514,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .experience = 1732,
     },
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
@@ -2525,7 +2529,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tornado Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 530,
         .pp = 37,
@@ -2546,7 +2550,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Storm Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 2900,
         .pp = 42,
@@ -2567,7 +2571,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tempest Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 3000,
         .pp = 45,
@@ -2588,7 +2592,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tret
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 710,
         .pp = 36,
@@ -2608,7 +2612,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fusion Dragon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 39,
         .hp = 5000,
         .pp = 500,
@@ -2624,7 +2628,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Deadbeard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 43,
         .hp = 6000,
         .pp = 600,
@@ -2644,7 +2648,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 468,
         .pp = 24,
@@ -2664,7 +2668,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 506,
         .pp = 26,
@@ -2684,7 +2688,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 579,
         .pp = 32,
@@ -2704,7 +2708,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 19,
         .hp = 690,
         .pp = 42,
@@ -2724,7 +2728,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 729,
         .pp = 44,
@@ -2744,7 +2748,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 767,
         .pp = 48,
@@ -2764,7 +2768,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 997,
         .pp = 60,
@@ -2784,7 +2788,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 30,
         .hp = 1206,
         .pp = 68,
@@ -2804,7 +2808,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Venus Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 12,
         .hp = 349,
         .pp = 25,
@@ -2823,7 +2827,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Venus Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 421,
         .pp = 30,
@@ -2842,7 +2846,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Venus Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 623,
         .pp = 51,
@@ -2861,7 +2865,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 290,
         .pp = 20,
@@ -2880,7 +2884,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 361,
         .pp = 27,
@@ -2899,7 +2903,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 466,
         .pp = 46,
@@ -2918,7 +2922,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 654,
         .pp = 59,
@@ -2937,7 +2941,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mars Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 172,
         .pp = 14,
@@ -2956,7 +2960,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mars Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 355,
         .pp = 24,
@@ -2975,7 +2979,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mars Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 592,
         .pp = 52,
@@ -2994,7 +2998,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 243,
         .pp = 22,
@@ -3013,7 +3017,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 314,
         .pp = 25,
@@ -3032,7 +3036,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 481,
         .pp = 40,
@@ -3051,7 +3055,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 688,
         .pp = 62,
@@ -3074,3 +3078,5 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
 };
 // clang-format on
+
+#undef BLANK_NAME

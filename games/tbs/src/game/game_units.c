@@ -728,11 +728,11 @@ UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
     return unit->field;                                                        \
   }
 
-/// Called as the field heals or hurts the whole party, in battle, and by the
-/// debug menu.
+/// Adds `delta` to a unit's HP, for the field's healing and damage, battle and
+/// the debug menu.
 UNIT_DEFINE_ADD(s32, Unit_AddHp, hp, hpMax)
-/// Called when Psynergy is used in the field, in battle and from the menu, by
-/// PP recovery at the end of a battle turn, and by the debug menu.
+/// Adds `delta` to a unit's PP, for Psynergy used in the field, in battle and
+/// from the menu, PP recovery at each battle turn's end and the debug menu.
 UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 
 #undef UNIT_DEFINE_SET

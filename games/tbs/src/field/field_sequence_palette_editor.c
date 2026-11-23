@@ -20,12 +20,14 @@
 /// START blinks the colour every 10 frames: white, the colour, black, the
 /// colour.
 #define EDITOR_BLINK_FRAMES 10
+/// The channel up and down choose, by its row under the swatch.
+enum EditorChannel { EDITOR_RED = 1, EDITOR_GREEN = 2, EDITOR_BLUE = 3 };
 
 /// The debug palette editor (L on the Pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue levels, 0 to 31.
 void PaletteEditor_Run(void) {
   s32 palette = 0;
-  s32 channel = 1;
+  s32 channel = EDITOR_RED;
   s32 color = 1;
   u16 *swatchColumn;
   u16 *tileEntry;
@@ -70,13 +72,13 @@ redraw:
   for (;;) {
     if (gKeysRepeat & KEY_UP) {
       channel--;
-      if (channel <= 0)
-        channel = 3;
+      if (channel < EDITOR_RED)
+        channel = EDITOR_BLUE;
     }
     if (gKeysRepeat & KEY_DOWN) {
       channel++;
-      if (channel > 3)
-        channel = 1;
+      if (channel > EDITOR_BLUE)
+        channel = EDITOR_RED;
     }
     if (gKeysRepeat & KEY_LEFT) {
       color--;
@@ -106,11 +108,11 @@ redraw:
       red = RGB_RED(rgb555);
       green = RGB_GREEN(rgb555);
       blue = RGB_BLUE(rgb555);
-      if (channel == 1 && red < RGB_LEVEL_MAX)
+      if (channel == EDITOR_RED && red < RGB_LEVEL_MAX)
         red++;
-      if (channel == 2 && green < RGB_LEVEL_MAX)
+      if (channel == EDITOR_GREEN && green < RGB_LEVEL_MAX)
         green++;
-      if (channel == 3 && blue < RGB_LEVEL_MAX)
+      if (channel == EDITOR_BLUE && blue < RGB_LEVEL_MAX)
         blue++;
       *paletteColor = RGB(red, green, blue);
       goto redraw;
@@ -121,11 +123,11 @@ redraw:
       red = RGB_RED(rgb555);
       green = RGB_GREEN(rgb555);
       blue = RGB_BLUE(rgb555);
-      if (channel == 1 && red != 0)
+      if (channel == EDITOR_RED && red != 0)
         red--;
-      if (channel == 2 && green != 0)
+      if (channel == EDITOR_GREEN && green != 0)
         green--;
-      if (channel == 3 && blue != 0)
+      if (channel == EDITOR_BLUE && blue != 0)
         blue--;
       *paletteColor = RGB(red, green, blue);
       goto redraw;

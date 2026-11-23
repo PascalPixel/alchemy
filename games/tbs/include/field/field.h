@@ -155,6 +155,9 @@ extern const s8 gFieldEffect_RandomChildValues[];
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
 extern const s32 gFieldEffect_BurstParticleActorScript[];
+/// Waits to arrive, sets off SpawnHeavyImpactEffect and releases the actor:
+/// Force's fist as it lands.
+extern const s32 gFieldEffect_HeavyImpactScript[];
 /// The emote bubble's script (Actor_ShowEmoteById): eight 2-frame steps
 /// of squash and stretch (SC_ADD to SW_SCALE_X and SW_SCALE_Y), 30 frames
 /// still, then SC_RELEASE.

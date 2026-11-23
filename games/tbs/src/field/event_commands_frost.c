@@ -1,5 +1,6 @@
 /// @file
-/// Frost.
+/// Frost: snowflakes spiral in on the target, and a puddle freezes into an
+/// ice pillar.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -29,13 +30,13 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
 /// starts at FROST_SPIRAL_FRAMES (FieldPsynergy_Frost).
 static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
                                                     s32 clockwise) {
-  struct Actor *particle = (struct Actor *)actor;
+  struct Actor *particle = actor;
   struct Vector3 position;
   s16 remainingFrames;
   s32 decrementedTimer;
 
   if (particle != NULL) {
-    // Keep the countdown's halfword narrowing before it sets the radius.
+    // timer counts the spiral's frames down; the radius shrinks with it.
     decrementedTimer = (u16)particle->timer - 1;
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
@@ -58,8 +59,9 @@ static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
   }
 }
 
-/// Spirals anticlockwise at twice the frames left in pixels, a 32nd of a turn
-/// further round for each, then fades.
+/// Per-frame update of a snowflake: spirals anticlockwise in to the target
+/// point (targetX to targetZ), at twice the frames left in pixels, a 32nd of a
+/// turn further round for each, then fades.
 void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *actor) {
   FieldEffect_UpdateSpiralParticle(actor, 0);
 }
@@ -75,7 +77,7 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct Actor *target = effectWork->child;
 
   if (target != 0) {
-    // enabled set skips the target's part of FieldPsynergy_Frost.
+    // With childMode the target neither flashes nor freezes.
     if (effectWork->childMode != 0) {
       effectWork->enabled = 1;
     }

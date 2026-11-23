@@ -1,5 +1,5 @@
 /// @file
-/// Growth.
+/// Growth: green sparks fly from the caster, and a sprout grows tall.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -12,8 +12,7 @@ struct BurstParticleVector {
 };
 
 /// A sprite part's OAM attributes (struct AnimationSpritePart) as Growth
-/// copies them; the notes give the AnimationSpritePart fields, some under
-/// other names here.
+/// copies them; each member names the AnimationSpritePart fields it covers.
 struct BurstParticleVisual {
   u8 link[4];
   u8 y;
@@ -40,8 +39,8 @@ struct BurstParticleVisual {
 /// from the first to the second: the image and the shadow
 /// (Sprite.image and shadow).
 struct BurstParticleVisualGroup {
-  struct BurstParticleVisual primary;
-  struct BurstParticleVisual child;
+  struct BurstParticleVisual image;
+  struct BurstParticleVisual shadow;
 };
 
 /// When Growth is cast on a target, particles fly from in front of the caster
@@ -53,6 +52,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
   target = ((struct FieldEffectWork *)gFieldEffectWork)->child;
   if (target != NULL) {
     FieldEffect_SpawnBurstParticleField();
+    // A sprout grows tall: sprout.tsv's animation 2, pictures 0 to 6.
     Actor_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(target, 0);
@@ -65,8 +65,8 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 }
 
 /// When Growth is cast with no target, particles fly out from in front of the
-/// caster, and then five falling actors appear 4 to 10 pixels round the
-/// Psynergy's position.
+/// caster, and then five bits of vine (SPRITE_VINE) fall 4 to 10 pixels round
+/// the Psynergy's position.
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct BurstParticleVector pos;
@@ -95,8 +95,8 @@ void FieldPsynergy_Growth(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Sends 24 particles, one every 2 frames, from in front of the caster to
-/// points round the Psynergy's position.
+/// Sends GROWTH_PARTICLE_MAX green sparks, one every 2 frames, from in front of
+/// the caster to points round the Psynergy's position.
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *caster;
@@ -110,8 +110,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
        particleIndex++) {
     struct Actor *particle;
-    struct BurstParticleVisual *visual;
-    struct BurstParticleVisual *child;
+    struct BurstParticleVisual *image;
+    struct BurstParticleVisual *shadow;
     FIXED radius;
 
     if (effectWork->angle == FACING_SOUTH) {
@@ -131,13 +131,13 @@ void FieldEffect_SpawnBurstParticleField(void) {
     // with the particle's picture. BUG: the copy comes before the NULL test, so
     // a failed spawn (a full gActors) is read through.
     particle = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
-    visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;
-    child = &((struct BurstParticleVisualGroup *)particle->sprite)->child;
-    child->fullColor = visual->fullColor;
-    child->flagsAHigh = visual->flagsAHigh;
-    child->flagsBHigh = visual->flagsBHigh;
-    child->attributes.bits.tile = visual->attributes.bits.tile;
-    child->attributes.bytes.palette = visual->attributes.bytes.palette;
+    image = &((struct BurstParticleVisualGroup *)particle->sprite)->image;
+    shadow = &((struct BurstParticleVisualGroup *)particle->sprite)->shadow;
+    shadow->fullColor = image->fullColor;
+    shadow->flagsAHigh = image->flagsAHigh;
+    shadow->flagsBHigh = image->flagsBHigh;
+    shadow->attributes.bits.tile = image->attributes.bits.tile;
+    shadow->attributes.bytes.palette = image->attributes.bytes.palette;
 
     if (particle != 0) {
       particle->scaleY = FIXED_ONE * 7 / 10;
@@ -147,8 +147,9 @@ void FieldEffect_SpawnBurstParticleField(void) {
       particle->motionFlags = 0;
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(particle, 7);
+      // From the shared script's SC_SYNC: released once it arrives.
       Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript + 1);
-      Actor_SetSpriteFlagsFar(particle, 1);
+      Actor_SetSpriteFlagsFar(particle, SPRITE_FLAG_SHADOW);
 
       // Destination: 4 to 10 pixels from the Psynergy's position.
       SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
@@ -165,4 +166,3 @@ void FieldEffect_SpawnBurstParticleField(void) {
 }
 
 #undef GROWTH_PARTICLE_MAX
-#undef SPRITE_PARTICLE

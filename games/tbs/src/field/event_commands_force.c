@@ -1,5 +1,6 @@
 /// @file
-/// Force.
+/// Force: a fist flies out from the caster and knocks what it hits back a
+/// cell.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -29,7 +30,7 @@ void FieldPsynergy_Force(void) {
   struct Actor *caster;
   struct FieldEffectWork *effectWork;
   struct FieldParticle *effect;
-  struct Sprite *sharedAnimation;
+  struct Sprite *sharedSprite;
   void *event;
   s32 scale;
   s32 i;
@@ -88,7 +89,7 @@ void FieldPsynergy_Force(void) {
   wait(3);
 
   // Three afterimages, sharing one set of graphics.
-  sharedAnimation = NULL;
+  sharedSprite = NULL;
   for (i = 2; i >= 0; i--) {
     copy = copies[i] = Actor_Spawn(SPRITE_MOVE_HAND, projectile->x.fixed,
                                    projectile->y.fixed, projectile->z.fixed);
@@ -101,11 +102,11 @@ void FieldPsynergy_Force(void) {
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, MOVE_HAND_ANIMATION_FIST);
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
-      sharedAnimation = Sprite_ShareVramCacheEntry(
-          (struct Sprite *)copy->sprite, sharedAnimation);
+      sharedSprite = Sprite_ShareVramCacheEntry((struct Sprite *)copy->sprite,
+                                                sharedSprite);
     }
   }
-  resourceSlot = sharedAnimation->slot;
+  resourceSlot = sharedSprite->slot;
 
   // Destination: 56 pixels in front of the caster with effectWork->enabled set
   // (no trigger named the target), otherwise the Psynergy's position.
@@ -121,18 +122,19 @@ void FieldPsynergy_Force(void) {
     pos.z = effectWork->z;
   }
   Actor_SetMoveTargetFar(projectile, pos.x, pos.y, pos.z);
-  Actor_StartScriptFar(projectile, gFieldEffect_BurstParticleActorScript + 4);
+  Actor_StartScriptFar(projectile, gFieldEffect_HeavyImpactScript);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       wait(3);
       Actor_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
+      // From the shared script's SC_SYNC: released once it arrives.
       Actor_StartScriptFar(copy, gFieldEffect_SharedParticleScript + 1);
     }
   }
 
   // Wait, at most 60 frames, for the fist's script to end.
-  for (i = 0; i <= 59 && (projectile)->script != NULL; i++)
+  for (i = 0; i < 60 && projectile->script != NULL; i++)
     wait(1);
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the way:

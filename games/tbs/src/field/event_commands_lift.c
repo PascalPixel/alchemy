@@ -1,5 +1,6 @@
 /// @file
-/// Lift.
+/// Lift: two hands grip the target and raise it, and Force's flashes and
+/// heavy impact, linked beside it.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -27,10 +28,9 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
     return;
 
   FieldPsynergy_FadeToCastColor();
-  // The caster's script starts 3 words into the shared particle script, with
-  // the target as its argument.
+  // The caster faces its target while Lift holds it.
   caster->watchedActor = target;
-  Actor_StartScriptFar(caster, gFieldEffect_SharedParticleScript + 3);
+  Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
 
   x = effectWork->x;
   pos[0] = x;
@@ -75,42 +75,41 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 }
 
 /// Two hands appear 16 pixels above the spot in front of the caster, 32 pixels
-/// to either side, then close in 24 pixels and scatter into shards.
+/// to either side, then close in 24 pixels and clap, and sparkles scatter.
 DEFINE_CLAPPING_HANDS_CAST(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
 /// full size over 24 frames; angle is the way it faces once grown.
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
-  struct Actor *fragment;
+  struct Actor *hand;
   FIXED scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
-  if (fragment != NULL) {
-    fragment->scaleX = fragment->scaleY = FIXED_ONE / 4;
-    fragment->acceleration = fragment->speedLimit = toFIXED(3);
-    ((struct Sprite *)fragment->sprite)->image.priority = 0;
-    Actor_SelectAnimationFar(fragment, MOVE_HAND_ANIMATION_GRIP);
-    scale = fragment->scaleX;
+  hand = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
+  if (hand != NULL) {
+    hand->scaleX = hand->scaleY = FIXED_ONE / 4;
+    hand->acceleration = hand->speedLimit = toFIXED(3);
+    ((struct Sprite *)hand->sprite)->image.priority = 0;
+    Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_GRIP);
+    scale = hand->scaleX;
     if (scale < FIXED_ONE) {
       do {
         scale += FIXED_ONE / 32;
-        fragment->scaleY = scale;
-        fragment->scaleX = scale;
-        fragment->facing += DEGtoANG(45);
+        hand->scaleY = scale;
+        hand->scaleX = scale;
+        hand->facing += DEGtoANG(45);
         wait(1);
-        scale = fragment->scaleX;
+        scale = hand->scaleX;
       } while (scale < FIXED_ONE);
     }
-    fragment->facing = angle;
+    hand->facing = angle;
   }
-  return fragment;
+  return hand;
 }
 
 /// Field effect sprite callback of a particle that scatters 25 pixels from its
-/// origin in a random direction, then gathers beside the main actor and is
-/// freed. Set on Force's 12 flashes by FieldPsynergy_Force in
-/// event_commands_force.c.
+/// origin in a random direction, then gathers in front of the caster and is
+/// freed: each of Force's FORCE_FLASHES flashes (event_commands_force.c).
 void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect) {
   // OUT_AND_BACK_FLYING_OUT must enter OUT_AND_BACK_AIM_BACK immediately.
   struct FieldEffectWork *effectWork = gFieldEffectWork;
@@ -143,7 +142,7 @@ again:
   }
 
   if (state == OUT_AND_BACK_AIM_BACK) {
-    // 8 pixels toward effectWork->angle from 16 pixels above the main actor,
+    // 8 pixels toward effectWork->angle from 16 pixels above the caster,
     // on screen, give or take 4 pixels.
     struct Actor *caster = effectWork->mainActor;
 

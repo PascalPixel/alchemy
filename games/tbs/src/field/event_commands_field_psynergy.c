@@ -5,8 +5,6 @@
 #include "event_commands_internal.h"
 #include "scene/actor_polar_target.h"
 
-// The dispatchers use the shared field effect.
-
 /// Runs one step of the current field Psynergy: an enum FieldPsynergyHandler.
 void FieldPsynergy_RunHandler(s32 kind) {
   if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
@@ -23,13 +21,13 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// (effectWork->fieldPsynergy).
 void FieldPsynergy_Run(void) {
   struct FieldEffectWork *effectWork;
-  struct FieldWork *runtime;
+  struct FieldWork *fieldWork;
   s32 kind;
   s32 targetId;
   s32 nearestTargetId;
 
   effectWork = gFieldEffectWork;
-  runtime = gFieldWork;
+  fieldWork = gFieldWork;
   kind = effectWork->fieldPsynergy;
   targetId = effectWork->secondActorId;
 
@@ -86,7 +84,7 @@ void FieldPsynergy_Run(void) {
     return;
   case FIELD_PSYNERGY_MIND_READ:
     // The wave and colour effect, stopping a running Reveal first.
-    if (runtime->revealActive != 0)
+    if (fieldWork->revealActive != 0)
       FieldPsynergy_EndReveal();
     FieldPsynergy_StartMindReadWave(effectWork->firstActorId, targetId);
     return;
@@ -109,14 +107,14 @@ void FieldPsynergy_Run(void) {
 /// handler of its kind.
 void FieldPsynergy_Dispatch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct FieldWork *runtime = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
   s32 kind = effectWork->fieldPsynergy;
   s32 targetId = effectWork->secondActorId;
 
   effectWork->enabled = 0;
   switch (kind) {
   case FIELD_PSYNERGY_MIND_READ:
-    if (runtime->revealActive != 0)
+    if (fieldWork->revealActive != 0)
       FieldPsynergy_EndReveal();
     if (gMainRoutineWork.haltedActor != effectWork->secondActorId)
       ((struct Actor *)effectWork->child)->paused = 1;
@@ -237,8 +235,8 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   return 0;
 }
 
-/// Per-frame update: sets every part of an actor's sprite to param frame % 6,
-/// which cycles its colours.
+/// Per-frame update: cycles an actor's colours through its own and the five
+/// with channels swapped, a new colour mode every frame.
 void Actor_CycleSpriteColors(struct Actor *actor) {
   struct Sprite *sprite;
   s32 count;
@@ -259,9 +257,8 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
 /// way.
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(, Actor_SetMoveTargetFar)
 
-// From here on actors are passed in each function's own view of them.
-
-/// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
+/// Counts the free blocks (VRAM_BLOCK_OWNER_FREE) of the sprite VRAM cache's
+/// VRAM_BLOCK_COUNT blocks.
 s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount = 0;
@@ -321,9 +318,10 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   return actor;
 }
 
-/// Sets the movement state and animation timer steps of every actor but the
-/// player's and except.
-void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
+/// Pauses or resumes every actor but the player's and except, and sets their
+/// animations' speed.
+void Actor_SetOthersPaused(struct Actor *except, s32 paused,
+                           s32 animationSpeed) {
   s16 *player;
   struct Actor *actor;
   s32 actorId;
@@ -333,8 +331,8 @@ void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
   do {
     actor = Actor_Lookup(actorId);
     if (actorId != *player && actor != NULL && actor != except) {
-      actor->paused = state;
-      Actor_SetAnimationSpeedFar(actor, value);
+      actor->paused = paused;
+      Actor_SetAnimationSpeedFar(actor, animationSpeed);
     }
     actorId++;
     // BUG: one past the actor table: Actor_Lookup(ACTOR_ID_COUNT) is the first

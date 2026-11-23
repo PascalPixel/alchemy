@@ -1,5 +1,6 @@
 /// @file
-/// A Jupiter Djinni joining the party.
+/// A Jupiter Djinni joining the party, and the first of the Mars Djinni's
+/// routines, linked after it: its shrinking and its sparks.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -21,7 +22,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     return;
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
-  // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
+  // Tint the screen yellow.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
   Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
@@ -109,11 +110,11 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow,
 /// stops where it arrives, hidden; 40 frames later it swarms to points within 4
 /// pixels of one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
-  struct Actor *owner;
+  struct Actor *leader;
   struct Vector3 position;
   s32 state;
 
-  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {
@@ -135,7 +136,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
     // front (priority 0, z lifting the sprite) after 3 frames.
     ((struct Sprite *)effect->actor)->image.priority =
-        owner->sprite->image.priority;
+        leader->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
@@ -143,7 +144,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   } else if (state == MARS_SPARK_RISING) {
     if (effect->age == 3) {
       ((struct Sprite *)effect->actor)->image.priority = 0;
-      effect->flags = 4;
+      effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
     }
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -152,7 +153,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
       ((struct Sprite *)effect->actor)->image.priority = 0;
-      effect->flags = 4;
+      effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
       effect->render = 0;
       effect->state++;
       effect->callbackDelay = 40;
@@ -161,9 +162,9 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->x.fixed;
-    position.y = owner->y.fixed + toFIXED(20);
-    position.z = owner->z.fixed;
+    position.x = leader->x.fixed;
+    position.y = leader->y.fixed + toFIXED(20);
+    position.z = leader->z.fixed;
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(toFIXED(4), Random16(), &position);
     effect->targetX = position.x;

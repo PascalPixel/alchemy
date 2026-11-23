@@ -116,7 +116,7 @@ void Exit_PrepareAnimation(s32 animation) {
   }
 }
 
-/// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
+/// Leaves through an EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
 /// FLAG_ARRIVAL_STAIRS_UP makes the next scene play the matching arrival
 /// (Entrance_PlayArrival).
 void Exit_StartStairsUp(void) {
@@ -124,7 +124,7 @@ void Exit_StartStairsUp(void) {
   GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_UP);
 }
 
-/// Leaves through a EXIT_STYLE_STAIRS_DOWN exit (ANIM_LEADER_LEAVE_ALTERNATE),
+/// Leaves through an EXIT_STYLE_STAIRS_DOWN exit (ANIM_LEADER_LEAVE_ALTERNATE),
 /// recorded in FLAG_ARRIVAL_STAIRS_DOWN.
 void Exit_StartStairsDown(void) {
   Exit_PrepareAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
@@ -133,25 +133,24 @@ void Exit_StartStairsDown(void) {
 
 /// Plays the leader's arrival animation through an exit: centred on its cell at
 /// the cell's north edge, the leader plays animation for 30 frames, loses the
-/// extra sprite part and walks 8 pixels south.
-void Entrance_EndArrivalAnimation(s32 animation) {
+/// hidden doorway part and walks 8 pixels south.
+void Entrance_PlayArrivalAnimation(s32 animation) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct Sprite *spriteAnimation = leader->sprite;
-  struct SpriteAnimation *eff =
-      (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
-                                                       SPRITE_DOORWAY);
-  spriteAnimation->flags = 0;
-  eff->colorMode = SPRITE_COLOR_HIDDEN;
+  struct Sprite *sprite = leader->sprite;
+  struct SpriteAnimation *doorway =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
+  sprite->flags = 0;
+  doorway->colorMode = SPRITE_COLOR_HIDDEN;
   leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   leader->z.fixed &= FIELD_CELL_MASK;
   Actor_SelectAnimationFar(leader, animation);
   wait(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
-  spriteAnimation->count = 1;
-  SpriteAnimation_ClearFar(spriteAnimation->entries[1]);
-  spriteAnimation->entries[1] = NULL;
-  spriteAnimation->flags = SPRITE_FLAG_SHADOW;
+  sprite->count = 1;
+  SpriteAnimation_ClearFar(sprite->entries[1]);
+  sprite->entries[1] = NULL;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = FIXED_ONE;
   leader->speedLimit = FIXED_ONE;
   Actor_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
@@ -169,13 +168,13 @@ s32 Entrance_PlayArrival(void) {
   s32 flag = FLAG_ARRIVAL_STAIRS_UP;
 
   if (GameFlag_GetFar(flag) != 0) {
-    Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
+    Entrance_PlayArrivalAnimation(ANIM_LEADER_ARRIVE);
     GameFlag_ClearFar(flag);
     result = 1;
   } else {
     flag = FLAG_ARRIVAL_STAIRS_DOWN;
     if (GameFlag_GetFar(flag) != 0) {
-      Entrance_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
+      Entrance_PlayArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
       GameFlag_ClearFar(flag);
       result = 2;
     } else {

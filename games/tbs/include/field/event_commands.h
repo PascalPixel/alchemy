@@ -229,7 +229,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused);
 void Exit_PrepareAnimation(s32 animation);
 void Exit_StartStairsUp(void);
 void Exit_StartStairsDown(void);
-void Entrance_EndArrivalAnimation(s32 animation);
+void Entrance_PlayArrivalAnimation(s32 animation);
 s32 Entrance_PlayArrival(void);
 
 void LineScroll_ArmDma(void);
@@ -287,7 +287,8 @@ s32 VramCache_CountFreeBlocks(void);
 struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
                                           struct Sprite *sharedSprite);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value);
+void Actor_SetOthersPaused(struct Actor *except, s32 paused,
+                           s32 animationSpeed);
 void FieldEffect_UpdateScaledArcActorA(struct Actor *actor);
 void FieldEffect_UpdateScaledArcActorB(struct Actor *actor);
 void FieldEffect_SpawnScaledArcActors(struct Actor *watched);

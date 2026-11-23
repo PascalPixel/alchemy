@@ -34,7 +34,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
 
   sprite = particle->actor;
   offset = 0;
-  if (particle->flags & 4)
+  if (particle->flags & FIELD_PARTICLE_LIFTED_BY_Z)
     offset = toFIXED(508) - particle->z;
   scale.x = Iwram_MulFX(particle->scaleX, sprite->scale);
   scale.y = Iwram_MulFX(particle->scaleY, sprite->scale);
@@ -145,13 +145,13 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 /// target, top speed 2, acceleration and scale 1, drawn, animation 1.
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               FIXED z) {
-  struct Sprite *animation;
+  struct Sprite *sprite;
 
   Dma_Fill32(0, effect, sizeof *effect);
-  animation = Sprite_CreateFar(kind);
-  effect->actor = animation;
-  if (animation != NULL)
-    animation->image.priority = 0;
+  sprite = Sprite_CreateFar(kind);
+  effect->actor = sprite;
+  if (sprite != NULL)
+    sprite->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   effect->scaleX = FIXED_ONE;
   effect->speedMax = toFIXED(2);
@@ -163,8 +163,8 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct Sprite *sprite = effect->actor;
-    sprite->flags = 0;
+    struct Sprite *created = effect->actor;
+    created->flags = 0;
   }
   effect->stopAtTarget = 1;
   effect->turnStepLimited = 1;
@@ -172,7 +172,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   effect->render = 1;
   effect->active = 1;
   effect->randomValue = Random16();
-  effect->flags = 4;
+  effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
   FieldParticle_SetActorMode(effect, 1);
 }
 

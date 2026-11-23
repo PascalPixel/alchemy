@@ -379,13 +379,16 @@ static void ColosseumSatrageMatch_PushBoardWalkPillar(void) {
 /// does not move the pillar: it is back beside the chest, as a probe of the
 /// race with the flag set shows.
 ///
-/// Cell (35, 77) lies below the course the screen shows, whose rows run from
-/// 0 to 31; the map stores it as a wall, and the flag makes it open ground
-/// (a probe with and without the flag). XXX: what reads cell (35, 77) and
-/// what that changes for the player; nothing in this file copies it onward,
-/// so a search of the shared Colosso code for row 77, then a race recorded
-/// with FLAG_WALL_PILLAR_MOVED set and Isaac climbing at column 35, would
-/// settle it.
+/// Cell (35, 77) is cell (35, 13) of the map's third layer, which starts at
+/// row 64 (the vine Growth raises is copied onto the same layer, at
+/// (32, 77..80)). There it stands walled between open cells (35, 12) and
+/// (35, 14) of column 35; the flag opens it. A walk staged on that layer from
+/// (35, 12) southward stops there without the flag and goes on with it.
+/// XXX: what in the race moves on that layer in column 35, and so what the
+/// opening changes for the player; a race recorded with the flag set, Isaac
+/// climbing The Wall at column 35, would settle it. The recorder cannot put
+/// him on The Wall the way the race does: from the ledge's foot, (36, 17), he
+/// does not climb.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 column;
   s32 row;

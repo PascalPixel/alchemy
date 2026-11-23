@@ -1401,16 +1401,12 @@ static void VenusLighthouse_MovePillarOntoSwitch(void) {
   Event_End();
 }
 
-/// Isaac steps onto the pink floor switch in front of the lady statue (cell
-/// (42, 49)), and it sinks under him with a rattle; stepping off raises it
-/// again. It counts only in the middle of the cell
-/// (FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH).
-///
-/// While he stands there the strip of the upper map layer over the lightning
-/// is cleared, and stepping off draws it again.
-// XXX: whether the lightning stops while he stands on the switch; a
-// recording of him standing on its middle (pixels 676..683, 788..795) and
-// facing south would settle it.
+/// Isaac steps onto the middle of the pink floor switch in front of the lady
+/// statue (cell (42, 49)): it sinks under him with a rattle, and the band of
+/// lightning across the floor south of her vanishes for as long as he stands
+/// there (FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH). Stepping off raises
+/// the switch and draws the lightning again. On the cell's edge nothing
+/// happens: the switch stays up and the lightning keeps crackling.
 static void VenusLighthouse_StepOnFloorSwitch(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 x = leader->x.part[0].integer;

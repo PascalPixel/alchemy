@@ -921,8 +921,11 @@ enum {
   ACTOR_HAMMET
 };
 
-/// Out of West Lunpa Cave by wagon, Bunza and Hammet nod to each other and
-/// climb aboard with the leader, and the wagon rolls off.
+/// Out of West Lunpa Cave once Dodonpa is locked up, Bunza and then Hammet
+/// come out beside Isaac at the cave mouth, face each other and nod. A
+/// covered wagon pulls up beside them; Hammet, Bunza and Isaac climb aboard
+/// in turn, and it rolls off east and away south out of sight, and the screen
+/// closes for the Kalay Tunnel Entrance.
 static void WorldMap_BoardBunzasWagon(void) {
   struct Actor *actor;
 
@@ -1490,8 +1493,15 @@ static void WorldMap_ExplainSettingDjinn(void) {
 /// The frames Flint takes to grow to full size as he comes down to the party.
 #define FLINT_GROW_FRAMES 16
 
-/// Walking up to Flint makes him join the party and show how Djinn are set
-/// and put on standby. Then comes the lesson battle.
+/// Walking up to Flint, the spark circling his spot just outside Vale: he
+/// cries "Oh!", drops down beside Isaac at full size, "A traveling warrior!",
+/// shimmers with sparkles, and asks to come along to find his comrades,
+/// telling how Djinn make an Adept's Psynergy stronger. Each "No" makes him
+/// plead again, and the seventh time he comes anyway; on "Yes", "Flint, the
+/// Venus Djinni, is now Isaac's ally!" Then he teaches the Djinn screen: it
+/// opens, and he shows how to give a Djinni to another Adept and set it, and
+/// that setting one changes attributes and even class. Then comes the lesson
+/// battle.
 static void WorldMap_MeetFlint(void) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -2331,8 +2341,11 @@ static void WorldMap_UpdateLighthouseQuake(void) {
   }
 }
 
-/// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
-/// its anchorage off the island.
+/// A leg of the Tolbi-bound Ship's crossing: from open sea the ship sails
+/// north-west with the camera on it until the green, wooded coast of an
+/// island comes into view, then turns north along the shore through the
+/// shallows and slows to a stop beside it. The screen closes for the rowing
+/// deck at the island.
 static void WorldMap_SailTolbiShipToIsland(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2646,11 +2659,11 @@ static inline void WorldMap_ShowTransitionPicture(u8 *buffer, s32 offset,
   Event_Wait(frames);
 }
 
-/// The lighthouse transition, after a beacon is lit.
-///
-/// A ball of light swells over the lighthouse's top, frame by frame, as the
-/// map darkens behind it. It holds for 140 frames and shrinks again. Then the
-/// camera shakes and the screen closes for the aerie
+/// The lighthouse transition, after a beacon is lit: on the World Map,
+/// darkened to a deep blue, a ball of light in the lighthouse's colours (blue
+/// for Mercury Lighthouse) swells over the lighthouse's top, glows there for
+/// 140 frames and shrinks away. The map brightens again as the camera shakes
+/// with a rumble, then the screen closes for the aerie, its beacon lit
 /// (https://alchemy.pascalpixel.com/story/venus-lighthouse-lit.gif).
 ///
 /// The ball is seven frames, tile maps drawn on BG0 in the lighthouse's

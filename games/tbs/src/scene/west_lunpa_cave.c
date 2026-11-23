@@ -276,8 +276,9 @@ static void WestLunpaCave_UnusedFreezePuddle(void) {
 }
 
 /// Frost on the puddle by the rocks on the first chamber's west side (cell
-/// (8, 32)) freezes it into a tall ice pillar against the wall. The game then
-/// gives the pillar's cell the height of the ledge west of it.
+/// (8, 32)) freezes it into a tall ice pillar against the wall. It only stands
+/// in the way: walking into it from the east, Isaac stops beside it and does
+/// not climb onto it.
 static void WestLunpaCave_FreezeSouthPuddle(void) {
   struct Actor *puddle;
 
@@ -286,11 +287,9 @@ static void WestLunpaCave_FreezeSouthPuddle(void) {
     puddle->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     puddle->motionFlags = 0;
   }
-  // The pillar's cell takes the height of the ledge along the west wall
-  // (cells (7, 30..34), 64 pixels up), so the pillar's top is level with it.
-  // XXX: whether that ledge can be reached, making the pillar a way onto or
-  // off it; a staged walk on the ledge after the freeze would settle it (the
-  // recorder's --at put Isaac outside the wall at (7, 31)).
+  // The pillar's cell takes the height of the cells along the west wall,
+  // (7, 30..34), 64 pixels up: the top of the wall's rock, which no floor
+  // leads onto.
   MapGrid_CopyCellAttributes(7, 32, 1, 1, 8, 32);
   GameFlag_Set(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN);
 }

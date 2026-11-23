@@ -968,8 +968,11 @@ static void TunnelRuins_DouseStartsOnPillar(void) {
 /// in map row 10, raises a pillar of ice 32 pixels below it, a square Isaac
 /// can hop onto: the walkthrough's way on to the next room.
 ///
-/// XXX: a recording of Frost cast with the pillar soaked in row 10 would show
-/// where on screen the ice stands.
+/// XXX: where on screen the ice stands; a recording of Frost cast once Douse
+/// has soaked the pillar would show it. The recorder cannot stage it: played
+/// after TunnelRuins_DouseStartsOnPillar (--first), it finds no ground the
+/// leader can walk to beside the pillar, cell (24, 10), and with --at 24,12
+/// it refuses the Douse row as already played.
 static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   s32 column;
   s32 row;

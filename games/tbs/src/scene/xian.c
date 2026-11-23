@@ -472,9 +472,10 @@ static void Xian_TalkToWaterCarrier(void) {
 /// street, the puddle is brought to the front drawing layer before it freezes.
 static void Xian_UpdatePuddlePriority(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // XXX: what this changes on screen; a recording of Frost cast from a
-  // doorstep north of the street, with the water spilled below, would settle
-  // it.
+  // XXX: what this changes on screen; a recording of Frost cast from north of
+  // the street with the water spilled would settle it. The recorder cannot
+  // stage the spill: Xian_TalkToWaterCarrier records her only by the pool,
+  // and played first (--first) it leaves the puddle off stage.
   if (FIELD_CELL(leader->z.fixed) < CARRIER_ROUTE_ROW)
     Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }

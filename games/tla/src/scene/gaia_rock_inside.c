@@ -1149,13 +1149,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "text/msg_ids.h"
 
-extern u32 gGaiaRockInside_TabletRiseScript[];
+extern u32 gLesson_TabletRiseScript[];
 extern u32 gGaiaRockInside_RisingSparkScript[];
 extern s32 gGaiaRockInside_CirclingSparkScript[];
-extern u32 gGaiaRockInside_FelixRiseScript[];
-extern s32 gGaiaRockInside_FallingSparkScript[];
-extern s32 gGaiaRockInside_TabletSettleScript[];
-extern s32 gGaiaRockInside_FelixSettleScript[];
+extern u32 gLesson_AdeptRiseScript[];
+extern s32 gLesson_SeekingSparkScript[];
+extern s32 gLesson_TabletSettleScript[];
+extern s32 gLesson_AdeptSettleScript[];
 
 /// Felix touches the slate in the lair and learns Sand: the screen warms to
 /// gold, the slate and then Felix rise among circling sparks, a white flash,
@@ -1183,7 +1183,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   a->motionFlags = 0;
   a->acceleration = toFIXED(1) / 5;
   a->speedLimit = toFIXED(1) / 5;
-  Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletRiseScript);
+  Actor_SetMovementTypeById(idA, gLesson_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(idA, SPRITE_COLOR_BLINK);
@@ -1239,7 +1239,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
       b->motionFlags = 0;
       b->acceleration = toFIXED(1) / 5;
       b->speedLimit = toFIXED(1) / 5;
-      Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixRiseScript);
+      Actor_SetMovementTypeById(idB, gLesson_AdeptRiseScript);
     }
     wait(LEARN_SPARK_INTERVAL);
   }
@@ -1263,7 +1263,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    Actor_StartScript(spark, gGaiaRockInside_FallingSparkScript);
+    Actor_StartScript(spark, gLesson_SeekingSparkScript);
   }
   Sound_Play(SE_SHIMMER);
   wait(50);
@@ -1276,8 +1276,8 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
-  Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletSettleScript);
-  Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixSettleScript);
+  Actor_SetMovementTypeById(idA, gLesson_TabletSettleScript);
+  Actor_SetMovementTypeById(idB, gLesson_AdeptSettleScript);
   b->update = Actor_EmitBubbles;
   wait(120);
   b->update = 0;
@@ -3503,39 +3503,9 @@ s32 gGaiaRockInside_CirclingSparkScript[] = {
     SC_END,
 };
 
-s32 gGaiaRockInside_FallingSparkScript[] = {
-    SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(Actor_StepToWatched), SC_RELEASE, SC_END,
-};
+#include "shared/lesson_seeking_spark_script.c"
 
-u32 gGaiaRockInside_TabletRiseScript[] = {
-    SC_MOVE_BY(0, 24, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
-
-u32 gGaiaRockInside_FelixRiseScript[] = {
-    SC_MOVE_BY(0, 16, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 4),
-    SC_END,
-};
-
-s32 gGaiaRockInside_TabletSettleScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -24, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 0),
-    SC_END,
-};
-
-s32 gGaiaRockInside_FelixSettleScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_MOVE_BY(0, -16, 0),
-    SC_SYNC,
-    SC_SET(SW_MOTION, 3),
-    SC_END,
-};
+#include "shared/lesson_scripts.c"
 
 s16 gGaiaRockInside_StumpSpots[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
 

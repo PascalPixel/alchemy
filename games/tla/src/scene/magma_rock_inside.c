@@ -1972,13 +1972,13 @@ void MagmaRockInside_TrailSparks(struct Actor *actor) {
                     &options);
 }
 
-extern s32 gMagmaRockInside_TabletRiseScript[];
+extern u32 gLesson_TabletRiseScript[];
 extern s32 gMagmaRockInside_RisingSparkScript[];
 extern s32 gMagmaRockInside_CirclingSparkScript[];
-extern s32 gMagmaRockInside_JennaRiseScript[];
+extern u32 gLesson_AdeptRiseScript[];
 extern s32 gMagmaRockInside_OrbitScript[];
-extern s32 gMagmaRockInside_TabletSettleScript[];
-extern s32 gMagmaRockInside_JennaSettleScript[];
+extern s32 gLesson_TabletSettleScript[];
+extern s32 gLesson_AdeptSettleScript[];
 
 /// The Blaze tablet's lesson: the music fades, the ground shakes and the
 /// screen takes on a warm tint as the tablet lifts, blinking and shooting
@@ -1999,7 +1999,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
    * touches. */
   s32 unused[3];
 
-  script = gMagmaRockInside_JennaRiseScript;
+  script = gLesson_AdeptRiseScript;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
@@ -2014,7 +2014,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   tablet->motionFlags = 0;
   tablet->acceleration = toFIXED(1) / 5;
   tablet->speedLimit = toFIXED(1) / 5;
-  Actor_SetScript(tabletId, gMagmaRockInside_TabletRiseScript);
+  Actor_SetScript(tabletId, gLesson_TabletRiseScript);
   Event_PlaySound(SE_TABLET_RISE);
   Event_Wait(45);
   Actor_SetSpriteColorById(tabletId, SPRITE_COLOR_BLINK);
@@ -2112,8 +2112,8 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   Event_PlaySound(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
-  Actor_SetScript(tabletId, gMagmaRockInside_TabletSettleScript);
-  Actor_SetScript(learnerId, gMagmaRockInside_JennaSettleScript);
+  Actor_SetScript(tabletId, gLesson_TabletSettleScript);
+  Actor_SetScript(learnerId, gLesson_AdeptSettleScript);
   learner->update = (ObjectUpdate)MagmaRockInside_TrailSparks;
   wait(120);
   learner->update = NULL;
@@ -3165,39 +3165,7 @@ s32 gMagmaRockInside_OrbitScript[] = {
       SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
   };
 
-/// The Blaze tablet's actor script as it lifts in the lesson (MagmaRockInside_LearnBlaze).
-s32 gMagmaRockInside_TabletRiseScript[] = {                                                               
-      SC_MOVE_BY(0, 24, 0),                                            
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 4),                                                    
-      SC_END,                                                                  
-  };
-
-/// Jenna's actor script as the sparks circle in to her (MagmaRockInside_LearnBlaze).
-s32 gMagmaRockInside_JennaRiseScript[] = {                                                               
-      SC_MOVE_BY(0, 16, 0),                                            
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 4),                                                    
-      SC_END,                                                                  
-  };
-
-/// The Blaze tablet's actor script as the lesson ends: it settles back.
-s32 gMagmaRockInside_TabletSettleScript[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, -24, 0),                                           
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 0),                                                   
-      SC_END,                                                                  
-  };
-
-/// Jenna's actor script as the lesson ends: she settles back.
-s32 gMagmaRockInside_JennaSettleScript[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_MOVE_BY(0, -16, 0),                                           
-      SC_SYNC,                                                                 
-      SC_SET(SW_MOTION, 3),                                                   
-      SC_END,                                                                  
-  };
+#include "shared/lesson_scripts.c"
 
 /// A piece of rubble's actor script: it lasts 33 frames.
 u32 gDust_ScatterScript[] = {                                                               

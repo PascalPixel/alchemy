@@ -294,7 +294,7 @@ void Madra_KarstSendsPartyAway(void) {
 /// Answering yes, and yes again when she asks whether her sister is dead, makes
 /// her threaten the party; either no sends it away.
 void Madra_KarstAsksAboutMenardi(void) {
-  Event_SetMessageId(MsgMadraHaveYouByChanceSeen);
+  Event_SetMessageId((s32)MsgMadraHaveYouByChanceSeen);
   // "Have you by chance seen a girl named Menardi?"
   Event_OpenMessage(ACTOR_KARST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
@@ -747,7 +747,7 @@ void Madra_InspectPartyAtGate(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgMadraYouThereHoldYourGround);
+  Event_SetMessageId((s32)MsgMadraYouThereHoldYourGround);
   // "You there! Hold your ground!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   FieldCamera_MoveTo(476, CAMERA_KEEP, 420, 1);
@@ -909,7 +909,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_StartScreenTransition();
   Actor_SetPosition(ACTOR_LADY, 172, 332);
   Actor_SetPosition(ACTOR_LADYS_GUARD, 172, 324);
-  Event_SetMessageId(MsgMadraHasPiersEscaped);
+  Event_SetMessageId((s32)MsgMadraHasPiersEscaped);
   Event_WaitTransitionFrames();
   // "Has Piers escaped!?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
@@ -1087,7 +1087,7 @@ void Madra_StopPartyAfterRaid(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgMadraHeyYouLotHold);
+  Event_SetMessageId((s32)MsgMadraHeyYouLotHold);
   // "Hey! You lot! Hold it right there!"
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 2);
   FieldCamera_MoveTo(476, CAMERA_KEEP, 400, 1);
@@ -1163,7 +1163,7 @@ void Madra_StopPartyAfterRaid(void) {
   // "Right after the mayor left, actually..."
   Event_ShowMessageThenWait(ACTOR_GATE_GUARD, 0, 10);
   if (Event_GetFlag(FLAG_KIBOMBO_WARRIORS_FOUND)) {
-    Event_SetMessageId(MsgMadraItWasThemWasnt);
+    Event_SetMessageId((s32)MsgMadraItWasThemWasnt);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Event_Wait(20);
     // "It was them, wasn't it, Felix?"
@@ -1183,7 +1183,7 @@ void Madra_StopPartyAfterRaid(void) {
       Event_ShowMessage(ACTOR_KRADEN, 0);
     }
   }
-  Event_SetMessageId(MsgMadraWasAnythingStolen);
+  Event_SetMessageId((s32)MsgMadraWasAnythingStolen);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
@@ -1275,7 +1275,7 @@ void Madra_MeetKarst(void) {
   if (GameFlag_Get(FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES) ||
       GameFlag_Get(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT))
     GameFlag_Set(FLAG_BANDIT_ON_WORLD_MAP);
-  Event_SetMessageId(MsgMadraFelixWait);
+  Event_SetMessageId((s32)MsgMadraFelixWait);
   // "Felix, wait!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_WalkToAndWait(ACTOR_FELIX, 150, 280);
@@ -1366,7 +1366,7 @@ void Madra_MeetKarst(void) {
   } else {
     s32 count = gFieldWork->message + 1;
 
-    Event_SetMessageId(MsgMadraMayorTriedToGiveFelix);
+    Event_SetMessageId((s32)MsgMadraMayorTriedToGiveFelix);
     MessageArgument_Push(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
     FieldMessage_Show((gFieldWork->message)++, 5);
     Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
@@ -1485,7 +1485,7 @@ void Madra_MeetKarst(void) {
     // "She would never have left you behind...and yet you are alone... So..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
   } else {
-    Event_SetMessageId(MsgMadraICantBelieveItNo);
+    Event_SetMessageId((s32)MsgMadraICantBelieveItNo);
     // "I can't believe it... No one has the power to defeat Saturos and my..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     Actor_TurnToFaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
@@ -1501,7 +1501,7 @@ void Madra_MeetKarst(void) {
     // "Yet you all avoid my gaze... And that look on your faces... It...is..."
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
   }
-  Event_SetMessageId(MsgMadraWhoIsThisIsaac);
+  Event_SetMessageId((s32)MsgMadraWhoIsThisIsaac);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Event_Wait(20);
   // "Who is this Isaac?"

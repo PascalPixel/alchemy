@@ -2,8 +2,9 @@
 #define ALCHEMY_CELL_TARGET_H
 
 /// @file
-/// The table of watched cells that the Jupiter and Mars Lighthouse overlays and
-/// overlay 6B0 keep, and field/map_cell_sprite.c's sprite reads.
+/// The cracked floor cells that Jupiter Lighthouse, Mars Lighthouse and Anemos
+/// Inner Sanctum watch (scene/shared/cracked_tile_*.h), and the sprite
+/// field/map_cell_sprite.c draws over the one the leader stands on.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -44,8 +45,7 @@ struct CellTarget {
 #define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
 
 /// The map cell of a 16.16 coordinate with a watched cell's 64 bit ORed in,
-/// as each copy of the cell-target handler in the Jupiter and Mars Lighthouse
-/// overlays and overlay 6B0 builds its row. The name is ours.
+/// as each scene's copy of the cracked tile handler builds its row.
 static inline s32 CellTarget_CellOf(FIXED position, s16 bit) {
   return FIELD_CELL(position) | bit;
 }

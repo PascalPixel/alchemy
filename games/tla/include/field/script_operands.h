@@ -15,7 +15,8 @@ struct Actor;
 /// command this frame or 0 to wait.
 typedef s32 (*ScriptCommand)(struct Actor *);
 
-/// Raw fields of the full slot, addressed by the set/add/compare commands.
+/// struct Actor as the actor script's SC_SET, SC_ADD and SC_CMP commands reach
+/// it, every field a plain number (enum ActorScriptValue numbers them).
 struct ScriptOperands {
   u32 script;
   u16 cursor;

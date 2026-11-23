@@ -37,10 +37,10 @@ struct ScatterWork {
 /// What Whirlwind's orb does once it reaches its target
 /// (FieldPsynergy_Whirlwind).
 enum OrbKind {
-  ORB_PLAIN,    // the scene is enabled: the orb only comes and goes
-  ORB_ORBITING, // leaves circle the orb while the target shrinks
-  ORB_WANDER,   // sprouting leaves: leaves wander off, the target is handed on
-  ORB_HANDOFF,  // a seedling: the target is handed on
+  ORB_PLAIN,    ///< the scene is enabled: the orb only comes and goes
+  ORB_ORBITING, ///< leaves circle the orb while the target shrinks
+  ORB_WANDER,  ///< sprouting leaves: leaves wander off, the target is handed on
+  ORB_HANDOFF, ///< a seedling: the target is handed on
 };
 
 /// One moving point of the Arrow: a spark on the canvas (x and y only, counting

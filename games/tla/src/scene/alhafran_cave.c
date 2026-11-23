@@ -207,16 +207,16 @@ void AlhafranCave_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gAlhafranCave_Puddles);
 }
 
-/// Nothing visible happens as Felix walks past cell (18, 8), east of the
-/// stairs up at the cave's north end; the game raises the ground under the
-/// southern stone bridge and under the broken bridge's two ends to the height
-/// of the ledges they join, so that from there he walks over the bridges
-/// rather than under them.
+/// Nothing visible happens as Felix walks east onto cell (18, 8), on the ledge
+/// 32 pixels up along the cave's north wall; the game raises the ground under
+/// the southern stone bridge (cells (25, 19) to (27, 19)) and under the broken
+/// bridge's two ends (cells (18, 24) and (21, 24)) to the height of the ledges
+/// they join, so that from the ledges he walks over the bridges rather than
+/// under them. Walking back west along the ledge onto cell (17, 7), the cell
+/// north-west of it, lowers them again (AlhafranCave_LowerBridgeCells).
 ///
 /// The ground goes up four steps, and the cell north-west of the southern
 /// bridge becomes a wall so that he cannot step off its end.
-// XXX: whether cell (18, 8) is where the way up onto the ledges begins; a
-// recording of the walk from the stairs up across it would settle it.
 void AlhafranCave_RaiseBridgeCells(void) {
   Event_SetFlag(FLAG_BRIDGE_CELLS_RAISED);
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 4);

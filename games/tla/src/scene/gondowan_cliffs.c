@@ -183,7 +183,7 @@ struct GeyserWork {
 };
 
 void GondowanCliffs_FreezeSecondPuddle(void);
-void GondowanCliffs_BlowAwayFoliage(void);
+void GondowanCliffs_BlowAwayWeeds(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -314,8 +314,8 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
 ///
 /// The leaves are Whirlwind's own; the event only sets the flag that keeps the
 /// weeds gone and opens the cave's exit.
-void GondowanCliffs_BlowAwayFoliage(void) {
-  GameFlag_Set(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
+void GondowanCliffs_BlowAwayWeeds(void) {
+  GameFlag_Set(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN);
 }
 
 /// Scoop on the patch of yellow sand beside the dog at the east end, cell
@@ -514,7 +514,7 @@ s32 Scene_Initialize(void) {
       Tightrope_Initialize();
       Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
     }
-    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN))
       Actor_SetPosition(ACTOR_WEEDS, 0, 0);
     else
       Actor_GetById(ACTOR_WEEDS)->scaleY = FIXED_ONE * 5 / 4;
@@ -617,7 +617,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
 #include "text/msg_ids.h"
 
 void GondowanCliffs_FreezeSecondPuddle(void);
-void GondowanCliffs_BlowAwayFoliage(void);
+void GondowanCliffs_BlowAwayWeeds(void);
 extern s32 gGondowanCliffs_ResetTileSpriteScript[];
 
 void GondowanCliffs_FightKindle(void);
@@ -700,7 +700,7 @@ LATE_DATA struct Trigger gGondowanCliffs_PassTriggers[] = {
 LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, IF_FLAG_SET(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN), 3},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, IF_FLAG_SET(FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN), 3},
     {TRIGGER_TALK, ACTOR_DOG, CONDITION_ALWAYS, EVENT(GondowanCliffs_TalkToDog)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, MSGNO(MsgDigHereYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DOG, CONDITION_ALWAYS, MSGNO(MsgIKnewIt)},
@@ -712,7 +712,7 @@ LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayFoliage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayWeeds)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, EVENT(GondowanCliffs_LeapStumpIntoWater)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(GondowanCliffs_ScoopUpGeyser)},
     {TRIGGER_TABLE_END},

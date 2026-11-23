@@ -395,9 +395,9 @@
 /// Set as Move sends the stump on the Gondowan Cliffs leaping into the stream,
 /// where it stands as a step.
 #define FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER 0x884
-/// Set as Whirlwind blows away the foliage before the cave of Kibombo
+/// Set as Whirlwind blows away the weeds before the cave of Kibombo
 /// warriors.
-#define FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN 0x885
+#define FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN 0x885
 /// Set as Scoop digs up the geyser in the yellow sand.
 #define FLAG_GONDOWAN_CLIFFS_GEYSER_DUG 0x886
 /// Set once the leader takes the Lemurian Ship's tiller: the ship can sail, the

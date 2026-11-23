@@ -24,11 +24,12 @@ enum {
   BASIC_SPRITE_COLORS = 14 * PALETTE_COLORS
 };
 
-/// Loads the pictures of animation id number into picture cache slot's buffer:
-/// the resource listed for it in gSpritePictureCache_Sources, decoded, its
-/// picture offsets turned into pointers, and for variant 1-5 its pixel colours
-/// of the basic sprite palettes (BASIC_SPRITE_COLORS) remapped through that
-/// variant's conversion table; a variant above 5 uses variant 1's.
+/// Loads the pictures of animation `number` into picture cache `slot`, at
+/// `buffer`: the resource gSpritePictureCache_Sources lists for it, decoded,
+/// its picture offsets turned into pointers, and for variant 1 to 5 its colours
+/// of the basic sprite palettes recoloured through that variant's table (a
+/// variant above 5 takes variant 1's). Returns the size of one picture in
+/// pixels, or 0 when nothing was loaded.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ActorSystemWork *system;
@@ -177,8 +178,9 @@ void SpriteAnimation_Reset(struct SpriteAnimation *layer) {
   }
 }
 
-/// Adds a sprite animation of animation id to a sprite, in the first of its
-/// four slots that is free.
+/// Adds a sprite animation of animation `id` to a sprite, in the first of its
+/// four slots that is free. Returns the new sprite animation, 0 when none is
+/// free, or -1 when the sprite's four slots are taken.
 s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
   s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;
@@ -244,8 +246,8 @@ void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
   }
 }
 
-/// Removes and clears a sprite's animation number no (0-3), trimming the
-/// sprite's animation count when no later sprite animation remains.
+/// Removes and clears a sprite's sprite animation `index` (0 to 3), trimming
+/// the sprite's animation count when no later sprite animation remains.
 void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   struct SpriteAnimation *layer;
   s32 laterLayers;
@@ -268,16 +270,16 @@ void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
   }
 }
 
-// Unlike Sprite_StartAnimation it does not mask SPRITE_ANIMATION_KEEP_PLACE
-// off, so with it set the index would pass animationCount only in a set of more
-// than 128 animations.
-/// Starts the indexed animation on a sprite animation when its metadata
-/// contains it.
+/// Starts animation `animation` on one sprite animation, when its set has
+/// that many; SPRITE_ANIMATION_KEEP_PLACE keeps its place and timer.
 void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;
   s32 scriptAddress;
 
+  // Unlike Sprite_StartAnimation it leaves SPRITE_ANIMATION_KEEP_PLACE in the
+  // index, so with that bit set the animation starts only in a set of more
+  // than 128 animations.
   keepPlace = SPRITE_ANIMATION_KEEP_PLACE & animation;
   if (layer->scripts != 0) {
     metadata = Resource_GetMetadataRecordFar(layer->animationId);
@@ -294,9 +296,9 @@ void SpriteAnimation_Start(struct SpriteAnimation *layer, s32 animation) {
   }
 }
 
-/// Starts animation flags & SPRITE_ANIMATION_INDEX_MASK on every sprite
-/// animation of a sprite (SPRITE_ANIMATION_KEEP_PLACE keeps each sprite
-/// animation's place and timer), unless the sprite plays it already.
+/// Starts `animation` (its SPRITE_ANIMATION_INDEX_MASK bits) on every sprite
+/// animation of a sprite, unless the sprite plays it already;
+/// SPRITE_ANIMATION_KEEP_PLACE keeps each one's place and timer.
 s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
   s32 keepPlace;
   s32 i;
@@ -392,7 +394,7 @@ void ActorSystem_Configure(s32 mode) {
   // On the world map (ACTOR_SYSTEM_WORLD_MAP) the two pools are taken from
   // EWRAM first; elsewhere from IWRAM first, though a battle has already taken
   // both from EWRAM.
-  if (mode == 3) {
+  if (mode == ACTOR_SYSTEM_WORLD_MAP) {
     sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
                                   ANIM_OBJECT_COUNT * sizeof(struct Sprite));
     layers =
@@ -417,8 +419,8 @@ void ActorSystem_Configure(s32 mode) {
                    Tile_CopyStridedCodeSize);
 }
 
-/// Takes a free sprite animation and starts it on animation id's first
-/// animation.
+/// Takes a free sprite animation and starts it on the first animation of
+/// animation `id`; NULL when none is free.
 struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct SpriteAnimation *candidate;
@@ -478,7 +480,7 @@ void SpriteAnimation_Clear(struct SpriteAnimation *record) {
 
 // Creating and releasing animated sprites, and measuring animation lengths.
 
-/// Creates a sprite for animation id, taking one of the 64 free sprites and a
+/// Creates a sprite for animation `id`, taking one of the 64 free sprites and a
 /// VRAM cache entry for its tiles.
 struct Sprite *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
@@ -610,9 +612,9 @@ void Sprite_Destroy(struct Sprite *sprite) {
   }
 }
 
-/// Returns how long, in frames, the first timedCount timed commands of
-/// animation number animation of id last: the sum of the arguments of its
-/// picture, wait and blank commands, up to timedCount of them or the first
+/// Returns how long, in frames, the first `timedCount` timed commands of
+/// animation `animation` of animation `id` last: the sum of the arguments of
+/// its picture, wait and blank commands, up to timedCount of them or the first
 /// play, hold, jump or end command.
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
   struct AnimationMetadata *metadata;

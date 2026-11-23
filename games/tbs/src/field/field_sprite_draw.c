@@ -36,11 +36,23 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 #define SHADOW_HALF_WIDTH 8
 #define SHADOW_HALF_HEIGHT 4
 
+/// How a sprite part is drawn (its OAM affine bits): as it is, through an
+/// affine matrix, or through one in a box twice its size, so that a part
+/// scaled up past full size is not cut off.
+enum SpritePartAffine {
+  SPRITE_PART_PLAIN = 0,
+  SPRITE_PART_AFFINE = 1,
+  SPRITE_PART_AFFINE_DOUBLE = 3
+};
+/// A plain part's matrix field holds OAM's horizontal flip bit instead.
+#define SPRITE_PART_MIRRORED 8
+
 /// Advances a sprite's animations by one frame, picks each sprite animation's
 /// picture for the facing dir, and when any picture changed redraws the sprite:
 /// the sprite animations composed by priority into one pixel buffer, an
 /// optional outline, and the result uploaded to the sprite's VRAM tiles.
-s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
+/// Returns 1 when the first sprite animation's picture is to be mirrored.
+s32 Sprite_ComposePicture(struct Sprite *sprite, u16 dir) {
   s32 mirrored;
   u32 size;
   struct ActorSystemWork *system;
@@ -81,8 +93,8 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 
   // Step each sprite animation's script: read commands until one shows a
   // picture for a while, else count the current picture's time down.
-  for (i = 0; i < animation->count; i++) {
-    layer = animation->entries[i];
+  for (i = 0; i < sprite->count; i++) {
+    layer = sprite->entries[i];
     if (layer == 0) {
       continue;
     }
@@ -96,7 +108,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       switch (picture) {
       case ANIMCMD_PLAY:
         SpriteAnimation_Start(layer, arg);
-        animation->lastNo = arg;
+        sprite->lastNo = arg;
         break;
       case ANIMCMD_JUMP:
         layer->scriptOffset = arg;
@@ -121,7 +133,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         picture = SPRITE_PICTURE_NONE;
         // Ending any sprite animation lowers the sprite's animation count, as
         // if the last had ended.
-        animation->count--;
+        sprite->count--;
         goto select_direction;
       case ANIMCMD_HOLD + 1 ... ANIMCMD_WAIT - 1:
       case ANIMCMD_WAIT + 1 ... ANIMCMD_UNUSED_LAST:
@@ -185,20 +197,20 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     }
     if (layer->picture != picture) {
       layer->picture = picture;
-      animation->dirty = 1;
+      sprite->dirty = 1;
     }
   }
 
-  if (animation->dirty != 0) {
-    size = animation->width * animation->height;
+  if (sprite->dirty != 0) {
+    size = sprite->width * sprite->height;
     pixels = Heap_Alloc(size);
     Iwram_ClearWords(pixels, size);
 
     // Sort the visible sprite animations by priority (0-3), then by index, with
     // an insertion sort on keys of (priority << 8) | index.
     drawCount = -1;
-    for (i = animation->count - 1; i >= 0; i--) {
-      layer = animation->entries[i];
+    for (i = sprite->count - 1; i >= 0; i--) {
+      layer = sprite->entries[i];
       if (layer == 0) {
         continue;
       }
@@ -233,7 +245,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 
     // Draw the sprite animations in that order, each by its codec.
     for (i = 0; i < drawCount; i++) {
-      layer = animation->entries[*(u8 *)&drawOrder[i]];
+      layer = sprite->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_PICTURE_TAGGED_LZ) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == SPRITE_PICTURE_LZ) {
@@ -257,7 +269,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
 
     // Outline: a pixel whose four neighbours are all drawn becomes the fill
     // colour, and any other drawn pixel the edge colour.
-    if ((animation->flags & SPRITE_FLAG_OUTLINED) != 0) {
+    if ((sprite->flags & SPRITE_FLAG_OUTLINED) != 0) {
       u8 *inside;
       u8 edge;
       u8 fill;
@@ -267,8 +279,8 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
       u8 *dst;
 
       inside = Heap_Alloc(size);
-      w = animation->width;
-      h = animation->height;
+      w = sprite->width;
+      h = sprite->height;
       edge = system->edge;
       fill = system->fill;
       Iwram_ClearWords(inside, size);
@@ -300,14 +312,14 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
     }
 
     // Upload the pixels to the sprite's tiles in VRAM.
-    tile = VramCache_Load(animation->slot, size, 0);
+    tile = VramCache_Load(sprite->slot, size, 0);
     {
       void *vram = (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP);
       ((SpriteUploadFn)gHeapSlots[HEAP_SLOT_PICTURE_UPLOADER])(
-          pixels, animation->width, animation->height, vram);
+          pixels, sprite->width, sprite->height, vram);
     }
-    animation->image.tile = tile;
-    animation->dirty = 0;
+    sprite->image.tile = tile;
+    sprite->dirty = 0;
     system->used += size;
     Heap_Release(pixels);
   }
@@ -329,7 +341,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   u32 halfHeight = sprite->height / 2;
   s32 marginX = SHADOW_HALF_WIDTH;
   s32 marginY = SHADOW_HALF_HEIGHT;
-  s32 affine = 1;
+  s32 affine = SPRITE_PART_AFFINE;
   s32 scaleX = *scale++;
   s32 scaleY = *scale;
   s32 x;
@@ -338,7 +350,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
 
   // The margins are the shadow's half width and height.
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-    affine = 3;
+    affine = SPRITE_PART_AFFINE_DOUBLE;
     marginX = 2 * SHADOW_HALF_WIDTH;
     marginY = 2 * SHADOW_HALF_HEIGHT;
     halfWidth <<= 1;
@@ -404,10 +416,10 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   flip = Sprite_ComposePicture(sprite, facing);
   if (flip == 0 && scaleX == FIXED_ONE && scaleY == scaleX &&
       sprite->rotation == 0) {
-    affine = 0;
+    affine = SPRITE_PART_PLAIN;
     matrix = 0;
   } else {
-    affine = 1;
+    affine = SPRITE_PART_AFFINE;
     effect.angle = sprite->rotation;
     effect.scaleX = scaleX >> 8;
     effect.scaleY = scaleY >> 8;
@@ -416,7 +428,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-    affine = 3;
+    affine = SPRITE_PART_AFFINE_DOUBLE;
     halfWidth <<= 1;
     halfHeight <<= 1;
     shadowHalfWidth = 2 * SHADOW_HALF_WIDTH;
@@ -492,7 +504,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   s32 slot;
 
   // Project first, then discard sprites beyond the padded screen bounds.
-  affine = 1;
+  affine = SPRITE_PART_AFFINE;
   if (gActorSystemWork->suspended == 0) {
     z = Matrix_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -PROJECTED_MARGIN &&
@@ -522,16 +534,16 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       offsetX = Iwram_MulFX(sprite->offsetX, scaleX);
       offsetY = -Iwram_MulFX((sprite->height >> 1) - sprite->offsetY, scaleY);
       if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-        affine = 3;
+        affine = SPRITE_PART_AFFINE_DOUBLE;
         halfWidth <<= 1;
         halfHeight <<= 1;
         size = 2 * SHADOW_HALF_WIDTH;
       } else if (scaleX == FIXED_ONE && sprite->rotation == 0 &&
                  scaleY == scaleX) {
-        affine = 0;
+        affine = SPRITE_PART_PLAIN;
       }
       // Mirroring uses negative affine scale when a matrix is needed.
-      if (affine != 0) {
+      if (affine != SPRITE_PART_PLAIN) {
         effect.angle = sprite->rotation;
         effect.scaleX = scaleX >> 8;
         if (flip != 0) {
@@ -541,9 +553,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         effect.scaleY = scaleY >> 8;
         z = OamMatrix_AllocFromTransform(&effect);
       } else if (flip != 0) {
-        // A plain sprite has no matrix: 8 in the matrix field is OAM's
-        // horizontal flip bit.
-        z = 8;
+        z = SPRITE_PART_MIRRORED;
         offsetX = -offsetX;
       } else {
         z = 0;

@@ -1,8 +1,10 @@
 /// @file
-/// The second debug room of Psynergy tests: Douse and Pound take an actor away,
-/// Grind and Tremor are tried on another, which scatters rocks when talked to,
-/// Burst breaks a wall and a rope is coiled. Its step into a battle answers a
-/// cell behavior no cell of the room's map holds.
+/// The second debug room of Psynergy tests. It stands on the Psynergy test's
+/// map, but its entrances lie east of that map's drawn cells, so the party
+/// walks in the dark among a fire, a stake and two posts: Douse and Pound take
+/// the fire away, Grind stands the stake up and Tremor on it does nothing,
+/// talking to it scatters rocks, and a rope is coiled between the posts. Its
+/// Burst and battle rows answer cells it does not reach.
 
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -36,12 +38,26 @@
 #include "system/task.h"
 #include "fixed_math.h"
 
-/// The battle the step on cell behavior 30 starts, once.
+/// Set once the step onto CELL_BEHAVIOR_BATTLE_STEP has started its battle.
 #define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
+
+/// The cell behaviors the room's triggers answer.
+enum PsynergyTest2CellBehavior {
+  /// A step here starts a battle; no cell of the map holds it.
+  CELL_BEHAVIOR_BATTLE_STEP = 30,
+  /// The Psynergy test's first Scoop spot, cell (10, 10), west of this room.
+  CELL_BEHAVIOR_HOLE_SPOT = 50
+};
+
+/// The stage Pound passes on the frame its fist lands.
+enum { POUND_STAGE_LANDS = 1 };
+
+/// The stage Scoop passes its spot's event each frame of the dig.
+enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
 
 /// The room's actors, numbered in the order of gActorPlacements.
 enum PsynergyTest2ActorId {
-  ACTOR_FIRE = 8,    ///< Douse and Pound take it off the map
+  ACTOR_FIRE = ACTOR_FIRST_PLACED, ///< Douse and Pound take it off the map
   ACTOR_STAKE,       ///< Grind and Tremor are tried on it; talked to, rocks fly
   ACTOR_FIRST_POST,  ///< the rope's first end; Lash at it does nothing
   ACTOR_SECOND_POST, ///< the rope's other end
@@ -70,7 +86,7 @@ void Rope_Coil(s32 rope, s32 firstActor, s32 secondActor);
 void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);
 
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
+void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -83,11 +99,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Douse on ACTOR_FIRE takes it off the map.
-void PsynergyTest2_DouseTarget(void) { Actor_SetPosition(ACTOR_FIRE, 0, 0); }
+void PsynergyTest2_DouseFire(void) { Actor_SetPosition(ACTOR_FIRE, 0, 0); }
 
-/// So does Pound, as it acts.
-void PsynergyTest2_PoundTarget(s32 mode) {
-  if (mode == 1)
+/// So does Pound, as its fist lands.
+void PsynergyTest2_PoundFire(s32 stage) {
+  if (stage == POUND_STAGE_LANDS)
     Actor_SetPosition(ACTOR_FIRE, 0, 0);
 }
 
@@ -95,19 +111,20 @@ void PsynergyTest2_PoundTarget(s32 mode) {
 void PsynergyTest2_IgnoreTremor(void) {}
 
 /// Grind on ACTOR_STAKE stands the stone stake up again.
-void PsynergyTest2_GrindActor(void) { Actor_SetAnimationById(ACTOR_STAKE, 3); }
+void PsynergyTest2_GrindStake(void) { Actor_SetAnimationById(ACTOR_STAKE, 3); }
 
-/// Burst on cell behavior 50 copies in the broken wall, a 1 by 2 block from
-/// (49, 1), cell behaviors and all.
-void PsynergyTest2_BurstWall(s32 mode) {
-  if (mode == 1) {
+/// Burst at CELL_BEHAVIOR_HOLE_SPOT, as its great blast dies down, copies the
+/// 1 by 2 block of cells at (49, 1) over (34, 1), and its cell behaviors over
+/// (34, 3).
+void PsynergyTest2_BurstCells(s32 stage) {
+  if (stage == BURST_STAGE_DYING_DOWN) {
     MapGrid_CopyCellsLayered(49, 1, 1, 2, 34, 1);
     MapGrid_CopyCellAttributes(49, 1, 1, 2, 34, 3);
   }
 }
 
-/// Stepping onto cell behavior 30 starts a battle, the first time only; no cell
-/// of the room's map holds 30, so it never runs.
+/// Stepping onto CELL_BEHAVIOR_BATTLE_STEP starts a battle, the first time
+/// only; no cell holds it, so it never runs.
 void PsynergyTest2_StepIntoBattle(void) {
   if (!Event_GetFlag(FLAG_BATTLE_FOUGHT)) {
     Event_SetFlag(FLAG_BATTLE_FOUGHT);
@@ -150,8 +167,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct Particle *particle);
 
-/// Each frame of the rocks: each of the 64 younger than 20 frames is drawn,
-/// its picture one of eight as it ages, and falls.
+/// Each frame of the rocks: each rock younger than ROCK_FRAMES is drawn, its
+/// picture one of eight as it ages, and falls.
 void PsynergyTest2_UpdateRocks(void) {
   struct RockParticleWork *work = Ram_HeapSlots->menuWork;
   struct Particle *particle = work->rocks;
@@ -199,18 +216,20 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, ACTOR_STAKE, CONDITION_ALWAYS,
      EVENT(PsynergyTest2_ScatterRocks)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(PsynergyTest2_StepIntoBattle)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BATTLE_STEP, CONDITION_ALWAYS,
+     EVENT(PsynergyTest2_StepIntoBattle)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_FIRE, CONDITION_ALWAYS,
-     EVENT(PsynergyTest2_DouseTarget)},
+     EVENT(PsynergyTest2_DouseFire)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FIRE,
-     CONDITION_ALWAYS, EVENT(PsynergyTest2_PoundTarget)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest2_PoundFire)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_STAKE, CONDITION_ALWAYS,
      EVENT(PsynergyTest2_IgnoreTremor)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_STAKE, CONDITION_ALWAYS,
-     EVENT(PsynergyTest2_GrindActor)},
+     EVENT(PsynergyTest2_GrindStake)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_POST, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
-     CONDITION_ALWAYS, EVENT(PsynergyTest2_BurstWall)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_HOLE_SPOT, CONDITION_ALWAYS,
+     EVENT(PsynergyTest2_BurstCells)},
     {TRIGGER_TABLE_END},
 };
 
@@ -245,7 +264,8 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
   }
 }
 
-/// Loads the rocks' tiles, hides all 64 and starts PsynergyTest2_UpdateRocks.
+/// Loads the rocks' tiles, hides every rock and starts
+/// PsynergyTest2_UpdateRocks.
 void PsynergyTest2_StartRocks(void) {
   struct RockParticleWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockParticleWork));
@@ -285,26 +305,26 @@ void PsynergyTest2_EndRocks(void) {
 }
 
 /// Unused: the Psynergy test's PsynergyTest_DigCells again.
-UNUSED void PsynergyTest2_DigCells(s32 mode, s32 sourceX, s32 sourceY,
+UNUSED void PsynergyTest2_DigCells(s32 stage, s32 sourceX, s32 sourceY,
                                    s32 width, s32 height, s32 destinationX,
                                    s32 destinationY) {
-  if (mode == 1)
+  if (stage == SCOOP_STAGE_DUG)
     MapGrid_CopyCells(sourceX, sourceY, width, height, destinationX,
                       destinationY);
 }
 
 /// Unused: the Psynergy test's PsynergyTest_GrowActor again.
-UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void PsynergyTest2_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
   s32 scale;
 
   actor = Actor_Get(id);
-  if (mode == 1) {
+  if (stage == SCOOP_STAGE_DUG) {
     Actor_SetPosition(id, x, z);
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (mode == 2) {
+  if (stage == SCOOP_STAGE_AFTER_DIG) {
     while (actor->scaleX < FIXED_ONE) {
       System_Wait(1);
       scale = actor->scaleX;
@@ -318,32 +338,32 @@ UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
 }
 
 /// Unused: the Psynergy test's PsynergyTest_DropActor again.
-UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void PsynergyTest2_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_Get(id);
-  if (mode == 2) {
+  if (stage == SCOOP_STAGE_AFTER_DIG) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->gravity = toFIXED(0.09);
     System_Wait(50);
   }
 }
 
 /// Unused: the Psynergy test's PsynergyTest_RaiseStatue again.
-UNUSED void PsynergyTest2_RaiseStatue(s32 mode, s32 x, s32 z, s32 row,
+UNUSED void PsynergyTest2_RaiseStatue(s32 stage, s32 x, s32 z, s32 row,
                                       s32 column) {
   struct Actor *actor;
 
-  if (mode == 1) {
+  if (stage == SCOOP_STAGE_DUG) {
     actor = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
     if (actor != NULL) {
       Actor_SetSpriteFlags(actor, 0);
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (mode == 2) {
+  if (stage == SCOOP_STAGE_AFTER_DIG) {
     actor =
         (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {

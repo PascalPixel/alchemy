@@ -1320,17 +1320,9 @@ void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 #include "shared/beam_start.h"
 
-s32 Ride_GetEntryValue(s32 index) {
-  struct FlameHitWork *work = RIDE_WORK;
+#include "shared/ride_get_entry_value.c"
 
-  return (work->entries + index)->active;
-}
-
-void Ride_SetEntryValue(s32 index, s16 value) {
-  struct FlameHitWork *work = RIDE_WORK;
-
-  (work->entries + index)->active = value;
-}
+#include "shared/ride_set_entry_value.c"
 
 s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 

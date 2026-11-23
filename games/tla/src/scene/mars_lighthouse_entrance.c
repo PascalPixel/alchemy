@@ -276,7 +276,7 @@ extern struct ActorPlacement gMarsLighthouseEntrance_SolBladePlacements[];
 /// The waking dragon face in the Valkyrie Mail rooms' long hall has crawled
 /// to its west end and stops breathing fire.
 s32 MarsLighthouseEntrance_DryDragonFace(void) {
-  Ride_SetEntryState(0, FLAME_THROWER_DRY | 1);
+  Ride_SetEntry(0, FLAME_THROWER_DRY | 1);
   return 0;
 }
 
@@ -1016,7 +1016,7 @@ void MarsLighthouseEntrance_WakeDragonFace(void) {
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(ACTOR_DRAGON_FACE,
                   gMarsLighthouseEntrance_DragonFaceGoesLeft);
-  Ride_SetEntryState(0, FLAME_FORWARD | 3);
+  Ride_SetEntry(0, FLAME_FORWARD | 3);
   Flag_Set(FLAG_DRAGON_FACE_AWAKE);
 }
 
@@ -1142,12 +1142,12 @@ void MarsLighthouseEntrance_PulseDragonFire(void) {
 
   if (gMarsLighthouseEntrance_DragonFireTimer < 60) {
     if (*state == 0) {
-      Ride_SetEntryState(0, FLAME_FORWARD | 3);
+      Ride_SetEntry(0, FLAME_FORWARD | 3);
       *state = 1;
     }
   } else {
     if (((struct HalfwordField *)state)->value == 1) {
-      Ride_SetEntryState(0, FLAME_THROWER_DRY | 3);
+      Ride_SetEntry(0, FLAME_THROWER_DRY | 3);
       *state = 0;
     }
   }
@@ -1375,7 +1375,7 @@ s32 Scene_Initialize(void) {
       if (entrance == VALKYRIE_NORTH_FROM_MIDDLE_WEST) {
         Actor_SetScript(ACTOR_DRAGON_FACE,
                         gMarsLighthouseEntrance_DragonFaceAtLeft);
-        Ride_SetEntryState(0, FLAME_FORWARD | 3);
+        Ride_SetEntry(0, FLAME_FORWARD | 3);
         Task_AddFrame(MarsLighthouseEntrance_PulseDragonFire, TASK_PASS_FRAME);
         Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
@@ -1546,29 +1546,12 @@ void FlameThrowers_Puff(void);
 
 #include "shared/ride_set_entry_value.c"
 
-/// The flame throwers' counter, which Ride_StepCounter steps.
+/// The flame throwers' counter, which Ride_AdvanceCounter steps.
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
-/// Steps the counter, wrapping at `limit`, unless the field is handling an
-/// event; returns it.
-UNUSED s32 Ride_StepCounter(s32 limit) {
-  struct FlameHitWork *work = RIDE_WORK;
+#include "shared/ride_advance_counter.h"
 
-  if (!Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-    if (++work->counter >= limit)
-      work->counter = 0;
-  }
-  return work->counter;
-}
-
-/// Sets flame thrower `index`'s flame (enum FlameThrowerFlags) and reach.
-void Ride_SetEntryState(s32 index, s32 value) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct RideEntry *entry = &work->entries[index];
-
-  entry->reach = INTtoFIXED(value & FLAME_THROWER_REACH_BITS);
-  entry->flags = value & FLAME_THROWER_FLAG_BITS;
-}
+#include "shared/ride_set_entry.h"
 
 #include "shared/ride_set_entry_count.c"
 

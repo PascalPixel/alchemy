@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_PALETTE_SNAPSHOTS_H
 #define ALCHEMY_PALETTE_SNAPSHOTS_H
 
+/// @file
+/// Palette cycles: runs of background palette colours that rotate one place
+/// every few frames, up to four at once.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
@@ -20,7 +24,8 @@ struct PaletteCycle {
 /// many are in use.
 struct PaletteCycleWork {
   struct PaletteCycle entries[4];
-  /// Cycles in use, 0 to 4; PaletteCycle_Step masks four to none.
+  /// Cycles in use, 0 to 4; PaletteCycle_Step runs none when all four are
+  /// taken (a BUG there).
   u16 count;
 };
 
@@ -36,7 +41,8 @@ STATIC_ASSERT(offsetof(struct PaletteCycleWork, count) == 176);
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 
 void PaletteCycle_Initialize(void);
-s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);
+s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
+                     s16 colorCount);
 void PaletteQueue_Stop(void);
 void PaletteCycle_Step(void);
 

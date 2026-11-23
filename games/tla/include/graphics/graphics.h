@@ -1,8 +1,15 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef ALCHEMY_GRAPHICS_H
+#define ALCHEMY_GRAPHICS_H
 
 /// @file
-/// GRAPHICS
+/// The screen fade's globals, and graphics, icon and text routines that the
+/// window, menu, battle and credits code share.
+///
+/// Several routines declared here are handwritten ARM code that the game copies
+/// to RAM before it runs it (RamCode_Load, system/ram_code.h). Such a routine
+/// is declared as an array of bytes, and a symbol ending in CodeSize is the
+/// length of the copy: no object, but an address the linker sets equal to the
+/// length, which the loader reads by casting it to a number.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -59,17 +66,15 @@ extern const u8 gStatusPanel_PpString[];
 extern const u8 gStatusPanel_SlashString[];
 /// The compressed item icons, indexed by an item's icon field.
 extern u8 *gItemIcons[];
-/// The end of gItemIcons, so Icon_CountItemIcons can count
-/// them.
+/// The end of gItemIcons, so Icon_CountItemIcons can count them.
 extern u8 *gItemIconsEnd[];
-/// The other compressed icons, among them the Status screen's status
-/// icons.
+/// The other compressed icons, among them the Status screen's status icons.
 extern u8 *gIcon_MiscIconPointers[];
 /// The compressed Psynergy icons, drawn over the shared icon base.
 extern u8 *gPsynergyIcons[];
 /// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
 extern u8 *gPsynergyIconsEnd[];
-void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
+void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                        s32 reuse);
 #ifndef OWN_BattleLayout_HighlightPartyPanels
 s32 PartyStatus_HighlightMembers(u16 *ids);
@@ -77,14 +82,17 @@ s32 PartyStatus_HighlightMembers(u16 *ids);
 void FileList_UpdatePulse(void);
 void Matrix_Initialize(void);
 s32 Text_ClearCanvas(void);
-s32 BattleUnit_ListIdsFar(s32 side, s32 group);
+/// Lists the units on the sides in sideMask into unitIds, an address or 0 for
+/// none, and returns how many.
+s32 BattleUnit_ListIdsFar(s32 sideMask, s32 unitIds);
 /// Reloads the portrait picture for the key into a portrait slot with that
-/// slot's palette (14 + slot), reusing the slot's VRAM cache entry.
-void Portrait_ReloadFar(s32 a, s32 b, s32 c);
+/// slot's palette (PORTRAIT_PALETTE + slot), reusing the slot's VRAM cache
+/// entry.
+void Portrait_ReloadFar(s32 slot, s32 key, s32 unused);
 void Icon_DrawMisc(u32 index);
 s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
 void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
-void MenuArrow_Release(s32 value);
+void MenuArrow_Release(s32 slot);
 void PartyStatus_Draw(s32 flags);
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 #ifndef OWN_Window_SetTilemapEntry
@@ -129,14 +137,15 @@ extern const u8 Resource_DecodeByteLzCode[];
 extern const u8 Text_LookupSymbolCode[];
 /// The size of Text_LookupSymbolCode.
 extern u8 Text_LookupSymbolCodeSize[];
-void Ability_LoadGlyphFar(s32, s32, s32 *, s32 *, s32);
+void Ability_LoadGlyphFar(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                          s32 reuse);
 s32 BattleParty_PrepareMembersFar(u16 *owners);
 s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align);
 void SelectionMenu_Clear(void);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 s32 ItemIcon_Compose(u32 code, u32 layers);
-void WindowSprite_ClearList(void *work);
+void WindowSprite_ClearList(void *sprites);
 void WindowSprite_Release(struct WindowSprite *node);
 #ifndef OWN_Resource_DecodeByteLzInRam
 s32 Decompress_ByteLz(const void *source, void *destination);
@@ -146,7 +155,7 @@ void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
 void String_FormatDecimal(s32);
 void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
                                 s32 *tile, s32 reuse);
-void Icon_BuildAbilityIconTiles(u32 icon, s32 with_base, s32 *slot, s32 *tile,
+void Icon_BuildAbilityIconTiles(u32 icon, s32 withBase, s32 *slot, s32 *tile,
                                 s32 reuse);
 void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
@@ -166,7 +175,7 @@ void WindowSystem_StartBattleUpdate(s32 kind);
 s32 Text_SetColorFar(s32 color);
 /// Decompresses resource `resourceId` and loads its first `size` bytes into
 /// VRAM cache entry `entryId`.
-void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
+void VramBlock_LoadResourceFar(s32 entryId, s32 size, s32 resourceId);
 
 /// The colour index Render_DecodePicture paints every pixel of a layer drawn
 /// with SPRITE_COLOR_FILL; the sprite viewer sets it to 3.
@@ -193,8 +202,8 @@ extern const u8 gNameEntry_KeyboardTilemap[];
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
 
-/// Tile_BuildCellPictures, copied to the heap by ScanlineWindow_FillSpans for
-/// each frame of a window transition.
+/// The size of Tile_BuildCellPicturesCode, which ScanlineWindow_FillSpans
+/// copies to the heap to run.
 extern u8 Tile_BuildCellPicturesCodeSize[];
 
 #endif

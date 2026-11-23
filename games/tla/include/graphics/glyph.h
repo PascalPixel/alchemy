@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_GLYPH_H
 #define ALCHEMY_GLYPH_H
 
+/// @file
+/// The main font's glyphs, and the palette and buffers icons are built in.
+
 #include "types.h"
 #include "edition.h"
 #include "static_assert.h"

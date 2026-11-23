@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_OAM_H
 #define ALCHEMY_OAM_H
 
+/// @file
+/// How much of OAM the frame's sprites take, and the window sprites' shapes.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
@@ -26,8 +29,8 @@ STATIC_ASSERT(offsetof(struct OamUsage, limit) == 2);
 /// The OAM entries the frame's list holds and the most it may; wait() empties
 /// it each frame.
 extern struct OamUsage gOamUsage;
-/// Builds this frame's OAM list in work, a frame-scratch block of OAM_SIZE,
-/// running its ARM kernel from a copy on the stack.
-void Render_BuildOamList(void *work);
+/// Builds this frame's OAM list in buffer, a scratch block of OAM_SIZE bytes,
+/// running its ARM routine from a copy on the stack.
+void Render_BuildOamList(void *buffer);
 
 #endif

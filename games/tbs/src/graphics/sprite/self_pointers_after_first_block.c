@@ -1,6 +1,7 @@
 /// @file
-/// An array of the sprite bank, after the first block of animations, that
-/// points only at itself.
+/// An unused array of the sprite bank that points only at itself. The bank's
+/// animations come in three blocks, and this array sits after the first,
+/// between Tret's animation list and Laurel's animations.
 
 #include "types.h"
 

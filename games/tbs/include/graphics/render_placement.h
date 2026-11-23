@@ -28,7 +28,7 @@ struct SpritePlacement {
 #endif
 };
 
-/// Returns the placement's values as an array.
+/// Returns the placement's values as an array: x, height, y, groundHeight.
 // UB: the legacy renderer walks across the scalar members as an array. UBFIX
 // supplies a real array; an always-on union changes producer scheduling.
 static inline const s32 *
@@ -53,8 +53,8 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 struct SpriteScale {
   union {
     struct {
-      FIXED x; ///< 16.16
-      FIXED y; ///< 16.16
+      FIXED x;
+      FIXED y;
     };
     s32 values[2];
   };

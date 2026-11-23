@@ -2,7 +2,8 @@
 #define ALCHEMY_PALETTE_SNAPSHOTS_H
 
 /// @file
-/// Palette snapshots and their work.
+/// Palette cycles: runs of background colours rotated one place every few
+/// frames. Nothing in the game ever adds one.
 
 #include "edition.h"
 #include "static_assert.h"
@@ -23,7 +24,7 @@ struct PaletteCycle {
 /// many are in use.
 struct PaletteCycleWork {
   struct PaletteCycle entries[4];
-  /// Cycles in use, 0 to 4; PaletteCycle_Step masks four to none.
+  /// Cycles in use, 0 to 4; PaletteCycle_Step advances none of four (a bug).
   u16 count;
 };
 

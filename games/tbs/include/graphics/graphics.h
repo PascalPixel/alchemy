@@ -2,7 +2,9 @@
 #define ALCHEMY_GRAPHICS_H
 
 /// @file
-/// The screen blend's globals and the graphics routines.
+/// The screen fade's state, and what the graphics bank holds for the rest of
+/// the game: fonts, icons, cursors, the name entry keyboards, the transitions'
+/// tables and the ARM routines that decode and shade pictures.
 ///
 /// Many of the routines declared here are handwritten ARM code that the game
 /// never runs where it lies: each loader copies it to RAM first, with
@@ -29,21 +31,21 @@
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
 extern u8 gScreenFadeToWhite;
-// volatile: ScreenFade_Update, which the VBlank handler runs, counts it down to
-// 0 while ScreenFade_Wait waits on it, so it is no device.
-extern volatile u8
-    gScreenFadeVBlanks; ///< the fade's length in VBlanks, 0 when idle
+/// The running fade's length in VBlanks, 0 when no fade is running.
+// volatile: the VBlank handler's ScreenFade_Update clears it when the fade
+// ends, while ScreenFade_Wait waits on it.
+extern volatile u8 gScreenFadeVBlanks;
 /// VBlanks until the running fade reaches its target.
-// volatile: the fade starts set it for ScreenFade_Update, which the VBlank
-// handler runs and which counts it down, so it is no device.
+// volatile: the VBlank handler's ScreenFade_Update counts it down.
 extern volatile u8 gScreenFadeVBlanksLeft;
 /// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gScreenFadeLayers;
 /// The brightness the running fade started from, 0 to 16.
 extern u8 gScreenFadeStartLevel;
-// volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
-// handler runs, so it is no device.
-extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
+/// The brightness the running fade ends at, 0 to 16.
+// volatile: ScreenFade_Start sets it for the VBlank handler's
+// ScreenFade_Update.
+extern volatile u8 gScreenFadeTargetLevel;
 /// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
 /// outward over the border's top edge.
 extern u8 gPageArrowTiles[];
@@ -74,11 +76,9 @@ extern const u8 gStatusPanel_PpString[];
 extern const u8 gStatusPanel_SlashString[];
 /// The compressed item icons, indexed by an item's icon field.
 extern u8 *gItemIcons[];
-/// The end of gItemIcons, so Icon_CountItemIcons can count
-/// them.
+/// The end of gItemIcons, so Icon_CountItemIcons can count them.
 extern u8 *gItemIconsEnd[];
-/// The other compressed icons, among them the Status screen's status
-/// icons.
+/// The other compressed icons, among them the Status screen's status icons.
 extern u8 *gIcon_MiscIconPointers[];
 /// The compressed Psynergy icons, drawn over the shared icon base.
 extern u8 *gPsynergyIcons[];
@@ -144,6 +144,8 @@ extern void *gOamDepthLists[];
 /// unused functions touch.
 #define gSelectionWorkspace                                                    \
   (*(u8 (*)[]) & gHeapSlots[HEAP_SLOT_SELECTION_WORKSPACE])
+/// The articles a message puts before a name, by article class, in the
+/// languages that have them.
 extern const struct ArticleTable gArticle_Table;
 /// One row's masks for a pair of bar-pattern tiles: a word XORed into each
 /// tile's row.
@@ -157,15 +159,16 @@ extern const struct TileMask gMenu_BarPatternRows[];
 /// The row masks Menu_BuildPatternTiles XORs into the range icons' tile
 /// pairs (menu_strings.s).
 extern const struct TileMask gMenu_PatternRowMasks[];
-/// One word of a tile XORed with a row's mask. Ours, not the original's
-/// name: the helper of a family of four sites, the two marks each of
-/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles makes on a tile
-/// pair, which match through it and through no plain XOR.
+/// One row of a tile XORed with a row's mask: how Menu_BuildPatternTiles and
+/// Menu_BuildLocalizedPatternTiles mark each tile of a pair.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 /// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
+/// The order in which the dissolve sets the 64 pixels of its tile.
 extern const u8 gScreenTransition_DitherTable[];
+/// Pixels: how far each line's edge of Reveal's rippling ellipse moves out.
 extern const s8 gScreenTransition_EdgeOffsets[];
+/// Pixels: the width of WINDOW_TRANSITION_BARS' bar on each line, by progress.
 extern const u8 gScreenTransition_NoiseWidths[];
 /// The resource bank's far-call stubs, listed in the resource directory as
 /// both ResourceFarCalls and ResourceFarCallsAlternate.
@@ -210,20 +213,16 @@ extern const u8 gRender_DecodePictureEnd[];
 /// The move-to-front LZ decoder's ARM entry: it returns 4 unless the
 /// stream's first byte is 2, the move-to-front tag.
 extern const u8 Decompress_MoveToFrontLzCommands[];
-/// The byte-oriented LZ decoder, run by Decompress_ByteLz from a heap
-/// copy.
+/// The byte-oriented LZ decoder, run by Decompress_ByteLz from a heap copy.
 extern const u8 Decompress_ByteLzArm[];
-/// The halfword LZ decoder that Decompress_Halfwords runs from its
-/// stack.
+/// The halfword LZ decoder that Decompress_Halfwords runs from its stack.
 extern const u8 Decompress_HalfwordLz[];
 /// The tagged LZ decoder (a first byte of 0 for the general form, 1 for the
-/// palette form), run by Decompress_TaggedLz from a heap
-/// copy.
+/// palette form), run by Decompress_TaggedLz from a heap copy.
 extern const u8 Decompress_TaggedLzArm[];
 /// Decompress_TaggedLzArm, which Decompress_TaggedLz copies to the heap.
 extern u8 Decompress_TaggedLzCodeSize[];
-/// Decompress_HalfwordLz, copied onto the stack by
-/// Decompress_Halfwords.
+/// Decompress_HalfwordLz, copied onto the stack by Decompress_Halfwords.
 extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
 /// name entry screen and the talk choices.
@@ -264,14 +263,13 @@ extern u8 Tile_ExpandMaskedCodeSize[];
 extern const u8 Tile_ExpandOpaque[];
 /// Tile_ExpandOpaque, which Icon_Decode loads for an icon's first layer.
 extern u8 Tile_ExpandOpaqueCodeSize[];
-/// The Title's "Press Start" prompt, byte-LZ compressed, in each
+/// The title screen's "Press Start" prompt, byte-LZ compressed, in each
 /// language.
 extern const u8 gTitle_PromptTiles[];
 /// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
 /// settings menu's selected icon through.
 extern const s32 gWindowSprite_PulseScales[];
-/// The pixel offsets MenuTitle_Bob moves a sprite pair up and down
-/// by.
+/// The pixel offsets MenuTitle_Bob moves a sprite pair up and down by.
 extern const u8 gMenuTitleBobOffsets[];
 /// The icon count's digits: 0 to 9, then the tens 1 to 3.
 extern u8 *gIcon_DigitPointers[];
@@ -285,10 +283,13 @@ extern u8 *gIcon_OverlayPointerTable[];
 /// The menus' hand cursor and gem, 16x16 4bpp sprites; the hand is loaded
 /// by Icon_CreateWithResourceVariant.
 extern u8 gIcon_ResourceTiles[];
+/// Pixels: the hop a window's sprite makes, one step a frame.
 extern const s8 gWindowSprite_BounceOffsets[];
 /// The animated page arrow's pictures, 8x16 sprites of 256 colours, 128 bytes
 /// each.
 extern const u8 gWindowSprite_PageArrowTiles[];
+/// Pixels: the x and y a window's wobbling sprite is moved by, one step every
+/// other frame.
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 /// For each of the 16 text colours, the pen the font's light shade takes in
 /// the UI palette.
@@ -297,6 +298,8 @@ extern const u8 gFont_ColorPens[];
 extern u8 Glyph_DrawCodeSize[];
 /// Each main font glyph's width in pixels, from the space (32) on.
 extern const u8 gFont_GlyphWidths[];
+/// Spanish's indefinite articles, by article class; gArticle_Table holds its
+/// definite ones.
 extern const struct ArticleTable gArticle_Indefinite;
 /// Points a struct MessageReader at a message's compressed bits and first
 /// context.

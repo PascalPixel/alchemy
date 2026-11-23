@@ -2,8 +2,8 @@
 #define ALCHEMY_RENDER_INPUT_H
 
 /// @file
-/// The sprite renderer's inputs and outputs: render inputs, OAM attributes and
-/// window sprite lists.
+/// Sprites as the windows draw them: a sprite's OAM attributes, and the lists
+/// of characters, icons and portraits each window shows as sprites.
 
 #include "edition.h"
 #include "static_assert.h"
@@ -42,15 +42,16 @@ union OamAttr2Word {
 
 /// Attributes zero through two copied to OAM, plus the halfword after them.
 struct OamData {
-  u16 y : 8;          ///< screen pixels
-  u16 affineMode : 2; ///< 0 plain, 1 affine, 3 affine at double size
+  u16 y : 8; ///< screen pixels
+  /// OBJ_AFFINE, and OBJ_DOUBLE_SIZE to turn it without clipping.
+  u16 affineMode : 2;
   u16 objectMode : 2; ///< an enum ObjMode
   u16 mosaic : 1;
   u16 fullColor : 1; ///< 256 colours instead of a 16-colour palette
-  u16 shape : 2;     ///< 0 square, 1 wide, 2 tall
+  u16 shape : 2;     ///< square, wide or tall, as the OBJ_SIZE_ macros
   u16 x : 9;         ///< screen pixels
-  /// The affine matrix; for a plain sprite, 8 mirrors it left to right and 16
-  /// top to bottom.
+  /// The affine matrix; for a plain sprite, the OBJ_HFLIP and OBJ_VFLIP
+  /// bits.
   u16 matrix : 5;
   u16 size : 2;   ///< with shape, the sprite's size
   u16 index : 10; ///< first sprite tile in VRAM

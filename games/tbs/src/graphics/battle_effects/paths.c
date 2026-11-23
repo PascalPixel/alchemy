@@ -1,15 +1,21 @@
 /// @file
-/// The paths two summon effects move along, each step a change of x and y
-/// in pixels: Atalanta's staged particles and Dragon Cloud's streams. Both are
-/// resources (ResourceId_StagedParticlePath, ResourceId_DualStreamPath).
+/// The flight paths of two battle effects: Atalanta's as her shafts of light
+/// gather, and that of the flame Dragon Cloud sends from its user.
+/// Each is resource data (ResourceId_StagedParticlePath and
+/// ResourceId_DualStreamPath).
 
 #include "types.h"
 
 // clang-format off
-/// Atalanta's staged particles' path.
+/// A path's first two rows: the starting point in pixels, x and y each split
+/// into a high and a low byte. Every row after it is one frame's move, x then
+/// y in pixels.
+#define PATH_START(x, y) {(x) >> 8, (s8)(x)}, {(y) >> 8, (s8)(y)}
+
+/// Atalanta's path while her shafts of light gather: a move a frame for 209
+/// frames, the last move never read.
 const s8 BattleEffect_StagedParticlePath[][2] = {
-    {0, -96},
-    {0, 95},
+    PATH_START(160, 95),
     {-5, -3},
     {-4, -3},
     {-4, -3},
@@ -222,10 +228,10 @@ const s8 BattleEffect_StagedParticlePath[][2] = {
     {8, 6},
 };
 
-/// Dragon Cloud's streams' path.
+/// The path of the flame Dragon Cloud sends from its user: a move a frame for
+/// 40 frames.
 const s8 BattleEffect_DualStreamPath[][2] = {
-    {0, 17},
-    {-1, -39},
+    PATH_START(17, -39),
     {6, 5},
     {6, 5},
     {6, 6},

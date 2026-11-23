@@ -630,17 +630,7 @@ static void AltmillerCave_HopOverPuddle(void) {
   }
 }
 
-/// Walking into one of the three fallen columns in Squall's hall or the hall at
-/// the bottom of the cave pushes it along the floor, if there is room.
-static void AltmillerCave_PushFallenColumn(void) {
-  struct PushedActorProbe probe;
-
-  Event_Start();
-  if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
-  }
-  Event_End();
-}
+#include "shared/pushed_actor_push.c"
 
 /// Update routine of the light at the top of the stopped ring. It pulses
 /// through four sizes.
@@ -2587,7 +2577,7 @@ struct Trigger gAltmillerCave_SquallTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ALTMILLER_CAVE_EAST_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTMILLER_CAVE_SOUTH_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ALTMILLER_CAVE_WEST_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_ALTMILLER_CAVE_SQUALL_COLUMN_FLOOR, CONDITION_ALWAYS, EVENT(AltmillerCave_PushFallenColumn)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_ALTMILLER_CAVE_SQUALL_COLUMN_FLOOR, CONDITION_ALWAYS, EVENT(PushedActor_PushIfClear)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ALTMILLER_CAVE_WEST_OF_PILLAR, CONDITION_ALWAYS, EVENT(AltmillerCave_PushPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(AltmillerCave_DropPillarIntoPit)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_CheckPuddleCovered)},
@@ -2621,7 +2611,7 @@ struct Trigger gAltmillerCave_DraughtTriggers[] = {
      ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
      CELL_BEHAVIOR_ALTMILLER_CAVE_DRAUGHT_COLUMN_FLOOR, CONDITION_ALWAYS,
-     EVENT(AltmillerCave_PushFallenColumn)},
+     EVENT(PushedActor_PushIfClear)},
     {TRIGGER_TALK, ACTOR_BLUE_ROCK, CONDITION_ALWAYS,
      EVENT(AltmillerCave_TurnRock)},
     {TRIGGER_TALK, ACTOR_GREEN_ROCK, CONDITION_ALWAYS,

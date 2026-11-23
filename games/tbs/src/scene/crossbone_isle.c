@@ -118,7 +118,7 @@ enum CrossboneIsleActorId {
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
   /// The two logs lying on the grass below the cliffs, which Isaac pushes by
-  /// walking into them (CrossboneIsle_PushIsleLog): the west one at the foot
+  /// walking into them (PushedActor_PushIfClear): the west one at the foot
   /// of the cliff the vines climb, the east one in front of the chest with
   /// the Mint.
   ACTOR_FIRST_ISLE_LOG,
@@ -142,7 +142,7 @@ enum CrossboneIsleActorId {
 enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
 /// Crossbone Isle's cells beside its two logs, where walking into a log pushes
-/// it (CrossboneIsle_PushIsleLog).
+/// it (PushedActor_PushIfClear).
 enum {
   /// Beside the east log, in front of the chest with the Mint: cells (23, 22),
   /// (20, 26), (21, 26) and (23, 26).
@@ -868,18 +868,7 @@ static void CrossboneIsle_RestoreIvy(void) {
   }
 }
 
-/// Walking into one of the two logs on Crossbone Isle's grass pushes it along,
-/// if the ground beyond is clear: the west one at the foot of the cliff, or the
-/// east one, which lies in front of the chest with the Mint.
-static void CrossboneIsle_PushIsleLog(void) {
-  struct PushedActorProbe probe;
-
-  Event_Start();
-  if (PushedActor_FindClearPosition(&probe) != 0) {
-    Actor_MoveAndRedraw(probe);
-  }
-  Event_End();
-}
+#include "shared/pushed_actor_push.c"
 
 /// Rolls log actorId one leg, dx and dz pixels, with Isaac walking backwards on
 /// top of it to the cell it stops at. The log rolls with a sound and stops with
@@ -2451,8 +2440,8 @@ struct Trigger gCrossboneIsle_IsleTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT(CrossboneIsle_UnusedBlowAwayFourthIvy) },
     { TRIGGER_EXIT, CROSSBONE_ISLE_TO_WORLD_MAP, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
     { TRIGGER_EXIT, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_WEST_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_EAST_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_WEST_LOG, CONDITION_ALWAYS, EVENT(PushedActor_PushIfClear) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_EAST_LOG, CONDITION_ALWAYS, EVENT(PushedActor_PushIfClear) },
     { EXAMINE_CHEST_FACING(FACING_WEST), TREASURE_SPOT_CROSSBONE_ISLE_COIN, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
     { EXAMINE_CHEST_FACING(FACING_NORTH), TREASURE_SPOT_CROSSBONE_ISLE_COIN, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
     { EXAMINE_CHEST_FACING(FACING_NORTHWEST), TREASURE_SPOT_CROSSBONE_ISLE_COIN, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },

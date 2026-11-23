@@ -15,6 +15,8 @@ static __inline__ void Io_Write16Swapped(volatile u16 *reg, s32 value) {
   *reg = value;
 }
 
+/// Matrix_UpdateVertices, run from RAM: works out each screen line's BG2 and
+/// BG3 affine parameters for the camera into one of the two affine pages.
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
                                void *out);
 
@@ -95,7 +97,8 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   if (update == 0 && tile == *shownQuarter)
     return 0;
   *shownQuarter = tile;
-  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
+  decodedTile = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH,
+                               WORLD_MAP_TILE_CELLS * WORLD_MAP_TILE_CELLS * 4);
   Decompress_ByteLz((u8 *)tileOffsets + tileOffsets[tile], decodedTile);
 
   // A tile is 16 by 16 cells of 4 bytes.
@@ -183,6 +186,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   // block 5.
   perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
                       DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  // fadeStep is where a map keeps wideTiles, read by the tileset animations.
   perspective->fadeStep = WORLD_MAP_WIDE_TILES;
   Io_Write16Inline(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) |
                        BGCNT_SCREEN_BASE(8) | BGCNT_WRAP | BGCNT_SIZE(2),
@@ -346,9 +350,11 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;
   backdropColor = WORLD_MAP_BG_PALETTE[0];
+  // Palettes 0 to 13, keeping the backdrop colour.
   Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
-  Dma_Set(buffer, WORLD_MAP_BG_PALETTE, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set(buffer, WORLD_MAP_BG_PALETTE, DMA_COPY_WORDS(14 * PALETTE_COLORS / 2),
+          REG_DMA3);
   tiles = gBgTileBuffer;
   Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), tiles);
   Dma_Set(tiles, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4),
@@ -443,15 +449,15 @@ void WorldMap_ApplyAffinePage(void) {
   // DISPCNT_MODE_0 for WorldMap_StartStillPicture's 200 and 255, which show the
   // still picture on BG1.
   windowTop = perspective->shownTop;
-  mode = 0;
+  mode = DISPCNT_MODE_0;
   if (windowTop < WORLD_MAP_STILL_WINDOW_TOP) {
     u16 bottom = perspective->shownBottom;
 
     mode = (bottom != 0) << 1;
     if (windowTop <= bottom) {
-      mode = 0;
+      mode = DISPCNT_MODE_0;
       if (windowTop == 0)
-        mode = 2;
+        mode = DISPCNT_MODE_2;
     }
   }
   displayControl |= mode;
@@ -470,7 +476,8 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   *(u16 *)(screenTile + WORLD_MAP_SCREEN_WIDTH) = *cellPictureTiles;
 }
 
-/// Draws world map tileRow into both layers' BG maps, 32 cells in each.
+/// Draws row tileRow of the cell buffer into both layers' BG maps, 32 cells in
+/// each: the row of the ground that scrolls into view.
 void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
@@ -498,8 +505,9 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   } while (cellsCopied < WORLD_MAP_BUFFER_CELLS);
 }
 
-/// Draws world map tileColumn into both layers' BG maps, 32 cells down in
-/// each: the second layer's map and cells follow the first's.
+/// Draws column tileColumn of the cell buffer into both layers' BG maps, 32
+/// cells down in each (the second layer's map and cells follow the first's):
+/// the column of the ground that scrolls into view.
 void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
@@ -610,7 +618,7 @@ void WorldMap_UpdateView(void) {
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
   }
-  ((s32 (*)(void *, s32 *, void *, void *))gHeapSlots[HEAP_SLOT_RAM_CODE])(
+  ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
       camera, cameraPosition, affineWork->scanlines,
       affinePages[gFrameCount & 1]);
 }
@@ -716,10 +724,12 @@ void WorldMap_StartStillPicture(void) {
   gVBlankCallback = WorldMap_PresentStillPicture;
 }
 
-/// VBlank: shows BG1 and copies the area's tiles back into VRAM.
+/// VBlank at the end of the still picture: puts BG1 back as the plain layer
+/// and copies the area's four tile sets back into char blocks 2 and 3.
 void WorldMap_ShowBg1FromBuffer(void) {
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
-  Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(8192), REG_DMA3);
+  Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2),
+          DMA_COPY_WORDS(4 * WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 }
 
 /// Reloads the world map area's palette and tiles after the still picture, puts
@@ -736,7 +746,8 @@ void WorldMap_LoadAreaGraphics(void) {
   backdropColor = *(s16 *)BG_PLTT;
   Decompress_ByteLz(Resource_GetTableEntry(graphicsResources[0]), decodeBuffer);
   *(s16 *)decodeBuffer = backdropColor;
-  Dma_Set(decodeBuffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set(decodeBuffer, (void *)BG_PLTT,
+          DMA_COPY_WORDS(14 * PALETTE_COLORS / 2), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[1]),
                       gBgTileBuffer);
   Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[2]),

@@ -1,17 +1,19 @@
 /// @file
-/// Timed map changes: tileset animations, the blend script, palette cycles.
+/// Timed map changes: the tileset animations that redraw a map's tiles in
+/// turn, the blend script that changes over time how its layers blend, and
+/// the palette cycles, which nothing starts.
 // Part of field.c.
 
 #include "field_internal.h"
 
-// A tileset animation script's commands, a halfword each where a source tile
-// would stand (TilesetAnim_Update and TilesetAnim_StartAll).
+/// A tileset animation script's commands, a halfword each where a source tile
+/// would stand (TilesetAnim_Update and TilesetAnim_StartAll).
 #define TILESET_ANIM_LOOP 0xffff        ///< back to the start of the script
 #define TILESET_ANIM_OPCODE_MASK 0xff00 ///< the high byte: the command
 #define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
 #define TILESET_ANIM_STOP 0xff   ///< TILESET_ANIM_JUMP's low byte to stop
-#define TILESET_ANIM_ARGUMENT_MASK                                             \
-  0xff ///< the low byte: the command's argument
+/// The low byte: the command's argument.
+#define TILESET_ANIM_ARGUMENT_MASK 0xff
 /// A layout with wide tiles animates 64-byte (256-colour) tiles in char block
 /// 2; others animate 16-colour ones in char block 1.
 #define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
@@ -240,7 +242,6 @@ again:
     blend->cursor += 2;
     goto again;
   }
-  // Counts the wait down by one.
   blend->delay = delayOrJumpIndex - 1;
 }
 

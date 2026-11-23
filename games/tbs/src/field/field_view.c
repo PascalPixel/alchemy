@@ -1,5 +1,7 @@
 /// @file
-/// Screen shake, the copied BG row drawer and the ground plane scanlines.
+/// The screen shake, and two parts of the world map's view: its still picture
+/// drawn from its tile maps, and its ground tilted away from the camera,
+/// worked out a screen line at a time.
 // Part of field.c.
 
 #include "field_internal.h"
@@ -72,7 +74,10 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
-/// Rebuilds the ground plane's scanline terms when the world map pitch changes.
+/// Works out each screen line of the world map's tilted ground: how much the
+/// ground is scaled on that line and how far along it the line lies from the
+/// followed point, for a camera pitched by pitchSlope. The lines above the
+/// horizon, sky, get zeros.
 void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
                                  struct WorldMapScanline *scanline) {
   s32 groundPoint[3];

@@ -1,5 +1,6 @@
 /// @file
-/// Bind and Triangle Strike.
+/// Bind's spinning triangle and rune, the unused Triangle Strike built on it,
+/// and an unused wash of blue down the battlefield.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -7,7 +8,7 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// Bind's sheet: the rune, the flare pictures, then the Djinni.
+/// Bind's sheet: the rune, the flare pictures, then Luff's Djinni.
 #define BIND_FLARE_PICTURES 4096
 #define BIND_DJINNI_PICTURE 8192
 /// The corners of Bind's triangle.
@@ -18,7 +19,7 @@
 /// The frames the triangle of flares shrinks and turns before the rune shows,
 /// with the damage.
 #define BIND_RUNE_FRAME 64
-/// The Djinni of Bind's prelude sways this far either way, a sway every 32
+/// Luff's Djinni sways this far either way, a sway every 32
 /// frames.
 #define BIND_DJINNI_SWAY 20
 /// The frames Triangle Strike's user takes to leap at the target.
@@ -41,10 +42,6 @@
 #define BLUE_RAMP_TILE_ROW_SHIFT 11
 /// The copy of the battle background the ramp is drawn in.
 #define BLUE_RAMP_PIXELS Ram_MapCellBuffer
-
-// Bind and Luff spin a shrinking triangle onto the first target and stand a
-// rune there. The triangle's corners are projected onto the canvas and each
-// edge is stamped with flares.
 
 /// Turns the screen into shades of blue, top down, with a ragged edge; nothing
 /// calls it.
@@ -126,7 +123,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 }
 
 /// A triangle of light spins and shrinks onto the first target, changing colour
-/// and leaving a fading trail, then a rune stands on the target.
+/// and leaving a fading trail, then a rune stands on the target. Used as the
+/// Djinni Luff, the Jupiter Djinni appears over the target first.
 ///
 /// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
@@ -188,7 +186,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
                                     DEGtoANG(120), 0);
 
-    // The prelude's Djinni sways where it appeared, then rises away.
+    // Luff's Djinni sways where it appeared, then rises away.
     if (args->prelude == 1) {
       s32 x;
       s32 y;
@@ -207,7 +205,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       EFFECT_RELEASE_BLITTERS();
     }
 
-    // A fresh pair of max blitters each frame, the second flipped.
+    // Two blitters that keep the brighter pixel, the second mirrored.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -216,6 +214,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
+    // Only the first target gets a triangle.
     for (member = 0; member != 1; member++) {
       object = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;
@@ -344,7 +343,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
                                     DEGtoANG(120), 0);
 
-    // A fresh pair of max blitters each frame, the second flipped.
+    // Two blitters that keep the brighter pixel, the second mirrored.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -353,6 +352,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
+    // Only the first target gets a triangle.
     for (member = 0; member != 1; member++) {
       object = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;

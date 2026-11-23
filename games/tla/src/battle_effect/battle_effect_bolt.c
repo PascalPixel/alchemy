@@ -1,5 +1,5 @@
 /// @file
-/// Bolt.
+/// Bolt, Flash Bolt and Blue Bolt: lightning strikes each target in turn.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"

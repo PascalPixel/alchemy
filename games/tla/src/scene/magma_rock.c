@@ -1065,7 +1065,7 @@ void MagmaRock_BurstStatue(s32 stage, s32 frame) {
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
-    MagmaRock_EndFallingRocks();
+    Rock_EndFalling();
   if (frame == PILLAR_CRUMBLE_FRAME)
     Actor_SelectAnimation(work->child, 3);
 }
@@ -1676,7 +1676,7 @@ void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
     MapGrid_CopyCellsTo(0, 96, 42, 81, 5, last);
   }
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
-    MagmaRock_EndFallingRocks();
+    Rock_EndFalling();
 }
 
 extern struct Trigger gMagmaRock_Triggers[];
@@ -2493,14 +2493,7 @@ void MagmaRock_StartFallingRocks(void) {
   Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Ends the falling rocks: removes their task and frees their picture and work.
-void MagmaRock_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"

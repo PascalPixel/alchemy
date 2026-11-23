@@ -2474,14 +2474,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Unused: stops the falling rocks and frees their tiles and work.
-UNUSED void Prox_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);

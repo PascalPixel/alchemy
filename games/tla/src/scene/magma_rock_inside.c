@@ -912,7 +912,7 @@ hit:
   Event_End();
 }
 
-void MagmaRockInside_EndFallingRocks(void);
+void Rock_EndFalling(void);
 
 /// Once Felix's Burst on the small statue beside a great stone face is over,
 /// the statue flashes white and spits a fireball the way it faces. In the
@@ -969,7 +969,7 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
     SET_ACTOR_POSITION(target, 0, 0, 0);
   }
   if (cue == PSYNERGY_EVENT_LAST_FRAME)
-    MagmaRockInside_EndFallingRocks();
+    Rock_EndFalling();
   if (cue == CRACKED_PILLAR_CRUMBLE_FRAME)
     Actor_SelectAnimation(work->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
@@ -2966,14 +2966,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Ends the falling rocks: removes their task and frees their picture and work.
-void MagmaRockInside_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 extern u32 gFieldEffect_LongScript[];
 

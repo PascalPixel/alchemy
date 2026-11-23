@@ -215,7 +215,7 @@ void EasternAlhafra_PlaceClearedDebris(void);
 void Rock_Spawn(s32, s32, s32, s32);
 
 void EasternAlhafra_StartFallingRocks(void);
-void EasternAlhafra_EndFallingRocks(void);
+void Rock_EndFalling(void);
 
 void EasternAlhafra_AskIfFinished(void);
 void EasternAlhafra_WorkersSeeBlockGone(void);
@@ -294,7 +294,7 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 frame) {
   if (mode == 3)
     Rock_Spawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
   if (frame == PSYNERGY_EVENT_LAST_FRAME)
-    EasternAlhafra_EndFallingRocks();
+    Rock_EndFalling();
 }
 
 /// Felix Pounds the stake on the cliff top east of the sail: it sinks into the
@@ -2486,14 +2486,7 @@ void EasternAlhafra_StartFallingRocks(void) {
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
-/// Stops the falling rocks and frees their tiles and work.
-void EasternAlhafra_EndFallingRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
-
-  FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
-  HeapSlot_Release(HEAP_SLOT_MENU);
-}
+#include "shared/rock_end_falling.h"
 
 extern s8 gPushFootprints[][4];
 

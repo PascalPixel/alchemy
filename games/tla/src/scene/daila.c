@@ -213,7 +213,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void Daila_TalkBeenBefore(void) {
   s32 msg;
 
-  if (GameFlag_Get(FLAG_DAILA_GREETER_ASKED) == 0) {
+  if (GameFlag_Get(FLAG_DAILA_ASKED_IF_BEEN_BEFORE) == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaBeenBefore;
@@ -228,7 +228,7 @@ void Daila_TalkBeenBefore(void) {
       Event_SetMessageId(msg + 2);
     }
     Event_ShowMessageAndWait(ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, 0);
-    GameFlag_Set(FLAG_DAILA_GREETER_ASKED);
+    GameFlag_Set(FLAG_DAILA_ASKED_IF_BEEN_BEFORE);
     Event_End();
   } else {
     Event_SetMessageId((s32)MsgDailaWaveNoInjuries);

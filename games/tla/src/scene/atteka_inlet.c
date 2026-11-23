@@ -151,12 +151,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_ATTEKA_INLET) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarborActorPlacementsOnceSetOut;
-    if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
+    if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO))
       return gAttekaInlet_HarborActorPlacementsOnceWinged;
     return gAttekaInlet_HarborActorPlacements;
   }
   if (scene == SCENE_ATTEKA_INLET_GEODE) {
-    if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
+    if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO))
       return gAttekaInlet_HeightsActorPlacementsOnceWinged;
     return gAttekaInlet_HeightsActorPlacements;
   }
@@ -199,7 +199,7 @@ void AttekaInlet_AskKradenToSetSail(void) {
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gMainRoutineWork.ownerOverride = 1;
-    if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
+    if (Event_GetFlag(FLAG_REUNION_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
       GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
@@ -228,7 +228,7 @@ void AttekaInlet_AskKradenToSetSail(void) {
 /// the way, so the party can only leave by the ship. Walls copied onto the
 /// cells beside them (`Map_CopyCellAttributeRect`) close the path for good.
 void AttekaInlet_ShipwrightsStopTheParty(void) {
-  if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) &&
+  if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO) &&
       !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -286,7 +286,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
 /// been waiting for you, Felix", while the camera looks over the ship and its
 /// new wings; she tells them to raise it with Hover and set sail.
 void AttekaInlet_HammaShowsTheWings(void) {
-  if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
+  if (GameFlag_Get(FLAG_REUNION_AT_CONTIGO)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -390,7 +390,7 @@ void AttekaInlet_KradenAsksToSetSail(void) {
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gMainRoutineWork.ownerOverride = 1;
-    if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
+    if (Event_GetFlag(FLAG_REUNION_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
       GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
@@ -661,7 +661,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ATTEKA_INLET && GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
+  if (scene == SCENE_ATTEKA_INLET && GameFlag_Get(FLAG_REUNION_AT_CONTIGO)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
@@ -956,26 +956,26 @@ struct Trigger gAttekaInlet_HarborTriggers[] = {
      EVENT(AttekaInlet_KradenAsksToSetSail)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT(AttekaInlet_CheckForHammetsMessenger)},
-    {TRIGGER_TALK, ACTOR_YOUNG_MAN_WATCHING_THE_SKIES, FLAG_REUNITED_AT_CONTIGO,
+    {TRIGGER_TALK, ACTOR_YOUNG_MAN_WATCHING_THE_SKIES, FLAG_REUNION_AT_CONTIGO,
      MSGNO(MsgWeVeMade)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WATCHING_THE_SKIES, FLAG_SET_OUT_WITH_WINGS,
      MSGNO(MsgHammaReturnedTo)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WATCHING_THE_SKIES, CONDITION_ALWAYS,
      MSGNO(MsgIVeBeenWatching)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WATCHING_THE_SKIES,
-     FLAG_REUNITED_AT_CONTIGO, MSGNO(MsgWeFirstHeard)},
+     FLAG_REUNION_AT_CONTIGO, MSGNO(MsgWeFirstHeard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WATCHING_THE_SKIES,
      FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgWeVeBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WATCHING_THE_SKIES,
      CONDITION_ALWAYS, MSGNO(MsgWheneverILook)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WONDERING_ABOUT_THE_OCEAN,
-     FLAG_REUNITED_AT_CONTIGO, MSGNO(MsgWeMustBe)},
+     FLAG_REUNION_AT_CONTIGO, MSGNO(MsgWeMustBe)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WONDERING_ABOUT_THE_OCEAN,
      FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgWasYourBoat)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WONDERING_ABOUT_THE_OCEAN, CONDITION_ALWAYS,
      MSGNO(MsgIWonderWhat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
-     ACTOR_YOUNG_MAN_WONDERING_ABOUT_THE_OCEAN, FLAG_REUNITED_AT_CONTIGO,
+     ACTOR_YOUNG_MAN_WONDERING_ABOUT_THE_OCEAN, FLAG_REUNION_AT_CONTIGO,
      MSGNO(MsgTheseWingsAre)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_YOUNG_MAN_WONDERING_ABOUT_THE_OCEAN, FLAG_SET_OUT_WITH_WINGS,
@@ -987,14 +987,14 @@ struct Trigger gAttekaInlet_HarborTriggers[] = {
      MSGNO(MsgWeBroughtThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_GUARDING_THE_WINGS,
      CONDITION_ALWAYS, MSGNO(MsgIDoubtAnyone)},
-    {TRIGGER_TALK, ACTOR_BOY_ON_THE_WINGS, FLAG_REUNITED_AT_CONTIGO,
+    {TRIGGER_TALK, ACTOR_BOY_ON_THE_WINGS, FLAG_REUNION_AT_CONTIGO,
      MSGNO(MsgIWonderIfThese)},
     {TRIGGER_TALK, ACTOR_BOY_ON_THE_WINGS, FLAG_SET_OUT_WITH_WINGS,
      MSGNO(MsgAMassiveRock)},
     {TRIGGER_TALK, ACTOR_BOY_ON_THE_WINGS, CONDITION_ALWAYS,
      MSGNO(MsgYouReGoingNorth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WINGS,
-     FLAG_REUNITED_AT_CONTIGO, MSGNO(MsgItSKind)},
+     FLAG_REUNION_AT_CONTIGO, MSGNO(MsgItSKind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WINGS,
      FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgIfThatBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_WINGS,

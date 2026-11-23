@@ -292,7 +292,7 @@ s32 Scene_Initialize(void) {
     else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
              (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
               !Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT)) ||
-             Event_GetFlag(FLAG_REUNITED))
+             Event_GetFlag(FLAG_REUNION))
       Actor_SetPosition(ACTOR_GALAHAD, 0, 0);
     else
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_GALAHAD), SPRITE_COLOR_GBR);

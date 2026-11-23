@@ -979,7 +979,7 @@ void Party_AddIsaacsParty(void) {
   for (i = 0; i <= PIERS; i++)
     Unit_Calculate(i);
   Party_RestoreHpPp(1);
-  GameFlag_Set(FLAG_REUNITED);
+  GameFlag_Set(FLAG_REUNION);
 
   // One of The Broken Seal's Djinn of each element the party lacks, picked at
   // random, plus one; 0 when it has them all.

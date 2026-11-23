@@ -38,7 +38,7 @@
 
 /// Set as Isaac's party joins Felix's (Party_AddIsaacsParty); a file saved
 /// after it is "Post-Reunion Data" (MsgSavePostReunion).
-#define FLAG_REUNITED 0x22
+#define FLAG_REUNION 0x22
 
 /// The first of the flags that mark each enemy defeated, by enemy id, 0x600 to
 /// 0x7ff (battle_internal.h's ENEMY_DEFEATED_FLAG): BattleEnemy_RecordDefeat
@@ -503,7 +503,7 @@
 /// Set at the end of the reunion in Contigo, where the two parties hear what
 /// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the
 /// wings.
-#define FLAG_REUNITED_AT_CONTIGO 0x9d0
+#define FLAG_REUNION_AT_CONTIGO 0x9d0
 
 /// Set once Felix has woken on Idejima's shore.
 #define FLAG_IDEJIMA_FELIX_WOKE 0x844
@@ -514,8 +514,9 @@
 /// Set once the party has wondered where Alex has gone.
 #define FLAG_IDEJIMA_ASKED_WHERE_ALEX_WENT 0x867
 
-/// Set once Daila's greeter has asked whether the party has been there before.
-#define FLAG_DAILA_GREETER_ASKED 0x843
+/// Set once the villager at Daila's west edge has asked whether the party has
+/// been there before.
+#define FLAG_DAILA_ASKED_IF_BEEN_BEFORE 0x843
 /// Set as Alex leaves Daila for Madra.
 #define FLAG_DAILA_MET_ALEX 0x84b
 /// Daila's area flag: set as Scoop digs up the Psy Crystal under its puddle,

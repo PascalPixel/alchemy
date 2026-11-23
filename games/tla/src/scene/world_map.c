@@ -691,7 +691,7 @@ void WorldMap_RefuseToRunAway(void) {
   s32 west = FACING_WEST;
 
   if (Event_GetFlag(FLAG_JUPITER_BEACON_LIT) &&
-      !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
+      !Event_GetFlag(FLAG_REUNION_AT_CONTIGO)) {
     actor = Actor_Get(gMainRoutineWork.leaderActorId);
     x = actor->x.fixed;
     z = actor->z.fixed;

@@ -346,7 +346,7 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
 /// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
 /// flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be
 /// read. Sets the title's options from them: Battle when a file has found a
-/// Djinni, Update when a file has a level and FLAG_REUNITED clear.
+/// Djinni, Update when a file has a level and FLAG_REUNION clear.
 s32 Save_ScanFileSummaries(void) {
   s32 error;
   s32 sentCount;
@@ -432,7 +432,7 @@ s32 Save_BuildFileSummary(void) {
     if (GameFlag_Get(i))
       summary->flagCount++;
   }
-  summary->reunited = GameFlag_Get(FLAG_REUNITED) != 0;
+  summary->reunited = GameFlag_Get(FLAG_REUNION) != 0;
   {
     s32 n;
     u32 frames;

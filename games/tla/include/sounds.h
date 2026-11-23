@@ -117,7 +117,7 @@ enum SoundId {
   /// The field music of the World Map, Osenia Cliffs, Gondowan Cliffs and
   /// Atteka Inlet.
   MUS_A_JOURNEY_AROUND_THE_WORLD,
-  /// MUS_A_JOURNEY_AROUND_THE_WORLD's places once FLAG_REUNITED is set.
+  /// MUS_A_JOURNEY_AROUND_THE_WORLD's places once FLAG_REUNION is set.
   MUS_JOURNEY_TO_SAVE_THE_WORLD,
   /// The music of the Staff Credit scene.
   MUS_STAFF_CREDIT,

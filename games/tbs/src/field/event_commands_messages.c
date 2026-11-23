@@ -97,8 +97,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     } else {
       left = 0;
       top = 0;
-      Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
-                                (u32 *)&height);
+      Text_GetMessageSizeAllPagesFar(message, &left, &top, (u32 *)&width,
+                                     (u32 *)&height);
       left = x - width / 2;
       if (flags & SPEAKER_WINDOW_ABOVE)
         top = y - height - 1;
@@ -136,8 +136,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
 #if TBS_PATCH_1
     found = Portrait_GetForSpeakerFar(sprite);
     if (found != -1) {
-      Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
-                                (u32 *)&height);
+      Text_GetMessageSizeAllPagesFar(message, &left, &top, (u32 *)&width,
+                                     (u32 *)&height);
       message = -1;
       if (top > y)
         portraitTop = top - PORTRAIT_WINDOW_TILES;
@@ -167,8 +167,8 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     none = Portrait_GetForSpeakerFar(sprite);
     found = -1;
     if (none != found) {
-      Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
-                                (u32 *)&height);
+      Text_GetMessageSizeAllPagesFar(message, &left, &top, (u32 *)&width,
+                                     (u32 *)&height);
       message = found;
       if (top > y)
         portraitTop = top - PORTRAIT_WINDOW_TILES;

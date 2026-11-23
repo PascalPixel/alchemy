@@ -62,6 +62,7 @@ enum TiamatPiece {
   TIAMAT_JAW = 3,
   TIAMAT_THROAT = 4,
 };
+/// The fire-lit pictures the pieces show as Tiamat breathes, by animation.
 enum TiamatAnimation {
   TIAMAT_HEAD_BREATHING = 8,
   TIAMAT_HORNS_BREATHING,

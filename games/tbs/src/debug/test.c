@@ -160,8 +160,8 @@ end:
   Window_Close(window, 2);
 }
 
-// The shop message browsers, run by talking to ACTOR_FELIX and
-// ACTOR_SECOND_FELIX while the leader faces a given way (gMenuTest_Triggers).
+/// The shop message browsers, run by talking to ACTOR_FELIX and
+/// ACTOR_SECOND_FELIX while the leader faces a given way (gMenuTest_Triggers).
 static void MenuTest_BrowseWeaponShopMessages(void) {
   MenuTest_BrowseMessageRange(MsgWeaponShopWelcome, SHOP_MESSAGES);
 }

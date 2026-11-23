@@ -102,8 +102,10 @@ void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
   Text_MeasureDecoded(Message_Decode(message, 0), (u32 *)x, (u32 *)y, 0);
 }
 
+/// Sizes the window for message no's first page.
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
-DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
+/// Sizes the window for all of message no's pages (Text_MeasureAllPages).
+DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAllPages, 1)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in

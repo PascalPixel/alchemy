@@ -91,7 +91,7 @@ void Weather_LastLightningFar(void);
 void Weather_ResumeLightningFar(void);
 void Weather_StartLightningFlashFar(s32 from, s32 to);
 void FieldEffect_InitializeSparklesFar(void);
-void ScreenTransition_InitializeBattleEffectStateFar(s32 mode);
+void ScreenTransition_StartHeldWindowFar(s32 mode);
 void PaletteFade_SetTargetFar(s32 mode, s32 half);
 void PaletteFade_SetSourceFar(s32 mode, s32 half);
 void PaletteFade_StartInterpolationFar(s32 frames);

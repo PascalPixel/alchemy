@@ -262,6 +262,7 @@ enum MoteFountainMode {
   MOTE_FOUNTAIN_DRIFTING          ///< Sleep Star
 };
 
+/// The motes the fountains set out, and the ones drawn.
 enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
 /// Motes burst out of the user and float up, wobbling, as they drift across the

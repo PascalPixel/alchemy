@@ -1295,8 +1295,8 @@ static s32 MercuryLighthouse_StartStatueSparkles(struct Actor *actor) {
   return 0;
 }
 
-// The sparkles stop when the statue halts; slide scripts and code call it.
-// An actor script passes its actor, which this one does not read.
+/// The sparkles stop when the statue halts; slide scripts and code call it.
+/// An actor script passes its actor, which this one does not read.
 #ifdef UBFIX
 static s32 MercuryLighthouse_StopStatueSparkles(struct Actor *actor) {
 #else

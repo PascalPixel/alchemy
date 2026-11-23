@@ -26,8 +26,8 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   grid->maxY = maxY;
 }
 
-// Task: moves the zoom one step from its previous value toward its target, and
-// removes itself on the last step.
+/// Task: moves the zoom one step from its previous value toward its target, and
+/// removes itself on the last step.
 UNREAD_RESULT WorldMap_StepZoom(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 *from; // the zoom the transition starts from
@@ -90,9 +90,9 @@ void Event_WaitForZoomTransition(void) {
   }
 }
 
-// Per-frame update of a riding actor: keeps it on the actor it rides (its
-// watched actor), raised by the actor's sprite height (its metadata's boxX) and
-// 8 pixels. Its work holds the actor's id.
+/// Per-frame update of a riding actor: keeps it on the actor it rides (its
+/// watched actor), raised by the actor's sprite height (its metadata's boxX)
+/// and 8 pixels. Its work holds the actor's id.
 UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
   struct Actor *host;
 

@@ -74,6 +74,7 @@ enum LacquerRoomsBActorId {
   ACTOR_COOK
 };
 
+/// Xian's shops and inn, by their numbers in the shop and inn tables.
 enum {
   XIAN_WEAPON_STOCK = 16,
   XIAN_ARMOR_STOCK = 17,

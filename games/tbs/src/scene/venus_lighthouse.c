@@ -3279,6 +3279,8 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   }
 }
 
+/// Tasks, each frame once a slide pours: puffs of sand at the head of the west
+/// slide, and of the east.
 static void VenusLighthouse_EmitWestPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(432, 32);
 }

@@ -98,7 +98,7 @@ FarCall_OverworldTable:
 	export Weather_StartLightningFlashFar, Weather_StartLightningFlash
 	overlay_veneer FieldMotes_Start
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
-	export ScreenTransition_InitializeBattleEffectStateFar, ScreenTransition_StartHeldWindow
+	export ScreenTransition_StartHeldWindowFar, ScreenTransition_StartHeldWindow
 	overlay_veneer ScreenTransition_InitializeState
 	overlay_veneer ScreenTransition_Start
 	overlay_veneer ScreenTransition_Finish

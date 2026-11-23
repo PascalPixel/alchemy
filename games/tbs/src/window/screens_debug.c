@@ -58,8 +58,8 @@ void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
   Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
-// The debug scene selector: a scene and an entrance number, starting from the
-// scene being run (DebugSceneSelect_HandleRowInput has the keys).
+/// The debug scene selector: a scene and an entrance number, starting from the
+/// scene being run (DebugSceneSelect_HandleRowInput has the keys).
 #ifdef UBFIX
 void DebugSceneSelect_Run(void) {
 #else

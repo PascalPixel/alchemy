@@ -92,6 +92,8 @@ extern s8 gSolSanctum_RingDirection[][3];
 extern FIXED gSolSanctum_RingMaxScales[];
 extern FIXED gSolSanctum_RingScaleSteps[];
 
+/// The eruption's actors, numbered in the order of
+/// gSolSanctumEruption_ActorPlacements.
 enum CollapseActorId {
   /// The shadow on the platform under each who leaves with Saturos: a
   /// blank actor, whose sprite draws only its shadow, shrunk with

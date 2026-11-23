@@ -79,7 +79,11 @@ extern u8 Tile_CopyStrided[];
 extern u8 Tile_CopyStridedCodeSize[];
 /// The size of Resource_ExecuteTransfer (decompress_tagged_lz.s).
 extern u8 TransferCommandExecutor_Size[];
+/// Stops the console for good with the BIOS Stop call: in the German, French,
+/// Spanish and Italian editions, what pulling the Game Pak out does.
 void Iwram_Halt(void);
+/// Runs the sound for this VBlank, the music players and then the game's own
+/// mixer in IWRAM; the last thing System_VBlankHandler does.
 void Mixer_Enter(void);
 
 #include "system/task.h"

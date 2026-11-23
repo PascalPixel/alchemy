@@ -105,6 +105,7 @@ extern u16 gVault_JailDoorCells[];
 extern s32 gVault_DriftScriptA[];
 extern s32 gVault_DriftScriptB[];
 
+/// The unit of the unused drift's random speeds: a tenth of a pixel a frame.
 enum { VAULT_DRIFT_RATE = toFIXED(1) / 10 };
 
 /// The townspeople, named by what they say.

@@ -248,7 +248,7 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE = 206
 };
 
-static inline void BabiPalace_CloseDoors(void) {
+static inline void BabiPalace_PauseDoorAnimations(void) {
   TilesetAnim_Pause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
   TilesetAnim_Pause(BABI_PALACE_OTHER_DOORS_ANIMATION);
   TilesetAnim_Pause(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
@@ -2500,7 +2500,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
   }
   Event_Wait(16);
   Import_EventSetExitRequest(work->stepTrigger);
-  BabiPalace_CloseDoors();
+  BabiPalace_PauseDoorAnimations();
   Event_End();
 }
 
@@ -2644,7 +2644,7 @@ s32 Scene_Initialize(void) {
   GlyphTransfer *glyph;
   s32 set;
 
-  BabiPalace_CloseDoors();
+  BabiPalace_PauseDoorAnimations();
   // XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
   // BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector
   // reaches them, and nothing in the game says why they set these story flags.

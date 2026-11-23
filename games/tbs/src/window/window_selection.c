@@ -631,6 +631,9 @@ s32 SelectionMenu_Run(s32 mode) {
   }
 }
 
+/// SelectionMenu_Run with the menu's sounds: the cursor's move, a confirm, and
+/// on a yes or no row a cancel for no; B, when mode allows it, cancels with its
+/// sound.
 u32 SelectionMenu_RunWithSounds(u32 mode) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
   u32 result;

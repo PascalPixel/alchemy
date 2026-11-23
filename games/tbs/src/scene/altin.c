@@ -186,6 +186,7 @@ enum {
   FLAG_ALTIN_WATER_DRAINED = FLAG_SCENE_TEMP_42
 };
 
+/// Altin's shops, by their numbers in the shop table.
 enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
 
 /// Altin's inn, as Inn_CheckIn numbers the inns.

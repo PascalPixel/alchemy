@@ -36,7 +36,7 @@ FarCall_WindowTable:
 	export Portrait_OpenWindowFar, Portrait_OpenWindow
 	export Portrait_CloseWindowFar, Portrait_CloseWindow
 	export Text_GetMessageSizeFar, Text_GetMessageSize
-	export Text_GetMessageSizeAltFar, Text_GetMessageSizeAlt
+	export Text_GetMessageSizeAllPagesFar, Text_GetMessageSizeAllPages
 	export MessageArgument_ClearAllFar, MessageArgument_ClearAll
 	export MessageArgument_PushFar, MessageArgument_Push
 	export PartyStatus_CreateWindowFar, PartyStatus_CreateWindow

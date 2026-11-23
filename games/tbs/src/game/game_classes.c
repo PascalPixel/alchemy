@@ -83,8 +83,8 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
   return gEnemy_ElementPresetTable[presetIndex].first;
 }
 
-// Writes a unit's base Power and Resist in each element, from its element
-// levels.
+/// Writes a unit's base Power and Resist in each element, from its element
+/// levels.
 UNREAD_RESULT
 Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   struct Unit *state = Unit_Get(unitId);

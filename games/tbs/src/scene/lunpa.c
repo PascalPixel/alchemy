@@ -134,6 +134,9 @@ enum LunpaFortressGatesCellBehavior {
 /// The event the gates' guards raise on spotting the uncloaked party.
 enum LunpaFortressGatesRaisedTrigger { RAISED_PARTY_SPOTTED = 91 };
 
+/// Lunpa's doors that open as the leader walks in (gLunpaDoors), counted from
+/// the first home's; at the temple's he goes through without first stepping
+/// into the doorway.
 enum {
   DOOR_COUNT = 8,
   DOOR_TEMPLE = CELL_BEHAVIOR_LUNPA_TEMPLE_DOOR -
@@ -188,6 +191,7 @@ enum {
 /// (MainRoutineWork.retreatEntrance).
 enum { GATE_RETREAT_ENTRANCE = 10 };
 
+/// The gate guards' lines when they catch the party uncloaked, in order.
 enum CatchMessage {
   CATCH_LEFT_GUARD_CHALLENGES,
   CATCH_RIGHT_GUARD_WONDERS,
@@ -195,10 +199,13 @@ enum CatchMessage {
   CATCH_RIGHT_GUARD_SENDS_PARTY_OFF
 };
 
+/// The left guard's two lines once he has seen Hammet with the party.
 enum RecognitionMessage { RECOGNITION_SEEN_THAT_MAN, RECOGNITION_IMPOSSIBLE };
 
+/// The leader lying where the guards threw him down the steps.
 enum { ANIM_SPRAWLED = 19 };
 
+/// How high the ice pillar's top is, and a cell: 16 pixels each.
 enum { PILLAR_TOP_HEIGHT = toFIXED(16), CELL_SIZE = toFIXED(16) };
 
 enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
@@ -207,6 +214,7 @@ extern struct MapGridCellAnimation gLunpaDoors[];
 
 static void Lunpa_WatchForUncloakedParty(void);
 
+/// Unused: nothing in the scene reads them.
 enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
 #include "shared/field_effect_create.c"
@@ -738,7 +746,7 @@ static void Lunpa_EnterFortress(void) {
   Event_End();
 }
 
-static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
+static void UNUSED Lunpa_TryJumpForward(void) { Field_TryJumpForward(); }
 
 /// Unused: plays the treasure jingle while Reveal is shining. Nothing calls
 /// it.
@@ -881,6 +889,8 @@ static void Lunpa_GuardsCatchParty(void) {
   Task_AddFrame(Lunpa_WatchForUncloakedParty, TASK_PASS_FRAME);
 }
 
+/// Puts back the three cells (7, 11) to (9, 11) that Cloak and the guards at
+/// the door rewrite, from the cell at (7, 12).
 static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
 /// As Cloak fades at the Lunpa Fortress Gates, a party still in the yard

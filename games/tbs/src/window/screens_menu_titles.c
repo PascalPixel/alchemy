@@ -124,10 +124,10 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
 /// draws as tilemap entries.
 #define RANGE_ICON_FIRST_TILE 788
 
-// Builds the twelve range icons Window_DrawThreeTileColumn draws, as the 24 BG
-// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
-// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
-// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1).
+/// Builds the twelve range icons Window_DrawThreeTileColumn draws, as the 24 BG
+/// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
+/// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
+/// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1).
 UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
   u32 *vram =
       (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP);
@@ -163,9 +163,9 @@ UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
   }
 }
 
-// Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `window`'s
-// interior: its end tile mirrored, its centre tile and its end tile, in the UI
-// palette.
+/// Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `window`'s
+/// interior: its end tile mirrored, its centre tile and its end tile, in the UI
+/// palette.
 UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
                                          s32 pattern, s32 unused) {
   s32 patternOffset = pattern * 2;

@@ -150,8 +150,9 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 extern const s32 gWorldPicture_AreaMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 void _call_via_r0(u32 routine);
+/// The ARM decoder for a battle background's picture, which
+/// BattleBackground_Load copies to RAM and runs as a BitDecoder.
 void BitDecoder_DecodeImage(void);
-void FarCall_WindowTable(void);
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the
 /// gBattleKnockback_* tables in knockback_tables.c. Each is named by how far

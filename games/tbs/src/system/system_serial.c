@@ -509,8 +509,12 @@ s32 Serial_GetActiveTransfers(void) {
   return flags;
 }
 
+/// Serial_ResetTransferState as a routine, for the link set-up and a link
+/// battle that fails.
 void LinkBattle_ResetTransferState(void) { Serial_ResetTransferState(); }
 
+/// A halfword in a record of its own, only to hold Serial_StepBlockTransfer's
+/// 1 (its FAKEMATCH).
 struct SerialHalfword {
   u16 v;
 };

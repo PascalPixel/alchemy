@@ -134,6 +134,7 @@ enum TimberRoomsAActorId {
   ACTOR_SOLDIER_NORTH
 };
 
+/// Suhalla's shop and inn, by their numbers in the shop and inn tables.
 enum { SHOP_SUHALLA = 31, INN_SUHALLA = 10 };
 
 /// The cells before the wounded soldiers' beds, (21, 9) to (23, 9). The

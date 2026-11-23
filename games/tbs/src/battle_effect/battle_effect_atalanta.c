@@ -31,8 +31,10 @@
 #define ATALANTA_SPRITE_ROWS 3
 #define ATALANTA_SPRITES (ATALANTA_SPRITE_ROWS * ATALANTA_SPRITE_ROWS)
 
-/// The trail particles' random rotations, after the particles in PARTICLES.
-#define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 14336)
+/// The trail particles' random rotations, after the first 512 particles of
+/// PARTICLES, which hold the 384 trail particles.
+#define ATALANTA_MATRICES                                                      \
+  (Ram_MapGridCellBuffer + 512 * sizeof(struct Particle))
 
 /// How far below its projected point a trail mote is drawn: the Japanese
 /// release draws the trails 16 pixels higher than the later releases.

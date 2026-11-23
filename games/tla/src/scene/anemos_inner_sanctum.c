@@ -1,6 +1,6 @@
 /// @file
-/// The Anemos Inner Sanctum, the last and hardest dungeon, reached by
-/// Teleport from the circle in the middle of Contigo.
+/// The Anemos Inner Sanctum, the hidden dungeon under Contigo, reached by
+/// Teleport from the circle in the middle of the town.
 ///
 /// The party arrives in a room with four element symbols on its floor.
 /// Stepping onto each, Felix lights a plate for every Djinni of its element
@@ -70,7 +70,7 @@ struct CellTargetEntry;
 
 /// A spark sent spiralling in to a Djinni's plate, as an actor's motion fields
 /// hold it: the plate it closes on (originX, originZ), the radius, angle and
-/// spin of its spiral, and the height it falls from by fall a step.
+/// spin of its spiral, and its height, which drops by `fall` each step.
 struct Spark {
   const s32 *script;
   s16 scriptCursor;
@@ -204,6 +204,15 @@ enum {
 #define FLAG_MIMIC_STONE_A_ON_BUTTON FLAG_AREA_TEMP_01
 #define FLAG_MIMIC_STONE_B_ON_BUTTON FLAG_AREA_TEMP_02
 #define FLAG_MIMIC_STONE_C_ON_BUTTON FLAG_AREA_TEMP_03
+
+/// Set while the leader stands on one of the Dragon Skin room's element
+/// symbols, so that it lights its plates once a visit to it.
+#define FLAG_ON_SYMBOL FLAG_SCENE_TEMP_00
+/// Set while the switches room's switch is held down by the leader.
+#define FLAG_SWITCH_PRESSED FLAG_SCENE_TEMP_00
+/// Set while the guardian room's mimic stone follows the leader or rests on
+/// its button, so that stepping onto its floor starts it no more.
+#define FLAG_MIMIC_STONE_STARTED FLAG_SCENE_TEMP_00
 
 /// The step triggers of the Dragon Skin room: its four element symbols, whose
 /// plates light for the Djinn of the element the party has
@@ -393,13 +402,15 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
     script = gAnemosInnerSanctum_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
-    count = script[3];
+    count = script[EFFECT_SCRIPT_REPEAT_COUNT];
     if (start != 0) {
       effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     } else {
       effect->scaleRateX = (targetX - FIXED_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -559,7 +570,9 @@ s16 palette;
 }
 
 /// Rings a torch at x, y (16.16) with eight orbs of the given palette that
-/// circle in on it at the given speed.
+/// circle in on it at the given speed. Each orb keeps its circle in its actor's
+/// fields: its centre in bounce (x) and gravity (y), its radius in riseBaseY,
+/// its angle in timer and its speed in userValue.
 void AnemosInnerSanctum_SparkRing(x, y, palette, speed) s32 x;
 s32 y;
 s16 palette;
@@ -568,25 +581,25 @@ s16 speed;
   s32 i;
 
   for (i = 0; i != SPARK_RING_STEPS;) {
-    struct Actor *object =
+    struct Actor *orb =
         (FieldActor_Create(SPRITE_PARTICLE, x, y, toFIXED(TORCH_ROW_Z)));
     s32 angle = i * (TRIG_TURN / SPARK_RING_STEPS);
 
-    FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
-    object->timer = angle;
-    object->userValue = speed;
-    object->riseCounter = i;
-    object->riseEnabled = palette;
-    object->bounce = x;
-    object->riseBaseY = toFIXED(32);
-    object->gravity = y;
-    object->motionFlags = 0;
-    Actor_SetBlendMode(object, 1);
-    FieldActor_SetSpriteColor(object, (u16)palette);
-    Scene_SetActorSpritePriority(object, 2);
-    Actor_SelectAnimation(object, 7);
-    Actor_SetSpriteFlags(object, 0);
-    Actor_StartScript(object, gAnemosInnerSanctum_OrbScript);
+    FieldVector_AddPolarOffset(32, angle, &orb->x.fixed);
+    orb->timer = angle;
+    orb->userValue = speed;
+    orb->riseCounter = i;
+    orb->riseEnabled = palette;
+    orb->bounce = x;
+    orb->riseBaseY = toFIXED(32);
+    orb->gravity = y;
+    orb->motionFlags = 0;
+    Actor_SetBlendMode(orb, 1);
+    FieldActor_SetSpriteColor(orb, (u16)palette);
+    Scene_SetActorSpritePriority(orb, 2);
+    Actor_SelectAnimation(orb, 7);
+    Actor_SetSpriteFlags(orb, 0);
+    Actor_StartScript(orb, gAnemosInnerSanctum_OrbScript);
     i += 2;
   }
 }
@@ -597,15 +610,15 @@ void AnemosInnerSanctum_LightTorch(x, y, palette) s32 x;
 s32 y;
 s16 palette;
 {
-  struct Actor *object;
+  struct Actor *flame;
 
-  object = FieldActor_Create(SPRITE_PARTICLE, INTtoFIXED(x), INTtoFIXED(y + 3),
-                             toFIXED(TORCH_ROW_Z));
-  object->motionFlags = ACTOR_FLOATS;
-  FieldActor_SetSpriteColor(object, (u16)palette);
-  Scene_SetActorSpritePriority(object, 2);
-  Actor_SelectAnimation(object, 7);
-  Actor_SetSpriteFlags(object, 0);
+  flame = FieldActor_Create(SPRITE_PARTICLE, INTtoFIXED(x), INTtoFIXED(y + 3),
+                            toFIXED(TORCH_ROW_Z));
+  flame->motionFlags = ACTOR_FLOATS;
+  FieldActor_SetSpriteColor(flame, (u16)palette);
+  Scene_SetActorSpritePriority(flame, 2);
+  Actor_SelectAnimation(flame, 7);
+  Actor_SetSpriteFlags(flame, 0);
 }
 
 #include "text/msg_ids.h"
@@ -656,7 +669,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     targetX = VENUS_TORCH_X;
     targetY = VENUS_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
-      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      GameFlag_Set(FLAG_ON_SYMBOL);
       return;
     }
     break;
@@ -666,7 +679,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     targetX = MERCURY_TORCH_X;
     targetY = MERCURY_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT)) {
-      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      GameFlag_Set(FLAG_ON_SYMBOL);
       return;
     }
     break;
@@ -676,7 +689,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     targetX = MARS_TORCH_X;
     targetY = MARS_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT)) {
-      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      GameFlag_Set(FLAG_ON_SYMBOL);
       return;
     }
     break;
@@ -686,7 +699,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     targetX = JUPITER_TORCH_X;
     targetY = JUPITER_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
-      GameFlag_Set(FLAG_SCENE_TEMP_00);
+      GameFlag_Set(FLAG_ON_SYMBOL);
       return;
     }
     break;
@@ -840,6 +853,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
           GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT) &&
           GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT) &&
           GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
+        // The north door opens.
         Event_SetFlag(FLAG_ANEMOS_NORTH_DOOR_OPEN);
         Event_PlaySound(SE_THUMP);
         MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
@@ -851,7 +865,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     }
 
     Actor_Release(djinni);
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_ON_SYMBOL);
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(60);
@@ -861,9 +875,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
 
 /// Nothing visible happens as Felix steps off a symbol onto the floor
 /// between them; the game lets the symbols be stepped onto again.
-void AnemosInnerSanctum_StepOffSymbol(void) {
-  GameFlag_Clear(FLAG_SCENE_TEMP_00);
-}
+void AnemosInnerSanctum_StepOffSymbol(void) { GameFlag_Clear(FLAG_ON_SYMBOL); }
 
 extern s16 gAnemosInnerSanctum_ElevatorBlocks[];
 extern s16 gAnemosInnerSanctum_SwitchesBlocks[];
@@ -1124,7 +1136,7 @@ void AnemosInnerSanctum_PressSwitch(void) {
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_SWITCH_PRESSED);
   Event_End();
 }
 
@@ -1148,7 +1160,7 @@ void AnemosInnerSanctum_StepOffSwitch(void) {
   FieldEvent_Wait(5);
   MapGrid_CopyCellsTo(52, 20, 31, 20, 1, 2);
   FieldEvent_Wait(5);
-  Event_ClearFlag(FLAG_SCENE_TEMP_00);
+  Event_ClearFlag(FLAG_SWITCH_PRESSED);
   Event_End();
 }
 
@@ -1187,12 +1199,12 @@ void AnemosInnerSanctum_MimicLeader(struct Actor *self) {
   FIXED next[2];
   FIXED ahead[3];
   struct Actor *dust;
-  s32 kind;
+  s32 behavior;
 
   if (FIXEDtoINT(Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed) >
       MIMIC_STONE_LINE_Z) {
     self->update = 0;
-    Event_ClearFlag(FLAG_SCENE_TEMP_00);
+    Event_ClearFlag(FLAG_MIMIC_STONE_STARTED);
     self->x.fixed = (self->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     self->z.fixed = (self->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     return;
@@ -1228,12 +1240,12 @@ void AnemosInnerSanctum_MimicLeader(struct Actor *self) {
 
     self->x.fixed = x;
     self->z.fixed = next[1];
-    kind = FieldMapGrid_GetCellBehaviorAt(self->layer, x, next[1]);
+    behavior = FieldMapGrid_GetCellBehaviorAt(self->layer, x, next[1]);
   }
-  if (kind == TRIGGER_MIMIC_STONE_BUTTON) {
+  if (behavior == TRIGGER_MIMIC_STONE_BUTTON) {
     gFieldWork->raisedTrigger = TRIGGER_MIMIC_STONE_ON_BUTTON;
     self->update = 0;
-  } else if (kind == TRIGGER_MIMIC_STONE_HOLE) {
+  } else if (behavior == TRIGGER_MIMIC_STONE_HOLE) {
     gFieldWork->raisedTrigger = TRIGGER_MIMIC_STONE_IN_HOLE;
     self->update = 0;
   }
@@ -1262,7 +1274,7 @@ void AnemosInnerSanctum_StartMimicStone(void) {
     actor->update = AnemosInnerSanctum_MimicLeader;
     actor->riseBaseY = Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed;
     actor->acceleration = Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed;
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_MIMIC_STONE_STARTED);
   }
 }
 
@@ -1496,6 +1508,11 @@ extern u16 gTeleportCircle_Colors[];
 extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gTeleportCircle_ShimmerSlots[];
 
+/// Sets up the room the party comes into: the Dragon Skin room's lit torches
+/// and opened north door; the pillars left in their places; the lifts, below
+/// or above as they last carried the party, and the round switches already
+/// pressed; the cracked floors; and the mimic stones resting on their
+/// buttons, their doors open.
 s32 Scene_Initialize(void) {
   s32 scene;
   s32 entranceHalfword;
@@ -1577,12 +1594,12 @@ s32 Scene_Initialize(void) {
           ACTOR_PRIORITY_IGNORES_RISES;
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-    struct Actor *firstSwitch = Actor_Get(ACTOR_SWITCHES_SWITCH_MARKER);
+    struct Actor *marker = Actor_Get(ACTOR_SWITCHES_SWITCH_MARKER);
 
-    firstSwitch->motionFlags = ACTOR_FALLS;
-    firstSwitch->groundHeight = -toFIXED(14);
-    firstSwitch->y.fixed = -toFIXED(14);
-    firstSwitch->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+    marker->motionFlags = ACTOR_FALLS;
+    marker->groundHeight = -toFIXED(14);
+    marker->y.fixed = -toFIXED(14);
+    marker->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     Actor_Get(ACTOR_SWITCHES_BOULDER)->riseCounter = 1;
@@ -1694,7 +1711,7 @@ s32 Scene_Initialize(void) {
     case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ELEVATOR_NORTHWEST:
       if (Event_GetFlag(FLAG_MIMIC_STONE_A_ON_BUTTON)) {
         Actor_SetPosition(ACTOR_MIMIC_STONE_A, 120, 120);
-        Event_SetFlag(FLAG_SCENE_TEMP_00);
+        Event_SetFlag(FLAG_MIMIC_STONE_STARTED);
       } else {
         MapGrid_CopyCellsTo(18, 1, 11, 4, 1, 2);
         MapGrid_SetCellHeight(toFIXED(184), toFIXED(88), 0, 2);
@@ -1704,7 +1721,7 @@ s32 Scene_Initialize(void) {
     case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHEAST:
       if (Event_GetFlag(FLAG_MIMIC_STONE_B_ON_BUTTON)) {
         Actor_SetPosition(ACTOR_MIMIC_STONE_B, 552, 120);
-        Event_SetFlag(FLAG_SCENE_TEMP_00);
+        Event_SetFlag(FLAG_MIMIC_STONE_STARTED);
       } else {
         MapGrid_CopyCellsTo(18, 1, 26, 4, 1, 2);
         MapGrid_SetCellHeight(toFIXED(424), toFIXED(88), 0, 2);
@@ -1714,7 +1731,7 @@ s32 Scene_Initialize(void) {
     case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHEAST:
       if (Event_GetFlag(FLAG_MIMIC_STONE_C_ON_BUTTON)) {
         Actor_SetPosition(ACTOR_MIMIC_STONE_C, 792, 120);
-        Event_SetFlag(FLAG_SCENE_TEMP_00);
+        Event_SetFlag(FLAG_MIMIC_STONE_STARTED);
       } else {
         MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);
         MapGrid_SetCellHeight(toFIXED(856), toFIXED(88), 0, 2);
@@ -1806,13 +1823,15 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
-    count = script[3];
+    count = script[EFFECT_SCRIPT_REPEAT_COUNT];
     if (start != 0) {
       effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     } else {
       effect->scaleRateX = (targetX - FIXED_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -1884,7 +1903,7 @@ void CrackedTile_DropIn(void) {
     FieldEffect_SpawnLocal(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                            velocity[0], velocity[1], velocity[2],
                            EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                               EFFECT_USE_PALETTE | 1,
+                               EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                            &options);
   }
   Event_PlaySound(SE_THUMP);
@@ -2058,70 +2077,70 @@ s32 gAnemosInnerSanctum_NoShadowScript[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AnemosInnerSanctumDragonSkinChest),
-    SCENE_EXIT_UNLESS(1, AnemosInnerSanctumEntrance, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AnemosInnerSanctumGuardian, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(99, Contigo, 99, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_TO_ANEMOS_INNER_SANCTUM_ENTRANCE, AnemosInnerSanctumEntrance, ANEMOS_INNER_SANCTUM_ENTRANCE_FROM_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_TO_CONTIGO, Contigo, CONTIGO_FROM_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST, EXIT_FLAG_NONE),
     SCENE_EXITS(AnemosInnerSanctumElevator),
     SCENE_EXIT_UNLESS(1, AnemosInnerSanctumElevator, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AnemosInnerSanctumElevator, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AnemosInnerSanctumElevator, 17, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AnemosInnerSanctumSwitches, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_SWITCHES, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_ELEVATOR, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, AnemosInnerSanctumElevator, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AnemosInnerSanctumGuardian, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHWEST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ELEVATOR_NORTHWEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, AnemosInnerSanctumElevator, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, AnemosInnerSanctumGuardian, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_WEST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ELEVATOR_WEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, AnemosInnerSanctumElevator, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, AnemosInnerSanctumElevator, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, AnemosInnerSanctumElevator, 18, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_UP_THE_LIFT, AnemosInnerSanctumElevator, ENTRANCE_UP_THE_LIFT, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, AnemosInnerSanctumElevator, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, AnemosInnerSanctumElevator, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, AnemosInnerSanctumElevator, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, AnemosInnerSanctumElevator, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, AnemosInnerSanctumGuardian, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ELEVATOR_EAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(17, AnemosInnerSanctumElevator, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(AnemosInnerSanctumSwitches),
     SCENE_EXIT_UNLESS(1, AnemosInnerSanctumSwitches, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AnemosInnerSanctumOrihalconChest, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHEAST, AnemosInnerSanctumOrihalconChest, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHEAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AnemosInnerSanctumSwitches, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AnemosInnerSanctumSwitches, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, AnemosInnerSanctumSwitches, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AnemosInnerSanctumGuardian, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AnemosInnerSanctumOrihalconChest, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, AnemosInnerSanctumElevator, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, AnemosInnerSanctumOrihalconChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_SOUTHWEST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTH, AnemosInnerSanctumOrihalconChest, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ELEVATOR, AnemosInnerSanctumElevator, ANEMOS_INNER_SANCTUM_ELEVATOR_FROM_ANEMOS_INNER_SANCTUM_SWITCHES, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHWEST, AnemosInnerSanctumOrihalconChest, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHWEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, AnemosInnerSanctumSwitches, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, AnemosInnerSanctumSwitches, 17, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, AnemosInnerSanctumGuardian, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHEAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, AnemosInnerSanctumSwitches, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, AnemosInnerSanctumSwitches, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, AnemosInnerSanctumSwitches, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, AnemosInnerSanctumGuardian, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_EAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(17, AnemosInnerSanctumSwitches, 11, EXIT_FLAG_NONE),
     SCENE_EXITS(AnemosInnerSanctumOrihalconChest),
-    SCENE_EXIT_UNLESS(1, AnemosInnerSanctumSwitches, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AnemosInnerSanctumSwitches, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHWEST, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTH, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AnemosInnerSanctumOrihalconChest, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AnemosInnerSanctumOrihalconChest, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AnemosInnerSanctumEntrance, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AnemosInnerSanctumGuardian, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AnemosInnerSanctumSwitches, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_ENTRANCE, AnemosInnerSanctumEntrance, ANEMOS_INNER_SANCTUM_ENTRANCE_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHEAST, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHEAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, AnemosInnerSanctumOrihalconChest, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, AnemosInnerSanctumOrihalconChest, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, AnemosInnerSanctumGuardian, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, AnemosInnerSanctumOrihalconChest, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, AnemosInnerSanctumOrihalconChest, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, AnemosInnerSanctumGuardian, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(THROUGH_FIRST_CRACKED_FLOOR, AnemosInnerSanctumOrihalconChest, THROUGH_FIRST_CRACKED_FLOOR, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(THROUGH_SECOND_CRACKED_FLOOR, AnemosInnerSanctumOrihalconChest, THROUGH_SECOND_CRACKED_FLOOR, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_SOUTHWEST, AnemosInnerSanctumGuardian, ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHWEST, EXIT_FLAG_NONE),
     SCENE_EXITS(AnemosInnerSanctumGuardian),
-    SCENE_EXIT_UNLESS(1, AnemosInnerSanctumElevator, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AnemosInnerSanctumElevator, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, AnemosInnerSanctumSwitches, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AnemosInnerSanctumSwitches, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AnemosInnerSanctumOrihalconChest, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AnemosInnerSanctumOrihalconChest, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AnemosInnerSanctumSwitches, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_WEST, AnemosInnerSanctumElevator, ANEMOS_INNER_SANCTUM_ELEVATOR_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_NORTHWEST, AnemosInnerSanctumElevator, ANEMOS_INNER_SANCTUM_ELEVATOR_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_EAST, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHEAST, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_EAST, AnemosInnerSanctumOrihalconChest, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHEAST, AnemosInnerSanctumOrihalconChest, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHWEST, AnemosInnerSanctumSwitches, ANEMOS_INNER_SANCTUM_SWITCHES_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_SOUTHWEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, AnemosInnerSanctumGuardian, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, AnemosInnerSanctumElevator, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, AnemosInnerSanctumDragonSkinChest, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_EAST, AnemosInnerSanctumElevator, ANEMOS_INNER_SANCTUM_ELEVATOR_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST, AnemosInnerSanctumDragonSkinChest, ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_ANEMOS_INNER_SANCTUM_GUARDIAN, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, AnemosInnerSanctumGuardian, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
@@ -2176,13 +2195,13 @@ struct Trigger gAnemosInnerSanctum_Triggers[] = {
 };
 
 struct Trigger gAnemosInnerSanctum_DragonSkinChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_TO_ANEMOS_INNER_SANCTUM_ENTRANCE},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN},
     {TRIGGER_STEP, TRIGGER_FLOOR_BETWEEN_SYMBOLS, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StepOffSymbol)},
-    {TRIGGER_STEP, TRIGGER_VENUS_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
-    {TRIGGER_STEP, TRIGGER_MERCURY_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
-    {TRIGGER_STEP, TRIGGER_MARS_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
-    {TRIGGER_STEP, TRIGGER_JUPITER_SYMBOL, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_VENUS_SYMBOL, FLAG_ON_SYMBOL, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_MERCURY_SYMBOL, FLAG_ON_SYMBOL, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_MARS_SYMBOL, FLAG_ON_SYMBOL, EVENT(AnemosInnerSanctum_LightSymbol)},
+    {TRIGGER_STEP, TRIGGER_JUPITER_SYMBOL, FLAG_ON_SYMBOL, EVENT(AnemosInnerSanctum_LightSymbol)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), TRIGGER_TELEPORT_CIRCLE, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_TeleportOut)},
     {TRIGGER_TABLE_END},
 };
@@ -2191,18 +2210,18 @@ struct Trigger gAnemosInnerSanctum_ElevatorTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_SWITCHES},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHWEST},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_WEST},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ELEVATOR_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_LIFT_READY), EVENT(AnemosInnerSanctum_RideLiftUp)},
     {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_ROUND_SWITCH_PRESSED(0), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
@@ -2223,26 +2242,26 @@ struct Trigger gAnemosInnerSanctum_ElevatorTriggers[] = {
 
 struct Trigger gAnemosInnerSanctum_SwitchesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_SOUTHEAST},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_SOUTHWEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTH},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 8, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ELEVATOR},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHWEST},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
+    {TRIGGER_EXIT, 16, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_SWITCHES_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_EndSand)},
-    {TRIGGER_STEP, TRIGGER_SWITCH, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressSwitch)},
-    {TRIGGER_STEP, TRIGGER_EAST_OF_SWITCH, IF_FLAG_SET(FLAG_SCENE_TEMP_00), EVENT(AnemosInnerSanctum_StepOffSwitch)},
+    {TRIGGER_STEP, TRIGGER_SWITCH, FLAG_SWITCH_PRESSED, EVENT(AnemosInnerSanctum_PressSwitch)},
+    {TRIGGER_STEP, TRIGGER_EAST_OF_SWITCH, IF_FLAG_SET(FLAG_SWITCH_PRESSED), EVENT(AnemosInnerSanctum_StepOffSwitch)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SWITCHES_BOULDER, CONDITION_ALWAYS, 0},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
@@ -2260,16 +2279,16 @@ struct Trigger gAnemosInnerSanctum_SwitchesTriggers[] = {
 };
 
 struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHWEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_ENTRANCE},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_EAST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHEAST},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_TO_ANEMOS_INNER_SANCTUM_GUARDIAN_NORTHEAST},
     {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_LIFT_READY), EVENT(AnemosInnerSanctum_RideLiftUp)},
     {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_ROUND_SWITCH_PRESSED(0), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
     {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_ROUND_SWITCH_PRESSED(1), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
@@ -2294,30 +2313,30 @@ struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[] = {
 };
 
 struct Trigger gAnemosInnerSanctum_GuardianTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_WEST},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_NORTHWEST},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_EAST},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHEAST},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_EAST},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_NORTHEAST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHWEST},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_EAST},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_START, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartMimicStone)},
-    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_HOLE, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartMimicStone)},
-    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_BUTTON, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_StartMimicStone)},
+    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_START, FLAG_MIMIC_STONE_STARTED, EVENT(AnemosInnerSanctum_StartMimicStone)},
+    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_HOLE, FLAG_MIMIC_STONE_STARTED, EVENT(AnemosInnerSanctum_StartMimicStone)},
+    {TRIGGER_STEP, TRIGGER_MIMIC_STONE_BUTTON, FLAG_MIMIC_STONE_STARTED, EVENT(AnemosInnerSanctum_StartMimicStone)},
     {TRIGGER_STEP, TRIGGER_BEFORE_CHARON_SLATE, FLAG_ANEMOS_CHARON_SLATE_SPOKE, EVENT(AnemosInnerSanctum_ApproachCharonSlate)},
     {TRIGGER_RAISED, TRIGGER_MIMIC_STONE_IN_HOLE, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_DropMimicStone)},
     {TRIGGER_RAISED, TRIGGER_MIMIC_STONE_ON_BUTTON, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_OpenMimicStoneDoor)},
     {TRIGGER_TABLE_END},
     // Unused: rows past the table's end.
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_WEST},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ELEVATOR_NORTHWEST},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_EAST},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_SWITCHES_NORTHEAST},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, ANEMOS_INNER_SANCTUM_GUARDIAN_TO_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST_EAST},
     {TRIGGER_TABLE_END},
 };
 

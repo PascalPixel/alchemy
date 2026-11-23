@@ -191,42 +191,14 @@ void GaiaRock_ClimbOntoHighestStoneFace(void) {
   StoneHead_BurstOut(ACTOR_THIRD_RISING_STATUE, FLAG_THIRD_STATUE_RISEN);
 }
 
+/// The Japanese edition lets a pillar land with no sound, through the routine
+/// of Taopo Swamp and the Kibombo Mountains, which tests for landing before it
+/// counts the frame down; the later editions take the Ankohl Ruins' routine and
+/// play SE_BOOM as it lands.
 #if !TLA_PATCH_1
-/// Lets pillar id fall until it lands, for at most 60 frames, and stands it
-/// still ten frames later.
-void GaiaRock_DropPillar(s32 id) {
-  s32 frames = 60;
-  struct Actor *actor = Actor_Get(id);
-
-  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  while (frames != 0) {
-    System_Wait(1);
-    if (actor->velocityY == 0)
-      break;
-    frames--;
-  }
-  System_Wait(10);
-  actor->motionFlags = 0;
-}
+#include "shared/actor_wait_to_land.h"
 #else
-/// Lets pillar id fall until it lands, for at most 60 frames, plays cue (when
-/// not 0) and stands it still ten frames later.
-void GaiaRock_DropPillar(s32 id, s32 cue) {
-  s32 frames = 60;
-  struct Actor *actor = Actor_Get(id);
-
-  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  while (frames != 0) {
-    System_Wait(1);
-    frames--;
-    if (actor->velocityY == 0)
-      break;
-  }
-  if (cue != 0)
-    Event_PlaySound(cue);
-  System_Wait(10);
-  actor->motionFlags = 0;
-}
+#include "shared/actor_wait_to_land_with_cue.h"
 #endif
 
 /// Nothing visible happens as Felix's Move takes hold of the stone pillar on
@@ -237,12 +209,10 @@ void GaiaRock_StartMovingPillar(void) {
   MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91);
 }
 
-/// The Japanese edition drops a pillar with no sound; the later editions play
-/// SE_BOOM as it lands.
 #if !TLA_PATCH_1
-#define DROP_PILLAR(id) GaiaRock_DropPillar(id)
+#define DROP_PILLAR(id) Actor_WaitToLand(id)
 #else
-#define DROP_PILLAR(id) GaiaRock_DropPillar(id, SE_BOOM)
+#define DROP_PILLAR(id) Actor_WaitToLandWithCue(id, SE_BOOM)
 #endif
 
 /// A pillar of the first cliffs stops after a push or a Move. The pillar on

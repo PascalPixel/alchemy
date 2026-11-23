@@ -449,12 +449,15 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define MULTIPLIER_ZERO_X 80
 #endif
 
+/// Whether B cannot leave hi-lo game `game`.
 #if TLA_PATCH_1
 #define CANNOT_QUIT(game) ((game) > 0)
 #else
 #define CANNOT_QUIT(game) ((game) == 1)
 #endif
 
+/// The OAM word of the game's number after the final game's banner: its x,
+/// fitted to each language's banner, and its 16x32 shape.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define GAME_NUMBER_WORD (OBJ_X(116) | OBJ_SIZE_16X32)
 #elif LANGUAGE == LANGUAGE_SPANISH
@@ -467,6 +470,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define GAME_NUMBER_WORD (OBJ_X(80) | OBJ_SIZE_16X32)
 #endif
 
+/// The bet window: where the coin window is, but in French a tile further right
+/// and narrower.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define BET_WINDOW_X 17
 #define BET_WINDOW_WIDTH 13

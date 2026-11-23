@@ -649,6 +649,8 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
   return node;
 }
 
+/// A selection mode that allows neither moving nor choosing, only cancelling
+/// with B.
 #define SELECTION_FIXED 999
 
 /// The row's last place, the fifth: the cursor stepping onto it with more

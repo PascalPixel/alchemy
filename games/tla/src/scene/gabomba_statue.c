@@ -1586,6 +1586,8 @@ enum {
 #define COG_CELL(behavior, attributes, pictureFlags)                           \
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 
+/// Gives a cell under a cog its shape on both layers and adds bits to both its
+/// shape words.
 #define MARK(at, shape, bits)                                                  \
   (cell = (at), layerA[cell] = (shape), layerB[cell] = (shape),                \
    word = &shapesA[cell], *word |= (bits), word = &shapesB[cell],              \

@@ -946,8 +946,8 @@ s32 DjinnMenu_ShowHelp(void) {
 #define GRID_CELL_WIDTH 6
 #endif
 
-// Spanish, French and Italian name the Djinni before its owner in one message
-// on the trade's help line, so the Djinni's icon leads the line.
+/// Spanish, French and Italian name the Djinni before its owner in one message
+/// on the trade's help line, so the Djinni's icon leads the line.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define TRADE_HELP_DJINNI_FIRST 1

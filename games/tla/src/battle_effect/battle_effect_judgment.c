@@ -5,6 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// The gathering's length and the sweep's, in frames.
 #define JUDGMENT_GATHER_FRAMES 160
 #define JUDGMENT_SWEEP_FRAMES 336
 /// The gathering's crash: the canvas fills to JUDGMENT_CRASH_LEVEL the frame

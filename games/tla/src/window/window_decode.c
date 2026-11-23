@@ -13,7 +13,6 @@
 #else
 #define ARTICLE_KINDS 8
 #endif
-
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define ARTICLE_KIND_MASK 15
 #else

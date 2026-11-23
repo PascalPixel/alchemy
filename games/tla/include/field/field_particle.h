@@ -9,6 +9,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A targetX that marks an effect with no target to steer toward.
 #define EFFECT_NO_TARGET ((s32)0x80000000)
 
 struct FieldParticle;

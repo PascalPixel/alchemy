@@ -57,6 +57,8 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
   }
 }
 
+/// The sound of the Djinni's leap: SE_WHOOSH until patch 1, SE_HIGH_JUMP from
+/// it.
 #if TLA_PATCH_1
 #define LEAP_SOUND SE_HIGH_JUMP
 #else

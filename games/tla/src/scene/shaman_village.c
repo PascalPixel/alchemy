@@ -2137,7 +2137,7 @@ void ShamanVillage_StartLettering(s32 shape, s32 secondHalf) {
   gShamanVillage_LetteringX = 0;
 }
 
-// The European editions' lettering sheet has one more palette row.
+/// The European editions' lettering sheet has one more palette row.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_PALETTE_ROWS 6

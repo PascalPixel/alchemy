@@ -106,8 +106,8 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 #define TILE_TEXT_MARK_GLYPH 254
 #define TILE_TEXT_MARK_WIDTH 3
 
-// A label's end tile advances three pixels: the HP label's in every font, and
-// the PP label's own in the French, Spanish and Italian fonts.
+/// A label's end tile advances three pixels: the HP label's in every font, and
+/// the PP label's own in the French, Spanish and Italian fonts.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define TEXT_IS_NARROW_TILE(code)                                              \

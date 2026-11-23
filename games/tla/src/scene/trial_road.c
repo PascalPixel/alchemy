@@ -3793,6 +3793,9 @@ static inline void *TrialRoadLink_AllocPicture(void) {
   return Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
 }
 
+/// Where an actor's marker stands on the race map: its place in cells, moved by
+/// `left` or `right` on the entrance's side, and raised by the stage it has
+/// reached.
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \

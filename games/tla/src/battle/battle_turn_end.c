@@ -429,6 +429,8 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 #define REFLECT_END_MESSAGE ((s32)&MsgReflectEnd)
 #endif
 
+/// When `test` finds the unit's status over, shows its end, `message`, with the
+/// unit's name, and waits for the player.
 #define ANNOUNCE_END(test, message)                                            \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
@@ -437,6 +439,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     BattleMessage_WaitForAdvance();                                            \
   }
 
+/// As ANNOUNCE_END, turning the unit back to its usual pose before the message.
 #define ANNOUNCE_END_POSE(test, message)                                       \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \

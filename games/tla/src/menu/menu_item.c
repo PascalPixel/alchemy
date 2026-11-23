@@ -68,6 +68,7 @@ void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
 #define ITEM_CANNOT_TRADE_X 15
 #endif
 
+/// The column "Traded" opens at, two tiles further left in Italian.
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define ITEM_TRADED_X 13
 #else
@@ -1580,10 +1581,10 @@ s32 Inventory_RemoveFirstUnflagged(s32 memberId) {
   return result;
 }
 
-// Where the cursor points at a command. The German, French and Spanish
-// releases ask two helpers of their own: the first reads x from a table that
-// sets the middle column 9 pixels left of the even 40-pixel spacing the other
-// releases compute, the second gives y.
+/// Where the cursor points at a command. The German, French and Spanish
+/// releases ask two helpers of their own: the first reads x from a table that
+/// sets the middle column 9 pixels left of the even 40-pixel spacing the other
+/// releases compute, the second gives y.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_SPANISH)
 s32 ItemMenu_GetCommandCursorX(s32 column, s32 row);
@@ -1755,9 +1756,6 @@ s32 ItemMenu_ChooseCommand(void) {
 
 #undef COMMAND_CURSOR_Y
 
-#define COMMAND_DISABLED (-1)
-#define COMMAND_AVAILABLE 1
-
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
 /// Returns whether the scene has an event for item on what the leader faces.
 s32 Scene_HasItemTriggerFar(s32 item);
@@ -1777,63 +1775,58 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   item = Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == 0) {
-    commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   } else {
-    commandStates[ITEM_COMMAND_USE] = COMMAND_DISABLED;
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_AVAILABLE;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_AVAILABLE;
   }
 
   if (Item_ClassifyUseMode(menu->sideMember[0], menu->selectedItems[0]) != -1)
-    commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
   else
-    commandStates[ITEM_COMMAND_USE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
 
   if (menu->selectedItems[0] & INVENTORY_BROKEN)
-    commandStates[ITEM_COMMAND_USE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_DISABLED;
 
   if (Item_CanUnitEquip(menu->sideMember[0],
                         menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) == 0) {
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   }
 
-  commandStates[ITEM_COMMAND_GIVE] = COMMAND_AVAILABLE;
-  commandStates[ITEM_COMMAND_DROP] = COMMAND_AVAILABLE;
-  commandStates[ITEM_COMMAND_INSPECT] = COMMAND_AVAILABLE;
+  commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_AVAILABLE;
+  commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_AVAILABLE;
+  commandStates[ITEM_COMMAND_INSPECT] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
-    commandStates[ITEM_COMMAND_REMOVE] = COMMAND_AVAILABLE;
-    commandStates[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_AVAILABLE;
+    commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   } else {
-    commandStates[ITEM_COMMAND_REMOVE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_DISABLED;
   }
 
   if (item->flags & ITEM_CANNOT_UNEQUIP) {
-    commandStates[ITEM_COMMAND_REMOVE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_REMOVE] = ITEM_COMMAND_STATE_DISABLED;
     if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
-      commandStates[ITEM_COMMAND_GIVE] = COMMAND_DISABLED;
-      commandStates[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
+      commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_DISABLED;
+      commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_DISABLED;
     }
   }
 
   if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
                               INVENTORY_ITEM_ID_MASK) != 0)
-    commandStates[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
+    commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
 
   if (menu->partyCount <= 1)
-    commandStates[ITEM_COMMAND_GIVE] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_GIVE] = ITEM_COMMAND_STATE_DISABLED;
 
   if (item->flags & ITEM_INDISPENSABLE)
-    commandStates[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
+    commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_DISABLED;
 }
 
-#undef COMMAND_AVAILABLE
-
-/// An item command's state when the selected item refuses it.
-#define ITEM_COMMAND_STATE_DISABLED (-1)
-
-// The x of the command grid's middle column: German, Spanish and French
-// draw Equip and Remove 8 pixels further left.
+/// The x of the command grid's middle column: German, Spanish and French
+/// draw Equip and Remove 8 pixels further left.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH)
 #define ITEM_COMMAND_TEXT_X 32
@@ -2073,9 +2066,9 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
   ItemMenu_DrawItemDetailsWithCount(window, item, -1);
 }
 
-// The headings are indented in English and Japanese; German, Spanish and
-// Italian start all three at the window's left edge, French the uses heading
-// only.
+/// The headings are indented in English and Japanese; German, Spanish and
+/// Italian start all three at the window's left edge, French the uses heading
+/// only.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define ITEM_DETAILS_HEADING_X 0
@@ -2653,10 +2646,10 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
 
 #undef ITEM_DROP_QUESTION_X
 
-// The question and its answers, as each translation lays them out. English and
-// Japanese stack Yes over No to the right of the question, and Up and Down move
-// the cursor; German, Spanish, French and Italian set them side by side below
-// it, and Left and Right move the cursor. Japanese indents the question.
+/// The question and its answers, as each translation lays them out. English and
+/// Japanese stack Yes over No to the right of the question, and Up and Down
+/// move the cursor; German, Spanish, French and Italian set them side by side
+/// below it, and Left and Right move the cursor. Japanese indents the question.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define EQUIP_YES_X 24

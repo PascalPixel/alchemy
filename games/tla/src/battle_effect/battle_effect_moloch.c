@@ -739,6 +739,8 @@ struct IrisScene {
   struct IrisPoint streaks[IRIS_STREAKS][IRIS_STREAK_LENGTH];
 };
 
+/// Iris's work, laid out in the map cell buffer: the petals, the scene, and the
+/// streaks' points.
 #define IRIS_PETAL_WORK (*(struct IrisPetals *)(Ram_MapCellBuffer + 8000))
 #define IRIS_SCENE (*(struct IrisScene *)(Ram_MapCellBuffer + 12000))
 #define IRIS_STREAK_POINTS                                                     \
@@ -752,6 +754,7 @@ extern const struct FourSpans gIris_RightStripSpans;
 
 #define STREAK(i, j)                                                           \
   (((struct IrisPoint *)IRIS_STREAK_POINTS)[(i) * IRIS_STREAK_LENGTH + (j)])
+/// BG palette 6, where the fade's colours are written.
 #define FADE_PLTT ((u16 *)&BG_PLTT_COLOR(6, 0))
 
 /// A splash where a drop lands: rings spread from (x, y) for twice the
@@ -2740,6 +2743,8 @@ static __inline__ void CopyWords4(const void *source, void *destination) {
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0xffffff)
 
+/// Writing a blitter at dst: a word; words copied from a fragment, by CPU or
+/// DMA, once or twice; a branch to target; or the branch at site aimed here.
 #define PUT(word)                                                              \
   do {                                                                         \
     *dst++ = (word);                                                           \

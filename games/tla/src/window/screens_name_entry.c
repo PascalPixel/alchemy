@@ -176,6 +176,8 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 }
 #endif
 
+/// A name's room in bytes and in letters, and the keyboard column of its
+/// commands.
 #define NAME_MAX_BYTES 14
 #define NAME_MAX_LETTERS 5
 #define NAME_COMMAND_COLUMN 18
@@ -210,8 +212,8 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 #define NAME_LABEL_WIDTH 8
 #endif
 
-// Whether the edition draws the remove and finish keys' labels as text over
-// the keyboard, and how wide its finish key is, in tiles.
+/// Whether the edition draws the remove and finish keys' labels as text over
+/// the keyboard, and how wide its finish key is, in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH
 #define NAME_KEY_LABELS 1

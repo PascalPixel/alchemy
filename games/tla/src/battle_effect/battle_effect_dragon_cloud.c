@@ -12,6 +12,7 @@
 #define DRAGON_CLOUD_TRAIL_HEIGHT 39
 #define DRAGON_CLOUD_TRAIL_PICTURE_BYTES                                       \
   PICTURE_BYTES(DRAGON_CLOUD_TRAIL) ///< bytes in each trail copy
+/// The first of the particles the embers take.
 #define DRAGON_CLOUD_FIRST_EMBER 8
 /// FirePillarSheetB: five flames, then the trail picture.
 #define DRAGON_CLOUD_FLAME_WIDTH 24

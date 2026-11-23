@@ -35,8 +35,8 @@
 #endif
 #define MENU_TEXT_Y 60
 
-// A link battle's opponent names take up to 8 letters of prefix, then a space,
-// in the European editions, instead of 5.
+/// A link battle's opponent names take up to 8 letters of prefix, then a space,
+/// in the European editions, instead of 5.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define LOBBY_PREFIX_LIMIT 7

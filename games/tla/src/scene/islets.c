@@ -658,6 +658,8 @@ void Islets_TradeWithBird(void) {
   Event_End();
 }
 
+/// An actor walks to (x, z) without turning to its way, and stops facing as it
+/// was.
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->steeringFlags &= ~ACTOR_FACES_MOTION,                 \
    Actor_WalkToAndWait(actor, x, z), Event_Wait(1),                            \
@@ -1088,6 +1090,8 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Event_SetFlag(FLAG_GEORGE_HAS_THE_TURTLE);
 }
 
+/// Creates a small turtle and its wading splash at (296, 424), the turtle with
+/// motion flags `answer`.
 #define SPAWN(a, b, answer)                                                    \
   {                                                                            \
     a = FieldActor_Create(SPRITE_TURTLE_SMALL, toFIXED(296), 0, toFIXED(424)); \

@@ -591,8 +591,8 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
           REG_DMA3);
 }
 
-// Where the left, middle and right pieces of `The Lost Age` come to rest, and
-// how far down.
+/// Where the left, middle and right pieces of `The Lost Age` come to rest, and
+/// how far down.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define LOGO_LEFT_X 24

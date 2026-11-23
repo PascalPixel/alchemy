@@ -213,6 +213,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_COINS_LABEL_X 48
 #endif
 
+/// The help window (Throw / Quit): its column and width, in tiles.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DICE_HELP_WINDOW_X 23
 #define DICE_HELP_WINDOW_WIDTH 7
@@ -268,6 +269,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_WINNINGS_NUMBER_X 56
 #endif
 
+/// The centre of the result lettering, in sprite x, which wraps at 512.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DICE_RESULT_LABEL_CENTER_X 640
 #else

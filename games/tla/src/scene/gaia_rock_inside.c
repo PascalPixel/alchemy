@@ -3077,6 +3077,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+/// The maze grid's width, in its cells.
 #define GRID_WIDTH 28
 
 /// The grid the maze's path is laid on (GaiaRockInside_LayMaze).

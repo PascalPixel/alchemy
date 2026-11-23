@@ -2402,6 +2402,7 @@ void Actor_PlaceBlocks(const u8 *table);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value);
 
+/// Blends BG2 out of sight: weight 0 over every layer beneath it.
 #define CLOSED_BLEND()                                                         \
   {                                                                            \
     REG_BLDALPHA = BLEND_ALPHA(0, 16);                                         \

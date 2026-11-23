@@ -559,6 +559,8 @@ void GaiaRock_StatueBlowsWind(void) {
   }
 }
 
+/// The transition Gaia Rock opens with: the window's shape until patch 1, an
+/// interlaced wipe from it.
 #if !TLA_PATCH_1
 #define SCREEN_EFFECT                                                          \
   SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE)

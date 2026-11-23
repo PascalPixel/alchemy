@@ -75,6 +75,7 @@
 #include "text/msg_ids.h"
 #include "window/window.h"
 
+/// Felix has teleported from the north circle once.
 #define FLAG_TELEPORTED_ONCE 0xa36
 /// Grind on the shaft of ice cracked the ice sheet a floor below.
 #define FLAG_ICE_SHAFT_GROUND 0xa3e
@@ -928,6 +929,8 @@ void MarsLighthouseEntrance_StartHoleMask(void) {
   Task_AddFrame(MarsLighthouseEntrance_DrawHoleMask, TASK_PASS_FRAME);
 }
 
+/// Shows every layer and the sprites outside the windows, and every layer
+/// inside the sprite window.
 #define SET_SPRITE_WINDOW_LAYERS()                                             \
   do {                                                                         \
     u16 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |      \

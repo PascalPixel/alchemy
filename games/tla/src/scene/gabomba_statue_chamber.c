@@ -25,6 +25,7 @@
 #include "item_ids.h"
 #include "sprite_ids.h"
 
+/// Set once Akafubu, in the final chamber, has said "I do not know..."
 #define FLAG_AKAFUBU_REACHED_CHAMBER 0x8fe
 
 #include "battle/battle.h"

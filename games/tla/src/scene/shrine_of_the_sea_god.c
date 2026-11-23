@@ -70,15 +70,25 @@ void FieldEffect_StartBlankOverlay(s32 object);
 #define FLAG_DJINNI_RAN_PAST 0x876   ///< its footprints are gone
 #define FLAG_DJINNI_BY_LEDGE 0x877   ///< it waits by the ledge
 #define FLAG_DJINNI_ON_LEDGE 0x87c   ///< it hopped up onto the ledge
+/// Frost froze the puddle at (8, 18).
 #define FLAG_SHRINE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+/// Frost froze the puddle at (10, 18).
 #define FLAG_SHRINE_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+/// Frost froze the puddle at (10, 17).
 #define FLAG_SHRINE_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
+/// Lash tied the rope room's rope.
 #define FLAG_SHRINE_ROPE_TIED FLAG_SCENE_TEMP_03
+/// Lash tied the north rope.
 #define FLAG_SHRINE_SECOND_ROPE_TIED FLAG_SCENE_TEMP_04
+/// Breath is caught, or its battle begun.
 #define FLAG_DJINNI_CHASE_OVER FLAG_SCENE_TEMP_05
+/// The torch has stopped Breath on the north side.
 #define FLAG_DJINNI_TRAPPED FLAG_SCENE_TEMP_06
+/// The torch stands where it traps Breath.
 #define FLAG_TORCH_AT_NORTH_WALL FLAG_SCENE_TEMP_07
+/// The hole room's unseen blocks are drawn.
 #define FLAG_BLOCKS_SHOWN FLAG_SCENE_TEMP_08
+/// Felix is drawn in front of the crossroads' bridges.
 #define FLAG_LEADER_IN_FRONT FLAG_SCENE_TEMP_0A
 /// A broken bridge's middle has fallen into the stream below.
 #define FLAG_CROSSROADS_BRIDGE_BROKEN FLAG_SCENE_TEMP_30

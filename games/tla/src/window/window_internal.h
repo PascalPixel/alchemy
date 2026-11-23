@@ -91,6 +91,8 @@
   ((entries)[position] = (code),                                               \
    (position) = ((position) + 1) & TEXT_BUFFER_MASK)
 
+/// The space a decoded em dash opens with: a plain space in the European
+/// editions, code 143 in the others.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TEXT_ARGUMENT_SPACE ' '

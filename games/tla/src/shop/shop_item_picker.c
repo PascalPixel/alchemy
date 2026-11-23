@@ -204,6 +204,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
 #define ITEM_PICKER_PRICE_WINDOW_WIDTH 16
 #endif
 
+/// The item details window's width, in tiles, fitted to its edition's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ITEM_PICKER_DETAILS_WINDOW_WIDTH 13
 #elif LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_FRENCH

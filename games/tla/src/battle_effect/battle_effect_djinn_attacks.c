@@ -37,6 +37,7 @@ enum MercurySheetPicture {
 };
 
 #define MERCURY_FLAMES 5 ///< flames thrown
+/// The particle slots Mercury's flames throw their motes into.
 #define MERCURY_MOTE_SLOTS 256
 /// In each summon what bursts throws its motes into its own slots of PARTICLES;
 /// a mote falls, slows and shrinks a size for each

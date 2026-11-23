@@ -1545,8 +1545,8 @@ void Menu_DrawModeIndicator(void) {
 #define TRANSFER_LOWER_WIDTH 21
 #endif
 
-// Spanish, French and Italian indent the password's lines and set them
-// closer together.
+/// Spanish, French and Italian indent the password's lines and set them
+/// closer together.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define PASSWORD_TEXT_X 8

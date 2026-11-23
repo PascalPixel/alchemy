@@ -168,6 +168,8 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #endif
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
+/// A place on the World Map, in pixels, as a place on the picture, 300 pixels
+/// to every 640.
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
 /// Each frame of the world map screen: moves the cursor with the d-pad, faster

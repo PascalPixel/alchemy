@@ -866,6 +866,7 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
     Text_DrawMessageFar(MsgStatusNormal, target, 0, 0);
 }
 
+/// The help line's length, in characters: longer in the European editions.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define HELP_LENGTH 80
@@ -1133,6 +1134,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 /// (menu_strings.s).
 extern const u32 gMenu_PatternRowMasks[][2];
 
+/// The words of one range icon's two tiles.
 #define RANGE_PATTERN_PAIR_WORDS 16
 /// The first of the Status menu's range icon BG tiles, which
 /// PsynergyMenu_DrawRange draws as tilemap entries; the battle menu builds its
@@ -1558,6 +1560,7 @@ s32 PsynergyMenu_SelectAction(void) {
 #define PAGE_ROWS 5
 #endif
 
+/// The tile column the equipment slots' highlight starts at.
 #define EQUIP_SLOT_X 2
 /// The equipment slots' highlight is a tile wider in the European editions.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE

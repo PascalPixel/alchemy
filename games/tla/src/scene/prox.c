@@ -214,7 +214,9 @@ enum ProxCaveHomesActorId {
 /// The Sanctum: one old man, the healer behind its lectern.
 enum ProxCavesActorId { ACTOR_HEALER = ACTOR_FIRST_PLACED };
 
+/// The farewells at the south gate, before the credits.
 #define FLAG_SAID_FAREWELL 0x9cc
+/// Mold hid in the snow pile at the head of the frozen river.
 #define FLAG_MOLD_HID_IN_SNOW 0xa2d
 /// The door of the upper house, which the warrior comes out of, stays open.
 #define FLAG_DOOR_LEFT_OPEN FLAG_SCENE_TEMP_00

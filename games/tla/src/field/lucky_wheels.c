@@ -89,7 +89,9 @@ void LuckyWheels_Run(void);
 /// spin loses before the game ends.
 #define LUCKY_WHEELS_WIN_PAUSE 60
 #define LUCKY_WHEELS_LOSS_PAUSE 45
-/// The stop prompt's sound plays this many frames into a spin.
+/// The stop prompt's window opens this many frames into a spin, and its sound
+/// plays at LUCKY_WHEELS_STOP_PROMPT_FRAME.
+#define LUCKY_WHEELS_STOP_WINDOW_FRAME 4
 #define LUCKY_WHEELS_STOP_PROMPT_FRAME 16
 /// Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte
 /// steps (a 256-colour tile is two): the sheet is 32 pixels wide, so a picture
@@ -124,6 +126,8 @@ void LuckyWheels_Run(void);
 #define LUCKY_WHEELS_BET_MAX 4
 /// The pulls of the lever after the first, before betting again.
 #define LUCKY_WHEELS_RESPINS 4
+/// The places on each wheel given the symbols 0 to 4 and three wilds.
+#define LUCKY_WHEELS_PLACED_SYMBOLS 8
 /// The wheels' symbols, in icons.png's order.
 enum LuckyWheelsSymbol {
   LUCKY_WHEELS_SHIRT,
@@ -175,8 +179,8 @@ enum LuckyWheelsState {
       20, ///< the fourth spin lost: a pause, then the end
 };
 
-/// The positions of the machine's lights, in screen pixels: its four corners
-/// first, then the lights along its frame.
+/// The machine's lights, its four corners first and then the lights along its
+/// frame.
 #define LUCKY_WHEELS_MACHINE_LIGHTS 14
 #define LUCKY_WHEELS_CORNER_LIGHTS 4
 
@@ -572,8 +576,22 @@ struct LuckyWheelsWork {
 #if TLA_PATCH_1
   // The Japanese release has no phase: it closes and reopens its prompt
   // window every frame.
-  s32 phase;
+  s32 phase; ///< the prompt shown while choosing locks (LuckyWheelsPrompt)
 #endif
+};
+
+/// The prompt window LuckyWheelsWork.phase says is open, so that it is drawn
+/// once rather than every frame. The all-locked prompt draws its two lines on
+/// two frames; after a losing spin the first value says the "pull the lever"
+/// line is drawn.
+enum LuckyWheelsPrompt {
+  LUCKY_WHEELS_PROMPT_NONE,
+  LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE,
+  LUCKY_WHEELS_PROMPT_PULL_LEVER = LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE,
+  LUCKY_WHEELS_PROMPT_ALL_LOCKED,
+  LUCKY_WHEELS_PROMPT_START,
+  LUCKY_WHEELS_PROMPT_LOCK,
+  LUCKY_WHEELS_PROMPT_SPIN,
 };
 
 extern char MsgSlotsBet[];        ///< "Bet"
@@ -643,6 +661,7 @@ void LuckyWheels_Update(void) {
         struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
 
         work->state = LUCKY_WHEELS_DONE;
+        // -2: the player quit while betting.
         save->wonPrizes[0] = -2;
         Window_CloseFar(work->window, 1);
       } else {
@@ -721,46 +740,48 @@ void LuckyWheels_Update(void) {
 #if TLA_PATCH_1
         if (work->cursor == LUCKY_WHEELS_LEVER) {
           if (allLocked != 0) {
-            if (work->phase != 1 && work->phase != 2) {
+            if (work->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE &&
+                work->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED) {
               Window_CloseFar(work->window, 1);
               work->window =
                   Window_CreateFar(LUCKY_WHEELS_ALL_LOCKED_X, 0,
                                    LUCKY_WHEELS_ALL_LOCKED_WIDTH, 4, 6);
               Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
                                          0);
-              work->phase = 1;
-            } else if (work->phase == 1) {
+              work->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE;
+            } else if (work->phase ==
+                       LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE) {
               Text_DrawMessageAsTilesFar((s32)MsgSlotsCannotPull, work->window,
                                          0, 8);
-              work->phase = 2;
+              work->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED;
             }
           } else {
-            if (work->phase != 3) {
+            if (work->phase != LUCKY_WHEELS_PROMPT_START) {
               Window_CloseFar(work->window, 1);
               work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
                                               LUCKY_WHEELS_START_WIDTH, 3, 6);
               Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0,
                                          0);
             }
-            work->phase = 3;
+            work->phase = LUCKY_WHEELS_PROMPT_START;
           }
         } else if (work->reels[work->cursor].held == 0) {
-          if (work->phase != 4) {
+          if (work->phase != LUCKY_WHEELS_PROMPT_LOCK) {
             Window_CloseFar(work->window, 1);
             work->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
                                             LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
           }
-          work->phase = 4;
+          work->phase = LUCKY_WHEELS_PROMPT_LOCK;
         } else {
-          if (work->phase != 5) {
+          if (work->phase != LUCKY_WHEELS_PROMPT_SPIN) {
             Window_CloseFar(work->window, 1);
             work->window = Window_CreateFar(LUCKY_WHEELS_SPIN_X, 0,
                                             LUCKY_WHEELS_SPIN_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, work->window, 0,
                                        0);
           }
-          work->phase = 5;
+          work->phase = LUCKY_WHEELS_PROMPT_SPIN;
         }
 #else
         Window_CloseFar(work->window, 1);
@@ -810,15 +831,15 @@ void LuckyWheels_Update(void) {
       }
     } else if (work->state == LUCKY_WHEELS_NO_WIN) {
 #if TLA_PATCH_1
-      if (work->phase == 0) {
-        work->phase = 1;
+      if (work->phase == LUCKY_WHEELS_PROMPT_NONE) {
+        work->phase = LUCKY_WHEELS_PROMPT_PULL_LEVER;
         Text_DrawMessageAsTilesFar(MsgSlotsPullLever, work->window, 0, 8);
       }
 #endif
       if (work->pressed & KEY_A) {
         work->state = LUCKY_WHEELS_CHOOSING_LOCKS;
 #if TLA_PATCH_1
-        work->phase = 0;
+        work->phase = LUCKY_WHEELS_PROMPT_NONE;
 #endif
         Sound_PlayFar(SE_MENU_CONFIRM);
         Window_CloseFar(work->window, 1);
@@ -828,7 +849,7 @@ void LuckyWheels_Update(void) {
       if (work->timer == LUCKY_WHEELS_LOSS_PAUSE)
         work->state = LUCKY_WHEELS_DONE;
     } else if (work->state != LUCKY_WHEELS_DONE) {
-      if (work->timer == 4) {
+      if (work->timer == LUCKY_WHEELS_STOP_WINDOW_FRAME) {
         work->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
                                         LUCKY_WHEELS_STOP_WIDTH, 3, 6);
         Text_DrawMessageAsTilesFar(MsgSlotsStopReels, work->window, 0, 0);
@@ -924,7 +945,7 @@ void LuckyWheels_Update(void) {
         } else {
           work->state = LUCKY_WHEELS_NO_WIN;
 #if TLA_PATCH_1
-          work->phase = 0;
+          work->phase = LUCKY_WHEELS_PROMPT_NONE;
 #endif
           Window_CloseFar(work->window, 1);
           if (work->spins < LUCKY_WHEELS_RESPINS) {
@@ -1336,7 +1357,7 @@ extern char MsgSlotsControls[];  ///< "{button_icon:1}:Start machine
 /// on the canvas while betting or winning, and the jackpot's sparks and
 /// colour cycle while showing a win. Then fades out and frees its memory.
 void LuckyWheels_Run(void) {
-  s32 picks[8];
+  s32 picks[LUCKY_WHEELS_PLACED_SYMBOLS];
   s32 litLines[LUCKY_WHEELS_PAYLINES];
   DrawRectangle draw[2];
   u8 *sheet;
@@ -1496,7 +1517,7 @@ void LuckyWheels_Run(void) {
     for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
       struct Reel *reel = &state->reels[i];
 
-      for (j = 0; j != 8; j++) {
+      for (j = 0; j != LUCKY_WHEELS_PLACED_SYMBOLS; j++) {
         picks[j] = Random16() % LUCKY_WHEELS_REEL_SYMBOLS;
         for (k = 0; k != j; k++) {
           if (picks[j] == picks[k]) {
@@ -1505,7 +1526,7 @@ void LuckyWheels_Run(void) {
           }
         }
       }
-      for (k = 0; k != 8; k++) {
+      for (k = 0; k != LUCKY_WHEELS_PLACED_SYMBOLS; k++) {
         s32 rank = k;
 
         if (rank > LUCKY_WHEELS_WILD_SYMBOL)

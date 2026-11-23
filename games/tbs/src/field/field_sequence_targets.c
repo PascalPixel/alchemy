@@ -210,8 +210,9 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestActorId;
 }
 
-/// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4 and, 12
-/// frames later, shows itemId in front of actor with sparkles.
+/// Opens the chest that is actor target (SE_CHEST_OPEN and the chest sheet's
+/// animation 4) and, 12 frames later, shows itemId in front of actor actorId
+/// with sparkles; returns the item's picture, or 0 when there is no chest.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
   void *targetActor;

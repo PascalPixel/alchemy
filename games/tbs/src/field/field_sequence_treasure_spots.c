@@ -23,8 +23,8 @@ struct MapGridMarkers {
   s32 shakeX, shakeY, shakeDecay;
   ///@}
   /// MapGridScrollWork's markers, read here as (column, row, id) triples, ended
-  /// by 255, 255: a 16-pixel cell and the subject of the trigger there; NULL
-  /// for a map with none.
+  /// by TREASURE_SPOT_LIST_END twice: a 16-pixel cell and the subject of the
+  /// trigger there; NULL for a map with none.
   u8 *markers;
 };
 
@@ -101,9 +101,8 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->collisionFlags = ACTOR_SOLID;
           marker->id = trigger->subject;
           marker->actor = markerActor;
-          // Plain words: through .fixed, the union moves the store above.
-          marker->column = markerActor->x.fixed / toFIXED(16);
-          marker->row = markerActor->z.fixed / toFIXED(16);
+          marker->column = markerActor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS);
+          marker->row = markerActor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -129,9 +128,8 @@ void Field_PlaceTreasureSpots(void) {
           markerActor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
           marker->actor = markerActor;
           marker->id = trigger->subject;
-          // Plain words: through .fixed, the union moves the store above.
-          marker->column = markerActor->x.fixed / toFIXED(16);
-          marker->row = markerActor->z.fixed / toFIXED(16);
+          marker->column = markerActor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS);
+          marker->row = markerActor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -166,6 +164,7 @@ s32 TreasureSpot_FindSlot(s32 id) {
   return matchingSlot;
 }
 
+/// Unused: empty.
 UNUSED void TreasureSpot_ReservedNoOp(void) {}
 
 /// Gives the actor of treasure spot id animation, plays sound and waits 12
@@ -195,8 +194,8 @@ void TreasureSpot_CloseChest(s32 id) {
 }
 
 /// Makes the chest of treasure spot id jump up as a mimic: after 18 frames it
-/// takes TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward
-/// velocityY of 8 << 16.
+/// turns into the mimic with a cry (SE_ENEMY_CRY) and leaps up at 8 pixels a
+/// frame, its shadow showing.
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -212,7 +211,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
     Sound_PlayFar(SE_ENEMY_CRY);
     if (actor != NULL) {
       actor->velocityY = toFIXED(8);
-      Actor_SetSpriteFlagsFar(actor, 1);
+      Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
     }
   }
 }
@@ -249,8 +248,7 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
   return marker->actor;
 }
 
-/// Hides the actor of treasure spot id by clearing its animationKind:
-/// ACTOR_SPRITE_NONE draws no sprite, and the actor stays in its slot.
+/// Hides the actor of treasure spot id; the actor stays in its slot.
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;

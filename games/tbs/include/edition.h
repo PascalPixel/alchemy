@@ -4,13 +4,24 @@
 /// @file
 /// The edition's language, for C to compare (LANGUAGE == LANGUAGE_GERMAN).
 
+// The build defines one TBS_EDITION_ name, as 1; none at all is Japanese.
 #if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN) +                       \
      defined(TBS_EDITION_DE) + defined(TBS_EDITION_ES) +                       \
      defined(TBS_EDITION_FR) + defined(TBS_EDITION_IT)) > 1
-#error multiple game editions selected
+#error Select exactly one TBS edition
+#endif
+#if (defined(TBS_EDITION_JA) && TBS_EDITION_JA != 1) ||                        \
+    (defined(TBS_EDITION_EN) && TBS_EDITION_EN != 1) ||                        \
+    (defined(TBS_EDITION_DE) && TBS_EDITION_DE != 1) ||                        \
+    (defined(TBS_EDITION_ES) && TBS_EDITION_ES != 1) ||                        \
+    (defined(TBS_EDITION_FR) && TBS_EDITION_FR != 1) ||                        \
+    (defined(TBS_EDITION_IT) && TBS_EDITION_IT != 1)
+#error Edition definitions must be 1
 #endif
 
-/// Compile-time language selectors, independent of gameplay revisions.
+/// The languages LANGUAGE may be. Only text, fonts and the layout that fits
+/// them follow the language; every other difference is a patch level
+/// (version.h).
 #define LANGUAGE_JAPANESE 0
 #define LANGUAGE_ENGLISH 1
 #define LANGUAGE_GERMAN 2

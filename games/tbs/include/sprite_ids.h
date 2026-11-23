@@ -9,11 +9,11 @@
 /// Sprite ids, one for each row of the sprite bank (gSprite_AnimationMetadata,
 /// in sprites.tsv's order) in order. A party member's field sprite shares its
 /// character number, so the field draws a character id as its sprite. The
-/// summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite:
-/// its event creates its objects of it (BattleEffect_SpawnObjects), each
-/// playing one of its animations.
-/// A row sprites.tsv leaves empty, with no size and no pictures, shows nothing
-/// and has no name; the next named row's number is written after it.
+/// summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite: its
+/// event creates its objects of it (BattleEffect_SpawnObjects), each playing
+/// one of its animations. A row sprites.tsv leaves empty, with no size and no
+/// pictures, shows nothing and has no name; the next named row's number is
+/// written after it.
 enum SpriteId {
   SPRITE_ISAAC,
   SPRITE_GARET,
@@ -35,10 +35,9 @@ enum SpriteId {
   SPRITE_CHEST,
   /// The bubbles an actor shows over its head (Actor_ShowEmote).
   SPRITE_EMOTE,
-  /// A blank 16-pixel square: an actor that shows nothing, such as a
-  /// shop
-  /// counter, or that a map draws an item's icon on, as for the Nuts that
-  /// Catch takes.
+  /// A blank 16-pixel square: an actor that shows nothing, such as a shop
+  /// counter, or that a map draws an item's icon on, as for the Nuts that Catch
+  /// takes.
   SPRITE_BLANK,
   /// A blank 32-pixel square (blank_32.png holds no drawn pixel). Its one
   /// actor, an unused one in Bilibin, gives it no role, so it keeps
@@ -49,7 +48,8 @@ enum SpriteId {
   /// FIELD_SPRITE_RIPPLE), and around the leader at Mercury Lighthouse's pools,
   /// grey in its first animation and blue in its second.
   SPRITE_RIPPLE,
-  /// Nothing in the source names this sprite.
+  /// The footprints the leader leaves on maps that show them
+  /// (FIELD_SPRITE_FOOTPRINT): one print or a pair, fading.
   SPRITE_FOOTPRINTS,
   /// The sparkles of Tret's glamour that rain on Kolima and its forest.
   SPRITE_GOLDEN_RINGS,
@@ -59,13 +59,13 @@ enum SpriteId {
   /// The Psynergy Stones a map's treasure spots place.
   SPRITE_PSYNERGY_STONE,
   SPRITE_KRADEN = 30,
-  /// The sprite of Dora, Isaac's mother.
+  /// Dora, Isaac's mother.
   SPRITE_DORA,
   SPRITE_SATUROS,
   SPRITE_MENARDI,
-  /// The sprite of Felix behind his mask.
+  /// Felix behind his mask.
   SPRITE_FELIX_MASKED,
-  /// The sprite of Felix as a young man.
+  /// Felix as a young man.
   SPRITE_FELIX,
   SPRITE_FELIX_CHILD,
   SPRITE_BOY_WITH_ORANGE_HAIR,
@@ -78,7 +78,7 @@ enum SpriteId {
   SPRITE_DONPA,
   SPRITE_LAYANA,
   SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN,
-  /// The sprite of Kaja, the Tolbi ship's fighter.
+  /// Kaja, the sea dog over the Tolbi ship's oarsmen.
   SPRITE_KAJA,
   SPRITE_JENNA_CHILD,
   SPRITE_HAMMET,
@@ -90,7 +90,6 @@ enum SpriteId {
   SPRITE_TRET,
   SPRITE_LAUREL,
   SPRITE_IODEM,
-  /// The sprite of McCoy.
   SPRITE_MCCOY,
   SPRITE_MAN_IN_GREEN_SHIRT,
   SPRITE_WOMAN_WITH_PINK_HAIR,
@@ -233,16 +232,16 @@ enum SpriteId {
   SPRITE_ROOF_BOARDS,
   SPRITE_LOG_WEST_EAST,
   SPRITE_FLAME_AND_SMOKE,
-  /// The effect FieldEffect_SetAttached attaches to an actor
-  /// or shows
-  /// once, as the leader flinches on hazard ground.
+  /// The effect FieldEffect_SetAttached attaches to an actor or shows once, as
+  /// the leader flinches on hazard ground.
   SPRITE_ATTACHED_EFFECT,
   SPRITE_CHEST_OF_VALUABLES,
   /// What Move pushes in Goma Cave and many rooms after it, which the game
   /// calls a stone pillar ("It's just a stone pillar.").
   SPRITE_STONE_PILLAR,
   SPRITE_STUMP,
-  /// Nothing in the source names this sprite.
+  /// A large hand, gripping, closed and open, in white and then glowing
+  /// blue. No code or table names it.
   SPRITE_HANDS,
   /// Spray thrown up where water is struck: where Goma Cave's stumps land,
   /// at Kolima Forest's floodgate, and over the Tolbi-bound Ship's side.
@@ -257,15 +256,15 @@ enum SpriteId {
   SPRITE_VINE,
   /// The whirlwind Whirlwind spins up.
   SPRITE_WHIRLWIND,
-  /// Nothing in the source names this sprite.
+  /// A small fire bursting with sparks, dying down to a wisp of smoke. No code
+  /// or table names it.
   SPRITE_FLAME_BURST,
   /// The fields of Psynergy that rise over the party as Kolima's curse falls.
   SPRITE_PSYNERGY_FIELD,
   /// The gold statue stolen from Vault's Sanctum: it rises from a chest in
   /// log_rooms_a.c and stands in the Sanctum again.
   SPRITE_SANCTUM_GOLD_STATUE,
-  /// A puff of dust kicked up where an actor stands; the water beasts of
-  /// Altin
+  /// A puff of dust kicked up where an actor stands; the water beasts of Altin
   /// and its mine spit it as spray, drawn SPRITE_COLOR_BGR or
   /// SPRITE_COLOR_WHITE.
   SPRITE_DUST_PUFF,
@@ -394,8 +393,7 @@ enum SpriteId {
   SPRITE_GLINT,
   /// The lights that float about the Elemental Star Room.
   SPRITE_FLOATING_LIGHT,
-  /// A blank 32-pixel square: an actor seen only by its shadow, such as
-  /// the
+  /// A blank 32-pixel square: an actor seen only by its shadow, such as the
   /// shadows under Altin Peak's falling boulder and its Hydros statue.
   SPRITE_BLANK_LARGE,
   /// The whirlwinds of the Suhalla Desert, which Douse stops, and the one
@@ -653,8 +651,7 @@ enum BabiAnimation {
 };
 
 /// SPRITE_LOG_NORTH_SOUTH's animations (log_north_south.tsv) as a log tips into
-/// a river
-/// (places/kolima-forest-entrance/events/KolimaForestEntrance_PushLog.gif).
+/// a river.
 enum LogAnimation {
   LOG_ANIMATION_ROLL_WEST = 3, ///< rolling over toward the west
   LOG_ANIMATION_FLOAT = 4,     ///< bobbing in the water
@@ -677,8 +674,7 @@ enum FloatingLogAnimation {
 };
 
 /// SPRITE_SPLASH's animations (splash.tsv), as Kolima Forest's floodgate
-/// plays them
-/// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
+/// plays them.
 enum SplashAnimation {
   SPLASH_ANIMATION_BURST = 1, ///< one burst of spray, then nothing
   /// Spray churning for about 120 frames, then dying away to nothing.

@@ -23,10 +23,10 @@ typedef unsigned long long u64;
 #define UNUSED __attribute__((unused))
 
 /// The result of a routine whose callers never read it: a task, an update
-/// routine, or a call whose result is dropped. The ROM's routine sets r0
-/// before it returns, as one with an int result does, while the task runner
-/// and the field call it as void. That call is undefined behaviour, so under
-/// UBFIX the routine returns nothing; RETURN_UNREAD(value) returns its result.
+/// routine, or a call whose result is dropped. The original returns a value,
+/// as a routine with an int result does, while the task runner and the field
+/// call it as void. That call is undefined behaviour, so under UBFIX the
+/// routine returns nothing; RETURN_UNREAD(value) returns its result.
 #ifdef UBFIX
 #define UNREAD_RESULT void
 #define RETURN_UNREAD(value)                                                   \

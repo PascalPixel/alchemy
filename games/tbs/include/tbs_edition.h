@@ -7,27 +7,27 @@
 #include "version.h"
 
 /// Lunpa Fortress's guard room fades in after its battle through a window
-/// transition: the ellipse around the leader (WINDOW_TRANSITION_LEADER) in
-/// Japanese, random bars (WINDOW_TRANSITION_BARS) in the others.
+/// transition: an ellipse around the leader in Japanese, random bars in the
+/// others.
 #if !TBS_PATCH_1
-#define LUNPA_RETURN_TRANSITION_VARIANT 9
+#define LUNPA_RETURN_TRANSITION_VARIANT WINDOW_TRANSITION_LEADER
 #else
-#define LUNPA_RETURN_TRANSITION_VARIANT 0
+#define LUNPA_RETURN_TRANSITION_VARIANT WINDOW_TRANSITION_BARS
 #endif
 
-/// The window renderer's work (struct WindowWork) is laid out anew outside
-/// Japanese: 8 windows instead of 12, and a text ring of 512 codes instead of
-/// 256. With it change the debug menus' columns, two icon menus' widths, and
-/// the first enemy name suffix's character code (65 in Japanese, which has 26
-/// suffixes; 49 in the others, which have 9).
+/// Outside Japanese the windows' work (struct WindowWork) is laid out anew: 8
+/// windows instead of 12, and a text ring of 512 codes instead of 256. The
+/// longer words widen the field menu's and the File Screen's icon rows and move
+/// the debug scene selector's columns, and two enemies of one kind are told
+/// apart in battle by 1 to 9 after their names instead of A to Z.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TEXT_BUFFER_MASK 0xFF
 #define WINDOW_COUNT 12
-#define SELECT_MENU_WIDTH 5
-#define TYPE_MENU_WIDTH 4
-#define MENU_TEXT_X 100
-#define MENU_LABEL_X 110
-#define LIST_MARKER_CHAR 65
+#define SELECT_MENU_WIDTH 5 ///< the field menu's icon row
+#define TYPE_MENU_WIDTH 4   ///< the File Screen's icon row
+#define MENU_TEXT_X 100     ///< the debug scene selector's colons
+#define MENU_LABEL_X 110    ///< its entrance number and area name
+#define LIST_MARKER_CHAR 'A'
 #else
 #define TEXT_BUFFER_MASK 0x1FF
 #define WINDOW_COUNT 8
@@ -35,10 +35,10 @@
 #define TYPE_MENU_WIDTH 7
 #define MENU_TEXT_X 74
 #define MENU_LABEL_X 82
-#define LIST_MARKER_CHAR 49
+#define LIST_MARKER_CHAR '1'
 #endif
 
-/// The y of the debug scene menu's first row, in pixels, where its arrow
+/// The y of the debug scene selector's first row, in pixels, where its arrow
 /// points.
 #define MENU_TEXT_Y 60
 
@@ -48,7 +48,7 @@
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define COLOSSO_PALETTE_BYTES 192
-#define LOBBY_PREFIX_LIMIT 7
+#define LOBBY_PREFIX_LIMIT 7 ///< the index of the prefix's last letter
 #else
 #define COLOSSO_PALETTE_BYTES 160
 #define LOBBY_PREFIX_LIMIT 4
@@ -71,16 +71,14 @@
 #endif
 #endif
 
-/// The menus' layout: the shop's sell and repair price window, the help line
-/// under the item and Psynergy menus, and the Status menu's switch help, page
-/// rows and row count, which the localized editions widen or rearrange.
+/// The menus' layout, which the localized editions widen or rearrange.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define SHOP_LIST_X 16
-#define SHOP_LIST_WIDTH 14
-#define HELP_TEXT_X 16
-#define SWITCH_HELP_X 64
-#define PAGE_ROWS 6
-#define MENU_ROW_COUNT 4
+#define SHOP_LIST_X 16     ///< the shop's sell and repair price window
+#define SHOP_LIST_WIDTH 14 ///< its width, in tiles
+#define HELP_TEXT_X 16     ///< the help line under the item and Psynergy menus
+#define SWITCH_HELP_X 64   ///< the Status menu's help for switching members
+#define PAGE_ROWS 6        ///< the Status menu's Psynergy names a page
+#define MENU_ROW_COUNT 4   ///< member figures the Status menu lowers
 #elif LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_LIST_X 14
 #define SHOP_LIST_WIDTH 16
@@ -239,10 +237,11 @@
 #define LUCKY_WHEELS_CHOOSE_HELD_X 3
 #define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 24
 #endif
-/// Lucky Wheels' count of Game Tickets left after the bet takes three digits
-/// from the French release on, one tile further left so that it ends where the
-/// two did, and the hold hint no longer follows the fourth and last spin, after
-/// which no wheel can be held. Neither is about words, so both are updates.
+/// Lucky Wheels' count of Game Tickets left after the bet
+/// (LUCKY_WHEELS_COIN_DIGITS and _X) takes three digits from the French release
+/// on, one tile further left so that it ends where the two did, and the hold
+/// hint no longer follows the fourth and last spin, after which no wheel can be
+/// held. Neither is about words, so both are patches.
 #if TBS_PATCH_3
 #define LUCKY_WHEELS_COIN_DIGITS 3
 #define LUCKY_WHEELS_COIN_X 56
@@ -254,15 +253,9 @@
 #endif
 
 /// The first area name message, for the area name shown on entering a new
-/// area (AreaNameWindow_Show).
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define RENDER_RESOURCE_BASE 2516
-#elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||           \
-    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define RENDER_RESOURCE_BASE 3039
-#else
-#define RENDER_RESOURCE_BASE 2459
-#endif
+/// area (AreaNameWindow_Show): MsgDebugAreaName, the debug scene selector's
+/// name for the title screen, which the area names follow in every edition.
+#define RENDER_RESOURCE_BASE MsgDebugAreaName
 
 /// The Status menu's Psynergy list: its range icon tiles, rows and columns.
 #if LANGUAGE == LANGUAGE_JAPANESE

@@ -13,7 +13,7 @@ FarCall_RuntimeTable:
 	export Random16Far, Random16
 	export Trig_AtanFar, Trig_Atan
 	overlay_veneer Math_IntegerSqrt
-	export FixedSqrtFar, Math_SqrtFX
+	export Math_SqrtFXFar, Math_SqrtFX
 	export Trig_SinFar, Trig_Sin
 	export Trig_CosFar, Trig_Cos
 	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset

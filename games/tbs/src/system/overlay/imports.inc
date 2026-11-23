@@ -27,7 +27,7 @@
 	export Task_Remove, Task_RemoveFar
 	export Import_RandomNext, Random16Far
 	export Trig_Atan, Trig_AtanFar
-	export Math_SqrtFX, FixedSqrtFar
+	export Math_SqrtFX, Math_SqrtFXFar
 	export Trig_Sin, Trig_SinFar
 	export Trig_Cos, Trig_CosFar
 	export Vector_AddPolarOffset, Vector_AddPolarOffsetFar
@@ -277,7 +277,7 @@
 	export Weather_ResumeLightning, Weather_ResumeLightningFar
 	export Weather_StartLightningFlash, Weather_StartLightningFlashFar
 	export FieldEffect_InitializeSparkles, FieldEffect_InitializeSparklesFar
-	export ScreenTransition_StartHeldWindow, ScreenTransition_InitializeBattleEffectStateFar
+	export ScreenTransition_StartHeldWindow, ScreenTransition_StartHeldWindowFar
 	export PaletteFade_SetTarget, PaletteFade_SetTargetFar
 	export PaletteFade_SetSource, PaletteFade_SetSourceFar
 	export PaletteFade_StartInterpolation, PaletteFade_StartInterpolationFar

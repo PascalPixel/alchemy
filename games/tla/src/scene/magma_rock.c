@@ -147,6 +147,25 @@ enum MagmaRockSalamanderTailEntrance {
   ENTRANCE_LOW_EAST_FROM_LOW_WEST_B
 };
 
+/// The cliff's exits from one of its levels to another, each leading to the
+/// entrance of the same letter: the high west level's two walls down to the
+/// low west level and the high east level's down to the low east level, the
+/// walls back up, and the paths between the levels side by side.
+enum MagmaRockSalamanderTailExit {
+  EXIT_HIGH_WEST_DOWN_A = 1,
+  EXIT_HIGH_WEST_DOWN_B,
+  EXIT_HIGH_WEST_TO_HIGH_EAST,
+  EXIT_HIGH_EAST_TO_HIGH_WEST,
+  EXIT_HIGH_EAST_DOWN = 7,
+  EXIT_LOW_WEST_UP_A = 9,
+  EXIT_LOW_WEST_UP_B,
+  EXIT_LOW_WEST_TO_LOW_EAST_A,
+  EXIT_LOW_WEST_TO_LOW_EAST_B,
+  EXIT_LOW_EAST_TO_LOW_WEST_A,
+  EXIT_LOW_EAST_UP,
+  EXIT_LOW_EAST_TO_LOW_WEST_B
+};
+
 /// The cell behaviours the scene's triggers answer. The three maps and the
 /// cliff's four levels each read them their own way, so one number can stand
 /// for two places. Cells on raised ground hold their behaviour some rows south
@@ -415,16 +434,16 @@ void MagmaRock_SettleBlocks(u16 *ids) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern s16 gMagmaRock_Regions[];
-extern s16 gMagmaRock_SalamanderTailRegions[];
-extern s16 gMagmaRock_StatueRegions[];
+extern struct SceneRegion gMagmaRock_Regions[];
+extern struct SceneRegion gMagmaRock_SalamanderTailRegions[];
+extern struct SceneRegion gMagmaRock_StatueRegions[];
 
-const struct SceneEntrance *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)
-    return (const struct SceneEntrance *)gMagmaRock_SalamanderTailRegions;
+    return gMagmaRock_SalamanderTailRegions;
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
-    return (const struct SceneEntrance *)gMagmaRock_StatueRegions;
-  return (const struct SceneEntrance *)gMagmaRock_Regions;
+    return gMagmaRock_StatueRegions;
+  return gMagmaRock_Regions;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
@@ -720,50 +739,51 @@ void MagmaRock_MoveFireball(struct Actor *actor) {
   }
 }
 
-/// Unless the party keeps its place: sets a fireball on one statue of its
-/// pair, given by side, facing the other, and starts it flying.
+/// Unless the party keeps its place: sets a fireball on one statue of the pair
+/// whose first statue is `first` (`side` 0 that one, 1 the other), facing the
+/// other, and starts it flying.
 void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   struct Actor *actor = Actor_Get(id);
-  struct Actor *a;
-  struct Actor *b;
-  u16 left;
-  u16 right;
-  s32 linked;
-  s32 next;
+  struct Actor *firstStatue;
+  struct Actor *secondStatue;
+  u16 firstId;
+  u16 startSide;
+  s32 startId;
+  s32 secondId;
   u8 *flags;
-  u8 facing;
+  u8 rollSide;
   s16 *pairFirst;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     return;
-  left = first;
-  right = side;
-  linked = left + right;
-  actor->x.fixed = Actor_Get(linked)->x.fixed;
-  actor->y.fixed = Actor_Get(linked)->y.fixed;
-  actor->z.fixed = Actor_Get(linked)->z.fixed;
+  firstId = first;
+  startSide = side;
+  startId = firstId + startSide;
+  actor->x.fixed = Actor_Get(startId)->x.fixed;
+  actor->y.fixed = Actor_Get(startId)->y.fixed;
+  actor->z.fixed = Actor_Get(startId)->z.fixed;
   Scene_SetActorSpritePriority(actor, 2);
   pairFirst = &actor->userValue;
   *pairFirst = first;
-  facing = side ^ 1;
-  actor->rollSide = facing;
+  rollSide = side ^ 1;
+  actor->rollSide = rollSide;
   actor->update = (void *)MagmaRock_MoveFireball;
-  next = left + 1;
+  secondId = firstId + 1;
   flags = &actor->motionFlags;
-  if (right != 0) {
-    a = Actor_Get(left);
-    b = Actor_Get(next);
-    if (a->x.fixed < b->x.fixed)
+  if (startSide != 0) {
+    firstStatue = Actor_Get(firstId);
+    secondStatue = Actor_Get(secondId);
+    if (firstStatue->x.fixed < secondStatue->x.fixed)
       actor->facing = FACING_WEST;
     else
-      actor->facing = 0;
+      actor->facing = FACING_EAST;
   } else {
-    a = Actor_Get(left);
-    b = Actor_Get(next);
-    if (a->x.fixed > b->x.fixed)
+    firstStatue = Actor_Get(firstId);
+    secondStatue = Actor_Get(secondId);
+    if (firstStatue->x.fixed > secondStatue->x.fixed)
       actor->facing = FACING_WEST;
     else
-      actor->facing = 0;
+      actor->facing = FACING_EAST;
   }
   *flags = 0;
 }
@@ -1281,7 +1301,8 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
 
 /// Burst at a cracked pillar on the slide or on the cliff: the pillar breaks
 /// (MagmaRock_BurstStatue) and its flag keeps it gone until the party leaves.
-#define DEFINE_MAGMA_ROCK_BURST_COLUMN(name, n1, n2, n3)                       \
+#define DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(name, slidePillar, cliffPillar,     \
+                                           flag)                               \
   void name(s32 stage, s32 frame) {                                            \
     struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
@@ -1290,35 +1311,35 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
       s32 scene = party->next;                                                 \
                                                                                \
       if (scene == SCENE_MAGMA_ROCK_SLIDE)                                     \
-        work->child = Actor_Get(n1);                                           \
+        work->child = Actor_Get(slidePillar);                                  \
       else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)                \
-        work->child = Actor_Get(n2);                                           \
+        work->child = Actor_Get(cliffPillar);                                  \
       MagmaRock_BurstStatue(stage, frame);                                     \
     }                                                                          \
-    Event_SetFlag(n3);                                                         \
+    Event_SetFlag(flag);                                                       \
   }
 
 /// Burst breaks the north-west one of the four cracked pillars in front of the
 /// slide's cave mouth (cell (15, 31)), or the cracked pillar on the cliff's
 /// high west level (cell (22, 34)) as its statue's fireball lands on it.
 /// Either sets `FLAG_CRACKED_PILLAR_A_BURST`.
-DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarA,
-                               ACTOR_CRACKED_PILLAR_A,
-                               ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
-                               FLAG_CRACKED_PILLAR_A_BURST)
+DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarA,
+                                   ACTOR_CRACKED_PILLAR_A,
+                                   ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
+                                   FLAG_CRACKED_PILLAR_A_BURST)
 
 /// Burst breaks the north-east one of the four cracked pillars in front of the
 /// slide's cave mouth (cell (17, 31)), or the cracked pillar on the cliff's low
 /// east level (cell (42, 39)) as its statue's fireball lands on it. Either sets
 /// `FLAG_CRACKED_PILLAR_B_BURST`.
-DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
-                               ACTOR_CRACKED_PILLAR_B,
-                               ACTOR_LOW_EAST_CRACKED_PILLAR,
-                               FLAG_CRACKED_PILLAR_B_BURST)
+DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
+                                   ACTOR_CRACKED_PILLAR_B,
+                                   ACTOR_LOW_EAST_CRACKED_PILLAR,
+                                   FLAG_CRACKED_PILLAR_B_BURST)
 
 /// Defines what Burst does to a cracked pillar: it breaks the pillar actor
 /// (MagmaRock_BurstStatue) and sets its flag.
-#define DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(name, pillar, flag)              \
+#define DEFINE_BURST_CRACKED_PILLAR(name, pillar, flag)                        \
   void name(s32 stage, s32 frame) {                                            \
     struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
                                                                                \
@@ -1329,23 +1350,20 @@ DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
 
 /// Burst breaks the south-west one of the four cracked pillars in front of the
 /// slide's cave mouth (cell (14, 34)). It sets `FLAG_CRACKED_PILLAR_C_BURST`.
-DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarC,
-                                      ACTOR_CRACKED_PILLAR_C,
-                                      FLAG_CRACKED_PILLAR_C_BURST)
+DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarC,
+                            ACTOR_CRACKED_PILLAR_C, FLAG_CRACKED_PILLAR_C_BURST)
 
 /// Burst breaks the south-east one of the four cracked pillars in front of the
 /// slide's cave mouth (cell (18, 34)). It sets `FLAG_CRACKED_PILLAR_D_BURST`.
-DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarD,
-                                      ACTOR_CRACKED_PILLAR_D,
-                                      FLAG_CRACKED_PILLAR_D_BURST)
+DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarD,
+                            ACTOR_CRACKED_PILLAR_D, FLAG_CRACKED_PILLAR_D_BURST)
 
 /// The fireball of the statue at the east end of the slide's upper ledge
 /// lands on the cracked pillar west of it (cell (20, 25)), and the blast breaks
 /// the pillar, opening the climb up to the ledge where it stood. It sets
 /// `FLAG_CRACKED_PILLAR_E_BURST`.
-DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarE,
-                                      ACTOR_CRACKED_PILLAR_E,
-                                      FLAG_CRACKED_PILLAR_E_BURST)
+DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarE,
+                            ACTOR_CRACKED_PILLAR_E, FLAG_CRACKED_PILLAR_E_BURST)
 
 /// Nothing visible happens when Felix, come out of the Ember Stone's room
 /// (MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_INSIDE_EMBER_STONE), takes his first step
@@ -1710,8 +1728,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 #include "../field/field_effect_advance_motion.c"
 
-#undef DEFINE_MAGMA_ROCK_BURST_COLUMN
-#undef DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN
+#undef DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR
+#undef DEFINE_BURST_CRACKED_PILLAR
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SPRITE_PRIORITY
@@ -2295,19 +2313,19 @@ void Actor_PlaceOnActor(s32 id, s32 owner);
 /// cracks, the second time it gives way with the leader.
 UNUSED void MagmaRock_StepOnTrap(u16 *list) {
   struct Actor *leader;
-  struct Actor *actor8;
+  struct Actor *firstPlaced;
   struct Actor *target;
   FIXED position[3];
 
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  actor8 = Actor_GetById(8);
+  firstPlaced = Actor_GetById(ACTOR_FIRST_PLACED);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   target = Actor_FindAtCell(position, 0);
-  if (target == 0)
+  if (target == NULL)
     return;
   while (*list != ACTOR_LIST_END) {
     u32 id = list[0];
@@ -2321,28 +2339,32 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
 
       Event_Start();
       if (!Event_GetFlag(flag)) {
-        Actor_SelectAnimation(actor8, 1);
-        Actor_TakePlaceOf(actor8, target);
+        Actor_SelectAnimation(firstPlaced, 1);
+        Actor_TakePlaceOf(firstPlaced, target);
         wait(1);
         Event_PlaySound(SE_CHEST_CLOSE);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_WHITE);
         wait(2);
-        Actor_SelectAnimation(actor8, 0);
-        Actor_CopyGraphics(id, 9);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        Actor_SelectAnimation(firstPlaced, 0);
+        Actor_CopyGraphics(id, ACTOR_FIRST_PLACED + 1);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_NORMAL);
         wait(2);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_WHITE);
         wait(4);
-        FieldActor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        FieldActor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                                  SPRITE_COLOR_NORMAL);
         Dust_Scatter(0);
-        Actor_TakePlaceOf(target, actor8);
+        Actor_TakePlaceOf(target, firstPlaced);
         wait(1);
         Event_SetFlag(flag);
       } else if (!Event_GetFlag(flag + 1)) {
         u8 *flags;
 
-        Actor_SelectAnimation(actor8, 0);
-        Actor_TakePlaceOf(actor8, target);
+        Actor_SelectAnimation(firstPlaced, 0);
+        Actor_TakePlaceOf(firstPlaced, target);
         wait(1);
         flags = &leader->motionFlags;
         *flags = 0;
@@ -2350,7 +2372,7 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
         MapGrid_SetShake(1, 4, 1);
         Dust_Scatter(0);
         wait(8);
-        Actor_SelectAnimation(actor8, 2);
+        Actor_SelectAnimation(firstPlaced, 2);
         Leader_SetCellShapeAt(-2, target->layer);
         Dust_Scatter(1);
         wait(16);
@@ -2358,9 +2380,9 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        *flags = 3;
+        *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         wait(5);
-        Actor_SetPositionAndResetMotion(actor8, 0, 0, 0);
+        Actor_SetPositionAndResetMotion(firstPlaced, 0, 0, 0);
         wait(2);
         Event_PlaySound(SE_THUMP);
         MagmaRock_SpawnDustRing();
@@ -2389,13 +2411,13 @@ void MagmaRock_SpawnDustRing(void) {
   s32 angle;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (leader == 0)
+  if (leader == NULL)
     return;
   state = 0;
   for (i = 0; i <= DUST_RING_PUFFS; i++) {
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-    if (effect != 0) {
+    if (effect != NULL) {
       state = Sprite_ShareVramCacheEntry(effect->sprite, state);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
@@ -2598,33 +2620,33 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "shared/scene_entrances_default.c"
 
 /// The exit regions of the slide.
-s16 gMagmaRock_Regions[] = {
-    240, 328, 352, 256, 344, 368, -1, 3,
-    448, 328, 352, 464, 344, 368, -1, 4,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gMagmaRock_Regions[] = {
+    {240, 328, 352, 256, 344, 368, CONDITION_ALWAYS, MAGMA_ROCK_SLIDE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST},
+    {448, 328, 352, 464, 344, 368, CONDITION_ALWAYS, MAGMA_ROCK_SLIDE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST},
+    {SCENE_TABLE_END},
 };
 
 /// The exit regions of the cliff.
-s16 gMagmaRock_SalamanderTailRegions[] = {
-    272, 56, 576, 288, 72, 592, -1, 1,
-    352, 40, 560, 368, 56, 576, -1, 2,
-    752, 512, 536, 768, 528, 552, -1, 5,
-    784, 80, 592, 800, 96, 608, -1, 7,
-    896, 512, 528, 912, 528, 544, -1, 8,
-    272, 48, 576, 288, 64, 592, -1, 9,
-    352, 32, 560, 368, 48, 576, -1, 10,
-    784, 56, 592, 800, 72, 608, -1, 14,
-    752, -344, 672, 768, -328, 688, -1, 16,
-    976, -344, 672, 992, -328, 688, -1, 17,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gMagmaRock_SalamanderTailRegions[] = {
+    {272, 56, 576, 288, 72, 592, CONDITION_ALWAYS, EXIT_HIGH_WEST_DOWN_A},
+    {352, 40, 560, 368, 56, 576, CONDITION_ALWAYS, EXIT_HIGH_WEST_DOWN_B},
+    {752, 512, 536, 768, 528, 552, CONDITION_ALWAYS, MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_STATUE_WEST},
+    {784, 80, 592, 800, 96, 608, CONDITION_ALWAYS, EXIT_HIGH_EAST_DOWN},
+    {896, 512, 528, 912, 528, 544, CONDITION_ALWAYS, MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_STATUE_EAST_B},
+    {272, 48, 576, 288, 64, 592, CONDITION_ALWAYS, EXIT_LOW_WEST_UP_A},
+    {352, 32, 560, 368, 48, 576, CONDITION_ALWAYS, EXIT_LOW_WEST_UP_B},
+    {784, 56, 592, 800, 72, 608, CONDITION_ALWAYS, EXIT_LOW_EAST_UP},
+    {752, -344, 672, 768, -328, 688, CONDITION_ALWAYS, MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_SLIDE_WEST},
+    {976, -344, 672, 992, -328, 688, CONDITION_ALWAYS, MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_SLIDE_EAST},
+    {SCENE_TABLE_END},
 };
 
 /// The exit regions of the top.
-s16 gMagmaRock_StatueRegions[] = {
-    240, -56, 448, 256, -40, 464, -1, 1,
-    384, -56, 448, 400, -40, 464, -1, 2,
-    416, -128, 448, 432, -112, 464, -1, 4,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gMagmaRock_StatueRegions[] = {
+    {240, -56, 448, 256, -40, 464, CONDITION_ALWAYS, MAGMA_ROCK_STATUE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST},
+    {384, -56, 448, 400, -40, 464, CONDITION_ALWAYS, MAGMA_ROCK_STATUE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_B},
+    {416, -128, 448, 432, -112, 464, CONDITION_ALWAYS, MAGMA_ROCK_STATUE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_A},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -2634,21 +2656,21 @@ u32 gSceneExits[] = {
     SCENE_EXIT(MAGMA_ROCK_SLIDE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST, MagmaRockSalamanderTailChest, MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_SLIDE_WEST),
     SCENE_EXIT(MAGMA_ROCK_SLIDE_TO_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST, MagmaRockSalamanderTailChest, MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_SLIDE_EAST),
     SCENE_EXITS(MagmaRockSalamanderTailChest),
-    SCENE_EXIT(1, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_ABOVE_A),
-    SCENE_EXIT(2, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_ABOVE_B),
-    SCENE_EXIT(3, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_EAST_FROM_HIGH_WEST),
-    SCENE_EXIT(4, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_WEST_FROM_HIGH_EAST),
+    SCENE_EXIT(EXIT_HIGH_WEST_DOWN_A, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_ABOVE_A),
+    SCENE_EXIT(EXIT_HIGH_WEST_DOWN_B, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_ABOVE_B),
+    SCENE_EXIT(EXIT_HIGH_WEST_TO_HIGH_EAST, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_EAST_FROM_HIGH_WEST),
+    SCENE_EXIT(EXIT_HIGH_EAST_TO_HIGH_WEST, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_WEST_FROM_HIGH_EAST),
     SCENE_EXIT(MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_STATUE_WEST, MagmaRockStatue, MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST),
     SCENE_EXIT(MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_STATUE_EAST_A, MagmaRockStatue, MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_B),
-    SCENE_EXIT(7, MagmaRockSalamanderTailChest, ENTRANCE_LOW_EAST_FROM_ABOVE),
+    SCENE_EXIT(EXIT_HIGH_EAST_DOWN, MagmaRockSalamanderTailChest, ENTRANCE_LOW_EAST_FROM_ABOVE),
     SCENE_EXIT(MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_STATUE_EAST_B, MagmaRockStatue, MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_B),
-    SCENE_EXIT(9, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_WEST_FROM_BELOW_A),
-    SCENE_EXIT(10, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_WEST_FROM_BELOW_B),
-    SCENE_EXIT(11, MagmaRockSalamanderTailChest, ENTRANCE_LOW_EAST_FROM_LOW_WEST_A),
-    SCENE_EXIT(12, MagmaRockSalamanderTailChest, ENTRANCE_LOW_EAST_FROM_LOW_WEST_B),
-    SCENE_EXIT(13, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_LOW_EAST_A),
-    SCENE_EXIT(14, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_EAST_FROM_BELOW),
-    SCENE_EXIT(15, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_LOW_EAST_B),
+    SCENE_EXIT(EXIT_LOW_WEST_UP_A, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_WEST_FROM_BELOW_A),
+    SCENE_EXIT(EXIT_LOW_WEST_UP_B, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_WEST_FROM_BELOW_B),
+    SCENE_EXIT(EXIT_LOW_WEST_TO_LOW_EAST_A, MagmaRockSalamanderTailChest, ENTRANCE_LOW_EAST_FROM_LOW_WEST_A),
+    SCENE_EXIT(EXIT_LOW_WEST_TO_LOW_EAST_B, MagmaRockSalamanderTailChest, ENTRANCE_LOW_EAST_FROM_LOW_WEST_B),
+    SCENE_EXIT(EXIT_LOW_EAST_TO_LOW_WEST_A, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_LOW_EAST_A),
+    SCENE_EXIT(EXIT_LOW_EAST_UP, MagmaRockSalamanderTailChest, ENTRANCE_HIGH_EAST_FROM_BELOW),
+    SCENE_EXIT(EXIT_LOW_EAST_TO_LOW_WEST_B, MagmaRockSalamanderTailChest, ENTRANCE_LOW_WEST_FROM_LOW_EAST_B),
     SCENE_EXIT(MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_SLIDE_WEST, MagmaRockSlide, MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST),
     SCENE_EXIT(MAGMA_ROCK_SALAMANDER_TAIL_CHEST_TO_MAGMA_ROCK_SLIDE_EAST, MagmaRockSlide, MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST),
     SCENE_EXITS(MagmaRockStatue),
@@ -2661,49 +2683,49 @@ u32 gSceneExits[] = {
 
 /// The actors placed in the slide.
 struct ActorPlacement gMagmaRock_Placements[] = {
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 6, 0, 0, FACING_EAST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 9, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 10, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 2},
-    {379, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 6, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 7, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 9, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STATUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     ACTOR_PLACEMENT(SPRITE_FLAME_PUFF, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 /// The actors placed in the cliff's high west level.
 struct ActorPlacement gMagmaRock_SalamanderTailHighWestPlacements[] = {
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_SOUTH, 2, 2},
-    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_SOUTH, 2, 3},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_EAST, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 3, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 4, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 5, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 6, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 7, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
 };
 
 /// The actors placed in the cliff's high east level.
 struct ActorPlacement gMagmaRock_SalamanderTailHighEastPlacements[] = {
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_SOUTH, 2, 2},
-    {379, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 13, 0, 0, FACING_SOUTH, 2, 2},
-    {379, CONDITION_ALWAYS, 1, 13, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 9, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 10, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 9, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 10, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 9, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 10, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STATUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 12, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 13, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STATUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 13, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     ACTOR_PLACEMENT(SPRITE_FLAME_PUFF, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FLAME_PUFF, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FLAME_PUFF, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
@@ -2712,43 +2734,44 @@ struct ActorPlacement gMagmaRock_SalamanderTailHighEastPlacements[] = {
 
 /// The actors placed in the cliff's low west level.
 struct ActorPlacement gMagmaRock_SalamanderTailLowWestPlacements[] = {
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 14, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_SOUTH, 2, 2},
-    {379, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 16, 0, 0, FACING_SOUTH, 2, 2},
-    {379, CONDITION_ALWAYS, 1, 16, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 17, 0, 0, FACING_SOUTH, 2, 2},
-    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, 1, 18, 0, 0, FACING_SOUTH, 2, 3},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 14, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 15, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STATUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 15, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 16, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STATUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 16, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 17, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 18, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT | ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {SCENE_TABLE_END},
 };
 
 /// The actors placed in the cliff's low east level.
 struct ActorPlacement gMagmaRock_SalamanderTailLowEastPlacements[] = {
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 19, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 20, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 21, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 22, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 23, 0, 0, FACING_SOUTH, 2, 2},
-    {379, CONDITION_ALWAYS, 1, 23, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 24, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 25, 0, 0, FACING_WEST, 2, 2},
-    {SPRITE_SPROUT, CONDITION_ALWAYS, 7, 26, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_SPROUT, CONDITION_ALWAYS, 7, 27, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_SPROUT, CONDITION_ALWAYS, 7, 28, 0, 0, FACING_NORTH, 2, 2},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 19, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 20, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 21, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 22, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 23, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_STATUE_CAP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 23, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 25, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 26, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 27, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 28, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
 };
 
 /// The actors placed on the top.
 struct ActorPlacement gMagmaRock_StatuePlacements[] = {
-    {384, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
-    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
+    {SPRITE_GREAT_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
+    {SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 2, 0, 0, FACING_WEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 /// The triggers of the slide.
 struct Trigger gMagmaRock_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, MAGMA_ROCK_SLIDE_TO_WORLD_MAP, CONDITION_ALWAYS,
+     MAGMA_ROCK_SLIDE_TO_WORLD_MAP},
     {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH,
      CELL_BEHAVIOR_MAGMA_ROCK_CAVE_DOOR, FLAG_CAVE_DOOR_USED,
      EVENT(MagmaRock_EnterCave)},
@@ -2808,7 +2831,8 @@ struct Trigger gMagmaRock_Triggers[] = {
 
 /// The triggers of the cliff's high west level.
 struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, EXIT_HIGH_WEST_TO_HIGH_EAST, CONDITION_ALWAYS,
+     EXIT_HIGH_WEST_TO_HIGH_EAST},
     {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MAGMA_ROCK_CRUMBLING_PILLAR,
      CONDITION_ALWAYS, EVENT(MagmaRock_CheckCrumblingPillars)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
@@ -2847,7 +2871,8 @@ struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
 
 /// The triggers of the cliff's high east level.
 struct Trigger gMagmaRock_SalamanderTailHighEastTriggers[] = {
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, EXIT_HIGH_EAST_TO_HIGH_WEST, CONDITION_ALWAYS,
+     EXIT_HIGH_EAST_TO_HIGH_WEST},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MagmaRock_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -2880,8 +2905,10 @@ struct Trigger gMagmaRock_SalamanderTailHighEastTriggers[] = {
 
 /// The triggers of the cliff's low west level.
 struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, EXIT_LOW_WEST_TO_LOW_EAST_A, CONDITION_ALWAYS,
+     EXIT_LOW_WEST_TO_LOW_EAST_A},
+    {TRIGGER_EXIT, EXIT_LOW_WEST_TO_LOW_EAST_B, CONDITION_ALWAYS,
+     EXIT_LOW_WEST_TO_LOW_EAST_B},
     // Flag 8 comes after the party members' flags and no code sets it, so the
     // push always answers, as the low east level's does.
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
@@ -2919,8 +2946,10 @@ struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
 
 /// The triggers of the cliff's low east level.
 struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
-    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, EXIT_LOW_EAST_TO_LOW_WEST_A, CONDITION_ALWAYS,
+     EXIT_LOW_EAST_TO_LOW_WEST_A},
+    {TRIGGER_EXIT, EXIT_LOW_EAST_TO_LOW_WEST_B, CONDITION_ALWAYS,
+     EXIT_LOW_EAST_TO_LOW_WEST_B},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
      CELL_BEHAVIOR_MAGMA_ROCK_PILLAR_PUSH, CONDITION_ALWAYS,
      EVENT(MagmaRock_PushPillarWest)},
@@ -2983,7 +3012,8 @@ struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
 
 /// The triggers of the top.
 struct Trigger gMagmaRock_StatueTriggers[] = {
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, MAGMA_ROCK_STATUE_TO_MAGMA_ROCK_INSIDE_ENTRANCE,
+     CONDITION_ALWAYS, MAGMA_ROCK_STATUE_TO_MAGMA_ROCK_INSIDE_ENTRANCE},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
      CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},

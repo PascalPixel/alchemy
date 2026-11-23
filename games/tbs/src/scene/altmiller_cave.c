@@ -161,15 +161,16 @@ enum {
 /// The lights, one of each colour.
 enum { LIGHT_COUNT = 5 };
 
-/// The palette a light or rock is drawn in, as its child value. They are the
-/// five colors in the same order, and none for a rock while Reveal is off.
+/// The colour mode that draws a light or a rock in each of Babi's five colors,
+/// a shuffle or tint of the sprite's own colours, and greyscale for a rock
+/// while Reveal is off.
 enum {
-  COLOR_BLUE = 1,
-  COLOR_GREEN = 4,
-  COLOR_WHITE = 11,
-  COLOR_YELLOW = 2,
-  COLOR_RED = 3,
-  COLOR_NONE = 6
+  COLOR_BLUE = SPRITE_COLOR_GRB,
+  COLOR_GREEN = SPRITE_COLOR_GBR,
+  COLOR_WHITE = SPRITE_COLOR_GREEN_TINT,
+  COLOR_YELLOW = SPRITE_COLOR_RBG,
+  COLOR_RED = SPRITE_COLOR_BGR,
+  COLOR_NONE = SPRITE_COLOR_GREY
 };
 
 /// The scene temp flags the cave keeps.
@@ -521,7 +522,7 @@ static void AltmillerCave_StartRetreat(void) {
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   original = effectWork->mainActor;
   Actor_FaceDirection(effectWork->firstActorId, FACING_SOUTH, 0);
-  Actor_SetSpriteColorMode(original, 0);
+  Actor_SetSpriteColorMode(original, SPRITE_COLOR_NORMAL);
   Event_Wait(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
                                   original->z.fixed);

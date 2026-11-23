@@ -1174,7 +1174,8 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
     }
   } else {
     Event_SetMessageId(MsgBabiTruthDoorOpenThoseSeeing);
-    // "The truth of this door is open to those seeing with their..."
+    // The wall's writing, with no speaker (-1): "The truth of this door is
+    // open to those seeing with their true heart."
     Event_ShowMessage(-1, 0);
   }
   Event_End();

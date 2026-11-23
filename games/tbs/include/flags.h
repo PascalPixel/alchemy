@@ -716,8 +716,8 @@
 #define FLAG_LUNPA_NUT_CAUGHT 0xfd1
 
 // Lunpa Fortress. From FLAG_LUNPA_FORTRESS_CRATES_MOVED to
-// FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, the fortress's state is cleared
-// whenever the party comes back to the gate below it.
+// FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN, the fortress's state is
+// cleared whenever the party comes back to the gate below it.
 /// The party has seen Hammet's rescue up to Dodonpa's trap; a retry after
 /// losing the battle skips to the trap.
 #define FLAG_LUNPA_FORTRESS_TRAP_SEEN 0x942
@@ -734,15 +734,16 @@
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED 0x947
 /// As FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED, for the second switch.
 #define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED 0x948
-/// The guard in the small room in the middle of LunpaFortressUpperFloor has
-/// been beaten, as a Brigand.
-#define FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN 0x949
+/// The guard in the narrow way north out of LunpaFortressUpperFloor's middle
+/// hall has been beaten, as a Brigand.
+#define FLAG_LUNPA_FORTRESS_MIDDLE_HALL_GUARD_BEATEN 0x949
 /// The three guards who fight together have been beaten.
 #define FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN 0x94a
-/// The east guard has been beaten, as a Brigand.
-#define FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN 0x94b
-/// The west guard has been beaten, as a Brigand.
-#define FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN 0x94c
+/// The guard in the doorway up to Donpa's room has been beaten, as a Brigand.
+#define FLAG_LUNPA_FORTRESS_DONPAS_DOOR_GUARD_BEATEN 0x94b
+/// The guard beside the Cell Key in the Cell Key room has been beaten, as a
+/// Brigand.
+#define FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN 0x94c
 /// Donpa's reward, the Djinni in his room, has joined the party.
 #define FLAG_LUNPA_FORTRESS_REWARD_TAKEN 0x94e
 #define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR 0xfa2

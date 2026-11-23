@@ -70,6 +70,23 @@ extern s16 gAncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS];
 /// Lemurians see the Psynergy and come out.
 #define FLAG_BLUE_STATUE_MOVED 0x961
 
+/// The cell behaviours the shore's trigger table answers: the way south to the
+/// boat dock, where Kraden may call Felix back; the rows across the dock where
+/// the view stops scrolling north and may again; the ledge's edge beside the
+/// blue statue's spot; and the six patches of weeds Cyclone blows away.
+enum {
+  CELL_BEHAVIOR_WAY_TO_DOCK = 2,
+  CELL_BEHAVIOR_KEEP_CAMERA_SOUTH = 20,
+  CELL_BEHAVIOR_LET_CAMERA_NORTH,
+  CELL_BEHAVIOR_LEDGE_BY_STATUE_SPOT,
+  CELL_BEHAVIOR_RIMES_WEEDS = 30,
+  CELL_BEHAVIOR_SECOND_WEEDS,
+  CELL_BEHAVIOR_THIRD_WEEDS,
+  CELL_BEHAVIOR_FOURTH_WEEDS,
+  CELL_BEHAVIOR_FIFTH_WEEDS,
+  CELL_BEHAVIOR_SIXTH_WEEDS
+};
+
 /// The shore's own way between the ruined gateway in its north-east and its
 /// south-east corner: the exits by where they lead, the entrances by where the
 /// party comes out.
@@ -1009,14 +1026,17 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ANCIENT_LEMURIA_TO_SOUTHEAST_CORNER},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(AncientLemuria_HeadForTheDock)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WAY_TO_DOCK, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_HeadForTheDock)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
      ANCIENT_LEMURIA_TO_LEMURIA},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ANCIENT_LEMURIA_TO_NORTHEAST_GATEWAY},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AncientLemuria_KeepCameraSouth)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AncientLemuria_LetCameraNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 22, CONDITION_ALWAYS,
-     EVENT(AncientLemuria_JumpForward)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_KEEP_CAMERA_SOUTH, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_KeepCameraSouth)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LET_CAMERA_NORTH, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_LetCameraNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_LEDGE_BY_STATUE_SPOT,
+     CONDITION_ALWAYS, EVENT(AncientLemuria_JumpForward)},
     {TRIGGER_TALK, ACTOR_RIME, CONDITION_ALWAYS,
      EVENT(AncientLemuria_RimeJoins)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -1024,18 +1044,24 @@ struct Trigger gSceneEvents[] = {
      (u32)(AncientLemuria_StartMovingStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BLUE_STATUE, FLAG_BLUE_STATUE_MOVED,
      EVENT(AncientLemuria_FinishMovingStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneRevealsRime)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSecondWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneThirdWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFourthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneFifthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 35,
-     CONDITION_ALWAYS, EVENT(AncientLemuria_CycloneSixthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_RIMES_WEEDS, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_CycloneRevealsRime)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SECOND_WEEDS, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_CycloneSecondWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_THIRD_WEEDS, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_CycloneThirdWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FOURTH_WEEDS, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_CycloneFourthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FIFTH_WEEDS, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_CycloneFifthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SIXTH_WEEDS, CONDITION_ALWAYS,
+     EVENT(AncientLemuria_CycloneSixthWeeds)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_TREMOR, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_RIMES_STATUE, IF_FLAG_SET(FLAG_RIME_IN_THE_STATUE),
      EVENT(AncientLemuria_StartTremorOnTheStatue)},

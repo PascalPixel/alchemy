@@ -136,7 +136,10 @@ enum WorldMapCellBehavior {
   CELL_BEHAVIOR_WORLD_MAP_ATTEKA_INLET_LANDING = 52,
   /// The ground round the ways out of Gondowan that Jenna will not take
   /// before the parties meet at Contigo (WorldMap_RefuseToRunAway).
-  CELL_BEHAVIOR_WORLD_MAP_AWAY_FROM_CONTIGO = 53
+  CELL_BEHAVIOR_WORLD_MAP_AWAY_FROM_CONTIGO = 53,
+  /// Where the ship, once it can fly, first takes to the air
+  /// (WorldMap_TakeOff).
+  CELL_BEHAVIOR_WORLD_MAP_FIRST_FLIGHT = 40
 };
 
 /// The World Map's blocks (struct WorldMapBlocks): 32 pixels square, 32 to a
@@ -179,6 +182,10 @@ void WorldMap_ShowAirsRockFromAlhafra(void);
 void WorldMap_TakeTheTiller(void);
 void WorldMap_SailToShipDeck(void);
 void WorldMap_CarryPartyToAquaRock(void);
+
+/// The lighthouses WorldMap_PlayLighthouseTransition shows lit, each the row of
+/// gWorldMapPalettes its picture takes.
+enum LighthouseView { LIGHTHOUSE_VIEW_VENUS = 1, LIGHTHOUSE_VIEW_JUPITER = 2 };
 
 void WorldMap_PlayLighthouseTransition(s32 mode);
 
@@ -509,22 +516,23 @@ void WorldMap_SetUpShip(void) {
 
 void Actor_StartIdle(struct Actor *actor);
 
-/// The leader jumps aboard the ship when close enough.
+/// The leader jumps aboard the ship when it is the actor ahead of them or
+/// under 16 pixels away.
 void WorldMap_BoardShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   struct Actor *ship;
-  s32 kind, dx, dz, distance;
+  s32 ahead, dx, dz, distanceSquared;
 
   if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;
-  kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+  ahead = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ship = Actor_Get(ACTOR_SHIP);
   dx = FIXEDtoINT(leader->x.fixed - ship->x.fixed);
   dz = FIXEDtoINT(leader->z.fixed - ship->z.fixed);
-  distance = dx * dx + dz * dz;
-  if (kind != 8 && distance > 255)
+  distanceSquared = dx * dx + dz * dz;
+  if (ahead != ACTOR_SHIP && distanceSquared > 255)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -535,11 +543,11 @@ void WorldMap_BoardShip(void) {
   gMainRoutineWork.shipZ = ship->z.fixed;
   gMainRoutineWork.shipFacing = ship->facing;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Actor_SelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   System_Wait(6);
   Event_PlaySound(SE_JUMP);
   Actor_SetSpriteFlags(leader, 0);
-  Actor_SelectAnimation(leader, 7);
+  Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
   leader->speedLimit = toFIXED(3);
   leader->acceleration = toFIXED(2);
   leader->velocityY = toFIXED(4);
@@ -547,7 +555,7 @@ void WorldMap_BoardShip(void) {
   Actor_StartIdle(leader);
   FieldActor_SetMoveTargetFX(leader, ship->x.fixed, 0, ship->z.fixed);
   FieldActor_WaitForMove(leader);
-  Actor_SelectAnimation(leader, 6);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   System_Wait(6);
   leader->groundHeight = 0;
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
@@ -625,10 +633,10 @@ void WorldMap_LeaveShip(void) {
     leader->z.fixed = ship->z.fixed;
     leader->motionFlags = 0;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     System_Wait(6);
     Event_PlaySound(SE_JUMP);
-    Actor_SelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = toFIXED(3);
     leader->acceleration = toFIXED(2);
     leader->velocityY = toFIXED(4);
@@ -636,7 +644,7 @@ void WorldMap_LeaveShip(void) {
     Actor_StartIdle(leader);
     FieldActor_SetMoveTargetFX(leader, position[0], 0, position[2]);
     FieldActor_WaitForMove(leader);
-    Actor_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     System_Wait(6);
     Event_End();
     Scene_ChooseMusic();
@@ -653,7 +661,7 @@ void Actor_PlaceOnActor(s32 actor, s32 target);
 /// comes down to the water first.
 void WorldMap_MoorAtAttekaInlet(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(ACTOR_SHIP);
+  struct Actor *ship = Actor_Get(ACTOR_SHIP);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -661,8 +669,8 @@ void WorldMap_MoorAtAttekaInlet(void) {
     WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gMainRoutineWork.shipX = leader->x.fixed;
-  gMainRoutineWork.shipZ = leader->z.fixed;
+  gMainRoutineWork.shipX = ship->x.fixed;
+  gMainRoutineWork.shipZ = ship->z.fixed;
   gMainRoutineWork.shipFacing = 0;
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(FLAG_SAILING);
@@ -670,11 +678,12 @@ void WorldMap_MoorAtAttekaInlet(void) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-/// Brings the actor to the player character's position.
+/// The actor walks into the leader and is taken off the stage, as a party
+/// member falls back in.
 static __inline__ void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
-  Actor_SetAnimation(actor, 2);
+  Actor_SetAnimation(actor, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(actor, leader->x.part[0].integer,
@@ -960,7 +969,7 @@ s32 Scene_Initialize(void) {
     WorldMap_SailToShipDeck();
     break;
   case WORLD_MAP_JUPITER_BEACON:
-    WorldMap_PlayLighthouseTransition(2);
+    WorldMap_PlayLighthouseTransition(LIGHTHOUSE_VIEW_JUPITER);
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), SPRITE_COLOR_HIDDEN);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
     wait(1);
@@ -1141,7 +1150,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
       Actor_ShowEmote(ACTOR_FELIX, emote, 30);
     }
-    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, ANIM_NOD);
     Event_Wait(10);
     // "But don't worry... We're just going to give you a little sample of..."
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
@@ -1190,7 +1199,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(5);
     // "So you think we just got a lot stronger?"
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
-    Actor_SetAnimationAndWait(ACTOR_THIEF_A, 3);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_A, ANIM_NOD);
     Event_Wait(10);
     Actor_FaceDirectionAndWait(ACTOR_BANDIT, facingSouth);
     Event_Wait(10);
@@ -1198,18 +1207,18 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(5);
     // "You let Isaac know we're looking for him!"
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
-    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, ANIM_NOD);
     Event_Wait(10);
     // "The band of thieves he busted in Vault are coming to repay the favor!"
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
-    Actor_SetAnimationAndWait(ACTOR_THIEF_A, 3);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_A, ANIM_NOD);
     Event_Wait(10);
     // "And we're not messing around!"
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
     Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Be sure you tell him! And send him this way!"
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
-    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, ANIM_NOD);
     Event_Wait(10);
     Event_Wait(40);
     Event_SetDestination((s16)gMainRoutineWork.restartScene,
@@ -1256,7 +1265,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     // "It's not like we really hurt anyone... After all, we lost!"
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
     Actor_FaceDirectionAndWait(ACTOR_BANDIT, FACING_WEST);
-    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, ANIM_NOD);
     Event_Wait(10);
     // "Yeah... And it's not like we stole anything...this time..."
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
@@ -1271,9 +1280,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(ACTOR_THIEF_B, southB, 0);
     // "You're thieves!"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-    Actor_SetAnimation(ACTOR_BANDIT, 3);
-    Actor_SetAnimation(ACTOR_THIEF_A, 3);
-    Actor_SetAnimationAndWait(ACTOR_THIEF_B, 3);
+    Actor_SetAnimation(ACTOR_BANDIT, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_THIEF_A, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_B, ANIM_NOD);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "If we asked around, we could probably find a dozen reasons to have..."
@@ -1314,7 +1323,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(5);
     // "Hey, come on! We haven't done anything wrong, really! Not yet..."
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
-    Actor_SetAnimationAndWait(ACTOR_THIEF_B, 4);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_B, ANIM_SHAKE_HEAD);
     // "Yeah! We didn't have enough time to do anything bad before we ran..."
     FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
     Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
@@ -1325,13 +1334,13 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
     Actor_TurnToFaceEachOther(ACTOR_BANDIT, ACTOR_THIEF_A, 0);
     Event_Wait(40);
-    Actor_SetAnimation(ACTOR_THIEF_A, 3);
-    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
+    Actor_SetAnimation(ACTOR_THIEF_A, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, ANIM_NOD);
     Event_Wait(10);
     Actor_TurnToFaceEachOther(ACTOR_BANDIT, ACTOR_THIEF_B, 0);
     Event_Wait(40);
-    Actor_SetAnimation(ACTOR_THIEF_B, 3);
-    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
+    Actor_SetAnimation(ACTOR_THIEF_B, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, ANIM_NOD);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
     Actor_FaceDirection(ACTOR_THIEF_A, FACING_SOUTH, 0);
@@ -1354,15 +1363,15 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(10);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
     Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(10);
     // "Will you promise to stop following Isaac and trying to get revenge..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-    Actor_SetAnimation(ACTOR_KRADEN, 2);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     {
       struct Actor *actor = Actor_Get(ACTOR_FELIX);
 
@@ -1410,7 +1419,7 @@ void WorldMap_DeliverLohoCannon(void) {
   WorldMap_Freeze();
   FieldActor_WaitForMoveById(ACTOR_LOHO_WORKER_A);
   FieldEvent_Wait(40);
-  Actor_SetAnimation(ACTOR_LOHO_WORKER_A, 3);
+  Actor_SetAnimation(ACTOR_LOHO_WORKER_A, ANIM_NOD);
   FieldEvent_SetMessageId((s32)MsgYouDonT);
   Actor_FaceDirection(ACTOR_LOHO_WORKER_B, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_LOHO_WORKER_C, FACING_NORTH_NORTHEAST, 0);
@@ -1420,7 +1429,7 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldEvent_Wait(30);
   // "Now, we're going to start excavating the ground north of the wall..."
   Event_ShowMessage(ACTOR_LOHO_WORKER_A, 0);
-  Actor_SetAnimation(ACTOR_LOHO_WORKER_A, 3);
+  Actor_SetAnimation(ACTOR_LOHO_WORKER_A, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(60);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_LOHO_WORKER_C);
@@ -1478,24 +1487,25 @@ void WorldMap_MeetEcho(void) {
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Party_RemoveMember(0);
-    Party_RemoveMember(1);
-    Party_RemoveMember(2);
-    Party_RemoveMember(3);
-    Party_RemoveMember(4);
-    Party_RemoveMember(5);
-    Party_RemoveMember(6);
-    Party_RemoveMember(7);
-    Party_AddMember(4);
-    Party_AddMember(5);
-    Party_AddMember(6);
+    // Echo's lesson is given to Felix, Jenna and Sheba alone.
+    Party_RemoveMember(ACTOR_ISAAC);
+    Party_RemoveMember(ACTOR_GARET);
+    Party_RemoveMember(ACTOR_IVAN);
+    Party_RemoveMember(ACTOR_MIA);
+    Party_RemoveMember(ACTOR_FELIX);
+    Party_RemoveMember(ACTOR_JENNA);
+    Party_RemoveMember(ACTOR_SHEBA);
+    Party_RemoveMember(ACTOR_PIERS);
+    Party_AddMember(ACTOR_FELIX);
+    Party_AddMember(ACTOR_JENNA);
+    Party_AddMember(ACTOR_SHEBA);
     owner = gMainRoutineWork.leaderActorId;
     Party_RestoreHpPp(1);
     Event_SetFlag(FLAG_DJINN_LESSON);
     Event_Start();
     Event_ResolvePendingActions(0);
-    Djinn_Give(owner, element, 7);
-    DjinnRecovery_AddStandby(owner, element, 7);
+    Djinn_Give(owner, element, DJINNI_INDEX(DJINNI_ECHO));
+    DjinnRecovery_AddStandby(owner, element, DJINNI_INDEX(DJINNI_ECHO));
     WorldMap_Freeze();
     Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     Event_Wait(10);
@@ -1526,7 +1536,7 @@ void WorldMap_MeetEcho(void) {
     Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     wait(16);
     djinni->update = 0;
-    Actor_SetSpriteColorMode(djinni, 0);
+    Actor_SetSpriteColorMode(djinni, SPRITE_COLOR_NORMAL);
     djinni->gravity = toFIXED(1);
     FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
@@ -1567,7 +1577,7 @@ void WorldMap_MeetEcho(void) {
       wait(1);
       i--;
     }
-    Actor_SetAnimationById(owner, 1);
+    Actor_SetAnimationById(owner, ANIM_STAND);
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
@@ -1578,7 +1588,7 @@ void WorldMap_MeetEcho(void) {
       wait(1);
       i--;
     }
-    Actor_SetAnimationById(owner, 22);
+    Actor_SetAnimationById(owner, ANIM_LEADER_LEAN_BACK);
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     Actor_ShowEmoteById(ACTOR_ECHO, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActorById(ACTOR_ECHO, owner, 0);
@@ -1608,7 +1618,7 @@ void WorldMap_MeetEcho(void) {
         goto plead;
       }
     }
-    Actor_SetAnimationById(owner, 22);
+    Actor_SetAnimationById(owner, ANIM_LEADER_LEAN_BACK);
     Actor_Jump(ACTOR_ECHO, 2, 20);
     Actor_Jump(ACTOR_ECHO, 4, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
@@ -1639,7 +1649,7 @@ void WorldMap_MeetEcho(void) {
   WorldMap_Freeze();
   Actor_FaceActorById(ACTOR_ECHO, owner, 0);
   Actor_FaceActorById(owner, ACTOR_ECHO, 0);
-  Actor_SetAnimationById(owner, 22);
+  Actor_SetAnimationById(owner, ANIM_LEADER_LEAN_BACK);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
   Actor_Jump(ACTOR_ECHO, 2, 20);
   Actor_Jump(ACTOR_ECHO, 2, 20);
@@ -1660,7 +1670,7 @@ void WorldMap_MeetEcho(void) {
   FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
     goto refused;
-  Actor_SetAnimationById(owner, 22);
+  Actor_SetAnimationById(owner, ANIM_LEADER_LEAN_BACK);
   Actor_RunRepeatedMotion(ACTOR_ECHO, 2);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
   FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
@@ -1673,7 +1683,7 @@ tutorial:
   WorldMap_ReloadPendingAreaGraphics();
   return;
 refused:
-  Actor_SetAnimationById(owner, 22);
+  Actor_SetAnimationById(owner, ANIM_LEADER_LEAN_BACK);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellThatS));
   Actor_Jump(ACTOR_ECHO, 2, 20);
   Actor_Jump(ACTOR_ECHO, 2, 20);
@@ -1686,7 +1696,7 @@ refused:
   Actor_Jump(ACTOR_ECHO, 2, 20);
   Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   WorldMap_ReloadPendingAreaGraphics();
-  FieldDjinn_JoinParty(9, element, 7);
+  FieldDjinn_JoinParty(ACTOR_ECHO, element, DJINNI_INDEX(DJINNI_ECHO));
   Scene_PlayMusic();
   Event_End();
   Event_ClearFlag(FLAG_DJINN_LESSON);
@@ -1699,7 +1709,7 @@ extern u32 gWorldMap_CollapseDustScript[];
 /// A cloud of dust thrown up at a random spot as the earthquake that fells
 /// Venus Lighthouse shakes the land, at a random scale.
 void WorldMap_SpawnCollapseDust(void) {
-  struct Actor *obj;
+  struct Actor *dust;
   struct FieldSprite *sprite;
   u8 *motionFlags;
   FIXED x;
@@ -1708,19 +1718,19 @@ void WorldMap_SpawnCollapseDust(void) {
 
   x = toFIXED(Random_Below(40));
   z = toFIXED(Random_Below(30));
-  obj = (FieldActor_Create(SPRITE_DUST_CLOUD, x + toFIXED(1976), 0,
-                           z + toFIXED(7260)));
-  if (obj != NULL) {
-    sprite = obj->sprite;
+  dust = (FieldActor_Create(SPRITE_DUST_CLOUD, x + toFIXED(1976), 0,
+                            z + toFIXED(7260)));
+  if (dust != NULL) {
+    sprite = dust->sprite;
     scale = ((Random16() << 15) >> 16) + FIXED_ONE * 6 / 5;
     sprite->flags = 0;
     sprite->priority = 2;
-    motionFlags = &obj->motionFlags;
+    motionFlags = &dust->motionFlags;
     *motionFlags = 0;
-    obj->scaleX = scale;
-    obj->scaleY = scale;
-    Actor_SelectAnimation(obj, 1);
-    Actor_StartScript(obj, gWorldMap_CollapseDustScript);
+    dust->scaleX = scale;
+    dust->scaleY = scale;
+    Actor_SelectAnimation(dust, 1);
+    Actor_StartScript(dust, gWorldMap_CollapseDustScript);
   }
 }
 
@@ -1747,7 +1757,7 @@ void WorldMap_SplitIdejima(s32 x, s32 z, s32 dx, s32 dz) {
 /// Venus Lighthouse is lit and falls; the earthquake breaks Idejima away with
 /// Jenna, Kraden and Alex on it.
 void WorldMap_WatchVenusLighthouseCollapse(void) {
-  WorldMap_PlayLighthouseTransition(1);
+  WorldMap_PlayLighthouseTransition(LIGHTHOUSE_VIEW_VENUS);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
   // "They've done it, Jenna! They've lit the beacon!"
   Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
@@ -1783,7 +1793,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
   WorldMap_SplitIdejima(0, 128, 0, 0);
-  Actor_SetAnimation(ACTOR_JENNA, 19);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_IDEJIMA_KRADEN, 5);
   Actor_SetAnimation(ACTOR_ALEX, 7);
   System_Wait(4);
@@ -1826,39 +1836,39 @@ extern s32 gWorldMap_IdejimaWakeScript[];
 
 /// Every sixteenth frame, a puff of spray behind the drifting Idejima.
 void WorldMap_SpawnIdejimaWake(void) {
-  struct Actor *leader;
-  struct Actor *obj;
+  struct Actor *island;
+  struct Actor *spray;
   struct FieldSprite *sprite;
-  u32 value;
+  u32 offset;
 
   if ((gFrameCount & 15) != 0)
     return;
-  leader = Actor_Get(ACTOR_DRIFTING_IDEJIMA);
-  obj = FieldActor_Create(SPRITE_DUST_CLOUD, leader->x.fixed - toFIXED(32),
-                          leader->y.fixed, leader->z.fixed - toFIXED(16));
-  if (obj == NULL)
+  island = Actor_Get(ACTOR_DRIFTING_IDEJIMA);
+  spray = FieldActor_Create(SPRITE_DUST_CLOUD, island->x.fixed - toFIXED(32),
+                            island->y.fixed, island->z.fixed - toFIXED(16));
+  if (spray == NULL)
     return;
-  obj->scaleX = FIXED_ONE / 2;
-  obj->scaleY = FIXED_ONE / 2;
-  sprite = obj->sprite;
+  spray->scaleX = FIXED_ONE / 2;
+  spray->scaleY = FIXED_ONE / 2;
+  sprite = spray->sprite;
   if (Random_Below(2)) {
     FIXED back = (Random_Below(48)) << 16;
 
-    obj->x.fixed -= back >> 1;
-    obj->z.fixed -= back;
+    spray->x.fixed -= back >> 1;
+    spray->z.fixed -= back;
   } else {
-    value = ((Random16() << 5) >> 16) << 16;
-    obj->x.fixed += value;
-    value = (s32)value >> 1;
-    obj->z.fixed += value;
+    offset = ((Random16() << 5) >> 16) << 16;
+    spray->x.fixed += offset;
+    offset = (s32)offset >> 1;
+    spray->z.fixed += offset;
   }
   sprite->flags = 0;
-  sprite->priority = ((struct FieldSprite *)leader->sprite)->priority;
-  obj->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  obj->motionFlags = leader->motionFlags;
-  FieldActor_SetSpriteColor(obj, 9);
-  Actor_SelectAnimation(obj, 2);
-  Actor_StartScript(obj, gWorldMap_IdejimaWakeScript);
+  sprite->priority = ((struct FieldSprite *)island->sprite)->priority;
+  spray->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  spray->motionFlags = island->motionFlags;
+  FieldActor_SetSpriteColor(spray, SPRITE_COLOR_BLUE_TINT);
+  Actor_SelectAnimation(spray, 2);
+  Actor_StartScript(spray, gWorldMap_IdejimaWakeScript);
 }
 
 extern u32 gWorldMap_IdejimaDriftScript[];
@@ -1900,7 +1910,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
 
 /// Idejima drifts north; a tidal wave rises behind it and carries it away.
 void WorldMap_DriftNorthOfContinent(void) {
-  struct Actor *boat = Actor_Get(ACTOR_IDEJIMA);
+  struct Actor *island = Actor_Get(ACTOR_IDEJIMA);
   struct WorldMapView *view = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 i;
 
@@ -1908,8 +1918,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldWorldMap_SetWindowCellTileAndDraw(64, 176, 304, 240);
   FieldWorldMap_SetWindowCellTileAndDraw(80, 176, 320, 240);
-  boat->scaleX = FIXED_ONE * 12 / 10;
-  boat->scaleY = FIXED_ONE * 12 / 10;
+  island->scaleX = FIXED_ONE * 12 / 10;
+  island->scaleY = FIXED_ONE * 12 / 10;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
@@ -1917,10 +1927,10 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IDEJIMA), 0);
   Actor_SetSpeed(ACTOR_IDEJIMA, 0.4);
-  boat->timer = 0;
-  boat->acceleration = toFIXED(1) / 8;
-  boat->speedLimit = toFIXED(1) / 8;
-  FieldActor_SetMoveTargetFX(boat, toFIXED(10239), boat->y.fixed,
+  island->timer = 0;
+  island->acceleration = toFIXED(1) / 8;
+  island->speedLimit = toFIXED(1) / 8;
+  FieldActor_SetMoveTargetFX(island, toFIXED(10239), island->y.fixed,
                              toFIXED(7884));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1930,7 +1940,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "So it would seem..."
   Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
-  FieldActor_SetMoveTargetFX(boat, toFIXED(10255), boat->y.fixed,
+  FieldActor_SetMoveTargetFX(island, toFIXED(10255), island->y.fixed,
                              toFIXED(7868));
   // "Wait..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -1985,7 +1995,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetPosition(ACTOR_FELIX, 3669, 7664);
   Actor_SetPosition(ACTOR_JENNA, 3657, 7621);
   Actor_SetPosition(ACTOR_SHEBA, 3703, 7651);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
+                            SPRITE_COLOR_NORMAL);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 1);
   System_Wait(1);
   WorldMap_Freeze();
@@ -1994,7 +2005,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_Wait(20);
   // "Alex... How can you stay so calm at a time like this?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "At times like this, where would be the good in panicking?"
   Event_ShowMessage(ACTOR_ALEX, 0);
   FieldActor_Jump(ACTOR_SHEBA, 6, 15);
@@ -2427,9 +2438,8 @@ static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
-/// The view of a lighthouse lit, seen from the World Map: mode 1 for Venus
-/// Lighthouse, 2 for Jupiter's beacon, which also rumbles and shakes the
-/// ground.
+/// The view of a lighthouse lit, seen from the World Map; Jupiter's beacon
+/// also rumbles and shakes the ground.
 void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
 
@@ -2440,7 +2450,7 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  if (mode == 2) {
+  if (mode == LIGHTHOUSE_VIEW_JUPITER) {
     MapGrid_SetShake(2, 3, 1);
     Event_PlaySound(SE_RUMBLE);
   }
@@ -2496,7 +2506,7 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
   FieldEvent_Wait(4);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
   PUSH_PICTURE(7);
-  if (mode == 1) {
+  if (mode == LIGHTHOUSE_VIEW_VENUS) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
     gWorldMapBlend = BLEND_ALPHA(0, 13);
@@ -2671,7 +2681,7 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
 
     sp->priority = 1;
     p->update = (void *)Actor_GrowUp;
-    p->priorityFlags = 2;
+    p->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 
@@ -2679,7 +2689,7 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
 
 // clang-format off
 u32 gWorldMap_LohoWorkerLeaveScriptA[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(8961, 5837),
     SC_SYNC,
     SC_POSITION_ORIGIN,
@@ -2687,7 +2697,7 @@ u32 gWorldMap_LohoWorkerLeaveScriptA[] = {
 };
 
 u32 gWorldMap_LohoWorkerLeaveScriptB[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(8945, 5853),
     SC_SYNC,
     SC_MOVE_XZ(8961, 5837),
@@ -2698,7 +2708,7 @@ u32 gWorldMap_LohoWorkerLeaveScriptB[] = {
 
 // The same script as gWorldMap_LohoWorkerLeaveScriptB, under another name.
 u32 gWorldMap_LohoWorkerLeaveScriptC[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(8945, 5853),
     SC_SYNC,
     SC_MOVE_XZ(8961, 5837),
@@ -2747,7 +2757,8 @@ s32 gWorldMap_SparkScript[] = {
 
 /// The colour modes the ship's glow steps through, one every other frame.
 u32 gWorldMap_GlowColorModes[] = {
-    0, 9, 0, 6,
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_BLUE_TINT,
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_GREY,
 };
 // clang-format on
 
@@ -2761,92 +2772,178 @@ void WorldMap_LeaveShip(void);
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 10240, 0, 7974, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {2, CONDITION_ALWAYS, 10144, 0, 8330, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {3, CONDITION_ALWAYS, 10144, 0, 8240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {4, CONDITION_ALWAYS, 10137, 0, 8602, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {5, CONDITION_ALWAYS, 10423, 0, 8354, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {6, CONDITION_ALWAYS, 10190, 0, 8883, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {7, CONDITION_ALWAYS, 10578, 0, 8952, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {8, CONDITION_ALWAYS, 10635, 0, 9040, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {9, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {10, CONDITION_ALWAYS, 10270, 0, 9522, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 10271, 0, 9425, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {12, CONDITION_ALWAYS, 10380, 0, 9370, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {13, CONDITION_ALWAYS, 10440, 0, 9399, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {14, CONDITION_ALWAYS, 11125, 0, 10695, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {15, CONDITION_ALWAYS, 12070, 0, 10470, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {16, CONDITION_ALWAYS, 11880, 0, 10090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {17, CONDITION_ALWAYS, 10976, 0, 9960, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {18, CONDITION_ALWAYS, 11736, 0, 9530, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {19, CONDITION_ALWAYS, 11910, 0, 9729, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {20, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {21, CONDITION_ALWAYS, 9244, 0, 9528, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {22, CONDITION_ALWAYS, 9328, 0, 9528, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {23, CONDITION_ALWAYS, 9148, 0, 9048, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {24, CONDITION_ALWAYS, 9148, 0, 8988, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {25, CONDITION_ALWAYS, 9199, 0, 8410, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {26, CONDITION_ALWAYS, 9060, 0, 8290, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {27, CONDITION_ALWAYS, 9256, 0, 7950, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {28, CONDITION_ALWAYS, 9546, 0, 8316, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {29, CONDITION_ALWAYS, 12770, 0, 11570, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {30, CONDITION_ALWAYS, 11724, 0, 8064, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {31, CONDITION_ALWAYS, 11680, 0, 6678, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {32, CONDITION_ALWAYS, 13486, 0, 7482, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {33, CONDITION_ALWAYS, 12923, 0, 9681, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {34, CONDITION_ALWAYS, 12921, 0, 9752, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {35, CONDITION_ALWAYS, 12680, 0, 10297, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {36, CONDITION_ALWAYS, 14478, 0, 8410, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {37, CONDITION_ALWAYS, 14250, 0, 8728, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {38, CONDITION_ALWAYS, 13376, 0, 6068, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {39, CONDITION_ALWAYS, 13452, 0, 6204, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {40, CONDITION_ALWAYS, 10903, 0, 6285, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {41, CONDITION_ALWAYS, 11201, 0, 6105, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {42, CONDITION_ALWAYS, 12461, 0, 7566, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {43, CONDITION_ALWAYS, 12090, 0, 7165, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {44, CONDITION_ALWAYS, 13010, 0, 1240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {45, CONDITION_ALWAYS, 13088, 0, 1090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {46, CONDITION_ALWAYS, 9490, 0, 10960, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {47, CONDITION_ALWAYS, 5836, 0, 10120, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {48, CONDITION_ALWAYS, 8582, 0, 7420, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {49, CONDITION_ALWAYS, 6314, 0, 6223, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {50, CONDITION_ALWAYS, 8847, 0, 4629, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {51, CONDITION_ALWAYS, 8970, 0, 7500, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {52, CONDITION_ALWAYS, 7256, 0, 8325, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {53, CONDITION_ALWAYS, 7280, 0, 8180, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {54, CONDITION_ALWAYS, 7714, 0, 7760, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {55, CONDITION_ALWAYS, 7277, 0, 7330, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {56, CONDITION_ALWAYS, 7383, 0, 5753, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {57, CONDITION_ALWAYS, 7504, 0, 5650, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {58, CONDITION_ALWAYS, 7663, 0, 5535, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {59, CONDITION_ALWAYS, 8960, 0, 5856, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {60, CONDITION_ALWAYS, 8933, 0, 3704, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {61, CONDITION_ALWAYS, 8916, 0, 1640, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {62, CONDITION_ALWAYS, 9056, 0, 1250, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {63, CONDITION_ALWAYS, 9056, 0, 1175, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {64, CONDITION_ALWAYS, 1992, 0, 7272, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {65, CONDITION_ALWAYS, 10239, 0, 7884, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {67, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {68, CONDITION_ALWAYS, 7256, 0, 8325, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {69, CONDITION_ALWAYS, 10640, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {71, CONDITION_ALWAYS, 10720, 0, 9075, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {72, CONDITION_ALWAYS, 7279, 0, 7307, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {73, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {74, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {77, CONDITION_ALWAYS, 12096, 0, 8325, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {78, CONDITION_ALWAYS, 14558, 0, 8457, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {80, CONDITION_ALWAYS, 11754, 0, 8030, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {81, CONDITION_ALWAYS, 11700, 0, 8034, FACING_WEST, 0, -1, -1, -1, -1, 0},
-    {82, CONDITION_ALWAYS, 11596, 0, 10204, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {83, CONDITION_ALWAYS, 10240, 0, 9142, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {84, CONDITION_ALWAYS, 9020, 0, 882, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {85, CONDITION_ALWAYS, 9288, 0, 9434, FACING_NORTH, 0, -1, -1, -1, -1, 0},
-    {86, CONDITION_ALWAYS, 9288, 0, 9640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {87, CONDITION_ALWAYS, 12640, 0, 4390, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {88, CONDITION_ALWAYS, 7868, 0, 9120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {89, CONDITION_ALWAYS, 9479, 0, 5060, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {98, CONDITION_ALWAYS, 8916, 0, 1640, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 10271, 0, 9540, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_IDEJIMA_SOUTHWEST, CONDITION_ALWAYS, 10240, 0, 7974,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_DAILA_SOUTH, CONDITION_ALWAYS, 10144, 0, 8330, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_DAILA_NORTH, CONDITION_ALWAYS, 10144, 0, 8240, FACING_NORTH,
+     0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_KANDOREAN_TEMPLE_GATE, CONDITION_ALWAYS, 10137, 0, 8602,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHRINE_OF_THE_SEA_GOD_ROPE, CONDITION_ALWAYS, 10423, 0,
+     8354, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST, CONDITION_ALWAYS,
+     10190, 0, 8883, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_DEHKAN_PLATEAU_TIGHTROPES, CONDITION_ALWAYS, 10578, 0, 8952,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_LEMURIAN_SHIP_MAIN_DECK_NORTH, CONDITION_ALWAYS, 10635, 0,
+     9040, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_MADRA, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_MADRA_DRAWBRIDGE_SOUTH, CONDITION_ALWAYS, 10270, 0, 9522,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_MADRA_DRAWBRIDGE_NORTH, CONDITION_ALWAYS, 10271, 0, 9425,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_OSENIA_CLIFFS_WEST, CONDITION_ALWAYS, 10380, 0, 9370,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_OSENIA_CLIFFS_EAST, CONDITION_ALWAYS, 10440, 0, 9399,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_MIKASALLA, CONDITION_ALWAYS, 11125, 0, 10695, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GAROH_WAY_UP, CONDITION_ALWAYS, 12070, 0, 10470,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_AIRS_ROCK_STORM_BRAND_CHEST, CONDITION_ALWAYS, 11880, 0,
+     10090, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_YAMPI_DESERT_GUARDIAN_RING_CHEST, CONDITION_ALWAYS, 10976,
+     0, 9960, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST, CONDITION_ALWAYS, 11736,
+     0, 9530, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE, CONDITION_ALWAYS, 11910,
+     0, 9729, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_ALHAFRA, CONDITION_ALWAYS, 11633, 0, 9406, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GONDOWAN_CLIFFS_A, CONDITION_ALWAYS, 9244, 0, 9528,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GONDOWAN_CLIFFS_B, CONDITION_ALWAYS, 9328, 0, 9528,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NARIBWE_SOUTH, CONDITION_ALWAYS, 9148, 0, 9048,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NARIBWE_NORTH, CONDITION_ALWAYS, 9148, 0, 8988,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST, CONDITION_ALWAYS, 9199, 0,
+     8410, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_KIBOMBO_MOUNTAINS_WAFT, CONDITION_ALWAYS, 9060, 0, 8290,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_KIBOMBO, CONDITION_ALWAYS, 9256, 0, 7950, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_WEST_INDRA_ISLET, CONDITION_ALWAYS, 9546, 0, 8316,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_EAST_TUNDARIA_ISLET, CONDITION_ALWAYS, 12770, 0, 11570,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NORTH_OSENIA_ISLET_A, CONDITION_ALWAYS, 11724, 0, 8064,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SOUTHEAST_ANGARA_ISLET, CONDITION_ALWAYS, 11680, 0, 6678,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SEA_OF_TIME_ISLET, CONDITION_ALWAYS, 13486, 0, 7482,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_YALLAM_SOUTH_A, CONDITION_ALWAYS, 12923, 0, 9681,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_YALLAM_SOUTH_B, CONDITION_ALWAYS, 12921, 0, 9752,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_TAOPO_SWAMP_ENTRANCE, CONDITION_ALWAYS, 12680, 0, 10297,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_APOJII_ISLANDS, CONDITION_ALWAYS, 14478, 0, 8410,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_AQUA_ROCK_MOAI_SOUTH, CONDITION_ALWAYS, 14250, 0, 8728,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_IZUMO, CONDITION_ALWAYS, 13376, 0, 6068, FACING_WEST, 0, -1,
+     -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GAIA_ROCK_SUSA, CONDITION_ALWAYS, 13452, 0, 6204,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_CHAMPA, CONDITION_ALWAYS, 10903, 0, 6285, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_ANKOHL_RUINS_ENTRANCE, CONDITION_ALWAYS, 11201, 0, 6105,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SEA_OF_TIME_SWIRLS, CONDITION_ALWAYS, 12461, 0, 7566,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SEA_OF_TIME_TO_LEMURIA_NORTHEAST, CONDITION_ALWAYS, 12090,
+     0, 7165, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SEA_OF_TIME_TO_LEMURIA_NORTH, CONDITION_ALWAYS, 13010, 0,
+     1240, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_LEMURIA_ENTRANCE, CONDITION_ALWAYS, 13088, 0, 1090,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_TUNDARIA_TOWER_ENTRANCE, CONDITION_ALWAYS, 9490, 0, 10960,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SW_ATTEKA_ISLET, CONDITION_ALWAYS, 5836, 0, 10120,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GONDOWAN_SETTLEMENT, CONDITION_ALWAYS, 8582, 0, 7420,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_HESPERIA_SETTLEMENT, CONDITION_ALWAYS, 6314, 0, 6223,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_KALT_ISLAND, CONDITION_ALWAYS, 8847, 0, 4629, FACING_SOUTH,
+     0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_MAGMA_ROCK_SLIDE, CONDITION_ALWAYS, 8970, 0, 7500,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_ATTEKA_INLET_EAST, CONDITION_ALWAYS, 7256, 0, 8325,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_ATTEKA_INLET_GEODE_NORTH, CONDITION_ALWAYS, 7280, 0, 8180,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_CONTIGO, CONDITION_ALWAYS, 7714, 0, 7760, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_JUPITER_LIGHTHOUSE_ENTRANCE, CONDITION_ALWAYS, 7277, 0,
+     7330, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHAMAN_VILLAGE_CAVE_WEST, CONDITION_ALWAYS, 7383, 0, 5753,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHAMAN_VILLAGE_CAVE_EAST, CONDITION_ALWAYS, 7504, 0, 5650,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_SHAMAN_VILLAGE, CONDITION_ALWAYS, 7663, 0, 5535,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_LOHO, CONDITION_ALWAYS, 8960, 0, 5856, FACING_WEST, 0, -1,
+     -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NORTHERN_REACHES_SOUTH, CONDITION_ALWAYS, 8933, 0, 3704,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NORTHERN_REACHES_NORTH, CONDITION_ALWAYS, 8916, 0, 1640,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_PROX_SOUTH_GATE, CONDITION_ALWAYS, 9056, 0, 1250,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_PROX_MOLD, CONDITION_ALWAYS, 9056, 0, 1175, FACING_NORTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_VENUS_COLLAPSE, CONDITION_ALWAYS, 1992, 0, 7272, FACING_EAST, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_DRIFT_NORTH, CONDITION_ALWAYS, 10239, 0, 7884, FACING_EAST, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_ALHAFRA_MANOR_VIEW, CONDITION_ALWAYS, 11633, 0, 9406,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FIRST_VOYAGE, CONDITION_ALWAYS, 7256, 0, 8325, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_SAIL_TO_DECK, CONDITION_ALWAYS, 10640, 0, 9075, FACING_EAST, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_LEMURIAN_SHIP_TILLER_B, CONDITION_ALWAYS, 10720, 0, 9075,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_JUPITER_BEACON, CONDITION_ALWAYS, 7279, 0, 7307, FACING_EAST, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_BANDIT_BEATEN, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_BANDIT_LOST, CONDITION_ALWAYS, 10168, 0, 9630, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_IDEJIMA_DRIFTING, CONDITION_ALWAYS, 12096, 0, 8325, FACING_EAST,
+     0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_CARRIED_TO_AQUA_ROCK, CONDITION_ALWAYS, 14558, 0, 8457,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NORTH_OSENIA_ISLET_B, CONDITION_ALWAYS, 11754, 0, 8030,
+     FACING_EAST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_NORTH_OSENIA_ISLET_C, CONDITION_ALWAYS, 11700, 0, 8034,
+     FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_CAVERNS_OSENIA, CONDITION_ALWAYS, 11596, 0, 10204,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_CAVERNS_INDRA, CONDITION_ALWAYS, 10240, 0, 9142,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_MARS_LIGHTHOUSE_OUTSIDE, CONDITION_ALWAYS, 9020, 0, 882,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_NORTH, CONDITION_ALWAYS, 9288, 0, 9434,
+     FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_GONDOWAN_CLIFFS_PASS_SOUTH, CONDITION_ALWAYS, 9288, 0, 9640,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_TREASURE_ISLE_ENTRANCE, CONDITION_ALWAYS, 12640, 0, 4390,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_CAVERNS_ATTEKA, CONDITION_ALWAYS, 7868, 0, 9120,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_FROM_CAVERNS_ANGARA, CONDITION_ALWAYS, 9479, 0, 5060,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {WORLD_MAP_DEBUG_FLIGHT, CONDITION_ALWAYS, 8916, 0, 1640, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {WORLD_MAP_DEBUG_SAILING, CONDITION_ALWAYS, 10271, 0, 9540, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2864,9 +2961,9 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_SOUTHWEST, Idejima,
                IDEJIMA_FROM_WORLD_MAP_SOUTHWEST),
     SCENE_EXIT_UNLESS(WORLD_MAP_TO_DAILA_SOUTH, DailaFlooded,
-                      DAILA_FLOODED_FROM_WORLD_MAP_SOUTH, 0x873),
+                      DAILA_FLOODED_FROM_WORLD_MAP_SOUTH, FLAG_TAVI_RESCUED),
     SCENE_EXIT_UNLESS(WORLD_MAP_TO_DAILA_NORTH, DailaFlooded,
-                      DAILA_FLOODED_FROM_WORLD_MAP_NORTH, 0x873),
+                      DAILA_FLOODED_FROM_WORLD_MAP_NORTH, FLAG_TAVI_RESCUED),
     SCENE_EXIT(WORLD_MAP_TO_DAILA_SOUTH, Daila, DAILA_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_DAILA_NORTH, Daila, DAILA_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_KANDOREAN_TEMPLE_GATE, KandoreanTempleGate,
@@ -2917,7 +3014,8 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_KIBOMBO_MOUNTAINS_WAFT, KibomboMountainsWaft,
                KIBOMBO_MOUNTAINS_WAFT_FROM_WORLD_MAP),
     SCENE_EXIT_UNLESS(WORLD_MAP_TO_KIBOMBO, KibomboCeremony,
-                      KIBOMBO_CEREMONY_FROM_WORLD_MAP, 0x8ff),
+                      KIBOMBO_CEREMONY_FROM_WORLD_MAP,
+                      FLAG_GABOMBA_MESSAGE_CARRIED),
     SCENE_EXIT_UNLESS(WORLD_MAP_TO_KIBOMBO, Kibombo, KIBOMBO_FROM_WORLD_MAP,
                       EXIT_FLAG_NONE),
     SCENE_EXIT(WORLD_MAP_TO_WEST_INDRA_ISLET, WestIndraIslet,
@@ -3313,7 +3411,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(WorldMap_MoorAtAttekaInlet)},
     {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_AWAY_FROM_CONTIGO, CONDITION_ALWAYS,
      EVENT(WorldMap_RefuseToRunAway)},
-    {TRIGGER_STEP, 40, FLAG_SHIP_TOOK_OFF, EVENT(WorldMap_TakeOff)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_FIRST_FLIGHT, FLAG_SHIP_TOOK_OFF,
+     EVENT(WorldMap_TakeOff)},
     {TRIGGER_EXIT, WORLD_MAP_TO_NORTHERN_REACHES_SOUTH, CONDITION_ALWAYS,
      WORLD_MAP_TO_NORTHERN_REACHES_SOUTH},
     {TRIGGER_EXIT, WORLD_MAP_TO_NORTHERN_REACHES_NORTH, CONDITION_ALWAYS,

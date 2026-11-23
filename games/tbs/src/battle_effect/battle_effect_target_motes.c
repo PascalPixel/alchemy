@@ -398,7 +398,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     current = &sheep[particleIndex];
     current->x = INTtoFIXED((Random16() & 63) + 32);
     current->y = -toFIXED(32);
-    current->velocityY = Random16() & 0;
+    current->velocityY = Random16() & 0; // a random number drawn for nothing
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
   }

@@ -241,6 +241,7 @@ static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
+/// ValeCave_FaceActorTowardLeader, as an actor's update takes it.
 #ifdef UBFIX
 #define VALE_CAVE_FACE_LEADER_CALLBACK ValeCave_FaceActorTowardLeader
 #else

@@ -3826,6 +3826,8 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 #include "shared/pushed_actor_tables.c"
 // clang-format off
 
+/// Which of the four challenges the guards who fight greet the party with,
+/// drawn on every arrival.
 s32 gLunpaFortressRandomPick = 0;
 
 s32 gLunpaFortressSecondPatrolRoute[] = {
@@ -4409,19 +4411,18 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     { TRIGGER_TABLE_END },
 };
 
+/// The cell doors' map cells, (x, y) pairs: Toadonpa's (east cell first), the
+/// cave's, the upper floor's and the ground floor's.
 u32 gLunpaFortressToadonpaDoorCells[] = {
     13, 56, 8, 56, 3, 56, 28, 85,
     28, 65,
 };
-
 u32 gLunpaFortressCaveDoorCells[] = {
     31, 61, 15, 57, 6, 61,
 };
-
 u32 gLunpaFortressUpperFloorDoorCells[] = {
     16, 119, 16, 113,
 };
-
 u32 gLunpaFortressGroundFloorDoorCells[] = {
     28, 72, 43, 92,
 };

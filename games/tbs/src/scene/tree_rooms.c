@@ -168,6 +168,8 @@ static void TreeRooms_SpawnSwirlSparks(void);
 static void TreeRooms_ApplyFlaggedMapPatches(void);
 static void TreeRooms_LandFromFall(void);
 
+/// Where the sparks spring from, the frame of their 121-frame cycle, and the
+/// cell keeping the entrance of the leaf last landed on, -1 once he jumps off.
 static struct FieldPosition sSparkOrigin ALIGNED(8);
 static s32 sSparkFrame;
 static s16 *sLastLeaf;
@@ -1359,6 +1361,8 @@ s32 gTreeRooms_WalkBackToLeaderScript[] = {
     SC_END,
 };
 
+/// The tint's steps of red, green and blue, three to an entry: a ramp from 0 up
+/// to 4 and back.
 u32 gTreeRooms_TintSteps[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -1662,4 +1666,6 @@ struct Trigger gTreeRoomsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Where in gTreeRooms_TintSteps the tint is, a random number of entries on
+/// each time.
 s32 gTreeRooms_TintIndex = 0;

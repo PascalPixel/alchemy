@@ -8,6 +8,7 @@
 #include "types.h"
 
 // clang-format off
+/// Each item's gender, by item id.
 #if LANGUAGE == LANGUAGE_GERMAN
 const s8 gLocalizedWord_ItemGenders[] = {
     0, // ???

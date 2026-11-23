@@ -61,7 +61,6 @@ const s8 gSettingsMenu_SleepIcons[2] = {
 const u8 gSettingsMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
-
 const u8 gSettingsMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };

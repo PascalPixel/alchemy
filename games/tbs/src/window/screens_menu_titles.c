@@ -117,6 +117,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
   }
 }
 
+/// The range icons' two sets of six, each a pair of tiles (16 words).
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16

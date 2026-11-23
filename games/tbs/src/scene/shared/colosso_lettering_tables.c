@@ -16,6 +16,7 @@ const u8 gColosso_LetteringPaletteOffsets[] = {
 #endif
 };
 
+/// A count digit's moves (3, 2, 1).
 const s16 gColosso_LetteringDigit[] = {
     COLOSSO_LETTERING_SCALE, 512, 1,
     COLOSSO_LETTERING_FADE, 0, 1,
@@ -27,6 +28,7 @@ const s16 gColosso_LetteringDigit[] = {
     COLOSSO_LETTERING_END,
 };
 
+/// `LOSE`'s moves.
 const s16 gColosso_LetteringLose[] = {
     COLOSSO_LETTERING_SCALE, 128, 1,
     COLOSSO_LETTERING_FADE, 0, 1,

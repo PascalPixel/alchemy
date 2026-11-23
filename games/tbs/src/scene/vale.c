@@ -3894,30 +3894,26 @@ struct Trigger gVale_TriggersAfterKalay[] = {
 };
 // clang-format on
 
-// The doors' cell animations, from the layout's cells below the village, each
-// picture shown for two frames; vale_prologue.c has the same four kinds.
-// Each table takes the name of a door it opens. The two of Jenna's
-// grandparents' kind and the west house's show their one open picture twice,
-// where the stormy night's show two.
-
+/// The doors' cell animations, from the layout's cells below the village, each
+/// picture shown for two frames; vale_prologue.c has the same four kinds.
+/// Each table takes the name of a door it opens. The two of Jenna's
+/// grandparents' kind and the west house's show their one open picture twice,
+/// where the stormy night's show two.
 u16 gVale_SanctumDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVale_IsaacsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(0, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(2, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVale_GrandparentsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(4, 98, 2, 2, 2),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gVale_WestHouseDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),
     MAPGRID_ANIMATION_STEP(4, 96, 2, 2, 2),

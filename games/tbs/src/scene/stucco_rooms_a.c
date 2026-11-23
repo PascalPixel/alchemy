@@ -710,12 +710,12 @@ struct Trigger gStuccoRoomsA_SanctumTriggers[] = {
 };
 // clang-format on
 
+/// A door of the rooms opening, and where each door is.
 u16 gStuccoRoomsA_DoorCellSteps[] = {
     MAPGRID_ANIMATION_STEP(7, 125, 1, 2, 5),
     MAPGRID_ANIMATION_STEP(8, 125, 1, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 struct MapGridCellAnimation gStuccoRoomsA_DoorCells[] = {
     {gStuccoRoomsA_DoorCellSteps, 34, 98},
     {gStuccoRoomsA_DoorCellSteps, 39, 98},

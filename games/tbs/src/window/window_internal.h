@@ -50,6 +50,8 @@
 #define ITEM_POSSESSIVE_TEXT_COUNT 4
 #endif
 
+/// The space written between a message's arguments: a plain space in the
+/// European editions.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TEXT_ARGUMENT_SPACE ' '
@@ -57,6 +59,7 @@
 #define TEXT_ARGUMENT_SPACE 143
 #endif
 
+/// A space's width in sprite text, in pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define WINDOW_SPRITE_SPACE_WIDTH 7
 #else

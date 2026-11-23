@@ -70,9 +70,13 @@
 /// reuse once the crystals are gone.
 enum { EMBER_COUNT = 16 };
 
+/// Unused: eight bytes before the embers' states that nothing reads.
 u8 gSolSanctumEruption_UnusedBeforeEmberState[8] BSS_DATA;
+/// Each ember's state, and the shake an ember's landing starts: ten times its
+/// pixels, three less each frame.
 s32 gEmberState[EMBER_COUNT] BSS_DATA;
 s32 gEmberTimer BSS_DATA;
+/// Unused: twelve bytes after the ember timer that nothing reads.
 u8 gSolSanctumEruption_UnusedAfterEmberTimer[12] BSS_DATA;
 /// The elemental arcs the chamber throws out: each one's actor, and its age in
 /// frames, 0 for none.
@@ -149,6 +153,7 @@ enum SolSanctumEruptionCorner {
   CHAMBER_SOUTHEAST = 3
 };
 
+/// The Wise One, and the crystals, which become the embers.
 enum {
   ACTOR_WISE_ONE = ACTOR_ALEX + 1,
   /// The sixteen crystals thrown out in a ring.
@@ -1861,6 +1866,8 @@ s32 gEruption_ArcOriginsHead[] = {
 };
 
 // clang-format off
+/// Where each of the ten elemental arcs springs from: its x from its
+/// chamber's, and its height, in 16.16 pixels.
 s32 gEruption_ArcOrigins[] = {
     -toFIXED(6), 0,
     toFIXED(10), toFIXED(10),

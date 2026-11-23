@@ -1272,6 +1272,7 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   ShipRooms_Turn(passengerId, leader->facing);
 }
 
+/// Kaja rowing speaks with the window below her and her portrait on the right.
 enum {
   KAJA_ROWING_SPEAKER =
       SPEAKER(ACTOR_ROWING_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT)

@@ -784,12 +784,15 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
     }                                                                          \
   }
 
+/// The Luna room's second falling light.
 SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
                           gSolSanctumLunaSolRooms_Light2Timer, 47, 42, 33, 90,
                           100)
+/// The Luna room's third falling light.
 SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
                           gSolSanctumLunaSolRooms_Light3Timer, 48, 31, 36, 95,
                           105)
+/// The Luna room's fourth falling light.
 SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
                           gSolSanctumLunaSolRooms_Light4Timer, 46, 41, 36, 85,
                           95)

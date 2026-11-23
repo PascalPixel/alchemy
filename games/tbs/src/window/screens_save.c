@@ -4,6 +4,9 @@
 
 #include "screens_internal.h"
 
+/// A file's half in bytes: the first is written to the file's slot, the
+/// second to the slot SAVE_FILE_COUNT on. Then the file number for no free
+/// file.
 #define SAVE_PART_BYTES 4096
 #define SAVE_NO_FREE_FILE 999
 
@@ -517,6 +520,7 @@ void FileList_StartPulse(void) {
   Task_Add(FileList_UpdatePulse, TASK_PASS_FRAME);
 }
 
+/// Stops the file list's glow (FileList_UpdatePulse).
 void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,

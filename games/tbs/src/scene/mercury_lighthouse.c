@@ -125,8 +125,8 @@ extern s32 gMercuryLighthouse_PushScriptD[];
 extern s32 gMercuryLighthouse_PushScriptC[];
 extern u16 gMercuryLighthouse_GateCells[];
 extern u16 gMercuryLighthouse_GateCloseCells[];
-extern u16 gMercuryLighthouse_FloorSwitchCells[];
-extern u16 gMercuryLighthouse_FloorSwitchCloseCells[];
+extern u16 gMercuryLighthouse_UpperGateCells[];
+extern u16 gMercuryLighthouse_UpperGateCloseCells[];
 extern u16 gMercuryLighthouse_ColumnCells[];
 extern struct SceneEntrance gMercuryLighthouseEntrancesOther[];
 extern struct SceneEntrance gMercuryLighthouseMiddleEntrances[];
@@ -151,6 +151,8 @@ extern s32 gPaletteCycleRed;
 extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
 
+/// How a spout carries Isaac back: from patch 1 the event waits until he is
+/// there.
 #if TBS_PATCH_1
 #define MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK(actorId, x, z)                    \
   Actor_MoveToAndWait(actorId, x, z)
@@ -1051,7 +1053,7 @@ static void MercuryLighthouse_OpenUpperGateWithMovedStatue(void) {
         Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
     Sound_Play(SE_FLOOR_SWITCH);
-    MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
+    MapGrid_PlayMapEdit(gMercuryLighthouse_UpperGateCells, 10, 18);
     MapGrid_CopyCellAttributes(10, 16, 1, 1, column, 19);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
   }
@@ -1083,7 +1085,7 @@ static void MercuryLighthouse_PressUpperGateFloorSwitch(void) {
       Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
   Sound_Play(SE_FLOOR_SWITCH);
-  MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
+  MapGrid_PlayMapEdit(gMercuryLighthouse_UpperGateCells, 10, 18);
   Event_End();
 }
 
@@ -1099,7 +1101,7 @@ static void MercuryLighthouse_ReleaseUpperGateFloorSwitch(void) {
     Event_Wait(5);
     MapGrid_CopyCellsTo(8, 29, 10, 23, 1, 1);
     Sound_Play(SE_FLOOR_SWITCH);
-    MapGrid_AnimateCells(gMercuryLighthouse_FloorSwitchCloseCells, 10, 18);
+    MapGrid_AnimateCells(gMercuryLighthouse_UpperGateCloseCells, 10, 18);
     Event_End();
   }
 }
@@ -3084,27 +3086,25 @@ s32 gMercuryLighthouse_PushScriptC[] = {
 /// Unused, with gPaletteCycleGreen and gPaletteCycleBlue: nothing reads them or
 /// changes them.
 s32 gPaletteCycleRed = 0;
-
 s32 gPaletteCycleGreen = 0;
-
 s32 gPaletteCycleBlue = 0;
 
+/// The gate room's sealed arch on the dais opening a column at a time, and
+/// closing; then the upper gate room's middle arch, the same.
 u16 gMercuryLighthouse_GateCells[] = {
     MAPGRID_ANIMATION_STEP(15, 1, 1, 2, 10), MAPGRID_ANIMATION_STEP(13, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(11, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(9, 1, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gMercuryLighthouse_GateCloseCells[] = {
     MAPGRID_ANIMATION_STEP(9, 1, 1, 2, 10), MAPGRID_ANIMATION_STEP(11, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(13, 1, 1, 2, 6), MAPGRID_ANIMATION_STEP(15, 1, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-
-u16 gMercuryLighthouse_FloorSwitchCells[] = {
+u16 gMercuryLighthouse_UpperGateCells[] = {
     MAPGRID_ANIMATION_STEP(16, 28, 1, 2, 10), MAPGRID_ANIMATION_STEP(14, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(12, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(10, 28, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
-
-u16 gMercuryLighthouse_FloorSwitchCloseCells[] = {
+u16 gMercuryLighthouse_UpperGateCloseCells[] = {
     MAPGRID_ANIMATION_STEP(10, 28, 1, 2, 10), MAPGRID_ANIMATION_STEP(12, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(14, 28, 1, 2, 6), MAPGRID_ANIMATION_STEP(16, 28, 1, 2, 6), MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// The lighthouse door opening in five steps as Mia casts Ply on it.
 u16 gMercuryLighthouse_ColumnCells[] = {
     MAPGRID_ANIMATION_STEP(126, 35, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 38, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 41, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 44, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 47, 1, 2, 2), MAPGRID_ANIMATION_STEPS_END,
 };

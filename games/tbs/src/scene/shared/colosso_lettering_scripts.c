@@ -7,6 +7,7 @@
 #include "types.h"
 
 // clang-format off
+/// The title lettering's moves, in COLOSSO_LETTERING_ commands.
 s16 gColosso_LetteringTitle[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     COLOSSO_LETTERING_PLACE, -188, 2048,
@@ -25,6 +26,7 @@ s16 gColosso_LetteringTitle[] = {
     COLOSSO_LETTERING_END,
 };
 
+/// `GO`'s moves.
 s16 gColosso_LetteringGo[] = {
 #if LANGUAGE == LANGUAGE_FRENCH
     COLOSSO_LETTERING_SCALE, 512, 1,
@@ -107,6 +109,7 @@ s16 gColosso_LetteringGo[] = {
 #endif
 };
 
+/// `WIN`'s moves.
 s16 gColosso_LetteringWin[] = {
     COLOSSO_LETTERING_SCALE, 128, 1,
     COLOSSO_LETTERING_FADE, 0, 1,

@@ -264,6 +264,8 @@ enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
 #define MOGALL_FOREST_EAST_ACTOR_CONDITION CONDITION_ALWAYS
 #endif
 
+/// The hiding place that shares the ape's sprite: always placed before patch 1,
+/// from it only until the ape has come out.
 #if !TBS_PATCH_1
 #define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION CONDITION_ALWAYS
 #else

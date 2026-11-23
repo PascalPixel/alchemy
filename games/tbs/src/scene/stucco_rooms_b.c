@@ -1130,12 +1130,12 @@ struct Trigger gStuccoRoomsBTriggersAfterColosso[] = {
 };
 // clang-format on
 
+/// A door of the rooms opening, and where each door is.
 u16 gStuccoRoomsBDoorOpening[] = {
     MAPGRID_ANIMATION_STEP(2, 123, 1, 2, 6),
     MAPGRID_ANIMATION_STEP(4, 123, 1, 2, 6),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 struct MapGridCellAnimation gStuccoRoomsBDoors[] = {
     {gStuccoRoomsBDoorOpening, 24, 100},
     {gStuccoRoomsBDoorOpening, 33, 100},

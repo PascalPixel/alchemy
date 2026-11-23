@@ -4,6 +4,8 @@
 
 #include "screens_internal.h"
 
+/// The Status screen's help text buffer, in characters, and the x of the
+/// Attack, Defense and Agility figures, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define OWNER_STATUS_TEXT_MAX 128
 #define OWNER_STATUS_VALUE_X 184
@@ -18,6 +20,7 @@
 /// The status icons shown at most.
 #define OWNER_STATUS_ICONS_MAX 8
 
+/// The message of a stat's label on the Status screen, by its row.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
 #else

@@ -113,6 +113,8 @@ static u8 sTransferData[96];
 /// and the forest far below lies under it.
 #define BG3_SPLIT_Y 192
 
+/// The screen line where BG3 splits, and its horizontal scroll below the split
+/// (the forest) and above it (the drifting clouds).
 static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;

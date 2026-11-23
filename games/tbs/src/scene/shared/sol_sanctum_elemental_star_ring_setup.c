@@ -1,10 +1,9 @@
 #include "system/dma.h"
 
-// Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
-// in the room, actors in a row from the first the map passes, each
-// pulsing and drifting on its own path from the tables gSolSanctum_Ring*, by
-// its index.
-
+/// Sol Sanctum's Elemental Star room and its eruption: the ten lights that
+/// float in the room, actors in a row from the first the map passes, each
+/// pulsing and drifting on its own path from the tables gSolSanctum_Ring*, by
+/// its index.
 enum { SOL_SANCTUM_RING_MAX = 10 };
 
 /// One floating light: its actor, its drift and its pulsing scale, and

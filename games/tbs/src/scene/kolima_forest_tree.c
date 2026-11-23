@@ -141,10 +141,14 @@ static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 change);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void Inventory_ReplaceItem(s32 oldItem, s32 newItem);
 
+/// Where Tret's sparks spring from (16.16 pixels), the frame of their cycle,
+/// whether a repelling spark plays its sound, and the frames of the healing
+/// palette's spread.
 s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
 s32 gKolimaForestTreeSparkFrame BSS_DATA;
 s32 gKolimaForestTreePlaySparkSound BSS_DATA;
 s32 gKolimaForestTreePaletteFrame BSS_DATA;
+/// Unused: eight bytes after the palette frame that nothing reads.
 u8 gKolimaForestTree_UnusedAfterPaletteFrame[8] BSS_DATA;
 /// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
 /// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.

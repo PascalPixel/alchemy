@@ -1377,6 +1377,7 @@ static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
   }
 }
 
+/// The sound the rings of light play here (psynergy_rings.c).
 #define PSYNERGY_RINGS_SOUND SE_PSYNERGY_SPARKLE
 #include "shared/psynergy_rings.c"
 
@@ -3667,6 +3668,7 @@ struct ActorPlacement gVenusLighthouseAerieActorPlacements[] = {
 };
 // clang-format on
 
+/// The floating platform the leader has landed on, 0 when none.
 s32 gVenusLighthouseAerie_LandedPlatform = 0;
 
 struct Trigger gVenusLighthouseAerieTriggers[] = {

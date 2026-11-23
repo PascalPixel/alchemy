@@ -371,6 +371,8 @@ static void Sanctum_AskQuestAgain(void) {
   Event_End();
 }
 
+/// Who answers "......" when the healer asks whether Isaac's new friends are
+/// Adepts: Ivan from patch 1, Garet before.
 #if TBS_PATCH_1
 #define SANCTUM_NEW_FRIENDS_SPEAKER 2
 #else
@@ -1641,6 +1643,8 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
   }
 }
 
+/// The question's window after the refusal ending, in tiles, and its cursor's
+/// x in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define QUESTION_X 2
 #define QUESTION_WIDTH 25

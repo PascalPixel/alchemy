@@ -2821,12 +2821,12 @@ struct Trigger gKalay_TunnelTriggers[] = {
 };
 // clang-format on
 
+/// A door of the town opening, and where each door is.
 u16 gKalay_DoorCellSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 33, 1, 2, 5),
     MAPGRID_ANIMATION_STEP(37, 33, 1, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 struct MapGridCellAnimation gKalay_DoorCells[] = {
     {gKalay_DoorCellSteps, 36, 10}, {gKalay_DoorCellSteps, 57, 7},
     {gKalay_DoorCellSteps, 57, 11}, {gKalay_DoorCellSteps, 57, 23},

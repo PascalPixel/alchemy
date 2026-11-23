@@ -1360,6 +1360,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
+/// Copies a seal's cell copy (struct CellCopy) onto the map.
 #define COPY_CELLS(copy)                                                       \
   MapGrid_CopyCellsTo((copy).sourceX, (copy).sourceY, (copy).destinationX,     \
                       (copy).destinationY, (copy).width, (copy).height)
@@ -1672,4 +1673,5 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The clouds' scroll, SCROLL_OFFSET_STEP more each frame.
 s32 gSolSanctumStatue_ScrollOffset = 0;

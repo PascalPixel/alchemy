@@ -4,6 +4,8 @@
 
 #include "system_internal.h"
 
+/// The IWRAM routine that clears a run of words, which the OAM build calls by
+/// its address.
 extern u8 IwramClearWords[];
 
 enum {

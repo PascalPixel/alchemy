@@ -1837,13 +1837,14 @@ s32 gTunnelRuins_DouseSplashScript[] = {
     SC_END,
 };
 
+/// The east wall's door opening once all five statues stand on their marks,
+/// and shutting again.
 u16 gTunnelRuins_DoorOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(28, 59, 1, 2, 4),
     MAPGRID_ANIMATION_STEP(26, 59, 1, 2, 4),
     MAPGRID_ANIMATION_STEP(24, 59, 1, 2, 4),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gTunnelRuins_DoorCloseSteps[] = {
     MAPGRID_ANIMATION_STEP(26, 59, 1, 2, 4),
     MAPGRID_ANIMATION_STEP(28, 59, 1, 2, 4),

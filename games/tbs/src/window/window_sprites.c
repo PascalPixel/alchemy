@@ -333,6 +333,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #endif
 
+/// The windows' tilemap, a 32-tile-wide screen block, 20 rows of it in use.
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 

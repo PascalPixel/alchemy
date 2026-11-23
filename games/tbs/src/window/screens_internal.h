@@ -70,6 +70,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define NUMBER_TEXT_FOUR_PLACES 7
 #define NUMBER_TEXT_THREE_PLACES 8
 
+/// Where the Djinni preview's old stats start in their number text, and their
+/// column.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_STAT_DIGIT_OFFSET NUMBER_TEXT_FOUR_PLACES
 #define DJINN_PREVIEW_STAT_X 4
@@ -78,6 +80,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define DJINN_PREVIEW_STAT_X 6
 #endif
 
+/// The x of the preview's ":Psynergy Gained" prompt, in pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_HELP_X 40
 #else
@@ -135,6 +138,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_SUMMON_WINDOW_WIDTH 14
 #endif
 
+/// The tile columns of a summon's first Djinn cost in the battle's summon
+/// command: its element icon, then its count.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_SUMMON_ELEMENT_COLUMN 13
 #define BATTLE_SUMMON_COST_COLUMN 14
@@ -188,6 +193,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
+/// The password level menu's explanation window ("The data stored in your
+/// password depends on which level you select:"), in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define PASSWORD_HELP_WINDOW_X 1
 #define PASSWORD_HELP_WINDOW_WIDTH 28
@@ -213,12 +220,14 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_METHOD_WINDOW_WIDTH 13
 #endif
 
+/// The x of "Transfer Method" in its heading window, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define TRANSFER_METHOD_LABEL_X 2
 #else
 #define TRANSFER_METHOD_LABEL_X 0
 #endif
 
+/// The transfer method menu's help window, in tiles.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_SPANISH ||            \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TRANSFER_HELP_WINDOW_X 1
@@ -241,6 +250,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define SHOP_COMMAND_LABEL_WIDTH 6
 #endif
 
+/// The width of the Sanctum's service label window, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SANCTUM_SERVICE_LABEL_WIDTH 10
 #else
@@ -358,6 +368,8 @@ extern const u8 gDjinnMenu_BlinkTile[32];
 #define DJINN_MENU_ARROW_TILE 808
 #define DJINN_MENU_ARROW_VRAM                                                  \
   (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
+/// Where each element's Djinn stand in the battle Djinn menu's icon window, a
+/// two-by-two grid of tiles.
 extern const u8 gDjinnMenu_ElementXOffsets[4];
 extern const u8 gDjinnMenu_ElementYOffsets[4];
 

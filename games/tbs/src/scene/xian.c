@@ -157,6 +157,8 @@ enum XianCellBehavior {
   CELL_BEHAVIOR_XIAN_WATER_STREET_NORTH = 21
 };
 
+/// The frames the leader must stand in the water carrier's way before she
+/// raises RAISED_CARRIER_BLOCKED.
 enum { XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
 /// The water carrier's round (gXian_WaterCarrierRoute) runs along map row 14
@@ -292,6 +294,7 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
   RETURN_UNREAD(0);
 }
 
+/// Xian_WatchWaterCarrierPath, as an actor's update takes it.
 #ifdef UBFIX
 #define XIAN_WATER_CARRIER_UPDATE Xian_WatchWaterCarrierPath
 #else
@@ -919,25 +922,21 @@ u16 gXian_HouseDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(63, 48, 1, 2, 4),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gXian_NorthHouseDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(69, 50, 2, 2, 4),
     MAPGRID_ANIMATION_STEP(65, 50, 2, 2, 4),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gXian_InnDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 4),
     MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 4),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gXian_SanctumDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(67, 50, 4, 2, 4),
     MAPGRID_ANIMATION_STEP(63, 50, 4, 2, 4),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gXian_SchoolDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(66, 44, 3, 2, 4),
     MAPGRID_ANIMATION_STEP(63, 44, 3, 2, 4),

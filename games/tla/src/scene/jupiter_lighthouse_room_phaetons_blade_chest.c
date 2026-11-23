@@ -12,9 +12,6 @@
 /// Phaeton's Blade's chest, its east one on towards the top; the stairs down
 /// between the statues are walled off while he Hovers
 /// (JupiterLighthouse_StartHovering).
-///
-/// The cracked tiles' code comes last, in two parts with the shared field
-/// effect code linked between them.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -111,6 +108,8 @@ struct Actor *gLightSpriteActors[16] BSS_DATA;
 struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
+/// The cells CrackedTile_Step watches, and the cell it copies over the one the
+/// leader steps on.
 struct CellTarget gCrackedTiles BSS_DATA;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void JupiterLighthouse_StopHovering(void);
@@ -135,14 +134,14 @@ struct Actor *Whirlwind_Spawn();
 /// off, so that he cannot drift down them.
 void JupiterLighthouse_StartHovering(void) {
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_HOVER)
-    FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
-                                 CELL_BEHAVIOR_WALL);
+    FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272),
+                                 MAPGRID_LAYER_GROUND, CELL_BEHAVIOR_WALL);
 }
 
 /// Nothing visible happens when Felix's Hover ends; the Hover hall's stairs
 /// down, cell (34, 17), lead down again.
 void JupiterLighthouse_StopHovering(void) {
-  MapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
+  MapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), MAPGRID_LAYER_GROUND,
                           EXIT_HOVER_HALL_STAIRS);
 }
 
@@ -333,7 +332,7 @@ extern s32 gPaletteCyclePausesInEvents;
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame (gPaletteCycleFrame).
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -365,10 +364,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -381,6 +376,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -408,7 +404,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 11, toFIXED(-8), 0, toFIXED(-8), FACING_WEST, 2, 0},
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, -8, 0, -8, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 424, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 440, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_POLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_CHILD, 664, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -437,10 +433,10 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_WHORL},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_TO_JUPITER_LIGHTHOUSE_AERIE},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
@@ -486,17 +482,12 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect_move.c"
 
-// The hover-tile hall of Jupiter Lighthouse's right tower: its copy of the
-// effect spawner, and the cracked tiles, found, cracked and fallen through.
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTile_Step watches, and the cell it copies over the one the
-/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
@@ -504,10 +495,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 #include "shared/cracked_tile_fall.h"
@@ -515,14 +502,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The hover-tile hall of Jupiter Lighthouse's right tower: the cracked tiles'
-// steps and landings.
 
-struct CellTarget;
-struct CellTargetEntry;
-void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
-void JupiterLighthouse_StopHovering(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 

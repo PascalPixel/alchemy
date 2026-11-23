@@ -9,9 +9,9 @@
 #define STREAK_VALUE(mode, n) gStreak_Styles[(mode)][(n)]
 #define STREAK_ANIMATE 0 ///< nonzero: the streak cycles through three images
 #define STREAK_HIT 1     ///< nonzero: play the hit sound and flash the target
-#define STREAK_MOTION                                                          \
-  2 ///< the target's knockback on the hit (enum BattleKnockback, -1: none)
-/// nonzero: the struck target trembles from side to side
+/// The target's knockback on the hit (enum BattleKnockback), or -1 for none.
+#define STREAK_MOTION 2
+/// Nonzero: the struck target trembles from side to side.
 #define STREAK_SHAKE 3
 
 #define STREAK_MAX 3 ///< streaks fired at each target
@@ -91,7 +91,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 streakIndex;
   s32 streaks = STREAK_MAX;
-  FIXED lift = toFIXED(20); // 20 pixels, 16.16
+  FIXED lift = toFIXED(20); // the streaks fly 20 pixels above the ground
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -258,12 +258,12 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
 /// The mote fountain's modes (BattleEffect_RunMoteFountain).
 enum MoteFountainMode {
-  MOTE_FOUNTAIN_FOUNTAIN_HEALING, ///< Soothing Star
-  MOTE_FOUNTAIN_DRIFTING          ///< Sleep Star
+  MOTE_FOUNTAIN_HEALING, ///< Soothing Star
+  MOTE_FOUNTAIN_DRIFTING ///< Sleep Star
 };
 
 /// The motes the fountains set out, and the ones drawn.
-enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
+enum { MOTE_FOUNTAIN_MOTES = 256, MOTE_FOUNTAIN_MOTES_DRAWN = 128 };
 
 /// Motes burst out of the user and float up, wobbling, as they drift across the
 /// field onto the targets, and each target flinches in turn.
@@ -277,16 +277,16 @@ void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
 ///
 /// Abilities: Soothing Star.
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
-  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_HEALING);
 }
-#define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
+#define MOTE_FOUNTAIN_FRAMES 128
 
 /// The projected depths over which a mote is sized, nearest to farthest: it is
 /// drawn MOTE_FOUNTAIN_LARGEST pixels wide (and twice as tall) at
-/// FLARE_DEPTH_NEAR or nearer, a pixel narrower for every
+/// MOTE_FOUNTAIN_DEPTH_NEAR or nearer, a pixel narrower for every
 /// MOTE_FOUNTAIN_DEPTH_STEP farther.
-#define FLARE_DEPTH_NEAR 314
-#define FLARE_DEPTH_FAR 634
+#define MOTE_FOUNTAIN_DEPTH_NEAR 314
+#define MOTE_FOUNTAIN_DEPTH_FAR 634
 #define MOTE_FOUNTAIN_LARGEST 6
 #define MOTE_FOUNTAIN_DEPTH_STEP 64
 
@@ -299,7 +299,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   BlitterPair draw;
   struct BattleCamera *camera;
-  u8 *sheet;
+  u8 *motes;
   struct Actor *source;
   struct Particle *mote;
   s32 resource;
@@ -309,9 +309,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
-  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
+  if (mode == MOTE_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -321,8 +321,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_LIGHTEN);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
+  if (mode == MOTE_FOUNTAIN_HEALING)
     resource = RESOURCE_ORANGE_PALETTE_A;
   else
     resource = RESOURCE_EARTH_WALL_SHEET;
@@ -331,7 +331,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
-  for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
+  for (i = 0; i != MOTE_FOUNTAIN_MOTES; i++) {
     s32 speed;
     s32 angle;
 
@@ -345,15 +345,15 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                  ((Random16() & 255) - 32) << 9,
                  -(Trig_Cos(angle) * speed << 1) >> 8);
     mote->variant = (Random16() & 31) + 48;
-    if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
+    if (mode == MOTE_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;
       mote->velocityZ /= 2;
     }
   }
 
-  for (frame = 0; frame != MOTE_FOUNTAIN_FOUNTAIN_FRAMES; frame++) {
+  for (frame = 0; frame != MOTE_FOUNTAIN_FRAMES; frame++) {
     EFFECT_VIEW_FROM_CAMERA(camera);
-    for (i = 0; i != MOTE_VISIBLE_COUNT; i++) {
+    for (i = 0; i != MOTE_FOUNTAIN_MOTES_DRAWN; i++) {
       mote = &PARTICLES[i];
       if (frame >= i / 32 * 8 && mote->variant >= 0) {
         s32 size;
@@ -365,13 +365,14 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
             mote->y, mote->z);
         Projection_Point(worldPoint, &position);
         position.x >>= 1;
-        if (position.depth < FLARE_DEPTH_NEAR)
-          position.depth = FLARE_DEPTH_NEAR;
-        if (position.depth > FLARE_DEPTH_FAR)
-          position.depth = FLARE_DEPTH_FAR;
+        if (position.depth < MOTE_FOUNTAIN_DEPTH_NEAR)
+          position.depth = MOTE_FOUNTAIN_DEPTH_NEAR;
+        if (position.depth > MOTE_FOUNTAIN_DEPTH_FAR)
+          position.depth = MOTE_FOUNTAIN_DEPTH_FAR;
         size = MOTE_FOUNTAIN_LARGEST -
-               (position.depth - FLARE_DEPTH_NEAR) / MOTE_FOUNTAIN_DEPTH_STEP;
-        EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
+               (position.depth - MOTE_FOUNTAIN_DEPTH_NEAR) /
+                   MOTE_FOUNTAIN_DEPTH_STEP;
+        EFFECT_DRAW_MOTE(draw[0], canvas, motes, position.x, position.y, size);
         Particle_AdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
         // The drifting mode pushes the motes across the field.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
@@ -416,8 +417,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 #undef STREAK_SPACING
 #undef STREAK_FLIGHT
 #undef STREAK_TARGET_DELAY
-#undef MOTE_FOUNTAIN_FOUNTAIN_FRAMES
-#undef FLARE_DEPTH_NEAR
-#undef FLARE_DEPTH_FAR
+#undef MOTE_FOUNTAIN_FRAMES
+#undef MOTE_FOUNTAIN_DEPTH_NEAR
+#undef MOTE_FOUNTAIN_DEPTH_FAR
 #undef MOTE_FOUNTAIN_LARGEST
 #undef MOTE_FOUNTAIN_DEPTH_STEP

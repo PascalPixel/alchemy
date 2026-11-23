@@ -141,6 +141,7 @@ void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 /// Adds unit to the party. With announce nonzero it also shows `<name> joined
 /// your party.` (Party_ShowJoinedMessage, which receives announce too).
 void Event_AddPartyMember(s32 unit, s32 announce) {
+  // DEAD: the unit looked up and never used; the ROM keeps the call.
   Unit_Get(unit);
   Party_AddMemberFar(unit);
   if (announce != 0) {
@@ -148,12 +149,21 @@ void Event_AddPartyMember(s32 unit, s32 announce) {
   }
 }
 
-/// Adds two units to the party and announces them together.
+/// Adds two units to the party and announces them together ("<a> and <b>
+/// joined your party.", Party_ShowPairJoinedMessage).
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddMemberFar(first);
   Party_AddMemberFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
+
+/// What Party_CheckShortcut finds wrong with a shortcut.
+enum ShortcutProblem {
+  SHORTCUT_USABLE = 0,
+  SHORTCUT_NO_SUCH_MEMBER = -1,
+  SHORTCUT_MEMBER_AWAY = -2, ///< not in the party
+  SHORTCUT_NOT_LEARNED = -3  ///< the member does not know the Psynergy
+};
 
 /// Checks an L or R button shortcut, packed as the party member in bits 10 to
 /// 13 and the Psynergy in bits 0 to 9.
@@ -162,20 +172,20 @@ s32 Party_CheckShortcut(u32 shortcut) {
   s32 ability = ABILITY_ID(shortcut);
 
   if (member > ALLY_MAX)
-    return -1;
+    return SHORTCUT_NO_SUCH_MEMBER;
   if (GameFlag_Get(FLAG_IN_PARTY(member)) == 0)
-    return -2;
+    return SHORTCUT_MEMBER_AWAY;
   if (Unit_KnowsPsynergyFar(member, ability) == 0)
-    return -3;
-  return 0;
+    return SHORTCUT_NOT_LEARNED;
+  return SHORTCUT_USABLE;
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
 /// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
+  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != SHORTCUT_USABLE)
     gMainRoutineWork.firstShortcut = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != 0)
+  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != SHORTCUT_USABLE)
     gMainRoutineWork.secondShortcut = 0;
 }
 
@@ -212,6 +222,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// Checks whether the party can carry one more of item; when it cannot, says
 /// so and returns -1, else 0.
 s32 Party_CheckItemLimit(s32 item) {
+  // DEAD: the count never used; the ROM keeps the call.
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);

@@ -6,6 +6,11 @@
 /// A screen row's map cell, in pixels, in an OAM entry's 8-bit y, as
 /// MAPGRID_CELL_PIXEL_MASK is for a whole pixel coordinate.
 #define CELL_GRID_ROW_MASK 0xf0
+// XXX: what the player sees of this bit; a render of a map whose third layer
+// sets it, with FieldEffect_StartBlankOverlay running, would settle it.
+/// MapCell.attributeB's lowest bit, on the map's third layer: a cell the blank
+/// overlay marks.
+#define CELL_BLANK_OVERLAY 0x01
 
 /// Each frame of the fade overlay: on each of the two cells beside the actor
 /// (left and right of it), where the ground one or two cells south rises above
@@ -86,9 +91,9 @@ void FadeOverlay_DrawMarks(void) {
   }
 }
 
-/// Starts the fade overlay on object (the party leader when NULL): loads its
+/// Starts the fade overlay on an actor (the party leader when NULL): loads its
 /// solid tiles, sets the blending and draws it each frame.
-void FieldEffect_StartFadeOverlay(void *object) {
+void FieldEffect_StartFadeOverlay(void *actor) {
   struct FadeOverlayWork *work;
   u8 *tiles;
   volatile u32 fill;
@@ -106,9 +111,9 @@ void FieldEffect_StartFadeOverlay(void *object) {
   // 31 is above the register's useful maximum, BLEND_FADE_MAX, and acts as it.
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
-  if (object == NULL)
-    object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  work->actor = object;
+  if (actor == NULL)
+    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  work->actor = actor;
 }
 
 /// Stops drawing the fade overlay, keeping its work.
@@ -132,8 +137,8 @@ void BlankOverlay_DrawMarks(void) {
   s32 row;
   u32 tile;
   struct MapCell *cells;
-  struct MapCell *a;
-  struct MapCell *b;
+  struct MapCell *right;
+  struct MapCell *left;
   struct AnimationSpritePart *m;
 
   if (actor == 0)
@@ -143,11 +148,12 @@ void BlankOverlay_DrawMarks(void) {
   tile =
       gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
   cells = map->layers[2].cells;
-  a = cells + (x + 8) / MAPGRID_CELL_PIXELS +
-      (row / MAPGRID_CELL_PIXELS - 2) * MAPGRID_SIZE;
-  b = cells + (x - 8) / MAPGRID_CELL_PIXELS +
-      (row / MAPGRID_CELL_PIXELS - 2) * MAPGRID_SIZE;
-  if ((a->attributeB & 1) || (b->attributeB & 1)) {
+  right = cells + (x + 8) / MAPGRID_CELL_PIXELS +
+          (row / MAPGRID_CELL_PIXELS - 2) * MAPGRID_SIZE;
+  left = cells + (x - 8) / MAPGRID_CELL_PIXELS +
+         (row / MAPGRID_CELL_PIXELS - 2) * MAPGRID_SIZE;
+  if ((right->attributeB & CELL_BLANK_OVERLAY) ||
+      (left->attributeB & CELL_BLANK_OVERLAY)) {
     m = mark;
     ((u32 *)m)[1] = OBJ_SIZE_16X16;
     ((u32 *)m)[2] = OBJ_PRIORITY(1);
@@ -157,11 +163,12 @@ void BlankOverlay_DrawMarks(void) {
     mark = m + 1;
     Oam_AddSpriteAtDepthClamped(m, 1);
   }
-  a = cells + (x + 8) / MAPGRID_CELL_PIXELS +
-      (row / MAPGRID_CELL_PIXELS - 1) * MAPGRID_SIZE;
-  b = cells + (x - 8) / MAPGRID_CELL_PIXELS +
-      (row / MAPGRID_CELL_PIXELS - 1) * MAPGRID_SIZE;
-  if ((a->attributeB & 1) || (b->attributeB & 1)) {
+  right = cells + (x + 8) / MAPGRID_CELL_PIXELS +
+          (row / MAPGRID_CELL_PIXELS - 1) * MAPGRID_SIZE;
+  left = cells + (x - 8) / MAPGRID_CELL_PIXELS +
+         (row / MAPGRID_CELL_PIXELS - 1) * MAPGRID_SIZE;
+  if ((right->attributeB & CELL_BLANK_OVERLAY) ||
+      (left->attributeB & CELL_BLANK_OVERLAY)) {
     m = mark;
     ((u32 *)m)[1] = OBJ_SIZE_16X16;
     ((u32 *)m)[2] = OBJ_PRIORITY(1);
@@ -174,8 +181,8 @@ void BlankOverlay_DrawMarks(void) {
 
 /// Like FieldEffect_StartFadeOverlay with blank tiles and no blending:
 /// loads 512 bytes of blank tiles into VRAM_CACHE_ENTRY_FADE_OVERLAY and starts
-/// BlankOverlay_DrawMarks on object (the controlled owner's when 0).
-void FieldEffect_StartBlankOverlay(s32 object) {
+/// BlankOverlay_DrawMarks on an actor (the party leader when 0).
+void FieldEffect_StartBlankOverlay(s32 actor) {
   struct FadeOverlayWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -184,9 +191,9 @@ void FieldEffect_StartBlankOverlay(s32 object) {
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, buffer);
   Task_Add(BlankOverlay_DrawMarks, TASK_PASS_FRAME);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  if (object == 0)
-    object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  work->actor = (struct FadeActor *)object;
+  if (actor == 0)
+    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  work->actor = (struct FadeActor *)actor;
 }
 
 /// Suspends the BlankOverlay_DrawMarks overlay task.
@@ -252,3 +259,4 @@ void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite,
 }
 
 #undef CELL_GRID_ROW_MASK
+#undef CELL_BLANK_OVERLAY

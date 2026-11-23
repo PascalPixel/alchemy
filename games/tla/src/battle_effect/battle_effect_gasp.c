@@ -992,7 +992,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 a;
 
           speed &= Random16();
-          a = (Random16() & 0x7fff) + DEGtoANG(90);
+          a = (Random16() & (DEGtoANG(180) - 1)) + DEGtoANG(90);
           speed += GASP_NOTE_SPEED_MIN;
           p->velocityX = Trig_Sin(a) * speed >> 7;
           p->velocityY = Trig_Cos(a) * speed >> 6;
@@ -1045,7 +1045,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 a;
 
           speed &= Random16();
-          a = (Random16() & 0x7fff) + DEGtoANG(90);
+          a = (Random16() & (DEGtoANG(180) - 1)) + DEGtoANG(90);
           speed += GASP_NOTE_SPEED_MIN;
           p->velocityX = Trig_Sin(a) * speed >> 6;
           p->velocityY = Trig_Cos(a) * speed >> 6;

@@ -52,15 +52,15 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + DEGtoANG(90);
-    speed = (Random16() & 0x1ff) + 128;
-    PARTICLES[i].x = INTtoFIXED((origin.x / 2 + (Random16() & 0xf)) - 8);
+    angle = (Random16() & (DEGtoANG(180) - 1)) + DEGtoANG(90);
+    speed = (Random16() & 511) + 128;
+    PARTICLES[i].x = INTtoFIXED((origin.x / 2 + (Random16() & 15)) - 8);
     PARTICLES[i].y = INTtoFIXED(origin.y + 8);
     PARTICLES[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     PARTICLES[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
-    PARTICLES[i].z = Random16() & 0x7f;
-    PARTICLES[i].velocityZ = Random16() & 0x7f;
-    PARTICLES[i].variant = (Random16() & 0xf) + 32;
+    PARTICLES[i].z = Random16() & 127;
+    PARTICLES[i].velocityZ = Random16() & 127;
+    PARTICLES[i].variant = (Random16() & 15) + 32;
   }
 
   for (frame = 0; frame != HAIL_FRAMES; frame++) {
@@ -82,7 +82,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame * (TRIG_TURN / 32);
-      x = FIXEDtoINT(-Trig_Sin(orbit) * 4) + screen[0] / 2 - 10;
+      x = FIXEDtoINT(-Trig_Sin(orbit) * 4) + screen[0] / 2 -
+          SMALL_DJINNI_WIDTH / 2;
       y = FIXEDtoINT(Trig_Cos(orbit) * 2) + screen[1] - 22;
       // DEAD: frame never passes 69, the loop ending at frame 63; the ROM
       // keeps the compare and the rise.
@@ -200,7 +201,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   {
     struct MotionObject *target = BattleObject_GetFar(args->targets[0])->object;
 
-    // The portals fan out from above the user.
+    // The portals fan out from above the user: eight set out, of which the
+    // first GROUND_PORTALS fly.
     for (i = 0; i != 8; i++) {
       struct Particle *portal = &work->particles[i];
 
@@ -221,7 +223,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       // The Djinni circles above the user, then rises away.
       if (args->prelude == 1) {
         s32 angle = frame * (TRIG_TURN / 32);
-        s32 x = FIXEDtoINT(-Trig_Sin(angle) * 4) + screen[0] / 2 - 10;
+        s32 x = FIXEDtoINT(-Trig_Sin(angle) * 4) + screen[0] / 2 -
+                SMALL_DJINNI_WIDTH / 2;
         s32 y = FIXEDtoINT(Trig_Cos(angle) * 2) + screen[1] - 22;
 
         if (frame > 16)
@@ -264,6 +267,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             x = position.x - PORTAL_WIDTH / 2;
             y = position.y - PORTAL_HEIGHT / 2;
             draw[0](canvas, work->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
+            // Its glow flickers between the sheet's next two pictures.
             if ((frame & 3) <= 1)
               draw[0](canvas, work->sheet + gHail_PortalPictures[1],
                       x + gHail_PortalX[1], y + gHail_PortalY[1],
@@ -375,8 +379,3 @@ void Camera_ApplyVerticalShake(s32 range) {
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   }
 }
-
-#undef BLITTER
-
-// Thor: a beam of light falls from a dusk sky, then a pillar of lightning and
-// violet bolts strike the foes.

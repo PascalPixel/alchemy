@@ -119,7 +119,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s16 gImil_KeyHeadings[];
+extern s16 gIce_KeyHeadings[];
 extern s16 gImil_SlideHeadings[];
 extern s32 gImil_ShiverScript[];
 extern s32 gImil_OldWomanHurryScript[];
@@ -1554,7 +1554,7 @@ static void Actor_SteerByPad(struct Actor *actor) {
     return;
   }
   actor->steeringFlags = 0;
-  heading = gImil_KeyHeadings[DPAD_INDEX(gKeysHeld)];
+  heading = gIce_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (heading == -1) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
@@ -1658,12 +1658,7 @@ tail:
 }
 
 // clang-format off
-s16 gImil_KeyHeadings[] = {
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
-    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
-    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-};
+#include "shared/ice_key_headings.c"
 
 s16 gImil_SlideHeadings[] = {
     KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,

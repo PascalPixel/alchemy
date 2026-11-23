@@ -1,0 +1,14 @@
+/// @file
+/// Imil's ice: the way the leader turns while he slides on it, by the held
+/// directions.
+
+/// The heading for each combination of held directions (DPAD_INDEX), or
+/// KEY_HEADING_NONE where they point nowhere and the leader looks around.
+// clang-format off
+s16 gIce_KeyHeadings[] = {
+    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
+    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
+    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
+    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
+};
+// clang-format on

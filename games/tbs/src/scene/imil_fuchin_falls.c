@@ -97,7 +97,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s16 gImilFuchinFalls_KeyHeadings[];
+extern s16 gIce_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct Actor *gImilFuchinFalls_DragonsEye;
 extern struct SceneEntrance gImilFuchinFalls_NoEntrances[];
@@ -1924,7 +1924,7 @@ static void Imil_TurnOnIceTowardHeldDirection(struct Actor *actor) {
     return;
   }
   actor->steeringFlags = 0;
-  direction = gImilFuchinFalls_KeyHeadings[DPAD_INDEX(gKeysHeld)];
+  direction = gIce_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (direction == KEY_HEADING_NONE) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
@@ -2032,12 +2032,7 @@ tail:
 }
 
 // clang-format off
-s16 gImilFuchinFalls_KeyHeadings[] = {
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
-    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
-    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-};
+#include "shared/ice_key_headings.c"
 
 s16 gImilFuchinFalls_SlideHeadings[] = {
     KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,

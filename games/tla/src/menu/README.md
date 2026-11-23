@@ -93,7 +93,7 @@ and Camelot screens, a scroll down a tall picture, and the logo
 coming together. The credits are the staff roll after the ending, with
 battle backgrounds behind the names, and the same code holds two more
 things: the story told in scrolling lines that open
-`Ages ago, or so the stories`, and the ending's pictures that scroll past in their
+`Ages ago, or so the stories`, and the ending's images that scroll past in their
 frame.
 
 ## Where the code is

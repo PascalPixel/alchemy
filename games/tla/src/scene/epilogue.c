@@ -1,6 +1,6 @@
 /// @file
 /// The epilogue: the party's last words, line after line, each with the
-/// speaker's portrait in a frame beside it, over the ending's pictures, from
+/// speaker's portrait in a frame beside it, over the ending's images, from
 /// "Finally! We've reached Vale." (MsgFinallyWeVe) to The End; then it waits
 /// for a button, or three minutes, and goes on to the file screen.
 
@@ -39,7 +39,7 @@
 #include "window/message_speed.h"
 #include "scene_exits.h"
 
-void EndingPicture_LowerTopStrip(s32 enable);
+void EndingImage_LowerTopStrip(s32 enable);
 
 /// The portrait frame's VRAM cache entry.
 s32 gEpiloguePortraitFrameEntry BSS_DATA ALIGNED(16);
@@ -56,7 +56,7 @@ s16 gEpiloguePortraitX BSS_DATA ALIGNED(4); ///< the portrait's left, in pixels
 /// The colours of the epilogue's name panel (green_panel.s).
 extern const u16 gEpilogueNamePanelPalette[];
 
-void EndingPicture_Show(s32 resource, u8 *map, s32 position);
+void EndingImage_Show(s32 resource, u8 *map, s32 position);
 #include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -132,7 +132,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y);
 
 /// A speaker (a sprite number) or'd with this shows the line with no portrait:
-/// a voice heard from off the picture.
+/// a voice heard from off the image.
 #define EPILOGUE_NO_PORTRAIT 0x8000
 
 /// The epilogue's message windows appear at once, without MESSAGE_WINDOW_ZOOM,
@@ -192,7 +192,7 @@ void Text_GetMessageSize();
 enum EpilogueLinePosition {
   LINE_AT_TOP,
   LINE_IN_MIDDLE,
-  LINE_AT_FOOT, ///< below the picture
+  LINE_AT_FOOT, ///< below the image
 };
 
 /// Shows the epilogue's next line, spoken by speaker (a sprite, whose portrait
@@ -248,10 +248,10 @@ void Epilogue_ShowLine(s32 speaker, s32 position, s32 frames) {
 }
 
 void SceneState_SetScrollTarget(u16 row);
-void EndingPicture_WaitForScroll(void);
+void EndingImage_WaitForScroll(void);
 void WindowSystem_InitField(void);
 
-/// Runs the whole epilogue, picture after picture, then sets out for the file
+/// Runs the whole epilogue, image after image, then sets out for the file
 /// screen, which offers to save the cleared game. Returns 0.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
@@ -266,7 +266,7 @@ s32 Scene_Initialize(void) {
   leader = Actor_Get(work->leaderActorId);
   leader->motionFlags = 0;
   work->messageSpeed = MESSAGE_SPEED_NORMAL;
-  EndingPicture_Start();
+  EndingImage_Start();
   WindowSystem_InitField();
   windowWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
   windowWork->holdTilemapUpload = 1;
@@ -297,7 +297,7 @@ s32 Scene_Initialize(void) {
   scroll = gBgScroll;
   scroll[3].y = 16;
   scroll[2].y = 16;
-  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_CLIFF_DAY_PICTURE,
+  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_CLIFF_DAY_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(100);
   Epilogue_ShowLine(SPRITE_JENNAS_FATHER, LINE_AT_FOOT, 30);
@@ -309,13 +309,13 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(SPRITE_JENNA, LINE_AT_FOOT, 40);
 #endif
   Epilogue_ShowLine(SPRITE_JENNA, LINE_AT_FOOT, 40);
-  // The picture pans 120 pixels right, to the three on the cliff.
+  // The image pans 120 pixels right, to the three on the cliff.
   SceneState_SetScrollTarget(120);
   System_Wait(1);
-  EndingPicture_WaitForScroll();
+  EndingImage_WaitForScroll();
   FieldEvent_Wait(30);
   // The sunset over the cliff, shown already panned to them.
-  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_CLIFF_SUNSET_PICTURE,
+  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_CLIFF_SUNSET_PICTURE,
         (s32)Ram_MapCellBuffer, 120);
   FieldEvent_Wait(120);
   Epilogue_ShowLine(SPRITE_JENNA, LINE_AT_FOOT, 30);
@@ -353,7 +353,7 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(EPILOGUE_NO_PORTRAIT | SPRITE_BOY_WITH_ORANGE_HAIR,
                     LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
-  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_VILLAGERS_PICTURE_A,
+  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_VILLAGERS_PICTURE_A,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_EPILOGUE_VILLAGERS);
@@ -370,39 +370,39 @@ s32 Scene_Initialize(void) {
   Epilogue_ShowLine(SPRITE_KRADEN, LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_GARET, LINE_AT_FOOT, 40);
   Epilogue_ShowLine(SPRITE_KRADEN, LINE_AT_FOOT, 40);
-  // The villagers' picture pans 200 pixels right, to Dora by the trees.
+  // The villagers' image pans 200 pixels right, to Dora by the trees.
   SceneState_SetScrollTarget(200);
   System_Wait(1);
-  EndingPicture_WaitForScroll();
+  EndingImage_WaitForScroll();
   FieldEvent_Wait(30);
   Epilogue_ShowLine(SPRITE_KYLE, LINE_AT_FOOT, 20);
   Epilogue_ShowLine(SPRITE_ISAAC, LINE_AT_FOOT, 40);
   Epilogue_ShowLine(SPRITE_DORA, LINE_AT_FOOT, 20);
   Epilogue_ShowLine(SPRITE_KYLE, LINE_AT_FOOT, 30);
   Epilogue_ShowLine(SPRITE_DORA, LINE_AT_FOOT, 40);
-  // No picture: the villagers fade to black before the embrace.
-  Call3((void (*)())EndingPicture_Show, 0, (s32)Ram_MapCellBuffer, 0);
+  // No image: the villagers fade to black before the embrace.
+  Call3((void (*)())EndingImage_Show, 0, (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   scroll[3].y = 0;
   scroll[2].y = 0;
-  EndingPicture_LowerTopStrip(0);
-  EndingPicture_Show(RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapCellBuffer, 0);
+  EndingImage_LowerTopStrip(0);
+  EndingImage_Show(RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   // The embrace stays until a button is pressed.
   while (gInput.pressed == 0)
     System_Wait(1);
-  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_REUNION_PICTURE,
+  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_REUNION_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
   // The reunion pans 120 pixels right, along the party.
   SceneState_SetScrollTarget(120);
   System_Wait(1);
-  EndingPicture_WaitForScroll();
+  EndingImage_WaitForScroll();
   FieldEvent_Wait(180);
-  Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_SUNSET_PLAIN_PICTURE,
+  Call3((void (*)())EndingImage_Show, RESOURCE_ENDING_SUNSET_PLAIN_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(300);
-  EndingPicture_Show(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer, 0);
+  EndingImage_Show(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   gMainRoutineWork.messageSpeed = savedSpeed;
@@ -417,7 +417,7 @@ s32 Scene_Initialize(void) {
         break;
     } while (gInput.pressed == 0);
   }
-  EndingPicture_Show(0, Ram_MapCellBuffer, 0);
+  EndingImage_Show(0, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   Io_Write16(0, &REG_BLDCNT);
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);

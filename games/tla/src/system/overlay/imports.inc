@@ -430,19 +430,19 @@
 	export BattleEffect_StepVector3, BattleEffect_StepVector3Far
 	export BattleEffect_GetObjectPriority, BattleEffect_GetObjectPriorityFar
 	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
-	export EndingPicture_Start, EndingPicture_StartFar
+	export EndingImage_Start, EndingImage_StartFar
 	export Actor_PlaySoundInView, Actor_PlaySoundInViewFar
 	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
 	export BattleEffect_GetObjectDepth, BattleEffect_GetObjectDepthFar
 	export Field_StartColorTransition, Field_StartColorTransitionFar
 	export Field_StartPaletteTransition, Field_StartPaletteTransitionFar
-	export EndingPicture_Show, EndingPicture_ShowFar
+	export EndingImage_Show, EndingImage_ShowFar
 	export BattleEffect_StartArcEffect, BattleEffect_StartArcEffectFar
 	export BattleEffect_EndArcEffect, BattleEffect_EndArcEffectFar
 	export SceneState_SetScrollTarget, SceneState_SetScrollTargetFar
 	export BattleEffect_WaitForArcGroups, BattleEffect_WaitForArcGroupsFar
-	export EndingPicture_WaitForScroll, EndingPicture_WaitForScrollFar
-	export EndingPicture_LowerTopStrip, EndingPicture_LowerTopStripFar
+	export EndingImage_WaitForScroll, EndingImage_WaitForScrollFar
+	export EndingImage_LowerTopStrip, EndingImage_LowerTopStripFar
 	export BattleEffect_SetObjectUpdateMode, BattleEffect_SetObjectUpdateModeFar
 	export MapGrid_GetCellBehavior, MapGrid_GetCellBehaviorFar
 	export Actor_ShowItemIconById, Actor_ShowItemIconByIdFar

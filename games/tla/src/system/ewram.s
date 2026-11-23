@@ -277,32 +277,32 @@ gDisplayScroll_LastPosition:
 	.global gDisplayScroll_Objects
 gDisplayScroll_Objects:
 	.space 0x00000004
-	.global gEndingPicture_Block
-gEndingPicture_Block:
+	.global gEndingImage_Block
+gEndingImage_Block:
 	.space 0x00000002
-	.global gEndingPicture_FadeFrames
-gEndingPicture_FadeFrames:
+	.global gEndingImage_FadeFrames
+gEndingImage_FadeFrames:
 	.space 0x00000002
-	.global gEndingPicture_MapScroll
-gEndingPicture_MapScroll:
+	.global gEndingImage_MapScroll
+gEndingImage_MapScroll:
 	.space 0x00000004
-	.global gEndingPicture_Scroll
-gEndingPicture_Scroll:
+	.global gEndingImage_Scroll
+gEndingImage_Scroll:
 	.space 0x00000004
-	.global gEndingPicture_Row
-gEndingPicture_Row:
+	.global gEndingImage_Row
+gEndingImage_Row:
 	.space 0x00000002
-	.global gEndingPicture_TargetRow
-gEndingPicture_TargetRow:
+	.global gEndingImage_TargetRow
+gEndingImage_TargetRow:
 	.space 0x00000002
-	.global gEndingPicture_Speed
-gEndingPicture_Speed:
+	.global gEndingImage_Speed
+gEndingImage_Speed:
 	.space 0x00000004
-	.global gEndingPicture_Map
-gEndingPicture_Map:
+	.global gEndingImage_Map
+gEndingImage_Map:
 	.space 0x00000004
-	.global gEndingPicture_Strips
-gEndingPicture_Strips:
+	.global gEndingImage_Strips
+gEndingImage_Strips:
 	.space 0x00000ad4
 	.global gOverlayArea
 gOverlayArea:

@@ -2,18 +2,18 @@
 @ use the second: a copy of credits_background_decode.s whose decoder writes
 @ 64 rows a band and steps 4 KB, the images' map strips.
 @
-@ EndingPicture_InnerProduct: Vector_InnerProduct again. Nothing calls it.
+@ EndingImage_InnerProduct: Vector_InnerProduct again. Nothing calls it.
 @
-@ EndingPicture_Decode(source, destination, offset): decodes a picture's packed
-@ map (r0) into the map buffer (r1). EndingPicture_Show (credits.c) copies it
+@ EndingImage_Decode(source, destination, offset): decodes an image's packed
+@ map (r0) into the map buffer (r1). EndingImage_Show (credits.c) copies it
 @ into a heap block and calls it there, so its first loop relocates the table
-@ of decoder commands (ending_picture_expand.s) for wherever the copy landed.
+@ of decoder commands (ending_image_expand.s) for wherever the copy landed.
 @
 @ Why assembly: as credits_background_decode.s's routines.
 .syntax unified
 	.arm
-	.global EndingPicture_InnerProduct
-EndingPicture_InnerProduct:
+	.global EndingImage_InnerProduct
+EndingImage_InnerProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}
@@ -22,16 +22,16 @@ EndingPicture_InnerProduct:
 	orr	r0, r0, ip, lsr #16
 	bx	lr
 	.thumb
-	.global EndingPicture_DecodeCode
-EndingPicture_DecodeCode:
-	.global EndingPicture_Decode
+	.global EndingImage_DecodeCode
+EndingImage_DecodeCode:
+	.global EndingImage_Decode
 	.thumb_func
-EndingPicture_Decode:
+EndingImage_Decode:
 	bx	pc
-AlchemyUncredited_ending_picture_decode:
+AlchemyUncredited_ending_image_decode:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_ending_picture_decode:
+AlchemyUncreditedEnd_ending_image_decode:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]
@@ -55,23 +55,23 @@ AlchemyUncreditedEnd_ending_picture_decode:
 .L_tile:
 	mov	r7, #64
 .L_row:
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	lsr	r6, r5, #25
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	orr	r6, r6, r5, lsr #17
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	orr	r6, r6, r5, lsr #9
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	lsr	r6, r5, #25
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	orr	r6, r6, r5, lsr #17
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	orr	r6, r6, r5, lsr #9
-	bl	EndingPicture_DecodeRead
+	bl	EndingImage_DecodeRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

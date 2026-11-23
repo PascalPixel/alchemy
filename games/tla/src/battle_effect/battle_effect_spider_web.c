@@ -1,6 +1,7 @@
 /// @file
-/// The Ulysses summon and Spider Web, with the effect sprites, grey ramp and
-/// circle maps they draw with.
+/// Drawing helpers several effects share (a sprite taken from the pool, the
+/// grey ramp, shaded discs, the mirrored palette), then the Ulysses summon,
+/// the swirl of Poison Beat and Spinning Beat, and Spider Web.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -190,8 +191,7 @@ void Ulysses_FlutterFlake(void) {
   work->frame++;
 }
 
-struct StripQuad;
-
+/// The mage's sprite scale, one to one.
 extern const struct Scale gUlysses_ShipScale;
 
 /// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
@@ -418,7 +418,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                 DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON;
   wait(1);
   for (frame = 0; frame != ULYSSES_FRAMES; frame++) {
-    struct Particle *step;
+    struct Particle *particle;
     // Once A or B is pressed, odd frames are not drawn or waited for: the
     // rest plays twice as fast.
     draw = 1;
@@ -497,18 +497,18 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     // The silhouette zooms in, swelling and shrinking back, and glows.
     if (frame >= ULYSSES_SILHOUETTE_FRAME && frame < ULYSSES_STRIKES_FRAME) {
       s32 t = frame - ULYSSES_SILHOUETTE_FRAME;
-      FIXED z = Trig_Cos(t * ULYSSES_SILHOUETTE_SWELL) / 3 + TRIG_TURN;
-      s32 q16;
+      FIXED distance = Trig_Cos(t * ULYSSES_SILHOUETTE_SWELL) / 3 + FIXED_ONE;
+      s32 zoom;
       s32 level = -1;
 
-      if (z < toFIXED(33) / 32) {
-        z = toFIXED(33) / 32;
+      if (distance < toFIXED(33) / 32) {
+        distance = toFIXED(33) / 32;
       }
-      q16 = toFIXED(256) / z;
-      work->bg2pa = q16;
-      work->bg2pd = q16;
-      work->bg2x = (64 - toFIXED(184) / z) << 8;
-      work->bg2y = (64 - toFIXED(76) / z) << 8;
+      zoom = toFIXED(256) / distance;
+      work->bg2pa = zoom;
+      work->bg2pd = zoom;
+      work->bg2x = (64 - toFIXED(184) / distance) << 8;
+      work->bg2y = (64 - toFIXED(76) / distance) << 8;
       if (t < ULYSSES_GLOW_FRAMES) {
         level = t;
       } else if (frame >= 116 && frame <= ULYSSES_RUNE_CIRCLES_FADE_FRAME) {
@@ -580,14 +580,14 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if (frame == ULYSSES_STRIKES_FRAME + 1) {
       struct Particle *p;
-      struct Particle *q;
+      struct Particle *spark;
 
       Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                     DISPCNT_WIN1_ON;
-      q = (struct Particle *)(work->sheet + ULYSSES_SPARKS);
+      spark = (struct Particle *)(work->sheet + ULYSSES_SPARKS);
       for (i = 0; i != ULYSSES_STRIKES; i++) {
         p = &work->particles[i];
         p->x = INTtoFIXED(gUlysses_ParticleStarts[i][0]);
@@ -599,7 +599,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         p->velocityZ = 0;
       }
       for (i = 0; i != ULYSSES_SPARK_COUNT; i++) {
-        q[i].variant = -1;
+        spark[i].variant = -1;
       }
       Resource_LoadAndDecompress(RESOURCE_FADING_CRESCENT_SHEET,
                                  gMapGridCellBuffer, 0, 0);
@@ -616,7 +616,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       struct RenderModel *model;
       struct Particle *sparks;
       u8 *crescents = gMapGridCellBuffer;
-      struct Particle *q;
+      struct Particle *spark;
       s32 shade;
       s32 j;
 
@@ -634,22 +634,23 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       model->texture = &texture;
       model->mesh = gBattleEffect_SquareMesh;
       model->vertices = verts;
-      for (i = 0, step = work->particles; i != ULYSSES_STRIKES; step++, i++) {
+      for (i = 0, particle = work->particles; i != ULYSSES_STRIKES;
+           particle++, i++) {
         s32 delay = i * ULYSSES_STRIKE_INTERVAL;
-        struct Particle *anchor = step + 8;
+        struct Particle *anchor = particle + 8;
         s32 t;
 
-        if (++step->variant == 0) {
+        if (++particle->variant == 0) {
           Sound_PlayFar(SE_ITEM_BREAK);
         }
-        t = step->variant;
+        t = particle->variant;
         if (t == ULYSSES_STRIKE_POWER_FRAME) {
           Sound_PlayFar(SE_POWER_UP);
-          t = step->variant;
+          t = particle->variant;
         }
         if (t == ULYSSES_STRIKE_HIT_FRAME) {
           Sound_PlayFar(SE_HEAVY_IMPACT);
-          t = step->variant;
+          t = particle->variant;
         }
         // Violet flames at the mage's hand.
         if ((u32)t < ULYSSES_STRIKE_FLAME_FRAMES) {
@@ -657,109 +658,111 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
           u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
-          blits[0](canvas, source, FIXEDtoINT(step->x) - (w >> 1),
-                   FIXEDtoINT(step->y) + gBattleEffect_PuffArcPictureBiasY[k] -
-                       36,
+          blits[0](canvas, source, FIXEDtoINT(particle->x) - (w >> 1),
+                   FIXEDtoINT(particle->y) +
+                       gBattleEffect_PuffArcPictureBiasY[k] - 36,
                    w, gBattleEffect_PuffArcPictureHeights[k]);
-          t = step->variant;
+          t = particle->variant;
         }
         // A flake flies out.
         if ((u32)(t - ULYSSES_STRIKE_FLAKE_FRAME) <
             ULYSSES_STRIKE_FLAKE_FRAMES) {
           s32 k = ((t - ULYSSES_STRIKE_FLAKE_FRAME) / 4) % ULYSSES_FLAKE_CELS;
           u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
-          s32 x = FIXEDtoINT(step->x);
+          s32 x = FIXEDtoINT(particle->x);
           u8 w = gUlysses_PictureWidths[k];
           s32 left = x - (w >> 1);
-          s32 y = FIXEDtoINT(step->y);
+          s32 y = FIXEDtoINT(particle->y);
           u8 h = gUlysses_PictureHeights[k];
 
           blit[1](canvas, source, left, y - (h >> 1), w, h);
-          t = step->variant;
+          t = particle->variant;
         }
         // The crescent of light sweeps round the targets, wobbling, and
         // closes from ULYSSES_STRIKE_CLOSE_FRAME.
         if ((u32)(t - ULYSSES_STRIKE_CRESCENT_FRAME) <
             ULYSSES_STRIKE_CRESCENT_FRAMES) {
-          FIXED s = ULYSSES_CRESCENT_SCALE(t - ULYSSES_STRIKE_CRESCENT_FRAME);
+          FIXED scale =
+              ULYSSES_CRESCENT_SCALE(t - ULYSSES_STRIKE_CRESCENT_FRAME);
           s32 vx;
-          s32 x = step->x;
+          s32 x = particle->x;
           FIXED mx = x - toFIXED(64);
-          FIXED my = step->y - toFIXED(64);
-          s32 u = t - ULYSSES_STRIKE_CLOSE_FRAME;
+          FIXED my = particle->y - toFIXED(64);
+          s32 closing = t - ULYSSES_STRIKE_CLOSE_FRAME;
 
-          if (u < 0) {
-            u = 0;
+          if (closing < 0) {
+            closing = 0;
           }
-          vx = step->velocityX;
-          step->y += step->velocityY;
+          vx = particle->velocityX;
+          particle->y += particle->velocityY;
           x += vx;
-          step->x = x;
+          particle->x = x;
           if (x < toFIXED(64)) {
-            step->velocityX = vx + toFIXED(1) / 2;
+            particle->velocityX = vx + toFIXED(1) / 2;
           }
-          if (step->y < toFIXED(60)) {
-            step->velocityY += toFIXED(1) / 2;
+          if (particle->y < toFIXED(60)) {
+            particle->velocityY += toFIXED(1) / 2;
           } else {
-            step->velocityY -= toFIXED(1) / 2;
+            particle->velocityY -= toFIXED(1) / 2;
           }
-          if (step->z >= 0) {
-            step->z += FIXEDtoINT(Trig_Sin(step->velocityZ) * 3 << 8);
+          if (particle->z >= 0) {
+            particle->z += FIXEDtoINT(Trig_Sin(particle->velocityZ) * 3 << 8);
           } else {
-            step->z -= FIXEDtoINT(Trig_Sin(step->velocityZ) * 3 << 8);
+            particle->z -= FIXEDtoINT(Trig_Sin(particle->velocityZ) * 3 << 8);
           }
-          step->velocityZ += TRIG_TURN / 64;
+          particle->velocityZ += TRIG_TURN / 64;
           if (draw) {
             // As an integer sum, the offset first.
-            texture.pixels =
-                (u8 *)(u * PICTURE_BYTES(ULYSSES_CRESCENT) + (s32)crescents);
+            texture.pixels = (u8 *)(closing * PICTURE_BYTES(ULYSSES_CRESCENT) +
+                                    (s32)crescents);
             Matrix_Initialize();
             Matrix_Translate(mx, my, 0);
             Matrix_RotateX(TRIG_TURN * 3 / 4);
-            Matrix_RotateY(step->z);
-            Matrix_ScaleUniform(s);
+            Matrix_RotateY(particle->z);
+            Matrix_ScaleUniform(scale);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Render_DrawModelList(model);
           }
-          t = step->variant;
+          t = particle->variant;
         }
         // The strike lands: sparks fly, and every target is jolted and
         // flashes.
         if (t == ULYSSES_STRIKE_HIT_FRAME) {
-          anchor->x = FIXEDtoINT(step->x);
-          anchor->y = FIXEDtoINT(step->y);
+          anchor->x = FIXEDtoINT(particle->x);
+          anchor->y = FIXEDtoINT(particle->y);
           j = 0;
           {
             s32 first = i * ULYSSES_STRIKE_SPARKS;
 
             // As an integer sum, the offset first.
-            q = (struct Particle *)(first * (s32)sizeof(*q) + (s32)sparks);
+            spark =
+                (struct Particle *)(first * (s32)sizeof(*spark) + (s32)sparks);
           }
-          for (; j != ULYSSES_STRIKE_SPARKS; j++, q++) {
-            s32 a = Random16() & TRIG_ANGLE_MASK;
-            s32 sp = (Random16() & 15) + 8;
+          for (; j != ULYSSES_STRIKE_SPARKS; j++, spark++) {
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
+            s32 speed = (Random16() & 15) + 8;
 
-            q->variant = (Random16() & 7) + 8;
-            q->x = step->x;
-            q->y = step->y;
-            q->velocityX = (Trig_Sin(a) * sp) / 4;
-            q->velocityY = (Trig_Cos(a) * sp) / 4;
+            spark->variant = (Random16() & 7) + 8;
+            spark->x = particle->x;
+            spark->y = particle->y;
+            spark->velocityX = (Trig_Sin(angle) * speed) / 4;
+            spark->velocityY = (Trig_Cos(angle) * speed) / 4;
           }
           for (j = 0; j != args->targetCount; j++) {
-            s32 m = (Random16() << 2) + toFIXED(1);
+            s32 lift = (Random16() << 2) + toFIXED(1);
 
             BattleEffect_StartActorMotion(args->targets[j], 1, toFIXED(2),
-                                          toFIXED(8), m,
+                                          toFIXED(8), lift,
                                           delay + (Random16() & 31) + 52);
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      TINT_KEEP, j, 4);
           }
         }
         // A burst of light where it landed.
-        if (draw && (u32)(step->variant - ULYSSES_STRIKE_HIT_FRAME) <
+        if (draw && (u32)(particle->variant - ULYSSES_STRIKE_HIT_FRAME) <
                         ULYSSES_STRIKE_BURST_FRAMES) {
-          s32 k = ((step->variant - ULYSSES_STRIKE_HIT_FRAME) / 2) % 6;
+          s32 k = ((particle->variant - ULYSSES_STRIKE_HIT_FRAME) / 2) % 6;
 
           blit[1](canvas,
                   work->sheet + ULYSSES_YELLOW_ORB_PICTURES +
@@ -770,16 +773,17 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != ULYSSES_SPARK_COUNT; i++) {
-        q = &sparks[i];
-        if (q->variant >= 0) {
-          s32 n = q->variant / 4 + 2;
+        spark = &sparks[i];
+        if (spark->variant >= 0) {
+          s32 n = spark->variant / 4 + 2;
 
           if (draw) {
             blit[1](canvas, sprites + gBattleEffect_FlarePictures[n - 1],
-                    FIXEDtoINT(q->x) - n, FIXEDtoINT(q->y) - n, n * 2, n * 2);
+                    FIXEDtoINT(spark->x) - n, FIXEDtoINT(spark->y) - n, n * 2,
+                    n * 2);
           }
-          Particle_AdvanceWithGravity2D(q, 60, toFIXED(1) / 8);
-          q->variant--;
+          Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 8);
+          spark->variant--;
         }
       }
       Heap_Release(model);
@@ -811,25 +815,25 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                 j * ULYSSES_RUNE_CIRCLE_INTERVAL;
 
         if (t >= 0) {
-          s32 sc;
+          s32 scale;
 
           Matrix_Initialize();
           Matrix_Translate(toFIXED(8), 0, 0);
           Matrix_RotateX(DEGtoANG(90));
           if (j == 0) {
-            sc = t * (FIXED_ONE * 3 / 64) - FIXED_ONE * 9 / 8;
+            scale = t * (FIXED_ONE * 3 / 64) - FIXED_ONE * 9 / 8;
             if (t < ULYSSES_RUNE_CIRCLE_HOLD_FRAMES) {
-              sc = t * (FIXED_ONE / 32);
-              if (sc > FIXED_ONE * 3 / 4) {
-                sc = FIXED_ONE * 3 / 4;
+              scale = t * (FIXED_ONE / 32);
+              if (scale > FIXED_ONE * 3 / 4) {
+                scale = FIXED_ONE * 3 / 4;
               }
             }
-            Matrix_ScaleUniform(sc);
+            Matrix_ScaleUniform(scale);
             Matrix_RotateY(-t * (TRIG_TURN / 128));
           } else {
             if (t >= ULYSSES_RUNE_CIRCLE_TILT_FRAMES) {
-              sc = FIXED_ONE * 7 / 4 - t * (FIXED_ONE / 32);
-              Matrix_ScaleUniform(sc);
+              scale = FIXED_ONE * 7 / 4 - t * (FIXED_ONE / 32);
+              Matrix_ScaleUniform(scale);
             } else {
               Matrix_RotateX(ULYSSES_RUNE_CIRCLE_TILT_X(t));
               Matrix_RotateZ(ULYSSES_RUNE_CIRCLE_TILT_Z(t));
@@ -878,18 +882,18 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           p->variant = -i / 2;
         }
       }
-      for (i = 0, step = work->particles; i != ULYSSES_FLARE_FLAMES;
-           i++, step++) {
-        if ((u32)step->variant < ULYSSES_FLARE_FLAME_FRAMES && draw) {
-          s32 k = (step->variant / 4) % 6;
+      for (i = 0, particle = work->particles; i != ULYSSES_FLARE_FLAMES;
+           i++, particle++) {
+        if ((u32)particle->variant < ULYSSES_FLARE_FLAME_FRAMES && draw) {
+          s32 k = (particle->variant / 4) % 6;
           u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
           u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
-          blits[0](canvas, source, step->x - (w >> 1),
-                   step->y + gBattleEffect_PuffArcPictureBiasY[k] - 48, w,
+          blits[0](canvas, source, particle->x - (w >> 1),
+                   particle->y + gBattleEffect_PuffArcPictureBiasY[k] - 48, w,
                    gBattleEffect_PuffArcPictureHeights[k]);
         }
-        step->variant++;
+        particle->variant++;
       }
     }
     if (frame == ULYSSES_FLAKE_FRAME) {

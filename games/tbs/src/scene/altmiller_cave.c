@@ -117,33 +117,34 @@ extern struct Trigger gAltmillerCave_CookieChestTriggers[];
 extern struct Trigger gAltmillerCave_DraughtTriggers[];
 
 /// The actors of Babi's room: Babi while invisible and once seen, and the two
-/// men from Tolbi who come looking for him.
+/// men from Tolbi who come looking for him. Garet, Ivan and Mia are placed
+/// first, in their own party slots.
 enum {
   /// Babi while invisible (SPRITE_INVISIBLE_BABI), seen only as a white
   /// outline lying on the floor near the middle of his room.
-  ACTOR_INVISIBLE_BABI = 8,
+  ACTOR_INVISIBLE_BABI = ACTOR_FIRST_PLACED,
   /// SPRITE_BABI, the same old man once he has drunk the draught.
-  ACTOR_BABI = 9,
+  ACTOR_BABI,
   /// Their sprite is a helmeted soldier carrying a torch
   /// (SPRITE_SOLDIER_WITH_TORCH).
-  ACTOR_FIRST_SOLDIER = 10,
-  ACTOR_SECOND_SOLDIER = 11
+  ACTOR_FIRST_SOLDIER,
+  ACTOR_SECOND_SOLDIER
 };
 
 /// Squall's hall and the hall at the bottom place first the three fallen
 /// columns the party pushes. Squall's hall then places its puddle, the stone
 /// pillar on the ledge and Squall, a Jupiter Djinni.
 enum {
-  ACTOR_FIRST_FALLEN_COLUMN = 8,
-  ACTOR_SQUALL_ROOM_PUDDLE = 11,
-  ACTOR_SQUALL_ROOM_PILLAR = 12,
-  ACTOR_SQUALL = 13
+  ACTOR_FIRST_FALLEN_COLUMN = ACTOR_FIRST_PLACED,
+  ACTOR_SQUALL_ROOM_PUDDLE = ACTOR_FIRST_FALLEN_COLUMN + 3,
+  ACTOR_SQUALL_ROOM_PILLAR,
+  ACTOR_SQUALL
 };
 
-/// The rock room: the five colored lights and the five rocks, each in Babi's
-/// order, the rocks left to right.
+/// The rock room, after the hall's three fallen columns: the five colored
+/// lights and the five rocks, each in Babi's order, the rocks left to right.
 enum {
-  ACTOR_FIRST_LIGHT = 11,
+  ACTOR_FIRST_LIGHT = ACTOR_FIRST_FALLEN_COLUMN + 3,
   ACTOR_BLUE_LIGHT = ACTOR_FIRST_LIGHT,
   ACTOR_GREEN_LIGHT,
   ACTOR_WHITE_LIGHT,
@@ -268,8 +269,8 @@ static void AltmillerCave_ReleaseWallBurst(void);
 /// The ring of five lights above the rocks as it spins to its next light.
 /// Angles are 16-bit turns, and the light at the top is the chosen one.
 struct LightWheel {
-  s16 phase;
-  s16 frames;
+  s16 phase;  ///< WHEEL_SPEEDING_UP to WHEEL_STOPPED
+  s16 frames; ///< frames into the phase
   s16 unused; ///< nothing reads or writes it
   u16 angle;
   u16 speed;
@@ -299,6 +300,10 @@ enum {
 
 /// The pieces the wall bursts into (AltmillerCave_ReleaseWallBurst).
 enum { WALL_BURST_PIECES = 24 };
+
+/// SPRITE_PARTICLE twinkling, its first two pictures by turns, as the pieces
+/// of the wall fly.
+enum { PARTICLE_ANIMATION_TWINKLE = 7 };
 
 /// The cave's own state, bytes of gSceneLocalState: the rock puzzle and the
 /// passage's darkness.
@@ -493,6 +498,7 @@ static void AltmillerCave_EndReveal(void) {
 
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
+    // Reveal then leaves the light around the party open as it ends.
     effectWork->childOption = 1;
   }
   if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
@@ -584,8 +590,9 @@ static void AltmillerCave_FreezePuddle(void) {
   if (blocked == 0) {
     MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     if (puddle != NULL) {
-      s32 motionFlags = 2;
+      s32 motionFlags = ACTOR_FALLS;
       puddle->motionFlags = motionFlags;
+      // blocked is 0 here: the pillar is drawn as anything standing is.
       puddle->priorityFlags = blocked;
     }
     GameFlag_Set(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN);
@@ -989,20 +996,25 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "Thank you for your help. I'll be okay now."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_Jump(ACTOR_GARET, 4, 13);
   Actor_Jump(ACTOR_GARET, 4, 30);
+  // "Look! It's a man!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 30);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "What are you talking about? What did you expect?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 30);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Well, I mean, we couldn't see who was talking..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "My sudden appearance seems to have startled you."
   Event_OpenMessage(ACTOR_BABI, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -1041,17 +1053,21 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "You used Psynergy to conceal yourself, didn't you? Only an Adept..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "Oh, um... Yes, I was using Psynergy to conceal myself..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Something in his tale doesn't sound right..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "I shall peer into his heart."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_IVAN, 1);
@@ -1073,9 +1089,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(40);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What's the matter, Ivan?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "This is Babi, the ruler of Tolbi!"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1084,30 +1102,37 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "And that wasn't Psynergy he was using to conceal himself... It was..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_Jump(ACTOR_BABI, 4, 13);
   Actor_Jump(ACTOR_BABI, 4, 30);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
   Event_Wait(30);
+  // "I said nothing of the kind! How can you know that?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "So, I guess that would make you Adepts..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "Does that mean... Have I finally found true Lemurians!?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
+  // "That's what I've been saying! We're Adepts. ...But what's Lemuria?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Yes, what is this 'Lemuria'?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What? You're Adepts... but not Lemurians?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(50);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1135,9 +1160,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "So I was wrong..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Are you searching for these Lemurians, Babi?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
@@ -1147,10 +1174,12 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Babi, you're the ruler of Tolbi... You can have anything you want...."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "Even the ruler of Tolbi has his limitations."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1160,21 +1189,25 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_NORTH, 0);
   Event_Wait(50);
+  // "Every year, I grow older and more frail... This body's had it."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "And you regret growing older?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "I understand your desire to remain young, but there's nothing anyone..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Wait a sec, Isaac! Do you remember when we were in Sol Sanctum?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgAltmillerThatsKradenSaidAlchemyCould);
@@ -1224,6 +1257,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   }
   Actor_SetPosition(ACTOR_FIRST_SOLDIER, 280, 304);
   Actor_SetPosition(ACTOR_SECOND_SOLDIER, 296, 304);
+  // "Babi!"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Event_Wait(10);
@@ -1238,6 +1272,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   FieldCamera_WaitForMove();
   Event_Wait(70);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "We've been searching everywhere for you, Babi!"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, ACTOR_FIRST_SOLDIER);
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_FIRST_SOLDIER);
@@ -1267,6 +1302,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
+  // "Iodem said we would find you in Altmiller Cave!"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTHEAST, 0);
@@ -1275,48 +1311,60 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(50);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "You're...not glad we found you?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(10);
+  // "No, it's not that."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What are you doing in a cave such as this, my lord?"
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "I have my reasons..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 16, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
   Event_Wait(20);
+  // "Everyone in Tolbi has been in a panic over your absence."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "I did not mean to cause anyone any undue concern."
   Event_ShowMessage(ACTOR_BABI, 0);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 16, 0);
   Event_Wait(20);
+  // "We're just happy we found you before the finals began."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "The trials have already ended?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_Jump(ACTOR_SECOND_SOLDIER, 4, 13);
   Actor_Jump(ACTOR_SECOND_SOLDIER, 4, 30);
+  // "Why have you been in this cave for so long?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "I had an important errand, but it has been taken care of."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Event_Wait(30);
+  // "Splendid! Then you can attend the finals."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTHEAST, 0);
   Event_Wait(30);
+  // "I must speak more with these people."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_SOUTHEAST, 0);
@@ -1329,12 +1377,14 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Who are they?"
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
   Event_Wait(30);
+  // "I owe my life to them..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_FIRST_SOLDIER, ACTOR_SECOND_SOLDIER, 70);
@@ -1348,6 +1398,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
   Event_Wait(20);
+  // "Pardon our rudeness. You have our gratitude for saving Babi's life."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1362,6 +1413,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "We must have Iodem grant them a reward."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_EAST, 0);
@@ -1370,9 +1422,11 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Event_Wait(20);
+  // "You can speak with them again after the finals are finished."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Oh. I see... If that's what we have to do, then..."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
@@ -1400,36 +1454,43 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
   Event_Wait(20);
+  // "I have not heard your names yet."
   Event_ShowMessage(ACTOR_BABI, 0);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_NORTH, 0);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "I'm Garet."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_GARET, ACTOR_BABI, 30);
+  // "This is Isaac."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "I am Ivan."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
+  // "My name is Mia."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_BABI, 2);
   Event_Wait(20);
+  // "Come see me at my palace once the finals have ended."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Event_Wait(70);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
   Event_Wait(20);
+  // "I would like to speak with you further."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -1444,6 +1505,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
   Actor_WaitForScriptEndById(ACTOR_BABI);
+  // "Say, I have an idea... Why don't you enter the finals?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1460,6 +1522,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_NORTH, 0);
   Event_Wait(20);
+  // "You have some interesting powers."
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -1468,15 +1531,18 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
+  // "But, Lord Babi, they have not cleared the trials."
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "Only warriors who clear the trials can appear in the finals."
   Event_ShowMessage(ACTOR_SECOND_SOLDIER, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_BABI, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   Actor_FaceDirection(ACTOR_BABI, FACING_EAST, 0);
   Event_Wait(20);
+  // "And you don't think that saving my life qualifies as a suitable trial?"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1491,6 +1557,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
+  // "I look forward to seeing you battle!"
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1538,17 +1605,21 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "He's asking us to appear in Colosso, isn't he?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
+  // "Is he serious?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "He wants to see us fight using our Psynergy... That's what it is."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
+  // "The finals... Should we do it?"
   Event_OpenMessage(ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
@@ -1803,7 +1874,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
     Event_ShowMessage(ACTOR_GARET, 0);
   }
 
-  // Question Babi's condition before agreeing to find his draught.
+  // Ivan and Mia speak up for helping him, and Garet gives in.
   line = MsgAltmillerSaidCouldntMove;
   Event_SetMessageId(line);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -1849,86 +1920,86 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_SetMessageId(line);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  // "He said he couldn't move even if he wanted to, right?..."
+  // "Will you get it for me?!"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  // "I agree with Ivan- whoever he is, he needs our help."
+  // "What do we have to do to get your draught?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  // "Fine! Okay! We should help people in need. Is that better!?"
+  // "First, you'll have to go deep into the cave."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
-  // "I'm with you, Isaac. I don't trust anyone who's afraid to..."
+  // "You'll find five rocks sticking up out of the ground."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  // "He said he couldn't even move, didn't he? Someone is in..."
+  // "Rotate the rocks on the left and right sides."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
-  // "I agree with Ivan line of thinking."
+  // "When you turn the rocks in the right order, five colored lights will..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  // "Fine! Whatever! We'll help everybody who needs help. Is that..."
+  // "Colored lights!? This sounds weird."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(30);
-  // "Will you get it for me?!"
+  // "That's right. Lights will appear on the wall."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Event_Wait(30);
-  // "What do we have to do to get your draught?"
+  // "There will be five colors: blue, green, white, yellow, and red."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 50);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(30);
-  // "First, you'll have to go deep into the cave."
+  // "Turn the five rocks in accordance with those colors."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  // "You'll find five rocks sticking up out of the ground."
+  // "Riiight... Spin the rocks in accordance with the color of the light..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
-  // "Rotate the rocks on the left and right sides."
+  // "The blue light corresponds to the rock farthest to the left. In..."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  // "When you turn the rocks in the right order, five colored..."
+  // "So, in order, left to right, the colors are blue, green, white,..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  // "Colored lights!? This sounds weird."
+  // "Correct. If you do this correctly, a hidden door will open."
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  // "That's right. Lights will appear on the wall."
+  // "A door? Somewhere deep in a cave? Who put it there?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_INVISIBLE_BABI, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  // "There will be five colors: blue, green, white, yellow, and red."
+  // "An ancient civilization, long since vanished. Ohhh! Please hurry!"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Actor_RunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
   Event_Wait(20);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  // "Turn the five rocks in accordance with those colors."
+  // "He seems to be in a lot of pain. We'd better find that cave, Isaac."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_MIA, 40);
@@ -2113,7 +2184,7 @@ s32 Scene_Initialize(void) {
     } else {
       actor = Actor_Get(ACTOR_INVISIBLE_BABI);
       actor->sprite->image.priority = 1;
-      actor->sprite->flags = 2;
+      actor->sprite->flags = SPRITE_FLAG_OUTLINED;
       actor->sprite->rotation = DEGtoANG(90);
     }
   }
@@ -2155,7 +2226,7 @@ s32 Scene_Initialize(void) {
     // starts the puzzle over, with the red light first.
     if (gMainRoutineWork.entrance ==
         ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
-      Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
+      Dma_Fill32(0, gAltmillerCave_LightWheel, sizeof(struct LightWheel));
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         CAVE_STATE(CAVE_ROUNDS_MATCHED) = 0;
         CAVE_STATE(CAVE_PUZZLE) = PUZZLE_START;
@@ -2178,6 +2249,8 @@ s32 Scene_Initialize(void) {
       actor->scaleX = FIXED_ONE;
       actor->scaleY = FIXED_ONE;
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_LIGHT + i), 0);
+      // The lights glimmer alike, each starting six frames after the one
+      // before, so that they do not glimmer in step.
       Actor_SetAnimation(ACTOR_FIRST_LIGHT + i, i + 1);
     }
     Actor_SetSpriteColorById(ACTOR_BLUE_LIGHT, COLOR_BLUE);
@@ -2200,7 +2273,8 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARK)) {
     AltmillerCave_InitializeDarkness();
   } else {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     gFieldWork->transitionFrames = 24;
   }
   return 0;
@@ -2262,7 +2336,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
 
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
-    FieldParticle_SetActorMode(fragment, 7);
+    FieldParticle_SetActorMode(fragment, PARTICLE_ANIMATION_TWINKLE);
     Sprite_SetAnimationColorModes(fragment->actor, Random_Below(7));
     scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * FIXED_ONE / 2;
     fragment->scaleY = scale;

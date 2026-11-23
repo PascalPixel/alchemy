@@ -1031,7 +1031,7 @@ void MarsLighthouseEntrance_WakeDragonFace(void) {
 /// slides on across it; if a fireball has hit him he rides along with it.
 void MarsLighthouseEntrance_SlideFromEdge(void) {
   Leader_SlideOnIceFromEdge();
-  MarsLighthouseEntrance_SlideIfRiding();
+  MarsLighthouseEntrance_RideFireballIfHit();
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -1654,7 +1654,7 @@ int MarsLighthouseEntrance_RideFireball(void) {
 /// has hit him, Felix is carried along with it
 /// (MarsLighthouseEntrance_RideFireball); otherwise nothing happens. The
 /// slide from the ice's edge asks the same, ignoring the answer.
-s32 MarsLighthouseEntrance_SlideIfRiding(void) {
+s32 MarsLighthouseEntrance_RideFireballIfHit(void) {
   if (RIDE_WORK->active) {
     MarsLighthouseEntrance_RideFireball();
     return 1;
@@ -2656,7 +2656,7 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_RideFireball)},
     {TRIGGER_STEP, VALKYRIE_SOUTH_CIRCLE, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_SlideIfRiding)},
+     EVENT(MarsLighthouseEntrance_RideFireballIfHit)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_VALKYRIE_ICE_CONE_A, FLAG_SCENE_TEMP_10,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},

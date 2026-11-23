@@ -103,7 +103,7 @@ void HangingVine_Place(s32 id, s32 a);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
 void Actor_DepartInRing(s32 id);
 s32 PushTarget_FillFootprint(s32 id);
-s32 PushTarget_FindSlide(struct PushTarget *target);
+s32 PushTarget_FindStop(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 
 void JupiterLighthouse_StartMovingPillar(void);
@@ -168,7 +168,7 @@ void JupiterLighthouse_PushColumnOffTheLedge(void) {
   FIXED x;
 
   actor->update = (ObjectUpdate)JupiterLighthouse_DrawColumnBelowLedge;
-  if (PushTarget_FindSlide(&target))
+  if (PushTarget_FindStop(&target))
     PushTarget_Push(target);
   if (FIELD_CELL(actor->x.fixed) == 16 && FIELD_CELL(actor->z.fixed) == 12 &&
       Event_GetFlag(FLAG_COLUMN_OFF_LEDGE) == 0) {
@@ -358,7 +358,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
   return MapGrid_CheckCollision(actor, position);
 }
 
-#include "shared/push_target_find_slide.h"
+#include "shared/push_target_find_stop.h"
 
 #include "shared/push_target_find_ahead.h"
 

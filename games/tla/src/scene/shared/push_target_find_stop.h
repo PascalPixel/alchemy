@@ -8,7 +8,7 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 /// Finds where the actor ahead stops when pushed: a cell at a time, the
 /// whole of its footprint (gPushFootprints) until a wall blocks it; 1 when it
 /// moves at all.
-s32 PushTarget_FindSlide(struct PushTarget *target) {
+s32 PushTarget_FindStop(struct PushTarget *target) {
   struct Actor *actor;
   s32 direction;
   FIXED position[3];

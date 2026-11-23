@@ -36,7 +36,7 @@ s32 Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
 void Leader_SlideOnIceFromEdge(void);
 
-s32 MarsLighthouseEntrance_SlideIfRiding(void);
+s32 MarsLighthouseEntrance_RideFireballIfHit(void);
 
 void Leader_SlideOnIceAhead(void);
 

@@ -103,7 +103,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   Decompress_TaggedLz(palette, work->sheet);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
-  // Additive and max blitters, clipped (flipped for side 1).
+  // Additive and max blitters, clipped, and mirrored when the party casts.
   if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,

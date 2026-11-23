@@ -233,17 +233,13 @@ void JupiterLighthouse_RideUpperWhirlwind(void) {
   }
 }
 
-/// Felix, Hovering from the Hover pad the energy block lights, floats into the
-/// east whirlwind's path at cell (65, 42): his Hover ends, and a whirlwind
-/// blows out, catches him and carries him off towards the right tower
-/// (Whirlwind_CarryLeader). Walking there without Hover does nothing.
+/// Felix casts Hover on the pad the energy block lights, at cell (65, 42), and
+/// rises in its glow: the east whirlwind catches him and carries him, still in
+/// Hover's rings, east along the chained walkway over the clouds to the right
+/// tower, and sets him down on the walkway's east end by the tower wall, beside
+/// the eye-shaped switch by its door (Whirlwind_CarryLeader). His Hover's
+/// movement ends as he is caught. Walking there without Hover does nothing.
 void JupiterLighthouse_RideWhirlwind(void) {
-  // XXX: where the east whirlwind sets Felix down. The pad's cell, at
-  // (1040, 160) on the overhead layer, is made one once the energy block is in
-  // its gap. Hover has no row of its own here for the
-  // recorder to cast, and a staged walk from entrance 4 with the block's flag
-  // set that opens the field menu to cast it runs past four minutes. A
-  // recording of Hover cast on the pad, then floated east, would settle it.
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

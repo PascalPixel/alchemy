@@ -532,11 +532,9 @@ void DehkanPlateau_SetBlocksShown(s32 show) {
 /// (Actor_Hide). Walking south from the terrace down the neck past (38, 28)
 /// and (38, 29), which hides them, and back up, which shows them, Felix is
 /// drawn whole both ways. Walking east across the terrace from cell (41, 24)
-/// with them shown, he is hidden below the shoulders by the ground south of
-/// him.
-// XXX: whether the blocks or that ground hide him there; the same walk with
-// the blocks hidden (come onto the terrace across (35, 13) to (35, 18) from
-// the west) would settle it.
+/// he steps down past the edge of the higher ground there and is hidden by it
+/// from the shoulders to the feet, the blocks drawn or not: the ground hides
+/// him, not the blocks.
 void DehkanPlateau_ShowBlocks(void) {
   DehkanPlateau_SetBlocksShown(1);
   GameFlag_Set(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);

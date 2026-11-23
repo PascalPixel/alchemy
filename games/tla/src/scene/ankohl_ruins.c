@@ -1290,9 +1290,12 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     }                                                                          \
   }
 
-/// Felix, carried up by the sand to the east ledge of the first sand room,
-/// steps on its button (cell (18, 8)) and the door in the north-east wall
-/// slides open.
+/// Felix steps on the first sand room's door button and the door in its
+/// north-east wall, cell (14, 5), slides open. The button is the block 16
+/// pixels high at cell (11, 5), east of the great stone face: once the sand
+/// has risen two steps, to 16 pixels, AnkohlRuins_RaiseFirstSand gives that
+/// cell the button's behaviour from cell (18, 8), which the map keeps east of
+/// the rooms where no camera shows it, and the next rise takes it away again.
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenFirstSandDoor,
                               FLAG_FIRST_SAND_DOOR_OPENED, 14, 65, 15, 5)
 
@@ -1322,14 +1325,11 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 }
 
 /// Felix steps on the second sand room's door button and the door in its
-/// north-west wall slides open.
-// XXX: the button's cell, behaviour 43, is (18, 7) in the map, 16 pixels up,
-// beside the first sand room's (18, 8); both lie east of every camera box of
-// the scene (x 288, the sand rooms' boxes ending at 272), so no picture of the
-// rooms shows them, and the recorder, with the second room's switch pressed
-// first (--first AnkohlRuins_PressSecondSandSwitch), finds the cell in no room
-// an entrance shows. Where the player finds it in the second room would take a
-// recording of Felix carried up by the sand there and stepping on it.
+/// north-west wall, cell (2, 23), slides open. The button is the block 16
+/// pixels high at cell (4, 23), two cells east of the door: once the sand has
+/// risen two steps, to 16 pixels, AnkohlRuins_RaiseSecondSand gives that cell
+/// the button's behaviour from cell (18, 7), which the map keeps east of the
+/// rooms where no camera shows it, and the next rise takes it away again.
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
                               FLAG_SECOND_SAND_DOOR_OPENED, 2, 83, 1, 23)
 

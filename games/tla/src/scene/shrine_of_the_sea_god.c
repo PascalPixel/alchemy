@@ -1969,12 +1969,15 @@ void ShrineOfTheSeaGod_LightTorch(void) {
 /// 232, ringed by cells 16 pixels down) mark out a winding way under the ridge
 /// of rock round the south ladder, cells (13, 21) to (25, 23) and (21, 18) to
 /// (20, 27), reaching the floor west of the ridge, the corridor south of it
-/// and the ledge east of it. Cast by the
-/// south ladder with no key held, Felix sinks into the sand and rises again in
-/// place a second later.
+/// and the ledge east of it. Cast on the floor west of the ridge, at cell
+/// (17, 21), Felix sinks into a mound of sand; steered east, then north, then
+/// east, the mound slides in under the ridge's rocky rim, comes out on its
+/// east side and goes on east along the floor to the room's east wall below
+/// the east ladder, still sand. Steered north off the way onto the floor by
+/// the water, he rises out of the sand. Cast off the way, as by the south
+/// ladder, he sinks and rises again in place a second later, whatever key is
+/// held (FieldPsynergy_Sand).
 void ShrineOfTheSeaGod_CastSand(void) {
-  // XXX: where the way leads as sand; a recording that holds the pad while he
-  // is sand (the recorder's keys start only once he has risen) would settle it.
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 

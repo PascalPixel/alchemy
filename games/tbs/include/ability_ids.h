@@ -113,7 +113,7 @@ enum AbilityId {
   ABILITY_CURSE,
   ABILITY_CONDEMN,
   ABILITY_DRAIN,
-  ABILITY_PSY_DRAIN, ///< Psynergy that costs no PP
+  ABILITY_PSY_DRAIN, ///< takes a foe's PP, and costs none itself
   ABILITY_BREAK,
   ABILITY_REGENERATE,
   ABILITY_REFLECT,
@@ -146,7 +146,8 @@ enum AbilityId {
   ABILITY_MAGIC_SHIELD,
   ABILITY_DEATH_PLUNGE,
   ABILITY_SHURIKEN,
-  /// Rolls its hit as it is planned.
+  /// Its instant death is rolled as the action is planned, so that its burst
+  /// can show whether it landed.
   ABILITY_ANNIHILATION,
   ABILITY_PUNJI,
   ABILITY_PUNJI_TRAP,
@@ -368,7 +369,8 @@ enum AbilityId {
   ABILITY_THREATEN,
   ABILITY_TREMBLE,
   ABILITY_FORTIFY,
-  /// An enemy that splits itself in two. Its message: "attempts to divide".
+  /// Not a surge of speed: the enemy splits itself in two ("attempts to
+  /// divide!", then "It split off into" its copy, or "It failed to divide!").
   ABILITY_SPEED_SURGE,
   ABILITY_ALLY_SEARCH,
   ABILITY_SIDESTEP,

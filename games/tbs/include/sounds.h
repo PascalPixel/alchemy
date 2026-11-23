@@ -223,9 +223,9 @@ enum SoundId {
   /// The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
   /// under 5,000 coins, and one level from the debug level editor; also an item
   /// or Psynergy used from the menu whose effect has no jingle of its own, such
-  /// as the stat items (Ability_PlayUseAnimation).
-  /// The row before it is the empty song: Colosso_ShowMatchResult plays this
-  /// one minus 1 plus the match's result, which lands there for a result of 0.
+  /// as the stat items (Ability_PlayUseAnimation). The row before it is the
+  /// empty song: Colosso_ShowMatchResult plays this one minus 1 plus the
+  /// match's result, which lands there for a result of 0.
   MUS_LUCKY = 91,
   /// The middle prize jingle: three pairs in Lucky Dice, a Tolbi Spring prize
   /// of 5,000 coins or more, and a cleared Colosseum trial.
@@ -831,10 +831,9 @@ enum SoundId {
   /// leader drops down a ledge or through a hole.
   SE_FALL,
   /// Unused: a chord held until stopped on the Colosso lettering's sample,
-  /// under
-  /// rising runs on noise voice 23 and on voice 56, a plain square wave here
-  /// where The Lost Age has the Sparks sample, and a note of Psynergy sparkle;
-  /// nothing plays it, in either game.
+  /// under rising runs on noise voice 23 and on voice 56, a plain square wave
+  /// here where The Lost Age has the Sparks sample, and a note of Psynergy
+  /// sparkle; nothing plays it, in either game.
   SE_UNUSED_SPARKLING_LETTERING
 };
 

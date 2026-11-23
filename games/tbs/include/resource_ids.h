@@ -13,8 +13,8 @@
 /// BuildStamp_GetTime turns its time into the number saves compare.
 extern char ResourceId_BuildStamp;
 #define RESOURCE_BUILD_STAMP ((s32)&ResourceId_BuildStamp)
-/// The row of FarCall_TitleTable. The Title hands it to
-/// Stub_NoOpHook, which ignores it.
+/// The row of FarCall_TitleTable. The Title hands it to Stub_NoOpHook, which
+/// ignores it.
 extern char ResourceId_TitleFarCalls;
 #define RESOURCE_TITLE_FAR_CALLS ((s32)&ResourceId_TitleFarCalls)
 /// The row of FarCall_BattleEffectTable. Lucky Dice and Lucky Wheels hand it to

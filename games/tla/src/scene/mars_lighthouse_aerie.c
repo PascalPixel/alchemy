@@ -297,8 +297,8 @@ void Scene_LeaveByExit(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s16 gMarsLighthouseAerie_FadeSlots[];
-extern s16 gMarsLighthouseAerie_FadeColorsFrom[];
-extern s16 gMarsLighthouseAerie_FadeColorsTo[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gMarsLighthouseAerie_FadeOrder[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
@@ -310,9 +310,9 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   struct Actor *actor;
   s32 i;
 
-  Palette_SetColorsFade(
-      gMarsLighthouseAerie_FadeSlots, gMarsLighthouseAerie_FadeColorsFrom,
-      gMarsLighthouseAerie_FadeColorsTo, gMarsLighthouseAerie_FadeOrder);
+  Palette_SetColorsFade(gMarsLighthouseAerie_FadeSlots, gTeleportCircle_Colors,
+                        gTeleportCircle_ShimmerColors,
+                        gMarsLighthouseAerie_FadeOrder);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   for (i = ACTOR_FIRST_PLATFORM; i <= ACTOR_LAST_PLATFORM; i++) {
@@ -3115,17 +3115,7 @@ s16 gMarsLighthouseAerie_FadeSlots[] = {
     137, 138, 139, 140, 141, 142, 143, -1,
 };
 
-s16 gMarsLighthouseAerie_FadeColorsFrom[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
-
-s16 gMarsLighthouseAerie_FadeColorsTo[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+#include "shared/teleport_circle_colors.c"
 
 u16 gMarsLighthouseAerie_FadeOrder[] ALIGNED(4) = {
     142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,

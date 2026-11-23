@@ -856,8 +856,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 extern s16 gYampiDesertCave_CircleSlots[];
-extern u16 gYampiDesertCave_CircleColors[];
-extern u16 gYampiDesertCave_CircleCycleColors[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 
@@ -868,9 +868,9 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
-    Palette_SetColorsFade(
-        gYampiDesertCave_CircleSlots, gYampiDesertCave_CircleColors,
-        gYampiDesertCave_CircleCycleColors, gYampiDesertCave_CircleCycleSlots);
+    Palette_SetColorsFade(gYampiDesertCave_CircleSlots, gTeleportCircle_Colors,
+                          gTeleportCircle_ShimmerColors,
+                          gYampiDesertCave_CircleCycleSlots);
     Actor_DisableById(ACTOR_CHEST_ROOM_FIRST_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_SECOND_LOG);
     Actor_DisableById(ACTOR_CHEST_ROOM_THIRD_LOG);
@@ -1017,19 +1017,7 @@ s16 gYampiDesertCave_CircleSlots[] = {
     9, 10, 11, 12, 13, 14, 15, -1,
 };
 
-/// The circles' colours, as red, green and blue for each entry.
-u16 gYampiDesertCave_CircleColors[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
-
-/// The shimmer's colours, which it moves round the entries.
-u16 gYampiDesertCave_CircleCycleColors[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+#include "shared/teleport_circle_colors.c"
 
 /// The shimmer's steps: for each, the palette entries its colours go to.
 u16 gYampiDesertCave_CircleCycleSlots[] = {

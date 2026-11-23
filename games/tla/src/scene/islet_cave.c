@@ -372,8 +372,8 @@ void IsletCave_OpenDoorAndEnter(void) {
 }
 
 extern u16 gIsletCave_PaletteSlots[];
-extern u16 gIsletCave_PaletteColors[];
-extern u16 gIsletCave_CycleColors[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gIsletCave_CycleSlots[];
 extern s32 gIsletCave_TremorTargetScript[];
 
@@ -389,8 +389,8 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_ISLET_CAVE_HALLS) {
     IsletCave_PlaceLogs();
-    Palette_SetColorsFade(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
-                          gIsletCave_CycleColors, gIsletCave_CycleSlots);
+    Palette_SetColorsFade(gIsletCave_PaletteSlots, gTeleportCircle_Colors,
+                          gTeleportCircle_ShimmerColors, gIsletCave_CycleSlots);
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
@@ -873,9 +873,7 @@ void IsletCave_RideThirdLogWest(void);
 // clang-format off
 u16 gIsletCave_PaletteSlots[] = {9, 10, 11, 12, 13, 14, 15, 65535};
 
-u16 gIsletCave_PaletteColors[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
-
-u16 gIsletCave_CycleColors[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
+#include "shared/teleport_circle_colors.c"
 
 u16 gIsletCave_CycleSlots[] = {                                                               
       14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  

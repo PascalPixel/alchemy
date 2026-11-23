@@ -396,8 +396,8 @@ void Contigo_InitializeGeoglyph(void);
 void Contigo_InitializeShops(void);
 void Contigo_InitializeLuckyDice(void);
 extern u16 gContigo_PaletteSlots[];
-extern u16 gContigo_PaletteColors[];
-extern u16 gContigo_ShimmerColors[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gContigo_CycleSlots[];
 extern s32 gContigo_ShiverScript[];
 extern u32 gContigo_SparkleTiles[];
@@ -2591,8 +2591,8 @@ void Contigo_InitializeVillage(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
-  Palette_SetColorsFade(gContigo_PaletteSlots, gContigo_PaletteColors,
-                        gContigo_ShimmerColors, gContigo_CycleSlots);
+  Palette_SetColorsFade(gContigo_PaletteSlots, gTeleportCircle_Colors,
+                        gTeleportCircle_ShimmerColors, gContigo_CycleSlots);
 }
 
 /// Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings'
@@ -2971,17 +2971,7 @@ u16 gContigo_PaletteSlots[] = {
     89, 90, 91, 92, 93, 94, 95, PALETTE_LIST_END,
 };
 
-u16 gContigo_PaletteColors[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, PALETTE_LIST_END,
-};
-
-u16 gContigo_ShimmerColors[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, PALETTE_LIST_END,
-};
+#include "shared/teleport_circle_colors.c"
 
 u16 gContigo_CycleSlots[] = {
     94, 89, 90, 91, 92, 93,

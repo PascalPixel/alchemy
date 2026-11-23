@@ -1488,8 +1488,8 @@ void AnemosInnerSanctum_ArriveOnGuardianLift(void) {
 s32 CrackedTile_Find();
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern s16 gAnemosInnerSanctum_PaletteSlots[];
-extern s16 gAnemosInnerSanctum_PaletteColors[];
-extern s16 gAnemosInnerSanctum_CycleColors[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gAnemosInnerSanctum_CycleSlots[];
 
 s32 Scene_Initialize(void) {
@@ -1502,8 +1502,8 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
     Palette_SetColorsFade((s32)gAnemosInnerSanctum_PaletteSlots,
-                          (s32)gAnemosInnerSanctum_PaletteColors,
-                          (s32)gAnemosInnerSanctum_CycleColors,
+                          (s32)gTeleportCircle_Colors,
+                          (s32)gTeleportCircle_ShimmerColors,
                           (s32)gAnemosInnerSanctum_CycleSlots);
     if (Event_GetFlag(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
       AnemosInnerSanctum_LightTorch(VENUS_TORCH_X, VENUS_TORCH_Y,
@@ -2037,17 +2037,7 @@ s16 gAnemosInnerSanctum_PaletteSlots[] = {
     89, 90, 91, 92, 93, 94, 95, -1,
 };
 
-s16 gAnemosInnerSanctum_PaletteColors[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
-
-s16 gAnemosInnerSanctum_CycleColors[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+#include "shared/teleport_circle_colors.c"
 
 u16 gAnemosInnerSanctum_CycleSlots[] = {                                                               
       94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91,  

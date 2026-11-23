@@ -1223,8 +1223,8 @@ extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[];
 extern u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[];
 extern s16 gMarsLighthouseEntrance_ValkyrieIceCones[];
 extern s16 gMarsLighthouseEntrance_FadeSlots[];
-extern s16 gMarsLighthouseEntrance_FadeColorsFrom[];
-extern s16 gMarsLighthouseEntrance_FadeColorsTo[];
+extern u16 gTeleportCircle_Colors[];
+extern u16 gTeleportCircle_ShimmerColors[];
 extern u16 gMarsLighthouseEntrance_FadeOrder[];
 
 s32 Scene_Initialize(void) {
@@ -1417,8 +1417,8 @@ s32 Scene_Initialize(void) {
       entrance == VALKYRIE_SOUTH_CIRCLE)
     Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Palette_SetColorsFade((s32)gMarsLighthouseEntrance_FadeSlots,
-                        (s32)gMarsLighthouseEntrance_FadeColorsFrom,
-                        (s32)gMarsLighthouseEntrance_FadeColorsTo,
+                        (s32)gTeleportCircle_Colors,
+                        (s32)gTeleportCircle_ShimmerColors,
                         (s32)gMarsLighthouseEntrance_FadeOrder);
   return 0;
 }
@@ -2206,17 +2206,7 @@ s16 gMarsLighthouseEntrance_FadeSlots[] = {
     137, 138, 139, 140, 141, 142, 143, -1,
 };
 
-s16 gMarsLighthouseEntrance_FadeColorsFrom[] = {
-    23, 25, 22, 23, 25, 22, 23, 25,
-    22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
-};
-
-s16 gMarsLighthouseEntrance_FadeColorsTo[] = {
-    30, 27, 31, 22, 21, 31, 20, 18,
-    31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
-};
+#include "shared/teleport_circle_colors.c"
 
 u16 gMarsLighthouseEntrance_FadeOrder[] ALIGNED(4) = {
     142, 137, 138, 139, 140, 141, 141, 142, 137, 138, 139, 140,

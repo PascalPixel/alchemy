@@ -51,7 +51,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   Projection_ScaledUnit(work->args->targets[work->args->targetCount - 1],
                         &last);
   first.x += (last.x - first.x) / 2;
-  REG_BG2X = (64 - first.x) << 8;
+  REG_BG2X = (CANVAS_SIZE / 2 - first.x) << 8;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   rockCount = gSpire_RockCounts[work->args->variant];
   for (i = 0; i != rockCount; i++) {
@@ -116,7 +116,8 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       // The boulder falls over its column.
       if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet, gSpire_RockX[i] + 64 - SPIRE_ROCK_WIDTH / 2,
+          blit(canvas, work->sheet,
+               gSpire_RockX[i] + CANVAS_SIZE / 2 - SPIRE_ROCK_WIDTH / 2,
                FIXEDtoINT(rock->y), SPIRE_ROCK_WIDTH, SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])

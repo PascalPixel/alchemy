@@ -510,13 +510,10 @@ void IsletCave_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
 }
 
 /// Stepping onto a log plays its dip under Felix's step, set back to floating
-/// first so that the dip plays from its start.
+/// first so that the dip plays from its start: as he steps onto it, the log
+/// spreads wider and flashes darker orange for about a third of a second, then
+/// settles back to its narrow yellow look.
 void IsletCave_SettleLog(s32 actorId) {
-  // XXX: how the dip looks on screen. Recorded walking west from the Teleport
-  // circle's island onto the first log's north end, the log shows no dip that
-  // can be told from the camera's pan after Felix and the water's ripple along
-  // its sides; frames of a log as he steps on, the camera still, would settle
-  // it.
   Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_FLOAT);
   Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_SETTLE);
   return;

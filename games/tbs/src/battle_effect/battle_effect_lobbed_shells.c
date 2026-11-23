@@ -72,7 +72,8 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 #define LOBBED_SHELLS_BURSTS (PARTICLES + 256)
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
-#define LOBBED_SHELLS_SMOKE_PICTURES 16000 ///< the smoke pictures in the sheet
+#define LOBBED_SHELLS_SMOKE_PICTURES                                           \
+  16000 ///< where the smoke starts in the sheet
 /// GoldShellSheet's shell as it tumbles, upright and then turned on its side.
 #define LOBBED_SHELL_WIDTH 24
 #define LOBBED_SHELL_HEIGHT 32
@@ -113,7 +114,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   s32 total;
   struct Actor *source;
   struct BattleCamera *camera;
-  u8 *palette;
+  u8 *resource;
   s32 i;
   FIXED height;
 
@@ -124,29 +125,29 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
-  palette = Resource_GetTableEntry(RESOURCE_SMOKE_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
+  resource = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet);
+  resource = Resource_GetTableEntry(RESOURCE_SMOKE_SHEET);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(resource, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
-    palette = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
+    resource = Resource_GetTableEntry(RESOURCE_BLUE_PALETTE);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
-    palette = Resource_GetTableEntry(RESOURCE_SPIDER_WEB_SHEET);
+    resource = Resource_GetTableEntry(RESOURCE_SPIDER_WEB_SHEET);
   else if (mode == LOBBED_SHELLS_STICKY_POISON)
-    palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
+    resource = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
   else if (mode == LOBBED_SHELLS_ROTTEN_BLOOD)
-    palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
+    resource = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
   else if (mode == LOBBED_SHELLS_MAD_SPATTER)
-    palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
+    resource = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
   else if (mode == LOBBED_SHELLS_POISON_INK)
-    palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
+    resource = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   else
-    palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    resource = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 
   // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
@@ -309,6 +310,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           s32 picture = burst->variant / 5;
           s32 flip;
 
+          // Every second shard tumbles through the other nine pictures.
           if (i & 1)
             picture += 9;
           flip = args->side;

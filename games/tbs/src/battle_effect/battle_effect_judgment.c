@@ -1,5 +1,6 @@
 /// @file
 /// The Judgment summon.
+// Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 
@@ -160,7 +161,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   s32 cx;
   s32 cy;
   s32 squash;
-  s32 sx = 8;
+  s32 stretch = 8; // the rings' width and upper half, in eighths
   s32 ring;
   s32 rings;
   s32 shift;
@@ -225,6 +226,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET),
                   SHEET_PALETTE_BYTES);
 
+  // Each mote starts 72 to 87 pixels from the shield, its two velocities
+  // holding the tilt and turn of its path; the first turn drawn is thrown
+  // away.
   for (i = 0; i != JUDGMENT_MOTES; i++) {
     PARTICLES[i].x = (Random16() & 15) + 72;
     PARTICLES[i].velocityX = Random16() & TRIG_ANGLE_MASK;
@@ -429,6 +433,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame >= JUDGMENT_BEAM_FRAME) {
+      // Two beams fall 16 pixels a frame onto the shield, and a ring of
+      // motes spreads from it 10 pixels a frame.
       s32 top = (frame << 4) - 2272;
       s32 n;
       s32 r;
@@ -783,7 +789,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             s32 dx;
 
             half = radius / 2;
-            dx = (half * sx) / 8;
+            dx = (half * stretch) / 8;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites.
              */
@@ -791,7 +797,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
               left = 0;
             left = cx - dx;
             bottom = cy + (slope * squash) / 8;
-            top = cy - (slope * sx) / 8;
+            top = cy - (slope * stretch) / 8;
             if (top < 0)
               top = 0;
             if (bottom > JUDGMENT_WAVE_SIZE - 1)
@@ -810,7 +816,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             JUDGMENT_PLOT_RING_POINTS(left, right, top, bottom);
 
             halfSlope = slope / 2;
-            dx = (halfSlope * sx) / 8;
+            dx = (halfSlope * stretch) / 8;
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites.
              */
@@ -818,7 +824,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
               left = 0;
             left = cx - dx;
             bottom = cy + (radius * squash) / 8;
-            top = cy - (radius * sx) / 8;
+            top = cy - (radius * stretch) / 8;
             if (left < 0)
               left = 0;
             if (right > JUDGMENT_WAVE_SIZE - 1)
@@ -847,6 +853,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
+    // The explosion: nine blasts fan out below where the flare struck.
     if (frame >= 86 && frame < JUDGMENT_SWEEP_BEACH) {
       s32 angle = -DEGtoANG(90);
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {

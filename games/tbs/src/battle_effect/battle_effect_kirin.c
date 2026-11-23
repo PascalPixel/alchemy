@@ -42,19 +42,19 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   static struct SpriteScale chargeScale = {{{FIXED_ONE, FIXED_ONE}}};
   struct SpritePlacement place;
   struct ScreenPoint unit;
-  u8 jitterRow[16];
-  u8 hitRow[14];
+  u8 wallJitter[16];
+  u8 passed[14];
   struct SpritePlacement chargePlace;
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle blit;
   u8 *sheet;
-  s32 baseX;
-  s32 grow;
+  s32 kirinX;
+  s32 scrolled;
   s32 savedX;
   struct BattleBackgroundWork *view;
-  s32 shift;
-  s32 wave;
+  s32 forestSpeed;
+  s32 bounce;
   s32 frame;
   s32 i;
 
@@ -86,11 +86,11 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FIRE_BLOB_SHEET, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(CANVAS_BLEND_LEVEL);
 
-  baseX = 0;
-  grow = 0;
+  kirinX = 0;
+  scrolled = 0;
   savedX = gBgScroll[1].x;
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  shift = 0;
+  forestSpeed = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   view->busy = 1;
 
@@ -111,7 +111,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
   // The sweep: Kirin bounds in over the forest (A or B ends it).
   for (frame = 0; frame != KIRIN_SWEEP_FRAMES; frame++) {
-    wave = 0;
+    bounce = 0;
     if (frame == 0) {
       Sound_PlayFar(SE_WHOOSH);
     }
@@ -132,14 +132,14 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     }
 
     if (frame >= 24 && frame <= 55) {
-      shift++;
+      forestSpeed++;
     }
-    if (shift > KIRIN_FOREST_SPEED_MAX) {
-      shift = KIRIN_FOREST_SPEED_MAX;
+    if (forestSpeed > KIRIN_FOREST_SPEED_MAX) {
+      forestSpeed = KIRIN_FOREST_SPEED_MAX;
     }
     if (frame <= 135) {
-      gBgScroll[1].x -= shift;
-      grow += shift;
+      gBgScroll[1].x -= forestSpeed;
+      scrolled += forestSpeed;
     }
 
     // Kirin bounds in, the screen shaking at each landing, then lifts away to
@@ -153,7 +153,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         lift = (frame - 104) * 16;
       }
       if (frame >= 8 && frame <= 31) {
-        baseX = baseX + shift - 8;
+        kirinX = kirinX + forestSpeed - 8;
       }
       if (frame > 7) {
         s32 height;
@@ -168,7 +168,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         if (angle > DEGtoANG(180)) {
           angle -= DEGtoANG(180);
         }
-        wave = FIXEDtoINT(Trig_Sin(angle) * height);
+        bounce = FIXEDtoINT(Trig_Sin(angle) * height);
         if ((frame & 31) == 8) {
           work->shakeFrames = 4;
         }
@@ -176,15 +176,15 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       place.groundHeight = 0;
       place.height = toFIXED(255);
       for (i = 0; i != KIRIN_SPRITES; i++) {
-        place.x = INTtoFIXED(baseX + gKirin_Columns[i] - lift) + toFIXED(224);
-        place.y = INTtoFIXED(gKirin_Rows[i] - wave) + toFIXED(72);
+        place.x = INTtoFIXED(kirinX + gKirin_Columns[i] - lift) + toFIXED(224);
+        place.y = INTtoFIXED(gKirin_Rows[i] - bounce) + toFIXED(72);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
       }
     }
 
     // A hoop of motes opens in front of Kirin.
     if (frame <= 26) {
-      s32 size = grow + 4;
+      s32 size = scrolled + 4;
       s32 count = frame * 8;
 
       if (size > MOTE_SIZE_MAX) {
@@ -198,8 +198,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       // forest starts to scroll.
       for (i = 0; i != count; i++) {
         s32 angle = i * (TRIG_TURN / KIRIN_HOOP_MOTES);
-        s32 x = FIXEDtoINT(Trig_Sin(angle) * ((grow + 4) * 2)) + grow + 96;
-        s32 y = FIXEDtoINT(Trig_Cos(angle) * ((grow + 4) * 12)) + 64;
+        s32 x =
+            FIXEDtoINT(Trig_Sin(angle) * ((scrolled + 4) * 2)) + scrolled + 96;
+        s32 y = FIXEDtoINT(Trig_Cos(angle) * ((scrolled + 4) * 12)) + 64;
 
         EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
@@ -230,8 +231,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           fire->variant--;
         }
         if (fire->x > 128 || fire->variant == 1) {
-          fire->x = (Random16() & 31) + baseX + 172;
-          fire->y = INTtoFIXED((Random16() & 31) - wave + 56);
+          fire->x = (Random16() & 31) + kirinX + 172;
+          fire->y = INTtoFIXED((Random16() & 31) - bounce + 56);
           fire->velocityY = ((Random16() & 31) - 16) * (toFIXED(1) / 2);
         }
       }
@@ -271,14 +272,14 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   }
 
   {
-    s32 rowX;
+    s32 chargeX;
 
-    rowX = 224;
-    for (i = 0; i != ARRAY_COUNT(hitRow); i++) {
-      hitRow[i] = 0;
+    chargeX = 224;
+    for (i = 0; i != ARRAY_COUNT(passed); i++) {
+      passed[i] = 0;
     }
-    for (i = 0; i != ARRAY_COUNT(jitterRow); i++) {
-      jitterRow[i] = Random16() & 31;
+    for (i = 0; i != ARRAY_COUNT(wallJitter); i++) {
+      wallJitter[i] = Random16() & 31;
     }
     for (i = 0; i != KIRIN_BURSTS_FREED * KIRIN_BURST_MOTES; i++) {
       PARTICLES[i].variant = 0;
@@ -295,7 +296,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         s32 angle;
         s32 rise;
 
-        rowX -= 16;
+        chargeX -= 16;
         // A bound every 16 frames, the first higher.
         if (frame <= 8) {
           angle = frame * (TRIG_TURN / 32) + DEGtoANG(90);
@@ -313,7 +314,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         chargePlace.groundHeight = 0;
         chargePlace.height = toFIXED(255);
         for (i = 0; i != KIRIN_SPRITES; i++) {
-          chargePlace.x = INTtoFIXED(rowX + gKirin_Columns[i]);
+          chargePlace.x = INTtoFIXED(chargeX + gKirin_Columns[i]);
           chargePlace.y = INTtoFIXED(gKirin_Rows[i] - rise) + toFIXED(72);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &chargePlace,
                                            &chargeScaleCopy, 0);
@@ -333,12 +334,12 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         // A target Kirin passes bursts into motes and reels.
-        if (hitRow[i] == 0) {
+        if (passed[i] == 0) {
           Projection_Unit(work->args->targets[i], &unit);
-          if (unit.x > rowX) {
+          if (unit.x > chargeX) {
             s32 k;
 
-            hitRow[i] = 1;
+            passed[i] = 1;
             for (k = 0; k != KIRIN_BURST_MOTES; k++) {
               struct Particle *burst = &PARTICLES[i * KIRIN_BURST_MOTES + k];
               s32 up;
@@ -383,9 +384,9 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         s32 slide = (frame - 40) * 12;
 
         EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
-        for (i = 0; i != ARRAY_COUNT(jitterRow); i++)
+        for (i = 0; i != ARRAY_COUNT(wallJitter); i++)
           blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-               jitterRow[i] - slide + 120, i * 8 - 8, FIRE_BLOB_WIDTH,
+               wallJitter[i] - slide + 120, i * 8 - 8, FIRE_BLOB_WIDTH,
                FIRE_BLOB_HEIGHT);
       }
       if (frame > 64) {

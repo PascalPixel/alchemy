@@ -132,7 +132,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
   // Default: set again before each round's forced actions.
   forcedCount = 0;
-  Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
+  CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
       (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
@@ -199,7 +199,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
     }
   }
-  Task_Add(UpdateLinkSessionCountdown, TASK_PASS_FRAME);
+  Task_Add(BattleMenu_UpdateEachFrame, TASK_PASS_FRAME);
 
   for (;;) {
     commandsOut = commands;
@@ -380,8 +380,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.word.attr01 = OBJ_SIZE_32X32 | OBJ_256_COLORS |
                                       OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        iconSprite->oam.f.tile =
-            Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
+        iconSprite->oam.f.tile = CommandIcon_ReloadSlot(largeIconSlot, mode);
         if (mode == COMMAND_ICON_DJINN)
           iconSprite->oam.f.x = 128;
         else
@@ -392,7 +391,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       switch (mode) {
       case COMMAND_ICON_ATTACK:
-        commandWindow = Window_Create(11, 17, 11, 3, 6);
+        commandWindow = Window_Create(11, 17, 11, 3,
+                                      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         Text_DrawMessageAsTiles((s32)MsgCommandName, commandWindow,
                                 BATTLE_COMMAND_NAME_X, 0);
         COMMAND_ICON_X(state) = ATTACK_ICON_X;
@@ -450,7 +450,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
         work = WINDOW_WORK;
-        commandWindow = Window_Create(8, 17, 18, 3, 6);
+        commandWindow = Window_Create(8, 17, 18, 3,
+                                      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
@@ -516,8 +517,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         summon = SummonDefinition_Get(mode);
         ability = Ability_Get(summon->abilityId);
         summonIconSlot = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(SUMMON_WINDOW_X, 17,
-                                      BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
+        commandWindow =
+            Window_Create(SUMMON_WINDOW_X, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3,
+                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
@@ -597,7 +599,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
           ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
-          commandWindow = Window_Create(11, 17, 10, 3, 6);
+          commandWindow = Window_Create(
+              11, 17, 10, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
           COMMAND_ICON_X(state) = DJINN_CHOSEN_ICON_X;
           Window_SetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0,
                                  0, 0);
@@ -627,7 +630,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           target = mode;
           break;
         }
-        commandWindow = Window_Create(11, 17, 10, 3, 6);
+        commandWindow = Window_Create(11, 17, 10, 3,
+                                      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = DJINN_CHOSEN_ICON_X;
         Text_SetColor(TEXT_COLOR_RED);
         Window_SetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0, 0,
@@ -698,7 +702,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
+        commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3,
+                                      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = ITEM_CHOSEN_ICON_X;
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
@@ -773,7 +778,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     Window_Close(state->timerWindow, 1);
   VramCache_FreeEntry(smallIconSlot);
   VramCache_FreeEntry(largeIconSlot);
-  Task_Remove(UpdateLinkSessionCountdown);
+  Task_Remove(BattleMenu_UpdateEachFrame);
   if (state->linkTimer != 0) {
     struct BattleWork *link;
 
@@ -1560,7 +1565,7 @@ void Menu_DrawModeIndicator(void) {
 #endif
 
 /// Selects the transfer method or the password level (`mode`, enum
-/// ResourceLayoutMode), with a heading window above and an explanation of the
+/// SendOptionMenu), with a heading window above and an explanation of the
 /// selected icon below, redrawn by a task while the menu runs. Returns the
 /// place chosen, or -1 when cancelled.
 s32 IconMenu_ChooseSendOption(s32 mode) {

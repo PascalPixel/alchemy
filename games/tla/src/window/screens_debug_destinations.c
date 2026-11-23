@@ -8,11 +8,11 @@
 /// Where a debug scene row's numbers and their labels start, in pixels; further
 /// right in Japanese.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-#define SELROW_TEXT_X 100
-#define SELROW_LABEL_X 110
+#define DEBUG_ROW_COLON_X 100
+#define DEBUG_ROW_SECOND_X 110
 #else
-#define SELROW_TEXT_X 74
-#define SELROW_LABEL_X 82
+#define DEBUG_ROW_COLON_X 74
+#define DEBUG_ROW_SECOND_X 82
 #endif
 
 /// Draws the debug scene and entrance numbers with their scene code and area
@@ -25,11 +25,11 @@ void DebugSceneSelect_DrawRow(void *window, s16 first, const s16 *second) {
 
   WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(selected, 3, window, 0, 14);
-  Text_DrawNumber(*second, 3, window, SELROW_LABEL_X, 14);
-  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 0);
+  Text_DrawNumber(*second, 3, window, DEBUG_ROW_SECOND_X, 14);
+  Text_DrawString(gMenu_ColonString, window, DEBUG_ROW_COLON_X, 0);
   Text_DrawMessage(selected + (s32)MsgDebugSceneCode, window, 0, 0);
-  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 14);
-  Text_DrawMessage(label, window, SELROW_LABEL_X, 0);
+  Text_DrawString(gMenu_ColonString, window, DEBUG_ROW_COLON_X, 14);
+  Text_DrawMessage(label, window, DEBUG_ROW_SECOND_X, 0);
 }
 
 struct Work;
@@ -76,5 +76,5 @@ s16 DebugSceneSelect_Run(void) {
     wait(1);
   }
 }
-#undef SELROW_TEXT_X
-#undef SELROW_LABEL_X
+#undef DEBUG_ROW_COLON_X
+#undef DEBUG_ROW_SECOND_X

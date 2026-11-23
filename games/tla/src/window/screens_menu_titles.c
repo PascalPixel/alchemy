@@ -58,14 +58,14 @@ extern volatile u32 gVBlankCount;
 #endif
 
 /// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
-/// by gMenuTitleBobOffsets, one step every four VBlanks.
+/// by gMenuTitle_BobOffsets, one step every four VBlanks.
 void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = (u8)obj->y + gMenuTitleBobOffsets[(gVBlankCount >> 2) & 7];
+  value = (u8)obj->y + gMenuTitle_BobOffsets[(gVBlankCount >> 2) & 7];
   obj->sprite.oam.y = value;
   obj = obj->next;
-  value = (u8)obj->y + gMenuTitleBobOffsets[(gVBlankCount >> 2) & 7];
+  value = (u8)obj->y + gMenuTitle_BobOffsets[(gVBlankCount >> 2) & 7];
   obj->sprite.oam.y = value;
 }
 
@@ -348,7 +348,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 /// status icons come from (Icon_DrawMisc), in a transfer block taken from
 /// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
 /// returns the entry's first tile.
-s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
+s32 MiscIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
@@ -429,7 +429,8 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
 /// Opens a 6x4 window at the upper left, draws its label and returns its
 /// handle.
 s32 Link_CreateCountdownLabelWindow(void) {
-  s32 win = (s32)Window_Create(0, 0, 6, 4, 6);
+  s32 win =
+      (s32)Window_Create(0, 0, 6, 4, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
@@ -443,7 +444,7 @@ s32 Link_CreateCountdownLabelWindow(void) {
 /// Decodes command icon `icon` (RESOURCE_COMMAND_ICONS, 1 KB of 256-colour
 /// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache
 /// entry `slotIndex` with it and returns the entry's first tile.
-s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
+s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
@@ -515,7 +516,7 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
   work->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
   entry->sprite.oam.f.tile =
-      Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
+      CommandIcon_ReloadSlot(work->entries[index].resource, icon);
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as

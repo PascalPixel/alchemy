@@ -60,7 +60,7 @@ s32 NameEntry_CountLetters(const u8 *name) {
 #else
 /// Unused: the Japanese edition's mark test (NameEntry_AcceptsMark there),
 /// which accepts every letter where no letter takes a mark.
-UNUSED s32 Window_ReturnOne(void) { return 1; }
+UNUSED s32 NameEntry_AcceptsAnyLetter(void) { return 1; }
 #endif
 
 /// Decompresses the type-01 tilemap resource and copies it over window's
@@ -123,7 +123,7 @@ void Resource_CopyFixedBlockA(s32 slot) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// Puts the string `str` into the UI's text entries and returns its width in
 /// pixels.
-s32 Text_SetString(const u8 *str) {
+s32 Text_MeasureString(const u8 *str) {
   struct WindowWork *work;
   u16 *dst;
   s32 count;
@@ -621,7 +621,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     output->depth = OAM_DEPTH_FRONT;
     output->sprite.oam.priority = 0;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
-                                       Text_SetString(editedName) + 70, 22);
+                                       Text_MeasureString(editedName) + 70, 22);
   }
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
@@ -649,8 +649,8 @@ s32 NameEntry_EditMemberName(s32 member) {
     }
     if (textDirty) {
       textDirty = 0;
-      MenuCursor_SetFar(&nameCaret.cursor, Text_SetString(editedName) + 70, 22,
-                        3);
+      MenuCursor_SetFar(&nameCaret.cursor, Text_MeasureString(editedName) + 70,
+                        22, 3);
     }
     MenuCursor_AdvanceFar(keyMotion);
     MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);

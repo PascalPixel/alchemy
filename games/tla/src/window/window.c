@@ -6,21 +6,22 @@
 /// screens.c, as in The Broken Seal.
 ///
 /// window_internal.h holds what every part shares (its includes and the
-/// declarations the parts disagreed on); the code is in the files under
-/// window/, included here in the order it has in the ROM. Camelot's own files
-/// are not recoverable: these parts are ours, cut where The Broken Seal's are.
-/// debug.c holds the debug menus, which The Lost Age keeps after the settings
-/// and Pause menus, where The Broken Seal keeps them in its screens object
-/// (screens/debug.c). Where to start:
+/// declarations the parts disagreed on); the code is in the window_*.c files
+/// beside this one, included here in the order it has in the ROM, cut where
+/// The Broken Seal's parts are. window_debug.c holds the debug menus, which The
+/// Lost Age keeps after the settings and Pause menus, where The Broken Seal
+/// keeps them in its screens object. Where to start:
 ///
-///   Windows         windows.c: Window_Create, Window_Close;
-///                   borders.c: Window_DrawBorder, Window_UpdateZooms
-///   Messages        borders.c: Message_OpenWindow, FieldMessage_Show;
-///                   typing.c: Message_UpdateAll; decode.c: Message_Decode
-///   Text drawing    sprites.c: WindowSprite_UpdateAll; text_tiles.c:
-///                   Text_DrawStringAsTiles, Text_DrawString
-///   Screens         selection.c: FieldMenu_Run; debug.c:
-///                   DebugWarp_Run
+///   Windows         window_windows.c: Window_Create, Window_Close;
+///                   window_borders.c: Window_DrawBorder, Window_UpdateZooms
+///   Messages        window_borders.c: Message_OpenWindow, FieldMessage_Show;
+///                   window_typing.c: Message_UpdateAll;
+///                   window_decode.c: Message_Decode
+///   Text drawing    window_sprites.c: WindowSprite_UpdateAll;
+///                   window_text_tiles.c: Text_DrawStringAsTiles,
+///                   Text_DrawString
+///   Screens         window_selection.c: FieldMenu_Run;
+///                   window_debug.c: DebugWarp_Run
 
 #include "window_internal.h"
 #include "window/screens.h"

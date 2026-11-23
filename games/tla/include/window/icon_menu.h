@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_ICON_MENU_H
 #define ALCHEMY_ICON_MENU_H
 
+/// @file
+/// The icon menu's work: the row of command icons the field menu, the File
+/// Screen, the shops and the Yes/No menu are chosen from.
+
 #include "types.h"
 #include "static_assert.h"
 #include "window/window.h"

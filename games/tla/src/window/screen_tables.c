@@ -101,7 +101,7 @@ const u8 gSummon_UnusedElements[SUMMON_END] = {
 };
 
 /// A window sprite pair's bob, in pixels, one step every four frames.
-const u8 gMenuTitleBobOffsets[8] = {0, 0, 1, 2, 3, 3, 2, 1};
+const u8 gMenuTitle_BobOffsets[8] = {0, 0, 1, 2, 3, 3, 2, 1};
 
 /// A window sprite's pulse, its scale one step every two frames: about 1.10 up
 /// to 1.22 and back.

@@ -1,6 +1,9 @@
 /// @file
-/// Each item name's gender, by item, for the article and adjective endings
-/// around it; German and Italian only.
+/// Each item name's gender, by item, for the possessive before it ("your")
+/// in German and Italian (gLocalizedWord_ItemPossessives). In German 0 is
+/// masculine ("dein Holzstab"), 1 feminine ("deine Arktis-Klinge") and 2
+/// neuter ("dein Langschwert"); Italian takes "Il tuo" for 0 and 2 and "la
+/// tua" for 1.
 
 #include "types.h"
 #include "edition.h"

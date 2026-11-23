@@ -52,7 +52,7 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
 /// Entries of the change list: the new list's 32 and the lost ones after.
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48
 
-/// The marks BattleDjinnMenu_ListChangedDjinn gives an ability in its list.
+/// The marks BattleDjinnMenu_ListChangedPsynergy gives an ability in its list.
 #define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change
 #define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change
 
@@ -62,9 +62,9 @@ s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
 /// `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST.
 /// Both lists are 32 slots, ended early by a 0 action. Returns the entries
 /// written, and the gained and lost counts through `gained` and `lost`.
-s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
-                                     const struct PsynergyEntry *newGrid,
-                                     u16 *out, s32 *gained, s32 *lost) {
+s32 BattleDjinnMenu_ListChangedPsynergy(const struct PsynergyEntry *oldGrid,
+                                        const struct PsynergyEntry *newGrid,
+                                        u16 *out, s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
   s32 count;
@@ -220,9 +220,11 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
   if (window != NULL)
     Window_Close(window, 1);
   if (page == 0)
-    window = Window_Create(0, 8, STAT_WINDOW_WIDTH, 11, 6);
+    window = Window_Create(0, 8, STAT_WINDOW_WIDTH, 11,
+                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   else
-    window = Window_Create(0, 5, 21, 14, 6);
+    window =
+        Window_Create(0, 5, 21, 14, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   if (window == NULL)
     return NULL;
 
@@ -240,7 +242,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     Djinn_SetFar(member, element, djinnIndex);
   Unit_CalculateFar(member);
 
-  abilityCount = BattleDjinnMenu_ListChangedDjinn(
+  abilityCount = BattleDjinnMenu_ListChangedPsynergy(
       savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);
   pages = ((abilityCount - 1) / 5) + 1;
   *pageCount = pages;

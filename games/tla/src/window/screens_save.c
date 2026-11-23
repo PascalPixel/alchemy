@@ -774,7 +774,7 @@ void FileList_StopPulse(void) { Task_Remove((u32)((s32)FileList_UpdatePulse)); }
 /// clipped to the screen as Window_SetTextTileBitRect clips, with the tile
 /// entry of tile 6 in HIGHLIGHT_PALETTE, the palette FileList_UpdatePulse
 /// animates.
-void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
+void FileList_FillHighlight(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 sum;
@@ -1151,7 +1151,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       WindowSprite_RedrawSavedRect(fileList);
       Window_DrawDividerLine(fileList, 0, 2, 27, 2);
       Window_DrawDividerLine(fileList, 0, 4, 27, 4);
-      Window_FillTilemapRect(fileList, 0, selectedFile * 2, 26, 1);
+      FileList_FillHighlight(fileList, 0, selectedFile * 2, 26, 1);
     }
     MenuTitle_Bob(modePicture);
     wait(1);

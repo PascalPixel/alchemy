@@ -156,16 +156,16 @@ s32 DebugBrowser_Icons(void) {
       Window_Close(window, 2);
       window = Window_Create(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
       if (mode == 0)
-        Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
+        Text_DrawStringInWindow(gIconBrowser_ItemTitle, window, 0, 0);
       else if (mode == 1)
-        Text_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
+        Text_DrawStringInWindow(gIconBrowser_EnergyTitle, window, 0, 0);
       else
-        Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
-      Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
+        Text_DrawStringInWindow(gIconBrowser_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gIconBrowser_PageLabel, window, 0, 8);
       Text_DrawNumberInWindow(page, 0, window, 40, 8);
       base = page * ICON_BROWSER_PAGE_ICONS;
       Text_DrawNumberInWindow(base, 3, window, 64, 8);
-      Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawStringInWindow(gIconBrowser_RangeDash, window, 88, 8);
       Text_DrawNumberInWindow(base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96,
                               8);
       for (i = 0; i < ICON_BROWSER_PAGE_ICONS; i++) {

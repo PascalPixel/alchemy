@@ -93,7 +93,7 @@ const u8 SoundTest_JingleString[] ALIGNED(4) = "Jingle";
 const u8 SoundTest_SeString[] ALIGNED(4) = "SE";
 const u8 SoundTest_EffectString[] ALIGNED(4) = "FX";
 
-/// The debug warp presets' names (window/keyboard.s), last first.
+/// The debug warp menu's row names (gDebugWarp_Presets), last first.
 const u8 DebugWarp_KaoruSpecial1Name[] ALIGNED(4) = "8:Kaoru Special1";
 const u8 DebugWarp_KaoruSpecial2Name[] ALIGNED(4) = "7:Kaoru Special2";
 const u8 DebugWarp_KaoruSpecial3Name[] ALIGNED(4) = "6:Kaoru Special3";

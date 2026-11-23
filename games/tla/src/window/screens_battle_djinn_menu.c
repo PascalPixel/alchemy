@@ -95,7 +95,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
-  listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11, 6);
+  listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11,
+                             WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_Get(member);
 

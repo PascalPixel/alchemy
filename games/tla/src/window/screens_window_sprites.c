@@ -77,11 +77,11 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
   return sprite;
 }
 
-/// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
-/// over it, and shows it at (x, y) in `window` at depth OAM_DEPTH_FRONT - 4.
-struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
-                                                      struct Window *window,
-                                                      s32 x, s32 y) {
+/// Unused: builds the 16x16 command icon of overlay `icon` over base 1
+/// (Icon_BuildCommandIconTiles) and shows it at (x, y) in `window`, in front
+/// of the other window sprites. Nothing calls it.
+UNUSED struct WindowSprite *
+WindowSprite_CreateCommandIcon(s32 icon, struct Window *window, s32 x, s32 y) {
   s32 slot;
   s32 unusedTile;
   struct WindowSprite *sprite;
@@ -175,9 +175,9 @@ void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   }
 }
 
-/// Sets the depth of the window sprite `sprite` to OAM_DEPTH_FRONT -
-/// `priority`, so a higher priority draws further back. Does nothing when
-/// `sprite` is NULL.
+/// Sets the depth of the window sprite `sprite` to ~priority, which is
+/// OAM_DEPTH_FRONT - `priority`: a higher priority draws further back. Does
+/// nothing when `sprite` is NULL.
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority) {
   if (sprite != NULL)
     ((struct WindowSprite *)sprite)->depth = ~priority;
@@ -193,8 +193,9 @@ typedef u16 *(*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
 /// and WINOUT, with the windows' horizontal extent on each of the 160 scan
 /// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
-/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures,
-/// copied into RAM for the call.
+/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures
+/// (cell_picture.c), copied into RAM for the call. With no window work, every
+/// line gets an empty span.
 void ScanlineWindow_FillSpans(void *spans) {
   struct WindowWork *work = Ram_HeapSlots->windowWork;
 

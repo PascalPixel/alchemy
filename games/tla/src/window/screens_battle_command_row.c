@@ -82,10 +82,12 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_FREE;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
-    selectionUi->window = Window_Create(20, COMMAND_ROW_TOP, 10, 3, 6);
+    selectionUi->window = Window_Create(
+        20, COMMAND_ROW_TOP, 10, 3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   else
-    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
-                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
+    selectionUi->window =
+        Window_Create(WINDOW_X, COMMAND_ROW_TOP, DISPLAY_TILE_WIDTH - WINDOW_X,
+                      3, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   selectionUi->drawnIndex = -1;
   if (mode == COMMAND_ROW_PARTY) {
     kindCount = 0;

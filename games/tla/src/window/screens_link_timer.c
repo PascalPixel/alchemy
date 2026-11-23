@@ -30,7 +30,7 @@ struct LinkSignature {
 /// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
 /// that are shown (the chosen command's and ability's icons, the party member's
 /// portrait) and slides the page arrows.
-void UpdateLinkSessionCountdown(void) {
+void BattleMenu_UpdateEachFrame(void) {
   struct BattleMenuWork *state =
       (struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork;
   struct BattleWork *runtime;

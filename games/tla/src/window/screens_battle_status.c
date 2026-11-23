@@ -268,7 +268,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   }
   cursorPosition.x = 0;
   cursorPosition.y = 0;
-  statusWindow = Window_Create(0, 0, 30, 20, 6);
+  statusWindow =
+      Window_Create(0, 0, 30, 20, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   helpWindow = Window_Create(0, 14, 30, 6,
                              WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
   Window_MarkVisibleTextTiles();
@@ -1091,7 +1092,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           }
         } while (0);
         for (j = 0; j < i; j++)
-          Resource_LoadTableEntryToBuffer(statusKinds[j], statusSlots[j]);
+          MiscIcon_LoadIntoSlot(statusKinds[j], statusSlots[j]);
         if (i == 0) {
           statusKinds[0] = OWNER_CONDITION_NORMAL;
           i = 1;

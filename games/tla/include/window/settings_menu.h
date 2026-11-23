@@ -23,7 +23,7 @@ union MenuCursorRef {
 /// icons too.
 struct OptionMenuWork {
   u8 unused[1024];
-  u8 entries[7][52]; ///< no code of this game names them
+  u8 entries[7][52]; ///< unused: nothing in this game reads them
   u8 unusedAfterEntries[8];
   /// The row the cursor is on: on the settings menu 0 to 4, indexing option
   /// and optionCount; on the Pause menu its entry, indexing icon.

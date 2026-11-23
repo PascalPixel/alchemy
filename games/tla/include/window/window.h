@@ -37,7 +37,7 @@ struct WindowWork {
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
   u8 mindRead;          ///< nonzero widens a message window by 2
-  u8 battleMode;        ///< 1 from the work's setup
+  u8 battleMode;        ///< where the windows are drawn (enum WindowBattleMode)
   u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
   u8 textPalette;       ///< text tiles' palette; 15 by default
   u16 tilemap[20][32];  ///< the windows' BG tilemap
@@ -67,7 +67,9 @@ struct WindowWork {
   u16 speakerVoiceCountdown; ///< characters until the next voice blip
   u8 pageArrowShown;         ///< 1 while the next-page arrow is shown
   u8 waitingForSound;        ///< set while a message waits on its sound
-  u8 haltingSpeech;          ///< cleared together with spacingAfter
+  /// The decode flags set for the next messages (Message_SetDecodeFlags):
+  /// MESSAGE_DECODE_HALTING_SPEECH and MESSAGE_DECODE_SPACING_AFTER.
+  u8 haltingSpeech;
   u8 spacingAfter;
   /// Nonzero lets a tall message fit in 32 pixels, placing its glyphs by
   /// y / 320 (Message.compressLines).
@@ -126,11 +128,6 @@ enum WindowSpriteKind {
   WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
   WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
   WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
-};
-
-/// How a window sprite moves (WindowSprite.motion); 0 is a free one.
-enum {
-  WINDOW_SPRITE_MOTION_PAGE_ARROW = 2 ///< the next-page arrow, bobbing
 };
 
 /// What Window_PutGlyph draws.
@@ -348,15 +345,15 @@ enum {
 };
 
 /// How a window sprite moves (WindowSprite.motion), run each frame by
-/// WindowSprite_UpdateAll; 0 is a free window sprite and
-/// WINDOW_SPRITE_MOTION_PAGE_ARROW (2) is window.h's.
+/// WindowSprite_UpdateAll; 0 is a free window sprite.
 enum {
   WINDOW_SPRITE_MOTION_STILL = 1,
-  WINDOW_SPRITE_MOTION_WOBBLE = 4, ///< swings along a small arc
-  WINDOW_SPRITE_MOTION_SHAKE = 5,  ///< jitters by a pixel every other frame
-  WINDOW_SPRITE_MOTION_POP = 6,    ///< shown at double size, then normal size
-  WINDOW_SPRITE_MOTION_SPIN = 7,   ///< turns while circling its place
-  WINDOW_SPRITE_MOTION_SWELL = 9,  ///< pulses between 1 and 1.5 times its size
+  WINDOW_SPRITE_MOTION_PAGE_ARROW = 2, ///< the next-page arrow, bobbing
+  WINDOW_SPRITE_MOTION_WOBBLE = 4,     ///< swings along a small arc
+  WINDOW_SPRITE_MOTION_SHAKE = 5,      ///< jitters by a pixel every other frame
+  WINDOW_SPRITE_MOTION_POP = 6,   ///< shown at double size, then normal size
+  WINDOW_SPRITE_MOTION_SPIN = 7,  ///< turns while circling its place
+  WINDOW_SPRITE_MOTION_SWELL = 9, ///< pulses between 1 and 1.5 times its size
   WINDOW_SPRITE_MOTION_SWELL_HALF = 10, ///< the same at half the scale
   WINDOW_SPRITE_MOTION_SHRINK =
       11, ///< shrinks from 1.5 times to its size, once
@@ -388,6 +385,9 @@ enum TextColor {
 enum {
   WINDOW_FLAG_OPEN = 0x1,    ///< the window slot is in use
   WINDOW_FLAG_INSTANT = 0x2, ///< opens and closes at once, with no zoom
+  /// Passed beside WINDOW_FLAG_INSTANT by the battle menus and the party
+  /// status window; Window_Create never reads it.
+  WINDOW_FLAG_UNREAD = 0x4,
   /// text is drawn into a canvas of bitmap tiles (Window_MapTextCanvasTiles)
   WINDOW_FLAG_TEXT_CANVAS = 0x8,
   /// the canvas has a border and a filled background; without it the canvas is

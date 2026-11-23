@@ -7,9 +7,9 @@
 #include "field/flag_call.h"
 
 /// The debug selection row's range: its value (a scene) runs 0 to
-/// DEBUG_ROW_VALUE_MAX, its second number (an entrance) 0 to DEBUG_ROW_SUB_MAX.
-#define DEBUG_ROW_VALUE_MAX 324
-#define DEBUG_ROW_SUB_MAX 99
+/// DEBUG_SCENE_MAX, its second number (an entrance) 0 to DEBUG_ENTRANCE_MAX.
+#define DEBUG_SCENE_MAX 324
+#define DEBUG_ENTRANCE_MAX 99
 
 /// The flag browser's pages of DEBUG_FLAG_ROWS rows of DEBUG_FLAGS_PER_ROW
 /// flags, 256 a page: every game flag.
@@ -22,7 +22,7 @@
 /// field (`mode`: 0 scene, 1 entrance), Left and Right step by one and wrap
 /// at either end. R and L step a scene by DEBUG_LARGE_STEP, setting the
 /// entrance to 0, and past either end go to the other; they step an entrance
-/// as far, wrapping by DEBUG_ROW_SUB_MAX (95 + 10 gives 6).
+/// as far, wrapping by DEBUG_ENTRANCE_MAX (95 + 10 gives 6).
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
     return -1;
@@ -37,10 +37,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
       value++;
     } else {
       (*sub)++;
-      if (*sub > DEBUG_ROW_SUB_MAX)
+      if (*sub > DEBUG_ENTRANCE_MAX)
         *sub = 0;
     }
-    if (value > DEBUG_ROW_VALUE_MAX)
+    if (value > DEBUG_SCENE_MAX)
       value = 0;
     DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_LEFT) {
@@ -49,10 +49,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     } else {
       (*sub)--;
       if (*sub < 0)
-        *sub = DEBUG_ROW_SUB_MAX;
+        *sub = DEBUG_ENTRANCE_MAX;
     }
     if (value < 0)
-      value = DEBUG_ROW_VALUE_MAX;
+      value = DEBUG_SCENE_MAX;
     DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_R) {
     if (*mode == 0) {
@@ -60,10 +60,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
       value += DEBUG_LARGE_STEP;
     } else {
       *sub += DEBUG_LARGE_STEP;
-      if (*sub > DEBUG_ROW_SUB_MAX)
-        *sub -= DEBUG_ROW_SUB_MAX;
+      if (*sub > DEBUG_ENTRANCE_MAX)
+        *sub -= DEBUG_ENTRANCE_MAX;
     }
-    if (value > DEBUG_ROW_VALUE_MAX)
+    if (value > DEBUG_SCENE_MAX)
       value = 0;
     DebugSceneSelect_DrawRow(arg, value, sub);
   } else if (gInput.repeat & KEY_L) {
@@ -73,10 +73,10 @@ s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     } else {
       *sub -= DEBUG_LARGE_STEP;
       if (*sub < 0)
-        *sub += DEBUG_ROW_SUB_MAX;
+        *sub += DEBUG_ENTRANCE_MAX;
     }
     if (value < 0)
-      value = DEBUG_ROW_VALUE_MAX;
+      value = DEBUG_SCENE_MAX;
     DebugSceneSelect_DrawRow(arg, value, sub);
   }
   return value;
@@ -232,8 +232,9 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   return 0;
 }
 
-/// Reserved menu entry. Nothing calls it.
-void Menu_ReservedNoOp(void) {}
+/// Unused: an empty routine, the twin of the window object's
+/// SelectionMenu_ReservedNoOp. Nothing calls it.
+UNUSED void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified party
 /// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.

@@ -63,7 +63,8 @@ void PartyStatus_CreateWindow(s32 flags) {
   work->holdTilemapUpload = 1;
   PartyStatus_BuildLayoutBounds(flags);
   window->window = (struct Window *)Window_Create(
-      window->x, window->y, window->width, window->height, 6);
+      window->x, window->y, window->width, window->height,
+      WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   PartyStatus_Draw(flags);
   work->holdTilemapUpload = 0;
 }

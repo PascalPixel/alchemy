@@ -4,8 +4,6 @@
 
 #include "system_internal.h"
 
-// The save code starts each DMA through Dma_Set, where serial.h's
-// SAVE_START_DMA writes DMA3's registers itself.
 /// DMA 3's enable bit in its count and control word, which the hardware
 /// clears when the transfer is done.
 #define DMA3_BUSY (DMA_ENABLE << 16)
@@ -14,12 +12,13 @@
 #define SAVE_START_DMA(source_, destination_, control_)                        \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
+/// Waits until `channel`'s transfer is done.
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA3_BUSY) != 0) {
   }
 }
 
-/// Waits until a START_DMA transfer is done.
+/// Waits until a SAVE_START_DMA transfer is done.
 #define WAIT_DMA() WaitDma(DMA3)
 
 /// The bytes of a part's first sector that its SaveSectorHeader takes, before
@@ -35,15 +34,13 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// gSceneLocalState: Save_LoadExtraSummary reads part SAVE_PART_EXTRA's there.
 #define SAVE_BROKEN_SEAL_SECOND_PLAY_TIME_OFFSET (SAVE_HEADER_BYTES + 256)
 
-extern const u8 gSave_HeaderTemplate[];
-
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
-/// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
-/// tries, a frame apart) and scans the first sector of each three of the 15
-/// into the workspace's
-/// occupied, partId and counter tables: a sector counts as taken when its
-/// signature and checksum are good, and of two copies of a part only the newer
-/// stays taken.
+/// library's SAVE_FLASH_TIMER handler, identifies the flash chip
+/// (SAVE_FLASH_IDENTIFY_ATTEMPTS tries, a frame apart) and reads each part's
+/// place, three sectors at a time, into the workspace's occupied, partId and
+/// counter tables: a place counts as taken when its signature and checksum are
+/// good, and of two copies of a part only the newer stays taken. Returns 1 when
+/// no flash chip answers, else 0.
 s32 Save_InitializeWork(void) {
   struct SaveWorkspace *work;
   struct SaveSectorHeader header;
@@ -76,7 +73,8 @@ s32 Save_InitializeWork(void) {
     WAIT_DMA();
     slot = &header;
 
-    if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
+    if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature,
+                          sizeof(slot->signature)) != 0)
       continue;
     work->counter[index] = slot->counter;
     partId = slot->partId;
@@ -102,23 +100,22 @@ s32 Save_InitializeWork(void) {
   return 0;
 }
 
-/// Picks the free sector to write part `mode` to, at random among every third
-/// of the 15 sectors. The last free sector only goes to a part that already has
-/// a copy, so replacing a save always has room. Returns SAVE_SECTOR_COUNT when
-/// there is no
-/// sector to use.
-u32 Save_SelectWriteSector(s32 mode) {
+/// Picks the free place, three sectors from a multiple of three, to write part
+/// `partId` to, at random among them. The last free place only goes to a part
+/// that already has a copy, so replacing a save always has room. Returns
+/// SAVE_SECTOR_COUNT when there is no place to use.
+u32 Save_SelectWriteSector(s32 partId) {
   u32 empty[SAVE_SECTOR_COUNT];
   s32 count;
   u32 index;
-  u8 *slot;
+  u8 *occupied;
   u8 value;
 
-  slot = ((struct SaveWorkspace *)Ram_HeapSlots->saveWork)->occupied;
+  occupied = ((struct SaveWorkspace *)Ram_HeapSlots->saveWork)->occupied;
   count = 0;
   for (index = 0; index < SAVE_SECTOR_COUNT; index += SAVE_SECTORS_PER_PART) {
-    value = *slot;
-    slot += SAVE_SECTORS_PER_PART;
+    value = *occupied;
+    occupied += SAVE_SECTORS_PER_PART;
     if (value == 0)
       empty[count++] = index;
   }
@@ -126,10 +123,10 @@ u32 Save_SelectWriteSector(s32 mode) {
   if (count != 0) {
     if (count == 1) {
       index = empty[0];
-      if (Save_FindLatestSector(mode) == SAVE_SECTOR_COUNT)
+      if (Save_FindLatestSector(partId) == SAVE_SECTOR_COUNT)
         index = SAVE_SECTOR_COUNT;
     } else {
-      // A free sector at random, so the writes spread over the flash chip.
+      // A free place at random, so the writes spread over the flash chip.
       index = Random16() % count;
       index = empty[index];
     }
@@ -137,8 +134,10 @@ u32 Save_SelectWriteSector(s32 mode) {
   return index;
 }
 
-/// Programs the workspace's sector buffer into flash sector `sector` and
-/// verifies it, through the flash library's routine for this chip.
+/// Programs the workspace's three-sector buffer into flash from sector
+/// `sector` on and verifies each, through the flash library's routine for this
+/// chip, calling the progress routine before the first and after each. Returns
+/// 1 when a sector fails, else 0.
 u32 Save_WriteSector(s32 sector) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   void (*progress)(s32) = work->progress;
@@ -164,7 +163,8 @@ u32 Save_WriteSector(s32 sector) {
   return 0;
 }
 
-/// Reads flash sector `index` into the workspace's sector buffer.
+/// Reads the three flash sectors from `index` on into the workspace's sector
+/// buffer. Returns 0 when their checksum matches the header's.
 s32 Save_ReadSector(s32 index) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
@@ -178,9 +178,12 @@ s32 Save_ReadSector(s32 index) {
 }
 
 /// Saves the 12,272 bytes at `source`, three sectors less the header, as part
-/// `partId`: writes the new copy with
-/// the next counter, then invalidates the old one, updating the workspace's
-/// sector tables.
+/// `partId`: writes the new copy with the next counter, then invalidates the
+/// old one, updating the workspace's sector tables. Returns 0, or the step that
+/// failed: 1 no free place, 2 the new copy, 3 invalidating the old one, and,
+/// once the counter passes SAVE_COUNTER_LIMIT and the copy is written again
+/// with counter 1 over the old place, 4 that write and 5 invalidating the new
+/// copy.
 s32 Save_WritePart(s32 partId, void *source) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSectorHeader header;
@@ -198,7 +201,8 @@ s32 Save_WritePart(s32 partId, void *source) {
   SAVE_START_DMA(source, work->slot + SAVE_HEADER_BYTES,
                  DMA_COPY_WORDS((sizeof(work->slot) - SAVE_HEADER_BYTES) / 4));
   WAIT_DMA();
-  SAVE_START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
+  SAVE_START_DMA(gSave_HeaderTemplate, &header,
+                 DMA_COPY_WORDS(sizeof(gSave_HeaderTemplate) / 4));
   WAIT_DMA();
   header.partId = partId;
   header.checksum = Save_ChecksumSector();
@@ -260,7 +264,8 @@ u32 Save_DeletePart(s32 partId) {
   return NONZERO(result);
 }
 
-/// Sums the 12,272 payload bytes of the workspace's three-sector buffer.
+/// Sums the 12,272 payload bytes of the workspace's three-sector buffer, the
+/// checksum its header keeps.
 s32 Save_ChecksumSector(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 limit;
@@ -283,25 +288,25 @@ s32 Save_ChecksumSector(void) {
   return sum;
 }
 
-/// Returns the occupied sector holding the newest copy of part `partId`, or
-/// SAVE_SECTOR_COUNT.
+/// Returns the first sector of the newest copy of part `partId`, or
+/// SAVE_SECTOR_COUNT when it has none.
 u32 Save_FindLatestSector(s32 partId) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   u32 latestCounter;
-  u32 latestSlot;
+  u32 latestSector;
   u32 i;
 
   latestCounter = 0;
-  latestSlot = SAVE_SECTOR_COUNT;
+  latestSector = SAVE_SECTOR_COUNT;
   for (i = 0; i < SAVE_SECTOR_COUNT; i += SAVE_SECTORS_PER_PART) {
     if (work->occupied[i] != 0 && partId == work->partId[i]) {
       if (latestCounter < work->counter[i]) {
         latestCounter = work->counter[i];
-        latestSlot = i;
+        latestSector = i;
       }
     }
   }
-  return latestSlot;
+  return latestSector;
 }
 
 /// Overwrites sector `index` with a header for no part (SAVE_PART_NONE) and
@@ -312,9 +317,10 @@ s32 Save_InvalidateSector(s32 index) {
   volatile u32 zero;
 
   zero = 0;
-  SAVE_START_DMA(&zero, &header, DMA_FILL_WORDS(4));
+  SAVE_START_DMA(&zero, &header, DMA_FILL_WORDS(SAVE_HEADER_BYTES / 4));
   WAIT_DMA();
-  SAVE_START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
+  SAVE_START_DMA(gSave_HeaderTemplate, &header,
+                 DMA_COPY_WORDS(sizeof(gSave_HeaderTemplate) / 4));
   WAIT_DMA();
   header.partId = SAVE_PART_NONE;
   header.counter = 0;
@@ -359,24 +365,25 @@ u32 Save_GetLatestCounter(s32 partId) {
   return latestCounter;
 }
 
-/// Reads the summary of the latest save in each of the three files, clearing
-/// it first; returns how many files have one.
+/// Reads the summary of the latest save in each of the SAVE_FILE_COUNT files,
+/// with its second play time from its next sector, clearing it first; returns
+/// how many files have one.
 s32 Save_LoadFileSummaries(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSummary *summary;
   s32 count;
-  u32 group;
+  u32 file;
 
   summary = work->summary;
   count = 0;
-  for (group = 0; group < SAVE_FILE_COUNT; group++) {
-    u32 slot;
+  for (file = 0; file < SAVE_FILE_COUNT; file++) {
+    u32 sector;
 
     Dma_Fill32(0, summary, sizeof(*summary));
-    slot = Save_FindLatestSector(group);
-    if (slot < SAVE_SECTOR_COUNT) {
-      ReadFlash(slot, 0, (u8 *)summary, sizeof(*summary));
-      ReadFlash(slot + 1, SAVE_SECOND_PLAY_TIME_OFFSET,
+    sector = Save_FindLatestSector(file);
+    if (sector < SAVE_SECTOR_COUNT) {
+      ReadFlash(sector, 0, (u8 *)summary, sizeof(*summary));
+      ReadFlash(sector + 1, SAVE_SECOND_PLAY_TIME_OFFSET,
                 (u8 *)&summary->secondPartPlayTime,
                 sizeof(summary->secondPartPlayTime));
       count++;

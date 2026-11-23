@@ -697,7 +697,9 @@ enum SoundId {
   /// Vale Cave, the leader sinking in Mercury Lighthouse's pool and bathing in
   /// a Lamakan Desert oasis.
   SE_WATER_MOVE,
-  SE_242,
+  /// Unused: two notes held until stopped on the Curse sample, doubled on noise
+  /// voice 28 and on the Rumble sample; nothing plays it, in either game.
+  SE_UNUSED_CURSE_RUMBLE,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as a
   /// lift of the Lemurian Ship is stepped on.
   SE_LEMURIAN_SHIP_LIFT,
@@ -726,7 +728,9 @@ enum SoundId {
   SE_BLACK_CRYSTAL_SET,
   /// A Colosso warrior fading in (Colosso_FadeInWarrior).
   SE_COLOSSO_WARRIOR_APPEAR,
-  SE_253,
+  /// Unused: SE_COLOSSO_WARRIOR_APPEAR's rising note on noise voice 20, doubled
+  /// an octave lower on the Roar sample; nothing plays it, in either game.
+  SE_UNUSED_COLOSSO_WARRIOR_ROAR,
   /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus its
   /// sprite's value (Speaker_GetVoice), and every few letters typed play it
   /// plus the letter code's low two bits (Message_Type), so a voice is four
@@ -826,7 +830,11 @@ enum SoundId {
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
   /// leader drops down a ledge or through a hole.
   SE_FALL,
-  SE_311
+  /// Unused: a chord held until stopped on the Colosso lettering's sample, under
+  /// rising runs on noise voice 23 and on voice 56, a plain square wave here
+  /// where The Lost Age has the Sparks sample, and a note of Psynergy sparkle;
+  /// nothing plays it, in either game.
+  SE_UNUSED_SPARKLING_LETTERING
 };
 
 /// The first voice: the first blip of the animals'.

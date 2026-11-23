@@ -19,7 +19,7 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_COLOSSO_RACE,
                              sizeof(struct ColossoRaceWork));
-  graphics = Heap_AllocEwram(512);
+  graphics = Heap_AllocEwram(GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
 
   work->gauge.playerActorId = playerActorId;
   work->gauge.opponentActorId = opponentActorId;
@@ -43,7 +43,7 @@ void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
   FieldDecompress_TaggedLz(gColosso_GaugeGraphics, graphics);
   vramSlot = VramCache_FindFreeEntry();
   work->gauge.vramBlock = vramSlot;
-  VramCache_Load((s16)vramSlot, 512, graphics);
+  VramCache_Load((s16)vramSlot, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, graphics);
 
   Task_AddFrame(Colosso_DrawGauge, TASK_PASS_FRAME - 10);
 

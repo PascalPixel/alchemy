@@ -2,7 +2,7 @@
 /// Lamakan Desert, south of Lama Temple: four scenes that share one trigger
 /// table, built around a heat gauge and the secrets Reveal uncovers.
 ///
-/// The party crosses it from the east. The first screen
+/// The party crosses it from the east. The first scene
 /// (SceneId_LamakanDesertEast) is entered from the World Map in its south-east
 /// corner and leads north. The second, the widest (SceneId_LamakanDesertSmog),
 /// is scattered with rings of rocks, cacti and skeletons, and hides Smog, a
@@ -21,7 +21,7 @@
 /// gMainRoutineWork.hazardSteps against HEAT_LIMIT.
 ///
 /// Most rings of rocks hide something only Reveal shows: an oasis, an Ant
-/// Lion's pit, a chest or a Psynergy Stone, and in the second screen Smog.
+/// Lion's pit, a chest or a Psynergy Stone, and in the second scene Smog.
 /// On entry each hidden patch of the map is saved aside and covered with
 /// plain sand under a shimmering heat haze (Reveal_HideSecrets); Reveal brings
 /// them back and stills the haze (Reveal_ShowSecrets) until it wears off. The
@@ -31,7 +31,7 @@
 /// drained (LamakanDesert_BatheInOasis); stepping by a pit, he is pulled into
 /// it and an Ant Lion attacks (LamakanDesert_FallIntoPit).
 ///
-/// In the third screen Reveal also parts the sandfalls over the passages, and
+/// In the third scene Reveal also parts the sandfalls over the passages, and
 /// shows the Manticore standing in the north-west one. Until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), coming near makes it roar and lunge at
 /// Isaac (LamakanDesert_MeetManticore), and talking to it starts its battle.
@@ -116,10 +116,12 @@ enum {
 
 /// The VRAM cache entry holding the gauge's tiles.
 s16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
+/// Unused: fourteen bytes nothing reads or writes.
 u8 gLamakanDesert_UnusedAfterGaugeSlot[14] BSS_DATA;
 /// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
 /// 16x16 cap at its foot.
 struct MenuSprite gHeatGauge_Sprites[5] BSS_DATA;
+/// Unused: twenty bytes nothing reads or writes.
 u8 gLamakanDesert_UnusedAfterGaugeSprites[20] BSS_DATA;
 /// The gauge's decoded tiles, which each frame's drawing starts from.
 u8 gHeatGauge_TileBuffer[2 * HEAT_GAUGE_TILE_BYTES] BSS_DATA;
@@ -170,7 +172,7 @@ enum LamakanDesertCellBehavior {
   /// The way out of the corridor behind the Manticore onto the World Map, at
   /// its west end, cell (8, 19).
   CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP = 9,
-  /// The sand before the north-west passage of the third screen, which the
+  /// The sand before the north-west passage of the third scene, which the
   /// Manticore guards, once Reveal has parted the sandfall over it.
   CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE = 40
 };
@@ -298,7 +300,7 @@ enum LamakanDesertTreasureSpot {
 #include "shared/field_effect_spawn.c"
 
 /// Talking to Smog, the Jupiter Djinni Reveal uncovers in a ring of rocks east
-/// of the middle of Lamakan Desert's second screen, makes it join the party.
+/// of the middle of Lamakan Desert's second scene, makes it join the party.
 static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
@@ -535,7 +537,7 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
 }
 
 /// Talking to the Manticore before the north-west passage of Lamakan Desert's
-/// third screen makes it rear up and starts the battle. Afterwards the party
+/// third scene makes it rear up and starts the battle. Afterwards the party
 /// stands where it fought, below the opened passage, and the Manticore is gone
 /// for good (LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE).
 static void LamakanDesert_FightManticore(void) {
@@ -571,7 +573,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   // shrivel up and blow away!"
   Event_SetMessageId((mark - LAMAKAN_DESERT_RAISED_HEAT_QUARTER) * 3 + member +
                      MSGNO(MsgMountainNorthAltinMineWestLama) + 1);
-  Event_ShowMessage(member + 1, 0);
+  Event_ShowMessage(ACTOR_GARET + member, 0);
   Event_End();
 }
 
@@ -668,8 +670,8 @@ static void LamakanDesert_BatheInOasis(void) {
     count = 2;
     oases = gLamakanDesertOasesOther;
   }
-  // Every oasis is nearer than 240 pixels, so the first always counts; a tie
-  // goes to the later.
+  // The distances are whole pixels and best starts at toFIXED(240), far beyond
+  // any of them, so the first oasis always counts; a tie goes to the later.
   total = count;
   oasis = oases;
   if (count != 0) {
@@ -899,7 +901,7 @@ static void LamakanDesert_FallIntoPit(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
-/// On a river of sand in Lamakan Desert's third screen, the sand carries Isaac
+/// On a river of sand in Lamakan Desert's third scene, the sand carries Isaac
 /// south, about a cell every ten frames, in a spray of sand, until something
 /// stops him. Where the river drops over a ledge, he gives a start and leaps
 /// down.
@@ -975,7 +977,7 @@ static void LamakanDesert_SlipDownSand(void) {
   actor->z.fixed += toFIXED(3) / 2;
 }
 
-/// Coming near the north-west passage of Lamakan Desert's third screen, once
+/// Coming near the north-west passage of Lamakan Desert's third scene, once
 /// Reveal has parted its sandfall and shown the Manticore standing in it,
 /// Isaac stops short, startled, and backs away as the Manticore roars, lunges
 /// at him and settles back. It happens each time until the Manticore is

@@ -738,9 +738,8 @@ static inline void MogallForest_UpdateRockCells(s32 column, s32 row) {
 
 /// Move on the small grey rock below the upper log in the second area's river
 /// clearing pushes it a cell. Pushed south into the ring on the ground (cell
-/// (36, 24)), it settles into place and stays, and the log can be pushed.
-///
-/// Settled, it sinks 2 pixels and its motion flags are cleared.
+/// (36, 24)), it sinks 2 pixels into place and stays, and the log can be
+/// pushed.
 static void MogallForest_SecondArea_UpdateRock(void) {
   s32 column;
   s32 row;
@@ -1315,7 +1314,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Sound_Play(SE_BOSS_ROAR);
   Actor_RunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
   Event_Wait(20);
-  // Jump toward the leader, then enter the final ape encounter.
+  // It leaps at Isaac, and the battle begins.
   {
     s32 leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].integer;
 
@@ -1462,9 +1461,6 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED) == 0) {
         Scene_RedrawActorRectangle(ACTOR_SECOND_AREA_RIVER_LOG);
       } else {
-#if TBS_PATCH_1
-#endif
-
         wait(1);
         Actor_SetPosition(ACTOR_SECOND_AREA_RIVER_LOG, 552, 510);
         Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,

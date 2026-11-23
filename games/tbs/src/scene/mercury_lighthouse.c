@@ -119,21 +119,21 @@
 
 extern s32 gMercuryLighthouse_RippleScript[];
 extern s32 gGlint_TwinkleScript[];
-extern s32 gMercuryLighthouse_PushScriptA[];
-extern s32 gMercuryLighthouse_PushScriptB[];
-extern s32 gMercuryLighthouse_PushScriptD[];
-extern s32 gMercuryLighthouse_PushScriptC[];
+extern s32 gMercuryLighthouse_StatueSlideWest[];
+extern s32 gMercuryLighthouse_StatueSlideSouth[];
+extern s32 gMercuryLighthouse_StatueSlideIntoHole[];
+extern s32 gMercuryLighthouse_StatueStaysPut[];
 extern u16 gMercuryLighthouse_GateCells[];
 extern u16 gMercuryLighthouse_GateCloseCells[];
 extern u16 gMercuryLighthouse_UpperGateCells[];
 extern u16 gMercuryLighthouse_UpperGateCloseCells[];
 extern u16 gMercuryLighthouse_ColumnCells[];
-extern struct SceneEntrance gMercuryLighthouseEntrancesOther[];
+extern struct SceneEntrance gMercuryLighthouseLowerEntrances[];
 extern struct SceneEntrance gMercuryLighthouseMiddleEntrances[];
 extern struct SceneEntrance gMercuryLighthouseUpperEntrances[];
 extern struct SceneEntrance gMercuryLighthouseExteriorEntrances[];
 extern u32 gMercuryLighthouse_Exits[];
-extern struct ActorPlacement gMercuryLighthouseActorPlacementsOther[];
+extern struct ActorPlacement gMercuryLighthouseNoActorPlacements[];
 extern struct ActorPlacement gMercuryLighthouseLowerActorPlacements[];
 extern struct ActorPlacement gMercuryLighthouseMiddleActorPlacements[];
 extern struct ActorPlacement gMercuryLighthouseUpperActorPlacements[];
@@ -141,7 +141,7 @@ extern struct ActorPlacement gMercuryLighthouseExteriorActorPlacements[];
 extern struct Trigger gMercuryLighthouseLowerTriggers[];
 extern struct Trigger gMercuryLighthouseMiddleTriggers[];
 extern struct Trigger gMercuryLighthouseUpperTriggers[];
-extern struct Trigger gMercuryLighthouseTriggersOther[];
+extern struct Trigger gMercuryLighthouseExteriorTriggers[];
 extern s32 gMercuryLighthouse_SparkScript[];
 extern s32 gMercuryLighthouse_GrowLightScript[];
 extern s32 gMercuryLighthouse_ScaleCounterScript[];
@@ -192,8 +192,7 @@ enum { ANIM_MIA_KNEEL = 16 };
 enum {
   /// The great pool room: two cells of the floor beside the Sleep Bomb chest,
   /// (7, 15) and (9, 15), which put out Isaac's lights like the pool's plain
-  /// squares
-  /// but are no place to hop from.
+  /// squares but are no place to hop from.
   CELL_BEHAVIOR_SLEEP_BOMB_LEDGE = 32,
   /// The crystal room's hole behind its blue crystal, (29, 37), and the edge
   /// of the gate room's terrace above another blue crystal, (13, 19).
@@ -419,15 +418,15 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (scene == SCENE_MERCURY_LIGHTHOUSE_MIDDLE) {
     return gMercuryLighthouseMiddleEntrances;
   }
-  return gMercuryLighthouseEntrancesOther;
+  return gMercuryLighthouseLowerEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Returns the packed exits shared by the lighthouse scenes.
+/// The four scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gMercuryLighthouse_Exits; }
 
-/// Selects the actors and obstacles for the current lighthouse scene.
+/// Each scene's people, statues and pipes; the empty table is for no scene.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -443,7 +442,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_MERCURY_LIGHTHOUSE_EXTERIOR) {
     return gMercuryLighthouseExteriorActorPlacements;
   }
-  return gMercuryLighthouseActorPlacementsOther;
+  return gMercuryLighthouseNoActorPlacements;
 }
 
 /// Ripples spread round Isaac while he stands out on the open water of the
@@ -501,7 +500,7 @@ static void MercuryLighthouse_InspectSealedDoor(void) {
   Event_End();
 }
 
-/// Selects the puzzle interactions and dialogue for the current scene.
+/// Each scene's triggers, the exterior's last.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -514,7 +513,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_MERCURY_LIGHTHOUSE_UPPER) {
     return gMercuryLighthouseUpperTriggers;
   }
-  return gMercuryLighthouseTriggersOther;
+  return gMercuryLighthouseExteriorTriggers;
 }
 
 #include "shared/mercury_lighthouse_waterfall.c"
@@ -1260,19 +1259,22 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   // A slide answers only the jet that hits the statue where it stands.
   if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
     if (cellX == 50 && GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
-      Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptA);
+      Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_StatueSlideWest);
     } else if (cellX == 49) {
       if (cellZ == SLIDING_STATUE_UNDER_JET_ROW &&
           !GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET) &&
           !GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET) &&
           !GameFlag_Get(FLAG_SWITCH_PIPE_STOPS_JETS)) {
-        Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptB);
+        Actor_SetScript(ACTOR_SLIDING_STATUE,
+                        gMercuryLighthouse_StatueSlideSouth);
       } else if (cellZ == SLIDING_STATUE_UNDER_JET_ROW &&
                  GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
-        Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptC);
+        Actor_SetScript(ACTOR_SLIDING_STATUE,
+                        gMercuryLighthouse_StatueStaysPut);
       } else if (cellZ == 46 &&
                  GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
-        Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptD);
+        Actor_SetScript(ACTOR_SLIDING_STATUE,
+                        gMercuryLighthouse_StatueSlideIntoHole);
         Event_Wait(30);
         return 1;
       }
@@ -1549,7 +1551,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
   // "Can you hear it, too?"
   Event_OpenMessage(ACTOR_MIA, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     // "Alex is the only one other than I who can enter Mercury..."
@@ -1586,6 +1588,7 @@ static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Event_SetMessageId(MSGNO(MsgImilStatueBlocksEntrance));
+  // "This statue is blocking the entrance."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Event_End();
 }
@@ -1652,7 +1655,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_SetMessageId(MsgMercuryDidThat);
     // "Did you do that?"
     Event_OpenMessage(ACTOR_MIA, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       gFieldWork->message += 1;
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
@@ -1680,8 +1683,10 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(20);
+    // "You... You could see our Psynergy?"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    // "Psynergy... Is that what you call that power?"
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 20);
@@ -1690,9 +1695,11 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
+    // "We had thought you were using Psynergy when you healed that old..."
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
+    // "That's a special power, handed down to members of the Mercury Clan..."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_WalkTo(ACTOR_MIA, 840, 656);
     Event_Wait(5);
@@ -1701,28 +1708,34 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_WaitForMoveById(ACTOR_MIA);
     Event_Wait(10);
+    // "It is called Ply, a power generated through meditation."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH_NORTHEAST, 20);
+    // "It was once much stronger..."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
+    // "This Mercury Clan sounds a little like people of Vale, don't you think?"
     Event_OpenMessage(ACTOR_GARET, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+      // "Sure... They're the sworn protectors of a special power, just..."
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
       gFieldWork->message += 1;
     } else {
       gFieldWork->message += 1;
       Event_Wait(20);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+      // "Oh, come on! Both of them are protectors of special powers! It's..."
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     }
     Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Event_Wait(20);
+    // "I have to go... I have to find whoever entered the lighthouse."
     Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
     Actor_WalkToAndWait(ACTOR_MIA, 840, 632);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHWEST, 0);
@@ -2798,7 +2811,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   // "Do you have business in the lighthouse, too?"
   Event_OpenMessage(ACTOR_MIA, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     // Each "no" brings "Please, don't hide anything." until the party says
     // yes.
     Event_Wait(20);
@@ -2814,7 +2827,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     Event_Wait(20);
     // "You have some errand in this lighthouse, don't you?"
     Event_OpenMessage(ACTOR_MIA, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
       Event_Wait(20);
       MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(ACTOR_MIA, ANIM_SHAKE_HEAD);
       Event_Wait(20);
@@ -2822,7 +2835,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
       for (;;) {
         Event_SetMessageId(questionMessage);
         Event_OpenMessage(ACTOR_MIA, 0);
-        if (Event_AskYesNoWithActorAnimation(0, 0) != 1) {
+        if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 1) {
           break;
         }
         Event_Wait(20);
@@ -3045,7 +3058,11 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "shared/glint_twinkle_script.c"
 
-s32 gMercuryLighthouse_PushScriptA[] = {
+/// The blue statue's slides in the room of jets, each three quarters of a
+/// second or a second after the jet starts: JET_WESTWARD pushes it west under
+/// the falling jet's pipe end, JET_SOUTHWARD south to the row of the hole, and
+/// JET_EASTWARD east into the hole.
+s32 gMercuryLighthouse_StatueSlideWest[] = {
     SC_WAIT(45),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
@@ -3055,7 +3072,7 @@ s32 gMercuryLighthouse_PushScriptA[] = {
     SC_END,
 };
 
-s32 gMercuryLighthouse_PushScriptB[] = {
+s32 gMercuryLighthouse_StatueSlideSouth[] = {
     SC_WAIT(60),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
@@ -3066,7 +3083,7 @@ s32 gMercuryLighthouse_PushScriptB[] = {
     SC_END,
 };
 
-s32 gMercuryLighthouse_PushScriptD[] = {
+s32 gMercuryLighthouse_StatueSlideIntoHole[] = {
     SC_WAIT(60),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
@@ -3077,7 +3094,9 @@ s32 gMercuryLighthouse_PushScriptD[] = {
     SC_END,
 };
 
-s32 gMercuryLighthouse_PushScriptC[] = {
+/// JET_WESTWARD again once the statue is under the falling jet's pipe end: the
+/// sparkles start, but the statue stays where it is.
+s32 gMercuryLighthouse_StatueStaysPut[] = {
     SC_WAIT(45),
     SC_CALL(MercuryLighthouse_StartStatueSparkles),
     SC_END,
@@ -3109,7 +3128,7 @@ u16 gMercuryLighthouse_ColumnCells[] = {
     MAPGRID_ANIMATION_STEP(126, 35, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 38, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 41, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 44, 1, 2, 2), MAPGRID_ANIMATION_STEP(126, 47, 1, 2, 2), MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct SceneEntrance gMercuryLighthouseEntrancesOther[] = {
+struct SceneEntrance gMercuryLighthouseLowerEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, 56, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
     { MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST, CONDITION_ALWAYS, 248, 0, 440, FACING_NORTH, 0, 16, 16, 496, 448, 0 },
@@ -3232,7 +3251,7 @@ u32 gMercuryLighthouse_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gMercuryLighthouseActorPlacementsOther[] = {
+struct ActorPlacement gMercuryLighthouseNoActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
@@ -3419,7 +3438,7 @@ struct Trigger gMercuryLighthouseUpperTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-struct Trigger gMercuryLighthouseTriggersOther[] = {
+struct Trigger gMercuryLighthouseExteriorTriggers[] = {
     { TRIGGER_EXIT, CELL_BEHAVIOR_LIGHTHOUSE_DOOR, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE },
     { TRIGGER_EXIT, CELL_BEHAVIOR_CAUSEWAY_FOOT, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE },

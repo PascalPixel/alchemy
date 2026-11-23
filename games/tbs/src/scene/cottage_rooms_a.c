@@ -159,6 +159,13 @@ enum CottageRoomsAAnimation {
   ANIM_GRANDMOTHER_IN_BED = 5
 };
 
+/// The stock rows the three counters of Vale's shops open (Shop_Run).
+enum { SHOP_VALE_WEAPONS = 1, SHOP_VALE_ARMOR = 2, SHOP_VALE_ITEMS = 3 };
+
+/// The map's paused tileset animation that redraws Jenna's grandmother's bed
+/// with her lying sick in it.
+#define JENNAS_GRANDMOTHERS_SICKBED_ANIMATION 4
+
 static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 
@@ -297,8 +304,9 @@ static void CottageRoomsA_WorryAboutTravelersHealth(void) {
   Event_End();
 }
 
-/// Leaves a house through its door.
-static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
+/// Leaves a house by its door, on the stormy night stopping the lightning
+/// first.
+static void CottageRoomsA_LeaveThroughDoor(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
   Sound_Play(SE_MAP_EXIT);
@@ -313,46 +321,50 @@ static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
 // The rooms' doors: stepping on a door's cell, whose cell behavior is its
 // exit's number, takes that exit back out, in every table. On the stormy night
 // the exits to SceneId_Vale lead to the storm's scene (SceneId_ValePrologue)
-// instead.
+// instead. A room's exit has its entrance's number, but the plaza's four
+// doors are named one way going in and another coming out: the shops are
+// entered at COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST and left by
+// COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH, which comes out at
+// VALE_PLAZA_FROM_COTTAGE_ROOMS_A_SOUTH.
 
 /// Leaves the house where a young man dreams of leaving.
 static void CottageRoomsA_LeaveToValeWest(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_WEST);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_WEST);
 }
 
 /// Leaves Jenna's grandparents' house.
 static void CottageRoomsA_LeaveToValeNorth(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_NORTH);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_NORTH);
 }
 
 /// Leaves the empty house.
 static void CottageRoomsA_LeaveToValePlazaWest(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
 }
 
 /// Leaves Vale's shops.
 static void CottageRoomsA_LeaveToValePlazaSouth(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
 }
 
 /// Leaves the house where villagers talk of Kraden and his visitors.
 static void CottageRoomsA_LeaveToValeSouth(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
 }
 
 /// Leaves Garet's house.
 static void CottageRoomsA_LeaveToValeEast(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_EAST);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_EAST);
 }
 
 /// Leaves the house where a strongman plans to scare Kraden's visitors.
 static void CottageRoomsA_LeaveToValePlazaEast(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
 }
 
 /// Leaves the house where a woman talks of permission to leave.
 static void CottageRoomsA_LeaveToValePlazaNorth(void) {
-  CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
+  CottageRoomsA_LeaveThroughDoor(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
 }
 
 /// Sets up a house of Vale as the party arrives.
@@ -400,7 +412,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, 454, 150);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNAS_GRANDMOTHER), 0);
       Actor_SetAnimation(ACTOR_JENNAS_GRANDMOTHER, ANIM_GRANDMOTHER_IN_BED);
-      TilesetAnim_Resume(4);
+      TilesetAnim_Resume(JENNAS_GRANDMOTHERS_SICKBED_ANIMATION);
     }
   }
   return 0;
@@ -410,7 +422,7 @@ s32 Scene_Initialize(void) {
 /// merchant speaks.
 static void CottageRoomsA_TalkToWeaponMerchant(void) {
   if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
-    Shop_Run(1, ACTOR_WEAPON_MERCHANT);
+    Shop_Run(SHOP_VALE_WEAPONS, ACTOR_WEAPON_MERCHANT);
     return;
   }
 
@@ -436,7 +448,7 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
 /// speaks.
 static void CottageRoomsA_TalkToArmorMerchant(void) {
   if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
-    Shop_Run(2, ACTOR_ARMOR_MERCHANT);
+    Shop_Run(SHOP_VALE_ARMOR, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -457,7 +469,7 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
 /// speaks.
 static void CottageRoomsA_TalkToItemMerchant(void) {
   if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
-    Shop_Run(3, ACTOR_ITEM_MERCHANT);
+    Shop_Run(SHOP_VALE_ITEMS, ACTOR_ITEM_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       Event_Start();
@@ -487,7 +499,8 @@ static inline void CottageRoomsA_FamilyNods(void) {
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
-/// Starts the repeated motion before waiting for the requested animation.
+/// Has an actor squash and spring back once while it plays an animation
+/// through.
 static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
                                                               s32 animation) {
   Actor_StartRepeatedMotion(actorId, 1);

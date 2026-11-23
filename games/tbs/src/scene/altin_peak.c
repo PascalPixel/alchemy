@@ -51,7 +51,7 @@
 /// The south entrance also opens onto the Alpine Crossing, and the west exit
 /// onto the World Map.
 ///
-/// For the programmer: every room's tables are picked by gMainRoutineWork.next,
+/// Every room's tables are picked by gMainRoutineWork.next,
 /// all the rooms share one exit table, and Scene_Initialize calls the setup of
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there. A beast is
@@ -98,12 +98,14 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-/// The water's flicker timer.
+/// How far a drain's flicker has gone, 0 to 100: the chance in a hundred that a
+/// screen line no longer shows the water (AltinPeak_FlickerWaterAway).
 u16 gAltinPeak_FlickerTimer BSS_DATA;
 /// The spit's direction, FACING_EAST or FACING_WEST.
 s32 gAltinPeak_SpitDirection BSS_DATA;
-/// The spit's origin.
+/// Where a beast's spit starts, its spout: x, y and z in 16.16 pixels.
 s32 gAltinPeak_SpitOrigin[3] BSS_DATA;
+/// Unused: nothing reads or writes these bytes.
 u8 gAltinPeak_UnusedAfterSpitOrigin[16] BSS_DATA;
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
 s16 gAltinPeak_PaletteHold BSS_DATA;
@@ -194,7 +196,36 @@ enum AltinPeakTriggerCell {
   CELL_BEHAVIOR_ALTIN_PEAK_FALLING_ROCK_SIGN = 12,
   /// The Hydros statue's room: the top of the steps before the statue, cells
   /// (19, 7) to (21, 7).
-  CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_HYDROS_STATUE = 10
+  CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_HYDROS_STATUE = 10,
+  /// A room's chest.
+  CELL_BEHAVIOR_ALTIN_PEAK_CHEST = 100,
+  /// The Psy Crystal's chest, in the small cave behind Altin's first guardian
+  /// statue that is a corner of Spritz's room's map.
+  CELL_BEHAVIOR_ALTIN_PEAK_PSY_CRYSTAL_CHEST = 101
+};
+
+/// SPRITE_DUST_PUFF's quick puff, the spit's drops: its eight pictures once,
+/// two to four frames each.
+enum { DUST_PUFF_ANIMATION_QUICK = 1 };
+
+/// SPRITE_ROCK rolling fast, the falling boulder.
+enum { ROCK_ANIMATION_ROLL_FAST = 4 };
+
+/// SPRITE_HYDROS_STATUE's animations (hydros_statue.tsv).
+enum HydrosStatueAnimation {
+  /// Grey stone, held: the statue once beaten.
+  HYDROS_STATUE_ANIMATION_STONE = ANIM_STILL,
+  /// Awake and moving, as it comes at Isaac.
+  HYDROS_STATUE_ANIMATION_ADVANCE = 2
+};
+
+/// SPRITE_MINE_CART's animations (mine_cart.tsv), as the ride picks them.
+enum MineCartAnimation {
+  MINE_CART_ANIMATION_ROLL = 2,     ///< rolling on the flat
+  MINE_CART_ANIMATION_UPHILL = 3,   ///< the ground ahead higher
+  MINE_CART_ANIMATION_DOWNHILL = 4, ///< the ground ahead lower
+  MINE_CART_ANIMATION_TURN_RIGHT = 5,
+  MINE_CART_ANIMATION_TURN_LEFT = 6
 };
 
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
@@ -1061,7 +1092,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
 #else
   shadow->update = (void (*)(struct Actor *))AltinPeak_ShadowFollowBoulder;
 #endif
-  Actor_SetAnimation(ACTOR_FALLING_BOULDER, 4);
+  Actor_SetAnimation(ACTOR_FALLING_BOULDER, ROCK_ANIMATION_ROLL_FAST);
   boulder->bounce = FIXED_ONE / 2;
   boulder->x.fixed = toFIXED(786);
   boulder->y.fixed = toFIXED(32);
@@ -1296,20 +1327,25 @@ const struct Trigger *Scene_GetTriggers(void) {
   return table;
 }
 
-/// Update routine of the hopping water beast. Once a second it leaps up and
-/// lands with a splash (SE_SPLASH) that shakes the screen briefly.
+/// The frames from one of a water beast's hops to the next.
+#define WATER_BEAST_HOP_PERIOD 60
+
+/// A water beast's update routine while it hops along a route: it leaps every
+/// WATER_BEAST_HOP_PERIOD frames with SE_JUMP, and lands with a splash
+/// (SE_SPLASH) that shakes the screen for a few frames.
 static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   struct Actor *beast = updated;
+  // The frames left of the landing's shake.
   s16 *shakeDelay = (s16 *)&beast->userValue;
 
-  // The route owns timer (hop phase), userValue (shake delay) and the effect's
-  // countdown (landing-sound latch) until it removes this update routine.
+  // timer counts the frames of the hop, and the effect's countdown is set
+  // while the beast is in the air, so that it lands with one splash.
   if (*shakeDelay != 0) {
     if (--*shakeDelay == 1)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
-    Actor_SelectAnimation(updated, 1);
+    Actor_SelectAnimation(updated, ANIM_STAND);
     beast->y.fixed -= toFIXED(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)updated)->countdown != 0) {
@@ -1327,10 +1363,10 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   if (beast->timer == 0) {
     Sound_Play(SE_JUMP);
     ((struct FieldEffect *)updated)->countdown = 1;
-    Actor_SelectAnimation(updated, 2);
+    Actor_SelectAnimation(updated, WATER_BEAST_ANIMATION_LEAP);
     beast->velocityY = toFIXED(3);
   }
-  if (++beast->timer == 60)
+  if (++beast->timer == WATER_BEAST_HOP_PERIOD)
     beast->timer = 0;
 }
 
@@ -1612,7 +1648,9 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
     Actor_SetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
     if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY) != 0) {
-      Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
+      // SPRITE_PUDDLE's first animation holds the ice pillar.
+      Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
+                         ANIM_STILL);
       Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
           FieldEffect_UpdateFrostGlint;
       Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
@@ -1628,7 +1666,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP) == 0) {
       return;
     }
-    Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
+    Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, ANIM_STILL);
     Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
         FieldEffect_UpdateFrostGlint;
     Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
@@ -1891,6 +1929,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_STATUE), 0);
     Actor_SetSpritePriority(ACTOR_STATUE_SHADOW, 3);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_STATUE_SHADOW), 0);
+    // statuesDefeated is 0 here: nothing about the shadow is solid.
     Actor_Get(ACTOR_STATUE_SHADOW)->collisionFlags = statuesDefeated;
   }
   entrance = gMainRoutineWork.entrance;
@@ -1930,7 +1969,11 @@ static void AltinPeak_InitializeSpit(struct Actor *spit) {
   spit->scaleY = 3 * FIXED_ONE / 10;
 }
 
-/// Update routine of a drop of spit.
+/// A drop of spit's update routine: it drifts the way the beast spits,
+/// slowing as it goes, with a random wobble, and moves down the screen as it
+/// grows; in its last few frames it spreads flat and shoots on half a pixel a
+/// frame. It flashes white the more often the nearer its end, and is
+/// released after its countdown.
 static void AltinPeak_DriftSpit(struct Actor *spit) {
   switch (gAltinPeak_SpitDirection) {
   case FACING_EAST:
@@ -1968,8 +2011,8 @@ static void AltinPeak_DriftSpit(struct Actor *spit) {
     Actor_Release(spit);
 }
 
-/// Task while a beast spits. Every fourth frame a drop of spit starts from
-/// its spout, living 20 frames.
+/// Task while a beast spits: every fourth frame a drop of spit starts from its
+/// spout, living 20 frames.
 static void AltinPeak_SpawnSpit(void) {
   struct Actor *spit;
 
@@ -1985,7 +2028,7 @@ static void AltinPeak_SpawnSpit(void) {
   ((struct FieldEffect *)spit)->countdown = 20;
   AltinPeak_InitializeSpit(spit);
   ((struct FieldEffect *)spit)->update = AltinPeak_DriftSpit;
-  Actor_SelectAnimation(spit, 1);
+  Actor_SelectAnimation(spit, DUST_PUFF_ANIMATION_QUICK);
 }
 
 /// A water beast starts spitting water from (x, y, z), in 16.16 fixed point,
@@ -1999,7 +2042,9 @@ static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing) {
   Task_AddFrame(AltinPeak_SpawnSpit, TASK_PASS_FRAME);
 }
 
-/// Task while the boulder crashes.
+/// Task while the boulder crashes into the doorway: every third frame a piece
+/// of rock of random size flies up from the crash and falls, and every ninth a
+/// crash or a clatter sounds.
 static void AltinPeak_SpawnDebris(void) {
   struct Actor *debris;
   FIXED scale;
@@ -2024,7 +2069,7 @@ static void AltinPeak_SpawnDebris(void) {
       Actor_SetSpriteFlags(debris, 0);
       debris->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       debris->sprite->image.priority = 1;
-      Actor_SelectAnimation(debris, 1);
+      Actor_SelectAnimation(debris, ANIM_STAND);
       Actor_StartScript(debris, gAltinPeak_DebrisScript);
       SET_VELOCITY(debris, toFIXED(Random_Below(6) - 3), toFIXED(8),
                    (Random_Below(1536)) - 768);
@@ -2153,7 +2198,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   MapGrid_SetShake(1, 1, 1);
   Actor_SetSpeed(ACTOR_STATUE, 0.1);
   Actor_SetSpeed(ACTOR_STATUE_SHADOW, 0.1);
-  Actor_SetAnimation(ACTOR_STATUE, 2);
+  Actor_SetAnimation(ACTOR_STATUE, HYDROS_STATUE_ANIMATION_ADVANCE);
   Actor_SetDestination(ACTOR_STATUE, 328, 104);
   Actor_SetDestination(ACTOR_STATUE_SHADOW, 328, 108);
   Event_Wait(60);
@@ -2193,7 +2238,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_STATUE, 328, 88);
   Actor_SetPosition(ACTOR_STATUE_SHADOW, 328, 88);
-  Actor_SetAnimation(ACTOR_STATUE, 0);
+  Actor_SetAnimation(ACTOR_STATUE, HYDROS_STATUE_ANIMATION_STONE);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
@@ -2369,9 +2414,9 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   actor->z.fixed = centerZ;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, MINE_CART_ANIMATION_ROLL);
   wait(15);
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STAND);
   wait(30);
   sprite = actor->sprite;
   sprite->count = 1;
@@ -2410,7 +2455,7 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
   x = (position.x + toFIXED(8)) & FIELD_CELL_MASK;
   z = (position.z + toFIXED(8)) & FIELD_CELL_MASK;
   angle += DEGtoANG(180);
-  Actor_SelectAnimation(actor, 5);
+  Actor_SelectAnimation(actor, MINE_CART_ANIMATION_TURN_RIGHT);
   Sound_Play(SE_CART_TURN);
   for (turnFrame = 0; turnFrame < 16; turnFrame++) {
     angle += TRIG_TURN / 64;
@@ -2439,7 +2484,7 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   x = (position.x + toFIXED(8)) & FIELD_CELL_MASK;
   z = (position.z + toFIXED(8)) & FIELD_CELL_MASK;
   angle += DEGtoANG(180);
-  Actor_SelectAnimation(actor, 6);
+  Actor_SelectAnimation(actor, MINE_CART_ANIMATION_TURN_LEFT);
   Sound_Play(SE_CART_TURN);
   for (turnFrame = 0; turnFrame < 16; turnFrame++) {
     angle -= TRIG_TURN / 64;
@@ -2499,11 +2544,11 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   behind = MapGrid_GetTerrainHeight(2, position.x, position.z);
   if (*timer <= CART_COUNTDOWN_TURN) {
     if (ahead == behind) {
-      Actor_SelectAnimation(actor, 2);
+      Actor_SelectAnimation(actor, MINE_CART_ANIMATION_ROLL);
     } else if (ahead > behind) {
-      Actor_SelectAnimation(actor, 3);
+      Actor_SelectAnimation(actor, MINE_CART_ANIMATION_UPHILL);
     } else {
-      Actor_SelectAnimation(actor, 4);
+      Actor_SelectAnimation(actor, MINE_CART_ANIMATION_DOWNHILL);
     }
   }
 }
@@ -3036,10 +3081,10 @@ struct ActorPlacement gAltinPeak_JunctionActorPlacements[] = {
 struct ActorPlacement gAltinPeak_FallingRocksActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 784, 0, 80, FACING_SOUTH,
         TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BLANK_LARGE, CONDITION_ALWAYS, 7, 784, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 774, 0, 76, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, 7, 774, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, 7, 792, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, 784, 0, 80, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, 774, 0, 76, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, 774, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SIGNPOST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, 792, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -3068,7 +3113,7 @@ struct Trigger gAltinPeak_TriggersOther[] = {
 };
 
 struct Trigger gAltinPeak_FirstWaterBeastTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
+    {TRIGGER_EXIT, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_FIRST_BEAST, FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP, EVENT(AltinPeak_ShowFirstBeastRoute)},
     {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_EAST_LEDGE_BY_GAP, FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY, EVENT(AltinPeak_FirstBeastHopsAway)},
     {TRIGGER_TALK, ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS, EVENT(AltinPeak_FightFirstWaterBeast)},
@@ -3078,7 +3123,7 @@ struct Trigger gAltinPeak_FirstWaterBeastTriggers[] = {
 };
 
 struct Trigger gAltinPeak_FirstWaterBeastTriggersDrained[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
+    {TRIGGER_EXIT, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN,
         EVENT(AltinPeak_FreezeFirstWaterBeastRoomPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN, EVENT(AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle)},
@@ -3086,45 +3131,45 @@ struct Trigger gAltinPeak_FirstWaterBeastTriggersDrained[] = {
 };
 
 struct Trigger gAltinPeak_RailTunnelTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
+    {TRIGGER_EXIT, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
+    {TRIGGER_EXIT, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST, CONDITION_ALWAYS, ALTIN_PEAK_RAIL_TUNNEL_TO_ALTIN_PEAK_SECOND_WATER_BEAST},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_SecondWaterBeastTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
+    {TRIGGER_EXIT, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_TO_ALTIN_PEAK_RAIL_TUNNEL},
+    {TRIGGER_EXIT, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_TO_CHEST_ROOM},
+    {TRIGGER_EXIT, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
     {TRIGGER_TALK, ACTOR_SECOND_WATER_BEAST, CONDITION_ALWAYS, EVENT(AltinPeak_FightSecondWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_SECOND_WATER_BEAST, CONDITION_ALWAYS,
         EVENT(AltinPeak_FightSecondWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER, CONDITION_ALWAYS, 0},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_LAKE_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSecondWaterBeastRoomSwitch)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {TRIGGER_TABLE_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
     // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest
     // holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, at the spot where the
     // Cookie's chest above already stands.
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
+    {TRIGGER_EXIT, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_SouthEntranceTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TUNNEL_TO_FLOODED_CHAMBER},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_RAIL_TUNNEL},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_FLOODED_CHAMBER_TO_TUNNEL},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALTIN_PEAK_POOL},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST},
+    {TRIGGER_EXIT, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST, CONDITION_ALWAYS, ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_ThirdWaterBeastTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
+    {TRIGGER_EXIT, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL, CONDITION_ALWAYS, ALTIN_PEAK_THIRD_WATER_BEAST_TO_ALTIN_PEAK_POOL},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT(AltinPeak_FreezeThirdWaterBeastRoomPuddle)},
     {TRIGGER_TALK, ACTOR_THIRD_WATER_BEAST, CONDITION_ALWAYS, EVENT(AltinPeak_FightThirdWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_THIRD_WATER_BEAST, CONDITION_ALWAYS,
@@ -3132,31 +3177,31 @@ struct Trigger gAltinPeak_ThirdWaterBeastTriggers[] = {
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipThirdWaterBeastRoomSwitch)},
     // The Dragon Shield's chest opens only from its west side.
-    {EXAMINE_CHEST_FACING(FACING_SOUTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
-    {EXAMINE_CHEST_FACING(FACING_EAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
-    {EXAMINE_CHEST_FACING(FACING_NORTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
+    {EXAMINE_CHEST_FACING(FACING_SOUTHEAST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
+    {EXAMINE_CHEST_FACING(FACING_EAST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
+    {EXAMINE_CHEST_FACING(FACING_NORTHEAST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_PoolTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
+    {TRIGGER_EXIT, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_SOUTH_ENTRANCE},
+    {TRIGGER_EXIT, ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST, CONDITION_ALWAYS, ALTIN_PEAK_POOL_NORTH_TO_SOUTHWEST},
+    {TRIGGER_EXIT, ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_NORTH},
+    {TRIGGER_EXIT, ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHWEST_TO_SOUTHEAST},
+    {TRIGGER_EXIT, ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST, CONDITION_ALWAYS, ALTIN_PEAK_POOL_SOUTHEAST_TO_SOUTHWEST},
+    {TRIGGER_EXIT, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_POOL_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT(AltinPeak_FreezePoolRoomPuddle)},
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipPoolRoomSwitch)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN, FIND_MIMIC | 2},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST, FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN, FIND_MIMIC | 2},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_SpritzTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
+    {TRIGGER_EXIT, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_JUNCTION},
+    {TRIGGER_EXIT, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN_PEAK_FALLING_ROCKS},
+    {TRIGGER_EXIT, ALTIN_PEAK_SPRITZ_TO_ALTIN, CONDITION_ALWAYS, ALTIN_PEAK_SPRITZ_TO_ALTIN},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_PSY_CRYSTAL_CHEST, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
     {TRIGGER_TALK, ACTOR_SPRITZ, CONDITION_ALWAYS, EVENT(AltinPeak_TalkToDjinni)},
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSpritzRoomSwitch)},
@@ -3175,31 +3220,34 @@ struct Trigger gAltinPeak_SpritzTriggers[] = {
 // clang-format on
 
 struct Trigger gAltinPeak_JunctionTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS,
      ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_SPRITZ},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
-     ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS,
-     ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
-     ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_LUCKY_MEDAL,
-     FIND_ITEM(ITEM_LUCKY_MEDAL)},
+    {TRIGGER_EXIT, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH,
+     CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_NORTH},
+    {TRIGGER_EXIT, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT,
+     CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_WEST_EXIT},
+    {TRIGGER_EXIT, ALTIN_PEAK_JUNCTION_TO_ALTIN, CONDITION_ALWAYS,
+     ALTIN_PEAK_JUNCTION_TO_ALTIN},
+    {TRIGGER_EXIT, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH,
+     CONDITION_ALWAYS, ALTIN_PEAK_JUNCTION_TO_ALTIN_PEAK_FALLING_ROCKS_SOUTH},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST,
+     FLAG_ALTIN_PEAK_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_JUNCTION_ROOM_BOULDER,
      CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_FallingRocksTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS,
-     ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
-     ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH},
+    {TRIGGER_EXIT, ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ,
+     CONDITION_ALWAYS, ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_SPRITZ},
+    {TRIGGER_EXIT, ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST, CONDITION_ALWAYS,
+     ALTIN_PEAK_FALLING_ROCKS_WEST_TO_EAST},
+    {TRIGGER_EXIT, ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH,
+     CONDITION_ALWAYS, ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_SOUTH},
+    {TRIGGER_EXIT, ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST, CONDITION_ALWAYS,
+     ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST},
+    {TRIGGER_EXIT, ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH,
+     CONDITION_ALWAYS, ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH},
     {EXAMINE_TRIGGER(EXAMINE_SILENT),
      CELL_BEHAVIOR_ALTIN_PEAK_FALLING_ROCK_SIGN, CONDITION_ALWAYS,
      EVENT(AltinPeak_ReadFallingRockSign)},
@@ -3211,25 +3259,26 @@ struct Trigger gAltinPeak_FallingRocksTriggers[] = {
 struct Trigger gAltinPeak_HydrosStatueTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_HYDROS_STATUE,
      FLAG_HYDROS_STATUES_DEFEATED, EVENT(AltinPeak_StartHydrosBattle)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_LIFTING_GEM,
-     FIND_ITEM(ITEM_LIFTING_GEM)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST,
+     FLAG_ALTIN_PEAK_LIFTING_GEM, FIND_ITEM(ITEM_LIFTING_GEM)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltinPeak_WestExitTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION,
+     CONDITION_ALWAYS, ALTIN_PEAK_WEST_EXIT_TO_ALTIN_PEAK_JUNCTION},
+    {TRIGGER_EXIT, ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM, CONDITION_ALWAYS,
      ALTIN_PEAK_WEST_EXIT_TUNNEL_TO_CHEST_ROOM},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL, CONDITION_ALWAYS,
      ALTIN_PEAK_WEST_EXIT_CHEST_ROOM_TO_TUNNEL},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP},
+    {TRIGGER_EXIT, ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP, CONDITION_ALWAYS,
+     ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_WEST_EXIT_ROOM_BOULDER,
      CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_EXIT_ROOM_PILLAR,
      CONDITION_ALWAYS, 0},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_VIAL,
-     FIND_ITEM(ITEM_VIAL)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTIN_PEAK_CHEST,
+     FLAG_ALTIN_PEAK_VIAL, FIND_ITEM(ITEM_VIAL)},
     {TRIGGER_TABLE_END},
 };
 

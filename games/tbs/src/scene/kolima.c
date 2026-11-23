@@ -100,9 +100,9 @@ extern s32 gKolima_IvanWalksIn[];
 extern s32 gKolima_MiaWalksIn[];
 extern s32 gKolima_PartySquashActions[];
 extern s32 gKolima_PartyRestoreScaleActions[];
-extern s32 gKolima_ProtectiveFieldGrowActions[];
-extern s32 gKolima_ProtectiveFieldShrinkActions[];
-extern s32 gKolima_EntryActions[];
+extern s32 gKolima_PsynergyFieldGrowActions[];
+extern s32 gKolima_PsynergyFieldShrinkActions[];
+extern s32 gKolima_GroundSparkleActions[];
 extern s32 gKolima_DebrisScript[];
 extern s32 gKolima_FaceLeaderScript[];
 extern u16 gKolima_DoorCells[];
@@ -113,7 +113,7 @@ extern struct SceneExitRegion gKolimaTunnelRegions[];
 extern u32 gKolimaExits[];
 extern struct ActorPlacement gKolimaTunnelActorPlacements[];
 extern struct ActorPlacement gKolimaActorPlacements[];
-extern struct ActorPlacement gKolima_EntryScript[];
+extern struct ActorPlacement gKolima_MoreGroundSparklePlacements[];
 extern struct ActorPlacement gKolimaBridgeActorPlacements[];
 extern struct Trigger gKolimaTriggers[];
 extern struct Trigger gKolimaBridgeTriggers[];
@@ -121,7 +121,7 @@ extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_SparkleBurstScript[];
 extern s32 gFallingEffectScript[];
 
-/// The puffs of dust the drawbridge throws up where it lands.
+/// The pieces the drawbridge throws out where it lands (SPRITE_DUST_PUFF).
 enum { BRIDGE_DUST_PUFFS = 10 };
 
 static void Kolima_WitnessForestCurse(void);
@@ -167,7 +167,7 @@ enum KolimaActorId {
   ACTOR_MIA_PSYNERGY_FIELD,
   ACTOR_GARET_PSYNERGY_FIELD,
   /// The four sparkles on the ground while the curse lasts
-  /// (gKolima_EntryActions).
+  /// (gKolima_GroundSparkleActions).
   ACTOR_FIRST_SPARKLE,
   /// Granite, a Venus Djinni, placed until it has joined.
   ACTOR_GRANITE = ACTOR_FIRST_SPARKLE + 4,
@@ -185,7 +185,8 @@ enum KolimaBridgeActorId {
   ACTOR_BRIDGE_VILLAGER_AS_TREE
 };
 
-/// Applies the deferred pose change requested by the falling-effect script.
+/// The end of a Psynergy field's growing: if a speck of the curse has burst on
+/// the fields meanwhile, this one takes its next pose.
 static s32 Kolima_ApplyPendingPose(struct Actor *actor) {
   if (gKolima_PendingPose != 0) {
     Actor_SelectAnimation(actor, 2);
@@ -194,8 +195,10 @@ static s32 Kolima_ApplyPendingPose(struct Actor *actor) {
   return 1;
 }
 
-/// Each frame of a sparkle on Kolima's ground, its timer runs on at random.
-static s32 Kolima_UpdateTimedAppearance(struct Actor *actor) {
+/// Each frame, a sparkle on Kolima's ground: red-tinted, it flashes white for
+/// the last few frames of each twinkle, which lasts about 24 frames at a
+/// random pace.
+static s32 Kolima_TwinkleGroundSparkle(struct Actor *actor) {
   s32 randomValue = Random_Next();
   s32 scaledRandom = randomValue * 100;
   s32 appearanceTimer = (u16)actor->timer + ((u32)scaledRandom >> 16);
@@ -239,8 +242,8 @@ Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
   }
 }
 
-/// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
-/// released when its timer runs out.
+/// Each frame of a piece thrown out where the drawbridge lands: it flies,
+/// swells and is gone when its timer runs out.
 static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
@@ -281,8 +284,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
-/// The exits of all three scenes, each scene's after its header word (an exit
-/// of kind 0).
+/// The ways out of all three scenes.
 const u32 *Scene_GetExits(void) { return gKolimaExits; }
 
 /// Selects the people of Kolima or Kolima Bridge. Kolima Tunnel has none. In
@@ -498,7 +500,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SPARKLE + 2), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SPARKLE + 3), 0);
 
-  table = gKolima_EntryActions;
+  table = gKolima_GroundSparkleActions;
   Actor_SetScript(ACTOR_FIRST_SPARKLE, table);
   Actor_SetScript(ACTOR_FIRST_SPARKLE + 1, table);
   Actor_SetScript(ACTOR_FIRST_SPARKLE + 2, table);
@@ -509,6 +511,8 @@ s32 Scene_Initialize(void) {
          actorId++) {
       Actor_SetSpriteFlags(Actor_Get(actorId), 0);
     }
+    // The healer's counter west, east and south of his tree searches as a
+    // wooden box, as its corners always do.
     MapGrid_CopyCellAttributes(13, 9, 1, 1, 13, 8);
     MapGrid_CopyCellAttributes(13, 9, 1, 1, 15, 8);
     MapGrid_CopyCellAttributes(13, 9, 1, 1, 14, 9);
@@ -530,7 +534,7 @@ s32 Scene_Initialize(void) {
     Actor_ReleaseById(ACTOR_IVAN_PSYNERGY_FIELD);
     Actor_ReleaseById(ACTOR_MIA_PSYNERGY_FIELD);
     Actor_ReleaseById(ACTOR_GARET_PSYNERGY_FIELD);
-    Event_AppendActorPlacements(gKolima_EntryScript);
+    Event_AppendActorPlacements(gKolima_MoreGroundSparklePlacements);
   }
 
   return 0;
@@ -538,8 +542,8 @@ s32 Scene_Initialize(void) {
 
 /// Shows one of the domes of Psynergy on its frames, even or odd, and lifts it
 /// 500 pixels out of sight on the others.
-static inline void Kolima_SetProtectiveFieldHeight(s32 actorId,
-                                                   s32 visibleOnOddFrames) {
+static inline void Kolima_FlickerPsynergyField(s32 actorId,
+                                               s32 visibleOnOddFrames) {
   struct Actor *actor = Actor_Get(actorId);
   if (actor != NULL) {
     actor->motionFlags = 0;
@@ -552,11 +556,11 @@ static inline void Kolima_SetProtectiveFieldHeight(s32 actorId,
 }
 
 /// Makes the four domes flicker, two on even frames and two on odd.
-static void Kolima_AlternateProtectiveFieldHeights(void) {
-  Kolima_SetProtectiveFieldHeight(ACTOR_LEADER_PSYNERGY_FIELD, 0);
-  Kolima_SetProtectiveFieldHeight(ACTOR_IVAN_PSYNERGY_FIELD, 1);
-  Kolima_SetProtectiveFieldHeight(ACTOR_MIA_PSYNERGY_FIELD, 0);
-  Kolima_SetProtectiveFieldHeight(ACTOR_GARET_PSYNERGY_FIELD, 1);
+static void Kolima_FlickerPsynergyFields(void) {
+  Kolima_FlickerPsynergyField(ACTOR_LEADER_PSYNERGY_FIELD, 0);
+  Kolima_FlickerPsynergyField(ACTOR_IVAN_PSYNERGY_FIELD, 1);
+  Kolima_FlickerPsynergyField(ACTOR_MIA_PSYNERGY_FIELD, 0);
+  Kolima_FlickerPsynergyField(ACTOR_GARET_PSYNERGY_FIELD, 1);
 }
 
 #include "shared/mind_read.c"
@@ -631,6 +635,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Event_SetMessageId(MsgKolimaQuiet);
+  // "It's so quiet..."
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -668,8 +673,10 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(1);
   Actor_Get(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What is the matter, Ivan?"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "This tree...was a person."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   if (*partyLayout != 0) {
     Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
@@ -681,6 +688,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
+  // "Everyone in Kolima has been turned into a tree."
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_SetSpeed(ACTOR_IVAN, 0.5);
   Actor_Get(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -691,6 +699,7 @@ static void Kolima_WitnessForestCurse(void) {
   if (*partyLayout != 0) {
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
+    // "It's horrible! All these trees with clothes are really..."
     Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   } else {
@@ -706,6 +715,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(10);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 10);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
+  // "Why? Do you know why this happened?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
@@ -714,6 +724,8 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
   }
+  // Yes: "I see... It was because they hurt the holy tree?"
+  // No: "I see... Who could have known?"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 40);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_SOUTHEAST, 40);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_WEST, 20);
@@ -732,11 +744,13 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_SetMessageId(MsgKolimaWhatIsIt);
+  // "What is it now, Ivan?"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 10);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  // "That sparkly stuff on the ground... What is it?"
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
-  Kolima_FaceActorAndWait(ACTOR_GARET, 0, 20);
+  Kolima_FaceActorAndWait(ACTOR_GARET, FACING_EAST, 20);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 40);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 20);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 30);
@@ -767,13 +781,16 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetScript(ACTOR_IVAN, squashActions);
   Actor_SetScript(ACTOR_MIA, squashActions);
   Event_Wait(100);
+  // "Aaah! What's happening!?"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
+  // "My mind!!! Someone is attacking my-"
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
   if (gKolima_MiaInParty != 0) {
     Event_Wait(40);
     Actor_SetAttachedEffect(ACTOR_MIA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "I... I can't... I can't even stand up!"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 40);
   } else {
     gFieldWork->message++;
@@ -822,7 +839,9 @@ static void Kolima_WitnessForestCurse(void) {
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
   Sound_Play(MUS_FOREST_THEME);
+  // "What is that? Something's falling from the sky!"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 80);
+  // "It's sparkling! Could this be what turned those people into..."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -833,6 +852,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "We've got to get out of here!"
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
@@ -851,10 +871,12 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "I can't! I can't move!!"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   if (gKolima_MiaInParty != 0) {
     Actor_SetAttachedEffect(ACTOR_MIA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    // "Oh, no... If it touches us, we'll turn into trees!"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 10);
   } else {
     gFieldWork->message++;
@@ -869,13 +891,13 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
   gKolima_PendingPose = 0;
-  Task_AddFrame(Kolima_AlternateProtectiveFieldHeights, TASK_PASS_FRAME);
+  Task_AddFrame(Kolima_FlickerPsynergyFields, TASK_PASS_FRAME);
   Sound_Play(SE_SHIMMER);
   Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
-  growFieldActions = gKolima_ProtectiveFieldGrowActions;
+  growFieldActions = gKolima_PsynergyFieldGrowActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldActions);
   Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
@@ -911,7 +933,7 @@ static void Kolima_WitnessForestCurse(void) {
   }
   Actor_Stop(ACTOR_GARET_PSYNERGY_FIELD);
   wait(1);
-  shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
+  shrinkFieldActions = gKolima_PsynergyFieldShrinkActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, shrinkFieldActions);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, shrinkFieldActions);
   if (gKolima_MiaInParty != 0) {
@@ -921,6 +943,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(40);
+  // "Isaac... What just happened to us? That barrier... Did it save..."
   Event_OpenMessage(ACTOR_GARET, 0);
   Actor_SetPosition(ACTOR_TRET, 87, 139);
   Actor_SetPosition(ACTOR_LAUREL, 87, 139);
@@ -931,11 +954,14 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+  // Yes: "I think so, too, Isaac. I think I know what those domes..."
+  // No: "No, I think Garet is right. I think I know what those..."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   if (gKolima_MiaInParty != 0) {
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(10);
     Event_SetMessageId(MsgKolimaKnowThoseFieldsWere);
+    // "You know what those fields were?"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 40);
   }
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -944,6 +970,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   // The companions discover that their Psynergy formed the barriers.
   Event_SetMessageId(MsgKolimaWasOurPsynergy);
+  // "It was our Psynergy."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(40);
@@ -953,8 +980,10 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 60);
+  // "What are you, crazy?"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  // "I didn't use any Psynergy!"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 20);
@@ -970,6 +999,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(10);
   Actor_Jump(ACTOR_GARET, 4, 0);
   Event_Wait(20);
+  // "Hey... I can stand... I can move again!"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   if (gKolima_MiaInParty != 0) {
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -985,6 +1015,7 @@ static void Kolima_WitnessForestCurse(void) {
     Kolima_FaceActorAndWait(ACTOR_MIA, FACING_NORTHEAST, 60);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(20);
+    // "You're right. I can stand, too..."
     Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
   } else {
     gFieldWork->message++;
@@ -993,6 +1024,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 10);
+  // "Ivan, it's okay! Go ahead! Stand up!"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(10);
@@ -1024,6 +1056,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  // "Those barriers..."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -1031,6 +1064,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(20);
+  // "We thought that Psynergy was only used when we concentrate,..."
   Event_OpenMessage(ACTOR_IVAN, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
@@ -1043,19 +1077,23 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 10);
     Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+    // "You're such a liar, Isaac!"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  // "When I was training, I'd focus so hard, I thought my head..."
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  // "Well, maybe it's just easier for you, but when I use Psynergy..."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 10);
   if (gKolima_MiaInParty != 0) {
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-    Kolima_FaceActorAndWait(ACTOR_MIA, 0, 20);
+    Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 20);
     Kolima_FaceActorAndWait(ACTOR_MIA, FACING_SOUTHEAST, 10);
     Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+    // "But what? The only way you can use Psynergy is by concentrating!"
     Kolima_ShowMessageAndWait(ACTOR_MIA, 10);
   } else {
     gFieldWork->message++;
@@ -1073,6 +1111,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+  // "Anyway, I'm certain that was Psynergy we were projecting."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 40);
@@ -1080,21 +1119,26 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+  // "That must mean that some Psynergy acts only when it's needed."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 10);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "You mean, like when we're in danger?"
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "I think it's like when we strike critical hits in battle..."
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  // "I can agree with what Garet is saying. It is definitely..."
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 10);
+  // "Wouldn't it be something if we could use this power at any..."
   Event_OpenMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -1105,6 +1149,8 @@ static void Kolima_WitnessForestCurse(void) {
     Event_Wait(40);
     gFieldWork->message++;
   }
+  // Yes: "Yeah! Let's start trying to master this power!"
+  // No: "You... You're not really into this, are you?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Sound_Play(MUS_FOREST_THEME);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
@@ -1123,6 +1169,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
   // A second shower raises the domes again before Tret and Laurel speak.
   Event_SetMessageId(MsgKolimaWatchOutItsHappeningAgain);
+  // "Watch out! It's happening again!"
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 10);
   Kolima_FaceActorAndWait(ACTOR_GARET, FACING_NORTH, 10);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
@@ -1140,7 +1187,7 @@ static void Kolima_WitnessForestCurse(void) {
   gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
-  growFieldActions = gKolima_ProtectiveFieldGrowActions;
+  growFieldActions = gKolima_PsynergyFieldGrowActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldActions);
   Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, 100, 274);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldActions);
@@ -1156,28 +1203,35 @@ static void Kolima_WitnessForestCurse(void) {
     wait(1);
   } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
   // Tret and Laurel, unseen, wonder at the party's immunity to the glamour.
+  // "Hroom! Why? Why don't they turn into trees...?"
   Kolima_ShowMessageAndWait(ACTOR_TRET, 80);
+  // "Who are they?"
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
+  // "What people are these, who are immune to Tret's glamour?"
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Scene_NodTogether();
+  // "Have they come to save that village with their strange powers?"
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Scene_NodTogether();
+  // "It will not be enough to save the people of Kolima."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(40);
+  // "They have earned their fate...Kolima took their axes to me,..."
   Kolima_ShowMessageAndWait(ACTOR_TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 40);
+  // "You children may not know this...but we are dying."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1191,11 +1245,13 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(ACTOR_MIA, FACING_NORTH, 80);
+  // "And Kolima Forest will wither and die when we are gone."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Kolima_FaceActorAndWait(ACTOR_MIA, 0, 40);
+  Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 40);
+  // "We are not the only ones who will die, Laurel. Once we are..."
   Kolima_ShowMessageAndWait(ACTOR_TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -1206,13 +1262,16 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(60);
+  // "Tret was once a kindly forest king."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Scene_NodTogether();
+  // "But he is slowly dying, and his heart has torn in two..."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Kolima_FaceActorAndWait(ACTOR_MIA, 0, 20);
+  Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 20);
+  // "His wrathful side turned the people of Kolima into trees."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -1222,11 +1281,13 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  // "The kind Tret speaks no more."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  Kolima_FaceActorAndWait(ACTOR_MIA, 0, 20);
+  Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 20);
+  // "Hroom! The kindly heart invites destruction... I need no..."
   Kolima_ShowMessageAndWait(ACTOR_TRET, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1237,16 +1298,20 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "If you wish to save those whom Tret turned into trees, you..."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(ACTOR_MIA, FACING_NORTH, 10);
+  // "But...if you cannot stop Tret from withering, we all will..."
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Scene_NodTogether();
   Event_Wait(60);
   // Laurel's and Tret's last words; then the party decides whether to help.
+  // "Look for Tret deep within the forest."
   Event_ShowMessage(ACTOR_LAUREL, 0);
+  // "It's no use, Laurel. Humans cannot be trusted! I shall die..."
   Event_ShowMessage(ACTOR_TRET, 0);
   Task_Remove(Kolima_UpdateCurseDust);
   Event_Wait(80);
@@ -1259,7 +1324,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_Stop(ACTOR_MIA_PSYNERGY_FIELD);
   Actor_Stop(ACTOR_GARET_PSYNERGY_FIELD);
   wait(1);
-  shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
+  shrinkFieldActions = gKolima_PsynergyFieldShrinkActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, shrinkFieldActions);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, shrinkFieldActions);
   if (*miaInParty != 0) {
@@ -1277,35 +1342,41 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_Get(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 10);
+  // "Isaac... Isn't there anything we can do?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(10);
+    // "What can we do? Do you have any idea?"
     Event_OpenMessage(ACTOR_GARET, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-      Kolima_FaceActorAndWait(ACTOR_MIA, 0, 20);
+      Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 20);
       Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
       Event_Wait(40);
       Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 20);
+      // "It looks like Isaac has something in mind."
       Kolima_ShowMessageAndWait(ACTOR_GARET, 10);
       Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 20);
       Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 20);
       Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+      // "We'll leave it up to you, Isaac. Let's go save everyone."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
       Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTHEAST, 20);
     } else {
-      Kolima_FaceActorAndWait(ACTOR_MIA, 0, 20);
+      Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 20);
       Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
       Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
       Kolima_FaceActorAndWait(ACTOR_GARET, FACING_SOUTH, 20);
       Event_SetMessageId(MsgKolimaHesAsStumpedAsWe);
+      // "He's as stumped as we are, but he says he'll help..."
       Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
       Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
+      // "I trust Isaac. He'll come up with an idea."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
     }
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -1316,6 +1387,7 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(10);
     Event_SetMessageId(MsgKolimaYoureIsaacThereIsntMuch);
+    // "You're right, Isaac... There isn't much we can do now."
     Kolima_ShowMessageAndWait(ACTOR_GARET, 10);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
     Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 20);
@@ -1323,16 +1395,19 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    // "So the people of Kolima will just remain trees until they..."
     Event_OpenMessage(ACTOR_IVAN, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Event_Wait(20);
       Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
       Event_Wait(40);
       Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 10);
+      // "I'm disappointed in you, Isaac... How can you give up so..."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 10);
       if (gKolima_MiaInParty != 0) {
-        Kolima_FaceActorAndWait(ACTOR_MIA, 0, 10);
+        Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 10);
         Actor_StartRepeatedMotion(ACTOR_MIA, 3);
+        // "That's right... We can't just leave them to rot!"
         Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
       } else {
         gFieldWork->message++;
@@ -1343,13 +1418,16 @@ static void Kolima_WitnessForestCurse(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(40);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+      // "But how can we bring back the nice Tret and save the village?"
       Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
       Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       Event_Wait(120);
+      // "I guess I really don't know what to do."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
       if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(ACTOR_MIA, FACING_SOUTHEAST, 10);
         Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
+        // "Ivan, you can't give up! Please, convince him to help!"
         Kolima_ShowMessageAndWait(ACTOR_MIA, 10);
       } else {
         gFieldWork->message++;
@@ -1360,10 +1438,12 @@ static void Kolima_WitnessForestCurse(void) {
         Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHWEST, 40);
         Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 20);
       }
+      // "Just promise me this one thing..."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 10);
       Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
       Event_Wait(40);
+      // "Promise you will do everything in your power to save Kolima."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -1375,10 +1455,12 @@ static void Kolima_WitnessForestCurse(void) {
       Event_Wait(40);
       Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
       Event_SetMessageId(MsgKolimaThatsReliefIsaacThoughtYoud);
+      // "That's a relief, Isaac. I thought you'd given up on Kolima..."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
       if (gKolima_MiaInParty != 0) {
-        Kolima_FaceActorAndWait(ACTOR_MIA, 0, 10);
+        Kolima_FaceActorAndWait(ACTOR_MIA, FACING_EAST, 10);
         Actor_StartRepeatedMotion(ACTOR_MIA, 1);
+        // "I was beginning to lose faith in you, Isaac."
         Kolima_ShowMessageAndWait(ACTOR_MIA, 20);
       } else {
         gFieldWork->message++;
@@ -1389,23 +1471,28 @@ static void Kolima_WitnessForestCurse(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(40);
       Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+      // "But what can we do? How can we bring back the good Tret and..."
       Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
       Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       Event_Wait(80);
+      // "I really don't have any idea right now..."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
       if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(ACTOR_MIA, FACING_SOUTHEAST, 20);
         Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+        // "I'm not sure... What should we do?"
         Kolima_ShowMessageAndWait(ACTOR_MIA, 40);
       } else {
         gFieldWork->message++;
       }
       Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
       Event_Wait(20);
+      // "I don't know just yet... But I'm sure we'll think of something."
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
       Actor_StartRepeatedMotion(ACTOR_GARET, 2);
       Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Event_Wait(40);
+      // "Well, let's get on with it!"
       Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
     }
   }
@@ -1447,14 +1534,13 @@ static void Kolima_WitnessForestCurse(void) {
   Event_End();
 }
 
-/// Shows the selected dialogue through an actor, then holds for its
-/// reaction.
+/// Shows the event's next line, spoken by actorId, then waits waitFrames.
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
   Event_ShowMessage(actorId, 0);
   Event_Wait(waitFrames);
 }
 
-/// Turns an actor immediately, then leaves time for the next event beat.
+/// Turns an actor at once to facing, then waits waitFrames.
 static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
   Actor_FaceDirection(actorId, facing, 0);
   Event_Wait(waitFrames);
@@ -1462,7 +1548,8 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
 
 #include "shared/kolima_grow.c"
 
-/// Spawns a moving curse sparkle every eighth frame.
+/// Every eighth frame, a golden ring of the curse falls from the sky over the
+/// party, with its sound while gKolima_EffectActive is set.
 static void Kolima_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
@@ -1495,8 +1582,10 @@ static void Kolima_SpawnCurseSparkle(void) {
 
 #include "shared/kolima_blink.c"
 
-/// Triggers a temporary pose when an effect enters the party's occupied area.
-static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
+/// A speck of the curse that lands inside the party's Psynergy fields (two
+/// boxes with Mia in the party, three without her) bursts there with a drip,
+/// and the fields take their next pose once grown (Kolima_ApplyPendingPose).
+static s32 Kolima_BurstOnPsynergyField(struct Actor *actor) {
   if (gKolima_MiaInParty != 0) {
     if ((actor->x.fixed > toFIXED(59) && actor->x.fixed < toFIXED(141) &&
          actor->z.fixed > toFIXED(211) && actor->z.fixed < toFIXED(257)) ||
@@ -1566,7 +1655,7 @@ s32 gKolima_MiaWalksIn[] = {
 
 #include "shared/kolima_squash.c"
 
-s32 gKolima_ProtectiveFieldGrowActions[] = {
+s32 gKolima_PsynergyFieldGrowActions[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 10),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 10),
     SC_WAIT(1),
@@ -1579,7 +1668,7 @@ s32 gKolima_ProtectiveFieldGrowActions[] = {
     SC_END,
 };
 
-s32 gKolima_ProtectiveFieldShrinkActions[] = {
+s32 gKolima_PsynergyFieldShrinkActions[] = {
     SC_ANIMATION(1),
     SC_ADD(SW_Z, -toFIXED(1) / 10),
     SC_ADD(SW_SCALE_X, -3 * FIXED_ONE / 200),
@@ -1592,14 +1681,14 @@ s32 gKolima_ProtectiveFieldShrinkActions[] = {
 };
 
 /// The sparkles on Kolima's ground: three quarters of their size, passed
-/// through, twinkling at random (Kolima_UpdateTimedAppearance).
-s32 gKolima_EntryActions[] = {
+/// through, twinkling at random (Kolima_TwinkleGroundSparkle).
+s32 gKolima_GroundSparkleActions[] = {
     SC_SET(SW_SCALE_X, 3 * FIXED_ONE / 4),
     SC_SET(SW_SCALE_Y, 3 * FIXED_ONE / 4),
     SC_SET(SW_COLLISION, 0),
     SC_SET(SW_TIMER, 0),
     SC_LABEL(1),
-    SC_CALL(Kolima_UpdateTimedAppearance),
+    SC_CALL(Kolima_TwinkleGroundSparkle),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -1623,7 +1712,8 @@ u16 gKolima_DoorCells[] = {
 /// Kolima's entrances. No exit leads to entrances 2, 10 and 12. Entrance 10
 /// puts the party where KOLIMA_FROM_WORLD_MAP does.
 struct SceneEntrance gKolimaEntrances[] = {
-    {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {KOLIMA_FROM_WORLD_MAP, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1,
      -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 418, 0, 285, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -1667,9 +1757,7 @@ struct SceneExitRegion gKolimaTunnelRegions[] = {
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-/// Kolima's exits, then Kolima Bridge's (from the header word for
-/// SceneId_KolimaBridge) and Kolima Tunnel's (from the one for
-/// SceneId_KolimaTunnel).
+/// Kolima's exits, then Kolima Bridge's and Kolima Tunnel's.
 u32 gKolimaExits[] = {
     SCENE_EXITS(Kolima),
     SCENE_EXIT(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),
@@ -1749,16 +1837,16 @@ struct ActorPlacement gKolimaActorPlacements[] = {
 
 /// Five more sparkles, placed by Scene_Initialize once the curse has been seen
 /// and kept while it lasts.
-struct ActorPlacement gKolima_EntryScript[] = {
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
+struct ActorPlacement gKolima_MoreGroundSparklePlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_RESET_ACTION,
         120, 0, 424, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_RESET_ACTION,
         296, 0, 376, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_RESET_ACTION,
         440, 0, 344, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_RESET_ACTION,
         296, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, 7,
+    ACTOR_PLACEMENT(SPRITE_SPARKLE, FLAG_KOLIMA_CURSE_LIFTED, MOVEMENT_TYPE_RESET_ACTION,
         152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     { SCENE_TABLE_END },
 };
@@ -1856,6 +1944,6 @@ s32 gFallingEffectScript[] = {
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
-    SC_CALL(Kolima_TriggerRegionScript),
+    SC_CALL(Kolima_BurstOnPsynergyField),
     SC_RELEASE,
 };

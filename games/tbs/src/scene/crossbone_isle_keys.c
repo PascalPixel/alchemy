@@ -86,24 +86,23 @@ extern struct Trigger gCrossboneIsleKeysTriggersOther[];
 extern struct Trigger gCrossboneIsleKeysRoomTriggers[];
 extern struct Trigger gCrossboneIsleStatuesTriggers[];
 extern struct Trigger gCrossboneIsleBaneTriggers[];
-extern u32 gCrossboneIsleKeys_SlotColumns[];
+extern u32 gCrossboneIsleKeys_StatueColumns[];
 extern s32 gCrossboneIsleKeys_IconTimer;
 
-// Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
-// FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
-// the numbers for their own.
 /// Bane's room: the pillar on the raised platform in the south-west has been
-/// pushed off it and stands lower down.
+/// pushed off it and stands lower down, until the party leaves the cave's area
+/// (an area flag, which other areas use for their own).
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED FLAG_AREA_TEMP_00
 
 /// How far, in pixels, the first statue follows Isaac south as it shoves him
-/// back, and how far the second shoves him; the two swapped from patch 1.
+/// back, and how far each of the others shoves him; the two swapped from
+/// patch 1.
 #if TBS_PATCH_1
-#define CROSSBONE_PURSUER_STEP_Z 16
-#define CROSSBONE_LEADER_STEP_Z 24
+#define FIRST_STATUE_FOLLOW_PIXELS 16
+#define STATUE_SHOVE_PIXELS 24
 #else
-#define CROSSBONE_PURSUER_STEP_Z 24
-#define CROSSBONE_LEADER_STEP_Z 16
+#define FIRST_STATUE_FOLLOW_PIXELS 24
+#define STATUE_SHOVE_PIXELS 16
 #endif
 
 static void CrossboneIsleKeys_PushFirstPillar(void);
@@ -253,9 +252,23 @@ enum CrossboneIsleBaneCellBehavior {
 /// byte, and PASSAGE_PLAY_OPENING to play its opening.
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
-/// The Demon Axe chest's examine trigger, a treasure spot the code places
-/// where the second pillar stands.
-#define TREASURE_SPOT_DEMON_AXE (TREASURE_SPOT_FIRST_ID + 7)
+/// The rooms' chests, named for what each holds; each room numbers its own.
+enum {
+  TREASURE_SPOT_KEYS_333_COINS = TREASURE_SPOT_FIRST_ID,
+  TREASURE_SPOT_KEYS_FAIRY_RING,
+  TREASURE_SPOT_KEYS_COOKIE,
+  TREASURE_SPOT_KEYS_SMOKE_BOMB,
+  TREASURE_SPOT_STATUES_444_COINS = TREASURE_SPOT_FIRST_ID,
+  TREASURE_SPOT_STATUES_SLEEP_BOMB,
+  TREASURE_SPOT_STATUES_STORM_GEAR,
+  TREASURE_SPOT_STATUES_PSY_CRYSTAL,
+  TREASURE_SPOT_BANE_666_COINS = TREASURE_SPOT_FIRST_ID + 4,
+  TREASURE_SPOT_BANE_WATER_OF_LIFE,
+  TREASURE_SPOT_BANE_ELIXIR,
+  /// The Demon Axe's chest, a treasure spot the code places where the second
+  /// pillar stands.
+  TREASURE_SPOT_DEMON_AXE
+};
 
 /// Bane's room: Frost has frozen the puddle into a pillar of ice.
 #define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
@@ -272,14 +285,15 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 #define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_SCENE_TEMP_20
 
 /// Raises an event for the trigger table to run on the next frame.
-static inline void MapLocalState_StoreStep(s16 *field, s32 step) {
-  *field = step;
+static inline void CrossboneIsleKeys_RaiseEvent(s16 *raisedTrigger, s32 event) {
+  *raisedTrigger = event;
 }
 
 /// Stands the first pillar on the low ledge in the north-west, in the given
 /// column, and makes its top ground level with the back ledge, so that Isaac
 /// can walk onto it from there.
-static inline void LiftPillar(s32 column, u8 motionFlags) {
+static inline void CrossboneIsleKeys_LiftFirstPillar(s32 column,
+                                                     u8 motionFlags) {
   MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(32);
@@ -774,7 +788,7 @@ static void CrossboneIsleKeys_CheckFirstStatueTrigger(void) {
 /// south and glides home again.
 ///
 /// CrossboneIsleKeys_CheckFirstStatueTrigger raises it. Isaac is pushed 24
-/// pixels south, and the statue follows him CROSSBONE_PURSUER_STEP_Z pixels
+/// pixels south, and the statue follows him FIRST_STATUE_FOLLOW_PIXELS pixels
 /// before it turns back.
 static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
   struct Actor *leader;
@@ -792,7 +806,7 @@ static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
   Event_Wait(4);
   Sound_Play(SE_THUMP);
-  Actor_SetDestinationOffset(ACTOR_FIRST_STATUE, 0, CROSSBONE_PURSUER_STEP_Z);
+  Actor_SetDestinationOffset(ACTOR_FIRST_STATUE, 0, FIRST_STATUE_FOLLOW_PIXELS);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetDestination(ACTOR_FIRST_STATUE, 360, 152);
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
@@ -814,7 +828,7 @@ static void CrossboneIsleKeys_CheckSecondStatueTrigger(void) {
       gMainRoutineWork.haltedActor != ACTOR_SECOND_STATUE && column == 10 &&
       (row >= 16 && row <= 18)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    MapLocalState_StoreStep(&work->raisedTrigger, RAISED_SECOND_CHASE);
+    CrossboneIsleKeys_RaiseEvent(&work->raisedTrigger, RAISED_SECOND_CHASE);
   }
 }
 
@@ -836,7 +850,7 @@ static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
                          leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_SECOND_STATUE);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
   Sound_Play(SE_THUMP);
   Event_Wait(4);
   Actor_SetDestinationOffset(ACTOR_SECOND_STATUE, 0, 16);
@@ -851,7 +865,7 @@ static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
 /// to stand right in front of Isaac's column, unless Halt holds it, and
 /// nudges him 8 pixels south if he has got into the alcove's row.
 ///
-/// gCrossboneIsleKeys_SlotColumns keeps the column each statue stands in.
+/// gCrossboneIsleKeys_StatueColumns keeps the column each statue stands in.
 static void CrossboneIsleKeys_TrackStatueColumn(s32 statueIndex) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
@@ -860,14 +874,14 @@ static void CrossboneIsleKeys_TrackStatueColumn(s32 statueIndex) {
 
   if (gMainRoutineWork.haltedActor == statueId)
     return;
-  if (column == gCrossboneIsleKeys_SlotColumns[statueIndex])
+  if (column == gCrossboneIsleKeys_StatueColumns[statueIndex])
     return;
 
   Actor_SetSpeed(statueId, 4.5);
   Sound_Play(SE_THUMP);
   Actor_SetDestination(statueId, (column << 4) + 8, 360);
 
-  gCrossboneIsleKeys_SlotColumns[statueIndex] = column;
+  gCrossboneIsleKeys_StatueColumns[statueIndex] = column;
 
   if (row <= 22) {
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
@@ -917,7 +931,7 @@ static void CrossboneIsleKeys_ThirdStatuePushesLeaderBack(void) {
                            leader->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
     Event_Wait(4);
     Sound_Play(SE_THUMP);
     Actor_SetDestinationOffset(ACTOR_THIRD_STATUE, 0, 16);
@@ -956,7 +970,7 @@ static void CrossboneIsleKeys_FourthStatuePushesLeaderBack(void) {
                            leader->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
     Event_Wait(4);
     Sound_Play(SE_THUMP);
     Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, 0, 16);
@@ -983,7 +997,7 @@ static void CrossboneIsleKeys_CheckFifthStatueTrigger(void) {
       Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
       state->cloaked == 0 && column == 19 && (row >= 15 && row <= 16)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
-    MapLocalState_StoreStep(&work->raisedTrigger, RAISED_FIFTH_CHASE);
+    CrossboneIsleKeys_RaiseEvent(&work->raisedTrigger, RAISED_FIFTH_CHASE);
   }
 }
 
@@ -1005,7 +1019,7 @@ static void CrossboneIsleKeys_FifthStatuePushesLeaderBack(void) {
                          leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_FIFTH_STATUE);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
   Sound_Play(SE_THUMP);
   Actor_SetDestinationOffset(ACTOR_FIFTH_STATUE, 0, 16);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1176,11 +1190,11 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
   } else if (column == 41) {
     CrossboneIsleKeys_RestoreMiddleUnderfootCell();
   } else if (column == 39) {
-    LiftPillar(column, 0);
+    CrossboneIsleKeys_LiftFirstPillar(column, 0);
   } else if (column == 38) {
-    LiftPillar(column, 0);
+    CrossboneIsleKeys_LiftFirstPillar(column, 0);
   } else if (column == 37) {
-    LiftPillar(column, 0);
+    CrossboneIsleKeys_LiftFirstPillar(column, 0);
   }
 }
 
@@ -1563,7 +1577,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   Task_AddFrame(CrossboneIsleKeys_UpdatePillarPriorities, TASK_PASS_FRAME);
   TreasureSpot_SetPosition(TREASURE_SPOT_DEMON_AXE, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
-    Actor_SetAnimation(ACTOR_SECOND_PILLAR_CHEST, 2);
+    Actor_SetAnimation(ACTOR_SECOND_PILLAR_CHEST, CHEST_ANIMATION_OPEN_EMPTY);
   }
   CrossboneIsleKeys_MoveFirstPillar();
   CrossboneIsleKeys_MoveSecondPillar();
@@ -1757,10 +1771,10 @@ struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
     // Unused: the plain step rows above answer the same cells first.
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_KEYS_THIRD_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_KEYS_FOURTH_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_KEYS_333_COINS, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_KEYS_FAIRY_RING, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_KEYS_COOKIE, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_KEYS_SMOKE_BOMB, FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { TRIGGER_TABLE_END },
 };
 
@@ -1781,10 +1795,10 @@ struct Trigger gCrossboneIsleStatuesTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_THIRD_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FOURTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIFTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_STATUES_444_COINS, FIND_COINS(444) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR, FIND_ITEM(ITEM_STORM_GEAR) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_STATUES_444_COINS, FLAG_CROSSBONE_ISLE_STATUES_444_COINS, FIND_COINS(444) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_STATUES_SLEEP_BOMB, FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_STATUES_STORM_GEAR, FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR, FIND_ITEM(ITEM_STORM_GEAR) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_STATUES_PSY_CRYSTAL, FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on
@@ -1863,19 +1877,20 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
      EVENT(CrossboneIsleKeys_MoveFourthPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_PILLAR, FLAG_SCENE_TEMP_05,
      EVENT(CrossboneIsleKeys_MoveFifthPillar)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_CROSSBONE_ISLE_BANE_666_COINS,
-     FIND_COINS(666)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 105,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_BANE_666_COINS,
+     FLAG_CROSSBONE_ISLE_BANE_666_COINS, FIND_COINS(666)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_BANE_WATER_OF_LIFE,
      FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE, FIND_ITEM(ITEM_WATER_OF_LIFE)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 106, FLAG_CROSSBONE_ISLE_BANE_ELIXIR,
-     FIND_ITEM(ITEM_ELIXIR)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_BANE_ELIXIR,
+     FLAG_CROSSBONE_ISLE_BANE_ELIXIR, FIND_ITEM(ITEM_ELIXIR)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_DEMON_AXE,
      FLAG_CROSSBONE_ISLE_DEMON_AXE, FIND_ITEM(ITEM_DEMON_AXE)},
     {TRIGGER_TABLE_END},
 };
 
-/// The column each pursuing statue stands in.
-u32 gCrossboneIsleKeys_SlotColumns[] = {
+/// The column the third and fourth statues stand in as they slide to stay in
+/// front of Isaac; the third entry is the fifth statue's, which nothing slides.
+u32 gCrossboneIsleKeys_StatueColumns[] = {
     16,
     21,
     0,

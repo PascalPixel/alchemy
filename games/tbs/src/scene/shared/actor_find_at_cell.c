@@ -1,6 +1,7 @@
 #include "scene/actor_step.h"
 
-// Bilibin, its cave, Kalay and Sol Sanctum's entrance.
+/// @file
+/// Bilibin, its cave, Kalay and Sol Sanctum's entrance: who stands on a cell.
 
 /// Returns the placed actor (8 to 65) standing on cell (x, z), or 0.
 static struct Actor *Actor_FindAtCell(s32 x, s32 z) {

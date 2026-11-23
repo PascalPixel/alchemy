@@ -93,7 +93,9 @@
 u16 gSolSanctumLunaSolRooms_Light2Timer BSS_DATA;
 u16 gSolSanctumLunaSolRooms_Light3Timer BSS_DATA ALIGNED(4);
 u16 gSolSanctumLunaSolRooms_Light1Timer BSS_DATA ALIGNED(4);
-s32 gSolSanctumLunaSolRooms_FlashState BSS_DATA;
+/// Set to 2 as a falling light lands: the rooms shake for a frame, then
+/// settle.
+s32 gSolSanctumLunaSolRooms_LandingShake BSS_DATA;
 u16 gSolSanctumLunaSolRooms_Light4Timer BSS_DATA;
 
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
@@ -165,7 +167,9 @@ enum SolSanctumLunaSolRoomsActorId {
 ///
 /// Behaviors 1 and 2 are the exits.
 enum SolSanctumLunaSolRoomsCellBehavior {
-  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
+  /// The room of Luna's south doorway, where Kraden calls Isaac over once the
+  /// picture has changed.
+  CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_LUNA_DOORWAY = 8,
   /// The way back out to SceneId_SolSanctumReliefs.
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,
   /// The symbol of the sun on the floor, first stepped on.
@@ -187,14 +191,6 @@ enum SolSanctumLunaSolRoomsCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_CHEST = 100
 };
 
-// Scene flags, cleared at every ordinary entrance; one of the three is
-// set at a time, for the colours the rooms show, so a return after a battle
-// keeps them:
-// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT: the plain colours
-//   (PALETTE_TINT_NONE);
-// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED: SOL_SANCTUM_BLUE_TINT;
-// - FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED: SOL_SANCTUM_WARM_TINT.
-
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void);
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void);
 static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void);
@@ -206,7 +202,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSolSanctumLunaSolRoomsExits; }
 
@@ -527,7 +523,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     // Kraden: "Shall we go a little farther?" Yes: "Thank you!" No: then go
     // back without him.
     Event_OpenMessage(ACTOR_KRADEN, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(MsgSolSanctumThank);
     } else {
       Event_SetMessageId(MsgSolSanctumGoBackVillage);
@@ -608,7 +604,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 10);
   // Kraden: "These rooms must be connected somehow, don't you think?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgSolSanctumLunaSolRooms);
   } else {
     Event_SetMessageId(MsgSolSanctumRoomLunaOne);
@@ -627,7 +623,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   // "What does it all mean? Isaac, would you look farther up the..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(request + 1);
     GameFlag_Set(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN);
   } else {
@@ -703,8 +699,8 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   Event_End();
 }
 
-/// Animates the first light falling through the Luna room and manages the
-/// shared shake pulse.
+/// The first light falling through the Luna room, which also shakes the rooms
+/// as any of the four lands.
 static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   if ((Random_Next() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
@@ -722,7 +718,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
       MOVE_LIGHT_DOWN(46, 30, 36);
       break;
     case 4:
-      gSolSanctumLunaSolRooms_FlashState = 2;
+      gSolSanctumLunaSolRooms_LandingShake = 2;
       MOVE_LIGHT_DOWN(46, 30, 37);
       break;
     case 80:
@@ -734,13 +730,13 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
       gSolSanctumLunaSolRooms_Light1Timer = 0;
     }
   }
-  if (gSolSanctumLunaSolRooms_FlashState != 0) {
-    if (gSolSanctumLunaSolRooms_FlashState == 2) {
+  if (gSolSanctumLunaSolRooms_LandingShake != 0) {
+    if (gSolSanctumLunaSolRooms_LandingShake == 2) {
       MapGrid_SetShake(1, 1, 1);
-    } else if (gSolSanctumLunaSolRooms_FlashState == 1) {
+    } else if (gSolSanctumLunaSolRooms_LandingShake == 1) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
-    gSolSanctumLunaSolRooms_FlashState--;
+    gSolSanctumLunaSolRooms_LandingShake--;
   }
 }
 
@@ -770,7 +766,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
         MOVE_LIGHT_DOWN(staging, column, (top) + 3);                           \
         break;                                                                 \
       case 4:                                                                  \
-        gSolSanctumLunaSolRooms_FlashState = 2;                                \
+        gSolSanctumLunaSolRooms_LandingShake = 2;                              \
         MOVE_LIGHT_DOWN(staging, column, (top) + 4);                           \
         break;                                                                 \
       case cleared:                                                            \
@@ -917,7 +913,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   gSolSanctumLunaSolRooms_Light2Timer = (Random_Below(60)) + 20;
   gSolSanctumLunaSolRooms_Light3Timer = (Random_Below(60)) + 20;
   gSolSanctumLunaSolRooms_Light4Timer = (Random_Below(60)) + 20;
-  gSolSanctumLunaSolRooms_FlashState = 0;
+  gSolSanctumLunaSolRooms_LandingShake = 0;
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateFirstFallingLight,
                 TASK_PASS_FRAME);
   Task_AddFrame(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
@@ -1119,6 +1115,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
   Actor_WalkToAndWait(ACTOR_KRADEN, 376, 184);
+  // Off the map, until he next comes out of the party.
   Actor_SetPosition(ACTOR_KRADEN, 1608, 1608);
   Event_Wait(4);
   GameFlag_Set(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
@@ -1404,6 +1401,8 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellsTo(30, 43, 36, 38, 3, 3);
         MapGrid_CopyCellsTo(36, 58, 32, 41, 8, 4);
       }
+      // The wall behind the symbol takes the plain wall's attributes beside
+      // it, so searching there does nothing.
       MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
     }
   }
@@ -1441,7 +1440,7 @@ static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void) {
   return allLit;
 }
 
-/// Advances the active dialogue and pauses for the requested frames.
+/// Shows the next message of the event, then waits.
 static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
                                                       s32 waitFrames) {
   Event_ShowMessage(speaker, 0);
@@ -1464,8 +1463,6 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   wait(1);
   Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  // The heap slots are read from one address, the palette fade's from the
-  // field's.
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1501,8 +1498,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   // them both aside.
   Event_SetMessageId(MsgSolSanctumFloatingEyeThing);
   // "Did that floating eye thing save us?"
-  Event_OpenMessage(1, 0);
-  Event_AskYesNoWithActorAnimation(0, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
+  Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
   Sound_Play(SE_TREMOR);
@@ -1629,9 +1626,9 @@ struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[] = {
         504, 0, 152, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         1608, 0, 1608, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         1608, 0, 1608, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         1608, 0, 1608, FACING_NORTH, TALK_FACING_PARTY, 0),
     { SCENE_TABLE_END },
 };
@@ -1653,12 +1650,13 @@ struct Trigger gSolSanctumLunaSolRoomsTriggers[] = {
     {EXAMINE_TRIGGER(EXAMINE_SILENT),
      CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL, CONDITION_ALWAYS,
      EVENT(SolSanctumLunaSolRooms_RiseToElementalStarRoom)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_LUNA_DOORWAY,
      CONDITION_ALWAYS,
      EVENT(SolSanctumLunaSolRooms_KradenSeesLunaPictureChange)},
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS,
+     CONDITION_ALWAYS, SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_RELIEFS},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE, CONDITION_ALWAYS,
      SOL_SANCTUM_LUNA_SOL_ROOMS_TO_SOL_SANCTUM_STATUE},
     {TRIGGER_STEP, CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM,
      CONDITION_ALWAYS, EVENT(SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum)},

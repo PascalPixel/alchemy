@@ -121,8 +121,7 @@ enum SanctumActorId {
   /// He is the Great Healer in Vale's Sanctum.
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   // Vale Sanctum (gSanctum_ValeActorPlacements, and
-  // gSanctum_QuestActorPlacements at the
-  // quest).
+  // gSanctum_QuestActorPlacements at the quest).
   /// The western of Vale's two other Healers, men with long brown hair in long
   /// robes, standing on either side of the stone counter.
   ///
@@ -180,7 +179,8 @@ static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
 static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RemoveCounter(void);
 
-/// Faces the actor whose ID this update routine stores in the timer field.
+/// An update routine: the actor keeps turned towards the actor whose id its
+/// timer holds.
 static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
   struct Actor *target;
 
@@ -374,9 +374,9 @@ static void Sanctum_AskQuestAgain(void) {
 /// Who answers "......" when the healer asks whether Isaac's new friends are
 /// Adepts: Ivan from patch 1, Garet before.
 #if TBS_PATCH_1
-#define SANCTUM_NEW_FRIENDS_SPEAKER 2
+#define SANCTUM_NEW_FRIENDS_SPEAKER ACTOR_IVAN
 #else
-#define SANCTUM_NEW_FRIENDS_SPEAKER 1
+#define SANCTUM_NEW_FRIENDS_SPEAKER ACTOR_GARET
 #endif
 
 /// Talking to the Healer on the west side of Vale's Sanctum once the party has
@@ -400,9 +400,9 @@ static void Sanctum_AskAboutNewAdepts(void) {
     Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   } else {
     gFieldWork->message++;
-    // "......"
+    // "......" from both at once.
     FieldEvent_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1,
-                                      3, 7, 16, 1, 14, 0);
+                                      ACTOR_MIA, 7, 16, 1, 14, 0);
     // "Your friend seems angered by your words, Isaac... That..."
     Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   }
@@ -430,11 +430,10 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
 }
 
 /// Every visit but a plain one to Vale's Sanctum opens without the area name.
-/// In Vault's, the gold statue
-/// stands behind the Healer once the thieves are jailed. Brought here after
-/// the eruption, or starting again after refusing, the stone counter is taken
-/// away and the Great Healer's question begins; a return from a battle or the
-/// menu (FLAG_KEEP_PARTY_POSITION) skips it.
+/// In Vault's, the gold statue stands behind the Healer once the thieves are
+/// jailed. Brought here after the eruption, or starting again after refusing,
+/// the stone counter is taken away and the Great Healer's question begins; a
+/// return from a battle or the menu (FLAG_KEEP_PARTY_POSITION) skips it.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -622,7 +621,6 @@ static void Sanctum_AskToAcceptQuest(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    // Reenact the journey before explaining the quest.
     Sanctum_ActOutSolSanctum();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
@@ -847,6 +845,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_SetAnimation(ACTOR_HEALER, ANIM_STAND);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 2);
     Event_Wait(20);
+    // "It is impossible to stop the eruption now."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
@@ -864,6 +863,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_EAST_HEALER, 1);
     Event_Wait(20);
+    // "Will Vale be..."
     Event_ShowMessage(ACTOR_EAST_HEALER, 0);
     Event_Wait(20);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -873,6 +873,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
     Event_Wait(20);
+    // "Vale will be safe. The Wise One will prevent the lava from reaching us."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(30);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -937,10 +938,12 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(40);
     Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
+    // "What's the matter, Great Healer?"
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
+    // "...The village will be destroyed, won't it?"
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -952,6 +955,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_SetAttachedEffect(ACTOR_GARETS_GRANDFATHER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(60);
+    // "Something even more dreadful than Vale's destruction looms ahead."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_HEALER, 0);
@@ -959,10 +963,12 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
     Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
     Event_Wait(20);
+    // "What could be worse than the destruction of Vale?"
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
     Event_Wait(20);
+    // "A terrible power."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -975,6 +981,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(60);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "The Elemental Star gems house incredible power."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -987,16 +994,19 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Event_Wait(20);
+    // "...And Vale has been guarding those gems?"
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
     Event_Wait(20);
+    // "The elemental lighthouses will loose that power upon the world."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(50);
     Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
+    // "Once the power of the gems has been released, the whole world will..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1008,6 +1018,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(80);
     Actor_RunRepeatedMotion(ACTOR_DORA, 1);
     Event_Wait(20);
+    // "The Wise One wants us to get the gems back, doesn't he?"
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_SHAKE_HEAD);
@@ -1022,6 +1033,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(80);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
     Event_Wait(20);
+    // "This world is ours, to save or to destroy. Our inaction may bring..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1039,12 +1051,14 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(60);
     Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "What a pity..."
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "We cannot hope for salvation. We must save ourselves..."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(40);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -1060,6 +1074,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_DORA, 1);
     Event_Wait(20);
+    // "Then what can we do?"
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(60);
     Actor_WalkToAndWait(ACTOR_HEALER, 200, 136);
@@ -1075,6 +1090,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(50);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
     Event_Wait(20);
+    // "Acquiring the Elemental Stars is their fate alone."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1083,6 +1099,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_SetAttachedEffect(ACTOR_DORA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_DORA, 1);
+    // "Are you suggesting we place the fate of the world... in the hands..."
     Event_ShowMessage(ACTOR_DORA, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
@@ -1090,6 +1107,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Actor_StartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
     Event_Wait(20);
+    // "Garet is only a child. You can't expect him to bear such a burden..."
     Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
     Event_Wait(30);
     Actor_WalkToAndWait(ACTOR_HEALER, 168, 120);
@@ -1100,6 +1118,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "The Wise One has spoken."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1107,10 +1126,12 @@ static void Sanctum_AskToAcceptQuest(void) {
     Event_Wait(60);
     Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
     Event_Wait(10);
+    // "Each of you shares responsibility for this."
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(10);
     Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
+    // "Now, each of you must make your own decision!"
     Event_ShowMessage(ACTOR_HEALER, 0);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
@@ -1119,6 +1140,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
+    // "I don't know what to do. Isaac, you decide."
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(30);
   }
@@ -1255,9 +1277,11 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_StartRepeatedMotion(ACTOR_WEST_HEALER, 2);
   Actor_StartRepeatedMotion(ACTOR_EAST_HEALER, 2);
   Event_Wait(40);
+  // "You two are quite brave to take on this quest."
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_Wait(20);
   Event_Wait(40);
+  // "I shall be watching you. Choose your destiny wisely, young ones."
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_Wait(60);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
@@ -1286,6 +1310,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   Sanctum_StartAllRepeatedMotion();
   Event_Wait(30);
+  // "That was the Wise One..."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
@@ -1298,6 +1323,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_HEALER, 0);
   Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_HEALER, 0);
   Event_Wait(20);
+  // "What did the Wise One say?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
@@ -1311,12 +1337,14 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
   Event_Wait(30);
+  // "Felix must unlock the power."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(20);
   Sanctum_ShowAllEmotes();
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(30);
+  // "Find the lighthouses... You'll have the guidance of the Elemental Star..."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(20);
   Sanctum_NodAll();
@@ -1335,18 +1363,21 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
+  // "Um... Then what?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   Sanctum_StartAllRepeatedMotion();
   Event_Wait(30);
+  // "What should they do there?"
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(80);
   Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
+  // "Surely, that cannot be all the advice you can offer them, Great Healer..."
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1356,20 +1387,24 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   Sanctum_StartAllRepeatedMotion();
   Event_Wait(40);
+  // "Seek the elementals... The Djinn..."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(20);
   Sanctum_NodAll();
   Event_Wait(30);
+  // "They will prove useful."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(30);
   Sanctum_NodAll();
   Event_Wait(120);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
   Event_Wait(20);
+  // "Isn't there anything else?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
   Event_Wait(20);
+  // "That is all."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1381,12 +1416,14 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_ShowEmote(ACTOR_EAST_HEALER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
+  // "That's it!? Isn't there anything else you can tell them?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "That is all, Mayor."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1400,6 +1437,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceActor(ACTOR_HEALER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
+  // "I leave it up to you, Isaac...Garet."
   Event_ShowMessage(ACTOR_HEALER, 0);
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_HEALER, 168, 176);
@@ -1445,6 +1483,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_EAST_HEALER, 0);
   Actor_RunRepeatedMotion(ACTOR_WEST_HEALER, 1);
   Event_Wait(20);
+  // "H-Hey, isn't it almost... time to meditate?"
   Event_ShowMessage(ACTOR_WEST_HEALER, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
@@ -1459,6 +1498,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_EAST_HEALER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
+  // "Oh yeah! Meditation! Let's go!"
   Event_ShowMessage(ACTOR_EAST_HEALER, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_WEST_HEALER, ANIM_NOD);
@@ -1477,11 +1517,13 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Well, what good are those guys!? Sending children off with no help..."
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
+  // "I agree, but..."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(20);
   Actor_WalkToAndWait(ACTOR_DORA, 168, 168);
@@ -1492,6 +1534,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "They didn't give us any other choice."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1502,10 +1545,12 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARETS_GRANDFATHER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
+  // "Then, when should they go?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
+  // "It doesn't sound like we can afford to wait."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1513,6 +1558,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_GARETS_GRANDFATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
+  // "Tomorrow, then?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1522,6 +1568,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(20);
+  // "Tomorrow? Yes."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
@@ -1677,6 +1724,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   window = Window_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
   text = MsgSanctumGreatHealer;
   Text_DrawMessage(text, window, 16, 0);
+  // "To the File Screen", or "Restart the game" when there is no saved file.
   if (Save_CountFilesExcludingSent(1) == 0) {
     Text_DrawMessage(text + 2, window, 16, 16);
   } else {
@@ -1764,7 +1812,7 @@ static void Sanctum_ActOutSolSanctum(void) {
   Event_Wait(15);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(10);
-  // Illustrate the account with the floating item icon.
+  // The Mars Star rises over them.
   Sanctum_RaiseItemIcon(ITEM_MARS_STAR, toFIXED(184), toFIXED(27),
                         toFIXED(168));
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1803,10 +1851,10 @@ static void Sanctum_ActOutSolSanctum(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(10);
-  Actor_Get(ACTOR_HEALER)->timer = GARET;
+  Actor_Get(ACTOR_HEALER)->timer = ACTOR_GARET;
   Actor_Get(ACTOR_HEALER)->update =
       (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
-  Actor_Get(ACTOR_GARETS_GRANDFATHER)->timer = GARET;
+  Actor_Get(ACTOR_GARETS_GRANDFATHER)->timer = ACTOR_GARET;
   Actor_Get(ACTOR_GARETS_GRANDFATHER)->update =
       (void (*)(struct Actor *))Sanctum_FaceActorNamedByTimer;
   Actor_WalkToAndWait(ACTOR_GARET, 196, 180);
@@ -1930,7 +1978,8 @@ static void Sanctum_ActOutSolSanctum(void) {
   Event_Wait(60);
 }
 
-/// Shows an item icon rising from the supplied fixed-point position.
+/// An item's menu icon leaps up from a place (16.16) and hangs where it
+/// stops, for a second in all.
 static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
                                   FIXED fixedZ) {
   struct Actor *icon;
@@ -1966,7 +2015,8 @@ static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
   }
 }
 
-/// Moves a spark upward, cycles its scale, and expires its lifetime.
+/// A glint's update: it drifts up, twinkling between full size and three
+/// fifths, and goes once its frames run out.
 static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   FIXED scale;
   s32 framesLeft;
@@ -1995,7 +2045,8 @@ static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
     Actor_StartScript(spark, gSanctum_SparkEndScript);
 }
 
-/// Creates a short-lived spark beside the specified actor.
+/// A glint rises from beside the actor, for half a second to a second and a
+/// half.
 static void Sanctum_SpawnActorSpark(s32 id) {
   struct Actor *actor;
   struct Actor *spark;

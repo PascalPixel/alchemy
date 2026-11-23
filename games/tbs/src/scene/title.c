@@ -1,9 +1,16 @@
 /// @file
-/// The title overlay holds the start screen, the Golden Sun logo shown after
-/// the ending, and the screens that lead from the prologue and the last event
-/// on to Vale and the File Screen.
+/// The Title (SceneId_Title): the screens between scenes that are not on a
+/// map, chosen by entrance.
 ///
-/// Scene_Initialize chooses by entrance.
+/// - TITLE_AFTER_RUN, at power-on: the Nintendo and Camelot logos and the
+///   title, looping until a key is pressed, then the File Screen.
+/// - TITLE_FROM_VALE_PLAZA, at the prologue's end: the title held while the
+///   years pass (MUS_THE_PASSAGE_OF_TIME), then Vale, the party grown up.
+/// - TITLE_FROM_LEMURIAN_SHIP, once the party sails away: the staff credits,
+///   then the File Screen.
+/// - TITLE_FROM_WORLD_MAP, after the ending on Jenna and Kraden's island: the
+///   Golden Sun logo with "To Be Continued" written in under it from the left,
+///   held a minute or until a key, then back to the logos.
 
 #include "scene/title.h"
 #include "resource_ids.h"
@@ -41,33 +48,29 @@ extern s16 gTitleVramBlock;
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's scene tables, which FieldSequence_Run reads through
-/// entry/title.s.
+/// The scene tables FieldSequence_Run reads; the title has no exits, actors or
+/// triggers.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gScreen_Entrances;
 }
 
-/// The exit regions entry, which is empty because the title has no exit
-/// boxes.
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gTitleExits; }
 
-/// The title overlay has no actors.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTitleActorPlacements;
 }
 
-/// The title overlay has no triggers.
 const struct Trigger *Scene_GetTriggers(void) { return gTitleTriggers; }
 
-/// The overlay's initialize entry, which plays what the entrance asks for.
+/// Plays the screens the entrance asks for, then sets the scene that follows.
 s32 Scene_Initialize(void) {
   s32 waitFrames;
 
-  // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
-  // press.
   if (gMainRoutineWork.entrance == TITLE_FROM_WORLD_MAP) {
+    // "To Be Continued": after 120 frames the logo waits up to 3600 frames (a
+    // minute) for a key press.
     Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
     Sound_Play(MUS_TO_BE_CONTINUED);
     Title_RevealScreen(0);
@@ -79,8 +82,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
     Sound_Play(MUS_THE_BROKEN_SEAL_ENDING);
-    // The credits: Credits_Run, through the scroll far-call
-    // table.
+    // The staff credits (Credits_Run).
     Import_CreditsRun(0);
     Sound_Play(SOUND_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
@@ -90,8 +92,8 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_TITLE);
     return 0;
   }
-  // The stub does nothing with its argument (system/system_start_up.c), the
-  // far-call bank the logo and intro calls below go through.
+  // The hook is handed the far-call bank the logo and intro calls below go
+  // through, and does nothing with it (system/system_start_up.c).
   // XXX (no evidence): what the call once did; the stub is empty in every
   // edition, so only an earlier build of the game would show.
   Stub_NoOpHook(RESOURCE_TITLE_FAR_CALLS);
@@ -125,7 +127,8 @@ s32 Scene_Initialize(void) {
     }
     Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_SANCTUM);
   } else {
-    // The intro without its prompt holds the title five seconds.
+    // TITLE_FROM_VALE_PLAZA: the intro without its prompt holds the title five
+    // seconds.
     Sound_Play(MUS_THE_PASSAGE_OF_TIME);
     Title_ShowIntro(0);
     Party_EndChildhood();
@@ -146,7 +149,7 @@ enum { LETTERING_PALETTE = 15 };
 /// the bottom of the screen.
 enum { LETTERING_ROWS = 32 };
 
-/// Loads the logo's lettering sprites and their palette.
+/// Loads the "To Be Continued" lettering's sprites and their palette.
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
   volatile u32 *dma3;
@@ -187,8 +190,9 @@ static void Title_LoadSprites(s32 unused) {
   Heap_Release(decodedSprites);
 }
 
-/// The task that queues the logo's lettering sprites each frame,
-/// revealing them from the left.
+/// The task that queues the "To Be Continued" lettering each frame, writing it
+/// in from the left a column every two frames, each new column flickering for
+/// its first few.
 static void Title_UpdateSpriteReveal(void) {
   u32 *attributes;
   struct TitleSprite *sprite;
@@ -265,7 +269,8 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Shows the Golden Sun logo for Scene_Initialize's entrance 10.
+/// Shows the Golden Sun logo for TITLE_FROM_WORLD_MAP: the logo fades up from
+/// black over the lettering being written in, then the screen opens.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 

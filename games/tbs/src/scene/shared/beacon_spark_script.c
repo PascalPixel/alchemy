@@ -6,7 +6,7 @@
 s32 gBeacon_SparkScript[] = {
     SC_SET(SW_SCALE_Y, 7 * FIXED_ONE / 5),
     SC_SET(SW_SCALE_X, 7 * FIXED_ONE / 5),
-    SC_ANIMATION(ANIM_SHAKE_HEAD),
+    SC_ANIMATION(4), // the spark sheet's own animation 4
     SC_WAIT(30),
     SC_RELEASE,
 };

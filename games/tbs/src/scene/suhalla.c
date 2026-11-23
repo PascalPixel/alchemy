@@ -161,8 +161,11 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
+    // Yes: "Making it through the sandstorms is impossible. Don't bother."
     Event_SetMessageId(firstMessage + 1);
   } else {
+    // No: "Didn't you come from Angara? Anytime Angarans come to Suhalla,
+    // they're always going to Lalivero."
     Event_SetMessageId(firstMessage + 2);
   }
   Event_ShowMessage(actorId, 0);
@@ -177,8 +180,11 @@ static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   Event_OpenMessage(actorId, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
+    // Yes: "Everyone who gets caught in the sandstorms winds up in Suhalla..."
     Event_SetMessageId(firstMessage + 1);
   } else {
+    // No: "I don't care what anyone says, there shouldn't be so many
+    // sandstorms!..."
     Event_SetMessageId(firstMessage + 2);
   }
   Event_ShowMessage(actorId, 0);
@@ -341,8 +347,9 @@ struct ActorPlacement gSuhallaActorPlacementsLater[] = {
     { SCENE_TABLE_END },
 };
 
-/// The cell each door's opening is drawn at, by cell behavior; then a door
-/// opening, and a wide door opening.
+/// The top-left cell each door's opening is drawn from, by its cell behavior
+/// (the exit it leads to), two cells above where the leader walks into it.
+/// Then a door's opening, drawn in two steps, and the Sanctum's wide door's.
 s16 gSuhallaDoorCells[][2] = {
     { 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };

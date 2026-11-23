@@ -1,5 +1,5 @@
-
-// Tolbi's ship deck and Vale's storm.
+/// @file
+/// Tolbi's ship deck and Vale's storm: things that throb.
 
 /// An actor script call, each frame: every 60 to 149 frames the actor
 /// squashes and stretches back to its own shape over six frames.

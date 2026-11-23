@@ -170,8 +170,8 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   MapGrid_WaitForShakeToSettle();
   Event_Wait(60);
 
-  // "I thought Mt. Aleph was inactive..." The villagers worry about Isaac and
-  // Garet, last seen going to Kraden's house.
+  // The villagers worry about Isaac and Garet, last seen going to Kraden's
+  // house.
   Event_SetMessageId(MsgValeMtAlephWasInactive);
   Actor_ShowEmote(ACTOR_GREAT_HEALER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
@@ -263,7 +263,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // "What should we do, Isaac? Should we go back up?" Either way, the two stay.
   Event_OpenMessage(ACTOR_GARET, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(60);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -284,8 +284,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
 
-  // The villagers spot them: "Garet!" "Isaac!" Garet's brother cries "Garet!"
-  // and the villagers turn to the path.
+  // Garet's brother spots them first, and the villagers turn to the path.
   // "Garet!"
   Event_ShowMessage(ACTOR_GARETS_BROTHER, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -297,7 +296,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
-  // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
+  // The camera flies to Dora and the Great Healer.
   FieldCamera_SetSpeed(3);
   FieldCamera_MoveToActorById(ACTOR_DORA, 1);
   FieldCamera_WaitForArrival();
@@ -327,7 +326,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_WaitForScriptEndById(ACTOR_GARET);
   Event_Wait(60);
 
-  // "Come over here, both of you!" The two walk down to the villagers.
+  // The two walk down to the villagers.
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(214, CAMERA_KEEP, 472, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -347,7 +346,6 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetAnimation(ACTOR_GREAT_HEALER, ANIM_STAND);
   Event_Wait(30);
 
-  // "Where have you been?" "What happened?"
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
   // "Where have you been?"
   Event_ShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
@@ -355,12 +353,11 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(50);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(50);
-  // The Great Healer: "What happened?" The two look at each other and shake
-  // their heads.
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   // "What happened?"
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);
   Event_Wait(40);
+  // The two look at each other and shake their heads.
   Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -378,7 +375,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // "Weren't Jenna and Kraden with you?" Yes: "They were taken away? By
   // whom?"; no: "What do you mean, they were taken away?"
   Event_OpenMessage(ACTOR_DORA, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // The mayor answers either reply; the other reply is skipped.
     Event_Wait(40);
     Actor_TurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
@@ -413,7 +410,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(60);
 
-  // "This is all very complicated... Come into the sanctum, both of you."
+  // The Great Healer sends the two into the sanctum to tell what happened.
   Actor_RunRepeatedMotion(ACTOR_GREAT_HEALER, 1);
   // "This is all very complicated."
   Event_ShowMessage(ACTOR_GREAT_HEALER, 0);

@@ -1,6 +1,7 @@
-// Kalay and Venus Lighthouse's aerie: actors that look about.
+/// @file
+/// Kalay and Venus Lighthouse's aerie: people who look about.
 
-/// An actor script call, each frame: when the actor's countdown (work)
+/// An actor script call, each frame: when the actor's countdown (userValue)
 /// runs out, it turns by a random amount up to half a turn and waits a random 0
 /// to 79 frames.
 static s32 Scene_LookAboutRandomly(struct Actor *actor) {

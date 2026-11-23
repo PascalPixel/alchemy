@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_TITLE_H
 #define ALCHEMY_TITLE_H
 
+/// @file
+/// What the Title (title.c) and the File Screen (file_screen.c) share: the
+/// Golden Sun logo and the sprites of its lettering.
+
 #include "types.h"
 
 /// One sprite of the logo's lettering, as Oam_AddSpriteAtDepth queues it.

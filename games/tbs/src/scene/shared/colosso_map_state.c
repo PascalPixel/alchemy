@@ -3,8 +3,8 @@
 /// a helper for the race gauge that no scene calls.
 
 /// Sets the race gauge's hold, which keeps the gauge on the screen.
-static void UNUSED Colosso_SetGaugeHold(s16 v) {
+static void UNUSED Colosso_SetGaugeHold(s16 hold) {
   struct ColossoGaugeWork *gauge = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
 
-  gauge->hold = v;
+  gauge->hold = hold;
 }

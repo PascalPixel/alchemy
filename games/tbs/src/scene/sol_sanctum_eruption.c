@@ -126,8 +126,8 @@ static void SolSanctumEruption_StepEmbers(void);
 static void SolSanctumEruption_UpdateEmberFrequency(void);
 static void SolSanctumEruption_PlayWiseOneRescue(void);
 static void SolSanctumEruption_PlaceBeforeStar(s32 actorId);
-static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate);
-static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate);
+static void SolSanctumEruption_DrawFirstCollapseTiles(s32 broken);
+static void SolSanctumEruption_DrawSecondCollapseTiles(s32 broken);
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void);
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void);
 static void SolSanctumEruption_RaiseElementalLights(u32 corner);
@@ -139,10 +139,6 @@ static void SolSanctumEruption_SetPaleTint(s32 enabled, s32 frames,
 static void SolSanctumEruption_FlashWiseOne(struct Actor *actor);
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
-
-// Scene flags, cleared on every ordinary arrival:
-// - FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING: set as Saturos's group starts to
-//   leave; from then on the embers fall without their sound (SE_GLITTER).
 
 /// The four corners of the chamber where
 /// SolSanctumEruption_RaiseElementalLights raises lights, in the order the Wise
@@ -164,8 +160,14 @@ enum {
   ACTOR_FIRST_EMBER = ACTOR_FIRST_CRYSTAL
 };
 
-/// The star the Wise One has the leader take out, lifted above him.
-enum { ACTOR_ELEMENTAL_STAR = 22 };
+/// SPRITE_BLUE_CRYSTAL's animations (blue_crystal.tsv): the crystal glinting,
+/// and shattering into shards that vanish.
+enum { BLUE_CRYSTAL_ANIMATION_GLINT = 2, BLUE_CRYSTAL_ANIMATION_SHATTER = 3 };
+
+/// SPRITE_WISE_ONE's animations (wise_one.tsv): its eye lowering and held
+/// low as it holds the floor with Psynergy, and lifting again into its
+/// blinking idle.
+enum { WISE_ONE_ANIMATION_LOWER_EYE = 2, WISE_ONE_ANIMATION_RAISE_EYE = 3 };
 
 /// A light stretches for ELEMENTAL_LIGHT_STRETCH_FRAMES, narrowing by nine
 /// tenths of its width, then is lifted out of view until it is done with at
@@ -326,7 +328,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // "Yeah, I know it's a rock, stupid!" No: someone is lifting it with
   // Psynergy. Kraden: "Could that be... the Wise One?!?"
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgSolSanctumIKnowItsARock);
   } else {
     Event_SetMessageId(MsgSolSanctumSomeoneIsLiftingIt);
@@ -674,7 +676,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     actor = Actor_Get(crystalIndex);
     Actor_Stop(crystalIndex);
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, BLUE_CRYSTAL_ANIMATION_GLINT);
     actor->sprite->image.priority = 0;
     actor->motionFlags = 0;
     actor->speedLimit = toFIXED(8);
@@ -757,7 +759,7 @@ static void SolSanctumEruption_StepEmbers(void) {
           landedEmber->targetZ == ACTOR_NO_TARGET) {
         gEmberState[emberIndex]++;
         if (gEmberState[emberIndex] == EMBER_LANDED)
-          Actor_SelectAnimation(landedEmber, 3);
+          Actor_SelectAnimation(landedEmber, BLUE_CRYSTAL_ANIMATION_SHATTER);
         if (gEmberState[emberIndex] == EMBER_PUT_AWAY) {
           landedEmber->x.fixed = 0;
           landedEmber->y.fixed = 0;
@@ -790,7 +792,7 @@ static void SolSanctumEruption_StepEmbers(void) {
       ember->acceleration = toFIXED(1);
       Actor_SetSpriteFlags(ember, 0);
       ember->sprite->image.priority = 1;
-      Actor_SelectAnimation(ember, 2);
+      Actor_SelectAnimation(ember, BLUE_CRYSTAL_ANIMATION_GLINT);
       Actor_StartScript(ember, gEruption_EmberScript);
       ember->x.fixed = Iwram_MulFX(Trig_Cos((u16)angle),
                                    toFIXED(Random_Below(256)) + toFIXED(256)) +
@@ -847,7 +849,7 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
 
 /// Ends the Wise One's palette animation and clears its attached effect.
 static inline void SolSanctumEruption_StopWiseOnePalette(void) {
-  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 3);
+  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_RAISE_EYE);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
@@ -873,7 +875,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles = gWeatherWork;
   wiseOne = Actor_Get(ACTOR_WISE_ONE);
   Task_Remove(SolSanctumEruption_UpdateEmberFrequency);
-  gEmberMask = 3;
+  gEmberMask = EMBER_EVERY(4);
   Event_Wait(80);
   Sound_Play(SOUND_FADE_OUT_BGM);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
@@ -955,7 +957,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_SetMessageId(MsgSolSanctumWellTurnedBadly);
   // "Well, this turned out badly, wouldn't you say?"
   Event_OpenMessage(ACTOR_GARET, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_SetMessageId(MsgSolSanctumWellTurnedBadly + 1);
   } else {
@@ -984,7 +986,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // way, he trusts Felix to look after them.
   // "You don't think they'll hurt Jenna and Kraden, do you?"
   Event_OpenMessage(ACTOR_GARET, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(10);
@@ -1094,7 +1096,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // Garet: "We're in big trouble..." Yes: "Let's get out of here..." No:
   // "Quit acting so tough!"
   Event_OpenMessage(ACTOR_GARET, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -1223,7 +1225,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   Scene_StartEventPsynergy();
-  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
+  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_LOWER_EYE);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
@@ -1283,7 +1285,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Event_Wait(40);
   Event_OpenMessage(ACTOR_WISE_ONE, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(40);
   } else {
     FieldMessage_Show(MsgSolSanctumCannotResist, 1);
@@ -1292,7 +1294,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   starOrigin = Actor_Get(ACTOR_PARTY_LEADER);
   star =
-      FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
+      FieldActor_Create(SPRITE_BLANK, starOrigin->x.fixed,
                         starOrigin->y.fixed + toFIXED(36), starOrigin->z.fixed);
   if (star != NULL) {
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
@@ -1402,7 +1404,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_WaitForMoveById(ACTOR_WISE_ONE);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
+  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_LOWER_EYE);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
@@ -1436,7 +1438,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_MoveToAndWait(ACTOR_WISE_ONE, 127, 110);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
+  Actor_SetAnimationAndWait(ACTOR_WISE_ONE, WISE_ONE_ANIMATION_LOWER_EYE);
   for (frame = 0; frame < 40; frame++) {
     SolSanctumEruption_FlashWiseOne(wiseOne);
     wait(1);
@@ -1524,9 +1526,10 @@ static void SolSanctumEruption_PlaceBeforeStar(s32 actorId) {
   Actor_SetSpritePriority(actorId, 3);
 }
 
-/// Selects the first collapsing tile patch and redraws the map.
-static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate) {
-  if (alternate != 0) {
+/// Draws the patch of floor that breaks up first, by the Wise One, broken or
+/// whole.
+static void SolSanctumEruption_DrawFirstCollapseTiles(s32 broken) {
+  if (broken != 0) {
     s32 cellSize;
     cellSize = 1;
     MapGrid_CopyCellsTo(8, 47, 64, 7, cellSize, cellSize);
@@ -1543,9 +1546,9 @@ static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate) {
   MapGrid_CenterOnFollowedPoint();
 }
 
-/// Selects the second collapsing tile patch and redraws the map.
-static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
-  if (alternate != 0) {
+/// Draws the patch of floor that breaks up second, broken or whole.
+static void SolSanctumEruption_DrawSecondCollapseTiles(s32 broken) {
+  if (broken != 0) {
     s32 patchSize;
     patchSize = 2;
     MapGrid_CopyCellsTo(9, 45, 65, 5, patchSize, patchSize);
@@ -1559,7 +1562,8 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
   MapGrid_CenterOnFollowedPoint();
 }
 
-/// Randomly alternates the first tile patch on even frames.
+/// The first patch of floor breaking up: every other frame it is drawn broken
+/// or whole at random.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if (Math_RemainderUnsigned(Random_Next(), 100) > 50) {
@@ -1570,7 +1574,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   }
 }
 
-/// Randomly alternates the second tile patch on even frames, as the first.
+/// The second patch of floor breaking up, as the first.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if (Math_RemainderUnsigned(Random_Next(), 100) > 50) {
@@ -1581,7 +1585,8 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   }
 }
 
-/// Stages and raises ten lights at one of the four chamber positions.
+/// Tints the chamber and raises ten lights, one after another, at one of its
+/// four corners, then waits until the last has risen out of view.
 static void SolSanctumEruption_RaiseElementalLights(u32 corner) {
   void Actor_ShowEmote(s32, s32, s32);
   void PaletteFade_ApplyTarget(s32, s32);
@@ -1774,19 +1779,21 @@ static void SolSanctumEruption_SetPaleTint(s32 enabled, s32 frames,
   }
 }
 
-/// Flashes the palette and spawns paired vertical effects every sixteen frames.
+/// Makes the Wise One flash white as it uses Psynergy, golden rings rising
+/// round it every sixteen frames.
 static void SolSanctumEruption_FlashWiseOne(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
-    Actor_SetColorMode(actor, 7);
+    Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetColorMode(actor, 0);
+    Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     SolSanctumEruption_SpawnEffectPair(actor);
   }
 }
 
-/// Cycles six palettes while spawning the actor's vertical effects.
+/// Cycles the actor through its colours swapped six ways as it glows, golden
+/// rings rising round it every sixteen frames.
 static void SolSanctumEruption_CycleActorPalette(struct Actor *actor) {
   if (gFrameCount & 1) {
     Actor_SetColorMode(actor, Math_RemainderUnsigned(gFrameCount >> 1, 6));
@@ -1798,7 +1805,8 @@ static void SolSanctumEruption_CycleActorPalette(struct Actor *actor) {
 
 #include "shared/field_effect_vertical.c"
 
-/// Creates two vertical effects sharing the parent position and cached tiles.
+/// Sends golden rings up round the Wise One, to SE_ERUPTION_COLUMNS: two
+/// halves that rise together, one in front of it and one mirrored behind.
 static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -1854,11 +1862,14 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
 
 #include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
-s32 gEruption_RisingLightOriginsHead[] = {
+/// Unused: an actor script nothing starts. It sends an actor up at 6 pixels a
+/// frame, growing it by a 25th each frame of its loop, then sets it back to
+/// full size.
+s32 gSolSanctumEruption_UnusedRiseAndGrowScript[] = {
     SC_SET(SW_VELOCITY_Y, toFIXED(6)),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 2621),
-    SC_ADD(SW_SCALE_Y, 2621),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 25),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 25),
     SC_WAIT(1),
     SC_LOOP(18, SC_TO(1)),
     SC_SET(SW_SCALE_X, FIXED_ONE),
@@ -1891,9 +1902,9 @@ u32 gSolSanctumEruption_Exits[] = {
 };
 
 struct ActorPlacement gSolSanctumEruption_ActorPlacements[] = {
-    ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),

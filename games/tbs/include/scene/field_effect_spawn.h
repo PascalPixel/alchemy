@@ -1,10 +1,15 @@
 #ifndef ALCHEMY_FIELD_EFFECT_SPAWN_H
 #define ALCHEMY_FIELD_EFFECT_SPAWN_H
 
+/// @file
+/// The small effects twenty-four scenes scatter, each moving at its own
+/// velocity, growing and spinning (shared/field_effect_spawn.c).
+
 #include "types.h"
 
 struct Actor;
 
+/// Moves, scales and spins a small effect by one frame.
 void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor);
 
 /// A random spin for a field effect, in 1/65536 turns a frame: up to a

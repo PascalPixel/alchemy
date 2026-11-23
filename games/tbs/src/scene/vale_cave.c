@@ -105,8 +105,7 @@ enum ValeCaveKiteActorId {
   ACTOR_EAST_CRATES,
   /// The log floating by the north wall of its pool, which carries Isaac from
   /// one end of the pool to the other. It is drawn as the north-south log of
-  /// Colosso's Lumber Water
-  /// Crossing Area (colosseum_azart_match.c).
+  /// Colosso's Lumber Water Crossing Area (colosseum_azart_match.c).
   ACTOR_RIDING_LOG,
   /// Two stacks of crates and two logs, stacked by the passage to the room of
   /// logs as they are at the cave's mouth.
@@ -145,7 +144,10 @@ enum ValeCaveCellBehavior {
   /// The first of the twelve cell behaviors on the ring of floor round Kite's
   /// mossy rocks (ValeCave_KiteKeepsAway), one for each of
   /// gValeCave_WalkTargets.
-  CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45
+  CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE = 45,
+  /// In Kite's part, the chests of the Halt Gem and of the Nut.
+  CELL_BEHAVIOR_VALE_CAVE_HALT_GEM_CHEST = 100,
+  CELL_BEHAVIOR_VALE_CAVE_NUT_CHEST
 };
 
 /// The cells of the room of logs' step triggers.
@@ -156,6 +158,21 @@ enum ValeCaveLogsCellBehavior {
   CELL_BEHAVIOR_VALE_CAVE_WEST_LOG_LEDGE,
   /// The floor south of the south log, cells (13..16, 23).
   CELL_BEHAVIOR_VALE_CAVE_SOUTH_LOG_FLOOR
+};
+
+/// SPRITE_CRATES sunk into the water: its top crate alone, as a square to walk
+/// on (crates.png).
+enum { CRATES_ANIMATION_SUNK = 2 };
+
+/// The pushed logs' animations beyond enum LogAnimation, from
+/// log_north_south.tsv and log_west_east.tsv, which order theirs alike.
+enum ValeCaveLogAnimation {
+  /// Rolling over the opposite way to LOG_ANIMATION_ROLL_WEST: the west log's
+  /// roll as it is pushed east.
+  LOG_ANIMATION_ROLL_EAST = 2,
+  /// log_west_east.tsv's roll in the order of LOG_ANIMATION_ROLL_WEST, as the
+  /// south log tips north into the pool.
+  LOG_WEST_EAST_ANIMATION_ROLL = 3
 };
 
 /// The map columns where the riding log's pool's western and eastern crates
@@ -358,7 +375,7 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     Actor_Get(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
     Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -toFIXED(8);
-    Actor_SetAnimation(ACTOR_WEST_CRATES, 2);
+    Actor_SetAnimation(ACTOR_WEST_CRATES, CRATES_ANIMATION_SUNK);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
     Event_Wait(30);
@@ -400,7 +417,7 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     Actor_Get(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
     Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -toFIXED(8);
-    Actor_SetAnimation(ACTOR_EAST_CRATES, 2);
+    Actor_SetAnimation(ACTOR_EAST_CRATES, CRATES_ANIMATION_SUNK);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
     Event_Wait(30);
@@ -573,12 +590,14 @@ static void ValeCave_PushLogOverEdge(void) {
       // The cells it held on the ledge, and its landing, become open floor.
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
-                                             1, 4, 0);
+                                             1, 4, CELL_BEHAVIOR_NORMAL);
       PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
-                                             1, 4, 0);
-      PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, 0);
-      PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
+                                             1, 4, CELL_BEHAVIOR_NORMAL);
+      PushedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2,
+                                             CELL_BEHAVIOR_NORMAL);
+      PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4,
+                                             CELL_BEHAVIOR_NORMAL);
       GameFlag_Set(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
       Sound_Play(SE_LOG_FALL);
     }
@@ -599,7 +618,7 @@ static void ValeCave_PushLogOffLedge(void) {
   Event_PlaySound(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
-  Actor_SetAnimation(ACTOR_WEST_LOG, 2);
+  Actor_SetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_ROLL_EAST);
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = 0;
   Actor_Get(ACTOR_WEST_LOG)->bounce = 0;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
@@ -608,7 +627,7 @@ static void ValeCave_PushLogOffLedge(void) {
   Actor_WaitForMoveById(ACTOR_WEST_LOG);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
-  Actor_SetAnimation(ACTOR_WEST_LOG, 3);
+  Actor_SetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_ROLL_WEST);
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 6, 0);
   ValeCave_WaitForActorLanding(Actor_Get(ACTOR_WEST_LOG));
@@ -631,16 +650,16 @@ static void ValeCave_PushLogNorth(void) {
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
-    Actor_SetAnimation(ACTOR_SOUTH_LOG, 3);
+    Actor_SetAnimation(ACTOR_SOUTH_LOG, LOG_WEST_EAST_ANIMATION_ROLL);
     Actor_SetSpeedAndAcceleration(ACTOR_SOUTH_LOG, 0.25, 0.5);
     Actor_SetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
-    Actor_SetAnimation(ACTOR_SOUTH_LOG, 8);
+    Actor_SetAnimation(ACTOR_SOUTH_LOG, LOG_ANIMATION_DROP_IN);
 
     Actor_Get(ACTOR_SOUTH_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     PushedActor_FillGridAttributeRectangle(
-        0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, 0);
+        0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, CELL_BEHAVIOR_NORMAL);
     if (FIELD_CELL(probe.position.z) == SOUTH_LOG_SOUTH_ROW) {
       GameFlag_Set(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
     } else {
@@ -856,11 +875,11 @@ static void ValeCave_ApplyEntryState(void) {
   }
 }
 
-/// Stepping onto either end of the riding log starts its floating animation
-/// over from the first frame.
+/// Stepping onto either end of the riding log makes it dip under Isaac's step.
+/// Setting it bobbing first starts the dip over if it is already playing.
 static void ValeCave_TouchRidingLog(void) {
-  Actor_SetAnimation(ACTOR_RIDING_LOG, 1);
-  Actor_SetAnimation(ACTOR_RIDING_LOG, 2);
+  Actor_SetAnimation(ACTOR_RIDING_LOG, FLOATING_LOG_ANIMATION_FLOAT);
+  Actor_SetAnimation(ACTOR_RIDING_LOG, FLOATING_LOG_ANIMATION_SETTLE);
 }
 
 #include "shared/field_effect_duration_scripts.c"
@@ -952,15 +971,15 @@ u32 gValeCave_Exits[] = {
 };
 
 struct ActorPlacement gValeCave_MouthActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         232, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         232, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         248, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         192, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         208, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
@@ -968,19 +987,19 @@ struct ActorPlacement gValeCave_MouthActorPlacements[] = {
 struct ActorPlacement gValeCave_KiteActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
         792, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         344, 0, 632, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         456, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         376, 0, 576, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         422, 0, 206, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_CRATES, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         440, 0, 206, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         384, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         400, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     { SCENE_TABLE_END },
 };
@@ -988,11 +1007,11 @@ struct ActorPlacement gValeCave_KiteActorPlacements[] = {
 struct ActorPlacement gValeCave_LogsActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_KITE, MOVEMENT_TYPE_STAND,
         792, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         200, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         312, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         240, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
@@ -1040,8 +1059,8 @@ struct Trigger gValeCave_KiteTriggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 10, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
     { TRIGGER_STEP, CELL_BEHAVIOR_VALE_CAVE_FIRST_KITE_ROUTE + 11, FLAG_KITE, EVENT(ValeCave_KiteKeepsAway) },
     { TRIGGER_TALK_HALTED, ACTOR_KITE, CONDITION_ALWAYS, EVENT(ValeCave_TalkToKite) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VALE_CAVE_HALT_GEM_CHEST, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VALE_CAVE_NUT_CHEST, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(ValeCave_RevealHiddenTile) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(ValeCave_HideRevealedTile) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CRATES, FLAG_VALE_CAVE_WEST_CRATES_SUNK, EVENT(ValeCave_MoveWestCratesIntoWater) },

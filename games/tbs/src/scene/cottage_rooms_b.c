@@ -262,7 +262,13 @@ enum CottageRoomsBAreaFlag {
   FLAG_VALE_MAN_SAW_ISAAC_GROWN = FLAG_AREA_TEMP_01
 };
 
-// FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
+/// The inn number of Vale's inn (Inn_CheckIn).
+#define VALE_INN 0
+
+/// The entrance beside Isaac's bed upstairs where the party starts again after
+/// a defeat on the stormy night, from ValePrologue's
+/// VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA (gScene_RestartRules).
+#define COTTAGE_ROOMS_B_ISAACS_BEDSIDE_RESTART 16
 
 /// The map's paused tileset animations that redraw the beds in Isaac's house:
 /// his own as he sleeps, gets up and has left it, on the stormy night, and
@@ -389,7 +395,8 @@ static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
   Event_End();
 }
 
-/// Stops storm lightning before fading through the requested exit.
+/// Takes an exit by a doorway or the stairs, on the stormy night stopping the
+/// lightning first.
 static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
@@ -622,8 +629,6 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
-  // "The Mt. Aleph Boulder is going to fall!" "Come on, Isaac. We have to go
-  // now!"
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_SetMessageId(firstMessage + 2);
   // "The Mt. Aleph Boulder is going to fall!"
@@ -654,16 +659,14 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
-  // "Isaac! You forgot something!" Catch plays from Dora on the tunic.
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Isaac! You forgot something!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA,
                     0);
+  // Dora reaches the tunic with Catch: "It's pouring outside! Don't go out
+  // without your tunic!" She steps up to him and he puts it on, with a flash.
   CottageRoomsB_DemonstrateCatch();
-  // Resolve the Psynergy demonstration before the pair walks away together.
-  // "It's pouring outside! Don't go out without your tunic!" She steps up to
-  // him and he puts it on, with a flash and SE_RECOVERY.
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
@@ -865,7 +868,7 @@ ramp:
 static void CottageRoomsB_TalkToInnkeeper(void) {
   if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
       TRIG_TURN * 9 / 16) {
-    Inn_CheckIn(0, ACTOR_INNKEEPER);
+    Inn_CheckIn(VALE_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -1157,7 +1160,8 @@ UNUSED static void CottageRoomsB_FlashPaletteAndSpawnPair(struct Actor *actor) {
   }
 }
 
-/// Cycles six palettes on odd frames and periodically emit paired effects.
+/// An actor's update routine that cycles it through six palettes, a step every
+/// other frame, and gives off a pair of effects every sixteen frames.
 static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
@@ -1171,8 +1175,8 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
 
 #include "shared/field_effect_vertical.c"
 
-/// Copies the parent's ground height into two oppositely moving vertical
-/// effects.
+/// Gives off a pair of golden rings at an actor, moving opposite ways up and
+/// down through it, the second drawn underfoot.
 static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
@@ -1378,7 +1382,8 @@ s32 gCottageRoomsB_MythrilBagWobblesScript[] = {
 };
 
 struct SceneEntrance gCottageRoomsB_Entrances[] = {
-    {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, 160, 0, 228,
      FACING_NORTH, 0, 24, 0, 248, 256, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, 480, 0,
@@ -1397,12 +1402,14 @@ struct SceneEntrance gCottageRoomsB_Entrances[] = {
      FACING_EAST, 0, 8, 576, 320, 736, 0},
     {COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR, CONDITION_ALWAYS, 408, 0,
      665, FACING_EAST, 0, 328, 600, 624, 816, 0},
+    // Entrance 10, beside Isaac's bed, is one no exit or rule leads to.
     {10, CONDITION_ALWAYS, 528, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_WEST, CONDITION_ALWAYS, 705, 0, 817,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_PROLOGUE_EAST, CONDITION_ALWAYS, 879, 0, 765,
      FACING_NORTH, 0, 640, 552, 952, 864, 0},
-    {16, CONDITION_ALWAYS, 538, 0, 683, FACING_SOUTH, 0, 328, 600, 624, 816, 0},
+    {COTTAGE_ROOMS_B_ISAACS_BEDSIDE_RESTART, CONDITION_ALWAYS, 538, 0, 683,
+     FACING_SOUTH, 0, 328, 600, 624, 816, 0},
     {COTTAGE_ROOMS_B_FROM_BABI_PALACE, CONDITION_ALWAYS, 760, 0, 328,
      FACING_SOUTH, 0, 672, 272, 960, 488, 0},
     {COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, CONDITION_ALWAYS, 567, 0, 676,

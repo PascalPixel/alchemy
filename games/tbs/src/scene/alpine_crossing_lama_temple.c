@@ -122,10 +122,12 @@ enum AlpineCrossingActorId {
   ACTOR_FIRST_WORKER,
   /// A young man with his hair tied back.
   ACTOR_SECOND_WORKER,
-  /// The water Frost freezes into a pillar (AlpineCrossing_FreezePuddle).
-  ACTOR_WATER_FOR_FROST,
-  /// The plant Growth grows into a vine (AlpineCrossing_GrowSprout).
-  ACTOR_PLANT
+  /// The puddle at the foot of the gully, which Frost freezes into a pillar
+  /// (AlpineCrossing_FreezePuddle).
+  ACTOR_PUDDLE,
+  /// The sprout below the signpost, which Growth grows into a vine
+  /// (AlpineCrossing_GrowSprout).
+  ACTOR_SPROUT
 };
 
 /// Alpine Crossing's Psynergy puzzles, kept while the party stays.
@@ -870,7 +872,8 @@ static void AlpineCrossing_HidePath(void) {
 /// Update routine of the ice pillar: Isaac is drawn in front of it while he
 /// stands higher than its top, so that he shows standing on it, and behind it
 /// otherwise.
-static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
+static UNREAD_RESULT
+AlpineCrossing_SortPillarAgainstLeader(struct Actor *pillar) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
     pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
@@ -884,10 +887,10 @@ static UNREAD_RESULT Pillar_SortAgainstLeader(struct Actor *pillar) {
 /// not hidden behind the ground he stands on.
 static void AlpineCrossing_PrepareFrost(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  struct Actor *puddle = Actor_Get(ACTOR_WATER_FOR_FROST);
+  struct Actor *puddle = Actor_Get(ACTOR_PUDDLE);
 
   if (leader->z.fixed <= puddle->z.fixed) {
-    Actor_SetSpritePriority(ACTOR_WATER_FOR_FROST, 1);
+    Actor_SetSpritePriority(ACTOR_PUDDLE, 1);
   }
 }
 
@@ -898,19 +901,18 @@ static void AlpineCrossing_PrepareFrost(void) {
 static void AlpineCrossing_FreezePuddle(void) {
   Event_Start();
 
-  Actor_Get(ACTOR_WATER_FOR_FROST)->priorityFlags &=
-      (u8)~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_Get(ACTOR_WATER_FOR_FROST)->collisionFlags &= (u8)~ACTOR_PUSHABLE;
-  Actor_Get(ACTOR_WATER_FOR_FROST)->motionFlags = 0;
-  Actor_Get(ACTOR_WATER_FOR_FROST)->update =
-      (void (*)(struct Actor *))Pillar_SortAgainstLeader;
+  Actor_Get(ACTOR_PUDDLE)->priorityFlags &= (u8)~ACTOR_PRIORITY_UNDERFOOT;
+  Actor_Get(ACTOR_PUDDLE)->collisionFlags &= (u8)~ACTOR_PUSHABLE;
+  Actor_Get(ACTOR_PUDDLE)->motionFlags = 0;
+  Actor_Get(ACTOR_PUDDLE)->update =
+      (void (*)(struct Actor *))AlpineCrossing_SortPillarAgainstLeader;
 
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 56, 18);
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 20, 18);
 
   wait(1);
   GameFlag_Set(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN);
-  Actor_SetSpritePriority(ACTOR_WATER_FOR_FROST, 2);
+  Actor_SetSpritePriority(ACTOR_PUDDLE, 2);
   Event_End();
 }
 
@@ -920,7 +922,7 @@ static void AlpineCrossing_FreezePuddle(void) {
 static void AlpineCrossing_GrowSprout(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(14, 6, 1, 2, 21, 11);
-  Actor_Get(ACTOR_PLANT)->collisionFlags = (u8)~ACTOR_SOLID;
+  Actor_Get(ACTOR_SPROUT)->collisionFlags = (u8)~ACTOR_SOLID;
   GameFlag_Set(FLAG_ALPINE_CROSSING_SPROUT_GROWN);
   Event_End();
 }
@@ -960,14 +962,14 @@ s32 Scene_Initialize(void) {
     }
   } else if (gMainRoutineWork.next == MAP_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_WATER_FOR_FROST), 0);
-    Actor_Get(ACTOR_WATER_FOR_FROST)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PUDDLE), 0);
+    Actor_Get(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     if (GameFlag_Get(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN)) {
-      Actor_SetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_PILLAR);
+      Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
       AlpineCrossing_FreezePuddle();
     }
     if (GameFlag_Get(FLAG_ALPINE_CROSSING_SPROUT_GROWN)) {
-      Actor_SetAnimation(ACTOR_PLANT, SPROUT_ANIMATION_GROWN);
+      Actor_SetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
     if (gMainRoutineWork.entrance ==
@@ -1262,9 +1264,9 @@ struct Trigger gAlpineCrossing_Triggers[] = {
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AlpineCrossing_RevealPath) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AlpineCrossing_HidePath) },
     // Frost's first phase, as it reaches the puddle
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WATER_FOR_FROST, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT(AlpineCrossing_PrepareFrost) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WATER_FOR_FROST, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT(AlpineCrossing_FreezePuddle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_PLANT, FLAG_ALPINE_CROSSING_SPROUT_GROWN, EVENT(AlpineCrossing_GrowSprout) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUDDLE, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT(AlpineCrossing_PrepareFrost) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_ALPINE_CROSSING_PUDDLE_FROZEN, EVENT(AlpineCrossing_FreezePuddle) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_ALPINE_CROSSING_SPROUT_GROWN, EVENT(AlpineCrossing_GrowSprout) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALPINE_CROSSING_SIGNPOST, CONDITION_ALWAYS, EVENT(AlpineCrossing_ReadSignpost) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALPINE_CROSSING_CHEST, FLAG_ALPINE_CROSSING_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { TRIGGER_TABLE_END },

@@ -1,5 +1,5 @@
-
-// Goma Cave Entrance and Goma Cave, and the Lamakan Desert.
+/// @file
+/// Goma Cave Entrance and Goma Cave, and the Lamakan Desert.
 
 /// Waits until the actor has come down to height (16.16), a second at most.
 static void Actor_WaitBelowHeight(struct Actor *actor, FIXED height) {

@@ -36,8 +36,8 @@
 /// goes back to her chores. The aerie of Venus Lighthouse leads in by
 /// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
 /// TimberRoomsBC_ReportToFaran. There the party reports to Faran and Iodem,
-/// in one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Step trigger 51
-/// afterwards plays TimberRoomsBC_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET).
+/// in one of two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Afterwards Iodem calls
+/// the party over (TimberRoomsBC_IodemCallsOut, FLAG_IODEM_ASKED_TO_MEET).
 /// That sends the party outside, where Iodem gives it the Black Orb
 /// (lalivero.c). A barrel holds a Lucky Medal.
 
@@ -199,14 +199,18 @@ enum TimberRoomsBCActorId {
 /// It is one frame held, lying asleep on his side.
 enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 
+/// The cells where, after the report, Iodem calls the party over. The
+/// doorways' cell behaviors are the numbers of the exits they lead to.
+enum { CELL_BEHAVIOR_TIMBER_ROOMS_C_IODEM_CALLS_OUT = 51 };
+
 /// The inn worker has apologized.
 ///
 /// It is the area temp flag FLAG_AREA_TEMP_00, which lasts until the party
 /// enters another area.
 enum { FLAG_LALIVERO_INN_WORKER_APOLOGIZED = FLAG_AREA_TEMP_00 };
 
-/// TimberRoomsC: the inn worker sighs between chores.
-static s32 InnWorker_Sigh(struct Actor *actor) {
+/// In the inn (TimberRoomsC), the inn worker sighs between chores.
+static s32 TimberRoomsBC_InnWorkerSighs(struct Actor *actor) {
   Actor_SetAttachedEffect(ACTOR_INN_WORKER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   return 0;
@@ -264,8 +268,11 @@ static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
     Event_OpenMessage(keeper, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(10);
+      // Yes: "Oh my! What's everyone else in Lalivero doing?..."
       Event_SetMessageId(message + 1);
     } else {
+      // No: "What are you, a shut-in? That's all anyone has been talking
+      // about!"
       Event_SetMessageId(message + 2);
     }
     Event_ShowMessage(keeper, 0);
@@ -907,7 +914,7 @@ s32 gTimberRoomsBC_InnWorkerChores[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_ANIMATION(ANIM_NOD),
     SC_WAIT(20),
-    SC_CALL(InnWorker_Sigh),
+    SC_CALL(TimberRoomsBC_InnWorkerSighs),
     SC_WAIT(30),
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(168, 0, 300),
@@ -1088,16 +1095,16 @@ struct ActorPlacement gTimberRoomsC_ActorPlacementsAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsB_Triggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_WEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_NORTH, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_SOUTH, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
     { TRIGGER_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
@@ -1135,16 +1142,16 @@ struct Trigger gTimberRoomsB_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_WEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_SOUTHEAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_ITEM_SHOP_UPSTAIRS_TO_ITEM_SHOP, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_NORTH, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_ITEM_SHOP_TO_ITEM_SHOP_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_NORTHWEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_NORTHWEST_HOUSE_TO_NORTHWEST_HOUSE_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_NORTHWEST_HOUSE_UPSTAIRS_TO_NORTHWEST_HOUSE, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_SOUTH, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_B_TO_LALIVERO_NORTHEAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
@@ -1182,16 +1189,16 @@ struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsC_Triggers[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LEMURIAN_SHIP, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
     { TRIGGER_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
     { TRIGGER_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
@@ -1214,17 +1221,17 @@ struct Trigger gTimberRoomsC_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsC_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
-    { TRIGGER_STEP, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT(TimberRoomsBC_IodemCallsOut) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LALIVERO_SOUTHWEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LALIVERO_NORTHEAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_TO_INN_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_UPSTAIRS_TO_INN, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_WEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_INN_UPSTAIRS_TO_GUEST_ROOM_EAST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_GUEST_ROOM_WEST_TO_INN_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_GUEST_ROOM_EAST_TO_INN_UPSTAIRS, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LALIVERO_NORTHWEST, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, TIMBER_ROOMS_C_TO_LEMURIAN_SHIP, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TIMBER_ROOMS_C_IODEM_CALLS_OUT, FLAG_IODEM_ASKED_TO_MEET, EVENT(TimberRoomsBC_IodemCallsOut) },
     { TRIGGER_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT(TimberRoomsBC_TalkToIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsFaranSaysKnowingHerPowersActor) },

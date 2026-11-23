@@ -266,9 +266,12 @@ enum {
 #define WATER_BEAST_HOP_PERIOD 60
 /// The map column the stone statue stands in once moved, at (360, 168).
 #define STONE_STATUE_MOVED_COLUMN 22
+/// The frames a drop of the water beast's spray lives.
 #define SPEW_LIFETIME 20
+/// A drop of spray starts at three tenths of its sprite's size.
 #define SPEW_START_SCALE (3 * FIXED_ONE / 10)
 
+/// Whether a heading faces north, across a counter.
 // UB: the facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
 #define ALTIN_FACES_COUNTER(facing) FACING_IS_NORTH(facing)
@@ -278,8 +281,10 @@ enum {
    (u32)(FACING_NORTHEAST - FACING_NORTHWEST - 2) << 16)
 #endif
 
-// UB: the random wobble can be negative. Both factors fit in signed32 bits
-// for the actor's signed16-bit timer and wobble values.
+/// How far a drop of spray drifts east this frame, in 16.16 pixels: a sixteenth
+/// of a pixel for each frame it has left, and half a pixel of random wobble
+/// either way.
+// UB: the wobble can be negative, and a negative number is shifted left.
 #ifdef UBFIX
 #define SPEW_LATERAL_STEP(timer, wobble) ((timer) * 4096 + (wobble) * 32768)
 #else
@@ -715,21 +720,22 @@ static void Altin_WalkIntoMine(void) {
   Event_End();
 }
 
-/// Update routine of the hopping water beast in Altin's village.
+/// The water beast's update routine as it flees: it leaps every
+/// WATER_BEAST_HOP_PERIOD frames with SE_JUMP, and lands with a splash that
+/// shakes the screen for a few frames.
 static void Altin_BeastHop(struct Actor *actor) {
   struct Actor *beast = actor;
+  // The frames left of the landing's shake.
   s16 *shakeFrames = (s16 *)&beast->userValue;
 
-  // While this update routine owns the beast, timer is its hop phase, work
-  // counts down the landing shake, and the effect's countdown is a
-  // landing-sound latch. Read work through its corresponding signed type for
-  // the countdown test.
+  // timer counts the frames of the hop, and the effect's countdown is set
+  // while the beast is in the air, so that it lands with one splash.
   if (*shakeFrames != 0) {
     if (--*shakeFrames == 1)
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
-    Actor_SelectAnimation(beast, 1);
+    Actor_SelectAnimation(beast, ANIM_STAND);
     beast->y.fixed -= toFIXED(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
@@ -747,7 +753,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   if (beast->timer == 0) {
     Sound_Play(SE_JUMP);
     ((struct FieldEffect *)actor)->countdown = 1;
-    Actor_SelectAnimation(beast, 2);
+    Actor_SelectAnimation(beast, WATER_BEAST_ANIMATION_LEAP);
     beast->velocityY = toFIXED(3);
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
@@ -859,6 +865,9 @@ static void Altin_ApplyWaterLevel(void) {
   if (gMainRoutineWork.entrance == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
+  // XXX: what copying these four by three cells into the flooded village's
+  // stored picture, after the stage is already drawn, changes for the player;
+  // a probe of the cells at (20, 41) with and without the copy would settle it.
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
   if (GameFlag_Get(FLAG_ALTIN_STATUE_MOVED) != 0) {
     Actor_SetPosition(ACTOR_STONE_STATUE, 360, 168);
@@ -917,7 +926,8 @@ static void CottageRoomsD_PlaceSheltering(void) {
   }
 }
 
-/// Gives a new drop of spewed water its look.
+/// Gives a new drop of spray its look: drawn in front, its red and blue
+/// swapped, and small.
 static void Altin_InitializeSpew(struct Actor *drop) {
   drop->motionFlags = 0;
   drop->sprite->image.priority = 1;
@@ -927,7 +937,11 @@ static void Altin_InitializeSpew(struct Actor *drop) {
   drop->scaleY = SPEW_START_SCALE;
 }
 
-/// Update routine of a drop of spewed water.
+/// A drop of spray's update routine, through its SPEW_LIFETIME frames: it
+/// drifts east, slowing as it goes, with a random wobble, and moves two pixels
+/// a frame down the screen as it grows; in its last frames it spreads flat and
+/// rises a little as it splashes. It flashes white the more often the nearer
+/// its end, and is released.
 static void Altin_DriftSpew(struct Actor *drop) {
   drop->x.fixed +=
       SPEW_LATERAL_STEP(drop->timer, (s16)((s32)(Random_Below(2)) - 1));
@@ -1431,32 +1445,32 @@ u16 gAltin_SanctumDoorCells[] = {
     MAPGRID_ANIMATION_STEP(40, 35, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-u16 gAltin_SouthwestDoorCells[] = {
+u16 gAltin_InnDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 48, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 48, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-u16 gAltin_SoutheastDoorCells[] = {
+u16 gAltin_ItemShopDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-u16 gAltin_EastDoorCells[] = {
+u16 gAltin_ArmorShopDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 46, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 46, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-u16 gAltin_NorthwestDoorCells[] = {
+u16 gAltin_EastHouseDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 50, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 50, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-u16 gAltin_NorthAndWestDoorCells[] = {
+u16 gAltin_CliffHouseAndWeaponShopDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 33, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 33, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-u16 gAltin_NortheastDoorCells[] = {
+u16 gAltin_SouthHouseDoorCells[] = {
     MAPGRID_ANIMATION_STEP(35, 52, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(33, 52, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
@@ -1465,8 +1479,12 @@ u16 gAltin_NortheastDoorCells[] = {
 /// Each door's opening pictures and the cell they are drawn at, in the order of
 /// the doors' cell behaviors from the inn's.
 struct MapGridCellAnimation gAltin_Doors[] = {
-    {gAltin_SouthwestDoorCells, 41, 5},  {gAltin_SanctumDoorCells, 51, 6},
-    {gAltin_NorthwestDoorCells, 57, 17}, {gAltin_NorthAndWestDoorCells, 39, 17},
-    {gAltin_NortheastDoorCells, 48, 25}, {gAltin_SoutheastDoorCells, 59, 9},
-    {gAltin_EastDoorCells, 42, 23},      {gAltin_NorthAndWestDoorCells, 41, 27},
+    {gAltin_InnDoorCells, 41, 5},
+    {gAltin_SanctumDoorCells, 51, 6},
+    {gAltin_EastHouseDoorCells, 57, 17},
+    {gAltin_CliffHouseAndWeaponShopDoorCells, 39, 17},
+    {gAltin_SouthHouseDoorCells, 48, 25},
+    {gAltin_ItemShopDoorCells, 59, 9},
+    {gAltin_ArmorShopDoorCells, 42, 23},
+    {gAltin_CliffHouseAndWeaponShopDoorCells, 41, 27},
 };

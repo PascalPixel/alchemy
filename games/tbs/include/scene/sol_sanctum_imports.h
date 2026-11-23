@@ -2,8 +2,8 @@
 #define ALCHEMY_SOL_SANCTUM_IMPORTS_H
 
 /// @file
-/// A scene overlay's imports: queueing a scene sound and setting up its record
-/// buffer.
+/// The heap slots' names, for the two rooms of Sol Sanctum that share
+/// shared/sol_sanctum_init_zoom.c; neither uses them.
 
 #include "system/heap_slots.h"
 

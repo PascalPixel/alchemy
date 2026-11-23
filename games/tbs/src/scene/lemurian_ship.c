@@ -291,19 +291,22 @@ static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
   return 0;
 }
 
-/// Remembers Garet's boarding height for the swell task.
+/// Remembers Garet's height on deck, so that from then on he bobs with the
+/// ship.
 static s32 LemurianShip_GaretStepOnDeck(struct Actor *interpreter) {
   gGaretDeckY = Actor_Get(ACTOR_GARET)->y.fixed;
   return 0;
 }
 
-/// Remembers Mia's boarding height for the swell task.
+/// Remembers Mia's height on deck, so that from then on she bobs with the
+/// ship.
 static s32 LemurianShip_MiaStepOnDeck(struct Actor *interpreter) {
   gMiaDeckY = Actor_Get(ACTOR_MIA)->y.fixed;
   return 0;
 }
 
-/// Remembers Ivan's boarding height for the swell task.
+/// Remembers Ivan's height on deck, so that from then on he bobs with the
+/// ship.
 static s32 LemurianShip_IvanStepOnDeck(struct Actor *interpreter) {
   gIvanDeckY = Actor_Get(ACTOR_IVAN)->y.fixed;
   return 0;
@@ -364,7 +367,7 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Event_Wait(20);
   // "But our journey will be over as soon as we find Jenna, right?"
-  Event_OpenMessage(1, 0);
+  Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
@@ -412,7 +415,7 @@ static void LemurianShip_SetSail(void) {
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
   // "We have to find Jenna before going to Lemuria, don't we?"
-  Event_OpenMessage(3, 0);
+  Event_OpenMessage(ACTOR_MIA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -454,7 +457,7 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(20);
   // The third question, Mia's: the seas are rough; will they be all right?
   // "The seas are very rough. Do you think we will be okay?"
-  Event_OpenMessage(3, 0);
+  Event_OpenMessage(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -514,19 +517,19 @@ static void LemurianShip_SetSail(void) {
   Actor_SetScript(ACTOR_GARET, gGaretBoardsShip);
   Event_Wait(50);
   Actor_SetScript(ACTOR_IVAN, gIvanBoardsShip);
-  Actor_WaitForScriptEndById(2);
+  Actor_WaitForScriptEndById(ACTOR_IVAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   // Mia, last, looks back at the shore before she boards.
-  Actor_WalkByAndWait(3, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MIA, 0, -32);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
   Event_Wait(20);
   Actor_SetScript(ACTOR_MIA, gMiaBoardsShip);
-  Actor_WaitForScriptEndById(3);
+  Actor_WaitForScriptEndById(ACTOR_MIA);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Event_Wait(20);
   // On deck, all four turn west together and nod.
@@ -852,10 +855,8 @@ static struct MenuSprite sCurtainSprites[3 * CURTAIN_ROW_PARTS];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
-/// Moves the curtains a step closer and queues their 24 sprites.
-/// Run each frame from Curtain_Start to the end of the game.
-// Each part is three words: the queue link, attributes 0 and 1, and
-// attribute 2.
+/// Writes one curtain sprite: its queue link, its attributes 0 and 1, and its
+/// attribute 2.
 #ifdef UBFIX
 #define CURTAIN_PART(attributes, tile)                                         \
   (part->next = NULL, part->oam.word.attr01 = (attributes),                    \
@@ -866,8 +867,8 @@ static s16 sCurtainVramSlot;
   (*word++ = 0, *word++ = (attributes), *word++ = (tile))
 #endif
 
-/// Task, each frame from Curtain_Start: closes the curtains a pixel more, until
-/// they rest.
+/// Each frame from Curtain_Start to the end of the game: closes the curtains a
+/// pixel more, until they rest, and queues their 24 sprites.
 static void Curtain_Close(void) {
 #ifdef UBFIX
   struct MenuSprite *part;

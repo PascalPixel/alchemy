@@ -89,14 +89,14 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
   }
 }
 
-/// COLOSSO_TAKE_PLACE_TRIGGER: the nearest actor with animation 165 level with
-/// or below the friend on the map calls the warriors to their places, and the
+/// COLOSSO_TAKE_PLACE_TRIGGER: the nearest fair-haired young man level with or
+/// south of the friend calls the warriors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,
 /// after Mia, the party leaves for the race.
 static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
-  s32 speakerId = 8;
+  s32 speakerId = ACTOR_FIRST_PLACED;
   FIXED nearestDistance = toFIXED(16);
   s32 supporterId = gMainRoutineWork.leaderActorId;
   struct Actor *supporter = Actor_GetById(supporterId);
@@ -105,7 +105,6 @@ static void Colosso_TakePlaceForMatch(void) {
   s32 flagBase;
 
   Event_Start();
-  // Choose the nearest matching speaker whose Z is at least the supporter's.
   // BUG: one past the actor table: Actor_Lookup(ACTOR_ID_COUNT) is the first
   // treasure spot's actor, which is looked at too; it is never the speaker.
 #ifdef BUGFIX
@@ -115,7 +114,7 @@ static void Colosso_TakePlaceForMatch(void) {
 #endif
     struct Actor *actor = Actor_GetById(actorId);
 
-    if (actor != NULL && actor->spriteStorageKind == 1 &&
+    if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
         actor->sprite->entries[0]->animationId ==
             SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
       s32 distanceX = (supporter->x.fixed - actor->x.fixed) / toFIXED(1);
@@ -137,6 +136,7 @@ static void Colosso_TakePlaceForMatch(void) {
       }
     }
   }
+  // "The match is about to begin. Please take your places."
   Event_SetMessageId(MsgColossoMatchAboutBeginPleaseTake);
   Event_ShowMessageAndWait(speakerId, 0);
   transition = &work->transition;
@@ -145,7 +145,6 @@ static void Colosso_TakePlaceForMatch(void) {
   Event_Wait(20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  // Each supporter has one saved map cell in the group's byte flags.
   flagBase = COLOSSO_CHEER_SLOT(supporterId);
   FieldGameFlag_SetByte(flagBase + COLOSSO_CHEER_COLUMN,
                         FIELD_CELL(supporter->x.fixed));
@@ -171,53 +170,58 @@ static void Colosso_TakePlaceForMatch(void) {
 /// they are done cheering.
 void Colosso_AskDoneCheering(s32 id) {
   struct FieldWork *work;
-  s32 slot;
+  s32 friendId;
   struct Actor *actor;
-  s32 msg;
-  s32 res;
+  s32 message;
+  s32 answer;
 
   work = gFieldWork;
   Actor_GetById(id);
   Actor_GetById(id);
-  slot = gMainRoutineWork.leaderActorId;
-  actor = Actor_GetById(slot);
+  friendId = gMainRoutineWork.leaderActorId;
+  actor = Actor_GetById(friendId);
   Event_Start();
-  msg = MsgColossoCheering;
-  Event_SetMessageId(msg);
+  // "Huh? Are you done cheering?" Yeah: "Then please wait here until the
+  // match begins." Nope: "Then cheer as best you can!"
+  message = MsgColossoCheering;
+  Event_SetMessageId(message);
   FieldMessage_ShowAtActor(id, 0);
   gFieldWork->choiceMessage = MsgColossoCheeringChoices;
   gFieldWork->choiceWidth = 4;
-  res = Event_AskYesNoWithActorAnimation(slot, 0);
-  if (res == 0) {
-    Event_SetMessageId(msg + 1);
+  answer = Event_AskYesNoWithActorAnimation(friendId, 0);
+  if (answer == 0) {
+    Event_SetMessageId(message + 1);
     Event_ShowMessageAndWait(id, 0);
     work->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
     work->transitionFrames = 15;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
+    FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_COLUMN,
                           FIELD_CELL(actor->x.fixed));
-    FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
+    FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(friendId) + COLOSSO_CHEER_ROW,
                           FIELD_CELL(actor->z.fixed));
-    slot++;
-    if (slot > MIA) {
+    friendId++;
+    if (friendId > MIA) {
       Import_EventSetExitRequest(COLOSSO_SOLO_TO_RACE);
       GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
     } else {
-      Colosso_ControlCharacterAlone(slot);
+      Colosso_ControlCharacterAlone(friendId);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       work->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
     }
   } else {
-    Event_SetMessageId(msg + 2);
+    Event_SetMessageId(message + 2);
     Event_ShowMessageAndWait(id, 0);
   }
   Event_End();
 }
 
-/// The guide where the stages start.
+/// The guide where the stages start. While Isaac looks around alone he asks
+/// whether Isaac has seen enough and, on yes, walks him back out to the
+/// Colosseum; while friends are still with Isaac, he tells him to choose where
+/// they cheer from first.
 static void Colosso_AskReadyToRace(s32 actorId) {
   struct Actor *actor;
   s32 x;
@@ -229,6 +233,8 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   Event_Start();
 
   if (Party_CountMembers() <= 1) {
+    // "Isaac, did you get a good look around?" Yes: "Let's head back, then."
+    // No: "Let me know when you're done looking around."
     Event_SetMessageId(MsgColossoIsaacDidGetGoodLook);
     if (Event_AskYesNoAndShowResponse(actorId, 0) == 0) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -242,6 +248,8 @@ static void Colosso_AskReadyToRace(s32 actorId) {
       Import_EventSetExitRequest(COLOSSO_SOLO_TO_COLOSSEUM);
     }
   } else {
+    // "Wait, shouldn't you decide where the best place to cheer for Isaac
+    // is?..."
     Event_SetMessageId(MsgColossoWaitShouldntDecideWhereBest);
     Event_ShowMessageAndWait(actorId, 0);
   }
@@ -264,13 +272,13 @@ void Colosso_ClearCheeringSpots(void) {
 /// and the third in Final 3). Returns what the guide does next, an enum
 /// ColossoGuideReply; the yes or no answer to the description's question is
 /// COLOSSO_GUIDE_DESCRIBE or COLOSSO_GUIDE_OFFER_CHEERING.
-s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
+s32 Colosso_GreetAtStage(s32 speaker, s32 stage) {
   s32 sceneId;
   s32 message;
   s32 choice;
 
   Field_EndBusyAndReveal();
-  MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_Push(stage, MESSAGE_ARGUMENT_NUMBER);
   sceneId = gMainRoutineWork.next;
   if (sceneId == SCENE_COLOSSEUM_AZART_MATCH) {
     message = MsgColossoStageFirstFinalsMatch;
@@ -281,10 +289,11 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   }
   Event_SetMessageId(message);
   Event_ShowMessageAndWait(speaker, 0);
-  if (GameFlag_Get(warrior + COLOSSO_STAGE_CHEERED) != 0) {
+  if (GameFlag_Get(stage + COLOSSO_STAGE_CHEERED) != 0) {
     return COLOSSO_GUIDE_CHEER;
   }
-  if (GameFlag_Get(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
+  if (GameFlag_Get(stage + COLOSSO_STAGE_DESCRIBED) != 0) {
+    // Descriptions, Cheer or Nothing.
     choice = ColossoMenu_Choose(0);
     if (choice == 1) {
       return COLOSSO_GUIDE_CHEER;
@@ -294,7 +303,8 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
     }
     return choice;
   }
-  GameFlag_Set(warrior + COLOSSO_STAGE_DESCRIBED);
+  GameFlag_Set(stage + COLOSSO_STAGE_DESCRIBED);
+  // "Would you like to hear a description of this stage?"
   Event_SetMessageId(MsgColossoWouldYouLikeHearDescription);
   FieldMessage_ShowAtActor(speaker, 0);
   return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
@@ -302,11 +312,11 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
 
 /// A stage's guide, after describing the stage, names it again: the copy of
 /// that line after it in the text.
-void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
+void Colosso_RepeatStageNumber(s32 speaker, s32 stage) {
   s32 sceneId;
   s32 message;
 
-  MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
+  MessageArgument_Push(stage, MESSAGE_ARGUMENT_NUMBER);
   sceneId = gMainRoutineWork.next;
   if (sceneId == SCENE_COLOSSEUM_AZART_MATCH) {
     message = MsgColossoStageFirstFinalsMatch;

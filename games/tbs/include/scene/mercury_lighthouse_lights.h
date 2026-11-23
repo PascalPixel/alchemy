@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_MERCURY_LIGHTHOUSE_LIGHTS_H
 #define ALCHEMY_MERCURY_LIGHTHOUSE_LIGHTS_H
 
+/// @file
+/// The lights the pool of Mercury Lighthouse and its entrance give the leader,
+/// which hold him up as he hops across the water
+/// (shared/mercury_lighthouse_lights.c and shared/mercury_lighthouse_pillar.c).
+
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
@@ -41,6 +46,8 @@ struct MercuryLighthouseLights {
 
 STATIC_ASSERT(sizeof(struct MercuryLighthouseLights) == 28);
 
+/// Keeps the lights' state for the floor's region; returning to where the
+/// party was, the column and the light under the leader are made again.
 void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st);
 

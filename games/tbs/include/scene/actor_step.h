@@ -1,11 +1,13 @@
 #ifndef ALCHEMY_ACTOR_STEP_H
 #define ALCHEMY_ACTOR_STEP_H
 
+/// @file
+/// One step from an actor, for the scenes whose statues and pillars are pushed
+/// (Bilibin, its cave, Kalay, Sol Sanctum's entrance, the Vault's cave, Venus
+/// Lighthouse) and those of staged_actor.c.
+
 #include "macros.h"
 #include "field/pushed_actor.h"
-
-// The pushed-statue scenes (Bilibin, its cave, Kalay, Sol Sanctum's entrance,
-// the Vault's cave, Venus Lighthouse) and those of staged_actor.c.
 
 /// Sets `position` to one step from `actor`: `step` is a DIRECTION_STEP, as
 /// the push tables hold them.

@@ -5,7 +5,7 @@
 /// The cell behaviors of Vault's layout, which SceneId_Vault (vault.c) and
 /// SceneId_VaultRevisit (vault_revisit.c) both draw and answer.
 
-/// The cell behaviors Vault's coord and examine triggers answer; the exits
+/// The cell behaviors Vault's step and examine triggers answer; the exits
 /// have behaviors of their own.
 enum VaultCellBehavior {
   /// Either end of the rope bridge in the town's south-east, where stepping

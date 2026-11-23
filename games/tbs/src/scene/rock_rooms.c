@@ -18,11 +18,11 @@
 /// temple's Healer serve as usual. The inn's chef is the one villager let into
 /// the fortress, and talking to him or reading his mind tells of the prisoner
 /// he feeds there, Hammet; what Layana says in Kalay changes once the party
-/// has heard it. Once Donpa has dealt
-/// with his son (FLAG_DODONPA_LOCKED_UP), the shops sell their last stock, the
-/// inn takes guests, and the villagers talk of a shimmering creature seen
-/// slipping into the fortress and of the guests Donpa is expecting.
-/// `Scene_GetTriggers` picks the sealed or the reopened table by that flag.
+/// has heard it. Once Donpa has dealt with his son (FLAG_DODONPA_LOCKED_UP),
+/// the shops sell their last stock, the inn takes guests, and the villagers
+/// talk of a shimmering creature seen slipping into the fortress and of the
+/// guests Donpa is expecting. `Scene_GetTriggers` picks the sealed or the
+/// reopened table by that flag.
 ///
 /// The temple has a second entrance before the altar, where a party defeated in
 /// Lunpa wakes.
@@ -91,7 +91,7 @@ enum RockRoomsActorId {
   ACTOR_MAN_ON_HIS_LATE_GRANDFATHER = ACTOR_FIRST_PLACED,
   ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA,
   /// In the second home: this burly grey-haired man
-  /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR) and a woman in a white apron
+  /// (SPRITE_BURLY_MAN_WITH_GREY_HAIR) and a woman in a pink apron
   /// (SPRITE_WOMAN_IN_PINK_APRON).
   ACTOR_MAN_ON_DONPAS_FORTRESS,
   ACTOR_WOMAN_ON_THE_INNS_CHEF,
@@ -103,7 +103,7 @@ enum RockRoomsActorId {
   ACTOR_ARMOR_MERCHANT,
   ACTOR_ITEM_MERCHANT,
   ACTOR_INNKEEPER,
-  /// A woman in a white apron (SPRITE_WOMAN_IN_PINK_APRON) at the inn, beside
+  /// A woman in a pink apron (SPRITE_WOMAN_IN_PINK_APRON) at the inn, beside
   /// the innkeeper.
   ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST,
   ACTOR_INN_WORKER,

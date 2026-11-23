@@ -39,7 +39,7 @@
 #include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
-extern struct SceneEntrance gFileScreen_Entrances[];
+extern struct SceneEntrance gScreen_Entrances[];
 extern u32 gFileScreen_Exits[];
 extern struct ActorPlacement gFileScreen_ActorPlacements[];
 extern struct Trigger gFileScreen_Triggers[];
@@ -202,7 +202,7 @@ static s32 FileScreen_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The File Screen overlay's scene tables, for the scene loader.
-u8 *Scene_GetEntrances(void) { return (u8 *)gFileScreen_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gScreen_Entrances; }
 
 /// The exit regions entry: the File Screen has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
@@ -1327,10 +1327,7 @@ static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct SceneEntrance gFileScreen_Entrances[] = {
-    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/screen_entrances.c"
 
 u32 gFileScreen_Exits[] = {
     SCENE_EXITS_END,

@@ -139,7 +139,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   // leaves the background.
   if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
-    pens[3] = 3;
+    pens[3] = WINDOW_BLACK_COLOR;
     Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
                     PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
@@ -173,8 +173,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_NEWLINE:
           x += TILE_TEXT_NEWLINE_WIDTH;
           break;
-        // Codes 11, 12, 14 and TEXT_ACTOR_NAME_START, which nothing in this
-        // game acts on, are skipped with their operands.
+        // The other codes are skipped with their operands.
         case TEXT_UNUSED_14:
         case TEXT_WINDOW_STATE:
         case TEXT_ACTOR_NAME_START:
@@ -401,7 +400,7 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
     work->textTileState[i] = 0;
 }
 
-/// Unused: does nothing.
+/// Unused: an empty routine between the text tiles and the dividers.
 UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a straight divider line inside a window from tile (x1, y1) to
@@ -565,29 +564,29 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
-/// Sets the text colour (0 to 15) of drawn text.
-void Text_SetColor(s32 param) {
+/// Sets the colour (enum TextColor) text is drawn in.
+void Text_SetColor(s32 color) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->colour = param & (PALETTE_COLORS - 1);
+  work->colour = color & (PALETTE_COLORS - 1);
 }
 
-/// Sets the text style (WindowWork.outline, an enum TextStyle) of drawn text.
-void Text_SetStyle(u16 value) {
+/// Sets the style (enum TextStyle) text is drawn in.
+void Text_SetStyle(u16 style) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->outline = value;
+  work->outline = style;
 }
 
 /// Decodes a message and draws it into a text canvas window at pixel (x, y),
 /// all at once.
 void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y) {
-  struct WindowWork *canvas = WINDOW_WORK;
-  canvas->textBufferEnd = 0;
+  struct WindowWork *work = WINDOW_WORK;
+  work->textBufferEnd = 0;
   Message_Decode(message, 1);
-  canvas->textBuffer[canvas->textBufferEnd] = 0;
-  canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
-  Text_DrawWideStringAtOffset(canvas->textBuffer, window, x, y);
+  work->textBuffer[work->textBufferEnd] = 0;
+  work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+  Text_DrawWideStringAtOffset(work->textBuffer, window, x, y);
 }
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
@@ -599,14 +598,14 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
   s32 vramAddress;
   u16 *text;
   u32 cell;
-  struct WindowWork *canvas;
+  struct WindowWork *work;
 
-  canvas = WINDOW_WORK;
-  canvas->textBufferEnd = 0;
+  work = WINDOW_WORK;
+  work->textBufferEnd = 0;
   Message_Decode(message, 1);
 
-  canvas->textBuffer[canvas->textBufferEnd] = 0;
-  canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
+  work->textBuffer[work->textBufferEnd] = 0;
+  work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
 
   cell = ((window->y + (offsetY >> 3) + 1) << 5) +
          (window->x + (offsetX >> 3)) + 1;
@@ -614,8 +613,8 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
     // Inside the tilemap.
     byteOffset = cell * 2;
     vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
-    text = canvas->textBuffer;
-    Text_DrawStringAsTiles(text, (u16 *)((u8 *)canvas->tilemap + byteOffset),
+    text = work->textBuffer;
+    Text_DrawStringAsTiles(text, (u16 *)((u8 *)work->tilemap + byteOffset),
                            (u16 *)vramAddress, 7 & offsetX);
   }
 }
@@ -642,12 +641,12 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
   Heap_Release(buffer);
 }
 
-/// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
-/// its interior.
+/// Draws a byte string as tiles in a window at pixel (offsetX, offsetY) of its
+/// interior.
 void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
                              s32 offsetX, s32 offsetY) {
   s16 *buffer;
-  struct WindowWork *canvas;
+  struct WindowWork *work;
   u32 cell;
   s32 vram;
   s32 src;
@@ -655,7 +654,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
   s32 phase;
 
   buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
-  canvas = WINDOW_WORK;
+  work = WINDOW_WORK;
   Text_WidenByteString(text, (u16 *)buffer);
 
   cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
@@ -665,7 +664,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
-    src = (s32)canvas->tilemap + cell;
+    src = (s32)work->tilemap + cell;
     phase = offsetX & 7;
     Text_DrawStringAsTiles((u16 *)buffer, (u16 *)src, (u16 *)dst, phase);
     // The scratch is freed only here: a place outside the tilemap leaves it
@@ -715,7 +714,7 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
                           x, y);
 }
 
-/// Draws a four-digit number after a two-glyph sign as tiles in window work at
+/// Draws a four-digit number after a two-tile label as tiles in a window at
 /// pixel (offsetX, offsetY) of its interior: the HP label (WINDOW_TILE_HP_LABEL
 /// and WINDOW_TILE_HP_LABEL_END) for variant 0, the party status window's HP;
 /// the PP label (WINDOW_TILE_PP_LABEL and WINDOW_TILE_PP_LABEL_END) for
@@ -727,13 +726,13 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
   u8 *text;
   s32 index;
   u32 cell;
-  struct WindowWork *canvas;
+  struct WindowWork *work;
   s32 vram;
   s32 src;
   s32 dst;
   s32 phase;
 
-  canvas = WINDOW_WORK;
+  work = WINDOW_WORK;
   text = String_FormatNumber(formatted, value, 4);
   // Each label is two tiles; the PP label's second is the HP label's in
   // English, German and Japanese (WINDOW_TILE_PP_LABEL_END).
@@ -756,7 +755,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
     vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
-    src = (s32)canvas->tilemap + cell;
+    src = (s32)work->tilemap + cell;
     phase = offsetX & 7;
     Text_DrawStringAsTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
   }

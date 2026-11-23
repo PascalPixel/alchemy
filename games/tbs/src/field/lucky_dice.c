@@ -386,7 +386,10 @@ void LuckyDice_Run(void) {
   resourceAddress += DICE_BOARD_PALETTE_COLORS * 2;
   FieldDecompress_TaggedLz((const void *)resourceAddress,
                            Ram_MapGridCellBuffer);
-  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
+  // One 256-colour tile for each tile of the screen.
+  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
+          DMA_COPY_WORDS(DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT *
+                         TILE_SIZE_8BPP / 4),
           REG_DMA3);
   resourceAddress = (s32)Resource_GetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
   Dma_Set((void *)resourceAddress, spritePalette,

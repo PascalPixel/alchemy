@@ -7,7 +7,7 @@
 static s32 Palette_ScaleRgb555(u16 *source, u16 *destination, FIXED scale,
                                s32 count) {
   s32 remaining;
-  u32 pixel;
+  u32 color;
   u32 red;
   u32 green;
   u32 blue;
@@ -19,16 +19,16 @@ static s32 Palette_ScaleRgb555(u16 *source, u16 *destination, FIXED scale,
 
     remaining = count;
     do {
-      pixel = *source;
-      red = pixel & redMask;
-      green = pixel & greenMask;
-      blue = blueMask & pixel;
+      color = *source;
+      red = color & redMask;
+      green = color & greenMask;
+      blue = blueMask & color;
       red *= scale;
       green *= scale;
       blue *= scale;
-      pixel = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
-      pixel |= FIXEDtoINT(blue) & blueMask;
-      *destination = pixel;
+      color = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
+      color |= FIXEDtoINT(blue) & blueMask;
+      *destination = color;
       source++;
       destination++;
       remaining--;

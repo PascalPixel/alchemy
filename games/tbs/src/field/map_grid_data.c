@@ -28,15 +28,30 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_FLAT_C] = Terrain_GetFlatCHeight,
 };
 
+#define ENV(name) BATTLE_ENVIRONMENT_##name
+
 /// World map battle environments (enum BattleEnvironment), indexed by the
 /// collision value plus 16 when the block word's top bit is set, or plus 32
 /// (whatever that bit) for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 // clang-format off
 const u8 gWorldMap_BattleEnvironments[48] = {
-    0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0, 0, 4, 7, 1, 1, 6, 1, 1, 1, 1, 0, 0, // 16
-    0, 0, 0, 0, 0, 5, 5, 5, 5, 6, 5, 5, 5, 5, 0, 0, // 32: the snowfield
+    // Collision values 0 to 15.
+    ENV(NONE), ENV(NONE), ENV(NONE), ENV(NONE),
+    ENV(NONE), ENV(GRASSLAND), ENV(SHALLOWS), ENV(GRASSLAND),
+    ENV(GRASSLAND), ENV(FOREST), ENV(GRASSLAND), ENV(GRASSLAND),
+    ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
+    // The same, where the block word's top bit is set.
+    ENV(NONE), ENV(NONE), ENV(NONE), ENV(NONE),
+    ENV(NONE), ENV(BEACH), ENV(SHALLOWS), ENV(GRASSLAND),
+    ENV(GRASSLAND), ENV(SNOW_FOREST), ENV(GRASSLAND), ENV(GRASSLAND),
+    ENV(GRASSLAND), ENV(GRASSLAND), ENV(NONE), ENV(NONE),
+    // The same, in the snowfield.
+    ENV(NONE), ENV(NONE), ENV(NONE), ENV(NONE),
+    ENV(NONE), ENV(SNOWFIELD), ENV(SNOWFIELD), ENV(SNOWFIELD),
+    ENV(SNOWFIELD), ENV(SNOW_FOREST), ENV(SNOWFIELD), ENV(SNOWFIELD),
+    ENV(SNOWFIELD), ENV(SNOWFIELD), ENV(NONE), ENV(NONE),
 };
+#undef ENV
 // clang-format on
 
 /// The eight compass directions as (x, y) offsets of radius 40. No code in

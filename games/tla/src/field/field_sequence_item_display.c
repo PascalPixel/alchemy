@@ -305,7 +305,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 }
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
-/// pixels of it.
+/// pixels of it, as around a found item's picture (ItemDisplay_EmitSparkles,
+/// whose sparkling it repeats line for line).
 void Reveal_EmitSparkles(struct Actor *actor) {
   const struct Actor *source = (const struct Actor *)actor;
   union PolarOffsetPosition position;
@@ -389,6 +390,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
     dz = z - originZ - y;
     dx >>= 16;
     dz >>= 16;
+    // On the 240 x 160 screen, give or take 15 pixels at the sides, 47 above
+    // and 31 below.
     if ((u32)(dx + 15) > 270 || (u32)(dz + 47) > 238)
       continue;
     if (flag == -1 || GameFlag_Get(flag))

@@ -3,11 +3,11 @@
 /// frames, and the palettes it builds from the shown one.
 // Part of field_sequence.c.
 
-/// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R
-/// with every channel moved to where blue is (BLUE_BITS, bits 14..10).
-#define COLOR_MAX 448
-#define COLOR_HALF 224
-#define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
+/// The palette fade works on 224 BG colours and then 224 OBJ colours, each as
+/// B, G, R with every channel moved to where blue is (BLUE_BITS, bits 14..10).
+#define FADE_HALF_COLORS 224
+#define FADE_COLORS (FADE_HALF_COLORS * 2)
+#define FADE_CHANNELS (FADE_COLORS * 3)
 
 /// Sets each colour channel of step to the amount to add each frame for source
 /// to reach target in frames frames; with frames 0 or less step is left as it
@@ -21,7 +21,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
 
   if (frames > 0) {
     divide = Iwram_SignedDivideEntry;
-    remainingChannels = COLOR_CHANNEL_COUNT - 1;
+    remainingChannels = FADE_CHANNELS - 1;
     do {
       sourceChannel = *source;
       targetChannel = *target;
@@ -52,7 +52,7 @@ void PaletteFade_Update(void) {
   // never leaves the colours short.
   if (++work->step < work->duration) {
     u16 *currentChannel = work->current;
-    for (i = 0; i < COLOR_CHANNEL_COUNT; i++) {
+    for (i = 0; i < FADE_CHANNELS; i++) {
       *currentChannel++ += *channelDelta++;
     }
   } else {
@@ -68,7 +68,7 @@ void PaletteFade_Update(void) {
     s32 blueMask = BLUE_BITS;
     u16 *current;
 
-    i = COLOR_MAX;
+    i = FADE_COLORS;
     current = work->current;
     for (; i != 0; i--) {
       *packed++ = (current[0] & blueMask) |
@@ -84,9 +84,9 @@ void PaletteFade_Update(void) {
     u16 *packed = work->packed[work->page];
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed,
-                        DMA_COPY_WORDS(COLOR_HALF / 2));
-    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + COLOR_HALF),
-                        DMA_COPY_WORDS(COLOR_HALF / 2));
+                        DMA_COPY_WORDS(FADE_HALF_COLORS / 2));
+    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + FADE_HALF_COLORS),
+                        DMA_COPY_WORDS(FADE_HALF_COLORS / 2));
   }
 }
 
@@ -99,7 +99,7 @@ void PaletteFade_Update(void) {
 /// PALETTES_BG for the BG's, PALETTES_OBJECTS for the OBJ's.
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
-  u32 colorCount = COLOR_MAX;
+  u32 colorCount = FADE_COLORS;
   s32 red;
   s32 blue;
   u32 color;
@@ -108,11 +108,11 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   if (mode == PALETTE_TINT_FROM_SOURCE)
     mode = *(u16 *)BG_PLTT;
   if (half == PALETTES_BG) {
-    colorCount = COLOR_HALF;
+    colorCount = FADE_HALF_COLORS;
   } else if (half == PALETTES_OBJECTS) {
-    dst += COLOR_HALF * 3;
-    src += COLOR_HALF;
-    colorCount = COLOR_HALF;
+    dst += FADE_HALF_COLORS * 3;
+    src += FADE_HALF_COLORS;
+    colorCount = FADE_HALF_COLORS;
   }
 
   // One colour: write it once, then let DMA copy it over the rest. The copy
@@ -403,7 +403,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     // Copy a ready buffer: mode is its address, and the OBJ half starts after
     // the BG's colours of three halfwords.
     if (half == PALETTES_OBJECTS)
-      mode += COLOR_HALF * 3 * sizeof(u16);
+      mode += FADE_HALF_COLORS * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst, DMA_COPY_WORDS((colorCount * 6) >> 2),
             REG_DMA3);
   }
@@ -416,10 +416,10 @@ void PaletteFade_Initialize(void) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
-  Dma_Set((void *)BG_PLTT, &work->palette[0], DMA_COPY_WORDS(COLOR_HALF / 2),
-          REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
-          DMA_COPY_WORDS(COLOR_HALF / 2), REG_DMA3);
+  Dma_Set((void *)BG_PLTT, &work->palette[0],
+          DMA_COPY_WORDS(FADE_HALF_COLORS / 2), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, &work->palette[FADE_HALF_COLORS],
+          DMA_COPY_WORDS(FADE_HALF_COLORS / 2), REG_DMA3);
   PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
                     PALETTES_ALL);
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
@@ -431,8 +431,8 @@ void PaletteFade_Release(void) {
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
-/// Sets the colours the buffer moves toward (see PaletteFade_Build); does
-/// nothing without a palette fade.
+/// Sets the colours the palette fade moves toward (see PaletteFade_Build);
+/// does nothing without a palette fade.
 void PaletteFade_SetTarget(s32 mode, s32 half) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
@@ -441,7 +441,7 @@ void PaletteFade_SetTarget(s32 mode, s32 half) {
   }
 }
 
-/// Sets the colours the buffer shows now (see PaletteFade_Build).
+/// Sets the colours the palette fade shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 mode, s32 half) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
@@ -450,7 +450,8 @@ void PaletteFade_SetSource(s32 mode, s32 half) {
   }
 }
 
-/// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
+/// Sets the backdrop colour (BG colour 0) of the palette fade's copy of the
+/// palettes, from which it builds its colours.
 void PaletteFade_SetBackdrop(u32 color) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
@@ -468,7 +469,7 @@ void PaletteFade_PackTarget(void) {
   u16 *current;
   s32 i;
 
-  i = COLOR_MAX;
+  i = FADE_COLORS;
   current = work->target;
   for (; i != 0; i--) {
     *packed++ =
@@ -481,8 +482,8 @@ void PaletteFade_PackTarget(void) {
   work--;
 }
 
-/// Starts moving the shown colours to the target colours over frames frames:
-/// sets work->duration, clears work->step and fills work->delta.
+/// Starts the fade from the shown colours to the target colours, over frames
+/// frames.
 void PaletteFade_StartInterpolation(s32 frames) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
@@ -494,16 +495,16 @@ void PaletteFade_StartInterpolation(s32 frames) {
   }
 }
 
-/// Takes colours as the BG colours of the palette copy and makes them,
+/// Takes colors as the BG colours of the palette copy and makes them,
 /// unchanged, the BG colours' target.
-void PaletteFade_LoadPalette(const u16 *colours) {
+void PaletteFade_LoadPalette(const u16 *colors) {
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
   if (work != NULL) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy(work->palette, colours, COLOR_HALF * sizeof(u16));
+    copy(work->palette, colors, FADE_HALF_COLORS * sizeof(u16));
     PaletteFade_Build(PALETTE_TINT_NONE, work->palette, work->target,
                       PALETTES_BG);
   }
@@ -525,6 +526,6 @@ s32 PaletteFade_ClampShiftedComponent(s32 value) {
   return value;
 }
 
-#undef COLOR_MAX
-#undef COLOR_HALF
-#undef COLOR_CHANNEL_COUNT
+#undef FADE_HALF_COLORS
+#undef FADE_COLORS
+#undef FADE_CHANNELS

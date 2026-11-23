@@ -83,7 +83,7 @@ s32 Field_UsePsynergy(u32 code) {
     FieldMessage_ShowFar((s32)&MsgKey0dbc, FIELD_MESSAGE_ZOOM |
                                                FIELD_MESSAGE_KEEP_OPEN |
                                                FIELD_MESSAGE_LOWER);
-    declined = FieldYesNo_Ask(1); // 0 is yes
+    declined = FieldYesNo_Ask(TRUE); // 0 is yes
     Message_CloseFinishedWindowsFar();
     if (declined != 0)
       return 0;
@@ -218,9 +218,10 @@ s32 Field_UsePsynergy(u32 code) {
   return 0;
 }
 
-/// Runs the event tied to a field Psynergy: a result below 0x10000 is a
-/// message, shown at target; a larger one is a routine, called with mode and
-/// target. With FLAG_NOTHING_HAPPENS set it then says nothing happens.
+/// Runs the event tied to a field Psynergy: an action below
+/// TRIGGER_RESULT_MESSAGE_END is a message, shown at target; any other is a
+/// routine, called with mode (the user, when a cast runs it) and target. With
+/// FLAG_NOTHING_HAPPENS set it then says "But nothing happens."
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
   if (event != NULL) {
     if (event->action != 0) {

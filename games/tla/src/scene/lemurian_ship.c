@@ -997,21 +997,21 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
     Event_End();                                                               \
   }
 
-/// Once the water on the sunk right pillar is gone, the pillar rises out of
-/// the floor with a chime and a thump, and the arched doorway closes again.
-///
-/// XXX: nothing in this file takes the water (its puddle) away; a recording of
-/// the frozen water being pushed off or melting would say what the player
-/// does to raise the pillar.
+/// Felix casts Parch on the water standing in the sunk right pillar, not
+/// frozen: it dries up in a white flash, and the pillar rises out of the floor
+/// with a chime and a thump, and the arched doorway closes again. Parch takes
+/// any unfrozen puddle it finds off the map (FieldPsynergy_Parch), and the
+/// room's watch (LemurianShip_WatchPillarPuddles) raises the pillar once its
+/// puddle is gone.
 DEFINE_RAISE_PILLAR(LemurianShip_RaiseRightPillar, ACTOR_RIGHT_PILLAR,
                     FLAG_RIGHT_PILLAR_SUNK, FLAG_RIGHT_PILLAR_FULL, 35)
 
-/// Once the water on the sunk left pillar is gone, the pillar rises out of
-/// the floor with a chime and a thump, and the arched doorway closes again.
-///
-/// XXX: nothing in this file takes the water (its puddle) away; a recording of
-/// the frozen water being pushed off or melting would say what the player
-/// does to raise the pillar.
+/// Felix casts Parch on the water standing in the sunk left pillar, not
+/// frozen: it dries up in a white flash, and the pillar rises out of the floor
+/// with a chime and a thump, and the arched doorway closes again. Parch takes
+/// any unfrozen puddle it finds off the map (FieldPsynergy_Parch), and the
+/// room's watch (LemurianShip_WatchPillarPuddles) raises the pillar once its
+/// puddle is gone.
 DEFINE_RAISE_PILLAR(LemurianShip_RaiseLeftPillar, ACTOR_LEFT_PILLAR,
                     FLAG_LEFT_PILLAR_SUNK, FLAG_LEFT_PILLAR_FULL, 29)
 

@@ -1654,8 +1654,8 @@ void TrialRoad_ScatterWeedsHidingMadPlant(void) {
   }
 }
 
-/// Always 1; nothing in the overlay calls it.
-s32 TrialRoad_ReturnTrue(void) { return 1; }
+/// Unused: always 1.
+UNUSED s32 TrialRoad_ReturnTrue(void) { return 1; }
 
 /// Defines a routine that sets the three tiles in Gasp's pools, at cells
 /// (10, 11), (18, 7) and (18, 15), to the cell at column groundX of row 30, and
@@ -2249,6 +2249,8 @@ void TrialRoad_UpdateRival(void) {
     if (state->rivalTimer == 0) {
       side = TrialRoad_RivalIsAhead(1) ^ 1;
       TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[side + 8]);
+      // Moapa's time at the chests counts from 1 when he reached the switch
+      // first, with one chest to fill, and from 601 when Felix did, with two.
       state->rivalTimer = side * 5 * 120 + 1;
     } else {
       if (state->stage[1] >= state->rivalBest)
@@ -3406,9 +3408,11 @@ void Actor_PlaceOnActor(s32 id, s32 owner);
 
 #include "shared/actor_take_place_of.h"
 
-/// A cracked pillar stepped on flashes the first time and gives way under
-/// Felix the second, as Magma Rock's trap floor does.
-void TrialRoad_StepOnTrap(const u16 *table) {
+/// Unused: Magma Rock's trap floor, kept in this overlay: a cracked pillar
+/// stepped on flashes the first time and gives way under Felix the second,
+/// with Moapa's actor standing in for the trap's picture. The crumbling stage
+/// uses Leader_CheckCrumblingStep instead.
+UNUSED void TrialRoad_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
   struct Actor *trap;
@@ -3529,6 +3533,8 @@ void TrialRoad_DriftDust(union FieldObject *object) {
 
 extern u32 gDust_ScatterScript[];
 
+/// Eight clouds of dust puff up in a row across the leader's feet; with spread
+/// set they fly out all round.
 void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
@@ -3574,6 +3580,8 @@ extern u32 gDust_BurstScript[];
 /// The clouds of dust MagmaRockInside_SpawnDustRing throws out in a ring.
 #define DUST_RING_PIECES 17
 
+/// Clouds of dust burst out in a ring round the leader as something lands with
+/// a thump.
 void MagmaRockInside_SpawnDustRing(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
@@ -3992,8 +4000,8 @@ s32 TrialRoad_RivalIsWaiting(void) {
   return IsZero(mode ^ RIVAL_WAITING);
 }
 
-/// Does nothing.
-void TrialRoad_DoNothing(void) {}
+/// Unused: does nothing.
+UNUSED void TrialRoad_DoNothing(void) {}
 
 s32 gTrialRoad_SettleScript[] = {
     SC_CALL((s32)TrialRoad_SettleOnGround),

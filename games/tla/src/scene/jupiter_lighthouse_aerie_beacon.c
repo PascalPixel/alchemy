@@ -7,6 +7,7 @@
 /// JupiterLighthouse_ShebaJoinsTheFight), and Alex takes them down on the
 /// elevator whether the party wins (JupiterLighthouse_WeBeatThem) or loses
 /// (JupiterLighthouse_KarstAndAgatioRetreat).
+
 #include "types.h"
 #include "item_ids.h"
 #include "flags.h"

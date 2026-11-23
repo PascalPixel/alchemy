@@ -2,7 +2,9 @@
 #define ALCHEMY_BATTLE_EFFECT_BATTLE_EFFECT_H
 
 /// @file
-/// What the battle_effect object defines for the code outside it.
+/// The battle effects as the rest of the battle calls them: a runner for each
+/// Psynergy, Djinni, summon and monster ability, and the canvas, palette,
+/// particle and model helpers they share.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -90,8 +92,11 @@ enum BattleKnockback {
   KNOCKBACK_HURL_FAR
 };
 
-/// A battle background's id, as the summons read it: the word and the bytes
-/// give the read the alias sets of the stores around it.
+/// A battle background's id, as BATTLE_BACKGROUND_ID reads it in the summons;
+/// nothing reads the word or the bytes.
+// XXX: is the union there for anything but the order of the summons' stores
+// beside the read, so a FAKEMATCH(signature) to tag; reading the id as a plain
+// u16 and comparing the editions would settle it.
 union BattleBackgroundId {
   u16 id;
   s32 word;
@@ -141,7 +146,8 @@ void Palette_BrightenBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta);
 void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
                             struct MeshTriangle *triangles, s32 segments);
-void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
+/// Loads a grey ramp into the background colours from colour 1.
+void Graphics_LoadGreyRamp(void);
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
 void Palette_BrightenBgEntries(s32 blueDelta, s32 greenDelta, s32 redDelta);
@@ -149,7 +155,8 @@ void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
-void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
+/// Sets the registers that show the canvas on BG2.
+void BattleEffect_SetupCanvasWindows(void);
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectParams *effect);
 void BattleEffect_RunNereid(struct BattleEffectParams *effect);
@@ -182,14 +189,14 @@ void BattleEffect_RunImpair(struct BattleEffectParams *args);
 void BattleEffect_RunDull(struct BattleEffectParams *args);
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *effect,
                                      s32 mode);
-void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
-void Palette_MirrorBgColors(void);       // mode 3 only
+/// Arms the HBlank DMA that scrolls BG1 line by line.
+void BattleEffect_ArmBg1HBlankDma(void);
+/// Reverses the first 64 background colours, keeping the backdrop colour.
+void Palette_MirrorBgColors(void);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_RunDragonFire(struct BattleEffectParams *effect, s32 mode);
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
-                                        s32 y); // ..PlaceFormationObjects
-void BattleEffect_RunImpactBurst(s32 formation, s32 x,
-                                 FIXED y); // ..RunImpactBurst
+void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 y);
+void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *midpoint);
@@ -217,12 +224,12 @@ enum DjinniEntranceLength {
   DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
 };
 
-/// Where BattleEffect_RunDjinniEntrance's Djinni appears: the first five 60
-/// pixels up.
+/// Where BattleEffect_RunDjinniEntrance's Djinni appears; the first five
+/// anchors stand it 60 pixels up.
 enum DjinniEntranceAnchor {
   DJINNI_ANCHOR_OVER_TARGET, ///< over the first target
   DJINNI_ANCHOR_TARGET_X,    ///< at the first target's x, at depth 0
-  DJINNI_ANCHOR_OVER_USER,
+  DJINNI_ANCHOR_OVER_USER,   ///< over the user
   DJINNI_ANCHOR_USER_X,      ///< at the user's x, at depth 0
   DJINNI_ANCHOR_CENTRE,      ///< in the centre of the field
   DJINNI_ANCHOR_HIGH_USER_X, ///< at the user's x, 80 pixels up

@@ -1,15 +1,16 @@
 /// @file
-/// The battle effect object, the bank's C in one: the display and HBlank
-/// helpers, the canvas layer, the dispatch that runs summon and table effects,
-/// and the effects from Ice and Douse to the battler tints, as The Broken
-/// Seal's battle_effect.c holds them; then the effects from Cybele to Bolt, the
-/// effects of abilities and summons from the opening every Djinn effect shares
-/// to Meteor Blow, the Liquifier, and the Megiddo, Moloch and Iris summons,
-/// Odyssey and the model renderers the effects draw with. Each part is named
-/// for the first ability it draws. battle_effect_internal.h holds the includes
-/// every part shares; the parts under battle_effect/ are included here in ROM
-/// order. Where two groups of parts name a type or routine otherwise, the later
-/// one sees its own through a view, defined before it and undefined after.
+/// The battle effects: what plays on screen when a Psynergy, Djinni, summon,
+/// unleash or monster ability is used. One object built from its parts, which
+/// are included here in ROM order, each named for the first ability it draws:
+/// first the display helpers, the canvas layer, the dispatch that runs summon
+/// and table effects and the effects from Ice and Douse to the battler tints,
+/// as The Broken Seal's battle_effect.c holds them; then the effects from
+/// Cybele to Bolt; then those from the opening every Djinn effect shares to
+/// Meteor Blow, and the Liquifier; last the Megiddo, Moloch and Iris summons,
+/// Odyssey and the model renderers the effects draw with.
+/// battle_effect_internal.h holds what every part shares. Where two groups of
+/// parts name a type or routine otherwise, the later one sees its own through
+/// a view, defined before it and undefined after.
 
 #include "battle_effect_internal.h"
 

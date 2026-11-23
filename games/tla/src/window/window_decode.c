@@ -53,9 +53,6 @@ enum {
   // with its operands (one, one and two), and only one message uses one of
   // them (12, in MsgLemuriaInteriorsWhatInWhatsWithAll), so nothing the game
   // shows tells them apart.
-  MESSAGE_CONTROL_11 = 11,
-  MESSAGE_CONTROL_12 = 12,
-  MESSAGE_CONTROL_14 = 14,
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,

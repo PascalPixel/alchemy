@@ -1,5 +1,6 @@
 /// @file
-/// Characters rendered into tiles, string widths and number formatting.
+/// Characters drawn into a glyph sprite's tiles, strings measured and drawn
+/// into windows, and numbers written as text.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -79,6 +80,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
 #endif
+  // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
   if (work->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
@@ -227,8 +229,6 @@ s32 Text_GetWideStringWidth(u16 *text) {
   return width;
 }
 
-void Text_ResetStyle(void);
-
 /// Draws a zero-terminated string of 16-bit character codes into a text canvas
 /// window at pixel (x, y), running its colour, outline, line spacing and new
 /// line codes; other control codes are skipped with their arguments.
@@ -311,6 +311,8 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         text++;
       }
 #else
+      // Two characters narrow enough to share a glyph's 16-pixel cell are drawn
+      // as one sprite.
       if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         next = *text;
 #if TLA_PATCH_4
@@ -347,8 +349,8 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in WindowWork.textBuffer. The window's position is read signed.
-void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
+/// in WindowWork.textBuffer.
+void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *window,
                                     s32 offsetX, s32 offsetY) {
   struct WindowWork *canvas = WINDOW_WORK;
   u32 cell;
@@ -359,7 +361,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
     canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
-  cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
+  cell = (((s16)window->y + offsetY + 1) << 5) + ((s16)window->x + offsetX) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) { // inside the tilemap
     s32 src;
     s32 dst;
@@ -374,8 +376,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
 
 /// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
 /// skipping the control codes and their arguments; TEXT_NEWLINE starts a new
-/// line.
-/// With no text, the render work's own entries are drawn, closed with a 0.
+/// line. With no text, the decoded text in WindowWork.textBuffer is drawn.
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y) {
   struct WindowWork *work;
@@ -442,8 +443,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
 /// Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
 /// returns where the text starts. With width 0 the number has no padding and a
 /// minus sign when negative; otherwise it is right-aligned in width characters
-/// (up to NUMBER_DIGITS) and unsigned. Each digit divides by 10 through the
-/// long-multiply helpers.
+/// (up to NUMBER_DIGITS) and unsigned.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;

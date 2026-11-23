@@ -5,9 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct MeshTriangle;
-struct StripQuad;
-
 /// One star of the sky the meteor flies through: a point on a sphere and the
 /// picture it is drawn with, or METEOR_BLOW_PIXEL_STAR.
 struct MeteorStar {
@@ -96,6 +93,8 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 /// stars as a burning meteor comes in, growing, and plunges in a cone of
 /// flame; then it lands on the foes, rings of fire and billows spread from it
 /// and sparks fly up as every foe is thrown back.
+///
+/// Abilities: Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -227,7 +226,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   starKind = &stars->kind;
   current = stars;
   for (star = 0; star != METEOR_BLOW_STAR_COUNT;
-       star++, starKind += 4, current++) {
+       star++, starKind += sizeof(struct MeteorStar) / sizeof(s32), current++) {
     s32 a = (star & (METEOR_BLOW_STAR_COUNT - 1)) * (TRIG_TURN / 2) /
             METEOR_BLOW_STAR_COUNT;
     s32 r = METEOR_BLOW_SKY_RADIUS;
@@ -235,7 +234,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
     current->y = Trig_Sin(a) * r;
     r = FIXEDtoINT(Trig_Cos(a) * r);
-    b = Random16() & 0x7fff;
+    b = Random16() & (DEGtoANG(180) - 1);
     current->x = Trig_Sin(b) * r;
     current->z = Trig_Cos(b) * r;
     if ((star & (METEOR_BLOW_STARS_PER_ORB - 1)) == 0) {
@@ -286,9 +285,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     }
     if (frame == 117) {
       work->frame = 45;
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        work->particles[i].variant = -1;
-      }
+      EFFECT_FREE_PARTICLES(i, work->particles, ARRAY_COUNT(work->particles));
       scale = FIXED_ONE;
     }
     // DEAD: frame never reaches 1600 here; the ROM keeps the compare and
@@ -557,7 +554,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         count++;
         count--;
         r = (Random16() & 511) + count;
-        a = (Random16() & 0x7fff) + DEGtoANG(90);
+        a = (Random16() & (DEGtoANG(180) - 1)) + DEGtoANG(90);
 
         p->x = canvasX;
         p->y = toFIXED(114);

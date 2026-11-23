@@ -1,6 +1,6 @@
 /// @file
-/// Haunt, the orbiting spirals, and the gathering lights of Demon Night,
-/// Rumble, Haunting and Thorny Grave.
+/// Haunt, the orbiting spirals, and the evil spirits of Demon Night, Rumble,
+/// Haunting and Thorny Grave.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -223,64 +223,64 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// The gathering lights' modes (BattleEffect_RunGatheringLights), each named
-/// for the effect that plays it, and its row of gGatheringLights_Counts.
-enum GatheringLightsMode {
-  GATHERING_LIGHTS_DEMON_NIGHT, ///< pink
-  GATHERING_LIGHTS_RUMBLE,      ///< Mars Djinn colours
-  GATHERING_LIGHTS_HAUNTING,    ///< Mercury Djinn colours
-  GATHERING_LIGHTS_THORNY_GRAVE ///< pink, the ramp reversed
+/// The evil spirits' modes (BattleEffect_RunGatheringLights), each named for
+/// the effect that plays it, and its row of gGatheringLights_Counts.
+enum GatheringSpiritsMode {
+  GATHERING_SPIRITS_DEMON_NIGHT, ///< pink
+  GATHERING_SPIRITS_RUMBLE,      ///< Mars Djinn colours
+  GATHERING_SPIRITS_HAUNTING,    ///< Mercury Djinn colours
+  GATHERING_SPIRITS_THORNY_GRAVE ///< pink, the ramp reversed
 };
 
-/// Sixteen pink lights burst out of the user and are pulled into each target.
+/// Sixteen pink spirits burst out of the user and are pulled into each target.
 ///
 /// Abilities: Demon Night.
 void BattleEffect_RunDemonNight(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_DEMON_NIGHT);
+  BattleEffect_RunGatheringLights(args, GATHERING_SPIRITS_DEMON_NIGHT);
 }
 
-/// Eight lights in Mars Djinn colours burst out of the user and are pulled
+/// Eight spirits in Mars Djinn colours burst out of the user and are pulled
 /// into each target.
 ///
 /// Abilities: Rumble.
 void BattleEffect_RunRumble(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_RUMBLE);
+  BattleEffect_RunGatheringLights(args, GATHERING_SPIRITS_RUMBLE);
 }
 
-/// Twelve lights in Mercury Djinn colours burst out of the user and are
+/// Twelve spirits in Mercury Djinn colours burst out of the user and are
 /// pulled into each target.
 ///
 /// Abilities: Haunting.
 void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
+  BattleEffect_RunGatheringLights(args, GATHERING_SPIRITS_HAUNTING);
 }
 
-/// Sixteen dark lights edged in white burst out of the user, are pulled into
+/// Sixteen dark spirits edged in white burst out of the user, are pulled into
 /// each target and push it back as they arrive.
 ///
 /// Abilities: Thorny Grave.
 void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
-  BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_THORNY_GRAVE);
+  BattleEffect_RunGatheringLights(args, GATHERING_SPIRITS_THORNY_GRAVE);
 }
 
-#define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
-/// The targets' turns, this many frames apart: each is struck by its lights
-/// from GATHERING_LIGHTS_HIT_FRAME.
-#define GATHERING_LIGHTS_TARGET_FRAMES 20
-#define GATHERING_LIGHTS_HIT_FRAME 70
+#define GATHERING_SPIRITS_SLOTS 128 ///< particles reserved for each target
+/// The targets' turns, this many frames apart: each is struck by its spirits
+/// from GATHERING_SPIRITS_HIT_FRAME.
+#define GATHERING_SPIRITS_TARGET_FRAMES 20
+#define GATHERING_SPIRITS_HIT_FRAME 70
 /// The background's widest sway, in pixels, at the effect's midpoint.
-#define GATHERING_LIGHTS_SWAY 16
+#define GATHERING_SPIRITS_SWAY 16
 /// A layer's BGnHOFS and BGnVOFS as one word, as an HBlank DMA writes them.
 #define BG_OFFSETS(horizontal, vertical) ((horizontal) | (vertical) << 16)
-/// MemberBurstImage's lights, three of its four pictures drawn.
-#define MEMBER_BURST_WIDTH 20
-#define MEMBER_BURST_HEIGHT 32
+/// The spirits' pictures, three of the sheet's four drawn.
+#define SPIRIT_WIDTH 20
+#define SPIRIT_HEIGHT 32
 
-/// For each target in turn, lights burst out of the user every way and from
+/// For each target in turn, spirits burst out of the user every way and from
 /// 30 frames on are pulled toward the middle of the target's body, vanishing
 /// once they have crossed it, in the mode's colours. The battle background
 /// sways sideways, swelling and dying away over the effect. In Thorny Grave
-/// every light that arrives also pushes its target back.
+/// every spirit that arrives also pushes its target back.
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                      s32 mode) {
   struct ScreenPoint screenPosition;
@@ -298,33 +298,33 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_MEMBER_BURST_IMAGE, work->sheet, 0, 0);
-  if (mode == GATHERING_LIGHTS_DEMON_NIGHT ||
-      mode == GATHERING_LIGHTS_THORNY_GRAVE)
+  if (mode == GATHERING_SPIRITS_DEMON_NIGHT ||
+      mode == GATHERING_SPIRITS_THORNY_GRAVE)
     paletteId = RESOURCE_PINK_BURST_SHEET;
-  else if (mode == GATHERING_LIGHTS_RUMBLE)
+  else if (mode == GATHERING_SPIRITS_RUMBLE)
     paletteId = RESOURCE_MARS_DJINN_SHEET;
   else
     paletteId = RESOURCE_MERCURY_DJINN_SHEET;
   LOAD_BG_PALETTE(paletteId);
-  if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
+  if (mode == GATHERING_SPIRITS_THORNY_GRAVE)
     Palette_MirrorBgColors();
   BattleEffect_FetchRectangleBlitters(args->side, draw);
 
-  // The lights fly off the user's body every way, at up to two pixels a
+  // The spirits fly off the user's body every way, at up to two pixels a
   // frame.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   EFFECT_FOR_EACH_TARGET(k, args) {
     struct MotionObject *source = BattleObject_GetFar(args->user)->object;
     s32 height = BattleUnit_GetEffectHeightFar(args->user);
 
-    for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
-      struct Particle *light = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
+    for (i = 0; i != GATHERING_SPIRITS_SLOTS; i++) {
+      struct Particle *spirit = &PARTICLES[k * GATHERING_SPIRITS_SLOTS + i];
 
-      SET_POSITION(light, source->x, height, source->z);
-      SET_VELOCITY(light, ((Random16() & 255) - 128) << 10,
+      SET_POSITION(spirit, source->x, height, source->z);
+      SET_VELOCITY(spirit, ((Random16() & 255) - 128) << 10,
                    ((Random16() & 255) - 128) << 10,
                    ((Random16() & 255) - 128) << 10);
-      light->variant = 0;
+      spirit->variant = 0;
     }
   }
 
@@ -334,16 +334,16 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode * 2 + 1] +
-                    args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES;
+                    args->targetCount * GATHERING_SPIRITS_TARGET_FRAMES;
        frame++) {
     s32 *row;
     s32 sway;
     s32 scrollX;
 
     if (frame == 80) {
-      if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
+      if (mode == GATHERING_SPIRITS_DEMON_NIGHT)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      else if (mode == GATHERING_LIGHTS_THORNY_GRAVE)
+      else if (mode == GATHERING_SPIRITS_THORNY_GRAVE)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -351,14 +351,14 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The battle background sways line by line, by up to
-    // GATHERING_LIGHTS_SWAY pixels at the effect's midpoint. A negative
+    // GATHERING_SPIRITS_SWAY pixels at the effect's midpoint. A negative
     // scroll wraps into the halfword one short of 65536.
     row = work->bg2xLines;
     sway = FIXEDtoINT(
         Trig_Sin(frame * (TRIG_TURN / 2) /
                  (gGatheringLights_Counts[mode * 2 + 1] +
-                  args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES)) *
-        GATHERING_LIGHTS_SWAY);
+                  args->targetCount * GATHERING_SPIRITS_TARGET_FRAMES)) *
+        GATHERING_SPIRITS_SWAY);
     scrollX = gBgScroll[1].x;
     for (i = 0; i != DISPLAY_HEIGHT; i++) {
       s32 x = (FIXEDtoINT(Trig_Sin((frame + i) * (TRIG_TURN / 64)) * sway)) +
@@ -374,43 +374,43 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
           BattleObject_GetFar(args->targets[k])->object;
       s32 half = BattleUnit_GetEffectHeightFar(args->targets[k]) / 2;
 
-      if (frame ==
-          k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME + 1) {
-        if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
+      if (frame == k * GATHERING_SPIRITS_TARGET_FRAMES +
+                       GATHERING_SPIRITS_HIT_FRAME + 1) {
+        if (mode == GATHERING_SPIRITS_DEMON_NIGHT)
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        else if (mode != GATHERING_LIGHTS_THORNY_GRAVE)
+        else if (mode != GATHERING_SPIRITS_THORNY_GRAVE)
           Sound_PlayFar(SE_IMPACT);
       }
       if (frame ==
-          k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
+          k * GATHERING_SPIRITS_TARGET_FRAMES + GATHERING_SPIRITS_HIT_FRAME)
         BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 26);
-      if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
+      if (frame > k * GATHERING_SPIRITS_TARGET_FRAMES) {
         for (i = 0; i != gGatheringLights_Counts[mode * 2]; i++) {
-          struct Particle *light = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
+          struct Particle *spirit = &PARTICLES[k * GATHERING_SPIRITS_SLOTS + i];
 
-          if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES + i * 2 &&
-              light->variant >= 0) {
-            EffectPosition_ProjectPoint((s32 *)light, &screenPosition);
+          if (frame > k * GATHERING_SPIRITS_TARGET_FRAMES + i * 2 &&
+              spirit->variant >= 0) {
+            EffectPosition_ProjectPoint((s32 *)spirit, &screenPosition);
             screenPosition.x >>= 1;
-            draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(MEMBER_BURST),
-                    screenPosition.x - MEMBER_BURST_WIDTH / 2,
-                    screenPosition.y - MEMBER_BURST_HEIGHT / 2,
-                    MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
-            Particle_AdvanceWithGravity3D(light, 62, 0);
+            draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(SPIRIT),
+                    screenPosition.x - SPIRIT_WIDTH / 2,
+                    screenPosition.y - SPIRIT_HEIGHT / 2, SPIRIT_WIDTH,
+                    SPIRIT_HEIGHT);
+            Particle_AdvanceWithGravity3D(spirit, 62, 0);
 
-            if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
-              s32 x = light->x;
+            if (frame > k * GATHERING_SPIRITS_TARGET_FRAMES + i + 30) {
+              s32 x = spirit->x;
               s32 dx = (target->x - x) >> 8;
-              s32 dy = (target->y + half - light->y) >> 9;
-              s32 dz = (target->z - light->z) >> 8;
+              s32 dy = (target->y + half - spirit->y) >> 9;
+              s32 dz = (target->z - spirit->z) >> 8;
               s32 targetDistance;
               s32 spiritDistance;
               s32 crossed;
 
-              light->velocityX += dx;
-              light->velocityY += dy;
-              light->velocityZ += dz;
+              spirit->velocityX += dx;
+              spirit->velocityY += dy;
+              spirit->velocityZ += dz;
               // It has crossed once it is as far out from the middle of the
               // field as its target is, on the target's side.
               targetDistance = target->x < 0 ? -target->x : target->x;
@@ -422,8 +422,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
               if (targetDistance <= spiritDistance &&
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {
-                light->variant = -1;
-                if (mode == GATHERING_LIGHTS_THORNY_GRAVE) {
+                spirit->variant = -1;
+                if (mode == GATHERING_SPIRITS_THORNY_GRAVE) {
                   BattleEffect_StartActorMotion(args->targets[k], 1, toFIXED(2),
                                                 toFIXED(2), toFIXED(2),
                                                 i * 8 + 100);
@@ -456,10 +456,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 #undef ORBITING_SPIRALS_INTERVAL
 #undef ORBITING_SPIRALS_LIFE
 #undef ORBITING_SPIRALS_PARTY_START_X
-#undef GATHERING_LIGHTS_SLOTS
-#undef GATHERING_LIGHTS_TARGET_FRAMES
-#undef GATHERING_LIGHTS_HIT_FRAME
-#undef GATHERING_LIGHTS_SWAY
+#undef GATHERING_SPIRITS_SLOTS
+#undef GATHERING_SPIRITS_TARGET_FRAMES
+#undef GATHERING_SPIRITS_HIT_FRAME
+#undef GATHERING_SPIRITS_SWAY
 #undef BG_OFFSETS
-#undef MEMBER_BURST_WIDTH
-#undef MEMBER_BURST_HEIGHT
+#undef SPIRIT_WIDTH
+#undef SPIRIT_HEIGHT

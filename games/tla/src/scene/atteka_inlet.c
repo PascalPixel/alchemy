@@ -128,7 +128,7 @@ enum AttekaInletHeightsActorId {
 
 /// The chest Master Hammet's messenger leaves, holding his gift: hidden until
 /// he comes.
-#define ACTOR_HAMMETS_GIFT_CHEST 65
+#define ACTOR_HAMMETS_GIFT_CHEST (FIELD_TREASURE_ACTOR + 1)
 
 /// Talking to Geode, facing east towards him where Cyclone uncovered him by the
 /// round boulder, makes him hop to the leader and join the party, the screen
@@ -194,7 +194,7 @@ void AttekaInlet_AskKradenToSetSail(void) {
   FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gMainRoutineWork.ownerOverride = 1;
@@ -208,7 +208,7 @@ void AttekaInlet_AskKradenToSetSail(void) {
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
-    Actor_SetAnimationById(ACTOR_KRADEN, 2);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
     actor = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
@@ -261,7 +261,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     // "I want to see our handiwork take flight. Don't you, buddy?"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHIPWRIGHT, 0);
     Actor_FaceDirectionAndWait(ACTOR_SECOND_SHIPWRIGHT, FACING_NORTH_NORTHWEST);
-    Actor_SetAnimationById(ACTOR_SECOND_SHIPWRIGHT, 3);
+    Actor_SetAnimationById(ACTOR_SECOND_SHIPWRIGHT, ANIM_NOD);
     // "I want to! Boy, do I want to!"
     Event_ShowMessageAndWait(ACTOR_SECOND_SHIPWRIGHT, 0);
     Actor_FaceDirectionById(ACTOR_SECOND_SHIPWRIGHT, FACING_EAST, 0);
@@ -313,13 +313,13 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimationAndWait(ACTOR_HAMMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     // "Now that you have been given wings, all obstacles in your path will..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "However, it is not the wings alone that grant your ship the power of..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-    Actor_SetAnimationById(ACTOR_HAMMA, 4);
+    Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
     // "Psynergy is the force that powers the Wings of Anemos."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     // "If the ship is to fly, you will need to focus the power of your..."
@@ -330,10 +330,10 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST);
     // "Now is the time to make use of the powers you acquired there."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-    Actor_SetAnimationAndWait(ACTOR_HAMMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     // "Now... Use the power of Hover to raise your ship!"
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-    Actor_SetAnimationById(ACTOR_HAMMA, 4);
+    Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
     // "At first, you may not want to move your ship too high or too far..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
@@ -344,7 +344,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_ShowEmoteById(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     // "But your quest should not demand much more of you..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-    Actor_SetAnimationAndWait(ACTOR_HAMMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     // "Now, be confident and set sail!"
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     Actor_SetSpeed(ACTOR_HAMMA, 0.8);
@@ -353,7 +353,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Event_Wait(1);
     Actor_GetById(ACTOR_HAMMA)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimationAndWait(ACTOR_HAMMA, 3);
+    Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
     // "All of Contigo is watching... Show them your power, and make your..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
     GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
@@ -385,7 +385,7 @@ void AttekaInlet_KradenAsksToSetSail(void) {
   FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gMainRoutineWork.ownerOverride = 1;
@@ -399,7 +399,7 @@ void AttekaInlet_KradenAsksToSetSail(void) {
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
-    Actor_SetAnimationById(ACTOR_KRADEN, 2);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
     actor = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
@@ -540,7 +540,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
                   0);
   // "I'm supposed to deliver this to Isaac... It's not too late, is it?"
   Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
-  Actor_SetAnimationAndWait(ACTOR_HAMMA, 3);
+  Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
   Actor_FaceDirectionAndRefreshById(ACTOR_HAMMETS_MESSENGER, angle);
   Actor_GetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 384);
@@ -555,7 +555,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_GetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_HAMMETS_MESSENGER, FACING_NORTH_NORTHWEST, 10);
-  Actor_SetAnimationAndWait(ACTOR_HAMMETS_MESSENGER, 3);
+  Actor_SetAnimationAndWait(ACTOR_HAMMETS_MESSENGER, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 434);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 348, 1);
   Actor_WalkToAndWait(ACTOR_HAMMETS_MESSENGER, 504, 460);
@@ -566,10 +566,10 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_ShowEmoteById(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   // "He was quite upset that you hadn't returned to visit him so that he..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-  Actor_SetAnimationById(ACTOR_HAMMA, 3);
+  Actor_SetAnimationById(ACTOR_HAMMA, ANIM_NOD);
   // "So he requested that I take this with me to Atteka."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-  Actor_SetAnimationAndWait(ACTOR_HAMMA, 3);
+  Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
   Actor_ShowEmoteById(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   // "It is a gift of thanks from Master Hammet. Take it, please."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
@@ -773,16 +773,21 @@ struct ActorPlacement gAttekaInlet_ActorPlacements[] = {
 
 /// The harbor's actors, in AttekaInletHarborActorId's order.
 struct ActorPlacement gAttekaInlet_HarborActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 88, 0, 376,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 216, 0, 328,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 168, 0, 184,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 488, 0, 408,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 552, 0, 424,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 216, 0, 328, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 168, 0, 184, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 488, 0, 408, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 552, 0, 424, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 152, 0, 296, FACING_SOUTHEAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -806,16 +811,21 @@ struct ActorPlacement gAttekaInlet_HarborActorPlacements[] = {
 /// The harbor's actors once the party has met again at Contigo and the ship
 /// has its wings.
 struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceWinged[] = {
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 88, 0, 376,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 216, 0, 328,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 168, 0, 184,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 488, 0, 408,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 552, 0, 424,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 216, 0, 328, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 168, 0, 184, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 488, 0, 408, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 552, 0, 424, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_SOUTHEAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -856,16 +866,21 @@ struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceWinged[] = {
 
 /// The harbor's actors once the ship has set out with its wings.
 struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceSetOut[] = {
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 88, 0, 376,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 216, 0, 328,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 168, 0, 184,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 488, 0, 408,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS, 7, 552, 0, 424,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 88, 0, 376, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 216, 0, 328, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 168, 0, 184, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 488, 0, 408, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_GLOWING_POST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_CLEAR_COLLISION, 552, 0, 424, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 162, 0, 300, FACING_SOUTHEAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -875,8 +890,9 @@ struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceSetOut[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS, 3, 204, 0,
-                    204, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_SPIKY_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER_NEAR, 204, 0, 204, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_CANNON, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
                     MOVEMENT_TYPE_STAND, 464, 0, 264, FACING_EAST,
                     TALK_FACING_KEEP, 0),
@@ -943,10 +959,13 @@ struct Trigger gAttekaInlet_Triggers[] = {
 /// The harbor's exits, the cabin door, Hamma's and Kraden's spots, talks and
 /// the messenger's check.
 struct Trigger gAttekaInlet_HarborTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     ATTEKA_INLET_TO_LEMURIAN_SHIP_CABINS, CONDITION_ALWAYS,
      EVENT(AttekaInlet_OpenDoorAndEnter)},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, ATTEKA_INLET_TO_ATTEKA_INLET_GEODE_SOUTH, CONDITION_ALWAYS,
+     ATTEKA_INLET_TO_ATTEKA_INLET_GEODE_SOUTH},
+    {TRIGGER_EXIT, ATTEKA_INLET_TO_ATTEKA_INLET_GEODE_NORTH, CONDITION_ALWAYS,
+     ATTEKA_INLET_TO_ATTEKA_INLET_GEODE_NORTH},
     {TRIGGER_STEP, 10, FLAG_HAMMA_SHOWED_THE_WINGS,
      EVENT(AttekaInlet_HammaShowsTheWings)},
     {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
@@ -1023,12 +1042,18 @@ struct Trigger gAttekaInlet_HarborTriggers[] = {
 /// The heights' exits, the shipwrights' spot, talks, Geode and Cyclone on its
 /// weeds.
 struct Trigger gAttekaInlet_HeightsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_SOUTH, CONDITION_ALWAYS,
+     ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_SOUTH},
+    {TRIGGER_EXIT, ATTEKA_INLET_GEODE_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS,
+     ATTEKA_INLET_GEODE_TO_WORLD_MAP_NORTH},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH,
+     ATTEKA_INLET_GEODE_TO_CONTIGO_SHOPS, CONDITION_ALWAYS,
+     ATTEKA_INLET_GEODE_TO_CONTIGO_SHOPS},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_NORTH, CONDITION_ALWAYS,
+     ATTEKA_INLET_GEODE_TO_ATTEKA_INLET_NORTH},
+    {TRIGGER_EXIT, ATTEKA_INLET_GEODE_TO_WORLD_MAP_SOUTH, CONDITION_ALWAYS,
+     ATTEKA_INLET_GEODE_TO_WORLD_MAP_SOUTH},
     {TRIGGER_STEP, 10, FLAG_SHIPWRIGHTS_STOPPED_PARTY,
      EVENT(AttekaInlet_ShipwrightsStopTheParty)},
     {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_GEODE, CONDITION_ALWAYS,

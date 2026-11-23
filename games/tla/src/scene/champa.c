@@ -143,7 +143,7 @@ enum ChampaActorId {
 };
 
 /// The chest Reveal shows by the six gravestones, holding the Viking Helm.
-#define ACTOR_VIKING_HELM_CHEST 64
+#define ACTOR_VIKING_HELM_CHEST FIELD_TREASURE_ACTOR
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -336,6 +336,10 @@ void Champa_TellOfBriggsTreasure(s32 actor) {
   s32 msg = (s32)&MsgChampaHeyYouJustCameTo;
 
   FieldEvent_SetMessageId(msg);
+  // "Hey, you just came to Champa not too long ago, didn't you?" Yes: "You'll
+  // be pleased to know that Briggs found ancient pirate treasure..." No:
+  // "Well, you wouldn't know it to look at us now, but Champa was quite
+  // poor..."
   Event_OpenMessage(actor, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -354,7 +358,9 @@ void Champa_TellOfBriggsTreasure(s32 actor) {
 void Champa_AskAboutAnkohlRuins(s32 actor) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldEvent_SetMessageId((s32)MsgChampaBriggsTookALongTime);
-    // "Briggs took a long time to return to us. You want to know why?"
+    // "Briggs took a long time to return to us. You want to know why?" Yes: "He
+    // was being held by an evil man who stole his money..." No: "Briggs
+    // overcame great danger to return home to us. I admire him."
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -367,7 +373,10 @@ void Champa_AskAboutAnkohlRuins(s32 actor) {
     Event_ShowMessage(actor, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgChampaYouveTheLookOfA);
-    // "You've the look of a traveler about you... Have you been to Ankohl..."
+    // "You've the look of a traveler about you... Have you been to Ankohl
+    // Ruins?" Yes: "Only those who have mastered the powers of the earth can
+    // enter the ruins." No: "My mistake... These old eyes aren't what they used
+    // to be..."
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -392,7 +401,8 @@ void Champa_TellOfObaba(s32 actor) {
   } else {
     FieldEvent_SetMessageId((s32)MsgChampaYoudThinkObabaWouldBe);
   }
-  // "You'd think Obaba would be glad that Briggs was back. She acts like..."
+  // "Obaba is the last possessor of the ancient secrets of Ankhol..." the
+  // first time, then "You'd think Obaba would be glad that Briggs was back."
   Event_ShowMessage(actor, 0);
 }
 
@@ -402,6 +412,10 @@ void Champa_AskIfSailorsAreWellLiked(s32 actor) {
   s32 msg = (s32)&MsgChampaTheChampaSailorsArentWell;
 
   FieldEvent_SetMessageId(msg);
+  // "The Champa sailors aren't...well liked outside of here, are we?" Yes:
+  // "Hey, that hurts... You could at least lie to me, just to be polite..."
+  // No: "Really? That's nice to hear. But if you do hear anything, don't
+  // believe a word of it."
   Event_OpenMessage(actor, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -477,10 +491,12 @@ void Champa_FeizhiArrives(void) {
       // "Isaac, is it you? Do my eyes deceive me?"
       Event_OpenMessage(ACTOR_FEIZHI, 0);
       if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
+        // "Oh. I must have been mistaken."
         FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
         gFieldWork->message = (gFieldWork->message + 1);
       } else {
         gFieldWork->message = (gFieldWork->message + 1);
+        // "No, you are not Isaac, are you?"
         FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       }
       Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -490,11 +506,13 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_Wait(20);
       Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      // "Young lady, are you looking for someone by the name of Isaac?"
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
       FieldEvent_Wait(5);
+      // "Yes, old man! I am looking for one called Isaac!"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(20);
@@ -503,46 +521,59 @@ void Champa_FeizhiArrives(void) {
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(20);
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_NORTH);
+      // "Where is Isaac?"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_FaceEachOther(ACTOR_KRADEN_MEETING_FEIZHI, ACTOR_FELIX, 0);
       FieldEvent_Wait(40);
       Actor_FaceDirection(ACTOR_KRADEN_MEETING_FEIZHI, FACING_SOUTH, 0);
       Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
       FieldEvent_Wait(20);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 4);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_SHAKE_HEAD);
+      // "I'm sorry... Isaac isn't with us..."
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
       FieldActor_Jump(ACTOR_FEIZHI, 2, 0);
+      // "Well then, where can I find Isaac?"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI,
                       EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+      // "Why do you want to find him so badly?"
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
       FieldEvent_Wait(5);
+      // "Me? I am Feizhi... Isaac helped me once."
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
+      // "He helped Ulmuch. Ulmuch was trapped, but Isaac saved him. He is a..."
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, EMOTE_IN_FRONT | EMOTE_SMILE,
                       30);
+      // "I suppose... But why are you looking for him? Do you like him? Is..."
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+      // "You're a mean old man. It is not polite to tease me."
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
+      // "That's what it is! You like Isaac!"
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
+      // "No! I am so embarrassed!"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_SOUTH);
       FieldEvent_Wait(10);
       Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI, EMOTE_IN_FRONT | EMOTE_SMILE,
                       30);
+      // "Don't worry, Feizhi... We'll tell Isaac how you feel!"
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
       Actor_FaceDirectionAndWait(ACTOR_FEIZHI, FACING_NORTH);
       FieldEvent_Wait(10);
       Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+      // "I... Really?"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(ACTOR_FEIZHI, 2);
       FieldEvent_Wait(5);
+      // "Then...will you give him this when you tell him?"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Champa_FeizhiHoldsHerGift();
       Actor_FaceEachOther(ACTOR_KRADEN_MEETING_FEIZHI, ACTOR_FELIX, 0);
@@ -550,20 +581,24 @@ void Champa_FeizhiArrives(void) {
       Actor_FaceDirection(ACTOR_KRADEN_MEETING_FEIZHI, FACING_SOUTH, 0);
       Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
       FieldEvent_Wait(20);
+      // "What is it?"
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
+      // "Isaac is on a dangerous journey. I am worried about him, so I made..."
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_ShowEmote(ACTOR_KRADEN_MEETING_FEIZHI,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      // "Ah, a good luck charm... I see."
       FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_MEETING_FEIZHI, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
+      // "I am going home now, old man. Thank you for doing this favor for me."
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
-      Actor_SetAnimationAndWait(ACTOR_FEIZHI, 3);
+      Actor_SetAnimationAndWait(ACTOR_FEIZHI, ANIM_NOD);
       FieldEvent_Wait(10);
       EventCamera_FollowActor(ACTOR_FELIX, 1);
       Actor_SetSpeed(ACTOR_FEIZHI, 1.2);
@@ -571,10 +606,10 @@ void Champa_FeizhiArrives(void) {
       FieldEvent_Wait(10);
       Actor_FaceEachOther(ACTOR_FELIX, ACTOR_KRADEN_MEETING_FEIZHI, 0);
       FieldEvent_Wait(30);
-      Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, 3);
+      Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_NOD);
       Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
       FieldEvent_Wait(30);
-      Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, 2);
+      Actor_SetAnimation(ACTOR_KRADEN_MEETING_FEIZHI, ANIM_WALK);
       Actor_HeadToward(ACTOR_KRADEN_MEETING_FEIZHI, ACTOR_FELIX);
       FieldActor_WaitForMoveById(ACTOR_KRADEN_MEETING_FEIZHI);
       Actor_SetPosition(ACTOR_KRADEN_MEETING_FEIZHI, 0, 0);
@@ -811,7 +846,7 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "Alex!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   // "Alex? Who is Alex?"
@@ -826,14 +861,19 @@ void Champa_MeetAlex(void) {
   // "A Water Adept?"
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Ah, and I see you've made a new friend! You..." Yes: "And you've found
+  // yourself a new Water Adept..." No: "Please... It's quite obvious that you
+  // decided..."
   Champa_MessageOpen(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     FieldEvent_Wait(15);
+    // "And you've found yourself a new Water Adept! Do you mean to cast me..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(35);
     gFieldWork->message = (gFieldWork->message + 1);
+    // "Please... It's quite obvious that you decided to replace me with a..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   }
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
@@ -843,6 +883,7 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "What do you want with us now, Alex? Or did you forget you were the one..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
@@ -850,8 +891,12 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "My dear Jenna..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(5);
+  // "Have you come to despise me so, after all..." Yes: "That's right, Felix!
+  // Why should we care about..." No: "Duh! You're the one who left us. It's
+  // pretty..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
@@ -862,6 +907,7 @@ void Champa_MeetAlex(void) {
     FieldEvent_Wait(10);
     Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
     FieldEvent_Wait(10);
+    // "That's right, Felix! Why should we care about someone who just left..."
     Event_ShowMessage(ACTOR_SHEBA, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
@@ -871,18 +917,22 @@ void Champa_MeetAlex(void) {
     Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
     FieldEvent_Wait(10);
     gFieldWork->message = (gFieldWork->message + 1);
+    // "Duh! You're the one who left us. It's pretty clear who despises whom..."
     Event_ShowMessage(ACTOR_SHEBA, 0);
   }
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "My, aren't we a bitter bunch? And I was just trying to help you with..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "We have no need of your help. We can light the lighthouses without you."
   Event_ShowMessage(ACTOR_KRADEN, 0);
+  // "Oh... Can you really?"
   Event_ShowMessage(ACTOR_KARST, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
@@ -914,13 +964,18 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
+  // "Karst!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KARST, 3);
+  Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_NOD);
+  // "That's right, Karst! I'm flattered that you remember!"
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
+  // "What is this, Alex? What's going on?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Ah, how can I explain this..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
+  // "What's going on is Alex is demonstrating his remarkable foresight once..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
@@ -952,17 +1007,23 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Oh, have you not had the pleasure of an introduction?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTH_NORTHWEST);
+  // "He stayed back at the ship when I saw them in Madra."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_WalkByAndWait(ACTOR_AGATIO, 16, 0);
+  // "I am Agatio."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   FieldActor_Jump(ACTOR_AGATIO, 4, 25);
+  // "Let's see... That guy's Felix, and the girls are Jenna and Sheba..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_NORTH_NORTHEAST);
+  // "They look like an unreliable bunch of ragamuffins."
   Event_ShowMessage(ACTOR_AGATIO, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(15);
+  // "Yes, they are rather useless, aren't they? That's why I finally had to..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
@@ -970,7 +1031,8 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "But now, I believe I may have been...hasty in my judgment."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -981,42 +1043,55 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(5);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "You are Piers?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "H-How do you know my name?"
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "How soon they forget! We met you before, when you were being...detained."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "Who could forget the amateur Adept changing water to ice in that..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 42);
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, -16);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  // "Ah! You saw that! That must be how you knew Piers was a Water Adept."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "In fact, I was even thinking of borrowing his ship at one point."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "You would steal someone's boat? That's so typical, Alex!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  // "You wound me, Jenna... I only meant to borrow it."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Whatever you might have meant, that doesn't make it right!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "And just when I was about to seize the opportunity, you had to come back."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
+  // "You mean from Kibombo..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "I was mere moments too late."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkByAndWait(ACTOR_KRADEN, 8, -8);
   FieldEvent_Wait(5);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Isn't that a shame."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetSpeed(ACTOR_ALEX, 1);
   Actor_Get(ACTOR_ALEX)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1026,10 +1101,12 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Still, because of that, I did meet Karst and Agatio, so perhaps it was..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "Can't you just stop talking about yourself for one second, Alex?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   FieldActor_StartRepeatedMotion(ACTOR_ALEX, 3);
   Actor_SetAttachedEffect(ACTOR_ALEX,
@@ -1037,27 +1114,34 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTH_NORTHWEST);
+  // "Enough of your childish gibes! Alex, I want to know what makes these..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_SetSpeed(ACTOR_ALEX, 0.6);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_EAST);
   Actor_WalkBy(ACTOR_ALEX, 8, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "Because they brought us the orb that Akafubu had taken. That shows..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "How so?"
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
+  // "The Kibombo are quite warlike... or were, at any rate. Recovering the..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "They were just typical villagers, easily frightened with a small..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "No... They would have used less abrupt methods than those you favor..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_EAST);
   FieldEvent_Wait(5);
+  // "Oh? What methods would those be?"
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1072,11 +1156,13 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "Alex said it clearly enough. We wouldn't terrorize people into doing..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
   FieldActor_Jump(ACTOR_KARST, 6, 15);
   FieldActor_Jump(ACTOR_KARST, 6, 23);
+  // "Enough of this!"
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -1085,13 +1171,16 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
+  // "Stop changing the subject! When are you going to light the remaining..."
   Event_ShowMessage(ACTOR_KARST, 0);
   FieldActor_Jump(ACTOR_AGATIO, 6, 15);
   FieldActor_Jump(ACTOR_AGATIO, 6, 23);
+  // "Yes! Our patience is beginning to wear thin!"
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetSpeed(ACTOR_KARST, 1.8);
   Actor_WalkByAndWait(ACTOR_KARST, -12, 0);
   FieldEvent_Wait(5);
+  // "If you waste much more of our time, we'll take those Elemental Stars..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1102,11 +1191,14 @@ void Champa_MeetAlex(void) {
   Actor_WalkByAndWait(ACTOR_AGATIO, 12, 0);
   FieldEvent_Wait(5);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "If we had a Wind Adept like Sheba and the Elemental Stars, we wouldn't..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  // "Excuse me?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I am, of course, opposed to their line of thinking."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_KARST, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHEAST, 0);
@@ -1116,9 +1208,11 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "My experience with Saturos and Menardi suggests that, while they were..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "You mean to say that they failed to solve the riddles?"
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
@@ -1126,11 +1220,13 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "Miserably..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 42);
   FieldActor_Jump(ACTOR_AGATIO, 6, 15);
   FieldActor_Jump(ACTOR_AGATIO, 6, 23);
+  // "Are you suggesting they were simple brutes, incapable of logic and..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -1139,10 +1235,12 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "I'm afraid so..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTH_NORTHWEST);
+  // "Alex... Whose side are you on?"
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
@@ -1152,8 +1250,10 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "I am on no one's side. My only concern is to see the lighthouse..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
+  // "So you mean to leave the task to Felix?"
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -1162,17 +1262,21 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(15);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
+  // "Then why have we come all this way looking for Felix?"
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
+  // "I merely wanted to confirm that he and his companions had not..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
+  // "Is that truly all?"
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "I also wanted to introduce Felix to the two of you."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
@@ -1181,30 +1285,39 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Why would you want to do that?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "With Saturos and Menardi gone, you probably felt very little pressure..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "What do you mean by that!?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "With Saturos and Menardi gone, I felt another pair might... How shall..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
+  // "Is that some kind of threat?"
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(15);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Take it as you wish. I just wanted to provide you with the proper..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-  Actor_SetAnimationAndWait(ACTOR_KARST, 3);
+  Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_NOD);
+  // "So, what? You've used us to your satisfaction, and now, our role is done?"
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
+  // "You only wanted us around to flex a little muscle and scare them into..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_EAST);
+  // "I suppose we will let you go today..."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -1223,7 +1336,8 @@ void Champa_MeetAlex(void) {
   Actor_WalkByAndWait(ACTOR_AGATIO, 32, 32);
   Actor_WalkByAndWait(ACTOR_AGATIO, 0, 32);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
-  Actor_SetAnimationAndWait(ACTOR_KARST, 3);
+  Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_NOD);
+  // "But we will always be nearby... pushing you to make your way to..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
@@ -1248,8 +1362,9 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_KARST, 0, 0);
   Actor_SetPosition(ACTOR_AGATIO, 0, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "I look forward to seeing you soon, Felix, somewhere very near Jupiter..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_ALEX);
   FieldActor_WatchAndSetScript(ACTOR_PIERS, ACTOR_ALEX);
@@ -1267,6 +1382,7 @@ void Champa_MeetAlex(void) {
   FieldCamera_MoveTo(304, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
+  // "Kraden, am I right in recalling that you pursue this quest on the..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
@@ -1274,15 +1390,20 @@ void Champa_MeetAlex(void) {
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, 32);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "This is true. I'm studying Alchemy because Lord Babi has ordered it."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What about it?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "Ah, what a pity. It would seem all your studies... have been for naught."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "What are you getting at, Alex?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Only that it seems your Lord Babi has at last succumbed to the ravages..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldActor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
@@ -1306,19 +1427,25 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_KRADEN, 8);
   FieldEvent_Wait(30);
+  // "Lord Babi is dead?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "Oh, so you didn't know?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Lord Babi? Dead? Could that really be true?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(25);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
+  // "Alex! How would you know such a thing?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "Do not mistake me! We had no hand in Babi's passing."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "However, the people of Tolbi may be under the impression that our..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
@@ -1328,18 +1455,24 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Alex! Cut the melodrama and get to the point for a change!"
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "Simply put, I would recommend against traveling to north Gondowan for..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "I just thought it might be better if you focused on your quest..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
+  // "How kind of you."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Take it as you will..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(10);
+  // "Very well. May we meet again."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_WalkByAndWait(ACTOR_ALEX, 0, 80);
@@ -1350,50 +1483,63 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Event_PlaySound(MUS_CHAMPA);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "So the only reason Alex came here was to threaten us?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "And to bring us news of Babi's death, despite the fact that we asked..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Perhaps he had his own reasons for telling Kraden..."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What do you mean, Piers?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
+  // "If Kraden undertook this quest on behalf of Babi, then he no longer..."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHWEST);
   FieldEvent_Wait(10);
+  // "Oh. Of course! I hadn't thought of that. Your orders were to find..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "That's right. But if Babi really has died, you're free to go where you..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 1);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, 16);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(5);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "That's not true, Sheba."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Certainly, my original reason for researching Alchemy was for Lord..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // ""Was for Lord Babi"? That's the past tense! What are your reasons now?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "This is no longer solely for research... I do this because of what..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_StartRepeatedMotion(ACTOR_PIERS, 3);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Your research?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What you learned on this quest?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST + 1);
@@ -1406,9 +1552,12 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  // Jenna: "I'm not following you at all!" Sheba: "I don't understand a word
+  // of this."
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 5, 5, 18, 8, ACTOR_SHEBA, 6,
                                     14, 8, 9, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Of course you don't! Felix is the only one I've spoken to about any of..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
@@ -1419,12 +1568,16 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // Jenna: "What!? You knew!?" Sheba: "That's not fair! Tell us!" Yes:
+  // "Please, Felix... Let's not say too much..." No: "Felix is right. Now is
+  // not the time to tell you about it all..."
   Champa_ShowTwoMessages(ACTOR_JENNA, 8, 5, 18, 8, ACTOR_SHEBA, 8, 14, 8, 9, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHWEST);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Champa_CloseTwoMessages(ACTOR_JENNA, ACTOR_SHEBA);
     FieldEvent_Wait(15);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "Please, Felix... Let's not say too much about it just yet."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
@@ -1432,6 +1585,7 @@ void Champa_MeetAlex(void) {
     FieldEvent_Wait(35);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     gFieldWork->message = (gFieldWork->message + 1);
+    // "Felix is right. Now is not the time to tell you about it all..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
@@ -1440,35 +1594,45 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 45);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "It's...far too complicated."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_JENNA, 6, 15);
   FieldActor_Jump(ACTOR_JENNA, 6, 23);
+  // "Well, when WILL you tell us?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "I am sure we will tell you once we get to Lemuria."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_SHEBA, 6, 15);
   FieldActor_Jump(ACTOR_SHEBA, 6, 23);
+  // "Do you promise?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "I promise..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, -8);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
   FieldEvent_Wait(5);
+  // "Piers? You don't mind waiting?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I cannot read minds, like Sheba, but I have a guess at what you're..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "A guess? What do you mean?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "You are a great scholar, Kraden, are you not?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   FieldEvent_Wait(5);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 45);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "I believe your theory is correct. And to prove it, I want to return to..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(20);
@@ -1481,7 +1645,7 @@ void Champa_MeetAlex(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
@@ -1499,7 +1663,7 @@ void Champa_MeetAlex(void) {
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_HeadToward(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1553,7 +1717,7 @@ struct ActorPlacement gChampa_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 432, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, 8, 440, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 440, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 408, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1632,26 +1796,31 @@ struct MapGridCellAnimation gChampa_Doors[] = {
 
 /// Champa's exits, doors, talks, Mind Read and Psynergy.
 struct Trigger gChampa_Triggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_B, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_NORTH,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_WEST,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_NORTHEAST,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_EAST,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_SANCTUM,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_CLIFF_CAVES_BRIGGS, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, CHAMPA_TO_WORLD_MAP, CONDITION_ALWAYS, CHAMPA_TO_WORLD_MAP},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_CLIFF_CAVES_HOUSES, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_CLIFF_CAVES_OBABA, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
@@ -1718,26 +1887,31 @@ struct Trigger gChampa_Triggers[] = {
 
 /// Champa's triggers once Briggs has sailed, the sailors' warning among them.
 struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_B, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_NORTH,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_WEST,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_NORTHEAST,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_ROOMS_EAST,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CHAMPA_TO_CHAMPA_SANCTUM,
+     CONDITION_ALWAYS, EVENT(Champa_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_CLIFF_CAVES_BRIGGS, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, CHAMPA_TO_WORLD_MAP, CONDITION_ALWAYS, CHAMPA_TO_WORLD_MAP},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_CLIFF_CAVES_HOUSES, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
-     EVENT(Champa_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CHAMPA_TO_CHAMPA_CLIFF_CAVES_OBABA, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},

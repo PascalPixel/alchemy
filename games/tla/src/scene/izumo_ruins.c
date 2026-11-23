@@ -406,15 +406,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-u32 gRubble_SprayScript[] = {
-    SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/rubble_spray_script.c"
 
-u32 gRubble_BurstScript[] = {
-    SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/rubble_burst_script.c"
 
 #include "shared/field_effect_duration_scripts.c"
 

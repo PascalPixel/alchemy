@@ -153,7 +153,7 @@ extern u32 gWaterDropScript[];
 extern const u8 gAquaRockInside_PillarTiles[];
 /// The splashes' tiles, compressed.
 extern const u8 gAquaRockInside_SplashTiles[];
-extern u32 gTaopoSwamp_PuffRises[];
+extern u32 gRubble_BurstScript[];
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
@@ -2642,11 +2642,8 @@ u32 gWaterDropScript[] = {
 #undef SET_BG1CNT_PRIORITY
 
 // clang-format off
-/// A vent's puff's rise.
-LATE_DATA u32 gTaopoSwamp_PuffRises[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
-};
+#define RUBBLE_SCRIPT_SECTION LATE_DATA
+#include "shared/rubble_burst_script.c"
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

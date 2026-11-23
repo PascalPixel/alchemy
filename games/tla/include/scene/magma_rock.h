@@ -75,9 +75,9 @@ s32 Field_TryJumpForward(void);
 
 void Dust_Scatter(s32 spread);
 void MagmaRock_SetLeaderCellShape(s32 heightOffset, s32 layer);
-extern u32 gDust_ScatterScript[];
+extern u32 gRubble_SprayScript[];
 
-extern u32 gMagmaRock_DustScript[];
+extern u32 gRubble_BurstScript[];
 
 void MagmaRock_FireStatue(void);
 

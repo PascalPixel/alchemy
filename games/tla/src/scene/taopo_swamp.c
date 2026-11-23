@@ -313,7 +313,7 @@ enum {
 enum { VENT_BESIDE_WEST_PILLAR = 2, VENT_BESIDE_EAST_PILLAR = 8 };
 
 void Vent_Bounce(struct Actor *actor);
-extern u32 gTaopoSwamp_PuffRises[];
+extern u32 gRubble_BurstScript[];
 extern s32 gTaopoSwamp_SparkleFrame;
 void BlendScript_Suspend(void);
 void TaopoSwamp_SparkleStarDust(void);
@@ -2262,10 +2262,7 @@ u32 gTaopoSwamp_SplashFades[] = {
     SC_RELEASE,
 };
 
-u32 gTaopoSwamp_PuffRises[] = {
-    0, 44, 22, 38, 0, 2,
-    0, 0, 0, 0, 1, 38,
-};
+#include "shared/rubble_burst_script.c"
 
 #include "shared/scene_entrances_default.c"
 

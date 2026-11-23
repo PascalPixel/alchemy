@@ -859,9 +859,9 @@ void TundariaTower_ParchRightWater(void);
 extern s16 gSlideOnIce_SteerAngles[];
 extern s16 gSlideOnIce_AnglesByKey[];
 
-extern u32 gTundariaTower_DustScatterScript[];
+extern u32 gRubble_SprayScript[];
 
-extern u32 gTundariaTower_DustRingScript[];
+extern u32 gRubble_BurstScript[];
 
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
@@ -1485,7 +1485,7 @@ void TundariaTower_ScatterDust(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      TundariaTower_StartEffectScript(effect, gTundariaTower_DustScatterScript);
+      TundariaTower_StartEffectScript(effect, gRubble_SprayScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -1526,7 +1526,7 @@ void TundariaTower_SpawnDustRing(void) {
         effect->collisionFlags = 0;
         Actor_SetSpriteFlags(effect, 0);
         Actor_SelectAnimation(effect, 2);
-        TundariaTower_StartEffectScript(effect, gTundariaTower_DustRingScript);
+        TundariaTower_StartEffectScript(effect, gRubble_BurstScript);
         angle = i * (TRIG_TURN / DUST_RING_PUFFS);
         effect->velocity.x = Trig_Cos(angle);
         effect->velocity.y = 0;
@@ -1614,21 +1614,9 @@ s16 gTundariaTowerBurstBroochPillar[] = {
 
 #include "shared/slide_on_ice_angles.c"
 
-u32 gTundariaTower_DustScatterScript[] = {
-    SC_WAIT(33),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/rubble_spray_script.c"
 
-u32 gTundariaTower_DustRingScript[] = {
-    SC_WAIT(44),
-    SC_SET(SW_HOOK, 0),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/rubble_burst_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

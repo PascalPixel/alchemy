@@ -2394,7 +2394,7 @@ void MagmaRock_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gMagmaRock_DustScript);
+      Actor_StartScript(effect, gRubble_BurstScript);
       angle = i * (TRIG_TURN / DUST_RING_PUFFS);
       effect->velocity.x = Trig_Cos(angle);
       effect->velocity.y = 0;
@@ -2596,17 +2596,9 @@ s16 gMagmaRock_StatueStatues[] = {
     -1, 0,
 };
 
-/// A scattered dust cloud's actor script: it lasts 33 frames.
-u32 gDust_ScatterScript[] = {                                                               
-      SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/rubble_spray_script.c"
 
-/// A dust cloud's actor script: it lasts 44 frames.
-u32 gMagmaRock_DustScript[] = {                                                               
-      SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_RELEASE,                                                                 
-  };
+#include "shared/rubble_burst_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

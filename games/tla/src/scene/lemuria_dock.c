@@ -1,7 +1,7 @@
 /// @file
 /// Lemuria's dock, where the Lemurian ship ties up: Kraden steps off to wait by
-/// the ship and asks whether the party is ready to sail, and a house stands on
-/// the quay.
+/// the ship and asks whether the party is ready to sail, and a door on the
+/// deck leads down into the ship's cabins.
 
 #include "system/task.h"
 #include "sprite_ids.h"
@@ -36,35 +36,27 @@ enum {
   ACTOR_CANNON
 };
 
-/// A door the leader walks into: the cell animation that opens it and the cell
-/// (x, z) it plays at.
-struct WarpTarget {
-  s32 script; ///< the door's cell animation
-  u16 x;
-  u16 z;
-};
-
 extern u8 MsgAreWeSetting[];
 extern s32 gLemuriaDock_Exits[];
 extern s32 gLemuriaDock_ExitsToOtherWayIn[];
-extern struct WarpTarget gLemuriaDock_HouseDoor;
+extern struct MapGridCellAnimation gLemuriaDock_CabinDoor;
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode);
+void LemuriaDock_EnterDoor(const struct MapGridCellAnimation *door, s32 exit,
+                           s32 mode);
 void LemuriaDock_CyclePalette(void);
 void Event_End(void);
 
-extern s16 gLemuriaDock_HouseDoorOpening[];
+extern u16 gLemuriaDock_CabinDoorOpening[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// The dock leads back to the way into Lemuria the party came by: Lemuria's
-/// entrance sets FLAG_LEMURIA_OTHER_WAY_IN when the party leaves by its fifth
-/// exit.
+/// The dock's ways lead back the way the party came into Lemuria, which the
+/// harbour and the shore of Ancient Lemuria note in FLAG_LEMURIA_OTHER_WAY_IN.
 s32 *Scene_GetExits(void) {
   if (!Event_GetFlag(FLAG_LEMURIA_OTHER_WAY_IN))
     return gLemuriaDock_Exits;
@@ -75,13 +67,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Arriving on the dock (entrance 2): where Kraden is not already on the dock
-/// he steps out from the leader and walks to his place by the ship; where he
-/// is, he walks back into the leader.
+/// Coming up the pier from the shore of Ancient Lemuria: where Kraden is not
+/// already on the dock he steps out from the leader and walks to his place by
+/// the ship; where he is, he walks back into the leader.
 void LemuriaDock_MoveKraden(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->entrance == 2) {
+  if (party->entrance == LEMURIA_DOCK_FROM_ANCIENT_LEMURIA_EAST_A) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (Actor_GetById(ACTOR_KRADEN)->x.fixed == 0) {
@@ -110,9 +102,7 @@ void LemuriaDock_MoveKraden(void) {
   }
 }
 
-/// Kraden asks whether the party is ready to sail; yes takes it aboard the ship
-/// (exit 1).
-/// "Felix, are we setting off now?"
+/// Kraden asks whether the party is ready to sail; yes sets sail.
 void LemuriaDock_AskSettingOff(void) {
   struct MainRoutineWork *party;
   s32 id;
@@ -148,7 +138,7 @@ void LemuriaDock_AskSettingOff(void) {
     Event_Wait(10);
 
     gMainRoutineWork.ownerOverride = 1;
-    Import_EventSetExitRequest(1);
+    Import_EventSetExitRequest(LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH);
   } else {
     Event_Wait(20);
     gFieldWork->message++;
@@ -157,16 +147,16 @@ void LemuriaDock_AskSettingOff(void) {
   }
 }
 
-/// The party leader walks into the door `warp` names, which opens with its cell
-/// animation, and leaves by exit `door`; mode 0 lines the leader up with the
-/// door first.
-void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
+/// The door opens and the leader walks in through it, lined up with it first
+/// (`mode` 0) or straight ahead (`mode` 1), leaving by `exit`.
+void LemuriaDock_EnterDoor(const struct MapGridCellAnimation *door, s32 exit,
+                           s32 mode) {
   s32 id;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(warp->script, warp->x, warp->z);
+  MapGrid_AnimateCells(door->steps, door->x, door->y);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -176,15 +166,16 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   else
     Actor_SetDestinationOffset(id, 0, -8);
   Event_Wait(10);
-  Import_EventSetExitRequest(door);
+  Import_EventSetExitRequest(exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
 }
 
-/// The leader walks into the dock's house through its door.
-void LemuriaDock_EnterHouse(s32 door) {
-  LemuriaDock_EnterDoor(&gLemuriaDock_HouseDoor, door, 0);
+/// Felix walks north into the door on the ship's deck: it opens and he goes
+/// down into the cabins.
+void LemuriaDock_EnterCabins(s32 exit) {
+  LemuriaDock_EnterDoor(&gLemuriaDock_CabinDoor, exit, 0);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -242,23 +233,22 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-/// The dock's exits: which of Ancient Lemuria's entrances the way north leads
-/// to follows FLAG_LEMURIA_OTHER_WAY_IN, which Ancient Lemuria sets by the way the party last
-/// came.
+/// The dock's exits, when the party came in by the harbour's north quay and
+/// the shore's first way.
 s32 gLemuriaDock_Exits[] = {
     SCENE_EXITS(LemuriaDock),
-    SCENE_EXIT_UNLESS(1, LemuriaEntrance, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AncientLemuria, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LemurianShipCabins, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH, LemuriaEntrance, LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A, AncientLemuria, ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_LEMURIAN_SHIP_CABINS, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_MAIN_DECK, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 /// The dock's exits once the party came by Lemuria's other way in.
 s32 gLemuriaDock_ExitsToOtherWayIn[] = {
     SCENE_EXITS(LemuriaDock),
-    SCENE_EXIT_UNLESS(1, LemuriaEntrance, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AncientLemuria, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LemurianShipCabins, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH, LemuriaEntrance, LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A, AncientLemuria, ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LEMURIA_DOCK_TO_LEMURIAN_SHIP_CABINS, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_MAIN_DECK, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -270,20 +260,23 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The steps of the dock house's door opening.
-s16 gLemuriaDock_HouseDoorOpening[] = {
-    51, 38, 1, 1, 6, -1,
+/// The cabin door's opening, one frame of cells copied over the shut door.
+u16 gLemuriaDock_CabinDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(51, 38, 1, 1, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 // clang-format on
 
-/// The dock house's door opening, at its place on the map grid.
-struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gLemuriaDock_HouseDoorOpening,
-                                            70, 22};
+/// The cabin door's opening, at its place on the map grid.
+struct MapGridCellAnimation gLemuriaDock_CabinDoor = {
+    gLemuriaDock_CabinDoorOpening, 70, 22};
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-     EVENT(LemuriaDock_EnterHouse)},
+    {TRIGGER_EXIT, LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A, CONDITION_ALWAYS,
+     LEMURIA_DOCK_TO_ANCIENT_LEMURIA_EAST_A},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     LEMURIA_DOCK_TO_LEMURIAN_SHIP_CABINS, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_EnterCabins)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MoveKraden)},
     {TRIGGER_TALK, ACTOR_KRADEN, CONDITION_ALWAYS,
      EVENT(LemuriaDock_AskSettingOff)},

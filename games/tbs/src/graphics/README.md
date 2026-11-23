@@ -8,7 +8,7 @@ that comes out has your picture in it.
 This page says what a picture can be: its format, its colours, its size,
 and how each kind is put together.
 
-## How the console draws a picture
+## How the console draws an image
 
 ![The title intro fades in: every colour on screen, the sky, the mountain and the sun's flares, brightens from a dark red towards its own colour](https://alchemy.pascalpixel.com/guides/graphics/title-fade.gif)
 

@@ -274,7 +274,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// outside window 0.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
-/// The battle background's picture as BG1 shows it from BG character block 2,
+/// The battle background's image as BG1 shows it from BG character block 2,
 /// one byte a pixel.
 #define BATTLE_BACKGROUND_WIDTH 256
 #define BATTLE_BACKGROUND_HEIGHT 120
@@ -290,7 +290,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
 /// Ram_MapGridCellBuffer as the unused blue ramp uses it: a working copy of the
-/// battle background's picture.
+/// battle background's image.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer
 
 /// Caps a colour level at cap, and at 0 from below.

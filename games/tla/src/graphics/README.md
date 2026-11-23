@@ -8,7 +8,7 @@ that comes out has your picture in it.
 This page says what a picture can be: its format, its colours, its size,
 and how each kind is put together.
 
-## How the console draws a picture
+## How the console draws an image
 
 ![The intro after `Camelot presents`: every colour of the clouds brightens from dark red towards its own](https://alchemy.pascalpixel.com/tla/guides/graphics/title-fade.gif)
 

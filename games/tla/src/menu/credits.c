@@ -1,6 +1,6 @@
 /// @file
 /// The staff credits: the battle backdrops behind them, the lines that scroll
-/// past, and the scrolling pictures with their border strips.
+/// past, and the scrolling images with their border strips.
 ///
 /// One object, as The Broken Seal's credits.c is, with its slides and lines at
 /// its end; the background decoders linked before it are assembly
@@ -61,7 +61,7 @@ extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern const u32 gDisplayScroll_SlideResources[];
 extern const void *gDisplayScroll_LineTable[];
 
-/// The scrolling picture's state. EndingPicture_Scroll, a VBlank task, moves
+/// The scrolling image's state. EndingPicture_Scroll, a VBlank task, moves
 /// the scroll toward its target while EndingPicture_WaitForScroll waits for it
 /// to arrive.
 ///@{
@@ -152,7 +152,7 @@ extern u8 gDebugTextEnabled;
 /// A message of the story crawl takes two scroll lines of 8 pixels.
 #define CRAWL_MESSAGE_PIXELS (2 * 8)
 
-/// The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
+/// The ending's scrolling images: a map buffer of 15 columns, each a strip of
 /// 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
 #define ENDING_PICTURE_COLUMNS 15
 #define ENDING_PICTURE_STRIP_BYTES 4096
@@ -890,10 +890,10 @@ UNUSED void Credits_ReservedNoOp(void) {}
 /// Sets the position the credits' scroll moves to.
 void SceneState_SetScrollTarget(u16 row) { gEndingPicture_TargetRow = row; }
 
-/// Copies 15 columns of a scrolling picture's map into a wrapping 2 KB
+/// Copies 15 columns of a scrolling image's map into a wrapping 2 KB
 /// tilemap by DMA, 31 rows of 64 bytes each, from the row the position
 /// selects, and records the position in the three scroll words. The
-/// scrolling picture scene's callback (EndingPicture_Scroll) and its picture
+/// scrolling image scene's callback (EndingPicture_Scroll) and its image
 /// loader (EndingPicture_Show, through its inline copy) call it.
 void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
   u32 start;
@@ -1076,7 +1076,7 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
   }
 }
 
-/// Shows a scrolling picture on the hidden one of the two BG character blocks.
+/// Shows a scrolling image on the hidden one of the two BG character blocks.
 /// With no resource it fills the map buffer with a plain tile word and clears
 /// the palette half; otherwise it clears the block's first 2 KB, expands
 /// resource's map into the buffer with EndingPicture_DecodeCode copied to the
@@ -1151,7 +1151,7 @@ void EndingPicture_DrawStrips(void) {
     Oam_AddSpriteAtDepthClamped(entry++, 0);
 }
 
-/// Allocates the 24 sprite entries of the scrolling picture's border strips,
+/// Allocates the 24 sprite entries of the scrolling image's border strips,
 /// fills their tiles with colour 1 and adds EndingPicture_DrawStrips to draw
 /// them; the entries are written as words, as The Broken Seal's
 /// Credits_InitCrawlSprites writes its strips.

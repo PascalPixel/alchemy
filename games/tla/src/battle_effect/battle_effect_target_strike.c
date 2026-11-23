@@ -1146,7 +1146,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
 
-  // Keep the battle background's picture aside, show the battle background
+  // Keep the battle background's image aside, show the battle background
   // with its colours black, and flash the first target.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2),
                   BATTLE_BACKGROUND_BYTES);

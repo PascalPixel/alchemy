@@ -30,7 +30,7 @@ number.
 
 ![Jenna casts Heat Wave at Piers: a blaze crosses the screen and bursts into sparks around him](https://alchemy.pascalpixel.com/tla/abilities/heat-wave.gif)
 
-Nearly every effect draws on the canvas, a picture of 128 by 128 kept to
+Nearly every effect draws on the canvas, an image of 128 by 128 kept to
 one side and laid over the battle on a background layer.
 
 A canvas pixel is not a colour. It is a brightness, a level from 0 to 63.

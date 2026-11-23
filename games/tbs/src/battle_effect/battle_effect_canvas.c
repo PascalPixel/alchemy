@@ -116,7 +116,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
   *counter = nextCounter;
 }
 
-/// Copies a full-screen picture to VRAM once the effect has finished a frame,
+/// Copies a full-screen image to VRAM once the effect has finished a frame,
 /// as transferMode says.
 void BattleEffect_FlushPendingGraphicsTransfer(void) {
   struct BattleEffectWork *work;

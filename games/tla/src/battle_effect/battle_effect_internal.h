@@ -310,7 +310,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define TARGET_STRIKE_BITE_WIDTH 18
 #define TARGET_STRIKE_BITE_HEIGHT 48
 
-/// The battle background's picture as BG1 shows it from BG character block 2,
+/// The battle background's image as BG1 shows it from BG character block 2,
 /// one byte a pixel.
 #define BATTLE_BACKGROUND_WIDTH 256
 #define BATTLE_BACKGROUND_HEIGHT 120

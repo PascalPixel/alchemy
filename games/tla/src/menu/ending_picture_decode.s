@@ -1,6 +1,6 @@
-@ The same two ARM routines again, beside the ending's scrolling pictures that
+@ The same two ARM routines again, beside the ending's scrolling images that
 @ use the second: a copy of credits_background_decode.s whose decoder writes
-@ 64 rows a band and steps 4 KB, the pictures' map strips.
+@ 64 rows a band and steps 4 KB, the images' map strips.
 @
 @ EndingPicture_InnerProduct: Vector_InnerProduct again. Nothing calls it.
 @

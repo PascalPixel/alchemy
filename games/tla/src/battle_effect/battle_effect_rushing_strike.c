@@ -244,14 +244,14 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The battle background's picture in BG1's flat map: BACKDROP_ROWS rows of
+/// The battle background's image in BG1's flat map: BACKDROP_ROWS rows of
 /// BG_SCREEN_WIDTH tiles from BACKDROP_FIRST_TILE.
 #define BACKDROP_FIRST_TILE 512
 #define BACKDROP_ROWS 15
 /// The first tile of the picture's right half.
 #define BACKDROP_RIGHT_HALF (BACKDROP_FIRST_TILE + BG_SCREEN_WIDTH / 2)
 
-/// Lays BG1's map with the right half of the battle background's picture, 16
+/// Lays BG1's map with the right half of the battle background's image, 16
 /// tiles by BACKDROP_ROWS, twice across and twice down, so that the backdrop
 /// scrolls on without end.
 void BattleEffect_BuildRepeatingTilemap(void) {

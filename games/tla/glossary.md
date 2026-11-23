@@ -301,7 +301,7 @@ Evidence: tradition: work, named for its owner, the main routine.
 
 ### Frame
 
-A frame is one picture on the screen and the game's work to prepare it,
+A frame is one image on the screen and the game's work to prepare it,
 about a sixtieth of a second. Everything that takes time is counted in
 frames. When Jenna wakes on Idejima and says `What...`, her event then
 calls [`wait()`](#wait) for 40 frames before she goes on: two thirds of a
@@ -341,24 +341,24 @@ Evidence: tradition: タスク and its 実行関数.
 
 ### VBlank
 
-VBlank is the short gap after the console has drawn one picture and before
-it starts the next, about 60 times a second. At each one the console breaks
-off whatever the game is doing and runs one small piece of its code. That
-piece puts the finished [frame](#frame) on screen, prepares the sound and
-reads the buttons ([System code](src/system/README.md#what-vblank-does)).
+VBlank is the short gap after the console has drawn the screen and before
+it starts drawing it again, about 60 times a second. At each one the console
+breaks off whatever the game is doing and runs one small piece of its code.
+That piece puts the finished [frame](#frame) on screen, prepares the sound
+and reads the buttons ([System code](src/system/README.md#what-vblank-does)).
 
 Evidence: tradition: V ブランク, the hardware's own name.
 
 ### Slowdown
 
 The game has about a sixtieth of a second to get each [frame](#frame)
-ready, before the console starts drawing the next picture. Slowdown is what
+ready, before the console starts drawing the screen again. Slowdown is what
 happens when a frame's work is not done in time: the frame stays on screen
-for two pictures or more. Everything counted in frames, every walk, pause
-and animation, drags together. The music does not, because the sound is
-prepared at every [VBlank](#vblank) whether the frame is ready or not. So
-the tune keeps its speed while the picture falls behind it
-([System code](src/system/README.md#what-vblank-does)).
+while the console draws the screen twice or more. Everything counted in
+frames, every walk, pause and animation, drags together. The music does
+not, because the sound is prepared at every [VBlank](#vblank) whether the
+frame is ready or not. So the tune keeps its speed while the image on
+screen falls behind it ([System code](src/system/README.md#what-vblank-does)).
 
 Evidence: tradition: 処理落ち.
 
@@ -392,7 +392,7 @@ used here for a system's block.
 ### Heap and pools
 
 The heap is where code gets memory for a while. Code that needs room for
-something, such as a picture being unpacked, asks the heap and is handed a
+something, such as an image being unpacked, asks the heap and is handed a
 block. The blocks are cut from two pools, which are simply two stretches of
 free memory, one in each of the console's
 [two areas](#iwram-and-ewram).
@@ -442,7 +442,7 @@ Evidence: plain English; the project's own word.
 
 The Game Pak is the cartridge as a piece of hardware. It holds the game
 itself, which cannot be changed: the code in its [banks](#bank), and every
-picture, map and tune, listed in the
+image, map and tune, listed in the
 [resource directory](#resource-directory). It also holds the
 [flash chip](#flash-chip) the saves are written to
 ([The Game Pak](src/gamepak/README.md)).
@@ -553,7 +553,7 @@ Evidence: plain English.
 ### Resource directory
 
 The resource directory is the cartridge's one list of every packed thing on
-it: each overlay, map and picture is a numbered row. The game finds a thing
+it: each overlay, map and image is a numbered row. The game finds a thing
 by its row, so Daila's [overlay](#overlay) is row 1617
 ([The Game Pak](src/gamepak/README.md#the-resource-directory-and-table-order)).
 
@@ -637,7 +637,7 @@ console keeps sixteen palettes of 16 colours each. A palette number says
 which of them a [sprite](#sprite-and-oam) or a tile, one of the small
 squares a [background layer](#background-layer) is made of, is painted in.
 So one drawing can appear in several colourings
-([Graphics](src/graphics/README.md#how-the-console-draws-a-picture)).
+([Graphics](src/graphics/README.md#how-the-console-draws-an-image)).
 
 Evidence: plain English for the hardware's own field.
 
@@ -1056,7 +1056,7 @@ division's.
 
 ### Battle background
 
-A battle background is the picture behind a battle. It is chosen by where
+A battle background is the image behind a battle. It is chosen by where
 the fight happens, such as the grassland, the Suhalla Desert or a ship's
 deck ([Graphics](src/graphics/README.md#battle-backgrounds)).
 
@@ -1179,7 +1179,7 @@ said so.
 
 ### Graphics
 
-Graphics is the game's pictures as files anyone can open and edit. Each
+Graphics is the game's art as files anyone can open and edit. Each
 folder is named for what it holds or the place it belongs to
 ([Graphics](src/graphics/README.md)).
 
@@ -1187,7 +1187,7 @@ Evidence: Camelot: the credits' "Graphic Arts"; plain English.
 
 ### Graphics folders
 
-For readers of the files: the folders of pictures under `src/graphics/`,
+For readers of the files: the folders of images under `src/graphics/`,
 and what is in each.
 
 - `battle_backgrounds`: the [battle backgrounds](#battle-background).
@@ -1199,7 +1199,7 @@ and what is in each.
 - `font`: the letters, how wide each one is, and the tables that match
   text to letters. Evidence: plain
   English.
-- `monster`: the enemies' battle pictures. Evidence: Camelot: the credits'
+- `monster`: the enemies' battle sprites. Evidence: Camelot: the credits'
   "Monster Design"; the game: "Monsters won't attack".
 - `palettes`: the windows' colours and the colours most sprites share. Evidence:
   plain English.
@@ -1212,7 +1212,7 @@ and what is in each.
 - `tileset`: the small squares and colours a map's
   [cell pictures](#cell-picture) are drawn from. Evidence: tradition: the
   tile set; Camelot: the credits' "Maps" for the work.
-- `ui`: every [Interface](#interface) picture, such as the menus' icons. Evidence: Camelot: the
+- `ui`: every [Interface](#interface) image, such as the menus' icons. Evidence: Camelot: the
   credits' "User Interface", whose banks place them; plain English for the
   subfolders.
 
@@ -1224,16 +1224,16 @@ The graphics folders named for a place or a thing in the game:
   Evidence: its area name, Aqua Rock.
 - `lemuria_palace`, the tiles of Lemuria's palace. Evidence: its area name,
   Lemuria.
-- `trial_road`, Trial Road's picture. Evidence: its area name, Trial Road.
-- `lucky_dice` and `lucky_wheels`, the two minigames' pictures.
+- `trial_road`, Trial Road's image. Evidence: its area name, Trial Road.
+- `lucky_dice` and `lucky_wheels`, the two minigames' images.
   Evidence: the game: "Lucky Dice", "Lucky Wheels".
-- `world_map`, the World Map's own pictures.
+- `world_map`, the World Map's own images.
   Evidence: the game: "World Map".
-- `title`, the Title's pictures and its intro. Evidence: Camelot: the scene
+- `title`, the Title's images and its intro. Evidence: Camelot: the scene
   label TITLE.
 - `credits`, the staff roll's font. Evidence: Camelot: the credits
   themselves.
-- `ending`, the pictures of the game's ending. Evidence: plain English.
+- `ending`, the images of the game's ending. Evidence: plain English.
 
 ### Tileset
 
@@ -1246,7 +1246,7 @@ Evidence: tradition: the tile set; plain English.
 
 ### Monster
 
-A monster is an enemy as the player sees it, its picture in a battle
+A monster is an enemy as the player sees it, its sprite in a battle
 ([Graphics](src/graphics/README.md#monsters)). In the code an enemy is a
 [unit](#unit) like any other.
 

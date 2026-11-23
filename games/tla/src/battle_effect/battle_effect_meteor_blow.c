@@ -16,7 +16,7 @@ struct MeteorStar {
 
 extern const struct Scale gMeteorBlow_DoubleScale;
 
-/// The sky, drawn over the battle background's picture in the map cell buffer:
+/// The sky, drawn over the battle background's image in the map cell buffer:
 /// METEOR_BLOW_STAR_COUNT stars on a sphere METEOR_BLOW_SKY_RADIUS across,
 /// centred at (METEOR_BLOW_SKY_CENTER_X, METEOR_BLOW_SKY_CENTER_Y). Every
 /// METEOR_BLOW_STARS_PER_ORB-th is a glowing orb, one of GlowOrbSetSheet's

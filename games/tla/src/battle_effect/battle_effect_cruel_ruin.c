@@ -125,7 +125,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     piece->velocityY = vy;
   }
 
-  // Copy the battle background's picture aside, fill it with colour 1, and
+  // Copy the battle background's image aside, fill it with colour 1, and
   // make its colours white.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2),
                   BATTLE_BACKGROUND_BYTES);

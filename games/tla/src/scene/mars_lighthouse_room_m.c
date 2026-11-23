@@ -1343,7 +1343,7 @@ void Teleport_PlaySparks(void);
 #include "shared/ride_if_active.h"
 
 /// Whether a flame or fireball has hit the leader.
-s32 MarsLighthouseRoomM_IsSliding(void) { return RIDE_WORK->active; }
+s32 Ride_IsActive(void) { return RIDE_WORK->active; }
 
 #include "shared/actor_scatter_crumbs.c"
 

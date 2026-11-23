@@ -1129,7 +1129,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Each frame in the Mercury tower: a hit by the flames stops Felix's slide.
 void MarsLighthouseRoomF_StopSlideWhileHit(void) {
-  if (MarsLighthouseRoomF_IsSliding())
+  if (Ride_IsActive())
     Leader_SetSlideStopped(1);
 }
 
@@ -1565,7 +1565,7 @@ s32 Fireball_CarryLeader(void) {
 #include "shared/ride_if_active.h"
 
 /// Whether Felix has been hit by the flames.
-s32 MarsLighthouseRoomF_IsSliding(void) { return RIDE_WORK->active; }
+s32 Ride_IsActive(void) { return RIDE_WORK->active; }
 
 extern u32 gCrumbs_Script[];
 s32 VramCache_FreeEntry(u32 slot);

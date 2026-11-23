@@ -138,7 +138,7 @@ enum KolimaForestTreeFaceChange {
 
 static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 change);
 static void KolimaForestTree_SpawnOrbitSparks(void);
-static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
+static void Inventory_ReplaceItem(s32 oldItem, s32 newItem);
 
 s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
 s32 gKolimaForestTreeSparkFrame BSS_DATA;
@@ -744,7 +744,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
   Sound_Play(MUS_TOWN_THEME);
-  KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
+  Inventory_ReplaceItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
 /// How far the curse tints the forest round Tret until it is lifted: green and
@@ -1023,19 +1023,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   }
 }
 
-/// Replaces the used water with its empty bottle in the same inventory slot.
-static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
-                                                  s32 newItemId) {
-  s32 member = PartyInventory_FindMember(oldItemId);
-
-  if (member != -1) {
-    s32 inventorySlot = Inventory_Find(member, oldItemId);
-
-    if (inventorySlot != -1) {
-      Unit_Get(member)->inventory[inventorySlot] = newItemId;
-    }
-  }
-}
+#include "shared/hermes_water_bottle.c"
 
 #include "shared/kolima_palette.c"
 

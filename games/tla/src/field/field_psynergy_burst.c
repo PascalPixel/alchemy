@@ -40,12 +40,29 @@ struct BurstWork {
   s16 phase; ///< the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
   s16 timer; ///< frames into the stage
   s16 shake; ///< passed to the target's event each frame (BurstStage)
-  u16 burstTile; ///< the explosion's first tile
-  s16 nextBurst; ///< the explosion slot used next
-  s16 newBursts; ///< explosions to start this frame
-  /// 1 cycles CANVAS_PALETTE's greens each frame, 2 loads the explosion's
-  /// palette once.
-  s8 paletteMode;
+  u16 burstTile;  ///< the explosion's first tile
+  s16 nextBurst;  ///< the explosion slot used next
+  s16 newBursts;  ///< explosions to start this frame
+  s8 paletteMode; ///< an enum BurstPaletteMode
+};
+
+/// BurstWork.paletteMode: what FieldPsynergy_UpdateBurst does to the palettes.
+enum BurstPaletteMode {
+  BURST_PALETTE_KEPT,      ///< nothing
+  BURST_PALETTE_SHINE,     ///< cycles the glow's greens each frame
+  BURST_PALETTE_EXPLOSIONS ///< loads the explosions' palette, once
+};
+
+/// BurstWork.phase: the stages of the cast, each lasting the frames its case
+/// counts.
+enum BurstPhase {
+  BURST_PHASE_START,        ///< SE_SPIN
+  BURST_PHASE_SWELL,        ///< the glow grows
+  BURST_PHASE_GATHER,       ///< the sparks fly into it
+  BURST_PHASE_FIRST_BLASTS, ///< explosions start, the screen darkens
+  BURST_PHASE_BLASTS,       ///< an explosion every 8 frames
+  BURST_PHASE_HUSH,         ///< a pause
+  BURST_PHASE_GREAT_BLAST   ///< ten explosions, ten more 4 frames on
 };
 
 /// The palette of Burst's explosions, loaded into BURST_EXPLOSION_PALETTE.
@@ -54,7 +71,8 @@ extern const u16 gBurst_ExplosionPalette[];
 /// Moves the work on to its next phase, its timer restarted.
 #define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
-/// Task of the Burst: cycles its particles' colours and draws them.
+/// Burst each frame: shines the glow, draws the sparks and the explosions, and
+/// moves the cast on through its stages, shaking the screen at each blast.
 void FieldPsynergy_UpdateBurst(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
@@ -69,7 +87,7 @@ void FieldPsynergy_UpdateBurst(void) {
   s32 blue;
 
   work->shake = BURST_STAGE_QUIET;
-  if (work->paletteMode == 1) {
+  if (work->paletteMode == BURST_PALETTE_SHINE) {
     palette = (volatile u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
     i = 0;
     frames = &canvas->drawnFrames;
@@ -87,11 +105,11 @@ void FieldPsynergy_UpdateBurst(void) {
 
       Io_Write16(green | blue | red, palette++);
     }
-  } else if (work->paletteMode == 2) {
+  } else if (work->paletteMode == BURST_PALETTE_EXPLOSIONS) {
     Dma_Set(gBurst_ExplosionPalette,
             (void *)&OBJ_PLTT_COLOR(BURST_EXPLOSION_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
-    work->paletteMode = 0;
+    work->paletteMode = BURST_PALETTE_KEPT;
   }
   pos[0] = scene->x;
   pos[1] = scene->y;
@@ -160,13 +178,13 @@ void FieldPsynergy_UpdateBurst(void) {
       particle->timer++;
     }
     switch (work->phase) {
-    case 0:
+    case BURST_PHASE_START:
       if (work->timer == 0)
         Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
         BURST_NEXT_PHASE(work);
       break;
-    case 1:
+    case BURST_PHASE_SWELL:
       canvas->scaleX += FIXED_ONE * 3 / 256;
       canvas->scaleY = canvas->scaleX;
       if (canvas->scaleX >= FIXED_ONE / 2) {
@@ -174,13 +192,13 @@ void FieldPsynergy_UpdateBurst(void) {
         work->timer = 0;
       }
       break;
-    case 2:
+    case BURST_PHASE_GATHER:
       if (work->timer == 40)
         BURST_NEXT_PHASE(work);
       break;
-    case 3:
+    case BURST_PHASE_FIRST_BLASTS:
       if (work->timer == 0)
-        work->paletteMode = 2;
+        work->paletteMode = BURST_PALETTE_EXPLOSIONS;
       if (work->timer == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
@@ -192,7 +210,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;
-    case 4:
+    case BURST_PHASE_BLASTS:
       if ((work->timer & 15) == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
@@ -203,11 +221,11 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 128)
         BURST_NEXT_PHASE(work);
       break;
-    case 5:
+    case BURST_PHASE_HUSH:
       if (work->timer == 35)
         BURST_NEXT_PHASE(work);
       break;
-    case 6:
+    case BURST_PHASE_GREAT_BLAST:
       if (work->timer == 0)
         work->newBursts = BURST_FINAL_EXPLOSIONS;
       if (work->timer == 4)
@@ -284,13 +302,13 @@ void FieldPsynergy_UpdateBurst(void) {
       particle->timer++;
     }
     switch (work->phase) {
-    case 0:
+    case BURST_PHASE_START:
       if (work->timer == 0)
         Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
         BURST_NEXT_PHASE(work);
       break;
-    case 1:
+    case BURST_PHASE_SWELL:
       canvas->scaleX += FIXED_ONE * 5 / 256;
       canvas->scaleY = canvas->scaleX;
       if (canvas->scaleX > toFIXED(0.3) - 1) {
@@ -298,13 +316,13 @@ void FieldPsynergy_UpdateBurst(void) {
         work->timer = 0;
       }
       break;
-    case 2:
+    case BURST_PHASE_GATHER:
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;
-    case 3:
+    case BURST_PHASE_FIRST_BLASTS:
       if (work->timer == 0) {
-        work->paletteMode = 2;
+        work->paletteMode = BURST_PALETTE_EXPLOSIONS;
         if (work->timer == 0) {
           MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), BURST_SHAKE_DECAY);
           work->newBursts = 1;
@@ -315,7 +333,8 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;
-    case 4:
+    case BURST_PHASE_BLASTS:
+      // Cast at nothing, the one blast is all: the caster lets go, and it ends.
       if (work->timer == 5)
         BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
       if (work->timer == 20) {
@@ -430,9 +449,9 @@ void FieldPsynergy_Burst(void) {
   canvas->command = CANVAS_UPLOAD;
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
-  work->phase = 0;
+  work->phase = BURST_PHASE_START;
   work->timer = 0;
-  work->paletteMode = 1;
+  work->paletteMode = BURST_PALETTE_SHINE;
   work->nextBurst = 0;
   work->newBursts = 0;
   Task_Add(FieldPsynergy_UpdateBurst, TASK_PASS_FRAME);

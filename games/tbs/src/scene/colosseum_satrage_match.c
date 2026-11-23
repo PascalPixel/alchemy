@@ -377,9 +377,15 @@ static void ColosseumSatrageMatch_PushBoardWalkPillar(void) {
 /// pillar stands in WALL_PILLAR_MOVED_COLUMN, and cell (35, 77) is opened or
 /// walled to match. Scene_Initialize opens that cell again for the race but
 /// does not move the pillar: it is back beside the chest, as a probe of the
-/// race with the flag set shows. XXX: what cell (35, 77) opens on The Wall; a
-/// render of the race with FLAG_WALL_PILLAR_MOVED set, Isaac climbing at
-/// column 35, would settle it.
+/// race with the flag set shows.
+///
+/// Cell (35, 77) lies below the course the screen shows, whose rows run from
+/// 0 to 31; the map stores it as a wall, and the flag makes it open ground
+/// (a probe with and without the flag). XXX: what reads cell (35, 77) and
+/// what that changes for the player; nothing in this file copies it onward,
+/// so a search of the shared Colosso code for row 77, then a race recorded
+/// with FLAG_WALL_PILLAR_MOVED set and Isaac climbing at column 35, would
+/// settle it.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 column;
   s32 row;
@@ -1009,9 +1015,8 @@ s32 Scene_Initialize(void) {
     actor->y.fixed = toFIXED(16);
   }
   Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  // With the wall pillar moved, the cell it stood on takes the ground of the
-  // cell south of it. The map stores the two alike, open ground, so the copy
-  // only matters where the cell has been changed since the map loaded.
+  // With the wall pillar moved, cell (35, 77) takes the open ground of the
+  // cell south of it; the map stores it as a wall.
   if (GameFlag_Get(FLAG_WALL_PILLAR_MOVED)) {
     MapGrid_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }

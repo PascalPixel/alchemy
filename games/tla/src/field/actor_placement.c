@@ -1,20 +1,20 @@
 /// @file
-/// The idle script and the default placements of the leader.
+/// The idle script, and the placement table the field starts with.
 
 #include "field/scene_tables.h"
 #include "field/actor_script.h"
 #include "types.h"
 
-/// The script of an object that does nothing.
+/// The script of an actor that does nothing.
 const s32 gActor_IdleScript[] = {
     SC_END,
 };
 
-/// Two rows the field copies into its work as it starts, one idle object at
-/// (300, 0, 300) and the end mark.
-// The Broken Seal's gField_DefaultPlacements.
+/// The two rows the field copies into its work as it starts, before
+/// Actor_ResetForLeader places the leader: one idle actor at (300, 0, 300) and
+/// the end of the table.
 const struct ActorPlacement gField_DefaultPlacements[] = {
-    {0, CONDITION_ALWAYS, (s32)gActor_IdleScript, toFIXED(300), 0, toFIXED(300),
-     23472, 0, 0},
+    ACTOR_PLACEMENT(0, CONDITION_ALWAYS, (s32)gActor_IdleScript, 300, 0, 300,
+                    23472, 0, 0),
     {SCENE_TABLE_END, 0, 0, 0, 0, 0, 0, 0, 0},
 };

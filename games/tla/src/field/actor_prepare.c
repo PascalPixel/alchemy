@@ -25,7 +25,7 @@ struct Actor *OverlayObject_PrepareObject(FIXED x, FIXED y, FIXED z, s32 type) {
     actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_BLACK);
-    Actor_SetBlendMode(actor, 1);
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
     return actor;
   }
   return NULL;

@@ -6,9 +6,10 @@
 #include "types.h"
 #include "edition.h"
 #include "fixed_math.h"
+#include "field/sprite.h"
 
-// Each callback takes the object and returns nonzero to go on with the
-// script this frame. They take different views of the object, so the
+// Each SC_CALL routine takes the actor and returns nonzero to go on with the
+// script this frame. They take different views of the actor, so the
 // declarations leave the parameters unspecified.
 s32 Actor_StepAngle();
 s32 Actor_ClearChildAndCollisionFlags();
@@ -60,24 +61,26 @@ const s16 gHeading_WipeSteps[80] = {
 /// stands it in its first animation.
 const s32 gActor_OffsetScript[] = {
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// The launch script (Actor_LaunchFromLeader): waits for the actor to arrive
-/// and a frame more, stands it, then steps it by its angle.
+/// and a frame more, stands it, then turns it a step toward the facing in its
+/// timer.
 const s32 gActor_LaunchScript[] = {
-    SC_SYNC, SC_WAIT(1), SC_ANIMATION(1), SC_CALL(Actor_StepAngle), SC_END,
+    SC_SYNC, SC_WAIT(1), SC_ANIMATION(ANIM_STAND), SC_CALL(Actor_StepAngle),
+    SC_END,
 };
 
-/// Steps the actor by its angle once.
+/// Turns the actor a step toward the facing in its timer.
 const s32 gActor_StepAngleScript[] = {
     SC_CALL(Actor_StepAngle),
     SC_END,
 };
 
-/// The Broken Seal's gMessageSpeed_VoiceRates: the message voice's rate by
-/// message speed option.
+/// The countdown between the sounds of a message's voice as it types, by the
+/// message speed the player chose (Message_SetVoiceFromActor).
 const u8 gMessageSpeed_VoiceRates[4] = {
     1,
     3,
@@ -85,7 +88,8 @@ const u8 gMessageSpeed_VoiceRates[4] = {
     0,
 };
 
-/// Squashes and stretches, then releases the actor.
+/// An emote bubble's script (Actor_ShowEmoteById): it pops up, squashing and
+/// stretching, stays 30 frames and is released.
 const s32 gFieldEffect_WatchedActorScript[] = {
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 2),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 4),
@@ -115,8 +119,8 @@ const s32 gFieldEffect_WatchedActorScript[] = {
     SC_RELEASE,
 };
 
-/// The Broken Seal's gActor_WaitScript: waits 40 frames, then releases the
-/// actor.
+/// Waits 40 frames, then releases the actor: the one-off effect
+/// FieldEffect_SetAttached shows over an actor.
 const s32 gActor_WaitScript[] = {
     SC_WAIT(40),
     SC_RELEASE,
@@ -128,20 +132,20 @@ const s32 gMovementType_WanderScript[] = {
     SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(4, 8, 16),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
@@ -178,20 +182,20 @@ const s32 gMovementType_WanderNearScript[] = {
     SC_ACCELERATION(0.05),
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(2, 2, 8),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(2, 2, 8),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(2, 2, 8),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
@@ -199,12 +203,13 @@ const s32 gMovementType_WanderNearScript[] = {
 
 /// MOVEMENT_TYPE_WANDER_CLOSE: wanders near home without pausing.
 const s32 gMovementType_WanderCloseScript[] = {
-    SC_SPEED(0.4), SC_ACCELERATION(0.2),          SC_ANIMATION(2),
+    SC_SPEED(0.4), SC_ACCELERATION(0.2),          SC_ANIMATION(ANIM_WALK),
     SC_LABEL(1),   SC_WANDER_HOME(2, 2, 6),       SC_SYNC,
     SC_WAIT(4),    SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-/// MOVEMENT_TYPE_SQUASH: squashes and stretches twice a round, for ever.
+/// MOVEMENT_TYPE_SQUASH: squashes and stretches, two bounces at a time, for
+/// ever.
 const s32 gMovementType_SquashScript[] = {
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, FIXED_ONE),

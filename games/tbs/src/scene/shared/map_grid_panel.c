@@ -1,18 +1,19 @@
-#include "system/ram_buffer.h"
+/// @file
+/// Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
+/// SceneId_CrossboneIsleDragonStatue) and Kolima Forest
+/// (SceneId_KolimaForestFloodgate): drawing a stretch of the layout, in one of
+/// the states kept elsewhere in it (such as the water raised or not), straight
+/// into the background's tile map.
 
-// Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
-// SceneId_CrossboneIsleDragonStatue) and Kolima Forest
-// (SceneId_KolimaForestFloodgate): drawing a stretch of
-// the layout, in one of the states kept elsewhere in it (such as the water
-// raised or not), straight into the background's tile map.
+#include "system/ram_buffer.h"
 
 /// Cells across and down a screen block: 32 tiles square, two tiles a cell.
 #define SCREEN_BLOCK_CELLS (BG_SCREEN_WIDTH / 2)
 
-/// Draws the width by height cells at cell (x, y) of the layout into screen
-/// block 5 from cell (destinationX, destinationY), wrapped to
-/// SCREEN_BLOCK_CELLS square, in band plane (SCREEN_BLOCK_CELLS cell rows
-/// each): each cell is its cell picture's tiles from Ram_CellPictures.
+/// Draws the width by height cells from cell (x, y) of the layout into screen
+/// block 5 at cell (destinationX, destinationY), wrapping every
+/// SCREEN_BLOCK_CELLS cells. The block is cut into horizontal planes of
+/// SCREEN_BLOCK_CELLS cell rows; plane picks which one is drawn into.
 static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
                                   s32 plane, s32 destinationX,
                                   s32 destinationY) {

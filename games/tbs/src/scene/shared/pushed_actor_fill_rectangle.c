@@ -19,9 +19,9 @@ static s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
     } else {
       cells = (struct MapGridCell *)gMapGridCellBuffer;
     }
-    cells += x + (z << 7);
+    cells += x + z * MAPGRID_SIZE;
     for (row = 0; row < height; row++) {
-      struct MapGridCell *cell = cells + (row << 7);
+      struct MapGridCell *cell = cells + row * MAPGRID_SIZE;
 
       for (column = 0; column < width; column++) {
         cell->behavior = value;

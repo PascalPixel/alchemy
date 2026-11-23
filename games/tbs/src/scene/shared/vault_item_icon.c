@@ -1,20 +1,15 @@
 /// @file
-/// Vault's rooms, before and after the thieves are caught: an item lying on
-/// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
+/// Vault's inn, before and after the thieves are caught: an item lying in the
+/// room drawn as its menu icon (the Bone on the barrel, at (568, 16, 672)).
 
-/// Creates a blank actor at the 16.16 position and draws it as the item's
-/// icon: the sprite's own animation is stopped (flags and count 0,
-/// 16-colour, palette 0), the actor stays put (motionFlags 0) and keeps its
-/// VRAM, and the icon's tiles, decoded into heap block 17, are loaded into
-/// the sprite's VRAM block.
-void Vault_PlaceItemIcon(s32 item, FIXED fixed_x, FIXED fixed_y,
-                         FIXED fixed_z) {
+/// Places the item's icon, standing still, at the 16.16 position.
+void Vault_PlaceItemIcon(s32 item, FIXED x, FIXED y, FIXED z) {
   struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *icon;
   u8 clear = 0;
 
-  actor = Actor_Create(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
+  actor = Actor_Create(SPRITE_BLANK, x, y, z);
   if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = clear;

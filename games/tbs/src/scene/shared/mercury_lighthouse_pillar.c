@@ -271,10 +271,10 @@ void MercuryLighthouse_HopAcrossPool(void) {
   pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   pos[1].fixed = actor->groundHeight;
   pos[2].fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
-  from = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) << 7) +
+  from = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
                         pos[0].fixed / toFIXED(16)];
   Vector_AddPolarOffset(toFIXED(32), angle, &pos[0].fixed);
-  to = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) << 7) +
+  to = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) * MAPGRID_SIZE) +
                       pos[0].fixed / toFIXED(16)];
   if (from->behavior != state->poolBehavior &&
       to->behavior == state->poolBehavior && state->levels == 0)

@@ -1,16 +1,16 @@
-
-// Twenty-three scenes, most of those that spawn effects (field_effect_spawn.c):
-// two ways to place a still field effect of a given type, each taking whole
-// pixels, with a Fixed form for a 16.16 position.
+/// @file
+/// Twenty-three scenes, most of those that spawn effects
+/// (field_effect_spawn.c): two ways to place a still actor of a given sprite,
+/// each taking whole pixels, with an FX form for a 16.16 position.
 
 /// Sets the actor's sprite priority (0 in front of the backgrounds, 3
 /// behind).
-UNUSED static void SetEffectRecordMode(struct Actor *work, s32 mode) {
-  work->sprite->image.priority = mode;
+UNUSED static void SetEffectRecordMode(struct Actor *actor, s32 priority) {
+  actor->sprite->image.priority = priority;
 }
 
-/// A still, translucent effect in palette 14, at sprite priority 0, at a 16.16
-/// position.
+/// A still, translucent black actor in front of the backgrounds (sprite
+/// priority 0), at a 16.16 position.
 UNUSED static void *Actor_PrepareFX(FIXED x, FIXED y, FIXED z, s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
@@ -23,7 +23,7 @@ UNUSED static void *Actor_PrepareFX(FIXED x, FIXED y, FIXED z, s32 type) {
     Actor_SetBlendMode(actor, ACTOR_BLEND_TRANSLUCENT);
     return actor;
   }
-  return 0;
+  return NULL;
 }
 
 /// Actor_PrepareFX at a point in whole pixels:
@@ -31,7 +31,7 @@ UNUSED static void *Actor_PrepareFX(FIXED x, FIXED y, FIXED z, s32 type) {
 #define Actor_Prepare(x, y, z, type)                                           \
   Actor_PrepareFX(toFIXED(x), toFIXED(y), toFIXED(z), type)
 
-/// A still effect in palette 15, at sprite priority 1, drawn under the
+/// A still, invisible actor at sprite priority 1, sorted under the other
 /// actors, at a 16.16 position.
 UNUSED static void *Actor_CreateConfiguredFX(FIXED x, FIXED y, FIXED z,
                                              s32 type) {
@@ -47,7 +47,7 @@ UNUSED static void *Actor_CreateConfiguredFX(FIXED x, FIXED y, FIXED z,
                            ACTOR_PRIORITY_UNDERFOOT;
     return actor;
   }
-  return 0;
+  return NULL;
 }
 
 /// Actor_CreateConfiguredFX at a point in whole pixels:

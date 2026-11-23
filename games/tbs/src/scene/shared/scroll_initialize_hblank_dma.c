@@ -1,17 +1,17 @@
-#include "system/system_call.h"
+/// @file
+/// The Lemurian ship: the ripple of the water, a wave in each axis of the
+/// background's scrolling, changed line by line in the horizontal blank.
 
-// The Lemurian ship: the ripple of the water, a wave in each axis of the
-// background's scrolling, changed line by line in the horizontal blank.
+#include "system/system_call.h"
 
 static inline void WaitDma(volatile u32 *channel) {
   while (channel[2] & DMA_BUSY) {
   }
 }
 
-/// Starts the ripple: its work (heap block 34) holds the mode and, for x and y,
-/// the wave's frequency, its step each frame and its amplitude; two
-/// tasks build each frame's table of line offsets and sends it by DMA in
-/// the horizontal blank.
+/// Starts the ripple, with the wave's frequency, its step each frame and its
+/// amplitude for x and for y: one task builds each frame's table of line
+/// offsets, and another sends it by DMA in the horizontal blank.
 void LineScroll_InitWave(s32 mode, FIXED freqX, s32 stepX, FIXED ampX,
                          FIXED freqY, s32 stepY, FIXED ampY) {
   struct LineScrollWork *work;

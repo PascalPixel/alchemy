@@ -1,72 +1,74 @@
+/// @file
+/// Mercury Lighthouse and its entrance: the lights that carry the leader over
+/// the pool (mercury_lighthouse_pillar.c).
+
 #include "system/dma.h"
 #include "system/ram_buffer.h"
 
-// Mercury Lighthouse and its entrance: the lights that carry the leader over
-// the pool (mercury_lighthouse_pillar.c).
-
-/// Keeps the lights' state st in HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS for the
-/// floor's region, the pool's cell behavior. On an ordinary arrival the
-/// leader has no lights. When the party returns to where it was, the column of
-/// lights over the leader and the light under them in the pool are made again.
+/// Sets up the lights for a floor whose pool is the cell behavior region,
+/// keeping their state for the pool's events. On an ordinary arrival the
+/// leader has no lights. When the party returns to where it was, as after a
+/// battle, the column of light over the leader and the light under them in
+/// the pool are made again.
 void MercuryLighthouse_RestoreLights(s32 region,
-                                     struct MercuryLighthouseLights *st) {
+                                     struct MercuryLighthouseLights *lights) {
   struct Actor *actor;
-  struct Actor *obj;
-  struct Sprite *animation;
+  struct Actor *light;
+  struct Sprite *sprite;
   struct MapGridCell *cell;
   FIXED z;
   s32 flag;
 
   *(struct MercuryLighthouseLights **)HeapSlot_AllocEwram(
-      HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(st)) = st;
+      HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(lights)) = lights;
   flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
-    Dma_Fill32(flag, st, sizeof(*st));
-    st->poolBehavior = region;
+    Dma_Fill32(flag, lights, sizeof(*lights));
+    lights->poolBehavior = region;
     return;
   }
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   z = actor->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer +
-         ((z / toFIXED(16)) << 7) + actor->x.fixed / toFIXED(16);
-  if (st->levels != 0 && st->pillar != 0) {
-    obj = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed,
-                            actor->y.fixed + toFIXED(24), z);
-    if (obj != NULL) {
-      obj->groundHeight = actor->groundHeight;
-      animation = obj->sprite;
-      Actor_StartScript(obj, gMercuryLighthouse_PillarScript);
-      obj->watchedActor = actor;
-      obj->motionFlags = ACTOR_FLOATS;
-      obj->y.fixed -= toFIXED(1) / 2;
-      if (animation != NULL) {
-        Sprite_StartAnimation(animation, 6 - st->levels);
-        animation->flags = 0;
-        animation->image.priority = 1;
+         (z / toFIXED(16)) * MAPGRID_SIZE + actor->x.fixed / toFIXED(16);
+  if (lights->levels != 0 && lights->pillar != 0) {
+    light = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed,
+                              actor->y.fixed + toFIXED(24), z);
+    if (light != NULL) {
+      light->groundHeight = actor->groundHeight;
+      sprite = light->sprite;
+      Actor_StartScript(light, gMercuryLighthouse_PillarScript);
+      light->watchedActor = actor;
+      light->motionFlags = ACTOR_FLOATS;
+      light->y.fixed -= toFIXED(1) / 2;
+      if (sprite != NULL) {
+        Sprite_StartAnimation(sprite, 6 - lights->levels);
+        sprite->flags = 0;
+        sprite->image.priority = 1;
       }
-      st->pillar = obj;
+      lights->pillar = light;
     }
   } else {
-    st->pillar = 0;
+    lights->pillar = 0;
   }
-  if (cell->behavior == region && st->stepEffect != 0) {
-    obj = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed,
-                            actor->z.fixed);
-    if (obj == NULL)
+  if (cell->behavior == region && lights->stepEffect != 0) {
+    light = FieldActor_Create(SPRITE_GOLDEN_RINGS, actor->x.fixed,
+                              actor->y.fixed, actor->z.fixed);
+    if (light == NULL)
       return;
-    obj->groundHeight = actor->groundHeight;
-    animation = obj->sprite;
-    Actor_StartScript(obj, gMercuryLighthouse_GrowLightScript);
-    obj->motionFlags = 0;
-    obj->timer = 0;
-    obj->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    obj->speedLimit = toFIXED(4);
-    if (animation != NULL) {
-      Sprite_StartAnimation(animation, 6);
-      animation->flags = 0;
+    light->groundHeight = actor->groundHeight;
+    sprite = light->sprite;
+    Actor_StartScript(light, gMercuryLighthouse_GrowLightScript);
+    light->motionFlags = 0;
+    light->timer = 0;
+    light->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    light->speedLimit = toFIXED(4);
+    if (sprite != NULL) {
+      Sprite_StartAnimation(sprite, 6);
+      sprite->flags = 0;
     }
-    st->stepEffect = obj;
+    lights->stepEffect = light;
   } else {
-    st->stepEffect = 0;
+    lights->stepEffect = 0;
   }
 }

@@ -8,7 +8,8 @@
 /// holds DJINNI_FLINT, gives it back to Isaac and recalculates both.
 static UNREAD_RESULT Vault_ReturnIsaacsDjinni(void) {
   DjinnRecovery_CountDownTwenty();
-  if ((Unit_Get(IVAN)->djinnHeld[ELEMENT_VENUS] & 1) != 0) {
+  if ((Unit_Get(IVAN)->djinnHeld[ELEMENT_VENUS] &
+       (1 << DJINNI_INDEX(DJINNI_FLINT))) != 0) {
     Djinn_Transfer(IVAN, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT), ISAAC);
     Sound_Play(SE_RECOVERY);
     Unit_Calculate(ISAAC);

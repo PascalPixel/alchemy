@@ -3,11 +3,12 @@
 /// leader stands beside the Bone on the floor, which the scenes' trigger tables
 /// test through FLAG_VAULT_LEADER_BESIDE_BONE.
 
-/// The leader stands beside the Bone on the inn's floor, so the girl at the
+/// The leader stands beside the Bone on the inn's barrel, so the girl at the
 /// inn's talk row gives way and the A button searches the Bone.
 #define FLAG_VAULT_LEADER_BESIDE_BONE FLAG_SCENE_TEMP_50
 
-/// Keeps the girl at the inn from offering another Bone too soon.
+/// A task: sets FLAG_VAULT_LEADER_BESIDE_BONE while the leader stands in cells
+/// (34, 41) to (35, 42), beside the barrel, and clears it anywhere else.
 static void Vault_UpdateLeaderBesideBoneFlag(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   FIXED fixedX = leader->x.fixed;

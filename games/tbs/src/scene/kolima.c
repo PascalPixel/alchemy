@@ -1585,7 +1585,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 /// A speck of the curse that lands inside the party's Psynergy fields (two
 /// boxes with Mia in the party, three without her) bursts there with a drip,
 /// and the fields take their next pose once grown (Kolima_ApplyPendingPose).
-static s32 Kolima_BurstOnPsynergyFields(struct Actor *actor) {
+static s32 Kolima_BurstOnPsynergyField(struct Actor *actor) {
   if (gKolima_MiaInParty != 0) {
     if ((actor->x.fixed > toFIXED(59) && actor->x.fixed < toFIXED(141) &&
          actor->z.fixed > toFIXED(211) && actor->z.fixed < toFIXED(257)) ||
@@ -1944,6 +1944,6 @@ s32 gFallingEffectScript[] = {
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
-    SC_CALL(Kolima_BurstOnPsynergyFields),
+    SC_CALL(Kolima_BurstOnPsynergyField),
     SC_RELEASE,
 };

@@ -30,8 +30,9 @@ s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
   return Item_CanUnitEquipDirect(unit, item);
 }
 
-/// Returns an item's equipment group from its type: 1 for types 1, 7 and 10,
-/// 2 for types 2 to 5 and 9, and 0 for any other type.
+/// Returns an item's equipment group from its type: weapons, tridents and the
+/// class-changing items count as weapons, armor, shields, helms, boots and
+/// shirts as armor, and anything else as neither.
 s32 Item_GetEquipmentGroup(s32 itemId) {
   s32 type = Item_GetDirect(itemId)->type;
   s32 group;
@@ -79,8 +80,7 @@ s32 Inventory_Count(s32 unitId) {
   return count;
 }
 
-/// Returns 1 when the selected character or any party member has a free
-/// inventory slot.
+/// Returns 1 when the leader or any party member has a free inventory slot.
 s32 PartyInventory_HasSpace(void) {
   s16 unitIds[10];
   s32 unitCount;
@@ -200,7 +200,7 @@ s32 Inventory_Find(s32 unitId, s32 itemId) {
   return -1;
 }
 
-/// Returns who carries `itemId`, asking the selected character first, or -1.
+/// Returns who carries `itemId`, asking the leader first, or -1.
 s32 PartyInventory_FindMember(s32 itemId) {
   s16 unitIds[10];
   s32 unitCount;
@@ -312,17 +312,18 @@ s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
 }
 
 /// Empties an inventory slot outright, closes the inventory up and
-/// recalculates the unit; returns 2, as Inventory_Remove does for a last item.
+/// recalculates the unit; returns INVENTORY_REMOVE_LAST, as Inventory_Remove
+/// does for a last item.
 s32 Inventory_ClearSlot(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
 
   unit->inventory[slot] = 0;
   Inventory_CompactSlots((s16 *)unit->inventory);
   Unit_Calculate(unitId);
-  return 2;
+  return INVENTORY_REMOVE_LAST;
 }
 
-/// Takes one item out of slot, closing up the inventory when it was the last.
+/// Takes one item out of `slot`, closing up the inventory when it was the last.
 /// The Psynergy list is not rebuilt, so a removed item's Psynergy stays listed
 /// until something rebuilds it.
 s32 Inventory_Remove(s32 unitId, s32 slot) {
@@ -357,8 +358,9 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
   return removalResult;
 }
 
-/// Returns whether the item in `slot` may be taken off: 0 yes, 1 it is equipped
-/// and cannot be unequipped, 8 the slot is empty.
+/// Returns 0 when the item in `slot` may be taken off, or else why not: it is
+/// equipped and cannot be (INVENTORY_REFUSE_CANNOT_UNEQUIP), or the slot is
+/// empty.
 s32 Inventory_CheckUnequip(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
@@ -366,16 +368,16 @@ s32 Inventory_CheckUnequip(s32 unitId, s32 slot) {
   s32 result = 0;
 
   if (itemId == 0)
-    return 8;
+    return INVENTORY_REFUSE_EMPTY;
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
       (item->flags & ITEM_CANNOT_UNEQUIP) != 0)
-    result = 1;
+    result = INVENTORY_REFUSE_CANNOT_UNEQUIP;
   return result;
 }
 
-/// Returns 0 when the item in `slot` may be dropped, or else why not: 8 the
-/// slot is empty, or bit 2 the item is indispensable and bit 1 it is equipped
-/// and cannot be taken off.
+/// Returns 0 when the item in `slot` may be dropped, or else why not, as
+/// InventoryRefusal bits: the item is indispensable, it is equipped and cannot
+/// be taken off, or the slot is empty.
 s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
@@ -383,12 +385,12 @@ s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
   s32 result = 0;
 
   if (itemId == 0)
-    return 8;
+    return INVENTORY_REFUSE_EMPTY;
   if ((item->flags & ITEM_INDISPENSABLE) != 0)
-    result = 2;
+    result = INVENTORY_REFUSE_INDISPENSABLE;
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
       (item->flags & ITEM_CANNOT_UNEQUIP) != 0)
-    result |= 1;
+    result |= INVENTORY_REFUSE_CANNOT_UNEQUIP;
   return result;
 }
 
@@ -444,11 +446,12 @@ u8 Item_GetTargetMode(s32 itemId) {
 /// ITEM_COUNTER_COUNT on).
 s32 RareItemStock_Adjust(s32 index, s32 delta) {
   s32 counterSlot = index;
-  u8 *data = gRareItemStock;
+  u8 *stock = gRareItemStock;
 
+  // From here `index` holds the count returned.
   index = 0;
   if (counterSlot < ITEM_COUNTER_COUNT) {
-    s32 value = data[counterSlot];
+    s32 value = stock[counterSlot];
 
     value += delta;
 
@@ -460,12 +463,12 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
     } else {
       index = value;
     }
-    data[counterSlot] = value;
+    stock[counterSlot] = value;
   }
   return index;
 }
 
-/// Adds delta to how many of a rare item the shops may sell, and returns the
+/// Adds `delta` to how many of a rare item the shops may sell, and returns the
 /// new count; ordinary items have none.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 result;

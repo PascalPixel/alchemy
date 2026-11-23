@@ -128,10 +128,10 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES,
                                     sizeof(struct BattleAffineHdma));
-  struct BattleBackgroundWork *work = Ram_HeapSlots->battleBackground;
+  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
 
   IWRAM_FILL_WORDS(block, sizeof(struct BattleAffineHdma), 0);
-  work->mode = BATTLE_BACKGROUND_NONE;
+  background->mode = BATTLE_BACKGROUND_NONE;
 }
 
 /// Frees the zoomed background's scanline work.
@@ -452,22 +452,22 @@ UNUSED s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 UNUSED s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
-      struct BattleWork *work = Ram_HeapSlots->battleWork;
+      struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
       if (gInput.repeat & KEY_LEFT)
-        work->debugValue--;
+        battle->debugValue--;
       if (gInput.repeat & KEY_RIGHT)
-        work->debugValue++;
+        battle->debugValue++;
       if (gInput.repeat & KEY_L)
-        work->debugValue -= DEBUG_VALUE_HUNDREDS;
+        battle->debugValue -= DEBUG_VALUE_HUNDREDS;
       if (gInput.repeat & KEY_R)
-        work->debugValue += DEBUG_VALUE_HUNDREDS;
+        battle->debugValue += DEBUG_VALUE_HUNDREDS;
       if (gInput.repeat & KEY_UP)
-        work->debugValue -= DEBUG_VALUE_TENS;
+        battle->debugValue -= DEBUG_VALUE_TENS;
       if (gInput.repeat & KEY_DOWN)
-        work->debugValue += DEBUG_VALUE_TENS;
+        battle->debugValue += DEBUG_VALUE_TENS;
       if (gInput.pressed & KEY_A) {
-        value = work->debugValue;
+        value = battle->debugValue;
         break;
       }
       wait(1);

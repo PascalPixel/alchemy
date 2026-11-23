@@ -410,7 +410,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   s32 anchorY;
   s32 x;
   s32 y;
-  struct AnimationSpritePart *part;
+  struct AnimationSpritePart *sprite;
 
   halfWidth = object->width >> 1;
   halfHeight = object->height >> 1;
@@ -443,11 +443,11 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   // The shadow, centred on the ground below the object.
   y = FIXEDtoINT(pz - pw) - SHADOW_HALF_HEIGHT;
   if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
-    part = &object->shadow;
-    part->affine = 0;
-    part->x = FIXEDtoINT(px) - SHADOW_HALF_WIDTH;
-    part->y = y;
-    Oam_AddSpriteAtDepthClamped(part,
+    sprite = &object->shadow;
+    sprite->affine = 0;
+    sprite->x = FIXEDtoINT(px) - SHADOW_HALF_WIDTH;
+    sprite->y = y;
+    Oam_AddSpriteAtDepthClamped(sprite,
                                 FIXEDtoINT(pz + pw) + PLACEMENT_SHADOW_DEPTH);
   }
 
@@ -472,12 +472,12 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.
   if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
-    part = &object->image;
-    part->x = x;
-    part->y = y;
-    part->affine = affine;
-    part->affineIndex = matrix;
-    Oam_AddSpriteAtDepthClamped(part,
+    sprite = &object->image;
+    sprite->x = x;
+    sprite->y = y;
+    sprite->affine = affine;
+    sprite->affineIndex = matrix;
+    Oam_AddSpriteAtDepthClamped(sprite,
                                 FIXEDtoINT(py + pz) + PLACEMENT_IMAGE_DEPTH);
   }
 }
@@ -508,7 +508,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   s32 anchorY;
   s32 x;
   s32 y;
-  struct AnimationSpritePart *part;
+  struct AnimationSpritePart *sprite;
 
   halfWidth = object->width >> 1;
   {
@@ -548,11 +548,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
 
   y = FIXEDtoINT(pz - pw) - extentY;
   if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
-    part = &object->shadow;
-    part->affine = 0;
-    part->x = FIXEDtoINT(px) - extentX;
-    part->y = y;
-    Oam_AddSpriteAtDepth(part, depth);
+    sprite = &object->shadow;
+    sprite->affine = 0;
+    sprite->x = FIXEDtoINT(px) - extentX;
+    sprite->y = y;
+    Oam_AddSpriteAtDepth(sprite, depth);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -579,12 +579,12 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + (FIXED_ONE - 1));
   y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + (FIXED_ONE - 1));
   if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
-    part = &object->image;
-    part->x = x;
-    part->y = y;
-    part->affine = affine;
-    part->affineIndex = matrix;
-    Oam_AddSpriteAtDepth(part, depth);
+    sprite = &object->image;
+    sprite->x = x;
+    sprite->y = y;
+    sprite->affine = affine;
+    sprite->affineIndex = matrix;
+    Oam_AddSpriteAtDepth(sprite, depth);
   }
 }
 

@@ -640,13 +640,13 @@ void VenusLighthouse_DoubtLeaving(void);
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
 s32 Scene_Initialize(void) {
-  struct MainRoutineWork *routine;
+  struct MainRoutineWork *work;
 
-  routine = &gMainRoutineWork;
+  work = &gMainRoutineWork;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (routine->entrance == ENTRANCE_OPENING) {
-    routine->restartScene = SCENE_VENUS_LIGHTHOUSE;
-    routine->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
+  if (work->entrance == ENTRANCE_OPENING) {
+    work->restartScene = SCENE_VENUS_LIGHTHOUSE;
+    work->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();

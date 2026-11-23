@@ -958,14 +958,14 @@ extern TerrainHeightFn gMapGrid_TerrainHeightFunctions[16];
 /// Broken Seal's: the height function of the cell's terrain kind applied to
 /// its samples.
 FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
 
   x >>= 16;
   z >>= 16;
-  if (work != NULL)
-    grid = work->layers[layer & 3].terrainIds;
+  if (map != NULL)
+    grid = map->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
   grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
@@ -976,13 +976,13 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
 /// Returns the terrain kind of a layer's cell at (x, z) in 16.16 pixels, as
 /// The Broken Seal's.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   x >>= 16;
   z >>= 16;
-  if (work != NULL)
-    grid = work->layers[layer & 3].terrainIds;
+  if (map != NULL)
+    grid = map->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
   return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
@@ -994,15 +994,15 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED z) {
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
 /// samples differ reads as TERRAIN_BUMP.
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
   u8 *code;
   s32 kind;
 
   x >>= 16;
   z >>= 16;
-  if (work != NULL)
-    grid = work->layers[layer & 3].terrainIds;
+  if (map != NULL)
+    grid = map->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
   code =
@@ -1040,11 +1040,11 @@ FIXED MapGrid_GetHighestTerrainHeightAround(s32 layer, FIXED x, FIXED z,
 /// Gives the cell at (x, z) of layer the ground height `height`, in 8-pixel
 /// steps, by tagging its shape with terrain kind 0 at that height.
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *shape;
 
   shape = gMapShapeGrid +
-          (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
+          (map->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
   shape += (FIELD_CELL(x)) + ((FIELD_CELL(z)) << 7);
   *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
 }
@@ -1056,13 +1056,13 @@ s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer) {
 
 /// As MapGrid_GetCellAttributeLowNibble, a second copy.
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
   x >>= 16;
   z >>= 16;
-  if (work != NULL)
-    grid = work->layers[layer & 3].terrainIds;
+  if (map != NULL)
+    grid = map->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
   return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +

@@ -104,11 +104,11 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
 /// Saves the field's background colours in the field work and fades to `layer`
 /// over SHOP_TINT_FRAMES frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct PaletteFade *paletteBuffers = Ram_HeapSlots->paletteFade;
   u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(savedPalette, field->savedFadeTarget,
+  Dma_Set(savedPalette, work->savedFadeTarget,
           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * 3 * sizeof(u16) / 4),
           REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,

@@ -124,11 +124,11 @@ s32 ItemMenu_Run(void) {
   result = ItemMenu_RunCommands(&owner, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *field = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     // The item goes to the field to be used, as Field_UseItem reads it.
-    field->item = (owner << ACT_UNIT_SHIFT) | (item & INVENTORY_ITEM_ID_MASK);
-    field->itemSlot = screen->selectedSlots[0];
+    work->item = (owner << ACT_UNIT_SHIFT) | (item & INVENTORY_ITEM_ID_MASK);
+    work->itemSlot = screen->selectedSlots[0];
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);

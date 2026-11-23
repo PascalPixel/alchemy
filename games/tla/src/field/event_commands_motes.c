@@ -22,7 +22,7 @@ void FieldMotes_Start(void) {
   u8 *tiles;
   u32 i;
   u32 size;
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
 
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
@@ -35,9 +35,9 @@ void FieldMotes_Start(void) {
   work->tileBase = VramCache_Load(work->entry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
-  slots = Ram_HeapSlots;
+  heap = Ram_HeapSlots;
   for (; i < WEATHER_PARTICLE_COUNT; i++) {
-    struct MapWork *view = slots->mapGrid;
+    struct MapWork *view = heap->mapGrid;
     s32 *pos;
     // p walks the sprite's attribute words, then holds the x, as size carries
     // the fill's 0 above.
@@ -78,7 +78,7 @@ void Weather_StartRain(s32 withCue) {
   u8 *tiles;
   u32 i;
   u32 size;
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
 
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
@@ -91,9 +91,9 @@ void Weather_StartRain(s32 withCue) {
   work->tileBase = VramCache_Load(work->entry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
-  slots = Ram_HeapSlots;
+  heap = Ram_HeapSlots;
   for (; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
-    struct MapWork *view = slots->mapGrid;
+    struct MapWork *view = heap->mapGrid;
     s32 *focus;
     // p walks the sprite's attribute words, then holds the x, as size carries
     // the fill's 0 above.
@@ -244,7 +244,7 @@ void FieldEffect_InitializeSparkles(void) {
   u32 i;
   s32 clear;
   volatile u32 zero;
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
 
   size = 0;
   Dma_Fill32Cell(zero, size, work, sizeof(struct WeatherWork));
@@ -255,10 +255,10 @@ void FieldEffect_InitializeSparkles(void) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 
   i = 0;
-  slots = Ram_HeapSlots;
+  heap = Ram_HeapSlots;
   clear = 0;
   do {
-    struct MapWork *view = slots->mapGrid;
+    struct MapWork *view = heap->mapGrid;
     s32 *leader;
     // attr walks the sprite's attribute words, then holds the x.
     u32 attr;

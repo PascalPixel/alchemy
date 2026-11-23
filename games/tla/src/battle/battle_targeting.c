@@ -575,13 +575,13 @@ void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
 
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattlePlayback_RunAll(void) {
-  struct BattleWork *work;
+  struct BattleWork *battle;
   struct BattlePlaybackWork *runtime;
   struct BattlePlaybackQueue *queue;
   s32 i;
 
-  work = Ram_HeapSlots->battleWork;
-  runtime = &work->events;
+  battle = Ram_HeapSlots->battleWork;
+  runtime = &battle->events;
   queue = &runtime->queue;
 
   for (i = 0; i < queue->count; i++) {

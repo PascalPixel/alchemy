@@ -52,9 +52,9 @@ void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 /// Converts a world position (16.16 pixels) to the screen: x and z receive the
 /// screen's x and y and y becomes 0.
 void Camera_WorldToScreen(struct Vector3 *position) {
-  struct HeapSlots *slots = Ram_HeapSlots;
+  struct HeapSlots *heap = Ram_HeapSlots;
 
-  if (((struct FieldWork *)slots->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (((struct FieldWork *)heap->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 result[3];
 
     Matrix_ProjectPoint(position, result);
@@ -62,7 +62,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     position->z = INTtoFIXED(result[1]);
     position->y = 0;
   } else {
-    struct MapWork *map = slots->mapGrid;
+    struct MapWork *map = heap->mapGrid;
     s32 x = map->viewX & FIELD_PIXEL_MASK;
     s32 z = map->viewZ & FIELD_PIXEL_MASK;
 
@@ -300,11 +300,11 @@ void FieldPsynergy_End(void) {
 /// On the World Map, notes that the field Psynergy has used the second half of
 /// the BG tile buffer, so the next still picture decodes it again.
 void FieldPsynergy_MarkWorldMapTilesUsed(void) {
-  struct HeapSlots *slots = Ram_HeapSlots;
-  s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
+  struct HeapSlots *heap = Ram_HeapSlots;
+  s32 mode = ((struct FieldWork *)heap->fieldWork)->mode;
 
   if (mode == ACTOR_SYSTEM_WORLD_MAP)
-    ((struct WorldMapView *)slots->mapGrid)->tileBufferUsed = mode;
+    ((struct WorldMapView *)heap->mapGrid)->tileBufferUsed = mode;
 }
 
 /// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase

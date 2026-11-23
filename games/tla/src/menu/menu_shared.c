@@ -39,14 +39,14 @@ s32 Menu_SuspendFieldTasks(void) {
 /// Clears the whole menu work and sets its defaults: no side selected, one
 /// entry in each side, and a 1x1 cursor grid.
 void Window_InitializeWork(s32 unused) {
-  struct ItemMenuWork *work = Ram_HeapSlots->menuWork;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
-  Dma_Fill32(0, work, MENU_WORK_SIZE);
-  work->sideIndex[0] = -1;
-  work->sideCount[0] = 1;
-  work->sideCount[1] = 1;
-  work->columnCount = 1;
-  work->rowCount = 1;
+  Dma_Fill32(0, menu, MENU_WORK_SIZE);
+  menu->sideIndex[0] = -1;
+  menu->sideCount[0] = 1;
+  menu->sideCount[1] = 1;
+  menu->columnCount = 1;
+  menu->rowCount = 1;
 }
 
 void Window_CloseFar();
@@ -612,20 +612,20 @@ extern u8 gMenuCursor_BobY[];
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
 /// bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
-  struct PsynergyMenuWork *work =
+  struct PsynergyMenuWork *menu =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
-  struct WindowSprite *cursor = work->sideIcon[0];
+  struct WindowSprite *cursor = menu->sideIcon[0];
 
   cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
-                                     xOffset + work->auxiliaryWindow->x * 8 + 8;
+                                     xOffset + menu->auxiliaryWindow->x * 8 + 8;
   cursor->sprite.oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] +
-                                     yOffset + work->auxiliaryWindow->y * 8 + 8;
+                                     yOffset + menu->auxiliaryWindow->y * 8 + 8;
 }
 
 /// Slides the hand cursor from where it is to (x, y) inside the menu's top-left
 /// window over two frames, in 1/16 pixel steps.
 void MenuCursor_Slide(s32 x, s32 y) {
-  struct PsynergyMenuWork *work =
+  struct PsynergyMenuWork *menu =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
   struct WindowSprite *cursor;
   s32 steps;
@@ -637,11 +637,11 @@ void MenuCursor_Slide(s32 x, s32 y) {
   s32 dy;
 
   steps = 2;
-  if (work->skipSlide != 0) {
-    work->skipSlide = 0;
+  if (menu->skipSlide != 0) {
+    menu->skipSlide = 0;
     return;
   }
-  cursor = work->sideIcon[0];
+  cursor = menu->sideIcon[0];
   {
     s32 spriteX = cursor->sprite.oam.x;
     s32 spriteY = cursor->sprite.oam.y;
@@ -667,13 +667,13 @@ void MenuCursor_Slide(s32 x, s32 y) {
   do {
     px += dx;
     {
-      s32 spriteX = (px >> 4) + (work->auxiliaryWindow->x << 3);
+      s32 spriteX = (px >> 4) + (menu->auxiliaryWindow->x << 3);
 
       cursor->sprite.oam.x = cursor->x = spriteX - 56;
     }
     py += dy;
     cursor->sprite.oam.y = cursor->y =
-        (py >> 4) + (work->auxiliaryWindow->y << 3) - 56;
+        (py >> 4) + (menu->auxiliaryWindow->y << 3) - 56;
     steps--;
     if (steps != 0)
       wait(1);

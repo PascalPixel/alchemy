@@ -93,17 +93,17 @@ void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y) {
   s32 slot;
-  struct WindowSprite *windowSprite;
+  struct WindowSprite *sprite;
 
   slot = VramCache_FindFreeEntry();
-  windowSprite = NULL;
+  sprite = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, slot, remap);
-    windowSprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
-    windowSprite->sprite.oam.fullColor = 1;
-    windowSprite->depth = OAM_DEPTH_FRONT - 4;
+    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
+    sprite->sprite.oam.fullColor = 1;
+    sprite->depth = OAM_DEPTH_FRONT - 4;
   }
-  return windowSprite;
+  return sprite;
 }
 
 /// Makes the sprite `obj` pulse: scales it about its centre by

@@ -742,7 +742,7 @@ void FieldPsynergy_Reveal(void) {
 /// black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES event.
 void FieldPsynergy_EndReveal(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
+  struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   void *pending;
 
@@ -765,9 +765,9 @@ void FieldPsynergy_EndReveal(void) {
       Field_RunPsynergyEvent(pending, scene->firstActorId,
                              scene->secondActorId);
     if (scene->childOption == 0) {
-      transition->nextMode = 0;
-      transition->duration = 1;
-      transition->step = 1;
+      state->nextMode = 0;
+      state->duration = 1;
+      state->step = 1;
       wait(10);
     }
   }

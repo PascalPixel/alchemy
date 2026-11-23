@@ -749,7 +749,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   FIXED vector[3];
   struct ScreenPoint spot;
   struct ScreenPoint *pos;
-  struct ScreenPoint point;
+  struct ScreenPoint screen;
   struct Scale scale;
   s32 frame;
   s32 i;
@@ -1005,11 +1005,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       }
 
       // Seven sparks orbit the falling sprite.
-      point.x = 0;
-      point.y = 0;
-      point.depth = toFIXED(512);
+      screen.x = 0;
+      screen.y = 0;
+      screen.depth = toFIXED(512);
       Matrix_Initialize();
-      Matrix_TranslateVector(&point.x);
+      Matrix_TranslateVector(&screen.x);
       Matrix_RotateZ(TRIG_TURN / 32);
       Matrix_RotateY(frame << 8);
       for (i = 0; i != 7; i++) {
@@ -1148,13 +1148,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       if (ember->y >= 0) {
         s32 size;
 
-        EffectPosition_ProjectPoint(&ember->x, &point);
-        point.x >>= 1;
-        if (point.depth < PARTICLE_STREAMS_EMBER_NEAR)
-          point.depth = PARTICLE_STREAMS_EMBER_NEAR;
-        if (point.depth > PARTICLE_STREAMS_EMBER_FAR)
-          point.depth = PARTICLE_STREAMS_EMBER_FAR;
-        size = 9 - (point.depth - PARTICLE_STREAMS_EMBER_NEAR) /
+        EffectPosition_ProjectPoint(&ember->x, &screen);
+        screen.x >>= 1;
+        if (screen.depth < PARTICLE_STREAMS_EMBER_NEAR)
+          screen.depth = PARTICLE_STREAMS_EMBER_NEAR;
+        if (screen.depth > PARTICLE_STREAMS_EMBER_FAR)
+          screen.depth = PARTICLE_STREAMS_EMBER_FAR;
+        size = 9 - (screen.depth - PARTICLE_STREAMS_EMBER_NEAR) /
                        PARTICLE_STREAMS_EMBER_SIZE_DEPTH;
         // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
         // picture is read from gBattleEffect_MotePictures[-1]; UBFIX draws
@@ -1168,7 +1168,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                  (gBattleEffect_MotePictures[size - 1] +
                   (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_PICTURES,
-             point.x - size / 2, point.y - size, size, size * 2);
+             screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(ember, PARTICLE_DAMPING_NONE,
                                       -toFIXED(1) / 8);
         if (ember->y <= toFIXED(20)) {
@@ -1203,14 +1203,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       struct Particle *flash = &PARTICLES[i];
 
       if (i / 3 < elapsed && flash->y >= 0) {
-        EffectPosition_ProjectPoint(&flash->x, &point);
-        point.x >>= 1;
+        EffectPosition_ProjectPoint(&flash->x, &screen);
+        screen.x >>= 1;
         if ((u32)flash->variant < 2 * PARTICLE_STREAMS_FLASH_PICTURES) {
           s32 picture = flash->variant / 2;
 
           draw(canvas, work->sheet + gParticleStreams_FlashPictures[picture],
-               point.x - gParticleStreams_FlashSizes[picture] / 2,
-               point.y - gParticleStreams_FlashSizes[picture] / 2,
+               screen.x - gParticleStreams_FlashSizes[picture] / 2,
+               screen.y - gParticleStreams_FlashSizes[picture] / 2,
                gParticleStreams_FlashSizes[picture],
                gParticleStreams_FlashSizes[picture]);
         }

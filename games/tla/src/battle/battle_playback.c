@@ -27,16 +27,16 @@ void BattlePlayback_Start(s32 cue) {
 /// Empties the playback queue and plays the commands queued next, after frames
 /// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
-  struct BattleWork *work;
+  struct BattleWork *battle;
   struct BattlePlaybackWork *ev;
 
-  work = Ram_HeapSlots->battleWork;
-  ev = &work->events;
+  battle = Ram_HeapSlots->battleWork;
+  ev = &battle->events;
   ev->queue.count = 0;
   ev->eventIndex = 0;
   ev->timer = frames;
   ev->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
-  work->plan.targetCount = 0;
+  battle->plan.targetCount = 0;
   return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
 
@@ -392,10 +392,10 @@ void BattlePlayback_Run(void) {
 /// Stops playback and empties the playback queue.
 u32 BattlePlayback_Reset(void) {
   struct BattlePlaybackWork *events;
-  struct BattleWork *work;
+  struct BattleWork *battle;
 
-  work = Ram_HeapSlots->battleWork;
-  events = &work->events;
+  battle = Ram_HeapSlots->battleWork;
+  events = &battle->events;
   events->phase = BATTLE_PLAYBACK_PHASE_IDLE;
   events->queue.count = 0;
   events->eventIndex = 0;

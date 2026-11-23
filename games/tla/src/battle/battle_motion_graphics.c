@@ -817,18 +817,18 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
 /// Removes unit id from the party's and the enemies' formations and from the
 /// planned actions. Returns 0 on removal, or -1 if absent from both formations.
 s32 BattleObject_RemoveFromLists(s32 id) {
-  struct BattleWork *work;
+  struct BattleWork *battle;
   s32 i;
   u32 j;
   s32 unit;
 
   // Ally formation.
-  work = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   Unit_Get(id)->side = BATTLE_SIDE_NONE;
   for (i = 0;; i++) {
-    unit = work->partyUnits[i];
+    unit = battle->partyUnits[i];
     if (unit == id) {
-      work->partyUnits[i] = BATTLE_UNIT_REMOVED;
+      battle->partyUnits[i] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
     if (unit == BATTLE_UNIT_LIST_END)
@@ -837,9 +837,9 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
   // Enemy formation.
   for (j = 0;; j++) {
-    unit = work->enemyIds[j];
+    unit = battle->enemyIds[j];
     if (unit == id) {
-      work->enemyIds[j] = BATTLE_UNIT_REMOVED;
+      battle->enemyIds[j] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
     if (unit == BATTLE_UNIT_LIST_END)
@@ -850,8 +850,8 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 removed:
   BattleEnemy_ReleaseNameLetter(id);
   for (j = 0; j < BATTLE_ACTION_CAPACITY; j++) {
-    if (work->actions[j].unitId == id)
-      work->actions[j].unitId = BATTLE_UNIT_LIST_END;
+    if (battle->actions[j].unitId == id)
+      battle->actions[j].unitId = BATTLE_UNIT_LIST_END;
   }
   return 0;
 }

@@ -257,7 +257,7 @@ s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
 /// up behind the other, and otherwise when the leader is in its way; from patch
 /// 1 it walks on while the leader is right beside it.
 s32 Yallam_UpdateRunningChild(struct Actor *actor) {
-  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   struct Actor *target;
@@ -279,7 +279,7 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
   if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((event->talk != 0 || window->mindRead != 0) && (*flags & CHILD_TALKING))
+    if ((event->talk != 0 || work->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
     Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
@@ -287,7 +287,7 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
 }
 #else
 s32 Yallam_UpdateRunningChild(struct Actor *actor) {
-  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;
@@ -300,7 +300,7 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
   if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-    if ((event->talk != 0 || window->mindRead != 0) && (*flags & CHILD_TALKING))
+    if ((event->talk != 0 || work->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
     Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }

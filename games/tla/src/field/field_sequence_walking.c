@@ -445,18 +445,17 @@ void WorldMap_Freeze(void) {
 
   // The mode and areaGraphicsPending read as one halfword.
   if (*(u16 *)&work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    struct ScreenTransitionState *transition;
+    struct ScreenTransitionState *state;
 
     work->areaGraphicsPending = 1;
 
     work->camera->paused = 1;
-    transition =
-        HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*transition));
-    if (transition != NULL && transition->step != 0) {
-      transition->start = DISPLAY_HEIGHT / 2;
-      transition->end = 0;
-      transition->duration = 1;
-      transition->step = 0;
+    state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+    if (state != NULL && state->step != 0) {
+      state->start = DISPLAY_HEIGHT / 2;
+      state->end = 0;
+      state->duration = 1;
+      state->step = 0;
       wait(2);
     }
     WorldMap_StartStillPictureFar();

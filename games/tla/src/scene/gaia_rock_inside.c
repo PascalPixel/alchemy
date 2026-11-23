@@ -3337,8 +3337,9 @@ restart:
 /// fourteenth into the Serpent's lair.
 void GaiaRockInside_TakeMazeExit(s32 direction) {
   s32 *state = &gPath->current;
-  u8 *row = (u8 *)state + *state * 8;
-  s32 next = row[((direction - 1) & 3) + 6];
+  // The step's PathStep.next, read by its offset from the path's start.
+  u8 *row = (u8 *)state + *state * sizeof(PathStep);
+  s32 next = row[((direction - 1) & 3) + offsetof(Path, steps[0].next)];
 
   switch (next) {
   case MAZE_BACK:

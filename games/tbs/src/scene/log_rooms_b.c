@@ -22,7 +22,7 @@
 ///   doubts the thieves were from Lunpa.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST and
 ///   LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS, the inn. The girl at the inn offers
-///   Bones there, and a Bone lies on the floor beside her. Its stairs lead to
+///   Bones there, and a Bone lies on the barrel beside her. Its stairs lead to
 ///   the upstairs room, where a cook works.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST, the item shop.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH, the weapon and armor
@@ -36,7 +36,7 @@
 /// The Bones are how the party gets the dog in Vault to show its hidden
 /// passage. The girl's offer gives one Bone each time it is accepted.
 /// FLAG_VAULT_BONE_RECEIVED, shared with log_rooms_a.c, changes only her
-/// words. Searching the Bone on the floor beside her
+/// words. Searching the barrel beside her, with the Bone on it
 /// (CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL, Vault_FindBone) gives another.
 ///
 /// While Isaac stands beside that Bone, Vault_UpdateBoneProximityFlag sets
@@ -371,7 +371,7 @@ static void LogRoomsB_ReadBoneGiverMind(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 
 /// Opens the room entered with the window transition. In the gem owner's house
-/// the table is drawn bare; at the inn the Bone is set on the floor beside the
+/// the table is drawn bare; at the inn the Bone is set on the barrel beside the
 /// girl at the inn.
 s32 Scene_Initialize(void) {
   s32 entrance;

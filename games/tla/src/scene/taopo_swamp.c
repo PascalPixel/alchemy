@@ -850,9 +850,14 @@ void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
 /// Frost on the puddle on the drips room's round spot, cell (25, 27).
 DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeDripSpot, 23, 27, 25)
 
-/// The next gust shatters the ice pillar on the drips room's round spot, as
-/// past the pool, and the drops it has caught start again from none
-/// (FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT).
+/// The next gust from the vent shatters the ice pillar on the drips room's
+/// round spot: the tall pillar Frost froze from the puddle there breaks into a
+/// lump of ice that is gone a moment later, leaving the spot bare for the
+/// drops to fill again, and the drops it has caught start again from none
+/// (FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT). The puddle freezes only once it has
+/// caught four drops or Douse was cast by a caster whose actor is 5
+/// (TaopoSwamp_FillDripSpot). The vents blow and the ceiling drips only when
+/// the room is entered by entrance 2, 4 or 9 (Scene_Initialize).
 void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   struct Actor *leader;
   struct Actor *actor;

@@ -105,6 +105,13 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+/// Menardi's answers to "Were you eavesdropping on our conversation?",
+/// counted from MsgValeTheyKnowLittleOfThe.
+enum EavesdropMessage {
+  EAVESDROP_MENARDI_FORBIDS_SPYING = 10,
+  EAVESDROP_MENARDI_TAKES_WORD = 11
+};
+
 s32 Scene_Initialize(void);
 extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
 extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];
@@ -682,10 +689,12 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // "Were you eavesdropping on our conversation?"
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // "Oh ho! Well... I can't permit you to continue your spying."
-    Event_SetMessageId(MsgValeTheyKnowLittleOfThe + 10);
+    Event_SetMessageId(MsgValeTheyKnowLittleOfThe +
+                       EAVESDROP_MENARDI_FORBIDS_SPYING);
   } else {
     // "Hmph! I guess that I should take you at your word..."
-    Event_SetMessageId(MsgValeTheyKnowLittleOfThe + 11);
+    Event_SetMessageId(MsgValeTheyKnowLittleOfThe +
+                       EAVESDROP_MENARDI_TAKES_WORD);
   }
 
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);

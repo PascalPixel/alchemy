@@ -140,6 +140,10 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 #define DICE_RESULT_LABEL_CENTER_X 640
 #endif
 
+/// The help window's labels, counted in messages from MsgLuckyDiceCoins:
+/// ":Throw" (MsgLuckyDiceThrow) and ":Quit" (MsgLuckyDiceQuit).
+enum { DICE_LABEL_THROW = 10, DICE_LABEL_QUIT = 11 };
+
 /// The used prefix of Lucky Dice's 1,560-byte work block
 /// (HEAP_SLOT_LUCKY_GAME): its sprites and windows. The allocation
 /// extends beyond these members.
@@ -457,10 +461,11 @@ void LuckyDice_Run(void) {
   window =
       Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
-  // ":Throw" and ":Quit" after their buttons (MsgLuckyDiceThrow and
-  // MsgLuckyDiceQuit), ten and eleven messages after the coins label.
-  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 10, window, 0, 0);
-  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + 11, sprites->helpWindow, 0, 8);
+  // ":Throw" and ":Quit" after their buttons.
+  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + DICE_LABEL_THROW, window, 0,
+                             0);
+  Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins + DICE_LABEL_QUIT,
+                             sprites->helpWindow, 0, 8);
 
   frame = 0;
   for (;;) {

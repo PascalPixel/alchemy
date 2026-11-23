@@ -2819,7 +2819,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   dst = (u32 *)BLITTER_BYTES;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
-  // Block 1, the prologue.
+  // Block 1, the entry code.
   COPY(4);
   if (mode == BLITTER_ADDITIVE) {
     COPY_FROM(BattleEffect_Mask, 3);

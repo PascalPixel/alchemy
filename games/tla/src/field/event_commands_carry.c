@@ -24,12 +24,12 @@
 /// ITEM_BREAK_SHARD_MAX sparkles, then vanish.
 void FieldPsynergy_Carry(void) {
   struct FieldEffectWork *work;
-  struct Actor *obj;
+  struct Actor *actor;
   struct Actor *pair[2];
   struct Vector3 pos;
-  struct Actor **walk;
+  struct Actor **hand;
   s32 n;
-  FIXED dist;
+  FIXED distance;
 
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
@@ -40,25 +40,26 @@ void FieldPsynergy_Carry(void) {
                                        FACING_EAST);
 
   wait(15);
-  walk = pair;
+  hand = pair;
   for (n = 0; n < 2; n++) {
-    obj = *walk++;
-    if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, toFIXED(24), obj->facing);
+    actor = *hand++;
+    if (actor != 0)
+      Actor_SetTargetPositionFromMagnitudeAngle(actor, toFIXED(24),
+                                                actor->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {
     SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
-    obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-    if (obj != 0) {
-      Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
-      obj->speedLimit = Random16() + toFIXED(2);
-      obj->acceleration = toFIXED(2);
-      obj->motionFlags = 0;
-      dist = Random16() * 24 + toFIXED(8);
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
+    actor = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
+    if (actor != 0) {
+      Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);
+      actor->speedLimit = Random16() + toFIXED(2);
+      actor->acceleration = toFIXED(2);
+      actor->motionFlags = 0;
+      distance = Random16() * 24 + toFIXED(8);
+      Actor_SetTargetPositionFromMagnitudeAngle(actor, distance, Random16());
     }
   }
 

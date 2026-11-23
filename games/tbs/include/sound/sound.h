@@ -41,7 +41,7 @@ void m4aSoundVSyncOff(void);
 s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine);
 void CgbSound(void);
 void CgbOscOff(u8 channel);
-void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed);
+void MPlayFadeOut(struct MusicPlayerInfo *player, u16 period);
 void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
                u8 count);
 void FadeOutBody(struct MusicPlayerInfo *player);
@@ -136,7 +136,7 @@ extern s32 gBuildStamp[];
 extern u8 gBgmFadeRequested;
 /// Set by the resident mixer whenever it clips a sample: when a sum overflows,
 /// IwramSoundNormalizeChannels saturates the samples and stores the clip mask
-/// (0x80008000) here, through pc.
+/// (0x80008000) here. Only the unused sound test reads it.
 extern s32 gSoundMixerClipped;
 /// An EWRAM byte Sound_Initialize clears and nothing else
 /// names.

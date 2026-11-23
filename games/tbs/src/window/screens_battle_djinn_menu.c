@@ -15,7 +15,7 @@
 #endif
 
 /// The party status window's layout, whose Djinn column the menu blinks.
-#define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
+#define PARTY_STATUS_LAYOUT (*(struct PartyStatusWindow **)gPartyStatusWork)
 
 /// A battle Djinn entry packs a Djinni's DJINN_COMMAND (bits 11..8 its element,
 /// 7..0 its number in the element, DJINN_COMMAND_INDEX), its standby bit and
@@ -93,7 +93,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                 WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                                     WINDOW_FLAG_BORDERED_CANVAS);
   Text_UseExtraTiles(1);
-  listWindow = Window_Create(21, 9, 9, 11, 6);
+  listWindow = Window_Create(21, 9, 9, 11, MENU_WINDOW_FLAGS);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_GetFar(member);
 
@@ -272,7 +272,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         drawnFirstEntry = firstEntry;
       }
       if (djinnCount > BATTLE_LIST_ROWS) {
-        for (j = 0; j < (listPages = ((djinnCount + 4) / BATTLE_LIST_ROWS));
+        for (j = 0; j < (listPages = ((djinnCount + BATTLE_LIST_ROWS - 1) /
+                                      BATTLE_LIST_ROWS));
              j++) {
           s32 tile = j + PAGE_NUMBER_TILE;
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
@@ -293,7 +294,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // R is held), and the page arrows, which give way to the plain frame
     // while R turns the preview's pages instead.
     if (djinnCount > BATTLE_LIST_ROWS) {
-      for (j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
+      for (j = 0; j < (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS;
+           j++) {
         s32 tile = j + PAGE_NUMBER_TILE;
         if ((gKeysHeld & KEY_R) || (gFrameCount & 15) <= 11) {
           if (j == (firstEntry / BATTLE_LIST_ROWS)) {
@@ -302,19 +304,25 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         }
         Window_SetTilemapEntry(
             listWindow, tile,
-            listWindow->width - ((djinnCount + 4) / BATTLE_LIST_ROWS) + j - 2,
+            listWindow->width -
+                ((djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS) + j -
+                2,
             -1, 0);
       }
       if ((gKeysHeld & KEY_R) == 0) {
         Window_SetTilemapEntry(
             listWindow, LIST_TILE_PAGES_LEFT,
-            listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
+            listWindow->width -
+                (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
+            -1, 0);
         Window_SetTilemapEntry(listWindow, LIST_TILE_PAGES_RIGHT,
                                listWindow->width - 2, -1, 0);
       } else {
         Window_SetTilemapEntry(
             listWindow, WINDOW_TILE_BORDER_TOP,
-            listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
+            listWindow->width -
+                (djinnCount + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
+            -1, 0);
         Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
@@ -395,7 +403,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
               ((djinnCount - 1) / BATTLE_LIST_ROWS) * BATTLE_LIST_ROWS) {
             selectedRow = djinnCount - firstEntry - 1;
           } else {
-            selectedRow = 4;
+            selectedRow = BATTLE_LIST_ROWS - 1;
           }
         }
         preferredRow = selectedRow;
@@ -503,7 +511,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     // the element of a ready standby Djinni under the cursor blinks between
     // HIGHLIGHT_PALETTE and WINDOW_PALETTE every four frames; then the arrow
     // tiles' blink.
-    partyStatus = CURSOR_OWNER;
+    partyStatus = PARTY_STATUS_LAYOUT;
     blinkPhase = gFrameCount & 4;
     iconWindow = partyStatus->window;
     if (partyStatus->flags & PARTY_STATUS_SHOW_DJINN) {
@@ -532,9 +540,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   }
 
   // Leave the Djinn column in WINDOW_PALETTE.
-  if (CURSOR_OWNER->flags & PARTY_STATUS_SHOW_DJINN) {
-    Window_HighlightRect(CURSOR_OWNER->window->x + 1,
-                         CURSOR_OWNER->window->y + 1, 4, 4, WINDOW_PALETTE);
+  if (PARTY_STATUS_LAYOUT->flags & PARTY_STATUS_SHOW_DJINN) {
+    Window_HighlightRect(PARTY_STATUS_LAYOUT->window->x + 1,
+                         PARTY_STATUS_LAYOUT->window->y + 1, 4, 4,
+                         WINDOW_PALETTE);
   }
   // Restore the party strip before releasing the Djinn menu's resources.
   VramCache_FreeEntry(cursorSlot);

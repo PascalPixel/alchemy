@@ -30,7 +30,7 @@ UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
   }
 }
 
-/// The marks BattleDjinnMenu_ListChangedDjinn gives an ability in its list,
+/// The marks BattleDjinnMenu_ListChangedAbilities gives an ability in its list,
 /// above its id: the preview draws a gained one in TEXT_COLOR_YELLOW and a
 /// lost one in TEXT_COLOR_RED.
 #define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change
@@ -46,9 +46,9 @@ UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
 /// `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST. Returns
 /// the entries written, and the gained and lost counts through `gained` and
 /// `lost`.
-s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
-                                     const struct PsynergyEntry *newGrid,
-                                     u16 *out, s32 *gained, s32 *lost) {
+s32 BattleDjinnMenu_ListChangedAbilities(const struct PsynergyEntry *oldGrid,
+                                         const struct PsynergyEntry *newGrid,
+                                         u16 *out, s32 *gained, s32 *lost) {
   s32 i;
   s32 j;
   s32 count;
@@ -104,7 +104,7 @@ UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
 
   iconSlot = VramCache_FindFreeEntry();
   if (iconSlot != VRAM_CACHE_ENTRY_COUNT) {
-    Resource_LoadIndexedEntryToBuffer(abilityId, iconSlot);
+    AbilityIcon_LoadIntoSlot(abilityId, iconSlot);
     // If the sprite pool is full, the creator releases iconSlot itself.
     WindowSprite_Create(iconSlot, OUTPUT_SIZE_16X16, window, x, y);
   }
@@ -153,7 +153,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     if (sprite) {
       sprite->motion = WINDOW_SPRITE_MOTION_STILL;
       sprite->kind = WINDOW_SPRITE_ICON;
-      sprite->index = VramCache_AllocEntry(128);
+      sprite->index = VramCache_AllocEntry(2 * 2 * TILE_SIZE_4BPP);
       entry = (struct PreviewSprite *)sprite->link;
       sprite->depth = OAM_DEPTH_WINDOW;
       sprite->x = 120;
@@ -182,9 +182,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     Window_Close(win, 1);
 
   if (page == 0)
-    win = Window_Create(0, 8, 21, 11, 6);
+    win = Window_Create(0, 8, 21, 11, MENU_WINDOW_FLAGS);
   else
-    win = Window_Create(0, 5, 21, 14, 6);
+    win = Window_Create(0, 5, 21, 14, MENU_WINDOW_FLAGS);
   if (win == NULL)
     return NULL;
 
@@ -202,7 +202,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     Djinn_SetFar(member, element, djinnIndex);
   Unit_CalculateFar(member);
 
-  abilityCount = BattleDjinnMenu_ListChangedDjinn(
+  abilityCount = BattleDjinnMenu_ListChangedAbilities(
       savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);
   // A page past the list shows the last.
   pages = (abilityCount - 1) / DJINN_PREVIEW_ABILITIES_PER_PAGE + 1;
@@ -275,7 +275,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
         rangePattern = RANGE_ICON_ALL;
       else
         rangePattern--;
-      Window_DrawThreeTileColumn(win, 16, visibleRow * 2, rangePattern, 0);
+      RangeIcon_Draw(win, 16, visibleRow * 2, rangePattern, 0);
 
       WindowSprite_CreateAbilityIcon(win, 0, visibleRow * 16 - 4,
                                      changedAbilities[i] & ACTION_ID_MASK);

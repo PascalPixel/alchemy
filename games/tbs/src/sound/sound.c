@@ -108,8 +108,8 @@ void Sound_Play(s32 id) {
   }
 }
 
-/// Restores BGM after a jingle and steps its volume and combined tempo/pitch
-/// ramps once per VBlank, clamping each ramp when it crosses its target.
+/// Runs once a VBlank: brings the music back after a jingle and steps its
+/// volume and its tempo and pitch toward their targets, stopping on each.
 void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
@@ -163,7 +163,11 @@ void Sound_UpdateBgmRamps(void) {
   m4aSoundVSync();
 }
 
-/// Runs the sound test's three sound selectors and five reverb codes forever.
+/// Unused: a sound test that never returns. Up and Down choose a row (music,
+/// jingles, sound effects), Left and Right step its number by 1 and L and R by
+/// 10, A plays it, B silences the music, Start fades it out, and Select fades
+/// the action sounds and moves to the next reverb code. Only a bare far-call
+/// veneer, which no code names, leads here.
 void SoundTest_Run(void) {
   // One row each for music, jingles and sound effects.
   s32 cues[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
@@ -188,7 +192,7 @@ void SoundTest_Run(void) {
     }
 
     if (gKeysRepeat & KEY_SELECT) {
-      reverbCode = (reverbCode + 1) % 5;
+      reverbCode = (reverbCode + 1) % (SOUND_REVERB_NONE + 1);
       Sound_LoadReverbCode(reverbCode);
     }
     if (gKeysRepeat & KEY_R)
@@ -220,8 +224,8 @@ void SoundTest_Run(void) {
   }
 }
 
-/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin) and
-/// clears every player's last sound.
+/// Starts the sound driver at power-on, with the music at full volume and its
+/// own tempo, and no music chosen yet.
 void Sound_Initialize(void) {
   s32 i;
 
@@ -241,34 +245,38 @@ void Sound_Initialize(void) {
     gMusicPlayerLastSound[i] = 0;
 }
 
-/// Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
-/// tempo.
+/// Plays the music at a tempo scale at once, BGM_UNITY_SCALE its own; its
+/// pitch stays. The Lemurian ship slows it to fifteen sixteenths.
 void Sound_SetBgmTempo(u16 tempoScale) {
   m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);
 }
 
-/// Applies a pitch offset, in 1/256 semitone, to the music's active tracks 0
-/// to 7 (TRACKS_ALL).
+/// Unused: transposes the music's tracks 0 to 7 by `pitch`, in 1/256
+/// semitone. Only a bare far-call veneer, which no code names, leads here.
 void Sound_SetBgmPitch(u16 pitch) {
   m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL, pitch);
 }
 
-/// Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
-/// (BGM_UNITY_SCALE the music's own).
+/// Unused: ramps the music's tempo and pitch together toward `targetScale`
+/// (BGM_UNITY_SCALE its own) by `step` a VBlank. Only a bare far-call veneer,
+/// which no code names, leads here.
 void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
   gBgmTempoPitchTarget = targetScale;
   gBgmTempoPitchStep = step;
 }
 
-/// Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
-/// outstanding volume ramp.
+/// Unused: sets the music's volume at once (BGM_UNITY_SCALE full), ending any
+/// fade toward another. Only a bare far-call veneer, which no code names, leads
+/// here.
 void Sound_SetBgmVolume(s16 volume) {
   m4aMPlayVolumeControl(&gMPlayInfo_BGM, TRACKS_ALL, volume);
   gBgmVolumeTarget = volume;
   gBgmVolume = volume;
 }
 
-/// Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step.
+/// Unused: fades the music toward `targetVolume` (BGM_UNITY_SCALE full) by
+/// `step` a VBlank. Only a bare far-call veneer, which no code names, leads
+/// here.
 void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
   gBgmVolumeTarget = targetVolume;
   gBgmVolumeStep = step;
@@ -278,14 +286,18 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
 /// player falls silent and the music begins to fade back in.
 s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
-/// Stops every sound player while preserving its state for a later resume.
+/// Unused: stops every music player where it is, for
+/// Sound_ResumeAllMusicPlayers to go on from. Only a bare far-call veneer,
+/// which no code names, leads here.
 void Sound_StopAllMusicPlayers(void) { m4aMPlayAllStop(); }
 
-/// Resumes every player, each from where m4aMPlayAllStop stopped it.
+/// Unused: resumes every music player from where Sound_StopAllMusicPlayers
+/// stopped it. Only a bare far-call veneer, which no code names, leads here.
 void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 
-/// Replaces the audio command mask, or toggles its requested bits when
-/// flagged.
+/// Unused: sets gSoundCommandMask, or with SOUND_COMMAND_MASK_TOGGLE flips the
+/// bits given; nothing reads the mask. Only a bare far-call veneer, which no
+/// code names, leads here.
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & SOUND_COMMAND_MASK_TOGGLE;
 
@@ -296,11 +308,12 @@ void Sound_UpdateCommandMask(u32 command) {
     gSoundCommandMask = command;
 }
 
-/// Returns the music Sound_Play last chose: 0xff before any, MUS_SILENCE after
-/// a fade, else the last music.
+/// Returns the music Sound_Play last chose: BGM_NONE before any, MUS_SILENCE
+/// after a fade.
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
-/// Waits a frame at a time for jingle restoration, giving up after 300 frames.
+/// Waits until the music has begun to come back after a jingle, giving up
+/// after BGM_WAIT_TIMEOUT_FRAMES.
 void Sound_WaitForBgmRestore(void) {
   s32 framesWaited = 0;
 

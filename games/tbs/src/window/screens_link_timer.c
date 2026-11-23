@@ -19,12 +19,15 @@ struct LinkSignature {
   u8 paddingAfterSignature[8];
 };
 
-/// A task while the party's commands are chosen (Battle_CollectPartyCommands):
-/// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
-/// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
-/// that are shown (the chosen command's and ability's icons, the party member's
-/// portrait) and slides the page arrows.
-void UpdateLinkSessionCountdown(void) {
+/// The battle menus' task while the party's commands are chosen
+/// (Battle_CollectPartyCommands): eases the battle view a third of the way to
+/// BattleMenuWork.targetViewOffset each frame (a pixel at least), draws the
+/// sprites of BattleMenuWork.icons that are shown (the chosen command's and
+/// ability's icons, the party member's portrait) and slides the page arrows.
+/// In a link battle it also runs the timer: once the partner has chosen, 15
+/// seconds counted down in a window at the top left, SE_TRIPLE_TONE_LOW playing
+/// at each second.
+void BattleMenu_Update(void) {
   struct BattleMenuWork *state = gBattleMenuWork;
   struct BattleWork *runtime;
   struct LinkSignature *signature;
@@ -54,7 +57,7 @@ void UpdateLinkSessionCountdown(void) {
       BattleCamera_SetCommandViewFar(newOffset);
     }
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < BATTLE_MENU_ICON_COUNT; i++) {
       if (state->iconShown[i] != 0)
         Oam_AddSpriteAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
     }
@@ -120,10 +123,11 @@ void UpdateLinkSessionCountdown(void) {
   }
 }
 
-/// Tests whether the party may not run from this battle: battle types 3 and 4
-/// (the battles an event starts, and link battles; see BATTLE_TYPE_NO_ESCAPE in
-/// battle/battle_turn.c) and a party once challenged
-/// (BattleWork.challengeFlag).
+/// Tests whether the party may not run from this battle, and if so says "This
+/// is no time to be running away!": a battle an event starts
+/// (BATTLE_TYPE_SCRIPTED), a link battle, and a party once challenged
+/// (BattleWork.challengeFlag). In a BATTLE_TYPE_NO_ESCAPE battle the party may
+/// try, and always fails (battle/battle_turn.c).
 s32 Battle_RefuseFlee(void) {
   s16 buffer[64];
   struct Window *window;
@@ -133,7 +137,8 @@ s32 Battle_RefuseFlee(void) {
 
   battle = gBattleWork;
   mode = gMainRoutineWork.battleType;
-  if (gMainRoutineWork.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
+  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE ||
+      mode <= BATTLE_TYPE_NO_ESCAPE || (result = 1, mode > BATTLE_TYPE_LINK)) {
     result = 0;
   }
   if (result == 0) {

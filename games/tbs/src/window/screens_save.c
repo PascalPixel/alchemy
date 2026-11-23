@@ -19,6 +19,22 @@
 /// No backup memory. "Unable to detect backup memory."
 #define SAVE_ERROR_NO_MEMORY -9
 
+/// What the file list is choosing a file for, which decides the files the
+/// cursor may stop on.
+enum FileMenuMode {
+  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
+  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
+  FILE_LIST_COPY,     ///< copying: any file with data
+  FILE_LIST_ERASE,    ///< erasing: any file with data
+  /// The title's Battle: files whose party has found a Djinni
+  /// (SaveFileSummary.flagCount).
+  FILE_LIST_BATTLE,
+  FILE_LIST_CLEARED ///< the title's Send: cleared files only
+};
+
+/// FileList_SelectFile's result when no file can be chosen in its mode.
+#define FILE_LIST_NO_FILE -2
+
 /// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
 #define PLAY_TIME_HOURS_MAX 999
 #define MINUTES_PER_HOUR 60
@@ -163,8 +179,9 @@ s32 Save_ScanFileSummaries(void) {
 /// Prepares the save buffer for writing: stamps the main routine's work with
 /// the time and options, then fills the file summary shown on the file menus
 /// (the leader's name, level and class, the play time, area, coins, Djinn of
-/// each element, the party, the send flag and how many of game flags 48-127 are
-/// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
+/// each element, the party, the send flag and how many Djinn have been found)
+/// and its checksum, the sum of SAVE_CHECKSUM_WORDS words from gGameFlagBytes
+/// on.
 u32 Save_BuildFileSummary(void) {
   u16 members[14];
   struct SaveFileSummary *summary;
@@ -208,10 +225,10 @@ u32 Save_BuildFileSummary(void) {
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
   summary->classId = leader->classId;
   summary->coins = gMainRoutineWork.holdings.coins;
-  summary->djinn[0] = Party_SumDjinnCountsFar(0);
-  summary->djinn[1] = Party_SumDjinnCountsFar(1);
-  summary->djinn[2] = Party_SumDjinnCountsFar(2);
-  summary->djinn[3] = Party_SumDjinnCountsFar(3);
+  summary->djinn[ELEMENT_VENUS] = Party_SumDjinnCountsFar(ELEMENT_VENUS);
+  summary->djinn[ELEMENT_MERCURY] = Party_SumDjinnCountsFar(ELEMENT_MERCURY);
+  summary->djinn[ELEMENT_MARS] = Party_SumDjinnCountsFar(ELEMENT_MARS);
+  summary->djinn[ELEMENT_JUPITER] = Party_SumDjinnCountsFar(ELEMENT_JUPITER);
   // Up to four party members, ended by -1.
   Party_ListMembersFar(members);
   for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
@@ -238,7 +255,7 @@ u32 Save_BuildFileSummary(void) {
     n <<= 2;
     word = (u32 *)gGameFlagBytes;
     Io_Write32(frames, &summary->frames);
-    // Entered at its test: as a while loop it gains a second test (4 bytes).
+    // A while loop, entered at its test.
     goto test;
     do {
       sum += *word++;
@@ -395,7 +412,7 @@ s32 Save_CopyFile(void) {
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    file = FileList_SelectFile(0, 2);
+    file = FileList_SelectFile(0, FILE_LIST_COPY);
     if (file == -1) {
       result = file;
     } else {
@@ -444,7 +461,7 @@ s32 Save_EraseSelectedFile(void) {
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    file = FileList_SelectFile(0, 3);
+    file = FileList_SelectFile(0, FILE_LIST_ERASE);
     if (file == -1) {
       result = file;
     } else {
@@ -524,7 +541,7 @@ void FileList_StartPulse(void) {
 void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
-/// clipped to the screen as Window_SetTextTileBitRect clips, with the tile
+/// clipped to the screen as Window_SetInteriorPaletteBit clips, with the tile
 /// entry of tile 6 in HIGHLIGHT_PALETTE, the palette FileList_UpdatePulse
 /// animates.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
@@ -603,7 +620,6 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
     menu->partyMemberX[i] =
         (x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
     menu->partyMemberY[i] = (y + window->y) * 8 + 16;
-    // 1.0 in 16.16.
     menu->partyMemberScale[i] = FIXED_ONE;
   }
 
@@ -751,7 +767,7 @@ void FileList_DrawDjinnCounts(struct Window *window,
 /// level and class, the play time and the coins.
 void FileList_DrawSummary(struct Window *window,
                           struct SaveFileSummary *summary) {
-  u32 playTime[4]; // the play time text
+  u32 playTime[4];
   s32 y;
 
   if (window != 0) {
@@ -792,21 +808,6 @@ void FileList_DrawSummary(struct Window *window,
 #endif
   }
 }
-
-/// What the file list is choosing a file for, which decides the files the
-/// cursor may stop on.
-enum FileMenuMode {
-  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
-  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
-  FILE_LIST_COPY,     ///< copying: any file with data
-  FILE_LIST_ERASE,    ///< erasing: any file with data
-  /// The title's Battle: files with any of game flags 48-127 set.
-  FILE_LIST_EXTRA,
-  FILE_LIST_CLEARED ///< the title's Send: cleared files only
-};
-
-/// FileList_SelectFile's result when no file can be chosen in its mode.
-#define FILE_LIST_NO_FILE -2
 
 /// The file list: lists the three files with each one's leader and area (or why
 /// it cannot be chosen) and, for the file under the cursor, its summary, its
@@ -875,7 +876,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       result = FILE_LIST_NO_FILE;
       goto done;
     }
-  } else if (menuMode == FILE_LIST_EXTRA) {
+  } else if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0; i < SAVE_FILE_COUNT &&
                 (save->summary[selectedFile].level == 0 ||
                  (s8)save->summary[selectedFile].flagCount == 0);
@@ -966,7 +967,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       goto done;
     }
   }
-  if (menuMode == FILE_LIST_EXTRA) {
+  if (menuMode == FILE_LIST_BATTLE) {
     for (i = 0; i < SAVE_FILE_COUNT &&
                 ((s8)save->summary[selectedFile].flagCount == 0);
          i++) {
@@ -1026,7 +1027,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     y = selectedFile * 16 + 4;
     cursorSprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, fileList, x, y);
-    cursorSprite->motion = 1;
+    cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
     fileCursor.anchor = cursorSprite;
   }
   cursorStyle = 1;
@@ -1105,7 +1106,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       } while ((save->summary[selectedFile].level == 0 ||
                 (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
-                (menuMode == FILE_LIST_EXTRA &&
+                (menuMode == FILE_LIST_BATTLE &&
                  (s8)save->summary[selectedFile].flagCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
@@ -1119,7 +1120,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       } while ((save->summary[selectedFile].level == 0 ||
                 (menuMode == FILE_LIST_CONTINUE &&
                  (s8)save->summary[selectedFile].sendFlag != 0) ||
-                (menuMode == FILE_LIST_EXTRA &&
+                (menuMode == FILE_LIST_BATTLE &&
                  (s8)save->summary[selectedFile].flagCount == 0) ||
                 (menuMode == FILE_LIST_CLEARED &&
                  (s8)save->summary[selectedFile].sendFlag == 0)));
@@ -1142,9 +1143,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
 #if TBS_PATCH_1
   FileList_StopPulse();
-#else
 #endif
-  // 55 is HEAP_SLOT_MENU, spriteWork's block.
   HeapSlot_Release(HEAP_SLOT_MENU);
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);

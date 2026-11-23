@@ -2,7 +2,7 @@
 #define ALCHEMY_SETTINGS_MENU_H
 
 /// @file
-/// The settings menu's work and the selection work.
+/// The work of the settings menu and the Pause menu.
 
 #include "static_assert.h"
 #include "types.h"

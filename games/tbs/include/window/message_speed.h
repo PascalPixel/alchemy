@@ -1,11 +1,13 @@
 #ifndef ALCHEMY_MESSAGE_SPEED_H
 #define ALCHEMY_MESSAGE_SPEED_H
 
+/// @file
+/// The message speed setting and how fast each speed types a message.
+
 #include "types.h"
 
-/// MainRoutineWork.messageSpeed, as the settings name it
-/// (MsgMessageSpeedSetting
-/// + speed): it indexes the speed tables below.
+/// MainRoutineWork.messageSpeed, as the settings menu names it
+/// (MsgMessageSpeedSetting + speed): it indexes the speed tables below.
 enum MessageSpeed {
   MESSAGE_SPEED_SLOW = 0,
   MESSAGE_SPEED_NORMAL = 1, ///< a new game's
@@ -16,10 +18,8 @@ extern const u8 gMessageSpeed_Delays[3];
 extern const u8 gMessageSpeed_Steps[3];
 extern const u8 gMessageSpeed_VoiceGaps[3];
 
-// The German counted nouns of window/counted_nouns.c come right after these
-// tables and stay their own object: in tbs-de the speed tables start at an odd
-// address, right after item_genders.o, and in one file with
-// gLocalizedWord_CountedNouns, a word-aligned pointer table, the object would
-// start at the next word, 3 bytes later.
+// The German counted nouns that follow these tables are a file of their own,
+// window/counted_nouns.c: their table of pointers is word-aligned, and in one
+// file with it these byte tables would be too.
 
 #endif

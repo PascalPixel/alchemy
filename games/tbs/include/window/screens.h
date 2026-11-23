@@ -1,6 +1,12 @@
 #ifndef ALCHEMY_SCREENS_H
 #define ALCHEMY_SCREENS_H
 
+/// @file
+/// The menu object's routines (window/screens.c): window sprites and
+/// portraits, the party status window, the file list and saving, name entry,
+/// the joined-party messages, the battle menus, the icon menus and the debug
+/// menus.
+
 #include "edition.h"
 #include "types.h"
 #include "graphics/glyph.h"
@@ -25,7 +31,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
 struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
                                      struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
-void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
+void WindowSprite_SetMotion(struct WindowSprite *sprite, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
 void ScanlineWindow_FillSpans(void *spans);
 void BgScreen_FillRect(s32 x, s32 y, u32 width, u32 height, s32 value);
@@ -37,8 +43,8 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
                                    s32 length);
 void PartyStatus_Draw(s32 flags);
 void PartyStatus_Close(void);
-void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
-                               s32 width, s32 height, u32 set);
+void Window_SetInteriorPaletteBit(const struct Window *window, s32 x, s32 y,
+                                  s32 width, s32 height, u32 set);
 
 struct SaveFileSummary;
 
@@ -74,8 +80,8 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
 s32 NameEntry_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
-void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
-                            s32 width, s32 height, u32 palette);
+void Window_SetInteriorPalette(const struct Window *window, s32 x, s32 y,
+                               s32 width, s32 height, u32 palette);
 void NameEntry_LoadPointingHandTiles(s32 slot);
 void NameEntry_LoadCaretTiles(s32 slot);
 s32 Text_SetString(const u8 *str);
@@ -83,7 +89,7 @@ void NameEntry_DrawName(struct Window *window, u8 *name);
 s32 NameEntry_EditMemberName(s32 member);
 s32 ColossoMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
-s32 Party_GetMemberPortraitSprite(u32 index);
+s32 Party_GetMemberPortraitSprite(u32 member);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
 void MenuTitle_Load(s32 picture, s32 slot);
@@ -102,20 +108,20 @@ struct PsynergyEntry;
 struct BattleCommandRowWork;
 
 UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void);
-UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
-                                         s32 pattern, s32 unused);
+UNREAD_RESULT RangeIcon_Draw(struct Window *window, s32 x, s32 y, s32 pattern,
+                             s32 unused);
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
 void Link_DrawPageArrows(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
-s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
+s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
-s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
+s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
 s32 WindowSprite_GetPointerTiles(s32 no);
 void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
-s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon);
+s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon);
 void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
                                     s32 tile);
 void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
@@ -125,12 +131,12 @@ void CommandRow_PutBg1InFront(void);
 void Graphics_InstallBg1VCountHandler(void);
 struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y);
 s32 BattleCommandRow_Run(s32 mode);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit);
 s32 PartyStatus_HighlightMembers(u16 *ids);
 UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value);
-s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
-                                     const struct PsynergyEntry *newGrid,
-                                     u16 *out, s32 *gained, s32 *lost);
+s32 BattleDjinnMenu_ListChangedAbilities(const struct PsynergyEntry *oldGrid,
+                                         const struct PsynergyEntry *newGrid,
+                                         u16 *out, s32 *gained, s32 *lost);
 UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
                                              s32 ability);
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
@@ -139,12 +145,12 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
-s32 Item_ClassifyUseAbility(s32 unit, s32 itemId);
+s32 Item_CheckBattleUse(s32 unit, s32 itemId);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
-void UpdateLinkSessionCountdown(void);
+void BattleMenu_Update(void);
 s32 Battle_RefuseFlee(void);
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act);
 s32 Battle_CollectPartyCommands(struct BattleAction *out, u16 *in, s32 count);
@@ -200,12 +206,12 @@ enum YesNo { YES = 0, NO = 1 };
 s32 FieldMenu_SelectCommand(s32 selection);
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command);
 s32 FileList_SelectAction(void);
-void Menu_DrawModeLabel(void);
-void Menu_DrawModeIndicator(void);
+void PasswordLevel_DrawHelp(void);
+void TransferMethod_DrawHelp(void);
 s32 IconMenu_ChooseSendOption(s32 mode);
 s32 Menu_SelectShopCommand(s32 selection);
 s32 Menu_SelectSanctumService(s32 selection);
-s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection);
+s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection);
 s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
@@ -217,8 +223,8 @@ void DebugSceneSelect_Run(void);
 #else
 s16 DebugSceneSelect_Run(void);
 #endif
-s32 DebugSceneSelect_HandleRowInput(struct Window *arg, s16 value, s16 *sub,
-                                    s16 *mode);
+s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
+                                    s16 *entrance, s16 *selectedField);
 s32 DebugFlagEditor_Run(void);
 void String_FormatHexDigits(u32 value, u32 count, u8 *out);
 void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);

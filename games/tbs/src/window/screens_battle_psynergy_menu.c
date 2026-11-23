@@ -45,7 +45,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                                     WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = BATTLE_LIST_ROWS;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  window = Window_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
+  window = Window_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, MENU_WINDOW_FLAGS);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y = i * 2;
@@ -137,7 +137,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           } else {
             rangePattern--;
           }
-          Window_DrawThreeTileColumn(window, 16, i * 2, rangePattern, 0);
+          RangeIcon_Draw(window, 16, i * 2, rangePattern, 0);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;

@@ -4,32 +4,29 @@
 
 #include "screens_internal.h"
 
-/// Says whether party member `unit` can use inventory entry `itemId` in battle:
-/// 0 yes; 1 no, "Using this will have no effect." (no item, an item that only
-/// teaches Psynergy while equipped, one with no action, or equipment the party
-/// member cannot equip); 2 not in battle, "Cannot be used during battle." (its
-/// action lacks ABILITY_USABLE_IN_BATTLE).
-s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
+/// Says whether party member `unit` can use inventory entry `itemId` in battle
+/// (enum BattleItemUse).
+s32 Item_CheckBattleUse(s32 unit, s32 itemId) {
   struct ItemDefinition *item;
 
   if (itemId == 0) {
-    return 1;
+    return BATTLE_ITEM_NO_EFFECT;
   }
   item = Item_GetDirectFar(itemId);
   if (item->useType == ITEM_USE_TEACHES) {
-    return 1;
+    return BATTLE_ITEM_NO_EFFECT;
   }
   if (item->abilityId == 0) {
-    return 1;
+    return BATTLE_ITEM_NO_EFFECT;
   }
   if ((item->type != ITEM_TYPE_NONE) &&
       (Item_CanUnitEquip(unit, itemId) == 0)) {
-    return 1;
+    return BATTLE_ITEM_NO_EFFECT;
   }
   if ((ABILITY_USABLE_IN_BATTLE & Ability_Get(item->abilityId)->flags) == 0) {
-    return 2;
+    return BATTLE_ITEM_NOT_IN_BATTLE;
   }
-  return 0;
+  return BATTLE_ITEM_USABLE;
 }
 
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
@@ -43,7 +40,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 
 /// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
-/// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
+/// TEXT_COLOR_YELLOW when Item_CheckBattleUse refuses it, TEXT_COLOR_RED
 /// when broken; the window above names the one under the cursor
 /// (MsgItemPlainName), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
@@ -79,7 +76,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                                     WINDOW_FLAG_BORDERED_CANVAS);
   iconCount = 0;
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  window = Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, 6);
+  window =
+      Window_Create(15, 9, 15, BATTLE_LIST_ROWS * 2 + 1, MENU_WINDOW_FLAGS);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y = i * 2;
@@ -118,8 +116,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                            window->width - 2, 1, WINDOW_PALETTE);
       Text_FillCanvasBackground();
       if (count != 0) {
-        if (Item_ClassifyUseAbility(member,
-                                    entries[firstEntry + selectedRow]) == 2) {
+        if (Item_CheckBattleUse(member, entries[firstEntry + selectedRow]) ==
+            BATTLE_ITEM_NOT_IN_BATTLE) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleItemUnavailable, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
         } else {
@@ -145,7 +143,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           }
           Item_GetDirectFar(item);
           Text_SetColor(TEXT_COLOR_WHITE);
-          if (Item_ClassifyUseAbility(member, item) != 0) {
+          if (Item_CheckBattleUse(member, item) != BATTLE_ITEM_USABLE) {
             Text_SetColor(TEXT_COLOR_YELLOW);
           } else if ((item & INVENTORY_BROKEN) != 0) {
             Text_SetColor(TEXT_COLOR_RED);
@@ -227,15 +225,15 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       if (count != 0) {
         result = firstEntry + selectedRow;
         Item_GetDirectFar(entries[result]);
-        unusableReason = 0;
+        unusableReason = BATTLE_ITEM_USABLE;
         if ((entries[result] & INVENTORY_BROKEN) == 0) {
-          unusableReason = Item_ClassifyUseAbility(member, entries[result]);
-          if (unusableReason == 0) {
+          unusableReason = Item_CheckBattleUse(member, entries[result]);
+          if (unusableReason == BATTLE_ITEM_USABLE) {
             break;
           }
         }
         Sound_PlayFar(SE_MENU_ERROR);
-        if (unusableReason == 2) {
+        if (unusableReason == BATTLE_ITEM_NOT_IN_BATTLE) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleItemUnavailable, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
         } else if ((entries[result] & INVENTORY_BROKEN) != 0) {

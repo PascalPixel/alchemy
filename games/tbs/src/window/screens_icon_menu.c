@@ -470,6 +470,15 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   return command;
 }
 
+/// The File Screen's rows of icons, by the files saved, each a row of
+/// gFileList_ActionByPosition.
+enum FileActionRow {
+  FILE_ROW_SOME = 0, ///< one or two files: New Game, Continue, Copy, Erase
+  FILE_ROW_FULL = 1, ///< three files: Continue, Erase
+  FILE_ROW_FULL_CLEARED = 2, ///< three files, all cleared: Erase
+  FILE_ROW_CLEARED = 3 ///< one or two files, all cleared: New Game, Copy, Erase
+};
+
 /// The File Screen's row of icons, from the save summaries: New Game,
 /// Continue, Copy and Erase for one or two files (starting on Continue); no New
 /// Game or Copy with three; with every file cleared no Continue, and only Erase
@@ -483,7 +492,7 @@ s32 FileList_SelectAction(void) {
   s32 initial;
   u32 group;
 
-  group = 0;
+  group = FILE_ROW_SOME;
   initial = 0;
   fileState = Save_ScanFileSummaries();
   if (fileState < 0) {
@@ -493,22 +502,22 @@ s32 FileList_SelectAction(void) {
     return 0;
   }
   if (fileState == SAVE_FILE_COUNT) {
-    group = 1;
+    group = FILE_ROW_FULL;
   } else if (fileState == SAVE_SCAN_ALL_CLEARED + SAVE_FILE_COUNT) {
-    group = 2;
+    group = FILE_ROW_FULL_CLEARED;
   } else if (fileState > SAVE_SCAN_ALL_CLEARED) {
-    group = 3;
+    group = FILE_ROW_CLEARED;
   } else {
     initial = 1;
   }
   IconMenu_Open();
-  if ((group == 0) || (group == 3)) {
+  if ((group == FILE_ROW_SOME) || (group == FILE_ROW_CLEARED)) {
     IconMenu_AddIcon(COMMAND_ICON_NEW_GAME);
   }
-  if (group <= 1U) {
+  if (group <= (u32)FILE_ROW_FULL) {
     IconMenu_AddIcon(COMMAND_ICON_CONTINUE);
   }
-  if ((group == 0) || (group == 3)) {
+  if ((group == FILE_ROW_SOME) || (group == FILE_ROW_CLEARED)) {
     IconMenu_AddIcon(COMMAND_ICON_COPY);
   }
   IconMenu_AddIcon(COMMAND_ICON_ERASE);
@@ -539,16 +548,15 @@ s32 FileList_SelectAction(void) {
 #define MODE_LABEL_RIGHT 80
 #endif
 
-/// Redraws the password-level explanation when the selected level changes.
-/// A task of the password level menu: what each level's
-/// password carries, from MsgPasswordLevel on: Gold (0) "Level", "Djinn",
-/// "Character stats", "Items" and "Coins", Silver (1) the first three,
-/// Bronze (2) the first two.
-void Menu_DrawModeLabel(void) {
+/// A task of the password level menu: when the selection moves, lists what
+/// that level's password carries, from MsgPasswordLevel on: Gold "Level",
+/// "Djinn", "Character stats", "Items" and "Coins", Silver the first three,
+/// Bronze the first two.
+void PasswordLevel_DrawHelp(void) {
   struct IconMenuWork *state = gIconMenuWork;
 
-  if (state->previousMode != state->selection) {
-    state->previousMode = state->selection;
+  if (state->drawnSelection != state->selection) {
+    state->drawnSelection = state->selection;
     Window_ClearInteriorTiles(state->lowerWindow, 8, 40, MODE_LABEL_RIGHT, 80);
 
     switch (state->selection) {
@@ -596,31 +604,31 @@ void Menu_DrawModeLabel(void) {
 // only when coming from Password.
 #if LANGUAGE == LANGUAGE_FRENCH
 
-/// Redraws password/cable transfer help when the chosen method changes. A
-/// task of the transfer method menu: Password or Cable.
-void Menu_DrawModeIndicator(void) {
+/// A task of the transfer method menu: when the selection moves between
+/// Password and Cable, explains the one chosen.
+void TransferMethod_DrawHelp(void) {
   struct IconMenuWork *state = gIconMenuWork;
 
-  if (state->previousMode != state->selection) {
+  if (state->drawnSelection != state->selection) {
     if (state->selection == TRANSFER_METHOD_PASSWORD) {
       WindowSprite_ClearList(state->lowerWindow);
       Text_DrawMessage(MsgPasswordTransferHelp, state->lowerWindow, 16, 4);
       Text_DrawMessage(MsgPasswordTransferHelp + 1, state->lowerWindow, 16, 16);
-    } else if (state->previousMode == TRANSFER_METHOD_PASSWORD) {
+    } else if (state->drawnSelection == TRANSFER_METHOD_PASSWORD) {
       WindowSprite_ClearList(state->lowerWindow);
       Text_DrawMessage(MsgCableTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage(MsgCableTransferHelp + 1, state->lowerWindow, 0, 16);
       Text_DrawMessage(MsgCableTransferHelp + 2, state->lowerWindow, 0, 28);
     }
-    state->previousMode = state->selection;
+    state->drawnSelection = state->selection;
   }
 }
 #else
-/// Redraws password/cable transfer help when the chosen method changes. A
-/// task of the transfer method menu: Password or Cable.
-void Menu_DrawModeIndicator(void) {
+/// A task of the transfer method menu: when the selection moves between
+/// Password and Cable, explains the one chosen.
+void TransferMethod_DrawHelp(void) {
   struct IconMenuWork *state = gIconMenuWork;
-  s16 *shown = &state->previousMode;
+  s16 *shown = &state->drawnSelection;
 
   if (*shown != state->selection) {
     *shown = state->selection;
@@ -679,8 +687,8 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   IconMenu_Center(ICON_MENU_BOTTOM_ROW, 5, 0);
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
-    Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
-    work->previousMode = -1;
+    Task_Add(PasswordLevel_DrawHelp, TASK_PASS_FRAME - 10);
+    work->drawnSelection = -1;
     window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
                            PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
@@ -705,8 +713,8 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     Text_DrawMessage(message, work->lowerWindow, 0, 16);
 #endif
   } else {
-    Task_Add(Menu_DrawModeIndicator, TASK_PASS_FRAME - 10);
-    work->previousMode = -1;
+    Task_Add(TransferMethod_DrawHelp, TASK_PASS_FRAME - 10);
+    work->drawnSelection = -1;
     window =
         Window_Create(TRANSFER_METHOD_WINDOW_X, 0, TRANSFER_METHOD_WINDOW_WIDTH,
                       4, WINDOW_FLAG_INSTANT);
@@ -720,9 +728,9 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   }
   result = IconMenu_Run(0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
-    Task_Remove(Menu_DrawModeLabel);
+    Task_Remove(PasswordLevel_DrawHelp);
   else
-    Task_Remove(Menu_DrawModeIndicator);
+    Task_Remove(TransferMethod_DrawHelp);
   WindowSprite_PrepareForRedraw(*upper);
   WindowSprite_PrepareForRedraw(work->lowerWindow);
   Window_Close(*upper, 2);

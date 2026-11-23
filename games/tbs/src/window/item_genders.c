@@ -1,557 +1,558 @@
 /// @file
 /// The grammatical gender of each item's name, by item id, in the German and
-/// Italian releases, a kind from 0 to 2 that picks the article or ending a
-/// message writes with the item. The names in the
-/// comments are the English release's.
+/// Italian releases (enum ItemGender), which picks the possessive a message
+/// writes before the item. The names in the comments are the English
+/// release's.
 
 #include "edition.h"
 #include "types.h"
+#include "window/articles.h"
 
 // clang-format off
 /// Each item's gender, by item id.
 #if LANGUAGE == LANGUAGE_GERMAN
 const s8 gLocalizedWord_ItemGenders[] = {
-    0, // ???
-    2, // Long Sword
-    2, // Broad Sword
-    2, // Claymore
-    2, // Great Sword
-    2, // Shamshir
-    1, // Silver Blade
-    2, // Masamune
-    1, // Arctic Blade
-    1, // Gaia Blade
-    1, // Sol Blade
-    2, // Muramasa
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Machete
-    2, // Short Sword
-    2, // Hunter's Sword
-    2, // Battle Rapier
-    2, // Master Rapier
-    1, // Ninja Blade
-    2, // Swift Sword
-    2, // Elven Rapier
-    1, // Assassin Blade
-    1, // Mystery Blade
-    1, // Kikuichimonji
-    2, // Kusanagi
-    2, // Bandit's Sword
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Battle Axe
-    1, // Broad Axe
-    1, // Great Axe
-    1, // Dragon Axe
-    1, // Giant Axe
-    1, // Vulcan Axe
-    1, // Burning Axe
-    1, // Demon Axe
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Mace
-    1, // Heavy Mace
-    0, // Battle Mace
-    1, // War Mace
-    1, // Righteous Mace
-    1, // Grievous Mace
-    1, // Blessed Mace
-    1, // Wicked Mace
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Wooden Stick
-    0, // Magic Rod
-    0, // Witch's Wand
-    0, // Blessed Ankh
-    0, // Psynergy Rod
-    0, // Frost Wand
-    0, // Angelic Ankh
-    0, // Demonic Staff
-    0, // Crystal Rod
-    0, // Zodiac Wand
-    0, // Shaman's Rod
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Leather Armor
-    1, // Psynergy Armor
-    0, // Chain Mail
-    1, // Armored Shell
-    0, // Plate Mail
-    1, // Steel Armor
-    1, // Spirit Armor
-    1, // Dragon Scales
-    0, // Demon Mail
-    1, // Asura's Armor
-    1, // Spiked Armor
-    0, // ?
-    0, // ?
-    0, // ?
-    2, // Cotton Shirt
-    1, // Travel Vest
-    0, // Fur Coat
-    1, // Adept's Clothes
-    2, // Elven Shirt
-    1, // Silver Vest
-    1, // Water Jacket
-    1, // Storm Gear
-    0, // Kimono
-    2, // Ninja Garb
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    2, // One-Piece Dress
-    2, // Travel Robe
-    1, // Silk Robe
-    2, // China Dress
-    2, // Jerkin
-    2, // Cocktail Dress
-    1, // Blessed Robe
-    0, // Magical Cassock
-    1, // Mysterious Robe
-    1, // Feathered Robe
-    1, // Oracle's Robe
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Wooden Shield
-    0, // Bronze Shield
-    0, // Iron Shield
-    0, // Knight's Shield
-    0, // Mirrored Shield
-    0, // Dragon Shield
-    0, // Earth Shield
-    0, // ?
-    0, // ?
-    1, // Padded Gloves
-    1, // Leather Gloves
-    1, // Gauntlets
-    0, // Vambrace
-    1, // War Gloves
-    1, // Spirit Gloves
-    1, // Battle Gloves
-    1, // Aura Gloves
-    0, // ?
-    0, // Leather Armlet
-    0, // Armlet
-    0, // Heavy Armlet
-    0, // Silver Armlet
-    0, // Spirit Armlet
-    0, // Virtuous Armlet
-    0, // Guardian Armlet
-    0, // ?
-    0, // ?
-    0, // Open Helm
-    0, // Bronze Helm
-    0, // Iron Helm
-    2, // Steel Helm
-    0, // Silver Helm
-    0, // Knight's Helm
-    0, // Warrior's Helm
-    0, // Adept's Helm
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Leather Cap
-    1, // Wooden Cap
-    1, // Mail Cap
-    1, // Jeweled Crown
-    1, // Ninja Hood
-    1, // Lucky Cap
-    1, // Thunder Crown
-    0, // Prophet's Hat
-    1, // Lure Cap
-    0, // ?
-    0, // Circlet
-    0, // Silver Circlet
-    0, // Guardian Circlet
-    0, // Platinum Circlet
-    0, // Mythril Circlet
-    1, // Glittering Tiara
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    2, // Herb
-    1, // Nut
-    0, // Vial
-    0, // Potion
-    2, // Hermes' Water
-    1, // Empty Bottle
-    0, // Psy Crystal
-    2, // Antidote
-    2, // Elixir
-    2, // Water of Life
-    0, // ?
-    2, // Power Bread
-    2, // Cookie
-    0, // Apple
-    1, // Hard Nut
-    1, // Mint
-    0, // Lucky Pepper
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Orb of Force
-    0, // Douse Drop
-    0, // Frost Jewel
-    0, // Lifting Gem
-    2, // Halt Gem
-    0, // Cloak Ball
-    0, // Carry Stone
-    1, // Catch Beads
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Venus Star
-    0, // Mercury Star
-    0, // Mars Star
-    0, // Jupiter Star
-    0, // Mythril Bag
-    2, // Small Jewel
-    1, // Smoke Bomb
-    1, // Sleep Bomb
-    2, // Game Ticket
-    1, // Lucky Medal
-    2, // Dragon's Eye
-    0, // Bone
-    0, // Anchor Charm
-    0, // Corn
-    0, // Cell Key
-    2, // Boat Ticket
-    1, // Sacred Feather
-    0, // Mystic Draught
-    0, // Oil Drop
-    1, // Weasel's Claw
-    0, // Bramble Seed
-    0, // Crystal Powder
-    0, // Black Orb
-    0, // Red Key
-    0, // Blue Key
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    2, // Mythril Shirt
-    2, // Silk Shirt
-    2, // Running Shirt
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Hyper Boots
-    1, // Quick Boots
-    1, // Fur Boots
-    1, // Turtle Boots
-    0, // ?
-    0, // ?
-    0, // Adept Ring
-    0, // War Ring
-    0, // Sleep Ring
-    0, // Healing Ring
-    0, // Unicorn Ring
-    0, // Fairy Ring
-    0, // Cleric's Ring
+    ITEM_MASCULINE, // ???
+    ITEM_NEUTER, // Long Sword
+    ITEM_NEUTER, // Broad Sword
+    ITEM_NEUTER, // Claymore
+    ITEM_NEUTER, // Great Sword
+    ITEM_NEUTER, // Shamshir
+    ITEM_FEMININE, // Silver Blade
+    ITEM_NEUTER, // Masamune
+    ITEM_FEMININE, // Arctic Blade
+    ITEM_FEMININE, // Gaia Blade
+    ITEM_FEMININE, // Sol Blade
+    ITEM_NEUTER, // Muramasa
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Machete
+    ITEM_NEUTER, // Short Sword
+    ITEM_NEUTER, // Hunter's Sword
+    ITEM_NEUTER, // Battle Rapier
+    ITEM_NEUTER, // Master Rapier
+    ITEM_FEMININE, // Ninja Blade
+    ITEM_NEUTER, // Swift Sword
+    ITEM_NEUTER, // Elven Rapier
+    ITEM_FEMININE, // Assassin Blade
+    ITEM_FEMININE, // Mystery Blade
+    ITEM_FEMININE, // Kikuichimonji
+    ITEM_NEUTER, // Kusanagi
+    ITEM_NEUTER, // Bandit's Sword
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Battle Axe
+    ITEM_FEMININE, // Broad Axe
+    ITEM_FEMININE, // Great Axe
+    ITEM_FEMININE, // Dragon Axe
+    ITEM_FEMININE, // Giant Axe
+    ITEM_FEMININE, // Vulcan Axe
+    ITEM_FEMININE, // Burning Axe
+    ITEM_FEMININE, // Demon Axe
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Mace
+    ITEM_FEMININE, // Heavy Mace
+    ITEM_MASCULINE, // Battle Mace
+    ITEM_FEMININE, // War Mace
+    ITEM_FEMININE, // Righteous Mace
+    ITEM_FEMININE, // Grievous Mace
+    ITEM_FEMININE, // Blessed Mace
+    ITEM_FEMININE, // Wicked Mace
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Wooden Stick
+    ITEM_MASCULINE, // Magic Rod
+    ITEM_MASCULINE, // Witch's Wand
+    ITEM_MASCULINE, // Blessed Ankh
+    ITEM_MASCULINE, // Psynergy Rod
+    ITEM_MASCULINE, // Frost Wand
+    ITEM_MASCULINE, // Angelic Ankh
+    ITEM_MASCULINE, // Demonic Staff
+    ITEM_MASCULINE, // Crystal Rod
+    ITEM_MASCULINE, // Zodiac Wand
+    ITEM_MASCULINE, // Shaman's Rod
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Leather Armor
+    ITEM_FEMININE, // Psynergy Armor
+    ITEM_MASCULINE, // Chain Mail
+    ITEM_FEMININE, // Armored Shell
+    ITEM_MASCULINE, // Plate Mail
+    ITEM_FEMININE, // Steel Armor
+    ITEM_FEMININE, // Spirit Armor
+    ITEM_FEMININE, // Dragon Scales
+    ITEM_MASCULINE, // Demon Mail
+    ITEM_FEMININE, // Asura's Armor
+    ITEM_FEMININE, // Spiked Armor
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_NEUTER, // Cotton Shirt
+    ITEM_FEMININE, // Travel Vest
+    ITEM_MASCULINE, // Fur Coat
+    ITEM_FEMININE, // Adept's Clothes
+    ITEM_NEUTER, // Elven Shirt
+    ITEM_FEMININE, // Silver Vest
+    ITEM_FEMININE, // Water Jacket
+    ITEM_FEMININE, // Storm Gear
+    ITEM_MASCULINE, // Kimono
+    ITEM_NEUTER, // Ninja Garb
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_NEUTER, // One-Piece Dress
+    ITEM_NEUTER, // Travel Robe
+    ITEM_FEMININE, // Silk Robe
+    ITEM_NEUTER, // China Dress
+    ITEM_NEUTER, // Jerkin
+    ITEM_NEUTER, // Cocktail Dress
+    ITEM_FEMININE, // Blessed Robe
+    ITEM_MASCULINE, // Magical Cassock
+    ITEM_FEMININE, // Mysterious Robe
+    ITEM_FEMININE, // Feathered Robe
+    ITEM_FEMININE, // Oracle's Robe
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Wooden Shield
+    ITEM_MASCULINE, // Bronze Shield
+    ITEM_MASCULINE, // Iron Shield
+    ITEM_MASCULINE, // Knight's Shield
+    ITEM_MASCULINE, // Mirrored Shield
+    ITEM_MASCULINE, // Dragon Shield
+    ITEM_MASCULINE, // Earth Shield
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Padded Gloves
+    ITEM_FEMININE, // Leather Gloves
+    ITEM_FEMININE, // Gauntlets
+    ITEM_MASCULINE, // Vambrace
+    ITEM_FEMININE, // War Gloves
+    ITEM_FEMININE, // Spirit Gloves
+    ITEM_FEMININE, // Battle Gloves
+    ITEM_FEMININE, // Aura Gloves
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Leather Armlet
+    ITEM_MASCULINE, // Armlet
+    ITEM_MASCULINE, // Heavy Armlet
+    ITEM_MASCULINE, // Silver Armlet
+    ITEM_MASCULINE, // Spirit Armlet
+    ITEM_MASCULINE, // Virtuous Armlet
+    ITEM_MASCULINE, // Guardian Armlet
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Open Helm
+    ITEM_MASCULINE, // Bronze Helm
+    ITEM_MASCULINE, // Iron Helm
+    ITEM_NEUTER, // Steel Helm
+    ITEM_MASCULINE, // Silver Helm
+    ITEM_MASCULINE, // Knight's Helm
+    ITEM_MASCULINE, // Warrior's Helm
+    ITEM_MASCULINE, // Adept's Helm
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Leather Cap
+    ITEM_FEMININE, // Wooden Cap
+    ITEM_FEMININE, // Mail Cap
+    ITEM_FEMININE, // Jeweled Crown
+    ITEM_FEMININE, // Ninja Hood
+    ITEM_FEMININE, // Lucky Cap
+    ITEM_FEMININE, // Thunder Crown
+    ITEM_MASCULINE, // Prophet's Hat
+    ITEM_FEMININE, // Lure Cap
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Circlet
+    ITEM_MASCULINE, // Silver Circlet
+    ITEM_MASCULINE, // Guardian Circlet
+    ITEM_MASCULINE, // Platinum Circlet
+    ITEM_MASCULINE, // Mythril Circlet
+    ITEM_FEMININE, // Glittering Tiara
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_NEUTER, // Herb
+    ITEM_FEMININE, // Nut
+    ITEM_MASCULINE, // Vial
+    ITEM_MASCULINE, // Potion
+    ITEM_NEUTER, // Hermes' Water
+    ITEM_FEMININE, // Empty Bottle
+    ITEM_MASCULINE, // Psy Crystal
+    ITEM_NEUTER, // Antidote
+    ITEM_NEUTER, // Elixir
+    ITEM_NEUTER, // Water of Life
+    ITEM_MASCULINE, // ?
+    ITEM_NEUTER, // Power Bread
+    ITEM_NEUTER, // Cookie
+    ITEM_MASCULINE, // Apple
+    ITEM_FEMININE, // Hard Nut
+    ITEM_FEMININE, // Mint
+    ITEM_MASCULINE, // Lucky Pepper
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Orb of Force
+    ITEM_MASCULINE, // Douse Drop
+    ITEM_MASCULINE, // Frost Jewel
+    ITEM_MASCULINE, // Lifting Gem
+    ITEM_NEUTER, // Halt Gem
+    ITEM_MASCULINE, // Cloak Ball
+    ITEM_MASCULINE, // Carry Stone
+    ITEM_FEMININE, // Catch Beads
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Venus Star
+    ITEM_MASCULINE, // Mercury Star
+    ITEM_MASCULINE, // Mars Star
+    ITEM_MASCULINE, // Jupiter Star
+    ITEM_MASCULINE, // Mythril Bag
+    ITEM_NEUTER, // Small Jewel
+    ITEM_FEMININE, // Smoke Bomb
+    ITEM_FEMININE, // Sleep Bomb
+    ITEM_NEUTER, // Game Ticket
+    ITEM_FEMININE, // Lucky Medal
+    ITEM_NEUTER, // Dragon's Eye
+    ITEM_MASCULINE, // Bone
+    ITEM_MASCULINE, // Anchor Charm
+    ITEM_MASCULINE, // Corn
+    ITEM_MASCULINE, // Cell Key
+    ITEM_NEUTER, // Boat Ticket
+    ITEM_FEMININE, // Sacred Feather
+    ITEM_MASCULINE, // Mystic Draught
+    ITEM_MASCULINE, // Oil Drop
+    ITEM_FEMININE, // Weasel's Claw
+    ITEM_MASCULINE, // Bramble Seed
+    ITEM_MASCULINE, // Crystal Powder
+    ITEM_MASCULINE, // Black Orb
+    ITEM_MASCULINE, // Red Key
+    ITEM_MASCULINE, // Blue Key
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_NEUTER, // Mythril Shirt
+    ITEM_NEUTER, // Silk Shirt
+    ITEM_NEUTER, // Running Shirt
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Hyper Boots
+    ITEM_FEMININE, // Quick Boots
+    ITEM_FEMININE, // Fur Boots
+    ITEM_FEMININE, // Turtle Boots
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Adept Ring
+    ITEM_MASCULINE, // War Ring
+    ITEM_MASCULINE, // Sleep Ring
+    ITEM_MASCULINE, // Healing Ring
+    ITEM_MASCULINE, // Unicorn Ring
+    ITEM_MASCULINE, // Fairy Ring
+    ITEM_MASCULINE, // Cleric's Ring
 };
 #elif LANGUAGE == LANGUAGE_ITALIAN
 const s8 gLocalizedWord_ItemGenders[] = {
-    0, // ???
-    1, // Long Sword
-    1, // Broad Sword
-    1, // Claymore
-    1, // Great Sword
-    1, // Shamshir
-    1, // Silver Blade
-    1, // Masamune
-    1, // Arctic Blade
-    1, // Gaia Blade
-    1, // Sol Blade
-    1, // Muramasa
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Machete
-    1, // Short Sword
-    1, // Hunter's Sword
-    0, // Battle Rapier
-    0, // Master Rapier
-    1, // Ninja Blade
-    1, // Swift Sword
-    0, // Elven Rapier
-    1, // Assassin Blade
-    1, // Mystery Blade
-    1, // Kikuichimonji
-    1, // Kusanagi
-    1, // Bandit's Sword
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Battle Axe
-    1, // Broad Axe
-    1, // Great Axe
-    1, // Dragon Axe
-    1, // Giant Axe
-    1, // Vulcan Axe
-    1, // Burning Axe
-    1, // Demon Axe
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Mace
-    1, // Heavy Mace
-    1, // Battle Mace
-    1, // War Mace
-    1, // Righteous Mace
-    1, // Grievous Mace
-    1, // Blessed Mace
-    1, // Wicked Mace
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Wooden Stick
-    0, // Magic Rod
-    0, // Witch's Wand
-    0, // Blessed Ankh
-    1, // Psynergy Rod
-    1, // Frost Wand
-    0, // Angelic Ankh
-    0, // Demonic Staff
-    1, // Crystal Rod
-    0, // Zodiac Wand
-    0, // Shaman's Rod
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Leather Armor
-    1, // Psynergy Armor
-    1, // Chain Mail
-    1, // Armored Shell
-    1, // Plate Mail
-    1, // Steel Armor
-    1, // Spirit Armor
-    1, // Dragon Scales
-    1, // Demon Mail
-    1, // Asura's Armor
-    1, // Spiked Armor
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Cotton Shirt
-    1, // Travel Vest
-    0, // Fur Coat
-    1, // Adept's Clothes
-    1, // Elven Shirt
-    1, // Silver Vest
-    1, // Water Jacket
-    1, // Storm Gear
-    0, // Kimono
-    0, // Ninja Garb
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // One-Piece Dress
-    0, // Travel Robe
-    0, // Silk Robe
-    0, // China Dress
-    0, // Jerkin
-    0, // Cocktail Dress
-    0, // Blessed Robe
-    1, // Magical Cassock
-    0, // Mysterious Robe
-    0, // Feathered Robe
-    0, // Oracle's Robe
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Wooden Shield
-    0, // Bronze Shield
-    0, // Iron Shield
-    0, // Knight's Shield
-    0, // Mirrored Shield
-    0, // Dragon Shield
-    0, // Earth Shield
-    0, // ?
-    0, // ?
-    0, // Padded Gloves
-    0, // Leather Gloves
-    0, // Gauntlets
-    0, // Vambrace
-    0, // War Gloves
-    0, // Spirit Gloves
-    0, // Battle Gloves
-    0, // Aura Gloves
-    0, // ?
-    0, // Leather Armlet
-    0, // Armlet
-    0, // Heavy Armlet
-    0, // Silver Armlet
-    0, // Spirit Armlet
-    0, // Virtuous Armlet
-    0, // Guardian Armlet
-    0, // ?
-    0, // ?
-    0, // Open Helm
-    0, // Bronze Helm
-    0, // Iron Helm
-    0, // Steel Helm
-    0, // Silver Helm
-    0, // Knight's Helm
-    0, // Warrior's Helm
-    0, // Adept's Helm
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Leather Cap
-    0, // Wooden Cap
-    0, // Mail Cap
-    1, // Jeweled Crown
-    0, // Ninja Hood
-    0, // Lucky Cap
-    1, // Thunder Crown
-    0, // Prophet's Hat
-    0, // Lure Cap
-    0, // ?
-    1, // Circlet
-    1, // Silver Circlet
-    1, // Guardian Circlet
-    1, // Platinum Circlet
-    1, // Mythril Circlet
-    1, // Glittering Tiara
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Herb
-    1, // Nut
-    1, // Vial
-    1, // Potion
-    1, // Hermes' Water
-    1, // Empty Bottle
-    1, // Psy Crystal
-    0, // Antidote
-    0, // Elixir
-    1, // Water of Life
-    0, // ?
-    0, // Power Bread
-    0, // Cookie
-    1, // Apple
-    1, // Hard Nut
-    1, // Mint
-    0, // Lucky Pepper
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Orb of Force
-    1, // Douse Drop
-    1, // Frost Jewel
-    1, // Lifting Gem
-    1, // Halt Gem
-    1, // Cloak Ball
-    1, // Carry Stone
-    1, // Catch Beads
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Venus Star
-    0, // Mercury Star
-    0, // Mars Star
-    0, // Jupiter Star
-    1, // Mythril Bag
-    0, // Small Jewel
-    1, // Smoke Bomb
-    1, // Sleep Bomb
-    0, // Game Ticket
-    1, // Lucky Medal
-    0, // Dragon's Eye
-    0, // Bone
-    1, // Anchor Charm
-    0, // Corn
-    1, // Cell Key
-    0, // Boat Ticket
-    1, // Sacred Feather
-    0, // Mystic Draught
-    1, // Oil Drop
-    0, // Weasel's Claw
-    0, // Bramble Seed
-    1, // Crystal Powder
-    1, // Black Orb
-    1, // Red Key
-    1, // Blue Key
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // ?
-    1, // Mythril Shirt
-    1, // Silk Shirt
-    1, // Running Shirt
-    0, // ?
-    0, // ?
-    0, // ?
-    0, // Hyper Boots
-    0, // Quick Boots
-    0, // Fur Boots
-    0, // Turtle Boots
-    0, // ?
-    0, // ?
-    0, // Adept Ring
-    0, // War Ring
-    0, // Sleep Ring
-    0, // Healing Ring
-    0, // Unicorn Ring
-    0, // Fairy Ring
-    0, // Cleric's Ring
+    ITEM_MASCULINE, // ???
+    ITEM_FEMININE, // Long Sword
+    ITEM_FEMININE, // Broad Sword
+    ITEM_FEMININE, // Claymore
+    ITEM_FEMININE, // Great Sword
+    ITEM_FEMININE, // Shamshir
+    ITEM_FEMININE, // Silver Blade
+    ITEM_FEMININE, // Masamune
+    ITEM_FEMININE, // Arctic Blade
+    ITEM_FEMININE, // Gaia Blade
+    ITEM_FEMININE, // Sol Blade
+    ITEM_FEMININE, // Muramasa
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Machete
+    ITEM_FEMININE, // Short Sword
+    ITEM_FEMININE, // Hunter's Sword
+    ITEM_MASCULINE, // Battle Rapier
+    ITEM_MASCULINE, // Master Rapier
+    ITEM_FEMININE, // Ninja Blade
+    ITEM_FEMININE, // Swift Sword
+    ITEM_MASCULINE, // Elven Rapier
+    ITEM_FEMININE, // Assassin Blade
+    ITEM_FEMININE, // Mystery Blade
+    ITEM_FEMININE, // Kikuichimonji
+    ITEM_FEMININE, // Kusanagi
+    ITEM_FEMININE, // Bandit's Sword
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Battle Axe
+    ITEM_FEMININE, // Broad Axe
+    ITEM_FEMININE, // Great Axe
+    ITEM_FEMININE, // Dragon Axe
+    ITEM_FEMININE, // Giant Axe
+    ITEM_FEMININE, // Vulcan Axe
+    ITEM_FEMININE, // Burning Axe
+    ITEM_FEMININE, // Demon Axe
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Mace
+    ITEM_FEMININE, // Heavy Mace
+    ITEM_FEMININE, // Battle Mace
+    ITEM_FEMININE, // War Mace
+    ITEM_FEMININE, // Righteous Mace
+    ITEM_FEMININE, // Grievous Mace
+    ITEM_FEMININE, // Blessed Mace
+    ITEM_FEMININE, // Wicked Mace
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Wooden Stick
+    ITEM_MASCULINE, // Magic Rod
+    ITEM_MASCULINE, // Witch's Wand
+    ITEM_MASCULINE, // Blessed Ankh
+    ITEM_FEMININE, // Psynergy Rod
+    ITEM_FEMININE, // Frost Wand
+    ITEM_MASCULINE, // Angelic Ankh
+    ITEM_MASCULINE, // Demonic Staff
+    ITEM_FEMININE, // Crystal Rod
+    ITEM_MASCULINE, // Zodiac Wand
+    ITEM_MASCULINE, // Shaman's Rod
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Leather Armor
+    ITEM_FEMININE, // Psynergy Armor
+    ITEM_FEMININE, // Chain Mail
+    ITEM_FEMININE, // Armored Shell
+    ITEM_FEMININE, // Plate Mail
+    ITEM_FEMININE, // Steel Armor
+    ITEM_FEMININE, // Spirit Armor
+    ITEM_FEMININE, // Dragon Scales
+    ITEM_FEMININE, // Demon Mail
+    ITEM_FEMININE, // Asura's Armor
+    ITEM_FEMININE, // Spiked Armor
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Cotton Shirt
+    ITEM_FEMININE, // Travel Vest
+    ITEM_MASCULINE, // Fur Coat
+    ITEM_FEMININE, // Adept's Clothes
+    ITEM_FEMININE, // Elven Shirt
+    ITEM_FEMININE, // Silver Vest
+    ITEM_FEMININE, // Water Jacket
+    ITEM_FEMININE, // Storm Gear
+    ITEM_MASCULINE, // Kimono
+    ITEM_MASCULINE, // Ninja Garb
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // One-Piece Dress
+    ITEM_MASCULINE, // Travel Robe
+    ITEM_MASCULINE, // Silk Robe
+    ITEM_MASCULINE, // China Dress
+    ITEM_MASCULINE, // Jerkin
+    ITEM_MASCULINE, // Cocktail Dress
+    ITEM_MASCULINE, // Blessed Robe
+    ITEM_FEMININE, // Magical Cassock
+    ITEM_MASCULINE, // Mysterious Robe
+    ITEM_MASCULINE, // Feathered Robe
+    ITEM_MASCULINE, // Oracle's Robe
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Wooden Shield
+    ITEM_MASCULINE, // Bronze Shield
+    ITEM_MASCULINE, // Iron Shield
+    ITEM_MASCULINE, // Knight's Shield
+    ITEM_MASCULINE, // Mirrored Shield
+    ITEM_MASCULINE, // Dragon Shield
+    ITEM_MASCULINE, // Earth Shield
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Padded Gloves
+    ITEM_MASCULINE, // Leather Gloves
+    ITEM_MASCULINE, // Gauntlets
+    ITEM_MASCULINE, // Vambrace
+    ITEM_MASCULINE, // War Gloves
+    ITEM_MASCULINE, // Spirit Gloves
+    ITEM_MASCULINE, // Battle Gloves
+    ITEM_MASCULINE, // Aura Gloves
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Leather Armlet
+    ITEM_MASCULINE, // Armlet
+    ITEM_MASCULINE, // Heavy Armlet
+    ITEM_MASCULINE, // Silver Armlet
+    ITEM_MASCULINE, // Spirit Armlet
+    ITEM_MASCULINE, // Virtuous Armlet
+    ITEM_MASCULINE, // Guardian Armlet
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Open Helm
+    ITEM_MASCULINE, // Bronze Helm
+    ITEM_MASCULINE, // Iron Helm
+    ITEM_MASCULINE, // Steel Helm
+    ITEM_MASCULINE, // Silver Helm
+    ITEM_MASCULINE, // Knight's Helm
+    ITEM_MASCULINE, // Warrior's Helm
+    ITEM_MASCULINE, // Adept's Helm
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Leather Cap
+    ITEM_MASCULINE, // Wooden Cap
+    ITEM_MASCULINE, // Mail Cap
+    ITEM_FEMININE, // Jeweled Crown
+    ITEM_MASCULINE, // Ninja Hood
+    ITEM_MASCULINE, // Lucky Cap
+    ITEM_FEMININE, // Thunder Crown
+    ITEM_MASCULINE, // Prophet's Hat
+    ITEM_MASCULINE, // Lure Cap
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Circlet
+    ITEM_FEMININE, // Silver Circlet
+    ITEM_FEMININE, // Guardian Circlet
+    ITEM_FEMININE, // Platinum Circlet
+    ITEM_FEMININE, // Mythril Circlet
+    ITEM_FEMININE, // Glittering Tiara
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Herb
+    ITEM_FEMININE, // Nut
+    ITEM_FEMININE, // Vial
+    ITEM_FEMININE, // Potion
+    ITEM_FEMININE, // Hermes' Water
+    ITEM_FEMININE, // Empty Bottle
+    ITEM_FEMININE, // Psy Crystal
+    ITEM_MASCULINE, // Antidote
+    ITEM_MASCULINE, // Elixir
+    ITEM_FEMININE, // Water of Life
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Power Bread
+    ITEM_MASCULINE, // Cookie
+    ITEM_FEMININE, // Apple
+    ITEM_FEMININE, // Hard Nut
+    ITEM_FEMININE, // Mint
+    ITEM_MASCULINE, // Lucky Pepper
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Orb of Force
+    ITEM_FEMININE, // Douse Drop
+    ITEM_FEMININE, // Frost Jewel
+    ITEM_FEMININE, // Lifting Gem
+    ITEM_FEMININE, // Halt Gem
+    ITEM_FEMININE, // Cloak Ball
+    ITEM_FEMININE, // Carry Stone
+    ITEM_FEMININE, // Catch Beads
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Venus Star
+    ITEM_MASCULINE, // Mercury Star
+    ITEM_MASCULINE, // Mars Star
+    ITEM_MASCULINE, // Jupiter Star
+    ITEM_FEMININE, // Mythril Bag
+    ITEM_MASCULINE, // Small Jewel
+    ITEM_FEMININE, // Smoke Bomb
+    ITEM_FEMININE, // Sleep Bomb
+    ITEM_MASCULINE, // Game Ticket
+    ITEM_FEMININE, // Lucky Medal
+    ITEM_MASCULINE, // Dragon's Eye
+    ITEM_MASCULINE, // Bone
+    ITEM_FEMININE, // Anchor Charm
+    ITEM_MASCULINE, // Corn
+    ITEM_FEMININE, // Cell Key
+    ITEM_MASCULINE, // Boat Ticket
+    ITEM_FEMININE, // Sacred Feather
+    ITEM_MASCULINE, // Mystic Draught
+    ITEM_FEMININE, // Oil Drop
+    ITEM_MASCULINE, // Weasel's Claw
+    ITEM_MASCULINE, // Bramble Seed
+    ITEM_FEMININE, // Crystal Powder
+    ITEM_FEMININE, // Black Orb
+    ITEM_FEMININE, // Red Key
+    ITEM_FEMININE, // Blue Key
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_FEMININE, // Mythril Shirt
+    ITEM_FEMININE, // Silk Shirt
+    ITEM_FEMININE, // Running Shirt
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Hyper Boots
+    ITEM_MASCULINE, // Quick Boots
+    ITEM_MASCULINE, // Fur Boots
+    ITEM_MASCULINE, // Turtle Boots
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // ?
+    ITEM_MASCULINE, // Adept Ring
+    ITEM_MASCULINE, // War Ring
+    ITEM_MASCULINE, // Sleep Ring
+    ITEM_MASCULINE, // Healing Ring
+    ITEM_MASCULINE, // Unicorn Ring
+    ITEM_MASCULINE, // Fairy Ring
+    ITEM_MASCULINE, // Cleric's Ring
 };
 #endif
 // clang-format on

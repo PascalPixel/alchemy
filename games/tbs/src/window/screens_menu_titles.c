@@ -34,7 +34,7 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
-  // The picture is 8 tiles. Neither sprite is checked for NULL.
+  // Each half is 8 tiles. Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
   first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
   first->depth = OAM_DEPTH_FRONT - 2;
@@ -50,8 +50,7 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
 void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  // volatile: the VBlank handler counts gVBlankCount, so each sprite reads it
-  // afresh; like gFrameCount's, the qualifier is no device.
+  // The VBlank interrupt counts gVBlankCount, so each sprite reads it afresh.
   value = (u8)obj->y +
           gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
   obj->oam.y = value;
@@ -121,11 +120,12 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16
-/// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
+/// The first of the range icons' BG tiles, which RangeIcon_Draw
 /// draws as tilemap entries.
 #define RANGE_ICON_FIRST_TILE 788
 
-/// Builds the twelve range icons Window_DrawThreeTileColumn draws, as the 24 BG
+/// Builds the twelve range icons of the battle lists, which RangeIcon_Draw
+/// draws, as the 24 BG
 /// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
 /// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
 /// gMenu_BarPatternRows (its colour 5 turns the fill to colour 1).
@@ -164,11 +164,11 @@ UNREAD_RESULT Menu_BuildLocalizedPatternTiles(void) {
   }
 }
 
-/// Draws range icon `pattern` across tiles (x, y) to (x + 2, y) of `window`'s
-/// interior: its end tile mirrored, its centre tile and its end tile, in the UI
-/// palette.
-UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
-                                         s32 pattern, s32 unused) {
+/// Draws range icon `pattern`, how many targets an ability reaches, across
+/// tiles (x, y) to (x + 2, y) of `window`'s interior: its end tile mirrored,
+/// its centre tile and its end tile, in the UI palette.
+UNREAD_RESULT RangeIcon_Draw(struct Window *window, s32 x, s32 y, s32 pattern,
+                             s32 unused) {
   s32 patternOffset = pattern * 2;
   s32 rightTile = patternOffset + WINDOW_TILE(RANGE_ICON_FIRST_TILE + 1);
 
@@ -254,20 +254,20 @@ void Link_DrawPageArrows(s32 offset) {
 /// `dst`, each pixel mapped through gGraphics_ExpandNibbleTable: first with
 /// colour 1 drawn as colour 10, then unchanged.
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
-  s32 bank = 0;
+  s32 copy = 0;
   s32 paletteOffset = 0;
-  s32 destinationBank = 0;
+  s32 destinationStep = 0;
 
-  // bank 0 writes from byte 0, bank 1 from (4 + 1) << 6 = 320, just after
-  // the first ten tiles of 32 bytes. Each "row" is one tile.
-  for (; bank <= 1; bank++) {
-    s32 row = 0;
-    s32 destinationOffset = (destinationBank + bank) << 6;
+  // The first copy goes from byte 0, the second from byte 320, after the
+  // first's ten tiles.
+  for (; copy <= 1; copy++) {
+    s32 digit = 0;
+    s32 destinationOffset = (destinationStep + copy) << 6;
 
     do {
       u16 *output = (u16 *)((u8 *)dst + destinationOffset);
       u16 *source = (u16 *)(BG_CHAR_BLOCK(0) + '0' * TILE_SIZE_4BPP +
-                            row * TILE_SIZE_4BPP);
+                            digit * TILE_SIZE_4BPP);
       s32 column;
 
       for (column = 0; column <= 15; column++) {
@@ -287,12 +287,12 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
         *output++ = expanded;
       }
 
-      row++;
+      digit++;
       destinationOffset += TILE_SIZE_4BPP;
-    } while (row <= 9);
+    } while (digit <= 9);
 
     paletteOffset += PALETTE_COLORS;
-    destinationBank += 4;
+    destinationStep += 4;
   }
 }
 
@@ -300,7 +300,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 /// status icons come from (Icon_DrawMisc), in a transfer block taken from
 /// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
 /// returns the entry's first tile.
-s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
+s32 StatusIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
 
@@ -326,10 +326,10 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   return result;
 }
 
-/// Builds the icon of ability `resource` in a transfer block taken from heap
-/// slot 17, reloads VRAM cache entry `index` with it and returns the entry's
-/// first tile.
-s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
+/// Builds the icon of ability `resource` in a transfer block taken from
+/// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
+/// returns the entry's first tile.
+s32 AbilityIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
   s32 result;
@@ -399,10 +399,10 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
 
 /// Opens the link battle timer's window, 6 by 4 tiles at the top left, with
 /// its heading (gLink_TimeLabelString), and returns it; the seconds go under
-/// the heading (UpdateLinkSessionCountdown), which keeps the window in
+/// the heading (BattleMenu_Update), which keeps the window in
 /// BattleMenuWork.timerWindow until the commands are chosen.
 struct Window *Link_CreateCountdownLabelWindow(void) {
-  struct Window *win = Window_Create(0, 0, 6, 4, 6);
+  struct Window *win = Window_Create(0, 0, 6, 4, MENU_WINDOW_FLAGS);
 
   LINK_COUNTDOWN_DRAW_HEADING(gLink_TimeLabelString, win, 0, 0);
   return win;
@@ -411,7 +411,7 @@ struct Window *Link_CreateCountdownLabelWindow(void) {
 /// Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
 /// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache
 /// entry `slotIndex` with it and returns the entry's first tile.
-s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
+s32 CommandIcon_ReloadSlot(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
@@ -484,7 +484,7 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
   work->entries[index].kind = icon;
   MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
   entry->sprite.oam.f.tile =
-      Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
+      CommandIcon_ReloadSlot(work->entries[index].resource, icon);
 }
 
 /// Puts BG1 behind the other layers (priority 3).

@@ -15,9 +15,9 @@
 ///   Party status    screens_party_status.c: PartyStatus_CreateWindow,
 ///                   PartyStatus_Draw
 ///   Saving          screens_save.c: FileList_SelectFile, Save_ToChosenFile
-///   Battle menus    screens_battle_party_commands.c:
-///   Battle_CollectPartyCommands, which
-///                   runs screens_battle_command_row.c: BattleCommandRow_Run
+///   Battle menus    Battle_CollectPartyCommands
+///                   (screens_battle_party_commands.c), which runs
+///                   BattleCommandRow_Run (screens_battle_command_row.c)
 ///                   and the menus of screens_battle_djinn_menu.c,
 ///                   screens_battle_summon_menu.c, screens_battle_item_menu.c,
 ///                   screens_battle_psynergy_menu.c and

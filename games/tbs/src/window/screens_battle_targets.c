@@ -57,22 +57,24 @@
       if (anchor + TARGET_CONDITION_LIST_WIDTH_SPANISH - 7 >                   \
           DISPLAY_TILE_WIDTH - 1)                                              \
         helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH_SPANISH; \
-      conditionWindow =                                                        \
-          Window_Create(helpColumn, helpRow,                                   \
-                        TARGET_CONDITION_LIST_WIDTH_SPANISH, count + 2, 6);    \
+      conditionWindow = Window_Create(helpColumn, helpRow,                     \
+                                      TARGET_CONDITION_LIST_WIDTH_SPANISH,     \
+                                      count + 2, MENU_WINDOW_FLAGS);           \
     } else {                                                                   \
       if (anchor + TARGET_CONDITION_LIST_WIDTH - 7 > DISPLAY_TILE_WIDTH - 1)   \
         helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH;         \
-      conditionWindow = Window_Create(                                         \
-          helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);     \
+      conditionWindow =                                                        \
+          Window_Create(helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH,      \
+                        count + 2, MENU_WINDOW_FLAGS);                         \
     }                                                                          \
   }
 #else
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
     TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH);                        \
-    conditionWindow = Window_Create(                                           \
-        helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);       \
+    conditionWindow =                                                          \
+        Window_Create(helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH,        \
+                      count + 2, MENU_WINDOW_FLAGS);                           \
   }
 #endif
 
@@ -87,6 +89,10 @@
 #define TARGET_VIEW_OFFSET_ENEMIES 16
 #define TARGET_VIEW_OFFSET_PARTY (-2)
 
+/// The target cursor's markers: the cursor, and two to each side of it for the
+/// units its range covers.
+#define TARGET_MARKERS 6
+
 /// One of the target cursor's markers: where it stands, its state flags and
 /// which listed unit it marks.
 struct TargetTrack {
@@ -95,7 +101,8 @@ struct TargetTrack {
   /// bits: 7..2 frames to stay put (CURSOR_HOLD_FRAME each) | 1
   /// CURSOR_IN_SPREAD | 0 CURSOR_EASING
   u8 flags;
-  s8 index; ///< the place it follows from the aimed one; 6 when unused
+  /// The place it follows from the aimed one; TARGET_MARKERS when unused.
+  s8 index;
 };
 
 /// TargetTrack.flags: easing halfway to its unit each frame, in the current
@@ -123,8 +130,8 @@ struct TargetTrack {
 /// or PLACE_ENEMY | its enemy slot, or -1 when cancelled.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
-  struct SelectionSprite cursorSprites[6];
-  struct TargetTrack cursorTracks[6];
+  struct SelectionSprite cursorSprites[TARGET_MARKERS];
+  struct TargetTrack cursorTracks[TARGET_MARKERS];
   struct ScreenPoint actorPosition;
   u16 spreadActorIds[UNIT_MAX];
   u8 spreadTrackIndices[8];
@@ -174,7 +181,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     gBattleMenuWork->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
   else
     gBattleMenuWork->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
-  for (i = 0; i < 6; i++)
+  for (i = 0; i < TARGET_MARKERS; i++)
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
   targetIndex = -1;
@@ -355,7 +362,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     // mark them, and redraw the window for the aimed one.
     if (redraw & TARGET_REDRAW_SPREAD) {
       targetCount = 0;
-      for (i = 0; i < 6; i++)
+      for (i = 0; i < TARGET_MARKERS; i++)
         cursorTracks[i].flags &= (u8)~CURSOR_IN_SPREAD;
       for (i = 0; i < spread; i++) {
         {
@@ -373,19 +380,19 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           if (i != 0 && (n = targetIndex - i) >= 0 &&
               candidateIds[n] != BATTLE_UNIT_REMOVED) {
             spreadActorIds[targetCount] = candidateIds[n];
-            cursorTracks[6 - i].flags |= CURSOR_IN_SPREAD;
-            if (cursorTracks[6 - i].index != -i) {
-              cursorTracks[6 - i].flags &= (u8)~CURSOR_EASING;
-              cursorTracks[6 - i].index = (s8)-i;
+            cursorTracks[TARGET_MARKERS - i].flags |= CURSOR_IN_SPREAD;
+            if (cursorTracks[TARGET_MARKERS - i].index != -i) {
+              cursorTracks[TARGET_MARKERS - i].flags &= (u8)~CURSOR_EASING;
+              cursorTracks[TARGET_MARKERS - i].index = (s8)-i;
             }
-            spreadTrackIndices[targetCount] = (u8)(6 - i);
+            spreadTrackIndices[targetCount] = (u8)(TARGET_MARKERS - i);
             targetCount++;
           }
         }
       }
-      for (i = 0; i < 6; i++) {
+      for (i = 0; i < TARGET_MARKERS; i++) {
         if ((cursorTracks[i].flags & CURSOR_IN_SPREAD) == 0)
-          cursorTracks[i].index = 6;
+          cursorTracks[i].index = TARGET_MARKERS;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
@@ -414,20 +421,22 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                   DISPLAY_TILE_WIDTH - 1)
                 helpColumn =
                     DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_ITALIAN;
-              conditionWindow = Window_Create(
-                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_ITALIAN, 3, 6);
+              conditionWindow =
+                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH_ITALIAN,
+                                3, MENU_WINDOW_FLAGS);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
               if (anchor + TARGET_SET_DJINNI_WIDTH_SPANISH - 4 >
                   DISPLAY_TILE_WIDTH - 1)
                 helpColumn =
                     DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_SPANISH;
-              conditionWindow = Window_Create(
-                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_SPANISH, 3, 6);
+              conditionWindow =
+                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH_SPANISH,
+                                3, MENU_WINDOW_FLAGS);
             } else {
               if (anchor + TARGET_SET_DJINNI_WIDTH - 4 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH;
-              conditionWindow =
-                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+              conditionWindow = Window_Create(
+                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, MENU_WINDOW_FLAGS);
             }
           }
 #else
@@ -438,8 +447,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #else
             TARGET_HELP_COLUMN(4, TARGET_SET_DJINNI_WIDTH);
 #endif
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+            conditionWindow = Window_Create(
+                helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, MENU_WINDOW_FLAGS);
 #endif
             Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
@@ -447,8 +456,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case TARGET_HINT_HP:
             TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH,
+                                            3, MENU_WINDOW_FLAGS);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
@@ -479,8 +488,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case TARGET_HINT_PP:
             TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH,
+                                            3, MENU_WINDOW_FLAGS);
             Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PpString,
                                     conditionWindow, 0, 0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
@@ -490,16 +499,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           case TARGET_HINT_REVIVE:
             TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(
+                helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, MENU_WINDOW_FLAGS);
             if (unit->hp != 0)
               goto no_condition;
             Text_DrawMessageAsTiles(MsgTargetDowned, conditionWindow, 0, 0);
             break;
           case TARGET_HINT_CURE_POISON:
             TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
-            conditionWindow =
-                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
+            conditionWindow = Window_Create(
+                helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, MENU_WINDOW_FLAGS);
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0, 0);
@@ -683,7 +692,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           markerPosition.y = y;
           track->y = y;
         }
-        marker->mode = 1;
+        marker->mode = OBJ_MODE_SEMI_TRANSPARENT;
         marker->x = markerPosition.x - 8;
         marker->y = markerPosition.y - 12;
         if (spread == ABILITY_RANGE_ALL)
@@ -785,6 +794,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #undef TARGET_NAME_INTERIOR_WIDTH
 #undef TARGET_VIEW_OFFSET_ENEMIES
 #undef TARGET_VIEW_OFFSET_PARTY
+#undef TARGET_MARKERS
 #undef CURSOR_EASING
 #undef CURSOR_IN_SPREAD
 #undef CURSOR_HOLD_FRAME

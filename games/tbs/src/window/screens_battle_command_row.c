@@ -28,13 +28,14 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until a
-/// command is chosen.
+/// command is chosen: returns its icon (enum CommandIcon),
+/// COMMAND_ROW_CANCELLED or COMMAND_ROW_STATUS.
 s32 BattleCommandRow_Run(s32 mode) {
-  u8 party[4];
+  u8 standbyDjinn[ELEMENT_COUNT];
   struct WindowWork *work;
   struct BattleCommandRowWork *selectionUi;
   struct BattleMenuWork *navigation;
-  s32 stripDirty, tradeCount, pulseScale, command;
+  s32 stripDirty, standbyCount, pulseScale, command;
   s32 entryIndex;
   s32 keys, repeat;
   s32 iconSlot;
@@ -42,22 +43,25 @@ s32 BattleCommandRow_Run(s32 mode) {
 
   work = WINDOW_WORK;
   // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
-  iconSlot = VramCache_AllocEntry(32 * 32);
+  iconSlot = VramCache_AllocEntry(COMMAND_ICON_BYTES);
   stripDirty = 1;
-  tradeCount = 0;
+  standbyCount = 0;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = 0; i < GLYPH_PALETTE_ICON_COLORS; i++)
     selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_UNSET;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
-    selectionUi->window = Window_Create(20, 17, 10, 3, 6);
+    selectionUi->window = Window_Create(20, 17, 10, 3, MENU_WINDOW_FLAGS);
   else
-    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
-                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
+    selectionUi->window =
+        Window_Create(WINDOW_X, COMMAND_ROW_TOP, DISPLAY_TILE_WIDTH - WINDOW_X,
+                      3, MENU_WINDOW_FLAGS);
   selectionUi->drawnIndex = -1;
-  // The commands, as listed above. tradeCount counts the party's standby
-  // Djinn.
+  // The commands: Fight, Flee and Status for the party; for a party member
+  // Attack, Psynergy, Djinn and Summon while the party can call a summon (the
+  // recovery table's first word, DjinnRecoveryTable.summonMask), Summon only
+  // with a Djinni on standby, Item and Defend.
   if (mode == COMMAND_ROW_PARTY) {
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FIGHT;
@@ -71,11 +75,11 @@ s32 BattleCommandRow_Run(s32 mode) {
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
     if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
-      BattleDjinn_CountStandbyFar(0, party);
-      for (i = 0; i <= 3; i++)
-        tradeCount += party[i];
+      BattleDjinn_CountStandbyFar(0, standbyDjinn);
+      for (i = 0; i < ELEMENT_COUNT; i++)
+        standbyCount += standbyDjinn[i];
       selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DJINN;
-      if (tradeCount != 0)
+      if (standbyCount != 0)
         selectionUi->commandKinds[kindCount++] = COMMAND_ICON_SUMMON;
     }
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ITEM;
@@ -221,8 +225,8 @@ s32 BattleCommandRow_Run(s32 mode) {
         entry->sprite.oam.f.affine = 0;
       }
     }
-    // The Djinn tutorial presses keys for the player, one each delay (1 is A,
-    // 16 Right, 32 Left). In the party's row it takes Fight.
+    // The Djinn tutorial presses keys for the player, one each delay. In the
+    // party's row it takes Fight.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
     navigation = gBattleMenuWork;
@@ -239,7 +243,7 @@ s32 BattleCommandRow_Run(s32 mode) {
         } else if (navigation->commandActor == 0) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
           if (kind == COMMAND_ICON_SUMMON ||
-              (tradeCount == 0 && kind == COMMAND_ICON_DJINN)) {
+              (standbyCount == 0 && kind == COMMAND_ICON_DJINN)) {
             if (navigation->tutorialStep == 1) {
               struct Window *message;
               if (kind == COMMAND_ICON_DJINN)
@@ -268,7 +272,7 @@ s32 BattleCommandRow_Run(s32 mode) {
       }
     }
     if ((keys & KEYS_SHOULDERS) && mode != COMMAND_ROW_PARTY) {
-      command = -2;
+      command = COMMAND_ROW_STATUS;
       break;
     }
     if (keys & KEY_A) {
@@ -277,7 +281,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     }
     if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      command = -1;
+      command = COMMAND_ROW_CANCELLED;
       break;
     }
     if (repeat & (KEY_DOWN | KEY_RIGHT)) {
@@ -401,7 +405,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 i;
   s32 j;
 
-  count = BattleUnit_ListIdsFar(1, 0);
+  count = BattleUnit_ListIdsFar(BATTLE_SIDE_MASK_PARTY, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
   if (ids[0] != BATTLE_UNIT_LIST_END) {

@@ -8,24 +8,27 @@
 #include "types.h"
 
 struct BattlePresentationWork;
-struct BattlePresentationWork;
+/// Runs a battle effect from the second range of kinds: the casting impacts,
+/// the plain attacks' beams and their critical hits.
 void BattleEffect_RunByIdRangeFar(struct BattlePresentationWork *work);
 /// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
 /// sheet, work and canvas it lends.
 void BattleEffect_RunFromTableFar(struct BattlePresentationWork *work);
+/// A pillar of light in an element's colours stands at a unit's feet while
+/// motes spiral up around it.
 void BattleEffect_RunElementPillarFar(struct BattlePresentationWork *work);
-/// A glow on the canvas map widens over the user for 56 frames while 16
-/// spinning rings rise around it, four abreast.
-void BattleEffect_RunFormChangeFar(struct BattlePresentationWork *request,
-                                   s32 value);
+/// The Doom Dragon's change of form once a form is beaten; formation says which
+/// (FORMATION_DOOM_DRAGON_A to C).
+void BattleEffect_RunFormChangeFar(struct BattlePresentationWork *work,
+                                   s32 formation);
 /// Sparks in an element's colours flare at four corners around a unit and
 /// motes spiral in, then a burst of light plays over it.
-void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
+void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *work);
 /// Starts the element streaks, which then draw by themselves while the battle
 /// runs on.
-void BattleEffect_StartElementStreaksFar(s32 kind);
-/// Ends the element streaks: removes their callbacks, clears the canvas in VRAM
-/// and frees their heap blocks.
+void BattleEffect_StartElementStreaksFar(s32 element);
+/// Ends the element streaks: removes their tasks, clears their canvas in VRAM
+/// and frees what they took.
 void BattleEffect_EndElementStreaksFar(void);
 /// Loads a blitter for a 128 by 128 canvas into a heap slot, the flags and the
 /// mode packed into one word: mode << 4 | flags.

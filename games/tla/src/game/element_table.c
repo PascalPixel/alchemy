@@ -1,18 +1,23 @@
 /// @file
 /// The element tables: class series by element, element power and resistance
 /// by level, the enemies' element presets, the power and resistance curve, and
-/// the classes two ability effects look for.
+/// the dragons and sea creatures two weapons' effects look for.
 // Part of game.c.
 
 #include "game_internal.h"
+#include "enemy_ids.h"
 
 /// The class series by a character's strongest and second element, read as
 /// [strongest][second]; The Broken Seal's gClass_SeriesByElements.
 const s32 gClass_SeriesByElements[4][4] = {
-    {1, 3, 4, 5},
-    {8, 6, 9, 10},
-    {4, 3, 2, 5},
-    {8, 10, 9, 7},
+    {CLASS_SERIES_SQUIRE, CLASS_SERIES_SWORDSMAN, CLASS_SERIES_BRUTE,
+     CLASS_SERIES_APPRENTICE},
+    {CLASS_SERIES_SEER, CLASS_SERIES_WATER_SEER, CLASS_SERIES_PILGRIM,
+     CLASS_SERIES_HERMIT},
+    {CLASS_SERIES_BRUTE, CLASS_SERIES_SWORDSMAN, CLASS_SERIES_GUARD,
+     CLASS_SERIES_APPRENTICE},
+    {CLASS_SERIES_SEER, CLASS_SERIES_HERMIT, CLASS_SERIES_PILGRIM,
+     CLASS_SERIES_WIND_SEER},
 };
 
 /// The elemental power and resistance of each element level, 0 to 15; The
@@ -24,8 +29,7 @@ const struct ElementLevelBonus gElement_PowerResistByLevel[16] = {
 };
 
 // clang-format off
-/// The 48 enemy element presets, by EnemyDefinition.elementPreset; each is
-/// named by the enemies that have it, in the English release's words.
+/// The 48 enemy element presets, by EnemyDefinition.elementPreset.
 const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
     {
         .first = ELEMENT_NONE,
@@ -518,10 +522,53 @@ const s16 gElement_PowerResistCurve[5][2] = {
 /// Chimeras and the Doom Dragon. Raiden's Wrath (the Cloud Brand's unleash)
 /// takes effect only on these (Enemy_IsDragon).
 const u16 gEnemy_DragonIds[DRAGON_ENEMY_COUNT] = {
-    88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,  99,
-    100, 143, 144, 145, 149, 150, 151, 176, 177, 178, 185, 186,
-    187, 191, 192, 193, 194, 195, 196, 299, 300, 301, 323, 324,
-    325, 357, 369, 370, 371, 372, 373, 374, 375, 376, 377,
+    ENEMY_AQUA_HYDRA,
+    ENEMY_HYDRA,
+    ENEMY_PYRODRA,
+    ENEMY_SERPENT,
+    ENEMY_SERPENT_ONE_BEAM,
+    ENEMY_SERPENT_TWO_BEAMS,
+    ENEMY_SERPENT_THREE_BEAMS,
+    ENEMY_SERPENT_FOUR_BEAMS,
+    ENEMY_SERPENT_6,
+    ENEMY_SERPENT_7,
+    ENEMY_AVIMANDER,
+    ENEMY_MACETAIL,
+    ENEMY_BOMBANDER,
+    ENEMY_WYVERN_CHICK,
+    ENEMY_PTERANODON,
+    ENEMY_WINGED_LIZARD,
+    ENEMY_DINO,
+    ENEMY_DINOX,
+    ENEMY_DINOSAURUS,
+    ENEMY_SEA_DRAGON,
+    ENEMY_TURTLE_DRAGON,
+    ENEMY_OCEAN_DRAGON,
+    ENEMY_WYVERN,
+    ENEMY_SKY_DRAGON,
+    ENEMY_WINGED_DRAGON,
+    ENEMY_BLUE_DRAGON,
+    ENEMY_CRUEL_DRAGON,
+    ENEMY_DRAGON,
+    ENEMY_FLAME_DRAGON_AGATIO,
+    ENEMY_FLAME_DRAGON_KARST,
+    ENEMY_FIRE_DRAGON,
+    ENEMY_SALAMANDER,
+    ENEMY_EARTH_LIZARD,
+    ENEMY_THUNDER_LIZARD,
+    ENEMY_CHIMERA,
+    ENEMY_CHIMERA_MAGE,
+    ENEMY_GRAND_CHIMERA,
+    ENEMY_FUSION_DRAGON,
+    ENEMY_DOOM_DRAGON_A,
+    ENEMY_DOOM_DRAGON_B,
+    ENEMY_DOOM_DRAGON_C,
+    ENEMY_DOOM_DRAGON_D,
+    ENEMY_DOOM_DRAGON_E,
+    ENEMY_DOOM_DRAGON_F,
+    ENEMY_DOOM_DRAGON_G,
+    ENEMY_DOOM_DRAGON_H,
+    ENEMY_DOOM_DRAGON_I,
 };
 
 /// The sea creatures, by enemy id: the Cuttles, Jellies, Hydras, Poseidon,
@@ -529,6 +576,14 @@ const u16 gEnemy_DragonIds[DRAGON_ENEMY_COUNT] = {
 /// Lizard Men and the Kraken. The Trident's use takes effect only on these
 /// (Enemy_IsSeaCreature).
 const u16 gEnemy_SeaCreatureIds[SEA_CREATURE_ENEMY_COUNT] = {
-    84,  85,  86,  87,  88,  89,  90,  101, 102, 103, 167, 168, 169, 170, 171,
-    172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 330, 331, 332, 348,
+    ENEMY_CUTTLE,        ENEMY_CALAMAR,      ENEMY_MAN_O_WAR,
+    ENEMY_AQUA_JELLY,    ENEMY_AQUA_HYDRA,   ENEMY_HYDRA,
+    ENEMY_PYRODRA,       ENEMY_POSEIDON,     ENEMY_POSEIDON_SECOND_ACTION,
+    ENEMY_POSEIDON_3,    ENEMY_URCHIN_BEAST, ENEMY_NEEDLE_EGG,
+    ENEMY_SEA_HEDGEHOG,  ENEMY_CONCH_SHELL,  ENEMY_SPIRAL_SHELL,
+    ENEMY_POISON_SHELL,  ENEMY_MERMAN,       ENEMY_GILLMAN,
+    ENEMY_GILLMAN_LORD,  ENEMY_SEA_DRAGON,   ENEMY_TURTLE_DRAGON,
+    ENEMY_OCEAN_DRAGON,  ENEMY_SEABIRD,      ENEMY_SEAFOWL,
+    ENEMY_GREAT_SEAGULL, ENEMY_LIZARD_MAN,   ENEMY_LIZARD_FIGHTER,
+    ENEMY_LIZARD_KING,   ENEMY_KRAKEN,
 };

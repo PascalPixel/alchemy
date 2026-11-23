@@ -18,9 +18,9 @@
 struct ItemDefinition;
 struct SummonDefinition;
 
-/// A field Psynergy, as the field kind: an ability's fieldPsynergy, named for
-/// the abilities that have it (the English release's names in
-/// gAbilityDefinitions). The field effect keeps it as its animation.
+/// What a Psynergy does when cast on the field (an ability's fieldPsynergy),
+/// each named for the abilities that have it in the English release. The
+/// field effect it starts keeps it as its animation.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
@@ -75,7 +75,7 @@ struct ElementLevelBonus {
 
 extern const struct ItemDefinition gItem_DefinitionTable[];
 extern const struct SummonDefinition gSummon_DefinitionTable[];
-s32 Djinn_CanSet(s32 owner, s32 index, s32 bit);
+s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex);
 
 struct BattleElementStats;
 
@@ -94,23 +94,23 @@ extern u8 gGameFlagBytes[];
 /// of a party member with HP (DjinnRecovery_CountDownTwenty).
 void DjinnRecovery_CountDownTwentyFar(void);
 /// Gives a Djinni to a unit.
-s32 Djinn_GiveFar(s32, s32, s32);
+s32 Djinn_GiveFar(s32 unitId, s32 element, s32 djinnIndex);
 /// Clears each button shortcut whose Psynergy can no longer be cast
 /// (Party_ClearUnusableShortcuts).
 void Party_ClearUnusableShortcutsFar(void);
 /// Gives a unit one item, joining its first matching stack (up to
 /// INVENTORY_STACK_MAX) or taking the first free slot.
-s32 Inventory_AddItemFar(s32, s32);
+s32 Inventory_AddItemFar(s32 unitId, s32 itemId);
 /// Takes one item out of slot, closing up the inventory when it was the last.
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 void Unit_CalculateBaseElements(s32 unitId,
                                 struct BattleElementStats *destination);
-s32 Class_Determine(s32 classId, u32 *djinn, s32 item);
-s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
-void Unit_RefreshPsynergy(s32);
+s32 Class_Determine(s32 character, u32 *djinn, s32 item);
+s32 Unit_GetElementLevels(s32 enemyId, const u8 *source, s32 *output);
+void Unit_RefreshPsynergy(s32 unitId);
 s32 Owner_UpdateClassActions(s32 owner);
-/// Expands message into buffer without an upper length bound.
-void Message_DecodeRawUnboundedFar(s32, u16 *);
+/// Decodes message into text with no length limit (Message_DecodeRawUnbounded).
+void Message_DecodeRawUnboundedFar(s32 message, u16 *text);
 
 /// How many summons there are (summon_table.c), and the number that ends a
 /// list of them (Summon_ListLearned).
@@ -178,7 +178,7 @@ void Unit_Calculate(s32 owner);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 itemId);
 extern const s32 gClass_SeriesByElements[4][4];
-s32 Unit_KnowsPsynergy(s32 owner, s32 value);
+s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId);
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 void MainRoutineWork_InitializeDefaults(void);
 extern const u8 gNewGame_SceneStateTable[4][5];

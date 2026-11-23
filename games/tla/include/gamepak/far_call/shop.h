@@ -6,10 +6,11 @@
 
 #include "types.h"
 
-/// Saves the field colours in the field work and fades to `layer` over 16
+/// Saves the field's background colours in the field work and tints them by
+/// `tint` (a PaletteFade_Build mode, PALETTE_TINT_CUSTOM with a colour) over 16
 /// frames.
-void Shop_SaveAndTintFieldPaletteFar(s32 value);
-/// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
+void Shop_SaveAndTintFieldPaletteFar(s32 tint);
+/// Fades back to the colours Shop_SaveAndTintFieldPaletteFar saved, over 16
 /// frames.
 void Shop_RestoreFieldPaletteFar(void);
 

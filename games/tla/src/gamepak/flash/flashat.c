@@ -10,8 +10,9 @@
 #define FLASH_ID_ATMEL (0x3d << 8 | 0x1f)
 
 // clang-format off
-/// The Atmel chip's waits by timing: milliseconds, the timer's reload value
-/// and its control.
+/// The Atmel chip's time limits in milliseconds, by enum FlashPhase (see
+/// FlashSetupInfo.maxTime): 40 for 128 programmed bytes and for the whole chip.
+/// Its sectors are erased by programming them, so that row is empty.
 const u16 Flash_MaxTimeAtmel[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -20,6 +21,7 @@ const u16 Flash_MaxTimeAtmel[] = {
 };
 // clang-format on
 
+/// The Atmel chip as gFlash_Chips lists it, in 4 KB sectors.
 const struct FlashSetupInfo gFlash_ChipAtmel = {
     .program = ProgramAtmelFlashBlock,
     .eraseChip = EraseAtmelFlashChip,
@@ -32,6 +34,7 @@ const struct FlashSetupInfo gFlash_ChipAtmel = {
              .id = {.joined = FLASH_ID_ATMEL}},
 };
 
+/// The Atmel chip in its own 128-byte sectors, which its routines work in.
 const struct FlashSetupInfo gFlash_ChipAtmelLayout = {
     // ProgramAtmelFlashSector takes its sector as a word and its source as
     // const, unlike the slot's type.

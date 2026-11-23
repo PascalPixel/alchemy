@@ -1,6 +1,6 @@
 /// @file
-/// Two lists the game's rules read, and each item's rare item counter number
-/// plus one, by item id.
+/// Each item's place among the shops' rare item counters, and two short lists
+/// a new game reads.
 // Part of game.c.
 
 #include "game_internal.h"

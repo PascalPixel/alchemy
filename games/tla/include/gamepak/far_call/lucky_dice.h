@@ -6,7 +6,8 @@
 
 #include "types.h"
 
-/// Plays Lucky Dice (LuckyDice_Start).
+/// Plays Lucky Dice until the player quits, and returns the entrance the field
+/// takes up again by, always 0; the entrance it is given is not read.
 s32 LuckyDice_StartFar(s32 entrance);
 
 #endif

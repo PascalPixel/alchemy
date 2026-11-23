@@ -24,7 +24,9 @@ struct FlashSector {
 struct FlashType {
   u32 romSize; ///< bytes of flash: 64 KB in every entry
   struct FlashSector sector;
-  u16 wait[2]; ///< Low two bits of REG_WAITCNT.
+  /// The SRAM wait (REG_WAITCNT's low two bits) the routines program and erase
+  /// with; the second is never read.
+  u16 wait[2];
   /// The maker and device id ReadFlashId returns; 0 in gFlash_ChipDefault.
   union {
     struct {
@@ -44,16 +46,17 @@ struct FlashSetupInfo {
   u16 (*program)(u16 sector, u8 *source); ///< programs one sector
   u16 (*eraseChip)(void);                 ///< erases the whole chip
   u16 (*eraseSector)(u16 sector);         ///< erases one sector
-  FlashWaitProc wait;                     ///< Wait for programming to finish.
-  /// Wait-time table: per timing, milliseconds, the timer's reload value and
-  /// its control (flash_max_time).
+  FlashWaitProc wait;                     ///< waits for a write to finish
+  /// The time limits: a row for each enum FlashPhase, of the flash timer's
+  /// interrupts (about a millisecond each), its reload value and its control.
+  /// No phase reads row 0.
   u16 *maxTime;
   struct FlashType type;
 };
 
-/// A wait-time row's timer: 67 counts at 65536 a second before it overflows,
-/// about a millisecond, then an interrupt (FlashTimerIntr), as pret writes it.
-#define FLASH_TIMER_RELOAD 65469
+/// A time limit's timer: 67 counts at 65536 a second before it overflows,
+/// about a millisecond, then an interrupt (FlashTimerIntr).
+#define FLASH_TIMER_RELOAD (65536 - 67)
 #define FLASH_TIMER_CONTROL (TIMER_ENABLE | TIMER_INTR_ENABLE | TIMER_256CLK)
 
 /// The chip type IdentifyFlash installed.

@@ -12,6 +12,8 @@ typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 /// A glyph sprite's size in its OAM attribute 1: 16 by 16, four tiles.
 #define GLYPH_SPRITE_SIZE (OBJ_SIZE_16X16 >> 16)
 
+/// The glyph routine RamCode_Load copies to RAM to run, and its size, as this
+/// symbol's address.
 extern const u8 Glyph_DrawCode[];
 extern u8 Glyph_DrawCodeSize[];
 
@@ -411,6 +413,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   }
 }
 
+/// A window tilemap's width in tiles, and its entries over the screen's 20
+/// rows.
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 

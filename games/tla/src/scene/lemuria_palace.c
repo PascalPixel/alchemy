@@ -325,6 +325,7 @@ void LemuriaPalace_FreeMaps(void) {
 /// Writes the alpha blend weights, REG_BLDALPHA.
 static __inline__ void Blend_WriteAlpha(s32 value) { REG_BLDALPHA = value; }
 
+/// Sets the alpha blend weights (Blend_WriteAlpha).
 #define BLEND_SET_ALPHA(value)                                                 \
   do {                                                                         \
     Blend_WriteAlpha(value);                                                   \

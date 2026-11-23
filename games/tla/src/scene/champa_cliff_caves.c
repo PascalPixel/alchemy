@@ -210,9 +210,11 @@ extern s16 gChampaCliffCaves_CloseDoorFrames[];
 
 void FieldEffect_StartBlankOverlay(s32 a);
 
-#define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
+/// Defines an update that grows an actor by step (a 16.16 scale) a frame until
+/// it is full size.
+#define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, step)                             \
   void name(struct Actor *actor) {                                             \
-    actor->scaleX += n1;                                                       \
+    actor->scaleX += step;                                                     \
     if (actor->scaleX >= FIXED_ONE) {                                          \
       actor->scaleX = FIXED_ONE;                                               \
       actor->update = 0;                                                       \
@@ -911,8 +913,6 @@ chosen:
 /// fourths of its size, from a quarter to full size.
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly,
                                FIXED_ONE * 3 / 64)
-
-#define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 
 /// Walking east into Obaba's forge room from the passage (cells (36, 12) to
 /// (36, 18)) once Briggs has fled up here: "Hold it right there!" Briggs
@@ -2355,17 +2355,18 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_AvimanderPlacementsAfterAviman
     {SCENE_TABLE_END},
 };
 
+/// Obaba's door opening and closing, as MAPGRID_ANIMATION_STEP rows: two steps
+/// of six frames each.
 LATE_DATA s16 gChampaCliffCaves_OpenDoorFrames[] = {
     1, 64, 1, 2, 6, 2, 64, 1, 2, 6, -1,
 };
-
 LATE_DATA s16 gChampaCliffCaves_CloseDoorFrames[] = {
     1, 64, 1, 2, 6, 0, 64, 1, 2, 6, -1,
 };
 
+/// Obaba's door opening and closing.
 LATE_DATA struct DoorEdit gChampaCliffCaves_OpenDoor = {
     gChampaCliffCaves_OpenDoorFrames, 11, 88};
-
 LATE_DATA struct DoorEdit gChampaCliffCaves_CloseDoor = {
     gChampaCliffCaves_CloseDoorFrames, 11, 88};
 

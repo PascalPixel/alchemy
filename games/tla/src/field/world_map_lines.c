@@ -69,6 +69,7 @@ struct BgAffine {
   s32 y;
 };
 
+/// The far-call table of system routines, read here for its arctangent.
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
 extern u32 gScanlineAngle;
 

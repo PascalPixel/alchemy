@@ -17,13 +17,20 @@
   FIXED_ADDRESS((s32 (*)(s32 a, s32 b)), 0x0300021c, IwramMulFX)
 /// The 16.16 product of two 16.16 numbers (Iwram_MulFX), written as a call.
 static inline FIXED Math_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
+/// value / divisor as a 16.16 number: value times 2^30 / divisor, shifted
+/// down 14.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x03000230, IwramRatioMulQ14)
+/// The square root of value, rounded down; 0 for a negative value.
 #define Iwram_SqrtEntry                                                        \
   FIXED_ADDRESS((s32 (*)(s32 value)), 0x030002d4, IwramSqrt)
+/// Paints value into destination's 16-pixel rows of bytes wherever a glyph's
+/// rows of bits, a halfword each, are set, as a glyph's shadow is drawn: twelve
+/// rows, fourteen outside the Japanese edition.
 #define Iwram_ExpandBitRuns                                                    \
   FIXED_ADDRESS((s32 (*)(const void *bits, void *destination, s32 value)),     \
                 0x03000314, IwramExpandBitRuns)
+/// Multiplies the current matrix by matrix.
 #define Iwram_MultiplyMatrixEntry                                              \
   FIXED_ADDRESS((void (*)(const FIXED *matrix)), 0x030003c8,                   \
                 IwramMultiplyMatrix)

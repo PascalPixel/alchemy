@@ -1609,10 +1609,11 @@ void TundariaTower_StartPillarMove(void);
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The blocks Move pushes, ended by -1: the pillar puzzle's four, and the one
+/// in the Burst Brooch's room.
 s16 gTundariaTowerPillarPuzzlePillars[] = {
     11, 12, 13, 14, -1,
 };
-
 s16 gTundariaTowerBurstBroochPillar[] = {
     8, -1,
 };

@@ -22,6 +22,7 @@
 #define HOLE_MASK_WIDTH 16
 #define HOLE_MASK_TOP 14
 
+/// The cracked tiles the including map watches, in its own table.
 extern struct CellTarget gCrackedTiles;
 
 struct Actor *Actor_GetById(u32 objectId);

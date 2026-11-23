@@ -51,6 +51,7 @@ struct BurstWork {
 /// The palette of Burst's explosions, loaded into BURST_EXPLOSION_PALETTE.
 extern const u16 gBurst_ExplosionPalette[];
 
+/// Moves the work on to its next phase, its timer restarted.
 #define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
 /// Task of the Burst: cycles its particles' colours and draws them.

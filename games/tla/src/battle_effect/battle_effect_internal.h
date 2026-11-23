@@ -660,6 +660,7 @@ enum TargetStrikeStyle {
                             POSE_DAMAGE, i, frames),                           \
    BattleMotion_ApplyKnockbackFar((effect)->targets[i], motion))
 
+/// A blitter that clips its rectangles to the canvas.
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// The second blitter, the drawing routine in the paired heap slot.

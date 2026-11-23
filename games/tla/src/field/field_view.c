@@ -13,6 +13,8 @@
 #include "system/ram_code.h"
 #include "field/resource_slot.h"
 
+/// A wait for a shake to settle gives up after five seconds, and ends once
+/// both amplitudes are under 1/256 pixel (16.16).
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 /// One of the world map's two tile maps of one-byte tiles, BG3's and then

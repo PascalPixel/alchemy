@@ -659,6 +659,8 @@ s32 Scene_PrepareMap(void) {
 void Daila_JumpForward(void) { Field_TryJumpForward(); }
 
 // clang-format off
+/// The six puddles Frost freezes into pillars, each with the flag set while it
+/// stands (FlagBlock_PlaceAll).
 s16 gDailaRooms_PillarFrozenFlags[] = {
     ACTOR_FIRST_PUDDLE,  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0,
     ACTOR_SECOND_PUDDLE, FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1,

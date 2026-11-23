@@ -1154,6 +1154,8 @@ void AnemosInnerSanctum_StepOffSwitch(void) {
 
 s32 CrackedTile_Step();
 
+/// Defines a step trigger on a cracked floor: when a tile gives way under the
+/// leader, the party leaves by exit `exit`, through the floor.
 #define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, exit)                        \
   void name(void) {                                                            \
     s32 fell;                                                                  \
@@ -2008,16 +2010,20 @@ s32 gAnemosInnerSanctum_SparkScript[] = {
     SC_END,
 };
 
+/// The blocks Move pushes in each room (Actor_LiftTargetBlock), ended by -1:
+/// the elevator room's two pillars.
 s16 gAnemosInnerSanctum_ElevatorBlocks[] = {
     ACTOR_ELEVATOR_FIRST_PILLAR, ACTOR_ELEVATOR_SECOND_PILLAR, -1,
 };
 
+/// The switches room's five pillars.
 s16 gAnemosInnerSanctum_SwitchesBlocks[] = {
     ACTOR_SWITCHES_FIRST_PILLAR, ACTOR_SWITCHES_SECOND_PILLAR,
     ACTOR_SWITCHES_PILLAR_A,     ACTOR_SWITCHES_PILLAR_B,
     ACTOR_SWITCHES_THIRD_PILLAR, -1,
 };
 
+/// The Orihalcon chest room's two pillars.
 s16 gAnemosInnerSanctum_OrihalconChestBlocks[] = {
     ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, ACTOR_ORIHALCON_CHEST_SECOND_PILLAR, -1,
 };
@@ -2315,17 +2321,21 @@ struct Trigger gAnemosInnerSanctum_GuardianTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The north door's opening, as MAPGRID_ANIMATION_STEP rows: two steps of two
+/// frames.
 s16 gAnemosInnerSanctum_NorthDoorFrames[] = {
     52, 7, 1, 2, 2, 54, 7, 1,
     2, 2, -1,
 };
 
+/// A mimic stone room's door opening, the same.
 s16 gAnemosInnerSanctum_MimicStoneDoorFrames[] = {
     18, 4, 1, 2, 2, 18, 7, 1,
     2, 2, -1,
 };
 // clang-format on
 
+/// The three mimic stone rooms' doors, by their step trigger's number.
 struct MapGridCellAnimation gAnemosInnerSanctum_MimicStoneDoors[] = {
     {gAnemosInnerSanctum_MimicStoneDoorFrames, 11, 4},
     {gAnemosInnerSanctum_MimicStoneDoorFrames, 26, 4},

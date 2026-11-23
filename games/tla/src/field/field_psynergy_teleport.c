@@ -12,7 +12,7 @@
 #include "window/window.h"
 #include "system/bg_scroll.h"
 
-#define WHIRL_COUNT 100
+#define WHIRL_COUNT 100 ///< sparks that whirl round the leader
 /// The frames a spark flies before it vanishes.
 #define TELEPORT_SPARK_FRAMES 20
 /// Before the sparks, the leader spins for TELEPORT_SPIN_FRAMES, its turn each

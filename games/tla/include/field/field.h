@@ -113,6 +113,8 @@ void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
+/// Puts the actor at (x, y, z), 16.16 pixels, at rest, raised by the ground
+/// height there if it follows the ground.
 void Actor_SetPositionWithTerrain(u32 objectId, FIXED x, FIXED y, FIXED z);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void ActorSystem_Configure(s32 mode);

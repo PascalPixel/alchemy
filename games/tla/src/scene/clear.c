@@ -1556,6 +1556,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
               ->baseHp;
       s32 at = i * 8;
 
+/// The word of the packed stats at byte at.
 #define WORD (*(u32 *)((u8 *)packedStats + at))
       stats->baseHp = WORD >> PASSWORD_HP_SHIFT;
       stats->basePp = WORD >> PASSWORD_PP_SHIFT & PASSWORD_PP_MASK;

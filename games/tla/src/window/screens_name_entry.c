@@ -245,7 +245,6 @@ extern const u8 gNameEntry_EndKeyLabel[];
 
 /// Places a menu cursor and its sprite at (x, y) at once.
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
-#define MenuCursor_SetPositionImmediateFar MenuCursor_SetPositionImmediateFar
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before
 // it (NameEntry_AcceptsMark refuses a mark that cannot), takes a byte but is no

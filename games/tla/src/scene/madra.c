@@ -1229,11 +1229,11 @@ void Madra_StopPartyAfterRaid(void) {
   Event_End();
 }
 
+/// Sets an actor's animation, and with SET_MODE_AND_WAIT waits frames after.
 #define SET_MODE(id, mode)                                                     \
   do {                                                                         \
     Actor_SetAnimation(id, mode);                                              \
   } while (0)
-
 #define SET_MODE_AND_WAIT(id, mode, frames)                                    \
   do {                                                                         \
     Actor_SetAnimation(id, mode);                                              \

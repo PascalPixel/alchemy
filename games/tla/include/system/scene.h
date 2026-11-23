@@ -8,8 +8,6 @@
 s32 Area_GetNameIndex(s32 scene, s32 entrance);
 s32 Area_GetNameIndexFar(s32 scene, s32 entrance);
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
 /// A position on the field in 16.16 fixed-point pixels.
 struct FieldPosition {
   FIXED x;

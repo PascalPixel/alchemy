@@ -291,6 +291,8 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 /// An empty function. Nothing in the tree names it but its prototype.
 void Icon_ReservedNoOp(void) {}
 
+/// The tile routines RamCode_Load copies to RAM to run, and their sizes, as
+/// these symbols' addresses.
 extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_ExpandMaskedCode[];
 extern u8 Tile_ExpandOpaqueCode[];

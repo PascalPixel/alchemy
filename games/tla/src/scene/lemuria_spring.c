@@ -79,7 +79,6 @@ enum LemuriaSpringActorId {
   ACTOR_LEMURIA_SPRING_SUMMON_TABLET
 };
 
-#define ACTOR_LEMURIA_SPRING_FIRST_OBSTACLE ACTOR_LEMURIA_SPRING_CRAB_A
 /// The actor that draws toss->trail[n] of a tossed coin or medal, n from 1.
 #define LEMURIA_SPRING_COIN_TRAIL(n) (ACTOR_LEMURIA_SPRING_COIN_SHADOW - (n))
 #define LEMURIA_SPRING_MEDAL_TRAIL(n) (ACTOR_LEMURIA_SPRING_MEDAL_SHADOW - (n))
@@ -313,6 +312,7 @@ s32 Menu_SelectCoinsOrMedals();
 #define TOSS_WINDOW_WIDTH 9
 #endif
 
+/// The weight of prize i in the draw of what a toss wins.
 #define WEIGHT(i) ((s8)gMainRoutineWork.prizeWeights[i])
 
 /// The toss: the party picks what to throw and how many, the coins fly, and

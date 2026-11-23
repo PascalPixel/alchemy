@@ -501,6 +501,7 @@ enum TrialRoadRaceMapTile {
   RACE_MAP_TILE_2P = 14,
   RACE_MAP_TILE_COUNT = 18
 };
+/// The bytes of the race map's tiles.
 #define RACE_MAP_PICTURE_BYTES (RACE_MAP_TILE_COUNT * TILE_SIZE_4BPP)
 /// The sprite palette the race map loads and draws with.
 #define RACE_MAP_PALETTE 14
@@ -705,18 +706,24 @@ void TrialRoad_SetUpSandStage(void);
 
 void TrialRoad_UpdateFountains(void);
 
-#define DEFINE_TRIAL_ROAD_OPEN_DOOR(name, n1, n2, n3, n4, n5, n6)              \
+/// Defines a routine that opens a stage's door at the top: on the left path
+/// (side 0) the door at column leftX, on the right the one at rightX, redrawn
+/// open from the spare cells, with the upper layer's at upperLeftX or
+/// upperRightX and the ground of the cell at column groundLeftX or
+/// groundRightX of row 127.
+#define DEFINE_TRIAL_ROAD_OPEN_DOOR(name, leftX, upperLeftX, groundLeftX,      \
+                                    rightX, upperRightX, groundRightX)         \
   void name(s32 side, s32 phase) {                                             \
     if (side == 0) {                                                           \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n1, phase);             \
-      MapGrid_CopyCellsLayered(127, 3, 1, 2, n2, 3);                           \
-      MapGrid_CopyCellAttributes(n3, 127, 1, 1, n1, 8);                        \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, leftX, phase);          \
+      MapGrid_CopyCellsLayered(127, 3, 1, 2, upperLeftX, 3);                   \
+      MapGrid_CopyCellAttributes(groundLeftX, 127, 1, 1, leftX, 8);            \
     } else {                                                                   \
       if (phase == 3)                                                          \
-        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, n4, phase);             \
-      MapGrid_CopyCellsLayered(127, 3, 1, 2, n5, 3);                           \
-      MapGrid_CopyCellAttributes(n6, 127, 1, 1, n4, 8);                        \
+        MapGrid_CopyCellPictureCellsRect(0, 120, 1, 2, rightX, phase);         \
+      MapGrid_CopyCellsLayered(127, 3, 1, 2, upperRightX, 3);                  \
+      MapGrid_CopyCellAttributes(groundRightX, 127, 1, 1, rightX, 8);          \
     }                                                                          \
   }
 
@@ -1641,14 +1648,17 @@ void TrialRoad_ScatterWeedsHidingMadPlant(void) {
 /// Always 1; nothing in the overlay calls it.
 s32 TrialRoad_ReturnTrue(void) { return 1; }
 
-#define DEFINE_TRIAL_ROAD_SET_POOL_TILES(name, n1, n2)                         \
+/// Defines a routine that sets the three tiles in Gasp's pools, at cells
+/// (10, 11), (18, 7) and (18, 15), to the cell at column groundX of row 30, and
+/// the upper layer's to the one at upperX.
+#define DEFINE_TRIAL_ROAD_SET_POOL_TILES(name, groundX, upperX)                \
   void name(void) {                                                            \
-    MapGrid_CopyCells(n1, 30, 1, 1, 10, 11);                                   \
-    Map_CopyCellsRect(n1, 30, 1, 1, 18, 7);                                    \
-    Map_CopyCellsRect(n1, 30, 1, 1, 18, 15);                                   \
-    Map_CopyCellsRect(n2, 30, 1, 1, 74, 11);                                   \
-    Map_CopyCellsRect(n2, 30, 1, 1, 82, 7);                                    \
-    Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
+    MapGrid_CopyCells(groundX, 30, 1, 1, 10, 11);                              \
+    Map_CopyCellsRect(groundX, 30, 1, 1, 18, 7);                               \
+    Map_CopyCellsRect(groundX, 30, 1, 1, 18, 15);                              \
+    Map_CopyCellsRect(upperX, 30, 1, 1, 74, 11);                               \
+    Map_CopyCellsRect(upperX, 30, 1, 1, 82, 7);                                \
+    Map_CopyCellsRect(upperX, 30, 1, 1, 82, 15);                               \
   }
 
 /// Reveal anywhere in Gasp's pool room shows the hidden tiles in the pools,
@@ -1915,6 +1925,8 @@ struct TrialRoadFountains {
   u32 *sprites;
 };
 
+/// The fountain stage's fountains, kept in the inventory snapshot's spare
+/// bytes.
 #define TRIAL_ROAD_FOUNTAINS                                                   \
   ((struct TrialRoadFountains *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
@@ -4553,6 +4565,8 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The crumbling stage's two cracked pillars, west and east, each with the flag
+/// that remembers its first step (Leader_CheckCrumblingStep), ended by -1.
 LAST_DATA s16 gTrialRoad_CrumblingPillars[] = {
     15, 834, 16, 836, -1, 0,
 };

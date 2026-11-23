@@ -1380,7 +1380,10 @@ void Islets_SetDeckBlocksByHeight(void) {
 #endif
 
 u8 gIslets_WaveTableIndex BSS_DATA;
+/// Unused: nothing reads these bytes (WAVE_LINES_PADDING).
 u8 gIslets_UnusedAfterWaveTableIndex[WAVE_LINES_PADDING] BSS_DATA;
+/// The water's two tables of line offsets, a halfword a screen line: one an
+/// HBlank DMA reads while the other is filled for the next frame.
 s16 gIslets_WaveLines[2][DISPLAY_HEIGHT] BSS_DATA;
 s32 gIslets_SecondCrateZ BSS_DATA;
 s32 gIslets_FirstCrateZ BSS_DATA;
@@ -2553,6 +2556,8 @@ struct ActionScript gIslets_SpinScript = {{
 
 #include "shared/push_leader_steps.c"
 
+/// The man in the green vest on E Tundaria Islet paces to the south-east and
+/// back; only the Japanese edition lets the party push him.
 u32 gIslets_EastTundariaWalkScript[] = {
 #if !TLA_PATCH_1
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
@@ -2725,14 +2730,16 @@ u32 gIslets_PacingSonScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The snow hut's door swinging open, as MAPGRID_ANIMATION_STEP rows, and no
+/// opening at all.
 u16 gIslets_DoorFrames[] = {
     92, 10, 1, 2, 6, 92, 8, 1, 2, 6, -1,
 };
-
 u16 gIslets_NoDoorFrames[] = {
     -1,
 };
 
+/// The doors, a row for each exit from the first; only the snow hut's opens.
 struct IsletsDoor gIslets_Doors[] = {
     {gIslets_NoDoorFrames, 64, 64},
     {gIslets_DoorFrames, 82, 10},

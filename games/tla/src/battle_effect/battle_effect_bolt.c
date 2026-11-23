@@ -27,6 +27,7 @@ enum {
   BOLT_STRIKES,      ///< bolts drawn over each other
   BOLT_COUNT_COLUMNS
 };
+/// A variant's count in column column of gBolt_Counts.
 #define BOLT_COUNT(variant, column)                                            \
   gBolt_Counts[(variant) * BOLT_COUNT_COLUMNS + (column)]
 

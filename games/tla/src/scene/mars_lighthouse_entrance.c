@@ -641,19 +641,27 @@ void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
   }
 }
 
-#define DEFINE_BURST_ICE_SHEET(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)       \
+/// Defines what Burst does to a sheet of ice: as it breaks, the screen flashes;
+/// eight columns from x are drawn broken at row z, rows high, from the cells at
+/// row brokenZ, and take the ground of the cells at column groundSourceX,
+/// groundRows high from row groundZ; the sheet's actor goes and flag is set.
+/// Chips of ice scatter from it every half second, and the screen flashes white
+/// at the end.
+#define DEFINE_BURST_ICE_SHEET(name, x, brokenZ, rows, z, groundSourceX,       \
+                               groundZ, groundRows, sheet, flag)               \
   void name(s32 state, s32 frame) {                                            \
     if (state == 1) {                                                          \
       Event_PlaySound(SE_FLASH);                                               \
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);                \
       PaletteFade_Interpolate(60);                                             \
-      MapGrid_CopyCellsLayered(n1, n2, 8, n3, n1, n4);                         \
-      MapGrid_CopyCellAttributes(n5, n6, 8, n7, n1, n6);                       \
-      Actor_SetPosition(n8, 0, 0);                                             \
-      Flag_Set(n9);                                                            \
+      MapGrid_CopyCellsLayered(x, brokenZ, 8, rows, x, z);                     \
+      MapGrid_CopyCellAttributes(groundSourceX, groundZ, 8, groundRows, x,     \
+                                 groundZ);                                     \
+      Actor_SetPosition(sheet, 0, 0);                                          \
+      Flag_Set(flag);                                                          \
     }                                                                          \
     if (frame > 96 && frame < 272 && frame % 30 == 0)                          \
-      MarsLighthouseEntrance_ScatterIceChips(n8);                              \
+      MarsLighthouseEntrance_ScatterIceChips(sheet);                           \
     if (frame == 276) {                                                        \
       PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);                  \
       PaletteFade_Interpolate(20);                                             \
@@ -2062,36 +2070,34 @@ s32 gMarsLighthouseEntrance_DragonFaceAtLeft[] = {
 
 #include "shared/debris_script.c"
 
+/// Each room's ice cones (MarsLighthouseEntrance_PlaceIceCones), and its flame
+/// throwers for FlameThrowers_Start, each with its flame's kind and reach, with
+/// the actors their flames stop at, 1 where reaching one calls the routine
+/// FlameThrowers_Start is given.
 s16 gMarsLighthouseEntrance_FugueIceCones[] = {
     ACTOR_FUGUE_ICE_CONE_A, 7, FLAG_SCENE_TEMP_00,
     ACTOR_FUGUE_ICE_CONE_B, 7, FLAG_SCENE_TEMP_01,
     -1,
 };
-
 u16 gMarsLighthouseEntrance_LapisBeamTargets[] = {
     ACTOR_LAPIS_FLAME_THROWER_A, FLAME_FORWARD | 3, ACTOR_LAPIS_FLAME_THROWER_B, FLAME_FORWARD | 3,
     ACTOR_LAPIS_FLAME_THROWER_C, FLAME_FORWARD | 3, ACTOR_LAPIS_FLAME_THROWER_D, FLAME_FORWARD | 3,
     0,
 };
-
 u16 gMarsLighthouseEntrance_LapisBeamStops[] = {
     ACTOR_PUSHED_STATUE, 0, 0,
 };
-
 s16 gMarsLighthouseEntrance_LapisIceCones[] = {
     ACTOR_LAPIS_ICE_CONE_A, 7, FLAG_SCENE_TEMP_02,
     ACTOR_LAPIS_ICE_CONE_B, 7, FLAG_SCENE_TEMP_03,
     -1,
 };
-
 u16 gMarsLighthouseEntrance_BalmBeamTargets[] = {
     ACTOR_BALM_FLAME_THROWER, FLAME_FORWARD | 3, 0,
 };
-
 u16 gMarsLighthouseEntrance_BalmBeamStops[] = {
     ACTOR_BALM_TORCH, 1, 0,
 };
-
 s16 gMarsLighthouseEntrance_BalmIceCones[] = {
     ACTOR_BALM_ICE_CONE_A, 7, FLAG_SCENE_TEMP_04,
     ACTOR_BALM_ICE_CONE_B, 7, FLAG_SCENE_TEMP_05,
@@ -2100,23 +2106,18 @@ s16 gMarsLighthouseEntrance_BalmIceCones[] = {
     ACTOR_BALM_ICE_CONE_E, 7, FLAG_SCENE_TEMP_08,
     -1,
 };
-
 u16 gMarsLighthouseEntrance_ValkyrieUpperBeamTargets[] = {
     ACTOR_UPPER_FLAME_THROWER, FLAME_FORWARD | 3, 0,
 };
-
 u16 gMarsLighthouseEntrance_ValkyrieUpperBeamStops[] = {
     ACTOR_PUSHED_STATUE, 0, ACTOR_UPPER_TORCH, 1, 0,
 };
-
 u16 gMarsLighthouseEntrance_ValkyrieLowerBeamTargets[] = {
     ACTOR_DRAGON_FACE, FLAME_THROWER_DRY | 3, 0,
 };
-
 u16 gMarsLighthouseEntrance_ValkyrieLowerBeamStops[] = {
     ACTOR_LOWER_TORCH, 1, 0,
 };
-
 s16 gMarsLighthouseEntrance_ValkyrieIceCones[] = {
     ACTOR_VALKYRIE_ICE_CONE_A, 7, FLAG_SCENE_TEMP_10,
     ACTOR_VALKYRIE_ICE_CONE_B, 7, FLAG_SCENE_TEMP_11,

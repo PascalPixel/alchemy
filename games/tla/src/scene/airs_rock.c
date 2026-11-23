@@ -1730,6 +1730,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 
 #include "shared/leader_lift.h"
 
+/// The leader's actor.
 #define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
 
 /// The fog's picture repeats every FOG_WRAP map cells (64 pixels) across and
@@ -2067,6 +2068,7 @@ void AirsRock_MoveSecondPillar(void);
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The five pillars on the entrance's ledges that Move pushes, ended by -1.
 s16 gAirsRock_EntrancePillars[] = {
     ACTOR_FIRST_LEDGE_PILLAR,  ACTOR_SECOND_LEDGE_PILLAR, ACTOR_THIRD_LEDGE_PILLAR,
     ACTOR_FOURTH_LEDGE_PILLAR, ACTOR_FIFTH_LEDGE_PILLAR,  -1,
@@ -2109,6 +2111,8 @@ s32 gAirsRock_RubbleScript[] = {
     SC_RELEASE,
 };
 
+/// The puddle Frost freezes into a pillar, and the flag set while it stands
+/// (FlagBlock_PlaceAll).
 s16 gAirsRock_FrozenPuddle[] = {
     ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
 };

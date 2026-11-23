@@ -177,13 +177,13 @@ enum AirsRockInsideFaceVentsVent {
 /// paired stakes and coins chest rooms; a turning bridge reads
 /// BRIDGE_NORTH_SOUTH while it runs north and south, and BRIDGE_EAST_WEST while
 /// it lies east and west, and the gust turns it the other way.
-#define CELL_BEHAVIOR_AIRS_ROCK_INSIDE_GUST_STOP 30
 enum AirsRockInsideGustStop {
   GUST_STOP_PAIRED_STAKES_NORTH_BARRIER = 0,
   GUST_STOP_LAST_BARRIER = 4,
   GUST_STOP_BRIDGE_NORTH_SOUTH = 5,
   GUST_STOP_BRIDGE_EAST_WEST = 6
 };
+#define CELL_BEHAVIOR_AIRS_ROCK_INSIDE_GUST_STOP 30 ///< the first stop's code
 
 /// The triggers this scene raises (FieldWork.raisedTrigger) besides a statue's
 /// whirlwind carrying the leader (RAISED_RIDE_WHIRLWIND), each room reading
@@ -589,6 +589,7 @@ void AirsRockInside_SetStakeCells(struct Actor *actor) {
 /// of them. A partner rising is drawn from its target's picture: the top
 /// STAKE_TOP_ROWS rows at once, then a row a step.
 enum { STAKE_ROW_TILES = 4, STAKE_DRAWN_TILES = 3, STAKE_TOP_ROWS = 3 };
+/// The bytes of one 8-pixel row of a stake's picture.
 #define STAKE_ROW_BYTES (STAKE_ROW_TILES * TILE_SIZE_8BPP)
 
 /// One step of Pound on a stake: the target sinks and its partner, the other
@@ -1254,6 +1255,7 @@ void AirsRockInside_FollowGust(struct Actor *actor) {
 
 void AirsRockInside_SpiralGust(struct Actor *actor);
 
+/// The actor the gust is cast at: the field effect's target.
 #define TARGET(effect) ((effect)->child)
 
 /// The half cell where a gust drops what it carries: x in the high half and z
@@ -2499,12 +2501,15 @@ void AirsRockInside_StampWideCellUnderLeader(void) {
 
 extern u32 gOrbitSpark_Script[];
 
-#define DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(name, n1, n2)                        \
+/// Defines a routine that sets the Reveal tablet room's two hidden doorways,
+/// at cells (8, 19) and (24, 19), from the spare cells of row 17: their ground
+/// from column groundColumn, their pictures from column pictureColumn.
+#define DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(name, groundColumn, pictureColumn)   \
   void name(void) {                                                            \
-    Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
-    Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
-    MapGrid_CopyCellsTo(n2, 17, 72, 19, 1, 2);                                 \
-    MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                  \
+    Map_CopyCellAttributeRect(groundColumn, 17, 1, 1, 8, 19);                  \
+    Map_CopyCellAttributeRect(groundColumn, 17, 1, 1, 24, 19);                 \
+    MapGrid_CopyCellsTo(pictureColumn, 17, 72, 19, 1, 2);                      \
+    MapGrid_CopyCellPictureIndicesRect(pictureColumn, 17, 88, 19, 1, 2);       \
   }
 
 /// Nothing visible of its own: as Reveal fades, the Reveal tablet room's two
@@ -2792,7 +2797,10 @@ void AirsRockInside_WalkToRevealTablet(void) {
   }
 }
 
-#define DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(name, n1)                          \
+/// Defines a routine for examining the Reveal tablet from one side: once it
+/// has been read the game only says so; before, Felix walks from sideX round
+/// to its front, faces it, and Sheba reads it.
+#define DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(name, sideX)                       \
   void name(void) {                                                            \
     if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {                               \
       Event_Start();                                                           \
@@ -2800,7 +2808,7 @@ void AirsRockInside_WalkToRevealTablet(void) {
       FieldMessage_Show(MsgCheckedTheTablet, FIELD_MESSAGE_ZOOM);              \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, n1, 136);        \
+      Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, sideX, 136);     \
       Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 264, 136);       \
       Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH,    \
                               0);                                              \
@@ -3541,14 +3549,18 @@ extern u32 gFieldEffect_LongScript[];
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The blocks Move pushes in each room (Actor_PlaceBlocks), ended by -1: the
+/// hall's statue.
 s16 gAirsRockInside_HallPillars[] = {
     ACTOR_HALL_MOVABLE_STATUE, -1,
 };
 
+/// The Vial chest room's two pillars.
 s16 gAirsRockInside_VialChestPillars[] = {
     ACTOR_VIAL_CHEST_EAST_PILLAR, ACTOR_VIAL_CHEST_WEST_PILLAR, -1,
 };
 
+/// The Clarity Circlet chest room's three pillars and its statue.
 s16 gAirsRockInside_ClarityCircletChestPillars[] = {
     ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR,
     ACTOR_CLARITY_CIRCLET_CHEST_SECOND_PILLAR,
@@ -3557,22 +3569,26 @@ s16 gAirsRockInside_ClarityCircletChestPillars[] = {
     -1,
 };
 
+/// The tightropes room's pillar.
 s16 gAirsRockInside_TightropesPillars[] = {
     ACTOR_TIGHTROPES_PILLAR, -1,
 };
 
+/// The paired stakes room's four pillars.
 s16 gAirsRockInside_PairedStakesPillars[] = {
     ACTOR_PAIRED_STAKES_PILLAR,   ACTOR_PAIRED_STAKES_PILLAR_A,
     ACTOR_PAIRED_STAKES_PILLAR_B, ACTOR_PAIRED_STAKES_PILLAR_C,
     -1,
 };
 
+/// The face vents room's five pillars.
 s16 gAirsRockInside_FaceVentsPillars[] = {
     ACTOR_FACE_VENTS_THIRD_PILLAR, ACTOR_FACE_VENTS_FIRST_PILLAR,
     ACTOR_FACE_VENTS_SECOND_PILLAR, ACTOR_FACE_VENTS_PILLAR_A,
     ACTOR_FACE_VENTS_PILLAR_B, -1,
 };
 
+/// The coins chest room's pillar and statue.
 s16 gAirsRockInside_CoinsChestPillars[] = {
     ACTOR_COINS_CHEST_PILLAR, ACTOR_COINS_CHEST_STATUE, -1,
 };
@@ -3636,6 +3652,8 @@ u32 gAirsRockInside_WindStoneScript[] = {
     SC_END,
 };
 
+/// The paired stakes room's four stakes, as AirsRockInside_PlaceStakes reads
+/// them: each stake, its first pose and the flag set while it is sunk.
 u16 gAirsRockInside_PairedStakesStakes[] = {
     ACTOR_PAIRED_STAKES_STAKE_A, 1, FLAG_STAKE_A_DOWN,
     ACTOR_PAIRED_STAKES_STAKE_B, 1, FLAG_STAKE_B_DOWN,

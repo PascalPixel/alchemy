@@ -166,6 +166,7 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
         args, TARGET_STRIKE_STYLE_LIGHTNING_EIGHT_SPARK_SLASHES);
 }
 
+/// The blitter the effect draws with, made in the heap's RAM code slot.
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.

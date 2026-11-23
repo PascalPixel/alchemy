@@ -106,7 +106,7 @@ enum VenusLighthouseActorId {
 /// An actor's timer as gVenusGreyStatueScript sets it. It holds a tag in the
 /// upper bits and a colour mode (enum SpriteColorMode) in the low four.
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
-enum { VENUS_COLOR_MARK_TAG = 0x212 };
+enum { VENUS_COLOR_MARK_TAG = 0x212 }; ///< the tag that marks the timer
 
 /// The scene's name for the byte Actor keeps for scene code. A statue with
 /// SW_VENUS_IMMOVABLE set cannot be pushed.

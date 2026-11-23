@@ -752,6 +752,9 @@ void LemurianShip_StepOnLiftWestSide(void) {
   }
 }
 
+/// Defines what talking to an Aqua Jelly does: it turns to Felix and quivers,
+/// and a battle starts that cannot be run from, its jelly's FLAG_FIGHTING_JELLY
+/// flag set (the room's first jelly firstJelly is actor firstActor).
 #define DEFINE_JELLY_BATTLE(name, firstJelly, firstActor)                      \
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
@@ -943,6 +946,8 @@ void LemurianShip_SetDownPillar(void) {
   LemurianShip_CheckPillarsOnDropTiles();
 }
 
+/// Defines what Douse on a hollow pillar does: rain fills it, its fullFlag is
+/// set, and it sinks if it stands on its tile marked with a drop of water.
 #define DEFINE_DOUSE_PILLAR(name, pillar, fullFlag)                            \
   void name(void) {                                                            \
     Sound_Play(SE_DRIP);                                                       \
@@ -977,6 +982,9 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
       ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)), 0);
 }
 
+/// Defines a sunk pillar rising once its water is gone: its loweredFlag and
+/// fullFlag are cleared, it rises 16 pixels with a chime and a thump, its cell
+/// in column column is solid again, and the arched doorway closes.
 #define DEFINE_RAISE_PILLAR(name, pillar, loweredFlag, fullFlag, column)       \
   void name(void) {                                                            \
     struct FieldWork *work = Ram_HeapSlots->fieldWork;                         \
@@ -1064,6 +1072,8 @@ void LemurianShip_StartParch(void) {
   Event_End();
 }
 
+/// Defines an actor setup that keeps a frozen puddle flat on the floor, drawn
+/// at sprite priority priority.
 #define DEFINE_SET_UP_PUDDLE(name, priority)                                   \
   void name(s32 id) {                                                          \
     struct Actor *actor = ((struct Actor *)Actor_GetById(id));                 \

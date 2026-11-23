@@ -1288,10 +1288,11 @@ extern u32 gFieldEffect_LongScript[];
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The blocks Move pushes, ended by ACTOR_LIST_END: by the falls, a pillar and
+/// a crate; by the wall, a crate.
 s16 gSettlements_FallsObjects[] = {
     ACTOR_PILLAR, ACTOR_FALLS_CRATE, ACTOR_LIST_END,
 };
-
 s16 gSettlements_WallCrate[] = {
     ACTOR_WALL_CRATE, ACTOR_LIST_END,
 };

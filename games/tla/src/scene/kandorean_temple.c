@@ -878,6 +878,8 @@ void KandoreanTemple_CastLash(void) {
   FieldPsynergy_End();
 }
 
+/// Defines a vent's frame task: while blowing is set, a cloud of steam of the
+/// given strength puffs from (x, z), 16.16 pixels, every period frames.
 #define DEFINE_KANDOREAN_TEMPLE_VENT(name, blowing, period, x, z, strength)    \
   void name(void) {                                                            \
     s32 position[3];                                                           \
@@ -2402,6 +2404,9 @@ void KandoreanTemple_ArriveOnWestVent(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
+/// One step of a steam column sinking back under its cover: the leader, the
+/// cover and the camera go down, and each of the column's five pieces shrinks,
+/// the top fastest.
 #define SINK_COVER(top, upper, middle, lower, foot)                            \
   do {                                                                         \
     leader->y.fixed += -toFIXED(27) / 4;                                       \
@@ -3548,10 +3553,11 @@ s32 gKandoreanTemple_SteamScript[] = {
     SC_RELEASE,
 };
 
+/// The block Move pushes in the lift room, and the vent room's pillar, each
+/// ended by -1.
 s16 gKandoreanTemple_BlockActors[] = {
     ACTOR_LIFT_ROOM_PILLAR, -1,
 };
-
 s16 gKandoreanTemple_PillarActors[] = {
     ACTOR_VENT_ROOM_PILLAR, -1,
 };

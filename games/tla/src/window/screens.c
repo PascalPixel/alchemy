@@ -184,6 +184,7 @@ extern const struct BarPatternRow gMenu_BarPatternRows[];
 /// DJINN_COUNT_TENS_TILE: the party status window loads them
 /// (gPartyStatus_DigitTiles) when a count passes 9.
 extern const u8 gPartyStatus_DigitTiles[];
+/// That tile, and its place in VRAM.
 #define DJINN_COUNT_TENS_TILE 416
 #define DJINN_COUNT_TENS_VRAM                                                  \
   ((void *)(BG_CHAR_BLOCK(0) + DJINN_COUNT_TENS_TILE * TILE_SIZE_4BPP))

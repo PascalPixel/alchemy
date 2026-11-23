@@ -961,6 +961,8 @@ s16 gJupiterLighthouse_WestPathCells[][2] = {
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
 #include "shared/field_effect_duration_scripts.c"
 
+/// The two stakes Pound sinks: each stake, its kind and the flag set once it is
+/// sunk, ended by -1.
 LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
     ACTOR_EAST_STAKE, 1, FLAG_EAST_STAKE_SUNK, ACTOR_WEST_STAKE, 1, FLAG_WEST_STAKE_SUNK, -1, 0,
 };

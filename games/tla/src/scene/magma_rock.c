@@ -1316,13 +1316,15 @@ DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
                                ACTOR_LOW_EAST_CRACKED_PILLAR,
                                FLAG_CRACKED_PILLAR_B_BURST)
 
-#define DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(name, n1, n2)                    \
+/// Defines what Burst does to a cracked pillar: it breaks the pillar actor
+/// (MagmaRock_BurstStatue) and sets its flag.
+#define DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(name, pillar, flag)              \
   void name(s32 stage, s32 frame) {                                            \
     struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
                                                                                \
-    work->child = Actor_Get(n1);                                               \
+    work->child = Actor_Get(pillar);                                           \
     MagmaRock_BurstStatue(stage, frame);                                       \
-    Event_SetFlag(n2);                                                         \
+    Event_SetFlag(flag);                                                       \
   }
 
 /// Burst breaks the south-west one of the four cracked pillars in front of the

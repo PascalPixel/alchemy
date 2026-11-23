@@ -14,6 +14,7 @@ enum {
   FROST_MOUND_X,   ///< canvas x of the mound's left edge
   FROST_MOUND_FOOT ///< canvas y of its foot
 };
+/// Mound i's FROST_MOUND_X or FROST_MOUND_FOOT.
 #define FROST_MOUND_SPOT(i, column) gFrost_MoundSpots[(i) * 2 + (column)]
 
 /// The ice mounds' pictures in IceChipSheet are all as wide; their heights are

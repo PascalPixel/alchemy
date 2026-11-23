@@ -135,6 +135,7 @@ void AquaRockInside_DrawSplashes(void);
 void AquaRockInside_StartSplashes(void);
 s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind);
 s32 AquaRockInside_AdvanceStreams(s32 a, s32 b);
+/// The motion of a thing a vent throws out (field/actor_vent_bounce.c).
 void Vent_Bounce(struct Actor *actor);
 void Actor_StartScripted(struct Actor *actor, s32 priority);
 void Vent_Puff(s32 *position, s32 base);
@@ -1542,7 +1543,10 @@ void AquaRockInside_WalkToParchTablet(void) {
   }
 }
 
-#define DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(name, n1)                          \
+/// Defines a routine for checking the Parch tablet from one side: once Piers
+/// has learned Parch the game only says so; before, Felix walks from sideX
+/// round to its front, faces it, and reads it.
+#define DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(name, sideX)                       \
   void name(void) {                                                            \
     if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {                             \
       Event_Start();                                                           \
@@ -1550,7 +1554,7 @@ void AquaRockInside_WalkToParchTablet(void) {
       Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, n1, 184);            \
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, sideX, 184);         \
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 184);           \
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);    \
       FieldEvent_Wait(10);                                                     \

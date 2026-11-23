@@ -367,12 +367,10 @@ s16 gMikasalla_DoorOpening[] = {
     81, 50, 1, 2, 6, 80, 50, 1,
     2, 6, -1,
 };
-
 s16 gMikasalla_ThirdDoorOpening[] = {
     79, 50, 1, 2, 6, 78, 50, 1,
     2, 6, -1,
 };
-
 s16 gMikasalla_WideDoorOpening[] = {
     78, 52, 2, 2, 6, 78, 53, 2,
     2, 6, -1, 0,

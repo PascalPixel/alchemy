@@ -424,6 +424,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 
 #define MARS_FRAMES 112
 #define MARS_FLAMES 9 ///< flames along the arc
+/// The embers each flame throws off.
 #define MARS_EMBERS_PER_FLAME 16
 /// The row of flames: from the canvas's x MARS_ROW_X out to MARS_ROW_REACH to
 /// either side, along line MARS_ROW_Y bowed four pixels.

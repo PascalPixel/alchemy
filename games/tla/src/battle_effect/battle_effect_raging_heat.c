@@ -265,10 +265,10 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
 #undef RUNE_CIRCLE_RIGHTED_FRAME
 
 #define JUGGLE_FRAMES 122
-#define RING_CUE_FRAME 16
+#define RING_CUE_FRAME 16   ///< the launch is heard
 #define RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
 #define RING_THROW_FRAME 64 ///< it flies at the targets
-#define RING_HIT_FRAME 88
+#define RING_HIT_FRAME 88   ///< it strikes; sparks burst
 #define JUGGLE_SPARKS_PER_TARGET 128
 #define JUGGLE_SPARK_COUNT 768
 /// The ring's tilt toward the viewer, beside its turn.

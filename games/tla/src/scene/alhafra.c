@@ -1304,6 +1304,8 @@ void Alhafra_PirateSeesMadrasMayor(s32 how) {
 }
 
 // clang-format off
+/// The three puddles Frost freezes into pillars, each with the flag set while
+/// it stands (FlagBlock_PlaceAll).
 s16 gAlhafra_Puddles[] = {
     ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_00, ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_01,
     ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_02, -1,             0,
@@ -1464,6 +1466,9 @@ u16 gAlhafra_SecondDoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
+/// The doors Felix opens by walking into them, a row for each exit number
+/// (Alhafra_EnterDoor): the door's opening and its cell; a row with none opens
+/// nothing.
 struct MapGridCellAnimation gAlhafra_Doors[] = {
     {NULL, 0, 0},
     {gAlhafra_DoorOpening, 27, 37},

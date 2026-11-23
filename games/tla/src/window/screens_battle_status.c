@@ -64,6 +64,7 @@ enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_EXP = 10 ///< MsgExp
 };
 
+/// The message of label row (enum above), counted back from MsgExp.
 #define OWNER_STATUS_LABEL(row) ((s32)MsgExp - OWNER_STATUS_LABEL_EXP + (row))
 
 /// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the

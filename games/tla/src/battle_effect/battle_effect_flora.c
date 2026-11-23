@@ -55,6 +55,7 @@ struct FloraWork {
   u16 palette[FLORA_COLORS];
 };
 
+/// The petals' work, kept in the particles' memory.
 #define FLORA_WORK ((struct FloraWork *)petals)
 /// Petal i's phase, read at gFlora_PetalTiles, FloraWork's tile numbers from
 /// the second on.

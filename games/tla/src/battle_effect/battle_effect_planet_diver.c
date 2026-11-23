@@ -9,6 +9,7 @@
 #include "system/system.h"
 #include "resource_ids.h"
 
+/// The spirits scattered at the start, up to 64 pixels from their centre.
 #define HAUNT_SCATTERED 512
 #define HAUNT_SPIRITS 8 ///< evil spirits drawn around each target
 #define HAUNT_SLOTS 64  ///< particles reserved for each target

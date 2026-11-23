@@ -97,7 +97,7 @@ extern u32 gJupiterLighthouse_AgatioFacesEastScript[];
 extern u32 gJupiterLighthouse_IsaacFacesWestScript[];
 extern u32 gJupiterLighthouse_IvanFacesNorthScript[];
 
-extern u32 gJupiterLighthouse_PiersStepsBackScript[];
+extern u32 gJupiterLighthouse_GatherAtFelixScript[];
 
 extern u32 gJupiterLighthouse_FelixWaitsScript[];
 extern u32 gJupiterLighthouse_KradenWaitsScript[];
@@ -1228,10 +1228,10 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   if (actor != NULL)
     Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
                          actor->z.part[0].integer);
-  Actor_SetScript(ACTOR_PIERS, gJupiterLighthouse_PiersStepsBackScript);
-  Actor_SetScript(ACTOR_SHEBA, gJupiterLighthouse_PiersStepsBackScript);
-  Actor_SetScript(ACTOR_JENNA, gJupiterLighthouse_PiersStepsBackScript);
-  Actor_SetScript(ACTOR_KRADEN, gJupiterLighthouse_PiersStepsBackScript);
+  Actor_SetScript(ACTOR_PIERS, gJupiterLighthouse_GatherAtFelixScript);
+  Actor_SetScript(ACTOR_SHEBA, gJupiterLighthouse_GatherAtFelixScript);
+  Actor_SetScript(ACTOR_JENNA, gJupiterLighthouse_GatherAtFelixScript);
+  Actor_SetScript(ACTOR_KRADEN, gJupiterLighthouse_GatherAtFelixScript);
   FieldActor_WaitForScriptEndById(ACTOR_PIERS);
   FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   FieldActor_WaitForScriptEndById(ACTOR_JENNA);
@@ -2130,6 +2130,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Garet hangs from the ledge: in his hanging pose, raised 12 pixels, or after
+/// the Japanese edition set at a height of 12 pixels.
 LATE_DATA u32 gJupiterLighthouse_GaretHangsScript[] = {
 #if !TLA_PATCH_1
     SC_ANIMATION(14),
@@ -2316,8 +2318,10 @@ LATE_DATA u32 gJupiterLighthouse_ShebaArrivesEastScript[] = {
     SC_END,
 };
 
-LATE_DATA u32 gJupiterLighthouse_PiersStepsBackScript[] = {
-    1, 38,
+/// Each walks to where Felix stood when the script started.
+LATE_DATA u32 gJupiterLighthouse_GatherAtFelixScript[] = {
+    SC_SYNC,
+    SC_RELEASE,
 };
 
 LATE_DATA u32 gJupiterLighthouse_WalkToAerieScript[] = {

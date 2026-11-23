@@ -4,6 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The save's place in flash and its limits.
 enum {
   SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
   SAVE_FLASH_IDENTIFY_ATTEMPTS = 8, ///< tries, a frame apart

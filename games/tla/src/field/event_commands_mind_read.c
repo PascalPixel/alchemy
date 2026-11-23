@@ -692,7 +692,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   }
 }
 
-#define REVEAL_FRAMES 600
+#define REVEAL_FRAMES 600 ///< ten seconds of Reveal
 
 /// Reveal: open a circle of the transition on the caster, wash the screen
 /// plain, run the Reveal event that matches, then show the markers nearby

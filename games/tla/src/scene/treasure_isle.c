@@ -723,6 +723,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// The spiky rocks that rise in the chests' room and the Armlet's room: each
+/// rock's cell, its actor and the flag set while it stands.
 struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[] = {
     {7, 21, 12, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0)},
     {7, 17, 13, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1)},
@@ -730,7 +732,6 @@ struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[] = {
     {9, 11, 15, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3)},
     {46, 38, 16, FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4)},
 };
-
 struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[] = {
     {41, 23, 11, FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0)},
     {47, 23, 12, FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1)},

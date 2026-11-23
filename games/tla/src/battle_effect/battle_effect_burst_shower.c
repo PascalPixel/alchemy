@@ -1,5 +1,6 @@
 /// @file
-/// The blessings' burst showers.
+/// The burst shower: a stream of shots from the user at the targets, which
+/// most monster breaths and a few Djinn play, each with its own picture.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -34,6 +35,16 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_FURY,
   BURST_SHOWER_MODE_STORM_BREATH_STRONG,
   BURST_SHOWER_MODE_CHAR
+};
+
+/// Where the burst shower keeps its pictures in the effect's sheet: the
+/// notes, hearts or smoke of the modes that load them first, at 0.
+enum BurstShowerSheet {
+  BURST_SHOWER_BUBBLE = 4096,  ///< the bubble, each row written twice
+  BURST_SHOWER_PICTURE = 3158, ///< the mode's bursts, faces, bolts or rocks
+  /// Gravel Blow's rock shards, as gSpire_ShardPictures counts from them.
+  BURST_SHOWER_ROCK_SHARDS = 5266,
+  BURST_SHOWER_DJINNI = 26048 ///< the prelude's small Djinni
 };
 
 /// VioletLightningSheetA's bolts, one every 72x64 bytes, drawn 62 tall;
@@ -291,14 +302,14 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           DJINNI_ENTRANCE(ELEMENT_MARS, args->side, DJINNI_ANCHOR_OVER_USER),
           origin, djinniTarget);
       Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
-                                 work->sheet + VOLLEY_B_DJINNI, 1, 0);
+                                 work->sheet + BURST_SHOWER_DJINNI, 1, 0);
     } else {
       BattleEffect_RunDjinniEntrance(
           args,
           DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
           origin, djinniTarget);
       Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
-                                 work->sheet + VOLLEY_B_DJINNI, 1, 0);
+                                 work->sheet + BURST_SHOWER_DJINNI, 1, 0);
     }
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
@@ -306,7 +317,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
+  // The blitters: the first keeps the brighter pixel, the second adds, both
+  // mirrored for the far side.
   if (args->prelude == 1) {
     if (args->side == EFFECT_SIDE_ENEMIES) {
       BattleEffect_FetchRectangleBlitters(0, pair);
@@ -347,7 +359,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   if (mode == BURST_SHOWER_MODE_LIGHTNING ||
       mode == BURST_SHOWER_MODE_STORM_BREATH_STRONG) {
     Resource_LoadAndDecompress(RESOURCE_VIOLET_LIGHTNING_SHEET_A,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 1);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FUGUE ||
              mode == BURST_SHOWER_MODE_DJINNFEST) {
     // The notes darkened: a drawn pixel keeps level 1.
@@ -370,13 +382,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                       SHEET_PALETTE_BYTES);
   } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
     Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 1);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FACES) {
     Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 1);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FURY) {
     Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 1);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 1);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
@@ -389,7 +401,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       BG_PLTT[i] = color;
     }
     Resource_LoadAndDecompress(RESOURCE_DEMON_FACE_SHEET,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 0);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 4);
   } else if (mode == BURST_SHOWER_MODE_HEAT_KISS) {
     Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
@@ -404,10 +416,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   } else if (mode == BURST_SHOWER_MODE_CHAR) {
     // Six smoke pictures, each with more holes punched at random.
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 0);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 0);
     for (i = 0; i != 6; i++) {
       for (j = 0; j != SMOKE_PUFF_HOLES(i); j++)
-        work->sheet[VOLLEY_B_PICTURE + i * PICTURE_BYTES(SMOKE_PUFF) +
+        work->sheet[BURST_SHOWER_PICTURE + i * PICTURE_BYTES(SMOKE_PUFF) +
                     Random16() % PICTURE_BYTES(SMOKE_PUFF)] = 0;
     }
     Iwram_CopyWords((void *)BG_PLTT,
@@ -419,9 +431,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, work->sheet, 1, 1);
     for (row = 0; row != BLUE_BUBBLE_HEIGHT; row++) {
       for (column = 0; column != BLUE_BUBBLE_WIDTH; column++) {
-        work->sheet[VOLLEY_B_BEAM + row * 2 * BLUE_BUBBLE_WIDTH + column] =
-            work->sheet[row * BLUE_BUBBLE_WIDTH + column];
-        work->sheet[VOLLEY_B_BEAM + row * 2 * BLUE_BUBBLE_WIDTH +
+        work->sheet[BURST_SHOWER_BUBBLE + row * 2 * BLUE_BUBBLE_WIDTH +
+                    column] = work->sheet[row * BLUE_BUBBLE_WIDTH + column];
+        work->sheet[BURST_SHOWER_BUBBLE + row * 2 * BLUE_BUBBLE_WIDTH +
                     BLUE_BUBBLE_WIDTH + column] =
             work->sheet[row * BLUE_BUBBLE_WIDTH + column];
       }
@@ -436,7 +448,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                       SHEET_PALETTE_BYTES);
   } else {
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                               work->sheet + VOLLEY_B_PICTURE, 1, 1);
+                               work->sheet + BURST_SHOWER_PICTURE, 1, 1);
     if (mode == BURST_SHOWER_MODE_GREY) {
       // A grey ramp, unblended.
       for (i = 0; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
@@ -453,7 +465,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         // Six flash pictures, each with more holes punched at random.
         for (i = 0; i != 6; i++) {
           for (j = 0; j != FLASH_BURST_HOLES(i); j++)
-            work->sheet[VOLLEY_B_PICTURE + i * PICTURE_BYTES(FLASH_BURST) +
+            work->sheet[BURST_SHOWER_PICTURE + i * PICTURE_BYTES(FLASH_BURST) +
                         (Random16() & (PICTURE_BYTES(FLASH_BURST) - 1))] = 0;
         }
         if (mode == BURST_SHOWER_MODE_BLACK_ICE) {
@@ -641,6 +653,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           Sound_PlayFar(SE_WHOOSH);
       }
       if (mode == BURST_SHOWER_MODE_PETRA) {
+        // Petra shows no damage during the shower.
       } else if (mode == BURST_SHOWER_MODE_GREY) {
         if (frame == 60)
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -661,10 +674,10 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         if (frame > 56)
           y = y - frame * 2 + 112;
         if (frame <= 3)
-          pair[1](canvas, work->sheet + VOLLEY_B_DJINNI, x, y,
+          pair[1](canvas, work->sheet + BURST_SHOWER_DJINNI, x, y,
                   SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-        pair[1](canvas, work->sheet + VOLLEY_B_DJINNI, x, y, SMALL_DJINNI_WIDTH,
-                SMALL_DJINNI_HEIGHT);
+        pair[1](canvas, work->sheet + BURST_SHOWER_DJINNI, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
 
       if (mode == BURST_SHOWER_MODE_LIGHTNING ||
@@ -672,13 +685,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         // One big picture at the user, three frames a cel.
         if (args->side == EFFECT_SIDE_PARTY)
           pair[0](canvas,
-                  work->sheet + VOLLEY_B_PICTURE +
+                  work->sheet + BURST_SHOWER_PICTURE +
                       frame / 3 % 3 * VIOLET_LIGHTNING_BYTES,
                   user->x - 2, user->y - 32, VIOLET_LIGHTNING_WIDTH,
                   VIOLET_LIGHTNING_HEIGHT);
         else
           pair[0](canvas,
-                  work->sheet + VOLLEY_B_PICTURE +
+                  work->sheet + BURST_SHOWER_PICTURE +
                       frame / 3 % 3 * VIOLET_LIGHTNING_BYTES,
                   user->x - 70, user->y - 32, VIOLET_LIGHTNING_WIDTH,
                   VIOLET_LIGHTNING_HEIGHT);
@@ -700,6 +713,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         else if (mode == BURST_SHOWER_MODE_CHAR)
           aim.y = targets[target].y + Random16() % 96 - 32;
         else if (mode == BURST_SHOWER_MODE_FIRE_DANCE) {
+          // The random height is thrown away; Fire Dance's shots weave.
           aim.y = targets[target].y + (Random16() & 255) - 192;
           aim.y = targets[target].y +
                   (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 16)) << 8)) - 128;
@@ -738,10 +752,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           continue;
         if (mode == BURST_SHOWER_MODE_FACES ||
             mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
+          // Never true here: Fury takes the branch below.
           if (mode == BURST_SHOWER_MODE_FURY && (i & 1))
             continue;
           if (age > 7)
-            pair[args->side](canvas, work->sheet + VOLLEY_B_PICTURE,
+            pair[args->side](canvas, work->sheet + BURST_SHOWER_PICTURE,
                              FIXED_INTEGER_PART(shot->x) - DEMON_FACE_WIDTH / 2,
                              FIXED_INTEGER_PART(shot->y) -
                                  DEMON_FACE_HEIGHT / 2,
@@ -750,14 +765,14 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           if (i & 1)
             continue;
           if (age > 2)
-            pair[0](canvas, work->sheet + VOLLEY_B_PICTURE,
+            pair[0](canvas, work->sheet + BURST_SHOWER_PICTURE,
                     FIXED_INTEGER_PART(shot->x) - DEMON_FACE_WIDTH / 2,
                     FIXED_INTEGER_PART(shot->y) - DEMON_FACE_HEIGHT / 2,
                     DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
         } else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
                    mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
           if (age > 1)
-            pair[0](canvas, work->sheet + VOLLEY_B_BEAM,
+            pair[0](canvas, work->sheet + BURST_SHOWER_BUBBLE,
                     FIXED_INTEGER_PART(shot->x) - BLUE_BUBBLE_WIDTH / 2,
                     FIXED_INTEGER_PART(shot->y) - BLUE_BUBBLE_HEIGHT,
                     BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT * 2);
@@ -788,8 +803,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           y = FIXED_INTEGER_PART(shot->y) - (height >> 1);
 
           pair[0](canvas,
-                  work->sheet + gSpire_ShardPictures[cel] + VOLLEY_B_GLOW, x, y,
-                  width, height);
+                  work->sheet + gSpire_ShardPictures[cel] +
+                      BURST_SHOWER_ROCK_SHARDS,
+                  x, y, width, height);
         } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY) {
           FIXED wobble = Trig_Sin((i * 2 + frame) * (TRIG_TURN / 32));
           s32 y;
@@ -809,7 +825,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (age > 5)
             pair[0](canvas,
-                    work->sheet + VOLLEY_B_PICTURE +
+                    work->sheet + BURST_SHOWER_PICTURE +
                         age / 4 * PICTURE_BYTES(FLASH_BURST),
                     FIXED_INTEGER_PART(shot->x) - FLASH_BURST_WIDTH / 2,
                     FIXED_INTEGER_PART(shot->y) - FLASH_BURST_HEIGHT / 2,
@@ -817,7 +833,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         } else if (mode == BURST_SHOWER_MODE_CHAR) {
           if (age > 1)
             pair[1](canvas,
-                    work->sheet + VOLLEY_B_PICTURE +
+                    work->sheet + BURST_SHOWER_PICTURE +
                         age / 4 * PICTURE_BYTES(SMOKE_PUFF),
                     FIXED_INTEGER_PART(shot->x) - SMOKE_PUFF_WIDTH / 2,
                     FIXED_INTEGER_PART(shot->y) - SMOKE_PUFF_HEIGHT / 2,
@@ -825,7 +841,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (age > 1)
             pair[0](canvas,
-                    work->sheet + VOLLEY_B_PICTURE +
+                    work->sheet + BURST_SHOWER_PICTURE +
                         age / 4 * PICTURE_BYTES(FLASH_BURST),
                     FIXED_INTEGER_PART(shot->x) - FLASH_BURST_WIDTH / 2,
                     FIXED_INTEGER_PART(shot->y) - FLASH_BURST_HEIGHT / 2,
@@ -884,6 +900,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       // The hits.
       if (mode == BURST_SHOWER_MODE_FUGUE ||
           mode == BURST_SHOWER_MODE_DJINNFEST) {
+        // The notes hit no one during the shower.
       } else if (mode == BURST_SHOWER_MODE_LIGHTNING ||
                  mode == BURST_SHOWER_MODE_STORM_BREATH_STRONG) {
         for (i = 0; i != args->targetCount; i++) {

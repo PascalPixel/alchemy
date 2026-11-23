@@ -753,7 +753,7 @@ s32 Title_ShowNintendoLogo(s32 fadeOut) {
 #define CAMELOT_FLAG_BYTES (13 * TILE_SIZE_8BPP)
 
 /// Shows the Camelot logo for two seconds, its flag waving. A or Start ends it
-/// early.
+/// early; it returns 0 either way.
 s32 Title_ShowCamelotLogo(void) {
   u32 i;
   u8 *resourceData;

@@ -5,6 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// The gathering's length and the sweep's, in frames.
 #define JUDGMENT_GATHER_FRAMES 160
 #define JUDGMENT_SWEEP_FRAMES 336
 /// The gathering's crash: the canvas fills to JUDGMENT_CRASH_LEVEL the frame
@@ -54,8 +55,8 @@
 #define JUDGMENT_SHEET_FLARE_A 16384
 #define JUDGMENT_SHEET_FLARE_B                                                 \
   (JUDGMENT_SHEET_FLARE_A + PICTURE_BYTES(JUDGMENT_FLARE))
-// OverlayImageA's three flash pictures, a byte a pixel, one after another in
-// the sheet: the small flash, the large flash and the glow.
+/// OverlayImageA's three flash pictures, a byte a pixel, one after another in
+/// the sheet: the small flash, the large flash and the glow.
 #define JUDGMENT_SHEET_FLASH_SMALL_WIDTH 16
 #define JUDGMENT_SHEET_FLASH_SMALL_HEIGHT 17
 #define JUDGMENT_SHEET_FLASH_LARGE_WIDTH 24

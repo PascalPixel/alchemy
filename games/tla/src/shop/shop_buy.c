@@ -354,9 +354,9 @@ void Shop_DrawMoney(void) {
   }
 }
 
-// The price line reads "Price", the price, then "Coins". Japanese indents
-// the line and its notes by 8 pixels, French draws the price 8 pixels nearer
-// its label, Spanish and Italian the coins label 8 pixels further right.
+/// The price line reads "Price", the price, then "Coins". Japanese indents
+/// the line and its notes by 8 pixels, French draws the price 8 pixels nearer
+/// its label, Spanish and Italian the coins label 8 pixels further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_ITEM_NOTE_X 8
 #else
@@ -636,9 +636,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   return result;
 }
 
-// The quantity window: outside the English edition the count sits further left
-// and the price and coins label move with their words; the Spanish, French and
-// Italian windows are wider; Japanese draws the counter コ after the count.
+/// The quantity window: outside the English edition the count sits further left
+/// and the price and coins label move with their words; the Spanish, French and
+/// Italian windows are wider; Japanese draws the counter コ after the count.
 #if LANGUAGE == LANGUAGE_ENGLISH
 #define QUANTITY_WINDOW_X 7
 #define QUANTITY_WINDOW_WIDTH 23

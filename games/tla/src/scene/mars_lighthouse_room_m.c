@@ -195,6 +195,8 @@ u16 *gPaletteColors BSS_DATA;
 u16 *gPaletteCycleColors BSS_DATA;
 u16 gPaletteCycleLength BSS_DATA;
 u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
+/// The beacon ledge inscription's colours: the element palettes as loaded, the
+/// palette the glow is built in, and the inscription's own palette as loaded.
 u16 gMarsLighthouseRoomM_LedgeElementColors[2 * PALETTE_COLORS] BSS_DATA
     ALIGNED(4);
 u16 gMarsLighthouseRoomM_LedgePalette[2 * PALETTE_COLORS] BSS_DATA;
@@ -1450,6 +1452,7 @@ struct Trigger gMarsLighthouseRoomM_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The beacon ledge inscription's glow, in frames; -1 before it starts.
 s32 gMarsLighthouseRoomM_LedgeCycleFrame = -1;
 
 struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
@@ -1460,6 +1463,7 @@ struct Trigger gMarsLighthouseRoomM_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The hall inscriptions' glow, in frames; -1 before it starts.
 s32 gMarsLighthouseRoomM_HallCycleFrame = -1;
 
 struct Trigger gMarsLighthouseRoomM_Room1Triggers[] = {

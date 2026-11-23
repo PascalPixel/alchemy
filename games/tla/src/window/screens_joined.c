@@ -10,7 +10,7 @@
 /// Returns 0; only the far-call table refers to it.
 s32 Screens_ReturnZero(void) { return 0; }
 
-// The window that announces a Djinni, wider in French and Italian.
+/// The window that announces a Djinni, wider in French and Italian.
 #if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define DJINN_JOIN_X 1
 #define DJINN_JOIN_WIDTH 28
@@ -220,8 +220,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   }
 }
 
-// The window that lists the Djinn a summon needs is wider and taller in
-// Spanish and French, whose text gives each Djinn count a line of its own.
+/// The window that lists the Djinn a summon needs is wider and taller in
+/// Spanish and French, whose text gives each Djinn count a line of its own.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
 #define TO_SUMMON_WINDOW_X 2
 #define TO_SUMMON_WINDOW_WIDTH 25

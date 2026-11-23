@@ -641,6 +641,7 @@ void Tightrope_Place(s32 a, s32 b, s32 c);
 
 extern u32 gTrialRoad_GaspHopScript[];
 
+/// The summit's colours as the cycle loads them (TrialRoad_StartPaletteCycle).
 u16 gTrialRoad_PaletteCycleColors[16] BSS_DATA;
 
 void TrialRoad_StepPaletteCycle(void);
@@ -688,6 +689,7 @@ void TrialRoad_DriftDust(union FieldObject *object);
 
 void Actor_StartIdle(struct Actor *actor);
 
+/// The race map's colours.
 extern const u16 gTrialRoad_RaceMapPalette[];
 
 void TrialRoad_MoveRival(void);
@@ -3786,6 +3788,7 @@ void TrialRoad_MoveRival(void) {
   }
 }
 
+/// The race map's picture, tagged LZ.
 extern const u8 gTrialRoad_RaceMapPicture[];
 
 /// The picture's buffer in EWRAM, the size VramCache_Load copies.
@@ -3793,6 +3796,9 @@ static inline void *TrialRoadLink_AllocPicture(void) {
   return Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
 }
 
+/// Where an actor's marker stands on the race map: its place in cells, moved by
+/// `left` or `right` on the entrance's side, and raised by the stage it has
+/// reached.
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
@@ -4005,11 +4011,14 @@ void (*gTrialRoad_StageSetUps[])(void) = {
     TrialRoad_SetUpSandStage,
 };
 
+/// The recordings Moapa's party runs by: one a stage pattern, then one for each
+/// side.
 u32 gTrialRoad_RivalRecordings[] = {
     450, 451, 452, 453, 454, 455,
     456, 457, 458, 459,
 };
 
+/// Each stage's place in the map, in cells.
 s16 gTrialRoad_StageMapCells[][2] = {
     {1, 48}, {15, 48}, {29, 48}, {1, 70},
     {15, 70}, {29, 70}, {1, 92}, {15, 92},
@@ -4022,12 +4031,13 @@ s8 gTrialRoad_RulesTreasureStages[] = {
     6, 7,
 };
 
-// The same table as gTrialRoad_RulesTreasureStages, under another name.
+/// The same table as gTrialRoad_RulesTreasureStages, under another name.
 s8 gTrialRoad_TreasureStages[] = {
     0, 1, 2, 3, 4, 4, 4, 5,
     6, 7,
 };
 
+/// The stage numbers TrialRoad_DealStageOrder deals into the stage order.
 s8 gTrialRoad_KeyStages[] = {
     0, 2, 3, 7, 1, 4, 5, 6,
 };
@@ -4167,6 +4177,7 @@ void TrialRoad_StandOnBlock(void);
 void TrialRoad_OpenSummitGate(s32 sound);
 void TrialRoad_StepOffSwitch(void);
 
+/// Unused: the digits 0 to 9 and A to F, four to a word.
 // clang-format off
 LAST_DATA u32 gTrialRoad_HexDigits[] = {
     0x33323130, 0x37363534, 0x42413938, 0x46454443, 0,
@@ -4367,6 +4378,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_SummitPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// Each stage pattern's actor placements.
 LAST_DATA s32 gTrialRoad_StagesPlacements[] = {
     (s32)gTrialRoad_PillarStagePlacements,
     (s32)gTrialRoad_TorchStagePlacements,
@@ -4887,6 +4899,7 @@ LAST_DATA s32 gTrialRoad_StagesTriggers[] = {
     (s32)gTrialRoad_SandStageTriggers,
 };
 
+/// The summit's colour cycle, in frames; -1 before it starts.
 LAST_DATA s32 gTrialRoad_PaletteCycleFrame = -1;
 
 LAST_DATA s32 gTrialRoad_PaletteCycleRunning = 1;

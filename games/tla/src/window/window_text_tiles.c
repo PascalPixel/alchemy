@@ -91,7 +91,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
           DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
 
-// A new line in tile text advances by a space's width: tile text is one line.
+/// A new line in tile text advances by a space's width: tile text is one line.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define TILE_TEXT_NEWLINE_WIDTH gFont_GlyphWidths[0]
 #else
@@ -106,8 +106,8 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 #define TILE_TEXT_MARK_GLYPH 254
 #define TILE_TEXT_MARK_WIDTH 3
 
-// A label's end tile advances three pixels: the HP label's in every font, and
-// the PP label's own in the French, Spanish and Italian fonts.
+/// A label's end tile advances three pixels: the HP label's in every font, and
+/// the PP label's own in the French, Spanish and Italian fonts.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define TEXT_IS_NARROW_TILE(code)                                              \

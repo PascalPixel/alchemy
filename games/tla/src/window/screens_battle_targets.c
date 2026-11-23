@@ -10,10 +10,10 @@
 #include "window/item_icon.h"
 #include "window/window.h"
 
-// Widths in tiles that fit each language's text: the "Set Djinni" window
-// (MsgSetDjinni) and the list of conditions an action cures; and the Mystery
-// names' copy, which Japanese decodes raw where the other languages copy it
-// expanded.
+/// Widths in tiles that fit each language's text: the "Set Djinni" window
+/// (MsgSetDjinni) and the list of conditions an action cures; and the Mystery
+/// names' copy, which Japanese decodes raw where the other languages copy it
+/// expanded.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TARGET_SET_DJINNI_WIDTH 8
 #define TARGET_CONDITION_LIST_WIDTH 14
@@ -41,9 +41,9 @@ s32 System_GetLanguage(void);
 #define TARGET_GAUGE_WIDTH 13
 #define TARGET_ONE_LINE_WIDTH 12
 
-// The help window's column, `back` tiles left of the aimed party member's; a
-// window `windowWidth` tiles wide that would run past the screen's right edge
-// stands against it instead.
+/// The help window's column, `back` tiles left of the aimed party member's; a
+/// window `windowWidth` tiles wide that would run past the screen's right edge
+/// stands against it instead.
 #define TARGET_HELP_COLUMN(back, windowWidth)                                  \
   {                                                                            \
     s32 anchor = selectedPosition.x / 8;                                       \
@@ -55,7 +55,7 @@ s32 System_GetLanguage(void);
 // The window listing the conditions an action cures, helpRow down and `count`
 // lines tall.
 #if TLA_PATCH_2
-// These editions widen it by a tile for Spanish as it runs.
+/// These editions widen it by a tile for Spanish as it runs.
 #define TARGET_CONDITION_LIST_WIDTH_SPANISH 17
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
@@ -106,8 +106,8 @@ s32 System_GetLanguage(void);
 #define TARGET_REDRAW_SPREAD 1
 #define TARGET_REDRAW_ALL 0xFFFF
 
-// The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels: the
-// sine divided by FIXED_ONE / 2, rounding toward zero.
+/// The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels: the
+/// sine divided by FIXED_ONE / 2, rounding toward zero.
 #define TARGET_BOB(y)                                                          \
   {                                                                            \
     s32 bob = Trig_Sin(gFrameCount * (TRIG_TURN / 16));                        \

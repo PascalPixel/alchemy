@@ -17,9 +17,9 @@
 #include "game/item.h"
 #include "field/field_sequence.h"
 
-// After a drop, "Felix gave <item> to <member>." shows zooming open alone in
-// German (patch 2), waiting for the jingle as well before it, and patch 3
-// drops the message.
+/// After a drop, "Felix gave <item> to <member>." shows zooming open alone in
+/// German (patch 2), waiting for the jingle as well before it, and patch 3
+/// drops the message.
 #if TLA_PATCH_2 && !TLA_PATCH_3
 #define GIFT_RECEIVED_MESSAGE_MODE FIELD_MESSAGE_ZOOM
 #else

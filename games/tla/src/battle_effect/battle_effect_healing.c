@@ -7,6 +7,7 @@
 
 #define HEALING_SPARKS 512 ///< sparks in PARTICLES
 
+/// Where the Djinni's picture is decoded in the work sheet, in bytes.
 #define HEALING_DJINNI_PICTURE 4096
 /// How far the Djinni sways to either side, in screen pixels.
 #define HEALING_DJINNI_SWAY 20

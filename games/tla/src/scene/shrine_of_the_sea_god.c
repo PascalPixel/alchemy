@@ -70,15 +70,25 @@ void FieldEffect_StartBlankOverlay(s32 object);
 #define FLAG_DJINNI_RAN_PAST 0x876   ///< its footprints are gone
 #define FLAG_DJINNI_BY_LEDGE 0x877   ///< it waits by the ledge
 #define FLAG_DJINNI_ON_LEDGE 0x87c   ///< it hopped up onto the ledge
+/// Frost froze the puddle at (8, 18).
 #define FLAG_SHRINE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+/// Frost froze the puddle at (10, 18).
 #define FLAG_SHRINE_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+/// Frost froze the puddle at (10, 17).
 #define FLAG_SHRINE_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
+/// Lash tied the rope room's rope.
 #define FLAG_SHRINE_ROPE_TIED FLAG_SCENE_TEMP_03
+/// Lash tied the north rope.
 #define FLAG_SHRINE_SECOND_ROPE_TIED FLAG_SCENE_TEMP_04
+/// Breath is caught, or its battle begun.
 #define FLAG_DJINNI_CHASE_OVER FLAG_SCENE_TEMP_05
+/// The torch has stopped Breath on the north side.
 #define FLAG_DJINNI_TRAPPED FLAG_SCENE_TEMP_06
+/// The torch stands where it traps Breath.
 #define FLAG_TORCH_AT_NORTH_WALL FLAG_SCENE_TEMP_07
+/// The hole room's unseen blocks are drawn.
 #define FLAG_BLOCKS_SHOWN FLAG_SCENE_TEMP_08
+/// Felix is drawn in front of the crossroads' bridges.
 #define FLAG_LEADER_IN_FRONT FLAG_SCENE_TEMP_0A
 /// A broken bridge's middle has fallen into the stream below.
 #define FLAG_CROSSROADS_BRIDGE_BROKEN FLAG_SCENE_TEMP_30
@@ -1043,6 +1053,8 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
+/// The broken bridge's middle less the leader's place, 16.16 pixels, as he
+/// rocks on it.
 FIXED gShrineOfTheSeaGod_BridgeOffset[3] BSS_DATA;
 
 /// On a broken bridge's middle the leader sways twice, the middle dipping under
@@ -1752,6 +1764,8 @@ void ShrineOfTheSeaGod_EndDjinniDash(void) {
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
+/// With Breath at the ledge's south-east corner, the leader comes up the south-
+/// east way: Breath dashes north to the north-east corner.
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216,
                    BREATH_AT_NORTHEAST_CORNER)
 
@@ -1796,6 +1810,9 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216,
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
+/// With Breath at the north-east corner, the leader steps onto the east side's
+/// north end: Breath runs west along the north side and leaps the torch's place
+/// to the north-west corner, unless the torch stands there.
 DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
                             FACING_WEST, BREATH_STOPPED_EAST_OF_TORCH, 296, 328,
                             BREATH_AT_NORTHWEST_CORNER)
@@ -1814,22 +1831,35 @@ DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
+/// With Breath at the north-west corner, the leader steps onto the north side's
+/// west end: Breath dashes round to the south-west corner.
 DEFINE_DJINNI_DASH_AROUND(ShrineOfTheSeaGod_DjinniNorthWestToSouthWest, 280,
                           296, 296, BREATH_AT_SOUTHWEST_CORNER)
 
+/// With Breath at the south-west corner, the leader steps onto the west side's
+/// south end: Breath dashes east to the south-east corner.
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthWestToSouthEast, 392, 296,
                    BREATH_AT_SOUTHEAST_CORNER)
 
+/// With Breath at the south-east corner, the leader steps onto the east side's
+/// south end: Breath dashes west to the south-west corner.
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToSouthWest, 280, 296,
                    BREATH_AT_SOUTHWEST_CORNER)
 
+/// With Breath at the south-west corner, the leader comes up the south-west
+/// way: Breath dashes round to the north-west corner.
 DEFINE_DJINNI_DASH_AROUND(ShrineOfTheSeaGod_DjinniSouthWestToNorthWest, 296,
                           216, 280, BREATH_AT_NORTHWEST_CORNER)
 
+/// With Breath at the north-west corner, the leader steps onto the west side's
+/// north end: Breath runs east along the north side and leaps the torch's place
+/// to the north-east corner, unless the torch stands there.
 DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthWestJumpsEast, 328,
                             FACING_EAST, BREATH_STOPPED_WEST_OF_TORCH, 392, 360,
                             BREATH_AT_NORTHEAST_CORNER)
 
+/// With Breath at the north-east corner, the leader steps onto the north side's
+/// east end: Breath dashes south to the south-east corner.
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296,
                    BREATH_AT_SOUTHEAST_CORNER)
 
@@ -1868,16 +1898,24 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296,
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
   }
 
+/// Breath, stopped east of the torch's place, tries the leap west again as the
+/// leader steps onto the east side's north end.
 DEFINE_DJINNI_JUMP(ShrineOfTheSeaGod_TrappedDjinniJumpsWest, FACING_WEST,
                    BREATH_STOPPED_EAST_OF_TORCH, 296, 328,
                    BREATH_AT_NORTHWEST_CORNER)
 
+/// Breath, stopped east of the torch, dashes back to the north-east corner as
+/// the leader steps onto the north side's west end.
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_TrappedDjinniToNorthEast, 392, 216,
                    BREATH_AT_NORTHEAST_CORNER)
 
+/// Breath, stopped west of the torch, dashes back to the north-west corner as
+/// the leader steps onto the north side's east end.
 DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_TrappedDjinniToNorthWest, 296, 216,
                    BREATH_AT_NORTHWEST_CORNER)
 
+/// Breath, stopped west of the torch's place, tries the leap east again as the
+/// leader steps onto the west side's north end.
 DEFINE_DJINNI_JUMP(ShrineOfTheSeaGod_TrappedDjinniJumpsEast, FACING_EAST,
                    BREATH_STOPPED_WEST_OF_TORCH, 392, 360,
                    BREATH_AT_NORTHEAST_CORNER)

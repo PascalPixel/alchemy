@@ -55,7 +55,8 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
           DMA_COPY_WORDS(8), REG_DMA3);
 }
 
-// How much of a refusal is copied: more in German, Spanish, French and Italian.
+/// How much of a refusal is copied: more in German, Spanish, French and
+/// Italian.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
 #define REFUSAL_TEXT_LENGTH 32
 #else

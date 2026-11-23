@@ -141,6 +141,7 @@ void OseniaCliffs_CyclePalette(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// The sea's shimmer, its step through the source colours.
 u32 gOseniaCliffs_PaletteCycleStep[] = {
     0,
 };

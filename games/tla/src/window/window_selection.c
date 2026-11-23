@@ -428,6 +428,8 @@ void SelectionMenu_Draw(void) {
   state->status += 1;
 }
 
+/// The pictures of the selection row's right and left arrows
+/// (sprite_cursors.s).
 extern u8 gMenu_CursorActorTiles[], gMenu_CursorLeftActorTiles[];
 
 /// Draws the selection screen's left (index 0) or right (1) arrow, nudged
@@ -589,6 +591,7 @@ void Menu_SetupSelectionBothSides(void) {
 }
 
 extern u8 gMenu_CursorActorTiles[];
+/// The picture of the selection row's left arrow (sprite_cursors.s).
 extern u8 gMenu_CursorLeftActorTiles[];
 
 /// Sets up the left (side 0) or right (1) arrow of the selection row, shown
@@ -649,6 +652,8 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
   return node;
 }
 
+/// A selection mode that allows neither moving nor choosing, only cancelling
+/// with B.
 #define SELECTION_FIXED 999
 
 /// The row's last place, the fifth: the cursor stepping onto it with more

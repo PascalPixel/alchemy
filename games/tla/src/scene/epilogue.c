@@ -53,6 +53,7 @@ s32 gEpiloguePortraitFrameTile BSS_DATA; ///< the frame's first tile
 s8 gEpiloguePortraitShown BSS_DATA;
 s16 gEpiloguePortraitX BSS_DATA ALIGNED(4); ///< the portrait's left, in pixels
 
+/// The colours of the epilogue's name panel (green_panel.s).
 extern const u16 gEpilogueNamePanelPalette[];
 
 void EndingPicture_Show(s32 resource, u8 *map, s32 position);

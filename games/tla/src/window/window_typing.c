@@ -4,6 +4,7 @@
 
 #include "window_internal.h"
 
+/// The text canvas: 30 columns of tiles, 32 words to a column.
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 ///< the top pixel rows, which stay put

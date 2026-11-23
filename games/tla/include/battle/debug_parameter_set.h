@@ -18,6 +18,7 @@ struct DebugPartyEntry {
   u16 unused; ///< 0 in every row; nothing reads it
 };
 
+/// The owner that ends the debug parameter sets.
 #define DEBUG_PARAMETER_SET_END -1
 
 /// The debug parameter sets DebugParameterSet_Load loads, a party member a row

@@ -3,8 +3,8 @@
 /// frames, and the palettes it builds from the shown one.
 // Part of field_sequence.c.
 
-// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R
-// with every channel moved to where blue is (BLUE_BITS, bits 14..10).
+/// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R
+/// with every channel moved to where blue is (BLUE_BITS, bits 14..10).
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)

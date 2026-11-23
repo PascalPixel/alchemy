@@ -140,10 +140,10 @@ extern u16 gTitleIntro_ChannelCurveContrast[];
 s32 TitlePaletteFade_ClampComponent(s32 value);
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 
-// The intro's tiles, in 16 colours: the far clouds in character block 0, the
-// near clouds in block 1, each 256 by 128 pixels, and the cards' text in block
-// 2. The text is `Camelot presents`, three rows in these editions and two in
-// the others, then `Golden Sun` on three and `Book Two` on two.
+/// The intro's tiles, in 16 colours: the far clouds in character block 0, the
+/// near clouds in block 1, each 256 by 128 pixels, and the cards' text in block
+/// 2. The text is `Camelot presents`, three rows in these editions and two in
+/// the others, then `Golden Sun` on three and `Book Two` on two.
 #define CLOUD_ROWS 16
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
@@ -591,8 +591,8 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
           REG_DMA3);
 }
 
-// Where the left, middle and right pieces of `The Lost Age` come to rest, and
-// how far down.
+/// Where the left, middle and right pieces of `The Lost Age` come to rest, and
+/// how far down.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define LOGO_LEFT_X 24
@@ -936,9 +936,9 @@ s32 TitleIntro_Run(void) {
   return 1;
 }
 
-// The title screen's "Press Start" prompt: five sprites further left in the
-// French and Japanese editions; two rows of three, from eight tile blocks, in
-// German; one row of three elsewhere.
+/// The title screen's "Press Start" prompt: five sprites further left in the
+/// French and Japanese editions; two rows of three, from eight tile blocks, in
+/// German; one row of three elsewhere.
 #if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_JAPANESE)
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56

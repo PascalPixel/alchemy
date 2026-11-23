@@ -31,6 +31,7 @@ STATIC_ASSERT(offsetof(struct EffectSprite, x) == 12);
 STATIC_ASSERT(offsetof(struct EffectSprite, angle) == 28);
 STATIC_ASSERT(offsetof(struct EffectSprite, pivotX) == 36);
 
+/// An EffectSprite depth that leaves the sprite undrawn.
 #define EFFECT_SPRITE_HIDDEN (-1)
 
 void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,

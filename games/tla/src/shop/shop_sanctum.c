@@ -194,14 +194,14 @@ s32 Sanctum_Run(s32 actorId) {
   return 0;
 }
 
-// Italian creates no donation window and passes 0 where the others pass it, a
-// layout difference of that language's edition: Sanctum_DrawFee draws nothing
-// without a window, so Italian shows no donation while a party member is
-// chosen, and the donation is first seen in the keeper's line (MsgReviving).
+/// Italian creates no donation window and passes 0 where the others pass it, a
+/// layout difference of that language's edition: Sanctum_DrawFee draws nothing
+/// without a window, so Italian shows no donation while a party member is
+/// chosen, and the donation is first seen in the keeper's line (MsgReviving).
 #define SANCTUM_HAS_DONATION_WINDOW (LANGUAGE != LANGUAGE_ITALIAN)
 
-// The donation window's left column and width in tiles, sized to each
-// language's text.
+/// The donation window's left column and width in tiles, sized to each
+/// language's text.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define SANCTUM_DONATION_WINDOW_X 0
 #define SANCTUM_DONATION_WINDOW_WIDTH 30

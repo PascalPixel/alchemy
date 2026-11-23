@@ -185,9 +185,9 @@
 #define FLAG_ARRIVAL_STAIRS_UP 0x120
 /// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
 #define FLAG_ARRIVAL_STAIRS_DOWN 0x121
-// Each lighthouse's scenes set its flag on every arrival, and Scene_Arrive
-// clears all four when the party enters another area, so a flag is set only
-// while the party is inside.
+/// Each lighthouse's scenes set its flag on every arrival, and Scene_Arrive
+/// clears all four when the party enters another area, so a flag is set only
+/// while the party is inside.
 #define FLAG_IN_VENUS_LIGHTHOUSE 0x110
 #define FLAG_IN_MERCURY_LIGHTHOUSE 0x111
 #define FLAG_IN_MARS_LIGHTHOUSE 0x112
@@ -560,8 +560,8 @@
 /// Set once the party has dug up the Golem Core under Loho's rock.
 #define FLAG_LOHO_GOLEM_CORE_DUG 0xff7
 
-// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
-// its uses what each one holds there.
+/// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: a scene says beside
+/// its uses what each one holds there.
 #define FLAG_SCENE_TEMP_00 0x200
 #define FLAG_SCENE_TEMP_01 0x201
 #define FLAG_SCENE_TEMP_02 0x202
@@ -819,7 +819,7 @@
 #define FLAG_SCENE_TEMP_FE 0x2fe
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
-// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF, as the scene flags.
+/// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF, as the scene flags.
 #define FLAG_AREA_TEMP_00 0x300
 #define FLAG_AREA_TEMP_01 0x301
 #define FLAG_AREA_TEMP_02 0x302

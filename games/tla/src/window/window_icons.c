@@ -5,6 +5,9 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 
+/// The encoded icons: the command icons' bases and the pictures drawn over
+/// them, the marks an item icon may carry (equipped, broken), and the digits of
+/// its count.
 extern u8 *gIcon_BasePointerTable[];
 extern u8 *gIcon_OverlayPointerTable[];
 extern u8 *gIcon_MarkPointers[];

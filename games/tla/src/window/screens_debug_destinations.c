@@ -5,6 +5,8 @@
 #include "window_internal.h"
 #include "gamepak/far_call/field_sequence.h"
 
+/// Where a debug scene row's numbers and their labels start, in pixels; further
+/// right in Japanese.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define SELROW_TEXT_X 100
 #define SELROW_LABEL_X 110

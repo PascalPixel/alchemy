@@ -8,6 +8,8 @@
 
 #include "field/encounter_zone.h"
 
+/// Each encounter zone's battles, a row a zone, the zone the ground under the
+/// party gives.
 // clang-format off
 const struct EncounterZone gEncounterZones[] = {
     // None: a ground whose zone is 0 has no random battles

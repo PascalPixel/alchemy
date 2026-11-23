@@ -213,7 +213,9 @@ extern u32 gWorldMap_GlowColorModes[];
 
 s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
+/// The party members hidden as the ship first takes off, -1 for none.
 s32 gWorldMap_HiddenMembers[8] BSS_DATA;
+
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
 u16 gWorldMapBlend BSS_DATA;
 s16 gGauge_Shown BSS_DATA ALIGNED(4);
@@ -223,6 +225,7 @@ u32 gGauge_Sprite[3] BSS_DATA;
 u8 gGauge_Tiles[8][32] BSS_DATA;
 u8 gGauge_SourceTiles[12][32] BSS_DATA;
 
+/// The tidal wave's tiles, pictures and palettes, tagged LZ.
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
@@ -245,10 +248,10 @@ void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
 
-// Once the party has walked nine tenths of the encounter threshold, a coin
-// toss either requests the Djinni's battle now or makes the party walk the
-// whole threshold first. From the international editions on, only while the
-// party walks the World Map, not aboard the ship or as sand.
+/// Once the party has walked nine tenths of the encounter threshold, a coin
+/// toss either requests the Djinni's battle now or makes the party walk the
+/// whole threshold first. From the international editions on, only while the
+/// party walks the World Map, not aboard the ship or as sand.
 #if !TLA_PATCH_1
 #define WORLD_MAP_TRY_ENCOUNTER(actorId, djinni)                               \
   {                                                                            \
@@ -2742,6 +2745,7 @@ s32 gWorldMap_SparkScript[] = {
 
 #include "shared/world_map_particle_script.c"
 
+/// The colour modes the ship's glow steps through, one every other frame.
 u32 gWorldMap_GlowColorModes[] = {
     0, 9, 0, 6,
 };

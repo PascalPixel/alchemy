@@ -18,8 +18,8 @@ enum StatusScreenStep {
 /// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
 /// or the full status page, with the elemental levels, Power and Resist.
 enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
-// A bit over the page mode: draw without clearing the window first, as for a
-// window just opened.
+/// A bit over the page mode: draw without clearing the window first, as for a
+/// window just opened.
 #define STATUS_PAGE_NO_CLEAR (1 << 8)
 #define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
@@ -642,8 +642,8 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_SUMMARY);
 }
 
-// The switch-characters help follows the A-button label on the help line:
-// Japanese starts it 64 pixels in, the other editions 80.
+/// The switch-characters help follows the A-button label on the help line:
+/// Japanese starts it 64 pixels in, the other editions 80.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SWITCH_CHARACTER_HELP_X 64
 #else
@@ -866,6 +866,7 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
     Text_DrawMessageFar(MsgStatusNormal, target, 0, 0);
 }
 
+/// The help line's length, in characters: longer in the European editions.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define HELP_LENGTH 80
@@ -1016,8 +1017,8 @@ extern const u8 gMenu_HpString[];
 /// The PP label: `PP`; `EP` in German.
 extern const u8 gMenu_PpString[];
 
-// The stat column of the status page's top rows: three digits from 200 or
-// four from 192, both ending at pixel 224.
+/// The stat column of the status page's top rows: three digits from 200 or
+/// four from 192, both ending at pixel 224.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_STAT_DIGITS 3
 #define STATUS_STAT_X 200
@@ -1133,6 +1134,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 /// (menu_strings.s).
 extern const u32 gMenu_PatternRowMasks[][2];
 
+/// The words of one range icon's two tiles.
 #define RANGE_PATTERN_PAIR_WORDS 16
 /// The first of the Status menu's range icon BG tiles, which
 /// PsynergyMenu_DrawRange draws as tilemap entries; the battle menu builds its
@@ -1194,22 +1196,22 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
   Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
 
-// The Japanese page lists six abilities rather than five, a row higher, and
-// says where the chosen ability can be used in short lines stacked at the
-// window's left edge rather than in one sentence across it. FIRST_TILE_ROW is
-// the tile row of the page's first ability; USABLE_TOP, USABLE_RIGHT and
-// USABLE_BOTTOM bound that text in pixels inside the window.
+/// The Japanese page lists six abilities rather than five, a row higher, and
+/// says where the chosen ability can be used in short lines stacked at the
+/// window's left edge rather than in one sentence across it. FIRST_TILE_ROW is
+/// the tile row of the page's first ability; USABLE_TOP, USABLE_RIGHT and
+/// USABLE_BOTTOM bound that text in pixels inside the window.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ROWS 6
 #define FIRST_TILE_ROW 1
 #define USABLE_TOP 72
 #define USABLE_RIGHT 64
 #define USABLE_BOTTOM 96
-// まちやダンジョン ("towns and dungeons"), the message two after MsgExpLabel.
+/// まちやダンジョン ("towns and dungeons"), the message two after MsgExpLabel.
 #define USABLE_IN_FIELD_MESSAGE ((s32)MsgExpLabel + 2)
-// せんとう ("battle"), the message after MsgExpLabel.
+/// せんとう ("battle"), the message after MsgExpLabel.
 #define USABLE_IN_BATTLE_MESSAGE ((s32)MsgExpLabel + 1)
-// でつかえます ("can be used"), the message before MsgDjinnListHelp.
+/// でつかえます ("can be used"), the message before MsgDjinnListHelp.
 #define CAN_BE_USED_MESSAGE ((s32)MsgDjinnListHelp - 1)
 #else
 #define PAGE_ROWS 5
@@ -1329,9 +1331,9 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #undef USABLE_RIGHT
 #undef USABLE_BOTTOM
 
-// The Japanese page lists six abilities rather than five, a row higher, and
-// lays its heading, names, costs, page icons and "no Psynergy" message out on
-// its own columns.
+/// The Japanese page lists six abilities rather than five, a row higher, and
+/// lays its heading, names, costs, page icons and "no Psynergy" message out on
+/// its own columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ROWS 6
 #define PAGE_ICONS_X 86
@@ -1442,8 +1444,8 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 #undef FIRST_RANGE_ROW
 #undef EMPTY_MESSAGE_Y
 
-// The rows of a page of the list and where the cursor points at its first row:
-// the Japanese page lists six abilities, a row higher.
+/// The rows of a page of the list and where the cursor points at its first row:
+/// the Japanese page lists six abilities, a row higher.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ROWS 6
 #define STATUS_PSYNERGY_CURSOR_X 58
@@ -1558,8 +1560,9 @@ s32 PsynergyMenu_SelectAction(void) {
 #define PAGE_ROWS 5
 #endif
 
+/// The tile column the equipment slots' highlight starts at.
 #define EQUIP_SLOT_X 2
-// The equipment slots' highlight is a tile wider in the European editions.
+/// The equipment slots' highlight is a tile wider in the European editions.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
 #define EQUIP_SLOT_WIDTH 9
 #else
@@ -1675,8 +1678,8 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
 #define PAGE_ROWS 5
 #endif
 
-// The page icons, the item names, the "no items" message and the Attack and
-// Defense figures, as each translation lays them out.
+/// The page icons, the item names, the "no items" message and the Attack and
+/// Defense figures, as each translation lays them out.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define PAGE_ICONS_X 119
 #define ITEM_NAME_X 128
@@ -1743,7 +1746,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 #undef EMPTY_MESSAGE_X
 #undef STAT_X
 
-// The equip window's width in tiles, narrower in Japanese.
+/// The equip window's width in tiles, narrower in Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define EQUIP_WINDOW_WIDTH 13
 #else
@@ -1758,7 +1761,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 #define PAGE_ROWS 5
 #endif
 
-// The French list puts its cursor 4 pixels further right.
+/// The French list puts its cursor 4 pixels further right.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define STATUS_EQUIPMENT_CURSOR_X 100
 #else

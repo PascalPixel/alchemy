@@ -402,22 +402,22 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 // Japanese release reaches each of those by its place beside a message whose
 // label fits its text.
 #if LANGUAGE == LANGUAGE_JAPANESE
-// ねむりからさめた! ("wakes from slumber"), three before MsgResNormal.
+/// ねむりからさめた! ("wakes from slumber"), three before MsgResNormal.
 #define WAKES_MESSAGE ((s32)&MsgResNormal - 3)
-// すばやさが もどった! ("Agility returns to normal"), after MsgDefNormal.
+/// すばやさが もどった! ("Agility returns to normal"), after MsgDefNormal.
 #define AGI_NORMAL_MESSAGE ((s32)&MsgDefNormal + 1)
-// われにかえった! ("regains consciousness"), two after MsgDefNormal.
+/// われにかえった! ("regains consciousness"), two after MsgDefNormal.
 #define CONSCIOUS_MESSAGE ((s32)&MsgDefNormal + 2)
-// まぼろしを うちやぶった! ("sees clearly once again"), three before
-// MsgCharmConscious.
+/// まぼろしを うちやぶった! ("sees clearly once again"), three before
+/// MsgCharmConscious.
 #define CURE_DELUSION_MESSAGE ((s32)&MsgCharmConscious - 3)
-// エナジーふうじがとけた! ("Psynergy seal is gone"), two before
-// MsgCharmConscious.
+/// エナジーふうじがとけた! ("Psynergy seal is gone"), two before
+/// MsgCharmConscious.
 #define CURE_SEAL_MESSAGE ((s32)&MsgCharmConscious - 2)
-// しびれがきえた! ("no longer stunned"), the message before MsgCharmConscious.
+/// しびれがきえた! ("no longer stunned"), the message before MsgCharmConscious.
 #define CURE_STUN_MESSAGE ((s32)&MsgCharmConscious - 1)
-// リフレクトのこうかがきえた! ("Reflect no longer affects"), after
-// MsgRefrainEnd.
+/// リフレクトのこうかがきえた! ("Reflect no longer affects"), after
+/// MsgRefrainEnd.
 #define REFLECT_END_MESSAGE ((s32)&MsgRefrainEnd + 1)
 #else
 #define WAKES_MESSAGE ((s32)&MsgWakes)
@@ -429,6 +429,8 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 #define REFLECT_END_MESSAGE ((s32)&MsgReflectEnd)
 #endif
 
+/// When `test` finds the unit's status over, shows its end, `message`, with the
+/// unit's name, and waits for the player.
 #define ANNOUNCE_END(test, message)                                            \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
@@ -437,6 +439,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     BattleMessage_WaitForAdvance();                                            \
   }
 
+/// As ANNOUNCE_END, turning the unit back to its usual pose before the message.
 #define ANNOUNCE_END_POSE(test, message)                                       \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
@@ -614,7 +617,7 @@ void Battle_ProcessTurnEnd(void) {
   }
 }
 
-// The most Djinn BattleUnit_DrainDjinn gathers to choose from.
+/// The most Djinn BattleUnit_DrainDjinn gathers to choose from.
 #define DRAIN_CANDIDATE_MAX 10
 
 /// Djinnfest, Fugue, Djinn Blast, Djinn Storm and Djinn Stun: puts one of the

@@ -73,9 +73,9 @@
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
 
-// Each pushed pillar's flag keeps it where it was pushed: two on the slide,
-// one on each of the cliff's high west, high east and low west levels and two
-// on its low east level.
+/// Each pushed pillar's flag keeps it where it was pushed: two on the slide,
+/// one on each of the cliff's high west, high east and low west levels and two
+/// on its low east level.
 #define FLAG_SLIDE_PILLAR_A_PUSHED 0x8d5
 #define FLAG_SLIDE_PILLAR_B_PUSHED 0x8d6
 #define FLAG_HIGH_WEST_PILLAR_B_PUSHED 0x8d7
@@ -86,32 +86,32 @@
 /// The top's great fire is put out and the rocks round it scattered,
 /// which opens the way into Magma Rock (MagmaRock_ScatterEmbers).
 #define FLAG_WAY_IN_BLASTED 0x8dc
-// Set as Burst breaks each cracked pillar, until the scene is left.
+/// Set as Burst breaks each cracked pillar, until the scene is left.
 #define FLAG_CRACKED_PILLAR_A_BURST FLAG_SCENE_TEMP_00
 #define FLAG_CRACKED_PILLAR_B_BURST FLAG_SCENE_TEMP_01
 #define FLAG_CRACKED_PILLAR_C_BURST FLAG_SCENE_TEMP_02
 #define FLAG_CRACKED_PILLAR_D_BURST FLAG_SCENE_TEMP_03
 #define FLAG_CRACKED_PILLAR_E_BURST FLAG_SCENE_TEMP_04
-// The high west level's crumbling pillars: each one's flag is set once it has
-// cracked under the leader, and the flag after it once it has fallen. The
-// first's is FLAG_CRACKED_PILLAR_A_BURST's too.
+/// The high west level's crumbling pillars: each one's flag is set once it has
+/// cracked under the leader, and the flag after it once it has fallen. The
+/// first's is FLAG_CRACKED_PILLAR_A_BURST's too.
 #define FLAG_CRUMBLING_PILLAR_A_CRACKED FLAG_SCENE_TEMP_00
 #define FLAG_CRUMBLING_PILLAR_B_CRACKED FLAG_SCENE_TEMP_02
-// Set once Felix has been on the cave mouth's cell (MagmaRock_EnterCave), so
-// that when the game moves him onto it he is not sent straight in; his next
-// step there by himself clears it (MagmaRock_ResetCaveDoor).
+/// Set once Felix has been on the cave mouth's cell (MagmaRock_EnterCave), so
+/// that when the game moves him onto it he is not sent straight in; his next
+/// step there by himself clears it (MagmaRock_ResetCaveDoor).
 #define FLAG_CAVE_DOOR_USED FLAG_SCENE_TEMP_F8
-// Set while Felix stands just behind the high west level's statue, the one
-// place Burst can wake it from (MagmaRock_ReadyHighWestStatue).
+/// Set while Felix stands just behind the high west level's statue, the one
+/// place Burst can wake it from (MagmaRock_ReadyHighWestStatue).
 #define FLAG_HIGH_WEST_STATUE_READY FLAG_SCENE_TEMP_12
-// Set while a fireball knocks Felix off the high east wall
-// (MagmaRock_KnockLeaderOffWall); the fireballs stop whooshing meanwhile.
+/// Set while a fireball knocks Felix off the high east wall
+/// (MagmaRock_KnockLeaderOffWall); the fireballs stop whooshing meanwhile.
 #define FLAG_LEADER_KNOCKED_DOWN FLAG_SCENE_TEMP_60
-// The cliff's low east level: each vine Growth has grown there.
+/// The cliff's low east level: each vine Growth has grown there.
 #define FLAG_VINE_A_GROWN FLAG_SCENE_TEMP_50
 #define FLAG_VINE_B_GROWN FLAG_SCENE_TEMP_51
 #define FLAG_VINE_C_GROWN FLAG_SCENE_TEMP_52
-// Its low west level: the rope Lash ties between the two posts.
+/// Its low west level: the rope Lash ties between the two posts.
 #define FLAG_LOW_WEST_ROPE_LASHED FLAG_SCENE_TEMP_50
 
 /// The cliff's four levels, by the last entrance of each: its high west and

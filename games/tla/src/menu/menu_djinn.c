@@ -154,7 +154,7 @@ s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 
 void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop);
 
-// Find the moved Djinni in the list and select its new position.
+/// Find the moved Djinni in the list and select its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \
     s32 column;                                                                \
@@ -721,7 +721,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
 #endif
 }
 
-// A grid cell's highlight is a tile narrower in Japanese.
+/// A grid cell's highlight is a tile narrower in Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define GRID_CELL_WIDTH 5
 #else
@@ -946,8 +946,8 @@ s32 DjinnMenu_ShowHelp(void) {
 #define GRID_CELL_WIDTH 6
 #endif
 
-// Spanish, French and Italian name the Djinni before its owner in one message
-// on the trade's help line, so the Djinni's icon leads the line.
+/// Spanish, French and Italian name the Djinni before its owner in one message
+/// on the trade's help line, so the Djinni's icon leads the line.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define TRADE_HELP_DJINNI_FIRST 1
@@ -967,7 +967,7 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 void DjinnRecovery_CountDownFar(void);
 s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
 
-// Shows one tutorial message and waits for its text to finish.
+/// Shows one tutorial message and waits for its text to finish.
 #define DJINN_TUTORIAL_MESSAGE(window, offset)                                 \
   do {                                                                         \
     (window) =                                                                 \
@@ -1693,15 +1693,15 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   return 1;
 }
 
-// The stat preview's columns, in pixels from x * 8: the Japanese edition draws
-// Attack, Defense and Agility with four digits from HP's column and Luck a tile
-// further left, sets every arrow in one column, and puts the Psynergy page's PP
-// heading further left.
-//
-// The Japanese text leaves the preview's messages unnamed, so each is written
-// by its place after a named one: "HP", the first of the six stat labels, 13
-// after "Luck rises"; "* Psynergy Gained" and "* Psynergy Lost", the two after
-// the status help; "* No change", the one after "Trade".
+/// The stat preview's columns, in pixels from x * 8: the Japanese edition draws
+/// Attack, Defense and Agility with four digits from HP's column and Luck a
+/// tile further left, sets every arrow in one column, and puts the Psynergy
+/// page's PP heading further left.
+///
+/// The Japanese text leaves the preview's messages unnamed, so each is written
+/// by its place after a named one: "HP", the first of the six stat labels, 13
+/// after "Luck rises"; "* Psynergy Gained" and "* Psynergy Lost", the two after
+/// the status help; "* No change", the one after "Trade".
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define DJINN_PREVIEW_DIGITS 3
 #define DJINN_PREVIEW_CURRENT_X 48

@@ -230,7 +230,7 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 void Actor_StartScript(struct Actor *actor, const void *data);
 
 extern s32 gTaopoSwamp_SteamPuffs;
-extern s32 gTaopoSwamp_PassageRows;
+extern s32 gTaopoSwamp_PassageFrames;
 extern s32 gTaopoSwamp_PoolFrames;
 extern u32 gTaopoSwamp_PuffSteamScript[];
 void Field_TryJumpForward(void);
@@ -786,6 +786,7 @@ void TaopoSwamp_DouseVentSpot(s32 unused, s32 id) {
     Event_ClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);                             \
   }
 
+/// Frost on the puddle on the round spot past the pool, cell (26, 8).
 DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeVentSpot, 28, 8, 26)
 
 /// The next gust shatters the ice pillar on the round spot past the pool, and
@@ -846,6 +847,7 @@ void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   }
 }
 
+/// Frost on the puddle on the drips room's round spot, cell (25, 27).
 DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeDripSpot, 23, 27, 25)
 
 /// The next gust shatters the ice pillar on the drips room's round spot, as
@@ -972,11 +974,11 @@ void TaopoSwamp_PuffSteam(void) {
 /// A task: the lava stream north of the pillar dries into a passage, from its
 /// south end up, a row of cells every eight frames.
 void TaopoSwamp_OpenPassage(void) {
-  s32 timer = --gTaopoSwamp_PassageRows;
+  s32 timer = --gTaopoSwamp_PassageFrames;
   s32 step = timer / 8;
 
   MapGrid_CopyCells(47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
-  if (gTaopoSwamp_PassageRows == 0)
+  if (gTaopoSwamp_PassageFrames == 0)
     FieldTask_Remove(TaopoSwamp_OpenPassage);
 }
 
@@ -1480,8 +1482,10 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *actor) {
     }                                                                          \
   }
 
+/// The drops falling in the room of the pillar gap, from (384, 400).
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInPillarGap, toFIXED(384), toFIXED(400))
 
+/// The drops falling in the drips room, from (416, 352).
 DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInDripRoom, toFIXED(416), toFIXED(352))
 
 extern u16 gTaopoSwampVentsVents[];
@@ -2243,18 +2247,21 @@ u16 gTaopoSwampVentsVents[] = {
 /// The actors the vents room's puffs land on, its two pillars, ended by 0.
 u16 gTaopoSwampVentsPillars[] = {ACTOR_WEST_VENT_PILLAR, ACTOR_EAST_VENT_PILLAR, 0};
 
+/// The pillar gap room's vents, as gTaopoSwampVentsVents.
 u16 gTaopoSwampPillarGapVents[] = {
     424, 104, 4,
     536, 136, 4,
     0,
 };
 
+/// The drips room's vents, as gTaopoSwampVentsVents.
 u16 gTaopoSwampDripsVents[] = {
     408, 408, 4,
     472, 360, 4,
     0,
 };
 
+/// The rock room's vents, as gTaopoSwampVentsVents.
 u16 gTaopoSwamp_RockRoomVents[] = {
     216, 184, 4,
     312, 136, 4,
@@ -2547,9 +2554,7 @@ struct Trigger gTaopoSwampDripsTriggers[] = {
 /// (TaopoSwamp_PuffSteam); the frames the passage takes to dry, eight to a row
 /// (TaopoSwamp_OpenPassage); and the pool's flickers (TaopoSwamp_FlickerPool).
 s32 gTaopoSwamp_SteamPuffs = 112;
-
-s32 gTaopoSwamp_PassageRows = 120;
-
+s32 gTaopoSwamp_PassageFrames = 120;
 s32 gTaopoSwamp_PoolFrames = 24;
 
 struct Trigger gTaopoSwampTremorTriggers[] = {
@@ -2625,4 +2630,5 @@ struct Trigger gTaopoSwampStarDustTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Star Dust's sparkle, in frames from 0 to 59.
 s32 gTaopoSwamp_SparkleFrame = 0;

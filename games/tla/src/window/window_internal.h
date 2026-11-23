@@ -6,7 +6,7 @@
 /// includes it before the parts, and each part includes it too, so that a part
 /// read on its own still resolves.
 
-// The window object defines these with its own types.
+/// The window object defines these with its own types.
 #define OWN_UiTextResource_Initialize
 #define OWN_UiTextResource_SetPosition
 
@@ -81,7 +81,7 @@
 /// window's frame flashes as it swells, for the message's countdown.
 #define WINDOW_ANIMATION_SWELL 4
 
-// Window animation lengths.
+/// Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
 #define WINDOW_CLOSE_FRAMES 4
 
@@ -91,6 +91,8 @@
   ((entries)[position] = (code),                                               \
    (position) = ((position) + 1) & TEXT_BUFFER_MASK)
 
+/// The space a decoded em dash opens with: a plain space in the European
+/// editions, code 143 in the others.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TEXT_ARGUMENT_SPACE ' '
@@ -108,7 +110,7 @@
 #define SELECTION_MENU_ENTRY_LIMIT 16 ///< entries a selection row can list
 #define AREA_NAME_WINDOW_FRAMES 90    ///< how long the area's name shows
 
-// WindowWork owns three messages, each with four line gaps.
+/// WindowWork owns three messages, each with four line gaps.
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4         ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start

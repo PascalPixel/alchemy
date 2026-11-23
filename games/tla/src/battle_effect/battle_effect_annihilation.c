@@ -5,12 +5,14 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// The shards the burst throws.
 #define SHARD_COUNT 64
 /// The frames the first four shards live; each four after live two longer.
 #define SHARD_LIFE 16
 /// The stronger variant's three burst pictures, after the basic one's.
 #define BURST_STRIP_BYTES (3 * PICTURE_BYTES(FIRE_BURST))
 
+/// The effect's length and the frames of its strike, flash and burst.
 #define ANNIHILATION_FRAMES 64
 #define STREAK_FRAME 6 ///< the user's fire streak, six frames
 #define HIT_FRAME 8

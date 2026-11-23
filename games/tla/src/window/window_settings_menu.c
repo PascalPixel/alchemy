@@ -177,9 +177,9 @@ void SettingsMenu_Release(void) {
 #define SLIDER_PALETTE 14
 #define BRIGHTNESS_SLIDER_PALETTE (SLIDER_PALETTE + 1)
 
-// The settings window's layout, sized to its labels: the window, the last
-// column of its dividers, the hue and brightness sliders and the message
-// speed icons. Japanese writes "Message speed" on one line.
+/// The settings window's layout, sized to its labels: the window, the last
+/// column of its dividers, the hue and brightness sliders and the message
+/// speed icons. Japanese writes "Message speed" on one line.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define OPTION_WINDOW_X 2
 #define OPTION_WINDOW_WIDTH 26
@@ -202,6 +202,7 @@ void SettingsMenu_Release(void) {
 #define OPTION_SLIDER_WIDTH 60
 
 extern const u8 gPointingHandTiles[];
+/// The hue and brightness sliders' picture and colours.
 extern const u8 gSettingsMenu_SliderTiles[];
 extern const u16 gSettingsMenu_SliderPalette[];
 
@@ -325,9 +326,9 @@ struct Window *SettingsMenu_Open(void) {
   return win;
 }
 
-// The layout that fits each language's text: the help window's column and
-// width in tiles, then, in pixels from the settings window's left, where the
-// choices' fields start and end.
+/// The layout that fits each language's text: the help window's column and
+/// width in tiles, then, in pixels from the settings window's left, where the
+/// choices' fields start and end.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SETTINGS_HELP_WINDOW_X 2
 #define SETTINGS_HELP_WINDOW_WIDTH 26
@@ -348,8 +349,8 @@ struct Window *SettingsMenu_Open(void) {
 #endif
 #endif
 
-// The heading above the settings window: Japanese shows the Settings heading;
-// from patch 1 the screen shows the Pause heading the Pause menu also shows.
+/// The heading above the settings window: Japanese shows the Settings heading;
+/// from patch 1 the screen shows the Pause heading the Pause menu also shows.
 #if TLA_PATCH_1
 #define SETTINGS_HEADING MENU_TITLE_PAUSE
 #else
@@ -664,8 +665,8 @@ struct Window *PauseMenu_Open(void) {
   return win;
 }
 
-// The heading's top, in pixels from the window's; from patch 1 it sits 8
-// pixels lower.
+/// The heading's top, in pixels from the window's; from patch 1 it sits 8
+/// pixels lower.
 #if TLA_PATCH_1
 #define HEADING_Y (-16)
 #else

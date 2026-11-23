@@ -101,11 +101,11 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #define FLAG_WEST_TORCH_LIT FLAG_AREA_TEMP_03
 #define FLAG_EAST_TORCH_LIT FLAG_AREA_TEMP_04
 #define FLAG_TABLET_TORCH_LIT FLAG_AREA_TEMP_05
-// Set as Burst breaks each of the cracked pillars' room's two pillars, until
-// the party leaves Magma Rock.
+/// Set as Burst breaks each of the cracked pillars' room's two pillars, until
+/// the party leaves Magma Rock.
 #define FLAG_INSIDE_CRACKED_PILLAR_A_BURST FLAG_AREA_TEMP_50
 #define FLAG_INSIDE_CRACKED_PILLAR_B_BURST FLAG_AREA_TEMP_51
-// Each pushed pillar's flag keeps it where it was pushed.
+/// Each pushed pillar's flag keeps it where it was pushed.
 #define FLAG_ENTRANCE_PILLAR_PUSHED 0x9f0
 #define FLAG_FURY_PILLAR_PUSHED 0x9f1
 #define FLAG_PILLAR_A_PUSHED 0x9f2
@@ -117,9 +117,10 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #define FLAG_ROCKS_RELEASED 0x9f8
 #define FLAG_MAGMA_BALL_TAKEN 0x9f9
 #define FLAG_BLAZE_LEARNED 0x9fa
-// The Blaze tablet's room: a stone on the way to the tablet that the map's
-// upper layer numbers raises the trigger STEP_CELL_TRIGGER_BASE plus its number
-// when Felix stops on it, and its flag keeps the stone behind it raised.
+/// The Blaze tablet's room: a stone on the way to the tablet that the map's
+/// upper layer numbers raises the trigger STEP_CELL_TRIGGER_BASE plus its
+/// number when Felix stops on it, and its flag keeps the stone behind it
+/// raised.
 #define FLAG_ANY_MARKER_LIT FLAG_SCENE_TEMP_00
 #define FLAG_MARKER_LIT(marker) (FLAG_SCENE_TEMP_00 + (marker))
 /// The trigger a numbered stone of the Blaze tablet's room raises, less its
@@ -2401,6 +2402,7 @@ void Actor_PlaceBlocks(const u8 *table);
 void Tightrope_Place(s32 a, s32 b, s32 c);
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value);
 
+/// Blends BG2 out of sight: weight 0 over every layer beneath it.
 #define CLOSED_BLEND()                                                         \
   {                                                                            \
     REG_BLDALPHA = BLEND_ALPHA(0, 16);                                         \

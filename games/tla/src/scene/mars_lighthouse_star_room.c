@@ -70,7 +70,9 @@
 
 #define FLAG_MARS_STAR_TAKEN 0xa3a ///< Felix took it from where Agatio left it
 #define FLAG_ADEPTS_WOKE 0xa3b     ///< Agatio and Karst woke after the battle
+/// The east fireball cracked the ice.
 #define FLAG_DRAGON_ICE_CRACKED 0xa4a
+/// Set on coming back from the Flame Dragons' battle.
 #define FLAG_FLAME_DRAGONS_BEATEN 0xa4b
 /// From patch 1: the Mars Star was set in the statue once, and the lighthouse
 /// thawed; set again, it only rises and falls back.
@@ -1462,6 +1464,7 @@ s32 Actor_HasArrived(struct Actor *actor);
 
 #include "shared/slide_on_ice_from_edge.c"
 
+/// Stops the leader's slide on the ice where it is (nonzero), or lets it run.
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"

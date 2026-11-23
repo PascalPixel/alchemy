@@ -2137,7 +2137,7 @@ void ShamanVillage_StartLettering(s32 shape, s32 secondHalf) {
   gShamanVillage_LetteringX = 0;
 }
 
-// The European editions' lettering sheet has one more palette row.
+/// The European editions' lettering sheet has one more palette row.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_PALETTE_ROWS 6
@@ -2902,6 +2902,8 @@ void ShamanVillage_BlowChimneySmoke(void) {
     Actor_SetSpritePriority(n2, variant);                                      \
   }
 
+/// A task: the sprout and the girl below the cave take the leader's sprite
+/// priority each frame, so they pass behind what he passes behind.
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerVillageActors, ACTOR_SPROUT,
                          ACTOR_GIRL_BELOW_THE_CAVE)
 
@@ -3003,6 +3005,8 @@ void ShamanVillage_SetUpInn(void) {
   }
 }
 
+/// A task: the sanctum's two shamans take the leader's sprite priority each
+/// frame.
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors,
                          ACTOR_SANCTUM_SHAMAN_A, ACTOR_SANCTUM_SHAMAN_B)
 
@@ -3064,7 +3068,7 @@ s16 gShamanVillage_LetteringLoseScript[] = {
     LETTERING_END,
 };
 
-// `GO` has a palette row of its own in the European editions' sheet.
+/// `GO` has a palette row of its own in the European editions' sheet.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_GO_PALETTE_OFFSET (5 * 32)
 #else
@@ -3285,11 +3289,12 @@ s32 gShamanVillage_HopFortuneTellerScript[] = {
     SC_END,
 };
 
+/// The VRAM cache entry the lettering's picture takes; -1 for none.
 s16 gShamanVillage_LetteringVramEntry[] = {
     -1,
 };
 
-// The title's and `GO`'s scales, which fit each language's lettering.
+/// The title's and `GO`'s scales, which fit each language's lettering.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define LETTERING_TITLE_SCALE 384
 #define LETTERING_GO_START_SCALE 512

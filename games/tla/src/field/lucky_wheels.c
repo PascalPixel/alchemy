@@ -537,11 +537,11 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_CHOOSE_LOCKED_X 3
 #define LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH 24
 #endif
-// The Spanish title's first letter is its last letter's tile turned over both
-// ways, drawn 16 pixels left and 8 down.
+/// The Spanish title's first letter is its last letter's tile turned over both
+/// ways, drawn 16 pixels left and 8 down.
 #define LUCKY_WHEELS_TITLE_FIRST_TURNED (LANGUAGE == LANGUAGE_SPANISH)
-// The first tile of the title's letters: the Japanese letters take fewer tiles,
-// so they start later and end at the same place.
+/// The first tile of the title's letters: the Japanese letters take fewer
+/// tiles, so they start later and end at the same place.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_TITLE_TILES 896
 #else
@@ -1232,8 +1232,8 @@ void LuckyWheels_FinishFrame(void) {
     Dma_Set(work->oam, OAM, DMA_COPY_WORDS(work->spriteCount * 2), REG_DMA3);
 }
 
-// The left edge of the title's first letter: the Spanish title has nine
-// letters and starts further left.
+/// The left edge of the title's first letter: the Spanish title has nine
+/// letters and starts further left.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_TITLE_X 8
 #else
@@ -1307,8 +1307,8 @@ void LuckyWheels_InitializeTitle(void) {
   Text_DrawMessageAsTilesFar(message - 1, state->subWindow, 0, 0);
 }
 
-// The help window is narrower in Japanese, and one row shorter there when it
-// shows only the controls. The jackpot banner's tiles are the title's.
+/// The help window is narrower in Japanese, and one row shorter there when it
+/// shows only the controls. The jackpot banner's tiles are the title's.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LUCKY_WHEELS_HELP_WINDOW_X 6
 #define LUCKY_WHEELS_HELP_WINDOW_WIDTH 18

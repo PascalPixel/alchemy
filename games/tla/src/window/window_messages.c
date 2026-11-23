@@ -415,8 +415,8 @@ void Message_DecodeAppend(s32 message) {
 /// credits' tile ring.
 #define CRAWL_CANVAS_WIDTH 192
 
-// The rows of a glyph drawn: all twelve of the Japanese font's, and fourteen of
-// the European fonts' fifteen.
+/// The rows of a glyph drawn: all twelve of the Japanese font's, and fourteen
+/// of the European fonts' fifteen.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PLOT_GLYPH_ROWS 12
 #else
@@ -598,6 +598,8 @@ void Message_Find(struct TextReader *reader, s32 message) {
   Heap_Release(routine);
 }
 
+/// Each decoding context's Huffman tree and its symbols, two pointers a row: a
+/// message's previous symbol picks the row.
 extern const void *const Text_MessageContexts[][2];
 
 /// Decodes the next symbol of a message. Messages are Huffman coded with one

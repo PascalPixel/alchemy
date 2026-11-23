@@ -53,8 +53,9 @@ enum BattleStaging {
   STAGING_BEAST_PSYNERGY = 17
 };
 
-// BattlePlan.battleEffect: the effect kind in the low twelve bits and its
-// strength (a double or triple blow) above them; then how the effect is staged.
+/// BattlePlan.battleEffect: the effect kind in the low twelve bits and its
+/// strength (a double or triple blow) above them; then how the effect is
+/// staged.
 #define EFFECT_ID_MASK 0xfff
 #define EFFECT_VARIANT_MASK 0x3000
 #define EFFECT_VARIANT_SHIFT 12

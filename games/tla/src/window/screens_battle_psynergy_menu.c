@@ -7,7 +7,8 @@
 #include "window/window_tile.h"
 #include "window/screens.h"
 
-// The list is a tile wider in Spanish and French, and its columns move with it.
+/// The list is a tile wider in Spanish and French, and its columns move with
+/// it.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
 #define LIST_WINDOW_X 8
 #define LIST_WINDOW_WIDTH 22

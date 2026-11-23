@@ -1021,6 +1021,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The colours the shining water takes in turn.
 // clang-format off
 s16 gAncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS] = {
     RGB(12, 24, 23), RGB(8, 22, 24), RGB(4, 20, 25),

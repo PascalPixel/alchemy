@@ -19,12 +19,12 @@
 #include "window/window.h"
 #include "resource_ids.h"
 
-// While a party member's commands are chosen (Battle_CollectPartyCommands),
-// where the Japanese layout differs: the chosen summon's window and the columns
-// of its first Djinn cost, the element icon and then the count, and the chosen
-// item's window, in tiles; the party member's portrait, and the chosen
-// command's icon beside the summon list, beside the chosen summon and beside
-// the Djinn list, in pixels.
+/// While a party member's commands are chosen (Battle_CollectPartyCommands),
+/// where the Japanese layout differs: the chosen summon's window and the
+/// columns of its first Djinn cost, the element icon and then the count, and
+/// the chosen item's window, in tiles; the party member's portrait, and the
+/// chosen command's icon beside the summon list, beside the chosen summon and
+/// beside the Djinn list, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_WINDOW_X 10
 #define BATTLE_SUMMON_WINDOW_WIDTH 17
@@ -47,23 +47,23 @@
 #define DJINN_MENU_ICON_X 144
 #endif
 
-// Where "Attack" is written in its window once chosen, in pixels.
+/// Where "Attack" is written in its window once chosen, in pixels.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define BATTLE_COMMAND_NAME_X 14
 #else
 #define BATTLE_COMMAND_NAME_X 16
 #endif
 
-// The chosen command's icon beside the Psynergy list, in pixels.
+/// The chosen command's icon beside the Psynergy list, in pixels.
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
 #define PSYNERGY_MENU_ICON_X 40
 #else
 #define PSYNERGY_MENU_ICON_X 48
 #endif
 
-// The chosen command's icon beside the window that names Attack, the chosen
-// Psynergy, the chosen Djinni or the chosen item, and beside the item list, in
-// pixels.
+/// The chosen command's icon beside the window that names Attack, the chosen
+/// Psynergy, the chosen Djinni or the chosen item, and beside the item list, in
+/// pixels.
 #define ATTACK_ICON_X 64
 #define PSYNERGY_CHOSEN_ICON_X 40
 #define DJINN_CHOSEN_ICON_X 64
@@ -1346,7 +1346,7 @@ s32 FileList_SelectAction(void) {
   return result;
 }
 
-// The label area is narrower in Japanese and wider in French.
+/// The label area is narrower in Japanese and wider in French.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LABEL_RIGHT 80
 #elif LANGUAGE == LANGUAGE_FRENCH
@@ -1399,7 +1399,7 @@ void Menu_DrawModeLabel(void) {
   }
 }
 
-// The Spanish descriptions are indented.
+/// The Spanish descriptions are indented.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define HELP_X 6
 #else
@@ -1475,8 +1475,8 @@ void Menu_DrawModeIndicator(void) {
 #endif
 }
 
-// The entries' width and the windows' places and widths, in tiles, and where
-// the lines of text start, in pixels, are fitted to each language's text.
+/// The entries' width and the windows' places and widths, in tiles, and where
+/// the lines of text start, in pixels, are fitted to each language's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ENTRY_WIDTH 5
 #define PASSWORD_UPPER_X 9
@@ -1545,8 +1545,8 @@ void Menu_DrawModeIndicator(void) {
 #define TRANSFER_LOWER_WIDTH 21
 #endif
 
-// Spanish, French and Italian indent the password's lines and set them
-// closer together.
+/// Spanish, French and Italian indent the password's lines and set them
+/// closer together.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define PASSWORD_TEXT_X 8

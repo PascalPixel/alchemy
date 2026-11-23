@@ -153,13 +153,17 @@ enum LemurianShipJelly {
 enum LemurianShipEncounter { ENCOUNTER_AQUA_JELLY, ENCOUNTER_AQUA_HYDRA };
 
 #define FLAG_JELLIES_BEATEN 0x930 ///< the first, by enum LemurianShipJelly
+/// The Aqua Hydra's, among the jellies' flags.
 #define FLAG_AQUA_HYDRA_BEATEN (FLAG_JELLIES_BEATEN + JELLY_AQUA_HYDRA)
 #define FLAG_PILLAR_WAY_OPEN 0x982     ///< both pillars sank, the way opened
 #define FLAG_SHIP_ENGINE_RUNNING 0x983 ///< the Black Crystal is set
 #define FLAG_HOLD_PARCHED 0x9e4        ///< Parch dried the flooded hold
+/// The tall crate fell off the ledge by the stairs.
 #define FLAG_CRATE_DROPPED FLAG_SCENE_TEMP_00
 #define FLAG_JELLY_FLED FLAG_SCENE_TEMP_01 ///< the frightened jelly ran
+/// The right pillar sank into the floor on its tile.
 #define FLAG_RIGHT_PILLAR_SUNK FLAG_SCENE_TEMP_02
+/// The left pillar sank into the floor on its tile.
 #define FLAG_LEFT_PILLAR_SUNK FLAG_SCENE_TEMP_03
 
 /// The pillar room's raised triggers: a pillar's puddle has dried, and the
@@ -169,7 +173,9 @@ enum LemurianShipRaisedTrigger {
   RAISED_LEFT_PILLAR
 };
 #define FLAG_RIGHT_PILLAR_FULL FLAG_SCENE_TEMP_04 ///< Douse filled it
+/// Douse filled the left pillar.
 #define FLAG_LEFT_PILLAR_FULL FLAG_SCENE_TEMP_05
+/// The lever took the lift down.
 #define FLAG_LIFT_LOWERED FLAG_SCENE_TEMP_07
 /// The first, by enum LemurianShipJelly: Frost froze the jelly's puddle.
 #define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_10

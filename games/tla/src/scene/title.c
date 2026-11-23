@@ -323,4 +323,5 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The VRAM cache entry the logo's lettering takes; -1 for none yet.
 s16 gTitleVramBlock = -1;

@@ -76,8 +76,11 @@
 #include "system/io_write.h"
 #include "scene/airs_rock.h"
 
+/// Move set the white dragon statue under the dragon head.
 #define FLAG_JUPITER_STATUE_BLOCKS_FLAMES 0xa37
+/// The robed statue dropped off the upper ledge.
 #define FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE 0xa38
+/// The urn torch's fireball melted the icebergs.
 #define FLAG_ICEBERGS_MELTED 0xa40
 /// The button's flame thrower has reached the Mars tower's torch.
 #define FLAG_MARS_TORCH_LIT 0xa42
@@ -1663,6 +1666,7 @@ extern s16 gSlideOnIce_AnglesByKey[];
 
 #include "shared/slide_on_ice_from_edge.c"
 
+/// Stops the leader's slide on the ice where it is (nonzero), or lets it run.
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -2024,7 +2028,7 @@ s32 gMarsLighthouseRoomF_FireballDrop[] = {
 
 #undef MapLayer
 
-// The stones fill the gaps from patch 1; before it, their rows run nothing.
+/// The stones fill the gaps from patch 1; before it, their rows run nothing.
 #if !TLA_PATCH_1
 #define MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES 0
 #else

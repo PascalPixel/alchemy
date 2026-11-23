@@ -160,7 +160,7 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
   }
 }
 
-// The scrolled name's left edge, in pixels left of its place.
+/// The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define WORLD_MAP_NAME_LEFT 3
 #else
@@ -168,6 +168,8 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #endif
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
+/// A place on the World Map, in pixels, as a place on the picture, 300 pixels
+/// to every 640.
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
 /// Each frame of the world map screen: moves the cursor with the d-pad, faster

@@ -107,7 +107,7 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   return -1;
 }
 
-// The Lift-style animation measures height by the actor's footing, not y.
+/// The Lift-style animation measures height by the actor's footing, not y.
 #define ANIM_MEASURES_FOOTING 18
 /// A facing's sixteenths of a turn (FACING_STEP), as a shift.
 #define FACING_STEP_SHIFT 12

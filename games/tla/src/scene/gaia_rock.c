@@ -237,8 +237,8 @@ void GaiaRock_StartMovingPillar(void) {
   MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91);
 }
 
-// The Japanese edition drops a pillar with no sound; the later editions play
-// SE_BOOM as it lands.
+/// The Japanese edition drops a pillar with no sound; the later editions play
+/// SE_BOOM as it lands.
 #if !TLA_PATCH_1
 #define DROP_PILLAR(id) GaiaRock_DropPillar(id)
 #else
@@ -559,6 +559,8 @@ void GaiaRock_StatueBlowsWind(void) {
   }
 }
 
+/// The transition Gaia Rock opens with: the window's shape until patch 1, an
+/// interlaced wipe from it.
 #if !TLA_PATCH_1
 #define SCREEN_EFFECT                                                          \
   SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE)

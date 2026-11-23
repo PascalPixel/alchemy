@@ -96,7 +96,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     } else {
       left = 0;
       top = 0;
-      Text_GetMessageSizeAltFar(message, &left, &top, &width, &height);
+      Text_GetMessageSizeAllPagesFar(message, &left, &top, &width, &height);
       left = x - (s32)width / 2;
       if (flags & SPEAKER_WINDOW_ABOVE)
         top = y - height - 1;
@@ -133,7 +133,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     // portrait's height.
     found = Portrait_GetForSpeakerFar(sprite);
     if (found != -1) {
-      Text_GetMessageSizeAltFar(message, &left, &top, &width, &height);
+      Text_GetMessageSizeAllPagesFar(message, &left, &top, &width, &height);
       message = -1;
       if (top > y)
         portraitTop = top - PORTRAIT_WINDOW_TILES;

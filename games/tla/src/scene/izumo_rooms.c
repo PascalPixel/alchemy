@@ -88,8 +88,12 @@ extern s32 gIzumoRooms_HeavingScript[];
     return 1;                                                                  \
   }
 
+/// Whether the second dancer is clear of the spot the first steps to; the first
+/// dancer's script waits on it.
 DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsFirstDancerClear, 10, toFIXED(148))
 
+/// Whether the first dancer is clear of the spot the second steps to; the
+/// second dancer's script waits on it.
 DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsSecondDancerClear, 9, toFIXED(132))
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }

@@ -3077,6 +3077,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
+/// The maze grid's width, in its cells.
 #define GRID_WIDTH 28
 
 /// The grid the maze's path is laid on (GaiaRockInside_LayMaze).
@@ -3507,8 +3508,10 @@ s32 gGaiaRockInside_CirclingSparkScript[] = {
 
 #include "shared/lesson_scripts.c"
 
+/// The cells the two stumps may be moved onto, numbered from 1; row 0 is none.
 s16 gGaiaRockInside_StumpSpots[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, {117, 45}, {119, 45}, {119, 47}, {121, 47}, {117, 49}, {119, 49}, {119, 51}, {121, 51}};
 
+/// The swaying platforms' places, in cells.
 s16 gGaiaRockInside_PlatformPlaces[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
 
 // The same script as gFieldEffect_MediumScript, under another name.
@@ -3555,6 +3558,7 @@ u16 gGaiaRockInside_LairBlendScript[12] ALIGNED(4) = {
     BLEND_SCRIPT_LOOP,
 };
 
+/// Each maze room's place in the map, in cells.
 s8 gGaiaRockInside_MazeOrigins[][2] = {{0, 0}, {1, 1}, {17, 1}, {33, 1}, {49, 1}, {49, 12}, {49, 23}, {49, 34}, {49, 45}, {33, 45}, {17, 45}, {1, 45}, {1, 34}, {1, 23}, {1, 12}, {0, 0}};
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -3874,6 +3878,7 @@ s32 gGaiaRockInside_SquashXScript[] = {
     SC_END,
 };
 
+/// The frames the arrow plants flash and pulse by.
 s32 gGaiaRockInside_ArrowFrame = 0;
 
 struct Trigger gGaiaRockInside_Triggers[] = {

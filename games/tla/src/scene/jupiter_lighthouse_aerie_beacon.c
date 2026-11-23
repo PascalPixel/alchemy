@@ -2709,6 +2709,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The aerie's six floating platforms.
 // clang-format off
 LATE_DATA s32 gJupiterLighthouse_FloatingPlatforms[] = {
     ACTOR_FLOATING_PLATFORM_A, ACTOR_FLOATING_PLATFORM_B, ACTOR_FLOATING_PLATFORM_C,

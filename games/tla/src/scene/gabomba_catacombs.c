@@ -590,6 +590,7 @@ s32 GabombaCatacombs_ShrinkGlow(struct Actor *actor) {
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Actor_PlaceOnActor(s32 actorId, s32 target);
 
+/// Shows the conversation's next line, centred.
 #define TALK()                                                                 \
   EventMessage_ShowCentered((s16)((union EventLine *)&work->message)->line++,  \
                             0, -3)
@@ -760,6 +761,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGabombaCatacombs_Triggers;
 }
 
+/// The transition the catacombs open with: the window's shape until patch 1, an
+/// interlaced wipe from it.
 #if !TLA_PATCH_1
 #define CATACOMBS_SCREEN_EFFECT                                                \
   SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE)

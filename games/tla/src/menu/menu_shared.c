@@ -83,10 +83,10 @@ void Window_CloseIfOpen(void **handle, s32 style) {
   }
 }
 
-// Japanese draws the name and the ailment labels 8 pixels further right, the
-// Lv label through Text_DrawStringInWindowFar, and the equip panel's "cannot
-// equip" line 16 pixels in, as the class panel's is. Spanish swaps the learn
-// panel's two lines: the note above the Psynergy's name.
+/// Japanese draws the name and the ailment labels 8 pixels further right, the
+/// Lv label through Text_DrawStringInWindowFar, and the equip panel's "cannot
+/// equip" line 16 pixels in, as the class panel's is. Spanish swaps the learn
+/// panel's two lines: the note above the Psynergy's name.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define STATUS_PANEL_NAME_X 40
 #define STATUS_PANEL_CANNOT_EQUIP_X 16
@@ -106,6 +106,8 @@ void Window_CloseIfOpen(void **handle, s32 style) {
 /// which Menu_WatchStart blinks.
 #define CLASS_CHANGE_ARROW_TILE 298
 
+/// A status panel request: the panel's kind in the low byte, and a bit to draw
+/// only its lower part.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 #define STATUS_PANEL_KIND_MASK 0xff
 
@@ -610,6 +612,7 @@ extern u8 gMenuCursor_BobX[];
 /// The hand cursor's bob in y: 0, -1, -1, -2, -2, -1, -1, 0.
 extern u8 gMenuCursor_BobY[];
 
+/// The hand cursor's step through gMenuCursor_BobY, one every two frames.
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
@@ -1039,6 +1042,7 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);
 }
 
+/// The tile of page 1's number; each later page's is the tile after.
 #define PAGE_LABEL_FIRST 49
 
 /// Draws a paged list's page numbers on the top border of window, ending at

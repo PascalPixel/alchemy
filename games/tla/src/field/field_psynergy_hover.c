@@ -62,8 +62,8 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 /// The glow's colours: sprite palette CANVAS_PALETTE.
 #define HOVER_GLOW_PALETTE ((u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0))
 
-// The glow's strength, in frames: full at 112, and it fades out a frame at a
-// time once the player leaves the place that feeds it.
+/// The glow's strength, in frames: full at 112, and it fades out a frame at a
+/// time once the player leaves the place that feeds it.
 #define GLOW_FULL 112
 /// The glow's strength set as the ring grows, before the glow is held.
 #define GLOW_RISING 100

@@ -23,8 +23,8 @@
 /// STRONG_SHAKE_PIXELS_PER_TURN pixels the view sways past SWAY_SHAKE.
 #define STRONG_SHAKE_PIXELS_PER_TURN 128
 
-// The stronger sway at an object (16.16 pixels): from SWAY_START up to
-// STRONG_SWAY_PEAK, ramping more slowly and holding longer.
+/// The stronger sway at an object (16.16 pixels): from SWAY_START up to
+/// STRONG_SWAY_PEAK, ramping more slowly and holding longer.
 #define STRONG_SWAY_PEAK toFIXED(12)
 #define STRONG_SWAY_RAMP (toFIXED(1) / 10) // 0.1 pixels a frame
 #define SWAY_SHAKE toFIXED(4)              // sprites shake only past this

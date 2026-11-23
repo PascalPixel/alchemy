@@ -1114,12 +1114,17 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
 /// events of their own, made the same way.
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, ACTOR_ROCK_A, FLAG_ROCK_A_CLEARED)
 
+/// As SeaOfTime_GrindFirstRock, for the rock on cells (18, 8) to (19, 9).
 DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, ACTOR_ROCK_B, FLAG_ROCK_B_CLEARED)
 
+/// Unused: Grind on a third rock, ACTOR_ROCK_C, which no arrival raises or
+/// places, so its trigger is never met.
 DEFINE_GRIND_ROCK(SeaOfTime_GrindThirdRock, ACTOR_ROCK_C, FLAG_ROCK_C_CLEARED)
 
+/// As SeaOfTime_GrindFirstRock, for the rock on cells (23, 13) to (24, 14).
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, ACTOR_ROCK_D, FLAG_ROCK_D_CLEARED)
 
+/// As SeaOfTime_GrindFirstRock, for the rock on cells (29, 9) to (30, 10).
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
 /// Felix casts Grind on the rock in the last stretch's south part, on cells
@@ -1514,11 +1519,14 @@ s32 Scene_PrepareMap(void) {
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The steps round each trunk the ship must sail before the waves start.
 u8 gSeaOfTime_LapsNeeded[] = {
     2 * LAP_CELLS, 3 * LAP_CELLS, 2 * LAP_CELLS,
     3 * LAP_CELLS, 2 * LAP_CELLS, 3 * LAP_CELLS,
 };
 
+/// Where the sparkles rise round each trunk as the ship's laps add up, in 16.16
+/// pixels.
 struct Spots gSeaOfTime_LapSpots = {{
     {toFIXED(672), toFIXED(704)},
     {toFIXED(896), toFIXED(320)},
@@ -1584,16 +1592,14 @@ struct ActorPlacement gSeaOfTime_ToLemuriaPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The ship's laps round a trunk: the last step trigger it crossed, the steps
+/// counted, the way it turns and the frame of its last step; then the waves'
+/// start frame and state.
 u16 gSeaOfTime_LastLapCell = 0;
-
 u16 gSeaOfTime_LapCount = 0;
-
 s16 gSeaOfTime_LapTurn = 0;
-
 u32 gSeaOfTime_LastLapFrame = 0;
-
 volatile u32 gSeaOfTime_WaveStartFrame = 0;
-
 u32 gSeaOfTime_WaveState = 0;
 
 struct Trigger gSeaOfTime_SwirlsTriggers[] = {
@@ -1715,6 +1721,7 @@ struct Trigger gSeaOfTime_SouthPartTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The step the sea's red pulse takes each time it brightens or dims.
 s16 gSeaOfTime_RedPulseStep[] = {
     1,
 };

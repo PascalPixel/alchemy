@@ -9,8 +9,8 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-// The Japanese list window is 9 tiles wide from column 21 and a recovering
-// Djinni's turns stand at x 40.
+/// The Japanese list window is 9 tiles wide from column 21 and a recovering
+/// Djinni's turns stand at x 40.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DJINN_LIST_X 21
 #define DJINN_LIST_WIDTH 9

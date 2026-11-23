@@ -178,7 +178,9 @@ void Summon_Learn(s32 summonId);
 
 struct SpringTossMotion gLemuriaSpring_Toss BSS_DATA ALIGNED(16);
 s32 gLemuriaSpring_TossKind BSS_DATA;
+/// The crabs and turtles in the toss's way, as the toss moves them.
 struct SpringObstacle gLemuriaSpring_Obstacles[4] BSS_DATA ALIGNED(16);
+
 s32 gLemuriaSpring_TossFrame BSS_DATA;
 s32 gLemuriaSpring_TossEnded BSS_DATA;
 s32 gLemuriaSpring_TossResult BSS_DATA;
@@ -287,9 +289,9 @@ extern u8 MsgLemuriaSpringWhatWillYouThrow[], MsgLemuriaSpringCoins[],
     MsgLemuriaSpringToss[], MsgLemuriaSpringYouWonCoin[];
 s32 Menu_SelectCoinsOrMedals();
 
-// French draws the coin window two tiles wider, its numbers 16 pixels further
-// right; Japanese draws them 16 pixels further left, each followed by its
-// counter word.
+/// French draws the coin window two tiles wider, its numbers 16 pixels further
+/// right; Japanese draws them 16 pixels further left, each followed by its
+/// counter word.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define COIN_WINDOW_WIDTH 19
 #define COIN_NUMBER_X 88
@@ -301,8 +303,8 @@ s32 Menu_SelectCoinsOrMedals();
 #define COIN_NUMBER_X 72
 #endif
 
-// The toss prompt's window: two tiles narrower in Japanese, against the right
-// edge.
+/// The toss prompt's window: two tiles narrower in Japanese, against the right
+/// edge.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TOSS_WINDOW_X 22
 #define TOSS_WINDOW_WIDTH 7

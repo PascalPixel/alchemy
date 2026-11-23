@@ -192,7 +192,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   return result;
 }
 
-// The price window and the item details window fit their edition's text.
+/// The price window and the item details window fit their edition's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ITEM_PICKER_PRICE_WINDOW_X 16
 #define ITEM_PICKER_PRICE_WINDOW_WIDTH 14
@@ -204,6 +204,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
 #define ITEM_PICKER_PRICE_WINDOW_WIDTH 16
 #endif
 
+/// The item details window's width, in tiles, fitted to its edition's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ITEM_PICKER_DETAILS_WINDOW_WIDTH 13
 #elif LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_FRENCH
@@ -352,10 +353,10 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 #undef ITEM_PICKER_PRICE_WINDOW_WIDTH
 #undef ITEM_PICKER_DETAILS_WINDOW_WIDTH
 
-// The note sits under the item's name; the price line reads "Price", the
-// price, then "Coins". Japanese indents the note by 8 pixels; Japanese and
-// French draw the price and the coins label 8 pixels further left, Spanish
-// the coins label 8 pixels further right.
+/// The note sits under the item's name; the price line reads "Price", the
+/// price, then "Coins". Japanese indents the note by 8 pixels; Japanese and
+/// French draw the price and the coins label 8 pixels further left, Spanish
+/// the coins label 8 pixels further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SHOP_PRICE_NOTE_X 8
 #else

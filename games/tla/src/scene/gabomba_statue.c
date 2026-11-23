@@ -1586,6 +1586,8 @@ enum {
 #define COG_CELL(behavior, attributes, pictureFlags)                           \
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 
+/// Gives a cell under a cog its shape on both layers and adds bits to both its
+/// shape words.
 #define MARK(at, shape, bits)                                                  \
   (cell = (at), layerA[cell] = (shape), layerB[cell] = (shape),                \
    word = &shapesA[cell], *word |= (bits), word = &shapesB[cell],              \
@@ -3901,6 +3903,7 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// The way the cogs turn, which each tooth an actor rides steps by.
 LATE_DATA s32 gGabombaStatue_CogDirection = 0;
 
 LATE_DATA u32 gGabombaStatue_LeaderFocusScript[] = {

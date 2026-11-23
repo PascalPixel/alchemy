@@ -191,10 +191,10 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
   return 0;
 }
 
-// Lucky Dice's layout, fitted to each language's text: the coins window at the
-// top and its label, the help window (Throw / Quit) and the winnings window at
-// the bottom with their text, in tiles for windows and pixels within them, and
-// the centre of the result lettering in sprite x, which wraps at 512.
+/// Lucky Dice's layout, fitted to each language's text: the coins window at the
+/// top and its label, the help window (Throw / Quit) and the winnings window at
+/// the bottom with their text, in tiles for windows and pixels within them, and
+/// the centre of the result lettering in sprite x, which wraps at 512.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DICE_COINS_WINDOW_X 18
 #define DICE_COINS_WINDOW_WIDTH 11
@@ -213,6 +213,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_COINS_LABEL_X 48
 #endif
 
+/// The help window (Throw / Quit): its column and width, in tiles.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DICE_HELP_WINDOW_X 23
 #define DICE_HELP_WINDOW_WIDTH 7
@@ -237,10 +238,10 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_REOPENED_HELP_WINDOW_WIDTH DICE_HELP_WINDOW_WIDTH
 #endif
 
-// The winnings window opens at this x less half its digits and is this width
-// plus its digits; after the winnings label the number stands at
-// DICE_WINNINGS_NUMBER_X, and the coins label at DICE_WINNINGS_COINS_X past
-// the number's digits.
+/// The winnings window opens at this x less half its digits and is this width
+/// plus its digits; after the winnings label the number stands at
+/// DICE_WINNINGS_NUMBER_X, and the coins label at DICE_WINNINGS_COINS_X past
+/// the number's digits.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DICE_WINNINGS_WINDOW_X 10
 #define DICE_WINNINGS_WINDOW_WIDTH 10
@@ -268,6 +269,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_WINNINGS_NUMBER_X 56
 #endif
 
+/// The centre of the result lettering, in sprite x, which wraps at 512.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DICE_RESULT_LABEL_CENTER_X 640
 #else

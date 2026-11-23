@@ -12,9 +12,9 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-// Room for the help line of an item and of a Djinni, and the second letter
-// tile of the PP cost's label, as measured: the item line grows from German
-// on, the Djinni line and the tile from French on.
+/// Room for the help line of an item and of a Djinni, and the second letter
+/// tile of the PP cost's label, as measured: the item line grows from German
+/// on, the Djinni line and the tile from French on.
 #if TLA_PATCH_2
 #define SUMMARY_ITEM_HELP_CAPACITY 52
 #else
@@ -149,8 +149,8 @@ extern const u8 gOwnerStatus_PvString[];
 void BattleObject_SpawnObjectsForListFar(u16 *list, s32 count, s32 mode);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 
-// The four list-page scroll marks, one tile per page of four rows (Psynergy
-// and items).
+/// The four list-page scroll marks, one tile per page of four rows (Psynergy
+/// and items).
 #define SUMMARY_DRAW_PAGE_MARKS(window, count, rowBase)                        \
   {                                                                            \
     for (j = 0; j < ((count) + 3) / 4; j++) {                                  \

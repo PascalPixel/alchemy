@@ -114,10 +114,14 @@ enum {
 #include "shared/tables.h"
 #include "shared/event_check_spheres_overlap.h"
 
+/// Parch dried the pool left of the middle way.
 #define FLAG_LEFT_WATER_PARCHED 0x942
+/// Parch dried the pool right of the middle way.
 #define FLAG_RIGHT_WATER_PARCHED 0x943
 #define FLAG_CRYSTAL_BROKEN 0x944 ///< Burst broke the crystal round the prong
+/// The second ledge pillar dropped beside the first: the steps are made.
 #define FLAG_SECOND_LEDGE_PILLAR_SET 0x946
+/// A ledge pillar dropped to the ledge's foot.
 #define FLAG_FIRST_LEDGE_PILLAR_SET 0x947
 /// Burst opened the brown wall outside, in the Burst Brooch's room.
 #define FLAG_BROWN_WALL_BURST 0x948
@@ -1109,6 +1113,7 @@ s32 Actor_HasArrived(struct Actor *actor);
 
 #include "shared/slide_on_ice_from_edge.c"
 
+/// Stops the leader's slide on the ice where it is (nonzero), or lets it run.
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -1624,11 +1629,14 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// The ice columns of the room of ice columns: each one's cell and its Pound
+/// flag, ending -1.
 s16 gTundariaTowerIceColumnsColumns[] = {
     8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
     FLAG_ICE_COLUMN_POUNDED + 2, 11, 7, FLAG_ICE_COLUMN_POUNDED + 3, -1,
 };
 
+/// The ice columns of the room of pillars, as gTundariaTowerIceColumnsColumns.
 s16 gTundariaTowerPillarPuzzleColumns[] = {
     8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
     FLAG_ICE_COLUMN_POUNDED + 2, -1, 0,

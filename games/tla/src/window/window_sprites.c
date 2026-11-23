@@ -17,14 +17,14 @@ extern u8 Glyph_DrawCodeSize[];
 
 s32 Text_DrawGlyphPair(s32 character, u32 *tiles);
 
-// A space's width in pixels, set by the font.
+/// A space's width in pixels, set by the font.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define SPACE_WIDTH 7
 #else
 #define SPACE_WIDTH 5
 #endif
-// The page arrow's offset from the window's last inner tile, and a sprite
-// glyph's from its text position, in pixels; the later editions moved both.
+/// The page arrow's offset from the window's last inner tile, and a sprite
+/// glyph's from its text position, in pixels; the later editions moved both.
 #if TLA_PATCH_1
 #define ARROW_X 4
 #define ARROW_Y (-1)
@@ -183,9 +183,9 @@ done:
   return width;
 }
 
-// Where the glyph's sprite sits against the text position, in pixels: the
-// Japanese font's glyphs are drawn into their tiles differently (see
-// Text_DrawGlyphPair).
+/// Where the glyph's sprite sits against the text position, in pixels: the
+/// Japanese font's glyphs are drawn into their tiles differently (see
+/// Text_DrawGlyphPair).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define GLYPH_SPRITE_OFFSET_X 1
 #define GLYPH_SPRITE_OFFSET_Y 0
@@ -308,9 +308,9 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   return vram;
 }
 
-// Where the next-page arrow sits on the interior's last tile, in pixels right
-// and down from its corner. It moves with the text: the Japanese glyph sprites
-// also sit 1 pixel further left and 2 lower (Glyph_DrawAsSprite).
+/// Where the next-page arrow sits on the interior's last tile, in pixels right
+/// and down from its corner. It moves with the text: the Japanese glyph sprites
+/// also sit 1 pixel further left and 2 lower (Glyph_DrawAsSprite).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PAGE_ARROW_OFFSET_X 3
 #define PAGE_ARROW_OFFSET_Y 1
@@ -584,7 +584,9 @@ struct PopTransform {
   u32 padding : 16;
 };
 
+/// The page arrow's pictures, a frame each.
 extern const u8 gWindowSprite_PageArrowTiles[];
+
 extern const u8 gWindowSprite_CursorBobOffsets[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const s8 gWindowSprite_BounceOffsets[];

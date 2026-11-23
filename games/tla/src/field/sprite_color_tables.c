@@ -100,6 +100,7 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
     },
 };
 
+/// A colour remap: each of the 256 colours to the colour drawn in its place.
 const u8 gSpriteColorRemapTables[256] = {
     0, 1, 219, 87, 14, 219, 219, 14, 219, 130, 130, 220, 217, 13, 14, 15,
     220, 87, 217, 13, 219, 220, 87, 222, 222, 219, 219, 87, 222, 222, 14, 13,
@@ -119,6 +120,8 @@ const u8 gSpriteColorRemapTables[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+/// The four shade tables, each the 256 colours to the colour drawn in its
+/// place.
 const u8 gSpriteColorShadeTables[4][256] = {
     { // Remap table 1
         0, 8, 186, 198, 15, 7, 194, 7, 8, 197, 204, 196, 183, 188, 166, 15,

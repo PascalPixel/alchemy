@@ -66,6 +66,8 @@ const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
 // clang-format off
 // ENV(name) is BATTLE_ENVIRONMENT_name, to keep each row's sixteen short.
 #define ENV(name) BATTLE_ENVIRONMENT_##name
+/// The World Map's battle environments, by collision value, sixteen to each of
+/// its sets of rows.
 const u8 gWorldMap_TerrainBehaviorTable[80] = {
     // plain
     ENV(NONE), ENV(SEA), ENV(SEA), ENV(SEA), ENV(SEA_LAST), ENV(GRASSLAND),

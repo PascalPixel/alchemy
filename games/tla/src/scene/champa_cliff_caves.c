@@ -220,6 +220,8 @@ void FieldEffect_StartBlankOverlay(s32 a);
     actor->scaleY = actor->scaleX;                                             \
   }
 
+/// Each frame the Trident, thrown up from the rising column, grows by a
+/// sixteenth of its size until it is full size.
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, FIXED_ONE / 16)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -905,6 +907,8 @@ chosen:
   }
 }
 
+/// Each frame Avimander, leaping out of the forge's fire, grows by three sixty-
+/// fourths of its size, from a quarter to full size.
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly,
                                FIXED_ONE * 3 / 64)
 
@@ -2146,6 +2150,7 @@ void ChampaCliffCaves_FlareAndDieDown(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
+/// The three prongs Obaba throws into her forge, in turn.
 struct TridentProngs gChampaCliffCaves_Prongs = {
     {ITEM_RIGHT_PRONG, ITEM_LEFT_PRONG, ITEM_CENTER_PRONG}};
 

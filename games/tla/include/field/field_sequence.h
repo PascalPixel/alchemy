@@ -121,9 +121,9 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 s32 Speaker_GetVoice(s32 id);
 
-// A field Psynergy or item use, packed into one value, as FieldWork.psynergy
-// and FieldWork.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
-// the Psynergy or item.
+/// A field Psynergy or item use, packed into one value, as FieldWork.psynergy
+/// and FieldWork.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
+/// the Psynergy or item.
 #define ACT_ID_MASK 0x3ff                 ///< bits 9..0
 #define ACT_UNIT_SHIFT 10                 ///< bits 13..10
 #define ABILITY_ID(c) ((c) & ACT_ID_MASK) ///< the Psynergy

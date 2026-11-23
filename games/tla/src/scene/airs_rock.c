@@ -2288,15 +2288,23 @@ struct Trigger gAirsRock_FujinShieldChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Wind Stones' gusts' barriers, a row each, in the order of their flags
+/// from FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN.
 s16 gAirsRock_GustTargets[][4] = {
     {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0}, {64, 0, 64, 0},
 };
 // clang-format on
 
+/// The fog's blend weight, in sixteenths, and its step every sixteenth frame:
+/// it thickens and thins between FOG_WEIGHT / 2 and FOG_WEIGHT
+/// (AirsRock_DriftFog).
 s8 gAirsRock_FogAlpha = 6;
 s8 gAirsRock_FogAlphaStep = 1;
 
+/// As gAirsRock_FogAlpha, while the fog lifts (AirsRock_LiftFog).
 s8 gAirsRock_LiftingFogAlpha = 6;
 s8 gAirsRock_LiftingFogAlphaStep = 1;
 
+/// The ledges' level the leader stood on when their cells were last swapped; -1
+/// before.
 s32 gAirsRock_LeaderLevel = -1;

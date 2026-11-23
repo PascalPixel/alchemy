@@ -50,8 +50,8 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-s32 gLemurianShipDeck_BobPhase BSS_DATA;
-s32 gLemurianShipDeck_WaveScroll BSS_DATA;
+s32 gLemurianShipDeck_BobPhase BSS_DATA;   ///< angle, TRIG_TURN / 128 a frame
+s32 gLemurianShipDeck_WaveScroll BSS_DATA; ///< 16.16 pixels, to 32
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

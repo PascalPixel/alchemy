@@ -949,6 +949,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/cracked_tile_place_landing.h"
 
+/// The cells of the west hall's path, ending at an x of -1.
 // clang-format off
 s16 gJupiterLighthouse_WestPathCells[][2] = {
     {8, 16}, {10, 16}, {11, 16}, {12, 16}, {14, 16}, {15, 16}, {10, 18},

@@ -1791,11 +1791,8 @@ LATE_DATA struct ActorPlacement gAquaRock_MistSabreChestPlacements[] = {
 /// The frame counts of the four red moai's streams' cycles
 /// (AquaRock_TimeStreams).
 LATE_DATA s32 gAquaRock_FirstStreamTimer = 0;
-
 LATE_DATA s32 gAquaRock_SecondStreamTimer = 0;
-
 LATE_DATA s32 gAquaRock_ThirdStreamTimer = 0;
-
 LATE_DATA s32 gAquaRock_FourthStreamTimer = 0;
 
 /// The scene's other rooms' triggers.

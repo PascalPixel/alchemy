@@ -6,8 +6,8 @@
 
 #include "system/io_reg.h"
 
-// The logo: an 8-bit background on BG2, its map in screen block 6 and its
-// tiles from tile 416 of character block 0.
+/// The logo: an 8-bit background on BG2, its map in screen block 6 and its
+/// tiles from tile 416 of character block 0.
 #define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
 #define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
 #define LOGO_FIRST_TILE 416

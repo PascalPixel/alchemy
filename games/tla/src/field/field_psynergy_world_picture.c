@@ -18,6 +18,7 @@
 #define WORLD_PICTURE_MARKER_ROW(p0, p1, p2, p3, p4)                           \
   ((p0) | (p1) << 4 | (p2) << 8 | (p3) << 12 | (p4) << 16)
 
+/// The bytes reserved for the World Map picture's marker tiles.
 // BUG: the original reserves 32 bytes but writes and uploads 128, as The
 // Broken Seal's does. The bump allocator takes bytes, not words; reserve the
 // whole tile buffer with BUGFIX.

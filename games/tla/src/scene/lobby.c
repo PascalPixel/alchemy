@@ -259,7 +259,7 @@ void LinkLobby_WriteSlotValue(s32 slot) {
   dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
-s32 gLinkLobby_WaitFrames BSS_DATA;
+s32 gLinkLobby_WaitFrames BSS_DATA; ///< frames without the partner
 s32 gLinkLobby_CallFrames BSS_DATA;
 
 /// The lobby's task each frame: counts frames without the opponent, clears
@@ -1657,6 +1657,7 @@ u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0,
 };
 
+/// The music and sounds the song request offers, numbered from 0 in its window.
 u16 gLinkLobby_SongRequestSounds[] = {
     MUS_TRY_YOUR_LUCK,
     MUS_THE_BROKEN_SEAL,

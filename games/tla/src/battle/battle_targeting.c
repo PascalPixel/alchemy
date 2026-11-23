@@ -25,8 +25,8 @@
 /// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
 
-// The turns a stat change or a status lasts; a status or a lowered stat may end
-// sooner.
+/// The turns a stat change or a status lasts; a status or a lowered stat may
+/// end sooner.
 #define STAT_CHANGE_TURNS 7
 #define AGILITY_CHANGE_TURNS 5
 #define STATUS_TURNS 7
@@ -44,6 +44,8 @@
 /// A summon's bonus damage counts the target's max HP up to this much.
 #define SUMMON_BONUS_HP_MAX 10000
 
+/// Counts unit's stun among the statuses Restore cures, for
+/// COUNT_PARTIAL_CURES.
 // BUG: Restore cures stun and never confusion or charm, as its description
 // says ("Remove sleep, stun, and delusion.") and its cure does, but the count
 // takes confusion and charm and not stun, so Cerberus, the Hydros Statue and

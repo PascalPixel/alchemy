@@ -317,8 +317,8 @@ void Actor_DisableById(s32 id);
 s32 gKandoreanTemple_SplashRingCounter BSS_DATA;
 s32 gKandoreanTemple_WestVentBlowing BSS_DATA;
 s32 gKandoreanTemple_EastVentBlowing BSS_DATA;
-s32 gKandoreanTemple_WestTimer BSS_DATA;
-s32 gKandoreanTemple_EastTimer BSS_DATA;
+s32 gKandoreanTemple_WestTimer BSS_DATA; ///< frames into its cycle
+s32 gKandoreanTemple_EastTimer BSS_DATA; ///< frames into its cycle
 u16 gKandoreanTemple_WestFloatPhase BSS_DATA;
 u16 gKandoreanTemple_EastFloatPhase BSS_DATA;
 struct Actor *gKandoreanTemple_LashPebble BSS_DATA;

@@ -619,7 +619,8 @@ enum UnitStatus {
   CHARACTER_AILMENT_COUNT
 };
 
-// Status labels use the Latin font's pixel positions or the Japanese tile grid.
+/// Status labels use the Latin font's pixel positions or the Japanese tile
+/// grid.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define MENU_DRAW_STATUS_LABEL Text_DrawStringInWindowFar
 #else

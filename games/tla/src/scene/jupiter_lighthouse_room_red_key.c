@@ -968,8 +968,8 @@ struct ActorPlacement gActorPlacements[] = {
 
 #include "shared/orb_rising_script.c"
 
+/// The spark ring's pulse: its step, and whether it still rises.
 s32 gJupiterLighthouse_PulseStep = 0;
-
 s32 gJupiterLighthouse_PulseOn = 1;
 
 struct Trigger gSceneEvents[] = {

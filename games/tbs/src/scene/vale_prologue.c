@@ -111,7 +111,7 @@ extern s32 gValePrologue_BoulderRollsDownriver[];
 extern struct SceneEntrance gValePrologue_Entrances[];
 extern u32 gValePrologue_Exits[];
 extern struct ActorPlacement gValePrologue_ActorPlacements[];
-extern struct ActorPlacement gValePrologue_BoulderWatchers[];
+extern struct ActorPlacement gValePrologue_BoulderElders[];
 extern struct Trigger gValePrologue_Triggers[];
 extern u16 gValePrologue_SanctumDoorOpens[];
 extern u16 gValePrologue_IsaacsDoorOpens[];
@@ -127,7 +127,7 @@ static void ValePrologue_ApplyThirdRockCollision(void);
 static void ValePrologue_ApplyFourthRockCollision(void);
 static void ValePrologue_BumpIntoShovingMan(void);
 static void ValePrologue_GaretLeavesHisChest(void);
-static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y);
+static void ValePrologue_GaretTalksAboutBlockedPath(s32 x, s32 y);
 static void ValePrologue_DoraGoesForHelp(void);
 static void ValePrologue_ShowBoulderSweepingDownriver(void);
 static void ValePrologue_FlashLightning(void);
@@ -142,7 +142,7 @@ static void ValePrologue_CycleBoulderPalette(void);
 static void ValePrologue_CopyLeaderSpritePriority(void);
 
 /// The placed actors, numbered in the order of gValePrologue_ActorPlacements.
-/// The elders holding back the Boulder (gValePrologue_BoulderWatchers) follow
+/// The elders holding back the Boulder (gValePrologue_BoulderElders) follow
 /// them.
 enum StormNightActorId {
   /// The strongman who comes back to the river with Jenna, his Psynergy
@@ -181,7 +181,7 @@ enum StormNightActorId {
   /// (ValePrologue_FlickerBoulderShadow).
   ACTOR_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
-  // elders!", vale_plaza.c), from gValePrologue_BoulderWatchers, which
+  // elders!", vale_plaza.c), from gValePrologue_BoulderElders, which
   // ValePrologue_WatchBoulderFall places after the scene's own actors and
   // removes.
   // Two invisible actors stand on the spots of ACTOR_ELDER_EAST and
@@ -945,10 +945,10 @@ static void ValePrologue_FirstRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > toFIXED(128)) {
-            ValePrologue_GaretCommentsOnBlockedPath(326, 918);
+            ValePrologue_GaretTalksAboutBlockedPath(326, 918);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, 918);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(335, 957);
+            ValePrologue_GaretTalksAboutBlockedPath(335, 957);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
         }
@@ -1011,10 +1011,10 @@ static void ValePrologue_SecondRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > toFIXED(128)) {
-            ValePrologue_GaretCommentsOnBlockedPath(219, 843);
+            ValePrologue_GaretTalksAboutBlockedPath(219, 843);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 829);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(214, 908);
+            ValePrologue_GaretTalksAboutBlockedPath(214, 908);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 219, 911);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1084,10 +1084,10 @@ static void ValePrologue_ThirdRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < toFIXED(693)) {
-            ValePrologue_GaretCommentsOnBlockedPath(62, 669);
+            ValePrologue_GaretTalksAboutBlockedPath(62, 669);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 627);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(75, 715);
+            ValePrologue_GaretTalksAboutBlockedPath(75, 715);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 67, 757);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1147,10 +1147,10 @@ static void ValePrologue_FourthRockFalls(void) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < toFIXED(1146)) {
-            ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
+            ValePrologue_GaretTalksAboutBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {
-            ValePrologue_GaretCommentsOnBlockedPath(445, 1172);
+            ValePrologue_GaretTalksAboutBlockedPath(445, 1172);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 447, 1227);
           }
           GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
@@ -1394,7 +1394,7 @@ static void ValePrologue_WarnAboutMtAleph(void) {
 /// Brings Garet out to discuss a blocked path, then returns him to Isaac.
 ///
 /// Called by the four rock events. x and y are the pixels where Garet stands.
-static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
+static void ValePrologue_GaretTalksAboutBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
   FIXED acceleration = (toFIXED(1) / 2);
 
@@ -1434,7 +1434,7 @@ static void ValePrologue_WatchBoulderFall(void) {
 
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     Event_Start();
-    Event_AppendActorPlacements(gValePrologue_BoulderWatchers);
+    Event_AppendActorPlacements(gValePrologue_BoulderElders);
     Scene_StartEventPsynergy();
     wait(1);
     Sound_Play(SE_RUMBLE);
@@ -3308,7 +3308,7 @@ struct ActorPlacement gValePrologue_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gValePrologue_BoulderWatchers[] = {
+struct ActorPlacement gValePrologue_BoulderElders[] = {
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, 7,
         124, 0, 375, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

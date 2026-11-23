@@ -336,7 +336,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 ///
 /// The event itself does nothing: Halt's own effect holds the statue, and
 /// each statue's chase checks gMainRoutineWork.haltedActor before it moves.
-static void CrossboneIsleKeys_HaltPursuer(void) {}
+static void CrossboneIsleKeys_HaltStatue(void) {}
 
 /// Keeps Bane turned toward Isaac on the spiked ledge, every frame.
 static UNREAD_RESULT
@@ -706,8 +706,8 @@ static void CrossboneIsleKeys_HideRedKey(void) {
 
 /// Gives the party a key that Catch has pulled in: "Isaac got the Blue Key."
 /// (or the Red Key), and the key's icon is gone from its post for good.
-static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
-                                                s32 collectedFlag) {
+static inline void CrossboneIsleKeys_GetKey(s32 actorId, s32 itemId,
+                                            s32 collectedFlag) {
   Item_ShowFound(itemId, 3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Party_GiveItem(itemId, 0);
@@ -719,42 +719,42 @@ static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
 /// the pit from the east door: a hand of light reaches out and pulls the key
 /// to him.
 static void CrossboneIsleKeys_CatchFirstBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY);
+  CrossboneIsleKeys_GetKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY);
 }
 
 /// Catch on the Blue Key on a post in the middle of the pit: a hand of light
 /// pulls it to Isaac.
 static void CrossboneIsleKeys_CatchSecondBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1);
+  CrossboneIsleKeys_GetKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1);
 }
 
 /// Catch on the Blue Key on a post in the north of the pit, below the
 /// walkway: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchThirdBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2);
+  CrossboneIsleKeys_GetKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2);
 }
 
 /// Catch on the Blue Key on a post in the south of the pit, east of the
 /// middle: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchFourthBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3);
+  CrossboneIsleKeys_GetKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3);
 }
 
 /// Catch on the Red Key, on the hidden post Reveal shows south of the
 /// fourth blue door: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchRedKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY,
-                               FLAG_CROSSBONE_ISLE_RED_KEY);
+  CrossboneIsleKeys_GetKey(ACTOR_RED_KEY, ITEM_RED_KEY,
+                           FLAG_CROSSBONE_ISLE_RED_KEY);
 }
 
 /// Watches, every frame, for Isaac on the tiles just south of the statue in
 /// the north-east, cells (21..23, 10..11), and sets it on him unless Cloak
 /// hides him, Halt holds the statue or another statue is already after him.
-static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
+static void CrossboneIsleKeys_CheckFirstStatueTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
@@ -773,7 +773,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
 /// when he steps onto the tiles in front of it, with a thud, shoves him back
 /// south and glides home again.
 ///
-/// CrossboneIsleKeys_CheckFirstPursuerTrigger raises it. Isaac is pushed 24
+/// CrossboneIsleKeys_CheckFirstStatueTrigger raises it. Isaac is pushed 24
 /// pixels south, and the statue follows him CROSSBONE_PURSUER_STEP_Z pixels
 /// before it turns back.
 static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
@@ -803,7 +803,7 @@ static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
 /// Watches, every frame, for Isaac on the narrow walk below the statue in the
 /// west, cells (10, 16..18), and sets it on him unless Cloak hides him, Halt
 /// holds the statue or another statue is already after him.
-static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
+static void CrossboneIsleKeys_CheckSecondStatueTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
@@ -822,7 +822,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
 /// statue room glides down onto Isaac as he comes north up the walk, with a
 /// thud, shoves him back south and glides home again.
 ///
-/// CrossboneIsleKeys_CheckSecondPursuerTrigger raises it.
+/// CrossboneIsleKeys_CheckSecondStatueTrigger raises it.
 static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -852,22 +852,22 @@ static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
 /// nudges him 8 pixels south if he has got into the alcove's row.
 ///
 /// gCrossboneIsleKeys_SlotColumns keeps the column each statue stands in.
-static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
+static void CrossboneIsleKeys_TrackStatueColumn(s32 statueIndex) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
-  s32 pursuerId = pursuerIndex + ACTOR_THIRD_STATUE;
+  s32 statueId = statueIndex + ACTOR_THIRD_STATUE;
 
-  if (gMainRoutineWork.haltedActor == pursuerId)
+  if (gMainRoutineWork.haltedActor == statueId)
     return;
-  if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
+  if (column == gCrossboneIsleKeys_SlotColumns[statueIndex])
     return;
 
-  Actor_SetSpeed(pursuerId, 4.5);
+  Actor_SetSpeed(statueId, 4.5);
   Sound_Play(SE_THUMP);
-  Actor_SetDestination(pursuerId, (column << 4) + 8, 360);
+  Actor_SetDestination(statueId, (column << 4) + 8, 360);
 
-  gCrossboneIsleKeys_SlotColumns[pursuerIndex] = column;
+  gCrossboneIsleKeys_SlotColumns[statueIndex] = column;
 
   if (row <= 22) {
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
@@ -882,7 +882,7 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
 ///
 /// Halt on the statue while it stands to one side lets him walk past.
 static void CrossboneIsleKeys_ThirdStatueShadowsLeader(void) {
-  CrossboneIsleKeys_TrackPursuerColumn(0);
+  CrossboneIsleKeys_TrackStatueColumn(0);
 }
 
 /// As Isaac walks along the rug in front of the fourth statue, in the east
@@ -891,13 +891,13 @@ static void CrossboneIsleKeys_ThirdStatueShadowsLeader(void) {
 ///
 /// Halt on the statue while it stands to one side lets him walk past.
 static void CrossboneIsleKeys_FourthStatueShadowsLeader(void) {
-  CrossboneIsleKeys_TrackPursuerColumn(1);
+  CrossboneIsleKeys_TrackStatueColumn(1);
 }
 
 /// Unused: would make the fifth statue slide to stay in front of Isaac as
 /// the third and fourth do; nothing calls it.
-UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
-  CrossboneIsleKeys_TrackPursuerColumn(2);
+UNUSED static void CrossboneIsleKeys_TrackFifthStatueColumn(void) {
+  CrossboneIsleKeys_TrackStatueColumn(2);
 }
 
 /// Stepping into the third statue's alcove on the south walkway, cells
@@ -972,7 +972,7 @@ static void CrossboneIsleKeys_FourthStatuePushesLeaderBack(void) {
 /// in the middle of the hall, cells (19, 15..16), and sets it on him unless
 /// Cloak hides him, Halt holds the statue or another statue is already after
 /// him.
-static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
+static void CrossboneIsleKeys_CheckFifthStatueTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
   s32 row = leader->z.fixed / toFIXED(16);
@@ -991,7 +991,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
 /// he steps onto the tiles in front of it, with a thud, shoves him back
 /// south and glides home again.
 ///
-/// CrossboneIsleKeys_CheckFifthPursuerTrigger raises it.
+/// CrossboneIsleKeys_CheckFifthStatueTrigger raises it.
 static void CrossboneIsleKeys_FifthStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -1540,11 +1540,11 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
   Actor_Get(ACTOR_THIRD_STATUE)->scaleX = 7 * FIXED_ONE / 10;
   Actor_Get(ACTOR_FOURTH_STATUE)->scaleX = 7 * FIXED_ONE / 10;
   Actor_Get(ACTOR_FIFTH_STATUE)->scaleX = 7 * FIXED_ONE / 10;
-  Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckFifthPursuerTrigger,
+  Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckFifthStatueTrigger,
                         TASK_PASS_FRAME);
-  Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckSecondPursuerTrigger,
+  Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckSecondStatueTrigger,
                         TASK_PASS_FRAME);
-  Task_AddFrame(CrossboneIsleKeys_CheckFirstPursuerTrigger, TASK_PASS_FRAME);
+  Task_AddFrame(CrossboneIsleKeys_CheckFirstStatueTrigger, TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(7, 6), &REG_BLDALPHA);
@@ -1776,11 +1776,11 @@ struct Trigger gCrossboneIsleStatuesTriggers[] = {
     { TRIGGER_RAISED, RAISED_FIRST_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FirstStatuePushesLeaderBack) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_CastRevealInStatueRoom) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_RevealEndsInStatueRoom) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIRST_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_SECOND_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_THIRD_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FOURTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltPursuer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIFTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltPursuer) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIRST_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_SECOND_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_THIRD_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FOURTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIFTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltStatue) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_STATUES_444_COINS, FIND_COINS(444) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR, FIND_ITEM(ITEM_STORM_GEAR) },

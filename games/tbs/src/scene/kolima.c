@@ -85,6 +85,7 @@
 #include "menu/menu.h"
 #include "scene/kolima.h"
 #include "scene/kolima_forest_bridge_falling_effect.h"
+#include "scene/party_nod.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
@@ -559,14 +560,6 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
 }
 
 #include "shared/mind_read.c"
-
-/// Gives the four companions the same nod, waiting on the final actor.
-static inline void Kolima_NodTogether(void) {
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-}
 
 /// In Kolima, on the first entry from the World Map (KOLIMA_FROM_WORLD_MAP),
 /// the party sees the curse fall. This plays until FLAG_KOLIMA_CURSE_WITNESSED.
@@ -1171,9 +1164,9 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
-  Kolima_NodTogether();
+  Scene_NodTogether();
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
-  Kolima_NodTogether();
+  Scene_NodTogether();
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1214,7 +1207,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
-  Kolima_NodTogether();
+  Scene_NodTogether();
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
@@ -1250,7 +1243,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(ACTOR_MIA, FACING_NORTH, 10);
   Kolima_ShowMessageAndWait(ACTOR_LAUREL, 10);
-  Kolima_NodTogether();
+  Scene_NodTogether();
   Event_Wait(60);
   // Laurel's and Tret's last words; then the party decides whether to help.
   Event_ShowMessage(ACTOR_LAUREL, 0);

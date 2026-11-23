@@ -1,6 +1,7 @@
 /// @file
-/// Animated map tiles, then actors: creating and releasing them, their
-/// animations, and starting scripts.
+/// Actors: a sprite dissolving pixel by pixel, the actor system, creating and
+/// releasing actors, their animations and scripts, and placing their sprites
+/// each frame under the scrolling or the fixed camera.
 // Part of field.c.
 
 #include "field_internal.h"
@@ -219,9 +220,9 @@ UNUSED void ActorSystem_ReservedNoOpA(void) {}
 /// Unused: a second empty routine.
 UNUSED void ActorSystem_ReservedNoOpB(void) {}
 
-// Objects: create and release field objects, and render them each frame.
+// Creating and releasing actors, and what they show.
 
-/// Returns an unused object (one without a script) from the 64 slots, or 0
+/// Returns an unused actor (one without a script) from the 64 slots, or 0
 /// if none is free.
 void *Actor_FindFree(void) {
   struct Actor *actor = ((struct Actor *)Ram_HeapSlots->actors);
@@ -430,14 +431,14 @@ void Actor_SetSpriteRotation(struct Actor *actor, u32 value) {
 
 /// Gives a one-sprite actor's first sprite animation animation id animationId
 /// and restarts its animations. A negative animationId does nothing.
-void Actor_SetFirstSpriteAnimation(struct Actor *actor, s32 index) {
+void Actor_SetFirstSpriteAnimation(struct Actor *actor, s32 animationId) {
   struct Sprite *child;
 
   if (actor != NULL &&
       (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     child = ((struct Sprite *)actor->sprite);
-    if (index >= 0) {
-      child->entries[0]->animationId = index;
+    if (animationId >= 0) {
+      child->entries[0]->animationId = animationId;
       Sprite_ResetAnimations(child);
     }
   }
@@ -461,8 +462,9 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
   actor->watchedActor = (struct Actor *)watchedActorHandle;
 }
 
-/// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
-/// frame first for sand on the World Map.
+/// Starts the leader's control script for the way the party moves now
+/// (gMainRoutineWork.movementMode), waiting a frame first for Sand on the World
+/// Map.
 void Actor_StartRenderModeScript(struct Actor *actor) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -550,7 +552,7 @@ void Actor_WaitForScriptEnd(struct Actor *actor) {
   }
 }
 
-/// Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow).
+/// Sets the flags of a one-sprite actor's sprite (enum SpriteFlag).
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value) {
   if (actor != NULL &&
       (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
@@ -580,7 +582,7 @@ void Actor_SetSpriteColorMode(struct Actor *actor, u32 value) {
 }
 
 /// Fixes the priority of a one-sprite actor's sprite and its shadow, which
-/// then no longer follow its depth (clears priorityFlags bit 0).
+/// then no longer follow the cells under it (ACTOR_PRIORITY_AUTOMATIC).
 void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 priority) {
   struct Sprite *sprite;
 
@@ -719,7 +721,7 @@ void ActorSystem_PlaceSprites(void) {
   originY = map->origin[1];
   Render_LoadDecoder();
   {
-    // The zero is set before the objects are read.
+    // The zero is set before the actors are read.
     /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     u32 zero = 0;
 
@@ -897,15 +899,14 @@ void ActorSystem_PlaceSprites(void) {
   HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
-// The fixed camera: each frame it places every object's sprites, facing them
-// by the angle from the eye to the target, each object in a function of its
-// own.
+// The fixed camera, on the World Map and in battle: each frame it places
+// every actor's sprites, facing them by the angle from the eye to the target.
 
 /// Unused: returns 1.
 UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
-/// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
-/// group's four sprites (kind 2), turned by angle. While battle commands are
+/// Places an actor's sprite (unless ACTOR_PRIORITY_NOT_DRAWN hides it) or each
+/// of its group's four sprites, turned by angle. While battle commands are
 /// chosen (FLAG_CHOOSING_COMMANDS) the sprites are drawn at 1.0 scale.
 void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
   const s32 *scale = &actor->scaleX;
@@ -933,12 +934,12 @@ void Actor_PlaceSprites(struct Actor *actor, s32 angle) {
                                     actor->facing + angle, actor->layer);
     }
     break;
-  case 0:
+  case ACTOR_SPRITE_NONE:
     break;
   }
 }
 
-/// Each frame, with the fixed camera: places every active object, from the
+/// Each frame, with the fixed camera: places every actor in use, from the
 /// 64th down. While battle commands are chosen (FLAG_CHOOSING_COMMANDS) it uses
 /// the fixed view matrix and turns the objects by an eighth of a turn less.
 void ActorSystem_ProjectSprites(void) {
@@ -998,14 +999,15 @@ s32 ActorScript_HideSprites(struct Actor *interpreter) {
   return 1;
 }
 
-/// Shows one sprite (spriteStorageKind 1) and advances to the next command.
+/// SC_SHOW_SPRITE: shows the actor's one sprite again (ACTOR_SPRITE_ONE) and
+/// moves on to the next command.
 s32 ActorScript_ShowSprite(struct Actor *interpreter) {
   interpreter->spriteStorageKind = ACTOR_SPRITE_ONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
-/// Waits up to 600 frames for a field object's movement target to be unset.
+/// Waits, at most 600 frames, for an actor to reach where it is going.
 void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 

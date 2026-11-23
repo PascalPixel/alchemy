@@ -791,15 +791,7 @@ s32 gMercuryLighthouse_ScaleCounterScript[] = {
     SC_RELEASE,
 };
 
-s32 gMercuryLighthouse_PillarScript[] = {
-    SC_CALL(MercuryLighthouse_FollowLeader),
-    SC_END,
-};
-
-u16 gMercuryLighthouse_MoveAngles[] = {
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
-    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-};
+#include "shared/mercury_lighthouse_pillar_tables.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

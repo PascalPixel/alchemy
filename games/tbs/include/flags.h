@@ -1334,10 +1334,10 @@
 #define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
 /// The nine floors of Crossbone Isle Cave (CrossboneIsleFirstFloor to
 /// CrossboneIsleNinthFloor): one flag each from these, in room order, for the
-/// monsters at the east door beaten and for the pillar sunk into the floor.
+/// monsters at the east door beaten and for the pillar dropped into the gap.
 #define FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED 0x8c8
-/// The first floor's stone pillar has sunk into the floor, opening the way
-/// on; one flag a floor from this one.
+/// The first floor's stone pillar has dropped into the gap between the
+/// ledges, its top a step across; one flag a floor from this one.
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
 /// Deadbeard has been beaten on the Pirate Ship.
 #define FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1

@@ -156,9 +156,9 @@ enum {
 enum GameStart {
   GAME_START_TITLE = 0,                  ///< the Title, with the work cleared
   GAME_START_DEBUG_VENUS_LIGHTHOUSE = 1, ///< SCENE_VENUS_LIGHTHOUSE_ENTRANCE
-  GAME_START_DEBUG_CLEAR = 2,            ///< SCENE_CLEAR
+  GAME_START_DEBUG_CLEAR = 2,            ///< SCENE_CLEAR, as from the title
   GAME_START_DEBUG_MT_ALEPH = 3,         ///< SCENE_MT_ALEPH_SUMMIT
-  GAME_START_DEBUG_TITLE = 4             ///< SCENE_TITLE from entrance 8
+  GAME_START_DEBUG_TITLE = 4 ///< the story crawl (TITLE_STORY_CRAWL)
 };
 
 /// A halfword in a record of its own, which Serial_StepBlockTransfer keeps its

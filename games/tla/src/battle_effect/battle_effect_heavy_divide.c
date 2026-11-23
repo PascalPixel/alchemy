@@ -1,6 +1,7 @@
 /// @file
 /// The body of Heavy Divide and Strong Hit, then Cool, Wyrd Curse, Radiant Fire
-/// and Hurricane, and the openings of Earth Force and Thunder Mine.
+/// and Hurricane, and the handlers that play Earth Force's and Thunder Mine's
+/// bolt trail.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -354,7 +355,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
   EffectPosition_ProjectBattler(args->targets[0], &ends[0]);
   EffectPosition_ProjectBattler(args->targets[args->targetCount - 1], &ends[1]);
   ends[0].x += (ends[1].x - ends[0].x) / 2;
-  REG_BG2X = (64 - ends[0].x) << 8;
+  REG_BG2X = (CANVAS_SIZE / 2 - ends[0].x) << 8;
 
   frame = 0;
   if (stagger != -COOL_FRAMES) {
@@ -363,7 +364,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
         struct Particle *puff;
 
         for (i = 0, puff = work->particles; i != COOL_PUFFS; i++, puff++) {
-          s32 speed = (Random16() & 0x1ff) + 128;
+          s32 speed = (Random16() & 511) + 128;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
 
           puff->x = INTtoFIXED((Random16() & 63) + 32);
@@ -674,7 +675,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     model->vertices = vertices;
     model->shade = shade;
 
-    // The glow gathers what the landed drops bring.
+    // The glow gathers what the landed drops bring, of the first eight; only
+    // the WYRD_CURSE_SKULL_COUNT that fall ever land.
     {
       struct Particle *glow;
       struct Particle *landed;

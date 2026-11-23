@@ -7,6 +7,7 @@
 #include "field/line_scroll_wave_sine.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "field/sprite.h"
 
 // Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h,
 // field_effect_scripts.h and field_sequence_internal.h, and
@@ -27,18 +28,18 @@ const u8 gField_ExamineTriggerMessageOffsets[6] = {
 /// reaches 16 pixels.
 // clang-format off
 const s16 gFieldEffect_TargetRangeByMode[25] = {
-    3, 16,
-    6, 16,
-    7, 16,
-    11, 16,
-    12, 16,
-    2, 32,
-    1, 32,
-    14, 32,
-    5, 32,
-    9, 32,
-    4, 48,
-    13, 48,
+    FIELD_PSYNERGY_PLY, 16,
+    FIELD_PSYNERGY_FROST, 16,
+    FIELD_PSYNERGY_LIFT, 16,
+    FIELD_PSYNERGY_CARRY, 16,
+    FIELD_PSYNERGY_GROWTH, 16,
+    FIELD_PSYNERGY_MIND_READ, 32,
+    FIELD_PSYNERGY_MOVE, 32,
+    FIELD_PSYNERGY_WHIRLWIND, 32,
+    FIELD_PSYNERGY_DOUSE, 32,
+    FIELD_PSYNERGY_HALT, 32,
+    FIELD_PSYNERGY_FORCE, 48,
+    FIELD_PSYNERGY_CATCH, 48,
     -1,
 };
 
@@ -98,8 +99,7 @@ const s32 gFieldEffect_RisingPulseScript[] = {
     SC_END,
 };
 
-/// Sinks a quarter pixel a frame for 60 frames,
-/// then disappears.
+/// Sinks a quarter pixel a frame for 60 frames, then disappears.
 const s32 gFieldEffect_ParticleScript[] = {
     SC_ADD(SW_Y, -toFIXED(1) / 4),
     SC_WAIT(1),
@@ -340,16 +340,18 @@ const s32 gActor_VariantScripts[97] = {
     SC_END,
 };
 
-/// A blinking actor's sprite param by frame ((gFrameCount >> 1) & 3,
-/// Actor_UpdateBlink): 7 for two frames out of eight.
-const u8 gActor_BlinkSpriteColors[4] = {7, 0, 0, 0};
+/// A blinking actor's colour mode by frame ((gFrameCount >> 1) & 3,
+/// Actor_UpdateBlink): white for two frames out of eight.
+const u8 gActor_BlinkSpriteColors[4] = {
+    SPRITE_COLOR_WHITE, SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL,
+};
 
 const s16 gLineScroll_WaveSine[256] = {
     LINE_SCROLL_WAVE_SINE};
 
-/// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle
-/// (event_commands_weather.c): dx and dy in screen pixels from its spot, tile from its first
-/// tile.
+/// {dx, dy, tile, shape, size} for each of the 16 frames of a raindrop's
+/// splash (event_commands_weather.c): dx and dy in screen pixels from its
+/// spot, tile from its first tile.
 const s16 gFieldEffect_GroundParticleFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
@@ -369,8 +371,8 @@ const s16 gFieldEffect_GroundParticleFrames[80] = {
     64, -160, 0, 2, 2,
 };
 
-/// {dy, tile} of a sparkle (event_commands_weather.c): dy in screen pixels from its spot, a
-/// row every two frames.
+/// {dy, tile} of a sparkle (event_commands_weather.c): dy in screen pixels
+/// from its spot, a row every two frames.
 const struct SparklePicture gFieldEffect_SparklePictures[32] = {
     {-2, 12},
     {-4, 12},
@@ -448,7 +450,8 @@ const u16 gFieldEffect_CyclePatternWords[16] = {
 };
 
 /// Move's hand animation by the quarter turns from its side of the target to
-/// the push (event_commands_move.c): 3 toward its side, 2 away from it, 1 either way across.
+/// the push (event_commands_move.c): 3 toward its side, 2 away from it, 1
+/// either way across.
 const u8 gFieldEffect_QuadrantModes[4] = {3, 1, 2, 1};
 
 /// Waits 60 frames and releases the actor. Word +4 is
@@ -461,8 +464,8 @@ const s32 gFieldEffect_BurstParticleActorScript[] = {
 /// The same four bytes as gFieldEffect_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleEffectBytes[4] = {3, 1, 2, 1};
 
-/// Waits to arrive, sets off SpawnHeavyImpactEffect (event_commands_lift.c) and releases the
-/// actor.
+/// Waits to arrive, sets off SpawnHeavyImpactEffect (event_commands_lift.c)
+/// and releases the actor.
 const s32 gFieldEffect_HeavyImpactScript[] = {
     SC_SYNC,
     SC_CALL(SpawnHeavyImpactEffect),
@@ -485,10 +488,13 @@ const s32 gFieldEffect_LongEffectScript[] = {
     SC_RELEASE,
 };
 
-/// The sprite params a paused actor flickers through at random
-/// (FieldPsynergy_UpdateHaltedActor, event_commands_halt.c): 0 twice as often as
-/// each of 1 to 6.
-const s8 gFieldEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
+/// The colour modes a Halted actor flickers through at random
+/// (FieldPsynergy_UpdateHaltedActor, event_commands_halt.c): its own colours
+/// twice as often as each of the five channel swaps and grey.
+const s8 gFieldEffect_RandomChildValues[8] = {
+    SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GRB, SPRITE_COLOR_RBG,
+    SPRITE_COLOR_BGR, SPRITE_COLOR_GBR, SPRITE_COLOR_BRG, SPRITE_COLOR_GREY,
+};
 
 /// The World Map markers' blend weight in sixteenths, against the picture's
 /// 16 less it ((gFrameCount >> 1) & 31, WorldPicture_UpdateMarkers): solid

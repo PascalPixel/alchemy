@@ -143,7 +143,7 @@ enum StatBoostSheet {
 /// damage; each later target follows STAT_BOOST_TARGET_DELAY frames behind.
 /// Crucible Fire starts at STAT_BOOST_CRUCIBLE_FIRE_FRAME, after the flares.
 #define STAT_BOOST_BURST_FRAME 52
-#define STAT_BOOST_PICTURE_FRAME 80
+#define STAT_BOOST_SPRITE_FRAME 80
 #define STAT_BOOST_TARGET_DELAY 8
 #define STAT_BOOST_CRUCIBLE_FIRE_FRAME (STAT_BOOST_BURST_FRAME + 1)
 
@@ -333,7 +333,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     drawFlags = EFFECT_CLIP_BOUNDS;
 
   for (frame = start; frame != args->targetCount * STAT_BOOST_TARGET_DELAY +
-                                   STAT_BOOST_PICTURE_FRAME + 28;
+                                   STAT_BOOST_SPRITE_FRAME + 28;
        frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 prelude;
@@ -344,7 +344,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       BattleEffect_StepPaletteToResource(RESOURCE_GREY_PALETTE_A);
     if (mode == STAT_BOOST_STEAM && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource(RESOURCE_JUPITER_DJINN_SHEET);
-    if (frame == STAT_BOOST_PICTURE_FRAME)
+    if (frame == STAT_BOOST_SPRITE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
 
     // The prelude's Djinni sways, and from frame 32 rises two pixels a frame;
@@ -378,7 +378,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           BattleObject_GetFar(args->targets[member])->object;
       s32 height = BattleUnit_GetEffectHeightFar(args->targets[member]) * 2 / 3;
 
-      if (frame == member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME)
+      if (frame == member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME)
         Sound_PlayFar(SE_POWER_UP);
       // The flares turn about two thirds of the target's height.
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -475,11 +475,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 pictures, four frames apart.
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 28) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        28) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         4 % 7;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
@@ -495,11 +495,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                  mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
         // Six 32x64 pictures, four frames apart.
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 24) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        24) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
@@ -515,11 +515,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 24) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        24) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         2 % 6;
           u8 *wisp;       // drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
@@ -542,11 +542,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       } else {
         // Six 40x40 pictures four frames apart, added to the canvas.
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 24) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        24) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_ADDITIVE);
@@ -782,7 +782,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 }
 
 #undef STAT_BOOST_BURST_FRAME
-#undef STAT_BOOST_PICTURE_FRAME
+#undef STAT_BOOST_SPRITE_FRAME
 #undef STAT_BOOST_TARGET_DELAY
 #undef STAT_BOOST_CRUCIBLE_FIRE_FRAME
 #undef STAT_CHANGE_PARTICLES

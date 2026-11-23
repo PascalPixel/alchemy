@@ -21,6 +21,7 @@ s32 Map_FillLayerRectCollision(u32 layer, u32 x, u32 y, u32 width, u32 height,
   else
     cells = gMapGridCellBuffer;
   cells += x + (y << 7);
+  // x and y, no longer needed, count the rows and the columns.
   for (x = 0; x < height; x++) {
     struct MapCell *cell = cells + (x << 7);
 

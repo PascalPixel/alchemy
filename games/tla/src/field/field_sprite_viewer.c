@@ -18,7 +18,9 @@ enum {
   UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
   /// The sprite ids L and R step by while Start is held: any step past one
   /// goes to the next stop of gSpriteViewer_SkipStops.
-  UI_SPRITE_VIEWER_FAST_STEP = 10
+  UI_SPRITE_VIEWER_FAST_STEP = 10,
+  /// gSpriteViewer_SkipStops' entries, its end marker the last.
+  UI_SPRITE_VIEWER_SKIP_STOPS = 10
 };
 
 /// An angle's bits: shifted up and back down, a value keeps only them.
@@ -61,7 +63,7 @@ void SpriteViewer_Run(void) {
 
   x = 144;
   y = 96;
-  editMode = 1;
+  editMode = UI_SPRITE_VIEWER_EDIT_SPRITE;
   selectedLayer = 0;
   shadowsEnabled = 1;
   backdrop = 0;
@@ -106,7 +108,7 @@ restart:
     Sprite_AddAnimation(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0)
       SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
     else
@@ -143,13 +145,13 @@ next:
       // DEAD: a read of the repeated keys nothing uses; the ROM keeps the load.
       (void)gInput.repeat;
       if (gInput.repeat & KEY_UP)
-        selectedLayer = (selectedLayer - 1) & 3;
+        selectedLayer = (selectedLayer - 1) & (ANIM_LAYER_COUNT - 1);
       if (gInput.repeat & KEY_DOWN)
-        selectedLayer = (selectedLayer + 1) & 3;
+        selectedLayer = (selectedLayer + 1) & (ANIM_LAYER_COUNT - 1);
       if (gInput.repeat & KEY_LEFT)
-        editMode = (editMode - 1) & 3;
+        editMode = (editMode - 1) & (UI_SPRITE_VIEWER_EDIT_COUNT - 1);
       if (gInput.repeat & KEY_RIGHT)
-        editMode = (editMode + 1) & 3;
+        editMode = (editMode + 1) & (UI_SPRITE_VIEWER_EDIT_COUNT - 1);
     }
 
     if (gInput.pressed & KEY_START) {
@@ -163,7 +165,8 @@ next:
     }
 
     switch (editMode) {
-    case 0:
+    case UI_SPRITE_VIEWER_EDIT_ANIMATION:
+      // The second sprite animation follows the first's animation.
       if (selectedLayer == 1)
         break;
       if (gInput.repeat & KEY_L) {
@@ -185,7 +188,7 @@ next:
         layers[1].animationIndex = layers[0].animationIndex;
       goto next;
 
-    case 1: {
+    case UI_SPRITE_VIEWER_EDIT_SPRITE: {
       s32 steps;
 
       changed = 0;
@@ -221,7 +224,7 @@ next:
       goto next;
     }
 
-    case 2:
+    case UI_SPRITE_VIEWER_EDIT_PRIORITY:
       changed = 0;
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].priority--;
@@ -242,7 +245,7 @@ next:
                                            layers[selectedLayer].priority);
       goto next;
 
-    case 3:
+    case UI_SPRITE_VIEWER_EDIT_COLOR:
       changed = 0;
       if (gInput.repeat & KEY_L) {
         layers[selectedLayer].colorMode--;
@@ -265,7 +268,7 @@ next:
     }
 
     if (gInput.repeat & KEY_A) {
-      if (editMode == 0) {
+      if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
           if (layers[selectedLayer].enabled != 0) {
             SpriteViewer_StartStaggeredAnimations(
@@ -295,7 +298,7 @@ next:
       const u16 *colors = gSpriteViewer_BackdropColors;
       backdrop++;
       backdrop &= 7;
-      // The colour's address as an integer sum.
+      // B steps the backdrop through its eight colours.
       *palette = *(const u16 *)((u32)colors + (backdrop << 1));
     }
     wait(1);
@@ -304,7 +307,7 @@ next:
 
 extern const u16 gSpriteViewer_SkipStops[];
 
-/// Steps a number from 0 to 715 by delta: a step of one wraps around the
+/// Steps a sprite id (0 to 715) by delta: a step of one wraps around the
 /// range, a larger step forward goes to the next stop above value and one back
 /// to the last stop below it (gSpriteViewer_SkipStops, ended by (u16)-1, from
 /// which a step forward wraps to 0). A delta of 0 returns value unchanged.
@@ -324,7 +327,7 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
     } else if (delta > 0) {
       u32 i;
 
-      for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
+      for (i = 0; i < UI_SPRITE_VIEWER_SKIP_STOPS; i++) {
         if (value < gSpriteViewer_SkipStops[i]) {
           value = gSpriteViewer_SkipStops[i];
           if (value == (u16)-1)
@@ -333,11 +336,11 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
         }
       }
     } else if (value == 0) {
-      value = gSpriteViewer_SkipStops[8];
+      value = gSpriteViewer_SkipStops[UI_SPRITE_VIEWER_SKIP_STOPS - 2];
     } else {
       s32 i;
 
-      for (i = 8; i >= 0; i--) {
+      for (i = UI_SPRITE_VIEWER_SKIP_STOPS - 2; i >= 0; i--) {
         if (value > gSpriteViewer_SkipStops[i]) {
           value = gSpriteViewer_SkipStops[i];
           break;
@@ -460,7 +463,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   }
 }
 
-/// Gives layer slot of each of the viewer's ten sprites the colour mode value.
+/// Gives sprite animation slot of each of the viewer's ten sprites the colour
+/// mode value.
 void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
@@ -476,8 +480,8 @@ void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value) {
   } while (count >= 0);
 }
 
-/// Gives layer slot of each of the viewer's ten sprites the drawing order
-/// value.
+/// Gives sprite animation slot of each of the viewer's ten sprites the drawing
+/// order value.
 void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset = (slot & 3) * sizeof(struct SpriteAnimation *) +
@@ -493,11 +497,11 @@ void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value) {
   } while (count >= 0);
 }
 
-/// Starts animation value on layer slot of each of the viewer's ten sprites,
-/// each one a frame (16 timer units) behind the last, so the copies are
-/// staggered.
+/// Starts animation value on sprite animation slot of each of the viewer's ten
+/// sprites, each one a frame (16 timer units) behind the last, so the copies
+/// are staggered.
 void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
-  s32 index;
+  s32 zero;
   s32 count;
   s32 offset;
   struct AnimationMetadata *metadata;
@@ -508,7 +512,7 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
   count = 0;
   offset = (3 & slot) * sizeof(struct SpriteAnimation *) +
            offsetof(struct Sprite, entries);
-  index = 0;
+  zero = 0;
   do {
     entry = *(struct SpriteAnimation **)(work + offset);
     if (entry->scripts != 0) {
@@ -518,20 +522,20 @@ void SpriteViewer_StartStaggeredAnimations(s32 slot, s32 value) {
         entry->script = entry->scripts[value];
         entry->timer = count * SPRITE_ANIMATION_NORMAL_STEP;
         entry->step = SPRITE_ANIMATION_NORMAL_STEP;
-        entry->scriptOffset = index;
-        entry->pictureBase = index;
+        entry->scriptOffset = zero;
+        entry->pictureBase = zero;
         entry->picture = SPRITE_PICTURE_NONE;
       }
       ((struct Sprite *)work)->offsetY = metadata->adjustY;
-      ((struct Sprite *)work)->rotation = index;
+      ((struct Sprite *)work)->rotation = zero;
     }
     count += 1;
     work += sizeof(struct Sprite);
   } while (count <= 9);
 }
 
-/// Sets sprite no on layer slot of each of the viewer's ten sprites, and resets
-/// each sprite animation from its new metadata.
+/// Sets sprite no on sprite animation slot of each of the viewer's ten sprites,
+/// and resets each sprite animation from its new metadata.
 void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
   u8 *base = Ram_HeapSlots->sprites;
   s32 offset;
@@ -563,7 +567,7 @@ void SpriteViewer_PlaceRing(void) {
   u16 angle;
   u16 step;
   u16 odd = 0;
-  u32 cnt;
+  u32 count;
   u32 i;
 
   scale = gSpriteViewer_Scale;
@@ -573,7 +577,7 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_THREE_PICTURES:
     angle = 0;
     step = DEGtoANG(60);
-    cnt = 6;
+    count = 6;
     break;
   case ANIM_FACING_FIVE_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
@@ -581,28 +585,28 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     angle = 0;
     step = DEGtoANG(45);
-    cnt = 8;
+    count = 8;
     break;
   case ANIM_FACING_FOUR_PICTURES:
   case ANIM_FACING_SIX_PICTURES:
     angle = 0;
     step = DEGtoANG(36);
-    cnt = UI_SPRITE_VIEWER_COPY_COUNT;
+    count = UI_SPRITE_VIEWER_COPY_COUNT;
     break;
   case ANIM_FACING_TWO_PART:
     angle = 0;
     step = 0;
     odd = DEGtoANG(180);
-    cnt = 4;
+    count = 4;
     break;
   default:
     angle = DEGtoANG(45);
     step = DEGtoANG(90);
-    cnt = 4;
+    count = 4;
     break;
   }
 
-  for (i = 0; i < cnt; i++) {
+  for (i = 0; i < count; i++) {
     Render_ApplyProjectedPlacement(
         sprites, (s32 *)(table + i * sizeof(struct SpritePlacement)),
         (s32 *)&scale, angle);

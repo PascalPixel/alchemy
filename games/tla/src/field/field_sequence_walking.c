@@ -80,7 +80,7 @@ void Field_UpdateHoverReady(void) {
 }
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
-/// leader (a World Map cell picture on the World Map), or 0 without a leader.
+/// leader (on the World Map, of its 32-pixel cell), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Field_GetPartyActor();
@@ -144,7 +144,7 @@ s32 Field_GetCollisionUnderLeader(void) {
 /// leaving the scene.
 void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   s32 selectedValue;
-  struct FieldWork *runtime;
+  struct FieldWork *work;
   FIXED z;
   FIXED y;
   FIXED x;
@@ -162,7 +162,7 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   z = positionZ;
   region = (struct MapRegion *)SCENE_ENTRIES->regions();
   if (region != 0 &&
-      (runtime = Ram_HeapSlots->fieldWork, minX = region->minX, minX != -1)) {
+      (work = Ram_HeapSlots->fieldWork, minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
     minZ = region->minZ;
@@ -174,12 +174,12 @@ void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
     if (GameFlag_IsConditionActive(condition) != 0 && y >= INTtoFIXED(minY) &&
         y < INTtoFIXED(maxY) && x >= INTtoFIXED(minX) && x < INTtoFIXED(maxX) &&
         z >= INTtoFIXED(minZ) && z < INTtoFIXED(maxZ)) {
-      runtime->exit = (u16)selectedValue;
+      work->exit = (u16)selectedValue;
       Sound_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
-    runtime = Ram_HeapSlots->fieldWork;
+    work = Ram_HeapSlots->fieldWork;
     region++;
     minX = region->minX;
     if (minX != -1)
@@ -332,7 +332,7 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
         work->fallenOwners[work->fallenCount++] = gMainRoutineWork.party[i];
-        work->raisedTrigger = -1;
+        work->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
         unit->poison = 0;
       }
     }
@@ -350,7 +350,7 @@ void Party_AddPp(s32 amount, s32 unused) {
 }
 
 /// Changes each party member's HP by amount, or by that percentage of maximum
-/// HP when percent is set.
+/// HP when scaled is set; a loss flashes the screen orange.
 void Party_AddHp(s32 amount, s32 scaled) {
   s32 count;
   s32 i;
@@ -373,6 +373,9 @@ void Party_AddHp(s32 amount, s32 scaled) {
       value = amount;
     } else {
       value = unit->hpMax * amount / 100;
+      // XXX: a percentage that comes to 0 changes HP by amount's size as a
+      // gain, a loss included; a hazard of 1% on a character under 100
+      // maximum HP, watched, would show whether the game heals there.
       if (value == 0) {
         value = amount;
         if (value < 0)
@@ -385,7 +388,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
 
 /// Hurts each poisoned character in the party: poison takes a twentieth of
 /// their maximum HP and deadly poison a tenth, rounded to the nearest and at
-/// least 1.
+/// least 1. Returns the worst poison found: 0 none, 1 poison, 2 deadly poison.
 s32 Party_ApplyPoisonDamage(void) {
   s32 result = 0;
   s32 count = Party_CountMembersFar();
@@ -396,12 +399,12 @@ s32 Party_ApplyPoisonDamage(void) {
     s32 remaining = count;
 
     do {
-      struct Unit *object = Unit_Get(*entry);
+      struct Unit *unit = Unit_Get(*entry);
       s32 amount;
 
-      switch (object->poison) {
+      switch (unit->poison) {
       case POISON_NORMAL:
-        amount = -((object->hpMax + POISON_DAMAGE_DIVISOR / 2) /
+        amount = -((unit->hpMax + POISON_DAMAGE_DIVISOR / 2) /
                    POISON_DAMAGE_DIVISOR);
         if (amount == 0)
           amount = -1;
@@ -409,8 +412,8 @@ s32 Party_ApplyPoisonDamage(void) {
           result = 1;
         break;
       case POISON_VENOM:
-        amount = -((object->hpMax + VENOM_DAMAGE_DIVISOR / 2) /
-                   VENOM_DAMAGE_DIVISOR);
+        amount =
+            -((unit->hpMax + VENOM_DAMAGE_DIVISOR / 2) / VENOM_DAMAGE_DIVISOR);
         if (amount == 0)
           amount = -1;
         if (result <= 1)
@@ -462,16 +465,14 @@ void WorldMap_Freeze(void) {
   }
 }
 
-/// On the world map (display mode 3), loads the area graphics a change left
-/// pending.
+/// On the World Map, loads the area graphics WorldMap_Freeze left pending and
+/// lets the camera's actor move again.
 void WorldMap_ReloadPendingAreaGraphics(void) {
-  struct FieldWork *block =
-      HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*block));
+  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
 
-  if (block->mode == ACTOR_SYSTEM_WORLD_MAP &&
-      block->areaGraphicsPending != 0) {
-    block->areaGraphicsPending = 0;
-    block->camera->paused = 0;
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP && work->areaGraphicsPending != 0) {
+    work->areaGraphicsPending = 0;
+    work->camera->paused = 0;
     WorldMap_LoadAreaGraphicsFar();
   }
 }

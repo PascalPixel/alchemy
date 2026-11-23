@@ -50,10 +50,10 @@ enum {
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ActorSystemWork *system;
-  struct SpritePictureCache *record;
+  struct SpritePictureCache *cache;
   struct SpritePictureCacheSource *entry;
   u32 *offset;
-  u8 *text;
+  u8 *pixel;
   u8 *end;
   u8 *table;
   u32 size;
@@ -65,10 +65,10 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   if (slot >= SPRITE_PICTURE_CACHE_COUNT)
     return 0;
   system = Ram_HeapSlots->actorSystem;
-  record = &system->pictureCaches[slot];
+  cache = &system->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
-  record->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | number;
-  record->pictures = buffer;
+  cache->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | number;
+  cache->pictures = buffer;
 
   entry = gSpritePictureCache_Sources;
   for (count = 0; count < PICTURE_CACHE_SOURCES_MAX; count++) {
@@ -93,33 +93,35 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   }
   if (variant != 0) {
     index = variant - 1;
-    text = (u8 *)(offset + 1);
+    pixel = (u8 *)(offset + 1);
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
     table = gResourceSlot_ConversionTables[index];
-    for (; text < end; text++) {
-      u32 c = *text;
+    for (; pixel < end; pixel++) {
+      u32 c = *pixel;
 
       if (c < BASIC_SPRITE_COLORS) {
         c = table[c];
-        *text = c;
+        *pixel = c;
       }
     }
   }
   return metadata->width * metadata->height;
 }
 
-/// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
-s32 SpritePictureCache_FindByTag(s32 key) {
+/// Returns the pictures loaded into the sprite picture cache with this tag, or
+/// 0.
+s32 SpritePictureCache_FindByTag(s32 tag) {
   struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
-  u32 no;
-  struct SpritePictureCache *p;
+  u32 i;
+  struct SpritePictureCache *cache;
 
-  no = 0;
-  for (p = system->pictureCaches; no < SPRITE_PICTURE_CACHE_COUNT; no++, p++) {
-    if (p->tag == key)
-      return (s32)p->pictures;
+  i = 0;
+  for (cache = system->pictureCaches; i < SPRITE_PICTURE_CACHE_COUNT;
+       i++, cache++) {
+    if (cache->tag == tag)
+      return (s32)cache->pictures;
   }
   return 0;
 }
@@ -127,17 +129,17 @@ s32 SpritePictureCache_FindByTag(s32 key) {
 /// Resets each sprite animation of a sprite from its animation's metadata: its
 /// facing kind, pictures, scripts and codec, with no picture shown and no
 /// script running.
-s32 Sprite_ResetAnimations(struct Sprite *state) {
+s32 Sprite_ResetAnimations(struct Sprite *sprite) {
   s32 index;
   struct SpriteAnimation **slot;
 
   index = 0;
-  if (index < state->count) {
-    slot = state->entries;
-    for (; index < state->count; index++) {
-      struct SpriteAnimation *object = *slot++;
+  if (index < sprite->count) {
+    slot = sprite->entries;
+    for (; index < sprite->count; index++) {
+      struct SpriteAnimation *spriteAnimation = *slot++;
       struct AnimationMetadata *metadata =
-          Resource_GetMetadataRecordFar(object->animationId);
+          Resource_GetMetadataRecordFar(spriteAnimation->animationId);
       void **pictures;
       u8 **animation;
 
@@ -145,31 +147,32 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
         continue;
 
       if (index == 0) {
-        state->width = metadata->width;
-        state->height = metadata->height;
-        state->scale = metadata->scale << 8;
-        state->offsetY = metadata->adjustY;
-        state->offsetX = metadata->adjustX;
+        sprite->width = metadata->width;
+        sprite->height = metadata->height;
+        sprite->scale = metadata->scale << 8;
+        sprite->offsetY = metadata->adjustY;
+        sprite->offsetX = metadata->adjustX;
       }
 
       pictures = metadata->pictures;
       if (pictures == 0)
-        pictures = (void **)SpritePictureCache_FindByTag(object->animationId);
+        pictures =
+            (void **)SpritePictureCache_FindByTag(spriteAnimation->animationId);
 
-      object->kind = metadata->drawKind;
+      spriteAnimation->kind = metadata->drawKind;
       animation = metadata->animation;
       // UB: the pictures are stored through a u8 ** view of the field, the
       // scripts' type.
 #ifdef UBFIX
-      object->pictures = pictures;
+      spriteAnimation->pictures = pictures;
 #else
-      *(u8 ***)&object->pictures = (u8 **)pictures;
+      *(u8 ***)&spriteAnimation->pictures = (u8 **)pictures;
 #endif
-      object->scripts = animation;
-      object->mode = metadata->pictureCodec;
-      object->picture = SPRITE_PICTURE_NONE;
-      object->script = 0;
-      object->scriptOffset = 0;
+      spriteAnimation->scripts = animation;
+      spriteAnimation->mode = metadata->pictureCodec;
+      spriteAnimation->picture = SPRITE_PICTURE_NONE;
+      spriteAnimation->script = 0;
+      spriteAnimation->scriptOffset = 0;
     }
   }
 
@@ -210,7 +213,6 @@ s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
   struct SpriteAnimation **entry;
   struct AnimationMetadata *metadata;
 
-  // Find an unused sprite animation slot before reserving a sprite animation.
   if (layerHandle != 0) {
     entry = &sprite->entries[0];
     do {
@@ -445,7 +447,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
   struct SpriteAnimation *entry;
   struct SpriteAnimation *found;
-  struct SpriteAnimation *object;
+  struct SpriteAnimation *spriteAnimation;
   s32 i;
   void **pictures;
   u8 **animation;
@@ -453,7 +455,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   found = NULL;
   metadata = Resource_GetMetadataRecordFar(id);
   entry = Ram_HeapSlots->spriteAnimations;
-  object = NULL;
+  spriteAnimation = NULL;
 
   if (metadata->width != 0) {
     for (i = 0; i < ANIM_OBJECT_COUNT; i++, entry++) {
@@ -469,23 +471,23 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
 #else
       pictures = (void **)*(s32 *)&metadata->pictures;
 #endif
-      object = found;
-      object->animationId = id;
+      spriteAnimation = found;
+      spriteAnimation->animationId = id;
       if (pictures == 0)
         pictures = (void **)SpritePictureCache_FindByTag(id);
 
       animation = metadata->animation;
-      object->scripts = animation;
-      object->pictures = pictures;
-      object->mode = metadata->pictureCodec;
-      object->picture = SPRITE_PICTURE_NONE;
-      object->script = animation[0];
-      object->scriptOffset = 0;
-      object->kind = metadata->drawKind;
-      object->colorMode = 0;
+      spriteAnimation->scripts = animation;
+      spriteAnimation->pictures = pictures;
+      spriteAnimation->mode = metadata->pictureCodec;
+      spriteAnimation->picture = SPRITE_PICTURE_NONE;
+      spriteAnimation->script = animation[0];
+      spriteAnimation->scriptOffset = 0;
+      spriteAnimation->kind = metadata->drawKind;
+      spriteAnimation->colorMode = 0;
     }
   }
-  return object;
+  return spriteAnimation;
 }
 
 /// Zeroes one sprite animation (struct SpriteAnimation); does nothing for NULL.
@@ -611,10 +613,11 @@ void Sprite_Destroy(struct Sprite *sprite) {
   }
 }
 
-/// Sums the first cnt frame durations of animation id's entry number `no`.
-/// Commands are two bytes (command, value); ANIMCMD_PLAY, ANIMCMD_HOLD,
-/// ANIMCMD_JUMP and ANIMCMD_END end the list, and the values of ANIMCMD_WAIT,
-/// ANIMCMD_BLANK and the frames below ANIMCMD_END count.
+/// Returns how many frames the first timedCount timed steps of animation
+/// number animation of sprite id last. Commands are two bytes (command,
+/// value); ANIMCMD_PLAY, ANIMCMD_HOLD, ANIMCMD_JUMP and ANIMCMD_END end the
+/// count, and the values of ANIMCMD_WAIT, ANIMCMD_BLANK and the pictures
+/// below ANIMCMD_END count.
 s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
   struct AnimationMetadata *metadata;
   u8 *script;
@@ -627,7 +630,6 @@ s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
     return 0;
   }
   script = ((u8 **)metadata->animation)[animation];
-  // Only timed commands count; control-flow commands terminate this scan.
   for (;;) {
     command = script[0];
     duration = script[1];

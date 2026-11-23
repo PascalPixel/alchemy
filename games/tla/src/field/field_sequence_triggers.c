@@ -22,13 +22,14 @@
 /// party's PP is fully restored!"
 #define PSYNERGY_STONE_PP 1999
 
-/// The encounter zone whose slots hold the Mimics' formations; slots from 8
-/// go on in the next zone.
+/// The encounter zone whose slots hold the Mimics' formations; Mimics past its
+/// ENCOUNTER_ZONE_SLOTS go on in the next zone.
 #define ENCOUNTER_ZONE_MIMIC 104
+#define ENCOUNTER_ZONE_SLOTS 8
 
-/// The Broken Seal's Scene_FindActorPlacement: finds actor id's placement in
-/// the event work's four tables (ids up to 7 by sprite, later ones counted
-/// in order among the rows past 7), or NULL.
+/// Finds actor id's row in the scene's four actor placement tables, or NULL:
+/// an id below ACTOR_FIRST_PLACED is the row of that sprite, a later one the
+/// row of that place among the placed actors' rows, counted in order.
 struct ActionDescriptor *Scene_FindActorPlacement(s32 id) {
   struct ActionDescriptor *entry;
   s32 i;
@@ -75,9 +76,6 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   return flagSet == 0;
 }
 
-// The Lost Age's form of the field's trigger search (the Broken Seal's
-// Scene_FindTrigger).
-
 /// Returns the first of the scene's triggers of kind for target whose
 /// condition holds and whose push (STEP_TRIGGER_FLAG_WALKING) and facing
 /// (TRIGGER_FLAG_FACING) requirements are met, or NULL. TRIGGER_PUSH and
@@ -92,7 +90,6 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
 
   flags = trigger->flags;
   while (flags != -1) {
-    // Holds one address for its whole life.
     u8 *mode = &gMainRoutineWork.movementMode;
 
     if ((flags & TRIGGER_KIND_MASK) == kind &&
@@ -148,9 +145,9 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { SCENE_ENTRIES->initialize(); }
 
-/// Returns the talk trigger of object id, or 0: for the object field Psynergy
-/// has stopped (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED trigger
-/// if it has one, the event for talking to it while it is stopped.
+/// Returns the talk trigger of actor id, or NULL: for the actor Halt has
+/// stopped (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED trigger if
+/// it has one, the event for talking to it while it is stopped.
 void *Scene_FindActorTalkTrigger(s32 id) {
   void *found = Scene_FindTrigger(TRIGGER_TALK, id);
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -181,12 +178,12 @@ void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement;
   s32 result;
-  struct Actor *object;
+  struct Actor *talker;
   s32 savedAngle;
   s32 paused;
-  s32 busyFlags;
+  s32 decodeFlags;
   s32 silent;
-  struct FieldWork *event;
+  struct FieldWork *field;
   struct Actor *leader;
   struct Actor *shown;
   struct ContainerRow *row;
@@ -205,12 +202,12 @@ s32 Scene_TalkToActor(s32 id) {
   result = -1;
   savedAngle = 0;
   paused = 0;
-  busyFlags = 0;
+  decodeFlags = 0;
   silent = id & FIELD_TALK_SILENT;
-  event = Ram_HeapSlots->fieldWork;
+  field = Ram_HeapSlots->fieldWork;
   id &= FIELD_TALK_ACTOR_MASK;
   found = 0;
-  object = Actor_GetById(id);
+  talker = Actor_GetById(id);
   if (id >= FIELD_TREASURE_ACTOR) {
     if (id != SCOOPED_ITEM_ACTOR) {
       row = SceneItem_GetRows();
@@ -234,11 +231,12 @@ s32 Scene_TalkToActor(s32 id) {
       type = CONTAINER_GROUND;
       point = result;
       flag = result;
-      contents = event->scoopedItem;
+      contents = field->scoopedItem;
       index = SCOOPED_ITEM_ACTOR;
       found = 1;
     }
     if (found) {
+      // found now holds what the search reports (enum ExamineTarget).
       found = type;
       if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
         found = EXAMINE_CHEST;
@@ -250,7 +248,7 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == CONTAINER_POND)
         found = EXAMINE_POND;
       Event_Start();
-      busy = &object->paused;
+      busy = &talker->paused;
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
@@ -270,10 +268,10 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == CONTAINER_MIMIC)
         TreasureSpot_OpenChest(index);
       if (type == CONTAINER_PSYNERGY_STONE) {
-        struct Actor *trap = TreasureSpot_GetActor(index);
+        struct Actor *stone = TreasureSpot_GetActor(index);
 
-        trap->update = ItemDisplay_EmitSparkles;
-        ItemDisplay_RaiseAboveLeader(trap);
+        stone->update = ItemDisplay_EmitSparkles;
+        ItemDisplay_RaiseAboveLeader(stone);
         Sound_PlayFar(MUS_TREASURE_FOUND);
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
         FieldMessage_ShowFar((s32)&MsgGotPsynergyStone,
@@ -291,8 +289,8 @@ s32 Scene_TalkToActor(s32 id) {
           FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 1,
                                FIELD_MESSAGE_ZOOM);
         PartyStatus_CloseFar();
-        trap->update = NULL;
-        Actor_SelectAnimationFar(trap, 2);
+        stone->update = NULL;
+        Actor_SelectAnimationFar(stone, 2);
         Sound_PlayFar(SE_GLITTER);
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared,
@@ -315,9 +313,9 @@ s32 Scene_TalkToActor(s32 id) {
         TreasureSpot_LaunchMimic(index);
         if (flag != -1)
           gMainRoutineWork.pendingDjinni = flag | CONDITION_FLAG_SET;
-        if (contents > 7)
+        if (contents > ENCOUNTER_ZONE_SLOTS - 1)
           work->encounter = Encounter_GetFormationAtSlot(
-              ENCOUNTER_ZONE_MIMIC + 1, contents - 8);
+              ENCOUNTER_ZONE_MIMIC + 1, contents - ENCOUNTER_ZONE_SLOTS);
         else
           work->encounter =
               Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC, contents);
@@ -429,7 +427,7 @@ s32 Scene_TalkToActor(s32 id) {
     talk = Scene_FindTrigger(TRIGGER_TALK_HALTED, id);
     if (talk == NULL) {
       talk = Scene_FindTrigger(TRIGGER_TALK, id);
-      busyFlags = 1;
+      decodeFlags = 1;
       if (talk == NULL)
         return result;
       // A function talk trigger is not run for a stopped actor: it says one
@@ -446,9 +444,9 @@ s32 Scene_TalkToActor(s32 id) {
   }
   if (talk != NULL && talk->result != 0) {
     if (!paused) {
-      object->paused = 1;
-      Actor_SetAnimationSpeedFar(object, 0);
-      savedAngle = object->facing;
+      talker->paused = 1;
+      Actor_SetAnimationSpeedFar(talker, 0);
+      savedAngle = talker->facing;
       if ((u8)placement->talkFacing <= TALK_FACING_PARTY_AND_BACK ||
           (s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -458,25 +456,25 @@ s32 Scene_TalkToActor(s32 id) {
       }
     }
     if (talk->result < TRIGGER_RESULT_MESSAGE_END) {
-      Message_SetDecodeFlagsFar(busyFlags);
+      Message_SetDecodeFlagsFar(decodeFlags);
       Event_RunMessage(id, talk->result);
     } else {
       Leader_StopMoving();
       ((void (*)(s32))talk->result)(id);
     }
     if (!paused) {
-      if (object->script[object->scriptCursor] == SCRIPT_COMMAND_END) {
+      if (talker->script[talker->scriptCursor] == SCRIPT_COMMAND_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
-          object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-          object->steeringFlags |= ACTOR_FACES_MOTION;
-          Actor_SetMovementType(object, (s32)gActor_FaceWatchedScript);
+          talker->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+          talker->steeringFlags |= ACTOR_FACES_MOTION;
+          Actor_SetMovementType(talker, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
-          object->timer = savedAngle;
-          Actor_StartScriptFar(object, gActor_StepAngleScript);
+          talker->timer = savedAngle;
+          Actor_StartScriptFar(talker, gActor_StepAngleScript);
         }
       }
-      object->paused = 0;
-      Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
+      talker->paused = 0;
+      Actor_SetAnimationSpeedFar(talker, ANIM_STEP_NORMAL);
     }
     result = 0;
   }
@@ -488,7 +486,7 @@ resume:
   return result;
 }
 
-/// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
+/// Runs the scene's raised trigger (TRIGGER_RAISED) for id: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_RunRaisedTrigger(s32 id) {
   struct TriggerView *trigger = Scene_FindTrigger(TRIGGER_RAISED, id);
@@ -561,9 +559,8 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// while gMainRoutineWork.sandActive is set: a MAP_CELL_LEDGE with KEY_DOWN
 /// held jumps down it, a MAP_CELL_JUMP jumps forward, a MAP_CELL_CLIMBABLE
 /// climbs down or up by the key held, and a MAP_CELL_PUSH pushes the actor
-/// ahead, running the
-/// scene's TRIGGER_PUSH trigger for it and TRIGGER_PUSHED for the cell. Always
-/// returns 0.
+/// ahead, running the scene's TRIGGER_PUSH trigger for it and TRIGGER_PUSHED
+/// for the cell. Always returns 0.
 s32 Field_RunPushCell(s32 attributes) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.leaderActorId;

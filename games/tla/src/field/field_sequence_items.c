@@ -10,6 +10,13 @@
 #include "field/event_commands.h"
 #include "field/field_sequence.h"
 
+/// What Event_ResolvePendingActions leaves running, as bits of its skip.
+enum PsynergyEndSkip {
+  END_SKIP_REVEAL = 1 << 0,
+  END_SKIP_RING = 1 << 1, ///< the ring of light (ABILITY_MAGNET)
+  END_SKIP_SAND = 1 << 2,
+};
+
 /// Runs message as an event of its own, shown at actor.
 void Event_RunMessage(s32 actor, s32 message) {
   Event_Start();
@@ -21,18 +28,18 @@ void Event_RunMessage(s32 actor, s32 message) {
 /// Ends every lasting Psynergy (Event_ResolvePendingActions with none skipped).
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
-/// Ends the lasting Psynergy and runs their end events: Reveal unless skip bit
-/// 0 is set, the ring of light (ABILITY_MAGNET) unless bit 1, and Sand, while
-/// the party is sand (gMainRoutineWork.sandActive), unless bit 2.
+/// Ends the lasting Psynergy and runs their end events: Reveal, the ring of
+/// light and Sand (while the party is sand, gMainRoutineWork.sandActive), each
+/// unless skip holds its bit (PsynergyEndSkip).
 void Event_ResolvePendingActions(s32 skip) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->busy = 0;
-  if (work->revealActive != 0 && !(skip & 1))
+  if (work->revealActive != 0 && !(skip & END_SKIP_REVEAL))
     Field_RunPsynergyEndEvents(ABILITY_REVEAL | ACT_PACKED);
-  if (work->ringActive != 0 && !(skip & 2))
+  if (work->ringActive != 0 && !(skip & END_SKIP_RING))
     Field_RunPsynergyEndEvents(ABILITY_MAGNET | ACT_PACKED);
-  if (gMainRoutineWork.sandActive != 0 && !(skip & 4))
+  if (gMainRoutineWork.sandActive != 0 && !(skip & END_SKIP_SAND))
     Field_RunPsynergyEndEvents(ABILITY_SAND | ACT_PACKED);
 }
 
@@ -103,7 +110,7 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
   return NULL;
 }
 
-s32 FieldYesNo_Ask(s32 mode);
+s32 FieldYesNo_Ask(s32 atBottom);
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; UNIT_NONE for whoever holds it in the
@@ -207,7 +214,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
                              FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
                                  FIELD_MESSAGE_LOWER);
         // partyIndex now holds the answer: 0 is yes.
-        partyIndex = FieldYesNo_Ask(1);
+        partyIndex = FieldYesNo_Ask(TRUE);
         Message_CloseFinishedWindowsFar();
         if (partyIndex != 0)
           return 0;

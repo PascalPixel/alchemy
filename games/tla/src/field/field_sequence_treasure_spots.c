@@ -10,8 +10,8 @@
 #include "sprite_ids.h"
 
 /// Sets an actor's y and groundHeight to the map's height at its x and z.
-void Actor_SnapToTerrain(void *object) {
-  struct Actor *actor = object;
+void Actor_SnapToTerrain(void *actorPointer) {
+  struct Actor *actor = actorPointer;
   s32 groundHeight;
 
   groundHeight = MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
@@ -47,8 +47,8 @@ s16 *SceneItem_GetRows(void) {
   return found;
 }
 
-/// Clears out[0..2], then fills it from ScenePoint_GetPosition's table entry
-/// for value; returns that lookup's result (0 found, -1 not).
+/// Clears out, then fills it with the position of scene point value; returns
+/// 0 when the point was found, else -1.
 s32 SceneItem_FindPosition(s32 value, s32 *out) {
   SET_VECTOR(out, 0, 0, 0);
   return ScenePoint_GetPosition(value, out);
@@ -140,7 +140,7 @@ void Field_PlaceTreasureSpots(void) {
               cells->collisionCode = CELL_BEHAVIOR_NORMAL;
           }
         }
-        Actor_SelectAnimationFar(actor, 1);
+        Actor_SelectAnimationFar(actor, ANIM_STAND);
         Actor_SetSpriteFlagsFar(actor, 0);
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_OPEN);
@@ -168,11 +168,11 @@ void Field_PlaceTreasureSpots(void) {
 /// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY
 /// TREASURE_SPOT_ON_CELL; any other mode draws its sprite wide (shape 1), 4
 /// pixels lower.
-void Actor_SetWideSprite(u32 objectId, s32 mode) {
+void Actor_SetWideSprite(u32 actorId, s32 mode) {
   struct Actor *actor;
   struct Sprite *sprite;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
   if (mode == 0) {
@@ -190,11 +190,11 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
 }
 
 /// Draws the actor's sprite square (shape 0, size 1), 8 pixels down.
-void Actor_SetSquareSprite(u32 objectId) {
+void Actor_SetSquareSprite(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
   sprite = actor->sprite;
@@ -207,12 +207,12 @@ void Actor_SetSquareSprite(u32 objectId) {
 
 /// Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or
 /// 0 without one.
-s32 Actor_GetSpriteShape(u32 objectId) {
+s32 Actor_GetSpriteShape(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
   s32 shape = 0;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   if (actor != 0) {
     sprite = actor->sprite;
     if (sprite != 0)
@@ -223,10 +223,10 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 
 /// Mode 1 moves the actor to z 0; mode 2 sets flag, draws a moved actor square
 /// again and drops it back home (homeX, homeZ) at Scoop's anchor.
-void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
+void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
   if (mode == 1)
@@ -234,20 +234,20 @@ void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   if (mode == 2) {
     GameFlag_Set(flag);
     if (actor->x.fixed != 0)
-      Actor_SetSquareSprite(objectId);
+      Actor_SetSquareSprite(actorId);
     actor->x.fixed = toFIXED(actor->homeX);
     actor->z.fixed = toFIXED(actor->homeZ);
-    BattleEffect_DropObjectAtAnchor(objectId);
+    BattleEffect_DropObjectAtAnchor(actorId);
   }
 }
 
 /// Shakes the actor's facing at random for 16 frames, then turns it back.
-UNUSED void Actor_ShakeAngle(u32 objectId) {
+UNUSED void Actor_ShakeAngle(u32 actorId) {
   struct Actor *actor;
   s32 angle;
   s32 i;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
   angle = actor->facing;
@@ -267,8 +267,8 @@ UNUSED void Actor_ShakeAngle(u32 objectId) {
 
 /// Closes the chest of the actor again (its item could not be carried), with
 /// SE_CHEST_CLOSE, and waits 12 frames.
-void TreasureSpot_CloseChest(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), TREASURE_SPOT_CHEST_CLOSING);
+void TreasureSpot_CloseChest(u32 actorId) {
+  Actor_SelectAnimationFar(Actor_Lookup(actorId), TREASURE_SPOT_CHEST_CLOSING);
   Sound_PlayFar(SE_CHEST_CLOSE);
   wait(12);
 }
@@ -276,10 +276,10 @@ void TreasureSpot_CloseChest(u32 objectId) {
 /// Makes the chest of the actor jump up as a mimic: after 18 frames it takes
 /// TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward velocity of
 /// 8 pixels a frame, its shadow shown.
-void TreasureSpot_LaunchMimic(u32 objectId) {
+void TreasureSpot_LaunchMimic(u32 actorId) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   wait(18);
   Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
   Sound_PlayFar(SE_ENEMY_CRY);
@@ -290,39 +290,39 @@ void TreasureSpot_LaunchMimic(u32 objectId) {
 }
 
 /// Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
-void TreasureSpot_OpenChest(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), TREASURE_SPOT_CHEST_OPENING);
+void TreasureSpot_OpenChest(u32 actorId) {
+  Actor_SelectAnimationFar(Actor_Lookup(actorId), TREASURE_SPOT_CHEST_OPENING);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
 /// Shows the chest of the actor open, with no sound.
-void TreasureSpot_ShowOpened(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), TREASURE_SPOT_CHEST_OPEN);
+void TreasureSpot_ShowOpened(u32 actorId) {
+  Actor_SelectAnimationFar(Actor_Lookup(actorId), TREASURE_SPOT_CHEST_OPEN);
 }
 
 /// Opens the empty chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
-void ObjectEvent_SetMode6WithCue(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId),
+void ObjectEvent_SetMode6WithCue(u32 actorId) {
+  Actor_SelectAnimationFar(Actor_Lookup(actorId),
                            TREASURE_SPOT_CHEST_OPENING_EMPTY);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
 /// Returns the actor, or NULL.
-struct Actor *TreasureSpot_GetActor(u32 objectId) {
-  return Actor_Lookup(objectId);
+struct Actor *TreasureSpot_GetActor(u32 actorId) {
+  return Actor_Lookup(actorId);
 }
 
 /// Releases the actor and empties its slot.
-void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
+void ObjectEvent_Remove(u32 actorId) { Actor_ReleaseAtIndex(actorId); }
 
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.
-void TreasureSpot_SetActorPosition(u32 objectId, FIXED x, FIXED z) {
+void TreasureSpot_SetActorPosition(u32 actorId, FIXED x, FIXED z) {
   struct Actor *actor;
 
-  actor = Actor_Lookup(objectId);
+  actor = Actor_Lookup(actorId);
   if (actor == 0)
     return;
   if (x == -1)

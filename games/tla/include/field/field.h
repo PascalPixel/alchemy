@@ -142,7 +142,8 @@ struct FieldPsynergyReach {
 
 extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
 /// Added to a field Psynergy's kind, the gFieldPsynergy_Reach row for the
-/// objects its shaking reaches (Tremor's, 275).
+/// actors its shaking reaches (Tremor's,
+/// REACH_SHAKEN_OBJECTS + FIELD_PSYNERGY_TREMOR).
 #define REACH_SHAKEN_OBJECTS 256
 
 /// Actor.spriteStorageKind, its low four bits: what the actor's sprite

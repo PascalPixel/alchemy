@@ -1,7 +1,7 @@
 /// @file
-/// Allocating the palette cycles' queue.
-
-// The main image and overlay 674 both compile this file.
+/// Allocating the palette cycles' queue. The main image
+/// (field_tile_animation.c) and the Islets' overlay (islets.c) each include a
+/// copy.
 
 /// Allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with its four
 /// entries cleared. Nothing in the main image calls it; the Islets call their

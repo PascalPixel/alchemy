@@ -391,7 +391,8 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
-  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 512);
+  spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS,
+                                 DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
   diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 1556);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
@@ -648,8 +649,9 @@ void LuckyDice_Run(void) {
         resetDice = 1;
       }
       payoutTimer++;
-    } else if (state == LUCKY_DICE_AIM && frame > 17) {
-      // Aiming: Up and Down raise and lower the dice between 32 and 160.
+    } else if (state == LUCKY_DICE_AIM && frame > DICE_FADE_FRAMES + 1) {
+      // Aiming, a frame after the fade in: Up and Down raise and lower the
+      // dice between 32 and 160.
       // B quits, as does running out of coins for a bet; A throws.
       // DEAD: gInput.repeat is read twice and discarded before the KEY_UP
       // test; the ROM keeps both loads.
@@ -986,7 +988,7 @@ void LuckyDice_Run(void) {
           Sound_PlayFar(MUS_SUPER_LUCKY);
         } else {
           pairCount = 0;
-          for (index = 0; index != 3; index++) {
+          for (index = 0; index != DICE_RESULT_COUNT - 1; index++) {
             for (otherIndex = index + 1; otherIndex != DICE_RESULT_COUNT;
                  otherIndex++) {
               if (numbers[index] == numbers[otherIndex]) {

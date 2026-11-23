@@ -38,6 +38,21 @@
 /// with one row of gWorldMap_GraphicsResources.
 #define WORLD_MAP_REGION_GROUP 10
 
+/// A world map graphics set, a row of gWorldMap_GraphicsResources: its
+/// palette, tileset animation script, cell picture attributes and six tile
+/// sets.
+enum WorldMapGraphicsResource {
+  WORLD_MAP_SET_PALETTE,
+  WORLD_MAP_SET_ANIMATION,
+  WORLD_MAP_SET_CELL_ATTRIBUTES,
+  WORLD_MAP_SET_TILES_1,
+  WORLD_MAP_SET_TILES_2,
+  WORLD_MAP_SET_TILES_3,
+  WORLD_MAP_SET_TILES_4,
+  WORLD_MAP_SET_TILES_5,
+  WORLD_MAP_SET_TILES_6,
+};
+
 /// The still picture on BG1 (WorldMap_StartStillPicture): 32 by 20 of the
 /// world picture's tiles, from its fifth row on.
 #define STILL_PICTURE_TILES_ACROSS 32
@@ -266,13 +281,13 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   s32 row;
   s32 column;
 
-  buffer = Heap_Alloc(512);
+  buffer = Heap_Alloc(BG_PLTT_SIZE);
   perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   block =
       &((struct WorldMapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
                                               (((z / toFIXED(32)) & 31) << 5)];
   WorldMap_UpdateRegionTint(block->region, 0);
-  // Reused: the region, then its group of ten.
+  // region holds the region, then its group of ten.
   region = block->region;
   region /= WORLD_MAP_REGION_GROUP;
   switch (region) {
@@ -292,32 +307,39 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;
   backdropColor = WORLD_MAP_BG_PALETTE[0];
-  Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
+  Decompress_ByteLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_PALETTE]),
+                    buffer);
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
           REG_DMA3);
   PaletteFade_LoadPaletteFar(buffer);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[1]),
-                      MAPGRID_ANIMATION_SCRIPT);
+  Decompress_TaggedLz(
+      Resource_GetTableEntry(resources[WORLD_MAP_SET_ANIMATION]),
+      MAPGRID_ANIMATION_SCRIPT);
   TilesetAnim_StartAll((const u16 *)MAPGRID_ANIMATION_SCRIPT);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), Ram_MapCollision);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer);
+  Decompress_TaggedLz(
+      Resource_GetTableEntry(resources[WORLD_MAP_SET_CELL_ATTRIBUTES]),
+      Ram_MapCollision);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
+                      Ram_BgTileBuffer);
   Dma_Set(Ram_BgTileBuffer, BG_CHAR_BLOCK(2),
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_2]),
                       WORLD_MAP_TILE_SET(1));
   Dma_Set(WORLD_MAP_TILE_SET(1), BG_CHAR_BLOCK(2) + WORLD_MAP_TILE_SET_BYTES,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_3]),
                       WORLD_MAP_TILE_SET(2));
   Dma_Set(WORLD_MAP_TILE_SET(2), BG_CHAR_BLOCK(3),
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_4]),
                       WORLD_MAP_TILE_SET(3));
   Dma_Set(WORLD_MAP_TILE_SET(3), BG_CHAR_BLOCK(3) + WORLD_MAP_TILE_SET_BYTES,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_5]),
+                      gMapGridAnimTiles);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
+                      &gWorldMapWork);
   // BG1's map (screen block 5) is filled with the window tiles' black tile,
   // and screen block 6 numbers the picture's tiles in rows, two a word: the
   // still picture's, then on round the picture.
@@ -391,16 +413,16 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->shownBottom = perspective->windowBottom;
   // DISPCNT_MODE_2 (the affine ground) for the rows of the whole screen;
   // DISPCNT_MODE_0 for the still picture's, which lie below it.
-  mode = 0;
+  mode = DISPCNT_MODE_0;
   windowTop = perspective->shownTop;
   if (windowTop < STILL_PICTURE_WINDOW_TOP) {
     u16 bottom = perspective->shownBottom;
 
     mode = (bottom != 0) << 1;
     if (windowTop <= bottom) {
-      mode = 0;
+      mode = DISPCNT_MODE_0;
       if (windowTop == 0)
-        mode = 2;
+        mode = DISPCNT_MODE_2;
     }
   }
   displayControl |= mode;

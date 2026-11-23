@@ -32,9 +32,10 @@ struct WorldMapWork {
     s16 width;
     s16 height;
   } nameBox;
-  s16 centered; ///< nonzero draws resource 35 at the origin
-                ///< (WorldMapPicture_Draw)
-  u16 mode;     ///< 0 to look, nonzero to choose a destination
+  /// Nonzero draws the whole world (RESOURCE_WORLD_MAP_PICTURE) at the
+  /// origin rather than about the cursor (WorldMapPicture_Draw).
+  s16 centered;
+  u16 mode; ///< 0 to look, nonzero to choose a destination
   /// Where the nearest-place search looks from in place of the cursor, 16.16
   /// pixels, when nonzero; the field code only ever clears it.
   FIXED searchX;

@@ -1,5 +1,7 @@
 /// @file
-/// Filling a rectangle of map cells with one attribute byte.
+/// Filling a rectangle of a map layer's cells with one collision code, as a
+/// pushed actor marks the cells it covers (push_target_push.h). Several
+/// scenes' overlays include a copy.
 
 #include "types.h"
 #include "system/ram_buffer.h"

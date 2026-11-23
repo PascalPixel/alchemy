@@ -21,6 +21,15 @@ enum SpritePictureCodec {
   SPRITE_PICTURE_LZ = 3         ///< LZ-compressed
 };
 
+/// An OAM entry's affine mode (AnimationSpritePart.affine): a plain sprite, a
+/// scaled or turned one, or one drawn in a box twice its size so that a scale
+/// above 1 is not cut off.
+enum OamAffineMode {
+  OAM_AFFINE_OFF = 0,
+  OAM_AFFINE_ON = 1,
+  OAM_AFFINE_DOUBLE_SIZE = 3,
+};
+
 /// Facing table `table`'s entry for facing angle `dir`, the turn cut into as
 /// many sectors as the table has entries.
 #define FACING_TABLE_ENTRY(table, dir)                                         \
@@ -81,7 +90,7 @@ void Sprite_SkipToStop(struct Sprite *sprite) {
 /// picture for the facing dir, and when any picture changed redraws the sprite:
 /// the sprite animations composed by priority into one pixel buffer, an
 /// optional outline, and the result uploaded to the sprite's VRAM tiles.
-s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
+s32 Sprite_ComposePicture(struct Sprite *sprite, u32 dir) {
   s32 mirrored;
   u32 size;
   struct ActorSystemWork *system;
@@ -96,7 +105,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   s32 k;
   s32 drawCount;
   u32 key;
-  s32 arg;
+  s32 argument;
   s32 picture;
   u32 facing;
   s32 tile;
@@ -112,8 +121,8 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
     decoderWasLoaded = 0;
   }
 
-  for (i = 0; i < obj->count; i++) {
-    layer = obj->entries[i];
+  for (i = 0; i < sprite->count; i++) {
+    layer = sprite->entries[i];
     if (layer == NULL)
       continue;
     if (layer->script == NULL)
@@ -121,41 +130,41 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   read_command:
     if ((s16)layer->timer <= 0) {
       picture = layer->script[layer->scriptOffset++];
-      arg = layer->script[layer->scriptOffset++];
+      argument = layer->script[layer->scriptOffset++];
       switch (picture) {
       case ANIMCMD_PLAY:
-        SpriteAnimation_Start(layer, arg);
-        obj->lastNo = arg;
+        SpriteAnimation_Start(layer, argument);
+        sprite->lastNo = argument;
         break;
       case ANIMCMD_JUMP:
-        layer->scriptOffset = arg;
+        layer->scriptOffset = argument;
         break;
       case ANIMCMD_SOUND:
-        Sound_PlayFar(arg);
+        Sound_PlayFar(argument);
         break;
       case ANIMCMD_HOLD:
         layer->scriptOffset -= 2;
         picture = layer->pictureBase;
         goto select_direction;
       case ANIMCMD_SET_KIND:
-        layer->kind = arg;
+        layer->kind = argument;
         break;
       case ANIMCMD_OFFSET_X:
-        obj->offsetX = arg;
+        sprite->offsetX = argument;
         break;
       case ANIMCMD_OFFSET_Y:
-        obj->offsetY = arg;
+        sprite->offsetY = argument;
         break;
       case ANIMCMD_BLANK:
         layer->pictureBase = SPRITE_PICTURE_NONE;
         // Falls through: its time counts as ANIMCMD_WAIT's does.
       case ANIMCMD_WAIT:
-        layer->timer += arg << 4;
+        layer->timer += argument << 4;
         break;
       case ANIMCMD_END:
         layer->pictureBase = SPRITE_PICTURE_NONE;
         layer->script = NULL;
-        obj->count--;
+        sprite->count--;
         picture = SPRITE_PICTURE_NONE;
         goto select_direction;
       case ANIMCMD_UNUSED_FIRST:
@@ -163,7 +172,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         break;
       default:
         layer->pictureBase = picture;
-        layer->timer += arg << 4;
+        layer->timer += argument << 4;
         break;
       }
       goto read_command;
@@ -203,23 +212,23 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
       mirrored = 1;
     if (layer->picture != picture) {
       layer->picture = picture;
-      obj->dirty = 1;
+      sprite->dirty = 1;
     }
   }
 
-  if (obj->flags & SPRITE_FLAG_KEEP_PICTURE) {
+  if (sprite->flags & SPRITE_FLAG_KEEP_PICTURE) {
     if (FACING_TABLE_ENTRY(gAnimationFacing_FrontBack, dir) &
         ANIM_FACING_MIRRORED)
       mirrored = 1;
-  } else if (obj->dirty != 0) {
-    size = obj->width * obj->height;
+  } else if (sprite->dirty != 0) {
+    size = sprite->width * sprite->height;
     pixels = Heap_Alloc(size);
     Iwram_ClearWords(pixels, size);
 
     drawCount = -1;
 
-    for (i = obj->count - 1; i >= 0; i--) {
-      layer = obj->entries[i];
+    for (i = sprite->count - 1; i >= 0; i--) {
+      layer = sprite->entries[i];
       if (layer == 0)
         continue;
       if (layer->pictures == 0)
@@ -249,7 +258,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
     drawCount++;
 
     for (i = 0; i < drawCount; i++) {
-      layer = obj->entries[*(u8 *)&drawOrder[i]];
+      layer = sprite->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_PICTURE_TAGGED_LZ) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == SPRITE_PICTURE_LZ) {
@@ -270,16 +279,17 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
       }
     }
 
-    if (obj->flags &
+    if (sprite->flags &
         (SPRITE_FLAG_OUTLINED | SPRITE_FLAG_SHADED | SPRITE_FLAG_SUNK)) {
-      if (obj->flags & SPRITE_FLAG_OUTLINED) {
+      if (sprite->flags & SPRITE_FLAG_OUTLINED) {
         OutlineFn outline;
 
         RamCode_Load(outline, Grid_DrawOutlineCode, Grid_DrawOutlineCodeSize);
-        outline(obj->width, obj->height, pixels, system->edge, system->fill);
+        outline(sprite->width, sprite->height, pixels, system->edge,
+                system->fill);
         Heap_Release(outline);
       }
-      if (obj->flags & SPRITE_FLAG_SUNK) {
+      if (sprite->flags & SPRITE_FLAG_SUNK) {
         s32 height;
         s32 width;
         s32 amount;
@@ -288,9 +298,9 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         u32 *src;
 
         // picture holds the rows to sink.
-        picture = obj->sunkRows;
-        height = obj->height;
-        width = obj->width;
+        picture = sprite->sunkRows;
+        height = sprite->height;
+        width = sprite->width;
         if (picture > height)
           picture = height;
         dst = (u32 *)(pixels + width * height);
@@ -306,10 +316,10 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
         limit = amount / 4;
         for (i = 0; i < limit; i++)
           *dst-- = 0;
-      } else if (obj->flags & SPRITE_FLAG_SHADED) {
-        u32 rows = obj->sunkRows;
-        u32 height = obj->height;
-        u32 width = obj->width;
+      } else if (sprite->flags & SPRITE_FLAG_SHADED) {
+        u32 rows = sprite->sunkRows;
+        u32 height = sprite->height;
+        u32 width = sprite->width;
         const u8 *shade = gSpriteColorShadeTables;
         u8 *p;
         s32 n;
@@ -325,12 +335,12 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
       }
     }
 
-    tile = VramCache_Load(obj->slot, size, 0);
+    tile = VramCache_Load(sprite->slot, size, 0);
     vram = (void *)(tile * TILE_SIZE_4BPP + OBJ_VRAM0);
-    ((UploadFn)Ram_HeapSlots->pictureUploader)(pixels, obj->width, obj->height,
-                                               vram);
-    obj->image.tile = tile;
-    obj->dirty = 0;
+    ((UploadFn)Ram_HeapSlots->pictureUploader)(pixels, sprite->width,
+                                               sprite->height, vram);
+    sprite->image.tile = tile;
+    sprite->dirty = 0;
     system->used += size;
     Heap_Release(pixels);
   }
@@ -351,7 +361,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   u32 halfHeight = sprite->height / 2;
   s32 marginX = SHADOW_HALF_WIDTH;
   s32 marginY = SHADOW_HALF_HEIGHT;
-  s32 affine = 1;
+  s32 affine = OAM_AFFINE_ON;
   s32 scaleX = *scale++;
   s32 scaleY = *scale;
   s32 x;
@@ -359,7 +369,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   struct AnimationSpritePart *shadow;
 
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-    affine = 3;
+    affine = OAM_AFFINE_DOUBLE_SIZE;
     halfWidth <<= 1;
     halfHeight <<= 1;
     marginX = 2 * SHADOW_HALF_WIDTH;
@@ -388,7 +398,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
 /// sprite at the screen point of a projected position (x, height, y, ground),
 /// scaled by scale[0] and scale[1] and turned by its rotation, and its shadow
 /// on the ground below; both go into the depth list by their screen row.
-void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
+void Render_ApplyProjectedPlacement(struct Sprite *sprite, s32 *pos, s32 *scale,
                                     s32 mode) {
   s32 matrix;
   u32 halfWidth;
@@ -410,24 +420,24 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   s32 anchorY;
   s32 x;
   s32 y;
-  struct AnimationSpritePart *sprite;
+  struct AnimationSpritePart *part;
 
-  halfWidth = object->width >> 1;
-  halfHeight = object->height >> 1;
+  halfWidth = sprite->width >> 1;
+  halfHeight = sprite->height >> 1;
   scaleX = *scale++;
   scaleY = *scale;
   px = *pos++;
   py = *pos++;
   pz = *pos++;
   pw = *pos;
-  flip = Sprite_ComposePicture(object, mode);
+  flip = Sprite_ComposePicture(sprite, mode);
   if (flip == 0 && scaleX == FIXED_ONE && scaleY == scaleX &&
-      object->rotation == 0) {
-    affine = 0;
+      sprite->rotation == 0) {
+    affine = OAM_AFFINE_OFF;
     matrix = 0;
   } else {
-    affine = 1;
-    effect.angle = object->rotation;
+    affine = OAM_AFFINE_ON;
+    effect.angle = sprite->rotation;
     effect.scaleX = scaleX >> 8;
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
@@ -435,34 +445,34 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-    affine = 3;
+    affine = OAM_AFFINE_DOUBLE_SIZE;
     halfWidth <<= 1;
     halfHeight <<= 1;
   }
 
-  // The shadow, centred on the ground below the object.
+  // The shadow, centred on the ground below the sprite.
   y = FIXEDtoINT(pz - pw) - SHADOW_HALF_HEIGHT;
-  if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
-    sprite = &object->shadow;
-    sprite->affine = 0;
-    sprite->x = FIXEDtoINT(px) - SHADOW_HALF_WIDTH;
-    sprite->y = y;
-    Oam_AddSpriteAtDepthClamped(sprite,
+  if ((sprite->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
+    part = &sprite->shadow;
+    part->affine = OAM_AFFINE_OFF;
+    part->x = FIXEDtoINT(px) - SHADOW_HALF_WIDTH;
+    part->y = y;
+    Oam_AddSpriteAtDepthClamped(part,
                                 FIXEDtoINT(pz + pw) + PLACEMENT_SHADOW_DEPTH);
   }
 
   if (scaleX == 0 || scaleY == 0)
     return;
 
-  // The anchor, scaled, and turned with the object.
-  if (object->rotation == 0) {
-    anchorX = object->offsetX * scaleX;
-    anchorY = ((object->height >> 1) - object->offsetY) * scaleY;
+  // The anchor, scaled, and turned with the sprite.
+  if (sprite->rotation == 0) {
+    anchorX = sprite->offsetX * scaleX;
+    anchorY = ((sprite->height >> 1) - sprite->offsetY) * scaleY;
   } else {
-    FIXED sin = Trig_Sin(object->rotation);
-    FIXED cos = Trig_Cos(object->rotation);
-    s32 offsetX = object->offsetX * scaleX;
-    s32 offsetY = ((object->height >> 1) - object->offsetY) * scaleY;
+    FIXED sin = Trig_Sin(sprite->rotation);
+    FIXED cos = Trig_Cos(sprite->rotation);
+    s32 offsetX = sprite->offsetX * scaleX;
+    s32 offsetY = ((sprite->height >> 1) - sprite->offsetY) * scaleY;
 
     anchorX = Iwram_MulFX(cos, offsetX) + Iwram_MulFX(sin, offsetY);
     anchorY = Iwram_MulFX(cos, offsetY) - Iwram_MulFX(sin, offsetX);
@@ -472,19 +482,19 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.
   if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
-    sprite = &object->image;
-    sprite->x = x;
-    sprite->y = y;
-    sprite->affine = affine;
-    sprite->affineIndex = matrix;
-    Oam_AddSpriteAtDepthClamped(sprite,
+    part = &sprite->image;
+    part->x = x;
+    part->y = y;
+    part->affine = affine;
+    part->affineIndex = matrix;
+    Oam_AddSpriteAtDepthClamped(part,
                                 FIXEDtoINT(py + pz) + PLACEMENT_IMAGE_DEPTH);
   }
 }
 
 /// Render_ApplyProjectedPlacement into the given draw slot: the sprite and its
 /// shadow both go to depth, and mode chooses the picture as facing does there.
-void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
+void Render_ApplyProjectedPlacementAtDepth(struct Sprite *sprite, s32 *pos,
                                            s32 *scale, s32 mode, s32 depth) {
   s32 matrix;
   u32 halfWidth;
@@ -508,11 +518,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   s32 anchorY;
   s32 x;
   s32 y;
-  struct AnimationSpritePart *sprite;
+  struct AnimationSpritePart *part;
 
-  halfWidth = object->width >> 1;
+  halfWidth = sprite->width >> 1;
   {
-    u8 height = object->height;
+    u8 height = sprite->height;
 
     halfHeight = height >> 1;
   }
@@ -524,14 +534,14 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   py = *pos++;
   pz = *pos++;
   pw = *pos;
-  flip = Sprite_ComposePicture(object, mode);
+  flip = Sprite_ComposePicture(sprite, mode);
   if (flip == 0 && scaleX == FIXED_ONE && scaleY == scaleX &&
-      object->rotation == 0) {
-    affine = 0;
+      sprite->rotation == 0) {
+    affine = OAM_AFFINE_OFF;
     matrix = 0;
   } else {
-    affine = 1;
-    effect.angle = object->rotation;
+    affine = OAM_AFFINE_ON;
+    effect.angle = sprite->rotation;
     effect.scaleX = scaleX >> 8;
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
@@ -539,7 +549,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-    affine = 3;
+    affine = OAM_AFFINE_DOUBLE_SIZE;
     halfWidth <<= 1;
     halfHeight <<= 1;
     extentX = 2 * SHADOW_HALF_WIDTH;
@@ -547,30 +557,30 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   }
 
   y = FIXEDtoINT(pz - pw) - extentY;
-  if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
-    sprite = &object->shadow;
-    sprite->affine = 0;
-    sprite->x = FIXEDtoINT(px) - extentX;
-    sprite->y = y;
-    Oam_AddSpriteAtDepth(sprite, depth);
+  if ((sprite->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
+    part = &sprite->shadow;
+    part->affine = OAM_AFFINE_OFF;
+    part->x = FIXEDtoINT(px) - extentX;
+    part->y = y;
+    Oam_AddSpriteAtDepth(part, depth);
   }
 
   if (scaleX == 0 || scaleY == 0)
     return;
 
-  if (object->rotation == 0) {
-    anchorX = object->offsetX * scaleX;
-    anchorY = ((object->height >> 1) - object->offsetY) * scaleY;
+  if (sprite->rotation == 0) {
+    anchorX = sprite->offsetX * scaleX;
+    anchorY = ((sprite->height >> 1) - sprite->offsetY) * scaleY;
   } else {
-    FIXED sin = Trig_Sin(object->rotation);
-    FIXED cos = Trig_Cos(object->rotation);
+    FIXED sin = Trig_Sin(sprite->rotation);
+    FIXED cos = Trig_Cos(sprite->rotation);
 
     // extentX and extentY are reused for the anchor's offset.
-    extentX = object->offsetX * scaleX;
+    extentX = sprite->offsetX * scaleX;
     {
-      u8 height = object->height;
+      u8 height = sprite->height;
 
-      extentY = ((height >> 1) - object->offsetY) * scaleY;
+      extentY = ((height >> 1) - sprite->offsetY) * scaleY;
     }
 
     anchorX = Iwram_MulFX(cos, extentX) + Iwram_MulFX(sin, extentY);
@@ -579,12 +589,12 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
   x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + (FIXED_ONE - 1));
   y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + (FIXED_ONE - 1));
   if (x < DISPLAY_WIDTH && y < DISPLAY_HEIGHT) {
-    sprite = &object->image;
-    sprite->x = x;
-    sprite->y = y;
-    sprite->affine = affine;
-    sprite->affineIndex = matrix;
-    Oam_AddSpriteAtDepth(sprite, depth);
+    part = &sprite->image;
+    part->x = x;
+    part->y = y;
+    part->affine = affine;
+    part->affineIndex = matrix;
+    Oam_AddSpriteAtDepth(part, depth);
   }
 }
 
@@ -647,13 +657,13 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       offsetY = Iwram_MulFX(sprite->offsetY - halfHeight, scaleY);
       halfWidth = sprite->width >> 1;
       if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
-        affine = 3;
+        affine = OAM_AFFINE_DOUBLE_SIZE;
         halfWidth <<= 1;
         halfHeight <<= 1;
       } else {
-        affine = 1;
+        affine = OAM_AFFINE_ON;
         if (scaleX == FIXED_ONE && sprite->rotation == 0 && scaleY == scaleX)
-          affine = 0;
+          affine = OAM_AFFINE_OFF;
       }
       if (flip)
         scaleX = -scaleX;
@@ -692,7 +702,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         ground[2] = point[2];
         Matrix_ProjectPoint(ground, screen);
         size = SHADOW_HALF_WIDTH;
-        if (affine == 3)
+        if (affine == OAM_AFFINE_DOUBLE_SIZE)
           size = 2 * SHADOW_HALF_WIDTH;
         shadow = &sprite->shadow;
         shadow->x = screen[0] - size;

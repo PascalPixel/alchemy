@@ -28,8 +28,8 @@ struct FieldParticle {
   FIXED speed;        ///< 16.16 fixed-point pixels per frame
   FIXED speedMax;     ///< 16.16 fixed-point pixels per frame
   FIXED acceleration; ///< 16.16 fixed-point pixels per frame, each frame
-  FIXED scaleX;       ///< 16.16 fixed point, 0x10000 full size
-  FIXED scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleX;       ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scaleY;       ///< 16.16 fixed point, FIXED_ONE full size
   u16 heading;        ///< 1/65536 turns
   s16 turnStepMax;    ///< 1/65536 turns a frame
   EffectCallback callback; ///< run each frame once callbackDelay is 0
@@ -39,8 +39,9 @@ struct FieldParticle {
   s16 orbitAngle;          ///< 1/32 turns
   s8 state;                ///< the callback's own step
   s8 stopAtTarget;         ///< nonzero: lands on the target within 8 pixels
-  s8 turnStepLimited; ///< Clamp steering to turnStepMax; zero faces the target
-                      ///< directly.
+  /// Nonzero turns it toward the target at most turnStepMax a frame; zero
+  /// faces it straight at the target.
+  s8 turnStepLimited;
   s8 updateMotion; ///< nonzero: FieldParticle_UpdateMotion moves it each frame
   s8 render;       ///< nonzero: drawn each frame
   s8 active;       ///< nonzero while the slot is in use

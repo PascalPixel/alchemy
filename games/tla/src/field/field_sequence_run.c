@@ -47,6 +47,16 @@ s32 Leader_StepOffTightrope(void);
 /// The search code aboard the ship facing sea of world map collision 3: the
 /// World Map has no examine trigger for it, so the search finds nothing there.
 #define SHIP_SEA_EXAMINE_CODE 99
+/// A map entrance stream's row: the entrance, its x and z, and its flags byte.
+#define MAP_ENTRANCE_ROW_BYTES 6
+
+/// Teleport's steps (gMainRoutineWork.teleportState): a place was chosen and
+/// the scene it lands in is loading, then the party arrives in it.
+enum TeleportState {
+  TELEPORT_NONE,
+  TELEPORT_CHOSEN,
+  TELEPORT_ARRIVING,
+};
 
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
@@ -88,11 +98,11 @@ s32 FieldSequence_Run(void) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.perspectiveMap = 1;
     mode = ACTOR_SYSTEM_WORLD_MAP;
-    Encounter_SelectMapZones(0);
+    Encounter_SelectMapZones(FALSE);
   } else {
     MapGrid_LoadMapFar(gMainRoutineWork.mapId);
     mode = ACTOR_SYSTEM_MAP;
-    Encounter_SelectMapZones(1);
+    Encounter_SelectMapZones(TRUE);
   }
   work->mode = mode;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -156,7 +166,7 @@ s32 FieldSequence_Run(void) {
   work->sceneAttributeHigh = NIBBLE_HIGH(value);
   work->sceneAttributeLow = NIBBLE_LOW(value);
 
-  if (gMainRoutineWork.teleportState == 2) {
+  if (gMainRoutineWork.teleportState == TELEPORT_ARRIVING) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
     Actor_SetSpriteFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
   }
@@ -175,14 +185,17 @@ s32 FieldSequence_Run(void) {
   if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
-      if (gMainRoutineWork.teleportState == 1) {
+      // XXX: why a Teleport arrival holds 6584 bytes of the battle effect's
+      // slot through its two 20-frame pauses; a heap trace of an arrival
+      // would settle it.
+      if (gMainRoutineWork.teleportState == TELEPORT_CHOSEN) {
         HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
         wait(20);
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
-      if (gMainRoutineWork.teleportState == 1) {
+      if (gMainRoutineWork.teleportState == TELEPORT_CHOSEN) {
         HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
         wait(20);
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
@@ -194,9 +207,9 @@ s32 FieldSequence_Run(void) {
         wait((work->transitionFrames + 1) / 2);
     }
     arrivalState = gMainRoutineWork.teleportState;
-    if (arrivalState == 1) {
-      /* FAKEMATCH(dead): teleportState set to 2 through its address. */
-      *(s8 *)&gMainRoutineWork.teleportState = 2;
+    if (arrivalState == TELEPORT_CHOSEN) {
+      /* FAKEMATCH(dead): teleportState set through its address. */
+      *(s8 *)&gMainRoutineWork.teleportState = TELEPORT_ARRIVING;
       /* FAKEMATCH(dead): a once-only loop round the arrival. */
       do {
         /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its use. */
@@ -216,8 +229,8 @@ s32 FieldSequence_Run(void) {
       } while (0);
       Event_SetDestination(gMainRoutineWork.teleportScene,
                            gMainRoutineWork.teleportEntrance);
-    } else if (arrivalState == 2) {
-      gMainRoutineWork.teleportState = 0;
+    } else if (arrivalState == TELEPORT_ARRIVING) {
+      gMainRoutineWork.teleportState = TELEPORT_NONE;
       Teleport_PlayWhirl();
     }
     if (GameFlag_Get(FLAG_SHOW_AREA_NAME)) {
@@ -308,7 +321,7 @@ s32 FieldSequence_Run(void) {
           Leader_StopMoving();
           WorldPicture_Show(1);
           if (gMainRoutineWork.teleportScene != -1)
-            gMainRoutineWork.teleportState = 1;
+            gMainRoutineWork.teleportState = TELEPORT_CHOSEN;
         } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
           Leader_StopMoving();
           value = 0;
@@ -679,7 +692,7 @@ s32 Field_PlaceAtEntrance(void) {
   cursor = gMapScene + (u16)Stream_ReadU16(&cursor);
   angle = &gMainRoutineWork.heading;
   layer = &gMainRoutineWork.layer;
-  for (;; cursor += 6) {
+  for (;; cursor += MAP_ENTRANCE_ROW_BYTES) {
     if (*(s8 *)cursor == -1) {
       *angle = FACING_SOUTH;
       {
@@ -769,11 +782,11 @@ void Field_ApplyEntrance(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 done;
 
-  done = Scene_ApplyEntrance(1);
+  done = Scene_ApplyEntrance(TRUE);
   if (work->mode == ACTOR_SYSTEM_MAP && done == 0)
     done = Field_PlaceAtEntrance();
   if (done == 0)
-    Scene_ApplyEntrance(0);
+    Scene_ApplyEntrance(FALSE);
 }
 #undef NIBBLE_LOW
 #undef NIBBLE_HIGH
@@ -785,3 +798,4 @@ void Field_ApplyEntrance(void) {
 #undef MAP_ENTRANCE_FACING_MASK
 #undef MAP_ENTRANCE_RAISED
 #undef MAP_ENTRANCE_KEEP_BOUNDS
+#undef MAP_ENTRANCE_ROW_BYTES

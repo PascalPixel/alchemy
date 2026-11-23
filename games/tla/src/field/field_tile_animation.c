@@ -135,29 +135,36 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   case WORLD_MAP_RELOAD_STEPS: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
-    Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
+    Decompress_ByteLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_PALETTE]),
+                      buffer);
     *(s16 *)buffer = backdropColor;
     Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
             REG_DMA3);
     {
       u8 *anim = MAPGRID_ANIMATION_SCRIPT;
       PaletteFade_LoadPaletteFar(buffer);
-      Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), anim);
+      Decompress_TaggedLz(
+          Resource_GetTableEntry(resources[WORLD_MAP_SET_ANIMATION]), anim);
       TilesetAnim_StartAll((const u16 *)anim);
     }
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), gMapGridShapes);
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_CELL_ATTRIBUTES]),
+        gMapGridShapes);
     break;
   }
   case 11:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
+        gBgTileBuffer);
     break;
   case 10:
     Dma_Set(gBgTileBuffer, (void *)BG_CHAR_BLOCK(2),
             DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 9:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
-                        WORLD_MAP_TILE_SET(1));
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_2]),
+        WORLD_MAP_TILE_SET(1));
     break;
   case 8:
     Dma_Set(WORLD_MAP_TILE_SET(1),
@@ -165,16 +172,18 @@ void WorldMap_PreloadCurrentTileBlock(void) {
             DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 7:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
-                        WORLD_MAP_TILE_SET(2));
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_3]),
+        WORLD_MAP_TILE_SET(2));
     break;
   case 6:
     Dma_Set(WORLD_MAP_TILE_SET(2), (void *)BG_CHAR_BLOCK(3),
             DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 5:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
-                        WORLD_MAP_TILE_SET(3));
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_4]),
+        WORLD_MAP_TILE_SET(3));
     break;
   case 4:
     Dma_Set(WORLD_MAP_TILE_SET(3),
@@ -182,11 +191,14 @@ void WorldMap_PreloadCurrentTileBlock(void) {
             DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
     break;
   case 3:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[7]),
-                        gMapGridAnimTiles);
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_5]),
+        gMapGridAnimTiles);
     break;
   case 1:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
+        &gWorldMapWork);
     break;
   }
   perspective->reloadSteps--;
@@ -224,10 +236,12 @@ void WorldMap_StartStillPicture(void) {
   Task_SuspendAll(TilesetAnim_Update);
   perspective->viewHeld = 1;
   resources = perspective->resources;
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
+                      gBgTileBuffer);
   if (perspective->tileBufferUsed != 0)
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
-                        WORLD_MAP_TILE_SET(1));
+    Decompress_TaggedLz(
+        Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_2]),
+        WORLD_MAP_TILE_SET(1));
   perspective->tileBufferUsed = 0;
   Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer,
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
@@ -265,19 +279,23 @@ s32 WorldMap_LoadAreaGraphics(void) {
   buffer = Ram_MapCellBuffer;
   resources = perspective->resources;
   backdropColor = *(s16 *)BG_PLTT;
-  Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
+  Decompress_ByteLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_PALETTE]),
+                    buffer);
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
           REG_DMA3);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
+                      gBgTileBuffer);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_2]),
                       WORLD_MAP_TILE_SET(1));
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_3]),
                       WORLD_MAP_TILE_SET(2));
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_4]),
                       WORLD_MAP_TILE_SET(3));
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_5]),
+                      gMapGridAnimTiles);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
+                      &gWorldMapWork);
   // The VBlank copies the tiles back and the next frame shows the ground;
   // only then is the still picture's buffer refilled with the cells.
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
@@ -314,10 +332,10 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 
 /// Each frame: runs the 16 tileset animations.
 void TilesetAnim_Update(void) {
-  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   u32 channelIndex;
 
-  for (channelIndex = 0; channelIndex < ARRAY_COUNT(gridState->anim);
+  for (channelIndex = 0; channelIndex < ARRAY_COUNT(map->anim);
        channelIndex++) {
     const u16 *commands;
     u32 sourceTileOrOpcode;
@@ -326,18 +344,17 @@ void TilesetAnim_Update(void) {
 
     // A tileset animation with no script, or paused by an event, keeps its
     // place.
-    if ((gridState->anim + channelIndex)->start == NULL ||
-        (gridState->anim + channelIndex)->paused != 0)
+    if ((map->anim + channelIndex)->start == NULL ||
+        (map->anim + channelIndex)->paused != 0)
       continue;
     // While the wait lasts the tileset animation only counts down; when it is
     // over, commands run in this same frame until one sets a new wait or stops.
   next:
-    if ((gridState->anim + channelIndex)->timer == 0) {
-      commands = (gridState->anim + channelIndex)->cursor;
+    if ((map->anim + channelIndex)->timer == 0) {
+      commands = (map->anim + channelIndex)->cursor;
       sourceTileOrOpcode = *commands++;
       if (sourceTileOrOpcode == TILESET_ANIM_LOOP) {
-        (gridState->anim + channelIndex)->cursor =
-            (gridState->anim + channelIndex)->start;
+        (map->anim + channelIndex)->cursor = (map->anim + channelIndex)->start;
         goto next;
       }
       // TILESET_ANIM_STOP leaves the cursor on itself, so the tileset animation
@@ -348,17 +365,17 @@ void TilesetAnim_Update(void) {
         if ((sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) ==
             TILESET_ANIM_STOP)
           continue;
-        (gridState->anim + channelIndex)->cursor =
-            (gridState->anim + channelIndex)->start +
+        (map->anim + channelIndex)->cursor =
+            (map->anim + channelIndex)->start +
             (sourceTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) * 2;
         goto next;
       }
       tileCount = *commands++;
       destinationTile = commands[0];
-      (gridState->anim + channelIndex)->timer = commands[1];
+      (map->anim + channelIndex)->timer = commands[1];
       // A source tile from TILESET_ANIM_RAM_TILE (TILESET_ANIM_RAM_WIDE_TILE
       // for 64-byte tiles) is read from RAM, at the start of gMapGridAnimTiles.
-      if (gridState->wideTiles == 0) {
+      if (map->wideTiles == 0) {
         if (sourceTileOrOpcode >= TILESET_ANIM_RAM_TILE)
           Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * TILE_SIZE_4BPP,
                   BG_CHAR_BLOCK(1) + destinationTile * TILE_SIZE_4BPP,
@@ -383,26 +400,26 @@ void TilesetAnim_Update(void) {
               REG_DMA3);
       }
       // A copy with a wait of 0 lets the next command run at once.
-      (gridState->anim + channelIndex)->cursor += 4;
+      (map->anim + channelIndex)->cursor += 4;
       goto next;
     } else {
-      (gridState->anim + channelIndex)->timer--;
+      (map->anim + channelIndex)->timer--;
     }
   }
 }
 
 /// Resumes tileset animation channelIndex.
 void TilesetAnim_Resume(u32 channelIndex) {
-  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
-  struct MapAnimation *channel = &gridState->anim[channelIndex];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapAnimation *channel = &map->anim[channelIndex];
 
   channel->paused = 0;
 }
 
 /// Pauses tileset animation channelIndex.
 void TilesetAnim_Pause(u32 channelIndex) {
-  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
-  struct MapAnimation *channel = &gridState->anim[channelIndex];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapAnimation *channel = &map->anim[channelIndex];
 
   channel->paused = 1;
 }
@@ -411,12 +428,12 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
 /// there (paused with TILESET_ANIM_MARKER_PAUSED).
 void TilesetAnim_StartAll(const u16 *script) {
-  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 channelsStarted;
   u32 marker;
 
   channelsStarted = 0;
-  Iwram_ClearWordsEntry(gridState->anim, sizeof(gridState->anim));
+  Iwram_ClearWordsEntry(map->anim, sizeof(map->anim));
   // Each tileset animation's script starts just after its marker and runs on
   // through the rest of the stream; the scan steps over the halfwords between
   // markers.
@@ -431,7 +448,7 @@ void TilesetAnim_StartAll(const u16 *script) {
 
       if (marker & TILESET_ANIM_MARKER_PAUSED)
         paused = 1;
-      channel = &gridState->anim[channelIndex];
+      channel = &map->anim[channelIndex];
       channel->start = script;
       channel->cursor = script;
       channel->timer = 0;
@@ -461,14 +478,14 @@ void TilesetAnim_ResumeAll(void) {
 
 /// Each frame: runs the map's blend script.
 void BlendScript_Run(void) {
-  struct MapWork *gridState = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct BlendScriptState *blend;
   u16 *commands;
   u32 instruction;
   u32 delayOrJumpIndex;
   u16 delay;
 
-  blend = &gridState->blend;
+  blend = &map->blend;
   if (blend->script == 0)
     return;
   if (blend->paused != 0)
@@ -500,14 +517,14 @@ again:
     // target's sprite and backdrop bits.
     if ((instruction & BLEND_SCRIPT_BLDCNT_MASK) == BLEND_SCRIPT_BLDCNT) {
       REG_BLDCNT = instruction;
-      gridState->blendControl = instruction;
+      map->blendControl = instruction;
       blend->cursor++;
       goto again;
     }
 
     // An alpha blend takes the level as BLDALPHA; a fade to white or black
     // takes it as BLDY.
-    if ((gridState->blendControl & BLDCNT_EFFECT_MASK) == BLDCNT_EFFECT_BLEND)
+    if ((map->blendControl & BLDCNT_EFFECT_MASK) == BLDCNT_EFFECT_BLEND)
       REG_BLDALPHA = instruction;
     else
       REG_BLDY = instruction;
@@ -701,7 +718,7 @@ FIXED Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position) {
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 /// it and the higher of the two on it.
-FIXED Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
+FIXED Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 maximum;
@@ -713,7 +730,7 @@ FIXED Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   if (second > first) {
     maximum = second;
   }
-  position = start + end;
+  position = x + y;
   if (position == CURVE_FULL_STEPS - 1) {
     return maximum;
   }
@@ -725,13 +742,12 @@ FIXED Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
 
 /// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
 /// y > x and the higher of the two on it.
-FIXED Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 start,
-                                              s32 end) {
+FIXED Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 maximum;
   s32 difference;
-  u32 position = start;
+  u32 position = x;
 
   first = samples[0] << CURVE_VALUE_SHIFT;
   second = samples[1] << CURVE_VALUE_SHIFT;
@@ -739,7 +755,7 @@ FIXED Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 start,
   if (second > first) {
     maximum = second;
   }
-  difference = end - position;
+  difference = y - position;
   position = difference + CURVE_FULL_STEPS - 1;
   if (position == CURVE_FULL_STEPS - 1) {
     return maximum;
@@ -752,7 +768,7 @@ FIXED Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 start,
 
 /// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
 /// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
-FIXED Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
+FIXED Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 middle;
   s32 last;
@@ -761,22 +777,22 @@ FIXED Terrain_GetBendSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   first = *samples++ << CURVE_VALUE_SHIFT;
   middle = *samples << CURVE_VALUE_SHIFT;
   last = samples[1] << CURVE_VALUE_SHIFT;
-  start = start + end;
-  if ((u32)start == CURVE_FULL_STEPS - 1) {
+  // x now holds x + y, which is 15 on the diagonal.
+  x = x + y;
+  if ((u32)x == CURVE_FULL_STEPS - 1) {
     result = middle;
-  } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-    result = first + (middle - first) * start / (CURVE_FULL_STEPS - 1);
+  } else if ((u32)x < CURVE_FULL_STEPS - 1) {
+    result = first + (middle - first) * x / (CURVE_FULL_STEPS - 1);
   } else {
-    start = start - (CURVE_FULL_STEPS - 1);
-    result = middle + (last - middle) * start / (CURVE_FULL_STEPS - 1);
+    x = x - (CURVE_FULL_STEPS - 1);
+    result = middle + (last - middle) * x / (CURVE_FULL_STEPS - 1);
   }
   return result;
 }
 
 /// A slope that bends on the diagonal x = y: from sample 0 at the top right
 /// corner to sample 1 on the diagonal to sample 2 at the bottom left.
-FIXED Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
-                                              s32 end) {
+FIXED Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 x, s32 y) {
   s32 first;
   s32 second;
   s32 third;
@@ -786,16 +802,17 @@ FIXED Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
   first = *samples++ << CURVE_VALUE_SHIFT;
   second = samples[0] << CURVE_VALUE_SHIFT;
   third = samples[1];
-  difference = end - start;
-  start = difference + CURVE_FULL_STEPS - 1;
+  // x now holds y - x + 15, which is 15 on the diagonal.
+  difference = y - x;
+  x = difference + CURVE_FULL_STEPS - 1;
   third <<= CURVE_VALUE_SHIFT;
 
-  if (start == CURVE_FULL_STEPS - 1)
+  if (x == CURVE_FULL_STEPS - 1)
     return second;
 
-  if ((u32)start < CURVE_FULL_STEPS - 1) {
+  if ((u32)x < CURVE_FULL_STEPS - 1) {
     delta = second - first;
-    difference = delta * start;
+    difference = delta * x;
     if (difference < 0)
       difference += CURVE_FULL_STEPS - 1;
     difference >>= 4;
@@ -943,6 +960,7 @@ FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z) {
     grid = map->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
+  // A row of the grid is MAPGRID_SIZE cells, 1 << 7; a shape is 4 bytes.
   grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   code = Ram_MapCollision + *grid * 4;
   return MapGrid_GetShapeHeight(code, x, z);
@@ -1020,7 +1038,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
 
   shape = gMapShapeGrid +
           (map->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
-  shape += (FIELD_CELL(x)) + ((FIELD_CELL(z)) << 7);
+  shape += (FIELD_CELL(x)) + FIELD_CELL(z) * MAPGRID_SIZE;
   *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
 }
 
@@ -1058,7 +1076,7 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
   if (state != NULL) {
     cells = state->layers[layer & 3].cells;
   }
-  cells += x + (y << 7);
+  cells += x + y * MAPGRID_SIZE;
   return cells->collisionCode;
 }
 
@@ -1072,7 +1090,7 @@ void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 collisionCode) {
   if (state != NULL) {
     struct MapCell *cells = state->layers[layer & 3].cells;
 
-    cells += x + (y << 7);
+    cells += x + y * MAPGRID_SIZE;
     cells->collisionCode = collisionCode;
   }
 }
@@ -1084,13 +1102,13 @@ FIXED MapGrid_GetTerrainHeightAbove(FIXED px, FIXED pz, s32 layer, FIXED base) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *shapes;
   u8 *code;
 
   if (map == NULL)
     return 0;
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (layer <= 2)
     shapes = map->layers[layer].terrainIds;
@@ -1110,7 +1128,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
   s32 x = FIXEDtoINT(px);
   s32 z = FIXEDtoINT(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1119,7 +1137,7 @@ s32 MapGrid_CheckCollisionAt(FIXED px, FIXED pz, s32 layer, s32 height) {
 
   if (map == NULL)
     return 0;
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (layer <= 2) {
     cells = (u8 *)map->layers[layer].cells;
@@ -1149,7 +1167,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1158,7 +1176,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
   if (map == NULL)
     return 0;
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (actor->layer <= 2) {
     cells = (u8 *)map->layers[actor->layer].cells;
@@ -1188,7 +1206,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
   s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1196,7 +1214,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 
   if (map == NULL)
     return 0;
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
   if (actor->layer <= 2) {
     cells = (u8 *)map->layers[actor->layer].cells;
@@ -1234,8 +1252,8 @@ s32 MapGrid_IsWallAt(s32 *position) {
 /// The cell behavior of the world map block under position (blocks 32 pixels
 /// square on a 32 by 32 grid), which the World Map's step triggers answer
 /// (world_map.c: STEP_TRIGGER_AREA(AREA_DAILA) enters Daila,
-/// CELL_BEHAVIOR_WORLD_MAP_IRON meets Iron); CELL_BEHAVIOR_WALL, which is
-/// CELL_BEHAVIOR_WALL, where the map has no block.
+/// CELL_BEHAVIOR_WORLD_MAP_IRON meets Iron), or CELL_BEHAVIOR_WALL where the
+/// map has no block.
 s32 WorldMap_GetBlockCellBehavior(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;
@@ -1304,7 +1322,7 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 /// Returns 0 when the world map at position can be walked on (a place there,
 /// and collision WORLD_MAP_COLLISION_WALKABLE_FIRST to
 /// WORLD_MAP_COLLISION_WALKABLE_LAST), else -1.
-s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
+s32 WorldMap_IsWalkable(void *mover, struct WorldPosition *position) {
   if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     if ((u32)(WorldMap_GetCollision(position) -
               WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
@@ -1315,12 +1333,13 @@ s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
 }
 
 /// Returns 0 where the ship can sail (the sea or shallow water), else -1.
-s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
+s32 WorldMap_IsSailable(void *mover, struct WorldPosition *position) {
   if (WorldMap_GetBlockCellBehavior(position) != CELL_BEHAVIOR_WALL) {
     s32 collision = WorldMap_GetCollision(position);
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 mode;
 
+    // Each of the three kinds of ground last flown over sails the same water.
     mode = work->terrainKind;
     if (mode == 0) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) <=

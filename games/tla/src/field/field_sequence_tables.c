@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-/// The message of each searchable cell behavior from 242 to 247, as an
-/// offset from MsgTileChecked and MsgTileResult.
+/// The message of each fixed search spot, CELL_BEHAVIOR_JAR to
+/// CELL_BEHAVIOR_WELL, as an offset from MsgTileChecked and MsgTileResult.
 const u8 gField_ExamineTriggerMessageOffsets[] = {
     2,  // a jar
     3,  // a barrel

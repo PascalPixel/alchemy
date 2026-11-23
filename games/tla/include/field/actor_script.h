@@ -204,7 +204,7 @@ enum ActorScriptValue {
   SW_WATCHED_ACTOR = 37,
   SW_HOOK = 38,
   SW_RISE_COUNTER = 39, ///< Actor.riseCounter, scene code's own byte
-  SW_RISE_ENABLED = 40  ///< Actor's byte 0x63, scene code's own byte
+  SW_RISE_ENABLED = 40  ///< Actor.riseEnabled, scene code's own byte
 };
 
 #endif

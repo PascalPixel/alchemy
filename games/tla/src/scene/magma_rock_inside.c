@@ -383,30 +383,7 @@ extern s32 gPushLeaderSteps[];
 
 #include "shared/block_push_onto.h"
 
-extern struct MapCell gMapGridCellBuffer[];
-
-/// Sets the collision code of each cell in a layer rectangle to value.
-/// Layers 3 and above use the shared buffer.
-s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
-                                     u32 height, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cells;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cells = map->layers[layer].cells;
-  else
-    cells = gMapGridCellBuffer;
-  cells += x + (y << 7);
-  for (x = 0; x < height; x++) {
-    struct MapCell *cell = cells + (x << 7);
-
-    for (y = 0; y < width; y++, cell++)
-      cell->collisionCode = value;
-  }
-  return 0;
-}
+#include "../field/map_cell_fill_byte.c"
 
 /// Talking to Fury, the Mars Djinni on the ledge just west of the north doorway
 /// into its room's east hall, starts a battle with it.

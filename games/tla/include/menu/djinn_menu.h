@@ -16,6 +16,8 @@
 #define DJINN_ENTRY_ELEMENT 0xe0  ///< its element (enum Element)
 #define DJINN_ENTRY_MEMBER 0xf00  ///< the party member holding it
 #define DJINN_ENTRY_IS_SET 0x8000 ///< set; a standby one is TEXT_COLOR_RED
+#define DJINN_ENTRY_ELEMENT_SHIFT 5
+#define DJINN_ENTRY_MEMBER_SHIFT 8
 
 #define DJINN_ELEMENTS 4
 #define DJINN_LIST_MEMBERS 8 ///< list columns: one per party member

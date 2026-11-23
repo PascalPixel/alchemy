@@ -200,7 +200,7 @@ void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height);
 
-/// The item menu's work, Ram_HeapSlots->menuWork (heap slot 220): its
+/// The item menu's work, Ram_HeapSlots->menuWork (HEAP_SLOT_MENU): its
 /// windows, the party figures, the items listed and the two choices a command
 /// makes. The Broken Seal's ItemMenuWork, whose names its members take: from
 /// itemWindow to the entry icons it lies 4 bytes further on than The Broken
@@ -326,7 +326,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 1289);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 3020);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 3090);
 
-/// The work of the party member chooser and the Status menu (heap slot 220),
+/// The work of the party member chooser and the Status menu (HEAP_SLOT_MENU),
 /// which each takes as it opens and frees before it returns. The Broken Seal's
 /// StatusScreenWork, laid out as ItemMenuWork is here.
 struct StatusScreenWork {
@@ -393,7 +393,7 @@ STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 544);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 560);
 STATIC_ASSERT(sizeof(struct StatusScreenWork) == 576);
 
-/// The Psynergy menu's work (heap slot 220): its windows, icons and cursors,
+/// The Psynergy menu's work (HEAP_SLOT_MENU): its windows, icons and cursors,
 /// the party members' tabs and the Psynergy listed for the chosen party
 /// member. The Broken Seal's PsynergyMenuWork, laid out as ItemMenuWork is
 /// here. The menu's shared routines (MenuCursor_Create, MenuCursor_Slide,
@@ -474,8 +474,8 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 620);
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window);
-void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
-                             s32 work);
+void Text_DrawStatComparison(const struct Unit *after,
+                             const struct Unit *before, s32 window);
 void Text_DrawMessageAsTilesFar(s32 message, struct Window *window, s32 x,
                                 s32 y);
 
@@ -498,7 +498,7 @@ void Text_UseExtraTilesFar(s32 flag);
 /// Marks the text tiles the tilemap shows and frees those it no longer shows.
 void Window_MarkVisibleTextTilesFar(void);
 void Menu_CreateOwnerEntryObjects(s32 first);
-void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
+void Menu_MarkChosenMember(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 /// Loads entry id's icon of kind mode into sprite tile slot slot (a free one
 /// when -1).
@@ -514,7 +514,7 @@ s32 Ability_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 s32 Ability_PlayUseAnimation(s32 action);
 void DjinnFigures_InitializeTopRow(void);
 void DjinnFigures_ReleaseTopRow(void);
-void Menu_ResetTwoResourceEntries(void);
+void Menu_FreeArrows(void);
 /// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
 /// frame; the Djinn preview blinks it, drawing it and a fill of the window
 /// background in turn every four frames.

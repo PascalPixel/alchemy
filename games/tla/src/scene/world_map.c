@@ -2343,8 +2343,8 @@ void WorldMap_CarryPartyToAquaRock(void) {
   FieldEvent_SetExitRequest(WORLD_MAP_TO_AQUA_ROCK_MOAI_NORTH);
 }
 
-/// Turns a placed actor's sprite with the World Map's view and shows it.
 // The same routine as WorldMap_SetIslandTile, under another name.
+/// Turns a placed actor's sprite with the World Map's view and shows it.
 s32 WorldMap_SetPlacedActorTile(struct Actor *actor) {
   u16 *yaw = &((struct WorldMapView *)Ram_HeapSlots->mapGrid)->yaw;
   struct FieldSprite *sprite = actor->sprite;
@@ -2694,6 +2694,7 @@ u32 gWorldMap_LohoWorkerLeaveScriptB[] = {
     SC_END,
 };
 
+// The same script as gWorldMap_LohoWorkerLeaveScriptB, under another name.
 u32 gWorldMap_LohoWorkerLeaveScriptC[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(8945, 5853),

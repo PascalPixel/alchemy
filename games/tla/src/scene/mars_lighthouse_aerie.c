@@ -3330,6 +3330,7 @@ s32 gMarsLighthouseAerie_IsaacTurnScript[] = {
     SC_END,
 };
 
+// The same script as gMarsLighthouseAerie_GaretReadyScript, under another name.
 s32 gMarsLighthouseAerie_GaretTurnScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(560, 0, 280),

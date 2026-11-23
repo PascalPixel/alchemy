@@ -1909,6 +1909,8 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
 // clang-format off
+// The same three lifetimes as gFieldEffect_ShortScript, MediumScript and
+// LongScript (shared/field_effect_duration_scripts.c), under other names.
 u32 gAnemosInnerSanctum_ShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),

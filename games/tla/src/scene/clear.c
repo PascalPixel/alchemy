@@ -2093,6 +2093,7 @@ LATE_DATA u16 gClear_PasswordFlags[] = {
     FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
+// The same list as gClear_ImportedKeyItems, under another name.
 LATE_DATA u16 gClear_PasswordKeyItems[] = {
     ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP, ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
     ITEM_HALT_GEM, ITEM_CLOAK_BALL, ITEM_CARRY_STONE, ITEM_CATCH_BEADS,

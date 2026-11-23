@@ -1374,9 +1374,9 @@ void GaiaRockInside_ReadSandTablet(void) {
   Event_End();
 }
 
+// The same routine as FieldEffect_AdvanceMotion, under another name.
 /// The dust's update: it moves by its velocity, slowing a little across the
 /// ground each frame, and grows and spins.
-// The same routine as FieldEffect_AdvanceMotion, under another name.
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX;
@@ -3541,6 +3541,7 @@ s16 gGaiaRockInside_StumpSpots[][2] = {{0, 0}, {113, 47}, {115, 47}, {115, 45}, 
 
 s16 gGaiaRockInside_PlatformPlaces[][2] = {{45, 51}, {31, 53}, {31, 57}, {39, 59}, {41, 59}, {43, 63}, {45, 63}, {35, 69}, {37, 69}};
 
+// The same script as gFieldEffect_MediumScript, under another name.
 u32 gGaiaRockInside_SerpentGlowScript[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
@@ -3551,6 +3552,7 @@ u32 gGaiaRockInside_SerpentGlowScript[] = {
     SC_END,
 };
 
+// The same script as gFieldEffect_MediumScript, under another name.
 u32 gGaiaRockInside_SerpentSmokeScript[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),

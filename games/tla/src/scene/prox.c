@@ -3147,6 +3147,7 @@ s32 gProx_JennaRunsAhead[] = {
     SC_END,
 };
 
+// The same script as gProx_ThirdParentWalksSouth, under another name.
 s32 gProx_GaretRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),

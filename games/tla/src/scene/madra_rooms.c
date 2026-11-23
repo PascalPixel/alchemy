@@ -1352,6 +1352,7 @@ s32 gMadraRooms_LeaderStepsAside[] = {
     SC_END,
 };
 
+// The same script as gMadraRooms_WifeWalksToBackRoom, under another name.
 /// The mushroom lover's script off to the back room to fetch Char.
 s32 gMadraRooms_OldManWalksToBackRoom[] = {
     SC_ANIMATION(ANIM_WALK),

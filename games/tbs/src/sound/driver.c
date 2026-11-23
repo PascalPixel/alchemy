@@ -410,8 +410,9 @@ enum {
   SOUND_MODULATION_SEMITONE = 16
 };
 
-/// Recalculates dirty stereo volumes and pitch from track settings and
-/// modulation.
+/// Works out a track's volume on each speaker and its pitch again, each only
+/// when its flags ask, from the song's settings, the player's controls and the
+/// vibrato.
 void TrkVolPitSet(struct MusicPlayerInfo *player,
                   struct MusicPlayerTrack *track) {
   u32 volume;
@@ -687,8 +688,8 @@ void CgbSound(void) {
         goto decay;
       }
       goto off;
-      // Tail notes expire; stopped notes enter release before their tail.
     } else if (note->state & SOUND_CHANNEL_SF_IEC) {
+      // A released note's echo holds until its length runs out.
       note->echoLength--;
       if ((s8)(note->echoLength & byteMask) > 0)
         goto write;
@@ -698,6 +699,7 @@ void CgbSound(void) {
       goto done;
     } else if ((note->state & SOUND_CHANNEL_SF_STOP) &&
                (note->state & SOUND_CHANNEL_SF_ENV)) {
+      // A note let go enters its release, then its echo.
       note->state &= ~SOUND_CHANNEL_SF_ENV;
       note->counter = note->release;
       if ((s8)(note->counter & byteMask)) {
@@ -781,7 +783,7 @@ void CgbSound(void) {
   // Only changed pitch and volume settings reach the hardware.
   write:
     if (note->modified & CGB_CHANNEL_MO_PIT) {
-      if (channel < CGB_CHANNEL_NOISE && (note->kind & 8)) {
+      if (channel < CGB_CHANNEL_NOISE && (note->kind & TONEDATA_TYPE_FIX)) {
         s32 bias = REG_SOUNDBIAS_H;
 
         // At the sound bias's two finest resolutions the frequency is rounded
@@ -795,7 +797,7 @@ void CgbSound(void) {
         *frequencyOrNoiseRegister = note->frequency;
       else
         *frequencyOrNoiseRegister =
-            (*frequencyOrNoiseRegister & 8) | note->frequency;
+            (*frequencyOrNoiseRegister & NR43_WIDTH_7BIT) | note->frequency;
       // The frequency's top three bits go in the trigger register's low bits.
       note->trigger = (note->trigger & (NRX4_RESTART | NRX4_LENGTH_STOP)) +
                       *((u8 *)&note->frequency + 1);
@@ -816,12 +818,13 @@ void CgbSound(void) {
         }
       } else {
         // NRx2: the starting volume in the high nibble, the envelope below.
-        envelopeControl &= 0xf;
+        envelopeControl &= NRX2_ENVELOPE;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
         *triggerRegister = note->trigger | NRX4_RESTART;
-        // CGB_CHANNEL_SWEEP_SQUARE is restarted a second time unless NR10 bit 3
-        // is set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        if (channel == CGB_CHANNEL_SWEEP_SQUARE && !(*sweepOrWaveControl & 8))
+        // CGB_CHANNEL_SWEEP_SQUARE is restarted a second time unless its sweep
+        // falls (8 alone is no sweep), as in pret's m4a.c.
+        if (channel == CGB_CHANNEL_SWEEP_SQUARE &&
+            !(*sweepOrWaveControl & NR10_SWEEP_DOWN))
           *triggerRegister = note->trigger | NRX4_RESTART;
       }
     }
@@ -1169,14 +1172,14 @@ void ply_xrele(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
 /// Reads each new note's echo level from the sequence (extended command 8,
 /// MPlayDef's xIECV).
 void ply_xiecv(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
-  track->tailLevel = *track->cursor;
+  track->echoLevel = *track->cursor;
   track->cursor++;
 }
 
 /// Reads each new note's echo length from the sequence (extended command 9,
 /// MPlayDef's xIECL).
 void ply_xiecl(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
-  track->tailLength = *track->cursor;
+  track->echoLength = *track->cursor;
   track->cursor++;
 }
 

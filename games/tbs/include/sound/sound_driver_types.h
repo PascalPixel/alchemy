@@ -61,6 +61,12 @@
 
 // The CGB channels' register bits, as GBATEK gives them.
 #define NRX2_ENVELOPE_UP 0x08 ///< NRx2: the envelope counts the volume up
+/// NRx2: the envelope's direction and its step time, below the start volume.
+#define NRX2_ENVELOPE 0x0F
+/// NR10: the sweep lowers the frequency; with no shift or time, no sweep.
+#define NR10_SWEEP_DOWN 0x08
+/// NR43: the noise counter is 7 bits wide, not 15.
+#define NR43_WIDTH_7BIT 0x08
 #define NRX4_LENGTH_STOP 0x40 ///< NRx4: the length counter stops the sound
 #define NRX4_RESTART 0x80     ///< NRx4: (re)starts the channel's sound
 /// NR30: plays wave RAM's second bank, so the CPU writes the first.
@@ -118,7 +124,7 @@ typedef void (*MPlayFunc)(struct MusicPlayerInfo *player,
 /// Byte 0xC4: sets modDepth from the next byte; 0 clears the modulation.
 #define MPLAY_JUMP_MOD 19
 /// Byte 0xCD, installed by MPlayExtender: runs the entry of
-/// gXcmdTable the next byte names (voice fields, tail level
+/// gXcmdTable the next byte names (voice fields, echo level
 /// and length).
 #define MPLAY_JUMP_XCMD 28
 /// Byte 0xCE: releases the track's sounding note of the key given (or of its
@@ -176,6 +182,11 @@ enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 #define SOUND_TEMPO_PER_TICK 150
 /// MusicPlayerInfo.tempoScale that plays a song at its own tempo.
 #define SOUND_TEMPO_SCALE_NORMAL 256
+
+/// ToneData.kind's bit 3, under pret's name: a PCM voice plays at a fixed
+/// rate, whatever the key, and a CGB voice's frequency is rounded to the sound
+/// bias's resolution.
+#define TONEDATA_TYPE_FIX 0x08
 
 /// A voice a track plays its notes with: its kind and base key, the sample or
 /// wave it plays, and its attack, decay, sustain and release.
@@ -435,8 +446,8 @@ struct MusicPlayerTrack {
   u8 lfoDelay;        ///< Ticks before the LFO starts, from the song.
   u8 lfoDelayCounter; ///< lfoDelay's countdown, reloaded by each note.
   u8 priority;        ///< Added to the player's priority for its notes.
-  u8 tailLevel;       ///< Each new note's echo level.
-  u8 tailLength;      ///< Each new note's echo length in VBlanks.
+  u8 echoLevel;       ///< Each new note's echo level.
+  u8 echoLength;      ///< Each new note's echo length in VBlanks.
   /// The notes this track started, newest first, linked through
   /// SoundChannel.next; PCM notes from SoundInfo.pcmNotes and CGB notes.
   struct SoundChannel *notes;
@@ -604,7 +615,7 @@ void Clear64byte(void *block);
 
 void MPlayStart(struct MusicPlayerInfo *player,
                 const struct SongHeader *header);
-void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed);
+void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 period);
 void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale);
 void m4aMPlayVolumeControl(struct MusicPlayerInfo *player, u16 mask,
                            u16 volume);

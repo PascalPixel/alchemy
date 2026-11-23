@@ -10,15 +10,15 @@
 
 /// Sound_UpdateCommandMask's command: the new gSoundCommandMask, or
 /// with SOUND_COMMAND_MASK_TOGGLE the bits to flip in it.
-enum AudioCommandMask {
+enum SoundCommandMask {
   SOUND_COMMAND_MASK_TOGGLE = 0x80,
   SOUND_COMMAND_MASK_BITS = 0x7f
 };
 
-/// The sound driver's mode at start (m4aSoundInit, m4aSoundMode): 8 PCM notes
-/// (bits 11..8), volume 15 (15..12), rate 7 (19..16), 352 samples a VBlank or
-/// 21024 a second, and sound bias resolution 1 (from bits 23..20).
-#define AUDIO_INITIAL_MODE 0x0097F800
+/// The sound mode m4aSoundInit sets for the whole game: 8 PCM notes (bits
+/// 11..8), volume 15 (15..12), rate 7 (19..16), 352 samples a VBlank or 21024
+/// a second, and sound bias resolution 1 (from bits 23..20).
+#define SOUND_GAME_MODE 0x0097F800
 
 /// A sound for Sound_Play: bits 11..0 the sound number, 15..12 flags.
 enum SoundControl {
@@ -77,9 +77,9 @@ extern struct MusicPlayerInfo gMPlayInfo_BGM;
 extern struct MusicPlayerInfo gMPlayInfo_Jingle;
 extern struct MusicPlayerInfo
     gMPlayInfo_ActionSE; ///< the music player SOUND_FADE_OUT_ACTION_SE fades
-/// The sound from SOUND_SE_FIRST up each player last started, by player, not
-/// a volume: sounds below it are not recorded, and SOUND_FADE_OUT_ACTION_SE
-/// clears entry 3. Nothing reads it.
+/// The sound effect each music player last started, by player: music and
+/// jingles are not recorded, and SOUND_FADE_OUT_ACTION_SE clears
+/// MUSIC_PLAYER_ACTION_SE's entry. Nothing reads it.
 extern u16 gMusicPlayerLastSound[8];
 /// VBlanks after a jingle starts before the music waits for its end; held
 /// at 1 until the jingle's player stops, then 0.

@@ -17,9 +17,10 @@
 #define PITCH_MAX 255
 #define PITCH_FRACTION_SHIFT 24
 
-/// Interpolates adjacent key frequencies and scales them by the wave sample
-/// frequency. A key past the table's second-to-last plays as nearly its last,
-/// the second-to-last raised by PITCH_MAX.
+/// The rate a PCM sample plays at for a key and a fine pitch: the sample's own
+/// rate times the key's step, found between the key's and the next key's. A
+/// key past the table's second-to-last plays as nearly its last, the
+/// second-to-last raised by PITCH_MAX.
 s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
@@ -45,9 +46,9 @@ s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
                       umul3232H32(upperFrequency - lowerFrequency, pitchScale));
 }
 
-/// Does nothing; nothing in the game refers to it. The driver's empty callback
-/// is DummyFunc (empty_callback.c).
-void UnusedDummyFunc(void) {}
+/// Unused: does nothing. The driver's empty callback is DummyFunc
+/// (empty_callback.c).
+UNUSED void UnusedDummyFunc(void) {}
 
 /// The music player count and the mixer's line limit, as the music player
 /// table supplies them.
@@ -79,10 +80,10 @@ static __inline__ void MPlayStartFade(struct MusicPlayerInfo *player,
   }
 }
 
-/// Begins a fade that stops and clears tracks when its volume reaches zero.
-/// Called by m4aMPlayFadeOut.
-void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
-  MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME);
+/// Fades a player's song out over 16 * `period` VBlanks, then stops it for
+/// good.
+void MPlayFadeOut(struct MusicPlayerInfo *player, u16 period) {
+  MPlayStartFade(player, period, SOUND_FADE_FULL_VOLUME);
 }
 
 /// The bytes of mixer code m4aSoundInit copies to IWRAM.
@@ -98,7 +99,7 @@ void m4aSoundInit(void) {
               CPU_SET_32BIT | (SOUND_MIXER_CODE_SIZE / 4));
   SoundInit(&gSoundInfo);
   MPlayExtender(gCgbChans);
-  m4aSoundMode(AUDIO_INITIAL_MODE);
+  m4aSoundMode(SOUND_GAME_MODE);
   // Each music player owns its tracks but shares the memacc area.
   for (playerIndex = 0; playerIndex < NUM_MUSIC_PLAYERS; playerIndex++) {
     struct MusicPlayerInfo *player = gMPlayTable[playerIndex].info;
@@ -199,21 +200,22 @@ UNUSED void m4aMPlayAllContinue(void) {
     MPlayContinue(gMPlayTable[playerIndex].info);
 }
 
-/// Begins the standard stop-and-clear fade.
-void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
-  MPlayFadeOut(player, speed);
+/// Fades a player's song out over 16 * `period` VBlanks, then stops it: how
+/// SOUND_FADE_OUT_BGM and SOUND_FADE_OUT_ACTION_SE end their sounds.
+void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 period) {
+  MPlayFadeOut(player, period);
 }
 
 /// Unused: begins a fade that pauses the music player at zero volume, keeping
 /// its tracks' state for a later resume.
 UNUSED void m4aMPlayFadeOutTemporarily(struct MusicPlayerInfo *player,
-                                       u16 speed) {
-  MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME | TEMPORARY_FADE);
+                                       u16 period) {
+  MPlayStartFade(player, period, SOUND_FADE_FULL_VOLUME | TEMPORARY_FADE);
 }
 
 /// Unused: starts a fade from zero volume and resumes the music player.
-UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 speed) {
-  MPlayStartFade(player, speed, FADE_IN);
+UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 period) {
+  MPlayStartFade(player, period, FADE_IN);
 }
 
 /// The bend range and LFO speed a track starts with, as MPlayMain gives a track

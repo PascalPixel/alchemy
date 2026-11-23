@@ -75,7 +75,7 @@ extern char ResourceId_LavaCaveBackdrop;
 /// (SceneId_YampiDesertCaveWaterOfLifeChest), the rows of
 /// gYampiDesertCave_Placements.
 enum YampiDesertCaveChestRoomActorId {
-  /// The three fallen columns pushed as logs (gYampiDesertCave_LogSprites).
+  /// The three fallen columns pushed as logs (gPushKinds).
   ACTOR_CHEST_ROOM_FIRST_LOG = ACTOR_FIRST_PLACED,
   ACTOR_CHEST_ROOM_SECOND_LOG,
   ACTOR_CHEST_ROOM_THIRD_LOG,
@@ -139,11 +139,7 @@ enum YampiDesertCaveCrystalActorId {
 /// treasure spot.
 enum { ACTOR_MYTHRIL_SILVER = FIELD_TREASURE_ACTOR };
 
-/// The kinds of log, the rows of gYampiDesertCave_LogSprites and
-/// gYampiDesertCave_LogFootprints.
-#define LOG_KIND_COUNT 6
-
-extern u16 gYampiDesertCave_LogSprites[];
+extern u16 gPushKinds[];
 
 void YampiDesertCave_StopLeaderAtLog(struct Actor *actor);
 
@@ -183,7 +179,7 @@ u16 gPaletteCycleLength BSS_DATA;
 u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 void Actor_DisableById(s32 id);
 
-extern s8 gYampiDesertCave_LogFootprints[][4];
+extern s8 gPushFootprints[][4];
 
 /// Makes a log's cells solid where it lies: its footprint's cells take the
 /// raised layers' attributes and block the ground; returns 0 for an actor that
@@ -199,25 +195,21 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   s32 bx, bz;
 
   i = 0;
-  if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
+  if ((u16)sprite != gPushKinds[i]) {
     do {
       kind = (u16)NEXT_HALFWORD(i);
       i = kind;
-    } while (kind < LOG_KIND_COUNT &&
-             (u16)sprite != gYampiDesertCave_LogSprites[kind]);
+    } while (kind < PUSH_KINDS && (u16)sprite != gPushKinds[kind]);
   }
   kind = (u16)i;
-  if (kind == LOG_KIND_COUNT)
+  if (kind == PUSH_KINDS)
     return 0;
-  w = (ABS(gYampiDesertCave_LogFootprints[kind][0]) +
-       ABS(gYampiDesertCave_LogFootprints[kind][2])) >>
-      4;
+  w = (ABS(gPushFootprints[kind][0]) + ABS(gPushFootprints[kind][2])) >> 4;
   // i is reused: the footprint's top here, the middle layer's x offset in
   // cells below.
-  i = gYampiDesertCave_LogFootprints[kind][1];
-  h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind][3])) >> 4;
-  x = FIELD_CELL(actor->x.fixed +
-                 toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
+  i = gPushFootprints[kind][1];
+  h = (ABS(i) + ABS(gPushFootprints[kind][3])) >> 4;
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[kind][0]));
   z = FIELD_CELL(actor->z.fixed + toFIXED(i));
   i = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
   az = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
@@ -240,7 +232,7 @@ extern s32 gPushLeaderSteps[];
 /// Where a pushed log comes to rest, found before the leader pushes it.
 struct LogSlide {
   FIXED x, y, z;  ///< the log's position at the end of the slide
-  s32 kind;       ///< its row of gYampiDesertCave_LogFootprints
+  s32 kind;       ///< its row of gPushFootprints
   s32 slot;       ///< its actor id
   void *onPushed; ///< run as the log slides, if not NULL
 };
@@ -273,12 +265,8 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
   actor = YampiDesertCave_FindPushedLog(&direction, &slide->slot, &slide->kind);
   if (actor != NULL) {
     kind = slide->kind;
-    w = (ABS(gYampiDesertCave_LogFootprints[kind][0]) +
-         ABS(gYampiDesertCave_LogFootprints[kind][2])) >>
-        4;
-    h = (ABS(gYampiDesertCave_LogFootprints[kind][1]) +
-         ABS(gYampiDesertCave_LogFootprints[kind][3])) >>
-        4;
+    w = (ABS(gPushFootprints[kind][0]) + ABS(gPushFootprints[kind][2])) >> 4;
+    h = (ABS(gPushFootprints[kind][1]) + ABS(gPushFootprints[kind][3])) >> 4;
     dx = gPushLeaderSteps[direction] & FIELD_PIXEL_MASK;
     dz = toFIXED(gPushLeaderSteps[direction]);
     slide->onPushed = NULL;
@@ -289,9 +277,9 @@ s32 YampiDesertCave_FindLogSlide(struct LogSlide *slide) {
     slide->z = actor->z.fixed + dz;
     probe[1] = actor->y.fixed;
     do {
-      probe[2] = slide->z + toFIXED(gYampiDesertCave_LogFootprints[kind][1]);
+      probe[2] = slide->z + toFIXED(gPushFootprints[kind][1]);
       for (j = 0; j < h; j++) {
-        probe[0] = slide->x + toFIXED(gYampiDesertCave_LogFootprints[kind][0]);
+        probe[0] = slide->x + toFIXED(gPushFootprints[kind][0]);
         for (i = 0; i < w; i++) {
           if (FieldActor_CheckMovementCollision(actor, probe) ==
               COLLISION_IMPASSABLE)
@@ -331,27 +319,19 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
   entry = &work->actors[ACTOR_FIRST_PLACED];
   for (; i < FIELD_TREASURE_ACTOR; i++) {
     actor = *entry;
-    for (k = 0; k < LOG_KIND_COUNT; k++) {
+    for (k = 0; k < PUSH_KINDS; k++) {
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
-          gYampiDesertCave_LogSprites[k]) {
+          gPushKinds[k]) {
         x = (leader->x.part[0].integer +
              PUSH_STEP_X(gPushLeaderSteps[*direction])) >>
             4;
         z = (leader->z.part[0].integer +
              PUSH_STEP_Z(gPushLeaderSteps[*direction])) >>
             4;
-        left =
-            (actor->x.part[0].integer + gYampiDesertCave_LogFootprints[k][0]) >>
-            4;
-        top =
-            (actor->z.part[0].integer + gYampiDesertCave_LogFootprints[k][1]) >>
-            4;
-        right =
-            (actor->x.part[0].integer + gYampiDesertCave_LogFootprints[k][2]) >>
-            4;
-        bottom =
-            (actor->z.part[0].integer + gYampiDesertCave_LogFootprints[k][3]) >>
-            4;
+        left = (actor->x.part[0].integer + gPushFootprints[k][0]) >> 4;
+        top = (actor->z.part[0].integer + gPushFootprints[k][1]) >> 4;
+        right = (actor->x.part[0].integer + gPushFootprints[k][2]) >> 4;
+        bottom = (actor->z.part[0].integer + gPushFootprints[k][3]) >> 4;
         if (left <= x && x < right && top <= z && z < bottom) {
           *kind = k;
           if (k & 1) {
@@ -415,16 +395,10 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
 
   from[0] = actor->x.fixed;
   from[2] = actor->z.fixed;
-  cell[0] = FIELD_CELL(actor->x.fixed +
-                       toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
-  cell[2] = FIELD_CELL(actor->z.fixed +
-                       toFIXED(gYampiDesertCave_LogFootprints[kind][1]));
-  w = (ABS(gYampiDesertCave_LogFootprints[kind][0]) +
-       ABS(gYampiDesertCave_LogFootprints[kind][2])) >>
-      4;
-  h = (ABS(gYampiDesertCave_LogFootprints[kind][1]) +
-       ABS(gYampiDesertCave_LogFootprints[kind][3])) >>
-      4;
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[kind][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[kind][1]));
+  w = (ABS(gPushFootprints[kind][0]) + ABS(gPushFootprints[kind][2])) >> 4;
+  h = (ABS(gPushFootprints[kind][1]) + ABS(gPushFootprints[kind][3])) >> 4;
   PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
                                          w, h, CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
@@ -475,10 +449,8 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
   Event_PlaySound(SE_HEAVY_STOP);
   Actor_SetPositionAndResetMotion(actor, slide.x, actor->y.fixed, slide.z);
   Actor_SelectAnimation(actor, 1);
-  slide.x =
-      FIELD_CELL(slide.x + toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
-  slide.z =
-      FIELD_CELL(slide.z + toFIXED(gYampiDesertCave_LogFootprints[kind][1]));
+  slide.x = FIELD_CELL(slide.x + toFIXED(gPushFootprints[kind][0]));
+  slide.z = FIELD_CELL(slide.z + toFIXED(gPushFootprints[kind][1]));
   ax = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
   az = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
   bx = FIELD_CELL(map->layers[MAPGRID_LAYER_OVERHEAD].offsetX);
@@ -491,10 +463,8 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
                                          w, h, CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, slide.x,
                                          slide.z, w, h, CELL_BEHAVIOR_WALL);
-  cell[0] =
-      FIELD_CELL(from[0] + toFIXED(gYampiDesertCave_LogFootprints[kind][0]));
-  cell[2] =
-      FIELD_CELL(from[2] + toFIXED(gYampiDesertCave_LogFootprints[kind][1]));
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[kind][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[kind][1]));
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],
                              cell[2]);
   MapGrid_CopyCellAttributes(cell[0] + 64, cell[2] + 64, w, h, cell[0] + bx,
@@ -518,9 +488,9 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *actor) {
   Vector_AddPolarOffset(toFIXED(MAPGRID_CELL_PIXELS), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != NULL) {
-    for (i = 0; i < LOG_KIND_COUNT; i++) {
+    for (i = 0; i < PUSH_KINDS; i++) {
       if (((struct Sprite *)hit->sprite)->entries[0]->animationId ==
-          gYampiDesertCave_LogSprites[i])
+          gPushKinds[i])
         return;
     }
     Actor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
@@ -987,20 +957,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void YampiDesertCave_MeetGuardianOfFire(void);
 
 // clang-format off
-/// The sprites pushed as logs, in the order of their footprints.
-u16 gYampiDesertCave_LogSprites[] = {
-    SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
-    SPRITE_PIPE_WEST_EAST, SPRITE_PIPE_NORTH_SOUTH,
-    SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
-};
-
-/// Each log's footprint around its position, in pixels: left, top, right and
-/// bottom.
-s8 gYampiDesertCave_LogFootprints[][4] = {
-    {-32, -8, 32, 8},  {-8, -32, 8, 32},
-    {-32, -16, 32, 0}, {-8, -32, 8, 32},
-    {-32, -8, 32, 8},  {-8, -32, 8, 32},
-};
+#include "shared/push_kinds.c"
 
 #include "shared/push_leader_steps.c"
 

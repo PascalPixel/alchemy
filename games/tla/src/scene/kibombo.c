@@ -1886,9 +1886,9 @@ void Kibombo_OverlayFollowsLeader(void) {
   // Walking round the ring's west side from cell (18, 9), up to the painted
   // pole and back, Felix stays drawn whole in front of the pole: nothing of
   // him is hidden there.
-  // XXX: whether the masks hide part of him once he passes north of (behind)
-  // a pole; a recording of Felix walking round the far side of the ring would
-  // settle it.
+  // Walking east along the ring's north side from cell (18, 7), behind the
+  // pole, Felix is hidden by it as he passes, and further east the thatched
+  // roof of the hut beside the ring hides all of him but the top of his head.
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
   work->actor =
@@ -2682,14 +2682,12 @@ void Kibombo_GazeAtStatue(void) {
       GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B);
 }
 
-/// During the ceremony the Great Gabomba's face is shown close up and the
-/// screen flashes white three times, with a sound each time, the view jumping
-/// to another part of the statue after each flash; after the third the screen
-/// goes dark and returns to the grounds.
-///
-/// XXX: what the second and third views, around (584, 248) and (248, 536),
-/// show; a recording of the statue's face as the grounds hand over to it
-/// would settle it.
+/// During the ceremony, as the Great Gabomba answers, the screen flashes white
+/// with a sound and its face is shown close up with its eyes shut, the fires
+/// on it flickering. It flashes again, and the face has its eyes half open;
+/// and again, and the eyes are wide open, staring. After a while the screen
+/// goes dark and the party is back on the grounds. Each view is a copy of the
+/// face in the map, at (248, 248), (584, 248) and (248, 536).
 void Kibombo_StatueFlashes(void) {
   Sound_Play(SE_POWER_UP);
   PaletteFade_ApplyTarget(RGB_WHITE, 0);

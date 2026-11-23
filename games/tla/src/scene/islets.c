@@ -2512,18 +2512,10 @@ void Islets_SinkInSea(void) {
 
 /// Walking east off the sailor's boat at West Indra Islet's piers (cell
 /// (5, 45)), Felix jumps the gap onto the pier. On E Tundaria Islet, walking
-/// south off the shore west of the healer (cell (16, 16)), he jumps out onto
-/// the iceberg moored below, where there is one to land on.
+/// south off the shore west of the healer (cell (16, 16)), he jumps down onto
+/// the iceberg below once it has drifted under the shore, and rides it as it
+/// drifts out and back; while it is away, pushing south there does nothing.
 void Islets_JumpForward(void) {
-  // Pushing south off the shore at cell (16, 16) for some nine seconds, a
-  // whole round of the icebergs' drift, Felix sees them drift out and back
-  // below but none comes to rest under the shore, and he does not jump.
-  // XXX: the jump onto an iceberg from E Tundaria Islet's shore is still read
-  // from the map, not seen. Cell (16, 16) is the only jump cell (behaviour 11)
-  // on the south shore's cells (2, 12) to (22, 24), and pushing south on it
-  // again (down:600) ended at once with nothing run. A recording of the push at
-  // the moment an iceberg lies two cells south, or with the icebergs held still
-  // by Reveal where one lies below, would settle it.
   Field_TryJumpForward();
   return;
 }

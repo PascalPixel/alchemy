@@ -21,12 +21,11 @@
 #define CYCLONE_ARC_PIXELS 30
 #define CYCLONE_ARC_PIXEL_STEP 368
 
-/// For each cell the Cyclone touched (the event work's point list from
-/// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
-/// (x, z) of the layer, copies the matching cell picture from the rectangle at
-/// (toX, toZ) over it, opens it (layer 2's collision 0) and records the copy
-/// in gSceneLocalState, up to 64. Trial Road, Gaia Rock and the Gabomba
-/// catacombs call it after a Cyclone.
+/// Clears the weeds the Cyclone blew away: for each cell it touched (the field
+/// work's list from FieldPsynergy_GatherNearbyCells) inside the width by
+/// height rectangle at (x, z) of the layer, copies the matching cell picture
+/// from the rectangle at (toX, toZ) over it, opens it on layer 2 and records
+/// the copy in gTouchCopies, up to 64. Gaia Rock calls it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
@@ -83,8 +82,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 
 /// A Mad Plant (sprite) springs out of the bushes cleared at the cell (x, z):
 /// it grows, turns to the leader, hops twice and leaps at the leader in an arc
-/// before the battle. The Gabomba Catacombs, Taopo Swamp, Gaia Rock,
-/// Jupiter Lighthouse and Trial Road each hide one.
+/// before the battle. The Gabomba Catacombs, Taopo Swamp and Gaia Rock each
+/// hide one.
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);

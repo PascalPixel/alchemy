@@ -26,6 +26,7 @@
 #include "system/main_routine_work.h"
 #include "system/system.h"
 #include "system/vram_cache.h"
+#include "window/battle_status.h"
 #include "window/message_speed.h"
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and

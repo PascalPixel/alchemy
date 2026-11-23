@@ -41,31 +41,6 @@ enum BattleSummaryLabel {
   OWNER_STATUS_LABEL_EXP = 10 ///< MsgOwnerStatusExp
 };
 
-/// A status the Status screen shows as an icon, which picks both the icon
-/// and its help (MsgOwnerStatusConditionHelp + condition).
-enum BattleSummaryStatus {
-  OWNER_CONDITION_EMPTY = -1, ///< a place with no icon
-  OWNER_CONDITION_NORMAL = 0, ///< no status: "Normal status."
-  OWNER_CONDITION_POISON = 1,
-  OWNER_CONDITION_DEADLY_POISON = 2,
-  OWNER_CONDITION_STUN = 3,
-  OWNER_CONDITION_PSYNERGY_SEALED = 4,
-  OWNER_CONDITION_SLEEP = 5,
-  OWNER_CONDITION_DELUSION = 6,
-  OWNER_CONDITION_HAUNT = 7,
-  OWNER_CONDITION_GRIM_REAPER = 8, ///< downed when its turns run out
-  OWNER_CONDITION_ATTACK_UP = 9,
-  OWNER_CONDITION_ATTACK_DOWN = 10,
-  OWNER_CONDITION_DEFENSE_UP = 11,
-  OWNER_CONDITION_DEFENSE_DOWN = 12,
-  OWNER_CONDITION_RESISTANCE_UP = 13,
-  OWNER_CONDITION_RESISTANCE_DOWN = 14,
-  OWNER_CONDITION_CURSED_ITEM = 15,
-  OWNER_CONDITION_DOWNED = 16,
-  OWNER_CONDITION_AGILITY_UP = 17,
-  OWNER_CONDITION_AGILITY_DOWN = 18
-};
-
 /// What the Status screen redraws on its next frame.
 #define OWNER_STATUS_REDRAW_ALL 1  ///< on opening, and on L or R
 #define OWNER_STATUS_REDRAW_HELP 2 ///< only the help line

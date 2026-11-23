@@ -15,6 +15,8 @@
 /// is 16.
 const u32 gBattleTables_UnusedWord = 17;
 
+/// Where a centred formation's enemies stand, as places from the middle of
+/// the line: the first in the middle, the rest either side in turn.
 const s8 gBattleParty_CenterOrderOffsets[] = {0, -1, 1, -2, 2, -3, 3, -4, 4};
 
 // clang-format off
@@ -124,7 +126,8 @@ const s8 gBattlePlacement_StepPairs[] = {
     0, 0,
 };
 
-/// A shear: x gains -0.8 of y.
+/// The tilt the camera adds while commands are chosen: a shear that moves x
+/// by -0.8 of y.
 const FIXED gBattleCamera_CommandMatrix[] = {
     FIXED_ONE,     0,         0,
     toFIXED(-0.8), FIXED_ONE, 0,

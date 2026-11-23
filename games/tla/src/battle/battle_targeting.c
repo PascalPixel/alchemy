@@ -213,8 +213,8 @@
         (applies) = 1;                                                         \
       break;                                                                   \
     case ABILITY_EFFECT_NONE:                                                  \
-    case 1:                                                                    \
-    case 2:                                                                    \
+    case ABILITY_EFFECT_RESTORE_HP:                                            \
+    case ABILITY_EFFECT_RESTORE_PP:                                            \
       break;                                                                   \
     default:                                                                   \
       (applies) = 1;                                                           \
@@ -544,11 +544,12 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   return 1;
 }
 
-/// Waits until the battle message has typed out, then marks it done.
+/// Waits until the battle message has typed out, then marks the next message
+/// (BattleMessageWork.marked).
 void BattleMessage_WaitForTyping(void) {
   while (!Message_AllTypedFar())
     wait(1);
-  ((s32 *)Ram_HeapSlots->battleMessage)[2] = 1;
+  ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked = 1;
 }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
@@ -653,8 +654,8 @@ u32 BattlePlayback_RunAll(void) {
   return BattlePlayback_Reset();
 }
 
-/// Queues one playback command with its operand, and returns the opcode.
-/// Nothing checks the queue's capacity.
+/// Queues one playback command with its operand. Nothing checks the queue's
+/// capacity.
 void BattlePlayback_Push(u32 opcode, u32 operand) {
   struct BattlePlaybackQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
   u32 index = queue->count;
@@ -664,12 +665,9 @@ void BattlePlayback_Push(u32 opcode, u32 operand) {
   queue->count = index + 1;
 }
 
-// Battle: identify effects that apply additional effects to defeated targets.
-
 /// Returns 1 for an effect that still applies when the ability's damage has
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the user.
-/// effect: effect ID.
 s32 Ability_EffectAppliesToDowned(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
@@ -820,13 +818,13 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   s32 defense;
   s32 pass;
   u8 targetId;
-  s8 *rm;
+  s8 *resistance;
   struct Unit *target;
   u32 actionIndex;
   s32 value;
   s32 amount; // the damage, or the HP or PP restored
   s32 power;
-  s8 *am;
+  s8 *agility;
   s32 guard;
   s16 enemyList[8];
   s32 enemyIndex;
@@ -1283,6 +1281,8 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       break;
     }
 
+    // Unused: no formula is -1. PP damage again, by the PP-damage falloff and
+    // with the plain damage message.
     case -1: {
       if (target->defendLevel == DEFEND_VANISHED)
         break;
@@ -1656,73 +1656,73 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_CRYSTAL:
     case ABILITY_EFFECT_SPRING:
     case ABILITY_EFFECT_BREATH: {
-      s32 old;
-      s32 maxu;
-      s32 maxv;
+      s32 before;
+      s32 limit;
+      s32 maximum;
       s32 heal;
 #ifndef UBFIX
-      u16 *pt;
+      u16 *stat;
 #endif
 
       // UB: a pointer walks from hp down past it to hpMax, reading each stat
       // twice, unsigned and signed; the member reads behind UBFIX share one
       // load each.
 #ifdef UBFIX
-      old = (u16)target->hp;
+      before = (u16)target->hp;
       heal = target->hp;
 #else
-      pt = (u16 *)&target->hp;
-      old = *pt--;
-      heal = *(s16 *)(pt + 1);
+      stat = (u16 *)&target->hp;
+      before = *stat--;
+      heal = *(s16 *)(stat + 1);
 #endif
       if (ability->effect == ABILITY_EFFECT_BREATH) {
-        s32 m;
+        s32 fullHp;
 
 #ifdef UBFIX
-        maxu = (u16)target->hpMax;
-        m = target->hpMax;
+        limit = (u16)target->hpMax;
+        fullHp = target->hpMax;
 #else
-        pt--;
-        maxu = *pt--;
-        m = *(s16 *)(pt + 1);
+        stat--;
+        limit = *stat--;
+        fullHp = *(s16 *)(stat + 1);
 #endif
-        heal += m * 2 / 5;
+        heal += fullHp * 2 / 5;
       } else if (ability->effect == ABILITY_EFFECT_SPRING) {
 #ifdef UBFIX
-        maxu = (u16)target->hpMax;
-        maxv = target->hpMax;
+        limit = (u16)target->hpMax;
+        maximum = target->hpMax;
 #else
-        pt--;
-        maxu = *pt--;
-        maxv = *(s16 *)(pt + 1);
+        stat--;
+        limit = *stat--;
+        maximum = *(s16 *)(stat + 1);
 #endif
-        heal += maxv * 7 / 10;
+        heal += maximum * 7 / 10;
       } else if (ability->effect == ABILITY_EFFECT_CRYSTAL) {
-        maxu = (u16)target->hpMax;
-        heal += (s16)maxu / 2;
-        /* FAKEMATCH(dead): updates of maxu that cancel out. */
-        maxu++;
-        maxu--;
+        limit = (u16)target->hpMax;
+        heal += (s16)limit / 2;
+        /* FAKEMATCH(dead): updates of limit that cancel out. */
+        limit++;
+        limit--;
       } else {
 #ifdef UBFIX
-        maxu = (u16)target->hpMax;
-        maxv = target->hpMax;
+        limit = (u16)target->hpMax;
+        maximum = target->hpMax;
 #else
-        pt--;
-        maxu = *pt--;
-        maxv = *(s16 *)(pt + 1);
+        stat--;
+        limit = *stat--;
+        maximum = *(s16 *)(stat + 1);
 #endif
         if (ability->effect == ABILITY_EFFECT_FIZZ)
-          heal += maxv * 60 / 100;
+          heal += maximum * 60 / 100;
         else
-          heal += maxv * 30 / 100;
+          heal += maximum * 30 / 100;
       }
-      if (heal > (s16)maxu)
-        heal = (s16)maxu;
-      restored = heal - (s16)old;
+      if (heal > (s16)limit)
+        heal = (s16)limit;
+      restored = heal - (s16)before;
       if (restored == 0 && kind != ABILITY_FORMULA_HEAL_HP)
         break;
-      if (heal == (s16)maxu)
+      if (heal == (s16)limit)
         PUSH_MESSAGE(MsgHpFull);
       else {
         BattlePlayback_Push(PLAYBACK_NUMBER, restored);
@@ -1737,56 +1737,56 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
     case ABILITY_EFFECT_EMBER:
     case ABILITY_EFFECT_AROMA:
     case ABILITY_EFFECT_ETHER: {
-      s32 old;
-      s32 maxv;
+      s32 before;
+      s32 maximum;
       s32 heal;
-      s32 maxu;
+      s32 limit;
 #ifndef UBFIX
-      u16 *pt;
+      u16 *stat;
 #endif
 
       // UB: a pointer walks from pp down past it to ppMax, reading each stat
       // twice, unsigned and signed; the member reads behind UBFIX share one
       // load each.
 #ifdef UBFIX
-      old = (u16)target->pp;
+      before = (u16)target->pp;
       heal = target->pp;
 #else
-      pt = (u16 *)&target->pp;
-      old = *pt--;
-      heal = *(s16 *)(pt + 1);
+      stat = (u16 *)&target->pp;
+      before = *stat--;
+      heal = *(s16 *)(stat + 1);
 #endif
       if (ability->effect == ABILITY_EFFECT_AROMA) {
-        maxv = target->ppMax;
-        maxu = (u16)target->ppMax;
-        heal += (s16)maxv / 10;
+        maximum = target->ppMax;
+        limit = (u16)target->ppMax;
+        heal += (s16)maximum / 10;
       } else if (ability->effect == ABILITY_EFFECT_ETHER) {
 #ifdef UBFIX
-        maxu = (u16)target->ppMax;
-        maxv = target->ppMax;
+        limit = (u16)target->ppMax;
+        maximum = target->ppMax;
 #else
-        pt--;
-        maxu = *pt--;
-        maxv = *(s16 *)(pt + 1);
+        stat--;
+        limit = *stat--;
+        maximum = *(s16 *)(stat + 1);
 #endif
-        heal += maxv * 3 / 10;
+        heal += maximum * 3 / 10;
       } else {
 #ifdef UBFIX
-        maxu = (u16)target->ppMax;
-        maxv = target->ppMax;
+        limit = (u16)target->ppMax;
+        maximum = target->ppMax;
 #else
-        pt--;
-        maxu = *pt--;
-        maxv = *(s16 *)(pt + 1);
+        stat--;
+        limit = *stat--;
+        maximum = *(s16 *)(stat + 1);
 #endif
-        heal += maxv * 7 / 100;
+        heal += maximum * 7 / 100;
       }
-      if (heal > (s16)maxu)
-        heal = (s16)maxu;
-      restored = heal - (s16)old;
+      if (heal > (s16)limit)
+        heal = (s16)limit;
+      restored = heal - (s16)before;
       if (restored == 0 && kind != ABILITY_FORMULA_HEAL_PP)
         break;
-      if (heal == (s16)maxu)
+      if (heal == (s16)limit)
         PUSH_MESSAGE(MsgPpFull);
       else {
         BattlePlayback_Push(PLAYBACK_NUMBER, restored);
@@ -1808,12 +1808,12 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       break;
 
     case ABILITY_EFFECT_AGILITY_DOWN:
-      am = &target->agilityStage;
+      agility = &target->agilityStage;
       {
-        u8 v;
+        u8 stage;
 
-        v = STAT_STAGE_MIN;
-        *am = v;
+        stage = STAT_STAGE_MIN;
+        *agility = stage;
       }
       target->agilityTurns = AGILITY_CHANGE_TURNS;
       Unit_CalculateFar(targetId);
@@ -1970,7 +1970,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
 
     case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY: {
       target->resistanceStage += 2;
-      if (*(rm = &target->resistanceStage) < STAT_STAGE_MIN)
+      if (*(resistance = &target->resistanceStage) < STAT_STAGE_MIN)
         target->resistanceStage = STAT_STAGE_MIN;
       if (target->resistanceStage > STAT_STAGE_MAX)
         target->resistanceStage = STAT_STAGE_MAX;
@@ -2256,6 +2256,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       BattlePlayback_Push(PLAYBACK_BLOW_AWAY, targetId);
       break;
 
+    // The second equipment total doubles as the readiness to counterattack.
     case ABILITY_EFFECT_COUNTER:
       PUSH_MESSAGE(MsgCounterReady);
       target->equipBonus[1] = 1;
@@ -2306,10 +2307,7 @@ done:
   }
 }
 
-// Battle: test whether an ability uses PP.
-
 /// Returns 1 for abilities that cost PP, and for Psy Drain whatever its cost.
-/// abilityId: ability ID.
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
@@ -2396,6 +2394,9 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
     if (request->turnAction == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_SECOND_ACTION);
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_A) {
+    // Each later action of the turn plays another of the dragon's animations.
+    // XXX: which head each of 6, 3 and 7 shows; recording the Doom Dragon's
+    // turns would settle it.
     selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
     switch (request->turnAction) {
     case 1:
@@ -2621,7 +2622,7 @@ select_again:
         needsChoice = 0;
       }
       break;
-    case 3:
+    case 3: // Unused: no ability's target mode is 3.
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     default:

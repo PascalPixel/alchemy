@@ -26,12 +26,12 @@ enum EarlyEndBias {
 /// Rolls whether a stat change or status with five turns or fewer left ends
 /// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
-  struct Unit *state = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   if (turns <= 5) {
     // 65536 / 100, rounded down, scales the percentage to the 16-bit random
     // range.
-    s32 threshold = ((state->luck * 3 - turns * 5) + bias) * (65536 / 100);
+    s32 threshold = ((unit->luck * 3 - turns * 5) + bias) * (65536 / 100);
     if (threshold >= (Battle_RandomFar() & 0xffff))
       return 1;
   }
@@ -64,19 +64,19 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 /// Counts down a Defense change and returns 1 when it ends; a lowered Defense
 /// may recover early.
 s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
-  if (state->defenseTurns != 0) {
-    state->defenseTurns--;
-    if (state->defenseTurns == 0) {
-      state->defenseStage = 0;
+  if (unit->defenseTurns != 0) {
+    unit->defenseTurns--;
+    if (unit->defenseTurns == 0) {
+      unit->defenseStage = 0;
       return 1;
     }
-    if (state->defenseStage < 0 &&
-        BattleUnit_RollCounterEarlyEnd(unitId, state->defenseTurns,
+    if (unit->defenseStage < 0 &&
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->defenseTurns,
                                        EARLY_END_DEFENSE_DOWN) != 0) {
-      state->defenseStage = 0;
-      state->defenseTurns = 0;
+      unit->defenseStage = 0;
+      unit->defenseTurns = 0;
       return 1;
     }
   }
@@ -86,19 +86,19 @@ s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
 /// Counts down a Resistance change and returns 1 when it ends; a lowered
 /// Resistance may recover early.
 s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
-  if (state->resistanceTurns != 0) {
-    state->resistanceTurns--;
-    if (state->resistanceTurns == 0) {
-      state->resistanceStage = 0;
+  if (unit->resistanceTurns != 0) {
+    unit->resistanceTurns--;
+    if (unit->resistanceTurns == 0) {
+      unit->resistanceStage = 0;
       return 1;
     }
-    if (state->resistanceStage < 0 &&
-        BattleUnit_RollCounterEarlyEnd(unitId, state->resistanceTurns,
+    if (unit->resistanceStage < 0 &&
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->resistanceTurns,
                                        EARLY_END_RESISTANCE_DOWN) != 0) {
-      state->resistanceStage = 0;
-      state->resistanceTurns = 0;
+      unit->resistanceStage = 0;
+      unit->resistanceTurns = 0;
       return 1;
     }
   }
@@ -107,14 +107,14 @@ s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
 
 /// Counts down delusion and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownDelusion(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
-  if (state->delusion != 0) {
-    state->delusion--;
-    if (state->delusion == 0)
+  struct Unit *unit = Unit_Get(unitId);
+  if (unit->delusion != 0) {
+    unit->delusion--;
+    if (unit->delusion == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->delusion,
+    if (BattleUnit_RollCounterEarlyEnd(unitId, unit->delusion,
                                        EARLY_END_DELUSION) != 0) {
-      state->delusion = 0;
+      unit->delusion = 0;
       return 1;
     }
   }
@@ -123,14 +123,14 @@ s32 BattleUnit_CountDownDelusion(s32 unitId) {
 
 /// Counts down confusion and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownConfusion(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
-  if ((u8)state->confusion != 0) {
-    (*(u8 *)&state->confusion)--;
-    if (state->confusion == 0)
+  struct Unit *unit = Unit_Get(unitId);
+  if ((u8)unit->confusion != 0) {
+    (*(u8 *)&unit->confusion)--;
+    if (unit->confusion == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, (u8)state->confusion,
+    if (BattleUnit_RollCounterEarlyEnd(unitId, (u8)unit->confusion,
                                        EARLY_END_CONFUSION) != 0) {
-      state->confusion = 0;
+      unit->confusion = 0;
       return 1;
     }
   }
@@ -139,14 +139,14 @@ s32 BattleUnit_CountDownConfusion(s32 unitId) {
 
 /// Counts down charm and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownCharm(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
-  if (state->charm != 0) {
-    state->charm--;
-    if (state->charm == 0)
+  struct Unit *unit = Unit_Get(unitId);
+  if (unit->charm != 0) {
+    unit->charm--;
+    if (unit->charm == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->charm, EARLY_END_CHARM) !=
+    if (BattleUnit_RollCounterEarlyEnd(unitId, unit->charm, EARLY_END_CHARM) !=
         0) {
-      state->charm = 0;
+      unit->charm = 0;
       return 1;
     }
   }
@@ -155,14 +155,14 @@ s32 BattleUnit_CountDownCharm(s32 unitId) {
 
 /// Counts down a stun and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownStun(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
-  if (state->stun != 0) {
-    state->stun--;
-    if (state->stun == 0)
+  struct Unit *unit = Unit_Get(unitId);
+  if (unit->stun != 0) {
+    unit->stun--;
+    if (unit->stun == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->stun, EARLY_END_STUN) !=
+    if (BattleUnit_RollCounterEarlyEnd(unitId, unit->stun, EARLY_END_STUN) !=
         0) {
-      state->stun = 0;
+      unit->stun = 0;
       return 1;
     }
   }
@@ -171,14 +171,14 @@ s32 BattleUnit_CountDownStun(s32 unitId) {
 
 /// Counts down sleep and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownSleep(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
-  if (state->sleep != 0) {
-    state->sleep--;
-    if (state->sleep == 0)
+  struct Unit *unit = Unit_Get(unitId);
+  if (unit->sleep != 0) {
+    unit->sleep--;
+    if (unit->sleep == 0)
       return 1;
-    if (BattleUnit_RollCounterEarlyEnd(unitId, state->sleep, EARLY_END_SLEEP) !=
+    if (BattleUnit_RollCounterEarlyEnd(unitId, unit->sleep, EARLY_END_SLEEP) !=
         0) {
-      state->sleep = 0;
+      unit->sleep = 0;
       return 1;
     }
   }
@@ -324,10 +324,9 @@ s32 DjinnRecovery_CountDownTwenty(void) {
 void Battle_TurnEndNoOp(void) {}
 
 /// Counts down one side's Djinn recovery at the turn's end: an owner must be in
-/// the battle; each Djinni that comes back plays its event (its icon, sound
-/// 175, the flash and its message) before it is Set. The message is
-/// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
-/// 0.
+/// the battle; each Djinni that comes back is shown before it is Set: its
+/// owner raises a hand and glows in its element to a high note, with "... is
+/// set to ...!" Returns 1 when a count fell, 2 when one was Set, else 0.
 s32 DjinnRecovery_CountDownSide(s32 side) {
   struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
@@ -542,7 +541,7 @@ void Battle_ProcessTurnEnd(void) {
     groupList = order.group;
     for (group = 0; group <= 1; group++) {
       count = BattleUnit_ListIds(groupList[group], unitIds);
-      if (groupList[group] == 1)
+      if (groupList[group] == BATTLE_SIDE_MASK_PARTY)
         count += BattleParty_PrepareReserveOwners(unitIds + count);
       for (unitIndex = 0; unitIndex < count; unitIndex++) {
         s32 hpAmount;
@@ -550,6 +549,7 @@ void Battle_ProcessTurnEnd(void) {
         s32 unitId = unitIds[unitIndex];
         struct Unit *unit = Unit_Get(unitId);
 
+        // A readiness to counterattack lasts the one turn.
         unit->equipBonus[1] = 0;
         if (unit->ready != 0) {
           unit->ready--;
@@ -759,7 +759,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   s32 battleContinues;
   s32 counts[ELEMENT_COUNT];
   struct DjinnRecoveryList *list;
-  s32 strongestElement;
+  s32 entryIndex;
   s32 recoveryTurn;
 
   unitId = plan->unitId;
@@ -768,13 +768,11 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   if (unitId <= ALLY_MAX ||
       ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0) {
     list = &Djinn_GetRecoveryTableFar(unitId > ALLY_MAX)->list;
-    for (strongestElement = 0; strongestElement < list->count;
-         strongestElement++) {
-      if (list->entries[strongestElement].unitId == unitId &&
-          list->entries[strongestElement].turns ==
-              DJINN_RECOVERY_AFTER_BATTLE) {
-        Djinn_PutOnStandbyFar(unitId, list->entries[strongestElement].element,
-                              list->entries[strongestElement].index);
+    for (entryIndex = 0; entryIndex < list->count; entryIndex++) {
+      if (list->entries[entryIndex].unitId == unitId &&
+          list->entries[entryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+        Djinn_PutOnStandbyFar(unitId, list->entries[entryIndex].element,
+                              list->entries[entryIndex].index);
       }
     }
   }
@@ -851,8 +849,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         BattlePlayback_Push(PLAYBACK_NUMBER, gain);
         BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
-        // Messages 3285 to 3288, 3232, 3240, 3185, 3191 and 3188 in English;
-        // all but MsgGoesDown still need their names in the PO catalogs.
+        // "...'s Earth Power rises by ...!", then Water, Fire and Wind.
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         Sound_PlayFar(SE_POWER_UP);
@@ -896,16 +893,19 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     poison = &unit->poison;
     if (*poison != 0) {
       s32 damage = unit->hpMax * *poison / 10;
-      struct BattleWork *state = Ram_HeapSlots->battleWork;
+      struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
       BattlePlayback_Push(PLAYBACK_HIT, unitId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgPoisonDamage);
+      // DEAD: *poison is nonzero here, so the hit's sound is always
+      // SE_HEAVY_IMPACT; the ROM keeps the reread of *poison, the compare and
+      // both stores.
       if (*poison != 0) {
-        state->events.pendingSound = SE_HEAVY_IMPACT;
+        battle->events.pendingSound = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingSound = SE_IMPACT;
+        battle->events.pendingSound = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {

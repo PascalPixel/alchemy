@@ -42,8 +42,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
-  struct BattleObject *first;
-  struct BattleObject *second;
+  struct BattleObject *userObject;
+  struct BattleObject *targetObject;
   struct Actor *user;
   struct Actor *target;
   s32 percent;
@@ -86,10 +86,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The run, most of the way to the target.
-  first = BattleObject_GetFar(args->user);
-  second = BattleObject_GetFar(args->targets[0]);
-  user = first->object;
-  target = second->object;
+  userObject = BattleObject_GetFar(args->user);
+  targetObject = BattleObject_GetFar(args->targets[0]);
+  user = userObject->object;
+  target = targetObject->object;
   percent = DEATH_PLUNGE_RUN_PERCENT;
   x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
   z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
@@ -100,7 +100,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   Actor_SetMoveTargetFar(user, x, 0, z);
   Actor_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
-  user->steeringFlags = 1;
+  user->steeringFlags = ACTOR_FACES_MOTION;
   user->acceleration = toFIXED(2);
   user->speedLimit = toFIXED(8);
   wait(20);

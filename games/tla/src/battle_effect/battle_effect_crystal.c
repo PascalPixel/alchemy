@@ -57,7 +57,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   cells = gMapGridCellBuffer;
   Iwram_ClearWords(cells, 32768);
   for (offset = 0, i = 0, size = 2; i != CRYSTAL_DISCS; size += 2, i++) {
-    // As an integer sum, the offset first.
+    // Each disc is drawn after the one before it in the map cell buffer.
     BattleEffect_DrawShadedCircles((u8 *)(offset + (s32)cells), size,
                                    FIXED_ONE);
     discOffsets[i] = offset;

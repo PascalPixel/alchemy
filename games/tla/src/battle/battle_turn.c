@@ -70,7 +70,6 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 #define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
-/// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[UNIT_MAX];
   s32 count;
@@ -97,16 +96,16 @@ s32 BattleFlee_CheckSuccess(void) {
   s32 levelTotal;
   s32 unitIndex;
   s32 chance;
-  struct BattleWork *escapeState;
+  struct BattleWork *battle;
 
   escaped = 0;
-  escapeState = Ram_HeapSlots->battleWork;
-  if (escapeState->firstStrike == FIRST_STRIKE_PARTY) {
+  battle = Ram_HeapSlots->battleWork;
+  if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     escaped = 1;
   } else {
     levelTotal = 0;
-    chance = FLEE_BASE_CHANCE +
-             (escapeState->fleeFailures * FLEE_CHANCE_PER_FAILURE);
+    chance =
+        FLEE_BASE_CHANCE + (battle->fleeFailures * FLEE_CHANCE_PER_FAILURE);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += Unit_Get((s32)livingUnits[unitIndex])->level;
@@ -122,7 +121,7 @@ s32 BattleFlee_CheckSuccess(void) {
         ((u32)((u32)(FLEE_ROLL_RANGE * Random16()) >> 16) < (u32)chance)) {
       escaped = 1;
     }
-    escapeState->fleeFailures++;
+    battle->fleeFailures++;
   }
   if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
@@ -150,7 +149,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   s32 entryCount = 0;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 unitCount;
-  s32 shuffleOrUnitIndex;
+  s32 i;
 
   if (battle->firstStrike == FIRST_STRIKE_PARTY)
     return 0;
@@ -159,8 +158,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   if (unitCount == 0)
     return 0;
 
-  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < TURN_ORDER_SWAPS;
-       shuffleOrUnitIndex++) {
+  for (i = 0; i < TURN_ORDER_SWAPS; i++) {
     u32 first = (unitCount * Random16()) >> 16;
     u32 second = (unitCount * Random16()) >> 16;
     s32 swap = unitIds[first];
@@ -168,6 +166,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
     unitIds[second] = swap;
   }
 
+  // Striking first, only two to five of the enemies act, each once.
   if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     s32 limit = (Random_Below(5)) + 1;
 
@@ -177,9 +176,8 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       unitCount = limit;
   }
 
-  for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
-       shuffleOrUnitIndex++) {
-    s32 unitId = unitIds[shuffleOrUnitIndex];
+  for (i = 0; i < unitCount; i++) {
+    s32 unitId = unitIds[i];
     struct Unit *unit = Unit_Get(unitId);
     s32 copyIndex;
 
@@ -447,8 +445,9 @@ fail:
   return -1;
 }
 
-/// Copies BG palettes 15 to 14 and 5 to 4, adjusting brightness.
-/// offset: amount added to each RGB component, clamped to 0-31.
+/// Fills BG palettes 14 and 4 with palettes 15 and 5 (the windows' and the
+/// basic colours) with offset added to each colour channel, held within 0 to
+/// RGB_LEVEL_MAX.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bank;
   s32 source = WINDOW_PALETTE;
@@ -490,76 +489,75 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 /// allies' commands and either the link opponent's or the enemies' actions.
 /// Returns the action count, or a negative value on cancellation or link
 /// failure.
-/// acts: action list, up to 20 entries.
-s32 Battle_GatherActions(struct BattleActionRecord *acts) {
+s32 Battle_GatherActions(struct BattleActionRecord *actions) {
   struct Unit *unit;
   struct BattleWork *battle;
-  u8 *mode;
-  s32 cnt;
-  s32 add;
+  u8 *firstStrike;
+  s32 count;
+  s32 received;
   s32 i;
 
   battle = Ram_HeapSlots->battleWork;
   {
-    struct BattleActionRecord *rec = battle->actions;
+    struct BattleActionRecord *records = battle->actions;
     u32 n;
 
     for (n = 0; n < BATTLE_ACTION_CAPACITY; n++) {
-      rec[n].unitId = BATTLE_UNIT_LIST_END;
-      rec[n].priority = PRIORITY_LOWEST;
+      records[n].unitId = BATTLE_UNIT_LIST_END;
+      records[n].priority = PRIORITY_LOWEST;
     }
   }
 
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
   GameFlag_Set(FLAG_CHOOSING_COMMANDS);
-  mode = &battle->firstStrike;
+  firstStrike = &battle->firstStrike;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 
   // Ally commands (unavailable when enemies strike first).
-  if (*mode != FIRST_STRIKE_ENEMIES) {
-    cnt = Battle_BuildUnitActions(acts);
-    if (cnt < 0)
+  if (*firstStrike != FIRST_STRIKE_ENEMIES) {
+    count = Battle_BuildUnitActions(actions);
+    if (count < 0)
       goto finish;
     // A failed escape gives enemies the same advantage as striking first.
-    if (cnt != 0 && acts[0].command == COMMAND_FLEE &&
+    if (count != 0 && actions[0].command == COMMAND_FLEE &&
         BattleFlee_CheckSuccess() == 0)
-      *mode = FIRST_STRIKE_ENEMIES;
+      *firstStrike = FIRST_STRIKE_ENEMIES;
   } else {
-    cnt = 0;
+    count = 0;
   }
 
   // Link opponent or enemy actions.
   if (Ram_HeapSlots->battleWork->isLink != 0) {
-    add = Battle_AppendLinkedActions(acts, cnt);
+    received = Battle_AppendLinkedActions(actions, count);
     if (LinkBattle_WaitSync() < 0) {
-      cnt = -1;
+      count = -1;
       goto finish;
     }
-    cnt += add;
-    if (add < 0) {
-      cnt = -1;
+    count += received;
+    if (received < 0) {
+      count = -1;
       goto finish;
     }
   } else {
-    cnt += Battle_BuildEnemyActions(acts + cnt);
+    count += Battle_BuildEnemyActions(actions + count);
   }
 
-  // Sort by priority and set guards for Defend (3 and 7) first.
-  BattleActionOrder_Sort(acts, cnt);
-  if (cnt > 0) {
-    struct BattleActionRecord *act = acts;
+  // Sorted, and every unit that defends this turn guards from its start.
+  BattleActionOrder_Sort(actions, count);
+  if (count > 0) {
+    struct BattleActionRecord *action = actions;
 
-    i = cnt;
+    i = count;
     do {
-      if (act->command == COMMAND_DEFEND ||
-          act->command == COMMAND_TOTAL_DEFENSE) {
-        unit = Unit_Get(act->unitId);
+      if (action->command == COMMAND_DEFEND ||
+          action->command == COMMAND_TOTAL_DEFENSE) {
+        unit = Unit_Get(action->unitId);
         unit->defendLevel =
-            act->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
+            action->command == COMMAND_DEFEND ? DEFEND_NORMAL : DEFEND_TOTAL;
       }
-      act++;
+      action++;
       i--;
     } while (i != 0);
   }
@@ -568,7 +566,7 @@ finish:
   GameFlag_Clear(FLAG_CHOOSING_COMMANDS);
   BattleCamera_SetDefaultView();
   Ram_HeapSlots->battleBackground->targetYaw = YAW_PARTY_ACTION;
-  return cnt;
+  return count;
 }
 
 /// Returns the unit id at a list place, PLACE_ENEMY_SIDE set for the enemies'

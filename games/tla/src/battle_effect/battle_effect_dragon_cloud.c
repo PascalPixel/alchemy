@@ -76,7 +76,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   s8 *path;
   s32 x;
   s32 y;
-  u8 *graphics;
+  u8 *motes;
   struct Actor *actor;
   struct Particle *particle;
   s32 i;
@@ -88,7 +88,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   drift = 0;
   x = 0;
   y = 0;
-  graphics = Ram_HeapSlots->battleSheet;
+  motes = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
@@ -109,7 +109,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
     }
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
                              &work->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, Ram_MapCellBuffer, 1,
@@ -236,7 +236,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         if (particle->variant >= 0 && frame >= i / 8) {
           s32 size = (particle->variant >> 4) + 1;
 
-          draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
+          draw[i & 1](canvas, motes + gBattleEffect_MotePictures[size - 1],
                       FIXED_INTEGER_PART(particle->x) - size / 2,
                       FIXED_INTEGER_PART(particle->y) - size, size, size * 2);
           Particle_AdvanceWithGravity2D(particle, 62, toFIXED(1) / 4);
@@ -373,7 +373,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
               Particle_AdvanceWithGravity3D(particle, 62, toFIXED(1) / 8);
             }
           } else {
-            draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
+            draw[0](canvas, motes + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             Particle_AdvanceWithGravity3D(particle, PARTICLE_DAMPING_NONE,
                                           -toFIXED(1) / 8);
@@ -393,7 +393,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             size >>= 3;
             size += 1;
             position.x >>= 1;
-            draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
+            draw[i & 1](canvas, motes + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
             Particle_AdvanceWithGravity3D(particle, 62, toFIXED(1) / 8);
@@ -411,7 +411,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 4) + 1;
 
-          draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
+          draw[i & 1](canvas, motes + gBattleEffect_MotePictures[size - 1],
                       FIXED_INTEGER_PART(spark->x) - size / 2,
                       FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
           Particle_AdvanceWithGravity2D(spark, 60, -toFIXED(1) / 4);

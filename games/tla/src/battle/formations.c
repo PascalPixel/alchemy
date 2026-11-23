@@ -7,2914 +7,2914 @@
 
 // clang-format off
 struct Formation gFormations[] = {
-    {0},
-    {
+    [0] = {0},
+    [1] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_ECHO)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [2] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_IRON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [3] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_STEEL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [4] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_MUD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [5] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_FLOWER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [6] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_MELD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [7] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_PETRA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [8] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_SALT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [9] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_GEODE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [10] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_UNUSED_MOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [11] = {
         .memberIds = {ENEMY_ROW(ENEMY_VENUS_DJINNI_CRYSTAL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {
+    [12] = {0},
+    [13] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_FOG)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [14] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_SOUR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [15] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_UNUSED_SPRING)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [16] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_UNUSED_SHADE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [17] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_CHILL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [18] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_STEAM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [19] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_UNUSED_RIME)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [20] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_UNUSED_GEL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [21] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_EDDY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [22] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_BALM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [23] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERCURY_DJINNI_SERAC)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {
+    [24] = {0},
+    [25] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_CANNON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [26] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_UNUSED_SPARK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [27] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_KINDLE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [28] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_UNUSED_CHAR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [29] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_UNUSED_COAL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [30] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_REFLUX)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [31] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_CORE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [32] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_UNUSED_TINDER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [33] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_UNUSED_SHINE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [34] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_FURY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [35] = {
         .memberIds = {ENEMY_ROW(ENEMY_MARS_DJINNI_FUGUE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {
+    [36] = {0},
+    [37] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_BREATH)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [38] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_BLITZ)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [39] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_UNUSED_ETHER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [40] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_WAFT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [41] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_UNUSED_HAZE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [42] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_WHEEZE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [43] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_UNUSED_AROMA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [44] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_WHORL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [45] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_GASP)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [46] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_UNUSED_LULL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [47] = {
         .memberIds = {ENEMY_ROW(ENEMY_JUPITER_DJINNI_GALE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {
+    [48] = {0},
+    [49] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [50] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [51] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN)},
         .minimumCounts = {3},
         .maximumCounts = {3},
     },
-    {
+    [52] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [53] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHESTBEATER)},
         .minimumCounts = {3},
         .maximumCounts = {3},
     },
-    {0},
-    {
+    [54] = {0},
+    [55] = {
         .memberIds = {ENEMY_ROW(ENEMY_KING_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [56] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_BRIGGS), ENEMY_ROW(ENEMY_SEA_FIGHTER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {
+    [57] = {0},
+    [58] = {
         .memberIds = {ENEMY_ROW(ENEMY_AQUA_JELLY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [59] = {
         .memberIds = {ENEMY_ROW(ENEMY_AQUA_HYDRA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {
+    [60] = {0},
+    [61] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [62] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_ONE_BEAM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [63] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_TWO_BEAMS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [64] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_THREE_BEAMS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [65] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_FOUR_BEAMS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [66] = {
         .memberIds = {ENEMY_ROW(ENEMY_AVIMANDER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [67] = {
         .memberIds = {ENEMY_ROW(ENEMY_POSEIDON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {
+    [68] = {0},
+    [69] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA), ENEMY_ROW(ENEMY_KNIGHT), ENEMY_ROW(ENEMY_KNIGHT)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [70] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA), ENEMY_ROW(ENEMY_KNIGHT_B), ENEMY_ROW(ENEMY_KNIGHT)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [71] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA), ENEMY_ROW(ENEMY_KNIGHT_B), ENEMY_ROW(ENEMY_KNIGHT_B)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [72] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA_B), ENEMY_ROW(ENEMY_KNIGHT_B), ENEMY_ROW(ENEMY_KNIGHT_B)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [73] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA_C), ENEMY_ROW(ENEMY_KNIGHT_B), ENEMY_ROW(ENEMY_KNIGHT_B)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [FORMATION_KARST_AND_AGATIO_A] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_KARST), ENEMY_ROW(ENEMY_AGATIO)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [FORMATION_KARST_AND_AGATIO_B] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_KARST), ENEMY_ROW(ENEMY_AGATIO)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [FORMATION_KARST_AND_AGATIO_C] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_KARST_B), ENEMY_ROW(ENEMY_AGATIO_B)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [77] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_FLAME_DRAGON_KARST), ENEMY_ROW(ENEMY_FLAME_DRAGON_AGATIO)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [FORMATION_DOOM_DRAGON_A] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_DOOM_DRAGON_A)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [FORMATION_DOOM_DRAGON_B] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_DOOM_DRAGON_E)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [FORMATION_DOOM_DRAGON_C] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_DOOM_DRAGON_H)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [81] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [82] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN_2)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [83] = {
         .memberIds = {ENEMY_ROW(ENEMY_RUFFIAN_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [84] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [85] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [86] = {
         .memberIds = {ENEMY_ROW(ENEMY_NUMB_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [87] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHESTBEATER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [88] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GORILLA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [89] = {
         .memberIds = {ENEMY_ROW(ENEMY_CRAZY_GORILLA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [90] = {
         .memberIds = {ENEMY_ROW(ENEMY_KING_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [91] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEVIL_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [92] = {
         .memberIds = {ENEMY_ROW(ENEMY_SAND_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [93] = {
         .memberIds = {ENEMY_ROW(ENEMY_BRIGGS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [94] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [95] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHAMPA_2)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [96] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHAMPA_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [97] = {
         .memberIds = {ENEMY_ROW(ENEMY_CUTTLE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [98] = {
         .memberIds = {ENEMY_ROW(ENEMY_CALAMAR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [99] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAN_O_WAR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [100] = {
         .memberIds = {ENEMY_ROW(ENEMY_AQUA_JELLY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [101] = {
         .memberIds = {ENEMY_ROW(ENEMY_AQUA_HYDRA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [102] = {
         .memberIds = {ENEMY_ROW(ENEMY_HYDRA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [103] = {
         .memberIds = {ENEMY_ROW(ENEMY_PYRODRA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [104] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [105] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_ONE_BEAM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [106] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_TWO_BEAMS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [107] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_THREE_BEAMS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [108] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_FOUR_BEAMS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [109] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_6)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [110] = {
         .memberIds = {ENEMY_ROW(ENEMY_SERPENT_7)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [111] = {
         .memberIds = {ENEMY_ROW(ENEMY_AVIMANDER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [112] = {
         .memberIds = {ENEMY_ROW(ENEMY_MACETAIL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [113] = {
         .memberIds = {ENEMY_ROW(ENEMY_BOMBANDER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [114] = {
         .memberIds = {ENEMY_ROW(ENEMY_POSEIDON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [115] = {
         .memberIds = {ENEMY_ROW(ENEMY_POSEIDON_SECOND_ACTION)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [116] = {
         .memberIds = {ENEMY_ROW(ENEMY_POSEIDON_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [117] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [118] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [119] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOAPA_C)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [120] = {
         .memberIds = {ENEMY_ROW(ENEMY_KNIGHT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [121] = {
         .memberIds = {ENEMY_ROW(ENEMY_KNIGHT_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [122] = {
         .memberIds = {ENEMY_ROW(ENEMY_KNIGHT_3)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [123] = {
         .memberIds = {ENEMY_ROW(ENEMY_AGATIO)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [124] = {
         .memberIds = {ENEMY_ROW(ENEMY_AGATIO_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [125] = {
         .memberIds = {ENEMY_ROW(ENEMY_AGATIO_VS_ISAAC)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [126] = {
         .memberIds = {ENEMY_ROW(ENEMY_KARST)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [127] = {
         .memberIds = {ENEMY_ROW(ENEMY_KARST_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [128] = {
         .memberIds = {ENEMY_ROW(ENEMY_KARST_VS_ISAAC)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [129] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [130] = {
         .memberIds = {ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [131] = {
         .memberIds = {ENEMY_ROW(ENEMY_WHITE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [132] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [133] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [134] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHIMERA_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [135] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN)},
         .minimumCounts = {3},
         .maximumCounts = {3},
     },
-    {
+    [136] = {
         .memberIds = {ENEMY_ROW(ENEMY_ALEC_GOBLIN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [137] = {
         .memberIds = {ENEMY_ROW(ENEMY_BABOON_GOBLIN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [138] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [139] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [140] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOMANGLER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [141] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD)},
         .minimumCounts = {3},
         .maximumCounts = {3},
     },
-    {
+    [142] = {
         .memberIds = {ENEMY_ROW(ENEMY_WARGOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [143] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD_KING)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [144] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_GABOMBA_CATACOMBS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [145] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_TAOPO_SWAMP)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [146] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_GAIA_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [147] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_JUPITER_LIGHTHOUSE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [148] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_TRIAL_ROAD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [149] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [150] = {
         .memberIds = {ENEMY_ROW(ENEMY_TALON_RUNNER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [151] = {
         .memberIds = {ENEMY_ROW(ENEMY_WINGED_RUNNER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [152] = {
         .memberIds = {ENEMY_ROW(ENEMY_MUMMY)},
         .minimumCounts = {3},
         .maximumCounts = {3},
     },
-    {
+    [153] = {
         .memberIds = {ENEMY_ROW(ENEMY_FOUL_MUMMY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [154] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAVE_WIGHT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [155] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN_CHICK)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [156] = {
         .memberIds = {ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [157] = {
         .memberIds = {ENEMY_ROW(ENEMY_WINGED_LIZARD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [158] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN_CUB)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [159] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [160] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKINWALKER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [161] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [162] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINOX)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [163] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINOSAURUS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [164] = {
         .memberIds = {ENEMY_ROW(ENEMY_ASSASSIN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [165] = {
         .memberIds = {ENEMY_ROW(ENEMY_SLAYER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [166] = {
         .memberIds = {ENEMY_ROW(ENEMY_DARK_MURDER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [167] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOMSAYER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [168] = {
         .memberIds = {ENEMY_ROW(ENEMY_LICH)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [169] = {
         .memberIds = {ENEMY_ROW(ENEMY_BANE_WIGHT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [170] = {
         .memberIds = {ENEMY_ROW(ENEMY_PIXIE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [171] = {
         .memberIds = {ENEMY_ROW(ENEMY_FAERY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [172] = {
         .memberIds = {ENEMY_ROW(ENEMY_WEIRD_NYPMH)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [173] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOOD_WALKER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [174] = {
         .memberIds = {ENEMY_ROW(ENEMY_ELDER_WOOD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [175] = {
         .memberIds = {ENEMY_ROW(ENEMY_ESTRE_WOOD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [176] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_STAR_MAGICIAN), ENEMY_ROW(ENEMY_REFRESH_BALL), ENEMY_ROW(ENEMY_GUARDIAN_BALL), ENEMY_ROW(ENEMY_THUNDER_BALL), ENEMY_ROW(ENEMY_ANGER_BALL)},
         .minimumCounts = {1, 1, 1, 1, 1},
         .maximumCounts = {1, 1, 1, 1, 1},
     },
-    {
+    [177] = {
         .memberIds = {ENEMY_ROW(ENEMY_DARK_WIZARD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [178] = {
         .memberIds = {ENEMY_ROW(ENEMY_EVIL_SHAMAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [179] = {
         .memberIds = {ENEMY_ROW(ENEMY_URCHIN_BEAST)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [180] = {
         .memberIds = {ENEMY_ROW(ENEMY_NEEDLE_EGG)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [181] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_HEDGEHOG)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [182] = {
         .memberIds = {ENEMY_ROW(ENEMY_CONCH_SHELL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [183] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRAL_SHELL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [184] = {
         .memberIds = {ENEMY_ROW(ENEMY_POISON_SHELL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [185] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERMAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [186] = {
         .memberIds = {ENEMY_ROW(ENEMY_GILLMAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [187] = {
         .memberIds = {ENEMY_ROW(ENEMY_GILLMAN_LORD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [188] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [189] = {
         .memberIds = {ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [190] = {
         .memberIds = {ENEMY_ROW(ENEMY_OCEAN_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [191] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEABIRD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [192] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEAFOWL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [193] = {
         .memberIds = {ENEMY_ROW(ENEMY_GREAT_SEAGULL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [194] = {
         .memberIds = {ENEMY_ROW(ENEMY_ROC)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [195] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAPTOR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [196] = {
         .memberIds = {ENEMY_ROW(ENEMY_FELL_RAPTOR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [197] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [198] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKY_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [199] = {
         .memberIds = {ENEMY_ROW(ENEMY_WINGED_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [200] = {
         .memberIds = {ENEMY_ROW(ENEMY_PHOENIX)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [201] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_BIRD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [202] = {
         .memberIds = {ENEMY_ROW(ENEMY_WONDER_BIRD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [203] = {
         .memberIds = {ENEMY_ROW(ENEMY_BLUE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [204] = {
         .memberIds = {ENEMY_ROW(ENEMY_CRUEL_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [205] = {
         .memberIds = {ENEMY_ROW(ENEMY_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [206] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLAME_DRAGON_AGATIO)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [207] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLAME_DRAGON_KARST)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [208] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [209] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOTAURUS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [210] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOS_WARRIOR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [211] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOS_KNIGHT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [212] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRESSIL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [213] = {
         .memberIds = {ENEMY_ROW(ENEMY_LITTLE_DEATH)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [214] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_DEATH)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [215] = {
         .memberIds = {ENEMY_ROW(ENEMY_RED_DEMON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [216] = {
         .memberIds = {ENEMY_ROW(ENEMY_LESSER_DEMON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [217] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_DEMON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [218] = {
         .memberIds = {ENEMY_ROW(ENEMY_AKA_MANAH)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [219] = {
         .memberIds = {ENEMY_ROW(ENEMY_DRUJ)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [220] = {
         .memberIds = {ENEMY_ROW(ENEMY_AESHMA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [221] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_VALUKAR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [222] = {
         .memberIds = {ENEMY_ROW(ENEMY_VALUKAR_UNUSED_A)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [223] = {
         .memberIds = {ENEMY_ROW(ENEMY_VALUKAR_UNUSED_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [224] = {
         .memberIds = {ENEMY_ROW(ENEMY_LIVING_ARMOR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [225] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUPPET_WARRIOR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [226] = {
         .memberIds = {ENEMY_ROW(ENEMY_ESTRE_BARON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [227] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST_ARMY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [228] = {
         .memberIds = {ENEMY_ROW(ENEMY_SOUL_ARMY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [229] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRIT_ARMY)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [230] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_DULLAHAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [231] = {
         .memberIds = {ENEMY_ROW(ENEMY_DULLAHAN_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [232] = {
         .memberIds = {ENEMY_ROW(ENEMY_DULLAHAN_C)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [233] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_SENTINEL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [234] = {
         .memberIds = {ENEMY_ROW(ENEMY_SENTINEL_UNUSED_A)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [235] = {
         .memberIds = {ENEMY_ROW(ENEMY_SENTINEL_UNUSED_B)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [236] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOM_DRAGON_A)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [237] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOM_DRAGON_E)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [238] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOM_DRAGON_H)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {0},
-    {
+    [239] = {0},
+    [240] = {0},
+    [241] = {
         .memberIds = {ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [242] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [243] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [244] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [245] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUNCH_ANT), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [246] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [247] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF), ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [248] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF), ENEMY_ROW(ENEMY_PUNCH_ANT), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {0},
-    {0},
-    {
+    [249] = {0},
+    [250] = {0},
+    [251] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [252] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUNCH_ANT), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [253] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [254] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [255] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF), ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [256] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [257] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM), ENEMY_ROW(ENEMY_PUNCH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [258] = {
         .memberIds = {ENEMY_ROW(ENEMY_AMAZE_KANDOREAN_TEMPLE)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [259] = {0},
+    [260] = {0},
+    [261] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [262] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [263] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [264] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM), ENEMY_ROW(ENEMY_GIANT_BAT)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [265] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [266] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM), ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [267] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [268] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [269] = {0},
+    [270] = {0},
+    [271] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [272] = {
         .memberIds = {ENEMY_ROW(ENEMY_ANGLE_WORM), ENEMY_ROW(ENEMY_GHOST)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [273] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKELETON), ENEMY_ROW(ENEMY_GHOST)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [274] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKELETON), ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [275] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [276] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [277] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [278] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_RAT_SOLDIER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [279] = {0},
+    [280] = {0},
+    [281] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER), ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [282] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [283] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_ANGLE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [284] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_RAT_SOLDIER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [285] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAT)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [286] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKELETON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [287] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILL_HEAD)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [288] = {
         .memberIds = {ENEMY_ROW(ENEMY_TROLL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {0},
-    {
+    [289] = {0},
+    [290] = {0},
+    [291] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_DRONE_BEE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [292] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINI_GOBLIN), ENEMY_ROW(ENEMY_DRONE_BEE)},
         .minimumCounts = {0, 1},
         .maximumCounts = {2, 1},
     },
-    {
+    [293] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER), ENEMY_ROW(ENEMY_DRONE_BEE)},
         .minimumCounts = {0, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [294] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER), ENEMY_ROW(ENEMY_MINI_GOBLIN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [295] = {
         .memberIds = {ENEMY_ROW(ENEMY_TROLL), ENEMY_ROW(ENEMY_RAT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [296] = {
         .memberIds = {ENEMY_ROW(ENEMY_TROLL)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {0},
-    {0},
-    {
+    [297] = {0},
+    [298] = {0},
+    [299] = {0},
+    [300] = {0},
+    [301] = {
         .memberIds = {ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [302] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [303] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [304] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINO), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {0, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [305] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINO), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [306] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [307] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_DINO), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [308] = {
         .memberIds = {ENEMY_ROW(ENEMY_TROLL), ENEMY_ROW(ENEMY_KOBOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {0},
-    {0},
-    {
+    [309] = {0},
+    [310] = {0},
+    [311] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [312] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [313] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [314] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [315] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIDER), ENEMY_ROW(ENEMY_MOMONGA)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [316] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIDER), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [317] = {
         .memberIds = {ENEMY_ROW(ENEMY_GNOME)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [318] = {
         .memberIds = {ENEMY_ROW(ENEMY_GNOME), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [319] = {0},
+    [320] = {0},
+    [321] = {
         .memberIds = {ENEMY_ROW(ENEMY_KOBOLD), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [322] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [323] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU), ENEMY_ROW(ENEMY_KOBOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [324] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU), ENEMY_ROW(ENEMY_KOBOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [325] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOUL), ENEMY_ROW(ENEMY_DINO)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [326] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY), ENEMY_ROW(ENEMY_KOBOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [327] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY), ENEMY_ROW(ENEMY_EMU)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {0},
-    {
+    [328] = {0},
+    [329] = {0},
+    [330] = {0},
+    [331] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [332] = {
         .memberIds = {ENEMY_ROW(ENEMY_EMU), ENEMY_ROW(ENEMY_GHOUL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [333] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY), ENEMY_ROW(ENEMY_EMU), ENEMY_ROW(ENEMY_GHOUL)},
         .minimumCounts = {1, 0, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [334] = {
         .memberIds = {ENEMY_ROW(ENEMY_CREEPER), ENEMY_ROW(ENEMY_EMU)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [335] = {
         .memberIds = {ENEMY_ROW(ENEMY_MUMMY), ENEMY_ROW(ENEMY_GHOUL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [336] = {
         .memberIds = {ENEMY_ROW(ENEMY_MUMMY), ENEMY_ROW(ENEMY_HARPY)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [337] = {
         .memberIds = {ENEMY_ROW(ENEMY_CREEPER), ENEMY_ROW(ENEMY_HARPY)},
         .minimumCounts = {0, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [338] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY), ENEMY_ROW(ENEMY_MUMMY)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [339] = {0},
+    [340] = {0},
+    [341] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [342] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN_CHICK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [343] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT), ENEMY_ROW(ENEMY_WYVERN_CHICK)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [344] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN_CHICK), ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [345] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN_CUB)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [346] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN_CUB), ENEMY_ROW(ENEMY_WYVERN_CHICK)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [347] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GORILLA)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [348] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GORILLA), ENEMY_ROW(ENEMY_WOLFKIN_CUB)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [349] = {0},
+    [350] = {0},
+    [351] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [352] = {
         .memberIds = {ENEMY_ROW(ENEMY_FLASH_ANT), ENEMY_ROW(ENEMY_WYVERN_CHICK)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [353] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN_CHICK), ENEMY_ROW(ENEMY_MOLE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [354] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN_CHICK), ENEMY_ROW(ENEMY_FLASH_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [355] = {
         .memberIds = {ENEMY_ROW(ENEMY_BONE_FIGHTER), ENEMY_ROW(ENEMY_MOLE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [356] = {
         .memberIds = {ENEMY_ROW(ENEMY_BONE_FIGHTER), ENEMY_ROW(ENEMY_DEATH_HEAD)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [357] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN_CUB), ENEMY_ROW(ENEMY_WYVERN_CHICK)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [358] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN_CUB), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [359] = {0},
+    [360] = {0},
+    [361] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GORILLA), ENEMY_ROW(ENEMY_DIRGE)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [362] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GORILLA), ENEMY_ROW(ENEMY_PIXIE)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [363] = {
         .memberIds = {ENEMY_ROW(ENEMY_PIXIE), ENEMY_ROW(ENEMY_SPIRIT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [364] = {
         .memberIds = {ENEMY_ROW(ENEMY_PIXIE), ENEMY_ROW(ENEMY_WILD_GORILLA)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [365] = {
         .memberIds = {ENEMY_ROW(ENEMY_DIRGE), ENEMY_ROW(ENEMY_PIXIE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [366] = {
         .memberIds = {ENEMY_ROW(ENEMY_ASSASSIN), ENEMY_ROW(ENEMY_PIXIE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [367] = {
         .memberIds = {ENEMY_ROW(ENEMY_ASSASSIN), ENEMY_ROW(ENEMY_WILD_GORILLA)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [368] = {
         .memberIds = {ENEMY_ROW(ENEMY_PIXIE)},
         .minimumCounts = {2},
         .maximumCounts = {3},
     },
-    {0},
-    {0},
-    {
+    [369] = {0},
+    [370] = {0},
+    [371] = {
         .memberIds = {ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [372] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOMSAYER), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [373] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOMSAYER), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [374] = {
         .memberIds = {ENEMY_ROW(ENEMY_SALAMANDER)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [375] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEATH_HEAD), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [376] = {
         .memberIds = {ENEMY_ROW(ENEMY_SALAMANDER), ENEMY_ROW(ENEMY_SPIRIT)},
         .minimumCounts = {0, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [377] = {
         .memberIds = {ENEMY_ROW(ENEMY_RED_DEMON), ENEMY_ROW(ENEMY_DOOMSAYER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [378] = {
         .memberIds = {ENEMY_ROW(ENEMY_RED_DEMON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [379] = {0},
+    [380] = {0},
+    [381] = {
         .memberIds = {ENEMY_ROW(ENEMY_CONCH_SHELL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [382] = {
         .memberIds = {ENEMY_ROW(ENEMY_CONCH_SHELL)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [383] = {
         .memberIds = {ENEMY_ROW(ENEMY_CONCH_SHELL)},
         .minimumCounts = {3},
         .maximumCounts = {3},
     },
-    {
+    [384] = {
         .memberIds = {ENEMY_ROW(ENEMY_CONCH_SHELL)},
         .minimumCounts = {4},
         .maximumCounts = {4},
     },
-    {0},
-    {0},
-    {0},
-    {0},
-    {0},
-    {0},
-    {
+    [385] = {0},
+    [386] = {0},
+    [387] = {0},
+    [388] = {0},
+    [389] = {0},
+    [390] = {0},
+    [391] = {
         .memberIds = {ENEMY_ROW(ENEMY_URCHIN_BEAST)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [392] = {
         .memberIds = {ENEMY_ROW(ENEMY_URCHIN_BEAST), ENEMY_ROW(ENEMY_CALAMAR)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [393] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEABIRD)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [394] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEABIRD), ENEMY_ROW(ENEMY_URCHIN_BEAST)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [395] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIGHTER_BEE)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [396] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIGHTER_BEE), ENEMY_ROW(ENEMY_SEABIRD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [397] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERMAN), ENEMY_ROW(ENEMY_CALAMAR)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [398] = {
         .memberIds = {ENEMY_ROW(ENEMY_MERMAN)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {0},
-    {0},
-    {
+    [399] = {0},
+    [400] = {0},
+    [401] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_VERMIN), ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [402] = {
         .memberIds = {ENEMY_ROW(ENEMY_NUMB_ANT), ENEMY_ROW(ENEMY_DEATH_CAP)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [403] = {
         .memberIds = {ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [404] = {
         .memberIds = {ENEMY_ROW(ENEMY_DIRE_WOLF), ENEMY_ROW(ENEMY_NUMB_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [405] = {
         .memberIds = {ENEMY_ROW(ENEMY_ALEC_GOBLIN), ENEMY_ROW(ENEMY_RAVAGER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [406] = {
         .memberIds = {ENEMY_ROW(ENEMY_ALEC_GOBLIN), ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [407] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST_MAGE), ENEMY_ROW(ENEMY_UNDEAD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [408] = {
         .memberIds = {ENEMY_ROW(ENEMY_UNDEAD), ENEMY_ROW(ENEMY_NUMB_ANT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {0},
-    {0},
-    {
+    [409] = {0},
+    [410] = {0},
+    [411] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_VERMIN), ENEMY_ROW(ENEMY_DEATH_CAP)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [412] = {
         .memberIds = {ENEMY_ROW(ENEMY_CAVE_TROLL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [413] = {
         .memberIds = {ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [414] = {
         .memberIds = {ENEMY_ROW(ENEMY_DIRE_WOLF), ENEMY_ROW(ENEMY_GHOST_MAGE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [415] = {
         .memberIds = {ENEMY_ROW(ENEMY_UNDEAD), ENEMY_ROW(ENEMY_CAVE_TROLL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [416] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEATH_CAP), ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {0, 1},
         .maximumCounts = {2, 1},
     },
-    {
+    [417] = {
         .memberIds = {ENEMY_ROW(ENEMY_FAERY), ENEMY_ROW(ENEMY_DIRE_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [418] = {
         .memberIds = {ENEMY_ROW(ENEMY_FAERY), ENEMY_ROW(ENEMY_MAD_VERMIN)},
         .minimumCounts = {1, 1},
         .maximumCounts = {2, 1},
     },
-    {0},
-    {0},
-    {
+    [419] = {0},
+    [420] = {0},
+    [421] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAN_O_WAR), ENEMY_ROW(ENEMY_FAERY)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [422] = {
         .memberIds = {ENEMY_ROW(ENEMY_ROC), ENEMY_ROW(ENEMY_FAERY)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [423] = {
         .memberIds = {ENEMY_ROW(ENEMY_ROC)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [424] = {
         .memberIds = {ENEMY_ROW(ENEMY_VIRAGO), ENEMY_ROW(ENEMY_FAERY)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [425] = {
         .memberIds = {ENEMY_ROW(ENEMY_VIRAGO), ENEMY_ROW(ENEMY_GHOST_MAGE)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [426] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_DRAGON), ENEMY_ROW(ENEMY_LIZARD_FIGHTER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [427] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_DRAGON), ENEMY_ROW(ENEMY_ROC)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [428] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [429] = {0},
+    [430] = {0},
+    [431] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [432] = {
         .memberIds = {ENEMY_ROW(ENEMY_WIGHT), ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [433] = {
         .memberIds = {ENEMY_ROW(ENEMY_GNOME_MAGE), ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [434] = {
         .memberIds = {ENEMY_ROW(ENEMY_GOLEM), ENEMY_ROW(ENEMY_CLAY_GARGOYLE)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [435] = {
         .memberIds = {ENEMY_ROW(ENEMY_DREAD_HOUND), ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [436] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOOD_WALKER), ENEMY_ROW(ENEMY_MAD_VERMIN), ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [437] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOOD_WALKER), ENEMY_ROW(ENEMY_CLAY_GARGOYLE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [438] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOOD_WALKER)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [439] = {0},
+    [440] = {0},
+    [441] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [442] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINOX)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [443] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOOD_WALKER), ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [444] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOTAURUS), ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [445] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOTAURUS), ENEMY_ROW(ENEMY_DINOX)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [446] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [447] = {
         .memberIds = {ENEMY_ROW(ENEMY_LIVING_ARMOR), ENEMY_ROW(ENEMY_MINOTAURUS)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [448] = {
         .memberIds = {ENEMY_ROW(ENEMY_LIVING_ARMOR)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {0},
-    {0},
-    {
+    [449] = {0},
+    [450] = {0},
+    [451] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [452] = {
         .memberIds = {ENEMY_ROW(ENEMY_NEEDLE_EGG)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [453] = {
         .memberIds = {ENEMY_ROW(ENEMY_NEEDLE_EGG), ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {2, 2},
     },
-    {
+    [454] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINOX), ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [455] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOTAURUS)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [456] = {
         .memberIds = {ENEMY_ROW(ENEMY_LIVING_ARMOR), ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [457] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAGICORE), ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [458] = {
         .memberIds = {ENEMY_ROW(ENEMY_STONE_SOLDIER), ENEMY_ROW(ENEMY_NEEDLE_EGG)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {0},
-    {0},
-    {
+    [459] = {0},
+    [460] = {0},
+    [461] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRAL_SHELL)},
         .minimumCounts = {2},
         .maximumCounts = {4},
     },
-    {
+    [462] = {
         .memberIds = {ENEMY_ROW(ENEMY_GILLMAN), ENEMY_ROW(ENEMY_SPIRAL_SHELL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [463] = {
         .memberIds = {ENEMY_ROW(ENEMY_GILLMAN), ENEMY_ROW(ENEMY_SEAFOWL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [464] = {
         .memberIds = {ENEMY_ROW(ENEMY_VILE_DIRGE), ENEMY_ROW(ENEMY_SEAFOWL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [465] = {
         .memberIds = {ENEMY_ROW(ENEMY_HYDRA), ENEMY_ROW(ENEMY_SEAFOWL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [466] = {
         .memberIds = {ENEMY_ROW(ENEMY_HYDRA), ENEMY_ROW(ENEMY_GILLMAN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [467] = {
         .memberIds = {ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [468] = {
         .memberIds = {ENEMY_ROW(ENEMY_TURTLE_DRAGON), ENEMY_ROW(ENEMY_HYDRA)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [469] = {0},
+    [470] = {0},
+    [471] = {
         .memberIds = {ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [472] = {
         .memberIds = {ENEMY_ROW(ENEMY_WARGOLD), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [473] = {
         .memberIds = {ENEMY_ROW(ENEMY_TALON_RUNNER), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [474] = {
         .memberIds = {ENEMY_ROW(ENEMY_TALON_RUNNER)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [475] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [476] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN), ENEMY_ROW(ENEMY_WARGOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [477] = {
         .memberIds = {ENEMY_ROW(ENEMY_SLAYER), ENEMY_ROW(ENEMY_WARGOLD)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [478] = {
         .memberIds = {ENEMY_ROW(ENEMY_SLAYER), ENEMY_ROW(ENEMY_WOLFKIN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {0},
-    {0},
-    {
+    [479] = {0},
+    [480] = {0},
+    [481] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEVIL_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [482] = {
         .memberIds = {ENEMY_ROW(ENEMY_FOUL_MUMMY), ENEMY_ROW(ENEMY_DEVIL_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [483] = {
         .memberIds = {ENEMY_ROW(ENEMY_MACETAIL), ENEMY_ROW(ENEMY_DEVIL_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [484] = {
         .memberIds = {ENEMY_ROW(ENEMY_WYVERN)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [485] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST_ARMY), ENEMY_ROW(ENEMY_WYVERN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [486] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOST_ARMY), ENEMY_ROW(ENEMY_FOUL_MUMMY)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [487] = {
         .memberIds = {ENEMY_ROW(ENEMY_BLUE_DRAGON), ENEMY_ROW(ENEMY_WYVERN)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [488] = {
         .memberIds = {ENEMY_ROW(ENEMY_BLUE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [489] = {0},
+    [490] = {0},
+    [491] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAGING_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [492] = {
         .memberIds = {ENEMY_ROW(ENEMY_WISE_GRYPHON), ENEMY_ROW(ENEMY_RAGING_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [493] = {
         .memberIds = {ENEMY_ROW(ENEMY_LICH), ENEMY_ROW(ENEMY_WISE_GRYPHON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [494] = {
         .memberIds = {ENEMY_ROW(ENEMY_LITTLE_DEATH), ENEMY_ROW(ENEMY_LICH)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [495] = {
         .memberIds = {ENEMY_ROW(ENEMY_PHOENIX), ENEMY_ROW(ENEMY_LITTLE_DEATH), ENEMY_ROW(ENEMY_LICH)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [496] = {
         .memberIds = {ENEMY_ROW(ENEMY_PHOENIX)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [497] = {
         .memberIds = {ENEMY_ROW(ENEMY_LESSER_DEMON), ENEMY_ROW(ENEMY_LITTLE_DEATH)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [498] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAND_CHIMERA)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [499] = {0},
+    [500] = {0},
+    [501] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOODLE_BUG)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [502] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_BIRD)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [503] = {
         .memberIds = {ENEMY_ROW(ENEMY_RAPTOR)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [504] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEVIL_FROG), ENEMY_ROW(ENEMY_RAPTOR)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [505] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOS_WARRIOR), ENEMY_ROW(ENEMY_FIRE_BIRD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [506] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOS_WARRIOR)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [507] = {
         .memberIds = {ENEMY_ROW(ENEMY_AKA_MANAH), ENEMY_ROW(ENEMY_MINOS_WARRIOR)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [508] = {
         .memberIds = {ENEMY_ROW(ENEMY_AKA_MANAH)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [509] = {0},
+    [510] = {0},
+    [511] = {
         .memberIds = {ENEMY_ROW(ENEMY_OOZE)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [512] = {
         .memberIds = {ENEMY_ROW(ENEMY_OOZE), ENEMY_ROW(ENEMY_GNOME)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [513] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOUL)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [514] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOUL), ENEMY_ROW(ENEMY_OOZE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [515] = {
         .memberIds = {ENEMY_ROW(ENEMY_GHOUL), ENEMY_ROW(ENEMY_GNOME)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [516] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY), ENEMY_ROW(ENEMY_OOZE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [517] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY), ENEMY_ROW(ENEMY_GHOUL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [518] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARPY)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [519] = {0},
+    [520] = {0},
+    [521] = {
         .memberIds = {ENEMY_ROW(ENEMY_DOOMSAYER), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [522] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEATH_HEAD)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [523] = {
         .memberIds = {ENEMY_ROW(ENEMY_BONE_FIGHTER), ENEMY_ROW(ENEMY_DEATH_HEAD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [524] = {
         .memberIds = {ENEMY_ROW(ENEMY_SALAMANDER)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [525] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRIT), ENEMY_ROW(ENEMY_BONE_FIGHTER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [526] = {
         .memberIds = {ENEMY_ROW(ENEMY_DEATH_HEAD), ENEMY_ROW(ENEMY_SPIRIT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [527] = {
         .memberIds = {ENEMY_ROW(ENEMY_RED_DEMON), ENEMY_ROW(ENEMY_DOOMSAYER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [528] = {
         .memberIds = {ENEMY_ROW(ENEMY_RED_DEMON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [529] = {0},
+    [530] = {0},
+    [531] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [532] = {
         .memberIds = {ENEMY_ROW(ENEMY_WIGHT), ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 2},
     },
-    {
+    [533] = {
         .memberIds = {ENEMY_ROW(ENEMY_GNOME_MAGE), ENEMY_ROW(ENEMY_FIRE_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [534] = {
         .memberIds = {ENEMY_ROW(ENEMY_GOLEM), ENEMY_ROW(ENEMY_WIGHT)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [535] = {
         .memberIds = {ENEMY_ROW(ENEMY_GNOME_MAGE), ENEMY_ROW(ENEMY_CLAY_GARGOYLE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [536] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRESSIL), ENEMY_ROW(ENEMY_DREAD_HOUND)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [537] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRESSIL), ENEMY_ROW(ENEMY_WOOD_WALKER)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [538] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOOD_WALKER)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [539] = {0},
+    [540] = {0},
+    [541] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [542] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAGICORE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [543] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAGICORE), ENEMY_ROW(ENEMY_STONE_SOLDIER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [544] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [545] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG), ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [546] = {
         .memberIds = {ENEMY_ROW(ENEMY_SQUIRRELFANG), ENEMY_ROW(ENEMY_MAGICORE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [547] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINOX), ENEMY_ROW(ENEMY_SQUIRRELFANG)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [548] = {
         .memberIds = {ENEMY_ROW(ENEMY_DINOX)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [549] = {0},
+    [550] = {0},
+    [551] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARRIDAN)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [552] = {
         .memberIds = {ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [553] = {
         .memberIds = {ENEMY_ROW(ENEMY_STONE_SOLDIER)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [554] = {
         .memberIds = {ENEMY_ROW(ENEMY_HORNED_GHOST), ENEMY_ROW(ENEMY_CANNIBAL_GHOUL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [555] = {
         .memberIds = {ENEMY_ROW(ENEMY_HARRIDAN), ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [556] = {
         .memberIds = {ENEMY_ROW(ENEMY_STONE_SOLDIER)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [557] = {
         .memberIds = {ENEMY_ROW(ENEMY_EARTH_GOLEM), ENEMY_ROW(ENEMY_CANNIBAL_GHOUL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [558] = {
         .memberIds = {ENEMY_ROW(ENEMY_EARTH_GOLEM), ENEMY_ROW(ENEMY_STONE_SOLDIER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [559] = {0},
+    [560] = {0},
+    [561] = {
         .memberIds = {ENEMY_ROW(ENEMY_TALON_RUNNER)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [562] = {
         .memberIds = {ENEMY_ROW(ENEMY_WARGOLD), ENEMY_ROW(ENEMY_WOLFKIN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [563] = {
         .memberIds = {ENEMY_ROW(ENEMY_WARGOLD), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [564] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN), ENEMY_ROW(ENEMY_WARGOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [565] = {
         .memberIds = {ENEMY_ROW(ENEMY_TALON_RUNNER), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [566] = {
         .memberIds = {ENEMY_ROW(ENEMY_SLAYER), ENEMY_ROW(ENEMY_WOLFKIN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [567] = {
         .memberIds = {ENEMY_ROW(ENEMY_SLAYER), ENEMY_ROW(ENEMY_WARGOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [568] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_GRYPHON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {0},
-    {
+    [569] = {0},
+    [570] = {0},
+    [571] = {
         .memberIds = {ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [572] = {
         .memberIds = {ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [573] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN), ENEMY_ROW(ENEMY_WARGOLD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [574] = {
         .memberIds = {ENEMY_ROW(ENEMY_WOLFKIN), ENEMY_ROW(ENEMY_MOLE_MAGE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [575] = {
         .memberIds = {ENEMY_ROW(ENEMY_WARGOLD), ENEMY_ROW(ENEMY_WOLFKIN)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [576] = {
         .memberIds = {ENEMY_ROW(ENEMY_WARGOLD), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [577] = {
         .memberIds = {ENEMY_ROW(ENEMY_NIGHTMARE), ENEMY_ROW(ENEMY_PTERANODON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [578] = {
         .memberIds = {ENEMY_ROW(ENEMY_NIGHTMARE)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [579] = {0},
+    [580] = {0},
+    [581] = {
         .memberIds = {ENEMY_ROW(ENEMY_SPIRAL_SHELL)},
         .minimumCounts = {4},
         .maximumCounts = {5},
     },
-    {
+    [582] = {
         .memberIds = {ENEMY_ROW(ENEMY_HYDRA)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [583] = {
         .memberIds = {ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {
+    [584] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAND_CHIMERA)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [585] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAND_CHIMERA), ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [586] = {
         .memberIds = {ENEMY_ROW(ENEMY_PHOENIX)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [587] = {
         .memberIds = {ENEMY_ROW(ENEMY_PHOENIX), ENEMY_ROW(ENEMY_GRAND_CHIMERA)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [588] = {
         .memberIds = {ENEMY_ROW(ENEMY_PHOENIX), ENEMY_ROW(ENEMY_TURTLE_DRAGON)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [589] = {0},
+    [590] = {0},
+    [591] = {
         .memberIds = {ENEMY_ROW(ENEMY_SEA_HEDGEHOG)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [592] = {
         .memberIds = {ENEMY_ROW(ENEMY_GREAT_SEAGULL), ENEMY_ROW(ENEMY_SEA_HEDGEHOG)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [593] = {
         .memberIds = {ENEMY_ROW(ENEMY_GILLMAN_LORD), ENEMY_ROW(ENEMY_PUPPET_WARRIOR)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [594] = {
         .memberIds = {ENEMY_ROW(ENEMY_PUPPET_WARRIOR)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [595] = {
         .memberIds = {ENEMY_ROW(ENEMY_PYRODRA), ENEMY_ROW(ENEMY_GREAT_SEAGULL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [596] = {
         .memberIds = {ENEMY_ROW(ENEMY_PYRODRA), ENEMY_ROW(ENEMY_SEA_HEDGEHOG)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [597] = {
         .memberIds = {ENEMY_ROW(ENEMY_OCEAN_DRAGON), ENEMY_ROW(ENEMY_PYRODRA)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [598] = {
         .memberIds = {ENEMY_ROW(ENEMY_OCEAN_DRAGON)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [599] = {0},
+    [600] = {0},
+    [601] = {
         .memberIds = {ENEMY_ROW(ENEMY_SAND_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [602] = {
         .memberIds = {ENEMY_ROW(ENEMY_WINGED_LIZARD)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [603] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOS_KNIGHT), ENEMY_ROW(ENEMY_SAND_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [604] = {
         .memberIds = {ENEMY_ROW(ENEMY_MINOS_KNIGHT), ENEMY_ROW(ENEMY_WINGED_LIZARD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [605] = {
         .memberIds = {ENEMY_ROW(ENEMY_SOUL_ARMY), ENEMY_ROW(ENEMY_SAND_SCORPION)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [606] = {
         .memberIds = {ENEMY_ROW(ENEMY_SOUL_ARMY)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [607] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_DRAGON), ENEMY_ROW(ENEMY_WINGED_LIZARD)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [608] = {
         .memberIds = {ENEMY_ROW(ENEMY_FIRE_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [609] = {0},
+    [610] = {0},
+    [611] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHIMERA_WORM)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [612] = {
         .memberIds = {ENEMY_ROW(ENEMY_CHIMERA_WORM), ENEMY_ROW(ENEMY_DRUJ)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1},
     },
-    {
+    [613] = {
         .memberIds = {ENEMY_ROW(ENEMY_WONDER_BIRD), ENEMY_ROW(ENEMY_CHIMERA_WORM)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [614] = {
         .memberIds = {ENEMY_ROW(ENEMY_WONDER_BIRD)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [615] = {
         .memberIds = {ENEMY_ROW(ENEMY_DRUJ), ENEMY_ROW(ENEMY_CHIMERA_WORM)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [616] = {
         .memberIds = {ENEMY_ROW(ENEMY_DRUJ), ENEMY_ROW(ENEMY_CRUEL_DRAGON)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [617] = {
         .memberIds = {ENEMY_ROW(ENEMY_CRUEL_DRAGON), ENEMY_ROW(ENEMY_WONDER_BIRD)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {
+    [618] = {
         .memberIds = {ENEMY_ROW(ENEMY_CRUEL_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [619] = {0},
+    [620] = {0},
+    [621] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAVE_WIGHT)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
-    {
+    [622] = {
         .memberIds = {ENEMY_ROW(ENEMY_GRAVE_WIGHT), ENEMY_ROW(ENEMY_BOMBANDER)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [623] = {
         .memberIds = {ENEMY_ROW(ENEMY_BOMBANDER), ENEMY_ROW(ENEMY_SKY_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [624] = {
         .memberIds = {ENEMY_ROW(ENEMY_BOMBANDER), ENEMY_ROW(ENEMY_MAD_DEMON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [625] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKY_DRAGON), ENEMY_ROW(ENEMY_GRAVE_WIGHT)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2},
     },
-    {
+    [626] = {
         .memberIds = {ENEMY_ROW(ENEMY_SKY_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {2},
     },
-    {
+    [627] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_DEMON), ENEMY_ROW(ENEMY_SKY_DRAGON)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1},
     },
-    {
+    [628] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_DEMON)},
         .minimumCounts = {2},
         .maximumCounts = {2},
     },
-    {0},
-    {0},
-    {
+    [629] = {0},
+    [630] = {0},
+    [631] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_STAR_MAGICIAN), ENEMY_ROW(ENEMY_REFRESH_BALL), ENEMY_ROW(ENEMY_GUARDIAN_BALL), ENEMY_ROW(ENEMY_THUNDER_BALL), ENEMY_ROW(ENEMY_ANGER_BALL)},
         .minimumCounts = {1, 1, 1, 1, 1},
         .maximumCounts = {1, 1, 1, 1, 1},
     },
-    {
+    [632] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_VALUKAR)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [633] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_SENTINEL)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [634] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_DULLAHAN)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [635] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_NAVAMPA_SHAMAN_VILLAGE_CAVE), ENEMY_ROW(ENEMY_AZART_SHAMAN_VILLAGE_CAVE), ENEMY_ROW(ENEMY_SATRAGE_SHAMAN_VILLAGE_CAVE)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [636] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_BANDIT_WORLD_MAP), ENEMY_ROW(ENEMY_THIEF_WORLD_MAP), ENEMY_ROW(ENEMY_THIEF_WORLD_MAP)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
     },
-    {
+    [637] = {
         .memberIds = {ENEMY_ROW(ENEMY_WILD_WOLF)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [FORMATION_KARST_AND_AGATIO_VS_ISAAC] = {
         .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_AGATIO_VS_ISAAC), ENEMY_ROW(ENEMY_KARST_VS_ISAAC)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
     },
-    {0},
-    {0},
-    {
+    [639] = {0},
+    [640] = {0},
+    [641] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_GABOMBA_CATACOMBS)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [642] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_TAOPO_SWAMP)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [643] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_GAIA_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [644] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_JUPITER_LIGHTHOUSE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [645] = {
         .memberIds = {ENEMY_ROW(ENEMY_MAD_PLANT_TRIAL_ROAD)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {0},
-    {0},
-    {0},
-    {0},
-    {0},
-    {
+    [646] = {0},
+    [647] = {0},
+    [648] = {0},
+    [649] = {0},
+    [650] = {0},
+    [651] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_KANDOREAN_TEMPLE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [652] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_AIRS_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [653] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_GABOMBA_STATUE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [654] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_AQUA_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [655] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_GAIA_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [656] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_TREASURE_ISLE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [657] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_JUPITER_LIGHTHOUSE)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [658] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_MAGMA_ROCK)},
         .minimumCounts = {1},
         .maximumCounts = {1},
     },
-    {
+    [659] = {
         .memberIds = {ENEMY_ROW(ENEMY_MIMIC_MARS_LIGHTHOUSE)},
         .minimumCounts = {1},
         .maximumCounts = {1},

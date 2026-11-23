@@ -191,10 +191,10 @@ enum DjinnCompareOperation {
 #include "graphics/vram_tab.h"
 #include "window/item_icon.h"
 
-void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
-                               s32 originX, s32 originY, s32 columns);
-void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **icons, s32 index, s32 x,
-                                 s32 y, s32 columns);
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
+                                s32 originX, s32 originY, s32 columns);
+void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
+                                      s32 x, s32 y, s32 columns);
 void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
                         s32 columns);
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
@@ -514,7 +514,7 @@ s32 Ability_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 s32 Ability_PlayUseAnimation(s32 action);
 void DjinnFigures_InitializeTopRow(void);
 void DjinnFigures_ReleaseTopRow(void);
-void Menu_ResetTwoResourceEntries(void);
+void Menu_FreeArrows(void);
 /// One 4-bit tile (backdrop.4bpp) the Djinn menus copy into the backdrop's
 /// frame; the Djinn preview blinks it, drawing it and a fill of the window
 /// background in turn every four frames.

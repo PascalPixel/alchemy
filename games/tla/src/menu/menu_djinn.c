@@ -82,7 +82,7 @@ s32 DjinnMenu_Run(void) {
   enabled = Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Menu_InitializeWork(0);
+  Window_InitializeWork(0);
   backdrop = Heap_AllocEwram(sizeof(*backdrop));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
@@ -118,7 +118,7 @@ s32 DjinnMenu_Run(void) {
   DjinnFigures_InitializeTopRow();
   DjinnMenu_RunScreen();
   DjinnFigures_ReleaseTopRow();
-  Menu_ResetTwoResourceEntries();
+  Menu_FreeArrows();
   wait(1);
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);

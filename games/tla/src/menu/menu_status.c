@@ -70,7 +70,7 @@ s32 PartyMemberChooser_Open(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Menu_InitializeWork(0);
+  Window_InitializeWork(0);
 
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
@@ -141,7 +141,7 @@ s32 StatusScreen_Run(void) {
   // Window 0 shows only the windows' layer and the sprites.
   transition->active = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
-  Menu_InitializeWork(0);
+  Window_InitializeWork(0);
   page = &state->page;
   *page = 0;
   state->partyCount = Party_ListMembersFar(state->memberIds);
@@ -1933,19 +1933,19 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
        entryIndex <= MENU_ENTRY_ICONS - 1; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
-      Menu_PlaceEntryIconInGrid(icon, entryIndex, originX, originY, columns);
+      Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
     }
   }
 }
 
-/// The side of a cell of the grids Menu_PlaceEntryIconInGrid places icons in.
+/// The side of a cell of the grids Menu_PlaceEntryActorInGrid places icons in.
 #define ENTRY_ICON_CELL_SIZE 16
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
 /// ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY),
 /// and shows it.
-void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
-                               s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
+                                s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
 
   entryIndex = index;

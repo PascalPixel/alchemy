@@ -8,9 +8,9 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-/// Loads each menu icon resource whose cache slot was acquired: the Djinn
-/// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the
-/// work's resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
+/// Loads the Djinn menu's up and down arrows (djinn_arrow_up and
+/// djinn_arrow_down) into free VRAM cache slots, the work's resourceSlots,
+/// for Icon_DrawVariantWithTileOffset.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -31,8 +31,9 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   }
 }
 
-/// Frees the two VRAM cache entries of the item menu's tiles.
-void Menu_ResetTwoResourceEntries(void) {
+/// Frees the VRAM cache slots of the two arrows the menu loaded
+/// (Resource_LoadPairedBlocks or Resource_LoadPairedBlocksIfAvailable).
+void Menu_FreeArrows(void) {
   struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
 
   VramCache_FreeEntry((u16)state->resourceSlots[0]);

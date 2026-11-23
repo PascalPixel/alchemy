@@ -39,7 +39,7 @@ s32 Menu_SuspendFieldTasks(void) {
 
 /// Clears the whole menu work and sets its defaults: no side selected, one
 /// entry in each side, and a 1x1 cursor grid.
-void Menu_InitializeWork(s32 unused) {
+void Window_InitializeWork(s32 unused) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   Dma_Fill32(0, menu, MENU_WORK_SIZE);
@@ -437,8 +437,8 @@ void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant);
 
-/// The stat arrows: the up and down arrow sprites the menu loads into its two
-/// sprite picture cache slots (Resource_LoadPairedBlocks).
+/// The stat arrows: the small up and down arrows the menu loads into its two
+/// VRAM cache slots (Resource_LoadPairedBlocks).
 enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 
 /// Writes Attack, Defense and Agility into a status window as they are now
@@ -663,16 +663,16 @@ void MenuCursor_Slide(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-void PsynergyMenu_PlaceEntryIcons(s32 x, s32 y, s32 width);
+void PsynergyMenu_RefreshMemberEntries(s32 x, s32 y, s32 width);
 
 /// Unused: lays the entry icons out eight to a row from (108, 40).
-UNUSED void PsynergyMenu_PlaceEntryIconsDefault(void) {
-  PsynergyMenu_PlaceEntryIcons(108, 40, 8);
+UNUSED void PsynergyMenu_RefreshMemberEntriesDefault(void) {
+  PsynergyMenu_RefreshMemberEntries(108, 40, 8);
 }
 
 /// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
 /// columns wide, from (originX, originY); empty slots keep their place.
-void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   s32 index;
@@ -682,7 +682,7 @@ void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
   scan = slot;
   do {
     if (*scan++ != NULL) {
-      PsynergyMenu_PlaceEntryIcon(slot, index, originX, originY, columns);
+      PsynergyMenu_PositionMemberEntry(slot, index, originX, originY, columns);
     }
     index++;
     slot++;
@@ -692,8 +692,8 @@ void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
 /// Places the icon in *slot at cell index of a grid of 16x16 cells, columns
 /// wide, from (originX, originY), and shows it; an index past the last entry
 /// is taken as 0.
-void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **slot, s32 index,
-                                 s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
+                                      s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
 
   if (index > MENU_ENTRY_ICONS - 1) {
@@ -722,7 +722,7 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
 
 /// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
 /// y): y is 56 for layout 1 and 40 otherwise.
-void ItemMenu_PlaceItemIcons(s32 layout) {
+void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   struct WindowSprite *icon;

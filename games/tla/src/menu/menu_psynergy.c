@@ -40,7 +40,7 @@ s32 PsynergyMenu_Run(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Menu_InitializeWork(0);
+  Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES);
@@ -491,7 +491,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   menu->psynergyCount =
       PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
-  PsynergyMenu_PlaceEntryIcons(108, 32, 8);
+  PsynergyMenu_RefreshMemberEntries(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyMenuEmpty, menu->psynergyWindow,

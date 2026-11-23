@@ -179,8 +179,9 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
   }
 }
 
-/// Moves each cursor axis one quarter of the remaining distance, with a minimum
-/// one-pixel step.
+/// Eases a cursor toward its target, a quarter of the way on each axis a frame
+/// and at least a pixel; the settings and name-entry screens move their markers
+/// with it.
 void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 delta;

@@ -89,7 +89,7 @@ void NameEntry_DrawName(struct Window *window, u8 *name);
 s32 NameEntry_EditMemberName(s32 member);
 s32 ColossoMenu_Choose(s32 unused);
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
-s32 Party_GetMemberPortraitSprite(u32 index);
+s32 Party_GetMemberPortraitSprite(u32 member);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
 void MenuTitle_Load(s32 picture, s32 slot);

@@ -169,8 +169,8 @@ void NameEntry_LoadCaretTiles(s32 slot) {
 #define NAME_MAX_BYTES 14 ///< stored name bytes, excluding its terminator
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-/// Puts the string `str` into the UI's text entries and returns its width in
-/// pixels.
+/// Copies the name `str` into the window work's text buffer and returns its
+/// width in pixels, where the caret stands after it.
 s32 Text_SetString(const u8 *str) {
   struct WindowWork *work;
   u16 *dst;

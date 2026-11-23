@@ -123,7 +123,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   work->dirty = 1;
   Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), cleared, &handle,
                        &palette, PORTRAIT_PALETTE, cleared);
-  // The portrait as a bare OAM entry, drawn each frame: a link word,
+  // The portrait as a bare OAM entry, drawn each frame at y 12: a link word,
   // attributes 0 and 1 and attribute 2.
   word = entry;
   *word++ = cleared;
@@ -150,17 +150,17 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   VramCache_FreeEntry(handle);
 }
 
-/// Returns the portrait character of party member `member` (0-8): from
-/// gCharacter_ChildSpriteTable during the prologue, from
+/// Returns the sprite whose portrait shows party member `member` (0 to 8):
+/// from gCharacter_ChildSpriteTable during the prologue, from
 /// gCharacter_SpriteTable otherwise; 0 for any other party member.
-s32 Party_GetMemberPortraitSprite(u32 index) {
-  if (index > 8) {
+s32 Party_GetMemberPortraitSprite(u32 member) {
+  if (member > 8) {
     return 0;
   }
   if (GameFlag_GetFar(FLAG_CHILDHOOD) == 0) {
-    return gCharacter_SpriteTable[index];
+    return gCharacter_SpriteTable[member];
   }
-  return gCharacter_ChildSpriteTable[index];
+  return gCharacter_ChildSpriteTable[member];
 }
 
 /// Shows that a party member joined the party while the join jingle

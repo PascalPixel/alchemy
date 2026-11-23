@@ -1,6 +1,8 @@
-/// Launches an actor ahead of another, 32 pixels out.
+/// Launches the actor this one carries (Actor_Attach) 32 pixels ahead of it,
+/// the way `userValue` faces, rolling at up to 8 pixels a frame
+/// (Actor_RollAndCrumble), with the launch sound.
 void Actor_LaunchAhead(struct Actor *self) {
-  struct Actor *actor = Actor_Get(self->riseCounter);
+  struct Actor *actor = Actor_Get(self->launchedActorId);
   s32 angle = (s16)self->userValue;
   struct FieldSprite *sprite = actor->sprite;
   FIXED position[3];

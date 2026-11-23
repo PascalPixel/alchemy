@@ -132,7 +132,7 @@ extern struct Trigger gShipRooms_RowingDeckTriggersKrakenOnDeck[];
 extern struct Trigger gShipRooms_RowingDeckTriggersArrived[];
 
 /// The visible anchor charm has been created this visit.
-#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00
+#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED FLAG_SCENE_TEMP_00
 
 /// Operations shared by the captain's quarters, passenger hold and rowing-deck
 /// events.
@@ -3178,10 +3178,10 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
 }
 
 /// Creates the visible anchor charm once a visit
-/// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN records it) and retains it for departure
-/// scripts.
+/// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED records it) and retains it for
+/// departure scripts.
 static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
-  s32 set = Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
+  s32 set = Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED);
   struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *glyph;
@@ -3201,7 +3201,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED);
   gShipRooms_AnchorCharm = actor;
   return actor;
 }

@@ -704,8 +704,8 @@ static void CrossboneIsleKeys_HideRedKey(void) {
 
 /// Gives the party a key that Catch has pulled in: "Isaac got the Blue Key."
 /// (or the Red Key), and the key's icon is gone from its post for good.
-static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
-                                                s32 collectedFlag) {
+static inline void CrossboneIsleKeys_GetKey(s32 actorId, s32 itemId,
+                                            s32 collectedFlag) {
   Item_ShowFound(itemId, 3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Party_GiveItem(itemId, 0);
@@ -717,36 +717,36 @@ static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
 /// the pit from the east door: a hand of light reaches out and pulls the key
 /// to him.
 static void CrossboneIsleKeys_CatchFirstBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY);
+  CrossboneIsleKeys_GetKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY);
 }
 
 /// Catch on the Blue Key on a post in the middle of the pit: a hand of light
 /// pulls it to Isaac.
 static void CrossboneIsleKeys_CatchSecondBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1);
+  CrossboneIsleKeys_GetKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1);
 }
 
 /// Catch on the Blue Key on a post in the north of the pit, below the
 /// walkway: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchThirdBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2);
+  CrossboneIsleKeys_GetKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2);
 }
 
 /// Catch on the Blue Key on a post in the south of the pit, east of the
 /// middle: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchFourthBlueKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
-                               FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3);
+  CrossboneIsleKeys_GetKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
+                           FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3);
 }
 
 /// Catch on the Red Key, on the hidden post Reveal shows south of the
 /// fourth blue door: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchRedKey(void) {
-  CrossboneIsleKeys_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY,
-                               FLAG_CROSSBONE_ISLE_RED_KEY);
+  CrossboneIsleKeys_GetKey(ACTOR_RED_KEY, ITEM_RED_KEY,
+                           FLAG_CROSSBONE_ISLE_RED_KEY);
 }
 
 /// Watches, every frame, for Isaac on the tiles just south of the statue in

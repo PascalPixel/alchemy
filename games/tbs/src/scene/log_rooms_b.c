@@ -134,7 +134,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// The actor stands still and says the selected message.
-static void LogRoomsB_ShowStandingActorDialogue(s32 actorId) {
+static void LogRoomsB_ShowStandingActorMessage(s32 actorId) {
   Event_Start();
   Actor_SetAnimation(actorId, ANIM_STAND);
   Event_ShowMessage(actorId, 0);
@@ -145,7 +145,7 @@ static void LogRoomsB_ShowStandingActorDialogue(s32 actorId) {
 static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
   Event_SetMessageId(message);
   Actor_TurnToFaceEachOther(actorId, ACTOR_PARTY_LEADER, 2);
-  LogRoomsB_ShowStandingActorDialogue(actorId);
+  LogRoomsB_ShowStandingActorMessage(actorId);
 }
 
 /// In the gem owner's house, his wife says she saw the cat get up on the table

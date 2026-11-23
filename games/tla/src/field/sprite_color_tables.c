@@ -1,14 +1,17 @@
 /// @file
-/// The sprite colour tables, 256 bytes each: the five conversion tables a
-/// resource slot maps a sprite's colours through, then the five byte remap
-/// tables (the first four as The Broken Seal's gSpriteColorRemapTables).
-/// field_sequence/sprite_color_tables.c is a second copy of the same ten.
+/// The sprite colour tables, 256 bytes each, that recolour a sprite picture by
+/// turning each colour of the basic sprite palette into another: five channel
+/// swaps, a greyscale, three tints and a negative. The first nine are The
+/// Broken Seal's; field_sequence_sprite_color_tables.c is a second copy of all
+/// ten.
 
 #include "types.h"
 
 // clang-format off
+/// The five channel swaps, in the order SPRITE_COLOR_GRB to SPRITE_COLOR_BRG
+/// name them; a sprite loaded in a colour variant, 1 to 5, takes its variant's.
 const u8 gResourceSlot_ConversionTables[5][256] = {
-    { // Table 0
+    { // Red and green swapped
         0, 1, 5, 33, 4, 2, 45, 186, 8, 135, 106, 21, 50, 13, 14, 15,
         32, 27, 181, 31, 125, 11, 22, 28, 34, 44, 96, 17, 23, 29, 35, 19,
         16, 3, 24, 30, 36, 37, 43, 49, 55, 61, 67, 38, 25, 6, 56, 62,
@@ -26,7 +29,7 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Table 1
+    { // Green and blue swapped
         0, 1, 2, 78, 186, 8, 80, 7, 5, 95, 126, 76, 12, 13, 14, 15,
         42, 77, 18, 109, 110, 111, 112, 113, 114, 145, 146, 147, 148, 149, 150, 31,
         182, 183, 184, 185, 38, 181, 36, 211, 125, 96, 16, 43, 44, 45, 46, 47,
@@ -44,7 +47,7 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Table 2
+    { // Red and blue swapped
         0, 1, 8, 193, 7, 5, 6, 4, 2, 160, 201, 121, 73, 13, 14, 15,
         187, 157, 37, 19, 55, 91, 127, 163, 199, 25, 61, 97, 133, 169, 205, 109,
         67, 103, 139, 175, 43, 18, 38, 74, 110, 146, 182, 36, 145, 80, 116, 152,
@@ -62,7 +65,7 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Table 3
+    { // Red to blue, green to red, blue to green
         0, 1, 8, 183, 186, 2, 45, 4, 5, 165, 196, 111, 73, 13, 14, 15,
         182, 147, 37, 31, 40, 76, 112, 148, 184, 44, 41, 77, 113, 149, 185, 109,
         42, 78, 114, 150, 38, 181, 43, 79, 115, 151, 187, 36, 145, 80, 116, 152,
@@ -80,7 +83,7 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Table 4
+    { // Red to green, green to blue, blue to red
         0, 1, 5, 103, 7, 8, 80, 186, 2, 100, 141, 91, 50, 13, 14, 15,
         67, 97, 181, 109, 115, 121, 127, 133, 139, 145, 151, 157, 163, 169, 175, 19,
         187, 193, 199, 205, 43, 18, 36, 221, 20, 26, 32, 38, 25, 6, 56, 62,
@@ -100,7 +103,8 @@ const u8 gResourceSlot_ConversionTables[5][256] = {
     },
 };
 
-/// A colour remap: each of the 256 colours to the colour drawn in its place.
+/// Greyscale: each colour to the grey of its brightness. CommandIcon_Load
+/// draws a command icon's top three rows of tiles through it when asked.
 const u8 gSpriteColorRemapTables[256] = {
     0, 1, 219, 87, 14, 219, 219, 14, 219, 130, 130, 220, 217, 13, 14, 15,
     220, 87, 217, 13, 219, 220, 87, 222, 222, 219, 219, 87, 222, 222, 14, 13,
@@ -120,10 +124,11 @@ const u8 gSpriteColorRemapTables[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// The four shade tables, each the 256 colours to the colour drawn in its
-/// place.
+/// Three tints, each raising one channel to full, then a negative. The bottom
+/// rows of a wading sprite (SPRITE_FLAG_SHADED) are drawn through the first,
+/// the blue.
 const u8 gSpriteColorShadeTables[4][256] = {
-    { // Remap table 1
+    { // Blue raised to full
         0, 8, 186, 198, 15, 7, 194, 7, 8, 197, 204, 196, 183, 188, 166, 15,
         192, 197, 182, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 184,
         212, 213, 214, 215, 188, 8, 182, 183, 184, 185, 186, 187, 185, 189, 190, 191,
@@ -141,7 +146,7 @@ const u8 gSpriteColorShadeTables[4][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Remap table 2
+    { // Red raised to full
         0, 2, 2, 3, 4, 4, 54, 15, 186, 126, 10, 3, 2, 48, 131, 15,
         16, 3, 2, 24, 24, 24, 24, 24, 24, 30, 30, 30, 30, 30, 30, 2,
         4, 4, 4, 4, 16, 42, 42, 42, 42, 42, 42, 48, 2, 48, 48, 48,
@@ -159,7 +164,7 @@ const u8 gSpriteColorShadeTables[4][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Remap table 3
+    { // Green raised to full
         0, 5, 4, 4, 4, 5, 68, 7, 7, 143, 108, 34, 33, 68, 136, 15,
         4, 35, 32, 5, 32, 33, 34, 35, 4, 5, 32, 33, 34, 35, 4, 34,
         32, 33, 34, 35, 32, 67, 68, 69, 70, 71, 72, 67, 35, 69, 70, 71,
@@ -177,7 +182,7 @@ const u8 gSpriteColorShadeTables[4][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
-    { // Remap table 4
+    { // A negative: each colour turned to its opposite
         0, 15, 7, 157, 8, 186, 124, 2, 4, 49, 79, 158, 171, 223, 220, 1,
         199, 157, 214, 192, 190, 153, 188, 151, 187, 149, 148, 147, 146, 8, 8, 212,
         184, 147, 182, 8, 202, 144, 142, 135, 140, 133, 139, 132, 7, 129, 128, 127,

@@ -21,11 +21,12 @@
 /// A rockslide has broken the fence and let monsters in. Initialize starts the
 /// lightning and leaves the two rocks that Isaac cannot budge across the way.
 /// It copies CELL_BEHAVIOR_WALL over the path's six cells below the west rock
-/// and under the east one. Two of those cells hold
-/// ValeKradensCottage_MeetSaturosAndMenardi's cell behavior 7 by day. It also
-/// lays a hurt man by the fence.
+/// and under the east one. Two of those cells are
+/// CELL_BEHAVIOR_KRADENS_COTTAGE_PAST_THE_STRANGERS by day. It also lays a hurt
+/// man by the fence.
 ///
-/// Talking to the hurt man, or walking up to him (cell behavior 20), plays
+/// Talking to the hurt man, or walking up to him
+/// (CELL_BEHAVIOR_KRADENS_COTTAGE_BESIDE_THE_SURVIVOR), plays
 /// ValeKradensCottage_TalkToRockslideSurvivor. He asks whether he will die. A
 /// yes leaves him giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP). A no has
 /// him find he is not hurt at all, warn them of the monsters on their way to
@@ -38,12 +39,15 @@
 /// Three years later, the day the story begins, Isaac comes up with Garet and
 /// Jenna to find two strangers outside.
 ///
-/// - Walking past the strangers (cell behavior 7) plays
+/// - Walking past the strangers
+/// (CELL_BEHAVIOR_KRADENS_COTTAGE_PAST_THE_STRANGERS)
+///   plays
 ///   ValeKradensCottage_MeetSaturosAndMenardi. The three overhear the two speak
 ///   of Sol Sanctum and of using Kraden, confront them and are let go. The two
 ///   call each other Saturos and Menardi (FLAG_MET_SATUROS_AND_MENARDI). The
 ///   strangers then stand aside, turning to watch the leader.
-/// - Near the cottage (cell behavior 5), the party overhears Kraden wondering
+/// - Before the cottage (CELL_BEHAVIOR_KRADENS_COTTAGE_BEFORE_THE_COTTAGE), the
+///   party overhears Kraden wondering
 ///   what the strangers know of the Elemental Stars
 ///   (ValeKradensCottage_OverhearKraden, FLAG_KRADEN_WONDERED_ABOUT_STRANGERS).
 /// - Talking to Kraden plays ValeKradensCottage_KradenPlansSanctumVisit. Garet
@@ -112,6 +116,41 @@ enum EavesdropMessage {
   EAVESDROP_MENARDI_TAKES_WORD = 11
 };
 
+/// Saturos's answers to "And this appointment is important enough to drive us
+/// away?", counted from MsgValeYoureTheOnesSneakingAround.
+enum AppointmentMessage {
+  APPOINTMENT_SATUROS_GIVES_WAY = 5,
+  APPOINTMENT_KRADEN_SENT_THEM_AWAY = 6
+};
+
+/// What the cells of this part of Vale do, by the trigger rows that answer
+/// them. The ways out are numbered as the day's exits, and lead to the stormy
+/// night's on that night.
+enum ValeKradensCottageCellBehavior {
+  /// The way down into the village by the north.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_NORTH_WAY_TO_VALE = 1,
+  /// The way down into the village by the south.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_SOUTH_WAY_TO_VALE,
+  /// The cottage's front door.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_DOOR,
+  /// The lower path up to Vale Cave's way in.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_WEST_PATH_TO_VALE_CAVE,
+  /// The ground before the cottage, where the party overhears Kraden.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_BEFORE_THE_COTTAGE,
+  /// The raised path up to Vale Cave's way in.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_EAST_PATH_TO_VALE_CAVE,
+  /// The way past the two strangers, where the party meets Saturos and
+  /// Menardi.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_PAST_THE_STRANGERS,
+  /// On the stormy night, the cells where a monster attacks, each once.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_FIRST_MONSTER = 10,
+  CELL_BEHAVIOR_KRADENS_COTTAGE_SECOND_MONSTER,
+  /// On the stormy night, beside the man hurt in the rockslide.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_BESIDE_THE_SURVIVOR = 20,
+  /// The jar that holds an Elixir.
+  CELL_BEHAVIOR_KRADENS_COTTAGE_JAR = 100
+};
+
 s32 Scene_Initialize(void);
 extern s32 gValeKradensCottage_RockslideSurvivorEscapeActions[];
 extern s32 gValeKradensCottage_RockslideSurvivorSquashes[];
@@ -158,8 +197,8 @@ enum ValeKradensCottageActorId {
 
 #include "shared/actor_facing.c"
 
-/// The front door of Kraden's cottage stands open since Kraden set off. So
-/// walking in (cell behavior 3, the exit into the cottage) skips its opening.
+/// The front door of Kraden's cottage stands open since Kraden set off, so
+/// walking in (CELL_BEHAVIOR_KRADENS_COTTAGE_DOOR) skips its opening.
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -225,7 +264,7 @@ static void ValeKradensCottage_TalkToBoyByTheFence(void) {
     Event_Wait(6);
     // "Do you hear those awful growls coming from the other side of..."
     Event_OpenMessage(ACTOR_BOY_BY_THE_FENCE, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(message + 1);
     } else {
       Event_SetMessageId(message + 2);
@@ -328,7 +367,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
     // "Isn't that strange?"
     Event_OpenMessage(ACTOR_KRADEN, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(MsgValeYouCannotEnterMtAleph);
     } else {
       Event_SetMessageId(MsgValeKradenIWaitedYearsFor);
@@ -408,7 +447,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_OpenMessage(ACTOR_KRADEN, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(MsgValeKradenWeOnlyCheckThe);
     } else {
       Event_SetMessageId(MsgValeKradenWeOnlyCheckMt);
@@ -421,7 +460,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     // "We'll be fine if they don't see us, right?"
     Event_OpenMessage(ACTOR_GARET, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(sneakingMessage + 1);
     } else {
       Event_SetMessageId(sneakingMessage + 2);
@@ -435,7 +474,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     // "This will just be our secret, OK?"
     Event_OpenMessage(ACTOR_JENNA, 0);
     Event_Wait(4);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
       Actor_Jump(ACTOR_JENNA, 2, 20);
       // "No, Isaac! You can't even tell your mother!"
       Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
@@ -464,7 +503,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_OpenMessage(ACTOR_KRADEN, 0);
     Event_Wait(4);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_SetMessageId(MsgValeGaretYouCanHandleThe);
     } else {
       Event_SetMessageId(MsgValeGaretIllTakeOverIf);
@@ -727,12 +766,14 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // "And this appointment is important enough to drive us away?"
   Event_OpenMessage(ACTOR_SATUROS, 0);
 
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // "Pfeh! If your errand is more important than our own, then..."
-    Event_SetMessageId(MsgValeYoureTheOnesSneakingAround + 5);
+    Event_SetMessageId(MsgValeYoureTheOnesSneakingAround +
+                       APPOINTMENT_SATUROS_GIVES_WAY);
   } else {
     // "Nevertheless, Kraden sent us away. He awaits you."
-    Event_SetMessageId(MsgValeYoureTheOnesSneakingAround + 6);
+    Event_SetMessageId(MsgValeYoureTheOnesSneakingAround +
+                       APPOINTMENT_KRADEN_SENT_THEM_AWAY);
   }
 
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -798,7 +839,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   // "Let's... Let's go, Isaac."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
+  // Isaac turns to Garet, east of him.
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST + 1, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -1012,7 +1054,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       // themselves.
       // "I'm hurt pretty badly... Do you think I'll die?"
       Event_OpenMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
-      if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
         Actor_RunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Event_Wait(20);
         Event_SetMessageId(message + 2);
@@ -1227,44 +1269,44 @@ struct Trigger gValeKradensCottage_Triggers[] = {
     { TRIGGER_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
     { TRIGGER_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValeKradensCottage_EnterCottage) },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
-    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(ValeKradensCottage_OverhearKraden) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(ValeKradensCottage_MeetSaturosAndMenardi) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_NORTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_SOUTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_KRADENS_COTTAGE_DOOR, CONDITION_ALWAYS, EVENT(ValeKradensCottage_EnterCottage) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_WEST_PATH_TO_VALE_CAVE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_EAST_PATH_TO_VALE_CAVE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KRADENS_COTTAGE_BEFORE_THE_COTTAGE, CONDITION_ALWAYS, EVENT(ValeKradensCottage_OverhearKraden) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KRADENS_COTTAGE_PAST_THE_STRANGERS, CONDITION_ALWAYS, EVENT(ValeKradensCottage_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_KRADENS_COTTAGE_JAR, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeKradensCottage_StormTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_NORTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_SOUTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH },
     { TRIGGER_TALK, ACTOR_WEST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
     { TRIGGER_TALK, ACTOR_EAST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
     { TRIGGER_TALK, ACTOR_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT(ValeKradensCottage_TalkToRockslideSurvivor) },
-    { TRIGGER_STEP, 20, FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP, EVENT(ValeKradensCottage_TalkToRockslideSurvivor) },
-    { TRIGGER_STEP, 10, FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT, EVENT(ValeKradensCottage_FightFirstMonster) },
-    { TRIGGER_STEP, 11, FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT, EVENT(ValeKradensCottage_FightSecondMonster) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, CONDITION_ALWAYS, 0 },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KRADENS_COTTAGE_BESIDE_THE_SURVIVOR, FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP, EVENT(ValeKradensCottage_TalkToRockslideSurvivor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KRADENS_COTTAGE_FIRST_MONSTER, FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT, EVENT(ValeKradensCottage_FightFirstMonster) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KRADENS_COTTAGE_SECOND_MONSTER, FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT, EVENT(ValeKradensCottage_FightSecondMonster) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_KRADENS_COTTAGE_JAR, CONDITION_ALWAYS, 0 },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gValeKradensCottage_TriggersAfterKalay[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValeKradensCottage_EnterCottage) },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
-    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_NORTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_NORTH },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_SOUTH_WAY_TO_VALE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_SOUTH },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_KRADENS_COTTAGE_DOOR, CONDITION_ALWAYS, EVENT(ValeKradensCottage_EnterCottage) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_WEST_PATH_TO_VALE_CAVE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_KRADENS_COTTAGE_EAST_PATH_TO_VALE_CAVE, CONDITION_ALWAYS, VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST },
     { TRIGGER_TALK, ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
     { TRIGGER_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT(ValeKradensCottage_TalkToCottageVisitor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_BY_THE_FENCE, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FENCE_BOULDER, CONDITION_ALWAYS, 0 },
 #if TBS_PATCH_3
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_KRADENS_COTTAGE_JAR, FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
 #endif
     { TRIGGER_TABLE_END },
 };

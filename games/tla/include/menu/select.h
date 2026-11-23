@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_SELECT_H
 #define ALCHEMY_SELECT_H
 
+/// @file
+/// The selection screen: the row of icons a command, item or Psynergy is
+/// picked from, its icons and their sprites.
+
 #include "types.h"
 #include "static_assert.h"
 #include "window/window.h"

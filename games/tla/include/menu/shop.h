@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_SHOP_H
 #define ALCHEMY_SHOP_H
 
+/// @file
+/// The coins window shops, inns and sanctums open beside the keeper.
+
 #include "edition.h"
 
 /// Width in tiles of the coins window that shops, inns and sanctums open

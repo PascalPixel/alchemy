@@ -18,7 +18,7 @@
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
-s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 unused) {
   struct WindowWork *win;
   struct FieldWork *work;
   s32 sprite;
@@ -44,16 +44,16 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   work = gFieldWork;
   handle = 0;
   portrait = 0;
-  sprite = Actor_GetSpriteById(localId);
+  sprite = Actor_GetSpriteById(speaker);
   extra = 0;
   portraitTop = 0;
   margin = 4;
-  flags = localId & SPEAKER_FLAGS;
+  flags = speaker & SPEAKER_FLAGS;
   message = work->message;
-  localId &= SPEAKER_ACTOR_MASK;
+  speaker &= SPEAKER_ACTOR_MASK;
   x = 0;
-  actor = Actor_Lookup(localId);
-  work->speaker = localId;
+  actor = Actor_Lookup(speaker);
+  work->speaker = speaker;
   y = 0;
   found = 0;
   if (work->fastForward == 0) {
@@ -65,15 +65,15 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
         found = 1;
         y -= 2;
       } else {
-        if (Actor_GetScreenPosition(localId, pos) != -1)
+        if (Actor_GetScreenPosition(speaker, pos) != -1)
           found = 1;
         else
           found = 0;
         x = pos[0] >> 3;
         y = pos[1] >> 3;
       }
-    } else if (localId <= 7) {
-      sprite = localId;
+    } else if (speaker <= ACTOR_PIERS) {
+      sprite = speaker;
       actor = Actor_Lookup(Party_GetLeaderActor());
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Matrix_ProjectPoint(&actor->x.fixed, pos);
@@ -198,20 +198,21 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   return handle;
 }
 
-/// Opens the message at the object and waits for its window; after ten
-/// seconds, or with Select, R, L and A held, the text is finished at once.
-void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
+/// Opens the event's current message at the speaker and waits for its window;
+/// after ten seconds, or with Select, R, L and A held, the text is finished at
+/// once.
+void FieldMessage_ShowAtActorAndWait(s32 speaker, s32 flags) {
   s32 masked;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  void *window = FieldMessage_ShowAtActor(object, message);
+  void *window = FieldMessage_ShowAtActor(speaker, flags);
   s32 id;
   u32 frames;
 
   frames = 0;
   wait(1);
-  id = Actor_GetSpriteById(object);
-  if (object <= 7) {
-    masked = object & SPEAKER_ACTOR_MASK;
+  id = Actor_GetSpriteById(speaker);
+  if (speaker <= ACTOR_PIERS) {
+    masked = speaker & SPEAKER_ACTOR_MASK;
     if (Scene_FindActorPlacement(masked) == 0)
       id = masked;
   }
@@ -234,32 +235,32 @@ void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
 
 /// The event command "show message and wait": shows the message, then waits the
 /// given number of frames.
-void Event_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
-  FieldMessage_ShowAtActorAndWait(object, message);
+void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames) {
+  FieldMessage_ShowAtActorAndWait(speaker, flags);
   Event_Wait(frames);
 }
 
-/// The event command "show message": opens the current message at actorId
+/// The event command "show message": opens the current message at the speaker
 /// (FieldMessage_ShowAtActor) and waits until it has been read and its window
 /// has closed; the speaker's portrait is closed once the text is typed out.
-void Event_ShowMessageAndWait(s32 object, s32 message) {
-  FieldMessage_ShowAtActorAndWait(object, message);
+void Event_ShowMessageAndWait(s32 speaker, s32 flags) {
+  FieldMessage_ShowAtActorAndWait(speaker, flags);
 }
 
-/// The event command "ask yes or no": opens the question at actorId, lets the
-/// leader answer, then shows the next message for yes or the one after it for
-/// no.
-s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
+/// The event command "ask yes or no": opens the question at the speaker, lets
+/// the leader answer, then shows the next message for yes or the one after it
+/// for no.
+s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags) {
   s32 result;
 
-  FieldMessage_ShowAtActor(object, message);
+  FieldMessage_ShowAtActor(speaker, flags);
   result = Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0);
   if (result == 0) {
-    FieldMessage_ShowAtActorAndWait(object, message);
+    FieldMessage_ShowAtActorAndWait(speaker, flags);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    FieldMessage_ShowAtActorAndWait(object, message);
+    FieldMessage_ShowAtActorAndWait(speaker, flags);
   }
   return result;
 }
@@ -434,23 +435,24 @@ void Message_SetVoiceFromActor(s32 key) {
   }
 }
 
-/// The event command "camera follow actor": the camera (the event's view
-/// centre) follows actorId.
-void FieldCamera_FollowActor(s32 id, s32 flag) {
-  struct Actor *obj;
+/// The event command "camera follow actor": the camera follows the actor, put
+/// on it at once unless keepPosition leaves it where it is to set out from.
+void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
+  struct Actor *actor;
   struct Actor *target;
   struct FieldWork *work;
   struct MapWork *map;
 
-  obj = Actor_Lookup(id);
+  actor = Actor_Lookup(actorId);
   work = Ram_HeapSlots->fieldWork;
   target = work->camera;
   map = Ram_HeapSlots->mapGrid;
-  if (obj != 0) {
+  if (actor != 0) {
     map->origin = &target->x.fixed;
-    Actor_StartCameraFar(target, obj);
-    if (flag == 0) {
-      SET_ACTOR_POSITION(target, obj->x.fixed, obj->y.fixed, obj->z.fixed);
+    Actor_StartCameraFar(target, actor);
+    if (keepPosition == 0) {
+      SET_ACTOR_POSITION(target, actor->x.fixed, actor->y.fixed,
+                         actor->z.fixed);
       wait(1);
       if (work->mode != ACTOR_SYSTEM_WORLD_MAP)
         MapGrid_CenterOnFollowedPointFar();
@@ -460,12 +462,12 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
 
 /// The event command "camera set speed": the camera's top speed and
 /// acceleration, 16.16 pixels per frame.
-void Camera_SetSpeedParameters(FIXED first, FIXED second) {
+void Camera_SetSpeedParameters(FIXED speed, FIXED acceleration) {
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
 
-  work->camera->speedLimit = first;
-  work->camera->acceleration = second;
+  work->camera->speedLimit = speed;
+  work->camera->acceleration = acceleration;
 }
 #undef MESSAGE_VOICE_NONE
 #undef MESSAGE_POSITION_WIDTH

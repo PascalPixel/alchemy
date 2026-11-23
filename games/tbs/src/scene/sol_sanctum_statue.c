@@ -88,6 +88,7 @@ extern struct Trigger gSolSanctumStatue_Triggers[];
 extern s32 gSolSanctumStatue_ScrollOffset;
 
 /// Both beams have opened the hole in the floor before the center statue.
+/// Until then, Move on the center statue first walks the leader clear of it.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
@@ -98,12 +99,12 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 /// Set once Kraden has explained the statue puzzle's trap.
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED FLAG_AREA_TEMP_0B
 
-/// The third patch draws the back row of drifting sprites 6 pixels below the
-/// other two rather than 8.
+/// How far below the other two the front row of clouds, the fastest, is
+/// drawn: 8 pixels, and 6 from TBS_PATCH_3 on.
 #if TBS_PATCH_3
-#define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
+#define SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET 6
 #else
-#define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 8
+#define SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET 8
 #endif
 
 /// A row of sky clouds: nine sprites 32 pixels wide, 288 pixels across the
@@ -145,11 +146,6 @@ enum SolSanctumStatueBeamTrack {
   CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_THIRD,
   CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_BOTTOM
 };
-
-// Scene flags, cleared on every ordinary arrival:
-// - FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN: both beams have opened the hole in the
-//   floor; until then, Move on the center statue first walks the leader clear
-//   of it.
 
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 /// Isaac uses Move to draw the sun-disc statue one cell south from its place
@@ -241,9 +237,7 @@ enum SolSanctumStatueActorId {
   ACTOR_MOVED_CENTER_STATUE
 };
 
-/// The scene's bss, in this order.
-///
-/// As commons of one object the linker would sort them itself.
+/// The seal the last statue moved has set up to open.
 static struct SealOpening sSealOpening ALIGNED(16);
 /// Initialization writes each three-word OAM packet, and drawing updates its
 /// fields.
@@ -365,7 +359,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_Wait(40);
   // The screen closes and opens on Kraden by the hole: "Where did that hole
   // come from?" Then back to the party.
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -452,7 +447,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_JENNA);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_End();
 }
@@ -640,7 +636,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Scene_WalkIntoLeader(ACTOR_GARET);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   work = gFieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_End();
 }
@@ -761,7 +758,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
               -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
-      sprite->y = screenY + SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET;
+      sprite->y = screenY + SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET;
       Oam_AddSpriteAtDepth(sprite, 0);
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
@@ -790,9 +787,9 @@ static void SolSanctumStatue_JumpSouth(void) {
 /// Unused: the eastern hall's northwest statue slides by itself to (504, 152),
 /// the cell where Move opens its seal, unless that seal is already open.
 ///
-/// This function opens nothing.
+/// It opens nothing.
 ///
-/// Nothing calls it. The player moves the statue there with Move instead.
+/// The player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
     Event_Start();
@@ -808,13 +805,14 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 s32 Scene_Initialize(void) {
   struct Actor *centerEffect;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   SolSanctumStatue_InitializeScrollingSprites();
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   centerEffect = Actor_Get(ACTOR_MOVED_CENTER_STATUE);
   centerEffect->collisionFlags = 0;
   {
-    u8 flags = centerEffect->priorityFlags | 2;
+    u8 flags = centerEffect->priorityFlags | ACTOR_PRIORITY_UNDERFOOT;
 
     centerEffect->priorityFlags = flags;
   }
@@ -1280,7 +1278,9 @@ static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   return 1;
 }
 
-/// Configures the northwest seal animation and statue return position.
+/// Opens the northwest seal (SolSanctumStatue_OpenSeal): the cells it lights,
+/// its flag, where the leader jumps back to and where its statue slides back to
+/// if the seal closes again.
 static void SolSanctumStatue_OpenNorthwestSeal(void) {
   struct SealOpening *seal = &sSealOpening;
   CELL_COPY_SET(seal->open, 0, 55, 32, 40, 4, 3);
@@ -1300,7 +1300,9 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Configures the northeast seal animation and statue return position.
+/// Opens the northeast seal (SolSanctumStatue_OpenSeal): the cells it lights,
+/// its flag, where the leader jumps back to and where its statue slides back to
+/// if the seal closes again.
 static void SolSanctumStatue_OpenNortheastSeal(void) {
   struct SealOpening *seal = &sSealOpening;
   CELL_COPY_SET(seal->open, 4, 55, 36, 40, 4, 3);
@@ -1320,7 +1322,9 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Configures the southwest seal animation and statue return position.
+/// Opens the southwest seal (SolSanctumStatue_OpenSeal): the cells it lights,
+/// its flag, where the leader jumps back to and where its statue slides back to
+/// if the seal closes again.
 static void SolSanctumStatue_OpenSouthwestSeal(void) {
   struct SealOpening *seal = &sSealOpening;
   CELL_COPY_SET(seal->open, 0, 58, 32, 43, 4, 1);
@@ -1340,7 +1344,9 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Configures the southeast seal animation and statue return position.
+/// Opens the southeast seal (SolSanctumStatue_OpenSeal): the cells it lights,
+/// its flag, where the leader jumps back to and where its statue slides back to
+/// if the seal closes again.
 static void SolSanctumStatue_OpenSoutheastSeal(void) {
   struct SealOpening *seal = &sSealOpening;
   CELL_COPY_SET(seal->open, 4, 58, 36, 43, 4, 1);
@@ -1488,7 +1494,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
   Event_End();
 }
 
-/// Shows the selected message from one speaker and waits the requested frames.
+/// Shows the next message of the event, then waits.
 static void SolSanctumStatue_SayThenWait(s32 speaker, s32 frames) {
   Event_ShowMessage(speaker, 0);
   Event_Wait(frames);
@@ -1563,9 +1569,9 @@ struct ActorPlacement gSolSanctumStatue_ActorPlacements[] = {
         288, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SUN_DISC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         1608, 0, 1608, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         560, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         592, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
     { SCENE_TABLE_END },
 };

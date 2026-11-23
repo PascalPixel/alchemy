@@ -424,94 +424,7 @@ s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
 
-/// Writes each listed background colour from its red, green and blue, keeps
-/// the lists for the Teleport circle's shimmer, and saves the palettes as the
-/// fade's source; arriving by Teleport, the party then arrives on the circle.
-void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
-                       u16 *cycleSlots) {
-  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
-
-  gPaletteSlots = slots;
-  gPaletteColors = colours;
-  gPaletteCycleColors = cycleColours;
-  gPaletteCycleSlots = cycleSlots;
-  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-    int index = *slots++;
-    int red = *colours++;
-    int green = *colours++;
-    int blue = *colours++;
-    SET_RGB(BG_PLTT[index], red, green, blue);
-  }
-  Dma_Set((const void *)BG_PLTT, fade->palette,
-          DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
-  Dma_Set(
-      (const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
-      DMA_COPY_WORDS((ARRAY_COUNT(fade->palette) - PALETTE_FADE_BG_COLORS) / 2),
-      REG_DMA3);
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  if (gMainRoutineWork.teleportState == 2)
-    Teleport_ArriveWhirling();
-}
-
-/// Starts the shimmer at its slow pace, as Teleport is cast: the first step
-/// after 16 frames, each after a frame less, down to two.
-void Teleport_StartShimmer(void) {
-  gPaletteCycleIndex = 0;
-  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
-  gPaletteCycleDelay = 15;
-  gPaletteCycleTimer = 16;
-  gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-/// Stops the shimmer, leaving the next transition a backdrop fade.
-void Teleport_StopShimmer(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Task_Remove(PaletteCycle_Fade);
-}
-
-/// Starts the shimmer at a step every two frames, as the party arrives.
-void Teleport_StartFastShimmer(void) {
-  gPaletteCycleIndex = 0;
-  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
-  gPaletteCycleDelay = 2;
-  gPaletteCycleTimer = 2;
-  gPaletteCycleBright = 1;
-  Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-#include "shared/list_count_entries.h"
-
-#include "shared/palette_cycle_fade.h"
-
-/// The party arrives by Teleport on the circle: the village fades in grey
-/// while the circle shimmers and the whirl plays, then its colours come back.
-void Teleport_ArriveWhirling(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 saved;
-
-  saved = work->transition;
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  Teleport_StartFastShimmer();
-  Teleport_PlayWhirl();
-  wait(40);
-  Teleport_StopShimmer();
-  PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
-  PaletteFade_StartInterpolation(16);
-  wait(16);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    party->teleportState = 0;
-  }
-  work->transition = saved;
-}
+#include "shared/teleport_shimmer.c"
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -2678,8 +2591,8 @@ void Contigo_InitializeVillage(void) {
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }
-  Palette_SetColors(gContigo_PaletteSlots, gContigo_PaletteColors,
-                    gContigo_ShimmerColors, gContigo_CycleSlots);
+  Palette_SetColorsFade(gContigo_PaletteSlots, gContigo_PaletteColors,
+                        gContigo_ShimmerColors, gContigo_CycleSlots);
 }
 
 /// Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings'

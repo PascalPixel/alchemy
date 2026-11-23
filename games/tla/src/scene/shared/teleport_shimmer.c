@@ -1,7 +1,9 @@
 /// @file
-/// The Teleport circles' shimmer, which three Mars Lighthouse overlays keep a
-/// copy of: the circle's colours run round it, a palette cycle, as Teleport is
-/// cast and as the party arrives on a circle.
+/// The Teleport circles' shimmer, which every scene with a circle keeps a copy
+/// of (Contigo, the Anemos Inner Sanctum, the Islet Cave, the Yampi Desert's
+/// cave and three of Mars Lighthouse's rooms): the circle's colours run round
+/// it, a palette cycle, as Teleport is cast and as the party arrives on a
+/// circle.
 
 /// Writes each listed background colour from its red, green and blue, keeps
 /// the lists for the shimmer, and saves the palettes as the fade's

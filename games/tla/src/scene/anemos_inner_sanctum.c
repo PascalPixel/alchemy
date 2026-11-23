@@ -113,13 +113,13 @@ u16 *gPaletteCycleColors BSS_DATA;
 u16 gPaletteCycleLength BSS_DATA;
 u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 
-void AnemosInnerSanctum_TeleportIn(void);
+void Teleport_ArriveWhirling(void);
 
 s32 Actor_LiftTargetBlock();
 
 void Actor_PlaceMovedBlock(void);
 
-void AnemosInnerSanctum_StopPaletteCycle(void);
+void Teleport_StopShimmer(void);
 
 void Teleport_PlaySparks(void);
 
@@ -326,90 +326,7 @@ enum AnemosInnerSanctumMimicStoneTrigger {
   TRIGGER_MIMIC_STONE_ON_BUTTON
 };
 
-/// Writes each listed background colour from its red, green and blue, keeps
-/// the lists for the palette cycle, and saves the palettes as the fade's
-/// source; arriving by Teleport, the party then teleports in.
-void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColors,
-                       u16 *cycleSlots) {
-  struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
-
-  gPaletteSlots = slots;
-  gPaletteColors = colours;
-  gPaletteCycleColors = cycleColors;
-  gPaletteCycleSlots = cycleSlots;
-  while (*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-    int index = *slots++;
-    int red = *colours++;
-    int green = *colours++;
-    int blue = *colours++;
-
-    SET_RGB(BG_PLTT[index], red, green, blue);
-  }
-  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
-          DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  if (gMainRoutineWork.teleportState == 2)
-    AnemosInnerSanctum_TeleportIn();
-}
-
-/// Starts the palette cycle at its slow pace, as Teleport is cast: the first
-/// step after 16 frames, each after a frame less, down to two.
-void PaletteCycle_Start(void) {
-  gPaletteCycleIndex = 0;
-  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
-  gPaletteCycleDelay = 15;
-  gPaletteCycleTimer = 16;
-  gPaletteCycleBright = 1;
-  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-/// Stops the palette cycle, leaving the next transition a backdrop fade.
-void AnemosInnerSanctum_StopPaletteCycle(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  FieldTask_Remove((s32)PaletteCycle_Fade);
-}
-
-/// Starts the palette cycle at a step every two frames, as Teleport flashes.
-void AnemosInnerSanctum_StartFastPaletteCycle(void) {
-  gPaletteCycleIndex = 0;
-  gPaletteCycleLength = List_CountEntries(gPaletteSlots);
-  gPaletteCycleDelay = 2;
-  gPaletteCycleTimer = 2;
-  gPaletteCycleBright = 1;
-  Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
-}
-
-#include "shared/list_count_entries.h"
-
-#include "shared/palette_cycle_fade.h"
-
-/// The party arrives by Teleport: the room fades in from grey while the
-/// palettes cycle and the whirl plays.
-void AnemosInnerSanctum_TeleportIn(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 saved;
-
-  saved = work->transition;
-  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  AnemosInnerSanctum_StartFastPaletteCycle();
-  Teleport_PlayWhirl();
-  System_Wait(40);
-  AnemosInnerSanctum_StopPaletteCycle();
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
-  PaletteFade_Interpolate(16);
-  System_Wait(16);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    party->teleportState = 0;
-  }
-  work->transition = saved;
-}
+#include "shared/teleport_shimmer.c"
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -1322,7 +1239,7 @@ void AnemosInnerSanctum_MimicLeader(struct Actor *self) {
 
 void Actor_PlaceBlocks(void);
 
-void AnemosInnerSanctum_StartFastPaletteCycle(void);
+void Teleport_StartFastShimmer(void);
 
 /// Stepping onto the floor before a mimic stone: the stone of the room the
 /// party came into starts to mirror the leader's steps.
@@ -1473,13 +1390,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// sparks fly as the colours cycle, and the party teleports back to
 /// Contigo.
 void AnemosInnerSanctum_TeleportOut(void) {
-  PaletteCycle_Start();
+  Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
   Event_SetDestination(SCENE_CONTIGO,
                        CONTIGO_FROM_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST);
   FieldEvent_Wait(40);
-  AnemosInnerSanctum_StopPaletteCycle();
+  Teleport_StopShimmer();
 }
 
 extern s16 gAnemosInnerSanctum_NorthDoorFrames[];
@@ -1584,10 +1501,10 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
-    Palette_SetColors((s32)gAnemosInnerSanctum_PaletteSlots,
-                      (s32)gAnemosInnerSanctum_PaletteColors,
-                      (s32)gAnemosInnerSanctum_CycleColors,
-                      (s32)gAnemosInnerSanctum_CycleSlots);
+    Palette_SetColorsFade((s32)gAnemosInnerSanctum_PaletteSlots,
+                          (s32)gAnemosInnerSanctum_PaletteColors,
+                          (s32)gAnemosInnerSanctum_CycleColors,
+                          (s32)gAnemosInnerSanctum_CycleSlots);
     if (Event_GetFlag(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
       AnemosInnerSanctum_LightTorch(VENUS_TORCH_X, VENUS_TORCH_Y,
                                     SPRITE_COLOR_NORMAL);

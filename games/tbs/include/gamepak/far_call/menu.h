@@ -2,7 +2,8 @@
 #define ALCHEMY_FAR_CALL_MENU_H
 
 /// @file
-/// Party menus and their interactive selection screens.
+/// The menu bank's far calls: the Item, Psynergy, Djinn and Status screens and
+/// the party member chooser.
 
 s32 ItemMenu_RunFar(void);
 s32 PsynergyMenu_RunFar(void);
@@ -13,6 +14,6 @@ void Menu_CreatePartyFiguresFar(void *source, s32 originX, s32 originY,
 void Menu_ReleasePartyFiguresFar(void);
 void Icon_PrepareActorFar(struct WindowSprite *object);
 s32 DjinnMenu_RunFar(void);
-void ItemMenu_DrawItemDetailsFar(s32 window, s32 item);
+void ItemMenu_DrawItemDetailsFar(s32 window, s32 inventoryEntry);
 
 #endif

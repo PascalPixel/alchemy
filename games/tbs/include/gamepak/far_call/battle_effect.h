@@ -2,9 +2,10 @@
 #define ALCHEMY_FAR_CALL_BATTLE_EFFECT_H
 
 /// @file
-/// Battle effect dispatch, drawing and presentation setup.
+/// The battle effects bank's far calls: the Psynergy, summon and element
+/// effects a battle plays.
 
-s32 BattleEffect_BuildBlitterFar(s32 slot, s32 width_shift, s32 height_shift,
+s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 void BattleEffect_RunByIdRangeFar(struct BattleEffectParams *args);
 void BattleEffect_RunSummonFar(struct BattleEffectParams *args);

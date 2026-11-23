@@ -71,6 +71,8 @@ void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void Sound_Play(s32 sound);
 void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z);
+/// Creates an actor at (x, y, z), 16.16 pixels, or returns 0 when every slot is
+/// taken (Actor_Create, through the overlay's own import row).
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void MapGrid_PlayMapEdit(const void *steps, s32 x, s32 y);
 void TreasureSpot_SetActorPosition(u32 actorId, FIXED x, FIXED z);
@@ -128,6 +130,8 @@ void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
 void Actor_WaitForScriptEndById(u32 actorId);
 void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 void Actor_Stop(s32 actorId);
+/// Sets the field's exit request (Event_SetExitRequest, through the overlay's
+/// own import row).
 void Import_EventSetExitRequest(s32 countdown);
 void Actor_WaitForMove(struct Actor *actor);
 s32 PartyInventory_FindMember(s32 item_id);

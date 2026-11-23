@@ -30,6 +30,8 @@
 #define SWAY_SHAKE toFIXED(4)              // sprites shake only past this
 #define STRONG_SWAY_HOLD_FRAMES 40
 
+/// The stages of Tremor's strong sway: it grows, holds, shrinks and settles,
+/// and SWAY_DONE ends it.
 enum {
   SWAY_GROW,
   SWAY_HOLD,

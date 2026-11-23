@@ -114,6 +114,9 @@ enum ItemType {
 /// stats (ClassDefinition) and the EQUIP_EFFECT_SCALE_ effects are in tenths.
 #define STAT_SCALE_ONE 10
 
+/// What an equipped item does for its wearer (ItemEquipEffect.kind): adds to a
+/// stat or to an element's power or resistance, scales a stat in tenths, or one
+/// of a few effects of its own.
 enum EquipEffectKind {
   EQUIP_EFFECT_NONE,
   EQUIP_EFFECT_ADD_HP,

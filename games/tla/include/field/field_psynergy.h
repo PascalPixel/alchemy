@@ -34,6 +34,8 @@ struct ScatterWork {
   s16 hit;
 };
 
+/// What Whirlwind's orb does once it reaches its target
+/// (FieldPsynergy_Whirlwind).
 enum OrbKind {
   ORB_PLAIN,    // the scene is enabled: the orb only comes and goes
   ORB_ORBITING, // leaves circle the orb while the target shrinks

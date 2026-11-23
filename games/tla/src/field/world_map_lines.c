@@ -72,6 +72,9 @@ struct BgAffine {
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
 extern u32 gScanlineAngle;
 
+/// Calls the Thumb routine whose address is in ip with (x, y) from this ARM
+/// code and returns its result: here the far-call table's arctangent, for the
+/// camera's yaw.
 s32 Matrix_CallInThumb(s32 x, s32 y);
 
 /// Builds the world map's per-scanline affine table for one frame: the ground

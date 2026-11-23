@@ -334,6 +334,8 @@ struct ShapeCell {
   u8 shape;
 } __attribute__((packed));
 
+/// The ground height of a layer at (x, z), 16.16 pixels
+/// (MapGrid_GetTerrainHeight, through the overlay's own import row).
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 #endif

@@ -14,9 +14,9 @@ enum StatusScreenStep {
   STATUS_STEP_EQUIPMENT = 3 ///< their equipment page
 };
 
-// The page modes of StatusScreen_DrawStatusAilments and
-// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
-// or the full status page, with the elemental levels, Power and Resist.
+/// The page modes of StatusScreen_DrawStatusAilments and
+/// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+/// or the full status page, with the elemental levels, Power and Resist.
 enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 // A bit over the page mode: draw without clearing the window first, as for a
 // window just opened.

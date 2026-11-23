@@ -109,6 +109,9 @@ void Window_CloseIfOpen(void **handle, s32 style) {
 #define STATUS_PANEL_LOWER_ONLY 0x100
 #define STATUS_PANEL_KIND_MASK 0xff
 
+/// What the status panel shows in its lower part (STATUS_PANEL_KIND_MASK's
+/// bits): the experience, the equipment, the Psynergy learned, the class, the
+/// stats, or the equipment with the class it would give.
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0,
   STATUS_PANEL_EQUIP = 2,

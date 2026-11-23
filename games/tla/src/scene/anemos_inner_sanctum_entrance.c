@@ -264,10 +264,13 @@ void AnemosInnerSanctumEntrance_MoveBlock(s32 a, s32 b) {
 }
 
 /// Felix walks into one of the six symbol blocks on the last room's floor and
-/// pushes it a cell ahead, as AnemosInnerSanctumEntrance_MoveBlock; walking
-/// to the edge of the floor with no block ahead, he jumps off it instead.
-// XXX: which edges he jumps off (the gap's?); a recording of Felix walking
-// off the floor's edge would settle it.
+/// pushes it a cell ahead, as AnemosInnerSanctumEntrance_MoveBlock. With no
+/// block to push, he jumps two cells ahead where the ground allows
+/// (Field_TryJumpForward), but only while he stands less than 28 pixels below
+/// the room's ground: never on the sunken floor itself, which lies 32 pixels
+/// down (cells (7, 25) to (17, 30)); only up on the blocks, which he walks on
+/// as platforms, or on the step at cell (12, 25) and the landing at cell
+/// (12, 9) north of the gap, each 16 pixels down.
 void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   struct MainRoutineWork *party;
   s32 held = Leader_CanPushObjectAhead();

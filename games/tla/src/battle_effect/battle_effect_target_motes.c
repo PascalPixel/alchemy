@@ -392,7 +392,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  REG_BLDCNT = scroll;
+  REG_BLDCNT = scroll; // still 0: no blending
   Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);

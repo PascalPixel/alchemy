@@ -944,6 +944,9 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 /// ELEMENT_PILLAR_TURN_FRAMES.
 #define ELEMENT_PILLAR_MOTES 32
 #define ELEMENT_PILLAR_TURN_FRAMES 64
+/// The bytes of ParticleSpritesD, the motes' sheet, which the pillar
+/// allocates for itself.
+#define ELEMENT_PILLAR_SHEET_BYTES 1550
 
 /// A pillar of light in an element's colours stands at a unit's feet while
 /// motes spiral up around it. The battle's element glow and the auto battle
@@ -963,7 +966,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, ELEMENT_PILLAR_SHEET_BYTES);
   camera = Ram_HeapSlots->cameraWork;
   work->vblanksSinceTransfer = 1;
   work->args = args;
@@ -1202,3 +1205,21 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 #undef TARGET_STRIKE_STAR_STEP_SHIFT
 #undef TARGET_STRIKE_STAR_SCALE
 #undef TARGET_STRIKE_SPARKS
+#undef ELEMENT_PILLAR_SHEET_BYTES
+#undef TARGET_STRIKE_MOTE_FLIGHT_FRAMES
+#undef TARGET_STRIKE_HIT_PICTURES
+#undef TARGET_STRIKE_BITE_PICTURES
+#undef BLADE_RAIN_FRAMES
+#undef BLADE_RAIN_SWORDS
+#undef BLADE_RAIN_STEP_SHIFT
+#undef BLADE_RAIN_WAIT_Y
+#undef BLADE_RAIN_SWORD_WIDTH
+#undef BLADE_RAIN_SWORD_HEIGHT
+#undef ELEMENT_PILLAR_FRAMES
+#undef ELEMENT_PILLAR_HALF_WIDTH
+#undef ELEMENT_PILLAR_HALF_HEIGHT
+#undef ELEMENT_PILLAR_GLOW_WIDTH
+#undef ELEMENT_PILLAR_GLOW_HEIGHT
+#undef ELEMENT_PILLAR_GLOW
+#undef ELEMENT_PILLAR_MOTES
+#undef ELEMENT_PILLAR_TURN_FRAMES

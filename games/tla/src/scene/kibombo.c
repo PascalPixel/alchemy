@@ -321,11 +321,11 @@ enum {
   /// "My son has been so kind and compassionate since the ceremony."
   ACTOR_FATHER_OF_AKAFUBU = 9,
   ACTOR_KRADEN_AT_HOME = 10,
-  /// "Are you going to head to western Gondowan?"
   /// The other villagers at home, each named for what they say: "I have heard
   /// that if you head west from southern Gondowan, you'll see the Eastern
   /// Sea."
   ACTOR_CHILD_ON_THE_EASTERN_SEA = 11,
+  /// "Are you going to head to western Gondowan?"
   ACTOR_WOMAN_ASKING_ABOUT_THE_WEST,
   /// "You can see Atteka from the bridge in western Gondowan."
   ACTOR_BOY_WHO_HEARD_OF_ATTEKA,
@@ -458,7 +458,7 @@ s32 Kibombo_KeepShakeCenter(struct Actor *actor) {
   return 0;
 }
 
-extern s16 gKibombo_HousesExitRegions[];
+extern struct SceneRegion gKibombo_HousesExitRegions[];
 
 /// An actor's update: every other frame, puts it up to a pixel either way of
 /// its kept center.
@@ -500,7 +500,7 @@ s32 Kibombo_FaceRandomWay(struct Actor *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 /// The houses have exit regions of their own; the other rooms have none.
-u8 *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_KIBOMBO_HOUSES)
@@ -536,7 +536,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gKibombo_StatueGroundsCeremonyActorPlacements;
   if (scene == SCENE_KIBOMBO_HOUSES) {
     if (GameFlag_Get(FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU))
-      gKibombo_HousesActorPlacements[0].talkFacing = TALK_FACING_PARTY;
+      gKibombo_HousesActorPlacements[ACTOR_AKAFUBU_AT_HOME - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY;
     return gKibombo_HousesActorPlacements;
   }
   return gKibombo_ActorPlacements;
@@ -1087,11 +1088,14 @@ void Kibombo_CrowdBows(void);
 void Kibombo_CrowdStands(void);
 void Kibombo_EndOffering(void);
 
-/// Akafubu raises the Black Crystal before the Great Gabomba while the warriors
-/// chant.
+/// Akafubu silences the crowd and raises the Black Crystal before the Great
+/// Gabomba, whose mouth opens and shuts again; the crowd bows to pray harder.
+/// Piers sees that Akafubu is an Adept but cannot reach him, and Kraden asks
+/// Felix to help Piers past the stump; a refusal counts as a weird answer.
 void Kibombo_AkafubuOffersCrystal(void) {
   Kibombo_CrowdStands();
   Sound_Play(MUS_SILENCE);
+  // "SILENCE!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -1104,6 +1108,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
+  // "I shall now present our jewel to the Great Gabomba!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CRYSTAL_MARKER), 0);
@@ -1119,15 +1124,19 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Kibombo_AkafubuCastsOnCrystal();
   Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
+  // "!!!"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
+  // "O Great Gabomba! Please accept this, our humble gift!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Sound_Play(MUS_RITUALS);
   Kibombo_EndOffering();
   Event_Wait(160);
+  // "Please, Great Gabomba! Accept this jewel!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 80);
   Sound_Play(SE_STATUE_STIRS);
   Kibombo_SetStatueMouth(1, 1);
   Event_Wait(20);
+  // "Look! The Great Gabomba has noticed the light of the jewel!"
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 80);
   Sound_Play(SE_RATTLE);
   Kibombo_SetStatueMouth(0, 1);
@@ -1135,6 +1144,8 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldEffect_SetAttached(ACTOR_AKAFUBU,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "Why, Great Gabomba?" ("Gabomba, why?" when Piers took the party for
+  // enemies)
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 20);
   Task_Remove(Kibombo_CarryBlackCrystal);
   wait(1);
@@ -1150,12 +1161,14 @@ void Kibombo_AkafubuOffersCrystal(void) {
     }
   }
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
+  // "Your prayers were weak! Open your hearts to the Great Gabomba!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(264, 16, 420, 1);
   Actor_SetSpeed(ACTOR_AKAFUBU, 1.6);
   Actor_WalkToAndWaitById(ACTOR_AKAFUBU, 264, 392);
   Event_Wait(20);
+  // "Sing your praises and dance for the Great Gabomba until your prayers..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Sound_Play(SE_BOSS_ROAR);
   Sound_Play(MUS_RITUALS);
@@ -1164,11 +1177,14 @@ void Kibombo_AkafubuOffersCrystal(void) {
   FieldCamera_MoveTo(88, 32, 392, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
+  // "Akafubu is no witch doctor! He's an Adept!"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "I may have to confront him to get my orb back... I may have to fight."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "I will do whatever it takes, but I will have my black orb back again."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_SetSpritePriority(ACTOR_PIERS, 2);
   Actor_SetSpeed(ACTOR_PIERS, 1.6);
@@ -1177,13 +1193,16 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 40);
+  // "It's no use. We can't get to Akafubu from here."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_WalkToAndWait(ACTOR_PIERS, 124, 356);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 20);
+  // "This won't work, either... What are we going to do? We can't get over..."
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  // "Piers's in trouble. Shouldn't we try to help him?"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 40);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
@@ -1195,20 +1214,24 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_STAND);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 40);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Maybe if we could do something about that stump, we could reach the..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
+  // "We've got to help Piers. Right, Felix?"
   Event_OpenMessage(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
+    // "Then hop to it!"
     Event_ShowMessageAndWait(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
+    // "What's all this now, Felix? Is it too much to ask that you help..."
     Event_ShowMessageAndWait(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
     Kibombo_CountAnswer();
@@ -1280,6 +1303,7 @@ void Kibombo_PiersJoinsParty(void) {
   FieldEffect_SetAttached(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "That power... Was that Psynergy?"
   Event_AskYesNo(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(96, CAMERA_KEEP, 372, 1);
@@ -1300,44 +1324,56 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_JennaJoinsPiersScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_SHEBA, gKibombo_ShebaJoinsPiersScript);
   Event_Wait(20);
+  // "I should have spotted it at once! You're Adepts!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Wait, so does that mean you're"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "Yes, my name is Piers, and I too am an Adept."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
+  // "To be honest, everyone in Lemuria is an Adept, and not just me."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "What's Lemuria?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
+  // "Lemuria is an island that lies in the center of the Eastern Sea."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Wait a second... You said Lemuria? I've heard that name before..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 40);
+  // "Of course! It was Lord Babi! He often spoke to me of Lemuria."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
+  // "He said it was so advanced that we can scarcely begin to imagine what..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
+  // "You are correct. My home was and is all that you say. Whoever told..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 20);
+  // "But wait, if it's so far away in the middle of the ocean, how come..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "It is not easily reached, and we Lemurians seldom leave... I cannot..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -1345,26 +1381,36 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "Except... Hold on a moment... Babi... I've heard that name somewhere..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
+  // "Well, yeah... Everyone knows about Lord Babi... He's the ruler of..."
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHEAST);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "I've never heard of Tolbi. Until recently, I had never left my home..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  // "Piers, are you just playing games with us?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  // "Don't be foolish. What would I gain from lying to you?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "I'm being quite serious."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
+  // "Piers is not playing games, Jenna. You can trust him."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+  // "Thank you for believing me, master sage!"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+  // "Please, call me Kraden, Piers of Lemuria."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "And I am the one who should be thanking you!"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1374,28 +1420,37 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
+  // "You look puzzled, Felix. You are probably wondering what I'm talking..."
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       1) {
+    // "Oh, good! Then I probably don't need to tell you..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+    // "Wait, just because my brother knows what you're talking about..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 2;
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+    // "I thought as much..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "If what Babi told me is true, Lemuria is all that remains of a once..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
+  // "Your friend is correct."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
+  // "In fact, the reason I was sent to Vale was somewhat related to my..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "I don't understand... What was in Vale that had anything to do with..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Babi believed that, in Lemuria alone, the power of Alchemy remains..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -1404,6 +1459,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 20);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "Lord Babi had need of Lemuria's Alchemy, but despite our effort, we..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1411,8 +1467,10 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "Since we could not find Lemuria, Lord Babi sent me to unlock the..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "Ah, yes! Babi! If I recall correctly, a man named Babi came to..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
@@ -1424,48 +1482,60 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 20);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "He stole one of our ships and fled the isle..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Yes! That must indeed be the same Lord Babi who know leads the people..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "Now, I'm even more confused. This is making my head hurt..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
+  // "I mean, if Babi really stole a ship from your home, why would he be..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "I can't expect you to understand, my dear. Lord Babi's reasons for..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "But if he already found Lemuria once, why doesn't he just go back the..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "Once you have left Lemuria, finding it again is quite difficult, even..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Well...why?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
+  // "The waters around Lemuria are wrapped in a perpetual fog... It is..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+  // "I remember Lord Babi once saying something to that effect."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "Even if one locates Lemuria, getting through the fog itself remains..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 40);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 20);
+  // "I don't get it... Why can't you just sail straight through it?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -1473,20 +1543,27 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "The ocean currents around Lemuria are swift and treacherous... Only..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "But...Babi stole a Lemurian ship from you, right? That means that he..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 10);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "Unfortunately, Babi was the only one of us who could use the ship."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
+  // "You see, Lemurian ships can only be helmed by Adepts..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "Which is why I have to get my black orb back! I must be able to..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 20);
+  // "There may be something up ahead on this path."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "Then let's go..."
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_PIERS);
   Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_PIERS);
@@ -1504,36 +1581,48 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_Stop(ACTOR_SHEBA);
   Actor_Stop(ACTOR_KRADEN);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
+  // "Wait a moment, Piers..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 40);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  // "We want to help you get your orb back."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "You intend to help me, Kraden?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "I am on this quest for many reasons...one of them being that I wish..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
+  // "If you would allow me, that is... I'd like to visit Lemuria myself."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "If this is something you would do for Babi, then I cannot permit it."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "What? Why not?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "Babi is a thief. He is not well loved in Lemuria."
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "It is partially on behalf of Babi... ...but there's more to it than that!"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 40);
+  // "I want to go to Lemuria so that I can see the full power of Alchemy!"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
+  // "I want to aid Piers so that he will take us to Lemuria... What do you..."
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+    // "You'll do it!? Splendid!"
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
@@ -1543,10 +1632,13 @@ void Kibombo_PiersJoinsParty(void) {
   } else {
     gFieldWork->message += 1;
     Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    // "Why, Felix? Why? Please, we simply have to!"
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
     Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
+    // "What's the matter with you, Felix? I don't see why we can't help Piers."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
     Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_EAST);
+    // "Yeah. I'm with Jenna on this one."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -1555,18 +1647,22 @@ void Kibombo_PiersJoinsParty(void) {
     Kibombo_CountAnswer();
   }
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "I appreciate your offer, but..."
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
+  // "I understand, Piers... You're not sure if you'll be able to take us..."
   Event_ShowMessageAndWait(
       SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
+  // "Can't we talk about this later?"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+  // "Yes, yes, of course! For now, let's just get that orb back for Piers!"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Actor_SetSpeed(ACTOR_PIERS, 0.4);
@@ -1733,7 +1829,7 @@ ask:
     // "Don't worry. Just use Scoop... You'll see why in just a few seconds..."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     gFieldWork->message -= 2;
-    // "I see..."
+    // "Dig there!"
     FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     goto ask;
   }
@@ -1746,19 +1842,25 @@ ask:
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+  // "I see..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "What's this?"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+  // "Someone has put something in the ground here."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  // "And this statue..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
+  // "Well, take a look..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  // "Felix! Try using Scoop around there!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_WatchAndSetScript(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
@@ -1790,10 +1892,13 @@ ask:
   Actor_Stop(ACTOR_KRADEN);
   Actor_Stop(ACTOR_PIERS);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Ah... I thought so..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "You thought what?"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
+  // "These marks are here to indicate an entrance there, in the center of..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -1801,18 +1906,23 @@ ask:
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "You mean we can go inside this statue?"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+  // "You could at one point..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHEAST);
+  // "The entrance was probably beneath that stone."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
+  // "I wonder... Was this the only one?"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 10);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "It seems that way..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
@@ -1820,12 +1930,16 @@ ask:
   Actor_WalkToAndWait(ACTOR_JENNA, 296, 168);
   Actor_WalkToAndWait(ACTOR_JENNA, 280, 154);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
+  // "Man, if this was the only entrance, then I feel bad for the people..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Why is that?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+  // "Well, if this is the only hole, then there's no way for air to get in..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "I...hadn't even thought of that."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 188, 1);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
@@ -1835,27 +1949,35 @@ ask:
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 40);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
+  // "We must inspect this area carefully, Felix."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Jenna has raised an interesting point..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "If people did indeed build this, they would not have been able to do..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
+  // "They might have opened a vent somewhere nearby."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 10);
+  // "And if so, then there may have been a ladder to enter the vent. We..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  // "Kraden, there doesn't seem to be anything of the sort here!"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "What were we just looking at?"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
+  // "If there is a vent shaft, it would probably be quite old, maybe even..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -1863,8 +1985,10 @@ ask:
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "And if that's the case, we should search more thoroughly."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+  // "OK, Felix!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -1889,12 +2013,9 @@ ask:
 /// cover whatever of Felix a raised cell beside him should hide; from here they
 /// follow him.
 void Kibombo_OverlayFollowsLeader(void) {
-  // Walking round the ring's west side from cell (18, 9), up to the painted
-  // pole and back, Felix stays drawn whole in front of the pole: nothing of
-  // him is hidden there.
-  // Walking east along the ring's north side from cell (18, 7), behind the
-  // pole, Felix is hidden by it as he passes, and further east the thatched
-  // roof of the hut beside the ring hides all of him but the top of his head.
+  // Behind the pole on the ring's north side the masks hide Felix as he
+  // passes, and further east the hut's thatched roof hides all of him but the
+  // top of his head.
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
   work->actor =
@@ -1942,8 +2063,8 @@ void Kibombo_FlickerColor(s32 index, s32 entry, s32 delta) {
   }
 }
 
-/// As Kibombo_FlickerColor, four steps redder and the green and blue four steps
-/// dimmer.
+/// As Kibombo_FlickerColor, four steps redder, with green and blue two and one
+/// steps dimmer.
 void Kibombo_FlickerRedColor(s32 index, s32 entry, s32 delta) {
   u16 color = gKibombo_FireColors[entry];
   s16 r = RGB_RED(color);
@@ -2069,7 +2190,6 @@ void Kibombo_CarryBlackCrystal(void) {
 #include "../field/field_effect_advance_motion.c"
 
 #undef DEFINE_KIBOMBO_FLICKER_FIRES
-#undef Actor_SetSpriteFlags
 #include "shared/tables.h"
 
 void Actor_StartScript(struct Actor *actor, const void *script);
@@ -2937,8 +3057,10 @@ void Kibombo_GabombaNotPleased(void) {
     }
   }
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_SHAKE_HEAD);
+  // "No! This time, he seemed almost like he might..."
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
+  // "We must continue! Drums! More drums!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   GameFlag_Clear(FLAG_GABOMBA_MUSIC_SILENCED);
   Sound_Play(MUS_RITUALS);
@@ -2973,8 +3095,10 @@ void Kibombo_WitchDoctorFeelsPower(void) {
   // "Oh! The magic, the power of the witch doctor fills my body!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
+  // "At the count of twenty, I shall present our jewel to the Great Gabomba!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHWEST);
+  // "Make your hearts as one, and dance for the Great Gabomba!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Task_Remove(Kibombo_FlickerCeremonyFires);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_NORTH_NORTHEAST);
@@ -3269,10 +3393,13 @@ void Kibombo_GabombaRespondsToGift(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
+  // "Did you see it, people?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   FieldActor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "At last! The Great Gabomba accepts me!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, ANIM_NOD);
+  // "I shall answer his call! I shall enter the Great Gabomba! Wait for..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.8);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 264, 320);
@@ -3336,20 +3463,26 @@ void Kibombo_CeremonyEnds(void) {
   Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_Jump(ACTOR_AKAFUBU_AT_HOME, 4, 10);
+  // "What do we have to be thankful of?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_FATHER_OF_AKAFUBU, FACING_EAST);
   Actor_ShowEmoteById(ACTOR_AKAFUBU_AT_HOME, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       20);
+  // "If they had just stopped me from leaving the Great Gabomba, this..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_ShowEmoteById(ACTOR_FATHER_OF_AKAFUBU,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "What!? If you had been more interested in your duty, you would not..."
   Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_WEST);
   Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
+  // "But, Father! These people are trying to steal the magic of our..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU_AT_HOME, FACING_SOUTH_SOUTHWEST);
+  // "Mine, I tell you! That power belongs to me!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_SetAnimationById(ACTOR_AKAFUBU_AT_HOME, ANIM_SHAKE_HEAD);
+  // "I'm going to be the one to get the Great Gabomba's magic! You'll see!"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_AKAFUBU_AT_HOME, 0);
   Actor_FaceDirection(ACTOR_FATHER_OF_AKAFUBU, FACING_NORTH_NORTHEAST, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU_AT_HOME, 1.6);
@@ -3357,19 +3490,26 @@ void Kibombo_CeremonyEnds(void) {
   Actor_FaceDirection(ACTOR_AKAFUBU_AT_HOME, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmoteById(ACTOR_FATHER_OF_AKAFUBU, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                       80);
+  // "My son, you have much to learn. He may look like a man, but before..."
   Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_FaceDirectionAndWait(ACTOR_FATHER_OF_AKAFUBU, FACING_SOUTH_SOUTHEAST);
+  // "See how he behaves when he gets excited?"
   Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_SetAnimationById(ACTOR_FATHER_OF_AKAFUBU, ANIM_SHAKE_HEAD);
+  // "No matter what I say, he won't listen to me right now."
   Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
+  // "I think that he has had enough for today..."
   Event_ShowMessageAndWait(ACTOR_FATHER_OF_AKAFUBU, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
+  // "I see your point."
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN_AT_HOME, FACING_EAST);
+  // "Well! I suppose we should be leaving then."
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_WEST);
   Actor_SetAnimationById(ACTOR_KRADEN_AT_HOME, ANIM_NOD);
+  // "After all, our journey has only just begun. We cannot remain idle..."
   Event_ShowMessageAndWait(ACTOR_KRADEN_AT_HOME, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetSpeed(ACTOR_KRADEN_AT_HOME, 0.8);
@@ -3824,6 +3964,8 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
     SC_END,
+    // Unused: past the end, an actor grows as it spins for ten frames, then
+    // shrinks away for 24.
     SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
     SC_CALL(Kibombo_SpinSprite),
@@ -3972,6 +4114,7 @@ s32 gKibombo_CrowdDanceScript[] = {
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TOP),
+    // Unused: past the endless loop, the same dance further east.
     SC_SPEED(0.4),
     SC_ACCELERATION(0.4),
     SC_LABEL(1),
@@ -4000,11 +4143,11 @@ s16 gKibombo_FrozenPuddle[] = {
 
 #include "shared/scene_entrances_default.c"
 
-s16 gKibombo_HousesExitRegions[] = {
-    400, 40, 368, 416, 56, 384, -1, 14,
-    112, 40, 624, 128, 56, 640, -1, 15,
-    384, 40, 880, 400, 56, 896, -1, 16,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gKibombo_HousesExitRegions[] = {
+    {400, 40, 368, 416, 56, 384, CONDITION_ALWAYS, 14},
+    {112, 40, 624, 128, 56, 640, CONDITION_ALWAYS, 15},
+    {384, 40, 880, 400, 56, 896, CONDITION_ALWAYS, 16},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {

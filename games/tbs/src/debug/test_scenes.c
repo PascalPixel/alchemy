@@ -46,6 +46,7 @@ static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
   GameFlag_Clear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
 }
 
+/// Talking to Flint, Fizz, Forge or Gust gives that Djinni to the party.
 static void Test_ReceiveFlint(void) {
   Test_GiveDjinniForTesting(ACTOR_FLINT, ELEMENT_VENUS);
 }

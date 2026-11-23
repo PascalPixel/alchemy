@@ -84,6 +84,7 @@ static inline s32 Iwram_SignedDivide(s32 dividend, s32 divisor) {
   return Iwram_SignedDivideEntry(dividend, divisor);
 }
 
+/// The unsigned quotient, rounded down.
 static inline u32 Iwram_UnsignedDivide(u32 dividend, u32 divisor) {
   return Iwram_UnsignedDivideEntry(dividend, divisor);
 }

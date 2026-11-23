@@ -71,6 +71,8 @@ struct SceneEncounterRule {
   s16 firstZone;
 };
 
+/// The scenes' encounter rules; the first that matches the scene and entrance,
+/// with its flag unset, gives the encounter zones.
 extern const struct SceneEncounterRule gScene_EncounterRules[];
 
 /// A rule choosing a scene's field music (gScene_MusicRules,
@@ -83,6 +85,8 @@ struct MapMusicRule {
   s16 music;         ///< sounds.h's MUS_ numbers
 };
 
+/// The field music rules; the first that matches the scene or its area, the
+/// entrance and the flag gives the music.
 extern const struct MapMusicRule gScene_MusicRules[];
 
 /// A rule naming the area a scene is in (gArea_NameRules, scene_rules.s),
@@ -97,6 +101,8 @@ struct AreaNameRule {
   s32 areaNameIndex;
 };
 
+/// The area name rules; the first that matches the scene or its area and the
+/// entrance gives the name.
 extern const struct AreaNameRule gArea_NameRules[];
 
 /// A run of screen lines in a transition shape: one window edge pair for every

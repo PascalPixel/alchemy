@@ -35,8 +35,8 @@ enum MercurySheetPicture {
       BLUE_FLAME_COLUMN_HEIGHT * BLUE_FLAME_COLUMN_WIDTH
 };
 
-#define MERCURY_FLAMES 5 ///< flames thrown
-#define MERCURY_MOTE_SLOTS 256
+#define MERCURY_FLAMES 5       ///< flames thrown
+#define MERCURY_MOTE_SLOTS 256 ///< slots of PARTICLES the motes may take
 /// In each summon what bursts throws its motes into its own slots of PARTICLES;
 /// a mote falls, slows and shrinks a size for each
 /// DJINN_ATTACKS_MOTE_SHRINK_FRAMES of its life it loses.

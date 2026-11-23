@@ -27,6 +27,7 @@ enum {
   IRQ_COUNT
 };
 
+/// The interrupt sources' bits in REG_IE and REG_IF.
 #define INTR_FLAG_VBLANK (1 << IRQ_VBLANK)
 #define INTR_FLAG_TIMER3 (1 << IRQ_TIMER3)
 #define INTR_FLAG_SERIAL (1 << IRQ_SERIAL)

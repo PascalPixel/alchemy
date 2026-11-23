@@ -91,6 +91,7 @@ extern struct Trigger gAlpineCrossing_Triggers[];
 /// party has been to another area.
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
+/// The overlay's two scenes.
 #define MAP_ALPINE_CROSSING (SCENE_ALPINE_CROSSING)
 #define MAP_LAMA_TEMPLE (SCENE_LAMA_TEMPLE)
 

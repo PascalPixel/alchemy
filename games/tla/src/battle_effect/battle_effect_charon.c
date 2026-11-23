@@ -109,7 +109,7 @@ extern const struct Scale gCharon_FinaleScale;
 /// Where the pictures that load once are decoded in the effect's sheet: the
 /// rune seal as it is stamped (RuneSealSheet, 184 by 80), then at frame 132
 /// Charon's, its wisp's and ParticleSpritesD's in turn.
-#define CHARON_PARTICLE_SPRITES_D_PICTURES 9216
+#define CHARON_BEAST_PICTURES 9216
 #define CHARON_RUNE_SEAL 9216
 #define RUNE_SEAL_WIDTH 184
 #define RUNE_SEAL_HEIGHT 80
@@ -649,8 +649,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(0, 0), CHARON_BEAST_COLORS * 2,
                         COLOR_PAIR(RGB_WHITE));
         source += CHARON_BEAST_COLORS * 2;
-        Decompress_TaggedLz(source,
-                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
+        Decompress_TaggedLz(source, work->sheet + CHARON_BEAST_PICTURES);
         for (i = 0, objectSlots = gVramCacheEntries; i != CHARON_BEAST_SPRITES;
              i++) {
           struct Sprite *object = EffectSprite_CreateWithTiles(
@@ -660,7 +659,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           object->image.priority = 3;
           OBJECTS[i] = object;
           Iwram_CopyWords(OBJ_VRAM + objectSlots[object->slot].offset,
-                          work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES +
+                          work->sheet + CHARON_BEAST_PICTURES +
                               i * OBJ_32X32_8BPP_BYTES,
                           OBJ_32X32_8BPP_BYTES);
         }
@@ -670,8 +669,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 0),
                         PALETTE_BANK_BYTES, COLOR_PAIR(RGB_WHITE));
         source += PALETTE_BANK_BYTES;
-        Decompress_TaggedLz(source,
-                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
+        Decompress_TaggedLz(source, work->sheet + CHARON_BEAST_PICTURES);
         {
           struct Sprite *object = EffectSprite_CreateWithTiles(
               64, 64, OBJ_SIZE_64X64, OBJ_PALETTE(CHARON_WISP_PALETTE));
@@ -684,8 +682,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             u8 *vram = OBJ_VRAM;
 
             vram += tileSlots[object->slot].offset;
-            Iwram_CopyWords(vram,
-                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES,
+            Iwram_CopyWords(vram, work->sheet + CHARON_BEAST_PICTURES,
                             OBJ_64X64_4BPP_BYTES);
           }
           object = EffectSprite_CreateWithTiles(
@@ -698,11 +695,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         source = (u8 *)Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_E);
         Iwram_CopyWords(BG_PLTT, source, SHEET_PALETTE_BYTES);
-        Resource_LoadAndDecompress(
-            RESOURCE_PARTICLE_SPRITES_D,
-            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0, 0);
-        Iwram_CopyWords(motePictures,
-                        work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES,
+        Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
+                                   work->sheet + CHARON_BEAST_PICTURES, 0, 0);
+        Iwram_CopyWords(motePictures, work->sheet + CHARON_BEAST_PICTURES,
                         MOTE_SET_BYTES);
         Resource_LoadAndDecompress(RESOURCE_CURSE_SEAL_SHEET,
                                    work->sheet + CHARON_ACT_PICTURES, 1, 1);

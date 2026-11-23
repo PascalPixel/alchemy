@@ -25,7 +25,22 @@ struct AzulFace {
        ? (void)((place)[2] = toFIXED(DISPLAY_HEIGHT))                          \
        : (void)0)
 
+/// Azul's timeline, in frames. The serpent plunges down from frame 0 and the
+/// battlefield shatters behind it; bubbles rise round the foes; the serpent
+/// swims in from the right and circles them while the water sphere closes;
+/// it darts off, the sphere swirls, the serpent rises from below, and the
+/// sphere bursts. A or B from AZUL_BUBBLES_FRAME on skips to the burst.
 #define AZUL_FRAMES 228
+#define AZUL_SHATTER_FRAME 10
+#define AZUL_BUBBLES_FRAME 16
+#define AZUL_SWIM_FRAME 54
+#define AZUL_SPHERE_FRAME 78 ///< the sphere is built; it shows two frames on
+#define AZUL_DART_FRAME 138
+#define AZUL_SWIRL_FRAME 152
+#define AZUL_DEEPEN_FRAME 160 ///< the water deepens again
+#define AZUL_RISE_FRAME 168
+#define AZUL_BURST_FRAME 186
+#define AZUL_DAMAGE_FRAME 214
 
 /// Azul's objects: the serpent's twelve, then sixteen copies of its body
 /// segments 5 to 8 that trail behind them; and the 31 shards the battlefield
@@ -87,7 +102,7 @@ struct AzulFace {
 /// FireRingTexture and SwirlTexture in the map cell buffer.
 #define AZUL_TEXTURES 16384
 
-/// Azul: the winged serpent plunges down and the battlefield shatters behind
+/// Azul: the serpent plunges down and the battlefield shatters behind
 /// it, bubbles rise round the foes, the serpent swims in from the right and
 /// closes them in a great sphere of water, and the sphere bursts over the
 /// field in foam and falling drops.
@@ -188,16 +203,19 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   stripEnd = offsetof(struct BattleEffectWork, sheet) + AZUL_WISPS +
              (AZUL_WISP_HEIGHT - 1) * AZUL_WISP_WIDTH;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
-    if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
+    // A or B skips to the burst in a white flash.
+    if ((gInput.repeat & (KEY_A | KEY_B)) && frame >= AZUL_BUBBLES_FRAME &&
+        frame < AZUL_BURST_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_PRESENT_CANVAS(work);
-      frame = 186;
+      frame = AZUL_BURST_FRAME;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       for (i = 0; i != AZUL_OBJECTS; i++) {
         ((struct Sprite *)work->sprites[i])->rotation = DEGtoANG(90);
       }
     }
+    // The battlefield's colours come up from dark over the first frames.
     if (frame <= 8) {
       s32 fade = 24 - frame * 3;
 
@@ -205,7 +223,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                            FIXED_ONE - fade * BACKGROUND_LEVEL_STEP,
                            BATTLE_BACKGROUND_COLORS);
     }
-    if (frame == 186) {
+    if (frame == AZUL_BURST_FRAME) {
       base.x = toFIXED(48);
       base.y = toFIXED(66.00005);
       vel.x = 0;
@@ -257,17 +275,19 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != args->targetCount; i++) {
-        ((s32 *)BattleObject_GetFar(args->targets[i])->object)[3] = 0;
+        BattleObject_GetFar(args->targets[i])->object->y = 0;
       }
       REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                    BGCNT_SCREEN_BASE(7);
     }
-    shatterFrame = frame - 10;
+    // The canvas fades in over the shattering.
+    shatterFrame = frame - AZUL_SHATTER_FRAME;
     if (shatterFrame <= BLEND_WEIGHT_MAX) {
       REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, shatterFrame);
     }
-    if ((u32)(frame - 16) <= 63) {
-      if (frame == 16) {
+    // Bubbles rise round the foes for 64 frames.
+    if ((u32)(frame - AZUL_BUBBLES_FRAME) <= 63) {
+      if (frame == AZUL_BUBBLES_FRAME) {
         s32 mask;
 
         i = 0;
@@ -299,12 +319,13 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         p->variant++;
       }
     }
-    if (frame <= 95 || (u32)(frame - 160) <= 31) {
+    // The water behind the foes deepens.
+    if (frame <= 95 || (u32)(frame - AZUL_DEEPEN_FRAME) <= 31) {
       u16 *c = work->backdropLines;
       s32 level = frame / 8;
 
-      if (frame > 159) {
-        level = (frame - 160) / 4 + AZUL_WATER_DEPTH;
+      if (frame >= AZUL_DEEPEN_FRAME) {
+        level = (frame - AZUL_DEEPEN_FRAME) / 4 + AZUL_WATER_DEPTH;
         if (level > AZUL_WATER_DEEPEST) {
           level = AZUL_WATER_DEEPEST;
         }
@@ -349,7 +370,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       base.x += vel.x;
       base.y += vel.y;
     }
-    if (frame == 168) {
+    // The serpent rises from below and lifts the foes.
+    if (frame == AZUL_RISE_FRAME) {
       base.x = toFIXED(48);
       base.y = toFIXED(168);
       vel.x = 0;
@@ -366,16 +388,18 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         actor->verticalMotionStrength = 0;
       }
     }
-    if (frame == 186) {
+    if (frame == AZUL_BURST_FRAME) {
       vel.y = -toFIXED(16);
     }
-    if ((frame < 54 || frame > 167) && frame < 214) {
+    // The serpent upright, plunging and then rising.
+    if ((frame < AZUL_SWIM_FRAME || frame >= AZUL_RISE_FRAME) &&
+        frame < AZUL_DAMAGE_FRAME) {
       place[3] = 0;
       place[1] = toFIXED(255);
-      if (frame > 167) {
+      if (frame >= AZUL_RISE_FRAME) {
         pos.y -= toFIXED(6);
       }
-      if (frame <= 53) {
+      if (frame < AZUL_SWIM_FRAME) {
         for (i = 0; i != AZUL_SERPENT_OBJECTS; i++) {
           place[0] = INTtoFIXED(40 - gAzul_ObjectX[i]) + base.x;
           place[2] = INTtoFIXED(128 - gAzul_ObjectZ[i] * 31 / 32) + base.y;
@@ -431,11 +455,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                             0);
         }
       }
-    } else if (frame >= 54 && frame < 168) {
+    } else if (frame >= AZUL_SWIM_FRAME && frame < AZUL_RISE_FRAME) {
+      // The serpent swims in from the right and circles, then darts off.
       s32 x;
       s32 y;
 
-      if (frame == 54) {
+      if (frame == AZUL_SWIM_FRAME) {
         for (i = 0; i != AZUL_OBJECTS; i++) {
           ((struct Sprite *)work->sprites[i])->rotation = 0;
         }
@@ -444,14 +469,14 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         vel.x = -toFIXED(6);
         vel.y = 0;
       }
-      if (frame == 138) {
+      if (frame == AZUL_DART_FRAME) {
         vel.x = toFIXED(8);
       }
       place[3] = 0;
       place[1] = toFIXED(255);
       vel.x = vel.x * 56 / DAMPING_SCALE;
       vel.y = vel.y * 56 / DAMPING_SCALE;
-      if (frame <= 137) {
+      if (frame < AZUL_DART_FRAME) {
         pos.x = (Trig_Sin(frame << 9) << 4) + base.x;
         x = pos.x;
         pos.y = (Trig_Cos(frame << 9) << 3) + base.y;
@@ -467,27 +492,29 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                           (s32 *)&gAzul_LateUnitScale, 0);
       }
     }
-    if ((u32)(frame - 138) <= 29) {
+    // The sphere drifts left as the serpent darts off, then back.
+    if ((u32)(frame - AZUL_DART_FRAME) <= 29) {
       s32 d = -toFIXED(2);
 
-      if (frame > 151) {
+      if (frame >= AZUL_SWIRL_FRAME) {
         d = frame * (toFIXED(1) / 8) - toFIXED(21);
       }
       pos.x = pos.x + d;
     }
-    if (frame == 78) {
+    if (frame == AZUL_SPHERE_FRAME) {
       Sound_PlayFar(SE_SPIN);
     }
-    if (frame == 138) {
+    if (frame == AZUL_DART_FRAME) {
       Sound_PlayFar(SE_LAUNCH);
     }
-    if (frame == 152) {
+    if (frame == AZUL_SWIRL_FRAME) {
       Sound_PlayFar(SE_WAVE_HIGH);
     }
     if (frame == 7) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    if (frame == 10) {
+    // The battlefield shatters into shards.
+    if (frame == AZUL_SHATTER_FRAME) {
       const u8 *piece;
 
       Sound_PlayFar(SE_CLATTER);
@@ -518,16 +545,18 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                               DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
                           IO_WRITE_HALFWORD);
     }
-    if (frame == 10 || frame == 186) {
+    // The foes are tinted blue and float up at the shattering, and stand again
+    // at the burst.
+    if (frame == AZUL_SHATTER_FRAME || frame == AZUL_BURST_FRAME) {
       for (i = 0; i != args->targetCount; i++) {
         struct BattleObject *slot = BattleObject_GetFar(args->targets[i]);
         struct MotionObject *actor = slot->object;
         void *record;
 
-        if (frame == 186) {
+        if (frame == AZUL_BURST_FRAME) {
           ReleaseBattleObjectRecordsFar(args->targets[i]);
         }
-        if (frame == 10) {
+        if (frame == AZUL_SHATTER_FRAME) {
           for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0;
                j++) {
             Sprite_RemoveAnimationFar(record, (s32)slot->shadowEntry);
@@ -539,12 +568,12 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           actor->verticalMotionStrength = 0;
         }
       }
-      if (frame == 186) {
+      if (frame == AZUL_BURST_FRAME) {
         args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
         BattleObject_SpawnObjectsForListFar(args->targets, 0, 0);
       }
     }
-    if (frame > 9) {
+    if (frame >= AZUL_SHATTER_FRAME) {
       for (i = 0; i != args->targetCount; i++) {
         struct MotionObject *actor =
             BattleObject_GetFar(args->targets[i])->object;
@@ -552,6 +581,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         actor->velocityY = actor->velocityY * 60 / DAMPING_SCALE;
       }
     }
+    // The shards tumble away until the serpent swims in.
     if (shatterFrame <= 43) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
@@ -596,7 +626,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Heap_Release(model);
       Heap_Release(vertices);
     }
-    if (frame == 78) {
+    // The sphere's rings, and the foam, rune and ring textures.
+    if (frame == AZUL_SPHERE_FRAME) {
       s32 angle;
       s32 offset;
 
@@ -644,18 +675,20 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
-    if (frame == 152) {
+    if (frame == AZUL_SWIRL_FRAME) {
       Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
     }
-    sphereFrame = frame - 80;
+    // The water sphere grows round the foes.
+    sphereFrame = frame - (AZUL_SPHERE_FRAME + 2);
     if (sphereFrame <= 107) {
       s32 scale;
       s32 shade;
       s32 size;
 
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-      if ((u32)(frame - 168) <= 17) {
+      // Foam streams up beside the rising serpent.
+      if ((u32)(frame - AZUL_RISE_FRAME) <= 17) {
         s32 y;
         s32 f;
         s32 width;
@@ -679,7 +712,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
-      if (frame <= 185) {
+      if (frame < AZUL_BURST_FRAME) {
         model = Render_AllocateModelList(1);
         scale = sphereFrame * 3 << 8;
         shade = 0;
@@ -704,7 +737,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         Matrix_RotateY(frame * (TRIG_TURN / 64));
         Render_TransformVertices(sphere, verts, 256);
         Render_DrawModelList(model);
-        if (frame > 137) {
+        if (frame >= AZUL_DART_FRAME) {
           shade = 1444 - frame * 10;
           size = frame * (FIXED_ONE / 8) + -toFIXED(17);
 
@@ -725,7 +758,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
             Render_DrawModelList(model);
           }
         }
-        if (frame > 151) {
+        if (frame >= AZUL_SWIRL_FRAME) {
           work->shakeFrames = 2;
           shade = 0;
           size = frame * (FIXED_ONE / 8) + -toFIXED(19);
@@ -744,8 +777,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         Heap_Release(model);
       }
     }
-    if (frame > 185) {
-      if (frame == 186) {
+    // The sphere bursts into drops that fall and bounce.
+    if (frame >= AZUL_BURST_FRAME) {
+      if (frame == AZUL_BURST_FRAME) {
         struct Particle *drop = (struct Particle *)gMapGridCellBuffer;
 
         for (i = 0; i != AZUL_DROPS; i++, drop++) {
@@ -778,7 +812,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         p->variant--;
       }
     }
-    if (frame == 186) {
+    if (frame == AZUL_BURST_FRAME) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
                                BACKGROUND_DARKEN_FRAMES);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
@@ -790,15 +824,15 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
     }
-    if (frame == 214) {
+    if (frame == AZUL_DAMAGE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
-    if (frame > 185) {
+    if (frame >= AZUL_BURST_FRAME) {
       BattleCamera_Shake(8, 8);
     } else {
       BattleCamera_Shake(2, 2);
     }
-    if (frame > 185) {
+    if (frame >= AZUL_BURST_FRAME) {
       BattleEffect_CountDownBattlerTints();
     }
     EFFECT_PRESENT_CANVAS(work);
@@ -885,9 +919,18 @@ void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
   position->y = first.y;
   position->depth = first.depth;
 }
-#undef BLITTER
 #undef CLAMP_Y
 #undef AZUL_FRAMES
+#undef AZUL_SHATTER_FRAME
+#undef AZUL_BUBBLES_FRAME
+#undef AZUL_SWIM_FRAME
+#undef AZUL_SPHERE_FRAME
+#undef AZUL_DART_FRAME
+#undef AZUL_SWIRL_FRAME
+#undef AZUL_DEEPEN_FRAME
+#undef AZUL_RISE_FRAME
+#undef AZUL_BURST_FRAME
+#undef AZUL_DAMAGE_FRAME
 #undef AZUL_SERPENT_OBJECTS
 #undef AZUL_BODY_SEGMENT
 #undef AZUL_BODY_COPIES

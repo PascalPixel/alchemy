@@ -5,8 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The pictures in the slash sheet: five flash pictures, then the shaft in
-/// three parts, each in its own size.
+/// The pictures in the slash sheet (Atalanta's arrows of light): five flash
+/// pictures, then the shaft in three parts, each in its own size.
 #define ATALANTA_SHAFT_FLASH_A_WIDTH 14
 #define ATALANTA_SHAFT_FLASH_A_HEIGHT 28
 #define ATALANTA_SHAFT_FLASH_B_WIDTH 23
@@ -69,6 +69,12 @@ enum SlashSheetPicture {
 /// Atalanta's sprites: four rows of three 32x32 pieces, the last row two.
 #define ATALANTA_PIECES 11
 
+/// The gathering's length, unless A or B cuts it short, and the frames Atalanta
+/// flies across in it.
+#define ATALANTA_GATHER_FRAMES 220
+#define ATALANTA_FLIGHT_LAST_FRAME 209
+/// The frame of the gathering the sky starts to darken.
+#define ATALANTA_DARKEN_FRAME 48
 #define ATALANTA_FALL_FRAMES 88 ///< frames of the shafts' fall
 
 #define ATALANTA_SHAFTS 16      ///< shafts of light that gather over the field
@@ -208,9 +214,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
   // The gathering (A or B ends it).
-  for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
+  for (frame = 0;
+       frame != ATALANTA_GATHER_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
+       frame++) {
     // Atalanta flies along her path: where she starts, then a step a frame.
-    if (frame <= 209) {
+    if (frame <= ATALANTA_FLIGHT_LAST_FRAME) {
       if (frame == 0) {
         pathX = (path[0] << 8) + (u8)path[1];
         pathY = (path[2] << 8) + (u8)path[3];
@@ -238,7 +246,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     point[1] = 0;
     point[2] = 0;
-    if (frame == 48) {
+    if (frame == ATALANTA_DARKEN_FRAME) {
       work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
@@ -339,8 +347,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, Ram_MapCellBuffer, 1,
                              0);
 
-  // The shafts start above the sky, each aimed at a target where there is
-  // one.
+  // The shafts start above the sky. They take the six places of a side in
+  // turn: one whose place holds a target is aimed at it, the others fall at
+  // random.
   for (i = 0; i != ATALANTA_FALLING_SHAFT_SLOTS; i++) {
     struct Particle *shaft = &work->particles[i];
     s32 member = i % 6;
@@ -434,6 +443,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 }
 
 #undef ATALANTA_MATRICES
+#undef ATALANTA_GATHER_FRAMES
+#undef ATALANTA_FLIGHT_LAST_FRAME
+#undef ATALANTA_DARKEN_FRAME
 #undef ATALANTA_PIECES
 #undef ATALANTA_FALLING_SHAFT_SLOTS
 #undef ATALANTA_TRAIL_DROP

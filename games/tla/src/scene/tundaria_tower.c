@@ -492,7 +492,7 @@ void TundariaTower_ExamineCrystal(void) {
 /// stops him.
 void TundariaTower_SlideOnIce(void) { Leader_SlideOnIce(); }
 
-extern s32 gTundariaTower_RefluxHops[];
+extern s32 gTundariaTower_RefluxSpinScript[];
 
 /// Sliding onto cell (21, 33) in Reflux's sliding puzzle: the screen flashes
 /// white with a splash and a shake, and Reflux hops down before the party and
@@ -514,7 +514,7 @@ void TundariaTower_RefluxAppears(void) {
   actor->steeringFlags = 0;
   actor->update = 0;
   Actor_SetDestination(ACTOR_REFLUX, 424, 536);
-  TundariaTower_StartEffectScript(actor, gTundariaTower_RefluxHops);
+  TundariaTower_StartEffectScript(actor, gTundariaTower_RefluxSpinScript);
   Actor_WaitForMoveById(ACTOR_REFLUX);
   GameFlag_Set(FLAG_REFLUX_APPEARED);
   Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
@@ -764,9 +764,8 @@ void TundariaTower_BurstMirrorWall(s32 step) {
   }
 }
 
-/// Nothing visible happens as Felix starts to cast Move on a sliding pillar
-/// or Burst on the icy wall; the game first stops whatever he was doing,
-/// such as sliding.
+/// As Felix starts to cast Move on a sliding pillar or Burst on the icy wall,
+/// whatever he was doing, such as sliding, stops first.
 void TundariaTower_ResolveBeforePsynergy(void) {
   Event_ResolvePendingActions(0);
 }
@@ -964,8 +963,9 @@ void TundariaTower_UpdateBrownWallCell(void) {
       0)
     MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 14, 17, 0);
   else
-    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 14, 17,
-                          CELL_BEHAVIOR_TUNDARIA_TOWER_BROWN_WALL << 8);
+    MapCell_SetAttributes(
+        MAPGRID_LAYER_GROUND, 14, 17,
+        CELL_ATTRIBUTES(CELL_BEHAVIOR_TUNDARIA_TOWER_BROWN_WALL, 0));
 }
 
 extern s16 gTundariaTowerIceColumnsColumns[];
@@ -982,7 +982,8 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_TUNDARIA_TOWER_ENTRANCE) {
   } else if (scene == SCENE_TUNDARIA_TOWER_CENTER_PRONG) {
     switch (gMainRoutineWork.entrance) {
-    case 1:
+    // The first hall, by its four ways in.
+    case TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_ENTRANCE:
     case 2:
     case 3:
     case 4:
@@ -1018,13 +1019,15 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == SCENE_TUNDARIA_TOWER_REFLUX) {
     switch (gMainRoutineWork.entrance) {
+    // The sliding puzzle's part of the map.
     case 6:
-    case 7:
+    case REFLUX_FROM_SLIDE:
       if (!GameFlag_Get(FLAG_DJINNI(DJINNI_REFLUX))) {
         if (!GameFlag_Get(FLAG_REFLUX_APPEARED)) {
           Actor_SetPosition(ACTOR_REFLUX, 344, 536);
           MapCell_SetAttributes(
-              0, 21, 33, CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS << 8);
+              MAPGRID_LAYER_GROUND, 21, 33,
+              CELL_ATTRIBUTES(CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS, 0));
           MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 22, 33,
                                 CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
         } else if (!GameFlag_Get(FLAG_FIGHTING_REFLUX)) {
@@ -1042,7 +1045,7 @@ s32 Scene_Initialize(void) {
     TundariaTower_SetUpIceColumns(gTundariaTowerIceColumnsColumns);
   } else if (scene == SCENE_TUNDARIA_TOWER_PILLAR_PUZZLE) {
     switch (gMainRoutineWork.entrance) {
-    case 3:
+    case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_SOUTH:
       actor = FieldActor_Create(SPRITE_CRATE, toFIXED(472), 0, toFIXED(200));
       if (actor != NULL) {
         Scene_SetActorSpritePriority((s32)actor, 1);
@@ -1052,8 +1055,8 @@ s32 Scene_Initialize(void) {
         Actor_SetBlendMode(actor, 1);
       }
       break;
-    case 1:
-    case 2:
+    case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_ICE_COLUMNS_NORTH:
+    case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_ICE_COLUMNS_SOUTHWEST:
       TundariaTower_SetUpIceColumns(gTundariaTowerPillarPuzzleColumns);
       if (GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET)) {
         Actor_SetPosition(ACTOR_FIRST_LEDGE_PILLAR, 216, 136);
@@ -1063,8 +1066,8 @@ s32 Scene_Initialize(void) {
       Actor_PlaceBlocks(gTundariaTowerPillarPuzzlePillars);
       Actor_SetSpritePriority(ACTOR_SECOND_LEDGE_PILLAR, 2);
       break;
-    case 4:
-    case 5:
+    case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_CENTER_PRONG_NORTH:
+    case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_CENTER_PRONG_SOUTH:
       if (GameFlag_Get(FLAG_MIRROR_WALL_BURST)) {
         MapGrid_CopyCellsTo(18, 97, 6, 97, 3, 4);
         MapGrid_CopyCellsTo(82, 34, 70, 34, 3, 2);
@@ -1072,7 +1075,8 @@ s32 Scene_Initialize(void) {
       }
       {
         union FieldObject **slot = &gTundariaTower_Reflection;
-        struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
+        struct Actor *effect =
+            ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
 
         effect->riseBaseY = toFIXED(576);
         effect->update = TundariaTower_ReflectLeader;
@@ -1081,10 +1085,11 @@ s32 Scene_Initialize(void) {
         Scene_SetActorSpritePriority(effect, 3);
       }
       break;
-    case 6:
+    case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_NORTH:
     case 7: {
       union FieldObject **slot = &gTundariaTower_Reflection;
-      struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
+      struct Actor *effect =
+          ((struct Actor *)Import_ActorCreate(SPRITE_FELIX, 0, 0, 0));
 
       effect->riseBaseY = toFIXED(624);
       effect->update = TundariaTower_ReflectLeader;
@@ -1409,7 +1414,7 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  partner = Actor_GetById(8);
+  partner = Actor_GetById(ACTOR_FIRST_PLACED);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -1428,15 +1433,19 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
         Actor_TakePlaceOf(partner, trap);
         wait(1);
         Sound_Play(SE_CHEST_CLOSE);
-        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                             SPRITE_COLOR_WHITE);
         wait(2);
         Actor_SelectAnimation(partner, 0);
-        Actor_CopyGraphics(id, 9);
-        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        Actor_CopyGraphics(id, ACTOR_FIRST_PLACED + 1);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                             SPRITE_COLOR_NORMAL);
         wait(2);
-        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_WHITE);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                             SPRITE_COLOR_WHITE);
         wait(4);
-        Actor_SetSpriteColor(Actor_GetById(8), SPRITE_COLOR_NORMAL);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_PLACED),
+                             SPRITE_COLOR_NORMAL);
         TundariaTower_ScatterDust(0);
         Actor_TakePlaceOf(trap, partner);
         wait(1);
@@ -1624,10 +1633,11 @@ void TundariaTower_StartPillarMove(void);
 /// The blocks Move pushes, ended by -1: the pillar puzzle's four, and the one
 /// in the Burst Brooch's room.
 s16 gTundariaTowerPillarPuzzlePillars[] = {
-    11, 12, 13, 14, -1,
+    ACTOR_FIRST_SLIDING_PILLAR, ACTOR_SECOND_LEDGE_PILLAR,
+    ACTOR_FIRST_LEDGE_PILLAR, ACTOR_SECOND_SLIDING_PILLAR, -1,
 };
 s16 gTundariaTowerBurstBroochPillar[] = {
-    8, -1,
+    ACTOR_BROOCH_ROOM_PILLAR, -1,
 };
 
 #include "shared/slide_on_ice_angles.c"
@@ -1642,20 +1652,27 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The ice columns of the room of ice columns: each one's cell and its Pound
-/// flag, ending -1.
+/// The ice columns of the room of ice columns: each one's actor, its standing
+/// column's animation (the flattened one follows it) and its Pound flag,
+/// ending -1.
 s16 gTundariaTowerIceColumnsColumns[] = {
-    8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
-    FLAG_ICE_COLUMN_POUNDED + 2, 11, 7, FLAG_ICE_COLUMN_POUNDED + 3, -1,
+    ACTOR_FIRST_ICE_COLUMN, 7, FLAG_ICE_COLUMN_POUNDED,
+    ACTOR_FIRST_ICE_COLUMN + 1, 7, FLAG_ICE_COLUMN_POUNDED + 1,
+    ACTOR_FIRST_ICE_COLUMN + 2, 7, FLAG_ICE_COLUMN_POUNDED + 2,
+    ACTOR_FIRST_ICE_COLUMN + 3, 7, FLAG_ICE_COLUMN_POUNDED + 3,
+    -1,
 };
 
 /// The ice columns of the room of pillars, as gTundariaTowerIceColumnsColumns.
 s16 gTundariaTowerPillarPuzzleColumns[] = {
-    8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
-    FLAG_ICE_COLUMN_POUNDED + 2, -1, 0,
+    ACTOR_FIRST_ICE_COLUMN, 7, FLAG_ICE_COLUMN_POUNDED,
+    ACTOR_FIRST_ICE_COLUMN + 1, 7, FLAG_ICE_COLUMN_POUNDED + 1,
+    ACTOR_FIRST_ICE_COLUMN + 2, 7, FLAG_ICE_COLUMN_POUNDED + 2,
+    -1, 0,
 };
 
-s32 gTundariaTower_RefluxHops[] = {
+/// Reflux turning round a sixteenth of a turn each frame as he comes down.
+s32 gTundariaTower_RefluxSpinScript[] = {
     SC_SET(SW_FACING, 0),
     SC_LABEL(1),
     SC_WAIT(1),
@@ -1666,12 +1683,14 @@ s32 gTundariaTower_RefluxHops[] = {
 #include "shared/scene_entrances_default.c"
 
 struct SceneRegion gTundariaTowerPillarPuzzleExitRegions[] = {
-    {816, 80, 528, 832, 96, 544, CONDITION_ALWAYS, 6},
+    {816, 80, 528, 832, 96, 544, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_BURST_BROOCH_NORTH},
     {SCENE_TABLE_END},
 };
 
 struct SceneRegion gTundariaTowerBurstBroochExitRegions[] = {
-    {176, 15, 192, 192, 33, 208, CONDITION_ALWAYS, 1},
+    {176, 15, 192, 192, 33, 208, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_BURST_BROOCH_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH},
     {SCENE_TABLE_END},
 };
 
@@ -1786,14 +1805,15 @@ struct ActorPlacement gTundariaTowerBurstBroochActorPlacements[] = {
 };
 
 struct Trigger gTundariaTowerEntranceTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, TUNDARIA_TOWER_ENTRANCE_TO_WORLD_MAP},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, TUNDARIA_TOWER_ENTRANCE_TO_TUNDARIA_TOWER_CENTER_PRONG},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gTundariaTowerCenterProngTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_ENTRANCE},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      CELL_BEHAVIOR_TUNDARIA_TOWER_LEFT_DOOR, CONDITION_ALWAYS,
@@ -1801,14 +1821,17 @@ struct Trigger gTundariaTowerCenterProngTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      CELL_BEHAVIOR_TUNDARIA_TOWER_RIGHT_DOOR, CONDITION_ALWAYS,
      EVENT(TundariaTower_OpenDoor)},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_ICE_SLIDE},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
@@ -1837,11 +1860,13 @@ struct Trigger gTundariaTowerIceSlideTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_SLIDE_TO_TUNDARIA_TOWER_REFLUX},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_SLIDE_TO_TUNDARIA_TOWER_CENTER_PRONG},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
@@ -1851,10 +1876,14 @@ struct Trigger gTundariaTowerIceSlideTriggers[] = {
 };
 
 struct Trigger gTundariaTowerRefluxTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTHWEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_SLIDE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTHEAST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTH},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_ICE, CONDITION_ALWAYS,
@@ -1868,15 +1897,21 @@ struct Trigger gTundariaTowerRefluxTriggers[] = {
 
 struct Trigger gTundariaTowerIceColumnsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTHWEST},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTH},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTHEAST},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTHWEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_TOP, CONDITION_ALWAYS,
      EVENT(TundariaTower_JumpDownSlide)},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_ICE, CONDITION_ALWAYS,
@@ -1897,14 +1932,20 @@ struct Trigger gTundariaTowerIceColumnsTriggers[] = {
 };
 
 struct Trigger gTundariaTowerPillarPuzzleTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTH},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_SOUTHWEST},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_BURST_BROOCH_SOUTH},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_CENTER_PRONG_NORTH},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_CENTER_PRONG_SOUTH},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_SOUTH},
     {TRIGGER_EXIT, 30, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END, CONDITION_ALWAYS,
      EVENT(TundariaTower_StopSliding)},
@@ -1961,7 +2002,8 @@ struct Trigger gTundariaTowerPillarPuzzleTriggers[] = {
 };
 
 struct Trigger gTundariaTowerBurstBroochTriggers[] = {
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
+     TUNDARIA_TOWER_BURST_BROOCH_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_BROOCH_ROOM_PILLAR, CONDITION_ALWAYS,
      EVENT(TundariaTower_StartPillarMove)},

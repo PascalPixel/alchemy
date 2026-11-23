@@ -7,6 +7,13 @@
 /// The pixels a settings slider's marker runs across, from OPTION_SLIDER_X.
 #define OPTION_SLIDER_WIDTH 60
 
+/// The headings of gMenuTitlePictures (graphics/ui/menu_titles.s) these menus
+/// show above their windows.
+enum {
+  MENU_TITLE_PAUSE = 6,    ///< "Pause"
+  MENU_TITLE_SETTINGS = 7, ///< "Settings"
+};
+
 /// The settings menu's rows, in the order of their help messages
 /// (MsgOptionHelp on) and of OptionMenuWork.option.
 enum SettingsMenuRow {
@@ -23,7 +30,7 @@ enum SettingsMenuRow {
 #define WINDOW_SHADE(n)                                                        \
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + (n))
 
-/// Unused: three that do nothing.
+/// Unused: three empty routines.
 UNUSED void SettingsMenu_ReservedNoOpA(void) {}
 UNUSED void SettingsMenu_ReservedNoOpB(void) {}
 UNUSED void SettingsMenu_ReservedNoOpC(void) {}
@@ -216,8 +223,8 @@ enum OptionMenuRow {
   OPTION_ROW_WINDOW_BRIGHTNESS = 2
 };
 
-// The five-row settings menu SettingsMenu_Run runs uses none of these four
-// functions.
+// The five-row settings menu SettingsMenu_Run runs uses none of these four.
+
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of SettingsMenu_LowerSetting.
 UNUSED void SettingsMenu_PreviousRow(struct OptionMenuWork *work) {
@@ -271,8 +278,8 @@ UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   }
 }
 
-/// An empty function, reached only through a bare entry of the window
-/// far-call table.
+/// An empty routine, reached only through a bare entry of the window far-call
+/// table.
 void SettingsMenu_SelectionNoOp(void) {}
 
 /// The settings menu's per-frame task: moves the cursor and the two slider
@@ -491,8 +498,7 @@ s32 SettingsMenu_Run(void) {
   helpWindow = Window_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3,
                              WINDOW_FLAG_INSTANT);
   settingsWindow = SettingsMenu_Open();
-  // Picture 7 of gMenuTitlePictures, the Setup heading.
-  pair = MenuTitle_Create(7, settingsWindow, 64, -48);
+  pair = MenuTitle_Create(MENU_TITLE_SETTINGS, settingsWindow, 64, -48);
   wait(1);
   windowColor = &work->option[SETTINGS_ROW_WINDOW_COLOR];
   brightness = &work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
@@ -625,8 +631,8 @@ s32 SettingsMenu_Run(void) {
     }
   }
 
-  Window_Close(helpWindow, 2);
-  Window_Close(settingsWindow, 2);
+  Window_Close(helpWindow, WINDOW_FLAG_INSTANT);
+  Window_Close(settingsWindow, WINDOW_FLAG_INSTANT);
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
@@ -782,15 +788,16 @@ s32 PauseMenu_Choose(void) {
   PauseMenu_Initialize();
   work = gOptionMenuWork;
   window = PauseMenu_Open();
-  // Picture 6 of gMenuTitlePictures, the Pause heading, above the window.
+  // The heading sits above the window, in the localized releases a little
+  // lower in debug mode.
 #if TBS_PATCH_1
   y = -24;
   if (gDebugMode != 0) {
     y = -16;
   }
-  pair = MenuTitle_Create(6, window, 40, y);
+  pair = MenuTitle_Create(MENU_TITLE_PAUSE, window, 40, y);
 #else
-  pair = MenuTitle_Create(6, window, 40, -24);
+  pair = MenuTitle_Create(MENU_TITLE_PAUSE, window, 40, -24);
 #endif
   wait(1);
   // The cursor starts where the block's page is, 0 after the fill.
@@ -852,7 +859,7 @@ s32 PauseMenu_Choose(void) {
     }
     break;
   }
-  Window_Close(window, 2);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   PauseMenu_Release();
   wait(1);
   // In the Battle Arena only Change settings shows: count from Save your quest.

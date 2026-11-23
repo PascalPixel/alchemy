@@ -553,9 +553,9 @@ Evidence: Camelot: "Please choose a file." (きろくばしょを えらんで�
 
 ### Background layer
 
-A background layer is one of the console's four large sheets of picture,
-stacked one behind another, each sliding as a whole. A sheet is made of
-tiles, small square pictures laid side by side like a mosaic. A town is
+A background layer is one of the console's four large layers of drawing,
+stacked one behind another, each sliding as a whole. A layer is made of
+tiles, small square drawings laid side by side like a mosaic. A town is
 drawn on three of them: the ground, the walls, and the roofs and treetops.
 The World Map uses the two the console can scale and rotate
 ([Field code](src/field/README.md#towns-and-dungeons-on-screen)).
@@ -564,14 +564,27 @@ Evidence: tradition: the hardware's BG.
 
 ### Sprite and OAM
 
-A sprite is a small picture the console can place anywhere on the screen,
-over or between the [background layers](#background-layer). The people are
-sprites, and so are the pointing hand in a menu and the letters of a spoken
-line. OAM, the object attribute memory, is the console's list of where each
-one sits, and the game writes it afresh every [frame](#frame)
+A sprite is a small figure the console can place anywhere on the screen,
+over or between the [background layers](#background-layer). It shows one
+[picture](#picture) of its [sprite sheet](#sprite-sheet) at a time. The
+people are sprites, and so are the pointing hand in a menu and the letters
+of a spoken line. OAM, the object attribute memory, is the console's list of
+where each one sits, and the game writes it afresh every [frame](#frame)
 ([System code](src/system/README.md#the-frames-sprites)).
 
-Evidence: tradition: スプライト and the hardware's OAM.
+Evidence: tradition: スプライト and the hardware's OAM; SGL's SPRITE, the
+thing placed on screen.
+
+### Sprite sheet
+
+A sprite sheet is the file of a [sprite](#sprite-and-oam)'s drawings: every
+pose Isaac is ever shown in, or every stage of a tornado, one
+[picture](#picture) after another. A sprite comes from its sprite sheet. In
+the code's names Sheet is short for it (`RESOURCE_TORNADO_SHEET`). Tiles and
+letters are kept the same way, on a tile sheet and a font sheet
+([Graphics](src/graphics/README.md#sprites-and-their-animations)).
+
+Evidence: tradition: the sprite sheet.
 
 ### Sprite animation
 
@@ -589,13 +602,16 @@ Evidence: plain English; no word of the time names one layer of a sprite.
 
 ### Picture
 
-A picture is one drawing in a [sprite animation](#sprite-animation) or in
-the animation of a map's tiles, such as one pose of Isaac's walk. It is
-shown for a number of [frames](#frame) before the next one takes its place
+A picture is one drawing on a [sprite sheet](#sprite-sheet), such as one
+pose of Isaac's walk. It is the stored drawing; the
+[sprite](#sprite-and-oam) is what shows it on screen. A
+[sprite animation](#sprite-animation) shows a picture for a number of
+[frames](#frame) before the next one takes its place, and the animation of a
+map's tiles steps through pictures the same way
 ([Field code](src/field/README.md#sprites-and-their-animation)).
-Picture is the one word for a single drawing on a sheet of drawings.
 
-Evidence: plain English; the time's パターン and コマ each mean other things too.
+Evidence: SGL's PICTURE, the picture data a sprite shows; plain English,
+since the time's パターン and コマ each mean other things too.
 
 ### Palette number
 
@@ -658,7 +674,7 @@ Evidence: Camelot: The Lost Age's developer test message 05746 heads a location 
 
 A room is the inside of a building: a house, a shop, an inn. Most rooms are
 not [scenes](#scene) of their own. Isaac's house, Kraden's study and Vale's
-inn are rooms of one scene, a [sheet of rooms](#sheet-of-rooms).
+inn are rooms of one scene, on its [rooms map](#rooms-map).
 
 Evidence: Camelot: the scene labels' ROOM and RM (HAIROOM1, KUP_RM01,
 FUCHINRM).
@@ -701,16 +717,17 @@ picture ([Field code](src/field/README.md#the-world-picture)).
 
 Evidence: plain English for what the player sees, the view standing still.
 
-### Sheet of rooms
+### Rooms map
 
-A sheet of rooms is one [scene](#scene) whose map holds several
-[rooms](#room) side by side, all drawn in one style. The door the party
-comes in by picks the room. The rooms need not be in one town: Vale's inn
-and the room of Babi's scholars in Tolbi are on the same sheet, because both
-are drawn as cottages. So a sheet is named for its style, as Cottage rooms
-or Stucco rooms ([Scenes](src/scene/README.md#design)).
+A rooms map is the [map](#map) of a [scene](#scene) that holds several
+[rooms](#room) side by side, all drawn in one style. A room comes from its
+rooms map. The door the party comes in by picks the room. The rooms need not
+be in one town: Vale's inn and the room of Babi's scholars in Tolbi are on
+the same rooms map, because both are drawn as cottages. So a rooms map is
+named for its style, as Cottage rooms or Stucco rooms
+([Scenes](src/scene/README.md#design)).
 
-Evidence: plain English; the project's own word.
+Evidence: Camelot: the credits' "Maps" and the scene labels' ROOM.
 
 ### Cell
 

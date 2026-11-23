@@ -10,13 +10,13 @@
 /// search, and still when nobody has room.
 #define DJINN_COUNT_NONE 999
 
-/// Returns the definition of Djinni `index` of element `group`; anything out of
+/// Returns the definition of Djinni `djinni` of `element`; anything out of
 /// range gives DJINNI_FLINT's.
-const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
+const struct DjinnDefinition *Djinn_GetDefinition(u32 element, u32 djinni) {
   s32 entry = 0;
 
-  if (group < ELEMENT_COUNT && index < DJINN_PER_ELEMENT)
-    entry = group * DJINN_PER_ELEMENT + index;
+  if (element < ELEMENT_COUNT && djinni < DJINN_PER_ELEMENT)
+    entry = element * DJINN_PER_ELEMENT + djinni;
   return &gDjinn_DefinitionTable[entry];
 }
 
@@ -239,9 +239,9 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   return standbyCount;
 }
 
-/// Returns the ability ID used when the Djinni is unleashed.
-s32 Djinn_GetAbilityId(u32 group, u32 index) {
-  return Djinn_GetDefinition(group, index)->abilityId;
+/// Returns the ability the Djinni unleashes.
+s32 Djinn_GetAbilityId(u32 element, u32 djinni) {
+  return Djinn_GetDefinition(element, djinni)->abilityId;
 }
 
 /// Returns how many Djinn of `element` the party holds, or of all elements for
@@ -256,10 +256,10 @@ s32 Party_SumDjinnCounts(s32 element) {
     struct Unit *unit = Unit_Get(unitIds[i]);
 
     if (element == -1) {
-      djinnCount += unit->djinnHeldCounts[0];
-      djinnCount += unit->djinnHeldCounts[1];
-      djinnCount += unit->djinnHeldCounts[2];
-      djinnCount += unit->djinnHeldCounts[3];
+      djinnCount += unit->djinnHeldCounts[ELEMENT_VENUS];
+      djinnCount += unit->djinnHeldCounts[ELEMENT_MERCURY];
+      djinnCount += unit->djinnHeldCounts[ELEMENT_MARS];
+      djinnCount += unit->djinnHeldCounts[ELEMENT_JUPITER];
     } else {
       djinnCount += unit->djinnHeldCounts[element];
     }

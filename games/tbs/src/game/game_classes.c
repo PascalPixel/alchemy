@@ -20,14 +20,15 @@ s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
 
 /// Writes each element level in tenths (ELEMENT_LEVEL_SCALE): an enemy's from
 /// its preset, a character's from the Djinn set on it plus its own bonus.
-s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
+/// `djinnHeld` is the unit's Djinn (Unit.djinnHeld).
+s32 Unit_GetElementLevels(s32 unitId, const u8 *djinnHeld, s32 output[4]) {
   s32 i;
   s32 *cursor;
 
-  if (record > PIERS) {
+  if (unitId > PIERS) {
     u32 index;
 
-    index = Enemy_GetDefinition(record)->elementPreset;
+    index = Enemy_GetDefinition(unitId)->elementPreset;
     if (index >= ENEMY_ELEMENT_PRESET_COUNT)
       index = 0;
 
@@ -38,19 +39,18 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
                   ELEMENT_LEVEL_SCALE;
   } else {
     cursor = output;
-    // `source` points at the unit's Djinn bits; the counts of set Djinn by
-    // element follow them in the unit.
-    source += offsetof(struct Unit, djinnSetCounts) -
-              offsetof(struct Unit, djinnHeld);
+    // The counts of set Djinn by element follow the Djinn bits in the unit.
+    djinnHeld += offsetof(struct Unit, djinnSetCounts) -
+                 offsetof(struct Unit, djinnHeld);
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      u32 count = *source++;
+      u32 count = *djinnHeld++;
 
       *cursor++ = count * ELEMENT_LEVEL_SCALE;
     }
 
-    if (record <= PIERS) {
+    if (unitId <= PIERS) {
       for (i = 0; i < ELEMENT_COUNT; i++) {
-        *output += Character_GetDefinition(record)->elementBonus[i];
+        *output += Character_GetDefinition(unitId)->elementBonus[i];
         output++;
       }
     }
@@ -80,19 +80,19 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
 
   if (presetIndex >= ENEMY_ELEMENT_PRESET_COUNT)
     presetIndex = 0;
-  return gEnemy_ElementPresetTable[presetIndex].first;
+  return gEnemy_ElementPresetTable[presetIndex].attackElement;
 }
 
 /// Writes a unit's base Power and Resist in each element, from its element
 /// levels.
 UNREAD_RESULT
 Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
-  struct Unit *state = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 levels[ELEMENT_COUNT];
   s32 i;
 
-  if (state->classId == CLASS_NONE) {
-    u32 preset = Enemy_GetDefinition(state->id)->elementPreset;
+  if (unit->classId == CLASS_NONE) {
+    u32 preset = Enemy_GetDefinition(unit->id)->elementPreset;
 
     if (preset >= ENEMY_ELEMENT_PRESET_COUNT)
       preset = 0;
@@ -106,7 +106,7 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
 
   // Element levels in tenths: the whole level picks the table's row, the
   // tenths add to it.
-  Unit_GetElementLevels(state->id, (u8 *)state->djinnHeld, levels);
+  Unit_GetElementLevels(unit->id, (u8 *)unit->djinnHeld, levels);
   for (i = 0; i < ELEMENT_COUNT; i++) {
     s32 tenths = levels[i] % ELEMENT_LEVEL_SCALE;
     s32 level = levels[i] / ELEMENT_LEVEL_SCALE;
@@ -123,8 +123,9 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   }
 }
 
-/// Returns the class a character has with these Djinn: the series of its two
-/// strongest elements, and the last class of it whose requirements it meets.
+/// Returns the class a character has with these Djinn (Unit.djinnHeld): the
+/// series of its two strongest elements, and the last class of it whose
+/// requirements it meets.
 s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 levels[ELEMENT_COUNT];
   s32 primary;
@@ -136,7 +137,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
 
   result = -1;
   if (character > PIERS)
-    return 0;
+    return CLASS_NONE;
   Unit_GetElementLevels(character, djinn, levels);
   if (GameFlag_Get(FLAG_CHILDHOOD)) {
     if (character == ISAAC)
@@ -183,7 +184,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
     }
   }
   if (result == -1)
-    result = 0;
+    result = CLASS_NONE;
   return result;
 }
 

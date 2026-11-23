@@ -7,12 +7,15 @@
 #include "item_ids.h"
 #include "game/game.h"
 
+/// The name field of an enemy's row, left blank: fourteen spaces.
+#define BLANK_NAME "              "
+
 // clang-format off
 /// The enemies, by enemy id less ENEMY_ID_FIRST.
 const struct EnemyDefinition gEnemy_Definitions[] = {
     // ???
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
@@ -24,7 +27,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Vermin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 1,
         .hp = 20,
         .atk = 23,
@@ -32,7 +35,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 7,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 2,
@@ -42,7 +45,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Vermin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 36,
         .atk = 32,
@@ -50,7 +53,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 9,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK, ABILITY_DEFEND},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 4,
@@ -60,7 +63,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mad Vermin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 131,
         .atk = 164,
@@ -68,7 +71,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 67,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_ONSLAUGHT, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 80,
@@ -78,7 +81,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 1,
         .hp = 17,
         .atk = 21,
@@ -86,7 +89,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 13,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 1,
@@ -96,7 +99,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 30,
         .atk = 30,
@@ -104,7 +107,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 20,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_SONIC_WAVE, ABILITY_ATTACK, ABILITY_SONIC_WAVE, ABILITY_ATTACK, ABILITY_SONIC_WAVE, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 3,
@@ -114,7 +117,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rabid Bat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 125,
         .atk = 190,
@@ -122,7 +125,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 84,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_VAMPIRIC_FANG, ABILITY_VAMPIRIC_FANG, ABILITY_ATTACK, ABILITY_SONIC_WAVE_STRONG, ABILITY_SONIC_WAVE_STRONG, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 82,
@@ -132,7 +135,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wild Mushroom
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 1,
         .hp = 18,
         .atk = 22,
@@ -140,7 +143,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 10,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 7,
+        .elementPreset = ELEMENT_PRESET_WILD_MUSHROOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_CONTAIN, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_CONTAIN, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 2,
@@ -150,7 +153,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wild Mushroom
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 34,
         .atk = 31,
@@ -158,7 +161,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 15,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 7,
+        .elementPreset = ELEMENT_PRESET_WILD_MUSHROOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_SOOTHING_STAR, ABILITY_ATTACK, ABILITY_SOOTHING_STAR, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 3,
@@ -168,7 +171,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Death Cap
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 117,
         .atk = 159,
@@ -176,7 +179,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 90,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 7,
+        .elementPreset = ELEMENT_PRESET_WILD_MUSHROOM,
         .abilities = {ABILITY_SLEEP_STAR, ABILITY_SLEEP_STAR, ABILITY_SLEEP_STAR, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 56,
@@ -186,7 +189,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Slime
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 2,
         .hp = 22,
         .atk = 22,
@@ -194,7 +197,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 8,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP, ABILITY_EFFECT_STUN},
         .coins = 2,
@@ -204,7 +207,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Slime
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 32,
         .atk = 34,
@@ -212,7 +215,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 10,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_ATTACK, ABILITY_BONE_CHILLER, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_BONE_CHILLER, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP, ABILITY_EFFECT_STUN},
         .coins = 4,
@@ -222,7 +225,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ooze
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 9,
         .hp = 72,
         .atk = 72,
@@ -230,7 +233,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 30,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_STICKY_GOO, ABILITY_STICKY_GOO, ABILITY_ATTACK, ABILITY_SPEED_SURGE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP, ABILITY_EFFECT_STUN},
         .coins = 40,
@@ -240,7 +243,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Slime Beast
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 99,
         .atk = 134,
@@ -248,7 +251,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 54,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_STICKY_POISON, ABILITY_STICKY_POISON, ABILITY_ATTACK, ABILITY_SPEED_SURGE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP, ABILITY_EFFECT_STUN},
         .coins = 77,
@@ -258,7 +261,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ghost
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 56,
         .pp = 6,
@@ -269,7 +272,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_HERB},
         .counts = {1},
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(6),
         .abilities = {ABILITY_ATTACK, ABILITY_RUMBLE, ABILITY_RUMBLE, ABILITY_IMPAIR, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_IMPAIR},
@@ -281,7 +284,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ghost Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 161,
         .pp = 19,
@@ -290,7 +293,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 86,
         .luck = 9,
         .actionCount = 1,
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_SPIRE, ABILITY_SPIRE, ABILITY_WHIRLWIND, ABILITY_WHIRLWIND, ABILITY_HAUNTING, ABILITY_HAUNTING, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -301,7 +304,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Horned Ghost
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 236,
         .pp = 32,
@@ -310,7 +313,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 116,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_ICE_HORN, ABILITY_ATTACK, ABILITY_HAIL_PRISM, ABILITY_ATTACK, ABILITY_HAUNTING, ABILITY_HAUNTING, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -321,7 +324,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lich
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 900,
         .pp = 52,
@@ -330,7 +333,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 106,
         .luck = 15,
         .actionCount = 1,
-        .elementPreset = 16,
+        .elementPreset = ELEMENT_PRESET_LICH,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_GLACIER, ABILITY_REVIVE, ABILITY_CURSE, ABILITY_ATTACK, ABILITY_ENFEEBLE, ABILITY_HAUNT, ABILITY_DEBILITATE, ABILITY_BIND},
@@ -342,7 +345,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Zombie
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 4,
         .hp = 55,
         .atk = 41,
@@ -350,7 +353,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 5,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 8,
@@ -360,7 +363,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Undead
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 165,
         .atk = 180,
@@ -368,7 +371,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 58,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_DECOMPOSE, ABILITY_DECOMPOSE, ABILITY_ALLY_SEARCH, ABILITY_ALLY_SEARCH, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 90,
@@ -378,7 +381,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wight
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 192,
         .atk = 205,
@@ -386,7 +389,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 54,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_DECOMPOSE, ABILITY_DECOMPOSE, ABILITY_ROTTEN_BLOOD, ABILITY_ROTTEN_BLOOD, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 115,
@@ -396,7 +399,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bandit
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 7,
         .hp = 244,
         .atk = 46,
@@ -406,7 +409,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_HERB},
         .counts = {1, 2},
-        .elementPreset = 1,
+        .elementPreset = ELEMENT_PRESET_BANDIT,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(1) | ITEM_ACTION(2) | ITEM_ACTION(3) | ITEM_ACTION(6),
         .abilities = {ABILITY_SLICE, ABILITY_SLICE, ABILITY_SLICE, ABILITY_SLICE, ABILITY_THREATEN, ABILITY_THREATEN, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -418,7 +421,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Thief
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 6,
         .hp = 110,
         .atk = 42,
@@ -428,7 +431,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_HERB},
         .counts = {1},
-        .elementPreset = 1,
+        .elementPreset = ELEMENT_PRESET_BANDIT,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(3) | ITEM_ACTION(4) | ITEM_ACTION(5),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_TREMBLE, ABILITY_TREMBLE, ABILITY_THREATEN, ABILITY_THREATEN, ABILITY_STAND_READY},
@@ -438,7 +441,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Brigand
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 421,
         .atk = 251,
@@ -448,7 +451,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_CRYSTAL_POWDER},
         .counts = {1, 2},
-        .elementPreset = 1,
+        .elementPreset = ELEMENT_PRESET_BANDIT,
         .itemActions = ITEM_ACTION(1) | ITEM_ACTION(2) | ITEM_ACTION(3) | ITEM_ACTION(4),
         .abilities = {ABILITY_SLICE, ABILITY_SLICE, ABILITY_SLICE, ABILITY_SLICE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
@@ -459,7 +462,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Skeleton
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 60,
         .atk = 46,
@@ -467,7 +470,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 18,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 14,
+        .elementPreset = ELEMENT_PRESET_SKELETON,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_BONE_CHARGE, ABILITY_BONE_CHARGE, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
         .coins = 11,
@@ -477,7 +480,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Bone Fighter
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 122,
         .atk = 131,
@@ -485,7 +488,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 52,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 14,
+        .elementPreset = ELEMENT_PRESET_SKELETON,
         .abilities = {ABILITY_UNDEAD_SWORD, ABILITY_UNDEAD_SWORD, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
         .coins = 63,
@@ -495,7 +498,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Skull Warrior
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 283,
         .pp = 16,
@@ -504,7 +507,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 130,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 14,
+        .elementPreset = ELEMENT_PRESET_SKELETON,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_DULL, ABILITY_DULL, ABILITY_BONE_CHARGE, ABILITY_BONE_CHARGE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
@@ -515,7 +518,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Will Head
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 54,
         .atk = 42,
@@ -523,7 +526,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 10,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 14,
+        .elementPreset = ELEMENT_PRESET_SKELETON,
         .abilities = {ABILITY_ATTACK, ABILITY_MYSTIC_FLAME, ABILITY_ATTACK, ABILITY_MYSTIC_FLAME, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 10,
@@ -533,7 +536,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Death Head
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 12,
         .hp = 128,
         .pp = 15,
@@ -542,7 +545,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 47,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 14,
+        .elementPreset = ELEMENT_PRESET_SKELETON,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_SLASH, ABILITY_SLASH, ABILITY_IMPAIR, ABILITY_IMPAIR, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -553,7 +556,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Willowisp
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 209,
         .pp = 12,
@@ -562,7 +565,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 121,
         .luck = 6,
         .actionCount = 1,
-        .elementPreset = 14,
+        .elementPreset = ELEMENT_PRESET_SKELETON,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_TUNDRA, ABILITY_BLUE_BOLT, ABILITY_ATTACK, ABILITY_DRAIN, ABILITY_HAUNTING, ABILITY_HAUNTING, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -573,7 +576,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 6,
         .hp = 49,
         .atk = 52,
@@ -581,7 +584,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 15,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_FORTIFY, ABILITY_FORTIFY, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 17,
@@ -591,7 +594,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Armored Rat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 147,
         .atk = 193,
@@ -599,7 +602,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 60,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_FORTIFY, ABILITY_FORTIFY, ABILITY_TOTAL_DEFENSE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 100,
@@ -609,7 +612,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Plated Rat
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 203,
         .atk = 262,
@@ -617,7 +620,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 61,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_TOTAL_DEFENSE, ABILITY_TOTAL_DEFENSE, ABILITY_COUNTERSTRIKE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 135,
@@ -627,7 +630,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat Soldier
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 6,
         .hp = 69,
         .atk = 56,
@@ -635,7 +638,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 19,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 32,
+        .elementPreset = ELEMENT_PRESET_RAT_SOLDIER,
         .abilities = {ABILITY_FLEE, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 19,
@@ -645,7 +648,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat Fighter
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 143,
         .atk = 146,
@@ -655,7 +658,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB},
         .counts = {1},
-        .elementPreset = 32,
+        .elementPreset = ELEMENT_PRESET_RAT_SOLDIER,
         .itemActions = ITEM_ACTION(2) | ITEM_ACTION(3) | ITEM_ACTION(4),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE, ABILITY_SLICE, ABILITY_SLICE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
@@ -666,7 +669,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Rat Warrior
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 208,
         .atk = 226,
@@ -676,7 +679,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB},
         .counts = {1},
-        .elementPreset = 32,
+        .elementPreset = ELEMENT_PRESET_RAT_SOLDIER,
         .itemActions = ITEM_ACTION(2) | ITEM_ACTION(3) | ITEM_ACTION(4),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE, ABILITY_SLICE, ABILITY_SLICE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
@@ -687,7 +690,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Drone Bee
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 7,
         .hp = 63,
         .atk = 68,
@@ -695,7 +698,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 36,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 9,
+        .elementPreset = ELEMENT_PRESET_DRONE_BEE,
         .abilities = {ABILITY_NUMBING_STING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 28,
@@ -705,7 +708,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fighter Bee
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 116,
         .atk = 155,
@@ -713,7 +716,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 74,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 9,
+        .elementPreset = ELEMENT_PRESET_DRONE_BEE,
         .abilities = {ABILITY_NUMBING_STING, ABILITY_ATTACK, ABILITY_ALLY_SEARCH, ABILITY_ALLY_SEARCH, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 90,
@@ -723,7 +726,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Warrior Bee
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 164,
         .atk = 221,
@@ -731,7 +734,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 102,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 9,
+        .elementPreset = ELEMENT_PRESET_DRONE_BEE,
         .abilities = {ABILITY_NUMBING_STING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ALLY_SEARCH, ABILITY_MORTAL_BLOW, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 104,
@@ -741,7 +744,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Troll
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 7,
         .hp = 101,
         .atk = 73,
@@ -750,7 +753,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .luck = 1,
         .actionCount = 1,
         .hpRegen = 10,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_BRUTE_FORCE, ABILITY_BRUTE_FORCE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
         .coins = 34,
@@ -760,7 +763,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cave Troll
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 212,
         .atk = 199,
@@ -769,7 +772,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .luck = 3,
         .actionCount = 1,
         .hpRegen = 20,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_BRUTE_FORCE, ABILITY_BRUTE_FORCE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
         .coins = 134,
@@ -779,7 +782,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Brutal Troll
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 291,
         .atk = 273,
@@ -788,7 +791,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .luck = 6,
         .actionCount = 1,
         .hpRegen = 30,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_BRUTE_FORCE, ABILITY_BRUTE_FORCE, ABILITY_ATTACK, ABILITY_BERSERK, ABILITY_BERSERK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
         .coins = 190,
@@ -798,7 +801,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Spider
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 69,
         .atk = 75,
@@ -806,7 +809,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 22,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 5,
+        .elementPreset = ELEMENT_PRESET_SPIDER,
         .abilities = {ABILITY_SPIDER_WEB, ABILITY_SPIDER_WEB, ABILITY_SPIDER_WEB, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 32,
@@ -816,7 +819,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tarantula
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 108,
         .atk = 144,
@@ -824,7 +827,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 52,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 5,
+        .elementPreset = ELEMENT_PRESET_SPIDER,
         .abilities = {ABILITY_POISON_FANG, ABILITY_POISON_FANG, ABILITY_ATTACK, ABILITY_SPIDER_WEB, ABILITY_SPIDER_WEB, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 81,
@@ -834,7 +837,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Recluse
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 27,
         .hp = 221,
         .atk = 323,
@@ -842,7 +845,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 109,
         .luck = 4,
         .actionCount = 1,
-        .elementPreset = 5,
+        .elementPreset = ELEMENT_PRESET_SPIDER,
         .abilities = {ABILITY_RABID_FANG, ABILITY_RABID_FANG, ABILITY_RABID_FANG, ABILITY_SPIDER_WEB, ABILITY_SPIDER_WEB, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 153,
@@ -852,7 +855,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gnome
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 85,
         .pp = 5,
@@ -861,7 +864,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 38,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 34,
+        .elementPreset = ELEMENT_PRESET_GNOME,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_FLARE, ABILITY_FLARE, ABILITY_GUARD, ABILITY_BOLT, ABILITY_ATTACK, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -872,7 +875,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gnome Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 162,
         .pp = 24,
@@ -881,7 +884,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 108,
         .luck = 8,
         .actionCount = 1,
-        .elementPreset = 36,
+        .elementPreset = ELEMENT_PRESET_GNOME_MAGE,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_FLASH_BOLT, ABILITY_FLASH_BOLT, ABILITY_FIREBALL, ABILITY_FIREBALL, ABILITY_DELUDE, ABILITY_DELUDE, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -892,7 +895,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gnome Wizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 215,
         .pp = 32,
@@ -901,7 +904,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 122,
         .luck = 8,
         .actionCount = 1,
-        .elementPreset = 30,
+        .elementPreset = ELEMENT_PRESET_GNOME_WIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_MOTHER_GAIA, ABILITY_ATTACK, ABILITY_SLEEP, ABILITY_SLEEP, ABILITY_IMPACT, ABILITY_IMPACT, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -912,7 +915,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ghoul
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 9,
         .hp = 99,
         .atk = 93,
@@ -920,7 +923,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 16,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_CANNIBAL_FANG, ABILITY_CANNIBAL_FANG, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 42,
@@ -930,7 +933,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fiendish Ghoul
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 609,
         .atk = 199,
@@ -938,7 +941,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 69,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_CANNIBAL_FANG, ABILITY_CANNIBAL_FANG, ABILITY_BACTERIA_RUSH, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 109,
@@ -948,7 +951,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cannibal Ghoul
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 249,
         .atk = 274,
@@ -956,7 +959,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 80,
         .luck = 4,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_CANNIBAL_FANG, ABILITY_ATTACK, ABILITY_DECOMPOSE, ABILITY_DECOMPOSE, ABILITY_ALLY_SEARCH, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
         .coins = 160,
@@ -966,7 +969,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mauler
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 9,
         .hp = 109,
         .atk = 99,
@@ -974,7 +977,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 24,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_BEAR_CLAW, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 45,
@@ -984,7 +987,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ravager
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 189,
         .atk = 185,
@@ -992,7 +995,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 60,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_BEAR_CLAW, ABILITY_BEAR_CLAW, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 95,
@@ -1002,7 +1005,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Grisly
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 800,
         .atk = 208,
@@ -1010,7 +1013,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 78,
         .luck = 13,
         .actionCount = 1,
-        .elementPreset = 4,
+        .elementPreset = ELEMENT_PRESET_GRISLY,
         .abilities = {ABILITY_BEAR_CLAW, ABILITY_BEAR_CLAW, ABILITY_ATTACK, ABILITY_BERSERK, ABILITY_BERSERK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 700,
@@ -1020,7 +1023,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cuttle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 80,
         .atk = 96,
@@ -1028,7 +1031,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 36,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_POISONOUS_BITE, ABILITY_POISONOUS_BITE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 49,
@@ -1038,7 +1041,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Calamar
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 104,
         .atk = 130,
@@ -1046,7 +1049,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 46,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_ELECTRIC_BITE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ALLY_SEARCH, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 79,
@@ -1056,7 +1059,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Man o' War
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 137,
         .atk = 193,
@@ -1064,7 +1067,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 70,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 24,
+        .elementPreset = ELEMENT_PRESET_SLIME,
         .abilities = {ABILITY_POISON_INK, ABILITY_POISON_INK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 87,
@@ -1074,7 +1077,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Harpy
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 105,
         .atk = 104,
@@ -1082,7 +1085,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 46,
         .luck = 4,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_SHRIEK, ABILITY_SHRIEK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 53,
@@ -1092,7 +1095,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Virago
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 185,
         .atk = 199,
@@ -1100,7 +1103,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 89,
         .luck = 4,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_BANSHEE_HOWL, ABILITY_BANSHEE_HOWL, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
         .coins = 120,
@@ -1110,7 +1113,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Harridan
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 231,
         .pp = 29,
@@ -1119,7 +1122,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 118,
         .luck = 8,
         .actionCount = 1,
-        .elementPreset = 12,
+        .elementPreset = ELEMENT_PRESET_HARRIDAN,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_BANSHEE_HOWL, ABILITY_BANSHEE_HOWL, ABILITY_CRAZY_VOICE, ABILITY_CRAZY_VOICE, ABILITY_WIND_SLASH, ABILITY_WIND_SLASH, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SLEEP},
@@ -1130,7 +1133,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Siren
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 116,
         .pp = 12,
@@ -1139,7 +1142,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 54,
         .luck = 9,
         .actionCount = 1,
-        .elementPreset = 33,
+        .elementPreset = ELEMENT_PRESET_SIREN,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_FROTH, ABILITY_FROTH, ABILITY_SLEEP, ABILITY_SLEEP, ABILITY_HEARTRENDER, ABILITY_HEARTRENDER, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -1150,7 +1153,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Succubus
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 529,
         .pp = 56,
@@ -1159,7 +1162,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 101,
         .luck = 12,
         .actionCount = 1,
-        .elementPreset = 33,
+        .elementPreset = ELEMENT_PRESET_SIREN,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_HAIL_PRISM, ABILITY_HAIL_PRISM, ABILITY_WIND_SLASH, ABILITY_WIND_SLASH, ABILITY_HEARTRENDER, ABILITY_HEARTRENDER, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -1170,7 +1173,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Nightmare
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 258,
         .pp = 28,
@@ -1179,7 +1182,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 138,
         .luck = 13,
         .actionCount = 1,
-        .elementPreset = 37,
+        .elementPreset = ELEMENT_PRESET_NIGHTMARE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_SHINE_PLASMA, ABILITY_SHINE_PLASMA, ABILITY_FIREBALL, ABILITY_FIREBALL, ABILITY_BIND, ABILITY_BIND, ABILITY_HEARTRENDER, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
@@ -1190,7 +1193,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mole
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 96,
         .atk = 119,
@@ -1198,7 +1201,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 36,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_MAD_SPATTER, ABILITY_MAD_SPATTER, ABILITY_MAD_SPATTER, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_SLEEP},
         .coins = 60,
@@ -1208,7 +1211,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mad Mole
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 156,
         .atk = 197,
@@ -1216,7 +1219,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 62,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_MAD_SPATTER, ABILITY_MAD_SPATTER, ABILITY_WORMS, ABILITY_WORMS, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_SLEEP},
         .coins = 88,
@@ -1226,7 +1229,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mole Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 199,
         .pp = 14,
@@ -1235,7 +1238,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 74,
         .luck = 4,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_MAD_GROWTH, ABILITY_ATTACK, ABILITY_MAD_SPATTER, ABILITY_MAD_SPATTER, ABILITY_WORMS, ABILITY_WORMS, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_SLEEP},
         .coins = 132,
@@ -1245,7 +1248,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Dirge
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 91,
         .atk = 122,
@@ -1253,7 +1256,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 60,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_FLYING_ATTACK, ABILITY_FLYING_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_STUN},
         .coins = 61,
@@ -1263,7 +1266,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Foul Dirge
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 149,
         .atk = 177,
@@ -1271,7 +1274,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 120,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_SWIFT_STRIKE, ABILITY_SWIFT_STRIKE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_STUN},
         .coins = 100,
@@ -1281,7 +1284,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Vile Dirge
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 173,
         .atk = 228,
@@ -1289,7 +1292,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 120,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 11,
+        .elementPreset = ELEMENT_PRESET_BAT,
         .abilities = {ABILITY_FLYING_ATTACK, ABILITY_ATTACK, ABILITY_WING_BEAT, ABILITY_WING_BEAT, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_STUN},
         .coins = 98,
@@ -1299,7 +1302,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ape
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 290,
         .atk = 128,
@@ -1307,7 +1310,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 49,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 3,
+        .elementPreset = ELEMENT_PRESET_VERMIN,
         .abilities = {ABILITY_RANSACK, ABILITY_RANSACK, ABILITY_RANSACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP, ABILITY_EFFECT_SLEEP},
         .coins = 160,
@@ -1317,7 +1320,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Killer Ape
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 1000,
         .pp = 45,
@@ -1326,7 +1329,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 94,
         .luck = 26,
         .actionCount = 1,
-        .elementPreset = 4,
+        .elementPreset = ELEMENT_PRESET_GRISLY,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_RANSACK, ABILITY_WAR_CRY, ABILITY_DOUSE, ABILITY_DEBILITATE, ABILITY_BIND, ABILITY_BIND, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1338,7 +1341,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Dirty Ape
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 230,
         .atk = 236,
@@ -1346,7 +1349,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 132,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 4,
+        .elementPreset = ELEMENT_PRESET_GRISLY,
         .abilities = {ABILITY_FREEBITE_RUSH, ABILITY_ATTACK, ABILITY_WAR_CRY, ABILITY_WAR_CRY, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP, ABILITY_EFFECT_SLEEP},
         .coins = 149,
@@ -1356,7 +1359,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Grub
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 102,
         .atk = 154,
@@ -1364,7 +1367,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 52,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 5,
+        .elementPreset = ELEMENT_PRESET_SPIDER,
         .abilities = {ABILITY_FLEE, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 88,
@@ -1374,7 +1377,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Worm
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 132,
         .atk = 196,
@@ -1382,7 +1385,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 79,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 5,
+        .elementPreset = ELEMENT_PRESET_SPIDER,
         .abilities = {ABILITY_SEARCH_FOR_HELP, ABILITY_SEARCH_FOR_HELP, ABILITY_SEARCH_FOR_HELP, ABILITY_SEARCH_FOR_HELP, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 94,
@@ -1392,7 +1395,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Acid Maggot
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 160,
         .atk = 255,
@@ -1400,7 +1403,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 78,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 5,
+        .elementPreset = ELEMENT_PRESET_SPIDER,
         .abilities = {ABILITY_ACID_BITE, ABILITY_ACID_BITE, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_STUN},
         .coins = 102,
@@ -1410,7 +1413,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Orc
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 148,
         .atk = 156,
@@ -1418,7 +1421,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 54,
         .luck = 3,
         .actionCount = 1,
-        .elementPreset = 30,
+        .elementPreset = ELEMENT_PRESET_GNOME_WIZARD,
         .abilities = {ABILITY_SPASM, ABILITY_SPASM, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_HAUNT, ABILITY_EFFECT_CURSE},
         .coins = 113,
@@ -1428,7 +1431,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Orc Captain
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 231,
         .atk = 248,
@@ -1438,7 +1441,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_ELIXIR},
         .counts = {1, 1},
-        .elementPreset = 30,
+        .elementPreset = ELEMENT_PRESET_GNOME_WIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(1) | ITEM_ACTION(2) | ITEM_ACTION(3),
         .abilities = {ABILITY_STAND_READY, ABILITY_STAND_READY, ABILITY_SPASM, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1450,7 +1453,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Orc Lord
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 278,
         .pp = 18,
@@ -1461,7 +1464,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_ELIXIR},
         .counts = {1},
-        .elementPreset = 31,
+        .elementPreset = ELEMENT_PRESET_ORC_LORD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(2) | ITEM_ACTION(3),
         .abilities = {ABILITY_SLEEP, ABILITY_SLEEP, ABILITY_SPASM, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1473,7 +1476,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Salamander
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 212,
         .pp = 18,
@@ -1482,7 +1485,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 50,
         .luck = 6,
         .actionCount = 1,
-        .elementPreset = 27,
+        .elementPreset = ELEMENT_PRESET_SALAMANDER,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_FIRE_BLESSING, ABILITY_FIRE_BLESSING, ABILITY_FIREBALL, ABILITY_FIREBALL, ABILITY_BLAST_STRONG, ABILITY_GUARD, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -1493,7 +1496,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Earth Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 1550,
         .pp = 48,
@@ -1502,7 +1505,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 102,
         .luck = 17,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_CLAY_SPIRE, ABILITY_ACID_BLESSING, ABILITY_ACID_BLESSING, ABILITY_QUAKE_SPHERE, ABILITY_MOTHER_GAIA, ABILITY_CURE_WELL, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1514,7 +1517,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Thunder Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 456,
         .atk = 347,
@@ -1522,7 +1525,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 134,
         .luck = 10,
         .actionCount = 1,
-        .elementPreset = 29,
+        .elementPreset = ELEMENT_PRESET_THUNDER_LIZARD,
         .abilities = {ABILITY_STORM_BLESSING, ABILITY_STORM_BLESSING, ABILITY_STORM_BLESSING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 221,
@@ -1532,7 +1535,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Manticore
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 1700,
         .pp = 83,
@@ -1541,7 +1544,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 61,
         .luck = 36,
         .actionCount = 2,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_RANDOM_START,
         .abilities = {ABILITY_MAD_BLAST, ABILITY_POISON_TAIL, ABILITY_ATTACK, ABILITY_CURSE, ABILITY_NOVA, ABILITY_DELUDE, ABILITY_POISON_TAIL, ABILITY_IMPAIR},
@@ -1553,7 +1556,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Magicore
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 321,
         .pp = 34,
@@ -1562,7 +1565,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 109,
         .luck = 11,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_NOVA, ABILITY_NOVA, ABILITY_POISON_TAIL, ABILITY_POISON_TAIL, ABILITY_SLEEP, ABILITY_BIND, ABILITY_BIND, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
@@ -1573,7 +1576,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Manticore King
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 348,
         .pp = 33,
@@ -1582,7 +1585,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 134,
         .luck = 12,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ERUPTION, ABILITY_ATTACK, ABILITY_POISON_TAIL, ABILITY_POISON_TAIL, ABILITY_LUCID_PROPHECY, ABILITY_BIND, ABILITY_BIND, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
@@ -1593,7 +1596,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Kobold
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 220,
         .atk = 230,
@@ -1603,7 +1606,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_HERB, ITEM_SLEEP_BOMB},
         .counts = {2, 1},
-        .elementPreset = 30,
+        .elementPreset = ELEMENT_PRESET_GNOME_WIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(0) | ITEM_ACTION(1) | ITEM_ACTION(2),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1615,7 +1618,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Goblin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 268,
         .atk = 289,
@@ -1625,7 +1628,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_VIAL, ITEM_ELIXIR},
         .counts = {1, 1},
-        .elementPreset = 30,
+        .elementPreset = ELEMENT_PRESET_GNOME_WIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(0) | ITEM_ACTION(1) | ITEM_ACTION(2),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1637,7 +1640,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Hobgoblin
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 650,
         .atk = 203,
@@ -1647,7 +1650,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_CRYSTAL_POWDER, ITEM_SMOKE_BOMB, ITEM_NUT, ITEM_SLEEP_BOMB},
         .counts = {1, 1, 2, 1},
-        .elementPreset = 31,
+        .elementPreset = ELEMENT_PRESET_ORC_LORD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(0) | ITEM_ACTION(1) | ITEM_ACTION(2),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -1659,7 +1662,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gargoyle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 176,
         .pp = 21,
@@ -1668,7 +1671,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 59,
         .luck = 7,
         .actionCount = 1,
-        .elementPreset = 17,
+        .elementPreset = ELEMENT_PRESET_GARGOYLE,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_GUARD, ABILITY_GUARD, ABILITY_QUAKE_SPHERE, ABILITY_ATTACK, ABILITY_ICE_BLESSING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -1679,7 +1682,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Clay Gargoyle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 209,
         .pp = 24,
@@ -1688,7 +1691,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 84,
         .luck = 7,
         .actionCount = 1,
-        .elementPreset = 17,
+        .elementPreset = ELEMENT_PRESET_GARGOYLE,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_GUARD, ABILITY_GUARD, ABILITY_SPIRE, ABILITY_SPIRE, ABILITY_SONIC_WAVE_STRONG, ABILITY_SONIC_WAVE_STRONG, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -1699,7 +1702,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ice Gargoyle
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 304,
         .pp = 21,
@@ -1708,7 +1711,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 100,
         .luck = 7,
         .actionCount = 1,
-        .elementPreset = 17,
+        .elementPreset = ELEMENT_PRESET_GARGOYLE,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_GUARD, ABILITY_GUARD, ABILITY_MOTHER_GAIA, ABILITY_ATTACK, ABILITY_ICE_BLESSING_STRONG, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -1719,7 +1722,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Gryphon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 1100,
         .pp = 36,
@@ -1728,7 +1731,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 98,
         .luck = 19,
         .actionCount = 1,
-        .elementPreset = 43,
+        .elementPreset = ELEMENT_PRESET_GRYPHON,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WING_FLUTTER, ABILITY_TORNADO, ABILITY_TWIN_BEAKS, ABILITY_IMPACT, ABILITY_ATTACK, ABILITY_SONIC_SLASH, ABILITY_BIND, ABILITY_WARD},
@@ -1740,7 +1743,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wild Gryphon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 370,
         .pp = 8,
@@ -1749,7 +1752,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 170,
         .luck = 10,
         .actionCount = 1,
-        .elementPreset = 43,
+        .elementPreset = ELEMENT_PRESET_GRYPHON,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_WING_STROKE, ABILITY_ATTACK, ABILITY_TWIN_BEAKS, ABILITY_TWIN_BEAKS, ABILITY_BIND, ABILITY_BIND, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
@@ -1760,7 +1763,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Wise Gryphon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .pp = 33,
         .atk = 22,
@@ -1768,7 +1771,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 9,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 43,
+        .elementPreset = ELEMENT_PRESET_GRYPHON,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_TORNADO, ABILITY_TORNADO, ABILITY_TWIN_BEAKS, ABILITY_TWIN_BEAKS, ABILITY_TWIN_BEAKS, ABILITY_BIND, ABILITY_BIND, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
@@ -1777,7 +1780,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Golem
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 266,
         .atk = 217,
@@ -1785,7 +1788,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 40,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .abilities = {ABILITY_FORCIBLE_ARM, ABILITY_FORCIBLE_ARM, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 161,
@@ -1795,7 +1798,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Earth Golem
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 298,
         .atk = 299,
@@ -1803,7 +1806,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 70,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .abilities = {ABILITY_TRUNCHEON_FIST, ABILITY_TRUNCHEON_FIST, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 183,
@@ -1813,7 +1816,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Grand Golem
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 476,
         .atk = 367,
@@ -1821,7 +1824,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 80,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .abilities = {ABILITY_TRUNCHEON_FIST, ABILITY_TRUNCHEON_FIST, ABILITY_TRUNCHEON_FIST, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 208,
@@ -1831,7 +1834,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Dread Hound
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 252,
         .atk = 211,
@@ -1839,7 +1842,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 90,
         .luck = 13,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .abilities = {ABILITY_FIRE_BLESSING_STRONG, ABILITY_FIRE_BLESSING_STRONG, ABILITY_DOUBLE_FANG, ABILITY_DOUBLE_FANG, ABILITY_WICKED_HOWL, ABILITY_WICKED_HOWL, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
         .coins = 176,
@@ -1849,7 +1852,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Cerebus
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 35,
         .hp = 2200,
         .pp = 42,
@@ -1858,7 +1861,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 151,
         .luck = 22,
         .actionCount = 1,
-        .elementPreset = 19,
+        .elementPreset = ELEMENT_PRESET_CEREBUS,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_ICE_BLESSING_STRONGEST, ABILITY_DOUBLE_FANG, ABILITY_DOUBLE_FANG, ABILITY_RESTORE, ABILITY_WICKED_HOWL, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ICE_MISSILE},
@@ -1870,7 +1873,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fenrir
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 406,
         .atk = 357,
@@ -1878,7 +1881,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 141,
         .luck = 9,
         .actionCount = 1,
-        .elementPreset = 19,
+        .elementPreset = ELEMENT_PRESET_CEREBUS,
         .abilities = {ABILITY_ICE_BLESSING_STRONGEST, ABILITY_ICE_BLESSING_STRONGEST, ABILITY_DOUBLE_FANG, ABILITY_DOUBLE_FANG, ABILITY_WICKED_HOWL, ABILITY_WICKED_HOWL, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
         .coins = 212,
@@ -1888,7 +1891,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Stone Soldier
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 179,
         .pp = 6,
@@ -1897,7 +1900,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 104,
         .luck = 5,
         .actionCount = 1,
-        .elementPreset = 26,
+        .elementPreset = ELEMENT_PRESET_STONE_SOLDIER,
         .abilities = {ABILITY_BLAST, ABILITY_BLAST, ABILITY_MAD_BLAST, ABILITY_MAD_BLAST, ABILITY_HEADBUTT, ABILITY_HEADBUTT, ABILITY_DYNAMITE, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_INSTANT_DEATH},
         .coins = 98,
@@ -1907,7 +1910,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Boulder Beast
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 27,
         .hp = 211,
         .pp = 14,
@@ -1916,7 +1919,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 140,
         .luck = 6,
         .actionCount = 1,
-        .elementPreset = 27,
+        .elementPreset = ELEMENT_PRESET_SALAMANDER,
         .abilities = {ABILITY_MAD_BLAST, ABILITY_MAD_BLAST, ABILITY_MAD_BLAST, ABILITY_ATTACK, ABILITY_HEADBUTT, ABILITY_HEADBUTT, ABILITY_DYNAMITE, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_INSTANT_DEATH},
         .coins = 164,
@@ -1926,7 +1929,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Raging Rock
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .pp = 14,
         .atk = 22,
@@ -1934,7 +1937,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 9,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 27,
+        .elementPreset = ELEMENT_PRESET_SALAMANDER,
         .abilities = {ABILITY_MAD_BLAST, ABILITY_MAD_BLAST, ABILITY_MAD_BLAST, ABILITY_MAD_BLAST, ABILITY_HEADBUTT, ABILITY_HEADBUTT, ABILITY_DYNAMITE, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_INSTANT_DEATH},
         .coins = 1,
@@ -1942,7 +1945,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Chimera
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 1350,
         .pp = 48,
@@ -1951,7 +1954,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 121,
         .luck = 18,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_RABID_FANG, ABILITY_MAD_DASH, ABILITY_FIRE_BLESSING_STRONG, ABILITY_ATTACK, ABILITY_FLARE_STORM, ABILITY_GUARD, ABILITY_IMPAIR, ABILITY_BIND},
@@ -1963,7 +1966,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Chimera Mage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 413,
         .pp = 28,
@@ -1972,7 +1975,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 145,
         .luck = 16,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_FIRE_BLESSING_STRONG, ABILITY_FIRE_BLESSING_STRONG, ABILITY_RABID_FANG, ABILITY_MAD_DASH, ABILITY_ERUPTION, ABILITY_RECOVERY, ABILITY_RECOVERY, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
@@ -1982,14 +1985,14 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .experience = 362,
     },
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
         .agi = 9,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_FIRE_BLESSING_STRONGEST, ABILITY_FIRE_BLESSING_STRONGEST, ABILITY_RABID_FANG, ABILITY_MAD_DASH, ABILITY_ERUPTION, ABILITY_RECOVERY, ABILITY_RECOVERY, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
@@ -1998,7 +2001,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Amaze
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 2,
         .hp = 28,
         .atk = 25,
@@ -2006,7 +2009,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 12,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_RUMBLE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2017,7 +2020,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Amaze
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 3,
         .hp = 39,
         .atk = 36,
@@ -2025,7 +2028,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 18,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_RUMBLE, ABILITY_ATTACK, ABILITY_RUMBLE, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2036,7 +2039,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Creeper
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 89,
         .pp = 6,
@@ -2045,7 +2048,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 29,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_FROST, ABILITY_ATTACK, ABILITY_DOUSE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2056,7 +2059,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Spirit
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 116,
         .pp = 11,
@@ -2065,7 +2068,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 48,
         .luck = 6,
         .actionCount = 1,
-        .elementPreset = 15,
+        .elementPreset = ELEMENT_PRESET_GHOST,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_ICE, ABILITY_ICE, ABILITY_DOUSE, ABILITY_DOUSE, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2076,7 +2079,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Zombie
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 4,
         .hp = 55,
         .atk = 41,
@@ -2084,10 +2087,11 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 1,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 13,
+        .elementPreset = ELEMENT_PRESET_ZOMBIE,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION},
     },
+    // Three spare rows, each named "?" in the text.
     {
         .name = "",
     },
@@ -2099,7 +2103,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Kraken
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 2400,
         .pp = 46,
@@ -2108,7 +2112,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 80,
         .luck = 21,
         .actionCount = 2,
-        .elementPreset = 19,
+        .elementPreset = ELEMENT_PRESET_CEREBUS,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_DARK_BLESSING, ABILITY_SPINNING_BEAT, ABILITY_WATER_BLESSING_STRONGEST, ABILITY_POISON_BEAT, ABILITY_PLY, ABILITY_DRENCH, ABILITY_FROTH_SPHERE, ABILITY_ATTACK},
@@ -2120,7 +2124,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mystery Man
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 3000,
         .pp = 260,
@@ -2129,14 +2133,14 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 9,
         .luck = 40,
         .actionCount = 1,
-        .elementPreset = 39,
+        .elementPreset = ELEMENT_PRESET_SATUROS,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_FIREBALL, ABILITY_FIREBALL, ABILITY_ERUPTION, ABILITY_ERUPTION, ABILITY_HEAT_FLASH, ABILITY_HEAT_FLASH, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Saturos
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 1200,
         .pp = 160,
@@ -2145,7 +2149,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 51,
         .luck = 40,
         .actionCount = 1,
-        .elementPreset = 39,
+        .elementPreset = ELEMENT_PRESET_SATUROS,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_RANDOM_START,
         .abilities = {ABILITY_HEAT_FLASH, ABILITY_FIREBALL, ABILITY_ATTACK, ABILITY_FIREBALL, ABILITY_HEAT_FLASH, ABILITY_ATTACK, ABILITY_ERUPTION, ABILITY_ATTACK},
@@ -2157,7 +2161,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Saturos
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 38,
         .hp = 3000,
         .pp = 260,
@@ -2166,7 +2170,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 160,
         .luck = 50,
         .actionCount = 1,
-        .elementPreset = 39,
+        .elementPreset = ELEMENT_PRESET_SATUROS,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_HEAT_FLASH, ABILITY_INFERNO, ABILITY_BREAK, ABILITY_ATTACK, ABILITY_PYROCLASM, ABILITY_PROTECT, ABILITY_HAUNT, ABILITY_POTENT_CURE},
@@ -2176,7 +2180,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mystery Woman
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 2600,
         .pp = 300,
@@ -2185,14 +2189,14 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 13,
         .luck = 40,
         .actionCount = 1,
-        .elementPreset = 40,
+        .elementPreset = ELEMENT_PRESET_MENARDI,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_FLARE_WALL, ABILITY_MAD_BLAST, ABILITY_NOVA, ABILITY_NOVA, ABILITY_DEATH_SIZE, ABILITY_DEATH_SIZE, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Menardi
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 38,
         .hp = 2600,
         .pp = 300,
@@ -2201,7 +2205,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 220,
         .luck = 50,
         .actionCount = 1,
-        .elementPreset = 40,
+        .elementPreset = ELEMENT_PRESET_MENARDI,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_FIERY_BLAST, ABILITY_DEATH_SIZE, ABILITY_IMPACT, ABILITY_FLARE_STORM, ABILITY_ATTACK, ABILITY_SUPERNOVA, ABILITY_RESIST, ABILITY_WISH},
@@ -2211,7 +2215,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lizard Man
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 129,
         .atk = 106,
@@ -2219,7 +2223,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 30,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 33,
+        .elementPreset = ELEMENT_PRESET_SIREN,
         .abilities = {ABILITY_WATER_BLESSING, ABILITY_WATER_BLESSING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN, ABILITY_EFFECT_SLEEP},
         .coins = 52,
@@ -2229,7 +2233,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lizard Fighter
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 212,
         .atk = 204,
@@ -2237,7 +2241,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 60,
         .luck = 2,
         .actionCount = 1,
-        .elementPreset = 33,
+        .elementPreset = ELEMENT_PRESET_SIREN,
         .abilities = {ABILITY_WATER_BLESSING_STRONG, ABILITY_WATER_BLESSING_STRONG, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN, ABILITY_EFFECT_SLEEP},
         .coins = 124,
@@ -2247,7 +2251,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Lizard King
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 2000,
         .pp = 52,
@@ -2256,7 +2260,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 92,
         .luck = 13,
         .actionCount = 1,
-        .elementPreset = 33,
+        .elementPreset = ELEMENT_PRESET_SIREN,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_ICE_BLESSING_STRONGEST, ABILITY_ICE_BLESSING_STRONGEST, ABILITY_ATTACK, ABILITY_DEBILITATE, ABILITY_HIGH_IMPACT, ABILITY_HAIL_PRISM, ABILITY_BLUNT, ABILITY_BIND},
@@ -2268,7 +2272,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Living Statue
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 17,
         .hp = 540,
         .pp = 34,
@@ -2277,7 +2281,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 56,
         .luck = 20,
         .actionCount = 1,
-        .elementPreset = 25,
+        .elementPreset = ELEMENT_PRESET_LIVING_STATUE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_TUNDRA, ABILITY_TUNDRA, ABILITY_WATER_BLESSING, ABILITY_WATER_BLESSING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2288,7 +2292,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Hydros Statue
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 19,
         .hp = 1300,
         .pp = 80,
@@ -2297,7 +2301,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 62,
         .luck = 30,
         .actionCount = 1,
-        .elementPreset = 25,
+        .elementPreset = ELEMENT_PRESET_LIVING_STATUE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_FROTH_SPHERE, ABILITY_RESTORE, ABILITY_TUNDRA, ABILITY_WATER_BLESSING_STRONG, ABILITY_ATTACK, ABILITY_DRENCH, ABILITY_ICE_HORN, ABILITY_ATTACK},
@@ -2309,7 +2313,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Azart
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 450,
         .atk = 206,
@@ -2319,7 +2323,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_OIL_DROP, ITEM_NUT},
         .counts = {1, 2},
-        .elementPreset = 2,
+        .elementPreset = ELEMENT_PRESET_AZART,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(5) | ITEM_ACTION(6) | ITEM_ACTION(7),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
@@ -2327,7 +2331,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Azart
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 450,
         .atk = 206,
@@ -2337,7 +2341,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_OIL_DROP, ITEM_NUT},
         .counts = {1, 2},
-        .elementPreset = 2,
+        .elementPreset = ELEMENT_PRESET_AZART,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(5) | ITEM_ACTION(6) | ITEM_ACTION(7),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
@@ -2345,7 +2349,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Satrage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 570,
         .atk = 228,
@@ -2355,7 +2359,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_NUT},
         .counts = {1, 2},
-        .elementPreset = 2,
+        .elementPreset = ELEMENT_PRESET_AZART,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(5) | ITEM_ACTION(6) | ITEM_ACTION(7),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
@@ -2363,7 +2367,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Satrage
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 570,
         .atk = 228,
@@ -2373,7 +2377,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_NUT},
         .counts = {1, 2},
-        .elementPreset = 2,
+        .elementPreset = ELEMENT_PRESET_AZART,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(5) | ITEM_ACTION(6) | ITEM_ACTION(7),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
@@ -2381,7 +2385,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Navampa
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 820,
         .atk = 274,
@@ -2391,7 +2395,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_NUT, ITEM_SLEEP_BOMB},
         .counts = {1, 1, 1},
-        .elementPreset = 2,
+        .elementPreset = ELEMENT_PRESET_AZART,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(5) | ITEM_ACTION(6) | ITEM_ACTION(7),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
@@ -2399,7 +2403,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Navampa
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 820,
         .atk = 232,
@@ -2409,7 +2413,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .actionCount = 1,
         .items = {ITEM_SMOKE_BOMB, ITEM_NUT, ITEM_SLEEP_BOMB},
         .counts = {1, 1, 1},
-        .elementPreset = 2,
+        .elementPreset = ELEMENT_PRESET_AZART,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .itemActions = ITEM_ACTION(5) | ITEM_ACTION(6) | ITEM_ACTION(7),
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEFEND, ABILITY_ATTACK},
@@ -2417,7 +2421,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Ant Lion
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 400,
         .pp = 32,
@@ -2426,7 +2430,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 58,
         .luck = 19,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_SONIC_WAVE_STRONG, ABILITY_SONIC_WAVE_STRONG, ABILITY_EARTHQUAKE, ABILITY_EARTHQUAKE, ABILITY_FLARE_WALL, ABILITY_FLARE_WALL, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -2437,7 +2441,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Roach
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 211,
         .pp = 27,
@@ -2446,7 +2450,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 92,
         .luck = 4,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_SONIC_WAVE_STRONG, ABILITY_SONIC_WAVE_STRONG, ABILITY_QUAKE_SPHERE, ABILITY_QUAKE_SPHERE, ABILITY_FLARE_WALL, ABILITY_FLARE_WALL, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
@@ -2457,14 +2461,14 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Doodle Bug
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
         .agi = 9,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 20,
+        .elementPreset = ELEMENT_PRESET_MANTICORE,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
         .coins = 1,
@@ -2472,7 +2476,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Toadonpa
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 27,
         .hp = 2800,
         .atk = 266,
@@ -2481,7 +2485,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .luck = 18,
         .actionCount = 1,
         .hpRegen = 80,
-        .elementPreset = 19,
+        .elementPreset = ELEMENT_PRESET_CEREBUS,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_DARK_BLESSING_MARS, ABILITY_DARK_BLESSING_MARS, ABILITY_THRASH, ABILITY_THRASH, ABILITY_ROTTEN_BLOOD, ABILITY_STICKY_POISON, ABILITY_ROTTEN_BLOOD, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
@@ -2492,7 +2496,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Poison Toad
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 34,
         .hp = 2250,
         .atk = 363,
@@ -2500,7 +2504,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 93,
         .luck = 20,
         .actionCount = 1,
-        .elementPreset = 19,
+        .elementPreset = ELEMENT_PRESET_CEREBUS,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_RABID_FANG, ABILITY_RABID_FANG, ABILITY_ACID_BLESSING, ABILITY_ACID_BLESSING, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ROTTEN_BLOOD, ABILITY_ROTTEN_BLOOD},
         .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
@@ -2510,14 +2514,14 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .experience = 1732,
     },
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .hp = 18,
         .atk = 22,
         .def = 6,
         .agi = 9,
         .luck = 1,
         .actionCount = 1,
-        .elementPreset = 19,
+        .elementPreset = ELEMENT_PRESET_CEREBUS,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_SLEEP},
         .coins = 1,
@@ -2525,7 +2529,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tornado Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 530,
         .pp = 37,
@@ -2534,7 +2538,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 104,
         .luck = 18,
         .actionCount = 2,
-        .elementPreset = 21,
+        .elementPreset = ELEMENT_PRESET_TORNADO_LIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WING_FLUTTER, ABILITY_WIND_SLASH, ABILITY_ATTACK, ABILITY_STORM_RAY, ABILITY_IMPACT, ABILITY_TORNADO, ABILITY_WARD, ABILITY_ATTACK},
@@ -2546,7 +2550,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Storm Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 2900,
         .pp = 42,
@@ -2555,7 +2559,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 112,
         .luck = 22,
         .actionCount = 2,
-        .elementPreset = 21,
+        .elementPreset = ELEMENT_PRESET_TORNADO_LIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WING_STROKE, ABILITY_SONIC_SLASH, ABILITY_ATTACK, ABILITY_STORM_RAY, ABILITY_IMPACT, ABILITY_TEMPEST, ABILITY_WARD, ABILITY_ATTACK},
@@ -2567,7 +2571,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tempest Lizard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 28,
         .hp = 3000,
         .pp = 45,
@@ -2576,7 +2580,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 114,
         .luck = 26,
         .actionCount = 2,
-        .elementPreset = 21,
+        .elementPreset = ELEMENT_PRESET_TORNADO_LIZARD,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WING_STROKE, ABILITY_SONIC_SLASH, ABILITY_ATTACK, ABILITY_STORM_RAY, ABILITY_IMPACT, ABILITY_TEMPEST, ABILITY_WARD, ABILITY_ATTACK},
@@ -2588,7 +2592,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Tret
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 710,
         .pp = 36,
@@ -2597,7 +2601,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 30,
         .luck = 28,
         .actionCount = 1,
-        .elementPreset = 8,
+        .elementPreset = ELEMENT_PRESET_TRET,
         .targetStrategy = TARGET_STRATEGY_MOST_MAX_HP,
         .abilities = {ABILITY_QUAKE, ABILITY_GROWTH, ABILITY_THORN, ABILITY_THORN, ABILITY_SLEEP_STAR, ABILITY_SLEEP_STAR, ABILITY_ATTACK, ABILITY_ATTACK},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2608,7 +2612,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Fusion Dragon
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 39,
         .hp = 5000,
         .pp = 500,
@@ -2617,14 +2621,14 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 190,
         .luck = 50,
         .actionCount = 2,
-        .elementPreset = 41,
+        .elementPreset = ELEMENT_PRESET_FUSION_DRAGON,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_OUTER_SPACE, ABILITY_ATTACK, ABILITY_EVIL_BLESSING, ABILITY_DRAGON_DRIVER, ABILITY_BREAK, ABILITY_DRAIN_FANG, ABILITY_DEADLY_GAS, ABILITY_SEVERE_BLOW},
     },
     // Deadbeard
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 43,
         .hp = 6000,
         .pp = 600,
@@ -2633,7 +2637,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 180,
         .luck = 60,
         .actionCount = 2,
-        .elementPreset = 42,
+        .elementPreset = ELEMENT_PRESET_DEADBEARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_ATTACK, ABILITY_FREEZE_PRISM, ABILITY_BREAK, ABILITY_IMPACT, ABILITY_WARD, ABILITY_INFERNO, ABILITY_GUARD, ABILITY_SPARK_PLASMA},
@@ -2644,7 +2648,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 468,
         .pp = 24,
@@ -2653,7 +2657,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 51,
         .luck = 8,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEBILITATE, ABILITY_DEBILITATE, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_PSY_DRAIN, ABILITY_WIND_SLASH},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2664,7 +2668,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 14,
         .hp = 506,
         .pp = 26,
@@ -2673,7 +2677,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 57,
         .luck = 10,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEBILITATE, ABILITY_DEBILITATE, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_PSY_DRAIN, ABILITY_BRIAR},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2684,7 +2688,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 16,
         .hp = 579,
         .pp = 32,
@@ -2693,7 +2697,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 70,
         .luck = 12,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEBILITATE, ABILITY_DEBILITATE, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_PSY_DRAIN, ABILITY_SHINE_PLASMA},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2704,7 +2708,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 19,
         .hp = 690,
         .pp = 42,
@@ -2713,7 +2717,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 89,
         .luck = 13,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_DEBILITATE, ABILITY_DEBILITATE, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_PSY_DRAIN, ABILITY_SONIC_SLASH},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2724,7 +2728,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 20,
         .hp = 729,
         .pp = 44,
@@ -2733,7 +2737,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 97,
         .luck = 14,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_CURSE, ABILITY_CURSE, ABILITY_DEBILITATE, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_SONIC_SLASH},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2744,7 +2748,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 21,
         .hp = 767,
         .pp = 48,
@@ -2753,7 +2757,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 104,
         .luck = 15,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_CURSE, ABILITY_CURSE, ABILITY_DEBILITATE, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_NETTLE},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2764,7 +2768,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 26,
         .hp = 997,
         .pp = 60,
@@ -2773,7 +2777,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 139,
         .luck = 17,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_CURSE, ABILITY_DEBILITATE, ABILITY_CONDEMN, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_ICE_MISSILE},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2784,7 +2788,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mimic
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 30,
         .hp = 1206,
         .pp = 68,
@@ -2793,7 +2797,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 167,
         .luck = 18,
         .actionCount = 1,
-        .elementPreset = 38,
+        .elementPreset = ELEMENT_PRESET_MIMIC,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .abilities = {ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_CURSE, ABILITY_DEBILITATE, ABILITY_CONDEMN, ABILITY_SLEEP, ABILITY_PSY_DRAIN, ABILITY_SPARK_PLASMA},
         .weakEffects = {ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY, ABILITY_EFFECT_RESISTANCE_DOWN},
@@ -2804,7 +2808,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Venus Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 12,
         .hp = 349,
         .pp = 25,
@@ -2813,7 +2817,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 76,
         .luck = 9,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_EARTHQUAKE, ABILITY_SPIRE, ABILITY_GAIA, ABILITY_MAD_GROWTH, ABILITY_BRIAR, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2823,7 +2827,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Venus Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 15,
         .hp = 421,
         .pp = 30,
@@ -2832,7 +2836,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 91,
         .luck = 10,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_GAIA, ABILITY_MAD_GROWTH, ABILITY_QUAKE_SPHERE, ABILITY_BRIAR, ABILITY_CLAY_SPIRE, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2842,7 +2846,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Venus Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 23,
         .hp = 623,
         .pp = 51,
@@ -2851,7 +2855,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 160,
         .luck = 18,
         .actionCount = 1,
-        .elementPreset = 23,
+        .elementPreset = ELEMENT_PRESET_EARTH_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_QUAKE_SPHERE, ABILITY_BRIAR, ABILITY_CLAY_SPIRE, ABILITY_MOTHER_GAIA, ABILITY_WILD_GROWTH, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2861,7 +2865,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 10,
         .hp = 290,
         .pp = 20,
@@ -2870,7 +2874,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 58,
         .luck = 9,
         .actionCount = 1,
-        .elementPreset = 25,
+        .elementPreset = ELEMENT_PRESET_LIVING_STATUE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_ATTACK, ABILITY_PRISM, ABILITY_TUNDRA, ABILITY_DRENCH, ABILITY_FROTH_SPHERE, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2880,7 +2884,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 361,
         .pp = 27,
@@ -2889,7 +2893,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 84,
         .luck = 10,
         .actionCount = 1,
-        .elementPreset = 25,
+        .elementPreset = ELEMENT_PRESET_LIVING_STATUE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_TUNDRA, ABILITY_DRENCH, ABILITY_FROTH_SPHERE, ABILITY_ICE_HORN, ABILITY_HAIL_PRISM, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2899,7 +2903,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 466,
         .pp = 46,
@@ -2908,7 +2912,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 116,
         .luck = 16,
         .actionCount = 1,
-        .elementPreset = 25,
+        .elementPreset = ELEMENT_PRESET_LIVING_STATUE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_TUNDRA, ABILITY_DRENCH, ABILITY_FROTH_SPHERE, ABILITY_ICE_HORN, ABILITY_HAIL_PRISM, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2918,7 +2922,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mercury Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 24,
         .hp = 654,
         .pp = 59,
@@ -2927,7 +2931,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 172,
         .luck = 19,
         .actionCount = 1,
-        .elementPreset = 25,
+        .elementPreset = ELEMENT_PRESET_LIVING_STATUE,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_FROTH_SPHERE, ABILITY_ICE_HORN, ABILITY_HAIL_PRISM, ABILITY_GLACIER, ABILITY_DELUGE, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2937,7 +2941,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mars Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 5,
         .hp = 172,
         .pp = 14,
@@ -2946,7 +2950,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 22,
         .luck = 6,
         .actionCount = 1,
-        .elementPreset = 27,
+        .elementPreset = ELEMENT_PRESET_SALAMANDER,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_FLARE, ABILITY_BLAST, ABILITY_FLARE, ABILITY_FLARE, ABILITY_BLAST, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE},
@@ -2956,7 +2960,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mars Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 13,
         .hp = 355,
         .pp = 24,
@@ -2965,7 +2969,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 76,
         .luck = 8,
         .actionCount = 1,
-        .elementPreset = 27,
+        .elementPreset = ELEMENT_PRESET_SALAMANDER,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_FLARE_WALL, ABILITY_VOLCANO, ABILITY_MAD_BLAST, ABILITY_FIREBALL, ABILITY_NOVA, ABILITY_ATTACK, ABILITY_ATTACK, ABILITY_FLEE},
@@ -2975,7 +2979,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Mars Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 22,
         .hp = 592,
         .pp = 52,
@@ -2984,7 +2988,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 151,
         .luck = 17,
         .actionCount = 1,
-        .elementPreset = 27,
+        .elementPreset = ELEMENT_PRESET_SALAMANDER,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_FIREBALL, ABILITY_NOVA, ABILITY_FLARE_STORM, ABILITY_ERUPTION, ABILITY_FIERY_BLAST, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -2994,7 +2998,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 8,
         .hp = 243,
         .pp = 22,
@@ -3003,7 +3007,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 42,
         .luck = 7,
         .actionCount = 1,
-        .elementPreset = 29,
+        .elementPreset = ELEMENT_PRESET_THUNDER_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WHIRLWIND, ABILITY_RAY, ABILITY_FLASH_BOLT, ABILITY_PLASMA, ABILITY_WIND_SLASH, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -3013,7 +3017,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 11,
         .hp = 314,
         .pp = 25,
@@ -3022,7 +3026,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 68,
         .luck = 9,
         .actionCount = 1,
-        .elementPreset = 29,
+        .elementPreset = ELEMENT_PRESET_THUNDER_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WHIRLWIND, ABILITY_FLASH_BOLT, ABILITY_PLASMA, ABILITY_WIND_SLASH, ABILITY_STORM_RAY, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -3032,7 +3036,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 18,
         .hp = 481,
         .pp = 40,
@@ -3041,7 +3045,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 120,
         .luck = 14,
         .actionCount = 1,
-        .elementPreset = 29,
+        .elementPreset = ELEMENT_PRESET_THUNDER_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_PLASMA, ABILITY_WIND_SLASH, ABILITY_STORM_RAY, ABILITY_TORNADO, ABILITY_BLUE_BOLT, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -3051,7 +3055,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
     // Jupiter Djinni
     {
-        .name = "              ",
+        .name = BLANK_NAME,
         .level = 25,
         .hp = 688,
         .pp = 62,
@@ -3060,7 +3064,7 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
         .agi = 177,
         .luck = 21,
         .actionCount = 1,
-        .elementPreset = 29,
+        .elementPreset = ELEMENT_PRESET_THUNDER_LIZARD,
         .targetStrategy = TARGET_STRATEGY_RANDOM,
         .actionStrategy = ACTION_STRATEGY_FALLING,
         .abilities = {ABILITY_WIND_SLASH, ABILITY_TORNADO, ABILITY_BLUE_BOLT, ABILITY_SHINE_PLASMA, ABILITY_DESTRUCT_RAY, ABILITY_FLEE, ABILITY_ATTACK, ABILITY_ATTACK},
@@ -3074,3 +3078,5 @@ const struct EnemyDefinition gEnemy_Definitions[] = {
     },
 };
 // clang-format on
+
+#undef BLANK_NAME

@@ -2,7 +2,8 @@
 #define ALCHEMY_FLASH_H
 
 /// @file
-/// Flash memory: erasing, programming and reading sectors.
+/// The flash chip that keeps the save files: its commands and error codes, and
+/// the routines that identify, erase, write, read and verify it.
 
 #include "types.h"
 
@@ -38,8 +39,8 @@
    FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_B),                          \
    FLASH_WRITE(FLASH_COMMAND_ADDRESS, (command)))
 
-/// The phase of a write the library waits on (WaitForFlashWrite): it picks the
-/// row of the chip's max-time table and is the low byte of a timeout's error.
+/// What a wait is for (WaitForFlashWrite): it picks the row of the chip's time
+/// limits and is the low byte of a timeout's error.
 enum FlashPhase {
   FLASH_PHASE_PROGRAM = 1,
   FLASH_PHASE_ERASE_SECTOR = 2,
@@ -69,15 +70,18 @@ u16 EraseFlashChip(void);
 u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected);
 u16 EraseAtmelFlashChip(void);
 u16 EraseAtmelFlashSector(u16 sector);
-u16 EraseAtmelFlashBlock(u16 block);
+u16 EraseAtmelFlashBlock(u16 sector);
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source);
-u16 ProgramAtmelFlashBlock(u16 block, u8 *source);
+u16 ProgramAtmelFlashBlock(u16 sector, u8 *source);
 void FlashTimerIntr(void);
 s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void));
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
-u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
+u8 *VerifyFlashCore(u8 *source, u8 *flash, u16 size);
 s32 Flash_VerifySector(u16 sector, u8 *source);
+s32 CountRemainingErasedFlashBytes(u8 *cursor);
+s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
+void StartFlashTimer(u8 timingIndex);
 
 /// The byte reader copied to RAM (CopyFlashReadRoutineToRam), good only until
 /// the caller that holds the copy returns.
@@ -89,7 +93,7 @@ extern u8 (*gFlashReadRoutine)(u8 *source);
 extern u16 (*gEraseFlashChip)(void);
 /// The chip's erase-sector routine (FlashSetupInfo.eraseSector).
 extern u16 (*gEraseFlashSector)(u16 sector);
-/// The chip's wait-time table (FlashSetupInfo.maxTime).
+/// The chip's time limits (FlashSetupInfo.maxTime).
 extern u16 *gFlashMaxTime;
 /// REG_IME as StartFlashTimer found it, for StopFlashTimer to restore.
 extern u16 gFlashSavedIme;
@@ -97,9 +101,6 @@ extern u16 gFlashSavedIme;
 extern u8 gFlashTimeoutFlag;
 /// The timer, 0 to 3, the flash library times its operations with.
 extern u8 gFlashTimerNum;
-s32 CountRemainingErasedFlashBytes(u8 *cursor);
-s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
-void StartFlashTimer(u8 timingIndex);
 /// The chip's program routine (FlashSetupInfo.program), which
 /// Save_WriteSector calls.
 extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);

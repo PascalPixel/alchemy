@@ -23,12 +23,12 @@ s32 Decompress_ByteLzFar(const void *source, void *destination);
 /// Unpacks a tagged LZ resource (a first byte of 0 or 1) the same way and
 /// returns the unpacked size in bytes.
 s32 Decompress_TaggedLzFar(const void *source, void *destination);
-s32 VramCache_FreeEntryFar(u32 no);
-s32 VramCache_ReleaseVramFar(u32 no);
-s32 VramCache_LoadFar(u32 no, u32 size, const void *src);
+s32 VramCache_FreeEntryFar(u32 entry);
+s32 VramCache_ReleaseVramFar(u32 entry);
+s32 VramCache_LoadFar(u32 entry, u32 size, const void *src);
 s32 VramCache_FindFreeEntryFar(void);
 s32 OamMatrix_AllocFromTransformFar(struct AffineTransform *source);
-void Oam_AddSpriteAtDepthFar(void *slot_entry, s32 slot);
+void Oam_AddSpriteAtDepthFar(void *slotEntry, s32 slot);
 void Window_LoadGraphicsFar(void);
 void *Resource_GetTableEntryFar(s32 index);
 void Stub_NoOpHookFar(s32 unused);
@@ -40,7 +40,7 @@ void Serial_InitializeFar(void);
 s32 Serial_PollAndTransferFar(void *send, void *receive);
 void Serial_RemoveIrqHandlersFar(void);
 s32 Sound_LoadReverbCodeFar(s32 code);
-s32 Serial_StartSendFar(void *source, s32 transferValue);
+s32 Serial_StartSendFar(void *source, s32 size);
 s32 Serial_StartReceiveFar(void *destination);
 s32 Serial_GetActiveTransfersFar(void);
 s32 Task_SetFlagsFar(TaskFunc func, u32 mask);

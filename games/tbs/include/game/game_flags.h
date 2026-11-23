@@ -2,10 +2,14 @@
 #define ALCHEMY_GAME_FLAGS_H
 
 /// @file
-/// The byte of gGameFlagBytes that holds a flag.
+/// The game flags' size, and the byte and bit of gGameFlagBytes that hold a
+/// flag.
 
 #include "edition.h"
 #include "types.h"
+
+/// How many game flags gGameFlagBytes holds, eight to a byte.
+#define GAME_FLAG_COUNT 4096
 
 /// The byte of gGameFlagBytes that holds `flag`: bits 3 to 11 of its number,
 /// isolated by shifting up and back down, which is how the game computes it.

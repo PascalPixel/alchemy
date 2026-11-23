@@ -160,8 +160,8 @@ enum EnemyActionStrategy {
 /// An enemy's definition: its level and stats, items, element preset, the
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {
-  /// The enemy's name: the name field, 15 bytes, blank in every
-  /// row. BattleUnit_Set takes the name from the messages instead.
+  /// Blank in every row: BattleUnit_Set takes the enemy's name from the
+  /// messages instead.
   u8 name[15];
   u8 level;
   /// The base stats BattleUnit_Set copies into the unit.
@@ -176,10 +176,10 @@ struct EnemyDefinition {
   u8 hpRegen;     ///< HP restored at each turn's end (Unit.baseHpRegen)
   u8 ppRegen;     ///< PP restored at each turn's end (Unit.basePpRegen)
   ///@}
-  u8 reservedBeforeRewards[2]; ///< 0 in every entry
+  u8 reservedBeforeAiState[2]; ///< 0 in every row
   /// 0 in every row; the unit's first Unit.aiState.
   struct BattleAIState aiState;
-  u8 reservedAfterRewards[4]; ///< 0 in every entry
+  u8 reservedAfterAiState[4]; ///< 0 in every row
   u16 items[4];               ///< items the enemy carries, 0 for none
   u8 counts[4];               ///< how many of each item it carries
   u8 elementPreset;           ///< row of gEnemy_ElementPresetTable, 0 to 43
@@ -188,7 +188,8 @@ struct EnemyDefinition {
   /// How the action is chosen from `abilities` (BattleAI_ChooseAction):
   /// an enum EnemyActionStrategy.
   s8 actionStrategy;
-  /// One bit per place in `abilities` (ITEM_ACTION): use an item held instead.
+  /// One bit per place in `abilities` (ITEM_ACTION): the enemy uses an item it
+  /// carries there instead.
   u8 itemActions;
   u16 abilities[8]; ///< the abilities the enemy chooses from
   /// [0] to [2]: the ability effects the enemy is weak to
@@ -201,6 +202,9 @@ struct EnemyDefinition {
   s16 itemChance;
   u16 experience; ///< experience won
 };
+
+/// EnemyDefinition.itemActions' bit for `place` in its abilities.
+#define ITEM_ACTION(place) (1 << (place))
 
 /// A level up's result: the level reached and the gain in each stat. The
 /// caller provides it; Unit_LevelUp fills it, and
@@ -233,9 +237,6 @@ STATIC_ASSERT(sizeof(struct DjinnDefinition) == 12);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, reservedAfterAbility) == 2);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
-/// EnemyDefinition.itemActions' bit for `place` in its abilities.
-#define ITEM_ACTION(place) (1 << (place))
-
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 84);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, aiState) == 32);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 54);

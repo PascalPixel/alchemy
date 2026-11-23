@@ -173,21 +173,21 @@ struct LevelUpWork {
   u8 unused[32];                            ///< never written
 };
 
-/// Teaches a character action `value` for good (or makes a class action
-/// permanent by clearing its marks), then rebuilds its list. Returns the
-/// action's place in the list, or -1 when the list is full.
-s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
-  struct Unit *state = Unit_Get(stateIndex);
-  s32 key = value & PSYNERGY_ABILITY_MASK;
+/// Teaches a character `abilityId` for good (or makes a class action permanent
+/// by clearing its marks), then rebuilds its list. Returns the action's place
+/// in the list, or -1 when the list is full.
+s32 Unit_LearnPsynergy(s32 unitId, s32 abilityId) {
+  struct Unit *unit = Unit_Get(unitId);
+  s32 ability = abilityId & PSYNERGY_ABILITY_MASK;
   s32 found = -1;
   s32 index;
 
   // Learning never takes the list's last slot.
   for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
-    s32 masked = state->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
+    s32 masked = unit->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
-    if ((masked ^ key) == 0) {
-      state->psynergy[index].encodedAction = masked;
+    if ((masked ^ ability) == 0) {
+      unit->psynergy[index].encodedAction = masked;
       found = index;
       break;
     }
@@ -195,10 +195,10 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
 
   if (found < 0) {
     for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
-      s32 action = state->psynergy[index].encodedAction;
+      s32 action = unit->psynergy[index].encodedAction;
 
       if (action == 0) {
-        state->psynergy[index].encodedAction = key;
+        unit->psynergy[index].encodedAction = ability;
         found = index;
         break;
       }
@@ -208,9 +208,9 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
     }
   }
 
-  Unit_RefreshPsynergy(stateIndex);
+  Unit_RefreshPsynergy(unitId);
   for (index = 0; index < PSYNERGY_SLOTS; index++) {
-    if (state->psynergy[index].encodedAction == key) {
+    if (unit->psynergy[index].encodedAction == ability) {
       break;
     }
   }
@@ -224,13 +224,13 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
   return Unit_TryLevelUp(unitId, gains);
 }
 
-/// Returns character `index`'s definition: growth curves, starting level and
-/// equipment.
-const struct CharacterDefinition *Character_GetDefinition(s32 index) {
-  const struct CharacterDefinition *base;
+/// Returns character `characterId`'s definition: growth curves, starting level
+/// and equipment.
+const struct CharacterDefinition *Character_GetDefinition(s32 characterId) {
+  const struct CharacterDefinition *definitions;
 
-  base = gCharacter_DefinitionTable;
-  return &base[index];
+  definitions = gCharacter_DefinitionTable;
+  return &definitions[characterId];
 }
 
 /// Sets up all eight characters for a new game: names from the message table,
@@ -302,7 +302,7 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
     if (level <= 0) {
       return 0;
     }
-    if (level <= UNIT_LEVEL_MAX && unit->id <= 7) {
+    if (level <= UNIT_LEVEL_MAX && unit->id <= PIERS) {
       return gCharacter_LevelExpTable[unit->id * UNIT_LEVEL_MAX + level - 1];
     }
   }

@@ -4,9 +4,10 @@
 
 #include "game_internal.h"
 
-/// Returns the multiplier, 256 for 1x, for an element difference: 256 plus 1.28
-/// a point, the difference held to -200 to 200, its effect half with halve.
-s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
+/// Returns the multiplier, 256 for 1x, for an element difference (power less
+/// resistance): 256 plus 1.28 a point, the difference held to -200 to 200, its
+/// effect half with `halve`.
+s32 Battle_GetElementMultiplier(s32 difference, s32 halve) {
   s32 minimumDifference;
   s32 maximumDifference;
   s32 pointIndex;
@@ -19,12 +20,12 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   {
     s32 pointCount = 5;
 
-    if (input > maximumDifference)
-      input = maximumDifference;
-    else if (input < minimumDifference)
-      input = minimumDifference;
+    if (difference > maximumDifference)
+      difference = maximumDifference;
+    else if (difference < minimumDifference)
+      difference = minimumDifference;
     for (pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-      if (input > gElement_PowerResistCurve[pointIndex][0])
+      if (difference > gElement_PowerResistCurve[pointIndex][0])
         break;
     }
     if (pointIndex == pointCount) {
@@ -34,7 +35,7 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
                        gElement_PowerResistCurve[pointIndex][0];
       multiplierSpan = gElement_PowerResistCurve[pointIndex - 1][1] -
                        gElement_PowerResistCurve[pointIndex][1];
-      multiplier = (input - gElement_PowerResistCurve[pointIndex][0]) *
+      multiplier = (difference - gElement_PowerResistCurve[pointIndex][0]) *
                        multiplierSpan / differenceSpan +
                    gElement_PowerResistCurve[pointIndex][1];
     }
@@ -257,11 +258,11 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 #define WEAKNESS_BONUS 25
 
 /// Rolls whether an effect takes hold on target: the base rate, plus three
-/// times the caster's lead in the element's level, less half the target's luck,
-/// plus WEAKNESS_BONUS against a weakness, times successScale percent. Luff
-/// gets three tries.
-s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
-                             s32 effectId, s32 successScale) {
+/// times the caster's lead in `element`'s level, less half the target's luck,
+/// plus WEAKNESS_BONUS against a weakness, times successScale percent. Luff's
+/// seal (ABILITY_EFFECT_SEAL_2_TURNS) gets three tries.
+s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 element, s32 effectId,
+                             s32 successScale) {
   struct Unit *unit = Unit_Get(target);
   s32 attempts = 1;
   s32 score;
@@ -319,9 +320,8 @@ restore_checked:
   // and its weaknesses; 0 or a negative one is a fixed chance.
   score = Battle_GetEffectBaseSuccessRate(effectId);
   if (score > 0) {
-    s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
-                     Unit_GetElementLevel(target, resistanceCategory) -
-                     (unit->luck >> 1);
+    s32 difference = Unit_GetElementLevel(caster, element) -
+                     Unit_GetElementLevel(target, element) - (unit->luck >> 1);
 
     score += difference * 3;
     if (BattleAbility_IsWeakToEffect(unit, effectId) != 0) {

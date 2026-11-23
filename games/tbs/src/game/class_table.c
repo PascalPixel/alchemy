@@ -1,6 +1,7 @@
 /// @file
 /// The 203 classes, by class id. Each name is the English release's
-/// (MsgClassName plus the class id).
+/// (MsgClassName plus the class id). Each series starts at a multiple of ten;
+/// the blank rows after its last class are spare ids, named "?" in the text.
 
 #include "ability_ids.h"
 #include "game/game.h"
@@ -2682,7 +2683,8 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    {
+    // ?, Isaac's in the prologue
+    [CLASS_ISAAC_CHILD] = {
         .series = CLASS_SERIES_FIXED,
         .required = {5},
         .hp = 8,
@@ -2692,7 +2694,8 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .agi = 11,
         .luck = 10,
     },
-    {
+    // ?, Garet's in the prologue
+    [CLASS_GARET_CHILD] = {
         .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
         .hp = 8,
@@ -2703,7 +2706,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .luck = 10,
     },
     // Flame User
-    {
+    [CLASS_FLAME_USER] = {
         .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
         .hp = 10,

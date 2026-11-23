@@ -5,8 +5,9 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
-/// The Macronix chip's waits by timing: milliseconds, the timer's reload value
-/// and its control.
+/// The Macronix chip's time limits, a row per enum FlashPhase (row 0 unused):
+/// milliseconds, the timer's reload value and its control. Its erases may take
+/// two seconds.
 // clang-format off
 const u16 Flash_MaxTimeMacronix[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -16,7 +17,7 @@ const u16 Flash_MaxTimeMacronix[] = {
 };
 // clang-format on
 
-/// The Panasonic chip's waits, as Flash_MaxTimeMacronix's.
+/// The Panasonic chip's time limits, laid out as the Macronix chip's.
 // clang-format off
 const u16 Flash_MaxTimePanasonic[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,

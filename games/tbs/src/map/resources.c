@@ -1,5 +1,15 @@
 /// @file
-/// Each layout's resources, by map number; the comment names its folder.
+/// The map table: what each map loads, its layout, palette, three tile sheets
+/// and tileset animation tiles. A scene names its map by row in the scene
+/// table (field/scenes.s), and MapGrid_LoadMap loads that row.
+///
+/// Each number is a place in the resource directory
+/// (gamepak/resource_directory.s), counted on from the empty map's
+/// (ResourceId_EmptyMap). The directory gives these places no names, so they
+/// stay numbers, and a row added or moved there renumbers them. Maps built from
+/// one tileset repeat its numbers; a map with a palette of its own borrows
+/// another tileset's tiles under it. Each row's comment names its layout's
+/// folder in src/map.
 
 #include "field/map_grid.h"
 
@@ -14,7 +24,7 @@ const struct MapResources gMaps[] = {
     {30, 31, {32, 33, 34}, 35}, // cottage_rooms_a
     {36, 37, {38, 39, 40}, 41}, // cottage_rooms_b
     {42, 43, {44, 45, 46}, 47}, // sanctum
-    {12, 13, {14, 15, 16}, 17}, // vale
+    {12, 13, {14, 15, 16}, 17}, // vale again, for Vale while Mt. Aleph erupts (SceneId_ValeEruption)
     {48, 49, {50, 51, 52}, 53}, // sol_entrance
     {54, 55, {56, 57, 58}, 59}, // sol_sanctum_luna_sol_rooms
     {60, 61, {62, 63, 64}, 59}, // sol_sanctum_statue
@@ -115,12 +125,12 @@ const struct MapResources gMaps[] = {
     {372, 373, {374, 375, 376}, 377}, // ship_rooms
     {378, 379, {358, 359, 16}, 360}, // tolbi_docks
     {380, 381, {14, 15, 16}, 17}, // crossbone_isle
-    {382, 383, {384, 385, 386}, 387}, // babi_lighthouse_rooms
+    {382, 383, {384, 385, 386}, 387}, // babi_lighthouse_rooms, in the colours of Crossbone Isle's stepping-stone room (SceneId_CrossboneIsleSteppingStones)
     {388, 389, {256, 257, 258}, 259}, // crossbone_isle_ice_pillars
     {390, 391, {256, 257, 258}, 259}, // crossbone_isle_keys_and_bane
     {392, 393, {256, 257, 258}, 259}, // crossbone_isle_statues
     {394, 395, {210, 211, 212}, 213}, // crossbone_isle_floodgate
-    {390, 396, {256, 257, 258}, 259}, // crossbone_isle_keys_and_bane
+    {390, 396, {256, 257, 258}, 259}, // crossbone_isle_keys_and_bane again, under a palette of its own for Bane's room (SceneId_CrossboneIsleBane)
     {397, 398, {384, 385, 386}, 387}, // crossbone_isle_stacked_pillars
     {399, 400, {146, 125, 162}, 148}, // crossbone_isle_dragon_statue
     {401, 402, {146, 125, 162}, 148}, // crossbone_isle_floating_logs
@@ -167,7 +177,7 @@ const struct MapResources gMaps[] = {
     {496, 497, {256, 257, 258}, 259}, // tunnel_ruins_great_statue
     {498, 497, {256, 257, 258}, 259}, // tunnel_ruins_lady_statues
     {499, 500, {384, 385, 386}, 387}, // babi_lighthouse_entry
-    {382, 501, {384, 385, 386}, 387}, // babi_lighthouse_rooms
+    {382, 501, {384, 385, 386}, 387}, // babi_lighthouse_rooms again, in Babi Lighthouse's own colours (SceneId_BabiLighthouseLuff)
     {502, 503, {146, 125, 237}, 148}, // babi_lighthouse_stone_door
     {504, 505, {481, 482, 483}, 484}, // lalivero
     {506, 507, {487, 488, 489}, 490}, // timber_rooms_b

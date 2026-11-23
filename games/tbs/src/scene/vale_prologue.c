@@ -328,6 +328,8 @@ enum StormNightAreaFlag {
 
 /// 0 while the westernmost elder strains at the Boulder, 1 once he lets go.
 static s32 sShakeDone;
+/// How hard the elders strain as the Boulder slips, 0 to 2: each step puts
+/// RINGS_INTERVAL_STEP more frames between their rings.
 static s32 sShakeShift;
 
 /// How long the elders call up their Psynergy once the camera reaches the
@@ -2220,7 +2222,7 @@ static inline void ValePrologue_PlayImpactBeat(s32 shakeAmplitude, s32 frames) {
 /// The Boulder comes down the river and carries Felix, his parents and Kyle
 /// away.
 static void ValePrologue_ShowBoulderSweepingDownriver(void) {
-  struct Sprite *actorVisual;
+  struct Sprite *boulderSprite;
   struct Sprite *boulderShadowSprite;
   struct Actor *actor;
   struct Actor *lookingActor;
@@ -2231,7 +2233,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
 
   actor = Actor_Get(ACTOR_BOULDER);
   boulderShadow = Actor_Get(ACTOR_BOULDER_SHADOW);
-  actorVisual = actor->sprite;
+  boulderSprite = actor->sprite;
   boulderShadowSprite = boulderShadow->sprite;
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(110, CAMERA_KEEP, 1419, 1);
@@ -2324,7 +2326,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   ValePrologue_PlaceActor(actor, toFIXED(200), toFIXED(898));
   actor->motionFlags = 0;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  actorVisual->image.priority = 0;
+  boulderSprite->image.priority = 0;
   FieldCamera_GetActor()->targetX = ACTOR_NO_TARGET;
   FieldCamera_GetActor()->targetY = ACTOR_NO_TARGET;
   FieldCamera_GetActor()->targetZ = ACTOR_NO_TARGET;
@@ -2404,6 +2406,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_Stop(ACTOR_JENNAS_FATHER);
   Actor_Stop(ACTOR_JENNAS_MOTHER);
   wait(1);
+  // Kyle and Jenna's parents freeze in the flash, drawn in front of all else.
+  // The shadow's variables hold each of them in turn.
   boulderShadow = Actor_Get(ACTOR_KYLE);
   boulderShadowSprite = boulderShadow->sprite;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2939,13 +2943,13 @@ s32 gValePrologue_UnusedGaretRunsUpScript[] = {
 /// over 12, for ever.
 s32 gValePrologue_UnusedGaretPantingScript[] = {
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 192),
-    SC_ADD(SW_SCALE_Y, 384),
+    SC_ADD(SW_SCALE_X, 3 * FIXED_ONE / 1024),
+    SC_ADD(SW_SCALE_Y, 3 * FIXED_ONE / 512),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_SCALE_X, -384),
-    SC_ADD(SW_SCALE_Y, -768),
+    SC_ADD(SW_SCALE_X, -3 * FIXED_ONE / 512),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 256),
     SC_WAIT(1),
     SC_LOOP(12, SC_TO(2)),
     SC_LOOP(SC_FOREVER, SC_TOP),

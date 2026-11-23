@@ -2521,47 +2521,7 @@ void Islets_JumpForward(void) {
 
 extern s8 gPushFootprints[][4];
 
-/// Makes the cells under a pushable actor solid, by its footprint: the sprite
-/// it wears picks one of gPushFootprints (its corners from the actor, in
-/// pixels), and the cells under it are copied to the map's spare area and
-/// walled on layers 0 and 2. Returns 1, or 0 for a sprite that is not pushed.
-s32 PushTarget_FillFootprint(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *actor = Actor_GetById(id);
-  s16 kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
-  s16 i = 0;
-  u32 index;
-  s32 a, b;
-  s32 fromX, fromZ;
-  s32 width, height, x, z;
-
-  if ((u16)kind != gPushKinds[(u16)i]) {
-    do {
-      index = (u16)NEXT_HALFWORD(i);
-      i = index;
-    } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
-  }
-  fromX = (u16)i;
-  if (fromX == PUSH_KINDS)
-    return 0;
-  a = gPushFootprints[fromX][0];
-  width = (ABS(a) + ABS(gPushFootprints[fromX][2])) >> 4;
-  b = gPushFootprints[fromX][1];
-  height = (ABS(b) + ABS(gPushFootprints[fromX][3])) >> 4;
-  x = actor->x.fixed + toFIXED(a);
-  z = actor->z.fixed + toFIXED(b);
-  b = FIELD_CELL(map->layers[1].offsetX);
-  x = FIELD_CELL(x);
-  z = FIELD_CELL(z);
-  fromZ = FIELD_CELL(map->layers[1].offsetY);
-  fromX = (u16)b;
-  Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
-  PushedActor_FillGridAttributeRectangle(0, x, z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, x, z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  return 1;
-}
+#include "shared/push_target_fill_footprint.h"
 
 #include "../field/map_cell_fill.c"
 

@@ -235,6 +235,39 @@ enum {
   FLAG_SECOND_ROCK_COLUMN = FLAG_AREA_TEMP_10
 };
 
+/// The chests along the stages have been opened: a Nut, an Oil Drop and a
+/// second Nut, from west to east.
+#define FLAG_COLOSSEUM_AZART_MATCH_FIRST_NUT_CHEST_OPENED FLAG_AREA_TEMP_08
+#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
+#define FLAG_COLOSSEUM_AZART_MATCH_SECOND_NUT_CHEST_OPENED FLAG_AREA_TEMP_0A
+
+/// Cell behaviors the stages' triggers answer.
+enum ColosseumAzartMatchCellBehavior {
+  /// The Rock Challenge's floor round its pillars, (17..21, 9..11), where
+  /// walking into a pillar pushes it.
+  CELL_BEHAVIOR_ROCK_CHALLENGE_FLOOR = 10,
+  /// Cell (27, 11), at the Rock Challenge's east end, where walking into a
+  /// pillar pushes it too.
+  CELL_BEHAVIOR_ROCK_CHALLENGE_EAST_END = 11,
+  /// The east edge of the Rock Challenge's raised square, cell (22, 12).
+  CELL_BEHAVIOR_ROCK_CHALLENGE_SQUARE_EDGE = 90,
+  /// East of the Pipeworks' loose pipe, cells (38, 7..10), where walking west
+  /// pushes it.
+  CELL_BEHAVIOR_PIPEWORKS_PIPE = 12,
+  /// On the north-south log, as at (64..66, 24): walking north or south rides
+  /// it.
+  CELL_BEHAVIOR_LOG_NORTH_SOUTH = 20,
+  /// On the east-west log, as at (63, 25..27): walking east or west rides it.
+  CELL_BEHAVIOR_LOG_EAST_WEST = 21,
+  /// The way into the arena, cells (79, 9..14).
+  CELL_BEHAVIOR_ARENA_ENTRY = 50,
+  /// The chests: a Nut at (28, 5), an Oil Drop at (48, 6) and a Nut at
+  /// (61, 13), opened facing west.
+  CELL_BEHAVIOR_FIRST_NUT_CHEST = 100,
+  CELL_BEHAVIOR_OIL_DROP_CHEST = 101,
+  CELL_BEHAVIOR_SECOND_NUT_CHEST = 103
+};
+
 /// The Broken Bridge's cycle, in frames, counted down: the bridge lies down,
 /// walkable, for the last 60 of each.
 #define BRIDGE_CYCLE_FRAMES 120
@@ -249,6 +282,28 @@ enum {
 #define LOG_NORTH_SOUTH_FLOAT 48
 #define LOG_EAST_WEST_FLOAT 160
 #define LOG_EAST_WEST_SHORT_FLOAT 96
+
+/// The Broken Bridge's operator's poses as the bridge swings
+/// (young_man_with_fair_hair.tsv).
+enum BridgeOperatorAnimation {
+  BRIDGE_OPERATOR_ANIMATION_SWINGING = 10, ///< as the bridge starts to move
+  BRIDGE_OPERATOR_ANIMATION_BRIDGE_DOWN = 11,
+  BRIDGE_OPERATOR_ANIMATION_BRIDGE_UP = 12
+};
+
+/// SPRITE_PIPE_NORTH_SOUTH's animations, as the Pipeworks' loose pipe is
+/// pushed (pipe_north_south.tsv).
+enum PipeAnimation {
+  PIPE_ANIMATION_STILL = 1,
+  PIPE_ANIMATION_ROLLING = 2 ///< its four pictures in turn
+};
+
+/// SPRITE_WHITE_PLATFORM's animations for the Pipeworks' pans
+/// (white_platform.tsv).
+enum PanAnimation {
+  PAN_ANIMATION_EMPTY = 2,
+  PAN_ANIMATION_FULL = 3 ///< water in it
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumAzartMatch_Entrances;
@@ -269,23 +324,29 @@ static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   case 66:
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
-    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
+                       BRIDGE_OPERATOR_ANIMATION_SWINGING);
     break;
   case 60:
+    // The bridge lies down, and its cells can be walked on.
     MapGrid_CopyCellsLayered(92, 33, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 33, 2, 2, 54, 38);
     MapGrid_CopyCellAttributes(50, 25, 6, 1, 50, 12);
-    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 11);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
+                       BRIDGE_OPERATOR_ANIMATION_BRIDGE_DOWN);
     break;
   case 6:
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
-    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 10);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
+                       BRIDGE_OPERATOR_ANIMATION_SWINGING);
     break;
   case 0:
+    // The bridge stands up again, and its cells are a gap once more.
     MapGrid_CopyCellsLayered(92, 29, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 29, 2, 2, 54, 38);
-    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR, 12);
+    Actor_SetAnimation(ACTOR_BRIDGE_OPERATOR,
+                       BRIDGE_OPERATOR_ANIMATION_BRIDGE_UP);
     MapGrid_CopyCellAttributes(50, 24, 6, 1, 50, 12);
     gColosseumAzartMatch_BridgeTimer = BRIDGE_CYCLE_FRAMES;
     break;
@@ -385,7 +446,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
   Event_Start();
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(600, CAMERA_KEEP, 200, 1);
-  Actor_SelectAnimation(actor, 3);
+  Actor_SelectAnimation(actor, PAN_ANIMATION_FULL);
   FieldCamera_WaitForMove();
   actor->motionFlags = 0;
   actor->acceleration = toFIXED(2) / 5;
@@ -403,7 +464,8 @@ static void ColosseumAzartMatch_DousePipe(void) {
   Event_End();
 }
 
-/// Moves the leader and a stage actor together between cell centers.
+/// Isaac rides one of the Lumber Water Crossing Area's logs dx or dz pixels,
+/// from one cell's center to another, as it rolls under him.
 static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
                                                       s32 dz) {
   struct Actor *leader;
@@ -432,13 +494,13 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
     FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
-    Actor_SelectAnimation(actor, 4);
+    Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
   } else {
-    Actor_SelectAnimation(actor, 3);
+    Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
   }
   Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_SETTLE);
   Sound_Play(SE_STOP_ACTION_SE);
   Event_End();
 }
@@ -518,7 +580,7 @@ static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
 /// down into the channel, and if the pans have not tipped already, the west
 /// pan fills and sinks and the east one rises, opening the way on
 /// (cell (41, 12)).
-static void ColosseumAzartMatch_PushPipeworksPillar(void) {
+static void ColosseumAzartMatch_PushPipeworksPipe(void) {
   s32 leaderId;
   struct Actor *leader;
   struct Actor *actor;
@@ -534,7 +596,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   actor->speedLimit = toFIXED(1) / 2;
   actor->acceleration = toFIXED(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, PIPE_ANIMATION_ROLLING);
   FieldActor_SetMoveTargetFX(actor, actor->x.fixed - toFIXED(48), 0,
                              actor->z.fixed);
   Event_Wait(6);
@@ -549,7 +611,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   Actor_WaitForMoveById(leaderId);
   Actor_SetAnimation(leaderId, ANIM_STAND);
   Actor_WaitForMove(actor);
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, PIPE_ANIMATION_STILL);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   Event_Wait(15);
@@ -577,7 +639,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   actor->acceleration = toFIXED(2) / 5;
   actor->speedLimit = toFIXED(4) / 5;
   FieldActor_SetMoveTargetFX(actor, actor->x.fixed, toFIXED(8), actor->z.fixed);
-  Actor_SelectAnimation(actor, 3);
+  Actor_SelectAnimation(actor, PAN_ANIMATION_FULL);
   ColosseumAzartMatch_AnimatePipeworksWater();
   actor = Actor_Get(ACTOR_PIPE_EAST);
   actor->motionFlags = none;
@@ -685,8 +747,10 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Event_End();
 }
 
-/// Marks actors standing in the stages' finish terrain.
-static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
+/// A friend whose cheering spot is the vine's cell before the Broken Bridge,
+/// half cells (94..95, 24..26), is put on layer 1 for the race, the layer the
+/// plant itself stands on.
+static void ColosseumAzartMatch_SetLayerOnVineCell(s32 actorId) {
   struct Actor *target;
   s32 column;
   s32 row;
@@ -731,10 +795,10 @@ s32 Scene_Initialize(void) {
   actor = Actor_Get(ACTOR_GROWTH_PLANT);
   actor->layer = 1;
   if (GameFlag_Get(FLAG_PLANT_GROWN)) {
-    Actor_SelectAnimation(actor, 4);
+    Actor_SelectAnimation(actor, SPROUT_ANIMATION_GROWN);
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
-    actor->priorityFlags = 3;
+    actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
@@ -747,8 +811,8 @@ s32 Scene_Initialize(void) {
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
-  // With the pipeworks' pillar pushed, water pours from the pipe above it
-  // down into the pool at the wall's foot.
+  // With the Pipeworks' loose pipe pushed under the spout, water pours down
+  // into the channel.
   if (GameFlag_Get(FLAG_PIPEWORKS_PIPE_PUSHED)) {
     MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
@@ -761,9 +825,9 @@ s32 Scene_Initialize(void) {
     actor->acceleration = toFIXED(2) / 5;
     actor->speedLimit = toFIXED(4) / 5;
     actor->y.fixed = toFIXED(8);
-    Actor_SelectAnimation(actor, 3);
+    Actor_SelectAnimation(actor, PAN_ANIMATION_FULL);
   } else {
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, PAN_ANIMATION_EMPTY);
   }
   Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
@@ -782,9 +846,9 @@ s32 Scene_Initialize(void) {
       Sound_Play(SOUND_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ColosseumAzartMatch_MarkFinishTerrain(ACTOR_GARET);
-      ColosseumAzartMatch_MarkFinishTerrain(ACTOR_IVAN);
-      ColosseumAzartMatch_MarkFinishTerrain(ACTOR_MIA);
+      ColosseumAzartMatch_SetLayerOnVineCell(ACTOR_GARET);
+      ColosseumAzartMatch_SetLayerOnVineCell(ACTOR_IVAN);
+      ColosseumAzartMatch_SetLayerOnVineCell(ACTOR_MIA);
       Colosso_ShowOpeningLettering(1);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
@@ -1003,6 +1067,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      // "Warriors must create steps they can use to get through here."
       Event_ShowMessage(actorId, 0);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 200);
       Event_Wait(30);
@@ -1028,6 +1093,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Colosso_PushActorAhead();
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+      // "Warriors must use only the objects in this stage, along with..."
       Event_ShowMessage(actorId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1078,6 +1144,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Event_Wait(60);
       Colosso_MovePointer(160, 96, 10);
       Event_Wait(70);
+      // "See the water pipes? They actually form a kind of scale."
       Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
@@ -1092,6 +1159,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);
       Event_Wait(15);
+      // "When one side lowers, the other side rises."
       Event_ShowMessage(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
       Event_Wait(30);
@@ -1099,6 +1167,7 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Event_Wait(40);
       Colosso_MovePointer(56, 64, 10);
       Event_Wait(70);
+      // "Using this premise, you must find a way to reach the next stage."
       Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
@@ -1129,9 +1198,11 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(840, CAMERA_KEEP, 216, 1);
       FieldCamera_WaitForMove();
+      // "They call this the Broken Bridge."
       Event_ShowMessage(actorId, 0);
       ColosseumAzartMatch_StartBrokenBridge();
       Event_Wait(60);
+      // "Carefully time your bridge crossings to reach the next stage."
       Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
       COLOSSEUM_AZART_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
@@ -1140,6 +1211,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+      // "If your timing is off, you'll fall down, which will cost you time."
       Event_ShowMessage(actorId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1173,11 +1245,13 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     // "This place is normally called the Lumber Water Crossing Area."
     Event_ShowMessage(actorId, 0);
     Colosso_ShowPointer(120, 72, 0);
+    // "The obstacle at this stage is that large water tank."
     Event_ShowMessage(actorId, 0);
     Colosso_HidePointer();
     Event_Wait(15);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 200);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
+    // "If you can get all the way across in one go, you don't have to..."
     Event_ShowMessage(actorId, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -1196,6 +1270,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    // "But if you want to reach the treasure box, it'll take a little..."
     Event_ShowMessage(actorId, 0);
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1228,9 +1303,6 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 #include "shared/actor_find_at_position.c"
 
 #include "shared/colosso_occupant.c"
-
-/// The chest holding an Oil Drop has been opened.
-#define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
 
 #include "shared/colosso_lettering_tables.c"
 // clang-format off
@@ -1308,18 +1380,18 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
 u32 gColosseumAzartMatch_BridgeTimer = 0;
 
 struct Trigger gColosseumAzartMatch_Triggers[] = {
-    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrHopAcross) },
-    { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRock) },
-    { STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRock) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT(ColosseumAzartMatch_PushPipeworksPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogNorthSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogNorthSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogEastWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogEastWest) },
-    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumAzartMatch_ReachArena) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_AREA_TEMP_08, FIND_ITEM(ITEM_NUT) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_AREA_TEMP_0A, FIND_ITEM(ITEM_NUT) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ROCK_CHALLENGE_SQUARE_EDGE, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrHopAcross) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ROCK_CHALLENGE_FLOOR, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRock) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ROCK_CHALLENGE_EAST_END, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRock) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_PIPEWORKS_PIPE, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT(ColosseumAzartMatch_PushPipeworksPipe) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_LOG_NORTH_SOUTH, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogNorthSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_LOG_NORTH_SOUTH, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogNorthSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_LOG_EAST_WEST, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogEastWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_LOG_EAST_WEST, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_RollLogEastWest) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_ARENA_ENTRY, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumAzartMatch_ReachArena) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_FIRST_NUT_CHEST, FLAG_COLOSSEUM_AZART_MATCH_FIRST_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_OIL_DROP_CHEST, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, CELL_BEHAVIOR_SECOND_NUT_CHEST, FLAG_COLOSSEUM_AZART_MATCH_SECOND_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_A, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_B, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_C, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },

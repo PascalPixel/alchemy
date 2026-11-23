@@ -107,15 +107,15 @@ enum AlhafraJailActorId {
   ACTOR_JAIL_KEY,
   /// Briggs and his crew in their cell, once Briggs is caught.
   /// "I hate prison. The food is terrible..."
-  ACTOR_CREWMAN_WHO_HATES_PRISON,
+  ACTOR_PIRATE_WHO_HATES_PRISON,
   /// "It sounds like the mayor of Alhafra lost interest in fixing that boat."
-  ACTOR_CREWMAN_ON_THE_BOAT,
+  ACTOR_PIRATE_ON_THE_BOAT,
   ACTOR_BRIGGS,
   /// "Everything would have been fine if it hadn't been for you meddling
   /// kids..."
-  ACTOR_CREWMAN_BLAMING_THE_PARTY,
+  ACTOR_PIRATE_BLAMING_THE_PARTY,
   /// "I saw you staring at Eoleo..."
-  ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
   ACTOR_EOLEO,
   ACTOR_CHAUCHA,
   /// "Everything's so boring here... Why doesn't anybody do anything...?"
@@ -446,10 +446,10 @@ void AlhafranCave_SetUpJail(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     Actor_SetPosition(ACTOR_JAIL_KEY, 0, 0);
     Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_BLAMING_THE_PARTY, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_WHO_HATES_PRISON, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_ON_THE_BOAT, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_BLAMING_THE_PARTY, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 0, 0);
     Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
     Actor_SetPosition(ACTOR_GUARD, 0, 0);
@@ -457,23 +457,23 @@ void AlhafranCave_SetUpJail(void) {
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetPosition(ACTOR_BORED_GUARD, 0, 0);
     FieldActor_SetSpritePriority(ACTOR_BRIGGS, 2);
-    FieldActor_SetSpritePriority(ACTOR_CREWMAN_WHO_HATES_PRISON, 2);
-    FieldActor_SetSpritePriority(ACTOR_CREWMAN_ON_THE_BOAT, 2);
-    FieldActor_SetSpritePriority(ACTOR_CREWMAN_BLAMING_THE_PARTY, 2);
-    FieldActor_SetSpritePriority(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 2);
+    FieldActor_SetSpritePriority(ACTOR_PIRATE_WHO_HATES_PRISON, 2);
+    FieldActor_SetSpritePriority(ACTOR_PIRATE_ON_THE_BOAT, 2);
+    FieldActor_SetSpritePriority(ACTOR_PIRATE_BLAMING_THE_PARTY, 2);
+    FieldActor_SetSpritePriority(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 2);
     if (!Event_GetFlag(FLAG_FAMILY_VISITED_BRIGGS)) {
-      Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 712, 216);
-      Actor_SetPosition(ACTOR_CREWMAN_BLAMING_THE_PARTY, 744, 216);
+      Actor_SetPosition(ACTOR_PIRATE_ON_THE_BOAT, 712, 216);
+      Actor_SetPosition(ACTOR_PIRATE_BLAMING_THE_PARTY, 744, 216);
     } else {
       Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
       Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     }
   } else {
     Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_ON_THE_BOAT, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_BLAMING_THE_PARTY, 0, 0);
-    Actor_SetPosition(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_WHO_HATES_PRISON, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_ON_THE_BOAT, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_BLAMING_THE_PARTY, 0, 0);
+    Actor_SetPosition(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 0, 0);
     Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
     Actor_SetPosition(ACTOR_GUARD, 0, 0);
@@ -531,9 +531,9 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(ACTOR_CHAUCHA, 1);
   Actor_SetSpeed(ACTOR_EOLEO, 1);
-  Actor_SetSpeed(ACTOR_CREWMAN_ON_THE_BOAT, 1);
-  Actor_SetSpeed(ACTOR_CREWMAN_BLAMING_THE_PARTY, 1);
-  Actor_SetSpeed(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 1);
+  Actor_SetSpeed(ACTOR_PIRATE_ON_THE_BOAT, 1);
+  Actor_SetSpeed(ACTOR_PIRATE_BLAMING_THE_PARTY, 1);
+  Actor_SetSpeed(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 1);
   FieldEvent_SetMessageId((s32)MsgYouHereTo);
   // "You here to see Briggs?"
   FieldEvent_ShowMessageThenWait(ACTOR_GUARD, 0, 10);
@@ -559,10 +559,10 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "How...is your cell? Is there anything I can do to make this easier..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_CREWMAN_WHO_HATES_PRISON, 2);
+  Actor_RunRepeatedMotion(ACTOR_PIRATE_WHO_HATES_PRISON, 2);
   FieldEvent_Wait(10);
   // "I'm fine, Chaucha. My only complaint is that the food here is terrible."
-  FieldEvent_ShowMessageThenWait(ACTOR_CREWMAN_WHO_HATES_PRISON, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIRATE_WHO_HATES_PRISON, 0, 10);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "What!? Are they forcing you to eat this disgusting gruel?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAUCHA, 0, 10);
@@ -621,14 +621,14 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   key->update = AlhafranCave_CycleKeyColors;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_BLAMING_THE_PARTY, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_CREWMAN_ON_THE_BOAT, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PIRATE_ON_THE_BOAT, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_CREWMAN_BLAMING_THE_PARTY, ANIM_NOD);
-  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  Actor_SetAnimationAndWait(ACTOR_PIRATE_BLAMING_THE_PARTY, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
                       FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 288, 1);
@@ -637,14 +637,14 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_ShowEmote(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  Actor_ShowEmote(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
                   EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_WalkByAndWait(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, -16, 0);
+  Actor_WalkByAndWait(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, -16, 0);
   FieldEvent_Wait(20);
-  (void *)Actor_ShowEmote(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  (void *)Actor_ShowEmote(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
                           EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(40);
@@ -666,11 +666,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Field_StartPaletteTransition(8);
   FieldEvent_Wait(30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
+  Actor_FaceDirection(ACTOR_PIRATE_WHO_HATES_PRISON, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
                       0);
-  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
@@ -682,12 +682,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_SOUTH_SOUTHEAST,
+  Actor_FaceDirection(ACTOR_PIRATE_WHO_HATES_PRISON, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
                       0);
-  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
-                      0);
-  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  Actor_FaceDirection(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
                       FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
@@ -709,11 +708,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
-  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
+  Actor_FaceDirection(ACTOR_PIRATE_WHO_HATES_PRISON, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
                       0);
-  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(40);
@@ -729,12 +728,11 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(20);
   // "Ahhh waaah..."
   FieldEvent_ShowMessageThenWait(ACTOR_EOLEO, 0, 10);
-  Actor_FaceDirection(ACTOR_CREWMAN_WHO_HATES_PRISON, FACING_SOUTH_SOUTHEAST,
+  Actor_FaceDirection(ACTOR_PIRATE_WHO_HATES_PRISON, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
                       0);
-  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHWEST,
-                      0);
-  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  Actor_FaceDirection(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
                       FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHWEST, 0);
@@ -826,14 +824,14 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(10);
   Actor_SetScript(ACTOR_EOLEO, gAlhafranCave_VisitorsLeaveScript);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, 16, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET,
+  Actor_WalkByAndWait(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 16, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET,
                       FACING_SOUTH_SOUTHEAST, 0);
-  Actor_WalkBy(ACTOR_CREWMAN_ON_THE_BOAT, 0, 16);
-  Actor_WalkByAndWait(ACTOR_CREWMAN_BLAMING_THE_PARTY, 0, 16);
+  Actor_WalkBy(ACTOR_PIRATE_ON_THE_BOAT, 0, 16);
+  Actor_WalkByAndWait(ACTOR_PIRATE_BLAMING_THE_PARTY, 0, 16);
   FieldEvent_Wait(5);
-  Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHEAST,
+  Actor_FaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIRATE_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHEAST,
                       0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
   FieldActor_WaitForScriptEndById(ACTOR_EOLEO);
@@ -975,16 +973,16 @@ struct Trigger gAlhafranCave_JailTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BORED_GUARD, CONDITION_ALWAYS, MSGNO(MsgNoMatterHow)},
     {TRIGGER_TALK, ACTOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgIVeBeen)},
     {TRIGGER_TALK, ACTOR_BRIGGS, CONDITION_ALWAYS, EVENT(AlhafranCave_TalkToBriggs)},
-    {TRIGGER_TALK, ACTOR_CREWMAN_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIHatePrison)},
-    {TRIGGER_TALK, ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgItSoundsLike)},
-    {TRIGGER_TALK, ACTOR_CREWMAN_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgEverythingWouldHave)},
-    {TRIGGER_TALK, ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgISawYou)},
+    {TRIGGER_TALK, ACTOR_PIRATE_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIHatePrison)},
+    {TRIGGER_TALK, ACTOR_PIRATE_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgItSoundsLike)},
+    {TRIGGER_TALK, ACTOR_PIRATE_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgEverythingWouldHave)},
+    {TRIGGER_TALK, ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgISawYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgItSSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS, CONDITION_ALWAYS, MSGNO(MsgHasStrangePowers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIMNotStaying)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgOhWhatS)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CREWMAN_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgIHearSome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIRATE_WHO_HATES_PRISON, CONDITION_ALWAYS, MSGNO(MsgIMNotStaying)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIRATE_ON_THE_BOAT, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIRATE_BLAMING_THE_PARTY, CONDITION_ALWAYS, MSGNO(MsgOhWhatS)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, CONDITION_ALWAYS, MSGNO(MsgIHearSome)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_JAIL_ROPE_LOW_POST, FLAG_JAIL_ROPE_TIED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_JAIL_STAKE, FLAG_JAIL_STAKE_POUNDED, EVENT(AlhafranCave_PoundStake)},
     // The cave's Frost row, repeated in the jail's table.

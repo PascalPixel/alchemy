@@ -76,7 +76,7 @@
 /// thawed; set again, it only rises and falls back.
 #define FLAG_MARS_STAR_SET 0xa9e
 /// Both fireballs have reached the ice: Burst can break it.
-#define FLAG_DRAGON_ICE_BURSTABLE FLAG_SCENE_TEMP_33
+#define FLAG_BURST_CAN_BREAK_DRAGON_ICE FLAG_SCENE_TEMP_33
 /// From patch 1: the ice is burst, and fireballs still on their way no longer
 /// crack it.
 #define FLAG_DRAGON_ICE_BURST FLAG_SCENE_TEMP_38
@@ -261,7 +261,7 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
       Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
-    Event_SetFlag(FLAG_DRAGON_ICE_BURSTABLE);
+    Event_SetFlag(FLAG_BURST_CAN_BREAK_DRAGON_ICE);
     actor->x.fixed = INTtoFIXED(actor->homeX);
     actor->z.fixed = INTtoFIXED(actor->homeZ);
     actor->scaleX = FIXED_ONE;
@@ -365,7 +365,7 @@ s32 Scene_Initialize(void) {
         MarsLighthouseStarRoom_ClearDragonIce();
         Actor_SetPosition(ACTOR_ICE_CRACK, 0, 0);
       } else if (Event_GetFlag(FLAG_DRAGON_ICE_CRACKED)) {
-        Event_SetFlag(FLAG_DRAGON_ICE_BURSTABLE);
+        Event_SetFlag(FLAG_BURST_CAN_BREAK_DRAGON_ICE);
       } else {
         Actor_SetPosition(ACTOR_ICE_CRACK, 0, 0);
       }
@@ -1787,7 +1787,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_RAISED, DRAGONS_WAKE_TRIGGER, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_WakeFlameDragons)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     DRAGON_ICE_TILE, IF_FLAG_SET(FLAG_DRAGON_ICE_BURSTABLE),
+     DRAGON_ICE_TILE, IF_FLAG_SET(FLAG_BURST_CAN_BREAK_DRAGON_ICE),
      EVENT(MarsLighthouseStarRoom_BurstIce)},
     {TRIGGER_TALK, ACTOR_KARST, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_HoldWarmHand)},

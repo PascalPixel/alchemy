@@ -460,10 +460,10 @@
 
 /// Set as the left tower's archer statue shoots its arrow at the left angel on
 /// Jupiter Lighthouse's aerie, which starts to lift its half of the lid.
-#define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
+#define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT 0xa0a
 /// The same for the right tower's archer and the right angel.
-#define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
-/// Set once both angels are energized and the lid is off the well on Jupiter
+#define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT 0xa0b
+/// Set once both angels are shot and the lid is off the well on Jupiter
 /// Lighthouse's aerie, where Isaac's party is found.
 #define FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED 0xa1f
 /// Set as the party comes out by the aerie to watch Karst and Agatio fight
@@ -1116,7 +1116,7 @@
 #define FLAG_SET_OUT_WITH_WINGS 0x9b2
 /// Set as Susa, at Gaia Rock once the Serpent is slain, hears that Kushinada is
 /// safe (GaiaRock_SusaRejoices); his talk and Mind Read change.
-#define FLAG_SUSA_REJOICES 0x9ab
+#define FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE 0x9ab
 /// Set as Jenna says "They're waiting for us. Let's go to Contigo." on the
 /// World Map, once the Jupiter beacon is lit.
 #define FLAG_JENNA_POINTED_TO_CONTIGO 0x9b3

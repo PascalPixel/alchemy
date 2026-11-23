@@ -91,7 +91,7 @@ gScene_EncounterRules:
 	encounter_rule GabombaStatueSteel, 1, -1, 47, 0
 	encounter_rule GabombaStatueSteel, 4, -1, 47, 0
 	encounter_rule GabombaStatueSteel, -1, -1, 48, 0
-	encounter_rule GabombaStatueTurntable, -1, -1, 0, 47
+	encounter_rule GabombaStatueMouse, -1, -1, 0, 47
 	encounter_rule GabombaStatueCogs, -1, -1, 48, 0
 	encounter_rule GabombaStatueChamberIdol, -1, -1, 48, 0
 	encounter_rule GabombaStatuePinion, -1, -1, 46, 0

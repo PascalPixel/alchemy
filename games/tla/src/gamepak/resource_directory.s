@@ -1021,8 +1021,8 @@ Resource_DirectoryTable:
 	resource , Tileset_PaletteGabombaStatueElixirChest
 	resource , Field_GabombaStatueSteel
 	resource , Tileset_PaletteGabombaStatueSteel
-	resource , Field_GabombaStatueTurntable
-	resource , Tileset_PaletteGabombaStatueTurntable
+	resource , Field_GabombaStatueMouse
+	resource , Tileset_PaletteGabombaStatueMouse
 	resource , Field_GabombaStatueCogs
 	resource , Tileset_PaletteGabombaStatueCogs
 	resource , Field_GabombaStatueChamberIdol

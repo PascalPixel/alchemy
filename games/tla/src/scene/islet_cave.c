@@ -294,19 +294,19 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gIsletCave_SentinelRoomPlacements[];
-extern struct ActorPlacement gIsletCave_HallPlacements[];
-extern struct ActorPlacement gIsletCave_CorridorPlacements[];
-extern struct Trigger gIsletCave_HallTriggers[];
-extern struct Trigger gIsletCave_CorridorTriggers[];
+extern struct ActorPlacement gIsletCave_HallsPlacements[];
+extern struct ActorPlacement gIsletCave_CorridorsPlacements[];
+extern struct Trigger gIsletCave_HallsTriggers[];
+extern struct Trigger gIsletCave_CorridorsTriggers[];
 extern struct Trigger gIsletCave_SentinelRoomTriggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ISLET_CAVE_HALLS)
-    return gIsletCave_HallPlacements;
+    return gIsletCave_HallsPlacements;
   if (scene == SCENE_ISLET_CAVE_CORRIDORS)
-    return gIsletCave_CorridorPlacements;
+    return gIsletCave_CorridorsPlacements;
   return gIsletCave_SentinelRoomPlacements;
 }
 
@@ -314,10 +314,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ISLET_CAVE_CORRIDORS)
-    return gIsletCave_CorridorTriggers;
+    return gIsletCave_CorridorsTriggers;
   if (scene == SCENE_ISLET_CAVE_SENTINEL)
     return gIsletCave_SentinelRoomTriggers;
-  return gIsletCave_HallTriggers;
+  return gIsletCave_HallsTriggers;
 }
 
 /// The end of a Teleport between the two circles: the circle shimmers while
@@ -1032,7 +1032,7 @@ struct ActorPlacement gIsletCave_SentinelRoomPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIsletCave_HallPlacements[] = {
+struct ActorPlacement gIsletCave_HallsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1044,13 +1044,13 @@ struct ActorPlacement gIsletCave_HallPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIsletCave_CorridorPlacements[] = {
+struct ActorPlacement gIsletCave_CorridorsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SERAC), MOVEMENT_TYPE_STAND, 336, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct Trigger gIsletCave_HallTriggers[] = {
+struct Trigger gIsletCave_HallsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -1086,7 +1086,7 @@ struct Trigger gIsletCave_HallTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIsletCave_CorridorTriggers[] = {
+struct Trigger gIsletCave_CorridorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},

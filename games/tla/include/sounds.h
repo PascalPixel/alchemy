@@ -518,7 +518,7 @@ enum SoundId {
   /// run of eleven short ones; nothing plays it.
   SE_UNUSED_SPIN_AWAY_SINGLE,
   /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
-  /// energized.
+  /// shot.
   SE_JUPITER_LIGHTHOUSE_BEAMS,
   /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 70 at tempo 100; nothing plays
   /// it.

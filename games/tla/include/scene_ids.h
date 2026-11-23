@@ -238,8 +238,8 @@ extern char SceneId_GabombaStatueElixirChest;
 /// The room inside the Gabomba Statue where Steel is fought.
 extern char SceneId_GabombaStatueSteel;
 #define SCENE_GABOMBA_STATUE_STEEL ((s32)&SceneId_GabombaStatueSteel)
-extern char SceneId_GabombaStatueTurntable;
-#define SCENE_GABOMBA_STATUE_TURNTABLE ((s32)&SceneId_GabombaStatueTurntable)
+extern char SceneId_GabombaStatueMouse;
+#define SCENE_GABOMBA_STATUE_MOUSE ((s32)&SceneId_GabombaStatueMouse)
 extern char SceneId_GabombaStatueCogs;
 #define SCENE_GABOMBA_STATUE_COGS ((s32)&SceneId_GabombaStatueCogs)
 extern char SceneId_GabombaStatueArrows;

@@ -113,7 +113,7 @@
 	.include "games/tla/src/map/gabomba_statue_bone_armlet_chest/map.inc"
 	.include "games/tla/src/map/gabomba_statue_elixir_chest/map.inc"
 	.include "games/tla/src/map/gabomba_statue_steel/map.inc"
-	.include "games/tla/src/map/gabomba_statue_turntable/map.inc"
+	.include "games/tla/src/map/gabomba_statue_mouse/map.inc"
 	.include "games/tla/src/map/gabomba_statue_cogs/map.inc"
 	.include "games/tla/src/map/gabomba_statue_chamber_idol/map.inc"
 	.include "games/tla/src/map/gabomba_statue_arrows/map.inc"

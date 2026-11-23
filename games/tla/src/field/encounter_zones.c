@@ -308,7 +308,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {371, 372, 373, 374, 375, 376, 377, 378},
         .weights = {20, 20, 10, 10, 5, 5},
     },
-    // Gabomba Statue: SceneId_GabombaStatueElixirChest entrances 1 and 2, SceneId_GabombaStatueSteel entrances 1 and 4, SceneId_GabombaStatueTurntable
+    // Gabomba Statue: SceneId_GabombaStatueElixirChest entrances 1 and 2, SceneId_GabombaStatueSteel entrances 1 and 4, SceneId_GabombaStatueMouse
     {
         .rate = 50,
         .level = 17,

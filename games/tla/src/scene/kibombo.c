@@ -334,7 +334,7 @@ enum {
   ACTOR_MAN_WITH_ACHING_BACK,
   /// "As soon as Akafubu became our recognized witch doctor, he became so much
   /// nicer."
-  ACTOR_OLD_WOMAN_ON_A_KINDER_AKAFUBU,
+  ACTOR_OLD_WOMAN_ON_A_NICER_AKAFUBU,
   /// Two warriors at home: "Many in Gondowan fear the might of the Kibombo
   /// warriors." and "We think it is time to inform other villages..."
   ACTOR_WARRIOR_NOT_TO_BE_FEARED,
@@ -4617,9 +4617,9 @@ struct Trigger gKibombo_HousesTriggers[] = {
      EVENT(Kibombo_TalkAchingBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ACHING_BACK_BEDSIDE,
      CONDITION_ALWAYS, EVENT(Kibombo_ReadMindNeverAgain)},
-    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_A_KINDER_AKAFUBU, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_A_NICER_AKAFUBU, CONDITION_ALWAYS,
      MSGNO(MsgAsSoonAs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_A_KINDER_AKAFUBU,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_A_NICER_AKAFUBU,
      CONDITION_ALWAYS, MSGNO(MsgAkafubuGetsSo)},
     {TRIGGER_TALK, ACTOR_WARRIOR_NOT_TO_BE_FEARED, CONDITION_ALWAYS,
      MSGNO(MsgManyInGondowan)},

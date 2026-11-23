@@ -33,9 +33,9 @@ void GabombaStatue_ClimbDownElixirChestLadder(void);
 void GabombaStatue_ClimbDownSteelNortheastLadder(void);
 
 void GabombaStatue_ClimbDownSteelEastLadder(void);
-void GabombaStatue_ClimbDownTurntableNorthLadder(void);
+void GabombaStatue_ClimbDownMouseNorthLadder(void);
 
-void GabombaStatue_ClimbDownTurntableWestLadder(void);
+void GabombaStatue_ClimbDownMouseWestLadder(void);
 
 void GabombaStatue_ClimbDownCogsLadder(void);
 

@@ -116,7 +116,7 @@ extern s32 gKalay_SecondGuideReturnScript[];
 extern s32 gKalay_PartyLookAboutScript[];
 extern s32 gKalay_PartyGatherScript[];
 extern s32 gKalay_FrostGrowScript[];
-extern struct SceneEntrance gKalay_NoEntrances[];
+extern struct SceneEntrance gKalay_FallbackEntrances[];
 extern struct SceneEntrance gKalay_TownEntrances[];
 extern struct SceneEntrance gKalay_HammetPalaceEntrances[];
 extern struct SceneEntrance gKalay_TunnelEntranceEntrances[];
@@ -353,7 +353,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_KALAY_TUNNEL_TREASURE_ROOM) {
     return gKalay_TunnelEntrances;
   }
-  return gKalay_NoEntrances;
+  return gKalay_FallbackEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -2414,11 +2414,7 @@ s32 gKalay_FrostGrowScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gKalay_NoEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
-     -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/kalay_fallback_entrances.c"
 
 struct SceneEntrance gKalay_TownEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 224, 0, 280, FACING_SOUTH, 0, -1, -1,

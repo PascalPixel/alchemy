@@ -55,7 +55,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern struct SceneEntrance gStuccoRoomsA_NoEntrances[];
+extern struct SceneEntrance gKalay_FallbackEntrances[];
 extern struct SceneEntrance gStuccoRoomsA_HouseEntrances[];
 extern struct SceneEntrance gStuccoRoomsA_SanctumEntrances[];
 extern u32 gStuccoRoomsA_Exits[];
@@ -168,7 +168,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_KALAY_SANCTUM) {
     return gStuccoRoomsA_SanctumEntrances;
   }
-  return gStuccoRoomsA_NoEntrances;
+  return gKalay_FallbackEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -426,11 +426,7 @@ static void StuccoRoomsA_ApplyRoomState(void) {
   }
 }
 
-struct SceneEntrance gStuccoRoomsA_NoEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
-     -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/kalay_fallback_entrances.c"
 
 struct SceneEntrance gStuccoRoomsA_HouseEntrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,

@@ -187,7 +187,7 @@ void Actor_PlaceOnActor(s32 id, s32 target);
 /// loads the stand-in's and the two pictures' sprites beside the leader, the
 /// cracked one showing its cracks, then puts them out of sight; a cracked
 /// pillar takes the cracked picture.
-void CrumblingPillar_PlaceWithStandIns(u16 *list) {
+void CrumblingPillar_PlaceWithStandIn(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 

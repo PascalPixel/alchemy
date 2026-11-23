@@ -1761,7 +1761,7 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
           ACTOR_PRIORITY_AUTOMATIC;
     }
   }
-  CrumblingPillar_PlaceWithStandIns(
+  CrumblingPillar_PlaceWithStandIn(
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
   DehkanPlateau_SetThemisAxeChestStandingPillarCells();
   Pillar_Place(gDehkanPlateau_ThemisAxeChestStakes);

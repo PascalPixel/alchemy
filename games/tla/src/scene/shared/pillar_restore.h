@@ -1,7 +1,7 @@
 #include "pillar_stand_in.h"
 
 /// Unused: as MagmaRockInside_RestoreCrumblingPillars, in a room whose pillars
-/// share one sprite, as Dehkan Plateau's CrumblingPillar_PlaceWithStandIns
+/// share one sprite, as Dehkan Plateau's CrumblingPillar_PlaceWithStandIn
 /// does: first loads the stand-in's and the two pictures' sprites beside the
 /// leader, the cracked one showing its cracks, then puts them out of sight; a
 /// cracked pillar takes the cracked picture.

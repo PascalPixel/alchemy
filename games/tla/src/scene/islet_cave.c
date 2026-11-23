@@ -51,40 +51,24 @@
 void Teleport_ArriveWhirling(void);
 
 s32 List_CountEntries(u16 *list);
-
 void PaletteCycle_Fade(void);
-
 void IsletCave_PlaceLogs(void);
-
 void IsletCave_FightMeld(void);
-
 void IsletCave_FightSerac(void);
-
 void IsletCave_TeleportToNorthCircle(void);
-
 void IsletCave_TeleportToIslandCircle(void);
-
 void IsletCave_OpenDoorAndEnter(void);
-
 void IsletCave_SettleFirstLog(void);
-
 void IsletCave_SettleSecondLog(void);
-
 void IsletCave_SettleThirdLog(void);
-
 void IsletCave_SettleFourthLog(void);
-
 void IsletCave_SettleFifthLog(void);
-
 void IsletCave_SettleSixthLog(void);
-
 void IsletCave_SettleSeventhLog(void);
 void IsletCave_RideFirstLogEast(void);
 void IsletCave_RideSecondLogEast(void);
 void IsletCave_RideSecondLogWest(void);
-
 void IsletCave_RideThirdLogEast(void);
-
 void IsletCave_RideFourthLogEast(void);
 void IsletCave_RideFourthLogWest(void);
 void IsletCave_RideFifthLogEast(void);
@@ -94,7 +78,6 @@ void IsletCave_RideSixthLogWest(void);
 void IsletCave_RideSeventhLogNorth(void);
 void IsletCave_RideSeventhLogSouth(void);
 void IsletCave_SentinelAwaits(void);
-
 void IsletCave_TremorRevealsSerac(void);
 
 extern u32 gIsletCave_SentinelScript[];
@@ -119,23 +102,23 @@ void PaletteFade_PackTarget(void);
 
 #include "text/msg_ids.h"
 
-/// Meld, the Djinni on the ledge at the north end of the east hall.
-enum { ACTOR_MELD = 15 };
+/// Meld, the Djinni on the ledge at the north end of the east hall, placed
+/// after the halls' seven logs.
+enum { ACTOR_MELD = ACTOR_FIRST_PLACED + 7 };
 
 /// Talking to Meld, the Venus Djinni on the ledge the seventh log carries
 /// Felix up to at the north end of the east hall, starts a battle with him.
 void IsletCave_FightMeld(void) {
   Field_RequestDjinnBattle(ACTOR_MELD, DJINNI_MELD);
-  return;
 }
 
 /// Serac, the Djinni hiding in the second corridor, and the winged statue
 /// Tremor shakes him out of.
-enum { ACTOR_WINGED_STATUE = 8, ACTOR_SERAC = 9 };
+enum { ACTOR_WINGED_STATUE = ACTOR_FIRST_PLACED, ACTOR_SERAC };
 
 /// The Sentinel, and the first of the ten small fires burning in pairs down
 /// both sides of its room.
-enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
+enum { ACTOR_SENTINEL = ACTOR_FIRST_PLACED, ACTOR_FIRST_FIRE };
 
 /// Set once the Sentinel is beaten, as the party comes back to its room.
 #define FLAG_SENTINEL_DEFEATED 0x9cf
@@ -168,7 +151,6 @@ enum { CELL_BEHAVIOR_BEFORE_SENTINEL = 10 };
 /// statue in the second corridor, starts a battle with him.
 void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
-  return;
 }
 
 /// The last step of each fire's script in the Sentinel's room: clears its
@@ -517,7 +499,6 @@ void IsletCave_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
 void IsletCave_SettleLog(s32 actorId) {
   Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_FLOAT);
   Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_SETTLE);
-  return;
 }
 
 /// Places the seven logs where the party left them, each with its cells.
@@ -543,56 +524,36 @@ void IsletCave_PlaceLogs(void) {
   IsletCave_PlaceWestEastLog(ACTOR_SEVENTH_LOG, 33, 0, 824, 120,
                              CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG,
                              FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED);
-  return;
 }
 
 /// Stepping onto the first log, between the Teleport circle's island and the
 /// west shore of the west hall, plays the log's dip under Felix's step.
-void IsletCave_SettleFirstLog(void) {
-  IsletCave_SettleLog(ACTOR_FIRST_LOG);
-  return;
-}
+void IsletCave_SettleFirstLog(void) { IsletCave_SettleLog(ACTOR_FIRST_LOG); }
 
 /// Stepping onto the second log, at the north of the west hall's lake, plays
 /// the log's dip under Felix's step.
-void IsletCave_SettleSecondLog(void) {
-  IsletCave_SettleLog(ACTOR_SECOND_LOG);
-  return;
-}
+void IsletCave_SettleSecondLog(void) { IsletCave_SettleLog(ACTOR_SECOND_LOG); }
 
 /// Stepping onto the third log, at the north end of the east hall's channel,
 /// plays the log's dip under Felix's step.
-void IsletCave_SettleThirdLog(void) {
-  IsletCave_SettleLog(ACTOR_THIRD_LOG);
-  return;
-}
+void IsletCave_SettleThirdLog(void) { IsletCave_SettleLog(ACTOR_THIRD_LOG); }
 
 /// Stepping onto the fourth log, at the north end of the east hall's channel,
 /// plays the log's dip under Felix's step.
-void IsletCave_SettleFourthLog(void) {
-  IsletCave_SettleLog(ACTOR_FOURTH_LOG);
-  return;
-}
+void IsletCave_SettleFourthLog(void) { IsletCave_SettleLog(ACTOR_FOURTH_LOG); }
 
 /// Stepping onto the fifth log, halfway down the east hall's channel, plays the
 /// log's dip under Felix's step.
-void IsletCave_SettleFifthLog(void) {
-  IsletCave_SettleLog(ACTOR_FIFTH_LOG);
-  return;
-}
+void IsletCave_SettleFifthLog(void) { IsletCave_SettleLog(ACTOR_FIFTH_LOG); }
 
 /// Stepping onto the sixth log, halfway down the east hall's channel, plays the
 /// log's dip under Felix's step.
-void IsletCave_SettleSixthLog(void) {
-  IsletCave_SettleLog(ACTOR_SIXTH_LOG);
-  return;
-}
+void IsletCave_SettleSixthLog(void) { IsletCave_SettleLog(ACTOR_SIXTH_LOG); }
 
 /// Stepping onto the seventh log, which lies across the east hall's channel,
 /// plays the log's dip under Felix's step.
 void IsletCave_SettleSeventhLog(void) {
   IsletCave_SettleLog(ACTOR_SEVENTH_LOG);
-  return;
 }
 
 /// Rides a log one stage, `dx` and `dz` pixels, carrying Felix with it: the
@@ -868,9 +829,6 @@ void IsletCave_TremorRevealsSerac(void) {
 #undef DEFINE_ISLET_CAVE_ARRIVE_AT
 #undef DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS
 
-void IsletCave_RideFirstLogWest(void);
-void IsletCave_RideThirdLogWest(void);
-
 // clang-format off
 #define TELEPORT_CIRCLE_FIRST_ENTRY 9
 #include "shared/teleport_circle_palette.c"
@@ -899,18 +857,18 @@ s32 gIsletCave_TremorTargetScript[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(IsletCaveHalls),
-    SCENE_EXIT_UNLESS(1, SeaOfTimeIslet, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ISLET_CAVE_HALLS_TO_SEA_OF_TIME_ISLET, SeaOfTimeIslet, SEA_OF_TIME_ISLET_FROM_ISLET_CAVE_HALLS, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, IsletCaveHalls, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, IsletCaveHalls, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, IsletCaveHalls, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, IsletCaveHalls, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, IsletCaveHalls, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, IsletCaveHalls, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IsletCaveCorridors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ISLET_CAVE_HALLS_TO_ISLET_CAVE_CORRIDORS, IsletCaveCorridors, ISLET_CAVE_CORRIDORS_FROM_ISLET_CAVE_HALLS, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, IsletCaveHalls, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, IsletCaveHalls, 9, EXIT_FLAG_NONE),
     SCENE_EXITS(IsletCaveCorridors),
-    SCENE_EXIT_UNLESS(1, IsletCaveHalls, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ISLET_CAVE_CORRIDORS_TO_ISLET_CAVE_HALLS, IsletCaveHalls, ISLET_CAVE_HALLS_FROM_ISLET_CAVE_CORRIDORS, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, IsletCaveCorridors, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, IsletCaveCorridors, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, IsletCaveCorridors, 5, EXIT_FLAG_NONE),
@@ -919,9 +877,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(7, IsletCaveCorridors, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, IsletCaveCorridors, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, IsletCaveCorridors, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, IsletCaveSentinel, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ISLET_CAVE_CORRIDORS_TO_ISLET_CAVE_SENTINEL, IsletCaveSentinel, ISLET_CAVE_SENTINEL_FROM_ISLET_CAVE_CORRIDORS, EXIT_FLAG_NONE),
     SCENE_EXITS(IsletCaveSentinel),
-    SCENE_EXIT_UNLESS(1, IsletCaveCorridors, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(ISLET_CAVE_SENTINEL_TO_ISLET_CAVE_CORRIDORS, IsletCaveCorridors, ISLET_CAVE_CORRIDORS_FROM_ISLET_CAVE_SENTINEL, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -941,13 +899,13 @@ struct ActorPlacement gIsletCave_SentinelRoomPlacements[] = {
 };
 
 struct ActorPlacement gIsletCave_HallsPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 872, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 776, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 872, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, 7, 824, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 872, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 776, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 872, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 824, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_MELD), MOVEMENT_TYPE_STAND, 824, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };

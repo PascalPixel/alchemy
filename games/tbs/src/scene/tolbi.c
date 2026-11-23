@@ -96,10 +96,6 @@ extern struct MapGridCellAnimation gTolbiDoors[];
 /// Frost has frozen the puddle north of the sprout into an ice pillar.
 #define FLAG_TOLBI_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
 
-// Scene flags: FLAG_TOLBI_SPROUT_GROWN is set once Growth has raised the
-// sprout, FLAG_TOLBI_PUDDLE_FROZEN once Frost has frozen the puddle; both reset
-// when the party leaves the town.
-
 /// Actors, numbered in the order of the actor placements from
 /// ACTOR_FIRST_PLACED. The townspeople the text gives no name are named by
 /// what their sprites show and what they say or, under Mind Read, think
@@ -302,7 +298,7 @@ static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gTolbiEntrances; }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gTolbiExits; }
 
@@ -390,7 +386,6 @@ static void Tolbi_TalkToOlderBrother(void) {
   Event_SetMessageId(msg);
   Actor_SetAnimation(ACTOR_TOLBI_OLDER_BROTHER, ANIM_STILL);
   Actor_FaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
-  // "I'm the oldest, so I shouldn't have to share my allowance."
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   wait(1);
@@ -433,7 +428,6 @@ static void Tolbi_TalkToYoungerSister(void) {
   Event_SetMessageId(msg);
   Actor_SetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, ANIM_STILL);
   Actor_FaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
-  // "Mama told us to share the money. Doesn't my brother remember?"
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
   wait(1);
@@ -639,7 +633,7 @@ s32 Scene_Initialize(s32 unused) {
   }
   if (GameFlag_Get(FLAG_TOLBI_SPROUT_GROWN) != 0) {
     Tolbi_GrowSprout();
-    Actor_SetAnimation(ACTOR_TOLBI_SPROUT, 4);
+    Actor_SetAnimation(ACTOR_TOLBI_SPROUT, SPROUT_ANIMATION_GROWN);
   }
 
   // After Colosso the crowd has gone home and is moved off the map. On finals
@@ -675,9 +669,9 @@ static void Tolbi_TalkToSpringVisitor(void) {
   // "Hmm? Do you want to test your luck at Tolbi Spring?"
   Event_OpenMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-    // Yes: "I'll give you the chance to go first."
+    // Past the No answer's line.
     gFieldWork->message++;
-    // "Really? Well then, I'll give you the chance to go first."
+    // Yes: "Really? Well then, I'll give you the chance to go first."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
     Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, 1);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 320, 304);
@@ -685,7 +679,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
     Actor_FaceDirection(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
     GameFlag_Set(FLAG_TOLBI_SPRING_OPENED);
   } else {
-    // "Oh, you don't? Well, I'm just going to keep trying for a while."
+    // No: "Oh, you don't? Well, I'm just going to keep trying for a while."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
   }
   Event_End();
@@ -840,11 +834,11 @@ static void Tolbi_FreezePuddle(void) {
   GameFlag_Set(FLAG_TOLBI_PUDDLE_FROZEN);
 }
 
-/// The actor script of a mirrored actor, which flips its sprite and passes 7
-/// on.
-s32 gTolbiMirroredActor[] = {
+/// The scalper asleep under the archway during the festival: propped up on one
+/// hand, mirrored.
+s32 gTolbiSleepingScalper[] = {
     SC_SET(SW_SCALE_X, -FIXED_ONE),
-    SC_ANIMATION(7),
+    SC_ANIMATION(STRONGMAN_ANIMATION_PROPPED_UP),
     SC_END,
 };
 
@@ -880,7 +874,8 @@ s32 gTolbiYoungerSisterRun[] = {
 };
 
 struct SceneEntrance gTolbiEntrances[] = {
-    {0, CONDITION_ALWAYS, 296, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 296, 0, 232, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {TOLBI_FROM_WORLD_MAP, CONDITION_ALWAYS, 304, 0, 448, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
     {TOLBI_FROM_HOUSE_NORTHWEST, CONDITION_ALWAYS, 168, 0, 200, FACING_SOUTH, 0,
@@ -980,7 +975,7 @@ struct ActorPlacement gTolbiActorPlacements[] = {
         280, 0, 184, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         272, 0, 168, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, (s32)gTolbiMirroredActor,
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, (s32)gTolbiSleepingScalper,
         312, 0, 120, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         302, 0, 296, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1056,7 +1051,7 @@ struct Trigger gTolbiTriggersFestival[] = {
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadSpringSign) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT(Tolbi_ReadLuckyMedalSign) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
-// The international editions find the jar only when the party faces north.
+    // From TBS_PATCH_1 on, the jar is found only facing north.
     { TOLBI_JAR_SEARCH_KIND, CELL_BEHAVIOR_TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT(Tolbi_FreezePuddle) },

@@ -1,5 +1,7 @@
 /// @file
-/// Running summon and table effects, and shared target helpers.
+/// The two ways into an effect, a summon or an ordinary ability, with the
+/// sheet, work and canvas they lend it; and the helpers the summons share for
+/// window 0's ragged edge and the targets' sprites.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -11,10 +13,6 @@ void BattleEffect_CallDoNothing(s32 count) {
   for (i = 0; i != count; i++)
     BattleEffect_DoNothing();
 }
-
-// Two of the battle's three entry points; README.md describes all three and the
-// heap blocks they lend an effect. The shared helpers after them manage the
-// scanline window and the targets' sprites.
 
 /// Runs one of the large battle effects, the summons: takes the effect's sheet,
 /// work and canvas, runs it and frees them again.
@@ -94,8 +92,12 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Builds window 0's right edge for every line and restarts the DMA that writes
-/// it.
+/// The first screen line of window 0's ragged edge.
+#define WINDOW_EDGE_FIRST_LINE 8
+
+/// Builds window 0's right edge for every line, ragged by each line's inset,
+/// and restarts the DMA that writes it; the summons run it each VBlank while
+/// the window opens across the screen.
 void BattleEffect_BuildWindowEdgeTable(void) {
   u16 *baseRightEdge;
   u16 *scanlineEdges;
@@ -107,11 +109,14 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   scanlineEdges = (u16 *)WINDOW_EDGE_LINES;
   edgeOffsets = WINDOW_EDGE_INSETS;
   for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-    if (scanline >= 8 && scanline < 8 + WINDOW_EDGE_INSET_LINES) {
-      rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
+    if (scanline >= WINDOW_EDGE_FIRST_LINE &&
+        scanline < WINDOW_EDGE_FIRST_LINE + WINDOW_EDGE_INSET_LINES) {
+      rightEdge =
+          *baseRightEdge - edgeOffsets[scanline - WINDOW_EDGE_FIRST_LINE];
       CLAMP(rightEdge, 0, DISPLAY_WIDTH);
       scanlineEdges[scanline] = rightEdge;
     } else {
+      // Empty: the left edge is past the screen's right.
       scanlineEdges[scanline] = WIN_RANGE(255, 241);
     }
   }
@@ -124,7 +129,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   }
 }
 
-/// Shows the battle objects of every unit with HP left on the targets' side.
+/// Spawns the battle sprites of every unit with HP left on the targets' side.
 void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
   s32 count;
@@ -170,7 +175,11 @@ void BattleEffect_SetupBlendedDisplay(void) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
-/// Updates every effect group of one unit's battle object.
+/// Tints one unit's sprite: every part but its shadow takes `palette`
+/// (SPRITE_COLOR_NORMAL gives the unit its own back), the sprite starts
+/// `animation`, and timer `timerSlot` of the effect counts `timerFrames` down
+/// to the tint's end (BattleEffect_CountDownBattlerTints); TINT_KEEP leaves
+/// any of the three as it is.
 void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
@@ -210,8 +219,10 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
   }
 }
 
-/// Writes the canvas's tile map for BG2, then closes the canvas layer.
-UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
-  BattleEffect_StartTiledCanvas(1);
+/// Opens the tiled canvas at priority 1 and closes it again at once.
+UNUSED void BattleEffect_OpenAndCloseTiledCanvas(void) {
+  BattleEffect_StartTiledCanvas(BGCNT_PRIORITY(1));
   BattleEffect_EndCanvasLayer();
 }
+
+#undef WINDOW_EDGE_FIRST_LINE

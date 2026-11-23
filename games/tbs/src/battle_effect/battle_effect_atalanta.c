@@ -27,8 +27,14 @@
 #define ATALANTA_BURST_PICTURE_FRAMES 4
 #define ATALANTA_BURST_SHAFT_FRAMES 12
 
-/// The trail particles' random rotations, after the particles in PARTICLES.
-#define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 14336)
+/// Atalanta is three rows of three 32x32 sprites.
+#define ATALANTA_SPRITE_ROWS 3
+#define ATALANTA_SPRITES (ATALANTA_SPRITE_ROWS * ATALANTA_SPRITE_ROWS)
+
+/// The trail particles' random rotations, after the first 512 particles of
+/// PARTICLES, which hold the 384 trail particles.
+#define ATALANTA_MATRICES                                                      \
+  (Ram_MapGridCellBuffer + 512 * sizeof(struct Particle))
 
 /// How far below its projected point a trail mote is drawn: the Japanese
 /// release draws the trails 16 pixels higher than the later releases.
@@ -141,7 +147,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
-  BattleEffect_SpawnObjects(9, SPRITE_ATALANTA, 1);
+  BattleEffect_SpawnObjects(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress(RESOURCE_SLASH_SHEET, work->sheet, 1, 1);
   Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_LIME_PALETTE),
                   SHEET_PALETTE_BYTES);
@@ -205,17 +211,19 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       }
       position.groundHeight = 0;
       position.height = toFIXED(255);
-      for (row = 0; row != 3; row++) {
-        for (column = 0; column != 3; column++) {
+      for (row = 0; row != ATALANTA_SPRITE_ROWS; row++) {
+        for (column = 0; column != ATALANTA_SPRITE_ROWS; column++) {
           position.x = INTtoFIXED(pathX + 80 + column * 32);
           position.y = INTtoFIXED(64 - pathY + row * 32);
-          Actor_ApplyProjectedPlacementFar(work->sprites[row * 3 + column],
-                                           &position, &gAtalanta_UnitScale, 0);
+          Actor_ApplyProjectedPlacementFar(
+              work->sprites[row * ATALANTA_SPRITE_ROWS + column], &position,
+              &gAtalanta_UnitScale, 0);
         }
       }
     }
     point[1] = 0;
     point[2] = 0;
+    // The battle background starts to darken.
     if (frame == 48) {
       work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
@@ -301,7 +309,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   view->busy = 0;
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
-  for (i = 0; i != 9; i++)
+  for (i = 0; i != ATALANTA_SPRITES; i++)
     Sprite_DestroyFar(work->sprites[i]);
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
@@ -403,6 +411,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+#undef ATALANTA_FALL_FRAMES
+#undef ATALANTA_SHAFTS
+#undef ATALANTA_TRAIL_MOTES
+#undef ATALANTA_FALLING_SHAFTS
+#undef ATALANTA_SPRITE_ROWS
+#undef ATALANTA_SPRITES
+#undef ATALANTA_TRAIL_DROP
 #undef ATALANTA_MATRICES
 #undef ATALANTA_FALLING_SHAFT_SLOTS
 #undef ATALANTA_SHAFT_FIRST_FRAME

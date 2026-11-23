@@ -5,20 +5,21 @@
 #include "battle_effect_internal.h"
 
 #define TORCH_FRAMES 96
-#define TORCH_FADE_FRAMES 8 ///< the disc fades in, and later out, over these
+#define TORCH_FADE_FRAMES 8 ///< the rings fade in, and later out, over these
 
 /// The ring level drawn brightest: the levels either side of it dim toward 0
 /// and toward the disc's edge.
 #define TORCH_BRIGHTEST_LEVEL 32
-/// The disc's colours are worked in eight-bit channels, each capped, then cut
+/// The rings' colours are worked in eight-bit channels, each capped, then cut
 /// to the five bits a colour holds; blue's lower cap cuts to the same level.
 #define TORCH_CHANNEL_MAX 255
 #define TORCH_BLUE_MAX 250
 /// How far a line sways either way: 32 canvas pixels, toFIXED(4) to a pixel.
 #define TORCH_SWAY (32 * 4)
 
-/// A fiery disc fades in, its rings running outward while every line of
-/// the display ripples, then fades out.
+/// After the Djinni's entrance, rings of fiery light fill the screen, running
+/// outward from the middle while every line sways, so that they swirl like
+/// heat; then they fade.
 ///
 /// Abilities: Torch.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
@@ -39,7 +40,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 green;
   s32 blue;
   s32 frame;
-  s32 wave;
+  s32 swayPhase;
   s32 level;
   u16 *ramp;
   s32 angle;
@@ -59,7 +60,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // The disc: each pixel's level is half its distance from the middle, its
+  // The rings: each pixel's level is half its distance from the middle, its
   // rows drawn a little taller; one quarter is worked out and mirrored into
   // the other three.
   for (y = 0; y != CANVAS_SIZE / 2; y++) {
@@ -115,14 +116,14 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   work->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
-  // Fade the disc in, ripple the display, then fade it out.
+  // Fade the rings in, sway the lines, then fade them out.
   for (frame = 0; frame != TORCH_FRAMES; frame++) {
     if (frame <= TORCH_FADE_FRAMES) {
       level = frame * 2;
-      wave = level;
+      swayPhase = level;
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
     } else {
-      wave = frame * 2;
+      swayPhase = frame * 2;
     }
     if (frame > TORCH_FRAMES - TORCH_FADE_FRAMES)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_FRAMES * 2 - frame * 2);
@@ -130,7 +131,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     // Each line starts one canvas pixel further along than the one above,
     // swayed either way by up to TORCH_SWAY.
     line = work->bg2xLines;
-    for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
+    for (i = 0, angle = -(swayPhase << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = CANVAS_WAVE_BG2X(i * toFIXED(4) - Trig_Sin(angle) * TORCH_SWAY +
                                  toFIXED(4));
       angle += TRIG_TURN / 128;

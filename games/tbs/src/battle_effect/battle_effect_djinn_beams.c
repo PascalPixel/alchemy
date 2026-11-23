@@ -38,12 +38,12 @@ void BattleEffect_RunDew(struct BattleEffectParams *args) {
 /// When there is a prelude a Djinni appears and rises away; then over each
 /// target in turn motes drift down and a column of light falls on it.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
-  struct ScreenPoint one;
+  struct ScreenPoint onlyTarget;
   struct ScreenPoint screenPosition;
   s32 ground[3];
   s32 point[3];
-  s32 djinnX;
-  s32 djinnY;
+  s32 djinniX;
+  s32 djinniY;
   BlitterPair draw;
   struct BattleEffectWork *work;
   void *canvas;
@@ -58,9 +58,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   if (work->args->prelude == 1)
-    BattleEffect_RunDjinniEntrance(args, element,
-                                   work->args->side ^ work->args->prelude,
-                                   DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
+    BattleEffect_RunDjinniEntrance(
+        args, element, work->args->side ^ work->args->prelude,
+        DJINNI_ANCHOR_OVER_TARGET, &djinniX, &djinniY);
   palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   palette += SHEET_PALETTE_BYTES;
@@ -86,8 +86,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
   REG_BG2PA = Q_8_8(1);
   if (work->args->targetCount == 1) {
-    Projection_ScaledUnit(work->args->targets[0], &one);
-    offsetX = CANVAS_SIZE / 2 - one.x;
+    Projection_ScaledUnit(work->args->targets[0], &onlyTarget);
+    offsetX = CANVAS_SIZE / 2 - onlyTarget.x;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
       offsetX = -NARROW_CANVAS_PARTY_X;
@@ -112,9 +112,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     if (k == 1) {
       s32 angle = frame * (TRIG_TURN / 32);
       s32 x = FIXEDtoINT(-Trig_Sin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
-              djinnX + offsetX - DJINNI_WIDTH / 2;
-      s32 y =
-          FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) + djinnY - 24;
+              djinniX + offsetX - DJINNI_WIDTH / 2;
+      s32 y = FIXEDtoINT(Trig_Cos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
+              djinniY - 24;
 
       BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)

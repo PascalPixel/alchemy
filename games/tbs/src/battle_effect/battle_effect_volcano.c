@@ -4,11 +4,8 @@
 
 #include "battle_effect_internal.h"
 
-// The fire pillars stand among the targets and scroll a column of fire up over
-// a flickering flame; each erupts in a fountain of sparks and keeps spitting
-// more.
-
 #define VOLCANO_FRAMES 96
+#define VOLCANO_MOST_PILLARS 4 ///< the strongest variant's
 /// The frames the pillars burn, and the strongest variant's camera turns.
 #define VOLCANO_PILLAR_FRAMES 64
 /// The camera's turn each of those frames: three sixteenths of a turn in all.
@@ -67,16 +64,18 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     PARTICLES[i].variant = 0;
 
   actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0; i != 4; i++) {
-    struct Particle *base = &work->particles[i];
+  // Each pillar stands 72 to 87 pixels out on the first target's side of the
+  // field, at its own depth.
+  for (i = 0; i != VOLCANO_MOST_PILLARS; i++) {
+    struct Particle *foot = &work->particles[i];
     s32 x;
 
     x = INTtoFIXED((Random16() & 15) + 72);
-    base->y = 0;
-    base->x = x;
-    base->z = INTtoFIXED(gVolcano_Depths[work->args->variant][i]);
+    foot->y = 0;
+    foot->x = x;
+    foot->z = INTtoFIXED(gVolcano_Depths[work->args->variant][i]);
     if (actor->x.fixed < 0)
-      base->x = -x;
+      foot->x = -x;
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -213,6 +212,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 }
 
 #undef VOLCANO_FRAMES
+#undef VOLCANO_MOST_PILLARS
 #undef VOLCANO_PILLAR_FRAMES
 #undef VOLCANO_CAMERA_SPIN
 #undef VOLCANO_SPARK_GRAVITY

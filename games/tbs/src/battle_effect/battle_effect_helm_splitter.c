@@ -133,7 +133,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
           draw[0](canvas,
                   work->sheet + HELM_SPLITTER_STAR_PICTURES +
-                      (((frame + i) / 4 % 6) << 8),
+                      (frame + i) / 4 % 6 *
+                          (HELM_SPLITTER_STAR_SIZE * HELM_SPLITTER_STAR_SIZE),
                   sx - HELM_SPLITTER_STAR_SIZE / 2,
                   sy - HELM_SPLITTER_STAR_SIZE / 2, HELM_SPLITTER_STAR_SIZE,
                   HELM_SPLITTER_STAR_SIZE);
@@ -154,8 +155,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 #define FORMATION_TWELVE 12
 #define FORMATION_EIGHT 8
 
-/// Arranges work->effects in a formation; x and z are its origin in 16.16
-/// pixels.
+/// Places a summon's figure, the sprites in work->sprites, in its formation;
+/// x and z are its origin in 16.16 pixels.
 void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
   static struct SpriteScale normalScale = {{{FIXED_ONE, FIXED_ONE}}};
   static struct SpriteScale largeScale = {
@@ -205,7 +206,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 }
 
 /// The fragment pictures in the sheet, four of 12x24, after the flash.
-#define IMPACT_BURST_SHARD_PICTURES 23000
+#define IMPACT_BURST_FRAGMENT_PICTURES 23000
 #define IMPACT_BURST_FRAGMENT_WIDTH 12 ///< each fragment picture's width
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24
 
@@ -223,8 +224,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 /// IMPACT_BURST_LIFE_PER_SIZE frames.
 #define IMPACT_BURST_LIFE_PER_SIZE 16
 
-/// Opens an impact flash and scatters sparks and fragments, keeping the
-/// effect's sprites in formation for the first 36 frames.
+/// Ends a summon: a flash opens where its figure stands and scatters sparks and
+/// three fragments, the figure holding its formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   void **slots;
   void **cursor;
@@ -233,7 +234,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   DrawRectangle additive;
   DrawRectangle maxBlend;
   u8 *sheet;
-  FIXED orgX;
+  FIXED originX;
   struct Particle *particle;
   s32 frame;
   s32 i;
@@ -244,7 +245,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   canvas = *cursor;
   sheet =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
-  orgX = x;
+  originX = x;
   x += toFIXED(40);
   x /= 2;
   REG_BG2PA = Q_8_8(0.5);
@@ -259,8 +260,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   additive = slots[HEAP_SLOT_RAM_CODE_PAIRED - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, work->sheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
-                             work->sheet + IMPACT_BURST_SHARD_PICTURES, 0, 0);
+  Resource_LoadAndDecompress(
+      RESOURCE_FLARE_IMAGE, work->sheet + IMPACT_BURST_FRAGMENT_PICTURES, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly.
@@ -362,7 +363,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     }
 
     for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
-      struct Particle *shard =
+      struct Particle *fragment =
           &work->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
       if (frame >= 36 && frame <= 63) {
@@ -370,13 +371,13 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         s32 drawX;
         s32 drawY;
 
-        Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE, 0);
+        Particle_AdvanceWithGravity2D(fragment, PARTICLE_DAMPING_NONE, 0);
         picture = (frame - 36) / 7;
-        drawX = FIXED_INTEGER_PART(shard->x);
-        drawY = FIXED_INTEGER_PART(shard->y);
+        drawX = FIXED_INTEGER_PART(fragment->x);
+        drawY = FIXED_INTEGER_PART(fragment->y);
         maxBlend(canvas,
                  work->sheet + picture * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
-                     IMPACT_BURST_SHARD_PICTURES,
+                     IMPACT_BURST_FRAGMENT_PICTURES,
                  drawX - IMPACT_BURST_FRAGMENT_WIDTH / 2,
                  drawY - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
                  IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
@@ -384,7 +385,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
     }
 
     if (frame <= 35)
-      BattleEffect_PlaceFormationObjects(formation, orgX, y);
+      BattleEffect_PlaceFormationObjects(formation, originX, y);
     EFFECT_PRESENT_CANVAS(work);
   }
 
@@ -396,10 +397,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 #undef HELM_SPLITTER_FRAMES
 #undef HELM_SPLITTER_STRIKE_FRAME
 #undef HELM_SPLITTER_STAR_PICTURES
+#undef HELM_SPLITTER_STAR_SIZE
 #undef HELM_SPLITTER_CLEARED_SLOTS
 #undef HELM_SPLITTER_SPARKS
 #undef HELM_SPLITTER_SPARK_SLOTS
-#undef IMPACT_BURST_SHARD_PICTURES
+#undef IMPACT_BURST_FRAGMENT_PICTURES
 #undef IMPACT_BURST_FRAGMENT_WIDTH
 #undef IMPACT_BURST_FRAGMENT_HEIGHT
 #undef IMPACT_BURST_FRAMES

@@ -9,6 +9,8 @@
 #define COLOR_PAIR(color) ((color) << 16 | (color))
 
 #define ELEMENT_BURST_FRAMES 56 ///< frames of the element burst
+/// The battle background's first BG palette, of the eight its colours take.
+#define BATTLE_BACKGROUND_PALETTE 6
 
 // The element runners, the streaks and the shattering opening are reached from
 // the battle through far calls, not the handler table, and take their own work,
@@ -603,7 +605,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) |
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       IO_WRITE_HALFWORD);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0),
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0),
                   BATTLE_BACKGROUND_COLORS * sizeof(u16),
                   COLOR_PAIR(RGB_WHITE));
   Sound_PlayFar(SE_POWER_UP);
@@ -628,11 +630,11 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
 
-    // Ease palettes 6 to 13 back to the battle background's colours.
+    // Ease the white back to the battle background's colours.
     if (frame > 7) {
       u16 *color;
 
-      color = (u16 *)&BG_PLTT_COLOR(6, 0);
+      color = (u16 *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0);
       for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
         s32 red = RGB_RED(*color);
         s32 green = RGB_GREEN(*color);
@@ -1081,6 +1083,9 @@ void BattleEffect_EndElementStreaks(void) {
 }
 
 #undef COLOR_PAIR
+#undef BATTLE_BACKGROUND_PALETTE
+#undef ELEMENT_BURST_FRAMES
+#undef DEATH_PLUNGE_STRIKE_FRAME
 #undef DEATH_PLUNGE_FRAMES
 #undef DEATH_PLUNGE_RUN_PERCENT
 #undef DEATH_PLUNGE_RING_FLASHES

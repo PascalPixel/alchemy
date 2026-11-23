@@ -204,27 +204,30 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the effect's sprites in its work block.
-void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
+/// Creates the `count` sprites a summon's figure is drawn from, all of sprite
+/// `spriteId`, into work->sprites: sprite n plays animation n, its piece of
+/// the figure, at BG priority `priority`.
+void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  s32 entryIndex = 0;
+  s32 piece = 0;
 
-  if (entryCount == 0) {
+  if (count == 0) {
     return;
   }
-  for (; entryIndex != entryCount; entryIndex++) {
-    struct Sprite *sprite = Sprite_CreateFar(source);
+  for (; piece != count; piece++) {
+    struct Sprite *sprite = Sprite_CreateFar(spriteId);
 
-    work->sprites[entryIndex] = sprite;
+    work->sprites[piece] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
-      Sprite_StartAnimationFar(sprite, entryIndex);
-      work->sprites[entryIndex]->image.priority = priority;
+      Sprite_StartAnimationFar(sprite, piece);
+      work->sprites[piece]->image.priority = priority;
     }
   }
 }
 
-/// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.
+/// Does nothing; Annihilation calls it 10,000 times as a busy wait
+/// (BattleEffect_CallDoNothing).
 void BattleEffect_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_PICTURES

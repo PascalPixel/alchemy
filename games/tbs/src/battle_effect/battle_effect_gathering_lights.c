@@ -73,13 +73,13 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   // The lights fly off the user in every direction.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   EFFECT_FOR_EACH_TARGET(k, work->args) {
-    struct Actor *src = GetBattleObjectSlotFar(work->args->user)->actor;
+    struct Actor *user = GetBattleObjectSlotFar(work->args->user)->actor;
     s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
       struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
-      SET_POSITION(mote, src->x.fixed, height, src->z.fixed);
+      SET_POSITION(mote, user->x.fixed, height, user->z.fixed);
       SET_VELOCITY(mote, ((Random16() & 255) - 128) << 10,
                    ((Random16() & 255) - 128) << 10,
                    ((Random16() & 255) - 128) << 10);
@@ -172,3 +172,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
 #undef GATHERING_LIGHTS_SLOTS
 #undef GATHERING_LIGHTS_RIPPLE
+#undef GATHERING_LIGHTS_TARGET_FRAMES
+#undef GATHERING_LIGHTS_HIT_FRAME
+#undef MEMBER_BURST_WIDTH
+#undef MEMBER_BURST_HEIGHT

@@ -54,7 +54,7 @@ void BattleEffect_RunWaterBlessing(struct BattleEffectParams *args) {
 /// The user fires a stream of grey bursts at the targets, which turn solid
 /// black and stay so.
 ///
-/// Abilities: Dark Blessing.
+/// Abilities: Dark Blessing (the first two; the third plays Acid Blessing's).
 void BattleEffect_RunDarkBlessing(struct BattleEffectParams *args) {
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_GREY);
 }
@@ -255,40 +255,40 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
 
     // The bursts fly.
     for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-      struct Particle *spark = &work->particles[i];
-      if (spark->variant >= 0) {
+      struct Particle *burst = &work->particles[i];
+      if (burst->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
-          if (spark->variant > 5) {
+          if (burst->variant > 5) {
             draw[work->args->side](canvas,
                                    (work->sheet + BURST_SHOWER_PICTURES),
-                                   FIXEDtoINT(spark->x) - DEMON_FACE_WIDTH / 2,
-                                   FIXEDtoINT(spark->y) - DEMON_FACE_HEIGHT / 2,
+                                   FIXEDtoINT(burst->x) - DEMON_FACE_WIDTH / 2,
+                                   FIXEDtoINT(burst->y) - DEMON_FACE_HEIGHT / 2,
                                    DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
-          if (spark->variant > 5) {
+          if (burst->variant > 5) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
-                        (spark->variant / 4) * PICTURE_BYTES(FLASH_BURST),
-                    FIXEDtoINT(spark->x) - FLASH_BURST_WIDTH / 2,
-                    FIXEDtoINT(spark->y) - FLASH_BURST_HEIGHT / 2,
+                        (burst->variant / 4) * PICTURE_BYTES(FLASH_BURST),
+                    FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
+                    FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
-          if (spark->variant > 1) {
+          if (burst->variant > 1) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
-                        (spark->variant / 4) * PICTURE_BYTES(FLASH_BURST),
-                    FIXEDtoINT(spark->x) - FLASH_BURST_WIDTH / 2,
-                    FIXEDtoINT(spark->y) - FLASH_BURST_HEIGHT / 2,
+                        (burst->variant / 4) * PICTURE_BYTES(FLASH_BURST),
+                    FIXEDtoINT(burst->x) - FLASH_BURST_WIDTH / 2,
+                    FIXEDtoINT(burst->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         }
-        spark->x += spark->velocityX;
-        spark->y += spark->velocityY;
-        spark->variant++;
-        if (spark->variant == BURST_SHOWER_BURST_LIFE) {
-          spark->variant = -1;
+        burst->x += burst->velocityX;
+        burst->y += burst->velocityY;
+        burst->variant++;
+        if (burst->variant == BURST_SHOWER_BURST_LIFE) {
+          burst->variant = -1;
         }
       }
     }

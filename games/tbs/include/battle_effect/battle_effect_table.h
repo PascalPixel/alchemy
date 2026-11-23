@@ -1,14 +1,18 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_TABLE_H
 #define ALCHEMY_BATTLE_EFFECT_TABLE_H
 
+/// @file
+/// The tables the battle effects read (battle_effect_table.c), in its order:
+/// picture offsets, sizes, timings and counts by variant. A table read by
+/// columns is a two-dimensional array, its columns named by the enum above it.
+
 #include "types.h"
 #include "graphics/render_placement.h"
 #include "system/vector3.h"
 
 // The two kinds of target strike (gTargetStrike_Styles).
 #define STRIKE_KIND_SLASH 0 ///< sideways slashes
-/// Rows of fangs above and below the target that close on it.
-#define STRIKE_KIND_BITE 1
+#define STRIKE_KIND_BITE 1  ///< rows of fangs above and below that close on it
 
 // A target strike style's extras.
 #define STRIKE_SMOKE 1  ///< each hit raises smoke puffs from the target's feet
@@ -41,8 +45,6 @@ enum TargetStrikeStyle {
   TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES
 };
 
-/// Every table battle_effect_table.c defines, in its order. A table read by
-/// columns is a two-dimensional array, its columns named by the enum above it.
 extern u16 gBattleEffect_MotePictures[];
 extern u16 gBattleEffect_FlarePictures[];
 extern u16 gBattleEffect_SparklePictures[];
@@ -62,12 +64,13 @@ enum {
 };
 extern u8 gFalling_IceCounts[][2];
 
-/// Each Douse variant: its bolt waves, sparks per bolt, spacing and frames.
+/// Each Douse variant: its drops, the droplets each splash throws, the
+/// spacing and the frames.
 enum {
-  FALLING_BOLT_WAVE_COUNT,      ///< bolts that drop, of the 64 placed
-  FALLING_BOLT_SPARKS_PER_BOLT, ///< sparks each bolt throws
-  FALLING_BOLT_SPACING,         ///< pixels between bolts along the slant
-  FALLING_BOLT_DURATION         ///< the effect's frames
+  DOUSE_DROP_COUNT,        ///< drops that fall, of the 64 placed
+  DOUSE_DROPLETS_PER_DROP, ///< droplets each landing drop throws up
+  DOUSE_DROP_SPACING,      ///< pixels between drops along the slant
+  DOUSE_FRAMES             ///< the effect's frames; the damage shows 64 before
 };
 extern u8 gFalling_Counts[][4];
 
@@ -339,9 +342,9 @@ enum ProjectileVolleyMode {
   PROJECTILE_VOLLEY_HEAT_WAVE,     ///< fireballs trailing embers
   PROJECTILE_VOLLEY_SLEET,         ///< ice chips falling from high above
   PROJECTILE_VOLLEY_IMPACT_COMETS, ///< comets, after
-                                   ///< CASTING_IMPACT_IMPACT_UNUSED_COMETS
+                                   ///< CASTING_IMPACT_UNUSED_COMETS
   PROJECTILE_VOLLEY_BLIZZARD,      ///< scattered ice chips; also after
-                                   ///< CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS
+                                   ///< CASTING_IMPACT_UNUSED_ICE_CHIPS
   PROJECTILE_VOLLEY_ICE_BLESSING,  ///< ice chips streaming one a frame
   PROJECTILE_VOLLEY_WING_STROKE    ///< large yellow sparks, spread up and down
 };

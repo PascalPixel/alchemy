@@ -20,6 +20,9 @@
 #define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
 #define CYBELE_DUST_PICTURE 6 ///< the dust cloud in gCybele_BlastPictures
 #define CYBELE_SPRITES 8      ///< the sprites Cybele is drawn from
+/// The two sprites of her face (CYBELE_POSE_FACE_LEFT and _RIGHT).
+#define CYBELE_FACE_LEFT_SPRITE 3
+#define CYBELE_FACE_RIGHT_SPRITE 4
 /// How far right of the screen's left edge the canvas shows until the chips
 /// fly, in pixels.
 #define CYBELE_CANVAS_X 32
@@ -190,9 +193,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       s32 pose = (frame - 48) / 24 % 3;
 
       Sprite_StartAnimationFar(
-          work->sprites[3], gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
+          work->sprites[CYBELE_FACE_LEFT_SPRITE],
+          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_LEFT]);
       Sprite_StartAnimationFar(
-          work->sprites[4], gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
+          work->sprites[CYBELE_FACE_RIGHT_SPRITE],
+          gCybele_ObjectPoses[pose][CYBELE_POSE_FACE_RIGHT]);
     }
 
     // Thorns fly from her mouth to the ground.
@@ -545,6 +550,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 #undef CYBELE_DUST_PICTURE
 #undef CYBELE_BLAST_PICTURES
 #undef CYBELE_SPRITES
+#undef CYBELE_FACE_LEFT_SPRITE
+#undef CYBELE_FACE_RIGHT_SPRITE
 #undef CYBELE_CANVAS_X
 #undef CYBELE_DISSOLVE_RUNS
 #undef CYBELE_DISSOLVE_BAND

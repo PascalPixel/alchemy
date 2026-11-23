@@ -1522,27 +1522,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnkohlRuins_Triggers;
 }
 
-/// The Left Prong, lying on top of the ruins, sparkles: a sparkle rises about
-/// it every eighth frame.
-void AnkohlRuins_SparkleChest(struct Actor *actor) {
-  struct EffectOptions params;
-  u32 phase = gFrameCount & 7;
-  s32 dx;
-  s32 dy;
-
-  if (phase == 0) {
-    {
-      s32 spreadX = 15;
-
-      dx = spreadX & Random16();
-    }
-    dy = Random16() & 7;
-    params.type = SPRITE_SPARKLE;
-    FieldEffect_Spawn(actor->x.fixed + INTtoFIXED(dx - 8),
-                      actor->y.fixed + INTtoFIXED(dy - 8), actor->z.fixed, 0,
-                      toFIXED(1) / 2, phase, EFFECT_USE_TYPE, &params);
-  }
-}
+#include "shared/prong_sparkle.h"
 
 void AnkohlRuins_RiseFromSand(void);
 void AnkohlRuins_CarriedOffLedge(void);
@@ -1857,7 +1837,7 @@ s32 Scene_Initialize(s32 a0) {
       actor->motionFlags = 0;
       actor->groundHeight = toFIXED(72);
       actor->y.fixed = toFIXED(72);
-      actor->update = (ObjectUpdate)AnkohlRuins_SparkleChest;
+      actor->update = (ObjectUpdate)Prong_Sparkle;
     }
   }
   return 0;
@@ -2147,7 +2127,7 @@ s32 Scene_Initialize(s32 a0) {
       actor->motionFlags = 0;
       actor->groundHeight = toFIXED(72);
       actor->y.fixed = toFIXED(72);
-      actor->update = (ObjectUpdate)AnkohlRuins_SparkleChest;
+      actor->update = (ObjectUpdate)Prong_Sparkle;
     }
   }
   return 0;

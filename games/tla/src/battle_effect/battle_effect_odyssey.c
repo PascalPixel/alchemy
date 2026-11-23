@@ -522,8 +522,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  REG_BG1CNT &= ~3;
-  REG_BG1CNT |= 0;
+  REG_BG1CNT &= ~BGCNT_PRIORITY(3);
+  REG_BG1CNT |= BGCNT_PRIORITY(0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The cloud sheet, moved to the battle background's palettes (which take
@@ -552,10 +552,13 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
       canvas[i] = 1;
   }
   {
-    s32 mode = 3;
+    // One value is both the clip flags, EFFECT_CLIP_BOUNDS, and the mode,
+    // BLITTER_COPY.
+    s32 clipAndCopy = BLITTER_COPY;
 
     enabled = 1;
-    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, mode);
+    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, clipAndCopy,
+                              clipAndCopy);
   }
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);

@@ -171,6 +171,8 @@ enum TrialRoadCell {
 #define FLAG_RIVAL_FIRST_AT_DOOR_BASE FLAG_AREA_TEMP_81
 /// Set once Felix climbs to the summit ahead of Moapa.
 #define FLAG_PARTY_FIRST_AT_PEAK FLAG_AREA_TEMP_85
+/// Set once the stages' order has been dealt from the leader's name.
+#define FLAG_STAGE_ORDER_DEALT FLAG_AREA_TEMP_80
 
 #include "shared/trial_road.h"
 
@@ -1793,19 +1795,19 @@ void TrialRoad_SetUpTorchStage(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_D)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_E)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_F)) = 1;
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_14))
+  if (!Event_GetFlag(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_C))
     Actor_SetAnimation(ACTOR_PILLAR_C, 5);
   else
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_C, -PILLAR_HEIGHT);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_15))
+  if (!Event_GetFlag(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_D))
     Actor_SetAnimation(ACTOR_PILLAR_D, 5);
   else
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_D, -PILLAR_HEIGHT);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_16))
+  if (!Event_GetFlag(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_E))
     Actor_SetAnimation(ACTOR_PILLAR_E, 5);
   else
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_E, -PILLAR_HEIGHT);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_17))
+  if (!Event_GetFlag(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_F))
     Actor_SetAnimation(ACTOR_PILLAR_F, 5);
   else
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -PILLAR_HEIGHT);
@@ -1814,11 +1816,11 @@ void TrialRoad_SetUpTorchStage(void) {
 /// Readies the weeds stage: its two overgrown pillars cannot be pushed until
 /// Whirlwind blows their weeds off.
 void TrialRoad_SetUpWeedsPillarStage(void) {
-  if (!Event_GetFlag(FLAG_AREA_TEMP_27))
+  if (!Event_GetFlag(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_A)) = 1;
   else
     Actor_SetPosition(ACTOR_WEEDS_A, 0, 0);
-  if (!Event_GetFlag(FLAG_AREA_TEMP_28))
+  if (!Event_GetFlag(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 1;
   else
     Actor_SetPosition(ACTOR_WEEDS_B, 0, 0);
@@ -1977,15 +1979,15 @@ void TrialRoad_SetUpFountainStage(void) {
   fountain->periodFrames = FOUNTAIN_PERIOD;
   fountain->riseFrame = FOUNTAIN_RISE_AT;
   fountain->fallFrame = FOUNTAIN_FALL_AT;
-  if (!Event_GetFlag(FLAG_AREA_TEMP_63))
+  if (!Event_GetFlag(FLAG_VENT_UNCOVERED_BASE + ACTOR_WEST_VENT))
     Actor_SetPosition(ACTOR_WEST_VENT, 0, 0);
   else
     TrialRoad_OpenVentCell(ACTOR_WEST_VENT);
-  if (!Event_GetFlag(FLAG_AREA_TEMP_64))
+  if (!Event_GetFlag(FLAG_VENT_UNCOVERED_BASE + ACTOR_MIDDLE_VENT))
     Actor_SetPosition(ACTOR_MIDDLE_VENT, 0, 0);
   else
     TrialRoad_OpenVentCell(ACTOR_MIDDLE_VENT);
-  if (!Event_GetFlag(FLAG_AREA_TEMP_65))
+  if (!Event_GetFlag(FLAG_VENT_UNCOVERED_BASE + ACTOR_EAST_VENT))
     Actor_SetPosition(ACTOR_EAST_VENT, 0, 0);
   else
     TrialRoad_OpenVentCell(ACTOR_EAST_VENT);
@@ -2353,14 +2355,14 @@ s32 Scene_PrepareMap(void) {
     u32 i;
 
     if ((u32)(entrance - TRIAL_ROAD_FROM_VILLAGE_LEFT) <= 1) {
-      if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
+      if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineWork.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
         value = 0;
         for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
           value += unit[n];
         TrialRoad_DealStageOrder(value);
-        GameFlag_Set(FLAG_AREA_TEMP_80);
+        GameFlag_Set(FLAG_STAGE_ORDER_DEALT);
       }
       state->mirrored = (entrance - 1) & 1;
       state->stage[0] = 0;
@@ -2370,17 +2372,18 @@ s32 Scene_PrepareMap(void) {
       value = state->order[state->mirrored ^ 1];
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
+      // From the village, in at the foot of the left or right path.
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if ((u32)(entrance - TRIAL_ROAD_FROM_SUMMIT_LEFT) <= 1) {
-      if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
+      if (!GameFlag_Get(FLAG_STAGE_ORDER_DEALT)) {
         unit = Unit_Get(gMainRoutineWork.leaderActorId);
         Iwram_ClearWordsEntry(state, sizeof(*state));
         value = 0;
         for (n = 0; n < UNIT_NAME_SIZE - 1; n++)
           value += unit[n];
         TrialRoad_DealStageOrder(value);
-        GameFlag_Set(FLAG_AREA_TEMP_80);
+        GameFlag_Set(FLAG_STAGE_ORDER_DEALT);
       }
       {
         s16 side = (entrance - 1) & 1;
@@ -2399,6 +2402,7 @@ s32 Scene_PrepareMap(void) {
       }
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
+      // From the summit, in at the top of the left or right path.
       n = entrance % 10;
       Event_SetDestination(SCENE_TRIAL_ROAD_STAGES, n);
     } else if (entrance == TRIAL_ROAD_RULES) {
@@ -4485,10 +4489,10 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_TORCH, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_TORCH, CONDITION_ALWAYS, EVENT(TrialRoad_MeltIceBesideTorch)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_SCENE_TEMP_14), EVENT(TrialRoad_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_D, IF_FLAG_SET(FLAG_SCENE_TEMP_15), EVENT(TrialRoad_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_E, IF_FLAG_SET(FLAG_SCENE_TEMP_16), EVENT(TrialRoad_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_F, IF_FLAG_SET(FLAG_SCENE_TEMP_17), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_C), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_D, IF_FLAG_SET(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_D), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_E, IF_FLAG_SET(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_E), EVENT(TrialRoad_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PILLAR_F, IF_FLAG_SET(FLAG_PUDDLE_MELTED_BASE + ACTOR_PILLAR_F), EVENT(TrialRoad_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4515,19 +4519,19 @@ LAST_DATA struct Trigger gTrialRoad_WeedsPillarStageTriggers[] = {
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_WEEDS_STAGE_LEDGE, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_AREA_TEMP_27), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_AREA_TEMP_28), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_AREA_TEMP_27), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_AREA_TEMP_28), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_A, FLAG_AREA_TEMP_27, EVENT(TrialRoad_BlowAwayWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_B, FLAG_AREA_TEMP_28, EVENT(TrialRoad_BlowAwayWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_A, FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A, EVENT(TrialRoad_BlowAwayWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_B, FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B, EVENT(TrialRoad_BlowAwayWeeds)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4785,11 +4789,14 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS,
      EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_WEST_VENT,
-     FLAG_AREA_TEMP_63, EVENT(TrialRoad_UncoverWestVent)},
+     FLAG_VENT_UNCOVERED_BASE + ACTOR_WEST_VENT,
+     EVENT(TrialRoad_UncoverWestVent)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
-     CELL_MIDDLE_VENT, FLAG_AREA_TEMP_64, EVENT(TrialRoad_UncoverMiddleVent)},
+     CELL_MIDDLE_VENT, FLAG_VENT_UNCOVERED_BASE + ACTOR_MIDDLE_VENT,
+     EVENT(TrialRoad_UncoverMiddleVent)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_EAST_VENT,
-     FLAG_AREA_TEMP_65, EVENT(TrialRoad_UncoverEastVent)},
+     FLAG_VENT_UNCOVERED_BASE + ACTOR_EAST_VENT,
+     EVENT(TrialRoad_UncoverEastVent)},
     {TRIGGER_TABLE_END},
 };
 

@@ -85,7 +85,7 @@
 extern s32 gTolbiShipMast_FollowCameraActions[];
 extern s32 gTolbiShipMast_LookoutActions[];
 extern s32 gTolbiShipMast_DriftActions[];
-extern s32 gTolbiShipMast_WaveActions[];
+extern s32 gActor_TrembleScript[];
 extern s32 gTolbiShipMast_BirdDepartureA[];
 extern s32 gTolbiShipMast_BirdDepartureB[];
 extern s32 gTolbiShipMast_BirdDepartureC[];
@@ -746,7 +746,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(20);
-  Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
+  Actor_SetScript(ACTOR_LOOKOUT, gActor_TrembleScript);
   Event_Wait(80);
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
@@ -909,23 +909,7 @@ s32 gTolbiShipMast_DriftActions[] = {
     SC_CALL(TolbiShipMast_DriftBird),
 };
 
-s32 gTolbiShipMast_WaveActions[] = {
-    SC_SET(SW_SCALE_X, FIXED_ONE),
-    SC_SET(SW_SCALE_Y, FIXED_ONE),
-    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+#include "shared/tremble_script.c"
 
 s32 gTolbiShipMast_BirdDepartureA[] = {
     SC_MOVE(72, 0, 216),

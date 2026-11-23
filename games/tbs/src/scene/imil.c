@@ -1670,23 +1670,7 @@ s16 gImil_SlideHeadings[] = {
     FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
 };
 
-s32 gImil_FreezingYoungManScript[] = {
-    SC_SET(SW_SCALE_X, FIXED_ONE),
-    SC_SET(SW_SCALE_Y, FIXED_ONE),
-    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+#include "shared/tremble_script.c"
 
 /// A sick person shivers (Imil_UpdateShiver) for as long as it runs.
 s32 gImil_ShiverScript[] = {
@@ -1843,7 +1827,7 @@ u32 gImil_Exits[] = {
 };
 
 struct ActorPlacement gImil_TownActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gImil_FreezingYoungManScript,
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, (s32)gActor_TrembleScript,
         99, 0, 234, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         376, 0, 408, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),

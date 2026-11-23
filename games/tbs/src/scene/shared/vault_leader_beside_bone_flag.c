@@ -8,7 +8,7 @@
 #define FLAG_VAULT_LEADER_BESIDE_BONE FLAG_SCENE_TEMP_50
 
 /// Keeps the girl at the inn from offering another Bone too soon.
-static void Vault_UpdateBoneProximityFlag(void) {
+static void Vault_UpdateLeaderBesideBoneFlag(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   FIXED fixedX = leader->x.fixed;
   s32 column;

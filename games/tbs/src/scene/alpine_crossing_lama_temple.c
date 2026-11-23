@@ -188,7 +188,7 @@ enum { TREASURE_SPOT_WATER_OF_LIFE = CELL_BEHAVIOR_LAMA_TEMPLE_CHEST };
 
 /// Draws the actor behind the background, on sprite priority 3 with automatic
 /// priority off.
-static s32 Actor_DrawBehindScenery(struct Actor *actor) {
+static s32 Actor_DrawBehindBackground(struct Actor *actor) {
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->sprite->image.priority = 3;
   actor->sprite->shadow.priority = 3;
@@ -1035,7 +1035,7 @@ s32 Scene_Initialize(void) {
 
 /// The first worker's actor placement script: he is drawn behind the scenery.
 s32 gAlpineCrossing_WorkerActorPlacementScript[] = {
-    SC_CALL(Actor_DrawBehindScenery),
+    SC_CALL(Actor_DrawBehindBackground),
     SC_END,
 };
 

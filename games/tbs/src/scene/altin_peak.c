@@ -56,7 +56,7 @@
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there. A beast is
 /// SPRITE_WATER_BEAST drawn with its green and blue swapped (SPRITE_COLOR_RBG),
-/// and its spray is SPRITE_DUST_PUFF recoloured, as in Altin. The falling
+/// and its spit is SPRITE_DUST_PUFF recoloured, as in Altin. The falling
 /// boulder is SPRITE_ROCK with a SPRITE_BLANK_LARGE actor for its shadow, and
 /// its pieces in the crash are SPRITE_ROCK again, scaled down
 /// (AltinPeak_SpawnDebris).
@@ -100,11 +100,11 @@
 
 /// The water's flicker timer.
 u16 gAltinPeak_FlickerTimer BSS_DATA;
-/// The spray's direction, FACING_EAST or FACING_WEST.
-s32 gAltinPeak_SprayDirection BSS_DATA;
-/// The spray's origin.
-s32 gAltinPeak_SprayOrigin[3] BSS_DATA;
-u8 gAltinPeak_UnusedAfterSprayOrigin[16] BSS_DATA;
+/// The spit's direction, FACING_EAST or FACING_WEST.
+s32 gAltinPeak_SpitDirection BSS_DATA;
+/// The spit's origin.
+s32 gAltinPeak_SpitOrigin[3] BSS_DATA;
+u8 gAltinPeak_UnusedAfterSpitOrigin[16] BSS_DATA;
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
 s16 gAltinPeak_PaletteHold BSS_DATA;
 /// The next byte of gAltinPeak_PaletteScript; 0 again at its -1.
@@ -1919,84 +1919,84 @@ static void AltinPeak_RestoreWestExitRoom(void) {
   }
 }
 
-/// Gives a new spray particle its look. It stands still, on sprite priority 1
+/// Gives a new drop of spit its look. It stands still, on sprite priority 1
 /// and at 0.3 scale.
-static void AltinPeak_InitializeSpray(struct Actor *spray) {
-  spray->motionFlags = 0;
-  spray->sprite->image.priority = 1;
-  Actor_SetSpriteColor(spray, SPRITE_COLOR_BGR);
-  Actor_SetSpriteFlags(spray, 0);
-  spray->scaleX = 3 * FIXED_ONE / 10;
-  spray->scaleY = 3 * FIXED_ONE / 10;
+static void AltinPeak_InitializeSpit(struct Actor *spit) {
+  spit->motionFlags = 0;
+  spit->sprite->image.priority = 1;
+  Actor_SetSpriteColor(spit, SPRITE_COLOR_BGR);
+  Actor_SetSpriteFlags(spit, 0);
+  spit->scaleX = 3 * FIXED_ONE / 10;
+  spit->scaleY = 3 * FIXED_ONE / 10;
 }
 
-/// Update routine of a spray particle.
-static void AltinPeak_DriftSpray(struct Actor *spray) {
-  switch (gAltinPeak_SprayDirection) {
+/// Update routine of a drop of spit.
+static void AltinPeak_DriftSpit(struct Actor *spit) {
+  switch (gAltinPeak_SpitDirection) {
   case FACING_EAST:
-    spray->x.fixed += spray->timer * (toFIXED(1) / 16) +
-                      ((s32)toFIXED(Random_Below(2) - 1) >> 1);
+    spit->x.fixed += spit->timer * (toFIXED(1) / 16) +
+                     ((s32)toFIXED(Random_Below(2) - 1) >> 1);
     break;
   case FACING_WEST:
-    spray->x.fixed -= spray->timer * (toFIXED(1) / 16) +
-                      ((s32)toFIXED(Random_Below(2) - 1) >> 1);
+    spit->x.fixed -= spit->timer * (toFIXED(1) / 16) +
+                     ((s32)toFIXED(Random_Below(2) - 1) >> 1);
     break;
   }
-  if (spray->timer <= 3) {
-    switch (gAltinPeak_SprayDirection) {
+  if (spit->timer <= 3) {
+    switch (gAltinPeak_SpitDirection) {
     case FACING_EAST:
-      spray->x.fixed += toFIXED(1) / 2;
+      spit->x.fixed += toFIXED(1) / 2;
       break;
     case FACING_WEST:
-      spray->x.fixed -= toFIXED(1) / 2;
+      spit->x.fixed -= toFIXED(1) / 2;
       break;
     }
-    spray->scaleX += FIXED_ONE / 10;
-    spray->scaleY -= FIXED_ONE / 20;
+    spit->scaleX += FIXED_ONE / 10;
+    spit->scaleY -= FIXED_ONE / 20;
   } else {
-    spray->z.fixed += toFIXED(6) / 5;
-    spray->scaleX += 3 * FIXED_ONE / 100;
-    spray->scaleY += 3 * FIXED_ONE / 100;
+    spit->z.fixed += toFIXED(6) / 5;
+    spit->scaleX += 3 * FIXED_ONE / 100;
+    spit->scaleY += 3 * FIXED_ONE / 100;
   }
-  if (Random_Below(spray->timer) == 0)
-    Actor_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
-  if (spray->timer != 0)
-    spray->timer -= 2;
+  if (Random_Below(spit->timer) == 0)
+    Actor_SetSpriteColor(spit, SPRITE_COLOR_WHITE);
+  if (spit->timer != 0)
+    spit->timer -= 2;
   else
-    spray->timer = (Random_Below(5)) * 2 + 2;
-  if (--((struct FieldEffect *)spray)->countdown == 0)
-    Actor_Release(spray);
+    spit->timer = (Random_Below(5)) * 2 + 2;
+  if (--((struct FieldEffect *)spit)->countdown == 0)
+    Actor_Release(spit);
 }
 
-/// Task while a beast spits. Every fourth frame a spray particle starts from
+/// Task while a beast spits. Every fourth frame a drop of spit starts from
 /// its spout, living 20 frames.
-static void AltinPeak_SpawnSpray(void) {
-  struct Actor *spray;
+static void AltinPeak_SpawnSpit(void) {
+  struct Actor *spit;
 
   if ((gFrameCount & 3) != 0)
     return;
-  spray = (struct Actor *)Actor_Create(
-      SPRITE_DUST_PUFF, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
-      gAltinPeak_SprayOrigin[2]);
-  if (spray == NULL)
+  spit = (struct Actor *)Actor_Create(
+      SPRITE_DUST_PUFF, gAltinPeak_SpitOrigin[0], gAltinPeak_SpitOrigin[1],
+      gAltinPeak_SpitOrigin[2]);
+  if (spit == NULL)
     return;
-  spray->timer = 30;
-  spray->userValue = 1;
-  ((struct FieldEffect *)spray)->countdown = 20;
-  AltinPeak_InitializeSpray(spray);
-  ((struct FieldEffect *)spray)->update = AltinPeak_DriftSpray;
-  Actor_SelectAnimation(spray, 1);
+  spit->timer = 30;
+  spit->userValue = 1;
+  ((struct FieldEffect *)spit)->countdown = 20;
+  AltinPeak_InitializeSpit(spit);
+  ((struct FieldEffect *)spit)->update = AltinPeak_DriftSpit;
+  Actor_SelectAnimation(spit, 1);
 }
 
 /// A water beast starts spitting water from (x, y, z), in 16.16 fixed point,
 /// toward facing (FACING_EAST or FACING_WEST), with its sound
 /// (SE_AMBIENT_WATER).
 static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing) {
-  SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
-  gAltinPeak_SprayDirection = facing;
+  SET_VECTOR(gAltinPeak_SpitOrigin, x, y, z);
+  gAltinPeak_SpitDirection = facing;
 
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  Task_AddFrame(AltinPeak_SpawnSpray, TASK_PASS_FRAME);
+  Task_AddFrame(AltinPeak_SpawnSpit, TASK_PASS_FRAME);
 }
 
 /// Task while the boulder crashes.

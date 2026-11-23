@@ -102,7 +102,7 @@
 /// FLAG_BILIBIN_JILL_RESCUED keeps her there.
 ///
 /// While whoever the player controls wades in the river,
-/// Bilibin_UpdateWadingRipples spreads a ripple from their feet every 30
+/// Bilibin_UpdateRiverRipples spreads a ripple from their feet every 30
 /// frames.
 ///
 /// Once the curse is lifted the trees are gone, and the Gang of Three are
@@ -183,7 +183,7 @@ static void Bilibin_RestoreRiverActors(void);
 /// made ground that pushes the crate, and the crate's own cell is walled off.
 static void Bilibin_UpdateCratesCells(void);
 static void Bilibin_SetUpTreasury(void);
-static void Bilibin_UpdateWadingRipples(void);
+static void Bilibin_UpdateRiverRipples(void);
 static void Bilibin_SpawnRipple(struct Actor *actor);
 /// Move on the golden statue in the Treasury slides it up or down the walkway
 /// between the two pools, where Gust waits on the ledge to the east.
@@ -689,7 +689,7 @@ s32 Scene_Initialize(void) {
     Bilibin_RestoreVillageActors();
   } else if (gMainRoutineWork.next == SCENE_BILIBIN_BARRICADE) {
     Bilibin_RestoreRiverActors();
-    Task_AddFrame(Bilibin_UpdateWadingRipples, TASK_PASS_FRAME);
+    Task_AddFrame(Bilibin_UpdateRiverRipples, TASK_PASS_FRAME);
   } else if (gMainRoutineWork.next == SCENE_BILIBIN_TREASURY) {
     Bilibin_SetUpTreasury();
   }
@@ -944,7 +944,7 @@ static void Bilibin_PushStatueOrCrates(void) {
 
 /// While Isaac wades in the river at the Bilibin Barricade, west of the fallen
 /// tree, a ripple spreads from his feet every 30 frames. It runs every frame.
-static void Bilibin_UpdateWadingRipples(void) {
+static void Bilibin_UpdateRiverRipples(void) {
   struct Actor *actor;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);

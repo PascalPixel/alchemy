@@ -103,7 +103,7 @@ enum {
   /// is left.
   FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
-  FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
+  FLAG_GUARD_ASKED_WHERE_YOU_WERE = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
   /// has not yet entered the palace.
   /// The grounds are in another area than Bilibin, so entering them clears it
@@ -221,7 +221,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
   // Once admitted, the party only receives the guard's current reminder.
   if (Event_GetFlag(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     if (GameFlag_Get(FLAG_KEEPING_MCCOY_WAITING) != 0) {
-      if (Event_GetFlag(FLAG_GUARD_SCOLDED) == 0) {
+      if (Event_GetFlag(FLAG_GUARD_ASKED_WHERE_YOU_WERE) == 0) {
         Event_SetMessageId(MsgBilibinWhere);
         // "Where were you?"
         Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
@@ -229,7 +229,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
         // "Lord McCoy is angry because he couldn't find you."
         Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
         Actor_RunRepeatedMotion(ACTOR_EAST_GUARD, 2);
-        GameFlag_Set(FLAG_GUARD_SCOLDED);
+        GameFlag_Set(FLAG_GUARD_ASKED_WHERE_YOU_WERE);
       }
       Event_SetMessageId(MsgBilibinMasterQuiteCranky);
       // "The master can be quite cranky. Hurry along, now!"

@@ -64,12 +64,12 @@ extern struct SceneEntrance gTimberRoomsAEntrances[];
 extern struct SceneExitRegion gTimberRoomsARegions[];
 extern u32 gTimberRoomsAExits[];
 extern struct ActorPlacement gTimberRoomsAActorPlacements[];
-extern struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[];
+extern struct ActorPlacement gTimberRoomsAActorPlacementsAfterColosso[];
 extern struct Trigger gTimberRoomsATriggers[];
-extern struct Trigger gTimberRoomsATriggersAfterAudience[];
+extern struct Trigger gTimberRoomsATriggersAfterColosso[];
 
 /// The actors, numbering the rows of gTimberRoomsAActorPlacements and of
-/// gTimberRoomsAActorPlacementsAfterAudience from ACTOR_FIRST_PLACED.
+/// gTimberRoomsAActorPlacementsAfterColosso from ACTOR_FIRST_PLACED.
 ///
 /// The two tables agree up to ACTOR_HEALER. Where an actor's talk changes
 /// after Babi's audience, the note quotes it before.
@@ -157,7 +157,7 @@ const u32 *Scene_GetExits(void) { return gTimberRoomsAExits; }
 /// soldiers and the travelers the sandstorms brought.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-    return gTimberRoomsAActorPlacementsAfterAudience;
+    return gTimberRoomsAActorPlacementsAfterColosso;
   }
   return gTimberRoomsAActorPlacements;
 }
@@ -564,7 +564,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
 /// Suhalla Sanctum, before or after Babi's audience.
 const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
-    return gTimberRoomsATriggersAfterAudience;
+    return gTimberRoomsATriggersAfterColosso;
   }
   return gTimberRoomsATriggers;
 }
@@ -676,7 +676,7 @@ struct ActorPlacement gTimberRoomsAActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[] = {
+struct ActorPlacement gTimberRoomsAActorPlacementsAfterColosso[] = {
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         400, 0, 184, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -741,7 +741,7 @@ struct Trigger gTimberRoomsATriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-struct Trigger gTimberRoomsATriggersAfterAudience[] = {
+struct Trigger gTimberRoomsATriggersAfterColosso[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_TIMBER_ROOMS_A_BEFORE_WOUNDED, FLAG_IODEM_MET_WOUNDED_SOLDIERS, EVENT(TimberRoomsA_IodemQuestionsWoundedSoldiers) },
     { TRIGGER_STEP, TIMBER_ROOMS_A_INN_TO_SUHALLA, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_STEP, TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },

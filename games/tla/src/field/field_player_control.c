@@ -408,7 +408,7 @@ s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
 /// step; mode is the map's kind of wading, and kind 2 takes another picture.
 void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
   struct Actor *created;
-  struct Child *sprite;
+  struct SpriteLayerView *sprite;
 
   created = Actor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
                          actor->y.fixed + toFIXED(4), actor->z.fixed);
@@ -416,7 +416,7 @@ void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
   if (!(actor->userValue & 1))
     Sound_PlayFar(SE_WADE);
   if (created != NULL) {
-    struct Child *child = created->sprite;
+    struct SpriteLayerView *child = created->sprite;
 
     created->groundHeight = actor->groundHeight;
     Actor_StartScript(created, gActor_SplashScript);

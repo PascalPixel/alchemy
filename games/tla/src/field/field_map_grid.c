@@ -134,7 +134,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
 /// routine copied to RAM, which reads the byte planes from a copy.
 void TileMap_ConvertBuffer(void) {
   u8 *saved;
-  ConvertFn routine;
+  ConvertMapRoutine routine;
   u32 size;
 
   size = MAPGRID_BYTE_PLANES_BYTES;

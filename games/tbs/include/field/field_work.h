@@ -39,8 +39,8 @@ STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_TRIGGER_PARTY_FELL = -1,
-  /// R on the world map: the picture of the whole world (WorldPicture_Show).
-  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
+  /// R on the world map: the map screen (MapScreen_Show).
+  FIELD_RAISED_TRIGGER_MAP_SCREEN = -888,
   /// L on the world map: the view zooms out while L is held
   /// (WorldMap_ZoomOutWhileLHeld).
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889

@@ -426,7 +426,7 @@ s32 Party_ApplyPoisonDamage(void) {
 }
 
 /// Before an event or menu on the World Map: ends any screen transition in
-/// progress, stops the camera and holds the view as a still picture.
+/// progress, stops the camera and holds the view as a still image.
 void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
@@ -442,7 +442,7 @@ void WorldMap_Freeze(void) {
       state->step = 0;
     }
     work->camera->paused = 1;
-    WorldMap_StartStillPictureFar();
+    WorldMap_StartStillImageFar();
   }
 }
 

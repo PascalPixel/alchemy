@@ -107,9 +107,9 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_NUT);
   }
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 2);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(GLADE_CURSE_DIVISOR);
   }

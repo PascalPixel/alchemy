@@ -2056,9 +2056,9 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
 
 /// Walls off the cells the three fallen columns stand on.
 static inline void AltmillerCave_BlockFallenColumnCells(void) {
-  Scene_RedrawActorFootprint(ACTOR_FIRST_FALLEN_COLUMN);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_FALLEN_COLUMN + 1);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_FALLEN_COLUMN + 2);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_FALLEN_COLUMN);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_FALLEN_COLUMN + 1);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_FALLEN_COLUMN + 2);
 }
 
 /// Sets up the room being entered: darkness, the ice pillar in Squall's hall

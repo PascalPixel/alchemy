@@ -36,7 +36,7 @@ s32 Leader_StepOffTightrope(void);
 /// The hazard count's limit each scene starts with, in steps on hazard cells:
 /// the hazard deals its damage each time the count reaches it.
 #define HAZARD_LIMIT_DEFAULT 16
-/// A Teleport destination's World Picture marker (FlagEntry.value's high
+/// A Teleport destination's map screen marker (FlagEntry.value's high
 /// nibble): 1 for a place the party walks to; 2 for Lemuria's, which it
 /// reaches aboard the ship.
 #define PLACE_MARKER_ON_FOOT (1 << 4)
@@ -319,13 +319,13 @@ s32 FieldSequence_Run(void) {
           WorldMap_ReloadPendingAreaGraphics();
         } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_TELEPORT) {
           Leader_StopMoving();
-          WorldPicture_Show(1);
+          MapScreen_Show(1);
           if (gMainRoutineWork.teleportScene != -1)
             gMainRoutineWork.teleportState = TELEPORT_CHOSEN;
-        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
           Leader_StopMoving();
           value = 0;
-          while (WorldPicture_Show(value))
+          while (MapScreen_Show(value))
             value ^= 1;
         } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
           Leader_StopMoving();

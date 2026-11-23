@@ -63,8 +63,8 @@ extern struct Trigger gBattleArenaTriggers[];
 /// The opponent has asked for a battle: its signature matches, and it stands
 /// asked or in the circle.
 #define FLAG_BATTLE_ARENA_OPPONENT_ASKED FLAG_SCENE_TEMP_01
-/// The player has agreed to a battle.
-#define FLAG_BATTLE_ARENA_AGREED_TO_BATTLE FLAG_SCENE_TEMP_02
+/// The player has applied for a battle ("Would you like to apply?").
+#define FLAG_BATTLE_ARENA_PLAYER_APPLIED FLAG_SCENE_TEMP_02
 /// The party is on its way into the battle.
 #define FLAG_BATTLE_ARENA_ENTERING_BATTLE FLAG_SCENE_TEMP_03
 /// ACTOR_PARTY_ORDER_VISITOR has given the linked finals' limit of three
@@ -390,7 +390,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
           (BattleArena_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
            BattleArena_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         GameFlag_Set(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-        if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
+        if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED)) {
           work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
         }
         result = 1;
@@ -400,7 +400,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
       }
     }
     if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED) &&
-        GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE) &&
+        GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED) &&
         !GameFlag_Get(FLAG_BATTLE_ARENA_ATTENDANT_ASKED)) {
       work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
     }
@@ -408,14 +408,14 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
   // LOBBY_PEER_WAIT_FRAMES frames without a link while a linked battle is being
   // arranged: report the link lost.
   if ((Event_GetFlag(FLAG_BATTLE_ARENA_OPPONENT_ASKED) ||
-       GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) &&
+       GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED)) &&
       !GameFlag_Get(FLAG_MONSTER_BATTLE) &&
       !BattleArena_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       sBattleArenaWaitFrames >= LOBBY_PEER_WAIT_FRAMES) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-    GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+    GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
     BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED)) {
@@ -428,13 +428,13 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
 /// LOBBY_ASK_AGAIN_CALLS. It is cleared on every arrival.
 u32 gBattleArenaCallFrames;
 
-/// Once both linked players have agreed to a battle, the attendant behind the
+/// Once both linked players have applied for a battle, the attendant behind the
 /// west counter calls out "If you want to participate, please step into the
 /// circle!", and calls it again now and then while the player keeps her
 /// waiting.
 ///
 /// `BattleArena_WatchOpponent` raises it (LOBBY_EVENT_ASK_TO_PARTICIPATE) while
-/// both have agreed, and every LOBBY_ASK_AGAIN_CALLS calls the flag that keeps
+/// both have applied, and every LOBBY_ASK_AGAIN_CALLS calls the flag that keeps
 /// her quiet is cleared.
 ///
 /// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
@@ -882,7 +882,7 @@ static s32 BattleArena_EnterBattle(void) {
         work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-        GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
         BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
@@ -941,7 +941,7 @@ static s32 BattleArena_EnterBattle(void) {
         Task_AddFrame((TaskFunc)BattleArena_WatchOpponent, TASK_PASS_FRAME);
         Task_SetFlags((TaskFunc)BattleArena_WatchOpponent, 1);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
-        GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+        GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
@@ -1026,7 +1026,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         GameFlag_Set(FLAG_MONSTER_BATTLE);
         GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
         GameFlag_Clear(FLAG_LINK_BATTLE);
-        GameFlag_Set(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+        GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
         messageId = messageBase + 7;
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -1047,10 +1047,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
       Event_SetMessageId(MsgLobbyOpponentArrived);
       // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
-      GameFlag_Clear(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+      GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
-    if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
+    if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED)) {
       messageId = messageBase + 3;
       /* The first branch's answers jump into this block's message tail, and an
        * accepted challenge back into its opening: the listing keeps one copy of
@@ -1086,7 +1086,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
             Event_SetMessageId(messageBase + 4);
           }
           BattleArena_WriteSlotValue(LOBBY_SLOT_ASKED);
-          GameFlag_Set(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+          GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
           goto open_message;
         } else {
           GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);

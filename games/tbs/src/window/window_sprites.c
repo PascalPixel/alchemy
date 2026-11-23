@@ -84,7 +84,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     windowSprite = WindowSprite_AcquireFree();
     if (windowSprite == NULL)
       return 0;
-    // The sprite's own four tiles of the glyph sheet.
+    // The sprite's own four of the glyph tiles.
     index = (windowSprite - work->sprites) * 4;
     windowSprite->motion = WINDOW_SPRITE_MOTION_STILL;
     windowSprite->kind = WINDOW_SPRITE_GLYPH;

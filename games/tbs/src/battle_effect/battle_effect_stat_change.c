@@ -77,7 +77,7 @@ enum StatBoostSheet {
 /// When the first target's flares burst and its sprite appears, with the
 /// damage; each later target follows STAT_BOOST_TARGET_DELAY frames behind.
 #define STAT_BOOST_BURST_FRAME 52
-#define STAT_BOOST_PICTURE_FRAME 80
+#define STAT_BOOST_SPRITE_FRAME 80
 #define STAT_BOOST_TARGET_DELAY 8
 
 /// The particles both kinds of stat change set out: the first half of the pool.
@@ -220,11 +220,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * STAT_BOOST_TARGET_DELAY +
-                               STAT_BOOST_PICTURE_FRAME + 28;
+                               STAT_BOOST_SPRITE_FRAME + 28;
        frame++) {
     struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 
-    if (frame == STAT_BOOST_PICTURE_FRAME)
+    if (frame == STAT_BOOST_SPRITE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
 
     // The prelude's Djinni sways, and from frame 32 rises two pixels a frame;
@@ -257,7 +257,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       s32 height =
           BattleUnit_GetEffectHeightFar(work->args->targets[member]) * 2 / 3;
 
-      if (frame == member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME)
+      if (frame == member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME)
         Sound_PlayFar(SE_POWER_UP);
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
@@ -337,11 +337,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       if (mode == STAT_BOOST_IMPACT) {
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 28) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        28) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         4 % 7;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
@@ -355,11 +355,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 24) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        24) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
@@ -374,11 +374,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       } else if (mode == STAT_BOOST_ZEPHYR) {
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 24) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        24) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         2 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_LIGHTEN);
@@ -399,11 +399,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       } else {
         if (frame >=
-                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * STAT_BOOST_TARGET_DELAY +
-                        STAT_BOOST_PICTURE_FRAME + 24) {
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_FRAME +
+                        24) {
           s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
-                         STAT_BOOST_PICTURE_FRAME) /
+                         STAT_BOOST_SPRITE_FRAME) /
                         4 % 6;
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
@@ -633,7 +633,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 }
 
 #undef STAT_BOOST_BURST_FRAME
-#undef STAT_BOOST_PICTURE_FRAME
+#undef STAT_BOOST_SPRITE_FRAME
 #undef STAT_BOOST_TARGET_DELAY
 #undef STAT_CHANGE_PARTICLES
 #undef STAT_BOOST_TARGET_PARTICLES

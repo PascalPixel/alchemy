@@ -290,7 +290,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       EFFECT_PRESENT_CANVAS(work);
     } while (limit < CANVAS_SIZE + PARTICLE_STREAMS_RAGGED_EDGE);
   }
-  // The fall, drawn on the battle background's picture (BG1, over the
+  // The fall, drawn on the battle background's image (BG1, over the
   // starfield), which darkens a little each frame to leave trails.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;

@@ -1,15 +1,15 @@
 /// @file
 /// The tables of staged_actor.c, which every scene with pushed things holds:
-/// the cell ahead for each of sixteen headings, and the six footprints.
+/// the cell ahead for each of sixteen headings, and the six rectangles.
 
 #include "pushed_actor_direction_steps.c"
 
-u32 gPushedActor_FootprintKinds[] PUSHED_ACTOR_TABLE_SECTION = {
+u32 gPushedActor_RectangleKinds[] PUSHED_ACTOR_TABLE_SECTION = {
     207, 205, 228, 229, 298, 297,
 };
 
 // clang-format off
-s32 gPushedActor_FootprintBounds[] PUSHED_ACTOR_TABLE_SECTION = {
+s32 gPushedActor_Rectangles[] PUSHED_ACTOR_TABLE_SECTION = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,

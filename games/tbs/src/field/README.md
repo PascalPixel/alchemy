@@ -198,11 +198,12 @@ The game gives each of the 160 lines its own: lines near the bottom show a
 short strip of ground drawn large, lines near the top a long strip squeezed
 small. Stack them and the map leans away.
 
-### The world picture
+### The map screen
 
-R on the World Map shows a picture of the whole world with a dot on each
-area visited. The dots need no table: arriving in an area marks it, and its
-dot is that area's position on the real map, scaled down.
+R on the World Map opens the map screen, a map of the whole world with a
+dot on each area visited. The dots need no table: arriving in an area
+marks it, and its dot is that area's position on the real map, scaled
+down.
 
 ## Random battles
 

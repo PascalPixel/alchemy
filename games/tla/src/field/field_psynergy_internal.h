@@ -7,8 +7,8 @@
 /// too.
 
 // world_map.h first: battle.h names struct WorldMapWork, and a struct declared
-// before its definition keeps a smaller alignment, which world_picture.c's
-// copies of it show.
+// before its definition keeps a smaller alignment, which
+// field_psynergy_map_screen.c's copies of it show.
 #include "field/world_map.h"
 #include "window/message_argument.h"
 #include "field/perspective.h"
@@ -134,7 +134,7 @@ struct CycloneWork {
 /// The fist or hand at priority 1, not sorted by depth.
 #define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
 
-/// The World Map screen's marker tiles (WorldPicture_Initialize draws them).
+/// The map screen's marker tiles (MapScreen_Initialize draws them).
 enum WorldMarkerTile {
   WORLD_MARKER_TILE_PARTY = 0, ///< where the party is
   WORLD_MARKER_TILE_SHIP = 2,

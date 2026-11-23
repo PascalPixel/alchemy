@@ -6,7 +6,7 @@ void PushTarget_Push(struct PushTarget target) {
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
   FIXED from[3];
-  s32 footprint;
+  s32 rectangle;
   s32 width;
   s32 height;
   s32 originX;
@@ -24,18 +24,18 @@ void PushTarget_Push(struct PushTarget target) {
 #else
   direction = FIXEDtoINT(leader->facing);
 #endif
-  footprint = target.footprint;
+  rectangle = target.rectangle;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
   from[0] = actor->x.fixed;
   from[2] = actor->z.fixed;
-  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
-  width = (ABS(gPushFootprints[footprint][0]) +
-           ABS(gPushFootprints[footprint][2])) >>
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushRectangles[rectangle][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushRectangles[rectangle][1]));
+  width = (ABS(gPushRectangles[rectangle][0]) +
+           ABS(gPushRectangles[rectangle][2])) >>
           4;
-  height = (ABS(gPushFootprints[footprint][1]) +
-            ABS(gPushFootprints[footprint][3])) >>
+  height = (ABS(gPushRectangles[rectangle][1]) +
+            ABS(gPushRectangles[rectangle][3])) >>
            4;
   PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
@@ -89,8 +89,8 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
                                        target.z);
   Actor_SelectAnimation(actor, 1);
-  target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
-  target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
+  target.x = target.x + toFIXED(gPushRectangles[rectangle][0]);
+  target.z = target.z + toFIXED(gPushRectangles[rectangle][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = FIELD_CELL(map->layers[1].offsetX);
@@ -101,8 +101,8 @@ void PushTarget_Push(struct PushTarget target) {
                                          CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
                                          CELL_BEHAVIOR_WALL);
-  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushRectangles[rectangle][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushRectangles[rectangle][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

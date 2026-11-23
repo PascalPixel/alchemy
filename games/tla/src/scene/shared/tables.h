@@ -13,8 +13,8 @@
 /// A PUSH_STEP's z, in pixels.
 #define PUSH_STEP_Z(step) ((s16)(step))
 
-/// The kinds of thing the leader can push, each with its footprint: the rows
-/// of a scene's gPushKinds and gPushFootprints, a log, a pipe and a fallen
+/// The kinds of thing the leader can push, each with its rectangle: the rows
+/// of a scene's gPushKinds and gPushRectangles, a log, a pipe and a fallen
 /// column, each lying west to east and north to south.
 #define PUSH_KINDS 6
 

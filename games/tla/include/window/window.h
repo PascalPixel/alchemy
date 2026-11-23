@@ -57,7 +57,7 @@ struct WindowWork {
   u16 textBufferEnd;     ///< where the next code goes in textBuffer
   u16 lastMessageStart;  ///< where the last decoded message began in textBuffer
   u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
+  u16 glyphTiles;        ///< first of the glyph tiles (cache entry 95)
   u32 argumentValues[8]; ///< message argument values (MessageArgument_Push)
   u16 argumentKinds[8];  ///< the MESSAGE_ARGUMENT_ kind of each; 0 when free
   u16 portraitPictures[2]; ///< picture shown in each portrait slot; 999 when
@@ -123,7 +123,7 @@ enum MessageDecodeFlag {
 /// WindowSprite.kind: what a window sprite owns besides itself, which
 /// WindowSprite_Release frees.
 enum WindowSpriteKind {
-  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph of the window's glyph sheet
+  WINDOW_SPRITE_GLYPH = 0,   ///< a glyph in the window's glyph tiles
   WINDOW_SPRITE_ICON = 1,    ///< its own VRAM cache entry
   WINDOW_SPRITE_PORTRAIT = 2 ///< a VRAM cache entry and a palette slot
 };

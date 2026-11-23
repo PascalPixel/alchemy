@@ -30,9 +30,9 @@ void Map_ApplySetFlagEditsFar(void);
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
 /// frame first in mode 9.
 void Actor_StartRenderModeScriptFar(void);
-/// Freezes the world map's perspective view as a still picture on BG1.
-void WorldMap_StartStillPictureFar();
-/// Reloads the world map area's palette and tiles after the still picture, puts
+/// Freezes the world map's perspective view as a still image on BG1.
+void WorldMap_StartStillImageFar();
+/// Reloads the world map area's palette and tiles after the still image, puts
 /// the default cells back and returns to the perspective view.
 void WorldMap_LoadAreaGraphicsFar(void);
 

@@ -5,8 +5,8 @@
 	.global FarCall_CreditsTable
 FarCall_CreditsTable:
 	export Credits_RunFar, Credits_Run
-	export EndingPicture_StartFar, EndingPicture_Start
-	export EndingPicture_ShowFar, EndingPicture_Show
+	export EndingImage_StartFar, EndingImage_Start
+	export EndingImage_ShowFar, EndingImage_Show
 	export SceneState_SetScrollTargetFar, SceneState_SetScrollTarget
-	export EndingPicture_WaitForScrollFar, EndingPicture_WaitForScroll
-	export EndingPicture_LowerTopStripFar, EndingPicture_LowerTopStrip
+	export EndingImage_WaitForScrollFar, EndingImage_WaitForScroll
+	export EndingImage_LowerTopStripFar, EndingImage_LowerTopStrip

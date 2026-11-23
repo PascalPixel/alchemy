@@ -10,7 +10,7 @@
 @ Why Read is assembly: shared decoder commands reuse live r0/r2/r3, change
 @ unsaved r5 and use fp as a mask. ldr pc jumps into those commands, below
 @ in this file. It is a two-instruction fragment of that decoder, with
-@ no prologue and no return of its own, and its tell is the computed pc into
+@ no entry code and no return of its own, and its tell is the computed pc into
 @ code. and ip, r3, #7 / ldr pc, [pc, ip, lsl #2] is unconditional and has
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop.
@@ -21,35 +21,35 @@
 	.section .rodata,"a",%progbits
 	.arm
 	.4byte	0x80808080
-	.4byte	EndingPicture_DecodeCaseTable
+	.4byte	EndingImage_DecodeCaseTable
 .text
 	.arm
-	.global EndingPicture_DecodeRead
-EndingPicture_DecodeRead:
+	.global EndingImage_DecodeRead
+EndingImage_DecodeRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
-AlchemyUncredited_ending_picture_read:
+AlchemyUncredited_ending_image_read:
 	nop
-AlchemyUncreditedEnd_ending_picture_read:
+AlchemyUncreditedEnd_ending_image_read:
 	.section .data,"aw",%progbits
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-	.global EndingPicture_DecodeCaseTable
-EndingPicture_DecodeCaseTable:
-	.4byte	EndingPicture_DecodeCase2
-	.4byte	EndingPicture_DecodeCase4Plus
-	.4byte	EndingPicture_DecodeCase8
-	.4byte	EndingPicture_DecodeCase6Plus
-	.4byte	EndingPicture_DecodeCase2
-	.4byte	EndingPicture_DecodeCase4Minus
-	.4byte	EndingPicture_DecodeCase10
-	.4byte	EndingPicture_DecodeCase6Minus
-	.section .text.ending_picture_expand_commands,"ax",%progbits
+	.global EndingImage_DecodeCaseTable
+EndingImage_DecodeCaseTable:
+	.4byte	EndingImage_DecodeCase2
+	.4byte	EndingImage_DecodeCase4Plus
+	.4byte	EndingImage_DecodeCase8
+	.4byte	EndingImage_DecodeCase6Plus
+	.4byte	EndingImage_DecodeCase2
+	.4byte	EndingImage_DecodeCase4Minus
+	.4byte	EndingImage_DecodeCase10
+	.4byte	EndingImage_DecodeCase6Minus
+	.section .text.ending_image_expand_commands,"ax",%progbits
 	.arm
-	.global EndingPicture_DecodeCommands
-EndingPicture_DecodeCommands:
-	.global EndingPicture_DecodeCase2
-EndingPicture_DecodeCase2:
+	.global EndingImage_DecodeCommands
+EndingImage_DecodeCommands:
+	.global EndingImage_DecodeCase2
+EndingImage_DecodeCase2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -57,8 +57,8 @@ EndingPicture_DecodeCase2:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeCase4Plus
-EndingPicture_DecodeCase4Plus:
+	.global EndingImage_DecodeCase4Plus
+EndingImage_DecodeCase4Plus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -69,8 +69,8 @@ EndingPicture_DecodeCase4Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeCase4Minus
-EndingPicture_DecodeCase4Minus:
+	.global EndingImage_DecodeCase4Minus
+EndingImage_DecodeCase4Minus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -81,8 +81,8 @@ EndingPicture_DecodeCase4Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeCase6Plus
-EndingPicture_DecodeCase6Plus:
+	.global EndingImage_DecodeCase6Plus
+EndingImage_DecodeCase6Plus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -93,8 +93,8 @@ EndingPicture_DecodeCase6Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeCase6Minus
-EndingPicture_DecodeCase6Minus:
+	.global EndingImage_DecodeCase6Minus
+EndingImage_DecodeCase6Minus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -105,8 +105,8 @@ EndingPicture_DecodeCase6Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeCase8
-EndingPicture_DecodeCase8:
+	.global EndingImage_DecodeCase8
+EndingImage_DecodeCase8:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -119,8 +119,8 @@ EndingPicture_DecodeCase8:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeCase10
-EndingPicture_DecodeCase10:
+	.global EndingImage_DecodeCase10
+EndingImage_DecodeCase10:
 	ror	r5, r3, #10
 	and	r5, r5, #0xfe000000
 	lsr	r3, r3, #10
@@ -130,5 +130,5 @@ EndingPicture_DecodeCase10:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global EndingPicture_DecodeEnd
-EndingPicture_DecodeEnd:
+	.global EndingImage_DecodeEnd
+EndingImage_DecodeEnd:

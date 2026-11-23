@@ -115,7 +115,7 @@ s32 Scene_Initialize(void) {
 
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
+  Scene_RedrawActorRectangle(ACTOR_RIVER_LOG);
 
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -125,8 +125,8 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
   }
 
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(CLIFF_CURSE_DIVISOR);

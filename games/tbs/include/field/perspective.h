@@ -25,12 +25,12 @@ struct WorldMapView {
   FIXED scaleY;  ///< 64 in 16.16 at load
   FIXED limitX;  ///< 8160 in 16.16 at load
   FIXED limitY;  ///< 8160 in 16.16 at load
-  /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
+  /// Set by WorldMap_StartStillImage while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;
   u8 unused[3];
   /// Screen rows, 0 and 159 at load and 200 and 255 from
-  /// WorldMap_StartStillPicture; each frame copies them to shownTop and
+  /// WorldMap_StartStillImage; each frame copies them to shownTop and
   /// shownBottom and picks BG mode 2 or 0 from them.
   ///@{
   u16 windowTop;
@@ -74,8 +74,8 @@ STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionFrames) == 856);
 STATIC_ASSERT(offsetof(struct WorldMapView, zoomTransitionStep) == 858);
 
 /// The first tile, in BG1's character base, of the 30 by 20 tile picture of
-/// 256 colours that screen block 6 numbers: the still picture's
-/// (WorldMap_StartStillPicture), and the world picture's (WorldPicture_Show).
+/// 256 colours that screen block 6 numbers: the still image's
+/// (WorldMap_StartStillImage), and the map screen's (MapScreen_Show).
 #define WORLD_MAP_STILL_FIRST_TILE 424
 
 #endif

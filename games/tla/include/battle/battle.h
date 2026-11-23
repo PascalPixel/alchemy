@@ -129,7 +129,7 @@ extern const u8 gBattleEffect_UntargetedObjectScript[];
 extern const u8 gColorBuffer_DarkenOneLevelMap[32];
 extern const u8 gColorBuffer_DarkenTwoLevelsMap[32];
 extern const u8 gColorBuffer_DarkenFourLevelsMap[32];
-/// The world map screen's state while it is open.
+/// The map screen's state while it is open.
 extern struct WorldMapWork gWorldMapWork;
 struct ActionDescriptor;
 struct ActionDescriptor *Scene_FindActorPlacement(s32 id);

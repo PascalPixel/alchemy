@@ -10,7 +10,7 @@
 
 /// The world map's perspective view, in the map's heap slot: the followed
 /// position, screen shake, view position, window, pitch and yaw, a 32 by 32
-/// grid of tile ids and zoom, then the still picture's state and the region
+/// grid of tile ids and zoom, then the still image's state and the region
 /// tint.
 struct WorldMapView {
   s32 *origin;                    ///< the followed point, as in MapWork
@@ -28,12 +28,12 @@ struct WorldMapView {
   FIXED limitX;            ///< 16352 in 16.16 at load
   FIXED limitY;            ///< 16352 in 16.16 at load
   u8 unusedAfterLimitY[4]; ///< no code names it
-  /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
+  /// Set by WorldMap_StartStillImage while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;
   u8 unused[3];
   /// Screen rows, 0 and 159 at load and 200 and 255 from
-  /// WorldMap_StartStillPicture; each frame copies them to shownTop and
+  /// WorldMap_StartStillImage; each frame copies them to shownTop and
   /// shownBottom and picks BG mode 2 or 0 from them.
   ///@{
   u16 windowTop;
@@ -66,11 +66,11 @@ struct WorldMapView {
   u16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
   s16 zoomTransitionStep;   ///< frames of the transition done
   /// Set when a field Psynergy cast on the World Map has used the second half
-  /// of the BG tile buffer; the still picture then decodes it again.
+  /// of the BG tile buffer; the still image then decodes it again.
   s8 tileBufferUsed;
-  /// Set while BG1 shows the still picture: the view then only shakes BG1.
-  s8 stillPictureShown;
-  /// Set while the view is held for the still picture or the world picture:
+  /// Set while BG1 shows the still image: the view then only shakes BG1.
+  s8 stillImageShown;
+  /// Set while the view is held for the still image or the map screen:
   /// no tile is preloaded, and without a shake the frame does nothing.
   s8 viewHeld;
   s8 tintRegion; ///< the encounter region the tint was chosen for

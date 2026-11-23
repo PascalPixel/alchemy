@@ -3,8 +3,8 @@
 
 /// @file
 /// What the event commands share with the field and the scenes: the field
-/// Psynergy's casts and their works, the Djinn's join effects, the World
-/// Picture's state, and the encounter zones of the story's battles.
+/// Psynergy's casts and their works, the Djinn's join effects, the map
+/// screen's state, and the encounter zones of the story's battles.
 
 #include "types.h"
 #include "system/vector3.h"
@@ -190,15 +190,15 @@ void FieldPsynergy_EndSand(void);
 s32 Actor_GetCellIndex(struct Actor *actor);
 s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
-void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY);
+void MapScreen_GetLeaderPoint(s32 *screenX, s32 *screenY);
 
-/// Never set (EWRAM, zero from boot). Set, the world map picture would list
+/// Never set (EWRAM, zero from boot). Set, the map screen would list
 /// only the places before the first end of the place table, not the second list
 /// from entry 128 on, and show each place's second marker (the high nibble of
 /// its value).
 // XXX (no evidence): what the switch was for; no edition, debug room or other
 // code writes it, so the game never shows it set.
-extern s16 gWorldPicture_FirstListOnly;
+extern s16 gMapScreen_FirstListOnly;
 
 void FieldPsynergy_Lash(void);
 
@@ -373,19 +373,19 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 
 extern const u16 gWorldMap_CursorDirectionAngles[];
 
-/// Where the world picture's cursor glides to on its own, 16.16; 0 when it does
+/// Where the map screen's cursor glides to on its own, 16.16; 0 when it does
 /// not.
-extern s32 gWorldPicture_GlideTargetX;
-/// As gWorldPicture_GlideTargetX, the second coordinate.
-extern s32 gWorldPicture_GlideTargetY;
-/// Nonzero while the world picture is zoomed in.
-extern s16 gWorldPicture_Zoomed;
+extern s32 gMapScreen_GlideTargetX;
+/// As gMapScreen_GlideTargetX, the second coordinate.
+extern s32 gMapScreen_GlideTargetY;
+/// Nonzero while the map screen is zoomed in.
+extern s16 gMapScreen_Zoomed;
 /// Set while the place name waits to be drawn again.
-extern s16 gWorldPicture_NameRedrawPending[];
+extern s16 gMapScreen_NameRedrawPending[];
 /// Frames before the place name is drawn again.
-extern s16 gWorldPicture_NameRedrawDelay[];
-/// The world picture's cursor marker.
-extern struct WorldMapMarker gWorldPicture_CursorMarker;
+extern s16 gMapScreen_NameRedrawDelay[];
+/// The map screen's cursor marker.
+extern struct WorldMapMarker gMapScreen_CursorMarker;
 
 void FieldPsynergy_GreyMindReadPalette(void);
 

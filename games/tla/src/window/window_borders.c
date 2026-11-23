@@ -292,7 +292,7 @@ void WindowSystem_Update(void);
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
 
-  state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
+  state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
@@ -312,7 +312,7 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
 
   if (initialize != 0)
     state->glyphTiles =
-        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
+        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_TILES, 128 << 6, 0);
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;

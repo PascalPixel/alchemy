@@ -1,8 +1,8 @@
-/// Makes the cells under a pushable actor solid, by its footprint: its sprite
-/// picks one of the footprints in gPushFootprints, and the cells' own
+/// Makes the cells under a pushable actor solid, by its rectangle: its sprite
+/// picks one of the rectangles in gPushRectangles, and the cells' own
 /// behaviors are kept in the map's spare area for when it moves. Returns 1, or
 /// 0 for a sprite that cannot be pushed.
-s32 PushTarget_FillFootprint(s32 id) {
+s32 PushTarget_FillRectangle(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(id);
   s16 shape = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
@@ -26,10 +26,10 @@ s32 PushTarget_FillFootprint(s32 id) {
   j = (u16)i;
   if (j == PUSH_KINDS)
     return 0;
-  width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
-  height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
-  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
+  width = (ABS(gPushRectangles[j][0]) + ABS(gPushRectangles[j][2])) >> 4;
+  height = (ABS(gPushRectangles[j][1]) + ABS(gPushRectangles[j][3])) >> 4;
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushRectangles[j][0]));
+  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushRectangles[j][1]));
   mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX;
   mapZ = FIELD_CELL(map->layers[1].offsetY);

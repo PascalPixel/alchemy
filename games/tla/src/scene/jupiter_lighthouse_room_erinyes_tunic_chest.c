@@ -54,7 +54,7 @@ struct PushTarget {
   FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-  s32 footprint; ///< index into the footprint table
+  s32 rectangle; ///< index into the rectangle table
   s32 id;
   void *callback;
 };
@@ -102,7 +102,7 @@ void Field_TryJumpForward(void);
 void HangingVine_Place(s32 id, s32 a);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
 void Actor_DepartInRing(s32 id);
-s32 PushTarget_FillFootprint(s32 id);
+s32 PushTarget_FillRectangle(s32 id);
 s32 PushTarget_FindStop(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 
@@ -285,10 +285,10 @@ s32 Scene_PrepareMap(void) {
   Actor_DisableById(ACTOR_SECOND_COLUMN);
   Actor_DisableById(ACTOR_LEDGE_COLUMN);
   Actor_DisableById(ACTOR_FOURTH_COLUMN);
-  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN);
-  PushTarget_FillFootprint(ACTOR_SECOND_COLUMN);
-  PushTarget_FillFootprint(ACTOR_LEDGE_COLUMN);
-  PushTarget_FillFootprint(ACTOR_FOURTH_COLUMN);
+  PushTarget_FillRectangle(ACTOR_FIRST_COLUMN);
+  PushTarget_FillRectangle(ACTOR_SECOND_COLUMN);
+  PushTarget_FillRectangle(ACTOR_LEDGE_COLUMN);
+  PushTarget_FillRectangle(ACTOR_FOURTH_COLUMN);
   if (Event_GetFlag(FLAG_COLUMN_OFF_LEDGE)) {
     for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
       FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
@@ -345,9 +345,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern s8 gPushFootprints[][4];
+extern s8 gPushRectangles[][4];
 
-#include "shared/push_target_fill_footprint.h"
+#include "shared/push_target_fill_rectangle.h"
 
 #include "../field/map_cell_fill.c"
 

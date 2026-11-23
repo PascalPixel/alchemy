@@ -287,7 +287,7 @@ The VBlank handler is not held up. The console calls it at every VBlank
 whatever the code is doing, and it goes on reading the buttons, running its
 own tasks and preparing the sound. So a frame that takes two VBlanks is
 [slowdown](glossary.md#slowdown), with the music at its proper speed, and
-code that never waited would be a still picture with the tune playing on.
+code that never waited would be a still image with the tune playing on.
 
 [The frame loop](src/system/README.md#the-frame-loop) has a frame's order
 in full, and [The task runner](src/system/README.md#the-task-runner) says

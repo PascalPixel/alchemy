@@ -48,6 +48,18 @@ ends. Pages list places in that order.
 
 Evidence: Camelot: the area names in the game's text.
 
+### Prologue
+
+The prologue is the part of a new game played before the title comes up
+and the game with Felix begins. After the story crawl, headed `Prologue
+from Book One`, has told what happened in The Broken Seal, Jenna and
+Kraden come out of Venus Lighthouse, Alex sends them west, and they cross
+the Suhalla Gate on their way to Idejima. The title then plays its intro once more
+(`TITLE_FROM_IDEJIMA`) ([Scenes](src/scene/README.md)).
+
+Evidence: the game: "Prologue from Book One"; Camelot: The Broken Seal's
+debug scene label PLOGV00.
+
 ### Psynergy and PP
 
 ![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
@@ -133,8 +145,8 @@ Evidence: plain English; the project's own word.
 Each game was released in Japanese, English, German, Spanish, French and
 Italian, and each release is an edition (`tla-ja` to `tla-it`). The five
 other than the Japanese are the international editions. They differ in more
-than their text: when the cursor on the world picture reaches a new marker,
-the Japanese edition draws its name at once, and the others six
+than their text: when the cursor on the [map screen](#map-screen) reaches a
+new marker, the Japanese edition draws its name at once, and the others six
 [frames](#frame) later.
 
 Evidence: plain English; the project's own word.
@@ -301,7 +313,7 @@ Evidence: tradition: work, named for its owner, the main routine.
 
 ### Frame
 
-A frame is one picture on the screen and the game's work to prepare it,
+A frame is one image on the screen and the game's work to prepare it,
 about a sixtieth of a second. Everything that takes time is counted in
 frames. When Jenna wakes on Idejima and says `What...`, her event then
 calls [`wait()`](#wait) for 40 frames before she goes on: two thirds of a
@@ -341,24 +353,24 @@ Evidence: tradition: タスク and its 実行関数.
 
 ### VBlank
 
-VBlank is the short gap after the console has drawn one picture and before
-it starts the next, about 60 times a second. At each one the console breaks
-off whatever the game is doing and runs one small piece of its code. That
-piece puts the finished [frame](#frame) on screen, prepares the sound and
-reads the buttons ([System code](src/system/README.md#what-vblank-does)).
+VBlank is the short gap after the console has drawn the screen and before
+it starts drawing it again, about 60 times a second. At each one the console
+breaks off whatever the game is doing and runs one small piece of its code.
+That piece puts the finished [frame](#frame) on screen, prepares the sound
+and reads the buttons ([System code](src/system/README.md#what-vblank-does)).
 
 Evidence: tradition: V ブランク, the hardware's own name.
 
 ### Slowdown
 
 The game has about a sixtieth of a second to get each [frame](#frame)
-ready, before the console starts drawing the next picture. Slowdown is what
+ready, before the console starts drawing the screen again. Slowdown is what
 happens when a frame's work is not done in time: the frame stays on screen
-for two pictures or more. Everything counted in frames, every walk, pause
-and animation, drags together. The music does not, because the sound is
-prepared at every [VBlank](#vblank) whether the frame is ready or not. So
-the tune keeps its speed while the picture falls behind it
-([System code](src/system/README.md#what-vblank-does)).
+while the console draws the screen twice or more. Everything counted in
+frames, every walk, pause and animation, drags together. The music does
+not, because the sound is prepared at every [VBlank](#vblank) whether the
+frame is ready or not. So the tune keeps its speed while the image on
+screen falls behind it ([System code](src/system/README.md#what-vblank-does)).
 
 Evidence: tradition: 処理落ち.
 
@@ -376,6 +388,9 @@ Sega’s library for the Saturn, whose fixed-point, angle and matrix design this
 code matches; the current matrix and its `Matrix_Push`, `Matrix_RotateX` and
 `Matrix_Translate` are named the same way.
 
+Evidence: SGL's FIXED, toFIXED and the FX suffix; plain English: fixed-point
+number.
+
 ### Work
 
 A work is the block of memory where one part of the game keeps what it is
@@ -392,7 +407,7 @@ used here for a system's block.
 ### Heap and pools
 
 The heap is where code gets memory for a while. Code that needs room for
-something, such as a picture being unpacked, asks the heap and is handed a
+something, such as an image being unpacked, asks the heap and is handed a
 block. The blocks are cut from two pools, which are simply two stretches of
 free memory, one in each of the console's
 [two areas](#iwram-and-ewram).
@@ -442,7 +457,7 @@ Evidence: plain English; the project's own word.
 
 The Game Pak is the cartridge as a piece of hardware. It holds the game
 itself, which cannot be changed: the code in its [banks](#bank), and every
-picture, map and tune, listed in the
+image, map and tune, listed in the
 [resource directory](#resource-directory). It also holds the
 [flash chip](#flash-chip) the saves are written to
 ([The Game Pak](src/gamepak/README.md)).
@@ -454,7 +469,7 @@ Waitstates".
 ### Flash chip
 
 The flash chip is the small chip on the cartridge the three save
-[files](#file-and-part) are written to. It keeps what is written with the
+[files](#file-and-copy) are written to. It keeps what is written with the
 power off. It is 64 KB, divided into 16 sectors of 4 KB. A sector is the
 smallest piece the game saves at a time
 ([The Game Pak](src/gamepak/README.md#the-flash-chip)).
@@ -516,7 +531,8 @@ thing can go to the veneer and be sent the right way.
 [overlay](#overlay) open with are made of them
 ([The Game Pak](src/gamepak/README.md#a-veneer)).
 
-Evidence: plain English; the project's own word.
+Evidence: tradition: the ARM and GNU linkers' "veneer", the stub they place
+for a branch that cannot reach its target.
 
 ### Overlay
 
@@ -553,17 +569,17 @@ Evidence: plain English.
 ### Resource directory
 
 The resource directory is the cartridge's one list of every packed thing on
-it: each overlay, map and picture is a numbered row. The game finds a thing
+it: each overlay, map and image is a numbered row. The game finds a thing
 by its row, so Daila's [overlay](#overlay) is row 1617
 ([The Game Pak](src/gamepak/README.md#the-resource-directory-and-table-order)).
 
 Evidence: plain English.
 
-### File and part
+### File and copy
 
 A file is one of the three saves the File Screen offers. Each is kept on
-the [flash chip](#flash-chip) as a part, and a part fills three of the
-chip's 4 KB sectors. A newly saved part is written to free sectors first,
+the [flash chip](#flash-chip) as one copy, and a copy fills three of the
+chip's 4 KB sectors. A newly saved copy is written to free sectors first,
 and only then is the old copy given up, so there is no moment at which
 neither copy is on the chip ([System code](src/system/README.md#saving)).
 
@@ -620,14 +636,30 @@ Evidence: plain English; no word of the time names one layer of a sprite.
 
 A picture is one drawing on a [sprite sheet](#sprite-sheet), such as one
 pose of Felix's walk. It is the stored drawing; the
-[sprite](#sprite-and-oam) is what shows it on screen. A
-[sprite animation](#sprite-animation) shows a picture for a number of
-[frames](#frame) before the next one takes its place, and the animation of a
-map's tiles steps through pictures the same way
+[sprite](#sprite-and-oam) is what shows it on screen, or a
+[battle effect](#battle-effect)'s blitter copies it onto the canvas the
+effect draws on. A [sprite animation](#sprite-animation) shows a picture for
+a number of [frames](#frame) before the next one takes its place, and the
+animation of a map's tiles steps through pictures the same way
 ([Field code](src/field/README.md#sprites-and-their-animation)).
 
 Evidence: SGL's PICTURE, the picture data a sprite shows; plain English,
 since the time's パターン and コマ each mean other things too.
+
+### Texture
+
+A texture is the drawing a model's faces, or rows of the
+[battle effects](#battle-effect)' canvas, are painted with. A model is a
+shape of flat faces a battle effect turns in three dimensions, such as the
+rings, columns and whirlpools of the summons. As the model is drawn, the
+texture is mapped across each face, stretched and turned with it, and it
+can scroll across it, so a ring seems to spin
+([Battle effects](src/battle_effect/README.md#models)). A
+[picture](#picture) is shown by a [sprite](#sprite-and-oam) as it was
+drawn; a texture is painted onto a model and takes the shape of its faces.
+
+Evidence: plain English and the period tradition, texture mapping
+(テクスチャ); the code's `ModelTexture`.
 
 ### Palette number
 
@@ -637,9 +669,10 @@ console keeps sixteen palettes of 16 colours each. A palette number says
 which of them a [sprite](#sprite-and-oam) or a tile, one of the small
 squares a [background layer](#background-layer) is made of, is painted in.
 So one drawing can appear in several colourings
-([Graphics](src/graphics/README.md#how-the-console-draws-a-picture)).
+([Graphics](src/graphics/README.md#how-the-console-draws-an-image)).
 
-Evidence: plain English for the hardware's own field.
+Evidence: plain English for the hardware's own field, GBATEK's "Palette
+Number".
 
 ### Palette fade
 
@@ -719,22 +752,35 @@ A map is the ground a [scene](#scene) is drawn on: a grid of
 
 Evidence: Camelot: the credits' "Maps".
 
-### Still picture
+### Still image
 
-On the World Map the land tilts away from the party. The tilt is drawn in a
-special way that leaves no [background layer](#background-layer) for
-[windows](#window) to appear on.
-
-So when a menu or a conversation opens there, the game stops. It draws the
-tilted view once, as a picture that stands still, on an ordinary layer.
-That frees a layer for the windows, and the still picture is what the
-player sees behind them
+A still image is a whole screen drawn once and then shown standing still.
+The game shows one on the World Map whenever a menu or a conversation opens
+there. The land's tilt is drawn in a way that leaves no
+[background layer](#background-layer) for [windows](#window) to appear on,
+so the game stops, draws the tilted view once onto an ordinary layer, and
+shows that still image behind the windows until they close
 ([Field code](src/field/README.md#the-world-map-in-perspective)).
 
-It is not the map of the whole world. That is the world picture
-([Field code](src/field/README.md#the-world-picture)).
+It is not the [map screen](#map-screen), the map of the whole world that R
+opens.
 
-Evidence: plain English for what the player sees, the view standing still.
+Evidence: plain English: an image that stands still.
+
+### Map screen
+
+The map screen is the map of the whole world that R opens on the World Map.
+It is drawn flat, with a marker on each town or dungeon the party has
+visited and a cursor that L and R step from one marker to the next, naming
+the place it rests on. Select shows the whole world at once, and A or B
+closes it. The World Map is a [scene](#scene), the land the party walks and
+sails on, drawn tilted away from it. The map screen is no scene: it is a
+chart of that land, shown without leaving the World Map, and nobody walks on
+it ([Field code](src/field/README.md#the-map-screen)).
+
+Evidence: the game: "This place doesn't seem to appear on the map..."
+(`MsgNotOnMap`), which it shows there; plain English: map screen, since a
+[map](#map) is a scene's ground.
 
 ### Rooms map
 
@@ -994,7 +1040,7 @@ Evidence: Camelot: the credits' "Battle".
 ### Unit
 
 A unit is one fighter in a battle, on either side: Felix is a unit, and so
-is each enemy. The game keeps the same sheet of facts for every one of
+is each enemy. The game keeps the same set of facts for every one of
 them, its stats, Psynergy, items, Djinn and ailments, which the code reads
 with `Unit_Get`. A unit in the party is a party member
 ([Game rules](src/game/README.md#the-unit)).
@@ -1054,9 +1100,25 @@ Evidence: Camelot: the credits' "Battle Effects", beside "Battle Characters"
 and "Battle Backgrounds", a Graphic Arts heading; the code is the Battle
 division's.
 
+### Mote
+
+A mote is one of the small specks an effect scatters by the dozen: the
+specks of light that tumble in on each target of Wish, or the ring of them
+the summon Thor draws. Each has its own place, speed and life, and the
+effect moves every one of them each [frame](#frame). A
+[battle effect](#battle-effect)'s mote is not a [sprite](#sprite-and-oam):
+the effect's blitter copies its [picture](#picture) onto the canvas the
+effect draws on, most often a round glowing dot at one of ten sizes, often
+a smaller one the farther the mote is
+([Battle effects](src/battle_effect/README.md#pictures-and-particles)). On
+the field a mote is a sprite, such as the motes that circle down onto the
+leader as a Venus Djinni joins.
+
+Evidence: plain English: a mote, a speck.
+
 ### Battle background
 
-A battle background is the picture behind a battle. It is chosen by where
+A battle background is the image behind a battle. It is chosen by where
 the fight happens, such as the grassland, the Suhalla Desert or a ship's
 deck ([Graphics](src/graphics/README.md#battle-backgrounds)).
 
@@ -1114,8 +1176,8 @@ Evidence: Camelot: the settings label メッセージスピード ("Message" in 
 
 The screens are the Title, the File Screen, the Pause menu, the field menu
 with its Psynergy, Djinn, Item and Status screens, the settings menu, name
-entry and the world picture. The File Screen is where a
-[file](#file-and-part) is chosen, copied or erased, and the Pause menu is
+entry and the [map screen](#map-screen). The File Screen is where a
+[file](#file-and-copy) is chosen, copied or erased, and the Pause menu is
 what Start opens on the field ([Interface](interface.md)).
 
 Evidence: Camelot: "Please choose a file.", "The Pause Menu is not available
@@ -1179,7 +1241,7 @@ said so.
 
 ### Graphics
 
-Graphics is the game's pictures as files anyone can open and edit. Each
+Graphics is the game's art as files anyone can open and edit. Each
 folder is named for what it holds or the place it belongs to
 ([Graphics](src/graphics/README.md)).
 
@@ -1187,7 +1249,7 @@ Evidence: Camelot: the credits' "Graphic Arts"; plain English.
 
 ### Graphics folders
 
-For readers of the files: the folders of pictures under `src/graphics/`,
+For readers of the files: the folders of images under `src/graphics/`,
 and what is in each.
 
 - `battle_backgrounds`: the [battle backgrounds](#battle-background).
@@ -1199,7 +1261,7 @@ and what is in each.
 - `font`: the letters, how wide each one is, and the tables that match
   text to letters. Evidence: plain
   English.
-- `monster`: the enemies' battle pictures. Evidence: Camelot: the credits'
+- `monster`: the enemies' battle sprites. Evidence: Camelot: the credits'
   "Monster Design"; the game: "Monsters won't attack".
 - `palettes`: the windows' colours and the colours most sprites share. Evidence:
   plain English.
@@ -1212,7 +1274,7 @@ and what is in each.
 - `tileset`: the small squares and colours a map's
   [cell pictures](#cell-picture) are drawn from. Evidence: tradition: the
   tile set; Camelot: the credits' "Maps" for the work.
-- `ui`: every [Interface](#interface) picture, such as the menus' icons. Evidence: Camelot: the
+- `ui`: every [Interface](#interface) image, such as the menus' icons. Evidence: Camelot: the
   credits' "User Interface", whose banks place them; plain English for the
   subfolders.
 
@@ -1224,16 +1286,16 @@ The graphics folders named for a place or a thing in the game:
   Evidence: its area name, Aqua Rock.
 - `lemuria_palace`, the tiles of Lemuria's palace. Evidence: its area name,
   Lemuria.
-- `trial_road`, Trial Road's picture. Evidence: its area name, Trial Road.
-- `lucky_dice` and `lucky_wheels`, the two minigames' pictures.
+- `trial_road`, Trial Road's image. Evidence: its area name, Trial Road.
+- `lucky_dice` and `lucky_wheels`, the two minigames' images.
   Evidence: the game: "Lucky Dice", "Lucky Wheels".
-- `world_map`, the World Map's own pictures.
+- `world_map`, the World Map's own images.
   Evidence: the game: "World Map".
-- `title`, the Title's pictures and its intro. Evidence: Camelot: the scene
+- `title`, the Title's images and its intro. Evidence: Camelot: the scene
   label TITLE.
 - `credits`, the staff roll's font. Evidence: Camelot: the credits
   themselves.
-- `ending`, the pictures of the game's ending. Evidence: plain English.
+- `ending`, the images of the game's ending. Evidence: plain English.
 
 ### Tileset
 
@@ -1246,7 +1308,7 @@ Evidence: tradition: the tile set; plain English.
 
 ### Monster
 
-A monster is an enemy as the player sees it, its picture in a battle
+A monster is an enemy as the player sees it, its sprite in a battle
 ([Graphics](src/graphics/README.md#monsters)). In the code an enemy is a
 [unit](#unit) like any other.
 

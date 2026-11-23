@@ -251,8 +251,8 @@ void Title_UpdateIntroSprites(void) {
   Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS(8), REG_DMA3);
 }
 
-/// Loads the title intro's two scrolling pictures, the clouds and the peak, and
-/// the sun's and lens flare's sprite tiles, builds the pictures' maps and sets
+/// Loads the title intro's two scrolling images, the clouds and the peak, and
+/// the sun's and lens flare's sprite tiles, builds the images' maps and sets
 /// the blending and windows.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;

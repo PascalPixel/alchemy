@@ -18,7 +18,7 @@
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 /// One of the world map's two tile maps of one-byte tiles, BG3's and then
-/// BG2's, as WorldMap_StartStillPicture copies them into gDecodeBuffer.
+/// BG2's, as WorldMap_StartStillImage copies them into gDecodeBuffer.
 #define WORLD_MAP_TILE_MAP_BYTES                                               \
   (WORLD_MAP_TILE_MAP_WIDTH * WORLD_MAP_TILE_MAP_WIDTH)
 
@@ -130,8 +130,8 @@ typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
     const struct WorldMapAffinePair *lines, u8 *pixels, const u8 *tiles,
     const u8 *map);
 
-/// Draws the current affine page into the world map's still-picture pixels.
-/// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
+/// Draws the current affine page into the world map's still-image pixels.
+/// WorldMap_StartStillImage supplies 160 pairs and a 240 by 160 byte output.
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels) {
   TileMapRowDrawer routine;

@@ -4,7 +4,7 @@
 /// @file
 /// What event_commands.c declares for the files that use it: the commands
 /// events run, moving on the field, weather and line scrolls, Djinn joining
-/// the party, each field Psynergy and its effects, and the World Map screen.
+/// the party, each field Psynergy and its effects, and the map screen.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -399,10 +399,10 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               FIXED z);
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect);
 
-void WorldPicture_Initialize(void);
-void WorldPicture_Release(void);
-void WorldPicture_UpdateMarkers(void);
-void WorldPicture_Show(s32 picture);
+void MapScreen_Initialize(void);
+void MapScreen_Release(void);
+void MapScreen_UpdateMarkers(void);
+void MapScreen_Show(s32 image);
 void Field_UpdateActorVisibilityBounds(void);
 void WorldMap_ZoomOutWhileLHeld(void);
 

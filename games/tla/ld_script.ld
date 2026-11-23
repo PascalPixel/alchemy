@@ -65,8 +65,8 @@ Glyph_DrawCodeSize = Tile_BuildCellPicturesCode - Glyph_DrawCode;
 BattleEffect_DecodePictureBlockSize = BattleEffect_DecodePictureEnd - BattleEffect_DecodePictureCode;
 Render_DecodePictureBlockSize = Render_DecodePictureEnd - Render_DecodePictureCode;
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
-Credits_DecodeBackgroundCodeSize = EndingPicture_InnerProduct - Credits_DecodeBackgroundCode;
-EndingPicture_DecodeCodeSize = EndingPicture_DecodeEnd - EndingPicture_DecodeCode;
+Credits_DecodeBackgroundCodeSize = EndingImage_InnerProduct - Credits_DecodeBackgroundCode;
+EndingImage_DecodeCodeSize = EndingImage_DecodeEnd - EndingImage_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
 Matrix_UpdateVerticesCodeSize = Render_ConvertMapCode - Matrix_UpdateVerticesCode;
@@ -314,9 +314,9 @@ SECTIONS
         "*/games/tla/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/credits_background_expand.o"(.rodata)
         "*/games/tla/src/menu/credits_background_expand.o"(.text .data .text.credits_background_expand_commands)
-        "*/games/tla/src/menu/ending_picture_decode.o"(.text .rodata .data .padding)
-        "*/games/tla/src/menu/ending_picture_expand.o"(.rodata)
-        "*/games/tla/src/menu/ending_picture_expand.o"(.text .data .text.ending_picture_expand_commands)
+        "*/games/tla/src/menu/ending_image_decode.o"(.text .rodata .data .padding)
+        "*/games/tla/src/menu/ending_image_expand.o"(.rodata)
+        "*/games/tla/src/menu/ending_image_expand.o"(.text .data .text.ending_image_expand_commands)
         "*/games/tla/src/menu/credits.o"(.text)
         "*/games/tla/src/menu/credits.o"(.rodata)
         "*/games/tla/src/menu/credits.o"(.data)

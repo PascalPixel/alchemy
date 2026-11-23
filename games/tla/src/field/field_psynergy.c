@@ -3,10 +3,10 @@
 /// their target, then in ROM order the tile copies, the field Psynergy The Lost
 /// Age adds, from Cyclone to Hover (each part named for the Psynergy it runs,
 /// its kind in FieldPsynergy_Run), the summon tablets, the actors' cells, the
-/// step vectors and field particles, and the world and World Map pictures.
-/// field_psynergy_internal.h holds the includes every part shares; the parts
-/// beside it, field_psynergy_<part>.c, are included here in ROM order. The ROM
-/// shows one object; the parts are ours.
+/// step vectors and field particles, and the world and map screen and its
+/// image. field_psynergy_internal.h holds the includes every part shares; the
+/// parts beside it, field_psynergy_<part>.c, are included here in ROM order.
+/// The ROM shows one object; the parts are ours.
 
 #include "field_psynergy_internal.h"
 
@@ -42,5 +42,5 @@
 
 #undef BG_VRAM
 
-#include "field_psynergy_world_picture.c"
-#include "field_psynergy_world_map_picture.c"
+#include "field_psynergy_map_screen.c"
+#include "field_psynergy_map_screen_image.c"

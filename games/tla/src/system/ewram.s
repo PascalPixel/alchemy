@@ -23,8 +23,8 @@ gPartyDjinnRecovery:
 	.space 0x00000002
 	.space 0x0000000c
 	.space 0x00000048
-	.global gWorldPictureChoice
-gWorldPictureChoice:
+	.global gMapScreenChoice
+gMapScreenChoice:
 	.space 0x00000004
 	.space 0x0000001c
 	.global gCharacterUnits
@@ -277,32 +277,32 @@ gDisplayScroll_LastPosition:
 	.global gDisplayScroll_Objects
 gDisplayScroll_Objects:
 	.space 0x00000004
-	.global gEndingPicture_Block
-gEndingPicture_Block:
+	.global gEndingImage_Block
+gEndingImage_Block:
 	.space 0x00000002
-	.global gEndingPicture_FadeFrames
-gEndingPicture_FadeFrames:
+	.global gEndingImage_FadeFrames
+gEndingImage_FadeFrames:
 	.space 0x00000002
-	.global gEndingPicture_MapScroll
-gEndingPicture_MapScroll:
+	.global gEndingImage_MapScroll
+gEndingImage_MapScroll:
 	.space 0x00000004
-	.global gEndingPicture_Scroll
-gEndingPicture_Scroll:
+	.global gEndingImage_Scroll
+gEndingImage_Scroll:
 	.space 0x00000004
-	.global gEndingPicture_Row
-gEndingPicture_Row:
+	.global gEndingImage_Row
+gEndingImage_Row:
 	.space 0x00000002
-	.global gEndingPicture_TargetRow
-gEndingPicture_TargetRow:
+	.global gEndingImage_TargetRow
+gEndingImage_TargetRow:
 	.space 0x00000002
-	.global gEndingPicture_Speed
-gEndingPicture_Speed:
+	.global gEndingImage_Speed
+gEndingImage_Speed:
 	.space 0x00000004
-	.global gEndingPicture_Map
-gEndingPicture_Map:
+	.global gEndingImage_Map
+gEndingImage_Map:
 	.space 0x00000004
-	.global gEndingPicture_Strips
-gEndingPicture_Strips:
+	.global gEndingImage_Strips
+gEndingImage_Strips:
 	.space 0x00000ad4
 	.global gOverlayArea
 gOverlayArea:
@@ -492,47 +492,47 @@ gMapGridAnimTiles:
 gWorldMapWork:
 	.space 0x00000004
 	.space 0x0000061c
-	.global gWorldPicture_CursorMarker
-gWorldPicture_CursorMarker:
+	.global gMapScreen_CursorMarker
+gMapScreen_CursorMarker:
 	.space 0x0000000c
-	.global gWorldPicture_Cursor
-gWorldPicture_Cursor:
+	.global gMapScreen_Cursor
+gMapScreen_Cursor:
 	.space 0x00000004
-	.global gWorldPicture_ScrollX
-gWorldPicture_ScrollX:
+	.global gMapScreen_ScrollX
+gMapScreen_ScrollX:
 	.space 0x00000004
-	.global gWorldPicture_ScrollY
-gWorldPicture_ScrollY:
+	.global gMapScreen_ScrollY
+gMapScreen_ScrollY:
 	.space 0x00000004
-	.global gWorldPicture_NameBox
-gWorldPicture_NameBox:
+	.global gMapScreen_NameBox
+gMapScreen_NameBox:
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
-	.global gWorldPicture_Zoomed
-gWorldPicture_Zoomed:
+	.global gMapScreen_Zoomed
+gMapScreen_Zoomed:
 	.space 0x00000002
-	.global gWorldPicture_FirstListOnly
-gWorldPicture_FirstListOnly:
+	.global gMapScreen_FirstListOnly
+gMapScreen_FirstListOnly:
 	.space 0x00000002
-	.global gWorldPicture_GlideTargetX
-gWorldPicture_GlideTargetX:
+	.global gMapScreen_GlideTargetX
+gMapScreen_GlideTargetX:
 	.space 0x00000004
-	.global gWorldPicture_GlideTargetY
-gWorldPicture_GlideTargetY:
+	.global gMapScreen_GlideTargetY
+gMapScreen_GlideTargetY:
 	.space 0x00000004
-	.global gWorldPicture_CursorStartX
-gWorldPicture_CursorStartX:
+	.global gMapScreen_CursorStartX
+gMapScreen_CursorStartX:
 	.space 0x00000004
-	.global gWorldPicture_CursorStartY
-gWorldPicture_CursorStartY:
+	.global gMapScreen_CursorStartY
+gMapScreen_CursorStartY:
 	.space 0x00000004
-	.global gWorldPicture_NameRedrawPending
-gWorldPicture_NameRedrawPending:
+	.global gMapScreen_NameRedrawPending
+gMapScreen_NameRedrawPending:
 	.space 0x00000002
-	.global gWorldPicture_NameRedrawDelay
-gWorldPicture_NameRedrawDelay:
+	.global gMapScreen_NameRedrawDelay
+gMapScreen_NameRedrawDelay:
 	.space 0x000019aa
 	.global gMapGridShapes
 gMapGridShapes:

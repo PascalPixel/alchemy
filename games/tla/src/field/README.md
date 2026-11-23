@@ -230,13 +230,13 @@ own: one sails it on the World Map, one sails it on a field map such as
 Lemuria's entrance, and once it has wings one flies it over ground the sea
 alone would stop.
 
-### The world picture
+### The map screen
 
-R on the World Map shows a picture of the whole world with a marker on
-each town or dungeon visited, and a cursor that L and R step from one
-marker to the next. Each marker is a row of a table with its flag and its
-spot on the real map: arriving there sets the flag, and the marker is that
-spot, scaled down.
+R on the World Map opens the map screen, a map of the whole world with a
+marker on each town or dungeon visited, and a cursor that L and R step
+from one marker to the next. Each marker is a row of a table with its flag
+and its spot on the real map: arriving there sets the flag, and the marker
+is that spot, scaled down.
 
 ## Random battles
 

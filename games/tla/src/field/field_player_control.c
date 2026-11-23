@@ -311,7 +311,7 @@ counted:
 
 /// Passes on a shortcut key's assignment, as The Broken Seal's: bits 15..14 say
 /// whether the request is a field Psynergy or an item, bits 13..0 which. On the
-/// world map R and L raise the world picture and the zoom instead, and while
+/// world map R and L raise the map screen and the zoom instead, and while
 /// FLAG_MENUS_RAISE_TRIGGER is set the scene's raised trigger. Returns the
 /// request.
 s32 Field_RequestShortcut(u32 assignment) {
@@ -323,7 +323,7 @@ s32 Field_RequestShortcut(u32 assignment) {
     work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
   } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gInput.held & KEY_R)
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_MAP_SCREEN;
     else if (gInput.held & KEY_L)
       work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
   } else {

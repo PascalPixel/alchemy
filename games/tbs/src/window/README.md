@@ -88,7 +88,7 @@ matters if you touch any text code:
 
 - **On the field** each letter is a sprite on its window, so a letter can
   shake, but sprites are few.
-- **In a battle** letters are painted into one shared sheet of tiles. They
+- **In a battle** letters are painted into one shared run of tiles. They
   cannot move, and they cost no sprites, which the battle needs for the
   fighters.
 - **A label** that appears all at once, such as a menu entry, is painted as

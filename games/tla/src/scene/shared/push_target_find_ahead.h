@@ -21,10 +21,10 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
         z = (PIXEL_PART(leader->z.fixed) +
              PUSH_STEP_Z(gPushLeaderSteps[*direction])) >>
             4;
-        left = (PIXEL_PART(actor->x.fixed) + gPushFootprints[k][0]) >> 4;
-        top = (PIXEL_PART(actor->z.fixed) + gPushFootprints[k][1]) >> 4;
-        right = (PIXEL_PART(actor->x.fixed) + gPushFootprints[k][2]) >> 4;
-        bottom = (PIXEL_PART(actor->z.fixed) + gPushFootprints[k][3]) >> 4;
+        left = (PIXEL_PART(actor->x.fixed) + gPushRectangles[k][0]) >> 4;
+        top = (PIXEL_PART(actor->z.fixed) + gPushRectangles[k][1]) >> 4;
+        right = (PIXEL_PART(actor->x.fixed) + gPushRectangles[k][2]) >> 4;
+        bottom = (PIXEL_PART(actor->z.fixed) + gPushRectangles[k][3]) >> 4;
         if (left <= x && x < right && top <= z && z < bottom) {
           *kind = k;
           // An odd kind lies north to south.

@@ -4,7 +4,7 @@
 
 #include "field_internal.h"
 
-/// On the World Map, the keys whose R and L open the world picture and the
+/// On the World Map, the keys whose R and L open the map screen and the
 /// zoomed map (newly pressed from patch 1, held before), and how far ahead of
 /// the leader each step is probed, in pixels.
 #if TBS_PATCH_1
@@ -104,7 +104,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
     work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
   } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_MAP_SCREEN;
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
       work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
     }

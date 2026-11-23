@@ -300,7 +300,7 @@ void FieldPsynergy_End(void) {
 }
 
 /// On the World Map, notes that the field Psynergy has used the second half of
-/// the BG tile buffer, so the next still picture decodes it again.
+/// the BG tile buffer, so the next still image decodes it again.
 void FieldPsynergy_MarkWorldMapTilesUsed(void) {
   struct HeapSlots *heap = Ram_HeapSlots;
   s32 mode = ((struct FieldWork *)heap->fieldWork)->mode;

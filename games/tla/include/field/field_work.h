@@ -49,8 +49,8 @@ enum FieldRaisedTrigger {
   /// Teleport: the picture of the whole world, shown once to choose where to
   /// go (FieldPsynergy_Teleport).
   FIELD_RAISED_TRIGGER_TELEPORT = -887,
-  /// R on the world map: the picture of the whole world (WorldPicture_Show).
-  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
+  /// R on the world map: the picture of the whole world (MapScreen_Show).
+  FIELD_RAISED_TRIGGER_MAP_SCREEN = -888,
   /// L on the world map: the view zooms out while L is held.
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889,
   FIELD_RAISED_TRIGGER_ROPE_OFF = -890,

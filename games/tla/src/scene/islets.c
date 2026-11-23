@@ -199,7 +199,7 @@ void FieldPsynergy_RestoreMindReadPalette(void);
 void FieldCamera_WaitForArrival(void);
 void TileCopies_CopyTouchedCells();
 
-s32 PushTarget_FillFootprint(s32 id);
+s32 PushTarget_FillRectangle(s32 id);
 
 void Actor_DisableById(s32 actorId);
 
@@ -310,7 +310,7 @@ struct PushTarget {
   FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-  s32 footprint; ///< index into the footprint table
+  s32 rectangle; ///< index into the rectangle table
   s32 id;
   void *callback;
 };
@@ -2235,7 +2235,7 @@ void Islets_InitializeEastTundaria(void) {
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
-    PushTarget_FillFootprint(ACTOR_LOG);
+    PushTarget_FillRectangle(ACTOR_LOG);
   }
   if (!Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
     FieldActor_WatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
@@ -2502,9 +2502,9 @@ void Islets_JumpForward(void) {
   return;
 }
 
-extern s8 gPushFootprints[][4];
+extern s8 gPushRectangles[][4];
 
-#include "shared/push_target_fill_footprint.h"
+#include "shared/push_target_fill_rectangle.h"
 
 #include "../field/map_cell_fill.c"
 

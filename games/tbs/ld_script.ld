@@ -288,7 +288,7 @@ SECTIONS
         "*/games/tbs/src/field/movement_scripts.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/field_effect_tiles.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/field_effect_tables.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/field/world_picture_markers.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/map_screen_markers.o"(.text .rodata .data .padding)
         . = ABSOLUTE(ROM_SHIFT + MENU_BANK_START);
         "*/games/tbs/src/gamepak/far_call/menu.o"(.text .padding)
         "*/games/tbs/src/menu/menu.o"(.text .padding)

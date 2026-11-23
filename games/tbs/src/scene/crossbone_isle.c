@@ -499,8 +499,8 @@ s32 Scene_Initialize(void) {
   if (current == SCENE_CROSSBONE_ISLE) {
     CrossboneIsle_RestoreIvy();
     Actor_Get(ACTOR_ISLE_NUT)->targetX = toFIXED(129);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG + 1);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_ISLE_LOG);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_ISLE_LOG + 1);
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT);
       if (actor != NULL) {
@@ -1168,9 +1168,9 @@ static inline void CrossboneIsle_MoveWestEastLogCells(s32 actorId, s32 column,
   wait(2);
   {
     s32 destinationRow = FIELD_CELL(Actor_Get(actorId)->z.fixed);
-    s32 footprintColumn = column - 1;
+    s32 rectangleColumn = column - 1;
 
-    MapGrid_CopyCellAttributes(footprintColumn, row, 3, 1, footprintColumn,
+    MapGrid_CopyCellAttributes(rectangleColumn, row, 3, 1, rectangleColumn,
                                destinationRow);
   }
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
@@ -1183,10 +1183,10 @@ static inline void CrossboneIsle_MoveNorthSouthLogCells(s32 actorId, s32 column,
   wait(2);
   {
     s32 destinationColumn = FIELD_CELL(Actor_Get(actorId)->x.fixed);
-    s32 footprintRow = row - 1;
+    s32 rectangleRow = row - 1;
 
-    MapGrid_CopyCellAttributes(column, footprintRow, 1, 3, destinationColumn,
-                               footprintRow);
+    MapGrid_CopyCellAttributes(column, rectangleRow, 1, 3, destinationColumn,
+                               rectangleRow);
   }
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
@@ -2030,7 +2030,7 @@ static void CrossboneIsle_RideLogGWest(void) {
   s32 row;
   s32 logKRow;
   s32 logBRow;
-  s32 footprintRow;
+  s32 rectangleRow;
 
   column = FIELD_CELL(Actor_Get(ACTOR_LOG_G)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_LOG_G)->z.fixed);
@@ -2070,11 +2070,11 @@ static void CrossboneIsle_RideLogGWest(void) {
 
   wait(2);
 
-  footprintRow = row - 1;
-  MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
+  rectangleRow = row - 1;
+  MapGrid_CopyCellAttributeRect(column, rectangleRow, 1, 3,
                                 FIELD_CELL(Actor_Get(ACTOR_LOG_G)->x.fixed),
-                                footprintRow);
-  MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
+                                rectangleRow);
+  MapGrid_CopyCellAttributes(0, 0, 1, 3, column, rectangleRow);
 }
 
 /// Walking east along the middle one of the west pool's three side logs rolls
@@ -2087,7 +2087,7 @@ static void CrossboneIsle_RideLogGEast(void) {
   s32 row;
   s32 logKRow;
   s32 logBRow;
-  s32 footprintRow;
+  s32 rectangleRow;
 
   column = FIELD_CELL(Actor_Get(ACTOR_LOG_G)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_LOG_G)->z.fixed);
@@ -2120,11 +2120,11 @@ static void CrossboneIsle_RideLogGEast(void) {
 
   wait(2);
 
-  footprintRow = row - 1;
-  MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
+  rectangleRow = row - 1;
+  MapGrid_CopyCellAttributeRect(column, rectangleRow, 1, 3,
                                 FIELD_CELL(Actor_Get(ACTOR_LOG_G)->x.fixed),
-                                footprintRow);
-  MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
+                                rectangleRow);
+  MapGrid_CopyCellAttributes(0, 0, 1, 3, column, rectangleRow);
 }
 
 /// Walking west along the north one of the west pool's three side logs rolls
@@ -2137,7 +2137,7 @@ static void CrossboneIsle_RideLogIWest(void) {
   s32 row;
   s32 logKRow;
   s32 logBRow;
-  s32 footprintRow;
+  s32 rectangleRow;
 
   column = FIELD_CELL(Actor_Get(ACTOR_LOG_I)->x.fixed);
   row = FIELD_CELL(Actor_Get(ACTOR_LOG_I)->z.fixed);
@@ -2174,11 +2174,11 @@ static void CrossboneIsle_RideLogIWest(void) {
 
   wait(2);
 
-  footprintRow = row - 1;
-  MapGrid_CopyCellAttributeRect(column, footprintRow, 1, 3,
+  rectangleRow = row - 1;
+  MapGrid_CopyCellAttributeRect(column, rectangleRow, 1, 3,
                                 FIELD_CELL(Actor_Get(ACTOR_LOG_I)->x.fixed),
-                                footprintRow);
-  MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
+                                rectangleRow);
+  MapGrid_CopyCellAttributes(0, 0, 1, 3, column, rectangleRow);
 }
 
 /// Walking east along the north one of the west pool's three side logs rolls

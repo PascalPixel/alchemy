@@ -116,7 +116,7 @@ extern u8 gMapGridShapes[];
 
 /// 32 KB of EWRAM at 0x02038000 holding background tiles, such as the world
 /// map's char blocks 2 and 3, which WorldMap_ShowBg1FromBuffer copies back
-/// after the still picture.
+/// after the still image.
 extern u8 gBgTileBuffer[];
 
 /// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its

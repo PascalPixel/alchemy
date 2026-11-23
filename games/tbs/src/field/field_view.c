@@ -1,5 +1,5 @@
 /// @file
-/// The screen shake, and two parts of the world map's view: its still picture
+/// The screen shake, and two parts of the world map's view: its still image
 /// drawn from its tile maps, and its ground tilted away from the camera,
 /// worked out a screen line at a time.
 // Part of field.c.
@@ -11,7 +11,7 @@
 /// The largest shake that counts as settled, just under 1/256 pixel.
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 /// One of the world map's two tile maps of one-byte tiles, BG3's and then
-/// BG2's, as WorldMap_StartStillPicture copies them into gDecodeBuffer.
+/// BG2's, as WorldMap_StartStillImage copies them into gDecodeBuffer.
 #define WORLD_MAP_TILE_MAP_BYTES (64 * 64)
 
 /// Changes the shake without restarting an axis whose argument is negative.
@@ -58,8 +58,8 @@ typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
     const struct WorldMapAffinePair *lines, u8 *pixels, const u8 *tiles,
     const u8 *map);
 
-/// Draws the current affine page into the world map's still-picture pixels.
-/// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
+/// Draws the current affine page into the world map's still-image pixels.
+/// WorldMap_StartStillImage supplies 160 pairs and a 240 by 160 byte output.
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels) {
   const u8 *maps;

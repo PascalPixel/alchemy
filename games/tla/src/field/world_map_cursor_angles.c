@@ -1,6 +1,6 @@
 /// @file
-/// Which way the cursor of the world map screen moves for the +Control Pad
-/// (WorldPicture_UpdateMarkers).
+/// Which way the cursor of the map screen moves for the +Control Pad
+/// (MapScreen_UpdateMarkers).
 
 #include "fixed_math.h"
 #include "types.h"

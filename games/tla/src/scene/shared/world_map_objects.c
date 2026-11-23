@@ -171,7 +171,7 @@ void WorldMap_UpdatePlacedActors(void) {
     i++;
     slot++;
     placement++;
-    if (i >= WORLD_PICTURE_PLACE_COUNT)
+    if (i >= MAP_SCREEN_PLACE_COUNT)
       break;
     next = placement->flag;
   }
@@ -192,7 +192,7 @@ UNUSED void WorldMap_QueueBlend(void) {
 /// Clears the places' actors and starts WorldMap_UpdatePlacedActors.
 void WorldMap_StartPlacedActors(void) {
   Iwram_ClearWords(gWorldMap_PlacedActors,
-                   WORLD_PICTURE_PLACE_COUNT * sizeof(struct Actor *));
+                   MAP_SCREEN_PLACE_COUNT * sizeof(struct Actor *));
   Task_AddFrame(WorldMap_UpdatePlacedActors, TASK_PASS_FRAME);
 }
 

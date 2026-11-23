@@ -1,11 +1,11 @@
 /// @file
 /// The staff credits: the battle backdrops behind them, the lines that scroll
-/// past, and the scrolling pictures with their border strips.
+/// past, and the scrolling images with their border strips.
 ///
 /// One object, as The Broken Seal's credits.c is, with its slides and lines at
 /// its end; the background decoders linked before it are assembly
 /// (credits_background_decode.s and credits_background_expand.s, then the
-/// ending pictures' ending_picture_decode.s and ending_picture_expand.s).
+/// ending images' ending_image_decode.s and ending_image_expand.s).
 
 #include "types.h"
 #include "battle/battle.h"
@@ -61,21 +61,21 @@ extern struct DisplayScrollObject *gDisplayScroll_Objects;
 extern const u32 gDisplayScroll_SlideResources[];
 extern const void *gDisplayScroll_LineTable[];
 
-/// The scrolling picture's state. EndingPicture_Scroll, a VBlank task, moves
-/// the scroll toward its target while EndingPicture_WaitForScroll waits for it
+/// The scrolling image's state. EndingImage_Scroll, a VBlank task, moves
+/// the scroll toward its target while EndingImage_WaitForScroll waits for it
 /// to arrive.
 ///@{
-extern s16 gEndingPicture_Block; ///< which character block the picture is in
-extern s16 gEndingPicture_FadeFrames; ///< frames of the fade-in, to 64
-extern u32 gEndingPicture_MapScroll;  ///< the tilemap's scroll, 16.16 pixels
-extern volatile s32 gEndingPicture_Scroll; ///< the scroll, 16.16 pixels
+extern s16 gEndingImage_Block;      ///< which character block the image is in
+extern s16 gEndingImage_FadeFrames; ///< frames of the fade-in, to 64
+extern u32 gEndingImage_MapScroll;  ///< the tilemap's scroll, 16.16 pixels
+extern volatile s32 gEndingImage_Scroll; ///< the scroll, 16.16 pixels
 /// The row a scene asks for (SceneState_SetScrollTarget); Row moves toward it.
-extern s16 gEndingPicture_TargetRow;
-extern s16 gEndingPicture_Row;   ///< the row the scroll is heading for
-extern s16 gEndingPicture_Speed; ///< the most rows a frame moves
-extern u8 *gEndingPicture_Map;   ///< the picture's map
-/// The 24 sprites of the picture's border strips.
-extern void *gEndingPicture_Strips;
+extern s16 gEndingImage_TargetRow;
+extern s16 gEndingImage_Row;   ///< the row the scroll is heading for
+extern s16 gEndingImage_Speed; ///< the most rows a frame moves
+extern u8 *gEndingImage_Map;   ///< the image's map
+/// The 24 sprites of the image's border strips.
+extern void *gEndingImage_Strips;
 ///@}
 
 void Credits_InitCrawlSprites(void);
@@ -91,12 +91,12 @@ extern const u8 gCredits_GlyphWidths[];
 /// The credits' font, the glyphs Credits_DrawLine draws a line's tiles from.
 extern const u8 gDisplayScroll_Font[];
 
-void EndingPicture_InitStrips(void);
-/// EndingPicture_Decode, the ARM decoder RamCode_Load copies into a heap block
-/// to run (ending_picture_decode.s).
-extern const u8 EndingPicture_DecodeCode[];
-/// EndingPicture_DecodeCode's bytes, as its address.
-extern u8 EndingPicture_DecodeCodeSize[];
+void EndingImage_InitStrips(void);
+/// EndingImage_Decode, the ARM decoder RamCode_Load copies into a heap block
+/// to run (ending_image_decode.s).
+extern const u8 EndingImage_DecodeCode[];
+/// EndingImage_DecodeCode's bytes, as its address.
+extern u8 EndingImage_DecodeCodeSize[];
 
 extern u8 gDebugTextEnabled;
 
@@ -173,30 +173,28 @@ enum CreditsAlignment {
   CREDITS_ALIGN_RIGHT = 2
 };
 
-/// The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
+/// The ending's scrolling images: a map buffer of 15 columns, each a strip of
 /// 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
-#define ENDING_PICTURE_COLUMNS 15
-#define ENDING_PICTURE_STRIP_BYTES 4096
-#define ENDING_PICTURE_SCREEN_BYTES BG_SCREEN_SIZE
-#define ENDING_PICTURE_ROWS 31
-#define ENDING_PICTURE_ROW_BYTES 64
+#define ENDING_IMAGE_COLUMNS 15
+#define ENDING_IMAGE_STRIP_BYTES 4096
+#define ENDING_IMAGE_SCREEN_BYTES BG_SCREEN_SIZE
+#define ENDING_IMAGE_ROWS 31
+#define ENDING_IMAGE_ROW_BYTES 64
 /// A row's offset wrapped into its screen block.
-#define ENDING_PICTURE_WRAP(offset)                                            \
-  ((offset) & (ENDING_PICTURE_SCREEN_BYTES - 1))
+#define ENDING_IMAGE_WRAP(offset) ((offset) & (ENDING_IMAGE_SCREEN_BYTES - 1))
 /// The fade-in's frames, four to each blend step.
-#define ENDING_PICTURE_FADE_FRAMES (BLEND_WEIGHT_MAX * 4)
+#define ENDING_IMAGE_FADE_FRAMES (BLEND_WEIGHT_MAX * 4)
 /// The map offset of the row of eight pixels a 16.16 scroll stands at.
-#define ENDING_PICTURE_ROW_OFFSET(scroll)                                      \
-  ((FIXEDtoINT(scroll) / 8) * ENDING_PICTURE_ROW_BYTES)
+#define ENDING_IMAGE_ROW_OFFSET(scroll)                                        \
+  ((FIXEDtoINT(scroll) / 8) * ENDING_IMAGE_ROW_BYTES)
 /// The map buffer: every column's strip.
-#define ENDING_PICTURE_MAP_BYTES                                               \
-  (ENDING_PICTURE_COLUMNS * ENDING_PICTURE_STRIP_BYTES)
-/// EndingPicture_WaitForScroll gives up after five seconds.
-#define ENDING_PICTURE_SCROLL_TIMEOUT (5 * FRAMES_PER_SECOND)
-/// The picture's border strips: eight sprites across at y 120, 136 and 152.
-#define ENDING_PICTURE_STRIP_SPRITES 24
+#define ENDING_IMAGE_MAP_BYTES (ENDING_IMAGE_COLUMNS * ENDING_IMAGE_STRIP_BYTES)
+/// EndingImage_WaitForScroll gives up after five seconds.
+#define ENDING_IMAGE_SCROLL_TIMEOUT (5 * FRAMES_PER_SECOND)
+/// The image's border strips: eight sprites across at y 120, 136 and 152.
+#define ENDING_IMAGE_STRIP_SPRITES 24
 
-/// A backdrop or picture resource begins with its 128 colours, the palette
+/// A backdrop or image resource begins with its 128 colours, the palette
 /// half it takes; its packed tiles follow.
 #define BACKDROP_COLORS 128
 #define BACKDROP_PALETTE_BYTES (BACKDROP_COLORS * 2)
@@ -210,7 +208,7 @@ enum CreditsAlignment {
 #define BACKDROP_CHANNEL_WEIGHT 5
 #define BACKDROP_GREY_PARTS 16
 
-/// The two pictures' screen blocks, each holding the same tilemap: BG3's, over
+/// The two images' screen blocks, each holding the same tilemap: BG3's, over
 /// character block 0, and BG2's, over character block 2.
 #define CREDITS_BG3_SCREEN_BLOCK 15
 #define CREDITS_BG2_SCREEN_BLOCK 31
@@ -313,7 +311,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 
   blankTiles = TILEMAP_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
   tilePair = TILEMAP_PAIR(0, 1);
-  // Pad above and below the picture so vertical wrapping stays blank.
+  // Pad above and below the image so vertical wrapping stays blank.
   for (i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
   for (i = 0; i < BACKDROP_TILES / 2; i++) {
@@ -326,7 +324,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
     *destination++ = 0;
 }
 
-/// A VBlank task of the credits: drifts both pictures together, keeping their
+/// A VBlank task of the credits: drifts both images together, keeping their
 /// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
@@ -916,45 +914,45 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 /// Unused: an empty routine nothing calls.
 UNUSED void Credits_ReservedNoOp(void) {}
 
-/// Sets the row the ending's scrolling picture moves to, in pixels from its
-/// top, at most gEndingPicture_Speed a frame.
-void SceneState_SetScrollTarget(u16 row) { gEndingPicture_TargetRow = row; }
+/// Sets the row the ending's scrolling image moves to, in pixels from its
+/// top, at most gEndingImage_Speed a frame.
+void SceneState_SetScrollTarget(u16 row) { gEndingImage_TargetRow = row; }
 
-/// Copies 15 columns of a scrolling picture's map into a wrapping 2 KB
+/// Copies 15 columns of a scrolling image's map into a wrapping 2 KB
 /// tilemap by DMA, 31 rows of 64 bytes each, from the row the position
 /// selects, and records the position in the three scroll words. The
-/// scrolling picture scene's callback (EndingPicture_Scroll) and its picture
-/// loader (EndingPicture_Show, through its inline copy) call it.
-void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
+/// scrolling image scene's callback (EndingImage_Scroll) and its image
+/// loader (EndingImage_Show, through its inline copy) call it.
+void EndingImage_CopyMap(const u8 *source, u8 *destination, s32 position) {
   u32 start;
   s32 column;
   s32 row;
   u32 offset;
   u32 from;
 
-  start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
-  gEndingPicture_TargetRow = gEndingPicture_Row = position;
-  gEndingPicture_Scroll = toFIXED(position);
-  for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
-    from = (position / 8) * ENDING_PICTURE_ROW_BYTES;
-    offset = ENDING_PICTURE_WRAP(start);
-    for (row = 0; row < ENDING_PICTURE_ROWS; row++) {
+  start = ENDING_IMAGE_ROW_OFFSET(gEndingImage_MapScroll);
+  gEndingImage_TargetRow = gEndingImage_Row = position;
+  gEndingImage_Scroll = toFIXED(position);
+  for (column = 0; column < ENDING_IMAGE_COLUMNS; column++) {
+    from = (position / 8) * ENDING_IMAGE_ROW_BYTES;
+    offset = ENDING_IMAGE_WRAP(start);
+    for (row = 0; row < ENDING_IMAGE_ROWS; row++) {
       Dma_Set(source + from, destination + offset,
-              DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
-      from += ENDING_PICTURE_ROW_BYTES;
-      offset = ENDING_PICTURE_WRAP(offset + ENDING_PICTURE_ROW_BYTES);
+              DMA_COPY_WORDS(ENDING_IMAGE_ROW_BYTES / 4), REG_DMA3);
+      from += ENDING_IMAGE_ROW_BYTES;
+      offset = ENDING_IMAGE_WRAP(offset + ENDING_IMAGE_ROW_BYTES);
     }
-    source += ENDING_PICTURE_STRIP_BYTES;
-    destination += ENDING_PICTURE_SCREEN_BYTES;
+    source += ENDING_IMAGE_STRIP_BYTES;
+    destination += ENDING_IMAGE_SCREEN_BYTES;
   }
 }
 
-/// The ending picture's VBlank task: fades the new picture in over 64
-/// frames, moves the row toward gEndingPicture_TargetRow by at most
-/// gEndingPicture_Speed, eases the 16.16 scroll after it, and copies the map
+/// The ending image's VBlank task: fades the new image in over 64
+/// frames, moves the row toward gEndingImage_TargetRow by at most
+/// gEndingImage_Speed, eases the 16.16 scroll after it, and copies the map
 /// strip that scrolls into view.
-void EndingPicture_Scroll(void) {
-  s32 old = gEndingPicture_Scroll;
+void EndingImage_Scroll(void) {
+  s32 old = gEndingImage_Scroll;
   s32 d;
   s32 scroll;
   u8 *source;
@@ -964,11 +962,11 @@ void EndingPicture_Scroll(void) {
   u32 offset;
   s32 i;
 
-  if (gEndingPicture_FadeFrames < ENDING_PICTURE_FADE_FRAMES) {
-    s32 t = ++gEndingPicture_FadeFrames / 4;
+  if (gEndingImage_FadeFrames < ENDING_IMAGE_FADE_FRAMES) {
+    s32 t = ++gEndingImage_FadeFrames / 4;
     s32 alpha;
 
-    if (gEndingPicture_Block & 1) {
+    if (gEndingImage_Block & 1) {
       alpha = ((BLEND_WEIGHT_MAX - t) << 8) | t;
       REG_BLDALPHA = alpha;
     } else {
@@ -976,86 +974,86 @@ void EndingPicture_Scroll(void) {
       REG_BLDALPHA = alpha;
     }
   }
-  if (gEndingPicture_TargetRow != gEndingPicture_Row) {
-    d = gEndingPicture_TargetRow - gEndingPicture_Row;
-    if (ABS(d) > gEndingPicture_Speed) {
+  if (gEndingImage_TargetRow != gEndingImage_Row) {
+    d = gEndingImage_TargetRow - gEndingImage_Row;
+    if (ABS(d) > gEndingImage_Speed) {
       if (d > 0)
-        d = gEndingPicture_Speed;
+        d = gEndingImage_Speed;
       else
-        d = -gEndingPicture_Speed;
+        d = -gEndingImage_Speed;
     }
-    gEndingPicture_Row += d;
+    gEndingImage_Row += d;
   }
   {
     /* FAKEMATCH(temporary): the scroll read through a pointer to it. */
-    volatile s32 *word = &gEndingPicture_Scroll;
-    FIXED target = toFIXED(gEndingPicture_Row);
+    volatile s32 *word = &gEndingImage_Scroll;
+    FIXED target = toFIXED(gEndingImage_Row);
 
     scroll = *word;
     if (scroll != target) {
       d = target - scroll;
-      if (ABS(d) > toFIXED(gEndingPicture_Speed) / 4)
+      if (ABS(d) > toFIXED(gEndingImage_Speed) / 4)
         d /= 8;
-      if (ABS(d) > toFIXED(gEndingPicture_Speed)) {
+      if (ABS(d) > toFIXED(gEndingImage_Speed)) {
         if (d > 0)
-          d = toFIXED(gEndingPicture_Speed);
+          d = toFIXED(gEndingImage_Speed);
         else
-          d = -toFIXED(gEndingPicture_Speed);
+          d = -toFIXED(gEndingImage_Speed);
       }
-      gEndingPicture_Scroll += d;
-      gEndingPicture_MapScroll += d;
+      gEndingImage_Scroll += d;
+      gEndingImage_MapScroll += d;
     }
   }
-  if ((gEndingPicture_Scroll ^ old) & toFIXED(8)) {
-    source = gEndingPicture_Map;
+  if ((gEndingImage_Scroll ^ old) & toFIXED(8)) {
+    source = gEndingImage_Map;
     destination = (u8 *)BG_CHAR_BLOCK(0);
-    start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
-    if (gEndingPicture_Block != 0)
+    start = ENDING_IMAGE_ROW_OFFSET(gEndingImage_MapScroll);
+    if (gEndingImage_Block != 0)
       destination = (u8 *)BG_CHAR_BLOCK(2);
-    scroll = gEndingPicture_Scroll;
+    scroll = gEndingImage_Scroll;
     if (scroll > old) {
-      from = ENDING_PICTURE_ROW_OFFSET((u32)scroll) +
-             (ENDING_PICTURE_ROWS - 1) * ENDING_PICTURE_ROW_BYTES;
-      offset = ENDING_PICTURE_WRAP(start + (ENDING_PICTURE_ROWS - 1) *
-                                               ENDING_PICTURE_ROW_BYTES);
-      for (i = 0; i < ENDING_PICTURE_COLUMNS; i++) {
+      from = ENDING_IMAGE_ROW_OFFSET((u32)scroll) +
+             (ENDING_IMAGE_ROWS - 1) * ENDING_IMAGE_ROW_BYTES;
+      offset = ENDING_IMAGE_WRAP(start + (ENDING_IMAGE_ROWS - 1) *
+                                             ENDING_IMAGE_ROW_BYTES);
+      for (i = 0; i < ENDING_IMAGE_COLUMNS; i++) {
         Dma_Set(source + from, destination + offset,
-                DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
-        source += ENDING_PICTURE_STRIP_BYTES;
-        destination += ENDING_PICTURE_SCREEN_BYTES;
+                DMA_COPY_WORDS(ENDING_IMAGE_ROW_BYTES / 4), REG_DMA3);
+        source += ENDING_IMAGE_STRIP_BYTES;
+        destination += ENDING_IMAGE_SCREEN_BYTES;
       }
     } else {
-      from = ENDING_PICTURE_ROW_OFFSET((u32)gEndingPicture_Scroll);
-      offset = ENDING_PICTURE_WRAP(start);
-      for (i = 0; i < ENDING_PICTURE_COLUMNS; i++) {
+      from = ENDING_IMAGE_ROW_OFFSET((u32)gEndingImage_Scroll);
+      offset = ENDING_IMAGE_WRAP(start);
+      for (i = 0; i < ENDING_IMAGE_COLUMNS; i++) {
         Dma_Set(source + from, destination + offset,
-                DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
-        source += ENDING_PICTURE_STRIP_BYTES;
-        destination += ENDING_PICTURE_SCREEN_BYTES;
+                DMA_COPY_WORDS(ENDING_IMAGE_ROW_BYTES / 4), REG_DMA3);
+        source += ENDING_IMAGE_STRIP_BYTES;
+        destination += ENDING_IMAGE_SCREEN_BYTES;
       }
     }
   }
   /* FAKEMATCH(temporary): d, the step, reused for the map's scroll in pixels;
      as a local of its own. */
-  d = FIXEDtoINT(gEndingPicture_MapScroll);
+  d = FIXEDtoINT(gEndingImage_MapScroll);
   gBgScroll[2].x = d;
   gBgScroll[3].x = d;
 }
 
-/// Starts the ending's pictures (the epilogue scene calls it first): resets
-/// the task table and the scroll, adds EndingPicture_Scroll, sets up BG2, BG3
+/// Starts the ending's images (the epilogue scene calls it first): resets
+/// the task table and the scroll, adds EndingImage_Scroll, sets up BG2, BG3
 /// and blending, and builds the border strips.
-void EndingPicture_Start(void) {
+void EndingImage_Start(void) {
   gCpuLoadDisplayEnabled = 0;
   gDebugTextEnabled = 0;
   gIdleSleepEnabled = 0;
   Task_ResetAll();
-  gEndingPicture_MapScroll = 0;
-  gEndingPicture_TargetRow = gEndingPicture_Row = gEndingPicture_Scroll = 0;
-  gEndingPicture_Map = NULL;
-  gEndingPicture_Speed = 1;
-  gEndingPicture_Block = 0;
-  Task_Add(EndingPicture_Scroll, TASK_PASS_FRAME);
+  gEndingImage_MapScroll = 0;
+  gEndingImage_TargetRow = gEndingImage_Row = gEndingImage_Scroll = 0;
+  gEndingImage_Map = NULL;
+  gEndingImage_Speed = 1;
+  gEndingImage_Block = 0;
+  Task_Add(EndingImage_Scroll, TASK_PASS_FRAME);
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap(
       (u32 *)BG_SCREEN_BLOCK(CREDITS_BG3_SCREEN_BLOCK));
@@ -1076,10 +1074,10 @@ void EndingPicture_Start(void) {
                  BLDCNT_TGT2_BD,
              &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-  EndingPicture_InitStrips();
+  EndingImage_InitStrips();
 }
 
-/// EndingPicture_CopyMap's body as EndingPicture_Show inlines it: the same
+/// EndingImage_CopyMap's body as EndingImage_Show inlines it: the same
 /// copy, written with each column's strip and tilemap found from its number.
 static inline void CopyScrollMap(const u8 *source, u8 *destination,
                                  s32 position) {
@@ -1089,31 +1087,31 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
   u32 offset;
   u32 from;
 
-  start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
-  gEndingPicture_TargetRow = gEndingPicture_Row = position;
-  gEndingPicture_Scroll = toFIXED(position);
-  for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
-    u8 *to = destination + column * ENDING_PICTURE_SCREEN_BYTES;
-    const u8 *strip = source + column * ENDING_PICTURE_STRIP_BYTES;
-    from = (position / 8) * ENDING_PICTURE_ROW_BYTES;
-    offset = ENDING_PICTURE_WRAP(start);
-    for (row = 0; row < ENDING_PICTURE_ROWS; row++) {
+  start = ENDING_IMAGE_ROW_OFFSET(gEndingImage_MapScroll);
+  gEndingImage_TargetRow = gEndingImage_Row = position;
+  gEndingImage_Scroll = toFIXED(position);
+  for (column = 0; column < ENDING_IMAGE_COLUMNS; column++) {
+    u8 *to = destination + column * ENDING_IMAGE_SCREEN_BYTES;
+    const u8 *strip = source + column * ENDING_IMAGE_STRIP_BYTES;
+    from = (position / 8) * ENDING_IMAGE_ROW_BYTES;
+    offset = ENDING_IMAGE_WRAP(start);
+    for (row = 0; row < ENDING_IMAGE_ROWS; row++) {
       Dma_Set(strip + from, to + offset,
-              DMA_COPY_WORDS(ENDING_PICTURE_ROW_BYTES / 4), REG_DMA3);
-      from += ENDING_PICTURE_ROW_BYTES;
-      offset = ENDING_PICTURE_WRAP(offset + ENDING_PICTURE_ROW_BYTES);
+              DMA_COPY_WORDS(ENDING_IMAGE_ROW_BYTES / 4), REG_DMA3);
+      from += ENDING_IMAGE_ROW_BYTES;
+      offset = ENDING_IMAGE_WRAP(offset + ENDING_IMAGE_ROW_BYTES);
     }
   }
 }
 
-/// Shows a scrolling picture on the hidden one of the two BG character blocks.
+/// Shows a scrolling image on the hidden one of the two BG character blocks.
 /// With no resource it fills the map buffer with a plain tile word and clears
 /// the palette half; otherwise it clears the block's first 2 KB, expands
-/// resource's map into the buffer with EndingPicture_DecodeCode copied to the
+/// resource's map into the buffer with EndingImage_DecodeCode copied to the
 /// heap (the fill word marks the second block's tiles), and queues the
 /// resource's 128-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
-void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
+void EndingImage_Show(s32 resource, u8 *map, s32 position) {
   volatile u32 cell;
   u32 word;
   u32 fill = 0;
@@ -1123,7 +1121,7 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
   s32 (*code)(u8 *, u8 *, u32);
 
   if (resource == 0) {
-    if (gEndingPicture_Block != 0) {
+    if (gEndingImage_Block != 0) {
       word = PIXELS_8BPP(1);
       tiles = (u8 *)BG_CHAR_BLOCK(0);
       palette = (u16 *)BG_PLTT;
@@ -1132,10 +1130,10 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
       tiles = (u8 *)BG_CHAR_BLOCK(2);
       palette = (u16 *)&BG_PLTT_COLOR(8, 0);
     }
-    Dma_Fill32Cell(cell, word, map, ENDING_PICTURE_MAP_BYTES);
+    Dma_Fill32Cell(cell, word, map, ENDING_IMAGE_MAP_BYTES);
     Dma_Fill32Cell(cell, 0, palette, BACKDROP_PALETTE_BYTES);
   } else {
-    if (gEndingPicture_Block != 0) {
+    if (gEndingImage_Block != 0) {
       tiles = (u8 *)BG_CHAR_BLOCK(0);
       palette = (u16 *)BG_PLTT;
     } else {
@@ -1143,59 +1141,59 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
       tiles = (u8 *)BG_CHAR_BLOCK(2);
       palette = (u16 *)&BG_PLTT_COLOR(8, 0);
     }
-    Dma_Fill32Cell(cell, 0, tiles, ENDING_PICTURE_SCREEN_BYTES);
+    Dma_Fill32Cell(cell, 0, tiles, ENDING_IMAGE_SCREEN_BYTES);
     data = Resource_GetTableEntry(resource);
-    RamCode_Load(code, EndingPicture_DecodeCode, EndingPicture_DecodeCodeSize);
+    RamCode_Load(code, EndingImage_DecodeCode, EndingImage_DecodeCodeSize);
     code(data + BACKDROP_PALETTE_BYTES, map, fill);
     Heap_Release(code);
     IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data,
                         DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
   }
-  gEndingPicture_Map = map;
+  gEndingImage_Map = map;
   CopyScrollMap(map, tiles, position);
-  gEndingPicture_Block ^= 1;
-  gEndingPicture_FadeFrames = 0;
+  gEndingImage_Block ^= 1;
+  gEndingImage_FadeFrames = 0;
 }
 
 /// Waits, for at most 300 frames, until the scroll reaches its row.
-void EndingPicture_WaitForScroll(void) {
+void EndingImage_WaitForScroll(void) {
   s32 frames = 0;
 
-  if (gEndingPicture_Scroll != toFIXED(gEndingPicture_Row)) {
+  if (gEndingImage_Scroll != toFIXED(gEndingImage_Row)) {
     do {
       wait(1);
       frames++;
-      if (frames >= ENDING_PICTURE_SCROLL_TIMEOUT)
+      if (frames >= ENDING_IMAGE_SCROLL_TIMEOUT)
         break;
-    } while (gEndingPicture_Scroll != toFIXED(gEndingPicture_Row));
+    } while (gEndingImage_Scroll != toFIXED(gEndingImage_Row));
   }
 }
 
-/// A VBlank task added by EndingPicture_InitStrips: queues the 24 border
+/// A VBlank task added by EndingImage_InitStrips: queues the 24 border
 /// strip sprites.
-void EndingPicture_DrawStrips(void) {
-  struct QueuedSprite *entry = gEndingPicture_Strips;
+void EndingImage_DrawStrips(void) {
+  struct QueuedSprite *entry = gEndingImage_Strips;
   s32 i;
 
-  for (i = 0; i < ENDING_PICTURE_STRIP_SPRITES; i++)
+  for (i = 0; i < ENDING_IMAGE_STRIP_SPRITES; i++)
     Oam_AddSpriteAtDepthClamped(entry++, 0);
 }
 
-/// Allocates the 24 sprite entries of the scrolling picture's border strips,
-/// fills their tiles with colour 1 and adds EndingPicture_DrawStrips to draw
+/// Allocates the 24 sprite entries of the scrolling image's border strips,
+/// fills their tiles with colour 1 and adds EndingImage_DrawStrips to draw
 /// them; the entries are written as words, as The Broken Seal's
 /// Credits_InitCrawlSprites writes its strips.
-void EndingPicture_InitStrips(void) {
+void EndingImage_InitStrips(void) {
   s32 slot = VramCache_FindFreeEntry();
   u32 *words;
   s32 tile;
   u32 i;
 
-  gEndingPicture_Strips = Heap_AllocEwram(ENDING_PICTURE_STRIP_SPRITES *
-                                          sizeof(struct QueuedSprite));
+  gEndingImage_Strips =
+      Heap_AllocEwram(ENDING_IMAGE_STRIP_SPRITES * sizeof(struct QueuedSprite));
   tile = VramCache_Load(slot, 512, 0);
   Dma_Fill32(PIXELS_4BPP(1), (void *)(OBJ_VRAM0 + tile * TILE_SIZE_4BPP), 512);
-  words = (u32 *)gEndingPicture_Strips;
+  words = (u32 *)gEndingImage_Strips;
   for (i = 0; i < 8; i++) {
     *words++ = 0;
     *words++ = OBJ_X(i * 32) | OBJ_SIZE_32X16 | 120;
@@ -1211,13 +1209,13 @@ void EndingPicture_InitStrips(void) {
     *words++ = OBJ_X(i * 32) | OBJ_SIZE_32X8 | 152;
     *words++ = tile | OBJ_PRIORITY(2);
   }
-  Task_Add(EndingPicture_DrawStrips, TASK_PASS_FRAME);
+  Task_Add(EndingImage_DrawStrips, TASK_PASS_FRAME);
 }
 
 /// Moves the top strip's eight sprites to y 120 when enable is set, and to
 /// y 0 otherwise.
-void EndingPicture_LowerTopStrip(s32 enable) {
-  struct QueuedSprite *entry = gEndingPicture_Strips;
+void EndingImage_LowerTopStrip(s32 enable) {
+  struct QueuedSprite *entry = gEndingImage_Strips;
   u32 i;
 
   if (!enable) {

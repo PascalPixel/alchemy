@@ -1535,10 +1535,10 @@ extern char ResourceId_RingArcs;
 /// Loaded by FieldPsynergy_Ring.
 extern char ResourceId_RingWaves;
 #define RESOURCE_RING_WAVES ((s32)&ResourceId_RingWaves)
-/// Loaded by WorldPicture_UpdateMarkers.
+/// Loaded by MapScreen_UpdateMarkers.
 extern char ResourceId_WorldMapPicture;
 #define RESOURCE_WORLD_MAP_PICTURE ((s32)&ResourceId_WorldMapPicture)
-/// Loaded by WorldPicture_UpdateMarkers.
+/// Loaded by MapScreen_UpdateMarkers.
 extern char ResourceId_WorldMapPictureLarge;
 #define RESOURCE_WORLD_MAP_PICTURE_LARGE ((s32)&ResourceId_WorldMapPictureLarge)
 /// Loaded by Scene_Initialize (epilogue.c).

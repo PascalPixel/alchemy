@@ -41,7 +41,7 @@
 /// Four affine map entries side by side, a byte each, written a word at a time.
 #define AFFINE_MAP_ENTRIES(first, second, third, fourth)                       \
   ((fourth) << 24 | (third) << 16 | (second) << 8 | (first))
-/// The battle background's picture: 32 by 15 tiles of 256 colours, 256 by 120
+/// The battle background's image: 32 by 15 tiles of 256 colours, 256 by 120
 /// pixels. The first 256 tiles fill character block 2 and the rest block 3.
 #define BACKGROUND_TILE_ROWS 15
 #define BACKGROUND_TILES (BG_SCREEN_WIDTH * BACKGROUND_TILE_ROWS)

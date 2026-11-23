@@ -79,6 +79,16 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+/// The water carrier has spilled her water.
+#define FLAG_XIAN_WATER_SPILLED FLAG_SCENE_TEMP_00
+/// Frost has frozen the spilled water into ice that can be stood on.
+#define FLAG_XIAN_SPILLED_WATER_FROZEN FLAG_SCENE_TEMP_01
+/// The kung fu student has shown her strike on the tree.
+#define FLAG_XIAN_STRIKE_SHOWN FLAG_SCENE_TEMP_02
+/// Force has made the kung fu student's tree jump once, which picks her second
+/// line.
+#define FLAG_XIAN_TREE_JUMPED FLAG_SCENE_TEMP_03
+
 s32 Scene_Initialize(void);
 extern s32 gXian_WaterCarrierRoute[];
 extern s32 gXian_TrainingTreeJump[];
@@ -96,11 +106,6 @@ extern struct Trigger gXian_Triggers[];
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
-
-// Xian's temporary flags: FLAG_XIAN_WATER_SPILLED the water carrier has spilled
-// her water FLAG_XIAN_SPILLED_WATER_FROZEN the spilled water is frozen
-// FLAG_XIAN_STRIKE_SHOWN the kung fu student has shown her strike on the tree
-// FLAG_XIAN_TREE_JUMPED Force has made the tree jump once
 
 /// The actors, numbering the rows of gXian_ActorPlacements. Each
 /// person is named by what their sprite shows and what they talk of before Xian
@@ -154,7 +159,9 @@ enum XianCellBehavior {
   CELL_BEHAVIOR_XIAN_WATER_STREET = 20,
   /// The cell north of the street between the north and east houses' doors,
   /// cell (25, 13), from which Isaac hops south over the spilled water.
-  CELL_BEHAVIOR_XIAN_WATER_STREET_NORTH = 21
+  CELL_BEHAVIOR_XIAN_WATER_STREET_NORTH = 21,
+  /// The jar by the mulberry orchard, cell (10, 22), with the Lucky Medal.
+  CELL_BEHAVIOR_XIAN_JAR = 101
 };
 
 /// The frames the leader must stand in the water carrier's way before she
@@ -213,28 +220,24 @@ static void Xian_SpawnTrainingParticles(void) {
 
 #include "shared/actor_distance.c"
 
-/// The water carrier has spilled her water.
-#define FLAG_XIAN_WATER_SPILLED FLAG_SCENE_TEMP_00
-/// Frost has frozen the spilled water into ice that can be stood on.
-#define FLAG_XIAN_SPILLED_WATER_FROZEN FLAG_SCENE_TEMP_01
-/// The kung fu student has shown her strike on the tree.
-#define FLAG_XIAN_STRIKE_SHOWN FLAG_SCENE_TEMP_02
-/// Force has made the kung fu student's tree jump once, which picks her second
-/// line.
-#define FLAG_XIAN_TREE_JUMPED FLAG_SCENE_TEMP_03
+/// Stops the water carrier where she stands while `target` is within
+/// `distanceLimit` pixels of her and no more than a sixteenth of a turn off her
+/// heading, or whenever `alwaysStop` is set, and sets her walking on
+/// otherwise. Returns whether she is stopped.
+///
+/// `paused` holds her still, and `timer` is 1 while this routine holds her;
+/// paused with `timer` 0, she stays put whatever the leader does.
+static s32 Xian_StopCarrierBeforeLeader(struct Actor *actor,
+                                        struct Actor *target, s32 distanceLimit,
+                                        s32 alwaysStop) {
+  s32 stopped = 0;
 
-/// Tracks a nearby target only within the actor's current facing sector.
-static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
-                                      s32 distanceLimit, s32 forceTracking) {
-  s32 isTracking = 0;
-
-  // This route uses paused/timer as its tracking latch and mode.
   if (actor->paused == 1 && actor->timer == 0) {
     Actor_SelectAnimation(actor, ANIM_STAND);
     return 1;
   }
 
-  if (Actor_Distance(target, actor) < distanceLimit || forceTracking != 0) {
+  if (Actor_Distance(target, actor) < distanceLimit || alwaysStop != 0) {
     u16 angle = Trig_Atan(target->z.fixed - actor->z.fixed,
                           target->x.fixed - actor->x.fixed);
     s32 previousHeading = FACING_SIXTEENTH(angle - FACING_STEP);
@@ -243,11 +246,11 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
     s32 currentHeading = FACING_SIXTEENTH(actor->facing);
 
     if (targetHeading == currentHeading || nextHeading == currentHeading ||
-        previousHeading == currentHeading || forceTracking != 0) {
+        previousHeading == currentHeading || alwaysStop != 0) {
       actor->paused = 1;
       Actor_SelectAnimation(actor, ANIM_STAND);
-      isTracking = 1;
-      actor->timer = isTracking;
+      stopped = 1;
+      actor->timer = stopped;
     } else {
       actor->paused = 0;
       Actor_SelectAnimation(actor, ANIM_WALK);
@@ -259,38 +262,39 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
     actor->timer = 0;
   }
 
-  return isTracking;
+  return stopped;
 }
 
 /// The water carrier's update: she stops and looks at Isaac when he stands in
 /// front of her, and when he has stood in her way at the west end of her
 /// round, cells (17, 14) and (18, 14), for two seconds on her way back, she
 /// raises RAISED_CARRIER_BLOCKED.
-static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
+static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *carrier) {
   struct Actor *leader;
   s32 near = 0;
 
-  if (updated->targetX == ACTOR_NO_TARGET &&
-      updated->targetZ == ACTOR_NO_TARGET)
+  if (carrier->targetX == ACTOR_NO_TARGET &&
+      carrier->targetZ == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FIELD_CELL(leader->x.fixed) >= CARRIER_ROUTE_WEST_COLUMN &&
       FIELD_CELL(leader->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 1 &&
       FIELD_CELL(leader->z.fixed) == CARRIER_ROUTE_ROW &&
-      FIELD_CELL(updated->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 2 &&
-      updated->velocityX <= 0) {
-    if (leader->x.fixed <= updated->x.fixed) {
-      updated->riseCounter++;
+      FIELD_CELL(carrier->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 2 &&
+      carrier->velocityX <= 0) {
+    if (leader->x.fixed <= carrier->x.fixed) {
+      carrier->riseCounter++;
       near = 1;
     }
   } else {
-    updated->riseCounter = 0;
+    carrier->riseCounter = 0;
   }
-  if (near && updated->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
+  // riseCounter counts the frames he has stood there.
+  if (near && carrier->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
     gFieldWork->raisedTrigger = RAISED_CARRIER_BLOCKED;
-    updated->riseCounter = 0;
+    carrier->riseCounter = 0;
   }
-  Xian_UpdateCarrierTracking(updated, leader, 18, near);
+  Xian_StopCarrierBeforeLeader(carrier, leader, 18, near);
   RETURN_UNREAD(0);
 }
 
@@ -384,6 +388,8 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     Event_Wait(5);
+    // He steps up to the middle of the cell beside hers on the street, on
+    // the side he stands (row 14's middle is 232 pixels down).
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader->x.fixed < Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed) {
       Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -512,7 +518,7 @@ static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   FIXED reboundVelocity;
   s32 stepBackOffset[3];
-  struct EffectOptions effectParams;
+  struct EffectOptions options;
 
   Event_Start();
   demonstrationSeen = GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN);
@@ -542,7 +548,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-    effectParams.priority = 1;
+    options.priority = 1;
     FieldEffect_Spawn(toFIXED(192), 0, toFIXED(312), toFIXED(1) / 10,
                       toFIXED(1) / 5, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
@@ -560,13 +566,13 @@ static void Xian_TalkToKungFuStudent(void) {
     Sound_Play(SE_HEAVY_IMPACT);
     Actor_SetScript(ACTOR_TRAINING_TREE, gXian_TrainingTreeJump);
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
-    effectParams.type = SPRITE_STAR_BURST;
-    effectParams.script = gXian_TreeImpactScript;
-    effectParams.rotation = DEGtoANG(90);
+    options.type = SPRITE_STAR_BURST;
+    options.script = gXian_TreeImpactScript;
+    options.rotation = DEGtoANG(90);
     FieldEffect_Spawn(toFIXED(168), 0, toFIXED(332), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                           EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
-                      &effectParams);
+                      &options);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     Task_Remove(Xian_SpawnTrainingParticles);
@@ -575,6 +581,8 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldEffect_Spawn(toFIXED(144), 0, toFIXED(312), -toFIXED(1) / 5,
                       toFIXED(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
+    // Half a pixel a frame back east, and below as a rotation: half a turn,
+    // which stands the post upright again.
     reboundVelocity = -toFIXED(1) / 2;
     FieldEffect_Spawn(toFIXED(144), 0, toFIXED(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
@@ -807,14 +815,13 @@ s32 Scene_Initialize(void) {
   // its actors: still, not solid, never a target and hidden.
   // XXX (no evidence): what the crates are for; nothing reads them again.
   for (crateIndex = 0; crateIndex <= 2; crateIndex++) {
-    struct Actor *actor;
-    actor = Actor_Get(crateIndex + ACTOR_FIRST_CRATE);
-    actor->sprite->image.priority = 1;
-    actor->motionFlags = 0;
-    actor->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(actor, 0);
-    Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
-    actor->priorityFlags = (actor->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |
+    struct Actor *crate = Actor_Get(crateIndex + ACTOR_FIRST_CRATE);
+    crate->sprite->image.priority = 1;
+    crate->motionFlags = 0;
+    crate->collisionFlags = ACTOR_NOT_TARGETED;
+    Actor_SetSpriteFlags(crate, 0);
+    Actor_SetSpriteColor(crate, SPRITE_COLOR_HIDDEN);
+    crate->priorityFlags = (crate->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |
                            ACTOR_PRIORITY_UNDERFOOT;
   }
   if (GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN)) {
@@ -1004,9 +1011,9 @@ struct ActorPlacement gXian_ActorPlacements[] = {
         368, 0, 496, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gXian_WaterCarrierRoute,
         280, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         168, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         168, 0, 312, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1078,7 +1085,7 @@ struct Trigger gXian_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MUSCULAR_MAN_ON_DISASTERS, CONDITION_ALWAYS, MSGNO(MsgXianItIsBadForXianIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_IN_THE_MULBERRY_ORCHARD, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_XIAN_JAR, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT(Xian_MistJoins) },
     { TRIGGER_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT(Xian_WaterCarrierStartsRoundAgain) },
     { TRIGGER_TABLE_END },

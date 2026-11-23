@@ -392,13 +392,16 @@ enum {
   ANIM_KRADEN_LIE = 5  ///< lying on his back (kraden.tsv)
 };
 
-// The World Map's scene flags: FLAG_WORLD_MAP_FALLING_ROCK_LANDED: the falling
-// rock has landed, in Hammet's caravan event.
-// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER: Iodem has handed over the Black Orb.
-// FLAG_WORLD_MAP_ORDINARY_ACTORS: the scene's ordinary actor
-// placements are in use. FLAG_WORLD_MAP_CAUGHT_IN_STORM: the storm holds the
-// party up in the air. FLAG_WORLD_MAP_STORM_GONE: the storm is done with, or
-// put away. FLAG_WORLD_MAP_STORM_FRAMES_LEFT: a byte: frames left in the air.
+/// The battles the map starts from the scripted encounter tables.
+enum {
+  /// Flint's lesson battle (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
+  ENCOUNTER_SLOT_DJINN_LESSON = 6,
+  /// The Tornado Lizard of Suhalla Desert's sandstorms
+  /// (ENCOUNTER_ZONE_SCRIPTED).
+  ENCOUNTER_SLOT_TORNADO_LIZARD = 5,
+  /// The Tempest Lizard of its great red storm (ENCOUNTER_ZONE_SCRIPTED).
+  ENCOUNTER_SLOT_TEMPEST_LIZARD = 7
+};
 
 /// Walking over the small island north-west of the Lamakan Desert's way out,
 /// once a random battle is nearly due, may start a battle with the Venus
@@ -790,7 +793,10 @@ static void WorldMap_ReturnToTolbiShip(void) {
   Import_EventSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
-/// The scene's initialization, which runs the moment the entrance selects.
+/// Sets the map up for the entrance the party arrives by: the lighthouse
+/// transitions and the Black Orb defeat lead straight on to another scene;
+/// every other way in starts the area contacts and plays the story moment its
+/// entrance names, if any.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
@@ -819,6 +825,8 @@ s32 Scene_Initialize(void) {
     FieldCamera_SetSpeed(8);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     Task_AddFrame(WorldMap_UpdateAreaContacts, TASK_PASS_FRAME);
+    // The bridge south of Vault, which the quake broke as Hammet's caravan
+    // left, lies broken until the Manticore of the Lamakan Desert is beaten.
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
@@ -1195,17 +1203,22 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_FALLING_ROCK, 0, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
   Actor_Jump(ACTOR_CARAVAN_HAMMET, 4, 40);
+  // "We must leave this treacherous place immediately!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET,
                                  0, 10);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_EAST, 10);
+  // "But to where? Where can we go?"
   Event_ShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 20);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTH, 40);
+  // "We have no choice. We're heading north."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET,
                                  0, 20);
   Actor_Jump(ACTOR_CARAVAN_MAN, 4, 20);
+  // "We'll wind up in Lunpa if we go north..."
   Event_ShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_CARAVAN_HAMMET, 1);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_WEST, 10);
+  // "Well, it's better than being smashed by falling rocks here, isn't it?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CARAVAN_HAMMET, 0,
                             10);
   Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN,
@@ -1487,7 +1500,8 @@ static void WorldMap_ExplainSettingDjinn(void) {
   GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   Event_Wait(30);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT,
+                                        ENCOUNTER_SLOT_DJINN_LESSON);
 }
 
 /// The frames Flint takes to grow to full size as he comes down to the party.
@@ -1502,6 +1516,11 @@ static void WorldMap_ExplainSettingDjinn(void) {
 /// opens, and he shows how to give a Djinni to another Adept and set it, and
 /// that setting one changes attributes and even class. Then comes the lesson
 /// battle.
+///
+/// Back from it, still on his ground (FLAG_DJINN_LESSON set), he leaps up
+/// again: "See! We Djinn can be very useful, can't we?" He shows the Djinn
+/// screen once more for standby and recovery, offers to explain it all again,
+/// and at last joins for good.
 static void WorldMap_MeetFlint(void) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -1557,6 +1576,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->update = 0;
     Actor_SetColorMode(djinni, SPRITE_COLOR_NORMAL);
     djinni->gravity = toFIXED(1);
+    // "A traveling warrior!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Sound_Play(SE_PSYNERGY_SPARKLE);
     FieldPsynergy_LoadResources(ABILITY_MOVE, 0);
@@ -1572,22 +1592,30 @@ static void WorldMap_MeetFlint(void) {
     FieldPsynergy_End();
     Actor_SetColorMode(djinni, SPRITE_COLOR_NORMAL);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
+    // "And I see you're an Adept, too!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "You are just the kind of fighter that I've been looking for."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, FIXEDtoINT(x), FIXEDtoINT(z));
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    // "Won't you please take me along with you?"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
     MessageArgument_Push(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
+    // "I am a Venus Djinni. My name is Flint."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    // "I must find my comrades. We were separated from each other when the
+    // volcano erupted."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    // "...Maybe you can help gather my friends together as you travel."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 30);
+    // "If you let me join you, I'll prove to be very beneficial to you..."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     i = 0;
     djinni->motionFlags = 0;
@@ -1598,6 +1626,7 @@ static void WorldMap_MeetFlint(void) {
       wait(1);
     }
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    // "Your Psynergy will grow stronger, and your Adept skills will also..."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = 0;
@@ -1607,12 +1636,15 @@ static void WorldMap_MeetFlint(void) {
       wait(1);
     }
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
+    // "You can call on us in battle or just use our power to boost your own!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
+    // "If you call on many of us at once, our powers will work together!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 30);
+    // "What do you think? Will you take me with you?"
     Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
     // Each "No" makes Flint plead again; the seventh time he gives up asking.
     count = 0;
@@ -1626,6 +1658,8 @@ static void WorldMap_MeetFlint(void) {
         Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
         goto listened;
       }
+      // "Come on! I promise you won't regret it! Please take me with you!",
+      // and five more pleas, down to "Take me with you!"
       Event_SetMessageId(count + MsgWorldMapComePromiseWont);
       Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
       count++;
@@ -1641,10 +1675,11 @@ static void WorldMap_MeetFlint(void) {
     MessageArgument_Push(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
     Sound_Play(MUS_A_NEW_ALLY);
     count = MsgWorldMapAbilityVenusDjinni;
+    // "Flint, the Venus Djinni, is now Isaac's ally!"
     Message_ShowCentered(count++, 3);
     Event_SetMessageId(count);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
-    // "..., the Venus Djinni, is now Isaac's ally!"
+    // "Now, I'll briefly teach you how to use Djinn."
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Sound_Play(MUS_TRY_YOUR_LUCK);
     WorldMap_ExplainSettingDjinn();
@@ -1662,7 +1697,7 @@ static void WorldMap_MeetFlint(void) {
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-  // Offer the lesson again, then explain setting and standby.
+  // Back from the lesson battle, Flint sums the lesson up.
   Event_SetMessageId(MsgWorldMapSeeDjinnUseful);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
@@ -1841,8 +1876,10 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
   Actor_ShowEmote(gWorldMapIodem, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Actor_RunRepeatedMotion(gWorldMapIodem, 2);
+  // "Hm... Perhaps it is time..."
   Event_ShowMessageThenWait(gWorldMapIodem, 0, 10);
   Actor_FaceDirection(gWorldMapIodem, FACING_WEST, 10);
+  // "Isaac, take this... Try to use it."
   Event_ShowMessage(gWorldMapIodem, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
   Actor_Get(gWorldMapIodem)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1871,8 +1908,9 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_End();
 }
 
-/// Turns Gateway Cave's exit into a step trigger that runs
-/// WorldMap_IodemCallsIsaacBack.
+/// While Iodem waits with the Black Orb handed over, walking into Gateway Cave
+/// runs WorldMap_IodemCallsIsaacBack instead of entering it, and his row of
+/// the placements stands him on the coast. `actorId` goes unread.
 static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
   s32 i;
 
@@ -2074,6 +2112,7 @@ static void WorldMap_UseBlackOrb(void) {
   FieldActor_SetMoveTarget(iodem, 6001, 0, 3416);
   Actor_WaitForMove(iodem);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
+  // "You returned the Black Orb."
   Message_ShowCentered(message + 6, 1);
   gFieldWork->message++;
   PartyInventory_Discard(ITEM_BLACK_ORB);
@@ -2245,6 +2284,7 @@ static void WorldMap_ShowEndingEvent(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   WorldMap_Freeze();
+  // Jenna: "Felix... Sheba...", and Kraden: "Felix! Sheba!"
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 7, 13, 2, 12, ACTOR_KRADEN, 9,
                                     4, 4, 3, 0);
   Event_Wait(20);
@@ -2260,11 +2300,14 @@ static void WorldMap_ShowEndingEvent(void) {
   WorldMap_Freeze();
   Event_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
+  // "They... They're alive."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
+  // "They're alive!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 2);
+  // "What is this? Alex, what happened?"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 60);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -2316,7 +2359,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
                         0, toFIXED(z) + toFIXED(QUAKE_DUST_TOP));
   if (actor != NULL) {
     struct Sprite *sprite = actor->sprite;
-    FIXED scale = (Random_Below(32768)) + 6 * FIXED_ONE / 5;
+    FIXED scale = Random_Below(FIXED_ONE / 2) + 6 * FIXED_ONE / 5;
 
     sprite->flags = 0;
     sprite->image.priority = 2;
@@ -2516,15 +2559,15 @@ static void WorldMap_UpdateStormTimer(void) {
 
 /// Draws the leader into the storm, lifts him and starts its timer.
 static void WorldMap_CatchInStorm(s32 targetActorId) {
-  s32 alreadyTraveling;
+  s32 alreadyCaught;
   struct Actor *actor;
   struct Actor *storm;
   s32 id;
 
   id = gMainRoutineWork.leaderActorId;
   actor = Actor_Get(id);
-  alreadyTraveling = Event_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
-  if (alreadyTraveling == 0) {
+  alreadyCaught = Event_GetFlag(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
+  if (alreadyCaught == 0) {
     Event_Start();
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -2537,11 +2580,11 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Actor_WaitForMoveById(id);
     Sound_Play(SE_SANDSTORM);
     Task_AddFrame(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
-    actor->motionFlags = alreadyTraveling;
+    actor->motionFlags = alreadyCaught;
     FieldActor_SetMoveTargetFX(actor, actor->x.fixed,
                                actor->y.fixed + toFIXED(32), actor->z.fixed);
     Actor_WaitForMoveById(id);
-    actor->velocityY = alreadyTraveling;
+    actor->velocityY = alreadyCaught;
     actor->motionFlags = ACTOR_FLOATS;
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
@@ -2573,9 +2616,13 @@ static void WorldMap_DouseMapStorm(void) {
   GameFlag_Clear(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
   GameFlag_Set(FLAG_WORLD_MAP_STORM_GONE);
   FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, 0);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
+  // As in Suhalla Desert, the Tornado Lizard is asked for and then replaced by
+  // the Tempest Lizard.
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED,
+                                        ENCOUNTER_SLOT_TORNADO_LIZARD);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED,
+                                        ENCOUNTER_SLOT_TEMPEST_LIZARD);
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 }
 
@@ -2608,7 +2655,9 @@ static void WorldMap_StormDropsParty(void) {
   Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_FROM_SUHALLA);
 }
 
-/// Run each frame of the lighthouse transition.
+/// Run each frame of the lighthouse transition: blends the ball of light over
+/// the map, its own weight flickering between 12 and 16 sixteenths every two
+/// frames over gWorldMapBlend.
 static void WorldMap_UpdateTransitionBlend(void) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
@@ -2621,35 +2670,36 @@ static void WorldMap_UpdateTransitionBlend(void) {
   }
 }
 
-/// Run each frame at the end of the lighthouse transition. Every third frame
-/// it moves the camera a pixel diagonally from the leader.
+/// Run each frame at the end of the lighthouse transition, as the ground
+/// rumbles: every third frame it moves the camera a pixel diagonally from the
+/// leader.
 static void WorldMap_JitterTransitionCamera(void) {
   struct Actor *actor;
-  s32 sx;
-  s32 sy;
+  s32 x;
+  s32 z;
   u32 mode;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  sx = actor->x.part[0].integer;
-  sy = actor->z.part[0].integer;
+  x = actor->x.part[0].integer;
+  z = actor->z.part[0].integer;
   if (gFrameCount % 3 == 0) {
     mode = Random_Below(4);
     switch (mode) {
     case 0:
-      FieldCamera_MoveToFX(toFIXED(sx) - toFIXED(1), CAMERA_KEEP,
-                           toFIXED(sy) + toFIXED(1), 1);
+      FieldCamera_MoveToFX(toFIXED(x) - toFIXED(1), CAMERA_KEEP,
+                           toFIXED(z) + toFIXED(1), 1);
       break;
     case 1:
-      FieldCamera_MoveWithinMapBounds(toFIXED(sx) + toFIXED(1), CAMERA_KEEP,
-                                      toFIXED(sy) - toFIXED(1), 1);
+      FieldCamera_MoveWithinMapBounds(toFIXED(x) + toFIXED(1), CAMERA_KEEP,
+                                      toFIXED(z) - toFIXED(1), 1);
       break;
     case 2:
-      FieldCamera_MoveToFX(toFIXED(sx) + toFIXED(1), CAMERA_KEEP,
-                           toFIXED(sy) + toFIXED(1), 1);
+      FieldCamera_MoveToFX(toFIXED(x) + toFIXED(1), CAMERA_KEEP,
+                           toFIXED(z) + toFIXED(1), 1);
       break;
     case 3:
-      FieldCamera_MoveToFX(toFIXED(sx) - toFIXED(1), CAMERA_KEEP,
-                           toFIXED(sy) - toFIXED(1), 1);
+      FieldCamera_MoveToFX(toFIXED(x) - toFIXED(1), CAMERA_KEEP,
+                           toFIXED(z) - toFIXED(1), 1);
       break;
     }
   }
@@ -2955,8 +3005,8 @@ s32 gCaravanRockGuideScript[] = {
     SC_WAIT(1),
     SC_MOVE(5608, 0, 1720),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 655),
-    SC_ADD(SW_SCALE_Y, 655),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 100),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 100),
     SC_WAIT(1),
     SC_LOOP(160, SC_TO(1)),
     SC_END,
@@ -3045,7 +3095,7 @@ s32 gQuakeCloudScript[] = {
     SC_RELEASE,
 };
 
-/// The ship crossing the sea (WorldMap_SailToFirstMonsterAttack,
+/// The ship crossing the sea (WorldMap_SailCrossingLeg,
 /// WorldMap_SailUntilLandSighted): 8 pixels west a step for 40 steps, then
 /// SW_TIMER turns 1 while it sails on two more.
 s32 gCrossingShipSailsWest[] = {
@@ -3516,6 +3566,7 @@ struct ActorPlacement gWorldMapActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_IODEM, CONDITION_ALWAYS, (s32)gWorldMapIodemScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     { SCENE_TABLE_END },
+    // Unused: a row for Garet past the table's end, which nothing reads.
     ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },

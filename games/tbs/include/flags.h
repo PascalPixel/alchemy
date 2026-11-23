@@ -153,6 +153,12 @@
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
+/// Holds the field's palette blend still (PaletteFade_Update), while a
+/// menu is open (Menu_SuspendFieldTasks).
+#define FLAG_PALETTE_BLEND_HELD 0x152
+/// Holds the field's weather still, its particles and its next burst, while a
+/// menu is open (Menu_SuspendFieldTasks).
+#define FLAG_WEATHER_HELD 0x166
 /// In debug mode, each step beeps (SE_CLICK) while fewer than 136 of the 512
 /// resource blocks are free.
 #define FLAG_DEBUG_RESOURCE_BEEP 0x15e
@@ -187,12 +193,6 @@
 /// Set when the cleared game's menu goes to the Battle Arena: there Psynergy
 /// has no effect and the Pause menu offers only Change settings.
 #define FLAG_IN_BATTLE_ARENA 0x17e
-/// Holds the field's palette blend still (PaletteFade_Update), while a
-/// menu is open (Menu_SuspendFieldTasks).
-#define FLAG_PALETTE_BLEND_HELD 0x152
-/// Holds the field's weather still, its particles and its next burst, while a
-/// menu is open (Menu_SuspendFieldTasks).
-#define FLAG_WEATHER_HELD 0x166
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
 /// (Actor_UpdatePlayerControl). Nothing in the game sets it.
 #define FLAG_FAST_WALK 0x17f

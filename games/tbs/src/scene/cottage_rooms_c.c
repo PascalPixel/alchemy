@@ -1,5 +1,5 @@
 /// @file
-/// Cottage rooms C (SceneId_CottageRoomsC) is a sheet of rooms drawn as
+/// Cottage rooms C (SceneId_CottageRoomsC) is a rooms map drawn as
 /// cottages, all of them inside Bilibin's buildings, whose area name is
 /// Bilibin.
 ///

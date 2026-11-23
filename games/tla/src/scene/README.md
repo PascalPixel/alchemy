@@ -250,7 +250,7 @@ Two choices explain the folder.
 
 Rooms are packed several to a map. The inside of a house need not be a map
 of its own: rooms sit side by side on one map, a
-[sheet of rooms](../../glossary.md#sheet-of-rooms), and the entrance picks
+[rooms map](../../glossary.md#rooms-map), and the entrance picks
 the room. Champa's houses are one scene, and the same scene entered from
 the islets at entrance 8 or 9 is a house out on an islet. So a file like
 `champa_rooms.c` can hold a room that isn't in Champa at all.

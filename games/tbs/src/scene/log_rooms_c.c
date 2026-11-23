@@ -1,5 +1,5 @@
 /// @file
-/// Log rooms C (SceneId_LogRoomsC), a sheet of rooms drawn in logs, holds only
+/// Log rooms C (SceneId_LogRoomsC), a rooms map drawn in logs, holds only
 /// Kolima's rooms: the village's houses, shops and inn.
 ///
 /// Some of its exits join its own rooms, by the stairs up the inn and the

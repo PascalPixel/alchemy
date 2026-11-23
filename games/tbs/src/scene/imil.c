@@ -43,7 +43,7 @@
 ///   Vial in a chest above the first house, and a Lucky Medal in the upper
 ///   left grave by the Sanctum.
 ///
-/// - Ice rooms (SceneId_IceRooms), a sheet of rooms drawn in ice, all of them
+/// - Ice rooms (SceneId_IceRooms), a rooms map drawn in ice, all of them
 ///   Imil's: inside the houses, the shops and the inn, whose area name is
 ///   Imil. By ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
 ///   Sanctum.

@@ -2420,8 +2420,8 @@ enum {
 
 /// SceneId_RockRooms's entrances and exits.
 enum {
-  /// The house at the gate to Suhalla, the one room of the sheet that is not
-  /// Lunpa's.
+  /// The house at the gate to Suhalla, the one room of the rooms map that is
+  /// not Lunpa's.
   ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT = 10,
 };
 

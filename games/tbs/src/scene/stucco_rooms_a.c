@@ -1,7 +1,7 @@
 /// @file
 /// Inside Kalay are the houses and the inn, and the Kalay Sanctum.
 ///
-/// - Stucco rooms A (SceneId_StuccoRoomsA), a sheet of rooms drawn in stucco,
+/// - Stucco rooms A (SceneId_StuccoRoomsA), a rooms map drawn in stucco,
 ///   all of them Kalay's, whose area name is Kalay. It holds every house and
 ///   the inn, each entered from its own door in the town (kalay.c) at an
 ///   entrance of its own, and left by the matching exit. The inn's entrances,

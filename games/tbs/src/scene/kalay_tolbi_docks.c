@@ -1,8 +1,8 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
 /// Karagol Sea, and the cottage at each (SceneId_KalayDocks, SceneId_TolbiDocks
-/// and SceneId_CottageRoomsE, the sheet that holds both cottages' rooms). The
-/// three scenes share one overlay.
+/// and SceneId_CottageRoomsE, the rooms map that holds both cottages' rooms).
+/// The three scenes share one overlay.
 ///
 /// What is there changes three times: when the Colosso tour group has left
 /// Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), when the ship has made its crossing

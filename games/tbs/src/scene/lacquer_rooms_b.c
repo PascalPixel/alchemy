@@ -1,6 +1,6 @@
 /// @file
 /// The insides of Xian (SceneId_LacquerRoomsB): its houses, its inn and its
-/// shop, red lacquered rooms laid side by side on one sheet, and the small
+/// shop, red lacquered rooms laid side by side on one rooms map, and the small
 /// bedroom behind Master Feh's school.
 ///
 /// Each of Xian's doors opens into a room of its own here. Three are villagers'

@@ -1,5 +1,5 @@
 /// @file
-/// Log rooms B (SceneId_LogRoomsB), a sheet of rooms drawn in logs, holds only
+/// Log rooms B (SceneId_LogRoomsB), a rooms map drawn in logs, holds only
 /// Vault's rooms: the town's houses, shops and inn once the party has reached
 /// Kalay.
 ///

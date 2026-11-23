@@ -1,5 +1,5 @@
 /// @file
-/// Lalivero's rooms are two sheets of rooms drawn in timber in one overlay,
+/// Lalivero's rooms are two rooms maps drawn in timber in one overlay,
 /// Timber rooms B and C.
 ///
 /// The game packs rooms that share a tile style onto one map, and every room

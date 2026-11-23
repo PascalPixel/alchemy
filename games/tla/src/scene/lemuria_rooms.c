@@ -1,5 +1,5 @@
 /// @file
-/// Lemuria's rooms (SceneId_LemuriaRooms), a sheet of rooms behind the city's
+/// Lemuria's rooms (SceneId_LemuriaRooms), a rooms map behind the city's
 /// doors:
 ///
 /// - Piers's uncle's house (LEMURIA_ROOMS_TO_LEMURIA_WEST_A), where Piers comes

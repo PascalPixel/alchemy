@@ -152,7 +152,6 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   offsetX *= toFIXED(16);
   offsetZ *= toFIXED(16);
 
-  // Shift the selected actor before the separate camera actor.
   if (actor != NULL) {
     actor->x.fixed += offsetX;
     actor->z.fixed += offsetZ;
@@ -173,53 +172,39 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-/// Nothing visible happens when Isaac walks over the upper branch next to the
-/// top of the west vine (cell (7, 12)), the branch that leads to the fifth
-/// floor's west door. The game quietly moves him 5 cells south onto a hidden
-/// copy of the branch, drawn in the same place, that joins the vine, so that
-/// holding Down at the vine climbs him down it.
+/// On the upper branch beside the west vine's top (cell (7, 12)), moves Isaac
+/// onto the hidden copy that joins the vine, so that Down climbs him down it.
 static void TretTreeBranch_JoinWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Nothing visible happens when Isaac, having climbed up the west vine, walks
-/// east along the upper branch (cell (8, 17)). The game quietly moves him from
-/// the hidden copy of the branch back onto the one drawn in the same place, 5
-/// cells north, which leads to the fifth floor's west door.
+/// Stepping east off the west vine's top (cell (8, 17)) moves Isaac back onto
+/// the drawn branch, the one to the fifth floor's west door.
 static void TretTreeBranch_LeaveWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Nothing visible happens when Isaac walks along the upper branch onto the top
-/// of the northeast vine (cell (37, 11)), on the branch that leads to the fifth
-/// floor's east door. The game quietly moves him 5 cells south onto a hidden
-/// copy of the branch, drawn in the same place, whose cell is the vine's top,
-/// so that holding Down climbs him down it.
+/// On the northeast vine's top (cell (37, 11)), on the branch to the fifth
+/// floor's east door, moves Isaac onto the hidden copy that joins the vine.
 static void TretTreeBranch_JoinNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Nothing visible happens when Isaac, having climbed up the northeast vine,
-/// walks west off its top (cell (36, 16)). The game quietly moves him from the
-/// hidden copy of the branch back onto the one drawn in the same place, 5
-/// cells north, which leads to the fifth floor's east door and to Breeze.
+/// Stepping west off the northeast vine's top (cell (36, 16)) moves Isaac back
+/// onto the drawn branch, the one to the fifth floor's east door and Breeze.
 static void TretTreeBranch_LeaveNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Nothing visible happens when Isaac walks east along the branch from the
-/// third floor's east door to the top of the southeast vine (cell (41, 20)).
-/// The game quietly moves him 6 cells south onto a hidden copy of the branch,
-/// drawn in the same place, that joins the vine, so that holding Down at the
-/// vine climbs him down it to the second floor's east door.
+/// At the southeast vine's top (cell (41, 20)), on the branch from the third
+/// floor's east door, moves Isaac onto the hidden copy that joins the vine,
+/// down which he climbs to the second floor's east door.
 static void TretTreeBranch_JoinSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-/// Nothing visible happens when Isaac, having climbed up the southeast vine,
-/// walks west along the branch towards the third floor's east door (cell (40,
-/// 26)). The game quietly moves him from the hidden copy of the branch back
-/// onto the one drawn in the same place, 6 cells north.
+/// Stepping west off the southeast vine's top (cell (40, 26)) moves Isaac back
+/// onto the drawn branch to the third floor's east door.
 static void TretTreeBranch_LeaveSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
@@ -255,13 +240,10 @@ TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
   state->value = REVEAL_WINDOW_STEPS;
 }
 
-/// When Reveal wears off on Tret's branches, the leaves round Isaac turn
-/// see-through again, as they were before he cast it.
-///
-/// Reveal draws its own rippling oval in place of the scene's, so this puts
-/// back the scene's oval (WINDOW_TRANSITION_LEADER) and the leaves' blend as
-/// Scene_Initialize set them.
-static void TretTreeBranch_CastReveal(void) {
+/// When Reveal wears off, the leaves round Isaac turn see-through again: Reveal
+/// drew its own rippling oval in place of the scene's, so the scene's oval and
+/// the leaves' blend are set back as Scene_Initialize set them.
+static void TretTreeBranch_RevealFades(void) {
   ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_LEADER);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -298,7 +280,7 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 }
 
 /// Opens Tret's branches with a backdrop fade, opens the see-through oval in
-/// the leaves round Isaac and starts the clouds drifting. Returns 0.
+/// the leaves round Isaac and starts the clouds drifting.
 s32 Scene_Initialize(void) {
   struct ScreenTransitionState *state;
 
@@ -443,7 +425,7 @@ struct Trigger gTretTreeBranch_Triggers[] = {
     {TRIGGER_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
      EVENT(TretTreeBranch_TalkToBreeze)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,
-     CONDITION_ALWAYS, EVENT(TretTreeBranch_CastReveal)},
+     CONDITION_ALWAYS, EVENT(TretTreeBranch_RevealFades)},
     {TRIGGER_TABLE_END},
 };
 

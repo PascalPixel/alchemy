@@ -33,10 +33,9 @@
 ///   fortress, talk in their rooms. Stairs from the Cell Key room lead down
 ///   to the north end of the ground floor, by the stairs to the cave.
 /// - The cave (`LunpaFortressCave`), a ring of ledges round an underground
-/// lake.
-///   Whirlwind blows ivy off two switches hidden in its walls, Reveal shows
-///   them, and each opens a sealed doorway. More ivy hides a passage to the
-///   cells, and a stack of crates pushed down a corridor fills a gap at its
+///   lake. Whirlwind blows ivy off two switches hidden in its walls, Reveal
+///   shows them, and each opens a sealed doorway. More ivy hides a passage to
+///   the cells, and a stack of crates pushed down a corridor fills a gap at its
 ///   foot.
 /// - The cells (`LunpaFortressToadonpa`): a row of three cells, the middle
 ///   one holding a Power Bread, and the room where Hammet is held. Walking
@@ -68,9 +67,7 @@
 /// and the others) and stand still while a menu, Psynergy or an item is in
 /// use. Each carries his circle of light, drawn on MAPGRID_LAYER_OVERHEAD,
 /// which his task moves with him and shakes by a pixel every frame, so the
-/// light flickers
-/// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
-/// shows the pair's two circles). Each has stretches of its rounds where it
+/// light flickers. Each has stretches of its rounds where it
 /// cannot see the leader. The pair in the upper floor's west hall walk east
 /// and west across columns 5 to 12, one in row 12 and one in row 18, and
 /// never see Isaac in rows 5 to 7 west of column 11, at the hall's top, or in
@@ -945,13 +942,13 @@ static void LunpaFortress_TakeCellKey(void) {
 /// columns 8 and 9 below row 22.
 static s32 LunpaFortress_IsLeaderHiddenFromPatrolPair(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
+  s32 leaderRow = leader->z.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
 
-  if (leaderTileZ >= 5 && leaderTileZ <= 7 && leaderTileX <= 10) {
+  if (leaderRow >= 5 && leaderRow <= 7 && leaderColumn <= 10) {
     return 1;
   }
-  if (leaderTileX >= 8 && leaderTileX <= 9 && leaderTileZ > 22) {
+  if (leaderColumn >= 8 && leaderColumn <= 9 && leaderRow > 22) {
     return 1;
   }
   return 0;
@@ -1038,16 +1035,16 @@ static void LunpaFortress_PatrolPairThrowsPartyOut(void) {
 static s32 LunpaFortress_IsLeaderPassingHallPatrol(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
-  s32 guardTileZ = guard->z.fixed / toFIXED(16);
-  s32 guardTileX = guard->x.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
+  s32 guardRow = guard->z.fixed / toFIXED(16);
+  s32 guardColumn = guard->x.fixed / toFIXED(16);
 
-  if (leaderTileX == 52 && guardTileX == 57 && guardTileZ > 34 &&
-      guardTileZ <= 40) {
+  if (leaderColumn == 52 && guardColumn == 57 && guardRow > 34 &&
+      guardRow <= 40) {
     return 1;
   }
-  if (leaderTileX == 57 && guardTileX == 52 && guardTileZ > 34 &&
-      guardTileZ <= 40) {
+  if (leaderColumn == 57 && guardColumn == 52 && guardRow > 34 &&
+      guardRow <= 40) {
     return 1;
   }
   return 0;
@@ -1111,18 +1108,18 @@ static void LunpaFortress_HallPatrolThrowsPartyOut(void) {
 /// rows 38 to 41, and columns 54 to 56 in rows 31 to 40.
 static s32 LunpaFortress_IsLeaderHiddenFromGroundFloorPatrol(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
+  s32 leaderRow = leader->z.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
 
-  if (leaderTileX >= 41 && leaderTileX <= 44 && leaderTileZ > 25 &&
-      leaderTileZ <= 28) {
+  if (leaderColumn >= 41 && leaderColumn <= 44 && leaderRow > 25 &&
+      leaderRow <= 28) {
     return 1;
   }
-  if (leaderTileX == 41 && leaderTileZ > 37 && leaderTileZ <= 41) {
+  if (leaderColumn == 41 && leaderRow > 37 && leaderRow <= 41) {
     return 1;
   }
-  if (leaderTileX >= 54 && leaderTileX <= 56 && leaderTileZ > 30 &&
-      leaderTileZ <= 40) {
+  if (leaderColumn >= 54 && leaderColumn <= 56 && leaderRow > 30 &&
+      leaderRow <= 40) {
     return 1;
   }
   return 0;
@@ -1183,11 +1180,11 @@ static void LunpaFortress_GroundFloorPatrolThrowsPartyOut(void) {
 /// of the ground floor's north-east hall its guard watches.
 static s32 LunpaFortress_IsLeaderOutsideNortheastHall(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
+  s32 leaderRow = leader->z.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
 
-  if (leaderTileX > 45 && leaderTileZ > 14 && leaderTileX <= 64 &&
-      leaderTileZ <= 16) {
+  if (leaderColumn > 45 && leaderRow > 14 && leaderColumn <= 64 &&
+      leaderRow <= 16) {
     return 0;
   }
   return 1;
@@ -1280,14 +1277,14 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
 static s32 LunpaFortress_IsLeaderAlongGuardsColumn(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / toFIXED(16);
-  s32 guardTileX = guard->x.fixed / toFIXED(16);
-  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
-  s32 zDistance = guardTileZ - leaderTileZ;
+  s32 guardRow = guard->z.fixed / toFIXED(16);
+  s32 guardColumn = guard->x.fixed / toFIXED(16);
+  s32 leaderRow = leader->z.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
+  s32 zDistance = guardRow - leaderRow;
 
-  if (zDistance >= -6 && zDistance <= 6 && guardTileX - 1 < leaderTileX &&
-      guardTileX + 1 > leaderTileX) {
+  if (zDistance >= -6 && zDistance <= 6 && guardColumn - 1 < leaderColumn &&
+      guardColumn + 1 > leaderColumn) {
     return 1;
   }
   return 0;
@@ -1297,16 +1294,16 @@ static s32 LunpaFortress_IsLeaderAlongGuardsColumn(s32 actorId) {
 static s32 LunpaFortress_IsLeaderAlongGuardsRow(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / toFIXED(16);
-  s32 guardTileX = guard->x.fixed / toFIXED(16);
-  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
-  s32 xDistance = guardTileX - leaderTileX;
+  s32 guardRow = guard->z.fixed / toFIXED(16);
+  s32 guardColumn = guard->x.fixed / toFIXED(16);
+  s32 leaderRow = leader->z.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
+  s32 xDistance = guardColumn - leaderColumn;
 
   if (xDistance < -6 || xDistance > 6) {
     return 0;
   }
-  if (guardTileZ - 2 < leaderTileZ && guardTileZ + 2 > leaderTileZ) {
+  if (guardRow - 2 < leaderRow && guardRow + 2 > leaderRow) {
     return 1;
   }
   return 0;
@@ -1332,18 +1329,18 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
 static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / toFIXED(16);
-  s32 guardTileX = guard->x.fixed / toFIXED(16);
-  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
-  s32 leaderTileX = leader->x.fixed / toFIXED(16);
-  s32 xDistance = guardTileX - leaderTileX;
+  s32 guardRow = guard->z.fixed / toFIXED(16);
+  s32 guardColumn = guard->x.fixed / toFIXED(16);
+  s32 leaderRow = leader->z.fixed / toFIXED(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
+  s32 xDistance = guardColumn - leaderColumn;
   s32 zDistance;
 
-  guardTileZ += 1;
+  guardRow += 1;
   if (xDistance < 0) {
     xDistance = -xDistance;
   }
-  zDistance = guardTileZ - leaderTileZ;
+  zDistance = guardRow - leaderRow;
   if (zDistance < 0) {
     zDistance = -zDistance;
   }
@@ -1358,17 +1355,17 @@ static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
 static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *viewCenter = FieldCamera_GetActor();
-  s32 guardTileX = guard->x.fixed / toFIXED(16);
-  s32 guardTileZ = guard->z.fixed / toFIXED(16);
-  s32 viewTileX = viewCenter->x.fixed / toFIXED(16);
-  s32 viewTileZ = viewCenter->z.fixed / toFIXED(16);
-  s32 xDistance = guardTileX - viewTileX;
+  s32 guardColumn = guard->x.fixed / toFIXED(16);
+  s32 guardRow = guard->z.fixed / toFIXED(16);
+  s32 viewColumn = viewCenter->x.fixed / toFIXED(16);
+  s32 viewRow = viewCenter->z.fixed / toFIXED(16);
+  s32 xDistance = guardColumn - viewColumn;
   s32 zDistance;
 
   if (xDistance < 0) {
     xDistance = -xDistance;
   }
-  zDistance = guardTileZ - viewTileZ;
+  zDistance = guardRow - viewRow;
   if (zDistance < 0) {
     zDistance = -zDistance;
   }
@@ -1384,10 +1381,10 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(GROUND_FLOOR_DOOR_FLAG + 1) == 0) {
-    s32 playerX = leader->x.fixed / toFIXED(16);
-    s32 playerZ = leader->z.fixed / toFIXED(16);
+    s32 leaderColumn = leader->x.fixed / toFIXED(16);
+    s32 leaderRow = leader->z.fixed / toFIXED(16);
 
-    if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
+    if (leaderColumn == 43 && leaderRow > 28 && leaderRow <= 31) {
       s16 *touchedTrigger = &gFieldWork->stepTrigger;
       s32 doorTrigger = CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR + 1;
 
@@ -1404,10 +1401,10 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(UPPER_FLOOR_DOOR_FLAG) == 0) {
-    s32 playerX = leader->x.fixed / toFIXED(16);
-    s32 playerZ = leader->z.fixed / toFIXED(16);
+    s32 leaderColumn = leader->x.fixed / toFIXED(16);
+    s32 leaderRow = leader->z.fixed / toFIXED(16);
 
-    if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
+    if (leaderColumn == 16 && leaderRow > 55 && leaderRow <= 58 &&
         (leader->facing == FACING_NORTH || leader->facing == FACING_SOUTH)) {
       s16 *touchedTrigger = &gFieldWork->stepTrigger;
       s32 doorTrigger = CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
@@ -1823,7 +1820,8 @@ static void LunpaFortress_OpenIvyPassage(void) {
   MapGrid_CopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
 
-/// The switch flips in two frames, then its doorway opens.
+/// The switch is drawn flipping, two pictures five frames apart, and then its
+/// doorway opens.
 static inline void LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
                                                   void (*openPassage)(void)) {
   MapGrid_CopyCells(6, 77, 1, 2, cellX, cellY);
@@ -1941,7 +1939,6 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
 
 /// Dodonpa's lever: the cell rumbles and shakes, its north wall crashes open on
 /// the den behind it, and everyone starts.
-
 static void LunpaFortress_ActivateLeverTrap(void) {
   MapGrid_SetShake(4, 4, 1);
   Sound_Play(SE_RUMBLE);
@@ -2047,6 +2044,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_WaitForMoveById(ACTOR_TOADONPA_DODONPA);
     Event_Wait(60);
     Sound_Play(SE_SWITCH);
+    // "Dodonpa pulled a lever."
     FieldMessage_Show(messageBase + 1, 1);
     Actor_SetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
     LunpaFortress_ActivateLeverTrap();
@@ -2060,7 +2058,7 @@ static void LunpaFortress_FindHammet(void) {
     LunpaFortress_PositionPartyForMonster();
     Actor_FaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_PARTY_LEADER, 0);
     Event_SetMessageId(messageBase);
-    // "Back for more? I guess you didn't learn your lesson!"
+    // "Go ahead-keep trying! You'll never win!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
     LunpaFortress_RevealMonster();
     gFieldWork->transition =
@@ -2302,9 +2300,8 @@ static void LunpaFortress_FindHammet(void) {
 /// After the battle with Toadonpa, the monster has fallen on Dodonpa and pinned
 /// him; Isaac is asked whether to lift it off him and they lift it either way,
 /// argue over what to do with him, and his father Donpa comes down, locks him
-/// in Hammet's cell to
-/// think over what he has done, and asks the party to slip out with Hammet
-/// before Dodonpa's loyal men find them.
+/// in Hammet's cell to think over what he has done, and asks the party to slip
+/// out with Hammet before Dodonpa's loyal men find them.
 ///
 /// It plays as the party comes back from the battle
 /// (LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE). It sets FLAG_DODONPA_LOCKED_UP,
@@ -3461,7 +3458,6 @@ static void LunpaFortress_ReadStartledOldManMind(void) {
     // "Maybe that merchant is the reason they've closed off the..."
     Event_ShowMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
-
     gFieldWork->psynergy = 0;
     FieldPsynergy_StopMindReadWave();
     LunpaFortress_TalkToStartledOldMan();
@@ -3484,6 +3480,7 @@ static void LunpaFortress_TalkToJailedDodonpa(void) {
   // "I was wrong! I'll turn over a new leaf, Dad! Please forgive me!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TOADONPA_DODONPA, 0);
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
+    // "The key doesn't work. Maybe Donpa changed the locks."
     FieldMessage_Show(pleaMessage + 2, 1);
   }
 }
@@ -3830,14 +3827,17 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 /// drawn on every arrival.
 s32 gLunpaFortressRandomPick = 0;
 
+// The patrolling guards' rounds: the west hall's pair walk east and west
+// across it in step, and the east halls' guards walk theirs to and fro, the
+// ground floor's pausing at each end.
 s32 gLunpaFortressSecondPatrolRoute[] = {
     SC_ACCELERATION(1.1),
     SC_SPEED(1.1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(192, 0, 288),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(88, 0, 288),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -3846,53 +3846,54 @@ s32 gLunpaFortressSecondPatrolRoute[] = {
 s32 gLunpaFortressFirstPatrolRoute[] = {
     SC_ACCELERATION(1.1),
     SC_SPEED(1.1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(192, 0, 192),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(88, 0, 192),
     SC_SYNC,
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gDonpaSleeps[] = {
-    SC_ANIMATION(5),
+/// Donpa lies asleep in his bed.
+s32 gLunpaFortressDonpaSleeps[] = {
+    SC_ANIMATION(ANIM_DONPA_IN_BED),
     SC_END,
 };
 
 s32 gLunpaFortressGroundFloorPatrolRoute[] = {
     SC_ACCELERATION(0.2),
     SC_SPEED(0.6),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(808, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(25),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(808, 0, 520),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(712, 0, 520),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(25),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(808, 0, 520),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(40),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(808, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(744, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(30),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -3900,30 +3901,30 @@ s32 gLunpaFortressGroundFloorPatrolRoute[] = {
 s32 gLunpaFortressHallPatrolRoute[] = {
     SC_ACCELERATION(0.2),
     SC_SPEED(0.6),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(920, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(840, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(840, 0, 592),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(840, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(920, 0, 648),
     SC_SYNC,
-    SC_ANIMATION(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_STAND),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(920, 0, 592),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -4178,7 +4179,7 @@ struct ActorPlacement gLunpaFortressUpperFloorActorPlacements[] = {
         664, 0, 360, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         712, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_DONPA, CONDITION_ALWAYS, (s32)gDonpaSleeps,
+    ACTOR_PLACEMENT(SPRITE_DONPA, CONDITION_ALWAYS, (s32)gLunpaFortressDonpaSleeps,
         944, 0, 122, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         904, 0, 120, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
@@ -4395,14 +4396,13 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     // Unused: these two rows give ACTOR_TOADONPA_HAMMET Dodonpa's lines from
     // his cell, but the player never reaches them. Before Dodonpa is jailed
     // Hammet stands in his cell, whose only way in is the row of five cells
-    // of CELL_BEHAVIOR_LUNPA_FORTRESS_HAMMETS_CELL, so
-    // LunpaFortress_FindHammet starts before the
-    // leader is beside him, and no ground outside the cell is within Mind
-    // Read's reach of him. After the battle
+    // of CELL_BEHAVIOR_LUNPA_FORTRESS_HAMMETS_CELL, so LunpaFortress_FindHammet
+    // starts before the leader is beside him, and no ground outside the cell
+    // is within Mind Read's reach of him. After the battle
     // LunpaFortress_DonpaJudgesDodonpa ends with the party leading him out,
-    // and once Dodonpa is jailed he is put out of sight at (0, 0). Talking
-    // to him would have shown Dodonpa's "I was wrong! I'll turn over a new
-    // leaf, Dad!" (MsgLunpaWrongTurnOver).
+    // and once Dodonpa is jailed he is put out of sight at (0, 0). Talking to
+    // him would have shown Dodonpa's "I was wrong! I'll turn over a new leaf,
+    // Dad!" (MsgLunpaWrongTurnOver).
     { TRIGGER_TALK, ACTOR_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
     { TRIGGER_TALK, ACTOR_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT(LunpaFortress_TalkToJailedDodonpa) },

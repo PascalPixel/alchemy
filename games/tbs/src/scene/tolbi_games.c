@@ -572,8 +572,11 @@ static inline void TolbiSpring_ShowPrizePicture(s32 sourceColumn,
 /// The pictures are 3 by 8 cells copied over the spring's middle from spare
 /// cells of the map.
 static void TolbiSpring_RevealPrize(s32 item) {
-  // XXX: what the pictures show (the spring opening, the item rising?); a
-  // recording of a Lucky Medal tossed, which needs a medal in the bag.
+  // XXX: what the pictures show; a recording of a Lucky Medal tossed would
+  // settle it. With medals given (--give), the recorder still never presses A
+  // at the toss, so the run passes its four minutes; the spare cells the
+  // pictures come from, (79..102, 20..36), lie outside the map's bounds, where
+  // no staged walk or probe photo reaches.
   Event_Start();
   Event_Wait(30);
   Sound_Play(SE_BOSS_ROAR);

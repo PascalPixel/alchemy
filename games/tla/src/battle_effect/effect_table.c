@@ -426,14 +426,14 @@ const u16 gPlasma_Shapes[][5] = {{128, 1, 16, 0, 0},  {255, 1, 16, 0, 0},
 /// The flash burst's picture for each three frames of a flash, by number.
 const u8 gPlasma_FlashPictures[] = {5, 5, 4, 3, 2, 1};
 
-/// Volcano's counts, by variant.
+/// The pillars of fire, by variant.
 const u8 gVolcano_Counts[] = {1, 2, 4};
 
-/// The eruptions' depths, four for each variant.
+/// Each pillar's depth on the field, in pixels, by variant.
 const s8 gVolcano_Depths[][4] = {
     {0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
 
-/// The frame each eruption starts on.
+/// The frame each pillar erupts on.
 const u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 
 /// The flips a glint may be drawn with, one picked at random.

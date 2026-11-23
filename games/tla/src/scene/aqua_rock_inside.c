@@ -1,4 +1,3 @@
-
 /// @file
 /// Aqua Rock's inner rooms, inside the rock on the island south of the Apojii
 /// Islands, which Felix enters from the rock's outer slopes. The file holds ten
@@ -134,7 +133,7 @@ void AquaRockInside_SetPillarsHeight(s32 value);
 void AquaRockInside_DrawSplashes(void);
 void AquaRockInside_StartSplashes(void);
 s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind);
-s32 AquaRockInside_AdvanceStreams(s32 a, s32 b);
+s32 AquaRockInside_AdvanceStreams(s32 first, s32 target);
 /// The motion of a thing a vent throws out (field/actor_vent_bounce.c).
 void Vent_Bounce(struct Actor *actor);
 void Actor_StartScripted(struct Actor *actor, s32 priority);
@@ -470,7 +469,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// room into its gap: the west pillar north along the dotted track to the round
 /// hole at its end (cell (9, 12)), the east one two squares east into its gap
 /// among the yellow stepping blocks (column 51). There it settles a pixel lower
-/// and stays for good, making the shortcut the walkthrough speaks of; with the
+/// and stays for good, opening a shortcut across the room; with the
 /// west one in place, its square and cell (13, 12) become places Felix hops
 /// across (MAP_CELL_JUMP).
 void AquaRockInside_SetPillarInGap(s32 unused, s32 id) {
@@ -516,14 +515,14 @@ void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 /// stepping blocks and the small blue rock rise with the water.
 void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   s32 i;
   s32 column;
-  s32 objectId = id;
+  s32 moai = id;
 
-  FieldActor_SetSpriteColor(Actor_Get(objectId), SPRITE_COLOR_NORMAL);
-  AquaRockInside_AddMoaiWater(objectId);
-  Actor_SetAnimation(objectId, 3);
+  FieldActor_SetSpriteColor(Actor_Get(moai), SPRITE_COLOR_NORMAL);
+  AquaRockInside_AddMoaiWater(moai);
+  Actor_SetAnimation(moai, 3);
   layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
@@ -550,7 +549,7 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
 /// water from its mouth, the room floods and the yellow stepping blocks rise.
 void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(id), SPRITE_COLOR_NORMAL);
@@ -577,8 +576,8 @@ void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
 void AquaRockInside_DoNothing(void) {}
 
 /// Frost on the puddle of the Water of Life chest's room, at cell (43, 44),
-/// freezes it, and Felix can hop across it (MAP_CELL_JUMP): the walkthrough's
-/// first way through the room's puzzle.
+/// freezes it, and Felix can hop across it (MAP_CELL_JUMP): one way through
+/// the room's puzzle.
 void AquaRockInside_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
   Event_SetFlag(FLAG_WATER_OF_LIFE_CHEST_PUDDLE_FROZEN);
@@ -673,22 +672,22 @@ void AquaRockInside_SteamRoomStreamDrains(void) {
 
 /// The Aquarius Stone shown set in the column.
 void AquaRockInside_ShowAquariusStone(void) {
-  struct Actor *object;
+  struct Actor *actor;
   struct Sprite *sprite;
 
   FieldActor_ShowItemIconById(ACTOR_AQUARIUS_STONE, ITEM_AQUARIUS_STONE);
   // UB: this room has no actor 20 (it places actors 8 to 10 and treasure
   // spots 64 and 65), so Actor_Get returns NULL and the stores below go
   // through it.
-  object = Actor_Get(20);
+  actor = Actor_Get(20);
 #ifdef UBFIX
-  if (object == NULL)
+  if (actor == NULL)
     return;
 #endif
-  sprite = object->sprite;
+  sprite = actor->sprite;
   sprite->retainCacheEntry = 1;
-  object->motionFlags = 0;
-  object->y.fixed = toFIXED(24);
+  actor->motionFlags = 0;
+  actor->y.fixed = toFIXED(24);
 }
 
 /// The great pool's pictures as it drains, from full to dry.
@@ -841,7 +840,7 @@ s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
   struct Actor *actor = Actor_Get(id);
 
   if (actor != 0) {
-    struct MapCell *cells = map->layers[0].cells;
+    struct MapCell *cells = map->layers[MAPGRID_LAYER_GROUND].cells;
     struct MapCell *cell = &cells[FIELD_CELL(actor->x.fixed) +
                                   FIELD_CELL(actor->z.fixed) * MAPGRID_SIZE];
 
@@ -907,7 +906,7 @@ void AquaRockInside_DouseRustySwordChestWaterStone(void) {
 /// pillars, so that the Water Stone's stream can run.
 void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_RUSTY_SWORD_CHEST_MOAI),
@@ -931,7 +930,7 @@ void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
 
 /// Felix jumps down the ledge he faces.
 void AquaRockInside_JumpDownLedge() {
-  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
+  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING, 0);
   Event_End();
 }
 
@@ -1019,9 +1018,9 @@ void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
 
 /// Stepping into the foot of the waterfall in the Vial chest's room, at the
 /// north end of its pool (cell (10, 10)): Felix tumbles, turns blue with his
-/// arms raised and is carried up out of sight, and comes out by `value` in the
+/// arms raised and is carried up out of sight, and comes out by `exit` in the
 /// Mist Sabre chest's room on Aqua Rock's slopes.
-void AquaRockInside_RideFalls(s32 value) {
+void AquaRockInside_RideFalls(s32 exit) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED speed;
   s32 i;
@@ -1054,7 +1053,7 @@ void AquaRockInside_RideFalls(s32 value) {
     System_Wait(1);
   }
   Event_End();
-  FieldEvent_SetExitRequest(value);
+  FieldEvent_SetExitRequest(exit);
 }
 
 /// Moving the stone pillar of the Vial chest's room in front of the green
@@ -1064,8 +1063,8 @@ void AquaRockInside_BlockMoaiWithPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (FIELD_CELL(actor->x.fixed) == 49) {
-    struct MapLayer *layer =
-        &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+    struct MapLayer *layer = &((struct MapWork *)Ram_HeapSlots->mapGrid)
+                                  ->layers[MAPGRID_LAYER_MIDDLE];
     s32 i;
     s32 fade;
 
@@ -1216,7 +1215,7 @@ void AquaRockInside_DouseTearStoneWaterStone(void) {
 /// pours water from its mouth, and the room floods around the water pillars.
 void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(id), SPRITE_COLOR_BRG);
@@ -1245,7 +1244,7 @@ enum { POOL_FLICKERS = 15 };
 /// tablet, which keeps Felix from leaving until Parch dries it.
 void AquaRockInside_WaterSinks(void) {
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   s32 i;
 
   Event_Start();
@@ -1304,11 +1303,11 @@ extern s32 gLesson_SeekingSparkScript[];
 extern s32 gLesson_TabletSettleScript[];
 extern s32 gLesson_AdeptSettleScript[];
 
-/// The tablet (`firstId`) rises and glows, sparks gather on Piers (`secondId`)
+/// The tablet (`tabletId`) rises and glows, sparks gather on Piers (`adeptId`)
 /// and he learns Parch in a flash.
-void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
-  struct Actor *first = Actor_GetById(firstId);
-  struct Actor *second = Actor_GetById(secondId);
+void AquaRockInside_PiersLearnsParch(s32 tabletId, s32 adeptId) {
+  struct Actor *tablet = Actor_GetById(tabletId);
+  struct Actor *adept = Actor_GetById(adeptId);
   struct Actor *actor;
   struct Actor *spark;
   struct Actor *swirl;
@@ -1323,26 +1322,26 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveWithinMapBounds(INTtoFIXED(FIXEDtoINT(first->x.fixed)),
-                                  INTtoFIXED(FIXEDtoINT(first->y.fixed)),
-                                  INTtoFIXED(FIXEDtoINT(first->z.fixed)), 1);
+  FieldCamera_MoveWithinMapBounds(INTtoFIXED(FIXEDtoINT(tablet->x.fixed)),
+                                  INTtoFIXED(FIXEDtoINT(tablet->y.fixed)),
+                                  INTtoFIXED(FIXEDtoINT(tablet->z.fixed)), 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
-  first->motionFlags = 0;
-  first->acceleration = toFIXED(1) / 5;
-  first->speedLimit = toFIXED(1) / 5;
-  Actor_SetMovementTypeById(firstId, gLesson_TabletRiseScript);
+  tablet->motionFlags = 0;
+  tablet->acceleration = toFIXED(1) / 5;
+  tablet->speedLimit = toFIXED(1) / 5;
+  Actor_SetMovementTypeById(tabletId, gLesson_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
-  Actor_ConfigureSpriteColor(firstId, SPRITE_COLOR_BLINK);
-  REG_BLDALPHA = BLEND_ALPHA(8, 16);
+  Actor_ConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
+  REG_BLDALPHA = BLEND_ALPHA(8, BLEND_WEIGHT_MAX);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   for (i = 0; i != TABLET_RISING_SPARKS; i++) {
-    actor = ((void *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
-                                        first->y.fixed, first->z.fixed));
+    actor = ((void *)Import_ActorCreate(SPRITE_PARTICLE, tablet->x.fixed,
+                                        tablet->y.fixed, tablet->z.fixed));
     Sound_Play(SE_GLITTER);
     actor->x.fixed += INTtoFIXED((Random16() & 31) - 16);
     actor->y.fixed += INTtoFIXED((Random16() & 15) - 8);
@@ -1355,27 +1354,27 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetBlendMode(actor, 1);
     Actor_StartScript(actor, gAquaRockInside_TabletGlowScript);
-    REG_BLDALPHA = BLEND_ALPHA(4, 16);
+    REG_BLDALPHA = BLEND_ALPHA(4, BLEND_WEIGHT_MAX);
     wait(2);
-    REG_BLDALPHA = BLEND_ALPHA(10, 16);
+    REG_BLDALPHA = BLEND_ALPHA(10, BLEND_WEIGHT_MAX);
     wait(2);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = BLEND_ALPHA(16, BLEND_WEIGHT_MAX);
     wait(2);
-    REG_BLDALPHA = BLEND_ALPHA(10, 16);
+    REG_BLDALPHA = BLEND_ALPHA(10, BLEND_WEIGHT_MAX);
     wait(2);
   }
-  REG_BLDALPHA = BLEND_ALPHA(8, 16);
+  REG_BLDALPHA = BLEND_ALPHA(8, BLEND_WEIGHT_MAX);
   wait(30);
   for (i = 0; i != LEARN_SPARKS; i++) {
-    spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
-                              second->z.fixed);
+    spark = FieldActor_Create(SPRITE_PARTICLE, adept->x.fixed, adept->y.fixed,
+                              adept->z.fixed);
     Sound_Play(SE_SPARKS);
     spark->timer = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
     spark->riseBaseY = toFIXED(122);
-    spark->watchedActor = second;
+    spark->watchedActor = adept;
     spark->riseCounter =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
@@ -1387,20 +1386,20 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
                                  &spark->x.fixed);
     Actor_StartScript(spark, gAquaRockInside_SpiralSparkScript);
     if (i == 3) {
-      Actor_SetSpriteColorById(secondId, SPRITE_COLOR_BLINK);
-      second->motionFlags = noMotion;
-      second->acceleration = toFIXED(1) / 5;
-      second->speedLimit = toFIXED(1) / 5;
-      Actor_SetMovementTypeById(secondId, script);
+      Actor_SetSpriteColorById(adeptId, SPRITE_COLOR_BLINK);
+      adept->motionFlags = noMotion;
+      adept->acceleration = toFIXED(1) / 5;
+      adept->speedLimit = toFIXED(1) / 5;
+      Actor_SetMovementTypeById(adeptId, script);
     }
     wait(LEARN_SPARK_INTERVAL);
   }
   Sound_Play(SE_SHIMMER);
   wait(16);
   for (i = 2; i != ORBIT_HALF_TURN; i += 2) {
-    swirl = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed,
-                              second->y.fixed + i * toFIXED(1) - toFIXED(8),
-                              second->z.fixed);
+    swirl = FieldActor_Create(SPRITE_PARTICLE, adept->x.fixed,
+                              adept->y.fixed + i * toFIXED(1) - toFIXED(8),
+                              adept->z.fixed);
     swirl->timer = Random16();
     swirl->userValue = TRIG_TURN / 32;
     swirl->riseCounter = i;
@@ -1408,7 +1407,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
     swirl->bounce = swirl->x.fixed;
     swirl->riseBaseY = 0;
     swirl->gravity = swirl->z.fixed;
-    swirl->watchedActor = second;
+    swirl->watchedActor = adept;
     swirl->motionFlags = (u16)0;
     swirl->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpriteColor(swirl, SPRITE_COLOR_RBG);
@@ -1423,16 +1422,16 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
-  Actor_ConfigureSpriteColor(firstId, SPRITE_COLOR_NORMAL);
-  Actor_ConfigureSpriteColor(secondId, SPRITE_COLOR_NORMAL);
+  Actor_ConfigureSpriteColor(tabletId, SPRITE_COLOR_NORMAL);
+  Actor_ConfigureSpriteColor(adeptId, SPRITE_COLOR_NORMAL);
   Sound_Play(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(80);
-  Actor_SetMovementTypeById(firstId, gLesson_TabletSettleScript);
-  Actor_SetMovementTypeById(secondId, gLesson_AdeptSettleScript);
-  second->update = Actor_EmitBubbles;
+  Actor_SetMovementTypeById(tabletId, gLesson_TabletSettleScript);
+  Actor_SetMovementTypeById(adeptId, gLesson_AdeptSettleScript);
+  adept->update = Actor_EmitBubbles;
   wait(120);
-  second->update = 0;
+  adept->update = 0;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
@@ -1578,11 +1577,11 @@ extern struct Trigger gAquaRockInside_RustySwordChestTriggers[];
 extern struct Trigger gAquaRockInside_CrystalPowderChestTriggers[];
 extern struct Trigger gAquaRockInside_VialChestTriggers[];
 extern struct Trigger gAquaRockInside_PsynergyStoneTriggers[];
-extern s16 gAquaRockInside_TightropeTriggers[];
+extern struct Trigger gAquaRockInside_TightropeTriggers[];
 extern struct Trigger gAquaRockInside_TearStoneTriggers[];
 extern struct Trigger gAquaRockInside_ParchTabletTriggers[];
 
-const u8 *Scene_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST)
@@ -1718,7 +1717,8 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *actor;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
     if (GameFlag_Get(FLAG_WATER_OF_LIFE_CHEST_EAST_MOAI_FILLED)) {
       AquaRockInside_AddMoaiWater(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI);
@@ -1755,7 +1755,8 @@ s32 Scene_Initialize(void) {
       actor->groundHeight = 0;
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE) {
-    if (entrance == 7)
+    if (entrance ==
+        AQUA_ROCK_INSIDE_AQUARIUS_STONE_FROM_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
       Leader_RiseFromWater();
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST) {
     AquaRockInside_AddMoaiWater(ACTOR_RUSTY_SWORD_CHEST_MOAI_A);
@@ -2285,7 +2286,8 @@ void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
               spout++;
               work->count++;
               {
-                u8 *terrain = map->layers[0].terrainIds + corner;
+                u8 *terrain =
+                    map->layers[MAPGRID_LAYER_GROUND].terrainIds + corner;
 
                 terrain[(u16)column + ((u16)row << 7)] = MAP_SHAPE_MARKED;
               }
@@ -2349,7 +2351,7 @@ void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
       *(s32 *)(Ram_MapCollision + MAP_SHAPE_RAISED_ALONE * 4) =
           MAP_SHAPE(0, (height / toFIXED(8)) & 0xff, 0, 0);
       {
-        u8 *ids = map->layers[0].terrainIds;
+        u8 *ids = map->layers[MAPGRID_LAYER_GROUND].terrainIds;
         s32 at = FIELD_CELL(entry->x) + FIELD_CELL(entry->z) * MAPGRID_SIZE;
         s32 v = MAP_SHAPE_RAISED_ALONE;
         ids[at] = v;
@@ -2464,7 +2466,7 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
     if (stream->x != 0) {
       splash = &state->splashes[state->count];
       do {
-        struct MapCell *cells = map->layers[0].cells;
+        struct MapCell *cells = map->layers[MAPGRID_LAYER_GROUND].cells;
         struct MapCell *cell = &cells[FIELD_CELL(stream->x) +
                                       FIELD_CELL(stream->z) * MAPGRID_SIZE];
         s32 kind = cell->collisionCode;
@@ -2494,7 +2496,7 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
           again = 0;
         }
         if (turn != STREAM_STOP) {
-          // The unsigned % 4: as & 3 the mask narrows to a halfword and pools.
+          // Each step of `turn` is a quarter turn, one way or the other.
           stream->direction = (u32)(stream->direction + turn) % 4;
           FieldVector_AddPolarOffset(16, stream->direction * DEGtoANG(90),
                                      &stream->x);
@@ -2518,7 +2520,7 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
     i = count;
     do {
       if (splash->active != 0) {
-        struct MapCell *cells = map->layers[0].cells;
+        struct MapCell *cells = map->layers[MAPGRID_LAYER_GROUND].cells;
         struct MapCell *cell = &cells[FIELD_CELL(splash->x) +
                                       FIELD_CELL(splash->z) * MAPGRID_SIZE];
 
@@ -2871,7 +2873,7 @@ LATE_DATA struct Trigger gAquaRockInside_Triggers[] = {
 
 /// The Water of Life chest's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST_TO_AQUA_ROCK_INSIDE_TIGHTROPE},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -2880,8 +2882,8 @@ LATE_DATA struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST_TO_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST},
+    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
@@ -2900,15 +2902,15 @@ LATE_DATA s32 gAquaRockInside_SpringLevel = 256;
 
 /// Steam's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_STEAM_TO_AQUA_ROCK_INSIDE_PSYNERGY_STONE},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_STEAM_TO_AQUA_ROCK_INSIDE_TIGHTROPE},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_STEAM_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE_NORTH_A},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 6, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_STEAM_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE_NORTH_B},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_STEAM_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE_SOUTH},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {TRIGGER_TALK, ACTOR_STEAM, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STEAM_ROOM_PILLAR, FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED, EVENT(AquaRockInside_PushPillarOffLedge)},
@@ -2920,14 +2922,14 @@ LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
 
 /// The Aquarius Stone's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_AquariusStoneTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS, EVENT(AquaRockInside_OpenDoorToTablet)},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_STEAM_NORTH_A},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_PARCH_TABLET, CONDITION_ALWAYS, EVENT(AquaRockInside_OpenDoorToTablet)},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_WEST},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_EAST},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_STEAM_SOUTH},
+    {STEP_TRIGGER_FACING(FACING_NORTH), AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_AQUARIUS_STONE_TO_AQUA_ROCK_INSIDE_STEAM_NORTH_B},
     {TRIGGER_TALK, ACTOR_AQUARIUS_STONE_BASE, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
     {USE_ITEM_ON_ACTOR(ITEM_AQUARIUS_STONE), ACTOR_AQUARIUS_STONE_BASE, FLAG_AQUA_ROCK_AQUARIUS_STONE_SET, EVENT(AquaRockInside_UseAquariusStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_AQUARIUS_STONE_WATER_STONE, FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED, EVENT(AquaRockInside_DouseAquariusStoneWaterStone)},
@@ -2936,15 +2938,15 @@ LATE_DATA struct Trigger gAquaRockInside_AquariusStoneTriggers[] = {
 
 /// The Rusty Sword chest's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_RustySwordChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_MOAI},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_INSIDE_TEAR_STONE},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE_WEST},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 5, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE_EAST},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_TO_AQUA_ROCK_INSIDE_TIGHTROPE},
     {STEP_TRIGGER_WALKING, 55, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellPushable)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellPushable)},
@@ -2958,13 +2960,13 @@ LATE_DATA struct Trigger gAquaRockInside_RustySwordChestTriggers[] = {
 
 /// The Crystal Powder chest's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_CrystalPowderChestTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST_NORTHWEST},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST_NORTH},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST_EAST},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_TO_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_TO_AQUA_ROCK_INSIDE_VIAL_CHEST_SOUTH},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
@@ -2979,9 +2981,9 @@ LATE_DATA struct Trigger gAquaRockInside_CrystalPowderChestTriggers[] = {
 
 /// The Vial chest's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_VialChestTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_VIAL_CHEST_TO_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_NORTHWEST},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_VIAL_CHEST_TO_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_NORTH},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_VIAL_CHEST_TO_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_EAST},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 6, CONDITION_ALWAYS, 6},
@@ -2990,8 +2992,8 @@ LATE_DATA struct Trigger gAquaRockInside_VialChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(AquaRockInside_RideFalls)},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 12, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_VIAL_CHEST_TO_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_SOUTH},
+    {TRIGGER_STEP, AQUA_ROCK_INSIDE_VIAL_CHEST_TO_AQUA_ROCK_MIST_SABRE_CHEST, CONDITION_ALWAYS, EVENT(AquaRockInside_RideFalls)},
     {TRIGGER_STEP, TRIGGER_WEST_VENT_GUST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoVentGust)},
     {TRIGGER_STEP, TRIGGER_EAST_VENT_GUST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoVentGust)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_MOAI_PILLAR, FLAG_VIAL_CHEST_MOAI_BLOCKED, EVENT(AquaRockInside_BlockMoaiWithPillar)},
@@ -3009,31 +3011,33 @@ LATE_DATA struct Trigger gAquaRockInside_VialChestTriggers[] = {
 
 /// The Psynergy Stone's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_PsynergyStoneTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_PSYNERGY_STONE_TO_AQUA_ROCK_INSIDE_STEAM},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_PSYNERGY_STONE_TO_AQUA_ROCK_INSIDE_TIGHTROPE_EAST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_PSYNERGY_STONE_TO_AQUA_ROCK_INSIDE_TIGHTROPE_WEST},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_PSYNERGY_STONE_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE},
     {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckPsynergyStone)},
     {TRIGGER_TABLE_END},
 };
 
 /// The tightrope's room's triggers.
-LATE_DATA s16 gAquaRockInside_TightropeTriggers[] = {
-    49, 0, 1, -1, 1, 0, 49, 0,
-    2, -1, 2, 0, 49, 0, 3, -1,
-    3, 0, 33, 0, 4, -1, 4, 0,
-    49, 0, 5, -1, 5, 0, 1, 0,
-    6, -1, 6, 0, 1, 0, 7, -1,
-    7, 0, 1, 0, 8, -1, 8, 0,
-    -1, -1, 0, 0, 0, 0,
+LATE_DATA struct Trigger gAquaRockInside_TightropeTriggers[] = {
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_PSYNERGY_STONE_WEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_PSYNERGY_STONE_EAST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_STEAM},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_TEAR_STONE_EAST},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_TEAR_STONE_NORTHEAST},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TIGHTROPE_TO_AQUA_ROCK_INSIDE_TEAR_STONE_WEST},
+    {TRIGGER_TABLE_END},
 };
 
 /// The Tear Stone's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_TearStoneTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TEAR_STONE_TO_AQUA_ROCK_INSIDE_TIGHTROPE_WEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TEAR_STONE_TO_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TEAR_STONE_TO_AQUA_ROCK_INSIDE_TIGHTROPE_NORTHEAST},
+    {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_TEAR_STONE_TO_AQUA_ROCK_INSIDE_TIGHTROPE_EAST},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePuzzlePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_C, CONDITION_ALWAYS, 0},
@@ -3046,7 +3050,7 @@ LATE_DATA struct Trigger gAquaRockInside_TearStoneTriggers[] = {
 
 /// The Parch tablet's room's triggers.
 LATE_DATA struct Trigger gAquaRockInside_ParchTabletTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_PARCH_TABLET_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadParchTablet)},
     {EXAMINE_TRIGGER_FACING(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_WalkToParchTablet)},
     {EXAMINE_TRIGGER_FACING(FACING_WEST), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadTabletFacingWest)},

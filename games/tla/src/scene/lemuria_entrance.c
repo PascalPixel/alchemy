@@ -72,9 +72,14 @@ extern s32 gLemuriaEntrance_ShipAtRest[];
 /// Grind has broken up the brown rock in the north-west channel.
 #define FLAG_ROCK_GROUND_AWAY 0x909
 
-void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
-void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
-s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
+/// The channel past the rock runs on in the map's south half: its north end
+/// (exit and entrance 2) leads to its south end (exit and entrance 4), and
+/// back.
+enum { CHANNEL_NORTH_END = 2, CHANNEL_SOUTH_END = 4 };
+
+void Text_GetMessageSize(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
+void Message_OpenWindow(s32 message, s32 x, s32 y, u32 options);
+s32 Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x, s32 y);
 
 /// Starts an actor's animation from its first frame.
 s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *actor) {
@@ -207,41 +212,43 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Shows the next line of a conversation in a window beside its speaker's
-/// portrait (Kraden's for SPEAKER_KRADEN) and closes it after the frames.
+/// Shows the next line of a conversation beside its speaker's portrait
+/// (Kraden's for SPEAKER_KRADEN), holds it the given frames once typed, and
+/// closes it. Piers's lines stand further right with his portrait at their
+/// right-hand end; everyone else's portrait is at the left.
 void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 b;
-  s32 a;
   s32 height;
   s32 width;
+  s32 top;
+  s32 left;
   s32 voice;
-  s32 id;
-  s32 x;
+  s32 character;
+  s32 portrait; // the portrait's left edge, then its window
 
-  width = 0;
-  height = 0;
-  id = SPRITE_KRADEN;
+  left = 0;
+  top = 0;
+  character = SPRITE_KRADEN;
   if (speaker != SPEAKER_KRADEN)
-    id = speaker;
-  voice = Speaker_GetVoice(id);
+    character = speaker;
+  voice = Speaker_GetVoice(character);
   if (speaker == ACTOR_PIERS) {
-    width = 10;
-    height = 10;
-    Text_GetMessageSize(work->message, &width, &height, &a, &b);
-    x = width + a - 5;
+    left = 10;
+    top = 10;
+    Text_GetMessageSize(work->message, &left, &top, &width, &height);
+    portrait = left + width - 5;
   } else {
-    width = 5;
-    height = 10;
-    x = 5;
+    left = 5;
+    top = 10;
+    portrait = 5;
   }
-  Call4((void (*)())Message_OpenWindow, work->message++, width, height,
-        MESSAGE_WINDOW_VOICE(voice) | 2);
-  x = Portrait_OpenWindow(id, 0, x, 5);
+  Call4((void (*)())Message_OpenWindow, work->message++, left, top,
+        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_UNREAD);
+  portrait = Portrait_OpenWindow(character, 0, portrait, 5);
   while (Message_AllTyped() == 0)
     System_Wait(1);
   FieldEvent_Wait(frames);
-  Window_Close(x, 2);
+  Window_Close(portrait, 2);
   Message_CloseFinishedWindows();
 }
 
@@ -348,9 +355,11 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(LemuriaEntrance),
     SCENE_EXIT_UNLESS(1, WorldMap, 45, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, LemuriaEntrance, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHANNEL_NORTH_END, LemuriaEntrance, CHANNEL_SOUTH_END,
+                      EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, LemuriaDock, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LemuriaEntrance, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHANNEL_SOUTH_END, LemuriaEntrance, CHANNEL_NORTH_END,
+                      EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, LemuriaDock, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
@@ -387,8 +396,8 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, LEMURIA_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS,
      LEMURIA_ENTRANCE_TO_WORLD_MAP},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, CHANNEL_NORTH_END, CONDITION_ALWAYS, CHANNEL_NORTH_END},
+    {TRIGGER_EXIT, CHANNEL_SOUTH_END, CONDITION_ALWAYS, CHANNEL_SOUTH_END},
     {TRIGGER_STEP, LEMURIA_ENTRANCE_TO_LEMURIA_DOCK_NORTH, CONDITION_ALWAYS,
      EVENT(LemuriaEntrance_LandAtHarbor)},
     {TRIGGER_STEP, LEMURIA_ENTRANCE_TO_LEMURIA_DOCK_SOUTH, CONDITION_ALWAYS,

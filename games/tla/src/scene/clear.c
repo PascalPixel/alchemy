@@ -1068,6 +1068,34 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   }
 #endif
 
+/// The rows of symbols to choose from, and the side column's keys beside
+/// them: Space moves on a place as R does, Return back a place as L does, and
+/// Finish checks the password as Start does. The third row has no side key.
+enum {
+  KEY_ROW_SPACE = 0,
+  KEY_ROW_RETURN = 1,
+  KEY_ROW_WITHOUT_SIDE_KEY = 2,
+  KEY_ROW_FINISH = 3,
+  KEY_ROWS = 4
+};
+
+/// What A chose this frame: a symbol of the grid or a side key.
+enum PasswordAction {
+  PASSWORD_ACTION_NONE = -1,
+  PASSWORD_ACTION_SYMBOL,
+  PASSWORD_ACTION_SPACE,
+  PASSWORD_ACTION_RETURN,
+  PASSWORD_ACTION_FINISH
+};
+
+/// The password screen's state: entering symbols; the last place just filled,
+/// which is drawn for a frame before the password is checked; and checking.
+enum PasswordState {
+  PASSWORD_STATE_ENTERING,
+  PASSWORD_STATE_CHECK,
+  PASSWORD_STATE_LAST_ENTERED
+};
+
 /// The password screen: chooses the password's level, then lets the player
 /// enter it on the grid of symbols, checks it and applies it; returns -1 when
 /// cancelled.
@@ -1142,6 +1170,7 @@ s32 Clear_EnterPassword(void) {
     s32 y;
     s32 x;
 
+    // Ten places a row, 12 pixels apart, with a gap after the fifth.
     x = col * 12 + 8;
     y = i / PASSWORD_SYMBOLS_PER_ROW * 16 + 2;
     if (col > 4)
@@ -1174,20 +1203,20 @@ s32 Clear_EnterPassword(void) {
   drawMode = 1;
   cursorX = (s16)window->x * 8 - 8;
   cursorY = (s16)window->y * 8 + 11;
-  state = 0;
+  state = PASSWORD_STATE_ENTERING;
   for (;;) {
-    action = -1;
-    if (state == 2)
-      state = 1;
+    action = PASSWORD_ACTION_NONE;
+    if (state == PASSWORD_STATE_LAST_ENTERED)
+      state = PASSWORD_STATE_CHECK;
     Window_SetTextTileRect(window, drawColumn, drawRow, drawMode, height,
                            WINDOW_PALETTE);
-    if (state == 0) {
+    if (state == PASSWORD_STATE_ENTERING) {
       if (gInput.repeat & KEY_RIGHT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
         {
           s32 next = column + 1;
 
-          if (row == 2)
+          if (row == KEY_ROW_WITHOUT_SIDE_KEY)
             column = next % SIDE_COLUMN;
           else
             column = next % (SIDE_COLUMN + 1);
@@ -1195,22 +1224,22 @@ s32 Clear_EnterPassword(void) {
       }
       if (gInput.repeat & KEY_LEFT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
-        if (row == 2)
+        if (row == KEY_ROW_WITHOUT_SIDE_KEY)
           column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
         else
           column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
       }
       if (gInput.repeat & KEY_DOWN) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
-        row = (row + 1) % 4;
-        if (column == SIDE_COLUMN && row == 2)
-          row = 3;
+        row = (row + 1) % KEY_ROWS;
+        if (column == SIDE_COLUMN && row == KEY_ROW_WITHOUT_SIDE_KEY)
+          row = KEY_ROW_FINISH;
       }
       if (gInput.repeat & KEY_UP) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
-        row = (row + 3) % 4;
-        if (column == SIDE_COLUMN && row == 2)
-          row = 1;
+        row = (row + KEY_ROWS - 1) % KEY_ROWS;
+        if (column == SIDE_COLUMN && row == KEY_ROW_WITHOUT_SIDE_KEY)
+          row = KEY_ROW_RETURN;
       }
     }
     if (column == SIDE_COLUMN)
@@ -1219,6 +1248,8 @@ s32 Clear_EnterPassword(void) {
       drawMode = 1;
     drawColumn = column;
     drawRow = row;
+    // The keys stand in groups of five, a blank tile between groups and
+    // before the side column.
     if (column > 4)
       drawColumn++;
     if (column > 9)
@@ -1269,27 +1300,29 @@ s32 Clear_EnterPassword(void) {
       u16 raw;
       struct InputState *input = &gInput;
 
-      if (column == SIDE_COLUMN && row == 0)
+      // Space and Return repeat while A is held, as L and R do.
+      if (column == SIDE_COLUMN && row == KEY_ROW_SPACE)
         raw = input->repeat;
-      else if (column == SIDE_COLUMN && row == 1)
+      else if (column == SIDE_COLUMN && row == KEY_ROW_RETURN)
         raw = input->repeat;
       else
         raw = input->pressed;
-      if ((raw & KEY_A) && state == 0) {
-        action = 0;
+      if ((raw & KEY_A) && state == PASSWORD_STATE_ENTERING) {
+        action = PASSWORD_ACTION_SYMBOL;
         if (column == SIDE_COLUMN) {
-          if (row == 0)
-            action = 1;
-          else if (row == 1)
-            action = 2;
-          else if (row == 3)
-            action = 3;
+          if (row == KEY_ROW_SPACE)
+            action = PASSWORD_ACTION_SPACE;
+          else if (row == KEY_ROW_RETURN)
+            action = PASSWORD_ACTION_RETURN;
+          else if (row == KEY_ROW_FINISH)
+            action = PASSWORD_ACTION_FINISH;
         } else if (cursor < length) {
           s32 code = gClear_PasswordGrid[column + row * SIDE_COLUMN];
 
           if (code <= PASSWORD_SYMBOL_MASK) {
             Sound_Play(SE_MENU_CONFIRM);
             gClear_PasswordText[cursor] = code;
+            // DEAD: a remainder nothing reads; the ROM keeps the call.
             __modsi3(cursor, PASSWORD_SYMBOLS_PER_ROW);
             if (cursor < length - 1) {
               if (cursor % PASSWORD_SYMBOLS_PER_PAGE ==
@@ -1298,13 +1331,14 @@ s32 Clear_EnterPassword(void) {
               else
                 cursor++;
             } else {
-              state = 2;
+              state = PASSWORD_STATE_LAST_ENTERED;
             }
           }
         }
       }
-      if (action != 0 || state == 1) {
-        if (gInput.pressed & KEY_START || action == 3 || state == 1) {
+      if (action != PASSWORD_ACTION_SYMBOL || state == PASSWORD_STATE_CHECK) {
+        if (gInput.pressed & KEY_START || action == PASSWORD_ACTION_FINISH ||
+            state == PASSWORD_STATE_CHECK) {
           u16 check;
           struct Window *box;
           struct MainRoutineWork *party;
@@ -1316,7 +1350,7 @@ s32 Clear_EnterPassword(void) {
           check =
               Clear_CalculatePasswordCrc16(crcLength, gClear_DecodedPassword);
 
-          state = 0;
+          state = PASSWORD_STATE_ENTERING;
           box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3,
                               WINDOW_FLAG_INSTANT);
           crc = check;
@@ -1362,12 +1396,12 @@ s32 Clear_EnterPassword(void) {
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
           DRAW_KEYS(window)
-        } else if (gInput.repeat & KEY_L || action == 2) {
+        } else if (gInput.repeat & KEY_L || action == PASSWORD_ACTION_RETURN) {
           if (cursor > 0) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor--;
           }
-        } else if (gInput.repeat & KEY_R || action == 1) {
+        } else if (gInput.repeat & KEY_R || action == PASSWORD_ACTION_SPACE) {
           if (cursor < length - 1) {
             Sound_Play(SE_MENU_CURSOR_MOVE);
             cursor++;

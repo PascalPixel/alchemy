@@ -72,10 +72,10 @@ extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gDjinnFigures_SpriteIds[];
 extern s32 gShipRooms_ShakeTimer;
 struct FloodgateLog;
-/// Heap slot 5: the 64 actors, 112 bytes each.
+/// The ACTOR_COUNT actors (HEAP_SLOT_ACTORS), 112 bytes each.
 #define gActors (*(struct Actor **)&gHeapSlots[HEAP_SLOT_ACTORS])
 /// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
-/// bytes after the tiles (WorldMap_PlayLighthouseTransition).
+/// after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedPictures[];
 /// The lighthouse transition's tiles, packed (tagged LZ).
 extern const u8 gWorldMapPackedTiles[];
@@ -92,9 +92,6 @@ enum WorldMapLighthouse {
 };
 /// The race gauge's 16 colours, loaded as OBJ palette 14 (Colosso_DrawGauge).
 extern u16 gColosso_GaugePalette[];
-// The lettering's three eases (Colosso_UpdateLettering): each value goes from
-// Start to Target over Duration frames, Step counting them; Duration 0 holds
-// Target.
 /// Frames in a row the chase has found a suspect cornered; at
 /// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
 extern u16 gLogRoomsA_StopTimer;
@@ -143,14 +140,15 @@ extern u32 gPushedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (picture_decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
-/// The size of Matrix_UpdateVertices, copied to heap slot 46; an address
+/// The size of Matrix_UpdateVertices, copied to HEAP_SLOT_RAM_CODE; an address
 /// equal to the size (ld_script.ld).
 extern u8 Matrix_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 
-// The field effects' scripts and tables (field/field_sequence_tables.c,
-// movement_scripts.c, field_effect_tables.c and spark_tiles.s).
+// The field effects' scripts and tables (field_sequence_tables.c,
+// movement_scripts.c, field_effect_tables.c and
+// graphics/field_effects/spark_tiles.s).
 extern const u16 gFieldEffect_CyclePatternWords[];
 extern const s8 gFieldEffect_RandomChildValues[];
 /// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
@@ -216,8 +214,7 @@ enum ActorSystemMode {
 /// (Sprite_ComposePicture, facing.c).
 enum AnimationFacingKind {
   /// The animation script's own picture whatever the facing; zero also marks a
-  /// free
-  /// sprite animation.
+  /// free sprite animation.
   ANIM_FACING_NONE = 0,
   ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
   ANIM_FACING_FRONT_BACK = 2,  ///< 8 sectors: a front and a back picture
@@ -351,8 +348,8 @@ enum TerrainKind {
   TERRAIN_SAMPLE_TABLE = 12,
   /// As TERRAIN_SAMPLE_TABLE, mirrored left to right.
   TERRAIN_SAMPLE_TABLE_MIRRORED = 13,
-  TERRAIN_FLAT_B = 14,
-  TERRAIN_FLAT_C = 15,
+  TERRAIN_FLAT_B = 14, ///< flat as TERRAIN_FLAT, by a copy of its function
+  TERRAIN_FLAT_C = 15, ///< flat as TERRAIN_FLAT, by another copy
   TERRAIN_KIND_COUNT = 16
 };
 

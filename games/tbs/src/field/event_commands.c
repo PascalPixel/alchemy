@@ -5,9 +5,9 @@
 /// line scrolls, Djinn joining the party, each field Psynergy, the
 /// field effect sprites its particles use, and the World Map screen.
 /// event_commands_internal.h holds the includes and the macros, types and
-/// inline helpers more than one part uses; the code is in the files under
-/// event_commands/, included here in link order, one family to a part, each
-/// opening with what it holds (head -2 event_commands/*.c).
+/// inline helpers more than one part uses; the code is in the
+/// event_commands_*.c files beside it, included here in link order, one family
+/// to a part, each opening with what it holds.
 ///
 /// A field Psynergy reaches its code through its field kind, the type column
 /// of games/tbs/src/game/ability_table.c; event_commands_field_psynergy.c runs

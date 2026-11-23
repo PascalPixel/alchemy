@@ -58,8 +58,9 @@ struct Actor {
   /// scrolling camera updates from the cell under it; the fixed camera passes
   /// it as the sprite's draw slot.
   u8 layer;
-  /// ActorPriorityFlag bits, read by the scrolling camera: 1 for placed
-  /// actors, 2 for footprints.
+  /// ActorPriorityFlag bits, read by the scrolling camera:
+  /// ACTOR_PRIORITY_AUTOMATIC for placed actors, ACTOR_PRIORITY_UNDERFOOT for
+  /// footprints.
   u8 priorityFlags;
   FIXED velocityX;  ///< 16.16 fixed-point pixels per frame
   FIXED velocityY;  ///< 16.16 fixed-point pixels per frame
@@ -92,8 +93,7 @@ struct Actor {
   u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* watched for arrival
   u8 conditionResult; ///< the actor script's last flag test
   u8 snapToTarget;    ///< nonzero lands it exactly on its target on arrival
-  /// ActorCollisionFlag bits: bit 0 solid, bit 1 the player pushes it, bits 2
-  /// to 4 for talk and Psynergy targets; placed actors take 1.
+  /// ActorCollisionFlag bits; placed actors take ACTOR_SOLID.
   u8 collisionFlags;
   u8 steeringFlags; ///< ActorSteeringFlag bits
   u8 paused;        ///< nonzero skips its script and motion, not its update
@@ -203,22 +203,6 @@ enum ActorPriorityFlag {
   ACTOR_PRIORITY_OVERHEAD = 0x04
 };
 
-/// Actor.motionFlags bits.
-enum ActorMotionFlag {
-  ACTOR_FOLLOWS_TERRAIN = 0x01, ///< moves with the ground height under it
-  ACTOR_FALLS = 0x02,           ///< falls by its gravity and bounces
-  ACTOR_FLOATS = 0x04,          ///< bobs up and down by its gravity
-  ACTOR_FLOATS_HIGH = 0x08,     ///< with ACTOR_FLOATS, four times as far
-  /// Keeps its speed on slopes, which slow others down.
-  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10,
-  /// Unused: nothing sets or reads it; a jump clears it with
-  /// ACTOR_FOLLOWS_TERRAIN.
-  ACTOR_MOTION_SPARE = 0x80,
-  /// The motion flags a jump keeps as the actor leaves the ground: all but
-  /// ACTOR_FOLLOWS_TERRAIN and the spare bit.
-  ACTOR_JUMP_KEEPS_MOTION = (u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE)
-};
-
 /// Actor.collisionFlags bits.
 enum ActorCollisionFlag {
   ACTOR_SOLID = 0x01,         ///< blocks other actors and the player
@@ -228,11 +212,6 @@ enum ActorCollisionFlag {
   ACTOR_NEAR_PSYNERGY = 0x10, ///< nearer for Psynergy targets
   /// Refuses to move into a solid actor (Actor.refused).
   ACTOR_BLOCKED_BY_SOLID = 0x80
-};
-
-/// Actor.steeringFlags bits.
-enum ActorSteeringFlag {
-  ACTOR_FACES_MOTION = 0x01 ///< turns toward its velocity, 1/16 turn a frame
 };
 
 enum {

@@ -76,7 +76,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
 /// Two hands appear 16 pixels above the spot in front of the caster, 32 pixels
 /// to either side, then close in 24 pixels and scatter into shards.
-DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
+DEFINE_CLAPPING_HANDS_CAST(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
 /// full size over 24 frames; angle is the way it faces once grown.

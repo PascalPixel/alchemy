@@ -83,7 +83,8 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     arc->scaleX = arc->scaleY = FIXED_ONE / 10;
     if (sprite == 0)
       continue;
-    // A wide 16-colour sprite drawn from the Psynergy's tiles.
+    // A 16-colour sprite 32 by 16 (wide, size 2), drawn from the Psynergy's
+    // tiles.
     Sprite_StartAnimationFar(sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);

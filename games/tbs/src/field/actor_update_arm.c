@@ -149,9 +149,9 @@ void Actor_UpdateAll(void) {
         }
       }
 
-      // Gravity for an actor that falls (ACTOR_FALLS), and a bounce that
-      // loses energy on landing.
-      if (actor->motionFlags & 2) {
+      // Gravity for an actor that falls, and a bounce that loses energy on
+      // landing.
+      if (actor->motionFlags & ACTOR_FALLS) {
         groundY = actor->groundHeight;
         if (y > groundY)
           actor->velocityY -= actor->gravity;
@@ -209,9 +209,8 @@ void Actor_UpdateAll(void) {
     }
     SET_POSITION(actor, x, y, z);
 
-    // An actor that faces its motion (ACTOR_FACES_MOTION) turns toward its
-    // direction of travel.
-    if (actor->steeringFlags & 1) {
+    // An actor that faces its motion turns toward its direction of travel.
+    if (actor->steeringFlags & ACTOR_FACES_MOTION) {
       x = actor->velocityX;
       z = actor->velocityZ;
       if (x != 0 || z != 0) {

@@ -238,7 +238,7 @@ s32 Party_CheckItemLimit(s32 item) {
   return 0;
 }
 
-/// The event command "give item": gives item to the first party member with
+/// Gives item to the first party member with
 /// room for it and says so.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct FieldWork *work;
@@ -372,7 +372,7 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 /// still asked below them.
 #define YES_NO_BELOW_LAST_ROW 15
 
-/// The event command "choose yes or no": once the message on screen has been
+/// Once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
 /// past YES_NO_BELOW_LAST_ROW, unless forceBottom is set.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
@@ -440,7 +440,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
                        FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
-/// The event command "open screen": starts the event's screen transition and
+/// Starts the event's screen transition and
 /// sets work->transitionActive.
 void Event_StartScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
@@ -449,7 +449,7 @@ void Event_StartScreenTransition(void) {
   runtime->transitionActive = 1;
 }
 
-/// The event command "close screen": finishes the event's screen transition and
+/// Finishes the event's screen transition and
 /// clears work->transitionActive.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *runtime = gFieldWork;
@@ -458,7 +458,7 @@ void Event_FinishScreenTransition(void) {
   runtime->transitionActive = 0;
 }
 
-/// The event command "wait for screen": waits as long as the transition runs
+/// Waits as long as the transition runs
 /// (work->transitionFrames). Events reach it.
 void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
@@ -480,7 +480,7 @@ void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   gMainRoutineWork.restartEntrance = entrance;
 }
 
-/// The event command "request exit": sets the field's exit request
+/// Sets the field's exit request
 /// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

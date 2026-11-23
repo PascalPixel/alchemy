@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_LUCKY_WHEELS_H
 #define ALCHEMY_LUCKY_WHEELS_H
 
+/// @file
+/// Lucky Wheels, Tolbi's game of chance (lucky_wheels.c), and the unused LZ
+/// packer kept beside it.
+
 #include "fixed_math.h"
 #include "types.h"
 

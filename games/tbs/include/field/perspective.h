@@ -9,7 +9,8 @@
 #include "types.h"
 
 /// The world map's perspective view: the followed position, screen shake,
-/// view position, window, pitch and yaw, tile ids and zoom. Heap slot 8.
+/// view position, window, pitch and yaw, tile ids and zoom, in
+/// HEAP_SLOT_MAP_GRID where a map keeps its MapGridScrollWork.
 struct WorldMapView {
   s32 *origin; ///< the followed point, as in MapGridScrollWork
   s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapGridScrollWork

@@ -324,7 +324,8 @@ static inline void Event_SetFlag(s32 flag) { GameFlag_Set(flag); }
 static inline void Event_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
-/// Plays a sound effect or music from an event: the SE command of script.h.
+/// Plays a sound effect or music from an event, as an actor script's SC_SE
+/// does.
 static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 #endif
 
@@ -333,6 +334,7 @@ static inline s32 Random_Next(void) { return Import_RandomNext(); }
 /// A random whole number from 0 to n - 1, as an event rolls one.
 #define Random_Below(n) ((u32)Random_Next() * (n) >> 16)
 
+/// A signed division, as an event writes it.
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
@@ -357,9 +359,9 @@ static inline void Actor_SetColorMode(struct Actor *actor, s32 mode) {
 
 /// Creates an actor in an empty slot of gActors, outside the actor ids, or
 /// returns NULL when every slot is taken.
-static inline struct Actor *FieldActor_Create(s32 type, FIXED fixed_x,
-                                              FIXED fixed_y, FIXED fixed_z) {
-  return Actor_Create(type, fixed_x, fixed_y, fixed_z);
+static inline struct Actor *FieldActor_Create(s32 type, FIXED x, FIXED y,
+                                              FIXED z) {
+  return Actor_Create(type, x, y, z);
 }
 
 /// OAM blend modes for Actor_SetBlendMode:
@@ -374,9 +376,8 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
 }
 
 /// Moves a treasure spot's actor to a point on the ground.
-static inline void TreasureSpot_SetPosition(s32 object, FIXED fixed_x,
-                                            FIXED fixed_z) {
-  TreasureSpot_SetActorPosition(object, fixed_x, fixed_z);
+static inline void TreasureSpot_SetPosition(s32 object, FIXED x, FIXED z) {
+  TreasureSpot_SetActorPosition(object, x, z);
 }
 
 /// Lines an actor up with the middle of its column, then walks it
@@ -396,8 +397,8 @@ static inline void FieldEvent_ShowMessageThenWait(s32 speaker, s32 flags,
   Event_ShowMessageThenWait(speaker, flags, frames);
 }
 
-/// Sets a sprite param on every part of an actor's sprite, or makes it
-/// blink.
+/// Sets a colour mode on every part of an actor's sprite, or with
+/// SPRITE_COLOR_BLINK makes it blink.
 static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
   Actor_ConfigureSpriteColor(actorId, value);
 }

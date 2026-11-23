@@ -13,8 +13,7 @@ struct Actor *Actor_GetById(s32 actorId) {
   return actor;
 }
 
-/// The event command "set actor speed": its top speed and acceleration, 16.16
-/// pixels per frame. Writes the actor's speedLimit and acceleration.
+/// Sets an actor's top speed and acceleration, in 16.16 pixels per frame.
 void Actor_SetSpeedParameters(u32 actorId, FIXED speedLimit,
                               FIXED acceleration) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -36,9 +35,8 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action) {
   }
 }
 
-/// The event command "stop actor": stops its movement type and puts it back
-/// under script control, on the idle script (a lone SC_END), and sets
-/// ACTOR_FACES_MOTION.
+/// Stops an actor's movement type and puts it back under script control, on
+/// the idle script (a lone SC_END), and sets ACTOR_FACES_MOTION.
 void Actor_Stop(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -80,8 +78,7 @@ void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action) {
   }
 }
 
-/// The event command "set actor destination": the actor heads for (x, z), in
-/// pixels, keeping its current animation.
+/// Sends an actor toward (x, z), in pixels, keeping its current animation.
 void Actor_SetDestinationById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -92,7 +89,7 @@ void Actor_SetDestinationById(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The event command "move actor and wait": as Actor_SetDestinationById, then
+/// As Actor_SetDestinationById, then
 /// waits (at most 600 frames) for the actor to arrive.
 void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -105,7 +102,7 @@ void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The event command "walk actor to": the actor walks toward (x, z), in pixels.
+/// Walks an actor toward (x, z), in pixels.
 void Actor_WalkToById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -117,7 +114,7 @@ void Actor_WalkToById(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The event command "walk actor to and wait": walks the actor to (x, z), in
+/// Walks the actor to (x, z), in
 /// pixels, waits for it to arrive and stands it still.
 void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -132,7 +129,7 @@ void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The event command "center actor and walk": walks the actor sideways to the
+/// Walks the actor sideways to the
 /// middle of its 16-pixel column, sets its sprite priority to priority
 /// (Actor_SetSpritePriority), then sends it zOffset pixels along z.
 void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
@@ -166,8 +163,8 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
   }
 }
 
-/// The event command "set actor destination offset": the actor heads (xOffset,
-/// zOffset) pixels from where it stands.
+/// Sends an actor (xOffset, zOffset) pixels from where it stands, keeping its
+/// current animation.
 void Actor_SetDestinationOffsetById(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -206,9 +203,9 @@ void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset) {
 }
 
 /// Places an actor on the leader and sends it walking (xOffset, zOffset) pixels
-/// away at speed 0.6 and acceleration 0.3, through the launch script; the actor
-/// then takes movement type action.
-void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
+/// away at speed 0.6 and acceleration 0.3; once there, the launch script turns
+/// it to face facing.
+void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 facing) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -223,11 +220,11 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
     Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
     Actor_StartScriptFar(actor, (const s32 *)&gActor_LaunchScript);
-    actor->timer = action;
+    actor->timer = facing;
   }
 }
 
-/// The event command "wait for actor": waits (at most 600 frames) for the actor
+/// Waits (at most 600 frames) for the actor
 /// to arrive and stands it still.
 void Actor_WaitForMoveById(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -238,7 +235,7 @@ void Actor_WaitForMoveById(u32 actorId) {
   }
 }
 
-/// The event command "set actor position": puts the actor at (x, z), 16.16
+/// Puts the actor at (x, z), 16.16
 /// pixels, at rest.
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
   struct Actor *actor;
@@ -312,7 +309,7 @@ void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
   }
 }
 
-/// The event command "set actor animation" (an enum ActorAnimation: ANIM_STAND,
+/// Switches an actor to an animation (an enum ActorAnimation: ANIM_STAND,
 /// ANIM_WALK, ANIM_NOD, ANIM_SHAKE_HEAD and so on).
 void Actor_SetAnimationById(u32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
@@ -353,8 +350,7 @@ void Actor_WaitForAnimationChange(u32 actorId) {
   }
 }
 
-/// The event command "set actor animation and wait": plays the
-/// animation and waits for it to end. Events reach it
+/// Plays an animation and waits for it to end. Events reach it
 /// (Actor_SetAnimationAndWait).
 void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
   Actor_SetAnimationById(actorId, animation);
@@ -365,7 +361,7 @@ void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
 /// bank's far-call table.
 void Actor_NoOp(void) {}
 
-/// The event command "actor jump": throws the actor upward at speed pixels per
+/// Throws the actor upward at speed pixels per
 /// frame with a jump sound (a higher one above 5), then waits frames frames.
 void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   struct Actor *actor;
@@ -388,7 +384,7 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
 #define REPEATED_MOTION_MAX 3
 #define REPEATED_MOTION_SCRIPT_BYTES (32 * sizeof(s32))
 
-/// The event command "start repeated motion": the actor squashes and springs
+/// Makes an actor squash and spring
 /// back count times (1 to REPEATED_MOTION_MAX), through gActor_VariantScripts.
 void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
   struct Actor *actor;
@@ -406,7 +402,7 @@ void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
   }
 }
 
-/// The event command "run repeated motion": as Actor_StartRepeatedMotion, then
+/// As Actor_StartRepeatedMotion, then
 /// waits for it to end.
 void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
   Actor_StartRepeatedMotion(actorId, count);
@@ -445,16 +441,16 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
 
 /// Kicks up a dust puff (SPRITE_DUST_PUFF) where source stands: it flies off
 /// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
-/// one of two animations.
-void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
+/// one of two animations, in the colour mode color.
+void FieldEffect_SpawnDustPuff(struct Actor *source, s32 color) {
   struct Actor *actor;
-  struct Sprite *child;
+  struct Sprite *sprite;
   s32 speed;
 
   actor = Actor_CreateFar(SPRITE_DUST_PUFF, source->x.fixed, source->y.fixed,
                           source->z.fixed);
   if (actor != 0) {
-    child = actor->sprite;
+    sprite = actor->sprite;
     switch (Random16() & 1) {
     case 1:
       Actor_SelectAnimationFar(actor, 2);
@@ -468,8 +464,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
       break;
     }
 
-    if (param != 0)
-      Actor_SetSpriteColor(actor, param);
+    if (color != SPRITE_COLOR_NORMAL)
+      Actor_SetSpriteColor(actor, color);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
     // toFIXED(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
@@ -482,8 +478,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     actor->speedLimit = toFIXED(1) / 10 * speed;
     actor->timer = 0;
     actor->update = FieldEffect_UpdateDustPuff;
-    child->flags = 0;
-    child->image.priority = source->sprite->image.priority;
+    sprite->flags = 0;
+    sprite->image.priority = source->sprite->image.priority;
   }
 }
 
@@ -496,9 +492,9 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// the leader when the player presses down at a ledge): it shows pose for 10
 /// frames, hops 12 pixels south, turns toward FACING_SOUTH_SOUTHWEST (1/16 turn
 /// past FACING_SOUTH) while sinking 28 pixels with a dust puff every other
-/// frame (none when param is -1), then jumps on to 16 pixels south of where it
-/// started and lands.
-void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
+/// frame in the colour mode dustColor (none when it is -1), then jumps on to 16
+/// pixels south of where it started and lands.
+void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 dustColor) {
   FIXED nextY;
   FIXED startZ;
   struct Actor *actor;
@@ -529,8 +525,8 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
       actor->y.fixed = nextY;
       actor->targetY = nextY;
       wait(1);
-      if ((param != -1) && (pose & 1)) {
-        FieldEffect_SpawnDustPuff(actor, param);
+      if ((dustColor != -1) && (pose & 1)) {
+        FieldEffect_SpawnDustPuff(actor, dustColor);
       }
     }
 
@@ -551,7 +547,7 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
   }
 }
 
-/// The event command "actor face actor": turns the first actor at once to face
+/// Turns the first actor at once to face
 /// the second, then waits the given number of frames.
 void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
   struct Actor *first;
@@ -566,7 +562,7 @@ void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
   }
 }
 
-/// The event command "actors face each other": turns two actors toward each
+/// Turns two actors toward each
 /// other, then waits the given number of frames.
 void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames) {
   void *first = Actor_Lookup(firstId);
@@ -623,10 +619,10 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
   }
 }
 
-/// The event command "release actor": releases the actor and empties its slot,
+/// Releases the actor and empties its slot,
 /// writing NULL to its place in the field work's actor table.
-void Actor_ReleaseById(s32 index) {
-  void *released = Actor_Lookup(index);
+void Actor_ReleaseById(s32 actorId) {
+  void *released = Actor_Lookup(actorId);
   struct FieldWork *table = gFieldWork;
 #ifdef UBFIX
   struct Actor *empty = NULL;
@@ -639,32 +635,32 @@ void Actor_ReleaseById(s32 index) {
     memcpy((u8 *)table + offsetof(struct FieldWork, actors) +
                // Copy the pointer representation without extending the actor
                // array.
-               index * sizeof(void *),
+               actorId * sizeof(void *),
            &empty, sizeof(empty));
 #else
     // UB: the getter accepts slots through 191, past the 66 actors.
-    table->actors[index] = NULL;
+    table->actors[actorId] = NULL;
 #endif
   }
 }
 
 UNUSED void Actor_ReleaseNoOp(void) {}
 
-/// The event command "set actor sprite param": gives every sprite part of the
-/// actor param (Actor_SetSpriteColor).
-void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
+/// Gives every sprite part of an actor the colour mode color
+/// (Actor_SetSpriteColor), or with SPRITE_COLOR_BLINK makes it blink.
+void Actor_ConfigureSpriteColor(s32 actorId, s32 color) {
   s32 blink;
   struct Actor *actor;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    blink = SPRITE_COLOR_BLINK & param;
+    blink = SPRITE_COLOR_BLINK & color;
     if (blink != 0) {
-      (actor)->update = Actor_UpdateBlink;
+      actor->update = Actor_UpdateBlink;
       return;
     }
-    (actor)->update = NULL;
-    Actor_SetSpriteColor(actor, param);
+    actor->update = NULL;
+    Actor_SetSpriteColor(actor, color);
   }
 }
 
@@ -672,14 +668,13 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
 /// mode from gActor_BlinkSpriteColors (SPRITE_COLOR_WHITE for two frames out of
 /// eight, otherwise SPRITE_COLOR_NORMAL).
 void Actor_UpdateBlink(struct Actor *actor) {
-
   if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-    u8 param;
+    u8 color;
     struct Sprite *container;
     u8 partCount;
 
     // The table's four entries each last two frames.
-    param = gActor_BlinkSpriteColors[(gFrameCount >> 1) & 3];
+    color = gActor_BlinkSpriteColors[(gFrameCount >> 1) & 3];
     container = actor->sprite;
     partCount = container->count;
     if (partCount != 0) {
@@ -688,7 +683,7 @@ void Actor_UpdateBlink(struct Actor *actor) {
       do {
         struct SpriteAnimation *entry = *entries++;
         if (entry != 0 && entry->script != 0) {
-          entry->colorMode = param;
+          entry->colorMode = color;
         }
         remaining--;
       } while (remaining != 0);
@@ -700,8 +695,7 @@ void Actor_UpdateBlink(struct Actor *actor) {
 /// Sets the colour mode of every animated part of an actor's sprite. Events set
 /// SPRITE_COLOR_NORMAL or SPRITE_COLOR_HIDDEN, and alternate the two to make an
 /// actor flash.
-void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
-
+void Actor_SetSpriteColor(struct Actor *actor, s32 color) {
   if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     struct Sprite *container = actor->sprite;
     u8 partCount = container->count;
@@ -712,7 +706,7 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
       do {
         struct SpriteAnimation *part = *entry++;
         if (part != NULL && part->script != 0) {
-          part->colorMode = param;
+          part->colorMode = color;
         }
         count--;
       } while (count != 0);
@@ -783,7 +777,7 @@ void Actor_ClearDestinationAndStand(u32 actorId) {
   }
 }
 
-/// The event command "actor face direction": the actor turns toward angle
+/// Turns an actor toward angle
 /// (TRIG_TURN a full turn; Actor_StepAngle), then the event waits the given
 /// number of frames.
 void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
@@ -796,7 +790,7 @@ void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
   }
 }
 
-/// The event command "set actor sprite priority": fixes the priority of the
+/// Fixes the priority of the
 /// actor's sprite, which then no longer follows its depth: clears
 /// ACTOR_PRIORITY_AUTOMATIC.
 void Actor_SetSpritePriority(s32 actorId, s32 priority) {
@@ -833,8 +827,7 @@ void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
 
 UNUSED void Actor_ReservedNoOp(void) {}
 
-/// The event command "set message": the number of the event's next message,
-/// written to work->message.
+/// Sets the number of the event's next message.
 void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low 12

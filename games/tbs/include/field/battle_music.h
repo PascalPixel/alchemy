@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_BATTLE_MUSIC_H
 #define ALCHEMY_BATTLE_MUSIC_H
 
+/// @file
+/// The battles that play music of their own (battle_music.c).
+
 #include "types.h"
 
 /// The bit that marks a song in gEncounter_BattleMusic; encounter keys have it

@@ -1,5 +1,6 @@
 /// @file
-/// Avoid.
+/// Avoid: the caster spins among falling arcs and flashes, and monsters attack
+/// less often until it wears off.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -9,21 +10,21 @@
 /// flashes as a dark outline.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Actor *caster;
-  struct Sprite *rec;
+  struct Sprite *sprite;
   struct SpriteAnimation *entry;
   s32 phase;
 
   caster = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  rec = caster->sprite;
-  entry = rec->entries[0];
+  sprite = caster->sprite;
+  entry = sprite->entries[0];
   phase = gFrameCount % 5;
   if (phase == 0) {
-    rec->dirty = 1;
-    rec->flags = SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED;
+    sprite->dirty = 1;
+    sprite->flags = SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED;
   } else if (phase == 2) {
     entry->colorMode = SPRITE_COLOR_NORMAL; // restore its colours
-    rec->dirty = 1;
-    rec->flags = SPRITE_FLAG_SHADOW;
+    sprite->dirty = 1;
+    sprite->flags = SPRITE_FLAG_SHADOW;
   }
 }
 
@@ -47,10 +48,8 @@ void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
     caster->facing += TRIG_TURN * 3 / 64;
 }
 
-/// Avoid (or the Sacred Feather) has worn off, and the game says so.
-/// "Avoid's effects wore off." (or "Sacred Feather's ...").
-///
-/// Clears gMainRoutineWork.avoidDistance. Reached through
+/// Says that Avoid, or the Sacred Feather, has worn off: "Avoid's effects wore
+/// off." Clears gMainRoutineWork.avoidDistance. Reached through
 /// FieldPsynergy_RunExtraHandler when the Psynergy request the leader's walking
 /// raises as Avoid runs out (field_sequence_walking.c) is handled.
 void FieldPsynergy_ShowAvoidWoreOff(void) {
@@ -73,7 +72,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
 void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;
-  struct Sprite *group;
+  struct Sprite *sprite;
   struct SpriteAnimation *entry;
   u32 angle;
   s32 slot;
@@ -81,8 +80,8 @@ void FieldPsynergy_Avoid(void) {
 
   effectWork = gFieldEffectWork;
   actor = effectWork->mainActor;
-  group = actor->sprite;
-  entry = group->entries[0];
+  sprite = actor->sprite;
+  entry = sprite->entries[0];
   angle = actor->facing;
   slot = VramCache_FindFreeEntry();
   // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
@@ -102,11 +101,11 @@ void FieldPsynergy_Avoid(void) {
   // Flash white for 2 frames in every 5.
   for (count = 0; count < AVOID_FLASHES; count++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
-    group->dirty = 1;
+    sprite->dirty = 1;
     wait(2);
-    group->dirty = 1;
+    sprite->dirty = 1;
     entry->colorMode = SPRITE_COLOR_NORMAL;
-    group->flags = SPRITE_FLAG_SHADOW;
+    sprite->flags = SPRITE_FLAG_SHADOW;
     wait(3);
   }
   actor->update = NULL;

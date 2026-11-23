@@ -21,13 +21,13 @@ typedef s32 (*ScriptCommand)(struct Actor *);
 struct ScriptOperands {
   u32 scriptAddress; ///< SW_SCRIPT; an add steps it by whole words
   u16 cursor;        ///< SW_CURSOR, compared as signed
-  u16 facing;        ///< SW_FACING, and work values 2 and 4
+  u16 facing;        ///< SW_FACING, and the work values either side
   u32 x;             ///< SW_X, 16.16 fixed-point pixels
   u32 y;             ///< SW_Y
   u32 z;             ///< SW_Z
   u32 groundHeight;  ///< SW_GROUND
   u32 scaleX;        ///< SW_SCALE_X, 16.16 fixed point
-  u32 scaleY;        ///< SW_SCALE_Y, and work value 11
+  u32 scaleY;        ///< SW_SCALE_Y, and the work value after it
   u16 radius;        ///< SW_RADIUS, in pixels; compared as signed
   u8 layer;          ///< no work value
   u8 priorityFlags;  ///< no work value
@@ -41,11 +41,11 @@ struct ScriptOperands {
   u32 targetZ;       ///< SW_TARGET_Z
   u32 bounce;        ///< SW_BOUNCE, or a floating actor's phase
   u32 gravity;       ///< SW_GRAVITY
-  /// Work value 23: the word Actor_Create zeroes and only scene code
+  /// SW_RISE_BASE_Y: the word Actor_Create zeroes and only scene code
   /// reads.
   u32 riseBaseY;
-  u32 sprite;           ///< work value 24: the sprite, or its list of four
-  u8 spriteStorageKind; ///< work value 25: 0 hidden, 1 one, 2 a group
+  u32 sprite;           ///< SW_SPRITE: the sprite, or its list of four
+  u8 spriteStorageKind; ///< SW_SPRITE_KIND, an enum ActorSpriteKind
   u8 motionFlags;       ///< SW_MOTION, ActorMotionFlag bits
   u8 arrivalAxis;       ///< SW_ARRIVAL
   u8 conditionResult;   ///< SW_RESULT, the last test; every compare sets it
@@ -60,9 +60,9 @@ struct ScriptOperands {
   u8 frozen;            ///< ActorArmView.frozen; no work value
   u8 riseCounter;       ///< SW_RISE_COUNTER, kept by scene code
   u8 riseEnabled;       ///< SW_RISE_ENABLED, kept by scene code
-  s16 timer;            ///< work value 35, what its actor script reads
-  s16 userValue;        ///< work value 36, or scene scratch
-  u32 watchedActor;     ///< work value 37, the actor it follows or faces
+  s16 timer;            ///< SW_TIMER, what its actor script reads
+  s16 userValue;        ///< SW_USER_VALUE, or scene scratch
+  u32 watchedActor;     ///< SW_WATCHED_ACTOR, the actor it follows or faces
   u32 update;           ///< SW_HOOK, the routine run each frame
 };
 

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_WORLD_MAP_LINES_H
 #define ALCHEMY_WORLD_MAP_LINES_H
 
+/// @file
+/// The World Map's tilt, drawn line by line (world_map_lines.c).
+
 #include "types.h"
 
 struct BgAffine;

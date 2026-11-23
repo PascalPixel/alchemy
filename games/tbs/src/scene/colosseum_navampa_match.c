@@ -296,9 +296,35 @@ enum PistonAnimation {
   PISTON_ANIMATION_TIP = 8
 };
 
-/// The cells where the long log's ride starts
-/// (ColosseumNavampaMatch_RollLongLog).
-enum { CELL_BEHAVIOR_LONG_LOG = 23 };
+/// Cell behaviors the stages' triggers answer.
+enum ColosseumNavampaMatchCellBehavior {
+  /// The Moving Sidewalk Stage's belt, cells (62..71, 11) and on.
+  CELL_BEHAVIOR_MOVING_SIDEWALK = 11,
+  /// The Scales of Justice's western ledge, cell (9, 12), given this behavior
+  /// from the spare cell (0, 25) while the scales are level.
+  CELL_BEHAVIOR_SCALES_LEDGE = 15,
+  /// Beside the ledge, cells (8..10, 13), where stepping off swings the scales
+  /// back.
+  CELL_BEHAVIOR_OFF_SCALES = 16,
+  /// The weight's square by the Scales of Justice, round (4..7, 9..11), where
+  /// walking into the weight pushes it.
+  CELL_BEHAVIOR_WEIGHT_SQUARE = 20,
+  /// The row of the stone pillar by the Wall Wedge's operator, (43..45, 11).
+  CELL_BEHAVIOR_ROCK_ROW = 22,
+  /// Where the long log's ride starts (ColosseumNavampaMatch_RollLongLog).
+  CELL_BEHAVIOR_LONG_LOG = 23,
+  /// The way into the arena, cells (92, 9..14).
+  CELL_BEHAVIOR_ARENA_ENTRY = 50,
+  /// The east end of the log-rolling area, cell (83, 13).
+  CELL_BEHAVIOR_LOG_AREA_END = 90,
+  /// The east edge of the weight's square, cell (8, 12).
+  CELL_BEHAVIOR_WEIGHT_SQUARE_EDGE = 91,
+  /// The chests: a Smoke Bomb at (12, 7), a Nut at (44, 6) and a Sleep Bomb at
+  /// (75, 13), opened facing west.
+  CELL_BEHAVIOR_SMOKE_BOMB_CHEST = 101,
+  CELL_BEHAVIOR_NUT_CHEST = 102,
+  CELL_BEHAVIOR_SLEEP_BOMB_CHEST = 103
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColosseumNavampaMatchEntrances;
@@ -538,8 +564,8 @@ static void ColosseumNavampaMatch_PushWeight(void) {
 }
 
 /// Move on the stone pillar of the Stepping-Stone Stage, the second stage,
-/// slides it along its row; the walkthrough has Garet push it east to give the
-/// racer a step across. The same work follows every push.
+/// slides it along its row; pushed east, it gives the racer a step across. The
+/// same work follows every push.
 ///
 /// The pillar's column is kept in FLAG_STONE_COLUMN, so that a friend's Move
 /// during Lend a Hand still holds for the race. Row 11 of the stage is made
@@ -1760,31 +1786,30 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
-/// Starts a scripted pixel destination while preserving the actor's
-/// height.
-static void ColosseumNavampaMatch_PositionActor(s32 selector, s32 x, s32 z) {
+/// Sets an actor running toward (x, z) in pixels, at the height it stands at.
+static void ColosseumNavampaMatch_RunActorTo(s32 selector, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_Lookup(selector);
   if (actor != NULL) {
     Actor_StartIdle(actor);
-    Actor_SelectAnimation(actor, 5);
+    Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
     Actor_SetMoveTarget(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
   }
 }
 
-/// Moves to a scripted pixel destination, waits, then restores the idle mode.
-static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
-                                                           s32 z) {
+/// Runs an actor to (x, z) in pixels and stands it there once it arrives.
+static void ColosseumNavampaMatch_RunActorToAndStand(s32 selector, s32 x,
+                                                     s32 z) {
   struct Actor *actor;
 
   actor = Actor_Lookup(selector);
   if (actor != NULL) {
     Actor_StartIdle(actor);
-    Actor_SelectAnimation(actor, 5);
+    Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
     Actor_SetMoveTarget(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
     Actor_WaitForMove(actor);
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, ANIM_STAND);
   }
 }
 
@@ -1813,10 +1838,9 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
-      ColosseumNavampaMatch_PositionAndActivateActor(ACTOR_PARTY_LEADER, 992,
-                                                     184);
+      ColosseumNavampaMatch_RunActorToAndStand(ACTOR_PARTY_LEADER, 992, 184);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.3);
-      ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
+      ColosseumNavampaMatch_RunActorTo(ACTOR_PARTY_LEADER, 1120, 184);
       Event_Wait(120);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ATTACH);
@@ -1837,7 +1861,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       }
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       60);
-      ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
+      ColosseumNavampaMatch_RunActorTo(ACTOR_PARTY_LEADER, 1120, 184);
       Event_ShowMessage(guideId, 0);
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
@@ -2086,24 +2110,24 @@ s32 gColosseumNavampaMatch_WallWedgeStep = 0;
 u32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct Trigger gColosseumNavampaMatchTriggers[] = {
-    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_HopFromLogAreaEnd) },
-    { STEP_TRIGGER_WALKING, 91, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeightOrHopAcross) },
-    { TRIGGER_STEP, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT(ColosseumNavampaMatch_RideMovingSidewalk) },
-    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeight) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LOG_AREA_END, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_HopFromLogAreaEnd) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_WEIGHT_SQUARE_EDGE, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeightOrHopAcross) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MOVING_SIDEWALK, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT(ColosseumNavampaMatch_RideMovingSidewalk) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_WEIGHT_SQUARE, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_SetWeightOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_MoveStone) },
-    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushRock) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ROCK_ROW, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushRock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_JustMoveRock) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LONG_LOG, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_RollLongLog) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT(ColosseumNavampaMatch_UpdateLogAreaStoneCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT(ColosseumNavampaMatch_UpdateLogAreaStoneCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT(ColosseumNavampaMatch_UpdateLogAreaStoneCells) },
-    { TRIGGER_STEP, 15, FLAG_ON_SCALES, EVENT(ColosseumNavampaMatch_StepOnScales) },
-    { TRIGGER_STEP, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT(ColosseumNavampaMatch_StepOffScales) },
-    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumNavampaMatch_ReachArena) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
-    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SCALES_LEDGE, FLAG_ON_SCALES, EVENT(ColosseumNavampaMatch_StepOnScales) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_OFF_SCALES, IF_FLAG_SET(FLAG_ON_SCALES), EVENT(ColosseumNavampaMatch_StepOffScales) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_ARENA_ENTRY, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumNavampaMatch_ReachArena) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_SMOKE_BOMB_CHEST, FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_NUT_CHEST, FLAG_COLOSSEUM_NAVAMPA_MATCH_NUT_CHEST_OPENED, FIND_ITEM(ITEM_NUT) },
+    { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, CELL_BEHAVIOR_SLEEP_BOMB_CHEST, FLAG_COLOSSEUM_NAVAMPA_MATCH_SLEEP_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE, FLAG_SCALES_FROZEN, EVENT(ColosseumNavampaMatch_FreezeOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumNavampaMatch_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT(ColosseumNavampaMatch_HaltWall) },

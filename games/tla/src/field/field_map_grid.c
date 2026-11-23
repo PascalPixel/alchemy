@@ -81,11 +81,9 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
 }
 
 /// Unpacks a map's cell pictures, decoded into the map cell buffer from its
-/// second byte, into gCellPictures. The buffer's second byte picks the method
-/// and the halfwords follow it; size counts from that byte, and an even size
-/// leaves nothing to unpack. Method 0 copies the halfwords; method 1 rebuilds
-/// each from a plane of high bytes and one of low bytes, XORed with the one
-/// before; method 2 XORs each halfword with the one before.
+/// second byte, into gCellPictures. The buffer's second byte is how they are
+/// packed (enum CellPicturePacking) and the halfwords follow it; size counts
+/// from that byte, and an even size leaves nothing to unpack.
 void TileMap_DecodeStagedBuffer(s32 size) {
   u16 *dst;
   u16 *src;
@@ -97,11 +95,11 @@ void TileMap_DecodeStagedBuffer(s32 size) {
   n = (size - 1) / 2;
   if (size & 1) {
     switch (((u8 *)gMapGridCellBuffer)[1]) {
-    case 0:
+    case CELL_PICTURE_PACKING_RAW:
       for (i = 0; i < n; i++)
         *dst++ = *src++;
       break;
-    case 1: {
+    case CELL_PICTURE_PACKING_SPLIT_DELTA: {
       u32 prev = 0;
       u8 *hi = Ram_MapCellBuffer + 2;
       u8 *lo = hi + n;
@@ -113,7 +111,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
       }
       break;
     }
-    case 2: {
+    case CELL_PICTURE_PACKING_DELTA: {
       s32 prev = 0;
 
       for (i = 0; i < n; i++) {
@@ -254,14 +252,13 @@ s32 MapGrid_LoadMap(s32 index) {
     layer->scaleY = layerSource->scrollY * (FIXED_ONE / 16);
     layer->speedX = layerSource->speedX * (toFIXED(1) / 16);
     layer->speedY = layerSource->speedY * (toFIXED(1) / 16);
-    layer->maskX = layerSource->periodX & 127;
-    // Read before the phase stores, which the original makes after it.
-    maskY = layerSource->periodY & 127;
+    layer->maskX = layerSource->periodX & (MAPGRID_SIZE - 1);
+    maskY = layerSource->periodY & (MAPGRID_SIZE - 1);
     layer->phaseX = 0;
     layer->phaseY = 0;
     layer->maskY = maskY << 7;
     x >>= 1;
-    y = (y >> 1) * 128;
+    y = (y >> 1) * MAPGRID_SIZE;
     layer->originY = y;
     scaleX = layerSource->scrollX * (FIXED_ONE / 16);
     cell = y + x;
@@ -673,7 +670,9 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
       screenRowOffset = (y & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
       if (maskY != MAPGRID_ROW_MASK)
         sourceRow = (sourceRow - originY) & maskY;
-      for (cellPictureRow = 0; cellPictureRow <= 10; cellPictureRow++) {
+      for (cellPictureRow = 0;
+           cellPictureRow <= DISPLAY_HEIGHT / MAPGRID_CELL_PIXELS;
+           cellPictureRow++) {
         sourceColumn = (x / 2) & (MAPGRID_SIZE - 1);
         screenColumnOffset = x & MAPGRID_SCREEN_TILE_MASK;
         if (maskX != MAPGRID_SIZE - 1)
@@ -828,12 +827,10 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   }
 }
 
-// Map: copy a cell rectangle.
+// Copying rectangles of cells from one place of the map to another.
 
-/// Copies a rectangle's cells, including block indices and attributes.
-/// srcX, srcY: source top left, in cells.
-/// width, height: size in cells.
-/// dstX, dstY: destination top left, in cells.
+/// Copies a rectangle of width by height cells from (srcX, srcY) to (dstX,
+/// dstY), their pictures and their attributes both.
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                        s32 dstY) {
   MapGrid_CopyCellPictureIndicesRect(srcX, srcY, dstX, dstY, width, height);
@@ -846,9 +843,9 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
-  s32 dst = (dstY << 7) + dstX;
+  s32 dst = dstY * MAPGRID_SIZE + dstX;
   u8 *dstShapes = gMapShapeGrid + dst;
-  s32 src = (srcY << 7) + srcX;
+  s32 src = srcY * MAPGRID_SIZE + srcX;
   u8 *srcShapes = gMapShapeGrid + src;
   u32 *dstCells = cells + dst;
   u16 row;
@@ -856,10 +853,10 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
 
   cells += src;
   for (row = 0; row < height; row++) {
-    u32 *dstCell = dstCells + (row << 7);
-    u32 *srcCell = cells + (row << 7);
-    u8 *dstShape = dstShapes + (row << 7);
-    u8 *srcShape = srcShapes + (row << 7);
+    u32 *dstCell = dstCells + row * MAPGRID_SIZE;
+    u32 *srcCell = cells + row * MAPGRID_SIZE;
+    u8 *dstShape = dstShapes + row * MAPGRID_SIZE;
+    u8 *srcShape = srcShapes + row * MAPGRID_SIZE;
 
     for (col = 0; col < width; col++) {
       *dstCell = (*dstCell & MAPGRID_CELL_PICTURE_ID_MASK) |
@@ -872,8 +869,9 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Copies a rectangle of cells (16x16 pixels each) as they are, from (sourceX,
-/// sourceY) to (dstX, dstY), width by height cells.
+/// Copies the pictures of a rectangle of cells from (srcX, srcY) to (dstX,
+/// dstY), width by height cells, keeping each destination's bits above the
+/// drawn picture, and redraws the copied cells that are on screen.
 void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 dstX, s32 dstY) {
   s32 y;
@@ -1002,7 +1000,8 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
 #define MAP_EDITS_END 0xffff
 
 /// Plays every edit of the map whose flag is set, as Map_ApplyFlagEdits does,
-/// bit 12 of an edit's flag word choosing attributes over pictures.
+/// MAP_EDIT_ATTRIBUTES in an edit's flag word choosing attributes over
+/// pictures: the map as the story has left it, as the player enters.
 void Map_ApplySetFlagEdits(void) {
   u8 *cursor = gMapSceneEditsOffset;
   u32 entry;

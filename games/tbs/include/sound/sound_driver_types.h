@@ -154,12 +154,15 @@ enum CgbChannelId {
   CGB_CHANNEL_NOISE = 4         ///< noise (NR41 to NR44)
 };
 
+/// What a track's vibrato moves (MODT).
 enum SoundModulationTarget {
   SOUND_MODULATION_PITCH,
   SOUND_MODULATION_VOLUME,
   SOUND_MODULATION_PAN
 };
 
+/// The low bits of MusicPlayerInfo.fadeVolume: a fade out that only pauses
+/// the song, so it can go on, and a fade in.
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
 #define SOUND_FADE_FULL_VOLUME 256
@@ -315,6 +318,8 @@ struct CgbChannel {
   u8 paddingAfterNext[8];         ///< Unused by this driver (pret's dummy4).
 };
 
+/// A sound channel's status bits: its envelope phase (SOUND_CHANNEL_SF_ENV),
+/// echo, and a note asked to stop or to start.
 enum SoundChannelFlag {
   SOUND_CHANNEL_SF_ENV = 0x03,
   SOUND_CHANNEL_SF_IEC = 0x04,
@@ -324,6 +329,7 @@ enum SoundChannelFlag {
       SOUND_CHANNEL_SF_IEC | SOUND_CHANNEL_SF_ENV
 };
 
+/// The envelope phase in a sound channel's status, from release to attack.
 enum SoundChannelEnvelope {
   SOUND_CHANNEL_SF_ENV_RELEASE,
   SOUND_CHANNEL_SF_ENV_SUSTAIN,
@@ -331,8 +337,12 @@ enum SoundChannelEnvelope {
   SOUND_CHANNEL_SF_ENV_ATTACK
 };
 
+/// What a CGB channel rewrites in its registers this frame: its volume, its
+/// pitch.
 enum CgbChannelModify { CGB_CHANNEL_MO_VOL = 1, CGB_CHANNEL_MO_PIT = 2 };
 
+/// A track's flags: the volume and pitch its notes must be given again, a
+/// track to reset, a track that plays.
 enum MusicPlayerTrackFlag {
   MPT_FLG_VOLSET = 1,
   MPT_FLG_VOLCHG = 3,
@@ -342,12 +352,16 @@ enum MusicPlayerTrackFlag {
   MPT_FLG_EXIST = 0x80
 };
 
+/// A music player's status: which tracks play, and the song paused.
 enum MusicPlayerStatus {
   MUSICPLAYER_STATUS_TRACK =
       0x0000ffff, ///< the tracks active after the last tick
   MUSICPLAYER_STATUS_PAUSE = 0x80000000
 };
 
+/// The operations of MEMACC (ply_memacc) on the work bytes all music players
+/// share: set, add or subtract a value or another byte, or jump on comparing
+/// with one.
 enum MemAccOp {
   MEMACC_SET = 0,
   MEMACC_ADD,

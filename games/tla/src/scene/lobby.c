@@ -166,8 +166,8 @@ enum LobbyRaisedTrigger {
 /// The linked partner has asked for a battle. Its signature matches and it
 /// stands asked or in the circle.
 #define FLAG_LINK_LOBBY_PARTNER_ASKED FLAG_SCENE_TEMP_01
-/// The player has agreed to a battle.
-#define FLAG_LINK_LOBBY_PLAYER_AGREED FLAG_SCENE_TEMP_02
+/// The player has applied for a battle ("Would you like to apply?").
+#define FLAG_LINK_LOBBY_PLAYER_APPLIED FLAG_SCENE_TEMP_02
 /// The party is on its way into the battle.
 #define FLAG_LINK_LOBBY_ENTERING_BATTLE FLAG_SCENE_TEMP_03
 /// ACTOR_PARTY_ORDER_VISITOR has given the linked finals' limit of three
@@ -297,7 +297,7 @@ s32 LinkLobby_PollPeerReady(void) {
           (LinkLobby_PeerSlotMatches(LOBBY_SLOT_ASKED) ||
            LinkLobby_PeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))) {
         Event_SetFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
-        if (Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_AGREED))
+        if (Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED))
           work->raisedTrigger = LOBBY_EVENT_PROMPT;
         result = 1;
       } else {
@@ -306,19 +306,19 @@ s32 LinkLobby_PollPeerReady(void) {
       }
     }
     if (Event_GetFlag(FLAG_LINK_LOBBY_PARTNER_ASKED) &&
-        Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_AGREED) &&
+        Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED) &&
         !Event_GetFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED))
       work->raisedTrigger = LOBBY_EVENT_PROMPT;
   }
   if ((Event_GetFlag(FLAG_LINK_LOBBY_PARTNER_ASKED) ||
-       Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_AGREED)) &&
+       Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED)) &&
       !Event_GetFlag(FLAG_MONSTER_BATTLE) &&
       !LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) &&
       gLinkLobby_WaitFrames > 24) {
     work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
     Event_SetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED);
     Event_ClearFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
-    Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_AGREED);
+    Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   if (Event_GetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED))
@@ -326,7 +326,7 @@ s32 LinkLobby_PollPeerReady(void) {
   return result;
 }
 
-/// Once both linked players have agreed to a battle, the attendant behind the
+/// Once both linked players have applied for a battle, the attendant behind the
 /// left counter says, "If you want to participate, please step into the
 /// circle!", and asks again if the player waits.
 s32 LinkLobby_PromptToParticipate(void) {
@@ -774,7 +774,7 @@ s32 LinkLobby_EnterBattle(void) {
         work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
         Event_SetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED);
         Event_ClearFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
-        Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_AGREED);
+        Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
         failed = 1;
         Event_ClearFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
@@ -821,7 +821,7 @@ s32 LinkLobby_EnterBattle(void) {
         Task_Add((TaskFunc)LinkLobby_PollPeerReady, TASK_PASS_FRAME);
         Task_SetFlags(LinkLobby_PollPeerReady, 1);
         Event_ClearFlag(FLAG_LINK_LOBBY_PARTNER_ASKED);
-        Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_AGREED);
+        Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
         Event_ClearFlag(FLAG_LINK_LOBBY_LINK_UP);
         Event_ClearFlag(FLAG_LINK_LOBBY_ENTERING_BATTLE);
         Event_ClearFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
@@ -885,7 +885,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
         Event_SetFlag(FLAG_MONSTER_BATTLE);
         Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
         Event_ClearFlag(FLAG_LINK_BATTLE);
-        Event_SetFlag(FLAG_LINK_LOBBY_PLAYER_AGREED);
+        Event_SetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
         line = msg + 7;
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -905,10 +905,10 @@ s32 LinkLobby_ChooseBattleMode(void) {
       Event_SetMessageId((s32)MsgLobbyYourOpponentHasArrived);
       // "Your opponent has arrived!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
-      Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_AGREED);
+      Event_ClearFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
     }
-    if (Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_AGREED)) {
+    if (Event_GetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED)) {
       line = msg + 3;
     message:
       Event_SetMessageId(line);
@@ -937,7 +937,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
           else
             Event_SetMessageId(msg + 4);
           LinkLobby_WriteSlotValue(LOBBY_SLOT_ASKED);
-          Event_SetFlag(FLAG_LINK_LOBBY_PLAYER_AGREED);
+          Event_SetFlag(FLAG_LINK_LOBBY_PLAYER_APPLIED);
           goto open_message;
         } else {
           Event_SetFlag(FLAG_LINK_LOBBY_LINK_LOST_UNREPORTED);

@@ -2098,9 +2098,11 @@ void PaletteCycle_StepAt(void) {
 }
 
 /// Starts the summit's colour cycle, loading its colours unless mode is 2;
-/// mode 1 also starts its task. XXX: which part of the summit the cycle
-/// animates (the purple Hover tile is likeliest); a few frames of the summit
-/// compared would settle it.
+/// mode 1 also starts its task. On the summit the purple stripes along the pale
+/// stone channels that run down the cliff face, and the round purple Hover pad
+/// at their foot, shimmer: their five shades of purple turn over every four
+/// frames, so the light seems to pulse along the channels and ripple in the
+/// pad's rings.
 void TrialRoad_StartPaletteCycle(s32 mode) {
   gTrialRoad_PaletteCycleRunning = 1;
   if (mode != 2)

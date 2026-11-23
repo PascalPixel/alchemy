@@ -118,8 +118,7 @@ enum IvanJoiningMessage {
   IVAN_JOINING_IVAN_WILL_READ_TOWN = 22
 };
 
-/// Each stop links to up to three others, with a heading for each connection.
-/// A connection's stopIndex when there is none.
+/// A link's stopIndex where a stop has fewer than three links.
 enum { LOG_STOP_NONE = 255 };
 
 /// The chase's stops (gLogRoomsA_Stops), LOG_STOP_COUNT of them, are placed
@@ -333,8 +332,8 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
                                            s32 waitFrames);
 static void Scene_StartMindRead(s32 casterId, s32 targetId);
 static void Scene_EndMindRead(void);
-static void LogRoomsA_UpdateActorStops(void);
-static void LogRoomsA_StartActorStops(void);
+static void LogRoomsA_UpdateCorneringChase(void);
+static void LogRoomsA_SpreadOutToCornerSuspects(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLogRoomsA_Entrances;
@@ -737,10 +736,8 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
 
 /// Starts one of the suspected thief's runs (gLogRoomsA_ThiefRuns) and moves
 /// his timer on to the spot it ends at.
-static inline void LogRoomsA_ApplySecondSuspectRoute(struct Actor *actor,
-                                                     s32 scriptRow,
-                                                     s32 routePair,
-                                                     u16 routeDelta) {
+static inline void LogRoomsA_StartThiefRun(struct Actor *actor, s32 scriptRow,
+                                           s32 routePair, u16 routeDelta) {
   Actor_SetScript(ACTOR_SUSPECTED_THIEF,
                   gLogRoomsA_ThiefRuns[scriptRow * 4 + actor->timer]);
   actor->timer = actor->timer - routePair * 2 + routeDelta;
@@ -778,17 +775,17 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   case 0:
   case 2:
     if (facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
-      LogRoomsA_ApplySecondSuspectRoute(actor, routePair, routePair, 1);
+      LogRoomsA_StartThiefRun(actor, routePair, routePair, 1);
     } else {
-      LogRoomsA_ApplySecondSuspectRoute(actor, routePair ^ 1, routePair, -1);
+      LogRoomsA_StartThiefRun(actor, routePair ^ 1, routePair, -1);
     }
     break;
   case 1:
   case 3:
     if (facing > FACING_SOUTHWEST && facing < FACING_NORTHEAST) {
-      LogRoomsA_ApplySecondSuspectRoute(actor, routePair, routePair, 1);
+      LogRoomsA_StartThiefRun(actor, routePair, routePair, 1);
     } else {
-      LogRoomsA_ApplySecondSuspectRoute(actor, routePair ^ 1, routePair, -1);
+      LogRoomsA_StartThiefRun(actor, routePair ^ 1, routePair, -1);
     }
     break;
   }
@@ -848,6 +845,7 @@ static void LogRoomsA_MayorGivesWaterOfLife(void) {
     LogRoomsA_PlayAnimationAndWait(ACTOR_MAYOR, ANIM_NOD, 20);
     gFieldWork->message++;
     if (PartyInventory_HasSpace() == 0) {
+      // "Oh no, Isaac and his friends have too many items!"
       Event_SetMessageId(MsgVaultYouWereSuchGreatHelp + 3);
       LogRoomsA_ShowMessageAndWait(ACTOR_MAYOR, 20);
       Event_End();
@@ -1055,14 +1053,13 @@ static void LogRoomsA_MeetIvan(void) {
     // "Would you please help me get my master's rod back?"
     Event_OpenMessage(ACTOR_IVAN, 0);
   } else {
-    // Asked again: "Would you really? Would you help me find the rod?"
     Sound_Play(MUS_WIND_ADEPTS);
     Event_SetMessageId(MsgVaultWouldReallyWouldHelpMe);
     // "Would you really? Would you help me find the rod?"
     Event_OpenMessage(ACTOR_IVAN, 0);
   }
-  // Accepting the search lets Ivan merge into the leader's position; a no gets
-  // his apology for asking.
+  // On a Yes Ivan joins and walks into Isaac, as a party member does; a No
+  // gets his apology for asking.
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     LogRoomsA_IvanJoinsRodSearch();
     GameFlag_Set(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH);
@@ -1663,7 +1660,7 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
 static void LogRoomsA_StartCorneringSuspects(void) {
   GameFlag_Set(FLAG_MENUS_RAISE_TRIGGER);
   GameFlag_Set(FLAG_VAULT_CORNERING_SUSPECTS);
-  LogRoomsA_StartActorStops();
+  LogRoomsA_SpreadOutToCornerSuspects();
 }
 
 /// The suspects see the party back, cry that they're coming for them
@@ -1728,7 +1725,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
 
   work = gFieldWork;
   Event_Start();
-  Task_Remove(LogRoomsA_UpdateActorStops);
+  Task_Remove(LogRoomsA_UpdateCorneringChase);
   GameFlag_Clear(FLAG_MENUS_RAISE_TRIGGER);
   GameFlag_Clear(FLAG_VAULT_CORNERING_SUSPECTS);
   Actor_SetAnimation(ACTOR_SUSPECTED_LEADER, ANIM_STAND);
@@ -2014,7 +2011,8 @@ static void LogRoomsA_SuspectsRunFromParty(void) {
   }
 }
 
-/// Installs a route script only when the suspect is in its expected state.
+/// Sends the suspect on a run when he waits at the expected spot, and numbers
+/// the spot it ends at.
 static void LogRoomsA_AdvanceSuspectRoute(s32 actorId, s32 expected, s32 next,
                                           const s32 *actions) {
   struct Actor *suspect = Actor_Get(actorId);
@@ -2124,7 +2122,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
     Event_Start();
     // The loft: emptied chests after the thieves are jailed; else the tied-up
-    // villager lies tied, groaning to SOUND_FADE_OUT_BGM, or the thieves wait
+    // villager lies tied, groaning as the music fades out, or the thieves wait
     // for a rematch.
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Actor_SetAnimation(ACTOR_FIRST_CHEST, CHEST_ANIMATION_OPEN_EMPTY);
@@ -2448,7 +2446,7 @@ static void LogRoomsA_DefeatThieves(void) {
     Event_Wait(20);
   }
   // "I see... So that's what happened..." The tied-up villager comes back with
-  // the mayor and two townsmen.
+  // the mayor and two strongmen.
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 20);
@@ -2489,7 +2487,7 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_SECOND_THIEF, 30);
   // "What should we do with them?" Locked up for a long, long time; the two
-  // townsmen rouse the thieves to tie them up.
+  // strongmen rouse the thieves to tie them up.
   LogRoomsA_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR, ACTOR_LOFT_ESCORT, 20);
   Actor_RunRepeatedMotion(ACTOR_LOFT_ESCORT, 1);
   Event_Wait(20);
@@ -2625,7 +2623,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_WaitForMoveById(ACTOR_LOFT_ESCORT);
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);
   Event_Wait(40);
-  // The mayor and the villager opening the chests thank the party.
+  // The mayor and the strongman thank the party.
   Actor_SetSpeed(ACTOR_LOFT_MAYOR, 0.8);
   Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0.8);
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 784, 408);
@@ -2682,6 +2680,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_WaitForMoveById(ACTOR_FOUND_URN);
   Actor_RunRepeatedMotion(ACTOR_FOUND_URN, 2);
   Event_Wait(60);
+  // "Found the mayor's precious urn."
   FieldMessage_Show((aftermath + 5), 1);
   Actor_SetAnimation(ACTOR_FIRST_CHEST, CHEST_ANIMATION_OPEN_EMPTY);
   Actor_SetPosition(ACTOR_FOUND_URN, 0, 0);
@@ -2698,8 +2697,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
                              40);
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS, FACING_EAST, 0);
   Event_Wait(40);
-  // The villager opening the chests opens the second: the gold statue stolen
-  // from the Sanctum.
+  // The strongman opens the second: the gold statue stolen from the
+  // Sanctum.
   Actor_RunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 2);
   Sound_Play(SE_CHEST_OPEN);
   Actor_SetAnimation(ACTOR_SECOND_CHEST, CHEST_ANIMATION_OPEN_ON_TREASURE);
@@ -2711,6 +2710,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_WaitForMoveById(ACTOR_FOUND_STATUE);
   Actor_RunRepeatedMotion(ACTOR_FOUND_STATUE, 2);
   Event_Wait(60);
+  // "Found a gold statue."
   FieldMessage_Show((aftermath + 8), 1);
   Actor_SetAnimation(ACTOR_SECOND_CHEST, CHEST_ANIMATION_OPEN_EMPTY);
   Actor_SetPosition(ACTOR_FOUND_STATUE, 0, 0);
@@ -2726,8 +2726,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
                                  50);
   LogRoomsA_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
-  // The villager opening the chests finds another chest; the mayor asks whether
-  // it is what Ivan was looking for, and he can return to Master Hammet.
+  // The strongman finds another chest; the mayor asks whether it is what Ivan
+  // was looking for, and he can return to Master Hammet.
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
                       FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
@@ -2833,7 +2833,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR,
                                  ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
   LogRoomsA_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  // The mayor and the villager opening the chests leave down the ladder.
+  // The mayor and the strongman leave down the ladder.
   Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 856, 408);
   Actor_SetScript(ACTOR_LOFT_MAYOR, gLogRoomsA_BackFromChests);
   Actor_SetScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
@@ -3038,7 +3038,7 @@ static void LogRoomsA_FaceEachOtherAndWait(s32 firstId, s32 secondId,
   Event_Wait(waitFrames);
 }
 
-/// Waits for the animation to change before the following pause.
+/// Plays the animation, waits until it has taken over, then waits waitFrames.
 static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
                                            s32 waitFrames) {
   Import_ActorSetAnimation(actorId, animation, waitFrames);
@@ -3050,8 +3050,8 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
 
 #include "shared/vault_item_icon.c"
 
-/// Finds the route node containing the actor's position on the
-/// eight-pixel grid.
+/// The chase's stop under a position (its x, y and z), or NULL between
+/// stops.
 static struct LogRoomsAStop *LogRoomsA_FindStopAtPosition(s32 *position) {
   s32 gridX = FIELD_HALF_CELL(position[0] - toFIXED(LOG_STOPS_ORIGIN_X));
   s32 gridZ = FIELD_HALF_CELL(position[2] - toFIXED(LOG_STOPS_ORIGIN_Z));
@@ -3074,7 +3074,8 @@ static struct LogRoomsAStop *LogRoomsA_FindStopAtPosition(s32 *position) {
   return result;
 }
 
-/// Chooses the outgoing connection nearest the requested facing.
+/// The stop linked to this one in the direction nearest requestedFacing,
+/// which is turned to that link's heading; NULL when it has no link.
 static struct LogRoomsAStop *
 LogRoomsA_ChooseStopTowardFacing(struct LogRoomsAStop *node,
                                  s16 *requestedFacing) {
@@ -3158,8 +3159,8 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-/// Reserves a full cell around the leader and half a cell around each actor
-/// following a route.
+/// Whether a stop is taken: -1 when Isaac stands within a cell of it, or Ivan
+/// or a suspect within half a cell; 1 when there is no stop; else 0.
 static s32 LogRoomsA_CheckStopBlocked(struct LogRoomsAStop *stop) {
   FIXED x;
   FIXED z;
@@ -3178,15 +3179,16 @@ static s32 LogRoomsA_CheckStopBlocked(struct LogRoomsAStop *stop) {
   return 0;
 }
 
-/// Sets the actor's destination to the route stop's cell center.
+/// Sends the actor walking to the middle of the stop.
 static void LogRoomsA_MoveActorToStop(struct Actor *actor,
                                       struct LogRoomsAStop *stop) {
   FieldActor_SetMoveTargetFX(actor, LOG_STOP_X(stop), 0, LOG_STOP_Z(stop));
 }
 
-/// Steers Ivan and both suspects through the graph and detects a sustained
-/// cornering.
-static void LogRoomsA_UpdateActorStops(void) {
+/// Every frame of the chase in the guests' room, moves Ivan and the two
+/// suspects on from stop to stop round the beds, and raises the cornering
+/// event once a suspect has had nowhere to run for half a second.
+static void LogRoomsA_UpdateCorneringChase(void) {
   struct Actor *leader;
   struct Actor *actor;
   struct FieldWork *work;
@@ -3291,7 +3293,7 @@ static void LogRoomsA_UpdateActorStops(void) {
     }
   }
 
-  // A failed route choice alone is not enough to end the chase.
+  // Only half a second with nowhere to run counts as cornered, naming who.
   if (blocked != 0) {
     if (++gLogRoomsA_StopTimer >= LOG_ROOMS_A_CORNERED_FRAMES)
       work->raisedTrigger = LOG_ROOMS_A_CORNERED_EVENT_BASE + blocked;
@@ -3303,8 +3305,7 @@ static void LogRoomsA_UpdateActorStops(void) {
 /// Sets the chase in the guests' room going: Isaac walks in, Garet and Ivan
 /// step out beside him, Garet spreads his arms, and the camera is held on the
 /// room.
-
-static void LogRoomsA_StartActorStops(void) {
+static void LogRoomsA_SpreadOutToCornerSuspects(void) {
   Event_Start();
   FieldCamera_MoveTo(168, CAMERA_KEEP, 656, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -3328,7 +3329,7 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_LEADER, 1, 1.2);
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_THIEF, 1.5, 1.5);
   gLogRoomsA_StopTimer = 0;
-  Task_AddOrUpdateFrame(LogRoomsA_UpdateActorStops, TASK_PASS_FRAME + 20);
+  Task_AddOrUpdateFrame(LogRoomsA_UpdateCorneringChase, TASK_PASS_FRAME + 20);
   // DEAD: the last system flag holds nothing, since no table, script or
   // routine sets or reads it; the ROM keeps the call that clears it.
   Event_ClearFlag(FLAG_SYSTEM_LAST);
@@ -3337,8 +3338,8 @@ static void LogRoomsA_StartActorStops(void) {
 }
 
 // clang-format off
-/// A missing edge keeps both sentinel bytes; valid facings use the angle's high
-/// byte.
+/// A link: the stop it leads to and the heading toward it, kept as the
+/// facing's high byte. An unused link is LOG_STOP_NONE with heading 255.
 #define NO_CONNECTION {LOG_STOP_NONE, 255, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
 /// The route network's stops, each with its links to the others.
@@ -3554,7 +3555,7 @@ s32 gLogRoomsA_BackFromChests[] = {
 // The suspects' runs about the guests' room, named by the spot each ends at
 // among the room's three beds: the head of each bed (z 632), its foot
 // (z 696), beside the outer beds (x 72 and 264, z 648) and the room's two
-// south corners (render map-12 with the spots drawn on it). A Round run goes
+// south corners. A Round run goes
 // about the end of the outer bed, an Across run over the beds' row, an Along
 // run past the feet of the beds. The suspects' timers number the spots
 // (LogRoomsA_SuspectsRunFromParty): the leader's 1 to 3 the heads and 4 to 6 the

@@ -382,6 +382,7 @@ s32 Scene_Initialize(void) {
 
   if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);
+    // As on the first visit, he stands on the floor.
     Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
     Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
     Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;

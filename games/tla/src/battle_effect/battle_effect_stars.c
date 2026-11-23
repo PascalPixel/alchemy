@@ -6,12 +6,12 @@
 #include "sounds.h"
 #include "gamepak/far_call/battle.h"
 
-#define SHINING_STAR_FRAMES 128 ///< frames of Shining Star
-#define ASTRAL_BLAST_FRAMES 60  ///< frames of Astral Blast
+#define SHINING_STAR_FRAMES 128
+#define ASTRAL_BLAST_FRAMES 60
 
 // Astral Blast flies three five-pointed stars at the target; Shining Star drops
 // eight that bounce near it. Each outline's corners are projected onto the
-// canvas and each edge stamped with motes.
+// canvas, kept in the map cell buffer, and each edge stamped with motes.
 
 /// A star outline's corners, its five points and the five between, and the
 /// turn from one to the next, a tenth of a turn rounded up.
@@ -55,13 +55,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct Actor *source;
   struct Actor *target;
   struct Particle *point;
-  struct Particle *step;
+  struct Particle *star;
   s32 start;
   s32 peak;
   s32 size;
   s32 j;
   s32 k;
-  struct Particle *trails;
+  struct Particle *corners;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -97,7 +97,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
     point++;
   }
 
-  trails = (struct Particle *)gMapGridCellBuffer;
+  corners = (struct Particle *)gMapGridCellBuffer;
   for (frame = 0; frame != ASTRAL_BLAST_FRAMES; frame++) {
     if (frame <= 47) {
       s32 speed;
@@ -115,12 +115,12 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
     for (i = 0; i != 3; i++) {
       start = i * ASTRAL_BLAST_STAR_INTERVAL;
       if (frame >= start) {
-        step = &work->particles[i];
+        star = &work->particles[i];
         size = (frame - start) / 4 + 2;
         if (size > MOTE_SIZE_MAX)
           size = MOTE_SIZE_MAX;
         EFFECT_VIEW_FROM_CAMERA(camera);
-        Matrix_TranslateVector(Particle_Coordinates(step));
+        Matrix_TranslateVector(Particle_Coordinates(star));
         peak = 0;
         for (j = 0; j != STAR_CORNERS; j++) {
           s32 depth;
@@ -143,14 +143,15 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 #ifndef UBFIX
           // UB: these first stores read base, which is never set; the next
           // two overwrite them.
-          trails[i * STAR_CORNERS + j].velocityX = screenPosition.x + base.x;
-          trails[i * STAR_CORNERS + j].velocityY = screenPosition.y + base.y;
+          corners[i * STAR_CORNERS + j].velocityX = screenPosition.x + base.x;
+          corners[i * STAR_CORNERS + j].velocityY = screenPosition.y + base.y;
 #endif
-          trails[i * STAR_CORNERS + j].velocityX = screenPosition.x;
-          trails[i * STAR_CORNERS + j].velocityY = screenPosition.y;
+          corners[i * STAR_CORNERS + j].velocityX = screenPosition.x;
+          corners[i * STAR_CORNERS + j].velocityY = screenPosition.y;
           Matrix_Pop();
         }
         if (peak <= ASTRAL_BLAST_DEPTH_MAX) {
+          // Each edge, from corner to corner, read from the buffer itself.
           for (j = 0; j != STAR_CORNERS; j++) {
             struct Particle *from =
                 &((struct Particle *)gMapGridCellBuffer)[j + i * STAR_CORNERS];
@@ -168,9 +169,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
             }
           }
         }
-        step->x += step->velocityX;
-        step->y += step->velocityY;
-        step->z += step->velocityZ;
+        star->x += star->velocityX;
+        star->y += star->velocityY;
+        star->z += star->velocityZ;
         // Each star knocks the target back and shakes the screen.
         if (frame == start + i + 10) {
           target->acceleration = toFIXED(2);
@@ -219,12 +220,12 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct MotionObject *source;
   struct MotionObject *target;
   struct Particle *point;
-  struct Particle *step;
+  struct Particle *star;
   struct ScreenPoint screenPosition;
   s32 size;
   s32 j;
   s32 k;
-  struct Particle *trails;
+  struct Particle *corners;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -258,7 +259,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   /* LEFTOVER(template): size holds 2. */
   size = 2;
-  trails = (struct Particle *)gMapGridCellBuffer;
+  corners = (struct Particle *)gMapGridCellBuffer;
   for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
     // The stars run through the colours of the rainbow.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
@@ -266,31 +267,31 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {
-      step = &work->particles[i];
-      if (frame >= step->variant) {
+      star = &work->particles[i];
+      if (frame >= star->variant) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        EffectPosition_ProjectPoint(step, &screenPosition);
+        EffectPosition_ProjectPoint(star, &screenPosition);
         screenPosition.x >>= 1;
         if (screenPosition.x >= -8 && screenPosition.x <= CANVAS_SIZE - 1 &&
             screenPosition.y <= CANVAS_SIZE - 1 && screenPosition.y >= -8) {
           for (j = 0; j != STAR_CORNERS; j++) {
-            trails[i * STAR_CORNERS + j].velocityX =
+            corners[i * STAR_CORNERS + j].velocityX =
                 screenPosition.x +
                 FIXEDtoINT(
                     (Trig_Sin(j * STAR_CORNER_ANGLE -
-                              (frame - step->variant) * SHINING_STAR_SPIN) *
+                              (frame - star->variant) * SHINING_STAR_SPIN) *
                      gStar_Radii[j & 1]) /
                     2);
-            trails[i * STAR_CORNERS + j].velocityY =
+            corners[i * STAR_CORNERS + j].velocityY =
                 screenPosition.y - FIXEDtoINT(Trig_Cos(j * STAR_CORNER_ANGLE -
-                                                       (frame - step->variant) *
+                                                       (frame - star->variant) *
                                                            SHINING_STAR_SPIN) *
                                               gStar_Radii[j & 1]);
           }
           for (j = 0; j != STAR_CORNERS; j++) {
-            struct Particle *from = &trails[j + i * STAR_CORNERS];
+            struct Particle *from = &corners[j + i * STAR_CORNERS];
             struct Particle *to =
-                &trails[i * STAR_CORNERS + (j + 1) % STAR_CORNERS];
+                &corners[i * STAR_CORNERS + (j + 1) % STAR_CORNERS];
 
             for (k = 0; k != SHINING_STAR_EDGE_MOTES; k++) {
               s32 x = from->velocityX + (to->velocityX - from->velocityX) * k /
@@ -303,19 +304,19 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           }
         }
         // At the ground the star bounces up at half its sideways speed.
-        if (step->y <= toFIXED(30) - 1) {
-          step->velocityY = -step->velocityY;
-          step->velocityX /= 2;
-          step->velocityZ /= 2;
+        if (star->y <= toFIXED(30) - 1) {
+          star->velocityY = -star->velocityY;
+          star->velocityX /= 2;
+          star->velocityZ /= 2;
           work->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
           for (j = 0; j != args->targetCount; j++)
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, j, 8);
         }
-        step->x += step->velocityX;
-        step->y += step->velocityY;
-        step->z += step->velocityZ;
+        star->x += star->velocityX;
+        star->y += star->velocityY;
+        star->z += star->velocityZ;
       }
     }
     BattleCamera_Shake(4, 4);

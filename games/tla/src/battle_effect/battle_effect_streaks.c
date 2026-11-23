@@ -328,10 +328,10 @@ void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
 
 /// The projected depths over which a mote is sized, nearest to farthest: it is
 /// drawn MOTE_FOUNTAIN_LARGEST pixels wide (and twice as tall) at
-/// FLARE_DEPTH_NEAR or nearer, a pixel narrower for every
+/// MOTE_FOUNTAIN_DEPTH_NEAR or nearer, a pixel narrower for every
 /// MOTE_FOUNTAIN_DEPTH_STEP farther.
-#define FLARE_DEPTH_NEAR 314
-#define FLARE_DEPTH_FAR 634
+#define MOTE_FOUNTAIN_DEPTH_NEAR 314
+#define MOTE_FOUNTAIN_DEPTH_FAR 634
 #define MOTE_FOUNTAIN_LARGEST 6
 #define MOTE_FOUNTAIN_DEPTH_STEP 64
 
@@ -438,12 +438,13 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         point[2] = mote->z;
         EffectPosition_ProjectPoint(point, &position);
         position.x >>= 1;
-        if (position.depth < FLARE_DEPTH_NEAR)
-          position.depth = FLARE_DEPTH_NEAR;
-        if (position.depth > FLARE_DEPTH_FAR)
-          position.depth = FLARE_DEPTH_FAR;
+        if (position.depth < MOTE_FOUNTAIN_DEPTH_NEAR)
+          position.depth = MOTE_FOUNTAIN_DEPTH_NEAR;
+        if (position.depth > MOTE_FOUNTAIN_DEPTH_FAR)
+          position.depth = MOTE_FOUNTAIN_DEPTH_FAR;
         size = MOTE_FOUNTAIN_LARGEST -
-               (position.depth - FLARE_DEPTH_NEAR) / MOTE_FOUNTAIN_DEPTH_STEP;
+               (position.depth - MOTE_FOUNTAIN_DEPTH_NEAR) /
+                   MOTE_FOUNTAIN_DEPTH_STEP;
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
 
         // Slaver's drops fall and bounce off the ground; the others rise
@@ -513,7 +514,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 #undef STREAK_TARGET_DELAY
 #undef MOTE_FOUNTAIN_FRAMES
 #undef MOTE_FOUNTAIN_SLAVER_FRAMES
-#undef FLARE_DEPTH_NEAR
-#undef FLARE_DEPTH_FAR
+#undef MOTE_FOUNTAIN_DEPTH_NEAR
+#undef MOTE_FOUNTAIN_DEPTH_FAR
 #undef MOTE_FOUNTAIN_LARGEST
 #undef MOTE_FOUNTAIN_DEPTH_STEP

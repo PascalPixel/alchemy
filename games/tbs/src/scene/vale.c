@@ -969,7 +969,7 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   guard->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, 166, 375);
   Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTHEAST, 20);
-  guard->steeringFlags = (guard->steeringFlags ^ 1);
+  guard->steeringFlags = (guard->steeringFlags ^ ACTOR_FACES_MOTION);
   Actor_SetSpeedAndAcceleration(ACTOR_MAN_GUARDING_MT_ALEPH, 2.5, 2.5);
   Actor_Jump(ACTOR_MAN_GUARDING_MT_ALEPH, 4, 0);
   Actor_WalkToAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, 202, 395);
@@ -1702,6 +1702,7 @@ s32 Scene_Initialize(void) {
         Scene_FloatNut(ACTOR_NUT_AFTER_KALAY);
       }
     }
+    // The hole Garet left in the roof when he jumped onto it.
     MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
     MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
     actor = Actor_Get((GameFlag_Get(FLAG_KALAY_REACHED) != 0) + ACTOR_PILLAR);
@@ -2108,8 +2109,9 @@ static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
   Actor_SetAnimation(actorId, ANIM_STAND);
 }
 
-/// Mode 0 sets count boards from first on the roof by the hole, still and
-/// without shadows. Any other mode puts them out of sight.
+/// Lays `count` of the roof's boards, from actor `first` on, by the hole in the
+/// roof, still and without shadows; with any `mode` but 0 it puts them out of
+/// sight instead.
 static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
   s32 actorId = first;
   u32 i;
@@ -2145,7 +2147,6 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 /// where Vale_RoofMended goes on.
 static void Vale_MendingTheRoof(void) {
   u32 i;
-  // Default: NULL until the first board is fetched.
   struct Actor *repairActor = NULL;
   struct Actor *leader;
   struct Actor *moveHand;
@@ -2160,6 +2161,9 @@ static void Vale_MendingTheRoof(void) {
   (FieldCamera_GetActor())->motionFlags = 0;
   wait(1);
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
+  // The hole in the roof, three cells of its picture, which the boards mend
+  // one by one at the roof's end from the whole pictures at (5, 102) to
+  // (7, 102).
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
@@ -2307,6 +2311,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(40);
   Actor_SetSpeed(ACTOR_OPENING_PILLAR, 0.15);
   Actor_SetSpeed(ACTOR_OPENING_MOVE_HAND, 0.15);
+  // DEAD: the pillar is looked up and dropped; the ROM keeps the call.
   Actor_Get(ACTOR_OPENING_PILLAR);
   FieldActor_SetMoveTarget(moveHand, 392, 208, 584);
   Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, PILLAR_MIDDLE_X, PILLAR_Z);
@@ -2476,7 +2481,7 @@ static void Vale_RoofMended(void) {
   struct Actor *leader;
   struct Actor *actor;
   u32 i;
-  struct Actor *turned;
+  struct Actor *dora;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
@@ -2487,10 +2492,10 @@ static void Vale_RoofMended(void) {
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
   Actor_SetPosition(ACTOR_DORA, 392, 896);
-  turned = Actor_Get(ACTOR_DORA);
-
-  turned->facing = FACING_EAST;
-  turned->facing = FACING_NORTH;
+  dora = Actor_Get(ACTOR_DORA);
+  // DEAD: Dora is turned east and at once north; the ROM keeps both stores.
+  dora->facing = FACING_EAST;
+  dora->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_GARET, 298, 736);
   Actor_Get(ACTOR_GARET)->facing = FACING_SOUTH;
   Actor_SetPosition(ACTOR_JENNA, 298, 760);
@@ -3381,13 +3386,13 @@ static void Vale_SetPillarPriorityByLeaderHeight(void) {
 
 #include "shared/actor_orbit.c"
 
-/// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
+/// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE for two
 /// frames in four, with the World Map's attached sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 2) != 0)
-    Actor_SetColorMode(actor, 7);
+    Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   else
-    Actor_SetColorMode(actor, 0);
+    Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   if ((gFrameCount & 0xf) == 0)
     WorldMap_CreateAttachedEffects(actor);
 }
@@ -3511,7 +3516,7 @@ s32 gVale_AlephGuardPatrolRoute[] = {
 /// the hammer.
 s32 gVale_LeaderHammers[] = {
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_Y, 1966),
+    SC_ADD(SW_SCALE_Y, 3 * FIXED_ONE / 100),
     SC_WAIT(12),
     SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(12),
@@ -3552,7 +3557,7 @@ s32 gVale_UnusedWaterGrows[] = {
     SC_SET(SW_SCALE_Y, FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, 3932),
+    SC_ADD(SW_SCALE_X, 3 * FIXED_ONE / 50),
     SC_ADD(SW_SCALE_Y, 2 * FIXED_ONE / 25),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
@@ -3614,7 +3619,7 @@ struct ActorPlacement gVale_ActorPlacements[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         132, 0, 908, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         92, 0, 508, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         252, 0, 620, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -3626,11 +3631,11 @@ struct ActorPlacement gVale_ActorPlacements[] = {
         276, 0, 1044, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         19, 0, 614, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
+    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_CLOSE,
         50, 0, 795, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
+    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_CLOSE,
         65, 0, 800, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
+    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_CLOSE,
         57, 0, 805, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         412, 0, 586, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3642,13 +3647,13 @@ struct ActorPlacement gVale_ActorPlacements[] = {
         373, 0, VALE_DORA_Z, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
+    ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         152, 0, 1016, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
@@ -3660,7 +3665,7 @@ struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         132, 0, 908, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         92, 0, 508, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         252, 0, 620, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -3672,11 +3677,11 @@ struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
         276, 0, 1044, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         19, 0, 614, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
+    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_CLOSE,
         50, 0, 795, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
+    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_CLOSE,
         65, 0, 800, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, 4,
+    ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_CLOSE,
         57, 0, 805, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         412, 0, 586, FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -3688,13 +3693,13 @@ struct ActorPlacement gVale_ActorPlacementsAfterLeaving[] = {
         335, 0, 869, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_ROOF_BOARDS, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, 7,
+    ACTOR_PLACEMENT(SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         152, 0, 1016, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
@@ -3720,7 +3725,7 @@ struct ActorPlacement gVale_ActorPlacementsAfterKalay[] = {
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         132, 0, 908, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, 3,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
         92, 0, 508, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         252, 0, 620, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),

@@ -1096,7 +1096,6 @@ u16 gLamaTemple_DoorOpenCells[] = {
     MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gLamaTemple_DoorCloseCells[] = {
     MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
     MAPGRID_ANIMATION_STEP(69, 46, 3, 2, 5),

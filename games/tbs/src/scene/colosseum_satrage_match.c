@@ -169,6 +169,9 @@ extern s32 gPushedActor_DirectionSteps[];
 extern s16 gColosso_LetteringSlot;
 extern s16 gColosso_MarkerSlot;
 
+/// The lifts' cycle in frames, the frame of it the demonstration waits for them
+/// to stand lined up, and how long it waits at most; and how far a riding log
+/// carries Isaac, in pixels.
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME 75
 #define COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES 600
@@ -1622,6 +1625,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
 /// The chest holding a Smoke Bomb has been opened.
 #define FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_39
 
+/// The rolling log's animation for each quarter turn of the way it is pushed.
 const u8 gColosseumSatrageMatch_RollLogScript[] = {2, 2, 3, 3};
 
 #include "shared/colosso_lettering_tables.c"
@@ -1729,8 +1733,10 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
+/// Set while the lifts stand in their broken pattern rather than in a line.
 s32 gColosseumSatrageMatch_LiftsApart = 0;
 
+/// The frames into the lifts' cycle (COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES).
 u32 gColosseumSatrageMatch_LiftTimer = 0;
 
 struct Trigger gColosseumSatrageMatchTriggers[] = {

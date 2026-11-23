@@ -84,6 +84,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_ITEM_STAT_X 72
 #endif
 
+/// The x of "You have no items." in the equipment page's list, in pixels.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define STATUS_ITEM_EMPTY_MESSAGE_X 112
 #else

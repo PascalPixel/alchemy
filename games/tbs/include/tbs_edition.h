@@ -38,11 +38,13 @@
 #define LIST_MARKER_CHAR 49
 #endif
 
+/// The y of the debug scene menu's first row, in pixels, where its arrow
+/// points.
 #define MENU_TEXT_Y 60
 
-// The European editions' Colosso lettering keeps 192 bytes of palettes
-// before its tiles instead of 160, and the Battle Arena's opponent names take
-// up to 8 letters of prefix, then a space, instead of 5.
+/// The European editions' Colosso lettering keeps 192 bytes of palettes
+/// before its tiles instead of 160, and the Battle Arena's opponent names take
+/// up to 8 letters of prefix, then a space, instead of 5.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define COLOSSO_PALETTE_BYTES 192
@@ -52,8 +54,8 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-// The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
-// European editions, and where the number sits in it.
+/// The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
+/// European editions, and where the number sits in it.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TICKET_COUNTER_WINDOW_X 18
@@ -283,7 +285,7 @@
 #define LIST_EMPTY_Y 17
 #endif
 
-// Where the save screen's file list puts the leader's name.
+/// Where the save screen's file list puts the leader's name.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_LIST_NAME_X 6

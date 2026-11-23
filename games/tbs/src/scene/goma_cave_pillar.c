@@ -312,6 +312,8 @@ static void GomaCavePillar_DropStumpFragments(void) {
   }
 }
 
+/// The frames the witness has watched Forge join, counted by
+/// GomaCavePillar_WatchForgeJoin.
 s32 gGomaCavePillar_WitnessFrames;
 
 /// Isaac casts Move on the stump in the middle of the room. Pushed to the

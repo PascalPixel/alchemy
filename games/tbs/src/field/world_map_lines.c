@@ -57,6 +57,8 @@ STATIC_ASSERT(offsetof(struct FarCallSystemTable, arcTan2) == 64);
 STATIC_ASSERT(offsetof(struct FarCallSystemTable, sin) == 88);
 STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 
+/// The System bank's far-call table, through which the world map reaches its
+/// arctangent, sine and cosine.
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
 
 /// One scanline of the world map's ground plane.

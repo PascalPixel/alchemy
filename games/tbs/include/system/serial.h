@@ -172,10 +172,13 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, flags) == 2);
 STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
+/// The link cable's runtime, as the transfer code reaches it.
 #define SERIAL_RUNTIME (&gSerialWork)
 
+/// This console's block transfer state, sent to the partners each VBlank.
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialWork gSerialWork;
+/// Set from Serial_Initialize while the consoles exchange packets every frame.
 extern u16 gSerialExchangeActive;
 /// What the send in progress sends from, 0 when none is running.
 extern s32 gSerialSendSource;
@@ -195,12 +198,15 @@ extern struct SerialTransferState gSerialPeerPayloads[4];
 // Serial_StepBlockTransfer, which the VBlank handler runs, steps it, so it is
 // no device.
 extern volatile u8 gSerialBlockNumber;
+/// Cleared as the link starts and as the Battle Arena trades parties; nothing
+/// reads it.
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 // volatile: the VBlank handler writes it while Serial_WaitForStatusMask and the
 // link screens poll it, so it is no device.
 extern volatile u16 gLinkStatus;
 
+/// Adds LINK_STATUS_ERROR to a link status once a transfer has failed.
 static inline s32 Serial_AddErrorFlag(s32 status) {
   if (gSerialWork.transferError != 0)
     status |= LINK_STATUS_ERROR;

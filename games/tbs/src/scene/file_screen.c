@@ -67,6 +67,8 @@ extern u16 gFileScreen_PasswordStackItems[];
 #define FILE_SCREEN_PASSWORD_BUFFER_SIZE 260
 #endif
 
+/// A cable transfer's window ("Save", "Preparing data" and "B: Quit"), in
+/// tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define FILE_SCREEN_LINK_WINDOW_X 4
@@ -92,45 +94,50 @@ extern u16 gFileScreen_PasswordStackItems[];
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'U'
 #endif
 
+/// The window that shows "Sending data", or the transfer's error, in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define FILE_SCREEN_LINK_ERROR_WINDOW_X 4
-#define FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH 22
+#define FILE_SCREEN_SENDING_WINDOW_X 4
+#define FILE_SCREEN_SENDING_WINDOW_WIDTH 22
 #else
-#define FILE_SCREEN_LINK_ERROR_WINDOW_X 5
-#define FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH 20
+#define FILE_SCREEN_SENDING_WINDOW_X 5
+#define FILE_SCREEN_SENDING_WINDOW_WIDTH 20
 #endif
 
+/// The window of the password's "Password" heading, in tiles.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
-#define FILE_SCREEN_HELP_WINDOW_X 8
-#define FILE_SCREEN_HELP_WINDOW_WIDTH 13
+#define FILE_SCREEN_PASSWORD_HEADING_X 8
+#define FILE_SCREEN_PASSWORD_HEADING_WIDTH 13
 #else
-#define FILE_SCREEN_HELP_WINDOW_X 10
-#define FILE_SCREEN_HELP_WINDOW_WIDTH 10
+#define FILE_SCREEN_PASSWORD_HEADING_X 10
+#define FILE_SCREEN_PASSWORD_HEADING_WIDTH 10
 #endif
 
+/// The x of a one-page password's help line, "B: Return", in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define FILE_SCREEN_PAGE_LABEL_X 80
+#define FILE_SCREEN_PASSWORD_RETURN_X 80
 #else
-#define FILE_SCREEN_PAGE_LABEL_X 0
+#define FILE_SCREEN_PASSWORD_RETURN_X 0
 #endif
 
+/// The help window of a password of several pages ("Left & Right: Change
+/// Page  B: Return"), in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define FILE_SCREEN_MESSAGE_WINDOW_X 0
-#define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 30
+#define FILE_SCREEN_PASSWORD_HELP_X 0
+#define FILE_SCREEN_PASSWORD_HELP_WIDTH 30
 #elif LANGUAGE == LANGUAGE_JAPANESE
-#define FILE_SCREEN_MESSAGE_WINDOW_X 3
-#define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 24
+#define FILE_SCREEN_PASSWORD_HELP_X 3
+#define FILE_SCREEN_PASSWORD_HELP_WIDTH 24
 #else
-#define FILE_SCREEN_MESSAGE_WINDOW_X 1
-#define FILE_SCREEN_MESSAGE_WINDOW_WIDTH 28
+#define FILE_SCREEN_PASSWORD_HELP_X 1
+#define FILE_SCREEN_PASSWORD_HELP_WIDTH 28
 #endif
 
 #define PASSWORD_SYMBOLS_PER_PAGE 50 ///< five rows of ten
-#define PASSWORD_SYMBOLS_PER_ROW 10
-#define PASSWORD_SYMBOL_MASK 0x3f ///< six bits: 64 symbols
+#define PASSWORD_SYMBOLS_PER_ROW 10  ///< a page's row
+#define PASSWORD_SYMBOL_MASK 0x3f    ///< six bits: 64 symbols
 
 /// The bytes each password level packs, its checksum's two included, as The
 /// Lost Age's password screen decodes them.
@@ -719,8 +726,8 @@ menu_top:;
       if (index == 0) {
         goto link_select;
       }
-      linkWindow = Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
-                                 FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
+      linkWindow = Window_Create(FILE_SCREEN_SENDING_WINDOW_X, 10,
+                                 FILE_SCREEN_SENDING_WINDOW_WIDTH, 4,
                                  WINDOW_FLAG_INSTANT);
 
       // "Sending data"
@@ -794,9 +801,9 @@ menu_top:;
       pageWindow = Window_Create(5, 4, 20, 12, WINDOW_FLAG_INSTANT);
       pageIndex = 0;
       pageCount = encodedSize / PASSWORD_SYMBOLS_PER_PAGE + 1;
-      headingWindow =
-          Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
-                        FILE_SCREEN_HELP_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+      headingWindow = Window_Create(FILE_SCREEN_PASSWORD_HEADING_X, 0,
+                                    FILE_SCREEN_PASSWORD_HEADING_WIDTH, 4,
+                                    WINDOW_FLAG_INSTANT);
       passwordHeadingMessage = MsgClearPasswordLabel;
       // "Password"
       Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
@@ -806,10 +813,10 @@ menu_top:;
       if (pageCount == 1) {
         helpWindow = Window_Create(5, 16, 20, 3, WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
-                                FILE_SCREEN_PAGE_LABEL_X, 0);
+                                FILE_SCREEN_PASSWORD_RETURN_X, 0);
       } else {
-        helpWindow = Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
-                                   FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3,
+        helpWindow = Window_Create(FILE_SCREEN_PASSWORD_HELP_X, 16,
+                                   FILE_SCREEN_PASSWORD_HELP_WIDTH, 3,
                                    WINDOW_FLAG_INSTANT);
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }

@@ -361,6 +361,8 @@ enum PsynergyEventTarget {
 #define USE_ITEM_ON_ACTOR(item)                                                \
   (TRIGGER_ITEM | TRIGGER_ITEM_ON_ACTOR | (item) << 8)
 
+/// An examine trigger: the leader presses A at `target` (enum ExamineTarget)
+/// ahead, when it is no actor.
 #define EXAMINE_TRIGGER(target) (TRIGGER_EXAMINE | (target) << 4)
 /// An examine trigger searched while facing the given way, as a counter is
 /// searched across.

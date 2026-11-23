@@ -2724,13 +2724,11 @@ u16 gFuchinTemple_TempleDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gFuchinTemple_FehsDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(62, 19, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(64, 19, 2, 2, 5),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gFuchinTemple_FehsDoorCloses[] = {
     MAPGRID_ANIMATION_STEP(62, 19, 2, 2, 5),
     MAPGRID_ANIMATION_STEP(60, 19, 2, 2, 5),

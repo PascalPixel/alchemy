@@ -34,6 +34,8 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
+/// Sends an actor toward the point magnitude (16.16 pixels) away from it in
+/// direction angle (actor_polar_target.h).
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle);
 

@@ -96,6 +96,8 @@ extern s32 gCrossboneIsleKeys_IconTimer;
 /// pushed off it and stands lower down.
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED FLAG_AREA_TEMP_00
 
+/// How far, in pixels, the first statue follows Isaac south as it shoves him
+/// back, and how far the second shoves him; the two swapped from patch 1.
 #if TBS_PATCH_1
 #define CROSSBONE_PURSUER_STEP_Z 16
 #define CROSSBONE_LEADER_STEP_Z 24
@@ -1872,10 +1874,12 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The column each pursuing statue stands in.
 u32 gCrossboneIsleKeys_SlotColumns[] = {
     16,
     21,
     0,
 };
 
+/// Unused: the frame counter of CrossboneIsleKeys_UnusedRedrawKeyActors.
 s32 gCrossboneIsleKeys_IconTimer = 0;

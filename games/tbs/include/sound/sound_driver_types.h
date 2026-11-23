@@ -165,6 +165,8 @@ enum SoundModulationTarget {
 /// the song, so it can go on, and a fade in.
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
+/// A fade's volume at full (MusicPlayerInfo.fadeVolume), and the step it
+/// moves by at each of its periods.
 #define SOUND_FADE_FULL_VOLUME 256
 #define SOUND_FADE_STEP 16
 

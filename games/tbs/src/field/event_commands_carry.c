@@ -27,6 +27,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
+/// The sparkles Carry scatters from the target, 8 to 32 pixels out.
 #define CARRY_SHARD_MAX 20
 
 /// Tests the target's move with its ground height raised 16 pixels, so a

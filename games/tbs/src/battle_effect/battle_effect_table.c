@@ -256,6 +256,8 @@ u16 gLobbedShells_ShardPictures[] = {0,    108,  228,  336,  444,  552,
 
 // battle_effect_condemn.c: Where the reaper's pictures are drawn.
 
+/// Where each of the reaper's seven pictures is drawn, in pixels, by the
+/// casting side's column (X) and row (Y).
 u8 gCondemn_PictureX[][7] = REAPER_PICTURE_X;
 u8 gCondemn_PictureY[][7] = {
     REAPER_PICTURE_Y,

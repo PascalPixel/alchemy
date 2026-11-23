@@ -18,6 +18,7 @@
 #define Ram_MapGridShapes FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridShapes)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
 
+/// The battle's enemy sprite slots, 16 KB each, inside the map grid's cells.
 #define Ram_EnemySpriteSlots                                                   \
   FIXED_ADDRESS((u8 *), 0x02018000, gActorSpriteSlots)
 

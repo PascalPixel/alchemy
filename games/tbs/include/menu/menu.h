@@ -238,6 +238,7 @@ void WindowPalette_SetLowHpTextColor(void);
 void DjinnFigures_ReleaseTopRow(void);
 void DjinnFigures_ReleaseBottomRow(void);
 
+/// The rows a page of the Psynergy and item lists holds.
 #define LIST_PAGE_SIZE 5
 
 /// The y of the menus' row of party portraits, and of the chosen member's,

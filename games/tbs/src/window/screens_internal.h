@@ -162,7 +162,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
     ((u32 *)(sprite))[2] = 0;                                                  \
   } while (0)
 
-// The chosen item's window.
+/// The chosen item's window.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define BATTLE_ITEM_WINDOW_WIDTH 16
@@ -170,9 +170,9 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define BATTLE_ITEM_WINDOW_WIDTH 15
 #endif
 
-// The password level menu (IconMenu_ChooseSendOption,
-// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
-// and, outside the Japanese edition, the explanation window under it.
+/// The password level menu (IconMenu_ChooseSendOption,
+/// RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
+/// and, outside the Japanese edition, the explanation window under it.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define PASSWORD_LEVEL_WINDOW_X 7

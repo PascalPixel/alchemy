@@ -10,8 +10,8 @@
 /// In Japanese, the glyphs of character codes from 256: KANJI_GLYPH_SIZE bytes
 /// each, drawn KANJI_WIDTH pixels wide.
 extern const u8 gFont_KanjiGlyphs[];
-#define KANJI_GLYPH_SIZE 24
-#define KANJI_WIDTH 10
+#define KANJI_GLYPH_SIZE 24 ///< bytes
+#define KANJI_WIDTH 10      ///< pixels
 
 /// The marks a kana is drawn with: their character codes.
 enum TextMarkGlyph {

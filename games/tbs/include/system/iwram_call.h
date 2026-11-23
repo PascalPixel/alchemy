@@ -148,6 +148,7 @@ static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
 }
 #endif
 
+/// Iwram_MulFX's routine in IWRAM, which returns through ip.
 extern u8 IwramMulFXReturnIp[];
 
 /// (left * right) >> 16 with a 64-bit product: the 16.16 product of two 16.16
@@ -155,6 +156,8 @@ extern u8 IwramMulFXReturnIp[];
 #define Iwram_MulFX(left, right)                                               \
   Iwram_CallReturnIp((left), (right), IwramMulFXReturnIp)
 
+/// Three IWRAM routines' distances in bytes from IwramIrqMain, for code that
+/// calls them from the interrupt handler's address.
 #define Iwram_CopyWordsOffset FIXED_OFFSET(5000, IwramCopyWords, IwramIrqMain)
 #define Iwram_RatioMulQ14Offset                                                \
   FIXED_OFFSET(316, IwramRatioMulQ14, IwramIrqMain)

@@ -248,6 +248,7 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE = 206
 };
 
+/// Pauses the tileset animations of the palace's doors as the leader leaves.
 static inline void BabiPalace_PauseDoorAnimations(void) {
   TilesetAnim_Pause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
   TilesetAnim_Pause(BABI_PALACE_OTHER_DOORS_ANIMATION);
@@ -2721,6 +2722,8 @@ s32 Scene_Initialize(void) {
 }
 
 // clang-format off
+/// The palace door between the two guards opening, a column of three cells at a
+/// time.
 u16 gBabiPalace_DoorCells[] = {
     MAPGRID_ANIMATION_STEP(25, 28, 1, 3, 5), MAPGRID_ANIMATION_STEP(26, 28, 1, 3, 5), MAPGRID_ANIMATION_STEP(27, 28, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,
 };

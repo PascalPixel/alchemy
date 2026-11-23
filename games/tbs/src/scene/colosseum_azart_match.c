@@ -1304,6 +1304,7 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
+/// The frames left in the broken bridge's cycle (BRIDGE_CYCLE_FRAMES).
 u32 gColosseumAzartMatch_Countdown = 0;
 
 struct Trigger gColosseumAzartMatch_Triggers[] = {
@@ -1339,11 +1340,13 @@ struct Trigger gColosseumAzartMatch_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
+/// The VRAM cache entry holding the lettering's tiles, -1 when none is loaded.
 s16 gColosso_LetteringSlot = -1;
 
 #include "shared/colosso_lettering_scripts.c"
 // clang-format on
 
+/// The VRAM cache entry holding the marker's tiles, -1 when none is loaded.
 s16 gColosso_MarkerSlot = -1;
 
 #include "shared/colosso_finish_scripts.c"

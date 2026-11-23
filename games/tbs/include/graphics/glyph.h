@@ -8,12 +8,11 @@
 #include "static_assert.h"
 #include "types.h"
 
-// FONT_GLYPH_ROWS: a main-font glyph is 12 rows of pixels in Japanese, 15 in
-// the other languages.
+/// A main-font glyph's height: 12 rows of pixels in Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
 enum { FONT_GLYPH_ROWS = 12 };
 #else
-enum { FONT_GLYPH_ROWS = 15 };
+enum { FONT_GLYPH_ROWS = 15 }; ///< 15 in the other languages
 #endif
 
 /// GlyphPalette.slot of an icon colour given no slot yet.

@@ -34,6 +34,8 @@
 #define GAIA_WALL_TOP_HEIGHT 96
 #define GAIA_WALL_FOOT_WIDTH 48
 #define GAIA_WALL_FOOT_HEIGHT 21
+/// Where the wall's top and foot begin in the earth wall sheet, after its rows,
+/// in bytes.
 enum EarthWallSheetPicture {
   GAIA_WALL_TOP = GAIA_ROW_HEIGHT * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
   GAIA_WALL_FOOT = GAIA_WALL_TOP + PICTURE_BYTES(GAIA_WALL_TOP)

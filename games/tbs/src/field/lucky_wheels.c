@@ -463,10 +463,10 @@ const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #endif
 };
 
+#define LUCKY_WHEELS_MACHINE_LIGHTS 14 ///< the machine's lights
+#define LUCKY_WHEELS_CORNER_LIGHTS 4   ///< the first of them, at its corners
 /// The positions of the machine's lights, in screen pixels: its four corners
 /// first, then the lights along its frame.
-#define LUCKY_WHEELS_MACHINE_LIGHTS 14
-#define LUCKY_WHEELS_CORNER_LIGHTS 4
 const u8 gLuckyWheels_MachineSpriteX[LUCKY_WHEELS_MACHINE_LIGHTS] = {
     2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219};
 const u8 gLuckyWheels_MachineSpriteY[LUCKY_WHEELS_MACHINE_LIGHTS] = {

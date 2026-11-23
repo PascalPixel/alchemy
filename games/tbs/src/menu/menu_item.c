@@ -19,18 +19,21 @@
 #define ITEM_MODAL_REMOVED_X 17
 #endif
 
+/// The x of the small message window "Can't trade it!".
 #if LANGUAGE == LANGUAGE_FRENCH
 #define ITEM_CANNOT_TRADE_X 11
 #else
 #define ITEM_CANNOT_TRADE_X 15
 #endif
 
+/// The x of the small message window "Traded".
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define ITEM_TRADED_X 13
 #else
 #define ITEM_TRADED_X 15
 #endif
 
+/// The x of "Trade for what?" in its window, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_TRADE_PROMPT_X 0
 #else
@@ -44,6 +47,7 @@
 #define ITEM_COMMAND_TEXT_X 40
 #endif
 
+/// The quantity chooser's window width, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_QUANTITY_WINDOW_WIDTH 30
 #else
@@ -61,6 +65,7 @@
 #define ITEM_GIVE_ASK_Y 32
 #endif
 
+/// The x of the drop question ("Are you sure you...") in its window, in pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_DROP_QUESTION_X 0
 #else

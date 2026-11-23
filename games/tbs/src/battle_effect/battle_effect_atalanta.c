@@ -66,6 +66,7 @@
 #define ATALANTA_SHAFT_MIDDLE_HEIGHT 35
 #define ATALANTA_SHAFT_BOTTOM_WIDTH 21
 #define ATALANTA_SHAFT_BOTTOM_HEIGHT 24
+/// Where each picture begins in the slash sheet, in bytes.
 enum SlashSheetPicture {
   ATALANTA_SHAFT_FLASH_A = 0,
   ATALANTA_SHAFT_FLASH_B = ATALANTA_SHAFT_FLASH_A +

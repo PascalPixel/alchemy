@@ -162,9 +162,8 @@ extern struct Trigger gAltinPeak_WestExitTriggers[];
 extern s32 gAltinPeak_RumbleFrames;
 extern FIXED gAltinPeak_CartSpeeds[];
 
-// The rail switches by the forks, each set once flipped from its first
-// position; they are area temp flags, kept until the party leaves the mine.
-
+/// The rail switches by the forks, each set once flipped from its first
+/// position; they are area temp flags, kept until the party leaves the mine.
 #define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_23
 #define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_25
 #define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH FLAG_AREA_TEMP_26
@@ -213,6 +212,7 @@ static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing);
 #define AltinPeak_StartSpitting(x, y, z, facing)                               \
   AltinPeak_StartSpittingFX(toFIXED(x), toFIXED(y), toFIXED(z), facing)
 static void AltinPeak_SpawnDebris(void);
+/// Makes the frozen puddle glint (frost_glint.h).
 static void FieldEffect_UpdateFrostGlint(struct Actor *actor);
 static void AltinPeak_BeastFreezesSecondPuddle(void);
 static void AltinPeak_AwardFrostJewelAndDrain(void);
@@ -254,13 +254,16 @@ enum {
   ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER
 };
 
+/// The third water beast's room: its puddle and the beast.
 enum {
   ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE = ACTOR_CART + 1,
   ACTOR_THIRD_WATER_BEAST
 };
 
+/// The pool room's puddle.
 enum { ACTOR_POOL_ROOM_PUDDLE = ACTOR_CART + 1 };
 
+/// Spritz's room: its puddles and pillar, an unused boulder, and the Djinni.
 enum {
   ACTOR_SPRITZ_ROOM_PUDDLE = ACTOR_CART + 1,
   ACTOR_SPRITZ_ROOM_PILLAR,
@@ -277,6 +280,7 @@ enum {
   ACTOR_SPRITZ = 14
 };
 
+/// The junction's boulder.
 enum { ACTOR_JUNCTION_ROOM_BOULDER = ACTOR_FIRST_PLACED };
 
 /// The falling-rocks passage: the boulder that falls and its shadow, the log
@@ -299,6 +303,7 @@ enum {
 /// The Hydros statue's room: the statue on its dais and its shadow.
 enum { ACTOR_STATUE = ACTOR_FIRST_PLACED, ACTOR_STATUE_SHADOW };
 
+/// The west exit's room: its boulder and pillar.
 enum {
   ACTOR_WEST_EXIT_ROOM_BOULDER = ACTOR_FIRST_PLACED,
   ACTOR_WEST_EXIT_ROOM_PILLAR

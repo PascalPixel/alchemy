@@ -210,6 +210,7 @@ enum LinkTally {
   LINK_TALLY_LINKED_STREAK = 7 ///< those won in a row now
 };
 
+/// Four letters as one word, the first in its low byte.
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off

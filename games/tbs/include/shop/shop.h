@@ -93,6 +93,8 @@ STATIC_ASSERT(offsetof(struct ShopWork, burstMember) == 939);
 STATIC_ASSERT(offsetof(struct ShopWork, warriorShop) == 940);
 STATIC_ASSERT(offsetof(struct ShopWork, effects) == 944);
 
+/// The shop's 16-by-16 sprites (graphics/ui/menu_sprites): the hand cursor,
+/// the gem and the list arrows.
 extern const u8 gMenuCursor_HandTiles[];
 extern const u8 gShop_GemTiles[];
 extern const u8 gShop_SmallDownArrowTiles[];
@@ -100,6 +102,8 @@ extern const u8 gShop_SmallUpArrowTiles[];
 extern const u8 gShop_UpArrowTiles[];
 extern const u8 gShop_DownArrowTiles[];
 
+/// The eight blank tiles of a price, which the shop writes its digits over,
+/// and of the quantity bar, which it fills in colours.
 extern const u8 gShop_PriceTiles[];
 extern const u8 gShop_QuantityTiles[];
 

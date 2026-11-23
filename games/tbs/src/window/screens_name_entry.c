@@ -226,8 +226,8 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
 #define NAME_LABEL_WIDTH 8
 #endif
 
-// Whether the edition draws the Delete and End key labels as text over the
-// keyboard, and how wide its End key is, in tiles.
+/// Whether the edition draws the Delete and End key labels as text over the
+/// keyboard, and how wide its End key is, in tiles.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH
 #define NAME_KEY_LABELS 1

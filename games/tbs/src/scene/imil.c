@@ -140,8 +140,8 @@ extern struct Trigger gImil_TownTriggers[];
 extern struct Trigger gImil_RoomTriggers[];
 extern u16 *gImil_DoorCellSteps[];
 extern s16 gImil_DoorCellPoints[][2];
-extern u16 gImil_CellStepsA[];
-extern u16 gImil_CellStepsB[];
+extern u16 gImil_OldManSitUpSteps[];
+extern u16 gImil_OldManLieBackSteps[];
 /// The point (x, y, z) the unused spiral and sway move around.
 extern s32 gImil_EffectCenter[];
 
@@ -489,12 +489,12 @@ static void Imil_TalkToOldMan(void) {
     if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
       Event_Start();
       Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
-      MapGrid_PlayMapEdit(gImil_CellStepsA, 10, 69);
+      MapGrid_PlayMapEdit(gImil_OldManSitUpSteps, 10, 69);
       Event_SetMessageId(MsgMercuryFeelMuchBetter);
       // "I feel much better, thanks to Mia. I should be fine now."
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
       Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK);
-      MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
+      MapGrid_AnimateCells(gImil_OldManLieBackSteps, 10, 69);
       Event_End();
     } else {
       Event_Start();
@@ -1049,7 +1049,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
-  MapGrid_AnimateCells(gImil_CellStepsA, 10, 69);
+  MapGrid_AnimateCells(gImil_OldManSitUpSteps, 10, 69);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
@@ -1057,7 +1057,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_RunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Event_Wait(40);
   Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK);
-  MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
+  MapGrid_AnimateCells(gImil_OldManLieBackSteps, 10, 69);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
@@ -1660,6 +1660,8 @@ tail:
 // clang-format off
 #include "shared/ice_key_headings.c"
 
+/// The way the leader slides on the ice for each combination of held
+/// directions (DPAD_INDEX); a diagonal slides east or west.
 s16 gImil_SlideHeadings[] = {
     KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
     FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
@@ -1985,27 +1987,23 @@ struct Trigger gImil_RoomTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
+/// Each door's opening, as map grid animations.
 u16 gImil_SanctumDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(40, 37, 4, 2, 5), MAPGRID_ANIMATION_STEP(40, 39, 4, 2, 5), MAPGRID_ANIMATION_STEPS_END,
     MAPGRID_ANIMATION_STEP(35, 35, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 35, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gImil_RoomsEastDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 37, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 37, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gImil_InnDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 43, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 43, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gImil_HouseSouthwestDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(35, 39, 2, 2, 5), MAPGRID_ANIMATION_STEP(33, 39, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gImil_HouseWestDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(42, 48, 2, 2, 5), MAPGRID_ANIMATION_STEP(40, 48, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
-
 u16 gImil_HouseNortheastDoorSteps[] = {
     MAPGRID_ANIMATION_STEP(42, 46, 2, 2, 5), MAPGRID_ANIMATION_STEP(40, 46, 2, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
@@ -2027,13 +2025,13 @@ s16 gImil_DoorCellPoints[][2] = {
 };
 // clang-format on
 
-u16 gImil_CellStepsA[] = {
+/// The old man's bed as he sits up in it, and as he lies back.
+u16 gImil_OldManSitUpSteps[] = {
     MAPGRID_ANIMATION_STEP(1, 125, 1, 2, 10),
     MAPGRID_ANIMATION_STEP(0, 125, 1, 2, 10),
     MAPGRID_ANIMATION_STEPS_END,
 };
-
-u16 gImil_CellStepsB[] = {
+u16 gImil_OldManLieBackSteps[] = {
     MAPGRID_ANIMATION_STEP(1, 125, 1, 2, 10),
     MAPGRID_ANIMATION_STEP(2, 125, 1, 2, 10),
     MAPGRID_ANIMATION_STEPS_END,

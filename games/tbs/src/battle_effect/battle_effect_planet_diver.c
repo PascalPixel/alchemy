@@ -192,6 +192,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+/// The particles Haunt scatters at random about its centre as it starts, up to
+/// 64 pixels out along each axis.
 #define HAUNT_SCATTERED 512
 #define HAUNT_SKULLS 8 ///< skulls drawn around each target
 #define HAUNT_SLOTS 64 ///< particles reserved for each target

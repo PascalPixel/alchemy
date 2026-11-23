@@ -18,6 +18,7 @@
 #define LANGUAGE_FRENCH 4
 #define LANGUAGE_ITALIAN 5
 
+/// The edition's language, from the TBS_EDITION_ the build defines.
 #if defined(TBS_EDITION_EN)
 #define LANGUAGE LANGUAGE_ENGLISH
 #elif defined(TBS_EDITION_DE)

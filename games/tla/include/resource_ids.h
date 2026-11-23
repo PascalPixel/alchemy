@@ -536,70 +536,63 @@ extern char ResourceId_SlashSheet;
 /// The path Atalanta's particles follow.
 extern char ResourceId_StagedParticlePath;
 #define RESOURCE_STAGED_PARTICLE_PATH ((s32)&ResourceId_StagedParticlePath)
-// Directory rows 0x144 BattleEffect_GreenPillarSheet and 0x145
-// BattleEffect_VineSheet.
-/// Drawn by Growing Columns.
+/// Drawn by the growing columns.
 extern char ResourceId_GreenPillarSheet;
 #define RESOURCE_GREEN_PILLAR_SHEET ((s32)&ResourceId_GreenPillarSheet)
 /// Drawn by Growth.
 extern char ResourceId_VineSheet;
 #define RESOURCE_VINE_SHEET ((s32)&ResourceId_VineSheet)
-// Directory row 0x16b, BattleEffect_GreenVineSheet: five 32x32 vine cels.
-/// Drawn by Vine.
+/// Drawn by Vine: five 32x32 vine cels.
 extern char ResourceId_GreenVineSheet;
 #define RESOURCE_GREEN_VINE_SHEET ((s32)&ResourceId_GreenVineSheet)
-// Directory row 0x13f, BattleEffect_ThornSheet: the large thorn at 0, the
-// small thorn at 0xf00 and the dust cels after them.
-/// Drawn by Thorn.
+/// Drawn by Thorn: the large thorn, the small one and the dust cels after
+/// them.
 extern char ResourceId_ThornSheet;
 #define RESOURCE_THORN_SHEET ((s32)&ResourceId_ThornSheet)
-
-// The resources the battle effects, the field, the menus and the scenes
-// load, gathered from the files that declared them.
 
 /// Loaded by BattleTransition_Run; listed in gScene_BattleBackgroundRules.
 extern char ResourceId_SerpentStarsBackdrop;
 #define RESOURCE_SERPENT_STARS_BACKDROP ((s32)&ResourceId_SerpentStarsBackdrop)
-/// Drawn by Casting Impact, Diamond Berg, Form Change, Geode, Leaping Strike,
-/// Meteor Blow, Plume Edge and Trident.
+/// Drawn by the casting impacts, Diamond Berg, the form changes, Geode, the
+/// leaping strike, Meteor Blow, Plume Edge and Trident.
 extern char ResourceId_BillowTexture;
 #define RESOURCE_BILLOW_TEXTURE ((s32)&ResourceId_BillowTexture)
 /// The particle sprites nearly every battle effect loads first, 90 of them,
 /// from Annihilation to Zagan.
-extern char ResourceId_ParticleSpritesA; // The Broken Seal's ParticleSpritesA
+extern char ResourceId_ParticleSpritesA;
 #define RESOURCE_PARTICLE_SPRITES_A ((s32)&ResourceId_ParticleSpritesA)
-/// Drawn by Djinni Charge and Zagan.
+/// Drawn by the Djinni charge and Zagan.
 extern char ResourceId_PetalSheet;
 #define RESOURCE_PETAL_SHEET ((s32)&ResourceId_PetalSheet)
-/// Drawn by Breaths, Casting Impact, Diamond Berg, Eclipse, Gasp Family,
-/// Leaping Strike, Meteor Blow, Moloch, Serac, Trident and Zagan.
+/// Drawn by the breaths, the casting impacts, Diamond Berg, Eclipse, the Gasp
+/// family, the leaping strike, Meteor Blow, Moloch, Serac, Trident and Zagan.
 extern char ResourceId_FlameBandTexture;
 #define RESOURCE_FLAME_BAND_TEXTURE ((s32)&ResourceId_FlameBandTexture)
 extern char ResourceId_SheepCardSheet; ///< directory row 0xe3
 #define RESOURCE_SHEEP_CARD_SHEET ((s32)&ResourceId_SheepCardSheet)
-/// Drawn by Djinni Sign and Target Strike.
+/// Drawn by the Djinni sign and the target strike.
 extern char ResourceId_StarCrossSheet;
 #define RESOURCE_STAR_CROSS_SHEET ((s32)&ResourceId_StarCrossSheet)
-/// Drawn by Blade Rain and Sabre Dance.
+/// Drawn by the blade rain and Sabre Dance.
 extern char ResourceId_CrossedDaggersSheet;
 #define RESOURCE_CROSSED_DAGGERS_SHEET ((s32)&ResourceId_CrossedDaggersSheet)
-/// Drawn by Burst Shower, Casting Impact and Stat Boost.
+/// Drawn by the burst showers, the casting impacts and the stat boosts.
 extern char ResourceId_GreyPaletteA;
 #define RESOURCE_GREY_PALETTE_A ((s32)&ResourceId_GreyPaletteA)
-/// Drawn by Azul, Breaths, Casting Impact, Catastrophe, Charon, Coatlicue,
-/// Cruel Ruin, Daedalus, Death Plunge, Diamond Berg, Flora, Gasp Family,
-/// Judgment, Legend, Liquifier, Megiddo, Odyssey, Radiant Fire, Raging Heat,
-/// Rushing Strike and Triple Chomp.
+/// Drawn by Azul, the breaths, the casting impacts, Catastrophe, Charon,
+/// Coatlicue, Cruel Ruin, Daedalus, Death Plunge, Diamond Berg, Flora, the Gasp
+/// family, Judgment, Legend, Liquifier, Megiddo, Odyssey, Radiant Fire, Raging
+/// Heat, the rushing strike and Triple Chomp.
 extern char ResourceId_FireRingTexture;
 #define RESOURCE_FIRE_RING_TEXTURE ((s32)&ResourceId_FireRingTexture)
-/// Drawn by Breaths, Cruel Ruin, Daedalus Alt, Eclipse, Form Change, Gasp
-/// Family, Light Surge, Liquifier and Megiddo.
+/// Drawn by the breaths, Cruel Ruin, Daedalus's second strike, Eclipse, the
+/// form changes, the Gasp family, Light Surge, Liquifier and Megiddo.
 extern char ResourceId_GlowBandTextureA;
 #define RESOURCE_GLOW_BAND_TEXTURE_A ((s32)&ResourceId_GlowBandTextureA)
-/// Drawn by Bolt Trail and Drain Motes.
+/// Drawn by the bolt trail and the drain motes.
 extern char ResourceId_VioletPaletteC;
 #define RESOURCE_VIOLET_PALETTE_C ((s32)&ResourceId_VioletPaletteC)
-/// Drawn by Burst Shower and Gasp Family.
+/// Drawn by the burst showers and the Gasp family.
 extern char ResourceId_MusicNoteSheet;
 #define RESOURCE_MUSIC_NOTE_SHEET ((s32)&ResourceId_MusicNoteSheet)
 /// Drawn by Liquifier.
@@ -840,7 +833,7 @@ extern char ResourceId_BlueRingSheet;
 /// Loaded by BattleCamera_SetViewAtDepth.
 extern char ResourceId_RedPaletteC;
 #define RESOURCE_RED_PALETTE_C ((s32)&ResourceId_RedPaletteC)
-/// Drawn by Form Change.
+/// Drawn by the form changes.
 extern char ResourceId_OrangePaletteC;
 #define RESOURCE_ORANGE_PALETTE_C ((s32)&ResourceId_OrangePaletteC)
 extern char ResourceId_CometTexture; ///< directory row 0xd0
@@ -850,8 +843,8 @@ extern char ResourceId_FeatherSheet; ///< directory row 0xd1
 /// Drawn by Zagan.
 extern char ResourceId_CrescentRowSheet;
 #define RESOURCE_CRESCENT_ROW_SHEET ((s32)&ResourceId_CrescentRowSheet)
-/// Drawn by Azul, Casting Impact, Catastrophe, Charon, Cruel Ruin, Eclipse,
-/// Gasp Family, Haures, Water Column and Water Sheet.
+/// Drawn by Azul, the casting impacts, Catastrophe, Charon, Cruel Ruin,
+/// Eclipse, the Gasp family, Haures, the water column and the water sheet.
 extern char ResourceId_SwirlTexture;
 #define RESOURCE_SWIRL_TEXTURE ((s32)&ResourceId_SwirlTexture)
 /// Drawn by Cruel Ruin and Eclipse.
@@ -883,39 +876,39 @@ extern char ResourceId_GoldenDragonTiles;
 extern char ResourceId_GoldenDragonHeadTiles;
 #define RESOURCE_GOLDEN_DRAGON_HEAD_TILES                                      \
   ((s32)&ResourceId_GoldenDragonHeadTiles)
-/// Drawn by Djinni Charge, Eclipse, Megiddo, Meteor Blow, Odyssey and Serac.
+/// Drawn by the Djinni charge, Eclipse, Megiddo, Meteor Blow, Odyssey and
+/// Serac.
 extern char ResourceId_DustBlobSheet;
 #define RESOURCE_DUST_BLOB_SHEET ((s32)&ResourceId_DustBlobSheet)
 /// Directory rows, named by their assets.
 extern char ResourceId_CometSheetA;
 #define RESOURCE_COMET_SHEET_A ((s32)&ResourceId_CometSheetA)
-/// Drawn by Projectile Volley and Void Beam.
+/// Drawn by the projectile volleys and Void Beam.
 extern char ResourceId_CometSheetB;
 #define RESOURCE_COMET_SHEET_B ((s32)&ResourceId_CometSheetB)
-/// Drawn by Projectile Volley.
+/// Drawn by the projectile volleys.
 extern char ResourceId_CometSheetC;
 #define RESOURCE_COMET_SHEET_C ((s32)&ResourceId_CometSheetC)
-/// Drawn by Projectile Volley.
+/// Drawn by the projectile volleys.
 extern char ResourceId_WindStreakSheet;
 #define RESOURCE_WIND_STREAK_SHEET ((s32)&ResourceId_WindStreakSheet)
-/// Drawn by Projectile Volley.
+/// Drawn by the projectile volleys.
 extern char ResourceId_ShortStreakPicture;
 #define RESOURCE_SHORT_STREAK_PICTURE ((s32)&ResourceId_ShortStreakPicture)
-/// Drawn by Projectile Volley.
+/// Drawn by the projectile volleys.
 extern char ResourceId_ShurikenSheet;
 #define RESOURCE_SHURIKEN_SHEET ((s32)&ResourceId_ShurikenSheet)
-/// Drawn by Projectile Volley.
+/// Drawn by the projectile volleys.
 extern char ResourceId_ProjectileVolleyImage;
 #define RESOURCE_PROJECTILE_VOLLEY_IMAGE                                       \
   ((s32)&ResourceId_ProjectileVolleyImage)
-/// Drawn by Projectile Volley.
+/// Drawn by the projectile volleys.
 extern char ResourceId_YellowSparkSheet;
 #define RESOURCE_YELLOW_SPARK_SHEET ((s32)&ResourceId_YellowSparkSheet)
-/// Drawn by Casting Impact, Mirrored Wall and Projectile Volley.
+/// Drawn by the casting impacts, the mirrored wall and the projectile volleys.
 extern char ResourceId_FireballSheet;
 #define RESOURCE_FIREBALL_SHEET ((s32)&ResourceId_FireballSheet)
-// djinn_attacks.c
-/// Drawn by Jupiter and Leaping Strike.
+/// Drawn by Jupiter and the leaping strike.
 extern char ResourceId_FlameballSheet;
 #define RESOURCE_FLAMEBALL_SHEET ((s32)&ResourceId_FlameballSheet)
 /// Drawn by Ground.
@@ -937,16 +930,16 @@ extern char ResourceId_VioletLightningSheetB;
 /// Drawn by Thor.
 extern char ResourceId_VioletMoteSheet;
 #define RESOURCE_VIOLET_MOTE_SHEET ((s32)&ResourceId_VioletMoteSheet)
-/// Drawn by Attack Slash, Casting Impact, Flurry and Ulysses.
+/// Drawn by the attack slashes, the casting impacts, the flurry and Ulysses.
 extern char ResourceId_YellowOrbSheet;
 #define RESOURCE_YELLOW_ORB_SHEET ((s32)&ResourceId_YellowOrbSheet)
-/// Drawn by Attack Slash and Flurry.
+/// Drawn by the attack slashes and the flurry.
 extern char ResourceId_BlueArcSheetA;
 #define RESOURCE_BLUE_ARC_SHEET_A ((s32)&ResourceId_BlueArcSheetA)
-/// Drawn by Attack Slash, Flurry and Haures.
+/// Drawn by the attack slashes, the flurry and Haures.
 extern char ResourceId_BlueArcSheetB;
 #define RESOURCE_BLUE_ARC_SHEET_B ((s32)&ResourceId_BlueArcSheetB)
-/// Drawn by Attack Slash and Flurry.
+/// Drawn by the attack slashes and the flurry.
 extern char ResourceId_WaveSheet;
 #define RESOURCE_WAVE_SHEET ((s32)&ResourceId_WaveSheet)
 /// Drawn by Ulysses.
@@ -961,58 +954,58 @@ extern char ResourceId_RuneCircleSheet;
 /// Drawn by Ulysses.
 extern char ResourceId_FadingCrescentSheet;
 #define RESOURCE_FADING_CRESCENT_SHEET ((s32)&ResourceId_FadingCrescentSheet)
-/// Drawn by Swirl Swipe.
+/// Drawn by the swirl swipe.
 extern char ResourceId_MagentaSwirlSheet;
 #define RESOURCE_MAGENTA_SWIRL_SHEET ((s32)&ResourceId_MagentaSwirlSheet)
-/// Drawn by Swirl Swipe.
+/// Drawn by the swirl swipe.
 extern char ResourceId_MagentaTailSheet;
 #define RESOURCE_MAGENTA_TAIL_SHEET ((s32)&ResourceId_MagentaTailSheet)
-/// Drawn by Attack Slash, Crescent Slash and Critical Hit.
+/// Drawn by the attack slashes, the crescent slash and the critical hits.
 extern char ResourceId_StarCrescentSheet;
 #define RESOURCE_STAR_CRESCENT_SHEET ((s32)&ResourceId_StarCrescentSheet)
-/// Drawn by Crescent Slash and Critical Hit.
+/// Drawn by the crescent slash and the critical hits.
 extern char ResourceId_GreyCrescentSheet;
 #define RESOURCE_GREY_CRESCENT_SHEET ((s32)&ResourceId_GreyCrescentSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_ImpFaceSheet;
 #define RESOURCE_IMP_FACE_SHEET ((s32)&ResourceId_ImpFaceSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_ApocalypseSheet;
 #define RESOURCE_APOCALYPSE_SHEET ((s32)&ResourceId_ApocalypseSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_BoulderPicture;
 #define RESOURCE_BOULDER_PICTURE ((s32)&ResourceId_BoulderPicture)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_SarcophagusSheet;
 #define RESOURCE_SARCOPHAGUS_SHEET ((s32)&ResourceId_SarcophagusSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_RaidensWrathSheet;
 #define RESOURCE_RAIDENS_WRATH_SHEET ((s32)&ResourceId_RaidensWrathSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_CloudPuffSheet;
 #define RESOURCE_CLOUD_PUFF_SHEET ((s32)&ResourceId_CloudPuffSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_FlameSheetA;
 #define RESOURCE_FLAME_SHEET_A ((s32)&ResourceId_FlameSheetA)
-/// Drawn by Casting Impact, Flora, Megaera and Wind Funnel.
+/// Drawn by the casting impacts, Flora, Megaera and the wind funnel.
 extern char ResourceId_TanPalette;
 #define RESOURCE_TAN_PALETTE ((s32)&ResourceId_TanPalette)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_VioletPaletteG;
 #define RESOURCE_VIOLET_PALETTE_G ((s32)&ResourceId_VioletPaletteG)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_BlueBeastSheet;
 #define RESOURCE_BLUE_BEAST_SHEET ((s32)&ResourceId_BlueBeastSheet)
-/// Drawn by Casting Impact.
+/// Drawn by the casting impacts.
 extern char ResourceId_RedCrescentSheetB;
 #define RESOURCE_RED_CRESCENT_SHEET_B ((s32)&ResourceId_RedCrescentSheetB)
-/// Drawn by Impact Burst.
+/// Drawn by the impact burst.
 extern char ResourceId_FlareSheet;
 #define RESOURCE_FLARE_SHEET ((s32)&ResourceId_FlareSheet)
-/// Drawn by Impact Burst.
+/// Drawn by the impact burst.
 extern char ResourceId_FlareImage;
 #define RESOURCE_FLARE_IMAGE ((s32)&ResourceId_FlareImage)
-/// Drawn by Particle Streams.
+/// Drawn by the particle streams.
 extern char ResourceId_FlameSheetB;
 #define RESOURCE_FLAME_SHEET_B ((s32)&ResourceId_FlameSheetB)
 /// Drawn by Annihilation.
@@ -1021,7 +1014,7 @@ extern char ResourceId_FireBurstSheet;
 /// Drawn by Ragnarok.
 extern char ResourceId_FlameBladeSheet;
 #define RESOURCE_FLAME_BLADE_SHEET ((s32)&ResourceId_FlameBladeSheet)
-/// Drawn by Falling Sword.
+/// Drawn by the falling sword.
 extern char ResourceId_SwordSheet;
 #define RESOURCE_SWORD_SHEET ((s32)&ResourceId_SwordSheet)
 /// Drawn by Judgment.
@@ -1048,34 +1041,34 @@ extern char ResourceId_FireBlobSheet;
 /// Drawn by Neptune.
 extern char ResourceId_SeaSerpentTiles;
 #define RESOURCE_SEA_SERPENT_TILES ((s32)&ResourceId_SeaSerpentTiles)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_ArcFragmentsSheet;
 #define RESOURCE_ARC_FRAGMENTS_SHEET ((s32)&ResourceId_ArcFragmentsSheet)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_RevealMaskA;
 #define RESOURCE_REVEAL_MASK_A ((s32)&ResourceId_RevealMaskA)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_RevealMaskB;
 #define RESOURCE_REVEAL_MASK_B ((s32)&ResourceId_RevealMaskB)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_RevealMaskC;
 #define RESOURCE_REVEAL_MASK_C ((s32)&ResourceId_RevealMaskC)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_RevealMaskD;
 #define RESOURCE_REVEAL_MASK_D ((s32)&ResourceId_RevealMaskD)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_RevealMaskE;
 #define RESOURCE_REVEAL_MASK_E ((s32)&ResourceId_RevealMaskE)
-/// Drawn by Flashing Strike.
+/// Drawn by the flashing strikes.
 extern char ResourceId_RevealMaskF;
 #define RESOURCE_REVEAL_MASK_F ((s32)&ResourceId_RevealMaskF)
 /// Drawn by Soul Shatter and Undead Sword.
 extern char ResourceId_LimeColumnSheet;
 #define RESOURCE_LIME_COLUMN_SHEET ((s32)&ResourceId_LimeColumnSheet)
-/// Drawn by Water Sheet.
+/// Drawn by the water sheet.
 extern char ResourceId_CrackedTextureSheet;
 #define RESOURCE_CRACKED_TEXTURE_SHEET ((s32)&ResourceId_CrackedTextureSheet)
-/// Drawn by Fire Puppet, Water Column and Wind Funnel.
+/// Drawn by Fire Puppet, the water column and the wind funnel.
 extern char ResourceId_StreakTexture;
 #define RESOURCE_STREAK_TEXTURE ((s32)&ResourceId_StreakTexture)
 /// Drawn by Diamond Berg.
@@ -1084,19 +1077,19 @@ extern char ResourceId_CrystalBitmapSheet;
 /// Drawn by Coatlicue and Crystal.
 extern char ResourceId_CogTexture;
 #define RESOURCE_COG_TEXTURE ((s32)&ResourceId_CogTexture)
-/// Drawn by Cards and Serac.
+/// Drawn by the Cards and Serac.
 extern char ResourceId_BlueCloudPuffSheet;
 #define RESOURCE_BLUE_CLOUD_PUFF_SHEET ((s32)&ResourceId_BlueCloudPuffSheet)
-/// Drawn by Heavy Blow.
+/// Drawn by the heavy blow.
 extern char ResourceId_GreatSwordSheet;
 #define RESOURCE_GREAT_SWORD_SHEET ((s32)&ResourceId_GreatSwordSheet)
-/// Drawn by Heavy Blow.
+/// Drawn by the heavy blow.
 extern char ResourceId_AxeSheet;
 #define RESOURCE_AXE_SHEET ((s32)&ResourceId_AxeSheet)
 /// Drawn by Cool.
 extern char ResourceId_CrestSheet;
 #define RESOURCE_CREST_SHEET ((s32)&ResourceId_CrestSheet)
-/// Drawn by Gasp Family and Wyrd Curse.
+/// Drawn by the Gasp family and Wyrd Curse.
 extern char ResourceId_BurningSkullSheet;
 #define RESOURCE_BURNING_SKULL_SHEET ((s32)&ResourceId_BurningSkullSheet)
 /// Drawn by Megaera and Ocean Fist.
@@ -1105,21 +1098,21 @@ extern char ResourceId_WhirlBeamSheet;
 /// Drawn by Light Surge.
 extern char ResourceId_GlowOrbTexture;
 #define RESOURCE_GLOW_ORB_TEXTURE ((s32)&ResourceId_GlowOrbTexture)
-/// Drawn by Catastrophe, Death Plunge, Element Cards, Gasp Family, Light Surge,
-/// Trident and Whiplash.
+/// Drawn by Catastrophe, Death Plunge, the element cards, the Gasp family,
+/// Light Surge, Trident and Whiplash.
 extern char ResourceId_VioletPaletteF;
 #define RESOURCE_VIOLET_PALETTE_F ((s32)&ResourceId_VioletPaletteF)
-/// Drawn by Geyser and Water Column.
+/// Drawn by the geyser and the water column.
 extern char ResourceId_EmberTexture;
 #define RESOURCE_EMBER_TEXTURE ((s32)&ResourceId_EmberTexture)
-/// Drawn by Gasp Family.
+/// Drawn by the Gasp family.
 extern char ResourceId_LightBurstSheet;
 #define RESOURCE_LIGHT_BURST_SHEET ((s32)&ResourceId_LightBurstSheet)
-/// Drawn by Gasp Family.
+/// Drawn by the Gasp family.
 extern char ResourceId_CornerGlowSheet;
 #define RESOURCE_CORNER_GLOW_SHEET ((s32)&ResourceId_CornerGlowSheet)
-/// Drawn by Catastrophe, Fume, Gasp Family, Haures, Rising Dragon and Rising
-/// Dragon Enemy.
+/// Drawn by Catastrophe, Fume, the Gasp family, Haures, Rising Dragon and the
+/// enemies' Rising Dragon.
 extern char ResourceId_SmokeBandSheet;
 #define RESOURCE_SMOKE_BAND_SHEET ((s32)&ResourceId_SmokeBandSheet)
 /// Drawn by Charon.
@@ -1155,8 +1148,8 @@ extern char ResourceId_CurseSealSheet;
 /// Drawn by Charon.
 extern char ResourceId_GlowRingTexture;
 #define RESOURCE_GLOW_RING_TEXTURE ((s32)&ResourceId_GlowRingTexture)
-/// Drawn by Catastrophe, Fume, Leaping Strike, Rising Dragon and Rising Dragon
-/// Enemy.
+/// Drawn by Catastrophe, Fume, the leaping strike, Rising Dragon and the
+/// enemies' Rising Dragon.
 extern char ResourceId_ClawSlashSheet;
 #define RESOURCE_CLAW_SLASH_SHEET ((s32)&ResourceId_ClawSlashSheet)
 /// Drawn by Heartbreak.
@@ -1184,16 +1177,15 @@ extern char ResourceId_GhostSkullTexture;
 /// Drawn by Whiplash.
 extern char ResourceId_SlashFlameSheet;
 #define RESOURCE_SLASH_FLAME_SHEET ((s32)&ResourceId_SlashFlameSheet)
-/// Drawn by Catastrophe, Megiddo, Odyssey and Rising Dragon Enemy.
+/// Drawn by Catastrophe, Megiddo, Odyssey and the enemies' Rising Dragon.
 extern char ResourceId_RedHazeBackdrop;
 #define RESOURCE_RED_HAZE_BACKDROP ((s32)&ResourceId_RedHazeBackdrop)
-/// Drawn by Rushing Strike.
+/// Drawn by the rushing strike.
 extern char ResourceId_FlamePlumeSheet;
 #define RESOURCE_FLAME_PLUME_SHEET ((s32)&ResourceId_FlamePlumeSheet)
-/// Drawn by Dragon Cloud and Rushing Strike.
+/// Drawn by Dragon Cloud and the rushing strike.
 extern char ResourceId_FirePillarSheetB;
 #define RESOURCE_FIRE_PILLAR_SHEET_B ((s32)&ResourceId_FirePillarSheetB)
-// daedalus.c
 /// Drawn by Daedalus.
 extern char ResourceId_BronzeAutomatonTiles;
 #define RESOURCE_BRONZE_AUTOMATON_TILES ((s32)&ResourceId_BronzeAutomatonTiles)
@@ -1212,10 +1204,10 @@ extern char ResourceId_ArcherSheet;
 /// Drawn by Life Shear.
 extern char ResourceId_LifeShearSheet;
 #define RESOURCE_LIFE_SHEAR_SHEET ((s32)&ResourceId_LifeShearSheet)
-/// Drawn by Geyser.
+/// Drawn by the geyser.
 extern char ResourceId_CrossTextureSheet;
 #define RESOURCE_CROSS_TEXTURE_SHEET ((s32)&ResourceId_CrossTextureSheet)
-/// Drawn by Bubble Column and Coatlicue.
+/// Drawn by the bubble column and Coatlicue.
 extern char ResourceId_BubbleAnimationSheet;
 #define RESOURCE_BUBBLE_ANIMATION_SHEET ((s32)&ResourceId_BubbleAnimationSheet)
 /// Drawn by Coatlicue.
@@ -1233,7 +1225,7 @@ extern char ResourceId_TriangleSealTexture;
 /// Drawn by Catastrophe.
 extern char ResourceId_PentagonSealTexture;
 #define RESOURCE_PENTAGON_SEAL_TEXTURE ((s32)&ResourceId_PentagonSealTexture)
-/// Drawn by Catastrophe, Element Cards and Trident.
+/// Drawn by Catastrophe, the element cards and Trident.
 extern char ResourceId_JaggedStreakSheet;
 #define RESOURCE_JAGGED_STREAK_SHEET ((s32)&ResourceId_JaggedStreakSheet)
 /// Drawn by Catastrophe.
@@ -1266,28 +1258,28 @@ extern char ResourceId_BladeSheet;
 /// Drawn by Legend, Megiddo and Odyssey.
 extern char ResourceId_FlameGradientTexture;
 #define RESOURCE_FLAME_GRADIENT_TEXTURE ((s32)&ResourceId_FlameGradientTexture)
-/// Drawn by Element Cards.
+/// Drawn by the element cards.
 extern char ResourceId_VineCardSheet;
 #define RESOURCE_VINE_CARD_SHEET ((s32)&ResourceId_VineCardSheet)
-/// Drawn by Element Cards.
+/// Drawn by the element cards.
 extern char ResourceId_DragonCardSheet;
 #define RESOURCE_DRAGON_CARD_SHEET ((s32)&ResourceId_DragonCardSheet)
-/// Drawn by Element Cards.
+/// Drawn by the element cards.
 extern char ResourceId_SunCardSheet;
 #define RESOURCE_SUN_CARD_SHEET ((s32)&ResourceId_SunCardSheet)
-/// Drawn by Element Cards.
+/// Drawn by the element cards.
 extern char ResourceId_BoltCardSheet;
 #define RESOURCE_BOLT_CARD_SHEET ((s32)&ResourceId_BoltCardSheet)
-/// Drawn by Cards.
+/// Drawn by the Cards.
 extern char ResourceId_ButterflyCardSheet;
 #define RESOURCE_BUTTERFLY_CARD_SHEET ((s32)&ResourceId_ButterflyCardSheet)
-/// Drawn by Cards.
+/// Drawn by the Cards.
 extern char ResourceId_SwordCardSheet;
 #define RESOURCE_SWORD_CARD_SHEET ((s32)&ResourceId_SwordCardSheet)
-/// Drawn by Cards.
+/// Drawn by the Cards.
 extern char ResourceId_SkeletonCardSheet;
 #define RESOURCE_SKELETON_CARD_SHEET ((s32)&ResourceId_SkeletonCardSheet)
-/// Drawn by Breaths.
+/// Drawn by the breaths.
 extern char ResourceId_DustCloudSheet;
 #define RESOURCE_DUST_CLOUD_SHEET ((s32)&ResourceId_DustCloudSheet)
 /// Drawn by Trident.
@@ -1296,7 +1288,6 @@ extern char ResourceId_FlameZigzagTexture;
 /// Drawn by Meteor Blow.
 extern char ResourceId_GlowOrbSetSheet;
 #define RESOURCE_GLOW_ORB_SET_SHEET ((s32)&ResourceId_GlowOrbSetSheet)
-// megiddo.c
 /// Drawn by Megiddo.
 extern char ResourceId_FireStripesTexture;
 #define RESOURCE_FIRE_STRIPES_TEXTURE ((s32)&ResourceId_FireStripesTexture)
@@ -1306,7 +1297,7 @@ extern char ResourceId_GiantSwordSheet;
 /// Drawn by Odyssey.
 extern char ResourceId_GiantSwordBladeSheet;
 #define RESOURCE_GIANT_SWORD_BLADE_SHEET ((s32)&ResourceId_GiantSwordBladeSheet)
-/// Drawn by Cloud Swirl.
+/// Drawn by the cloud swirl.
 extern char ResourceId_CloudSwirlSheet;
 #define RESOURCE_CLOUD_SWIRL_SHEET ((s32)&ResourceId_CloudSwirlSheet)
 /// Drawn by Iris.
@@ -1328,9 +1319,8 @@ extern char ResourceId_WaterSplash;
 /// Loaded by FieldPsynergy_Hover.
 extern char ResourceId_RingOrb;
 #define RESOURCE_RING_ORB ((s32)&ResourceId_RingOrb)
-// The two 8x8 tiles of the shaken sprites (FieldEffect_ShakeTiles): the row
-// needs a name in directory.s before this adopts.
-/// Loaded by FieldPsynergy_TremorOnTarget.
+/// The two 8x8 tiles of the sprites Tremor shakes (FieldEffect_ShakeTiles),
+/// loaded by FieldPsynergy_TremorOnTarget.
 extern char ResourceId_ShakeTiles;
 #define RESOURCE_SHAKE_TILES ((s32)&ResourceId_ShakeTiles)
 /// The lava cave backdrop of the Valukar battle in the Yampi Desert Cave.

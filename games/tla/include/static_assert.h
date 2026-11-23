@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_STATIC_ASSERT_H
 #define ALCHEMY_STATIC_ASSERT_H
 
+/// @file
+/// STATIC_ASSERT, a check on sizes and layouts made as the code compiles.
+
 #include "types.h"
 #include "stddef.h"
 

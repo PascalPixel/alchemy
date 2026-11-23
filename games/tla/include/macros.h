@@ -9,8 +9,8 @@
 /// projected, a per-frame step, a camera point or a scale.
 #define SET_VECTOR(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 
-/// Set the position or the velocity of a particle, a piece of debris or an
-/// object in one statement.
+/// Sets the position or the velocity of a particle, a piece of debris or an
+/// actor in one statement.
 #define SET_POSITION(p, newX, newY, newZ)                                      \
   ((p)->x = (newX), (p)->y = (newY), (p)->z = (newZ))
 #define SET_VELOCITY(p, vx, vy, vz)                                            \
@@ -34,13 +34,12 @@
 
 /// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
 /// `v | -v`. The flag readers and the Psynergy tests return their truth values
-/// so; the name is ours. `v` is read twice.
+/// so. `v` is read twice.
 #define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
 
 /// One more than `i` as a signed halfword, the step taken in the high half of
-/// a word. The scenes step the halfword counters of their short searches so:
-/// PushTarget_FillFootprint in five scenes, Yampi Desert Cave's search of its
-/// logs and Apojii Islands' scan of its cells. The name is ours.
+/// a word: the scenes step the halfword counters of their short searches so,
+/// as PushTarget_FillFootprint does.
 #define NEXT_HALFWORD(i) ((s32)(((i) << 16) + (1 << 16)) >> 16)
 
 /// A scene's data that its overlay places after pictures linked between its

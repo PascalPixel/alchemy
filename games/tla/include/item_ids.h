@@ -9,7 +9,7 @@
 /// MsgItemName + its id. Each kind of item leaves spare ids after its last,
 /// whose rows are blank and whose names in the text are "?"; a kind's first id
 /// is written where spares come before it. A row whose name repeats another's
-/// keeps its number as its placeholder until what sets it apart is known.
+/// is named for what sets it apart (ITEM_SPIRIT_GLOVES_UNUSED).
 enum ItemId {
   ITEM_NONE,
   ITEM_LONG_SWORD,

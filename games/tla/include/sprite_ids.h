@@ -3,7 +3,7 @@
 
 /// @file
 /// Sprite numbers, named where their sheet is. A sprite's picture is
-/// graphics/sprite/<name>.png, its id's name in lowercase without SPRITE_
+/// src/graphics/sprite/<name>.png, its id's name in lowercase without SPRITE_
 /// (jenna.png for SPRITE_JENNA).
 
 /// Sprite ids, one for each row of the sprite table (sprite/sprites.tsv) in
@@ -176,7 +176,11 @@ enum SpriteId {
   SPRITE_POSEIDON = 159,
   SPRITE_LEMURIAN_MAN,
   SPRITE_GIRL_WITH_RED_BOW,
+  /// A turtle in a 32-pixel sheet, standing alone and with a child riding it;
+  /// it stands on one of the islets of the turtle trade.
   SPRITE_SMALL_TURTLE,
+  /// A smaller turtle in a 16-pixel sheet, the one the islets' trade spawns
+  /// wading.
   SPRITE_TURTLE_SMALL,
   SPRITE_LEMURIAN_OLD_WOMAN,
   SPRITE_LEMURIAN_IN_TEAL,
@@ -743,6 +747,8 @@ enum SpriteId {
   SPRITE_MOAPA_SHADOW,
   SPRITE_BATTLE_SHADOW = 686,
   SPRITE_BATTLE_SHADOW_NARROW,
+  /// The status icons BattleStatusIcon_Cycle shows in turn over a battler
+  /// wider than 32 pixels, one for each condition.
   SPRITE_STATUS_WIDE_POISON,
   SPRITE_STATUS_WIDE_VENOM,
   SPRITE_STATUS_WIDE_STUN,
@@ -750,6 +756,8 @@ enum SpriteId {
   SPRITE_STATUS_WIDE_SLEEP,
   SPRITE_STATUS_WIDE_DELUSION,
   SPRITE_STATUS_WIDE_HAUNT,
+  /// The Grim Reaper's mark: a flame for each of its count, 1 to 7, as the
+  /// name's number.
   SPRITE_STATUS_WIDE_GRIM_REAPER_1,
   SPRITE_STATUS_WIDE_GRIM_REAPER_2,
   SPRITE_STATUS_WIDE_GRIM_REAPER_3,
@@ -757,6 +765,7 @@ enum SpriteId {
   SPRITE_STATUS_WIDE_GRIM_REAPER_5,
   SPRITE_STATUS_WIDE_GRIM_REAPER_6,
   SPRITE_STATUS_WIDE_GRIM_REAPER_7,
+  /// The same status icons, for battlers 32 pixels wide.
   SPRITE_STATUS_POISON,
   SPRITE_STATUS_VENOM,
   SPRITE_STATUS_STUN,

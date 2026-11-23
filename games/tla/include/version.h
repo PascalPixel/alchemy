@@ -27,8 +27,7 @@
 #endif
 
 #define TLA_PATCH_1 (TLA_PATCH_LEVEL >= 1) ///< every edition but Japanese
-/// German, French, Spanish and Italian.
-#define TLA_PATCH_2 (TLA_PATCH_LEVEL >= 2)
+#define TLA_PATCH_2 (TLA_PATCH_LEVEL >= 2) ///< German, French, Spanish, Italian
 #define TLA_PATCH_3 (TLA_PATCH_LEVEL >= 3) ///< French, Spanish and Italian
 #define TLA_PATCH_4 (TLA_PATCH_LEVEL >= 4) ///< Spanish and Italian
 

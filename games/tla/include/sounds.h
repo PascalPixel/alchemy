@@ -5,8 +5,8 @@
 /// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
 /// sound/songs are named. Music takes the title of its track where the two are
-/// matched (MUS_TO_THE_OPEN_SEA), the titles as Miketendo64's track guide
-/// lists them, and otherwise the place or moment it is the music of (MUS_PROX).
+/// matched (MUS_TO_THE_OPEN_SEA), and otherwise the place or moment it is the
+/// music of (MUS_PROX).
 /// A row of the empty song (Sound_EmptySong), which plays nothing, has no name,
 /// and the next named row's number is written after it. A sequence with no name
 /// yet keeps its number as its placeholder: those the game plays say where, and
@@ -17,8 +17,8 @@
 
 enum SoundId {
   /// A song of no tracks: scenes play it to silence the music, and the music
-  /// rules give it to the Epilogue, and to Kibombo and the Gabomba Statue once
-  /// flag 0x8f7 is set.
+  /// rules give it to the Epilogue, and to Kibombo and the Gabomba Statue while
+  /// FLAG_GABOMBA_MUSIC_SILENCED is set.
   MUS_SILENCE,
   /// Super Lucky Dice's music, started with each new bet (SuperLuckyDice_Run).
   MUS_SUPER_LUCKY_DICE,
@@ -29,7 +29,7 @@ enum SoundId {
   MUS_CHAMPA,
   /// The field music of Daila and West Indra Islet.
   MUS_DAILA,
-  /// The field music of the Apojii Islands and SW Atteka Islet.
+  /// The field music of the Apojii Islands and Southwest Atteka Islet.
   MUS_APOJII_ISLANDS,
   /// Izumo's field music once FLAG_SERPENT_SLAIN is set, when the town
   /// celebrates.
@@ -61,8 +61,7 @@ enum SoundId {
   /// FLAG_ALREADY_KNOWS_DJINN is set.
   MUS_CHILDRENS_SONG,
   /// MUS_CHILDRENS_SONG's tune arranged on four tracks for its eight; only the
-  /// link
-  /// lobby's song request plays it.
+  /// link lobby's song request plays it.
   MUS_CHILDRENS_SONG_SHORT,
   /// The field music of Air's Rock.
   MUS_AIRS_ROCK = 20,
@@ -138,15 +137,15 @@ enum SoundId {
   /// (ENCOUNTER_ZONE_SCRIPTED, slot 1).
   MUS_BATTLE_WITH_DOOM_DRAGON,
   /// The Broken Seal's MUS_TEST_YOUR_SKILLS, note for note: after a link
-  /// battle's
-  /// own music (Battle_Run), and at Super Lucky Dice's results past the second
-  /// kind (SuperLuckyDice_Run).
+  /// battle's own music (Battle_Run), and at Super Lucky Dice's results past
+  /// the second kind (SuperLuckyDice_Run).
   MUS_TEST_YOUR_SKILLS,
   /// The battle music at sea, while the Lemurian Ship is the actor events move
   /// (ownerOverride) and it does not fly.
   MUS_BATTLE_ON_THE_SEA,
-  /// Battle music of Karst and Agatio at Jupiter Lighthouse's beacon (encounter
-  /// table 13, slot 7, and slots 5 and 6); its tune is MUS_KARST_AND_AGATIO's.
+  /// Battle music of Karst and Agatio's three battles at Jupiter Lighthouse's
+  /// beacon (ENCOUNTER_TABLE_MOAPA, slots 5 to 7); its tune is
+  /// MUS_KARST_AND_AGATIO's.
   MUS_BATTLE_WITH_KARST_AND_AGATIO,
   /// The battle is won.
   MUS_VICTORY,
@@ -168,7 +167,7 @@ enum SoundId {
   MUS_SEA_OF_TIME,
   /// The Epilogue's music after its first lines.
   MUS_EPILOGUE = 67,
-  /// The staff credits' music (the title's entrance 8, Credits_Run).
+  /// The story crawl's music as a new game begins (TITLE_STORY_CRAWL).
   MUS_THE_BROKEN_SEAL,
   /// Unused: The Broken Seal's MUS_MAIN_THEME_TITLE, note for note.
   MUS_UNUSED_TITLE = 70,
@@ -182,8 +181,9 @@ enum SoundId {
   /// The music of the Clear scene, area "(Clear data)", where data is
   /// transferred.
   MUS_THE_ADVENTURE_RESUMES,
-  /// The title held without its prompt: after the prologue (the title's
-  /// entrance 3), and as the logo shows after the ending (entrance 10).
+  /// The title held without its prompt: after the prologue
+  /// (TITLE_FROM_IDEJIMA), and under the unused "To Be Continued" logo
+  /// (TITLE_TO_BE_CONTINUED).
   MUS_TITLE_AFTER_PROLOGUE,
   /// The Trial Road race: Moapa's challenge, the rules and the countdown in
   /// Shaman Village, and the Trial Road's music while

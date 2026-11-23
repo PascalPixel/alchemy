@@ -189,15 +189,29 @@ enum EnemyId {
   ENEMY_MACETAIL,
   ENEMY_BOMBANDER,
   ENEMY_POSEIDON,
+  /// The abilities Poseidon chooses from for his second action of each turn
+  /// (BattleAI_ChooseAction); his first takes ENEMY_POSEIDON's.
   ENEMY_POSEIDON_SECOND_ACTION,
   ENEMY_POSEIDON_3,
+  /// Moapa at the Trial Road's peak. He and his two Knights come weaker, with
+  /// less defense and fewer Bosca Hits or Strong Hits, the more stage doors
+  /// the party reached before them in the race (TrialRoad_ChallengeMoapa,
+  /// ENCOUNTER_TABLE_MOAPA): this row while it reached two or fewer,
+  /// ENEMY_MOAPA_B at three and ENEMY_MOAPA_C at all four.
   ENEMY_MOAPA,
   ENEMY_MOAPA_B,
   ENEMY_MOAPA_C,
+  /// One of Moapa's Knights: both are this row while the party reached no stage
+  /// door first, one at one door, and neither from two doors on, when both are
+  /// ENEMY_KNIGHT_B.
   ENEMY_KNIGHT,
   ENEMY_KNIGHT_B,
   ENEMY_KNIGHT_3,
+  /// Agatio in the first two of the three battles on Jupiter Lighthouse's
+  /// aerie (ENCOUNTER_TABLE_MOAPA, slots 5 and 6), as ENEMY_KARST is Karst.
   ENEMY_AGATIO,
+  /// Agatio in the third battle (slot 7), the same stats as ENEMY_AGATIO, as
+  /// ENEMY_KARST_B is Karst.
   ENEMY_AGATIO_B,
   ENEMY_AGATIO_VS_ISAAC,
   ENEMY_KARST,
@@ -252,6 +266,7 @@ enum EnemyId {
   ENEMY_BANE_WIGHT,
   ENEMY_PIXIE,
   ENEMY_FAERY,
+  /// Spelled as the English release spells it.
   ENEMY_WEIRD_NYPMH,
   ENEMY_WOOD_WALKER,
   ENEMY_ELDER_WOOD,
@@ -310,6 +325,9 @@ enum EnemyId {
   ENEMY_GHOST_ARMY,
   ENEMY_SOUL_ARMY,
   ENEMY_SPIRIT_ARMY,
+  /// The Dullahan's three sets of abilities, one row each
+  /// (gBattleAI_DullahanForms): it starts its battle on one at random and moves
+  /// to the next each time it has gone through one (BattleAI_ChooseAction).
   ENEMY_DULLAHAN,
   ENEMY_DULLAHAN_B,
   ENEMY_DULLAHAN_C,

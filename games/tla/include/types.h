@@ -21,9 +21,10 @@ typedef unsigned long long u64;
 #define TRUE 1
 
 #ifdef MODERN
-/// the modern build places code and data where its own compiler puts them:
-/// a fixed address is the linked name, called through a register as at a
-/// fixed address, so that code copied into RAM still reaches it
+/// The address of one of Camelot's fixed places in the modern build, which
+/// puts code and data where its own compiler does: the linked name, read
+/// through a register as a fixed address would be, so that code copied into
+/// RAM still reaches it.
 #define FIXED_LINKED(linked)                                                   \
   ({                                                                           \
     extern char modern_##linked[] __asm__(#linked);                            \

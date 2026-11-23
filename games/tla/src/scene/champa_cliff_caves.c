@@ -365,7 +365,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Walking into a door in the cliff caves: it opens with a sound, Felix walks
-/// through and the screen goes to the room behind it.
+/// through (lined up on the door first when `mode` is 0, straight on when 1)
+/// and the screen goes to the room behind it.
 void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
                                        s32 mode) {
   s32 id;

@@ -182,8 +182,9 @@ void Champa_ShrinkIntoTent(struct Actor *actor) {
   actor->scaleY += -(FIXED_ONE * 3 / 128);
 }
 
-/// Walking into a door of Champa: it opens with a sound, Felix walks in and the
-/// screen goes to the room behind it. The door's map edit is not played.
+/// Walking into a door of Champa: it opens with a sound, Felix walks in (lined
+/// up on the door first when `mode` is 0, straight on when 1) and the screen
+/// goes to the room behind it. The door's map edit is not played.
 void Champa_OpenDoorAndEnter(const struct MapGridCellAnimation *opening,
                              s32 door, s32 mode) {
   s32 id;

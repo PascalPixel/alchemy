@@ -5,23 +5,23 @@
 /// In the swamp outside, Move pulls the stump at the end of the broken plank
 /// bridge into the mud so Felix can hop the gap, and each step through the mud
 /// sinks him deeper until he goes under and comes up on firm ground, unless a
-/// bubble lifts him out first. Whirlwind blows away the ivy over three cave
+/// bubble lifts him out first. Whirlwind blows away the weeds over three cave
 /// mouths at the foot of the cliffs, and Growth grows the sprout beside the
-/// eastern cave into a vine. Behind the westernmost ivy, a small cave holds a
-/// buried Tear Stone. Behind the eastern ivy, stairs lead down to the vents
-/// room, where vents in the north wall puff gusts that blow Felix off the ledge
-/// into the room below; there Cyclone scatters the weeds hiding the Bramble
-/// Seed and a Mad Plant. Moving the vents room's east pillar over its vent
-/// sends the next gust onto Flower, the Venus Djinni, which falls to that same
-/// room below. A passage north from the vents room ends at the second Tear
-/// Stone. Behind the third ivy lie the pool, a round spot in a gust that Douse
-/// wets and Frost freezes into an ice pillar, and the drips room, where drops
-/// from the ceiling fill a second spot. Below them, glowing red rocks cooled
-/// with Douse and pushed into the lava make stepping stones (in the Tremor
-/// room, and in the lava rocks' room with the Vial's chest); Tremor on the
-/// pillar under a rock pile dries a lava stream into a passage; and in the dark
-/// rooms beyond, cooling the last glowing rock shows where the Star Dust is
-/// buried.
+/// eastern cave into a vine. Behind the westernmost clump of weeds, a small
+/// cave holds a buried Tear Stone. Behind the eastern clump of weeds, stairs
+/// lead down to the vents room, where vents in the north wall puff gusts that
+/// blow Felix off the ledge into the room below; there Cyclone scatters the
+/// weeds hiding the Bramble Seed and a Mad Plant. Moving the vents room's east
+/// pillar over its vent sends the next gust onto Flower, the Venus Djinni,
+/// which falls to that same room below. A passage north from the vents room
+/// ends at the second Tear Stone. Behind the third clump of weeds lie the pool,
+/// a round spot in a gust that Douse wets and Frost freezes into an ice pillar,
+/// and the drips room, where drops from the ceiling fill a second spot. Below
+/// them, glowing red rocks cooled with Douse and pushed into the lava make
+/// stepping stones (in the Tremor room, and in the lava rocks' room with the
+/// Vial's chest); Tremor on the pillar under a rock pile dries a lava stream
+/// into a passage; and in the dark rooms beyond, cooling the last glowing rock
+/// shows where the Star Dust is buried.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -61,7 +61,8 @@ enum {
   TRIGGER_MUD = 60,
   TRIGGER_BUBBLE = 61,
   TRIGGER_FIRM_GROUND = 62,
-  /// The buried Tear Stones' spots, in the cave behind the westernmost ivy
+  /// The buried Tear Stones' spots, in the cave behind the westernmost clump of
+  /// weeds
   /// and in the cave north of the vents room.
   TRIGGER_FIRST_TEAR_STONE = 50,
   TRIGGER_SECOND_TEAR_STONE = 51,
@@ -78,7 +79,8 @@ enum {
 
 /// The swamp's actors outside (SceneId_TaopoSwampMud).
 enum TaopoSwampMudActorId {
-  /// The five ivy bushes Whirlwind blows away (SPRITE_IVY), each kept gone by
+  /// The five bushes of weeds Whirlwind blows away (SPRITE_WEEDS), each kept
+  /// gone by
   /// its flag, FLAG_TAOPO_SWAMP_BUSH_BLOWN plus its id. Three of them cover
   /// cave mouths at the foot of the cliffs, which open once they are gone.
   ACTOR_FIRST_BUSH = ACTOR_FIRST_PLACED,
@@ -434,10 +436,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTaopoSwamp_Placements;
 }
 
-/// Whirlwind on one of the five ivy bushes at the foot of the swamp's cliffs
-/// blows it away for good. Three hide cave mouths: the westernmost, at cell
-/// (13, 8), the way to the first Tear Stone; the one at cell (37, 11), the way
-/// to the pool; and the one at cell (44, 16), the stairs down to the vents
+/// Whirlwind on one of the five bushes of weeds at the foot of the swamp's
+/// cliffs blows it away for good. Three hide cave mouths: the westernmost, at
+/// cell (13, 8), the way to the first Tear Stone; the one at cell (37, 11), the
+/// way to the pool; and the one at cell (44, 16), the stairs down to the vents
 /// room. The two just east of the first, at (16, 7) and (18, 7), hide nothing.
 /// The bush's flag, FLAG_TAOPO_SWAMP_BUSH_BLOWN plus its actor, keeps it gone
 /// and opens the exit behind it.
@@ -544,7 +546,7 @@ void TaopoSwamp_ScoopSecondTearStone(s32 mode) {
 }
 
 /// Scoop on the ring of small stones in the middle of the small cave behind
-/// the westernmost ivy, cell (25, 7), digs up a Tear Stone.
+/// the westernmost clump of weeds, cell (25, 7), digs up a Tear Stone.
 void TaopoSwamp_ScoopFirstTearStone(s32 mode) {
   Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR,
                       FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0));
@@ -2353,11 +2355,11 @@ struct ActorPlacement gTaopoSwamp_Placements[] = {
 };
 
 struct ActorPlacement gTaopoSwampMudActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 112, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 112, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 112, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 112, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 272, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STUMP, FLAG_TAOPO_SWAMP_STUMP_SUNK, MOVEMENT_TYPE_STAND, 216, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

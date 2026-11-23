@@ -99,19 +99,19 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_IVY,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_WEEDS),
                     (s32)gApojiiIslandsCave_WeedsScript, 120, 0, 608,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_WEEDS),
                     (s32)gApojiiIslandsCave_WeedsScript, 184, 0, 592,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_WEEDS),
                     (s32)gApojiiIslandsCave_WeedsScript, 216, 0, 592,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY,
+    ACTOR_PLACEMENT(SPRITE_WEEDS,
                     FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_WEEDS),
                     (s32)gApojiiIslandsCave_WeedsScript, 280, 0, 640,
                     FACING_NORTH, TALK_FACING_KEEP, 0),

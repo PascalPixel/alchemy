@@ -256,7 +256,7 @@ enum ActorAnimation {
   /// ANIM_CAST_PSYNERGY's first two pictures, held on the second, and its last
   /// two, held on the last with the hand held out: the caster's start and end
   /// of a field Psynergy.
-  ANIM_CAST_PSYNERGY_BEGIN = 20,
+  ANIM_CAST_PSYNERGY_START = 20,
   ANIM_CAST_PSYNERGY_END = 21,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the

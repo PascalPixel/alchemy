@@ -75,7 +75,7 @@ enum PsynergyTestActorId {
   ACTOR_INNKEEPER,
   ACTOR_MESSAGE_BROWSER, ///< the shops' and the Sanctum's lines
   ACTOR_MARS_DJINNI,     ///< lies on its side; Mind Read hears it
-  ACTOR_IVY,             ///< the icon browser
+  ACTOR_WEEDS,           ///< the icon browser
   ACTOR_SPROUT,          ///< ignores Force
   /// A puddle frozen as the room starts: Isaac's name entry from the north,
   /// the item picker from elsewhere; it ignores Force, Whirlwind, Catch,
@@ -830,7 +830,7 @@ struct ActorPlacement gActorPlacements[] = {
                     TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     136, 0, 40, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0,
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0,
                     72, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136,
                     0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -883,7 +883,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(PsynergyTest_BrowseSanctumMessages)},
     {TRIGGER_TALK, ACTOR_MARS_DJINNI, CONDITION_ALWAYS,
      EVENT(PsynergyTest_NoOp)},
-    {TRIGGER_TALK, ACTOR_IVY, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WEEDS, CONDITION_ALWAYS,
      EVENT(PsynergyTest_OpenIconBrowser)},
     {TRIGGER_TALK, ACTOR_SPROUT, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
@@ -965,7 +965,7 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(PsynergyTest_ArriveInRing)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 57,
      CONDITION_ALWAYS, EVENT(PsynergyTest_FightMadPlant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_IVY, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_WEEDS, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnoreTremor)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_ICE_PILLAR, CONDITION_ALWAYS,
      EVENT(PsynergyTest_IgnoreTremor)},

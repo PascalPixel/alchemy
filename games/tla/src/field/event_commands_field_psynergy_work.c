@@ -195,7 +195,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   }
 }
 
-/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_BEGIN) and
+/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_START) and
 /// stops, flashes with a sound, and the ability's name is announced; with
 /// FLAG_PLAY_PSYNERGY_CAST set the caster holds out its hand
 /// (ANIM_CAST_PSYNERGY_END) and keeps its glow.
@@ -205,7 +205,7 @@ void FieldPsynergy_StartCast(void) {
   struct Actor *actor = work->mainActor;
   s32 ability = work->action;
 
-  Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_BEGIN);
+  Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_START);
   actor->targetX = actor->x.fixed;
   actor->velocityX = 0;
   actor->targetY = actor->y.fixed;

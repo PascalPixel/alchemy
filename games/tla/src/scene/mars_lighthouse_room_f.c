@@ -699,7 +699,11 @@ extern u32 gMarsLighthouseRoomF_RubbleScriptB[];
 /// The pieces of wall MarsLighthouseRoomF_ScatterRubble throws.
 #define RUBBLE_PIECES 12
 
-/// Twelve pieces of wall burst from an actor and bounce away.
+/// Twelve green pieces of wall burst from an actor, fly up and bounce away
+/// down over the lava, then flicker out: as the Mars tower's fireball cracks
+/// the centre wall (MarsLighthouseRoomF_CrackCenterWall). Each piece flickers
+/// out after gDebris_Script's wait or, at random, two frames later
+/// (gMarsLighthouseRoomF_RubbleScriptB).
 void MarsLighthouseRoomF_ScatterRubble(s32 id) {
   struct Actor *origin = Actor_Get(id);
   s32 i;

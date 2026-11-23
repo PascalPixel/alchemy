@@ -226,7 +226,7 @@ struct PushTarget {
   FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-  s32 footprint; ///< index into the footprint table
+  s32 rectangle; ///< index into the rectangle table
   s32 id;
   void *callback;
 };
@@ -279,7 +279,7 @@ void Ride_SetEntryCount(s32 index, s16 value);
 
 void CrackedTile_DropIn(void);
 
-s32 PushTarget_FillFootprint(s32 id);
+s32 PushTarget_FillRectangle(s32 id);
 
 void LightSprites_InitB(void);
 
@@ -1230,8 +1230,8 @@ s32 Scene_Initialize(void) {
                           STEP_TRIGGER_FLAME_HIT);
       Actor_DisableById(ACTOR_MARS_PIPE_A);
       Actor_DisableById(ACTOR_MARS_PIPE_B);
-      PushTarget_FillFootprint(ACTOR_MARS_PIPE_A);
-      PushTarget_FillFootprint(ACTOR_MARS_PIPE_B);
+      PushTarget_FillRectangle(ACTOR_MARS_PIPE_A);
+      PushTarget_FillRectangle(ACTOR_MARS_PIPE_B);
       MarsLighthouseRoomF_RouteFireThroughPipes();
     }
   } else if (scene == SCENE_MARS_LIGHTHOUSE_MERCURY_TOWER) {
@@ -1271,9 +1271,9 @@ s32 Scene_Initialize(void) {
     Actor_DisableById(ACTOR_MERCURY_PIPE_A);
     Actor_DisableById(ACTOR_MERCURY_PIPE_B);
     Actor_DisableById(ACTOR_MERCURY_PIPE_C);
-    PushTarget_FillFootprint(ACTOR_MERCURY_PIPE_A);
-    PushTarget_FillFootprint(ACTOR_MERCURY_PIPE_B);
-    PushTarget_FillFootprint(ACTOR_MERCURY_PIPE_C);
+    PushTarget_FillRectangle(ACTOR_MERCURY_PIPE_A);
+    PushTarget_FillRectangle(ACTOR_MERCURY_PIPE_B);
+    PushTarget_FillRectangle(ACTOR_MERCURY_PIPE_C);
     Actor_GetById(ACTOR_UPPER_PUDDLE)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_CENTER_PUDDLE)->priorityFlags |=
@@ -1714,9 +1714,9 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef Field_CheckSpheresOverlap
 
 extern u16 gPushKinds[PUSH_KINDS];
-extern s8 gPushFootprints[][4];
+extern s8 gPushRectangles[][4];
 
-#include "shared/push_target_fill_footprint.h"
+#include "shared/push_target_fill_rectangle.h"
 
 /// Sets the cell behavior of a rectangle of one layer's cells.
 void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,

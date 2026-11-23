@@ -180,9 +180,9 @@ u16 gPaletteCycleLength BSS_DATA;
 u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 void Actor_DisableById(s32 id);
 
-extern s8 gPushFootprints[][4];
+extern s8 gPushRectangles[][4];
 
-/// Makes a log's cells solid where it lies: its footprint's cells take the
+/// Makes a log's cells solid where it lies: its rectangle's cells take the
 /// raised layers' attributes and block the ground; returns 0 for an actor that
 /// is no log.
 s32 YampiDesertCave_SetLogCells(s32 id) {
@@ -205,12 +205,12 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   kind = (u16)i;
   if (kind == PUSH_KINDS)
     return 0;
-  w = (ABS(gPushFootprints[kind][0]) + ABS(gPushFootprints[kind][2])) >> 4;
-  // i is reused: the footprint's top here, the middle layer's x offset in
+  w = (ABS(gPushRectangles[kind][0]) + ABS(gPushRectangles[kind][2])) >> 4;
+  // i is reused: the rectangle's top here, the middle layer's x offset in
   // cells below.
-  i = gPushFootprints[kind][1];
-  h = (ABS(i) + ABS(gPushFootprints[kind][3])) >> 4;
-  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[kind][0]));
+  i = gPushRectangles[kind][1];
+  h = (ABS(i) + ABS(gPushRectangles[kind][3])) >> 4;
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushRectangles[kind][0]));
   z = FIELD_CELL(actor->z.fixed + toFIXED(i));
   i = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
   az = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
@@ -233,7 +233,7 @@ extern s32 gPushLeaderSteps[];
 /// Where a pushed log comes to rest, found before the leader pushes it.
 struct LogRoll {
   FIXED x, y, z;  ///< the log's position at the end of the roll
-  s32 kind;       ///< its row of gPushFootprints
+  s32 kind;       ///< its row of gPushRectangles
   s32 slot;       ///< its actor id
   void *onPushed; ///< run as the log rolls, if not NULL
 };
@@ -252,7 +252,7 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 }
 
 /// Finds how far a pushed object can roll in the leader's direction, probing
-/// its footprint cell by cell until MapGrid_CheckCollision reports a wall.
+/// its rectangle cell by cell until MapGrid_CheckCollision reports a wall.
 /// Returns 1 with the log's end position in roll, or 0 if it cannot move.
 s32 YampiDesertCave_FindLogRoll(struct LogRoll *roll) {
   FIXED probe[3];
@@ -266,8 +266,8 @@ s32 YampiDesertCave_FindLogRoll(struct LogRoll *roll) {
   actor = YampiDesertCave_FindPushedLog(&direction, &roll->slot, &roll->kind);
   if (actor != NULL) {
     kind = roll->kind;
-    w = (ABS(gPushFootprints[kind][0]) + ABS(gPushFootprints[kind][2])) >> 4;
-    h = (ABS(gPushFootprints[kind][1]) + ABS(gPushFootprints[kind][3])) >> 4;
+    w = (ABS(gPushRectangles[kind][0]) + ABS(gPushRectangles[kind][2])) >> 4;
+    h = (ABS(gPushRectangles[kind][1]) + ABS(gPushRectangles[kind][3])) >> 4;
     dx = gPushLeaderSteps[direction] & FIELD_PIXEL_MASK;
     dz = toFIXED(gPushLeaderSteps[direction]);
     roll->onPushed = NULL;
@@ -278,9 +278,9 @@ s32 YampiDesertCave_FindLogRoll(struct LogRoll *roll) {
     roll->z = actor->z.fixed + dz;
     probe[1] = actor->y.fixed;
     do {
-      probe[2] = roll->z + toFIXED(gPushFootprints[kind][1]);
+      probe[2] = roll->z + toFIXED(gPushRectangles[kind][1]);
       for (j = 0; j < h; j++) {
-        probe[0] = roll->x + toFIXED(gPushFootprints[kind][0]);
+        probe[0] = roll->x + toFIXED(gPushRectangles[kind][0]);
         for (i = 0; i < w; i++) {
           if (FieldActor_CheckMovementCollision(actor, probe) ==
               COLLISION_IMPASSABLE)
@@ -329,10 +329,10 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
         z = (leader->z.part[0].integer +
              PUSH_STEP_Z(gPushLeaderSteps[*direction])) >>
             4;
-        left = (actor->x.part[0].integer + gPushFootprints[k][0]) >> 4;
-        top = (actor->z.part[0].integer + gPushFootprints[k][1]) >> 4;
-        right = (actor->x.part[0].integer + gPushFootprints[k][2]) >> 4;
-        bottom = (actor->z.part[0].integer + gPushFootprints[k][3]) >> 4;
+        left = (actor->x.part[0].integer + gPushRectangles[k][0]) >> 4;
+        top = (actor->z.part[0].integer + gPushRectangles[k][1]) >> 4;
+        right = (actor->x.part[0].integer + gPushRectangles[k][2]) >> 4;
+        bottom = (actor->z.part[0].integer + gPushRectangles[k][3]) >> 4;
         if (left <= x && x < right && top <= z && z < bottom) {
           *kind = k;
           if (k & 1) {
@@ -396,10 +396,10 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
 
   from[0] = actor->x.fixed;
   from[2] = actor->z.fixed;
-  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[kind][0]));
-  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[kind][1]));
-  w = (ABS(gPushFootprints[kind][0]) + ABS(gPushFootprints[kind][2])) >> 4;
-  h = (ABS(gPushFootprints[kind][1]) + ABS(gPushFootprints[kind][3])) >> 4;
+  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushRectangles[kind][0]));
+  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushRectangles[kind][1]));
+  w = (ABS(gPushRectangles[kind][0]) + ABS(gPushRectangles[kind][2])) >> 4;
+  h = (ABS(gPushRectangles[kind][1]) + ABS(gPushRectangles[kind][3])) >> 4;
   PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
                                          w, h, CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
@@ -450,8 +450,8 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
   Event_PlaySound(SE_HEAVY_STOP);
   Actor_SetPositionAndResetMotion(actor, roll.x, actor->y.fixed, roll.z);
   Actor_SelectAnimation(actor, 1);
-  roll.x = FIELD_CELL(roll.x + toFIXED(gPushFootprints[kind][0]));
-  roll.z = FIELD_CELL(roll.z + toFIXED(gPushFootprints[kind][1]));
+  roll.x = FIELD_CELL(roll.x + toFIXED(gPushRectangles[kind][0]));
+  roll.z = FIELD_CELL(roll.z + toFIXED(gPushRectangles[kind][1]));
   ax = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
   az = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
   bx = FIELD_CELL(map->layers[MAPGRID_LAYER_OVERHEAD].offsetX);
@@ -463,8 +463,8 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
                                          w, h, CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_OVERHEAD, roll.x, roll.z,
                                          w, h, CELL_BEHAVIOR_WALL);
-  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[kind][0]));
-  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[kind][1]));
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushRectangles[kind][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushRectangles[kind][1]));
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],
                              cell[2]);
   MapGrid_CopyCellAttributes(cell[0] + 64, cell[2] + 64, w, h, cell[0] + bx,

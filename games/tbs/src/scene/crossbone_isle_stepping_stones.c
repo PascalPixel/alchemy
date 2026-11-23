@@ -278,43 +278,43 @@ static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
 
   for (i = 0; i <= 5; i++) {
     if (actor->sprite->entries[0]->animationId ==
-        gPushedActor_FootprintKinds[i]) {
-      probe->footprintIndex = i;
+        gPushedActor_RectangleKinds[i]) {
+      probe->rectangleIndex = i;
       break;
     }
-    probe->footprintIndex = 7;
+    probe->rectangleIndex = 7;
   }
-  if (probe->footprintIndex < 0 || probe->footprintIndex > 6) {
+  if (probe->rectangleIndex < 0 || probe->rectangleIndex > 6) {
     return 0;
   }
   // Bounds are pixel offsets; dimensions and origins below are 16-pixel cells.
   probe->position.x = actor->x.fixed;
   probe->position.y = actor->y.fixed;
   probe->position.z = actor->z.fixed;
-  coordinate = gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
+  coordinate = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1];
   if (coordinate < 0) {
     coordinate = -coordinate;
   }
-  farExtent = gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 3];
+  farExtent = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 3];
   if (farExtent < 0) {
     farExtent = -farExtent;
   }
   *depth = (coordinate + farExtent) >> 4;
-  coordinate = gPushedActor_FootprintBounds[probe->footprintIndex * 4];
+  coordinate = gPushedActor_Rectangles[probe->rectangleIndex * 4];
   if (coordinate < 0) {
     coordinate = -coordinate;
   }
-  farExtent = gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 2];
+  farExtent = gPushedActor_Rectangles[probe->rectangleIndex * 4 + 2];
   if (farExtent < 0) {
     farExtent = -farExtent;
   }
   *width = (coordinate + farExtent) >> 4;
   // Move from the actor's center to the top-left cell it covers.
   probe->position.x +=
-      INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
+      INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4]);
   {
     s32 offsetZ =
-        INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
+        INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1]);
 
     coordinate = probe->position.z;
     coordinate += offsetZ;
@@ -1555,21 +1555,21 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_ICE_PILLARS) {
-    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 1);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 2);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 3);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_PILLAR + 4);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 1);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 2);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 3);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_PILLAR + 4);
   } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_FLOODGATE) {
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 3);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 4);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 5);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 6);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 7);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 2);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 3);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 4);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 5);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 6);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 7);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
         GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) != 0) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
@@ -1621,8 +1621,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     Actor_SetAnimation(ACTOR_SINKING_BOULDER, 2);
     Actor_SetSpriteColorById(ACTOR_SINKING_BOULDER, SPRITE_COLOR_GREY);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
-    Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
+    Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
 #if TBS_PATCH_1
     Actor_Get(ACTOR_FIRST_LOG)->motionFlags = 0;
     Actor_Get(ACTOR_FIRST_LOG + 1)->motionFlags = 0;

@@ -39,7 +39,7 @@
 
 /// One more than `i` as a signed halfword, the step taken in the high half of
 /// a word: the scenes step the halfword counters of their short searches so,
-/// as PushTarget_FillFootprint does.
+/// as PushTarget_FillRectangle does.
 #define NEXT_HALFWORD(i) ((s32)(((i) << 16) + (1 << 16)) >> 16)
 
 /// A scene's data that its overlay places after pictures linked between its

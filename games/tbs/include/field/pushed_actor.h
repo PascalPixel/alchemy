@@ -2,7 +2,7 @@
 #define ALCHEMY_PUSHED_ACTOR_H
 
 /// @file
-/// The pushed actors' movement probes and footprint bounds.
+/// The pushed actors' movement probes and rectangles.
 
 #include "static_assert.h"
 #include "types.h"
@@ -21,24 +21,24 @@
 /// A DIRECTION_STEP's Z as a 16.16 offset: its lower halfword, shifted up.
 #define DIRECTION_STEP_Z_FIXED(step) INTtoFIXED(step)
 
-/// Where a pushed actor ahead of the leader would roll to: its footprint, its
+/// Where a pushed actor ahead of the leader would roll to: its rectangle, its
 /// actor, that position, and a routine run during the leader's
 /// follow-through.
 struct PushedActorProbe {
-  /// The large thing's row in gPushedActor_FootprintKinds and
-  /// gPushedActor_FootprintBounds, 0 to 5.
-  s32 footprintIndex;
+  /// The large thing's row in gPushedActor_RectangleKinds and
+  /// gPushedActor_Rectangles, 0 to 5.
+  s32 rectangleIndex;
   s32 actorSlot; ///< the large thing's actor id, 8 to 65
-  /// 16.16 pixels while moving; converted to cells by footprint redraws.
+  /// 16.16 pixels while moving; converted to cells by rectangle redraws.
   struct FieldPosition position;
   /// Run as the leader follows the rolling thing, when not null; the probe
   /// clears it.
   void (*callback)(void);
 };
 
-/// A footprint's bounds, as gPushedActor_FootprintBounds holds four words
-/// a footprint; no code names this struct.
-struct PushedActorFootprint {
+/// A rectangle's edges, as gPushedActor_Rectangles holds four words
+/// a rectangle; no code names this struct.
+struct PushedActorRectangle {
   s32 x0; ///< left edge, pixels from the thing's position
   s32 z0; ///< top edge, pixels from the thing's position
   s32 x1; ///< right edge, pixels from the thing's position
@@ -49,6 +49,6 @@ STATIC_ASSERT(sizeof(struct PushedActorProbe) == 24);
 STATIC_ASSERT(offsetof(struct PushedActorProbe, position.x) == 8);
 STATIC_ASSERT(offsetof(struct PushedActorProbe, position.z) == 16);
 
-STATIC_ASSERT(sizeof(struct PushedActorFootprint) == 16);
+STATIC_ASSERT(sizeof(struct PushedActorRectangle) == 16);
 
 #endif

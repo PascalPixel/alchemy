@@ -2397,9 +2397,9 @@ s32 Scene_Initialize(void) {
       SetEffectRecordMode(Actor_Get(ACTOR_FIRST_PIPE), 1);
       SetEffectRecordMode(Actor_Get(ACTOR_SECOND_PIPE), 1);
       SetEffectRecordMode(Actor_Get(ACTOR_THIRD_PIPE), 1);
-      Scene_RedrawActorFootprint(ACTOR_FIRST_PIPE);
-      Scene_RedrawActorFootprint(ACTOR_SECOND_PIPE);
-      Scene_RedrawActorFootprint(ACTOR_THIRD_PIPE);
+      Scene_RedrawActorRectangle(ACTOR_FIRST_PIPE);
+      Scene_RedrawActorRectangle(ACTOR_SECOND_PIPE);
+      Scene_RedrawActorRectangle(ACTOR_THIRD_PIPE);
       SetEffectRecordMode(Actor_Get(ACTOR_PIPE_END), 1);
       // The cells MercuryLighthouse_PushChannelPipes copies as it sets the
       // flag, redrawn on arrival.
@@ -2610,8 +2610,8 @@ s32 Scene_Initialize(void) {
       SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END), 1);
       SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END + 1), 1);
       SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END + 2), 1);
-      Scene_RedrawActorFootprint(ACTOR_WEST_EAST_PIPE);
-      Scene_RedrawActorFootprint(ACTOR_JET_SWITCH_PIPE);
+      Scene_RedrawActorRectangle(ACTOR_WEST_EAST_PIPE);
+      Scene_RedrawActorRectangle(ACTOR_JET_SWITCH_PIPE);
       if (gMainRoutineWork.entrance != MERCURY_LIGHTHOUSE_UPPER_JETS_FROM_GATE)
         break;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {

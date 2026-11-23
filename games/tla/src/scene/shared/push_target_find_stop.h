@@ -6,13 +6,13 @@ static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
 }
 
 /// Finds where the actor ahead stops when pushed: a cell at a time, the
-/// whole of its footprint (gPushFootprints) until a wall blocks it; 1 when it
+/// whole of its rectangle (gPushRectangles) until a wall blocks it; 1 when it
 /// moves at all.
 s32 PushTarget_FindStop(struct PushTarget *target) {
   struct Actor *actor;
   s32 direction;
   FIXED position[3];
-  s32 footprint;
+  s32 rectangle;
   s32 width;
   s32 height;
   s32 dx;
@@ -22,14 +22,14 @@ s32 PushTarget_FindStop(struct PushTarget *target) {
   s32 col;
   u8 *layer;
 
-  actor = PushTarget_FindAhead(&direction, &target->id, &target->footprint);
+  actor = PushTarget_FindAhead(&direction, &target->id, &target->rectangle);
   if (actor != 0) {
-    footprint = target->footprint;
-    width = (ABS(gPushFootprints[footprint][0]) +
-             ABS(gPushFootprints[footprint][2])) >>
+    rectangle = target->rectangle;
+    width = (ABS(gPushRectangles[rectangle][0]) +
+             ABS(gPushRectangles[rectangle][2])) >>
             4;
-    height = (ABS(gPushFootprints[footprint][1]) +
-              ABS(gPushFootprints[footprint][3])) >>
+    height = (ABS(gPushRectangles[rectangle][1]) +
+              ABS(gPushRectangles[rectangle][3])) >>
              4;
     // A push step holds x pixels in its high half and z in its low.
     dx = gPushLeaderSteps[direction] & FIELD_PIXEL_MASK;
@@ -42,9 +42,9 @@ s32 PushTarget_FindStop(struct PushTarget *target) {
     target->z = actor->z.fixed + dz;
     position[1] = actor->y.fixed;
     for (;;) {
-      position[2] = target->z + INTtoFIXED(gPushFootprints[footprint][1]);
+      position[2] = target->z + INTtoFIXED(gPushRectangles[rectangle][1]);
       for (row = 0; row < height; row++) {
-        position[0] = target->x + INTtoFIXED(gPushFootprints[footprint][0]);
+        position[0] = target->x + INTtoFIXED(gPushRectangles[rectangle][0]);
         for (col = 0; col < width; col++) {
           if (FieldActor_CheckMovementCollision(actor, position) ==
               COLLISION_IMPASSABLE)

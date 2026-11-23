@@ -123,7 +123,7 @@ struct PushTarget {
   FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-  s32 footprint; ///< index into the footprint table
+  s32 rectangle; ///< index into the rectangle table
   s32 id;
   void *callback;
 };
@@ -183,7 +183,7 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-s32 PushTarget_FillFootprint(s32 id);
+s32 PushTarget_FillRectangle(s32 id);
 
 /// Sets up the rooms as the party enters: the archer statue at three quarters
 /// size, the five columns blocking their cells, the cracked tiles, and the
@@ -202,11 +202,11 @@ s32 Scene_Initialize(void) {
   Actor_DisableById(ACTOR_FIRST_COLUMN + 2);
   Actor_DisableById(ACTOR_FIRST_COLUMN + 3);
   Actor_DisableById(ACTOR_FIRST_COLUMN + 4);
-  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN);
-  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN + 1);
-  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN + 2);
-  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN + 3);
-  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN + 4);
+  PushTarget_FillRectangle(ACTOR_FIRST_COLUMN);
+  PushTarget_FillRectangle(ACTOR_FIRST_COLUMN + 1);
+  PushTarget_FillRectangle(ACTOR_FIRST_COLUMN + 2);
+  PushTarget_FillRectangle(ACTOR_FIRST_COLUMN + 3);
+  PushTarget_FillRectangle(ACTOR_FIRST_COLUMN + 4);
   CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
                    FLAG_AREA_TEMP_80, 0, 1);
   if (gMainRoutineWork.entrance == THROUGH_CRACKED_TILE)
@@ -284,9 +284,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern s8 gPushFootprints[][4];
+extern s8 gPushRectangles[][4];
 
-#include "shared/push_target_fill_footprint.h"
+#include "shared/push_target_fill_rectangle.h"
 
 #include "../field/map_cell_fill.c"
 

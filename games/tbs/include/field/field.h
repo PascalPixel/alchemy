@@ -133,9 +133,9 @@ extern const u16 gHeatGauge_Palette[16];
 extern u8 Render_DecodePicture[];
 /// The statue scene's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
-/// The six large things' sprite animations, which pick their footprints in
-/// gPushedActor_FootprintBounds; each scene with them defines its own.
-extern u32 gPushedActor_FootprintKinds[];
+/// The six large things' sprite animations, which pick their rectangles in
+/// gPushedActor_Rectangles; each scene with them defines its own.
+extern u32 gPushedActor_RectangleKinds[];
 /// The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP.
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (picture_decode.s).

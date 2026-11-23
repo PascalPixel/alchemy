@@ -196,13 +196,13 @@ struct Actor;
 struct EffectSprite;
 struct Vector3;
 
-/// A push: where the pushed actor ends up, which footprint it has and which
+/// A push: where the pushed actor ends up, which rectangle it has and which
 /// actor it is.
 struct PushTarget {
   FIXED x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-  s32 footprint; ///< index into the footprint table
+  s32 rectangle; ///< index into the rectangle table
   s32 id;
   void *callback;
 };
@@ -864,7 +864,7 @@ s32 Scene_Initialize(void) {
   }
   EasternAlhafra_PlaceClearedDebris();
   if (Event_GetFlag(FLAG_LOG_ROLLED) == 0)
-    PushTarget_FillFootprint(ACTOR_LOG);
+    PushTarget_FillRectangle(ACTOR_LOG);
   Rope_Initialize();
   Rope_Place(0, FLAG_EASTERN_ALHAFRA_ROPE_LASHED, ACTOR_ROPE_POST,
              ACTOR_SECOND_ROPE_POST);
@@ -2486,9 +2486,9 @@ void EasternAlhafra_StartFallingRocks(void) {
 
 #include "shared/rock_end_falling.h"
 
-extern s8 gPushFootprints[][4];
+extern s8 gPushRectangles[][4];
 
-#include "shared/push_target_fill_footprint.h"
+#include "shared/push_target_fill_rectangle.h"
 
 #include "../field/map_cell_fill.c"
 

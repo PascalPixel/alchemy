@@ -819,7 +819,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:
-      // Each log already pushed leaves open floor; else its footprint
+      // Each log already pushed leaves open floor; else its rectangle
       // blocks its cells again.
       if (GameFlag_Get(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE) != 0) {
         PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4,
@@ -827,7 +827,7 @@ static void ValeCave_ApplyEntryState(void) {
         PushedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4,
                                                CELL_BEHAVIOR_NORMAL);
       } else {
-        Scene_RedrawActorFootprint(ACTOR_WEST_LOG);
+        Scene_RedrawActorRectangle(ACTOR_WEST_LOG);
       }
       if (GameFlag_Get(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE) != 0) {
         PushedActor_FillGridAttributeRectangle(2, 16, 16, 1, 4,
@@ -835,7 +835,7 @@ static void ValeCave_ApplyEntryState(void) {
         PushedActor_FillGridAttributeRectangle(0, 16, 16, 1, 4,
                                                CELL_BEHAVIOR_NORMAL);
       } else {
-        Scene_RedrawActorFootprint(ACTOR_EAST_LOG);
+        Scene_RedrawActorRectangle(ACTOR_EAST_LOG);
       }
       southLogOnSouthernRow =
           GameFlag_Get(FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW);
@@ -848,7 +848,7 @@ static void ValeCave_ApplyEntryState(void) {
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
-        Scene_RedrawActorFootprint(ACTOR_SOUTH_LOG);
+        Scene_RedrawActorRectangle(ACTOR_SOUTH_LOG);
         Actor_SetSpritePriority(ACTOR_SOUTH_LOG, 3);
       }
       break;

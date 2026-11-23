@@ -192,7 +192,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// On entry a log already in the river floats there again and the logs mark the
 /// cells they cover.
 s32 Scene_Initialize(void) {
-  Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
+  Scene_RedrawActorRectangle(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
     Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
@@ -200,8 +200,8 @@ s32 Scene_Initialize(void) {
                                            CELL_BEHAVIOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
   }
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG);
+  Scene_RedrawActorRectangle(ACTOR_FIRST_LOG + 1);
   if (gMainRoutineWork.entrance == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();

@@ -10,9 +10,9 @@ u16 gPushKinds[PUSH_KINDS] = {
     SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 };
 
-/// Each kind's footprint: its corners from the actor, x and z in pixels
-/// (PushTarget_FillFootprint).
-s8 gPushFootprints[][4] = {
+/// Each kind's rectangle: its corners from the actor, x and z in pixels
+/// (PushTarget_FillRectangle).
+s8 gPushRectangles[][4] = {
     {-32, -8, 32, 8}, {-8, -32, 8, 32}, {-32, -16, 32, 0},
     {-8, -32, 8, 32}, {-32, -8, 32, 8}, {-8, -32, 8, 32},
 };

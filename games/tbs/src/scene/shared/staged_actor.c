@@ -13,14 +13,14 @@
 // things that roll until they meet something, redrawn into the map grid where
 // they stop.
 //
-// A large thing is one of six footprints, by its sprite's animation
-// (gPushedActor_FootprintKinds): its bounds in
-// gPushedActor_FootprintBounds are four words a footprint, the left, top,
+// A large thing is one of six rectangles, by its sprite's animation
+// (gPushedActor_RectangleKinds): its bounds in
+// gPushedActor_Rectangles are four words a rectangle, the left, top,
 // right and bottom edges in pixels from its position.
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 extern s32 gPushedActor_DirectionSteps[];
-extern s32 gPushedActor_FootprintBounds[];
+extern s32 gPushedActor_Rectangles[];
 
 #include "actor_distance.c"
 
@@ -131,7 +131,7 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
   if (target != NULL) {
     u32 i = 0;
     s32 kind = target->sprite->entries[0]->animationId;
-    s32 *kinds = gPushedActor_FootprintKinds;
+    s32 *kinds = gPushedActor_RectangleKinds;
 
     do {
       if (kind == *kinds++) {
@@ -156,11 +156,11 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
 #endif
 }
 
-/// Returns the large thing whose footprint covers the cell ahead of the leader
+/// Returns the large thing whose rectangle covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
-/// leader's direction, its actor id and its footprint; or NULL.
+/// leader's direction, its actor id and its rectangle; or NULL.
 static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
-                                           s32 *footprint) {
+                                           s32 *rectangle) {
   struct FieldWork *work = gFieldWork;
   struct Actor *player = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Actor **list;
@@ -178,27 +178,26 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
       continue;
 #endif
     for (j = 0, kind = actor->sprite->entries[0]->animationId; j < 6; j++) {
-      if (kind == gPushedActor_FootprintKinds[j]) {
+      if (kind == gPushedActor_RectangleKinds[j]) {
         s32 x, z, left, top, right, bottom;
-        *footprint = j;
+        *rectangle = j;
         x = ((FIXEDtoINT(player->x.fixed)) +
              (FIXEDtoINT(gPushedActor_DirectionSteps[*direction]))) >>
             4;
         z = ((FIXEDtoINT(player->z.fixed)) +
              (s16)gPushedActor_DirectionSteps[*direction]) >>
             4;
-        left = (actor->x.part[0].integer +
-                gPushedActor_FootprintBounds[j * 4 + 0]) >>
-               4;
-        top = (actor->z.part[0].integer +
-               gPushedActor_FootprintBounds[j * 4 + 1]) >>
+        left =
+            (actor->x.part[0].integer + gPushedActor_Rectangles[j * 4 + 0]) >>
+            4;
+        top = (actor->z.part[0].integer + gPushedActor_Rectangles[j * 4 + 1]) >>
               4;
-        right = (actor->x.part[0].integer +
-                 gPushedActor_FootprintBounds[j * 4 + 2]) >>
-                4;
-        bottom = (actor->z.part[0].integer +
-                  gPushedActor_FootprintBounds[j * 4 + 3]) >>
-                 4;
+        right =
+            (actor->x.part[0].integer + gPushedActor_Rectangles[j * 4 + 2]) >>
+            4;
+        bottom =
+            (actor->z.part[0].integer + gPushedActor_Rectangles[j * 4 + 3]) >>
+            4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
             if (left != FIELD_CELL(player->x.fixed)) {
@@ -217,9 +216,9 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
 }
 
 /// Finds where the large thing ahead of the leader would roll to: step its
-/// footprint on, a cell at a time the way the leader faces, until a cell of it
+/// rectangle on, a cell at a time the way the leader faces, until a cell of it
 /// meets something (a collision result of 2). Fills probe with the thing, its
-/// footprint and that position; returns 0 when there is no thing or it cannot
+/// rectangle and that position; returns 0 when there is no thing or it cannot
 /// move.
 UNUSED static s32
 PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
@@ -235,31 +234,31 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
 
   probe->callback = 0;
   actor = Scene_FindActorRegion(&direction, &probe->actorSlot,
-                                &probe->footprintIndex);
+                                &probe->rectangleIndex);
   if (actor == NULL) {
     return 0;
   }
   mode = &actor->layer;
   *mode = 2;
   {
-    s32 footprint = probe->footprintIndex;
+    s32 rectangle = probe->rectangleIndex;
 
     steps = 0;
-    offset = footprint * 4;
-    nearEdge = gPushedActor_FootprintBounds[offset + 1];
+    offset = rectangle * 4;
+    nearEdge = gPushedActor_Rectangles[offset + 1];
     if (nearEdge < 0) {
       nearEdge = -nearEdge;
     }
-    farEdge = gPushedActor_FootprintBounds[offset + 3];
+    farEdge = gPushedActor_Rectangles[offset + 3];
     if (farEdge < 0) {
       farEdge = -farEdge;
     }
     height = (nearEdge + farEdge) >> 4;
-    nearEdge = gPushedActor_FootprintBounds[offset];
+    nearEdge = gPushedActor_Rectangles[offset];
     if (nearEdge < 0) {
       nearEdge = -nearEdge;
     }
-    farEdge = gPushedActor_FootprintBounds[offset + 2];
+    farEdge = gPushedActor_Rectangles[offset + 2];
     if (farEdge < 0) {
       farEdge = -farEdge;
     }
@@ -278,11 +277,11 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   for (;;) {
     probe->position.z =
         position.z +
-        INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
+        INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4 + 1]);
     for (row = 0; row < height; row++) {
       probe->position.x =
           position.x +
-          INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
+          INTtoFIXED(gPushedActor_Rectangles[probe->rectangleIndex * 4]);
       for (column = 0; column < width; column++) {
         if (FieldActor_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
@@ -336,19 +335,19 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   direction = FACING_INDEX(Actor_GetById(ACTOR_PARTY_LEADER)->facing);
   actor = Actor_GetById(probe.actorSlot);
   {
-    s32 extentA = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1];
+    s32 extentA = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1];
     s32 extentB;
 
     if (extentA < 0)
       extentA = -extentA;
-    extentB = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 3];
+    extentB = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 3];
     if (extentB < 0)
       extentB = -extentB;
     verticalExtent = (extentA + extentB) >> 4;
-    extentA = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 0];
+    extentA = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 0];
     if (extentA < 0)
       extentA = -extentA;
-    extentB = gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 2];
+    extentB = gPushedActor_Rectangles[probe.rectangleIndex * 4 + 2];
     if (extentB < 0)
       extentB = -extentB;
     horizontalExtent = (extentA + extentB) >> 4;
@@ -360,10 +359,10 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   originalPosition.z = actor->z.fixed;
   tilePosition.x =
       actor->x.fixed +
-      INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+      INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4]);
   tilePosition.z =
       actor->z.fixed +
-      INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+      INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1]);
   tilePosition.x = FIELD_CELL(tilePosition.x);
   tilePosition.z = FIELD_CELL(tilePosition.z);
 
@@ -429,9 +428,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
     {
       probe.position.x +=
-          INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
-      probe.position.z += INTtoFIXED(
-          gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4]);
+      probe.position.z +=
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1]);
       probe.position.x = FIELD_CELL(probe.position.x);
       probe.position.z = FIELD_CELL(probe.position.z);
     }
@@ -450,9 +449,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
     {
       originalPosition.x +=
-          INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
-      originalPosition.z += INTtoFIXED(
-          gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4]);
+      originalPosition.z +=
+          INTtoFIXED(gPushedActor_Rectangles[probe.rectangleIndex * 4 + 1]);
       originalPosition.x = FIELD_CELL(originalPosition.x);
       originalPosition.z = FIELD_CELL(originalPosition.z);
     }
@@ -472,7 +471,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 /// Blocks large thing id's cells (CELL_BEHAVIOR_WALL) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
-UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
+UNUSED static s32 Scene_RedrawActorRectangle(s32 id) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct Actor *actor = Actor_GetById(id);
   struct PushedActorProbe probe;
@@ -488,35 +487,35 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
 
   for (idx = 0; idx <= 5; idx++) {
     if (actor->sprite->entries[0]->animationId ==
-        gPushedActor_FootprintKinds[idx]) {
-      probe.footprintIndex = idx;
+        gPushedActor_RectangleKinds[idx]) {
+      probe.rectangleIndex = idx;
       break;
     }
-    probe.footprintIndex = 7;
+    probe.rectangleIndex = 7;
   }
 
-  if (probe.footprintIndex < 0 || probe.footprintIndex > 6)
+  if (probe.rectangleIndex < 0 || probe.rectangleIndex > 6)
     return 0;
   probe.position.x = actor->x.fixed;
   probe.position.y = actor->y.fixed;
   probe.position.z = actor->z.fixed;
-  offset = probe.footprintIndex * 4;
-  z0 = gPushedActor_FootprintBounds[offset + 1];
+  offset = probe.rectangleIndex * 4;
+  z0 = gPushedActor_Rectangles[offset + 1];
   if (z0 < 0)
     z0 = -z0;
-  z1 = gPushedActor_FootprintBounds[offset + 3];
+  z1 = gPushedActor_Rectangles[offset + 3];
   if (z1 < 0)
     z1 = -z1;
   height = (z0 + z1) >> 4;
-  x0 = gPushedActor_FootprintBounds[offset];
+  x0 = gPushedActor_Rectangles[offset];
   if (x0 < 0)
     x0 = -x0;
-  x1 = gPushedActor_FootprintBounds[offset + 2];
+  x1 = gPushedActor_Rectangles[offset + 2];
   if (x1 < 0)
     x1 = -x1;
   width = (x0 + x1) >> 4;
-  probe.position.x += INTtoFIXED(gPushedActor_FootprintBounds[offset]);
-  probe.position.z += INTtoFIXED(gPushedActor_FootprintBounds[offset + 1]);
+  probe.position.x += INTtoFIXED(gPushedActor_Rectangles[offset]);
+  probe.position.z += INTtoFIXED(gPushedActor_Rectangles[offset + 1]);
   probe.position.x = FIELD_CELL(probe.position.x);
   probe.position.z = FIELD_CELL(probe.position.z);
   idx = FIELD_CELL(grid->layers[1].offsetX);

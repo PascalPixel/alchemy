@@ -7,8 +7,6 @@
 #include "sounds.h"
 
 #include "gamepak/far_call/battle.h"
-#include "system/system.h"
-#include "resource_ids.h"
 
 #define LIQUIFIER_FRAMES 111
 /// The work's particles: the sparks, then the beams.
@@ -79,7 +77,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       for (i = 0, beam = &work->particles[LIQUIFIER_FIRST_BEAM];
            i != LIQUIFIER_BEAMS; i++, beam++) {
         SET_POSITION(beam, INTtoFIXED(to.x + (Random16() & 127) - 64),
-                     INTtoFIXED(to.y), (Random16() & 0x1fff) + toFIXED(7) / 16);
+                     INTtoFIXED(to.y), (Random16() & 8191) + toFIXED(7) / 16);
       }
     }
     if (frame == 0) {
@@ -103,7 +101,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
           u32 angle = Random16() % (DEGtoANG(135) - 1) + TRIG_TURN * 5 / 16;
-          s32 speed = (Random16() & 0x1ff) + 512;
+          s32 speed = (Random16() & 511) + 512;
 
           step->velocityX = (Trig_Sin(angle) * speed) >> LIQUIFIER_BURST_SHIFT;
           step->velocityY =
@@ -152,8 +150,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         struct Particle *step = work->particles;
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
-          s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
-          s32 speed = (Random16() & 0x1ff) + 512;
+          s32 angle = (Random16() & (DEGtoANG(180) - 1)) - DEGtoANG(90);
+          s32 speed = (Random16() & 511) + 512;
           s32 y;
 
           step->velocityX =
@@ -228,7 +226,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           Matrix_Scale(FIXED_ONE / 3,
                        Trig_Sin(age * (TRIG_TURN / 32)) *
                            gLiquifier_SplashHeights[i] / 64 * 2,
-                       DEGtoANG(180));
+                       FIXED_ONE / 2);
           Render_TransformVertices(gLiquifier_SplashCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -380,7 +378,7 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
 }
 
 /// The ball: the work's last particle.
-#define CANVAS_BURST_BALL (&work->particles[63])
+#define CANVAS_BURST_BALL (&work->particles[ARRAY_COUNT(work->particles) - 1])
 
 /// Draws a disc of the given size from the discs in the map cell buffer as its
 /// four quarters about (x, y), the same quarter mirrored each way.
@@ -412,7 +410,7 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define CANVAS_BURST_FLASH_BURST_PICTURES 2048
-/// The work's particles: mode 0's rays, then at the hit the flames, and the
+/// The work's particles: Shred's rays, then at the hit the flames, and the
 /// sparks after them.
 #define CANVAS_BURST_RAYS 16
 #define CANVAS_BURST_FLAMES 16

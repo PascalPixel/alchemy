@@ -15,6 +15,9 @@
 #define HELM_SPLITTER_SPARK_SLOTS 64 ///< spark slots moved and drawn
 /// The side of each of PinkStarSheet's six square stars.
 #define HELM_SPLITTER_STAR_SIZE 16
+#define HELM_SPLITTER_STARS 6
+/// FireSwirlSheet's pictures, the swirl growing; the last one holds.
+#define HELM_SPLITTER_SWIRL_PICTURES 7
 
 /// The user leaps at the first target and strikes through a fire swirl; the
 /// target reels and sparks scatter, bouncing off the ground: stars for Helm
@@ -91,8 +94,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (frame >= 8 && frame <= 23) {
         s32 picture = (frame - 8) / 2;
 
-        if (picture > 6)
-          picture = 6;
+        if (picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
+          picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
         if (args->side == EFFECT_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
                   gHelmSplitter_PictureBiasX[picture] + 30,
@@ -113,8 +116,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (frame >= 8 && frame <= 23) {
         s32 picture = (frame - 8) / 2;
 
-        if (picture > 6)
-          picture = 6;
+        if (picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
+          picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
         if (args->side == EFFECT_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
                   position.x / 2 + gHelmSplitter_PictureBiasX[picture] - 16,
@@ -173,8 +176,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           if (args->variant == EFFECT_VARIANT_BASIC)
             draw[0](canvas,
                     work->sheet + HELM_SPLITTER_SPARK_PICTURES +
-                        ((frame + i) / 4 % 6) * HELM_SPLITTER_STAR_SIZE *
-                            HELM_SPLITTER_STAR_SIZE,
+                        ((frame + i) / 4 % HELM_SPLITTER_STARS) *
+                            HELM_SPLITTER_STAR_SIZE * HELM_SPLITTER_STAR_SIZE,
                     sx - HELM_SPLITTER_STAR_SIZE / 2,
                     sy - HELM_SPLITTER_STAR_SIZE / 2, HELM_SPLITTER_STAR_SIZE,
                     HELM_SPLITTER_STAR_SIZE);
@@ -203,3 +206,5 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 #undef HELM_SPLITTER_SPARKS
 #undef HELM_SPLITTER_SPARK_SLOTS
 #undef HELM_SPLITTER_STAR_SIZE
+#undef HELM_SPLITTER_STARS
+#undef HELM_SPLITTER_SWIRL_PICTURES

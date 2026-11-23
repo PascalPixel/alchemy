@@ -219,7 +219,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                                  work->sheet + MEGIDDO_DUST_BLOB, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      if (!args->side) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         x = toFIXED(160);
       } else {
         x = toFIXED(80);
@@ -248,7 +248,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       savedYaw = camera->yaw;
     }
     if ((u32)(frame - 16) <= 61) {
-      if (!args->side) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         camera->yaw -= TRIG_TURN / 256;
       } else {
         camera->yaw += TRIG_TURN / 256;
@@ -317,7 +317,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
     // The sun sweeps down across the sky.
     if ((u32)(frame - 84) <= 58) {
-      if (!args->side) {
+      if (args->side == EFFECT_SIDE_ENEMIES) {
         x -= toFIXED(2);
       } else {
         x += toFIXED(2);
@@ -464,7 +464,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       {
         s32 shade = -24;
 
-        model->flags = 3;
+        model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
         model->shade = shade;
       }
       model->scrollV = zero;
@@ -487,7 +487,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           model->scrollU = ~scroll & MEGIDDO_FLAME_SCROLL_MASK;
           Matrix_Initialize();
           Matrix_Translate(-toFIXED(2), -toFIXED(32), 0);
-          Matrix_Scale(82000, 217608, FIXED_ONE);
+          Matrix_Scale(toFIXED(1.25123), toFIXED(3.32044), FIXED_ONE);
           Matrix_ScaleUniform(scale);
           Matrix_RotateZ(DEGtoANG(180));
           scroll += MEGIDDO_FLAME_SCROLL_STEP;
@@ -626,7 +626,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Matrix_Initialize();
-        if (!args->side) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           Matrix_Translate(INTtoFIXED(pos.x / 2 + gMegiddo_RayX[i] - 64),
                            INTtoFIXED(gMegiddo_RayY[i] + pos.y - 54), 0);
         } else {
@@ -634,7 +634,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                            INTtoFIXED(gMegiddo_RayY[i] + pos.y - 54), 0);
         }
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-        if (!args->side) {
+        if (args->side == EFFECT_SIDE_ENEMIES) {
           Matrix_RotateZ(gMegiddo_RayRolls[i]);
         } else {
           Matrix_RotateZ(-gMegiddo_RayRolls[i]);
@@ -649,6 +649,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(verts);
 
+    // Waits until a VBlank has passed since the canvas was last copied.
     do {
       (void)work->vblanksSinceTransfer;
     } while (work->vblanksSinceTransfer <= 1);

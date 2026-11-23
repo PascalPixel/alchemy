@@ -208,6 +208,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         p->x = (Random16() & 15) + 72;
         p->velocityX = Random16() & TRIG_ANGLE_MASK;
+        // velocityY is drawn twice; the second draw is the one kept.
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
         p->velocityY = Random16() & TRIG_ANGLE_MASK;
       }
@@ -411,9 +412,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // The beams fall from the burst.
+    // The beams fall from the burst, 16 pixels a frame from 32 pixels down.
     if (frame >= JUDGMENT_BEAM_FRAME) {
-      s32 y = frame * 16 - 2272;
+      s32 y = frame * 16 - (JUDGMENT_BEAM_FRAME - 2) * 16;
       s32 flags;
 
       flags = EFFECT_CLIP_BOUNDS;

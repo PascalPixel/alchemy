@@ -298,9 +298,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
-      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0x7f) + 64) << 15,
-                   ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 127) + 64) << 15,
+                   ((Random16() & 255) - 127) << 15);
       spark->variant = 0;
     }
     if (mode == HEALING_MODE_BREATH)
@@ -317,9 +317,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->y = toFIXED(48);
       spark->x = 0;
       spark->z = 0;
-      spark->velocityX = ((Random16() & 0xff) - 127) << 8;
-      spark->velocityY = -((Random16() & 0x7f) + 64) << 9;
-      spark->velocityZ = ((Random16() & 0xff) - 127) << 8;
+      spark->velocityX = ((Random16() & 255) - 127) << 8;
+      spark->velocityY = -((Random16() & 127) + 64) << 9;
+      spark->velocityZ = ((Random16() & 255) - 127) << 8;
       spark->variant = 0;
     }
     frameCount = args->targetCount * 8 + 58;
@@ -328,9 +328,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
-      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0x7f) + 64) << 15,
-                   ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 127) + 64) << 15,
+                   ((Random16() & 255) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = args->targetCount * 8 + 58;
@@ -339,9 +339,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
-      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 255) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = args->targetCount * 8 + 58;
@@ -374,9 +374,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
-      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0xff) - 127) << 14,
-                   ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 255) - 127) << 14,
+                   ((Random16() & 255) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = args->targetCount * 8 + 58;
@@ -385,16 +385,16 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
-      SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0xff) - 127) << 15,
-                   ((Random16() & 0xff) - 127) << 15);
+      SET_POSITION(spark, ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 255) - 127) << 15,
+                   ((Random16() & 255) - 127) << 15);
       spark->variant = 0;
     }
     frameCount = args->targetCount * 8 + 58;
   }
 
-  // Motes a target: 32 for variant 0, 128 for variant 2, else 64; mode 8
-  // takes 128 and mode 12 16.
+  // Motes a target: half as many for the basic variant and twice for the
+  // strongest; Spring always takes twice and Eddy a quarter.
   motesPerTarget = HEALING_MOTES;
   if (args->variant == EFFECT_VARIANT_BASIC)
     motesPerTarget = HEALING_MOTES / 2;

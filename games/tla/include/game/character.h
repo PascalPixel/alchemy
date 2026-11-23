@@ -118,9 +118,11 @@ struct EnemyDefinition {
   u8 weakEffects[4]; ///< the ability effects the enemy is weak to
   u16 coins;         ///< coins won
   s16 item;          ///< the item it may leave, 0 for none
-  s16 itemChance;    ///< the chance of the item, 0 for none
-  u16 experience;    ///< experience won
-  u8 padding[2];     ///< padding
+  /// The chance of the item, as a power of two: 1 in 2 to the power n - 1 (1
+  /// always, 6 one in 32); 0 for none.
+  s16 itemChance;
+  u16 experience; ///< experience won
+  u8 padding[2];  ///< padding
 };
 
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 76);

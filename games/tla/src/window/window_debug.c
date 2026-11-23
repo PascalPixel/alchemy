@@ -98,9 +98,9 @@ UNUSED s32 DebugSoundTest_Run(void) {
       test.values[SOUND_TEST_PRESET] =
           (test.values[SOUND_TEST_PRESET] + SOUND_TEST_PRESETS) %
           SOUND_TEST_PRESETS;
-      WindowSprite_RedrawSavedRect((struct Window *)window);
+      WindowSprite_RedrawSavedRect(window);
       for (i = 0, y = 2; i < SOUND_TEST_ROWS - 1; i++, y += 2)
-        Window_DrawDividerLine((struct Window *)window, 0, y, 14, y);
+        Window_DrawDividerLine(window, 0, y, 14, y);
       for (i = 0, value = test.values; i < SOUND_TEST_ROWS; i++)
         Text_DrawNumberInWindow(*value++, 0, (s32)window, 72, i * 16);
       Text_DrawStringInWindow((u8 *)SoundTest_MusicString, (s32)window, 8, 0);
@@ -148,7 +148,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
       redraw = 1;
     }
   } while (1);
-  Window_Close((struct Window *)window, WINDOW_FLAG_INSTANT);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   DebugSoundTest_Release();
   wait(1);
   return 0;
@@ -192,9 +192,8 @@ struct Window *DebugMenu_Open(void) {
   Text_DrawMessage((s32)MsgFullPpAndMoney + 2, (s32)window, 8, 52);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 3, (s32)window, 8, 76);
   Text_DrawMessage((s32)MsgFullPpAndMoney + 4, (s32)window, 8, 100);
-  work->cursor.sprite =
-      WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                          OUTPUT_SIZE_16X16, (struct Window *)window, 0, 0);
+  work->cursor.sprite = WindowSprite_Create(
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -393,7 +392,7 @@ struct Window *DebugWarp_Open(void) {
     line++;
     if (i == 8)
       break;
-    Window_DrawDividerLine((struct Window *)window, 0, row, 29, row);
+    Window_DrawDividerLine(window, 0, row, 29, row);
     row += 2;
     i++;
   }
@@ -518,9 +517,8 @@ struct Window *DebugShortcut_Open(void) {
     DebugShortcut_DrawAbility(gDebugShortcut_Abilities[3][i], (s32)window, 176,
                               y);
   }
-  work->cursor.sprite =
-      WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                          OUTPUT_SIZE_16X16, (struct Window *)window, 0, 0);
+  work->cursor.sprite = WindowSprite_Create(
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -613,7 +611,7 @@ UNUSED s32 DebugShortcut_Run(void) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
-  Window_Close((struct Window *)window, WINDOW_FLAG_INSTANT);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   DebugShortcut_Release();
   wait(1);
   if (result != -1) {

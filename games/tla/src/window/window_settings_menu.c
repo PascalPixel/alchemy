@@ -230,10 +230,10 @@ struct Window *SettingsMenu_Open(void) {
   work = Ram_HeapSlots->settingsMenu;
   win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
                       WINDOW_FLAG_INSTANT);
-  Window_DrawDividerLine((struct Window *)win, 0, 2, OPTION_DIVIDER_END, 2);
-  Window_DrawDividerLine((struct Window *)win, 0, 4, OPTION_DIVIDER_END, 4);
-  Window_DrawDividerLine((struct Window *)win, 0, 7, OPTION_DIVIDER_END, 7);
-  Window_DrawDividerLine((struct Window *)win, 0, 10, OPTION_DIVIDER_END, 10);
+  Window_DrawDividerLine(win, 0, 2, OPTION_DIVIDER_END, 2);
+  Window_DrawDividerLine(win, 0, 4, OPTION_DIVIDER_END, 4);
+  Window_DrawDividerLine(win, 0, 7, OPTION_DIVIDER_END, 7);
+  Window_DrawDividerLine(win, 0, 10, OPTION_DIVIDER_END, 10);
   msg = (s32)&MsgWindowColorLabel;
   Text_DrawMessageAsTiles(msg, win, 8, 0);
   msg++;
@@ -457,16 +457,14 @@ s32 SettingsMenu_Run(void) {
       MenuCursor_SetFar(&work->marker[1].cursor, x, y, 1);
 
       x = work->option[SETTINGS_ROW_MESSAGE_SPEED] + (s32)MsgMessageSpeedSlow;
-      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
-                                40, FIRST_CHOICE_RIGHT, 48);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 40,
+                                FIRST_CHOICE_RIGHT, 48);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 40);
       x = work->option[SETTINGS_ROW_SPEECH] + (s32)MsgSpeechOff;
-      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
-                                64, CHOICE_RIGHT, 72);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 64, CHOICE_RIGHT, 72);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 64);
       x = work->option[SETTINGS_ROW_AUTO_SLEEP] + (s32)MsgAutoSleepOff;
-      Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
-                                88, CHOICE_RIGHT, 96);
+      Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 88, CHOICE_RIGHT, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
       // The windows show the edited colours at once.
       WindowColor_Apply(*windowColor, *brightness);
@@ -532,8 +530,8 @@ s32 SettingsMenu_Run(void) {
     }
   }
 
-  Window_Close((struct Window *)helpWindow, WINDOW_FLAG_INSTANT);
-  Window_Close((struct Window *)settingsWindow, WINDOW_FLAG_INSTANT);
+  Window_Close(helpWindow, WINDOW_FLAG_INSTANT);
+  Window_Close(settingsWindow, WINDOW_FLAG_INSTANT);
   if (result == 0) {
     // "In Sleep Mode, press Select and the L and R Buttons to return to the
     // game."
@@ -629,7 +627,7 @@ struct Window *PauseMenu_Open(void) {
   }
   win = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
-    Window_DrawDividerLine((struct Window *)win, 0, i * 3, 19, i * 3);
+    Window_DrawDividerLine(win, 0, i * 3, 19, i * 3);
   y = 4;
   if (settingsOnly == 0) {
     msg = (s32)MsgSaveYourQuest;
@@ -778,7 +776,7 @@ s32 PauseMenu_Choose(s32 initial) {
       }
     }
   }
-  Window_Close((struct Window *)window, WINDOW_FLAG_INSTANT);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   PauseMenu_Release();
   wait(1);
   if (result >= 0)

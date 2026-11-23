@@ -1578,7 +1578,8 @@ const s8 gLightSurge_PillarOffsets[4] = {-24, -8, 24, 48};
 const u8 gDjinniCharge_EntranceFlags[] = {2, 10, 0, 0};
 
 /// The debris's gravities.
-const s32 gDjinniCharge_DebrisGravity[4] = {-8192, -4096, -2048, -1024};
+const s32 gDjinniCharge_DebrisGravity[4] = {-toFIXED(1) / 8, -toFIXED(1) / 16,
+                                            -toFIXED(1) / 32, -toFIXED(1) / 64};
 
 /// How far along its path the streak's head is at each step, in sixteenths.
 const s8 gGaspFamily_StreakSteps[] = {0, 0, 1, 2, 4, 6, 9, 12, 16, 0, 0, 0};
@@ -1880,7 +1881,8 @@ const u16 gFume_Levels[][FUME_COLUMNS] = {{16384, 16, 24, 96, 8, 4096},
                                           {40768, 32, 38, 256, 32, 16384}};
 
 /// The early drops' gravities.
-const s32 gOceanFist_DropGravity[4] = {-8192, -16384, -16384, -32768};
+const s32 gOceanFist_DropGravity[4] = {-toFIXED(1) / 8, -toFIXED(1) / 4,
+                                       -toFIXED(1) / 4, -toFIXED(1) / 2};
 
 /// The streak's scale, 16.16, by mode.
 const s32 gRushingStrike_Scales[] = {toFIXED(0.5), toFIXED(0.5), toFIXED(0.5),
@@ -1959,10 +1961,11 @@ const u16 gLifeShear_OrangeBladeMesh[] = {
 const struct ModelVertex gLifeShear_BladeCorners[] = {
     {-81, -16, 0}, {47, -16, 0}, {-81, 16, 0}, {47, 16, 0}};
 
-/// By mode: the drops' gravity, and their smallest picture.
-const s32 gGeyser_DropGravity[] = {-16384, -32768, -32768};
+/// The drops' gravity, by mode (enum GeyserMode).
+const s32 gGeyser_DropGravity[] = {-toFIXED(1) / 4, -toFIXED(1) / 2,
+                                   -toFIXED(1) / 2};
 
-/// Each drop's smallest size.
+/// The drops' smallest picture size, by mode.
 const s8 gGeyser_DropMinSizes[] = {1, 4, 5};
 
 /// The fifteen pictures of a glowing oval, from 16 by 32 down to 3 by 4: their

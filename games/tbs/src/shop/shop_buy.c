@@ -4,11 +4,9 @@
 
 #include "shop_internal.h"
 
-#define SHOP_STACK_LIMIT 30 ///< maximum quantity accepted by Inventory_AddItem
-
 /// Runs the Buy and Artifacts counters: the player browses the stock seven
 /// items a page, picks one, chooses who gets it and how many, and pays. Checks
-/// room in the bag and coins first, and warns when the party member cannot
+/// room in the pack and coins first, and warns when the party member cannot
 /// equip it. An artifact bought takes its stock counter down, and the list is
 /// rebuilt. Repeats until B.
 s32 Shop_SelectBuy(void) {
@@ -43,7 +41,6 @@ s32 Shop_SelectBuy(void) {
       Window_CreateFar(0, 8, SHOP_PRICE_WIDTH, 4, WINDOW_FLAG_INSTANT);
 
 next_page:
-  // Browse stock first; recipient and quantity selection follow confirmation.
   selectionIndex = selected;
   stockWindow = Window_CreateFar(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
@@ -121,6 +118,7 @@ next_page:
     goto close;
 
   shop->selectedItem = shop->stockItemIds[selected];
+  // "Which one of you gets this?"
   Shop_ShowKeeperMessage(MsgWhoGetsThis);
   selectedDefinition = Item_GetDirectFar(shop->selectedItem);
   quantity = 1;
@@ -162,20 +160,25 @@ next_page:
         MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
+          // "Your pack is full, (the member). Who will you give this to?"
           Shop_ShowKeeperMessage(MsgPackFull);
         else
+          // "You can't carry any more of this item, (the member), so who
+          // gets it?"
           Shop_ShowKeeperMessage(MsgCannotCarryItem);
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u32)selectedDefinition->price > gMainRoutineWork.holdings.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
+        // "Oh! That's a fine choice, but you don't have enough money."
         Shop_ShowKeeperMessageHidingCursor(MsgBuyNotEnoughMoney);
         selectionResult = -1;
         break;
       }
       if (Item_IsCompatibleWithUnitFar(unitId, shop->selectedItem) == 0) {
         MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        // "You can't equip this, (the member). Do you still want it?"
         Shop_ShowKeeperMessage(MsgCannotEquipStillWant);
         if (Shop_AskYesNo(0) != 0) {
           repromptRecipient = 1;
@@ -215,7 +218,8 @@ next_page:
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   wait(1);
-  // Artifact quantities are consumed only after the purchase completes.
+  // An artifact bought leaves the world's stock, one for each bought, and the
+  // list is made again without what is gone.
   if (selectionResult == 0 && shop->action == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
       Item_AdjustCounterFar(shop->selectedItem, -1);
@@ -224,6 +228,7 @@ next_page:
     if (selected > shop->stockCount - 1)
       selected = shop->stockCount - 1;
   }
+  // "Anything else?"
   Shop_ShowKeeperMessage(MsgBuyAnythingElse);
   goto next_page;
 
@@ -254,17 +259,18 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   stockIndex = selected - selected % SHOP_STOCK_PAGE_ITEMS;
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
+    // The arrows show the shop's own icons, which closing the window leaves.
     if (stockIndex != 0) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
                                     window, 216, -16);
-      icon->kind = 0;
+      icon->kind = WINDOW_SPRITE_GLYPH;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animationStep = 0;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 216, 24);
-      icon->kind = 0;
+      icon->kind = WINDOW_SPRITE_GLYPH;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animationStep = 0;
     }
@@ -276,8 +282,8 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
         item = Item_GetDirectFar(itemId);
-        icon = WindowSprite_CreateLoadedFar(itemId, ICON_BASE, window,
-                                            pageSlot * 32, 0);
+        icon = (u8 *)WindowSprite_CreateLoadedFar(itemId, ICON_BASE, window,
+                                                  pageSlot * 32, 0);
         icon->depth = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
@@ -309,7 +315,7 @@ void Shop_DrawMoney(void) {
     Text_DrawMessageAsTilesFar(msg, window, 0, 0);
     Text_DrawNumberInWindowFar(gMainRoutineWork.holdings.coins, 6, window, 0,
                                8);
-    Text_DrawMessageAsTilesFar(msg - 2, window, 48, 8);
+    Text_DrawMessageAsTilesFar(msg - 2, window, 48, 8); // MsgCoins
 #endif
   }
 }
@@ -330,7 +336,7 @@ cannot_buy:
 show_price:
   labelMessage = MsgPrice;
   Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_ITEM_NOTE_X, 8);
-  labelMessage -= 3;
+  labelMessage -= 3; // MsgCoins
   Text_DrawNumberInWindowFar(price, 5, window, SHOP_PRICE_NUMBER_X, 8);
   Text_DrawMessageAsTilesFar(labelMessage, window, SHOP_PRICE_LABEL_X, 8);
   return;
@@ -388,9 +394,9 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
 }
 
 /// Shows how Attack, Defense and Agility would change if the party member wore
-/// the item: equips it in place of what it would replace, recomputes, puts the
-/// slot back and recomputes again, then draws both values with an arrow and the
-/// name of the item it would replace.
+/// the item, with an arrow up or down beside each that changes and the name of
+/// the item it would replace. The item is tried on in that item's slot and the
+/// slot put back.
 void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);
@@ -430,8 +436,7 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   } else {
     replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
   }
-  // Borrow a live slot so Unit_Calculate includes every equipment effect;
-  // restore both the slot and the stats before returning to the counter.
+  // Luck is worked out with the rest but not shown.
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   Unit_CalculateFar(unitId);
@@ -445,15 +450,16 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
   baseStats[1] = unit->def;
   baseStats[2] = unit->agi;
   baseStats[3] = unit->luck;
+  // Attack, Defense and Agility, each with the shop's own arrow icon.
   for (index = 0; index <= 2; index++) {
     if (baseStats[index] > previewStats[index])
       WindowSprite_CreateFar(shop->statDownIcon, OUTPUT_SIZE_16X16, window, 56,
                              index * 16 - 4)
-          ->kind = 0;
+          ->kind = WINDOW_SPRITE_GLYPH;
     else if (baseStats[index] < previewStats[index])
       WindowSprite_CreateFar(shop->statUpIcon, OUTPUT_SIZE_16X16, window, 56,
                              index * 16 - 4)
-          ->kind = 0;
+          ->kind = WINDOW_SPRITE_GLYPH;
     Text_DrawNumberInWindowFar(baseStats[index], 3, window, 32, index * 16);
     if (baseStats[index] != previewStats[index])
       Text_DrawNumberInWindowFar(previewStats[index], 3, window, 72,
@@ -496,11 +502,11 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
             window, x, y);
         icon[offsetof(struct WindowSprite, depth)] = OAM_DEPTH_FRONT - 3;
         x += 16;
-        if (itemIndex == 4) {
+        if (itemIndex == SHOP_INVENTORY_COLUMNS - 1) {
           x = 8;
           y += 16;
         }
-        if (itemIndex == 9) {
+        if (itemIndex == SHOP_INVENTORY_COLUMNS * 2 - 1) {
           x = 8;
           y += 16;
         }
@@ -515,7 +521,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
 }
 
 /// Asks how many to buy when the item stacks, limited by what the coins buy,
-/// the artifact's stock and a stack of 30 less what the party member carries.
+/// the artifact's stock and a full stack less what the party member carries.
 /// Returns the count (1 for other items), or -1 when cancelled.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
@@ -532,6 +538,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   item = Item_GetDirectFar(itemId);
   selectedQuantity = 1;
   if (item->flags & ITEM_STACKABLE) {
+    // "How many do you want?"
     Shop_ShowKeeperMessage(MsgHowManyToBuy);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
@@ -540,7 +547,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
       carriedQuantity = 0;
     }
 
-    quantityLimit = SHOP_STACK_LIMIT;
+    quantityLimit = INVENTORY_STACK_MAX;
     if (item->price != 0)
       quantityLimit = (u32)gMainRoutineWork.holdings.coins / item->price;
 
@@ -554,8 +561,8 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
     }
 
     quantityLimit += carriedQuantity;
-    if (quantityLimit > SHOP_STACK_LIMIT)
-      quantityLimit = SHOP_STACK_LIMIT;
+    if (quantityLimit > INVENTORY_STACK_MAX)
+      quantityLimit = INVENTORY_STACK_MAX;
 
     shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
     MenuCursor_Place(0, SHOP_QUANTITY_CURSOR_X, 48);
@@ -578,8 +585,9 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 #define SHOP_QUANTITY_COIN_LABEL_X 136
 #endif
 
-/// Chooses how many items to buy or sell, above minimum, the items already
-/// carried; returns -1 when cancelled.
+/// Lets the player choose how many to buy or sell on the quantity bar, from 1
+/// to `maximum` less the `minimum` already carried, with the coins they come
+/// to. Returns the number, or -1 for B.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct Window *window;
@@ -634,9 +642,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           quantityIndex = (quantityIndex + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, tileBuffer,
                   DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
-          // Paint capacity, available stock, selection and carried items in
-          // that order; each shorter prefix overwrites the previous colour.
-          QuantityBar_Fill(SHOP_STACK_LIMIT, QUANTITY_BAR_OUT_OF_REACH,
+          QuantityBar_Fill(INVENTORY_STACK_MAX, QUANTITY_BAR_OUT_OF_REACH,
                            tileBuffer);
           QuantityBar_Fill(minimum + maximum, QUANTITY_BAR_CHOOSABLE,
                            tileBuffer);
@@ -658,7 +664,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           Text_DrawMessageAsTilesFar(unitMessageBase, window, 80, 0);
           Text_DrawNumberInWindowFar(price * selectedQuantity, 6, window, 96,
                                      0);
-          Text_DrawMessageAsTilesFar(unitMessageBase - 1, window, 144, 0);
+          Text_DrawMessageAsTilesFar(unitMessageBase - 1, window, 144,
+                                     0); // MsgCoins
 #endif
         }
         wait(1);
@@ -682,8 +689,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   item = Item_GetDirectFar(itemId);
   lastAddedSlot = 0;
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
-  // Keep each inventory addition, coin debit and shop-credit increment in
-  // order.
+  // Each one is paid for on its own, and its price counts toward the next
+  // Game Ticket.
   Sound_PlayFar(SE_SHOP_PURCHASE);
   for (i = 0; i < quantity; i++) {
     lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -691,6 +698,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
     Party_AdjustShopCreditFar(item->price);
     Shop_DrawMoney();
   }
+  // "Then here you go!"
   Shop_ShowKeeperMessageHidingCursor(MsgHereYouGo);
   if (Shop_ConfirmEquip(unitId, lastAddedSlot) != 0) {
     Shop_SellOld(unitId, replacedSlot);
@@ -715,14 +723,15 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   if (replacedSlot != -1) {
-    struct ItemDefinition *oldInfo =
+    struct ItemDefinition *equippedItem =
         Item_GetDirectFar(unit->inventory[replacedSlot]);
 
-    if (oldInfo->flags & ITEM_CANNOT_UNEQUIP)
+    if (equippedItem->flags & ITEM_CANNOT_UNEQUIP)
       return 0;
   }
 
   MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+  // "Would you like to equip it now, (the member)?"
   Shop_ShowKeeperMessage(MsgEquipNowPrompt);
   if (Shop_AskYesNo(0) != 0)
     return 0;
@@ -735,12 +744,14 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (item->flags & ITEM_CURSED) {
     Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
+    // "You've been cursed!"
     Message_OpenWindowFar(MsgBecameCursed, 8, 4, MESSAGE_WINDOW_UNREAD);
     while (Message_AllTypedFar() == 0) {
       wait(1);
     }
   }
 
+  // "You look bolder already!"
   Shop_ShowKeeperMessageHidingCursor(MsgLookBolder);
   return 1;
 }
@@ -786,4 +797,3 @@ s32 Shop_SalePrice(s32 inventoryEntry) {
 
 #undef SHOP_QUANTITY_NUMBER_X
 #undef SHOP_QUANTITY_COIN_LABEL_X
-#undef SHOP_STACK_LIMIT

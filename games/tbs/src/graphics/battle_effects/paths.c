@@ -6,6 +6,7 @@
 #include "types.h"
 
 // clang-format off
+/// Atalanta's staged particles' path.
 const s8 BattleEffect_StagedParticlePath[][2] = {
     {0, -96},
     {0, 95},
@@ -221,6 +222,7 @@ const s8 BattleEffect_StagedParticlePath[][2] = {
     {8, 6},
 };
 
+/// Dragon Cloud's streams' path.
 const s8 BattleEffect_DualStreamPath[][2] = {
     {0, 17},
     {-1, -39},

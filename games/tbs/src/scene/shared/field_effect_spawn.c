@@ -38,6 +38,10 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   effect->spin = 0;
 }
 
+/// Defines `name`, which places a field effect at (x, y, z) moving at the
+/// velocity given, with its duration script, and applies the options that
+/// `flags` asks for; `create`, `set_mode` and `set_script` are the actor
+/// routines it reaches them through.
 #define EFFECT_SPAWN(name, create, set_mode, set_script)                       \
   void name(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,  \
             u32 flags, const struct EffectOptions *options) {                  \

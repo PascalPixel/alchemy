@@ -32,7 +32,7 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-extern struct SceneEntrance gTitleEntrances[];
+extern struct SceneEntrance gScreen_Entrances[];
 extern u32 gTitleExits[];
 extern struct ActorPlacement gTitleActorPlacements[];
 extern struct Trigger gTitleTriggers[];
@@ -43,7 +43,9 @@ static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which FieldSequence_Run reads through
 /// entry/title.s.
-const struct SceneEntrance *Scene_GetEntrances(void) { return gTitleEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gScreen_Entrances;
+}
 
 /// The exit regions entry, which is empty because the title has no exit
 /// boxes.
@@ -344,10 +346,7 @@ static void Title_LoadBackground(void) {
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
-struct SceneEntrance gTitleEntrances[] = {
-    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/screen_entrances.c"
 
 u32 gTitleExits[] = {
     SCENE_EXITS_END,

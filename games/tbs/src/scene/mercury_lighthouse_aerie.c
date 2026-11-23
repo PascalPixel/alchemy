@@ -118,7 +118,7 @@ extern u32 gMercuryLighthouseAerieExits[];
 extern struct ActorPlacement gMercuryLighthouseAerieActorPlacements[];
 extern struct Trigger gMercuryLighthouseAerieTriggers[];
 extern s32 gMercuryLighthouseAerie_LandedPlatform;
-extern s32 gMercuryLighthouseAerie_SparkScript[];
+extern s32 gBeacon_SparkScript[];
 
 /// The aerie's actors.
 ///
@@ -1922,7 +1922,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
     return;
   }
   sprite = spark->sprite;
-  Actor_StartScript(spark, gMercuryLighthouseAerie_SparkScript);
+  Actor_StartScript(spark, gBeacon_SparkScript);
   Actor_SetSpriteColor(spark, SPRITE_COLOR_BGR);
   spark->motionFlags = cycleFrame;
   angle = Random_Next() & 0x0ffff000;
@@ -2036,10 +2036,4 @@ struct Trigger gMercuryLighthouseAerieTriggers[] = {
 
 s32 gMercuryLighthouseAerie_LandedPlatform = 0;
 
-s32 gMercuryLighthouseAerie_SparkScript[] = {
-    SC_SET(SW_SCALE_Y, 7 * FIXED_ONE / 5),
-    SC_SET(SW_SCALE_X, 7 * FIXED_ONE / 5),
-    SC_ANIMATION(ANIM_SHAKE_HEAD),
-    SC_WAIT(30),
-    SC_RELEASE,
-};
+#include "shared/beacon_spark_script.c"

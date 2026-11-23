@@ -97,7 +97,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s16 gImilFuchinFalls_KeyHeadings[];
+extern s16 gIce_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct Actor *gImilFuchinFalls_DragonsEye;
 extern struct SceneEntrance gImilFuchinFalls_NoEntrances[];
@@ -293,7 +293,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void);
 static void Imil_WalkTowardFever(void);
 static void ImilFuchinFalls_PrepareRoom(void);
 static void ImilFuchinFalls_RebuildLogRoom(void);
-static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
+static void Scene_HopLeaderBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void Imil_SlideActorAcrossIce(void);
 
@@ -915,6 +915,10 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
 /// Eye room's long channel (cell (15, 27)) would float it back to the foot of
 /// the channel. The log never stops there, as
 /// FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop says.
+///
+/// The same routine as
+/// FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle under another
+/// name: the room's step table holds both.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -1617,15 +1621,15 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
 
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
     if (trigger == CELL_BEHAVIOR_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END) {
-      ImilFuchinFalls_HopBy(0, -32);
+      Scene_HopLeaderBy(0, -32);
     } else {
-      ImilFuchinFalls_HopBy(-32, 0);
+      Scene_HopLeaderBy(-32, 0);
     }
   }
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
       trigger == CELL_BEHAVIOR_FUCHIN_FALLS_DRAGONS_EYE_ROOM_STUMP &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
-    ImilFuchinFalls_HopBy(0, 32);
+    Scene_HopLeaderBy(0, 32);
   }
 }
 
@@ -1633,24 +1637,14 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
 /// water: from the middle of the pool onto the stump (cell (17, 22)), or from
 /// the head of the long channel onto the upper crosswise log, when it lies at
 /// the head too.
-static void FuchinFallsCave_HopNorth(void) { ImilFuchinFalls_HopBy(0, -32); }
+static void FuchinFallsCave_HopNorth(void) { Scene_HopLeaderBy(0, -32); }
 
 /// In the Dragon's Eye room, Isaac jumps west from the lower crosswise log
 /// halfway down the long channel onto the stump below the west ledge (cell
 /// (12, 27)), from which he walks on to the stairs down to the Dragon's Eye.
-static void FuchinFallsCave_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
+static void FuchinFallsCave_HopWest(void) { Scene_HopLeaderBy(-32, 0); }
 
-/// Makes the leader leap a distance in pixels, landing with a spring.
-static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
-  Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, dx, dz);
-  Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
-  Event_End();
-}
+#include "shared/leader_hop.c"
 
 /// Puts the Dragon's Eye on the little table in the middle of the round
 /// chamber below the Dragon's Eye room, drawn as its item icon.
@@ -1930,7 +1924,7 @@ static void Imil_TurnOnIceTowardHeldDirection(struct Actor *actor) {
     return;
   }
   actor->steeringFlags = 0;
-  direction = gImilFuchinFalls_KeyHeadings[DPAD_INDEX(gKeysHeld)];
+  direction = gIce_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (direction == KEY_HEADING_NONE) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
@@ -2038,12 +2032,7 @@ tail:
 }
 
 // clang-format off
-s16 gImilFuchinFalls_KeyHeadings[] = {
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
-    FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
-    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-};
+#include "shared/ice_key_headings.c"
 
 s16 gImilFuchinFalls_SlideHeadings[] = {
     KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,

@@ -179,7 +179,7 @@ static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z);
 static void MercuryLighthouse_SparkleBurst(s32 x, s32 y, s32 z, s32 angle);
 static void MercuryLighthouse_RideLift(void);
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void);
-static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
+static void Inventory_ReplaceItem(s32 oldItem, s32 newItem);
 
 /// Mia kneeling with her hands together, as she senses someone inside the
 /// lighthouse (mia.png's frame 76).
@@ -2129,7 +2129,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Event_Start();
   Sound_Play(MUS_TREASURE_FOUND);
   ItemDisplay_ShowItem(ITEM_HERMES_WATER, 3);
-  MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
+  Inventory_ReplaceItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
   MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER),
                        MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_Push(ITEM_HERMES_WATER, MESSAGE_ARGUMENT_ITEM);
@@ -2976,18 +2976,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   FieldPsynergy_StopCasterUpdate();
 }
 
-/// Replaces one inventory item in the party member and slot that contain it.
-static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
-  s32 member = PartyInventory_FindMember(oldItem);
-
-  if (member != -1) {
-    s32 inventorySlot = Inventory_Find(member, oldItem);
-
-    if (inventorySlot != -1) {
-      Unit_Get(member)->inventory[inventorySlot] = newItem;
-    }
-  }
-}
+#include "shared/hermes_water_bottle.c"
 
 #include "shared/mercury_lighthouse_lights.c"
 
@@ -3044,15 +3033,7 @@ s32 gMercuryLighthouse_ScaleCounterScript[] = {
     SC_RELEASE,
 };
 
-s32 gMercuryLighthouse_PillarScript[] = {
-    SC_CALL(MercuryLighthouse_FollowLeader),
-    SC_END,
-};
-
-u16 gMercuryLighthouse_MoveAngles[] = {
-    KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_NORTH,
-    FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
-};
+#include "shared/mercury_lighthouse_pillar_tables.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

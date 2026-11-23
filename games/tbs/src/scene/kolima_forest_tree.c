@@ -69,6 +69,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/kolima_palette.h"
+#include "scene/party_nod.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/io_reg.h"
@@ -138,7 +139,7 @@ enum KolimaForestTreeFaceChange {
 
 static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 change);
 static void KolimaForestTree_SpawnOrbitSparks(void);
-static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
+static void Inventory_ReplaceItem(s32 oldItem, s32 newItem);
 
 s32 gKolimaForestTreeSparkOrigin[3] BSS_DATA ALIGNED(16);
 s32 gKolimaForestTreeSparkFrame BSS_DATA;
@@ -377,14 +378,6 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Event_Wait(20);
 }
 
-/// Gives all four companions the same nod, waiting on Ivan's animation.
-static inline void KolimaForestTree_NodTogether(void) {
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-}
-
 /// Turns the companions together and pauses after the final facing change.
 static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, facing, 0);
@@ -544,7 +537,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   }
-  KolimaForestTree_NodTogether();
+  Scene_NodTogether();
   FieldCamera_MoveTo(328, 8, 212, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -576,7 +569,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_SetMessageId(MsgKolimaShouldDoPeopleKolimaCursed);
   // "That should do it. The people of Kolima are cursed no more."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_NodTogether();
+  Scene_NodTogether();
   FieldCamera_MoveTo(234, 0, 232, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -602,7 +595,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   // "Then those gems fell into my branches..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_NodTogether();
+  Scene_NodTogether();
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
@@ -682,7 +675,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
-  KolimaForestTree_NodTogether();
+  Scene_NodTogether();
   Event_Wait(10);
   KolimaForestTree_FaceParty(FACING_SOUTHWEST, 120);
   Task_Remove(spawnOrbitSparks);
@@ -723,7 +716,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
-  KolimaForestTree_NodTogether();
+  Scene_NodTogether();
   Sound_Play(SOUND_FADE_OUT_BGM);
   finalActions = gKolimaForestTree_ReturnToPartyActions;
   Actor_SetScript(ACTOR_GARET, finalActions);
@@ -744,7 +737,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
   Sound_Play(MUS_TOWN_THEME);
-  KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
+  Inventory_ReplaceItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
 /// How far the curse tints the forest round Tret until it is lifted: green and
@@ -1023,19 +1016,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   }
 }
 
-/// Replaces the used water with its empty bottle in the same inventory slot.
-static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
-                                                  s32 newItemId) {
-  s32 member = PartyInventory_FindMember(oldItemId);
-
-  if (member != -1) {
-    s32 inventorySlot = Inventory_Find(member, oldItemId);
-
-    if (inventorySlot != -1) {
-      Unit_Get(member)->inventory[inventorySlot] = newItemId;
-    }
-  }
-}
+#include "shared/hermes_water_bottle.c"
 
 #include "shared/kolima_palette.c"
 

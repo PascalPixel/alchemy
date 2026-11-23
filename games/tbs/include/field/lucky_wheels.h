@@ -5,7 +5,6 @@
 #include "types.h"
 
 s32 LuckyWheels_Start(void);
-s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count);
 void LuckyWheels_TransferCanvas(void);
 void Palette_DarkenScreenStep(void);
 void Palette_StepTowardResource(s32 resource);

@@ -60,6 +60,7 @@
 #include "menu/menu.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
@@ -491,21 +492,6 @@ static void BabiLighthouse_InspectLockedDoor(void) {
   Event_End();
 }
 
-/// A companion walks back into Isaac and is put out of sight, so that the
-/// party walks as Isaac alone again.
-static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
-  struct Actor *leader;
-
-  Actor_SetAnimation(actorId, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part[0].integer,
-                         leader->z.part[0].integer);
-  }
-  Actor_WaitForMoveById(actorId);
-  Actor_SetPosition(actorId, 0, 0);
-}
-
 /// The first time the party walks north into the cave before the stone door,
 /// across cells (17, 23) to (20, 23), Iodem steps out beside Isaac to meet
 /// Faran and three men, who say the door has never opened. Faran
@@ -796,9 +782,9 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Actor_SetSpeed(ACTOR_MIA, 1.2);
-  BabiLighthouse_WalkBackToLeader(ACTOR_GARET);
-  BabiLighthouse_WalkBackToLeader(ACTOR_IVAN);
-  BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(10);
   Event_End();
 }
@@ -1074,9 +1060,9 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Actor_SetSpeed(ACTOR_MIA, 1.2);
-  BabiLighthouse_WalkBackToLeader(ACTOR_GARET);
-  BabiLighthouse_WalkBackToLeader(ACTOR_IVAN);
-  BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 0);

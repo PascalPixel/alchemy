@@ -76,11 +76,11 @@
 
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gItemIcon_GrowScript[];
-extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
+extern struct SceneEntrance gSolSanctum_StarRoomEntrances[];
 extern u32 gSolSanctumElementalStarRoom_Exits[];
 extern struct ActorPlacement gSolSanctumElementalStarRoom_ActorPlacements[];
 extern struct Trigger gSolSanctumElementalStarRoom_Triggers[];
-extern u16 gSolSanctumElementalStarRoom_StarCells[];
+extern u16 gSolSanctum_StarCells[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];
 extern s8 gSolSanctum_RingDirection[][3];
@@ -197,7 +197,7 @@ static inline void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 #include "shared/actor_facing.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gSolSanctumElementalStarRoom_Entrances;
+  return gSolSanctum_StarRoomEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -251,8 +251,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   Event_Wait(20);
   MapGrid_SetShake(1, 2, 1);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(41), 29);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(41), 29);
   OPEN_RISEN_PILLAR(41, 29);
   Event_Wait(40);
   MapGrid_SetScreenShake(0, 0, 0);
@@ -262,8 +261,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(19), 29);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(19), 29);
   OPEN_RISEN_PILLAR(19, 29);
   Event_Wait(40);
   MapGrid_SetScreenShake(0, 0, 0);
@@ -272,8 +270,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(41), 10);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(41), 10);
   OPEN_RISEN_PILLAR(41, 10);
   Event_Wait(40);
   gFieldWork->transition =
@@ -357,8 +354,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(29), 4);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(29), 4);
   OPEN_RISEN_PILLAR(29, 4);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
@@ -367,8 +363,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(21), 21);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(21), 21);
   OPEN_RISEN_PILLAR(21, 21);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
@@ -378,8 +373,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(21), 29);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(21), 29);
   OPEN_RISEN_PILLAR(21, 29);
   Event_Wait(40);
   gFieldWork->transition =
@@ -479,8 +473,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(10), 31);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(10), 31);
   OPEN_RISEN_PILLAR(10, 31);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
@@ -490,8 +483,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(24), 9);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(24), 9);
   OPEN_RISEN_PILLAR(24, 9);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
@@ -501,8 +493,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
-  MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
-                      RISEN_PILLAR_LEFT(36), 10);
+  MapGrid_PlayMapEdit(gSolSanctum_StarCells, RISEN_PILLAR_LEFT(36), 10);
   OPEN_RISEN_PILLAR(36, 10);
   Event_Wait(40);
   gFieldWork->transition =
@@ -2260,11 +2251,7 @@ s32 gSolSanctumElementalStarRoom_AngleScript[] = {
 
 #include "shared/item_icon_grow_script.c"
 
-struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,
-     -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/sol_sanctum_star_room_entrances.c"
 
 u32 gSolSanctumElementalStarRoom_Exits[] = {
     SCENE_EXITS(SolSanctumElementalStarRoom),
@@ -2339,9 +2326,7 @@ struct Trigger gSolSanctumElementalStarRoom_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-u16 gSolSanctumElementalStarRoom_StarCells[] = {
-    MAPGRID_ANIMATION_STEP(59, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(62, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(65, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(68, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(71, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(74, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(77, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(80, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(83, 40, 3, 4, 0), MAPGRID_ANIMATION_STEPS_END,
-};
+#include "shared/sol_sanctum_star_cells.c"
 
 #include "shared/sol_sanctum_elemental_star_ring_tables.c"
 // clang-format on

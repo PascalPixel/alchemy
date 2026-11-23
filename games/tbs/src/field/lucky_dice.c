@@ -281,40 +281,7 @@ enum LuckyDiceState {
   LUCKY_DICE_PAYOUT  ///< the winnings move into the coins
 };
 
-/// Copies count RGB555 colours from source to destination with each channel
-/// multiplied by scale (16.16: 0 is black, FIXED_ONE unchanged), for fades.
-s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
-                                s32 count) {
-  s32 remaining;
-  u32 pixel;
-  u32 red;
-  u32 green;
-  u32 blue;
-
-  if (count > 0) {
-    u32 redMask = RGB(31, 0, 0);
-    u32 greenMask = RGB(0, 31, 0);
-    u32 blueMask = RGB(0, 0, 31);
-
-    remaining = count;
-    do {
-      pixel = *source;
-      red = pixel & redMask;
-      green = pixel & greenMask;
-      blue = blueMask & pixel;
-      red *= scale;
-      green *= scale;
-      blue *= scale;
-      pixel = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
-      pixel |= FIXEDtoINT(blue) & blueMask;
-      *destination = pixel;
-      source++;
-      destination++;
-      remaining--;
-    } while (remaining != 0);
-  }
-  return 0;
-}
+#include "palette_scale.c"
 
 /// Runs the Lucky Dice minigame until the player quits or cannot afford a
 /// throw. Each throw costs ten coins per level of the party's average.
@@ -421,9 +388,8 @@ void LuckyDice_Run(void) {
                            Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
           REG_DMA3);
-  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0,
-                              BG_PLTT_COLORS);
-  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
+  Palette_ScaleRgb555(spritePalette, (u16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
+  Palette_ScaleRgb555(bgPalette, (u16 *)BG_PLTT, 0, BG_PLTT_COLORS);
 
   // Show the board on BG1, sprites and windows, with the board blended.
   REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -501,12 +467,12 @@ void LuckyDice_Run(void) {
     resetDice = 0;
     // Fade in.
     if (frame <= DICE_FADE_FRAMES) {
-      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
-                                  frame * (FIXED_ONE / DICE_FADE_FRAMES),
-                                  BG_PLTT_COLORS);
-      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
-                                  frame * (FIXED_ONE / DICE_FADE_FRAMES),
-                                  BG_PLTT_COLORS);
+      Palette_ScaleRgb555(spritePalette, (u16 *)OBJ_PLTT,
+                          frame * (FIXED_ONE / DICE_FADE_FRAMES),
+                          BG_PLTT_COLORS);
+      Palette_ScaleRgb555(bgPalette, (u16 *)BG_PLTT,
+                          frame * (FIXED_ONE / DICE_FADE_FRAMES),
+                          BG_PLTT_COLORS);
     }
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, camera->focus);
@@ -1062,10 +1028,8 @@ void LuckyDice_Run(void) {
   // Fade out and free the work blocks.
   for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
     scale = FIXED_ONE - index * (FIXED_ONE / DICE_FADE_FRAMES);
-    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale,
-                                BG_PLTT_COLORS);
-    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale,
-                                BG_PLTT_COLORS);
+    Palette_ScaleRgb555(spritePalette, (u16 *)OBJ_PLTT, scale, BG_PLTT_COLORS);
+    Palette_ScaleRgb555(bgPalette, (u16 *)BG_PLTT, scale, BG_PLTT_COLORS);
     wait(1);
   }
   HeapSlot_Release(HEAP_SLOT_CAMERA);

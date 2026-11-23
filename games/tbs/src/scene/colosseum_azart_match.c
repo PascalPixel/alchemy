@@ -154,7 +154,7 @@ extern s16 gColosso_LetteringWin[];
 extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosso_LeaderFinishScript[];
 extern char gHexDigits[20];
-extern u32 gPushedActor_DirectionSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 extern s16 gColosso_LetteringSlot;
 extern s16 gColosso_MarkerSlot;
 
@@ -1239,24 +1239,7 @@ char gHexDigits[20] = "0123456789ABCDEF";
 
 #include "shared/colosso_prize_scripts.c"
 
-u32 gPushedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.c"
 
 struct SceneEntrance gColosseumAzartMatch_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 920, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

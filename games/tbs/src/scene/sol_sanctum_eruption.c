@@ -81,7 +81,7 @@ s32 gEmberLevel BSS_DATA;
 s32 gEmberLevelTimer BSS_DATA;
 
 extern s32 gEruption_ArcOrigins[];
-extern struct SceneEntrance gSolSanctumEruption_Entrances[];
+extern struct SceneEntrance gSolSanctum_StarRoomEntrances[];
 extern u32 gSolSanctumEruption_Exits[];
 extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
 extern struct Trigger gSolSanctumEruption_Triggers[];
@@ -182,7 +182,7 @@ enum {
 #define ARC_SCAN_STILL_ACTIVE 888
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gSolSanctumEruption_Entrances;
+  return gSolSanctum_StarRoomEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -1870,10 +1870,7 @@ s32 gEruption_ArcOrigins[] = {
     -toFIXED(2), toFIXED(15),
 };
 
-struct SceneEntrance gSolSanctumEruption_Entrances[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/sol_sanctum_star_room_entrances.c"
 
 u32 gSolSanctumEruption_Exits[] = {
     SCENE_EXITS(SolSanctumEruption),
@@ -1941,12 +1938,7 @@ struct Trigger gSolSanctumEruption_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// Unused: a copy of the Elemental Star room's cell animation
-/// (gSolSanctumElementalStarRoom_StarCells), nine steps of a 3-by-4 picture.
-/// Nothing in the eruption plays it.
-u16 gSolSanctumEruption_UnusedStarCells[] = {
-    MAPGRID_ANIMATION_STEP(59, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(62, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(65, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(68, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(71, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(74, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(77, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(80, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(83, 40, 3, 4, 0), MAPGRID_ANIMATION_STEPS_END,
-};
+#include "shared/sol_sanctum_star_cells.c"
 
 s32 gEruption_EmberScript[] = {
     SC_CALL(SolSanctumEruption_AlignEmberToHeading),

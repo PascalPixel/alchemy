@@ -74,9 +74,9 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
-extern s32 gVaultCave_DirectionSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
-extern struct SceneEntrance gVaultCave_FallbackEntrances[];
+extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gVaultCavePassage_Entrances[];
 extern struct SceneEntrance gVaultCaveVambrace_Entrances[];
 extern struct SceneEntrance gVaultCaveMouth_Entrances[];
@@ -205,7 +205,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Entrances;
   }
-  return gVaultCave_FallbackEntrances;
+  return gScene_FallbackEntrances;
 }
 
 /// Returns the region boxes used by the cave's exits.
@@ -280,11 +280,11 @@ static void VaultCave_PushPillarAhead(void) {
   s32 row;
 
   column = (leader->x.part[0].integer +
-            (FIXEDtoINT(gVaultCave_DirectionSteps[direction]))) >>
+            (FIXEDtoINT(gPushedActor_DirectionSteps[direction]))) >>
            4;
-  row =
-      (leader->z.part[0].integer + (s16)gVaultCave_DirectionSteps[direction]) >>
-      4;
+  row = (leader->z.part[0].integer +
+         (s16)gPushedActor_DirectionSteps[direction]) >>
+        4;
   pillar = VaultCave_FindCollidableActorAtCell(column, row);
   // UB: the pillar's collisionFlags is read before the test for no pillar.
 #ifdef UBFIX
@@ -302,17 +302,17 @@ static void VaultCave_PushPillarAhead(void) {
     }
   }
   column = (pillar->x.part[0].integer +
-            (FIXEDtoINT(gVaultCave_DirectionSteps[direction]))) >>
+            (FIXEDtoINT(gPushedActor_DirectionSteps[direction]))) >>
            4;
-  row =
-      (pillar->z.part[0].integer + (s16)gVaultCave_DirectionSteps[direction]) >>
-      4;
+  row = (pillar->z.part[0].integer +
+         (s16)gPushedActor_DirectionSteps[direction]) >>
+        4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != NULL && (beyond->collisionFlags & 1)) {
     return;
   }
   pillar->layer = 2;
-  Actor_StepFrom(&destination, pillar, gVaultCave_DirectionSteps[direction]);
+  Actor_StepFrom(&destination, pillar, gPushedActor_DirectionSteps[direction]);
   if (FieldActor_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }
@@ -1037,26 +1037,17 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+// The cave keeps its pushed-actor steps with its read-only data, though they
+// are not const: the pushes read the step again after each call.
+#define PUSHED_ACTOR_TABLES_READ_ONLY
+#include "shared/pushed_actor_direction_steps.c"
 // clang-format off
-// Not const, and placed in read-only data by its section: the pushes read the
-// step again after each call, as a const table is not.
-s32 gVaultCave_DirectionSteps[] __attribute__((section(".rodata"))) = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
 
 const s32 gVaultCave_PuffScript[] = {
     SC_RELEASE,
 };
 
-struct SceneEntrance gVaultCave_FallbackEntrances[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gVaultCavePassage_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

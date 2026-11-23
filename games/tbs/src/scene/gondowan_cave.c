@@ -66,7 +66,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern struct SceneEntrance gGondowanCaveEntrancesOther[];
+extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gGondowanPassageEntrances[];
 extern struct SceneEntrance gGondowanCaveRiverEntrances[];
 extern struct SceneEntrance gGondowanCaveEntrances[];
@@ -188,7 +188,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_GONDOWAN_CAVE) {
     return gGondowanCaveEntrances;
   }
-  return gGondowanCaveEntrancesOther;
+  return gScene_FallbackEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -575,10 +575,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct SceneEntrance gGondowanCaveEntrancesOther[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gGondowanPassageEntrances[] = {
     { GONDOWAN_PASSAGE_FROM_WORLD_MAP_NORTH, CONDITION_ALWAYS, 152, 0, 120, FACING_SOUTH, 0, 32, 32, 272, 480, 0 },

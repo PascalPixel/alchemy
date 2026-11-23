@@ -44,7 +44,7 @@
 ///   leads below or to the deck.
 /// - Land. At TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO the seven birds
 ///   (ACTOR_FIRST_BIRD) fly away before "Land ho!". The rowing values of the
-///   passengers chosen to row (gTolbiShipMast_PassengerRowValues) decide where
+///   passengers chosen to row (gTolbiShip_PassengerRowValues) decide where
 ///   the ship comes in. The balance is those at the first and third seats less
 ///   those at the second and fourth. A balance of exactly 11 takes
 ///   TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
@@ -85,7 +85,7 @@
 extern s32 gTolbiShipMast_FollowCameraActions[];
 extern s32 gTolbiShipMast_LookoutActions[];
 extern s32 gTolbiShipMast_DriftActions[];
-extern s32 gTolbiShipMast_WaveActions[];
+extern s32 gActor_TrembleScript[];
 extern s32 gTolbiShipMast_BirdDepartureA[];
 extern s32 gTolbiShipMast_BirdDepartureB[];
 extern s32 gTolbiShipMast_BirdDepartureC[];
@@ -101,7 +101,7 @@ extern struct ActorPlacement gTolbiShipMast_FirstAttackActorPlacements[];
 extern struct ActorPlacement gTolbiShipMast_BirdActorPlacements[];
 extern struct ActorPlacement gTolbiShipMast_LandingActorPlacements[];
 extern struct Trigger gTolbiShipMast_Triggers[];
-extern u32 gTolbiShipMast_PassengerRowValues[];
+extern u32 gTolbiShip_PassengerRowValues[];
 
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
@@ -746,7 +746,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(20);
-  Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
+  Actor_SetScript(ACTOR_LOOKOUT, gActor_TrembleScript);
   Event_Wait(80);
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
@@ -879,7 +879,7 @@ static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
   }
   for (passenger = 0; passenger <= 8; passenger++) {
     if (GameFlag_Get(firstFlag + passenger) != 0)
-      return gTolbiShipMast_PassengerRowValues[passenger];
+      return gTolbiShip_PassengerRowValues[passenger];
   }
   return 0;
 }
@@ -909,23 +909,7 @@ s32 gTolbiShipMast_DriftActions[] = {
     SC_CALL(TolbiShipMast_DriftBird),
 };
 
-s32 gTolbiShipMast_WaveActions[] = {
-    SC_SET(SW_SCALE_X, FIXED_ONE),
-    SC_SET(SW_SCALE_Y, FIXED_ONE),
-    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
+#include "shared/tremble_script.c"
 
 s32 gTolbiShipMast_BirdDepartureA[] = {
     SC_MOVE(72, 0, 216),
@@ -1075,10 +1059,5 @@ struct Trigger gTolbiShipMast_Triggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// Each passenger's rowing value, in the order of enum TolbiShipPassenger
-/// (ship_rooms.c).
-u32 gTolbiShipMast_PassengerRowValues[] = {
-    7, 5, 8, 4, 9, 12, 6, 3,
-    0,
-};
+#include "shared/tolbi_ship_rowing.c"
 // clang-format on

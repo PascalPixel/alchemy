@@ -61,7 +61,7 @@
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
 ///   VenusLighthouseThirdFloor also redraws). Carry sets down four floating
 ///   pillars on two balance platforms that sink and rise to their weight
-///   (gVenusBalancePlatformHeights). Four pillars carrying track sink into
+///   (gBalance_PlatformHeights). Four pillars carrying track sink into
 ///   eight sockets, and the lights run on to the pillar room's gate
 ///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A chest holds the Gaia Blade,
 ///   and a Psynergy Stone lies here. A passage raises the leader on a
@@ -112,9 +112,9 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern u32 gPushedActor_DirectionSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
-extern u32 gVenusBalancePlatformHeights[];
+extern u32 gBalance_PlatformHeights[];
 extern struct SwitchCell gVenusFourthFloorSockets[];
 extern u8 gVenusTracksMovingWest[];
 extern u8 gVenusTracksMovingEast[];
@@ -2000,15 +2000,15 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
     Sound_Play(SE_SETTLE);
   }
   FieldActor_SetMoveTargetFX(westSupport, westSupport->x.fixed,
-                             gVenusBalancePlatformHeights[westSupport->timer],
+                             gBalance_PlatformHeights[westSupport->timer],
                              westSupport->z.fixed);
   FieldActor_SetMoveTargetFX(eastSupport, eastSupport->x.fixed,
-                             gVenusBalancePlatformHeights[eastSupport->timer],
+                             gBalance_PlatformHeights[eastSupport->timer],
                              eastSupport->z.fixed);
   Actor_WaitForMoveById(ACTOR_BALANCE_WEST);
   Actor_WaitForMoveById(ACTOR_BALANCE_EAST);
-  westSupport->y.fixed = gVenusBalancePlatformHeights[westSupport->timer];
-  eastSupport->y.fixed = gVenusBalancePlatformHeights[eastSupport->timer];
+  westSupport->y.fixed = gBalance_PlatformHeights[westSupport->timer];
+  eastSupport->y.fixed = gBalance_PlatformHeights[eastSupport->timer];
   if (waitFrames != 0) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   }
@@ -3600,16 +3600,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
 
 #include "shared/field_effect_duration_scripts.c"
 
-/// The cell ahead for each of sixteen headings, 16 pixels east-west in the
-/// upper halfword and north-south in the lower (DIRECTION_STEP).
-u32 gPushedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.c"
 
 /// The third floor's four sockets, by cell: northwest, northeast, southwest
 /// and southeast.
@@ -3621,11 +3612,7 @@ struct SwitchCell gVenusThirdFloorSockets[] = {
 };
 
 // clang-format off
-/// The heights of a balance platform by the weight on it (its timer, from 0
-/// to 6). The more floating pillars stand on its side, the lower it sinks.
-u32 gVenusBalancePlatformHeights[] = {
-    -toFIXED(16), -toFIXED(16), -toFIXED(32), -toFIXED(48), -toFIXED(64), -toFIXED(80), -toFIXED(80),
-};
+#include "shared/balance_heights.c"
 
 /// The fourth floor's eight sockets, by cell: northwest, northeast, west,
 /// east, far west, middle, southwest and southeast.
@@ -3867,6 +3854,8 @@ s32 gVenusThirdFloorLightNortheastToSoutheast[] = {
     SC_END,
 };
 
+// The same script as gVenusThirdFloorLightNortheastToNorthwest,
+// under another name.
 s32 gVenusThirdFloorLightSouthwestToNorthwest[] = {
     SC_MOVE(776, 0, 664),
     SC_SYNC,
@@ -3896,6 +3885,8 @@ s32 gVenusThirdFloorLightSoutheastToNortheast[] = {
     SC_END,
 };
 
+// The same script as gVenusThirdFloorLightNorthwestToSouthwest,
+// under another name.
 s32 gVenusThirdFloorLightSoutheastToSouthwest[] = {
     SC_MOVE(776, 0, 696),
     SC_SYNC,

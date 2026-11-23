@@ -139,11 +139,11 @@ enum QuantityBarColor {
   QUANTITY_BAR_CHOSEN = 10,       ///< orange
   QUANTITY_BAR_OUT_OF_REACH = 14, ///< grey
 };
-void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer);
+void QuantityBar_Fill(s32 itemCount, s32 color, u8 *tileBuffer);
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition);
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
                                             s32 x, s32 y);
-void Shop_SaveAndTintFieldPalette(s32 layer);
+void Shop_SaveAndTintFieldPalette(s32 tint);
 void Shop_RestoreFieldPalette(void);
 void MenuCursor_Advance(struct MenuCursor *cursor);
 void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor);

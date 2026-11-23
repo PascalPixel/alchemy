@@ -140,7 +140,7 @@ void Message_CloseFinishedWindows(void);
 /// The cave's actors, numbering the rows of gActorPlacements.
 enum ShamanVillageCaveActorId {
   /// The weeds Whirlwind scatters from the wall below the first room's west
-  /// passage, over the steps that climb it (SPRITE_IVY).
+  /// passage, over the steps that climb it (SPRITE_WEEDS).
   ACTOR_FIRST_WEEDS = ACTOR_FIRST_PLACED,
   /// A round boulder placed in the map's top left corner, above every room's
   /// view; nothing moves it.
@@ -895,9 +895,9 @@ u32 gShamanVillageCave_PillarScript[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gShamanVillageCave_WeedsScript, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gShamanVillageCave_WeedsScript, 40, 0, 128, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gShamanVillageCave_WeedsScript, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gShamanVillageCave_WeedsScript, 232, 0, 608, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 808, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 792, FACING_NORTH, TALK_FACING_KEEP, 0),

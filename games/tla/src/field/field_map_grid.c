@@ -178,7 +178,7 @@ void Map_CopyPalette(s32 map, void *destination) {
 /// (MapGrid_UpdateLayerScroll).
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *sceneResources;
-  struct MapWork *work;
+  struct MapWork *map;
   struct MapHeader *sceneHeader;
   struct MapLayer *layer;
   struct MapHeaderLayer *layerSource;
@@ -195,8 +195,8 @@ s32 MapGrid_LoadMap(s32 index) {
   ScreenFade_FromBlack(0);
   sceneResources = (struct MapResources *)&gMaps[index];
   // A field map's work ends after its three layers; the world map's goes on.
-  work = HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, MAPGRID_FIELD_WORK_SIZE);
-  Iwram_ClearWordsEntry(work, MAPGRID_FIELD_WORK_SIZE);
+  map = HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, MAPGRID_FIELD_WORK_SIZE);
+  Iwram_ClearWordsEntry(map, MAPGRID_FIELD_WORK_SIZE);
   sceneHeader = (struct MapHeader *)MAPGRID_RESOURCE(sceneResources->header);
   encodedData = (u8 *)sceneHeader + sceneHeader->cellPictures;
   TileMap_DecodeStagedBuffer(
@@ -222,23 +222,23 @@ s32 MapGrid_LoadMap(s32 index) {
   encodedData = (u8 *)sceneHeader + sceneHeader->script;
   Decompress_TaggedLz(encodedData,
                       Ram_MapCollision + MAPGRID_SHAPE_TABLE_BYTES);
-  work->minX = toFIXED(sceneHeader->cameraBounds[0] * 8);
-  work->minZ = toFIXED(sceneHeader->cameraBounds[1] * 8);
-  work->maxX = toFIXED(sceneHeader->cameraBounds[2] * 8);
-  work->maxZ = toFIXED(sceneHeader->cameraBounds[3] * 8);
-  viewX = &work->viewX;
+  map->minX = toFIXED(sceneHeader->cameraBounds[0] * 8);
+  map->minZ = toFIXED(sceneHeader->cameraBounds[1] * 8);
+  map->maxX = toFIXED(sceneHeader->cameraBounds[2] * 8);
+  map->maxZ = toFIXED(sceneHeader->cameraBounds[3] * 8);
+  viewX = &map->viewX;
   *viewX = 0;
-  viewY = &work->viewZ;
+  viewY = &map->viewZ;
   *viewY = 0;
-  work->enabled[0] = sceneHeader->priority[0];
-  work->enabled[1] = sceneHeader->priority[1];
-  work->enabled[2] = sceneHeader->priority[2];
-  work->basePriority = 2;
-  if (work->maxX == 0)
-    work->maxX = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
-  if (work->maxZ == 0)
-    work->maxZ = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
-  layer = work->layers;
+  map->enabled[0] = sceneHeader->priority[0];
+  map->enabled[1] = sceneHeader->priority[1];
+  map->enabled[2] = sceneHeader->priority[2];
+  map->basePriority = 2;
+  if (map->maxX == 0)
+    map->maxX = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
+  if (map->maxZ == 0)
+    map->maxZ = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
+  layer = map->layers;
   layerSource = sceneHeader->layers;
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
     u32 x = layerSource->x;
@@ -275,20 +275,20 @@ s32 MapGrid_LoadMap(s32 index) {
     layerSource++;
     layer++;
   }
-  work->dispcnt = DISPCNT_OBJ_ON;
-  if (work->enabled[0] != 0)
-    work->dispcnt = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
-  if (work->enabled[1] != 0)
-    work->dispcnt |= DISPCNT_BG2_ON;
-  if (work->enabled[2] != 0)
-    work->dispcnt |= DISPCNT_BG1_ON;
-  Io_Write16(work->enabled[0] | BGCNT_CHAR_BASE(sceneHeader->charBase[0]) |
+  map->dispcnt = DISPCNT_OBJ_ON;
+  if (map->enabled[0] != 0)
+    map->dispcnt = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+  if (map->enabled[1] != 0)
+    map->dispcnt |= DISPCNT_BG2_ON;
+  if (map->enabled[2] != 0)
+    map->dispcnt |= DISPCNT_BG1_ON;
+  Io_Write16(map->enabled[0] | BGCNT_CHAR_BASE(sceneHeader->charBase[0]) |
                  BGCNT_SCREEN_BASE(5),
              &REG_BG3CNT);
-  Io_Write16(work->enabled[1] | BGCNT_CHAR_BASE(sceneHeader->charBase[1]) |
+  Io_Write16(map->enabled[1] | BGCNT_CHAR_BASE(sceneHeader->charBase[1]) |
                  BGCNT_SCREEN_BASE(6),
              &REG_BG2CNT);
-  Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
+  Io_Write16(map->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
                  BGCNT_SCREEN_BASE(7),
              &REG_BG1CNT);
   if (GameFlag_Get(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
@@ -327,11 +327,11 @@ s32 MapGrid_LoadMap(s32 index) {
 /// Centres the camera on the point the map follows (origin: x, height, z), or
 /// on (0, 0) when there is none, and scrolls the layers there.
 void MapGrid_CenterOnFollowedPoint(void) {
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 x = 0;
   s32 height = 0;
   s32 z = 0;
-  s32 *followedPosition = work->origin;
+  s32 *followedPosition = map->origin;
 
   if (followedPosition != NULL) {
     const s16 *rectList;
@@ -340,7 +340,7 @@ void MapGrid_CenterOnFollowedPoint(void) {
     x = *followedPosition++;
     height = *followedPosition++;
     z = *followedPosition++;
-    rectList = work->cameraBoxes;
+    rectList = map->cameraBoxes;
     if (rectList != NULL) {
       for (rect = rectList; rect[0] != -1; rect += 4) {
         FIXED left = toFIXED(rect[0]) - toFIXED(120);
@@ -502,7 +502,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 /// automatic scroll (wrapping at its period), draws the cell picture column or
 /// row that scrolls into view, and sets its BG scroll.
 void MapGrid_UpdateLayerScroll(void) {
-  struct MapWork *work;
+  struct MapWork *map;
   struct MapLayer *layer;
   s32 *origin;
   s32 x, y;
@@ -510,9 +510,9 @@ void MapGrid_UpdateLayerScroll(void) {
   s32 baseX, baseY;
   u32 layerIndex;
 
-  work = Ram_HeapSlots->mapGrid;
-  origin = work->origin;
-  layer = work->layers;
+  map = Ram_HeapSlots->mapGrid;
+  origin = map->origin;
+  layer = map->layers;
   if (origin == 0)
     return;
   baseX = *origin++ - FIELD_VIEW_FOCUS_X;
@@ -521,10 +521,10 @@ void MapGrid_UpdateLayerScroll(void) {
 
     baseY = *origin - height - FIELD_VIEW_FOCUS_Y;
   }
-  minX = work->minX + work->shakeX;
-  maxX = work->maxX - work->shakeX - FIELD_VIEW_WIDTH;
-  minY = work->minZ + work->shakeY;
-  maxY = work->maxZ - work->shakeY - FIELD_VIEW_HEIGHT;
+  minX = map->minX + map->shakeX;
+  maxX = map->maxX - map->shakeX - FIELD_VIEW_WIDTH;
+  minY = map->minZ + map->shakeY;
+  maxY = map->maxZ - map->shakeY - FIELD_VIEW_HEIGHT;
   if (minX > maxX)
     maxX = minX;
   if (minY > maxY)
@@ -537,35 +537,35 @@ void MapGrid_UpdateLayerScroll(void) {
     baseY = minY;
   if (baseY > maxY)
     baseY = maxY;
-  if (work->shakeX != 0) {
+  if (map->shakeX != 0) {
     s32 shakeRoll = Random16();
 
     shakeRoll -= Random16();
-    baseX += Iwram_MulFX(work->shakeX, shakeRoll);
-    work->shakeX = Iwram_MulFX(work->shakeX, work->shakeDecay);
+    baseX += Iwram_MulFX(map->shakeX, shakeRoll);
+    map->shakeX = Iwram_MulFX(map->shakeX, map->shakeDecay);
   }
-  if (work->shakeY != 0) {
+  if (map->shakeY != 0) {
     s32 shakeRoll = Random16();
 
     shakeRoll -= Random16();
-    baseY += Iwram_MulFX(work->shakeY, shakeRoll);
-    work->shakeY = Iwram_MulFX(work->shakeY, work->shakeDecay);
+    baseY += Iwram_MulFX(map->shakeY, shakeRoll);
+    map->shakeY = Iwram_MulFX(map->shakeY, map->shakeDecay);
   }
   {
-    s32 step = work->viewZ - baseY;
+    s32 step = map->viewZ - baseY;
 
     if (step > toFIXED(16)) {
-      baseY = work->viewZ - toFIXED(16);
-      step = work->viewZ - baseY;
+      baseY = map->viewZ - toFIXED(16);
+      step = map->viewZ - baseY;
     }
     if (step < -toFIXED(16))
-      baseY = work->viewZ + toFIXED(16);
+      baseY = map->viewZ + toFIXED(16);
   }
-  work->viewX = baseX;
-  work->viewZ = baseY;
+  map->viewX = baseX;
+  map->viewZ = baseY;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++, layer++) {
-    baseX = Iwram_MulFX(work->viewX, layer->scaleX);
-    baseY = Iwram_MulFX(work->viewZ, layer->scaleY);
+    baseX = Iwram_MulFX(map->viewX, layer->scaleX);
+    baseY = Iwram_MulFX(map->viewZ, layer->scaleY);
     if (layer->speedX != 0) {
       layer->phaseX += layer->speedX;
       baseX += layer->phaseX;
@@ -622,30 +622,30 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
   u32 layerIndex;
   u8 *screenMap;
   u32 *cells;
-  struct MapWork *work = Ram_HeapSlots->mapGrid;
-  struct MapLayer *layer = work->layers;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer = map->layers;
   u32 originX;
 
   x -= FIELD_VIEW_FOCUS_X;
   y -= FIELD_VIEW_FOCUS_Y;
-  if (x < work->minX)
-    x = work->minX;
-  if (x > work->maxX - FIELD_VIEW_WIDTH)
-    x = work->maxX - FIELD_VIEW_WIDTH;
-  if (y < work->minZ)
-    y = work->minZ;
-  if (y > work->maxZ - FIELD_VIEW_HEIGHT)
-    y = work->maxZ - FIELD_VIEW_HEIGHT;
-  work->viewX = x;
-  work->viewZ = y;
+  if (x < map->minX)
+    x = map->minX;
+  if (x > map->maxX - FIELD_VIEW_WIDTH)
+    x = map->maxX - FIELD_VIEW_WIDTH;
+  if (y < map->minZ)
+    y = map->minZ;
+  if (y > map->maxZ - FIELD_VIEW_HEIGHT)
+    y = map->maxZ - FIELD_VIEW_HEIGHT;
+  map->viewX = x;
+  map->viewZ = y;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++) {
-    if (work->enabled[layerIndex] != 0) {
+    if (map->enabled[layerIndex] != 0) {
       u32 maskX, maskY, originY;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;
 
-      x = Iwram_MulFX(work->viewX, layer->scaleX);
-      y = Iwram_MulFX(work->viewZ, layer->scaleY);
+      x = Iwram_MulFX(map->viewX, layer->scaleX);
+      y = Iwram_MulFX(map->viewZ, layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x += layer->phaseX;

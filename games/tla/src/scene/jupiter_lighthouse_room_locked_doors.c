@@ -326,7 +326,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ResolvePendingActions(0);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-    Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL * 4);
+    Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL * 4);
     leader->motionFlags = flag;
     leader->y.fixed = leader->groundHeight = -toFIXED(BEAM_DEPTH);
     Event_StartScreenTransition();

@@ -111,12 +111,12 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
 /// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
 s32 SpritePictureCache_FindByTag(s32 key) {
-  struct ActorSystemWork *work = Ram_HeapSlots->actorSystem;
+  struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
   u32 no;
   struct SpritePictureCache *p;
 
   no = 0;
-  for (p = work->pictureCaches; no < SPRITE_PICTURE_CACHE_COUNT; no++, p++) {
+  for (p = system->pictureCaches; no < SPRITE_PICTURE_CACHE_COUNT; no++, p++) {
     if (p->tag == key)
       return (s32)p->pictures;
   }

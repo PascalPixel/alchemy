@@ -381,9 +381,9 @@ BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
 
   actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(actor, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL * 3);
   BattleEffect_RunProjectileVolley(args, mode);
-  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
 }
 
 /// From the user's leap pose, one large comet in ice colours flies at each

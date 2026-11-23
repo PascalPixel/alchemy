@@ -61,15 +61,15 @@ FIXED Party_GetPpRatio(void);
 /// Two pixels of colour 1, the glow's darkest: the tiles' blank rows.
 #define GLOW_BLANK_PAIR ((u8)PIXELS_4BPP(1))
 /// The beams' brighter colours, in the palette after the picture's.
-#define BEAMS_LIGHT_PALETTE (PICTURE_PALETTE + 1)
+#define BEAM_LIGHT_PALETTE (PICTURE_PALETTE + 1)
 /// The meeting beams' tiles, loaded from tile 0 of character block 0.
-#define BEAMS_TILES 256
+#define BEAM_TILES 256
 /// The picture layer's tiles the glow clears before it is drawn.
 #define GLOW_CLEARED_TILES 256
 /// Where the four beams meet, in pixels from where the last flight ends: the
 /// light there stands west and north of it.
-#define BEAMS_MEET_OFFSET_X (-50)
-#define BEAMS_MEET_OFFSET_Z (-30)
+#define BEAM_MEET_OFFSET_X (-50)
+#define BEAM_MEET_OFFSET_Z (-30)
 /// The camera's turn back each frame of the flight home, and each frame of the
 /// flight out until the turn ends.
 #define FLIGHT_TURN_STEP (TRIG_TURN / 2048)
@@ -285,7 +285,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
     Decompress_TaggedLz(gStaffCredit_BeamsTiles, buffer);
     Decompress_TaggedLz(gStaffCredit_BeamsMaps, frames);
     IO_WRITE_QUEUE_PUSH(VRAM, (u32)buffer,
-                        DMA_COPY_WORDS(BEAMS_TILES * TILE_SIZE_4BPP / 4));
+                        DMA_COPY_WORDS(BEAM_TILES * TILE_SIZE_4BPP / 4));
     IO_WRITE_QUEUE_PUSH(PICTURE_MAP, (u32)frames,
                         DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
     grid = frames;
@@ -337,7 +337,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
         IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
                             (u32)gStaffCredit_BeamsPalette,
                             DMA_COPY_HALFWORDS(PALETTE_COLORS));
-        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(BEAMS_LIGHT_PALETTE, 0),
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(BEAM_LIGHT_PALETTE, 0),
                             (u32)gStaffCredit_BeamsLightPalette,
                             DMA_COPY_HALFWORDS(PALETTE_COLORS));
       } else {
@@ -359,8 +359,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
         FIXED offsetX;
         endX = flightEnds[BEACON_BEAMS_MEET * 2];
         endZ = flightEnds[BEACON_BEAMS_MEET * 2 + 1];
-        offsetZ = toFIXED(BEAMS_MEET_OFFSET_Z);
-        offsetX = toFIXED(BEAMS_MEET_OFFSET_X);
+        offsetZ = toFIXED(BEAM_MEET_OFFSET_Z);
+        offsetX = toFIXED(BEAM_MEET_OFFSET_X);
 
         Actor_SetPositionFX(ACTOR_BEACON, toFIXED(endX) + offsetX,
                             toFIXED(endZ) + offsetZ);
@@ -688,7 +688,7 @@ void StaffCredit_UpdateTransitionBlend(void) {
   }
 }
 
-static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
+static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }
 

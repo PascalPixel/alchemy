@@ -584,7 +584,7 @@ void TundariaTower_JumpDownSlide(void) {
   leader->facing = FACING_NORTH;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId,
-                              ANIMATION_STEP_NORMAL * 3 / 2);
+                              ANIM_STEP_NORMAL * 3 / 2);
   Event_Wait(40);
   MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(19), FIELD_CELL_ORIGIN(57), 0, -12);
   Actor_GetById(gMainRoutineWork.leaderActorId)->bounce = 0;
@@ -596,7 +596,7 @@ void TundariaTower_JumpDownSlide(void) {
 /// the room of pillars or the Burst Brooch's room. The game takes the pillar
 /// off the map grid and, in the room of pillars, remembers the cell it
 /// started from, so that Move can send it on sliding the same way.
-void TundariaTower_BeginPillarMove(void) {
+void TundariaTower_StartPillarMove(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -1599,7 +1599,7 @@ void TundariaTower_FightReflux(void);
 void TundariaTower_OpenDoor(void);
 void TundariaTower_FreeCenterProng(void);
 void TundariaTower_JumpDownSlide(void);
-void TundariaTower_BeginPillarMove(void);
+void TundariaTower_StartPillarMove(void);
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
@@ -1908,25 +1908,25 @@ struct Trigger gTundariaTowerPillarPuzzleTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_FIRST_ICE_COLUMN + 2, FLAG_ICE_COLUMN_POUNDED + 2,
      EVENT(TundariaTower_PoundIceColumn)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TundariaTower_BeginPillarMove)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TundariaTower_StartPillarMove)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TundariaTower_SetDownPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_FIRST),
      ACTOR_FIRST_SLIDING_PILLAR, CONDITION_ALWAYS,
      EVENT(TundariaTower_ResolveBeforePsynergy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FIRST_SLIDING_PILLAR, CONDITION_ALWAYS,
-     EVENT(TundariaTower_BeginPillarMove)},
+     EVENT(TundariaTower_StartPillarMove)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS),
      ACTOR_FIRST_SLIDING_PILLAR, CONDITION_ALWAYS,
      EVENT(TundariaTower_SlidePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_SECOND_LEDGE_PILLAR, FLAG_SECOND_LEDGE_PILLAR_SET,
-     EVENT(TundariaTower_BeginPillarMove)},
+     EVENT(TundariaTower_StartPillarMove)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_LEDGE_PILLAR,
      FLAG_SECOND_LEDGE_PILLAR_SET, EVENT(TundariaTower_SetDownPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FIRST_LEDGE_PILLAR, FLAG_FIRST_LEDGE_PILLAR_SET,
-     EVENT(TundariaTower_BeginPillarMove)},
+     EVENT(TundariaTower_StartPillarMove)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_LEDGE_PILLAR,
      FLAG_FIRST_LEDGE_PILLAR_SET, EVENT(TundariaTower_SetDownPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_FIRST),
@@ -1934,7 +1934,7 @@ struct Trigger gTundariaTowerPillarPuzzleTriggers[] = {
      EVENT(TundariaTower_ResolveBeforePsynergy)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_SECOND_SLIDING_PILLAR, CONDITION_ALWAYS,
-     EVENT(TundariaTower_BeginPillarMove)},
+     EVENT(TundariaTower_StartPillarMove)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS),
      ACTOR_SECOND_SLIDING_PILLAR, CONDITION_ALWAYS,
      EVENT(TundariaTower_SlidePillar)},
@@ -1955,7 +1955,7 @@ struct Trigger gTundariaTowerBurstBroochTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_BROOCH_ROOM_PILLAR, CONDITION_ALWAYS,
-     EVENT(TundariaTower_BeginPillarMove)},
+     EVENT(TundariaTower_StartPillarMove)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BROOCH_ROOM_PILLAR,
      CONDITION_ALWAYS, EVENT(TundariaTower_SetDownPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),

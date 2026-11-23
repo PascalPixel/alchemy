@@ -52,9 +52,9 @@ void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 /// Converts a world position (16.16 pixels) to the screen: x and z receive the
 /// screen's x and y and y becomes 0.
 void Camera_WorldToScreen(struct Vector3 *position) {
-  struct HeapSlots *slots = Ram_HeapSlots;
+  struct HeapSlots *heap = Ram_HeapSlots;
 
-  if (((struct FieldWork *)slots->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (((struct FieldWork *)heap->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 result[3];
 
     Matrix_ProjectPoint(position, result);
@@ -62,7 +62,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     position->z = INTtoFIXED(result[1]);
     position->y = 0;
   } else {
-    struct MapWork *map = slots->mapGrid;
+    struct MapWork *map = heap->mapGrid;
     s32 x = map->viewX & FIELD_PIXEL_MASK;
     s32 z = map->viewZ & FIELD_PIXEL_MASK;
 
@@ -195,7 +195,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   }
 }
 
-/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_BEGIN) and
+/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_START) and
 /// stops, flashes with a sound, and the ability's name is announced; with
 /// FLAG_PLAY_PSYNERGY_CAST set the caster holds out its hand
 /// (ANIM_CAST_PSYNERGY_END) and keeps its glow.
@@ -205,7 +205,7 @@ void FieldPsynergy_StartCast(void) {
   struct Actor *actor = work->mainActor;
   s32 ability = work->action;
 
-  Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_BEGIN);
+  Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_START);
   actor->targetX = actor->x.fixed;
   actor->velocityX = 0;
   actor->targetY = actor->y.fixed;
@@ -221,7 +221,7 @@ void FieldPsynergy_StartCast(void) {
     Actor_SetOthersPaused(actor, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgCastAbilityName, work->messageMode);
-    Actor_SetOthersPaused(actor, 0, ANIMATION_STEP_NORMAL);
+    Actor_SetOthersPaused(actor, 0, ANIM_STEP_NORMAL);
     work->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
@@ -300,11 +300,11 @@ void FieldPsynergy_End(void) {
 /// On the World Map, notes that the field Psynergy has used the second half of
 /// the BG tile buffer, so the next still picture decodes it again.
 void FieldPsynergy_MarkWorldMapTilesUsed(void) {
-  struct HeapSlots *slots = Ram_HeapSlots;
-  s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
+  struct HeapSlots *heap = Ram_HeapSlots;
+  s32 mode = ((struct FieldWork *)heap->fieldWork)->mode;
 
   if (mode == ACTOR_SYSTEM_WORLD_MAP)
-    ((struct WorldMapView *)slots->mapGrid)->tileBufferUsed = mode;
+    ((struct WorldMapView *)heap->mapGrid)->tileBufferUsed = mode;
 }
 
 /// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase

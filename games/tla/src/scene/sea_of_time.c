@@ -154,7 +154,7 @@ enum {
   FLAG_ROCK_C_CLEARED,
   FLAG_ROCK_D_CLEARED,
   FLAG_ROCK_E_CLEARED,
-  FLAG_LAST_ROCK_CLEARED
+  FLAG_ROCK_SOUTH_CLEARED
 };
 
 /// Set while the waves run, from the stars over a trunk until the sea's
@@ -253,7 +253,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define WAVE_GREEN 6
 #define WAVE_BLUE 23
 /// The frames between the sea's colour steps while the waves run.
-#define WAVES_COLOR_STEP_FRAMES 360
+#define WAVE_COLOR_STEP_FRAMES 360
 /// The background colour whose red pulses while no waves run, between
 /// `PULSE_RED_MIN` and full: colour 15 of background palette 0.
 #define PULSE_COLOR BG_PLTT_COLOR(0, 15)
@@ -689,15 +689,15 @@ void SeaOfTime_CountLaps(void) {
 }
 
 /// The frames the waves run.
-#define WAVES_FRAMES 120
+#define WAVE_FRAMES 120
 
-/// While the waves run, ends them `WAVES_FRAMES` after the sea has gone still,
+/// While the waves run, ends them `WAVE_FRAMES` after the sea has gone still,
 /// and keeps their start, the sea's colour step and the frame count in case
 /// the scene is left and entered again.
 void SeaOfTime_TimeWaves(void) {
   u32 *state = gSceneState;
 
-  if (gFrameCount - gSeaOfTime_WaveStartFrame > WAVES_FRAMES)
+  if (gFrameCount - gSeaOfTime_WaveStartFrame > WAVE_FRAMES)
     gFieldWork->raisedTrigger = RAISED_STOP_WAVES;
   *state++ = gSeaOfTime_WaveStartFrame;
   *state++ = gSeaOfTime_WaveState;
@@ -713,7 +713,7 @@ extern u32 gSeaOfTime_WaveState;
 ///
 /// The sea's colours step toward one colour (`WAVE_RED`, `WAVE_GREEN`,
 /// `WAVE_BLUE`) every 10 frames, and its colour cycle slows to a step every
-/// `WAVES_COLOR_STEP_FRAMES`; `SeaOfTime_TimeWaves` ends them.
+/// `WAVE_COLOR_STEP_FRAMES`; `SeaOfTime_TimeWaves` ends them.
 void SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -763,7 +763,7 @@ void SeaOfTime_StartWaves(void) {
     frame = gFrameCount;
     gSeaOfTime_WaveState += frame & 1;
   } while (changed);
-  gSeaOfTime_WaveState = WAVES_COLOR_STEP_FRAMES;
+  gSeaOfTime_WaveState = WAVE_COLOR_STEP_FRAMES;
   gSeaOfTime_WaveStartFrame = frame;
   Task_Add(SeaOfTime_TimeWaves, TASK_PASS_FRAME);
   Event_End();
@@ -1130,7 +1130,8 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
 /// Felix casts Grind on the rock in the last stretch's south part, on cells
 /// (44, 42) to (45, 43), and it is gone for good.
-DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, ACTOR_ROCK_A, FLAG_LAST_ROCK_CLEARED)
+DEFINE_GRIND_ROCK(SeaOfTime_GrindSouthRock, ACTOR_ROCK_A,
+                  FLAG_ROCK_SOUTH_CLEARED)
 
 #define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \
   void name(void) {                                                            \
@@ -1438,7 +1439,7 @@ void SeaOfTime_Open(void) {
 /// waves were running when the party left, they are still running. In the
 /// last stretch's north part, once Poseidon is beaten, the rocks Grind has not
 /// broken are back and the pulsing red is gone; on the arrival from his battle,
-/// the sea opens (`SeaOfTime_Open`). In its south part the last rock is placed
+/// the sea opens (`SeaOfTime_Open`). In its south part the south rock is placed
 /// until it is broken.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1496,7 +1497,7 @@ s32 Scene_Initialize(void) {
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         SeaOfTime_Open();
     } else {
-      if (!GameFlag_Get(FLAG_LAST_ROCK_CLEARED))
+      if (!GameFlag_Get(FLAG_ROCK_SOUTH_CLEARED))
         SeaOfTime_PlaceRock(89, 85, ACTOR_ROCK_A);
     }
   }
@@ -1716,7 +1717,7 @@ struct Trigger gSeaOfTime_SouthPartTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_FollowChannel)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
-     EVENT(SeaOfTime_GrindLastRock)},
+     EVENT(SeaOfTime_GrindSouthRock)},
     {TRIGGER_TABLE_END},
 };
 

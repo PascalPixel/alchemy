@@ -108,7 +108,7 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
 }
 
 // The Lift-style animation measures height by the actor's footing, not y.
-#define ANIMATION_MEASURES_FOOTING 18
+#define ANIM_MEASURES_FOOTING 18
 /// A facing's sixteenths of a turn (FACING_STEP), as a shift.
 #define FACING_STEP_SHIFT 12
 
@@ -138,7 +138,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   // Height: within the rule's pixels above or below.
   rule = Field_GetPsynergyReach(animation);
   height = toFIXED(rule->height);
-  if (animation == ANIMATION_MEASURES_FOOTING) {
+  if (animation == ANIM_MEASURES_FOOTING) {
     if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;
   } else {
@@ -323,5 +323,5 @@ void Leader_PushObjectAhead(void) {
   }
 }
 
-#undef ANIMATION_MEASURES_FOOTING
+#undef ANIM_MEASURES_FOOTING
 #undef FACING_STEP_SHIFT

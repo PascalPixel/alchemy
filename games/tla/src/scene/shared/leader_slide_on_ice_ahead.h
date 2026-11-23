@@ -56,7 +56,7 @@ void Leader_SlideOnIceAhead(void) {
     actor->acceleration = toFIXED(1) / 10;
     actor->timer = 0;
     Actor_SelectAnimation(actor, ANIM_WALK);
-    Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
+    Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
     actor->update = Actor_SteerByPad;
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);

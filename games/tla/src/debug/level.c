@@ -60,12 +60,12 @@ enum {
   ENTRANCE_NAMES_FOURTH = 96,
   ENTRANCE_NAMES_THIRD = 97,
   ENTRANCE_NAMES_SECOND = 98,
-  ENTRANCE_NAMES_FIRST = 99,
-  /// The entrances the code tests against: up to the first is the debug
-  /// room's, above the second the rooms of names'.
-  ENTRANCE_DEBUG_ROOM_LAST = 89,
-  ENTRANCE_NAMES_ABOVE = 94
+  ENTRANCE_NAMES_FIRST = 99
 };
+
+/// The entrances the code tests against: up to the first is the debug room's,
+/// above the second the rooms of names'.
+enum { ENTRANCE_DEBUG_ROOM_LAST = 89, ENTRANCE_NAMES_ABOVE = 94 };
 
 /// The debug room's actors, numbering the rows of
 /// gIncreaseItemAndLevel_ActorPlacements, as The Broken Seal's.

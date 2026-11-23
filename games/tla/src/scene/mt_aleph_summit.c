@@ -318,7 +318,7 @@ s32 Scene_Initialize(void) {
   u16 *color, *out;
   struct Actor *actor;
   volatile u32 *held;
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
 
   buffer = Heap_AllocEwram(BG_PLTT_SIZE);
   Window_LoadGraphics();
@@ -333,7 +333,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_SetSpeed(1);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
     Actor_SetAnimation(ACTOR_ALEX, 12);
-    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL / 2);
+    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIM_STEP_NORMAL / 2);
     gFieldWork->transition = 0;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     REG_BG1CNT &= ~BGCNT_PRIORITY(3);
@@ -395,7 +395,7 @@ s32 Scene_Initialize(void) {
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     // "Wait for me! Please, wait! Wait until I reach the summit of Mt. Aleph!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ALEX, 0);
-    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL * 2);
+    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIM_STEP_NORMAL * 2);
     for (i = 0; i != CLIMB_STEPS; i++) {
       if (i == CLIMB_CAMERA_STEP) {
         FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);
@@ -408,8 +408,8 @@ s32 Scene_Initialize(void) {
     }
     Event_SetDestination(SCENE_STAFF_CREDIT, 1);
   } else if (mode == ENTRANCE_ALEX_TAKES_THE_POWER) {
-    slots = Ram_HeapSlots;
-    fade = slots->paletteFade;
+    heap = Ram_HeapSlots;
+    fade = heap->paletteFade;
     Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 0),
                     PALETTE_FADE_BG_COLORS * sizeof(u16));
     FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
@@ -431,7 +431,7 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT &= ~BGCNT_PRIORITY(3);
     REG_BG3CNT |= BGCNT_PRIORITY(2);
     System_Wait(1);
-    ((struct FieldWork *)slots->fieldWork)->transition = scale;
+    ((struct FieldWork *)heap->fieldWork)->transition = scale;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -722,7 +722,7 @@ s32 Scene_Initialize(void) {
     // "If you survive, perhaps we shall meet again someday..."
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
     FieldEvent_Wait(10);
-    slots = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
+    heap = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
     MapGrid_SetShake(16, 16, 1);
     for (j = 0, scale = -FIXED_ONE * 15 / 8; j != 128;
          j++, scale += FIXED_ONE / 16) {
@@ -739,7 +739,7 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
         PaletteFade_Interpolate(64);
       }
-      ((struct MapWork *)slots)->layers[1].offsetY -= toFIXED(1);
+      ((struct MapWork *)heap)->layers[1].offsetY -= toFIXED(1);
       Actor_Get(ACTOR_ALEX)->z.fixed += toFIXED(1);
       System_Wait(1);
     }

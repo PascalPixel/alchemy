@@ -36,7 +36,7 @@ void BattleParty_SwapInReserves(void) {
   s32 actorCount;
   s32 reserveCount;
   s32 count;
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 i;
 
   if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
@@ -48,7 +48,7 @@ void BattleParty_SwapInReserves(void) {
   BattleHighlight_SetModes(actors, HIGHLIGHT_FADE_OUT);
   wait(32);
   for (i = 0; i < count; i++) {
-    s32 unit = work->partyUnits[i];
+    s32 unit = battle->partyUnits[i];
     s32 id = reserves[i];
     struct BattleObject *from = BattleObject_Get(unit);
     struct BattleObject *to = BattleObject_Get(id);
@@ -60,7 +60,7 @@ void BattleParty_SwapInReserves(void) {
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
                                        place->z);
     gMainRoutineWork.party[i] = id;
-    work->partyUnits[i] = id;
+    battle->partyUnits[i] = id;
   }
   for (i = 0; i < count; i++)
     gMainRoutineWork.party[actorCount + i] = actors[i];
@@ -93,9 +93,9 @@ void BattleCamera_Create(void) {
 /// ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
 /// The form change's battle effect calls it through its far call.
 void Battle_ChangeEnemyForm(s32 id) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 unit;
-  struct BattleObject *object;
+  struct BattleObject *battleObject;
 
   if (id == FORMATION_DOOM_DRAGON_A)
     unit = ENEMY_DOOM_DRAGON_E;
@@ -105,12 +105,13 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleMotion_DestroyAllSlotObjects();
   BattleEnemy_ClaimNameLetter(unit, 1);
   BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, NAME_LETTER_NONE);
-  work->enemyIds[0] = FIRST_ENEMY_UNIT;
-  work->enemyIds[1] = BATTLE_UNIT_LIST_END;
+  battle->enemyIds[0] = FIRST_ENEMY_UNIT;
+  battle->enemyIds[1] = BATTLE_UNIT_LIST_END;
   BattlePlacement_RelayoutEnemies();
-  object = BattleObject_Get(FIRST_ENEMY_UNIT);
-  BattleObject_Make(object, FIRST_ENEMY_UNIT, object->anchorX / FIXED_ONE,
-                    object->anchorZ / FIXED_ONE);
+  battleObject = BattleObject_Get(FIRST_ENEMY_UNIT);
+  BattleObject_Make(battleObject, FIRST_ENEMY_UNIT,
+                    battleObject->anchorX / FIXED_ONE,
+                    battleObject->anchorZ / FIXED_ONE);
   BattleObject_Put();
 }
 

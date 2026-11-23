@@ -524,7 +524,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
                                  POSE_CAST);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object,
-            ANIMATION_STEP_NORMAL * 2);
+            ANIM_STEP_NORMAL * 2);
         ElementGlow_Play(request->unitId,
                          DJINN_COMMAND_ELEMENT(request->parameter), GLOW_BURST,
                          0);

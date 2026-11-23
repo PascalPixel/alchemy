@@ -21,11 +21,12 @@
 #define NAME_SUFFIX_COUNT 9
 #endif
 
-/// The size the STATIC_ASSERTs below hold struct Unit to, and the action id's
-/// bits in an action list entry.
+/// Bytes in a struct Unit, which the code clears and copies whole: the size the
+/// STATIC_ASSERTs below hold it to.
+enum { BATTLE_UNIT_SIZE = 332 };
+
+/// The action id's bits in an action list entry.
 enum {
-  /// Bytes in a struct Unit, which the code clears and copies whole.
-  BATTLE_UNIT_SIZE = 332,
   PSYNERGY_ABILITY_MASK = 0x3fff, ///< PsynergyEntry.encodedAction's action id
   /// PsynergyEntry.encodedAction's marks: the action comes from an equipped
   /// item, or from the class (its top bit, PSYNERGY_FROM_CLASS_SHIFT).

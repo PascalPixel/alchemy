@@ -8,28 +8,28 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// Column `n` of style `mode`'s row of gStreaks_Styles, four flags a style.
-#define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode) * 4 + (n)]
+/// Column `n` of style `mode`'s row of gStreak_Styles, four flags a style.
+#define STREAK_VALUE(mode, n) gStreak_Styles[(mode) * 4 + (n)]
 /// Nonzero: the streak cycles through three images.
-#define STREAKS_ANIMATE 0
+#define STREAK_ANIMATE 0
 /// Nonzero: play the hit sound and flash the target.
-#define STREAKS_HIT 1
+#define STREAK_HIT 1
 /// The target's knockback on the hit (enum BattleKnockback, -1: none).
-#define STREAKS_MOTION 2
+#define STREAK_MOTION 2
 /// Nonzero: the struck target trembles from side to side.
-#define STREAKS_SHAKE 3
+#define STREAK_SHAKE 3
 
-#define STREAKS_MAX 3 ///< streaks fired at each target
+#define STREAK_MAX 3 ///< streaks fired at each target
 
 /// The streak volley's styles (BattleEffect_RunStreakVolley): its colour and
-/// its row of gStreaks_Styles.
+/// its row of gStreak_Styles.
 enum StreakStyle {
-  STREAKS_STYLE_EMBER,  ///< Sonic Wave
-  STREAKS_STYLE_LIME,   ///< Shriek and Harpy, and the unused
-                        ///< BattleEffect_RunLimeStreaks
-  STREAKS_STYLE_VIOLET, ///< Banshee Howl
-  STREAKS_STYLE_RED,    ///< Wicked Howl
-  STREAKS_STYLE_CYAN    ///< War Cry
+  STREAK_STYLE_EMBER,  ///< Sonic Wave
+  STREAK_STYLE_LIME,   ///< Shriek and Harpy, and the unused
+                       ///< BattleEffect_RunLimeStreaks
+  STREAK_STYLE_VIOLET, ///< Banshee Howl
+  STREAK_STYLE_RED,    ///< Wicked Howl
+  STREAK_STYLE_CYAN    ///< War Cry
 };
 
 /// Three streaks of ember light fly from the user at each target in turn; each
@@ -37,7 +37,7 @@ enum StreakStyle {
 ///
 /// Abilities: Sonic Wave.
 void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_EMBER);
+  BattleEffect_RunStreakVolley(args, STREAK_STYLE_EMBER);
 }
 
 /// Three streaks of lime light fly from the user at each target in turn; each
@@ -45,7 +45,7 @@ void BattleEffect_RunSonicWave(struct BattleEffectParams *args) {
 ///
 /// Abilities: Shriek, Harpy.
 void BattleEffect_RunShriek(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
+  BattleEffect_RunStreakVolley(args, STREAK_STYLE_LIME);
 }
 
 /// Three streaks of violet light fly from the user at each target in turn; each
@@ -53,7 +53,7 @@ void BattleEffect_RunShriek(struct BattleEffectParams *args) {
 ///
 /// Abilities: Banshee Howl.
 void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_VIOLET);
+  BattleEffect_RunStreakVolley(args, STREAK_STYLE_VIOLET);
 }
 
 /// Three flickering cyan streaks fly from the user at each target in turn;
@@ -61,7 +61,7 @@ void BattleEffect_RunBansheeHowl(struct BattleEffectParams *args) {
 ///
 /// Abilities: War Cry.
 void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_CYAN);
+  BattleEffect_RunStreakVolley(args, STREAK_STYLE_CYAN);
 }
 
 /// Three flickering red streaks fly from the user at each target in turn; each
@@ -69,13 +69,13 @@ void BattleEffect_RunWarCry(struct BattleEffectParams *args) {
 ///
 /// Abilities: Wicked Howl.
 void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_RED);
+  BattleEffect_RunStreakVolley(args, STREAK_STYLE_RED);
 }
 
 /// Unused: no entry of the effect table points here. It would have played
 /// the same lime streaks as Shriek.
 UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
-  BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
+  BattleEffect_RunStreakVolley(args, STREAK_STYLE_LIME);
 }
 
 /// FiveModeImage's streaks: three animation frames, each six pictures that
@@ -84,9 +84,9 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 #define STREAK_WIDTH 20
 #define STREAK_HEIGHT 40
 #define STREAK_FRAME_BYTES (6 * PICTURE_BYTES(STREAK))
-#define STREAKS_SPACING 6       ///< frames between streaks
-#define STREAKS_FLIGHT 24       ///< frames from user to target
-#define STREAKS_TARGET_DELAY 32 ///< frames between targets
+#define STREAK_SPACING 6       ///< frames between streaks
+#define STREAK_FLIGHT 24       ///< frames from user to target
+#define STREAK_TARGET_DELAY 32 ///< frames between targets
 
 /// Fires the streaks at each target in turn from above the user; each leaves a
 /// fading trail.
@@ -104,7 +104,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 frame;
   s32 j;
-  s32 streaks = STREAKS_MAX;
+  s32 streaks = STREAK_MAX;
   s32 lift = toFIXED(20);
 
   /* FAKEMATCH(dead): heap set through its own address; as heap = Ram_HeapSlots.
@@ -136,19 +136,19 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   // The streak pictures, and the mode's colours.
   Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, work->sheet, 0, 0);
   switch (mode) {
-  case STREAKS_STYLE_EMBER:
+  case STREAK_STYLE_EMBER:
     resource = RESOURCE_EMBER_STREAK_SHEET;
     break;
-  case STREAKS_STYLE_LIME:
+  case STREAK_STYLE_LIME:
     resource = RESOURCE_LIME_PALETTE;
     break;
-  case STREAKS_STYLE_VIOLET:
+  case STREAK_STYLE_VIOLET:
     resource = RESOURCE_VIOLET_PALETTE_D;
     break;
-  case STREAKS_STYLE_RED:
+  case STREAK_STYLE_RED:
     resource = RESOURCE_RED_PALETTE_B;
     break;
-  case STREAKS_STYLE_CYAN:
+  case STREAK_STYLE_CYAN:
   default:
     resource = RESOURCE_CYAN_PALETTE;
     break;
@@ -160,10 +160,10 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
   source = BattleObject_GetFar(args->user)->object;
   {
-    // The loop counts STREAKS_SPACING for each streak though targets are
-    // STREAKS_TARGET_DELAY apart, so with three or four targets it stops
+    // The loop counts STREAK_SPACING for each streak though targets are
+    // STREAK_TARGET_DELAY apart, so with three or four targets it stops
     // before the last one's second flash.
-    s32 totalFrames = streaks * args->targetCount * STREAKS_SPACING + 48;
+    s32 totalFrames = streaks * args->targetCount * STREAK_SPACING + 48;
 
     // Each streak flies from lift above the user to lift above its target.
     EFFECT_FOR_EACH_TARGET(k, args) {
@@ -172,9 +172,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
         struct Particle *streak = &work->particles[k * streaks + j];
 
         SET_POSITION(streak, source->x, source->y + lift, source->z);
-        SET_VELOCITY(streak, (target->x - streak->x) / STREAKS_FLIGHT,
-                     (target->y + lift - streak->y) / STREAKS_FLIGHT,
-                     (target->z - streak->z) / STREAKS_FLIGHT);
+        SET_VELOCITY(streak, (target->x - streak->x) / STREAK_FLIGHT,
+                     (target->y + lift - streak->y) / STREAK_FLIGHT,
+                     (target->z - streak->z) / STREAK_FLIGHT);
         streak->variant = 0; // frames since the streak set off
       }
     }
@@ -193,20 +193,20 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       EFFECT_FOR_EACH_TARGET(k, args) {
         // Each target's streaks set out with the style's cry.
-        if (frame == k * STREAKS_TARGET_DELAY) {
-          if (mode == STREAKS_STYLE_LIME)
+        if (frame == k * STREAK_TARGET_DELAY) {
+          if (mode == STREAK_STYLE_LIME)
             Sound_PlayFar(SE_SHRIEK);
-          if (mode == STREAKS_STYLE_VIOLET)
+          if (mode == STREAK_STYLE_VIOLET)
             Sound_PlayFar(SE_STONE_GRIND);
-          if (mode == STREAKS_STYLE_RED)
+          if (mode == STREAK_STYLE_RED)
             Sound_PlayFar(SE_BOSS_ROAR);
-          if (mode == STREAKS_STYLE_CYAN)
+          if (mode == STREAK_STYLE_CYAN)
             Sound_PlayFar(SE_ITEM_BREAK);
         }
-        if (frame >= k * STREAKS_TARGET_DELAY) {
+        if (frame >= k * STREAK_TARGET_DELAY) {
           for (j = 0; j != streaks; j++) {
             // From here lift holds the streak's start frame.
-            lift = k * STREAKS_TARGET_DELAY + j * STREAKS_SPACING;
+            lift = k * STREAK_TARGET_DELAY + j * STREAK_SPACING;
             if (frame >= lift) {
               struct Particle *streak = &work->particles[k * streaks + j];
               s32 step;
@@ -217,7 +217,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               step = streak->variant / 8;
               if (step > 5)
                 step = 5;
-              if (STREAKS_VALUE(mode, STREAKS_ANIMATE)) {
+              if (STREAK_VALUE(mode, STREAK_ANIMATE)) {
                 u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
                                            frame / 2 % 3 * STREAK_FRAME_BYTES];
 
@@ -243,14 +243,14 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
           // From 6 frames after the hit, tremble the target sideways for
           // 32 frames.
-          if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
-              frame >= k * STREAKS_TARGET_DELAY + 30 &&
-              frame < k * STREAKS_TARGET_DELAY + 62) {
+          if (STREAK_VALUE(mode, STREAK_SHAKE) &&
+              frame >= k * STREAK_TARGET_DELAY + 30 &&
+              frame < k * STREAK_TARGET_DELAY + 62) {
             struct MotionObject *struck =
                 BattleObject_GetFar(args->targets[k])->object;
 
             struck->x += INTtoFIXED(
-                gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]);
+                gStreak_Tremble[(frame - k * STREAK_TARGET_DELAY - 30) % 8]);
             if (struck->x > 0)
               struck->x += toFIXED(1) / 2;
             else
@@ -261,23 +261,23 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
           // The hit: a sound and two flashes, 16 frames apart. The first
           // hit lets the battle show its results.
-          if (STREAKS_VALUE(mode, STREAKS_HIT)) {
-            if (frame == k * STREAKS_TARGET_DELAY + 24) {
+          if (STREAK_VALUE(mode, STREAK_HIT)) {
+            if (frame == k * STREAK_TARGET_DELAY + 24) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0)
                 EFFECT_SHOW_DAMAGE(-1);
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
             }
-            if (frame == k * STREAKS_TARGET_DELAY + 40)
+            if (frame == k * STREAK_TARGET_DELAY + 40)
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
           }
-          if (STREAKS_VALUE(mode, STREAKS_MOTION) != -1 &&
-              frame == k * STREAKS_TARGET_DELAY + 24) {
+          if (STREAK_VALUE(mode, STREAK_MOTION) != -1 &&
+              frame == k * STREAK_TARGET_DELAY + 24) {
             work->shakeFrames = 4;
             BattleMotion_ApplyKnockbackFar(args->targets[k],
-                                           STREAKS_VALUE(mode, STREAKS_MOTION));
+                                           STREAK_VALUE(mode, STREAK_MOTION));
           }
         }
       }
@@ -498,18 +498,18 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
-#undef STREAKS_VALUE
-#undef STREAKS_ANIMATE
-#undef STREAKS_HIT
-#undef STREAKS_MOTION
-#undef STREAKS_SHAKE
-#undef STREAKS_MAX
+#undef STREAK_VALUE
+#undef STREAK_ANIMATE
+#undef STREAK_HIT
+#undef STREAK_MOTION
+#undef STREAK_SHAKE
+#undef STREAK_MAX
 #undef STREAK_WIDTH
 #undef STREAK_HEIGHT
 #undef STREAK_FRAME_BYTES
-#undef STREAKS_SPACING
-#undef STREAKS_FLIGHT
-#undef STREAKS_TARGET_DELAY
+#undef STREAK_SPACING
+#undef STREAK_FLIGHT
+#undef STREAK_TARGET_DELAY
 #undef MOTE_FOUNTAIN_FRAMES
 #undef MOTE_FOUNTAIN_SLAVER_FRAMES
 #undef FLARE_DEPTH_NEAR

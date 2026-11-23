@@ -493,15 +493,15 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 /// acts: action list, up to 20 entries.
 s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   struct Unit *unit;
-  struct BattleWork *work;
+  struct BattleWork *battle;
   u8 *mode;
   s32 cnt;
   s32 add;
   s32 i;
 
-  work = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   {
-    struct BattleActionRecord *rec = work->actions;
+    struct BattleActionRecord *rec = battle->actions;
     u32 n;
 
     for (n = 0; n < BATTLE_ACTION_CAPACITY; n++) {
@@ -513,7 +513,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
   GameFlag_Set(FLAG_CHOOSING_COMMANDS);
-  mode = &work->firstStrike;
+  mode = &battle->firstStrike;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 

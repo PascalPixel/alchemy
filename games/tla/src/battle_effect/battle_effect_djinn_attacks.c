@@ -319,7 +319,7 @@ enum VenusSheetPicture {
 ///
 /// Abilities: Venus.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -332,18 +332,18 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   s32 start;
   s32 angle;
 
-  slots = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)slots->battleEffect;
-  canvas = slots->battleCanvas;
-  sheet = slots->battleSheet;
+  heap = Ram_HeapSlots;
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
+  sheet = heap->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       BLITTER_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
-  draw[0] = (DrawRectangle)slots->ramCode;
-  draw[1] = (DrawRectangle)slots->ramCodePaired;
+  draw[0] = (DrawRectangle)heap->ramCode;
+  draw[1] = (DrawRectangle)heap->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, work->sheet, 1,
                              1);

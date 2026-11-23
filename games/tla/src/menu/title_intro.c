@@ -144,7 +144,7 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 // near clouds in block 1, each 256 by 128 pixels, and the cards' text in block
 // 2. The text is `Camelot presents`, three rows in these editions and two in
 // the others, then `Golden Sun` on three and `Book Two` on two.
-#define CLOUDS_ROWS 16
+#define CLOUD_ROWS 16
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
 #define PRESENTS_ROWS 3
@@ -157,7 +157,7 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 #define GOLDEN_SUN_TILE (PRESENTS_ROWS * BG_SCREEN_WIDTH)
 #define BOOK_TWO_TILE (GOLDEN_SUN_TILE + GOLDEN_SUN_ROWS * BG_SCREEN_WIDTH)
 #define INTRO_TILE_BYTES                                                       \
-  ((2 * CLOUDS_ROWS + CARD_TEXT_ROWS) * BG_SCREEN_WIDTH * TILE_SIZE_4BPP)
+  ((2 * CLOUD_ROWS + CARD_TEXT_ROWS) * BG_SCREEN_WIDTH * TILE_SIZE_4BPP)
 
 /// Blanks the display, loads the intro's clouds and cards: their colours into
 /// the BG palette with colour 0 black, and their tiles, unpacked through the
@@ -223,15 +223,15 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
 
 /// The near clouds' and the far clouds' blend weights over each other; the
 /// plunge raises both from the near clouds' to full.
-#define CLOUDS_FRONT_WEIGHT 11
-#define CLOUDS_BACK_WEIGHT 10
+#define CLOUD_FRONT_WEIGHT 11
+#define CLOUD_BACK_WEIGHT 10
 
 /// The intro's three passes over the clouds.
 enum CloudsPass {
-  CLOUDS_BEFORE_CARDS = 0,
-  CLOUDS_BETWEEN_CARDS = 1,
+  CLOUD_BEFORE_CARDS = 0,
+  CLOUD_BETWEEN_CARDS = 1,
   /// After the last card, ending in a plunge through them into white.
-  CLOUDS_AFTER_CARDS = 2
+  CLOUD_AFTER_CARDS = 2
 };
 
 /// Shows the two layers of clouds and runs one pass's scroll steps over them
@@ -247,7 +247,7 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
   REG_DISPCNT = 0;
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
   tile = 0;
-  for (j = 0; j < CLOUDS_ROWS; j++) {
+  for (j = 0; j < CLOUD_ROWS; j++) {
     for (i = 0; i < BG_SCREEN_WIDTH; i++) {
       *map++ = tile++;
     }
@@ -260,7 +260,7 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
   }
   map = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
   tile = 0;
-  for (j = 0; j < CLOUDS_ROWS; j++) {
+  for (j = 0; j < CLOUD_ROWS; j++) {
     for (i = 0; i < BG_SCREEN_WIDTH; i++) {
       *map++ = tile++ | BG_TILE_PALETTE(1);
     }
@@ -275,24 +275,24 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) |
                BGCNT_SCREEN_BASE(INTRO_FRONT_SCREEN);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
-  REG_BLDALPHA = BLEND_ALPHA(CLOUDS_FRONT_WEIGHT, CLOUDS_BACK_WEIGHT);
+  REG_BLDALPHA = BLEND_ALPHA(CLOUD_FRONT_WEIGHT, CLOUD_BACK_WEIGHT);
   for (i = 0; i < 4; i++) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  if (pass == CLOUDS_BEFORE_CARDS) {
+  if (pass == CLOUD_BEFORE_CARDS) {
     TitlePaletteFade_Initialize();
   }
   TitlePaletteFade_SetCurrent(RGB(2, 0, 0), PALETTES_ALL);
   TitlePaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   REG_DISPCNT = DISPCNT_BG1_ON | DISPCNT_BG2_ON;
-  if (pass == CLOUDS_BEFORE_CARDS) {
+  if (pass == CLOUD_BEFORE_CARDS) {
     TitlePaletteFade_Start(1);
   } else {
     TitlePaletteFade_Start(10);
   }
 
-  if (pass == CLOUDS_BEFORE_CARDS) {
+  if (pass == CLOUD_BEFORE_CARDS) {
     if (!TITLE_STEP(30, 2, 0, -3, 0, 0, 0, 0, 0))
       return 0;
     if (!TITLE_STEP(10, 2, 0, -2, 0, 0, 0, 0, 0))
@@ -315,7 +315,7 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
     TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
-  } else if (pass == CLOUDS_BETWEEN_CARDS) {
+  } else if (pass == CLOUD_BETWEEN_CARDS) {
     if (!TITLE_STEP(40, 1, 1, -1, -1, 1, 0, 1, 0))
       return 0;
     if (!TITLE_STEP(20, 1, 1, -1, -1, 3, 0, 1, 0))
@@ -341,7 +341,7 @@ s32 TitleIntro_ScrollClouds(s32 pass) {
       return 0;
     // The plunge: both layers speed up and brighten, two frames a weight.
     j = 2;
-    for (i = CLOUDS_FRONT_WEIGHT; i < BLEND_WEIGHT_MAX; i++) {
+    for (i = CLOUD_FRONT_WEIGHT; i < BLEND_WEIGHT_MAX; i++) {
       REG_BLDALPHA = BLEND_ALPHA(i, i);
       gBgScroll[1].y += j + 16;
       gBgScroll[2].y += j + 8;
@@ -912,11 +912,11 @@ s32 TitleIntro_Run(void) {
   gOamCopyEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
   TitleIntro_LoadPictureTiles();
-  if ((result = TitleIntro_ScrollClouds(CLOUDS_BEFORE_CARDS)) == 0 ||
+  if ((result = TitleIntro_ScrollClouds(CLOUD_BEFORE_CARDS)) == 0 ||
       (result = TitleIntro_ShowPresentsCard()) == 0 ||
-      (result = TitleIntro_ScrollClouds(CLOUDS_BETWEEN_CARDS)) == 0 ||
+      (result = TitleIntro_ScrollClouds(CLOUD_BETWEEN_CARDS)) == 0 ||
       (result = TitleIntro_ShowBookTwoCard()) == 0 ||
-      (result = TitleIntro_ScrollClouds(CLOUDS_AFTER_CARDS)) == 0) {
+      (result = TitleIntro_ScrollClouds(CLOUD_AFTER_CARDS)) == 0) {
     TitlePaletteFade_SetTarget(RGB(0, 0, 0), PALETTES_ALL);
     TitlePaletteFade_Start(10);
     wait(10);

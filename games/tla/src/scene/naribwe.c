@@ -5,7 +5,7 @@
 /// the southeast hut, the weapon and armor shop the southwest one, and the
 /// fortune-teller's hut stands at the top of the village between two burning
 /// braziers, where for 20 coins he reads an item. Through the northwest houses
-/// is a back yard, where Whirlwind blows away the ivy over a ladder up to a
+/// is a back yard, where Whirlwind blows away the weeds over a ladder up to a
 /// ledge of totem poles, and Reveal there shows the Unicorn Ring's chest under
 /// a rock pile. Once Piers has carried Gabomba's message, the villagers talk of
 /// the smoke over the Kibombo Mountains.
@@ -73,7 +73,7 @@ enum NaribweActorId {
   /// The item stall's keeper: "No one can see the future. Absolutely no one.
   /// Except for our fortune-teller."
   ACTOR_ITEM_SHOPKEEPER,
-  /// The ivy over the back yard's ladder, which Whirlwind blows away.
+  /// The weeds over the back yard's ladder, which Whirlwind blows away.
   ACTOR_WEEDS,
   /// The post Lash throws the rope from, and the rope's unseen end up on the
   /// ledge.
@@ -350,9 +350,9 @@ void Naribwe_EnterDoor(void) {
   Event_End();
 }
 
-/// Felix casts Whirlwind at the ivy in the back yard behind the northwest
+/// Felix casts Whirlwind at the weeds in the back yard behind the northwest
 /// houses: the leaves blow away and the ladder up to the ledge of totem poles
-/// shows. The ivy stays gone until the party leaves the village.
+/// shows. The weeds stay gone until the party leaves the village.
 void Naribwe_ScatterWeeds(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -462,7 +462,7 @@ extern s16 gNaribwe_DoorOpening[];
       ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
                       MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
-      ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS,                            \
+      ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS,                          \
                       (s32)gNaribwe_WeedsAnimation, 40, 0, 168, FACING_SOUTH,  \
                       TALK_FACING_KEEP, 0),                                    \
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \

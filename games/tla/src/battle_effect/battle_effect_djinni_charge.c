@@ -132,7 +132,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       frames = 50;
     }
     REG_BG2PA = Q_8_8(0.5);
-    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 15);
+    Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL * 15);
 
     for (frame = 0; frame != frames; frame++) {
       if (frame == 0) {
@@ -459,7 +459,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
     }
-    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

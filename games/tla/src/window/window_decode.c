@@ -398,7 +398,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if TLA_PATCH_2 && LANGUAGE != LANGUAGE_FRENCH
   struct PossessiveTable possessives;
 #endif
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
 
 #if TLA_PATCH_2 && !TLA_PATCH_3
   // DEAD: German alone clears afterItem here, and the first code always
@@ -410,8 +410,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   } else {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
-    slots = Ram_HeapSlots;
-    decode = (s32 (*)(struct TextReader *))slots->messageDecoder;
+    heap = Ram_HeapSlots;
+    decode = (s32 (*)(struct TextReader *))heap->messageDecoder;
     Message_Find(&reader, script);
 
     do {
@@ -933,15 +933,15 @@ s32 Message_Decode(s32 script, s32 clear) {
   u16 name[MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct TextReader reader;
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
 
   if (script == -1) {
     start = work->lastMessageStart;
   } else {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
-    slots = Ram_HeapSlots;
-    decode = (s32 (*)(struct TextReader *))slots->messageDecoder;
+    heap = Ram_HeapSlots;
+    decode = (s32 (*)(struct TextReader *))heap->messageDecoder;
     Message_Find(&reader, script);
 
     do {

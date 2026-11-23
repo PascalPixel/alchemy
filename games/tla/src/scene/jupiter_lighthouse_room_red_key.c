@@ -329,7 +329,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   leader->update = JupiterLighthouse_FlashColors;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_SHIMMER);
-  Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL * 4);
+  Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL * 4);
   FieldEvent_Wait(50);
   Event_PlaySound(SE_GATHERING_POWER);
   leader->timer = 0;
@@ -382,7 +382,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   leader->timer = 3;
   System_Wait(1);
   leader->update = 0;
-  Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId),
                        SPRITE_FLAG_SHADOW);
   Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_PulseScript);

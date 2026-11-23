@@ -2,11 +2,11 @@
 /// Trial Road, the mountain path above the Shaman Village where Moapa tests
 /// the party before he will hand over the Hover Jade. Felix races Moapa and his
 /// two knights up four stages, by the left path or the right. Each stage is
-/// one of eight puzzle rooms (logs to roll, stakes to Pound, ivy to blow away,
-/// frozen puddles, crumbling pillars, fountains, a sand stream), dealt in an
-/// order that depends on the letters of the leader's name. At the top of each
-/// stage the switch in front of the door opens the blue chests beside it, and
-/// the door opens once each open chest holds a piece of the party's
+/// one of eight puzzle rooms (logs to roll, stakes to Pound, weeds to blow
+/// away, frozen puddles, crumbling pillars, fountains, a sand stream), dealt in
+/// an order that depends on the letters of the leader's name. At the top of
+/// each stage the switch in front of the door opens the blue chests beside it,
+/// and the door opens once each open chest holds a piece of the party's
 /// equipment: one chest, or two when Moapa got there first. A button at the
 /// top offers to give up. Moapa's party waits at the summit, or arrives after
 /// the party, and fights them for the Jade. Long after, Hover on the summit's
@@ -86,8 +86,8 @@ enum TrialRoadCell {
   CELL_PILLAR_STAGE_LEDGE = 52,
   // The torch stage: north and south of each pillar of ice.
   CELL_ICE_PILLAR_SIDE = 33,
-  // The ivy stage's ledge, jumped from southward.
-  CELL_IVY_STAGE_LEDGE = 33,
+  // The weeds stage's ledge, jumped from southward.
+  CELL_WEEDS_STAGE_LEDGE = 33,
   // The Pound stage's four stakes, and the ground the pillars stand on.
   CELL_WEST_STAKE = 50,
   CELL_INNER_WEST_STAKE = 51,
@@ -152,11 +152,11 @@ enum TrialRoadCell {
 /// Set once Gasp has stopped mirroring Felix and hopped away to where he can
 /// be talked to.
 #define FLAG_GASP_FLED FLAG_SCENE_TEMP_88
-/// Set once Whirlwind has blown away the ivy on the pillar stage's pillar C,
+/// Set once Whirlwind has blown away the weeds on the pillar stage's pillar C,
 /// on the Pound stage's pillar B, and on the sand stage's cliff.
-#define FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY FLAG_AREA_TEMP_07
-#define FLAG_POUND_STAGE_IVY_BLOWN_AWAY FLAG_AREA_TEMP_39
-#define FLAG_SAND_STAGE_IVY_BLOWN_AWAY FLAG_AREA_TEMP_74
+#define FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY FLAG_AREA_TEMP_07
+#define FLAG_POUND_STAGE_WEEDS_BLOWN_AWAY FLAG_AREA_TEMP_39
+#define FLAG_SAND_STAGE_WEEDS_BLOWN_AWAY FLAG_AREA_TEMP_74
 /// Set while the Pound stage's inner west stake stands raised and the west one
 /// sunk; clear the other way round.
 #define FLAG_INNER_WEST_STAKE_RAISED FLAG_AREA_TEMP_35
@@ -234,15 +234,15 @@ enum TrialRoadTorchStageActorId {
   ACTOR_EAST_TORCH
 };
 
-/// The ivy after the pillars: on pillar C in the pillar stage, on pillars A
-/// and B in the ivy pillar stage.
-enum { ACTOR_IVY_A = ACTOR_FIRST_STAGE_PIECE + 5, ACTOR_IVY_B };
+/// The weeds after the pillars: on pillar C in the pillar stage, on pillars A
+/// and B in the weeds pillar stage.
+enum { ACTOR_WEEDS_A = ACTOR_FIRST_STAGE_PIECE + 5, ACTOR_WEEDS_B };
 
-/// The ivy on pillar B in the Pound stage, after its four stakes.
-enum { ACTOR_POUND_STAGE_IVY = ACTOR_EAST_STAKE + 1 };
+/// The weeds on pillar B in the Pound stage, after its four stakes.
+enum { ACTOR_POUND_STAGE_WEEDS = ACTOR_EAST_STAKE + 1 };
 
-/// The ivy on the sand stage's cliff, after its two tightrope posts.
-enum { ACTOR_SAND_STAGE_IVY = ACTOR_FIRST_STAGE_PIECE + 2 };
+/// The weeds on the sand stage's cliff, after its two tightrope posts.
+enum { ACTOR_SAND_STAGE_WEEDS = ACTOR_FIRST_STAGE_PIECE + 2 };
 
 /// The pillar at the summit (gTrialRoad_SummitPlacements), after Kraden.
 #define ACTOR_PEAK_PILLAR (ACTOR_KRADEN + 1)
@@ -307,9 +307,10 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// one's flag, FLAG_SCENE_TEMP_14 to FLAG_SCENE_TEMP_17, is set once a torch
 /// has melted it to a puddle.
 #define FLAG_PUDDLE_MELTED_BASE (FLAG_SCENE_TEMP_14 - ACTOR_PILLAR_C)
-/// The ivy pillar stage's two ivies; each one's flag, FLAG_AREA_TEMP_27 and
-/// FLAG_AREA_TEMP_28, is set once Whirlwind has blown it away.
-#define FLAG_IVY_BLOWN_AWAY_BASE (FLAG_AREA_TEMP_27 - ACTOR_IVY_A)
+/// The weeds pillar stage's two clumps of weeds; each one's flag,
+/// FLAG_AREA_TEMP_27 and FLAG_AREA_TEMP_28, is set once Whirlwind has blown it
+/// away.
+#define FLAG_WEEDS_BLOWN_AWAY_BASE (FLAG_AREA_TEMP_27 - ACTOR_WEEDS_A)
 
 /// The log stage's logs' flags, FLAG_SCENE_TEMP_53 to FLAG_SCENE_TEMP_55, set
 /// once each has been pushed.
@@ -318,7 +319,7 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// set once each has been uncovered.
 #define FLAG_VENT_UNCOVERED_BASE (FLAG_AREA_TEMP_63 - ACTOR_WEST_VENT)
 
-/// A piece Felix cannot push: a pillar ivy holds down, a frozen puddle, a
+/// A piece Felix cannot push: a pillar weeds hold down, a frozen puddle, a
 /// stake, or a log (logs roll by their own events).
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
 #define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
@@ -353,7 +354,7 @@ extern struct ActorPlacement gTrialRoad_GaspPlacements[];
 extern struct ActorPlacement gTrialRoad_SummitPlacements[];
 extern s32 gTrialRoad_StagesPlacements[];
 
-/// The script of each clump of ivy: it sits on the ground at the foot of its
+/// The script of each clump of weeds: it sits on the ground at the foot of its
 /// pillar or cliff, drawn half again as tall as its picture.
 s32 TrialRoad_SettleOnGround(struct Actor *actor) {
   s32 height =
@@ -543,7 +544,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 a);
 
 void TrialRoad_ClearGiveUpAsked(void);
 
-void TrialRoad_BlowAwayPillarStageIvy(void);
+void TrialRoad_BlowAwayPillarStageWeeds(void);
 
 void TrialRoad_JumpAcrossGap(void);
 
@@ -579,7 +580,7 @@ void TrialRoad_StartSand(void);
 
 void TrialRoad_EndSand(void);
 
-void TrialRoad_BlowAwaySandStageIvy(void);
+void TrialRoad_BlowAwaySandStageWeeds(void);
 
 void TrialRoad_DriftWithStream(void);
 
@@ -596,7 +597,7 @@ void TrialRoad_ChallengeMoapa(void);
 
 extern struct ActorPlacement gTrialRoad_PillarStagePlacements[];
 extern struct ActorPlacement gTrialRoad_TorchStagePlacements[];
-extern struct ActorPlacement gTrialRoad_IvyPillarStagePlacements[];
+extern struct ActorPlacement gTrialRoad_WeedsPillarStagePlacements[];
 extern struct ActorPlacement gTrialRoad_PoundStagePlacements[];
 extern struct ActorPlacement gTrialRoad_CrumblingStagePlacements[];
 extern struct ActorPlacement gTrialRoad_LogStagePlacements[];
@@ -604,7 +605,7 @@ extern struct ActorPlacement gTrialRoad_FountainStagePlacements[];
 extern struct ActorPlacement gTrialRoad_SandStagePlacements[];
 extern struct Trigger gTrialRoad_PillarStageTriggers[];
 extern struct Trigger gTrialRoad_TorchStageTriggers[];
-extern struct Trigger gTrialRoad_IvyPillarStageTriggers[];
+extern struct Trigger gTrialRoad_WeedsPillarStageTriggers[];
 extern struct Trigger gTrialRoad_PoundStageTriggers[];
 extern struct Trigger gTrialRoad_CrumblingStageTriggers[];
 extern struct Trigger gTrialRoad_LogStageTriggers[];
@@ -691,7 +692,7 @@ extern const u16 gTrialRoad_RaceMapPalette[];
 void TrialRoad_MoveRival(void);
 void TrialRoad_SetUpPillarStage(void);
 void TrialRoad_SetUpTorchStage(void);
-void TrialRoad_SetUpIvyPillarStage(void);
+void TrialRoad_SetUpWeedsPillarStage(void);
 void TrialRoad_SetUpPoundStage(void);
 void TrialRoad_SetUpCrumblingStage(void);
 void TrialRoad_SetUpLogStage(void);
@@ -970,11 +971,11 @@ DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_ClearJumpUnderPushedPillar,
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_SetJumpUnderPushedPillar,
                           TrialRoad_SetJumpCellUnder)
 
-/// Whirlwind on the ivy at the foot of the pillar stage's overgrown pillar,
+/// Whirlwind on the weeds at the foot of the pillar stage's overgrown pillar,
 /// at cell (15, 24), blows it away, and the pillar can then be pushed.
-void TrialRoad_BlowAwayPillarStageIvy(void) {
+void TrialRoad_BlowAwayPillarStageWeeds(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_C)) = 0;
-  Event_SetFlag(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY);
+  Event_SetFlag(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY);
 }
 
 /// Walking off the edge of a ledge or pillar top toward another one jumps
@@ -1075,11 +1076,11 @@ void TrialRoad_FreezePuddle(s32 a, s32 id) {
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Whirlwind on the ivy at the foot of one of the two overgrown pillars in
-/// the ivy stage blows it away, and the pillar can then be pushed or Moved.
-void TrialRoad_BlowAwayIvy(s32 a, s32 id) {
-  PUSH_BLOCKED(Actor_GetById(id - (ACTOR_IVY_A - ACTOR_PILLAR_A))) = 0;
-  Event_SetFlag(id + FLAG_IVY_BLOWN_AWAY_BASE);
+/// Whirlwind on the weeds at the foot of one of the two overgrown pillars in
+/// the weeds stage blows it away, and the pillar can then be pushed or Moved.
+void TrialRoad_BlowAwayWeeds(s32 a, s32 id) {
+  PUSH_BLOCKED(Actor_GetById(id - (ACTOR_WEEDS_A - ACTOR_PILLAR_A))) = 0;
+  Event_SetFlag(id + FLAG_WEEDS_BLOWN_AWAY_BASE);
 }
 
 /// Sinks a stake into the ground, so that Felix walks over it.
@@ -1106,11 +1107,11 @@ void TrialRoad_RaiseStake(s32 id) {
   }
 }
 
-/// Whirlwind on the ivy at the foot of the Pound stage's middle pillar, at
+/// Whirlwind on the weeds at the foot of the Pound stage's middle pillar, at
 /// cell (16, 28), blows it away, and the pillar can then be pushed.
-void TrialRoad_BlowAwayPoundStageIvy(void) {
+void TrialRoad_BlowAwayPoundStageWeeds(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 0;
-  Event_SetFlag(FLAG_POUND_STAGE_IVY_BLOWN_AWAY);
+  Event_SetFlag(FLAG_POUND_STAGE_WEEDS_BLOWN_AWAY);
 }
 
 /// The stake each of the pound stage's four stakes raises when it is pounded
@@ -1559,11 +1560,11 @@ void TrialRoad_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
-/// Whirlwind on the ivy on the sand stage's cliff blows it away and uncovers
+/// Whirlwind on the weeds on the sand stage's cliff blows it away and uncovers
 /// the vine behind it, cell (19, 21), which Felix can then climb.
-void TrialRoad_BlowAwaySandStageIvy(void) {
+void TrialRoad_BlowAwaySandStageWeeds(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
-  Event_SetFlag(FLAG_SAND_STAGE_IVY_BLOWN_AWAY);
+  Event_SetFlag(FLAG_SAND_STAGE_WEEDS_BLOWN_AWAY);
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -1735,12 +1736,12 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Readies the pillar stage: the middle pillar cannot be pushed until
-/// Whirlwind blows its ivy off, and Felix can jump between the pillars' tops.
+/// Whirlwind blows its weeds off, and Felix can jump between the pillars' tops.
 void TrialRoad_SetUpPillarStage(void) {
-  if (!Event_GetFlag(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY))
+  if (!Event_GetFlag(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_C)) = 1;
   else
-    Actor_SetPosition(ACTOR_IVY_A, 0, 0);
+    Actor_SetPosition(ACTOR_WEEDS_A, 0, 0);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
@@ -1790,17 +1791,17 @@ void TrialRoad_SetUpTorchStage(void) {
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -PILLAR_HEIGHT);
 }
 
-/// Readies the ivy stage: its two overgrown pillars cannot be pushed until
-/// Whirlwind blows their ivy off.
-void TrialRoad_SetUpIvyPillarStage(void) {
+/// Readies the weeds stage: its two overgrown pillars cannot be pushed until
+/// Whirlwind blows their weeds off.
+void TrialRoad_SetUpWeedsPillarStage(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_27))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_A)) = 1;
   else
-    Actor_SetPosition(ACTOR_IVY_A, 0, 0);
+    Actor_SetPosition(ACTOR_WEEDS_A, 0, 0);
   if (!Event_GetFlag(FLAG_AREA_TEMP_28))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 1;
   else
-    Actor_SetPosition(ACTOR_IVY_B, 0, 0);
+    Actor_SetPosition(ACTOR_WEEDS_B, 0, 0);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
@@ -1815,16 +1816,16 @@ void TrialRoad_SetUpIvyPillarStage(void) {
 
 /// Readies the Pound stage: its four stakes cannot be pushed, one of each pair
 /// stands raised, and the overgrown pillar cannot be pushed until Whirlwind
-/// blows its ivy off.
+/// blows its weeds off.
 void TrialRoad_SetUpPoundStage(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_WEST_STAKE)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_INNER_WEST_STAKE)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_INNER_EAST_STAKE)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_EAST_STAKE)) = 1;
-  if (!Event_GetFlag(FLAG_POUND_STAGE_IVY_BLOWN_AWAY))
+  if (!Event_GetFlag(FLAG_POUND_STAGE_WEEDS_BLOWN_AWAY))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 1;
   else
-    Actor_SetPosition(ACTOR_POUND_STAGE_IVY, 0, 0);
+    Actor_SetPosition(ACTOR_POUND_STAGE_WEEDS, 0, 0);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
@@ -1972,14 +1973,14 @@ void TrialRoad_SetUpFountainStage(void) {
 }
 
 /// Readies the sand stage: its tightrope between two posts, and the vine on
-/// the cliff, climbable once Whirlwind has blown its ivy away.
+/// the cliff, climbable once Whirlwind has blown its weeds away.
 void TrialRoad_SetUpSandStage(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_WEST_POST, ACTOR_EAST_POST);
-  if (!Event_GetFlag(FLAG_SAND_STAGE_IVY_BLOWN_AWAY))
+  if (!Event_GetFlag(FLAG_SAND_STAGE_WEEDS_BLOWN_AWAY))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
   else
-    Actor_SetPosition(ACTOR_SAND_STAGE_IVY, 0, 0);
+    Actor_SetPosition(ACTOR_SAND_STAGE_WEEDS, 0, 0);
 }
 
 /// The cave beyond the summit needs no setting up.
@@ -3992,7 +3993,7 @@ u32 gTrialRoad_GaspHopScript[] = {
 void (*gTrialRoad_StageSetUps[])(void) = {
     TrialRoad_SetUpPillarStage,
     TrialRoad_SetUpTorchStage,
-    TrialRoad_SetUpIvyPillarStage,
+    TrialRoad_SetUpWeedsPillarStage,
     TrialRoad_SetUpPoundStage,
     TrialRoad_SetUpCrumblingStage,
     TrialRoad_SetUpLogStage,
@@ -4159,7 +4160,7 @@ LATE_DATA s32 gTrialRoad_DustScript[] = {
 void TrialRoad_FightGasp(void);
 void TrialRoad_OpenChests(void);
 void TrialRoad_JumpForward(void);
-void TrialRoad_BlowAwayPoundStageIvy(void);
+void TrialRoad_BlowAwayPoundStageWeeds(void);
 void TrialRoad_StandOnBlock(void);
 void TrialRoad_OpenSummitGate(s32 sound);
 void TrialRoad_StepOffSwitch(void);
@@ -4220,7 +4221,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_PillarStagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 392, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 456, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 392, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 248, 0, 400, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 248, 0, 400, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -4243,7 +4244,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_TorchStagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-LAST_DATA struct ActorPlacement gTrialRoad_IvyPillarStagePlacements[] = {
+LAST_DATA struct ActorPlacement gTrialRoad_WeedsPillarStagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MOAPA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4256,8 +4257,8 @@ LAST_DATA struct ActorPlacement gTrialRoad_IvyPillarStagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 440, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 456, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_YELLOW_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 456, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 232, 0, 432, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 296, 0, 432, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 232, 0, 432, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 296, 0, 432, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 
@@ -4276,7 +4277,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_PoundStagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 264, 0, 464, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 264, 0, 464, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -4335,7 +4336,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_SandStagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SHAMAN_VILLAGER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 408, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 312, 0, 336, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 312, 0, 336, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -4367,7 +4368,7 @@ LAST_DATA struct ActorPlacement gTrialRoad_SummitPlacements[] = {
 LAST_DATA s32 gTrialRoad_StagesPlacements[] = {
     (s32)gTrialRoad_PillarStagePlacements,
     (s32)gTrialRoad_TorchStagePlacements,
-    (s32)gTrialRoad_IvyPillarStagePlacements,
+    (s32)gTrialRoad_WeedsPillarStagePlacements,
     (s32)gTrialRoad_PoundStagePlacements,
     (s32)gTrialRoad_CrumblingStagePlacements,
     (s32)gTrialRoad_LogStagePlacements,
@@ -4405,16 +4406,16 @@ LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY), EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY, EVENT(TrialRoad_BlowAwayPillarStageIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_A, FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY, EVENT(TrialRoad_BlowAwayPillarStageWeeds)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4458,7 +4459,7 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
+LAST_DATA struct Trigger gTrialRoad_WeedsPillarStageTriggers[] = {
     {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
     {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
@@ -4479,7 +4480,7 @@ LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
     {TRIGGER_TALK, ACTOR_LEFT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_INNER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_IVY_STAGE_LEDGE, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_WEEDS_STAGE_LEDGE, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_AREA_TEMP_27), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_AREA_TEMP_28), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
@@ -4492,8 +4493,8 @@ LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_A, FLAG_AREA_TEMP_27, EVENT(TrialRoad_BlowAwayIvy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_AREA_TEMP_28, EVENT(TrialRoad_BlowAwayIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_A, FLAG_AREA_TEMP_27, EVENT(TrialRoad_BlowAwayWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_B, FLAG_AREA_TEMP_28, EVENT(TrialRoad_BlowAwayWeeds)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4528,9 +4529,9 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {TRIGGER_STEP, CELL_EAST_STAKE, IF_FLAG_SET(FLAG_EAST_STAKE_RAISED), EVENT(TrialRoad_StepOntoEastStake)},
     {STEP_TRIGGER_WALKING, CELL_STAKE_GROUND, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_CheckStakesCovered)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_POUND_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_CheckStakesCovered)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_POUND_STAGE_WEEDS_BLOWN_AWAY), EVENT(TrialRoad_CheckStakesCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_CheckStakesCovered)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_POUND_STAGE_IVY, FLAG_POUND_STAGE_IVY_BLOWN_AWAY, EVENT(TrialRoad_BlowAwayPoundStageIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_POUND_STAGE_WEEDS, FLAG_POUND_STAGE_WEEDS_BLOWN_AWAY, EVENT(TrialRoad_BlowAwayPoundStageWeeds)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_WEST_STAKE, FLAG_INNER_WEST_STAKE_RAISED, EVENT(TrialRoad_PoundWestStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_INNER_WEST_STAKE, IF_FLAG_SET(FLAG_INNER_WEST_STAKE_RAISED), EVENT(TrialRoad_PoundInnerWestStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_INNER_EAST_STAKE, FLAG_EAST_STAKE_RAISED, EVENT(TrialRoad_PoundInnerEastStake)},
@@ -4814,8 +4815,8 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
      CONDITION_ALWAYS, EVENT(TrialRoad_StartSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(TrialRoad_EndSand)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SAND_STAGE_IVY,
-     FLAG_SAND_STAGE_IVY_BLOWN_AWAY, EVENT(TrialRoad_BlowAwaySandStageIvy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SAND_STAGE_WEEDS,
+     FLAG_SAND_STAGE_WEEDS_BLOWN_AWAY, EVENT(TrialRoad_BlowAwaySandStageWeeds)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4874,10 +4875,14 @@ LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
 };
 
 LAST_DATA s32 gTrialRoad_StagesTriggers[] = {
-    (s32)gTrialRoad_PillarStageTriggers,    (s32)gTrialRoad_TorchStageTriggers,
-    (s32)gTrialRoad_IvyPillarStageTriggers, (s32)gTrialRoad_PoundStageTriggers,
-    (s32)gTrialRoad_CrumblingStageTriggers, (s32)gTrialRoad_LogStageTriggers,
-    (s32)gTrialRoad_FountainStageTriggers,  (s32)gTrialRoad_SandStageTriggers,
+    (s32)gTrialRoad_PillarStageTriggers,
+    (s32)gTrialRoad_TorchStageTriggers,
+    (s32)gTrialRoad_WeedsPillarStageTriggers,
+    (s32)gTrialRoad_PoundStageTriggers,
+    (s32)gTrialRoad_CrumblingStageTriggers,
+    (s32)gTrialRoad_LogStageTriggers,
+    (s32)gTrialRoad_FountainStageTriggers,
+    (s32)gTrialRoad_SandStageTriggers,
 };
 
 LAST_DATA s32 gTrialRoad_PaletteCycleFrame = -1;

@@ -4,9 +4,9 @@
 /// and SceneId_GondowanCliffsPass, which share this overlay). Coming from
 /// Madra, Felix finds a dog lying in the grass by the east entrance; Scoop on
 /// the yellow sand beside it digs up a geyser that carries him up onto the
-/// cliffs to the west. Whirlwind clears the ivy from a cave mouth nearby, where
-/// Kibombo warriors are hiding. Further on, Move pushes a tree stump off its
-/// ledge into the stream as a stepping stone, and close by Kindle, a Mars
+/// cliffs to the west. Whirlwind clears the weeds from a cave mouth nearby,
+/// where Kibombo warriors are hiding. Further on, Move pushes a tree stump off
+/// its ledge into the stream as a stepping stone, and close by Kindle, a Mars
 /// Djinni, waits to be fought; the tightrope across the river in the far west
 /// leads on towards Kibombo. Two puddles can be frozen with Frost once
 /// Felix has it, the eastern one on a later visit for the Healing Fungus. If
@@ -68,7 +68,7 @@ enum {
   /// The two puddles Frost freezes into pillars of ice.
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
-  ACTOR_IVY, ///< over the mouth of the cave Whirlwind opens
+  ACTOR_WEEDS, ///< over the mouth of the cave Whirlwind opens
   /// The stump that stands in the stream once
   /// FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER is set.
   ACTOR_STUMP,
@@ -308,12 +308,12 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN);
 }
 
-/// Whirlwind on the ivy hanging over a cave mouth west of the dog blows it
+/// Whirlwind on the weeds hanging over a cave mouth west of the dog blows it
 /// away for good, opening the way into the cave where the Kibombo warriors
 /// hide.
 ///
 /// The leaves are Whirlwind's own; the event only sets the flag that keeps the
-/// ivy gone and opens the cave's exit.
+/// weeds gone and opens the cave's exit.
 void GondowanCliffs_BlowAwayFoliage(void) {
   GameFlag_Set(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
 }
@@ -486,7 +486,7 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
 /// Sets up the scene being entered. The river channel has its own set-up; the
 /// cliffs turn the party back while Piers still needs their help, and
-/// otherwise tie the rope and string the tightrope, put back the ivy, the
+/// otherwise tie the rope and string the tightrope, put back the weeds, the
 /// frozen puddles, the geyser and the stump as their flags say, and start the
 /// water shimmering.
 s32 Scene_Initialize(void) {
@@ -515,9 +515,9 @@ s32 Scene_Initialize(void) {
       Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
-      Actor_SetPosition(ACTOR_IVY, 0, 0);
+      Actor_SetPosition(ACTOR_WEEDS, 0, 0);
     else
-      Actor_GetById(ACTOR_IVY)->scaleY = FIXED_ONE * 5 / 4;
+      Actor_GetById(ACTOR_WEEDS)->scaleY = FIXED_ONE * 5 / 4;
     if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
     if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN))
@@ -662,7 +662,7 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1624, 0, 760, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1304, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1880, 0, 568, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WEEDS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1576, 0, 672, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DOG, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -712,7 +712,7 @@ LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayFoliage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayFoliage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, EVENT(GondowanCliffs_LeapStumpIntoWater)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(GondowanCliffs_ScoopUpGeyser)},
     {TRIGGER_TABLE_END},

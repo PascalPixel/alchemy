@@ -32,11 +32,11 @@
 #define CLIMB_STEP_IS_CLEAR(actor, probe, angle)                               \
   (SET_CLIMB_STEP(probe, actor, angle), !MapGrid_CheckCollision(actor, probe))
 
-/// SCRIPT_CMD_KEYS, the leader's control on a climbable wall: moves it 8 pixels
-/// at a time by the direction pad, up and down changing its height rather than
-/// its depth, reaching east or west as it goes and clinging while the pad is
-/// not held. Refuses a step into a wall, from or onto a cell that is not
-/// MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low (down), and
+/// SCRIPT_COMMAND_KEYS, the leader's control on a climbable wall: moves it 8
+/// pixels at a time by the direction pad, up and down changing its height
+/// rather than its depth, reaching east or west as it goes and clinging while
+/// the pad is not held. Refuses a step into a wall, from or onto a cell that is
+/// not MAP_CELL_CLIMBABLE, or onto ground too high (up) or too low (down), and
 /// records the held keys in the field work. Returns 1.
 s32 Actor_MoveByKeys(struct Actor *actor) {
   struct FieldPosition position;
@@ -125,7 +125,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   return 1;
 }
 
-/// SCRIPT_CMD_ROPE, the leader's control on a tied rope (render mode 3):
+/// SCRIPT_COMMAND_ROPE, the leader's control on a tied rope (render mode 3):
 /// the pad moves it from node to node along the rope, a half cell a step.
 s32 Actor_CrossRope(struct Actor *actor) {
   struct FieldPosition position;
@@ -158,7 +158,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
     best = (struct RopeNode *)actor->watchedActor;
     animationSpeed = 0;
   } else {
-    animationSpeed = ANIMATION_STEP_NORMAL;
+    animationSpeed = ANIM_STEP_NORMAL;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
     position.x += actor->x.fixed;

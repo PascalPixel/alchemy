@@ -26,7 +26,7 @@ s32 Field_UsePsynergy(u32 code) {
   s32 retreat = 0;
   struct PendingEvent *after;
   struct PendingEvent *during;
-  struct PendingEvent *pending;
+  struct PendingEvent *event;
   struct Actor *actor;
   s32 selector;
   s32 target;
@@ -102,13 +102,13 @@ s32 Field_UsePsynergy(u32 code) {
 
   // The scene's first event; a use that pays no PP only runs its ending events.
   selector = Scene_SelectPsynergyTarget(group);
-  pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FIRST),
-                                      group, selector);
-  if (pending != NULL) {
+  event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FIRST),
+                                    group, selector);
+  if (event != NULL) {
     target = -1;
     if (selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
       target = selector & PSYNERGY_TARGET_ID;
-    Field_RunPsynergyEvent(pending, userId, target);
+    Field_RunPsynergyEvent(event, userId, target);
   }
   if (code & ACT_PACKED)
     return Field_RunPsynergyEndEvents(code);
@@ -203,10 +203,10 @@ s32 Field_UsePsynergy(u32 code) {
   hit = work->psynergyHitObject;
   if (hit != -1) {
     selector = hit | PSYNERGY_TARGET_ACTOR;
-    pending = Scene_FindPsynergyTrigger(
+    event = Scene_FindPsynergyTrigger(
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, selector);
-    if (pending != NULL)
-      Field_RunPsynergyEvent(pending, userId, work->psynergyHitObject);
+    if (event != NULL)
+      Field_RunPsynergyEvent(event, userId, work->psynergyHitObject);
   }
   Field_RunPsynergyEvent(after, userId, target);
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST))

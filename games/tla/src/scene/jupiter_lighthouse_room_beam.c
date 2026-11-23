@@ -405,7 +405,7 @@ void JupiterLighthouse_RideTheBeam(void) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
-    Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 4);
+    Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 4);
     actor->motionFlags = 0;
     for (i = 0; i < BEAM_RIDE_STEPS; i++) {
       actor->y.fixed += toFIXED(3);

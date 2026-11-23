@@ -66,7 +66,7 @@ void BattleEffect_FadeToSavedPalettes(s32 frames);
 void FieldPsynergy_Parch(void) {
   struct ParchWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ParchWork));
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 offset; // byte offset of the event work's 80 actor pointers
@@ -114,10 +114,10 @@ void FieldPsynergy_Parch(void) {
 
   i = 0;
   kind = SPRITE_PUDDLE;
-  slots = Ram_HeapSlots;
+  heap = Ram_HeapSlots;
   for (offset = offsetof(struct FieldWork, actors); i < FIELD_ACTOR_COUNT;
        i++, offset += sizeof(struct Actor *)) {
-    actor = *(struct Actor **)((u8 *)slots->fieldWork + offset);
+    actor = *(struct Actor **)((u8 *)heap->fieldWork + offset);
     actorSprite = actor->sprite;
     if (actor->script != NULL && actorSprite->entries[0]->animationId == kind &&
         actorSprite->lastNo == 1 &&

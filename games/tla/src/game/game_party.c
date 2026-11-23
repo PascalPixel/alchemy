@@ -159,7 +159,7 @@ s32 Party_ListMembers(s16 *unitIds) {
   return count;
 }
 
-/// Adds `amount` to the party's coins, kept between 0 and COINS_MAX, and
+/// Adds `amount` to the party's coins, kept between 0 and COIN_MAX, and
 /// returns the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
@@ -168,8 +168,8 @@ s32 Party_AdjustCoins(s32 amount) {
   work = &gMainRoutineWork;
   value = work->coins;
   value += amount;
-  if (value > COINS_MAX) {
-    value = COINS_MAX;
+  if (value > COIN_MAX) {
+    value = COIN_MAX;
   }
   if (value < 0) {
     value = 0;
@@ -195,7 +195,7 @@ s32 Party_AdjustCoins(s32 amount) {
     return value;                                                              \
   }
 
-PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, COINS_MAX)
+PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, COIN_MAX)
 PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, SHOP_GIFTS_MAX)
 
 /// Writes the summons the party can call to output, in menu order, ending with

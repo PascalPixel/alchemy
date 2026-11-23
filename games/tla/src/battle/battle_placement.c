@@ -544,7 +544,7 @@ s32 Enemy_GetFreeUnitId(void) {
 /// new place, skipping the removed places before the first enemy and laying
 /// out up to the last one still there.
 void BattlePlacement_RelayoutEnemies(void) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 unitIds[UNIT_MAX];
   s32 x[ENEMY_BATTLE_SIZE];
   s32 z[ENEMY_BATTLE_SIZE];
@@ -554,15 +554,15 @@ void BattlePlacement_RelayoutEnemies(void) {
   s32 total;
 
   for (i = 0;
-       i < ENEMY_BATTLE_SIZE && work->enemyIds[i] != BATTLE_UNIT_LIST_END;
+       i < ENEMY_BATTLE_SIZE && battle->enemyIds[i] != BATTLE_UNIT_LIST_END;
        i++) {
-    if (work->enemyIds[i] == BATTLE_UNIT_REMOVED) {
+    if (battle->enemyIds[i] == BATTLE_UNIT_REMOVED) {
       if (count == 0)
         continue;
     } else {
       last = count;
     }
-    unitIds[count] = work->enemyIds[i];
+    unitIds[count] = battle->enemyIds[i];
     count++;
   }
   total = last + 1;
@@ -571,10 +571,10 @@ void BattlePlacement_RelayoutEnemies(void) {
     s32 id = unitIds[i];
 
     if (id != BATTLE_UNIT_REMOVED) {
-      struct BattleObject *object = BattleObject_Get(id);
+      struct BattleObject *battleObject = BattleObject_Get(id);
 
-      object->anchorX = toFIXED(x[i]);
-      object->anchorZ = toFIXED(z[i]);
+      battleObject->anchorX = toFIXED(x[i]);
+      battleObject->anchorZ = toFIXED(z[i]);
     }
   }
 }
@@ -592,19 +592,19 @@ void BattleUnit_RefreshPlacement(void) {
   s32 n;
   s32 value;
   u8 *p;
-  struct BattleWork *work;
+  struct BattleWork *battle;
 
   place = 0;
   stand = 0;
-  work = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
   // placement[0..7] is each party unit id's place and placement[8..13] the
   // enemy places, numbered 8 to 13.
   value = BATTLE_OBJECT_NONE;
   for (i = 0; i < UNIT_MAX; i++)
-    work->placement[i] = value;
-  for (n = ENEMY_BATTLE_SIZE - 1, p = &work->placement[UNIT_MAX - 1],
+    battle->placement[i] = value;
+  for (n = ENEMY_BATTLE_SIZE - 1, p = &battle->placement[UNIT_MAX - 1],
       value = UNIT_MAX - 1;
        n >= 0; n--, value--)
     *p-- = value;
@@ -613,19 +613,20 @@ void BattleUnit_RefreshPlacement(void) {
   for (i = 0; i < count; place++, i++) {
     s32 id = ids[i];
 
-    work->placement[id] = place;
+    battle->placement[id] = place;
     BattleObject_Make(BattleObject_Get(id), id,
                       gBattlePlacement_StepPairs[place * 2],
                       gBattlePlacement_StepPairs[place * 2 + 1]);
   }
   // The enemies, laid out by size.
   for (i = 0;
-       i < ENEMY_BATTLE_SIZE && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++)
-    ids[i] = work->enemyIds[i];
+       i < ENEMY_BATTLE_SIZE && battle->enemyIds[i] != BATTLE_UNIT_LIST_END;
+       i++)
+    ids[i] = battle->enemyIds[i];
   count = i;
   BattlePlacement_LayoutEnemies(ids, count, x, z);
   for (i = 0; i < count; i++, stand++) {
-    s32 id = work->enemyIds[i];
+    s32 id = battle->enemyIds[i];
 
     if (id != BATTLE_UNIT_REMOVED)
       BattleObject_Make(BattleObject_Get(id), id, x[stand], z[stand]);

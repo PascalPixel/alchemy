@@ -1074,7 +1074,7 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectParams *args) {
 
 /// A swirl sweeps across the first target from the user's side.
 void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
   struct BattleEffectWork *work;
   void *canvas;
   struct MotionObject *target;
@@ -1088,19 +1088,19 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 
   // The canvas at its own width, and a transparent blitter, mirrored when the
   // targets are the party.
-  slots = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)slots->battleEffect;
-  canvas = slots->battleCanvas;
+  heap = Ram_HeapSlots;
+  work = (struct BattleEffectWork *)heap->battleEffect;
+  canvas = heap->battleCanvas;
   EFFECT_START_NARROW_CANVAS(0);
   if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_TRANSPARENT);
-    draw[0] = (DrawRectangle)slots->ramCode;
+    draw[0] = (DrawRectangle)heap->ramCode;
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_TRANSPARENT);
-    draw[0] = (DrawRectangle)slots->ramCode;
+    draw[0] = (DrawRectangle)heap->ramCode;
   }
   Resource_LoadAndDecompress(RESOURCE_MAGENTA_SWIRL_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapCellBuffer, 1,

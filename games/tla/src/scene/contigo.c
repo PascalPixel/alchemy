@@ -114,16 +114,16 @@ enum ContigoCellBehavior {
 /// game (Contigo_InitializeLuckyDice); the Spanish text numbers these lines
 /// differently.
 #if LANGUAGE == LANGUAGE_SPANISH
-#define COINS_WON_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 1)
-#define COINS_LOST_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 2)
+#define COIN_WON_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 1)
+#define COIN_LOST_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 2)
 #define READ_SIGN_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
 #define CONGRATULATIONS_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
 #define FIRST_PRIZE_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
 #define NEXT_PRIZE_MESSAGE ((s32)MsgContigoCongratulations)
 #define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
 #else
-#define COINS_WON_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
-#define COINS_LOST_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
+#define COIN_WON_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
+#define COIN_LOST_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
 #define READ_SIGN_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
 #define CONGRATULATIONS_MESSAGE ((s32)MsgContigoCongratulations)
 #define FIRST_PRIZE_MESSAGE ((s32)MsgContigoYouWonHereYouGo)
@@ -1552,9 +1552,9 @@ void Contigo_OfferLuckyDice(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     *(s32 *)gSceneState = gMainRoutineWork.coins;
-    /* FAKEMATCH(dead): tests of the coins, never above COINS_MAX, around a
+    /* FAKEMATCH(dead): tests of the coins, never above COIN_MAX, around a
      * store to price, which nothing reads again. */
-    if (gMainRoutineWork.coins > COINS_MAX) {
+    if (gMainRoutineWork.coins > COIN_MAX) {
       if (gMainRoutineWork.coins != 0)
         price = 0;
     }
@@ -1599,9 +1599,9 @@ void Contigo_OfferSuperLuckyDice(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     *(s32 *)gSceneState = gMainRoutineWork.coins;
-    /* FAKEMATCH(dead): tests of the coins, never above COINS_MAX, around a
+    /* FAKEMATCH(dead): tests of the coins, never above COIN_MAX, around a
      * store to price, which nothing reads again. */
-    if (gMainRoutineWork.coins > COINS_MAX) {
+    if (gMainRoutineWork.coins > COIN_MAX) {
       if (gMainRoutineWork.coins != 0)
         price = 0;
     }
@@ -2708,13 +2708,13 @@ void Contigo_InitializeLuckyDice(void) {
       else
         Sound_Play(MUS_LUCKY);
       Event_Wait(20);
-      Event_SetMessageId(COINS_WON_MESSAGE);
+      Event_SetMessageId(COIN_WON_MESSAGE);
       MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
       // "Ya won ... coin! Talk about lucky!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
       Sound_WaitForJingle();
     } else if (coinChange < 0) {
-      Event_SetMessageId(COINS_LOST_MESSAGE);
+      Event_SetMessageId(COIN_LOST_MESSAGE);
       MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
       // "Ya lost ... coin. Better luck next time."
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
@@ -2734,13 +2734,13 @@ void Contigo_InitializeLuckyDice(void) {
       else
         Sound_Play(MUS_LUCKY);
       Event_Wait(20);
-      Event_SetMessageId(COINS_WON_MESSAGE);
+      Event_SetMessageId(COIN_WON_MESSAGE);
       MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
       // "Ya won ... coin! Talk about lucky!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
       Sound_WaitForJingle();
     } else if (coinChange < 0) {
-      Event_SetMessageId(COINS_LOST_MESSAGE);
+      Event_SetMessageId(COIN_LOST_MESSAGE);
       MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
       // "Ya lost ... coin. Better luck next time."
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);

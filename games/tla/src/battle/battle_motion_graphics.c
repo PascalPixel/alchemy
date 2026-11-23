@@ -176,7 +176,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->unitId)->object;
   Actor_SelectAnimationFar(actor, POSE_CAST);
-  Actor_SetAnimationSpeedFar((struct Actor *)actor, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)actor, ANIM_STEP_NORMAL);
   IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   Sound_PlayFar(SE_CAST);
   wait(10);
@@ -412,11 +412,10 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
                                     Unit_Get(plan->partnerId)->enemyId)));
     Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObject *)object)->object,
-        ANIMATION_STEP_NORMAL);
+        ANIM_STEP_NORMAL);
   }
   Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object,
-      ANIMATION_STEP_NORMAL);
+      (struct Actor *)BattleObject_Get(work.actor)->object, ANIM_STEP_NORMAL);
 
   if ((u16)work.actors[0] <= ALLY_MAX)
     work.side = EFFECT_SIDE_PARTY;
@@ -547,7 +546,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Actor_SelectAnimationFar(object, *mode);
   }
-  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIM_STEP_NORMAL);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.side = EFFECT_SIDE_PARTY;
   else
@@ -730,7 +729,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   saved = BattleMotion_CallBeast(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar(object, heap->battleWork->actingAnimation);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIM_STEP_NORMAL);
   Sound_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.actor, plan->element, GLOW_STREAKS, 0);
@@ -818,18 +817,18 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
 /// Removes unit id from the party's and the enemies' formations and from the
 /// planned actions. Returns 0 on removal, or -1 if absent from both formations.
 s32 BattleObject_RemoveFromLists(s32 id) {
-  struct BattleWork *work;
+  struct BattleWork *battle;
   s32 i;
   u32 j;
   s32 unit;
 
   // Ally formation.
-  work = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   Unit_Get(id)->side = BATTLE_SIDE_NONE;
   for (i = 0;; i++) {
-    unit = work->partyUnits[i];
+    unit = battle->partyUnits[i];
     if (unit == id) {
-      work->partyUnits[i] = BATTLE_UNIT_REMOVED;
+      battle->partyUnits[i] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
     if (unit == BATTLE_UNIT_LIST_END)
@@ -838,9 +837,9 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
   // Enemy formation.
   for (j = 0;; j++) {
-    unit = work->enemyIds[j];
+    unit = battle->enemyIds[j];
     if (unit == id) {
-      work->enemyIds[j] = BATTLE_UNIT_REMOVED;
+      battle->enemyIds[j] = BATTLE_UNIT_REMOVED;
       goto removed;
     }
     if (unit == BATTLE_UNIT_LIST_END)
@@ -851,8 +850,8 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 removed:
   BattleEnemy_ReleaseNameLetter(id);
   for (j = 0; j < BATTLE_ACTION_CAPACITY; j++) {
-    if (work->actions[j].unitId == id)
-      work->actions[j].unitId = BATTLE_UNIT_LIST_END;
+    if (battle->actions[j].unitId == id)
+      battle->actions[j].unitId = BATTLE_UNIT_LIST_END;
   }
   return 0;
 }

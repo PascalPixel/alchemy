@@ -9,24 +9,24 @@
 /// when party is set, otherwise the enemies (PLACE_ENEMY | slot); 0 when none
 /// lives.
 s32 BattleAI_ChooseRandomTarget(s32 party) {
-  struct BattleWork *work;
+  struct BattleWork *battle;
   u16 targets[6];
   s32 count;
   s32 i;
 
   count = 0;
-  work = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
 
   if (party != 0) {
-    for (i = 0; work->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (work->partyUnits[i] != BATTLE_UNIT_REMOVED &&
-          Unit_Get(work->partyUnits[i])->hp != 0)
+    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED &&
+          Unit_Get(battle->partyUnits[i])->hp != 0)
         targets[count++] = i | PLACE_PARTY;
     }
   } else {
-    for (i = 0; work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (work->enemyIds[i] != BATTLE_UNIT_REMOVED &&
-          Unit_Get(work->enemyIds[i])->hp != 0)
+    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED &&
+          Unit_Get(battle->enemyIds[i])->hp != 0)
         targets[count++] = i | PLACE_ENEMY;
     }
   }
@@ -39,14 +39,14 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 /// for ids up to ALLY_MAX, else the enemies), other than unitId itself; unitId
 /// when no other lives.
 s32 BattleUnit_FindStrongestAlly(u32 unitId) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u32 best = unitId;
   s32 bestAttack = Unit_Get(unitId)->atk;
   s32 i;
   s32 id;
 
   if (unitId <= ALLY_MAX) {
-    for (i = 0; (id = work->partyUnits[i]) != BATTLE_UNIT_LIST_END; i++) {
+    for (i = 0; (id = battle->partyUnits[i]) != BATTLE_UNIT_LIST_END; i++) {
       if (id != BATTLE_UNIT_REMOVED && Unit_Get(id)->hp != 0) {
         if (best == unitId ||
             (id != unitId && Unit_Get(id)->atk > bestAttack)) {
@@ -56,7 +56,7 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
       }
     }
   } else {
-    for (i = 0; (id = work->enemyIds[i]) != BATTLE_UNIT_LIST_END; i++) {
+    for (i = 0; (id = battle->enemyIds[i]) != BATTLE_UNIT_LIST_END; i++) {
       if (id != BATTLE_UNIT_REMOVED && Unit_Get(id)->hp != 0) {
         if (best == unitId ||
             (id != unitId && Unit_Get(id)->atk > bestAttack)) {

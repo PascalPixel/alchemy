@@ -25,5 +25,5 @@ void Actor_SteerByPad(struct Actor *actor) {
     turn = -FACING_STEP;
   actor->facing += turn;
   Actor_SelectAnimation(actor, ANIM_WALK);
-  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
 }

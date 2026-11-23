@@ -1670,9 +1670,9 @@ void AquaRockInside_FallThroughWater(void) {
 }
 
 /// How long the vents blow: an hour of frames.
-#define VENTS_BLOW_FRAMES (60 * 60 * 60)
+#define VENT_BLOW_FRAMES (60 * 60 * 60)
 
-/// The vents' hook: they blow for VENTS_BLOW_FRAMES, with their sound, then
+/// The vents' hook: they blow for VENT_BLOW_FRAMES, with their sound, then
 /// stop.
 void AquaRockInside_UpdateVents(void) {
   s32 counter = Vent_GetCounter();
@@ -1683,13 +1683,13 @@ void AquaRockInside_UpdateVents(void) {
     Vent_SetBlowing(1, 1);
     Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
-  case VENTS_BLOW_FRAMES - 1:
+  case VENT_BLOW_FRAMES - 1:
     Vent_SetBlowing(0, 0);
     Vent_SetBlowing(1, 0);
     Scene_QueueMusic(-1);
     break;
   }
-  Vent_AdvanceCounter(VENTS_BLOW_FRAMES);
+  Vent_AdvanceCounter(VENT_BLOW_FRAMES);
 }
 
 extern u16 gAquaRockInside_CrystalPowderChestVents[];

@@ -24,7 +24,7 @@ void Vents_Start(u16 *points, u16 *ids, void (*cycle)(void)) {
       point->timer = i++;
       points += 2;
       point++;
-      if (i > VENTS_MAX - 1)
+      if (i > VENT_MAX - 1)
         break;
       x = *points++;
     }

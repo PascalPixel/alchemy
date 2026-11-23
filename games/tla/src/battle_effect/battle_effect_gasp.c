@@ -1094,7 +1094,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame == 14)
         Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
-                                   ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
       if (frame == 22)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 26) {

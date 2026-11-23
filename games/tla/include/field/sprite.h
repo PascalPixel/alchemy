@@ -68,7 +68,7 @@ struct SpriteAnimation {
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null once command 239 ends it
   u8 scriptOffset; ///< byte offset of the next command in script
-  u8 step;         ///< taken off timer each frame; ANIMATION_STEP_NORMAL
+  u8 step;         ///< taken off timer each frame; ANIM_STEP_NORMAL
   u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
   u8 pictureBase; ///< picture the script chose, before facing; 255 blank
 };
@@ -212,7 +212,7 @@ struct PlacedSprite {
 
 /// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it:
 /// a timed command's frames run as written.
-#define ANIMATION_STEP_NORMAL 16
+#define ANIM_STEP_NORMAL 16
 
 /// Animation numbers of a person's sprite, for Actor_SetAnimation. A sprite
 /// that is not a person (a bird, a dragon, a pillar) numbers its own.
@@ -256,7 +256,7 @@ enum ActorAnimation {
   /// ANIM_CAST_PSYNERGY's first two pictures, held on the second, and its last
   /// two, held on the last with the hand held out: the caster's start and end
   /// of a field Psynergy.
-  ANIM_CAST_PSYNERGY_BEGIN = 20,
+  ANIM_CAST_PSYNERGY_START = 20,
   ANIM_CAST_PSYNERGY_END = 21,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the

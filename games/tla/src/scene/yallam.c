@@ -116,7 +116,7 @@ enum YallamCell {
   CELL_WEEDS_OVER_CAVE_HOLE = 20,
   CELL_WEEDS_BELOW_SHOPS = 21,
   CELL_WEEDS_OVER_ANTIDOTE = 22,
-  CELL_CORNER_WEEDS = 23,
+  CELL_WEEDS_IN_CORNER = 23,
   CELL_WEEDS_OVER_NUT = 24,
   CELL_WEEDS_BY_SANCTUM = 25
 };
@@ -143,7 +143,7 @@ void Yallam_UncoverCaveHole(void);
 
 void Yallam_ScatterWeedsBelowShops(void);
 
-void Yallam_ScatterCornerWeeds(void);
+void Yallam_ScatterWeedsInCorner(void);
 
 void Yallam_ScatterWeedsBySanctum(void);
 
@@ -257,7 +257,7 @@ s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
 /// up behind the other, and otherwise when the leader is in its way; from patch
 /// 1 it walks on while the leader is right beside it.
 s32 Yallam_UpdateRunningChild(struct Actor *actor) {
-  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   struct Actor *target;
@@ -279,7 +279,7 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
   if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((event->talk != 0 || window->mindRead != 0) && (*flags & CHILD_TALKING))
+    if ((event->talk != 0 || work->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
     Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
@@ -287,7 +287,7 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
 }
 #else
 s32 Yallam_UpdateRunningChild(struct Actor *actor) {
-  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;
@@ -300,7 +300,7 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
   if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-    if ((event->talk != 0 || window->mindRead != 0) && (*flags & CHILD_TALKING))
+    if ((event->talk != 0 || work->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
     Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
@@ -434,7 +434,7 @@ void Yallam_UncoverAntidote(void) {
 /// Cyclone cast at the three weeds in the village's south-east corner (cells
 /// (44, 22), (43, 23) and (44, 23)) scatters them all; the Nut lies under the
 /// one at cell (42, 21) (Yallam_UncoverNut).
-void Yallam_ScatterCornerWeeds(void) {
+void Yallam_ScatterWeedsInCorner(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
 }
 
@@ -2284,7 +2284,7 @@ struct Trigger gYallam_Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_CAVE_HOLE, CONDITION_ALWAYS, EVENT(Yallam_UncoverCaveHole)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BELOW_SHOPS, CONDITION_ALWAYS, EVENT(Yallam_ScatterWeedsBelowShops)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_ANTIDOTE, CONDITION_ALWAYS, EVENT(Yallam_UncoverAntidote)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_CORNER_WEEDS, CONDITION_ALWAYS, EVENT(Yallam_ScatterCornerWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_IN_CORNER, CONDITION_ALWAYS, EVENT(Yallam_ScatterWeedsInCorner)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_NUT, CONDITION_ALWAYS, EVENT(Yallam_UncoverNut)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BY_SANCTUM, CONDITION_ALWAYS, EVENT(Yallam_ScatterWeedsBySanctum)},
     {TRIGGER_TALK, ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},

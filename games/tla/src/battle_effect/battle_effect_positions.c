@@ -346,7 +346,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   s32 acceleration;
   s32 strength;
   void *draw[2];
-  struct HeapSlots *slots;
+  struct HeapSlots *heap;
   struct MotionObject *object;
   struct MotionObject *target;
   u16 *background;
@@ -383,9 +383,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
-  slots = Ram_HeapSlots;
-  draw[0] = slots->ramCode;
-  draw[1] = slots->ramCodePaired;
+  heap = Ram_HeapSlots;
+  draw[0] = heap->ramCode;
+  draw[1] = heap->ramCodePaired;
   BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget,
                                         CRITICAL_HIT_ZOOM);
   wait(1);
@@ -469,7 +469,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;

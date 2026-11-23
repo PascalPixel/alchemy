@@ -57,7 +57,7 @@ extern s16 gAncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS];
 
 /// The frames the statue Rime hides in takes to rock from side to side and
 /// back, clicking as each rock starts.
-#define RIMES_STATUE_ROCK_FRAMES 16
+#define RIME_STATUE_ROCK_FRAMES 16
 
 /// Rime's story: brought out of the first weeds by Cyclone, hiding in the blue
 /// statue, which rocks, until Tremor shakes it out.
@@ -99,8 +99,8 @@ void AncientLemuria_RockTheStatue(struct Actor *actor) {
   s16 time = actor->timer++;
 
   sprite->rotation = Iwram_MulFX(
-      Trig_Sin(time * (TRIG_TURN / RIMES_STATUE_ROCK_FRAMES)), TRIG_TURN / 256);
-  if ((time & (RIMES_STATUE_ROCK_FRAMES - 1)) == 0)
+      Trig_Sin(time * (TRIG_TURN / RIME_STATUE_ROCK_FRAMES)), TRIG_TURN / 256);
+  if ((time & (RIME_STATUE_ROCK_FRAMES - 1)) == 0)
     Sound_Play(SE_SWITCH);
 }
 

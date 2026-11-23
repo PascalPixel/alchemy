@@ -168,7 +168,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     Actor_SelectAnimationFar(user, POSE_LEAP);
-    Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
+    Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
   } else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   if (mode == FLASHING_STRIKE_BOOST_HACK)
@@ -265,7 +265,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   } else {
     if (mode == FLASHING_STRIKE_BOOST_HACK)
       Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
-                                 ANIMATION_STEP_NORMAL);
+                                 ANIM_STEP_NORMAL);
     BattleEffect_EndCanvasLayer();
   }
 }

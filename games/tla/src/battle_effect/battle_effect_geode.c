@@ -144,7 +144,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
-  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL * 3);
   Mesh_BuildGrid(mesh, GEODE_CLOD_RING_VERTICES, GEODE_CLOD_RINGS,
                  BATTLE_BACKGROUND_WIDTH / GEODE_CLOD_RING_VERTICES,
                  GEODE_RING_SPACING);
@@ -430,7 +430,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     EFFECT_END_FRAME(work);
   }
-  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

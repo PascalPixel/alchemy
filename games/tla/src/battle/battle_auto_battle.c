@@ -345,8 +345,7 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   Actor_SetAnimationSpeedFar(
-      (struct Actor *)BattleObject_Get(work.actor)->object,
-      ANIMATION_STEP_NORMAL);
+      (struct Actor *)BattleObject_Get(work.actor)->object, ANIM_STEP_NORMAL);
   BattleObject_Get(work.actors[0]);
 
   work.count = 1;
@@ -404,7 +403,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   // the target's side takes the effect.
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar((struct Actor *)object, POSE_CAST);
-  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, ANIM_STEP_NORMAL);
   if ((u16)action->target <= ALLY_MAX) {
     work.side = EFFECT_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);

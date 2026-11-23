@@ -168,28 +168,28 @@ void BattleObject_UpdatePose(s32 id) {
 
   Actor_SelectAnimationFar((struct Actor *)BattleObject_Get(id)->object, value);
   Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(id)->object,
-                             ANIMATION_STEP_NORMAL - 2 + (id & 3));
+                             ANIM_STEP_NORMAL - 2 + (id & 3));
 }
 
 /// Releases all graphics the object owns and marks it as having none.
 /// no: object ID.
 void ReleaseBattleObjectRecords(s32 no) {
   struct BattleObject *slot;
-  struct MotionObject *obj;
+  struct MotionObject *object;
   s32 i;
   void *rec;
 
   slot = BattleObject_Get(no);
   if (slot != NULL) {
-    obj = slot->object;
-    if (obj != NULL) {
+    object = slot->object;
+    if (object != NULL) {
       slot->animationEntry = 0;
       slot->shadowEntry = 0;
-      for (i = 0; (rec = GetMotionRecord(obj, i)) != NULL; i += 1) {
+      for (i = 0; (rec = GetMotionRecord(object, i)) != NULL; i += 1) {
         Sprite_DestroyFar(rec);
       }
-      obj->recordStorageKind = ACTOR_SPRITE_NONE; // No graphics.
-      obj->records = NULL;
+      object->recordStorageKind = ACTOR_SPRITE_NONE; // No graphics.
+      object->records = NULL;
     }
   }
 }
@@ -372,7 +372,7 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
 /// shadow's priority by whether it is airborne, draws the nearer side in front
 /// and draws a unit under Haze (DEFEND_VANISHED) as an outline.
 void BattleObject_UpdateSpritePriorities(void) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 unitIds[UNIT_MAX];
   struct MotionObject *objects[14];
   s32 partyCount;
@@ -424,7 +424,7 @@ void BattleObject_UpdateSpritePriorities(void) {
     }
   }
 
-  if (work->keepObjectPriorities != 0)
+  if (battle->keepObjectPriorities != 0)
     return;
 
   if ((s16)((struct BattleCamera *)Ram_HeapSlots->cameraWork)->yaw >= 0) {
@@ -525,14 +525,14 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 /// Returns a unit's battle object, through its place in BattleWork.placement,
 /// or null for a unit with no place.
 static __inline__ struct BattleObject *BattleObject_FindSlot(s32 id) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
-  struct BattleObject *slots = work->slots;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleObject *slots = battle->slots;
 
   if (id > ALLY_MAX)
     id -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
-  if (work->placement[id] == BATTLE_OBJECT_NONE)
+  if (battle->placement[id] == BATTLE_OBJECT_NONE)
     return NULL;
-  return &slots[work->placement[id]];
+  return &slots[battle->placement[id]];
 }
 
 /// Frees the enemy sprite slots a unit holds and marks its actor for release at
@@ -656,16 +656,16 @@ void BattleCamera_SetDefaultView(void) {
 /// Returns a unit's battle object, through its place, or null for a unit with
 /// no place.
 struct BattleObject *BattleObject_Get(s32 objectId) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
-  struct BattleObject *slots = work->slots;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleObject *slots = battle->slots;
   s32 index;
 
   if (objectId > ALLY_MAX) {
     objectId -= FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   }
   index = objectId;
-  if (work->placement[index] == BATTLE_OBJECT_NONE) {
+  if (battle->placement[index] == BATTLE_OBJECT_NONE) {
     return NULL;
   }
-  return &slots[work->placement[index]];
+  return &slots[battle->placement[index]];
 }

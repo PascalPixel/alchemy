@@ -107,7 +107,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s32 memberCount;
   s32 memberIndex;
   struct Unit *unit;
-  struct FieldWork *field;
+  struct FieldWork *work;
 
   memberCount = Party_ListMembersFar(partyMemberIds);
   // Charge once and restore only party members who are alive.
@@ -124,10 +124,10 @@ void Inn_PlaySleep(s32 roomPrice) {
 
   // The night's fades take 60 frames each, a window closing round the leader
   // as The Broken Seal's.
-  field = Ram_HeapSlots->fieldWork;
-  field->transition =
+  work = Ram_HeapSlots->fieldWork;
+  work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  field->transitionFrames = 60;
+  work->transitionFrames = 60;
   wait(20);
   Event_FinishScreenTransitionFar();
   Event_WaitTransitionFramesFar();

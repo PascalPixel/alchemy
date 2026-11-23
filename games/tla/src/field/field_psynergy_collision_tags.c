@@ -5,11 +5,6 @@
 
 #include "field_psynergy_internal.h"
 
-/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
-/// pillar, held, and the puddle.
-#define PUDDLE_ANIMATION_FROZEN 0
-#define PUDDLE_ANIMATION_PUDDLE 1
-
 /// Sets up Alhafra's and the Alhafran Cave's puddles as FlagBlock_PlaceAll
 /// does, and marks the open cells on each puddle's four sides a gap to jump
 /// across (MapGrid_MarkJumpIfOpen), so the leader jumps onto a frozen one.
@@ -151,6 +146,3 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 key, s32 height) {
     i++;
   }
 }
-
-#undef PUDDLE_ANIMATION_FROZEN
-#undef PUDDLE_ANIMATION_PUDDLE

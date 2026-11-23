@@ -119,9 +119,8 @@ void FieldPsynergy_Parch(void) {
        i++, offset += sizeof(struct Actor *)) {
     actor = *(struct Actor **)((u8 *)heap->fieldWork + offset);
     actorSprite = actor->sprite;
-    // A puddle showing water (animation 1), not frozen into a pillar of ice.
     if (actor->script != NULL && actorSprite->entries[0]->animationId == kind &&
-        actorSprite->lastNo == 1 &&
+        actorSprite->lastNo == PUDDLE_ANIMATION_PUDDLE &&
         FieldPsynergy_CheckOverlap(pos, 4, &actor->x.fixed,
                                    actor->radius - 2) >= 0) {
       result = PARCH_DRIES;

@@ -123,6 +123,11 @@ struct CycloneWork {
 #define CANVAS_SHINE_MIDDLE 16
 #define CANVAS_SHINE_SWING 12
 
+/// SPRITE_PUDDLE's animations (puddle.tsv) that a flag block shows: the ice
+/// pillar, held, and the puddle.
+#define PUDDLE_ANIMATION_FROZEN 0
+#define PUDDLE_ANIMATION_PUDDLE 1
+
 /// FieldWork.psynergyDrawFlags, which a scene sets for Pound and Scoop to
 /// draw in its room.
 #define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground

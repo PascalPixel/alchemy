@@ -107,6 +107,13 @@ struct TabletPiece {
 #define TABLET_RUNE_PICTURES 16
 #define RUNE_LIT (TABLET_RUNE_PICTURES * 2)
 
+/// What the runes do (SummonTabletWork.state).
+enum RuneMotion {
+  RUNES_LINE_UP = 0, ///< each flies from the tablet to its place in the rows
+  RUNES_CIRCLE = 2,  ///< each chases the one before round the circle
+  RUNES_GATHER = 3   ///< each flies to the leader and is drawn till it lands
+};
+
 /// The summon tablet's work (heap slot battleEffect): the decoded pictures, the
 /// pebbles and runes that fly between the tablet and the leader, and the
 /// circle the runes gather on.
@@ -123,7 +130,7 @@ struct SummonTabletWork {
   s32 angle;
   s32 radius;
   s32 spacing;
-  s8 state;
+  s8 state; ///< enum RuneMotion
   s8 moving;
   u16 pebbleTile;
   s32 targetX;
@@ -164,7 +171,7 @@ void SummonTablet_UpdateRunes(void) {
   piece = work->runes;
   sprite = work->runeSprites;
   for (i = 0; i < TABLET_RUNE_COUNT; i++, sprite++, piece++) {
-    if (work->state == 0) {
+    if (work->state == RUNES_LINE_UP) {
       if (piece->timer >= 0) {
         Motion_StepTowardTarget(&piece->rune, toFIXED(4));
         sprite->x = piece->rune.x;
@@ -172,12 +179,12 @@ void SummonTablet_UpdateRunes(void) {
         EffectSprite_Draw(sprite);
       }
       piece->timer++;
-    } else if (work->state == 2) {
+    } else if (work->state == RUNES_CIRCLE) {
       Motion_StepTowardTarget(&piece->rune, toFIXED(6));
       sprite->x = piece->rune.x;
       sprite->y = piece->rune.z;
       EffectSprite_Draw(sprite);
-    } else if (work->state == 3) {
+    } else if (work->state == RUNES_GATHER) {
       if (piece->rune.x != work->targetX || piece->rune.z != work->targetZ) {
         Motion_StepTowardTarget(&piece->rune, toFIXED(6));
         sprite->x = piece->rune.x;
@@ -201,6 +208,18 @@ void SummonTablet_UpdateRunes(void) {
     }
   }
 }
+
+/// The stages of a summon tablet's reading.
+enum TabletStage {
+  TABLET_STRUCK = 0,      ///< pebbles fly off it, then it vanishes
+  TABLET_RUNES_LIGHT = 1, ///< the runes, lined up, light up in a wave
+  TABLET_LEADER_TURNS = 2,
+  TABLET_ARMS_RAISED = 3,
+  TABLET_RUNES_CIRCLE = 4,    ///< the runes stream round in a circle
+  TABLET_RUNES_TO_LEADER = 5, ///< the circle moves over the leader
+  TABLET_RUNES_CLOSE_IN = 6,  ///< and shrinks to nothing on it
+  TABLET_LEADER_SQUASHED = 7
+};
 
 extern const s32 gFieldEffect_TargetColors[];
 extern const s32 gSummonTablet_SquashScript[];
@@ -235,12 +254,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 delay;
   s32 angle;
   s32 i;
-  FIXED startX = 130 * FIXED_ONE;
-  FIXED startZ = 30 * FIXED_ONE;
+  FIXED startX = toFIXED(130);
+  FIXED startZ = toFIXED(30);
 
   Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
   pos[0] = owner->x.fixed;
-  pos[1] = owner->y.fixed + 24 * FIXED_ONE;
+  pos[1] = owner->y.fixed + toFIXED(24);
   pos[2] = owner->z.fixed;
   Camera_WorldToScreen(pos);
   ownerX = pos[0];
@@ -304,12 +323,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Actor_StartScriptFar(target, gSummonTablet_SquashScript);
   work->moving = 0;
   Task_Add(SummonTablet_UpdateRunes, TASK_PASS_FRAME);
-  state = 0;
+  state = TABLET_STRUCK;
   timer = 0;
   do {
     switch (state) {
-    case 0:
-      work->state = 0;
+    case TABLET_STRUCK:
+      work->state = RUNES_LINE_UP;
       if (timer <= 39) {
         if ((timer & 7) == 0)
           Sound_PlayFar(SE_IMPACT);
@@ -326,7 +345,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         timer = -1;
       }
       break;
-    case 1:
+    case TABLET_RUNES_LIGHT:
       // Each rune lights up three times, a frame later for each place across
       // or down the rows.
       for (i = 0; i < TABLET_RUNE_COUNT; i++) {
@@ -354,7 +373,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         timer = -1;
       }
       break;
-    case 2:
+    case TABLET_LEADER_TURNS:
       if (timer == 0) {
         Actor_FaceDirectionById(ownerId, FACING_SOUTH, 0);
         break;
@@ -368,7 +387,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         timer = -1;
       }
       break;
-    case 3:
+    case TABLET_ARMS_RAISED:
       if (timer == 0)
         Actor_SelectAnimationFar(owner, ANIM_LEADER_ARMS_RAISED);
       if (timer == 10) {
@@ -376,7 +395,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         timer = -1;
       }
       break;
-    case 4:
+    case TABLET_RUNES_CIRCLE:
       if (timer == 0) {
         piece = work->runes;
         delay = 0;
@@ -385,13 +404,13 @@ void SummonTablet_PlayRunes(s32 targetId) {
           delay -= 3;
           piece++;
         }
-        work->radius = 60 * FIXED_ONE;
+        work->radius = toFIXED(60);
         work->angle = TRIG_TURN * 3 / 4;
         work->originX = startX;
         work->originZ = startZ;
         work->moving = 1;
-        work->spacing = 4 * FIXED_ONE;
-        work->state = 2;
+        work->spacing = toFIXED(4);
+        work->state = RUNES_CIRCLE;
       }
       if (timer == 0)
         Sound_PlayFar(SE_FALLING_LIGHT);
@@ -404,7 +423,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         timer = -1;
       }
       break;
-    case 5:
+    case TABLET_RUNES_TO_LEADER:
       work->originX = timer * (ownerX - startX) / 30 + startX;
       work->originZ = timer * (ownerZ - startZ) / 30 + startZ;
       if (timer == 30) {
@@ -412,22 +431,22 @@ void SummonTablet_PlayRunes(s32 targetId) {
         timer = -1;
       }
       break;
-    case 6:
+    case TABLET_RUNES_CLOSE_IN:
       if (timer == 0)
         work->spacing = 0;
-      work->radius += -2 * FIXED_ONE;
+      work->radius += -toFIXED(2);
       if (work->radius < 0) {
         work->radius = 0;
         state++;
         timer = -1;
       }
       break;
-    case 7:
+    case TABLET_LEADER_SQUASHED:
       if (timer == 0)
         Actor_StartScriptFar(owner, gMovementType_SquashScript);
       if ((timer & 3) == 0)
         Sound_PlayFar(SE_MAP_TRANSITION);
-      work->state = 3;
+      work->state = RUNES_GATHER;
       if (timer == 60)
         state = FIELD_PSYNERGY_FINISHED;
       break;
@@ -463,8 +482,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// A flag block: its actor and the flag that says it has been moved, in a list
-/// ended by ACTOR_LIST_END (FlagBlock_PlaceAll).
+/// A flag block: a puddle's actor and the flag that says it is frozen, in a
+/// list ended by ACTOR_LIST_END (FlagBlock_PlaceAll).
 struct ActorFlag {
   u16 actor;
   s16 flag;
@@ -474,11 +493,11 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
 /// Sets up a scene's flag blocks, the puddles Frost turns into pillars of ice
 /// (actor and flag pairs, ended by ACTOR_LIST_END): each stops being solid and
-/// blocks its cell; one whose flag is set takes animation 0 and has the flag
-/// cleared, the others animation 1. Then FlagBlock_ApplyFlags applies them and
-/// the leader is lifted onto the ground if it now lies below it. Daila,
-/// Kibombo, the Izumo ruins, Air's Rock and the Lemurian Ship call it as they
-/// start.
+/// blocks its cell; one whose flag is set shows the ice pillar and has the
+/// flag cleared, the others the puddle. Then FlagBlock_ApplyFlags raises the
+/// frozen ones and sets their flags again, and the leader is lifted onto the
+/// ground if it now lies below it. A scene with such puddles calls it as it
+/// starts.
 void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ActorFlag *list = actors;
@@ -492,14 +511,14 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     struct MapCell *cell = &map->layers[actor->layer].cells[slot];
 
     actor->motionFlags = 0;
-    actor->collisionFlags &= ~1;
+    actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlagsFar(actor, 0);
     cell->collisionCode = CELL_BEHAVIOR_WALL;
     if (GameFlag_Get(flag)) {
-      Actor_SelectAnimationFar(actor, 0);
+      Actor_SelectAnimationFar(actor, PUDDLE_ANIMATION_FROZEN);
       GameFlag_Clear(flag);
     } else {
-      Actor_SelectAnimationFar(actor, 1);
+      Actor_SelectAnimationFar(actor, PUDDLE_ANIMATION_PUDDLE);
     }
   }
   FlagBlock_ApplyFlags(list);
@@ -509,14 +528,6 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   if (leader->y.fixed < height)
     leader->y.fixed = leader->groundHeight = height;
 }
-
-void BattleEffect_StartTiledCanvas(s32 mode);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_RunDrainMotes(void *effect, s32 mode);
-void PartyStatus_CreateWindow(s32 flags);
-void Shop_InitializeWork(void);
-s32 Inn_RoomPrice(s32 innId);
-void Shop_ReleaseWork(void);
 
 /// Marks the cell at (x, z) MAP_CELL_JUMP, a gap the leader jumps across, where
 /// no ground lies above height base.

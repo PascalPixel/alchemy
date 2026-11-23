@@ -117,7 +117,7 @@ extern u32 gVenusLighthouseAerieExits[];
 extern struct ActorPlacement gVenusLighthouseAerieActorPlacements[];
 extern s32 gVenusLighthouseAerie_LandedPlatform;
 extern struct Trigger gVenusLighthouseAerieTriggers[];
-extern s32 gVenusLighthouseAerie_BesideParticleScript[];
+extern s32 gBeacon_SparkScript[];
 
 /// The aerie's actors, in the order of its actor placements (its entrances and
 /// exits are in scene_exits.h);
@@ -3393,7 +3393,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   if (effect == NULL)
     return;
   sprite = effect->sprite;
-  Actor_StartScript(effect, gVenusLighthouseAerie_BesideParticleScript);
+  Actor_StartScript(effect, gBeacon_SparkScript);
   Actor_SetSpriteColor(effect, SPRITE_COLOR_BRG);
   effect->motionFlags = phase;
   angle = Random_Next() & 0xffff000;
@@ -3685,10 +3685,4 @@ struct Trigger gVenusLighthouseAerieTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gVenusLighthouseAerie_BesideParticleScript[] = {
-    SC_SET(SW_SCALE_Y, 7 * FIXED_ONE / 5),
-    SC_SET(SW_SCALE_X, 7 * FIXED_ONE / 5),
-    SC_ANIMATION(ANIM_SHAKE_HEAD),
-    SC_WAIT(30),
-    SC_RELEASE,
-};
+#include "shared/beacon_spark_script.c"

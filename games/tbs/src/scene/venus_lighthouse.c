@@ -3854,6 +3854,8 @@ s32 gVenusThirdFloorLightNortheastToSoutheast[] = {
     SC_END,
 };
 
+// The same script as gVenusThirdFloorLightNortheastToNorthwest,
+// under another name.
 s32 gVenusThirdFloorLightSouthwestToNorthwest[] = {
     SC_MOVE(776, 0, 664),
     SC_SYNC,
@@ -3883,6 +3885,8 @@ s32 gVenusThirdFloorLightSoutheastToNortheast[] = {
     SC_END,
 };
 
+// The same script as gVenusThirdFloorLightNorthwestToSouthwest,
+// under another name.
 s32 gVenusThirdFloorLightSoutheastToSouthwest[] = {
     SC_MOVE(776, 0, 696),
     SC_SYNC,

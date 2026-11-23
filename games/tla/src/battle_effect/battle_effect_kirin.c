@@ -1,5 +1,6 @@
 /// @file
-/// The Kirin summon.
+/// The Kirin summon, and the two line routines that set BG2's horizontal
+/// scale.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -133,6 +134,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       shift++;
     if (shift > KIRIN_FOREST_SPEED_MAX)
       shift = KIRIN_FOREST_SPEED_MAX;
+    // DEAD: frame <= 135 here and frame <= 149 below always hold in the
+    // sweep's frames; the ROM keeps both compares.
     if (frame <= 135) {
       gBgScroll[1].x -= shift;
       grow += shift;

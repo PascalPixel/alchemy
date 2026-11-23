@@ -74,7 +74,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
   Window_CloseIfOpen(&menu->helpWindow, 1);
-  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
 
   pageCounts[0] = 1;
   pageCounts[1] = 1;
@@ -185,8 +185,9 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   }
 
   // Open the paired sides only after both units have been restored.
-  Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
-  Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
+  Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
+  Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15,
+                        WINDOW_FLAG_INSTANT);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
 
   if (mode == DJINN_COMPARE_STANDBY) {
@@ -557,7 +558,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WINDOW_WORK->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
-  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   Window_CloseIfOpen((struct Window **)&menu->window, 1);
   Window_CloseIfOpen(&menu->secondWindow, 1);
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
@@ -625,9 +626,9 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   if (pageCounts[1] == 0)
     pageCounts[1] = 1;
   leftWindowSlot = (struct Window **)&menu->window;
-  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, 2);
+  Window_UpdateOrCreate(leftWindowSlot, 0, 5, 15, 15, WINDOW_FLAG_INSTANT);
   rightWindowSlot = &menu->secondWindow;
-  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
+  Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, WINDOW_FLAG_INSTANT);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   Text_DrawMessageAsTilesFar(MsgCurrentStatus, menu->statusWindow, 0, 0);
@@ -715,7 +716,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WINDOW_WORK->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
-  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   Window_CloseIfOpen(leftWindowSlot, 1);
   Window_CloseIfOpen(rightWindowSlot, 1);
   WindowSprite_RedrawSavedRectFar(menu->listWindow);

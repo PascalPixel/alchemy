@@ -184,7 +184,7 @@ s32 Menu_SuspendFieldTasks(void);
 void Window_InitializeWork(s32 unused);
 s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
                           s32 flags);
-void Window_CloseIfOpen(struct Window **handle, s32 style);
+void Window_CloseIfOpen(struct Window **handle, s32 instant);
 void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode);
 void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
                                  s32 y);

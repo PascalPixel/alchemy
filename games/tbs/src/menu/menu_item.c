@@ -734,6 +734,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         state = ITEM_STEP_ITEM;
         break;
       }
+      // The item it would replace is cursed and will not come off.
       if (result == -2) {
         WindowSprite_ClearListFar(menu->descriptionWindow);
         ItemMenu_ShowMessage(MsgCannotRemoveItem, 0, -1);
@@ -864,7 +865,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 
   menu->buttonHelpWindow = NULL;
   menu->statusWindow = NULL;
-  menu->descriptionWindow = Window_CreateFar(0, 17, 30, 3, 2);
+  menu->descriptionWindow = Window_CreateFar(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
   menu->itemWindow = NULL;
   menu->selectedColumn = 0;
   menu->selectedRow = 0;
@@ -1021,9 +1022,11 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
   sortMode = 0;
   showEquipment = 0;
   unit = Unit_GetFar(memberIds[selection]);
-  if (Window_UpdateOrCreate(&menu->itemWindow, 13, 3, 17, 10, 2))
+  if (Window_UpdateOrCreate(&menu->itemWindow, 13, 3, 17, 10,
+                            WINDOW_FLAG_INSTANT))
     Menu_SpawnIconEntries(menu, menu->itemWindow);
-  if (Window_UpdateOrCreate(&menu->buttonHelpWindow, 13, 13, 17, 4, 2)) {
+  if (Window_UpdateOrCreate(&menu->buttonHelpWindow, 13, 13, 17, 4,
+                            WINDOW_FLAG_INSTANT)) {
     menu->selectedItemIcon = WindowSprite_CreateFromResourceFar(
         ICON_KIND_ITEM, 0, menu->buttonHelpWindow, 0, result);
     menu->selectedItemIcon->motion = ICON_HIDDEN;
@@ -1156,7 +1159,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       memberIndex = (memberIndex + memberCount) % memberCount;
       window = menu->itemWindow;
       Unit_GetFar(menu->memberIds[memberIndex]);
-      // The marker over the chosen party member, three tiles a party member.
+      // The marker over the chosen party member, three tiles a party member;
+      // no screen makes it, so it is NULL (MenuCursor_Create).
       targetMarker = menu->sideIcons[1];
       targetMarker->oam.x = targetMarker->x =
           ((menu->mainWindow->x + memberIndex * 3) << 3) - 2;
@@ -1246,7 +1250,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       memberIndex++;
     }
   }
-  // The marker is NULL here too (see above).
+  // The marker, still NULL.
   targetMarker = menu->sideIcons[1];
   menu->sideIndex[1] = memberIndex;
   Icon_PrepareActor(targetMarker);
@@ -1459,6 +1463,7 @@ void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
   s32 inventoryEntry = unit->inventory[slot];
   s32 previewSlot;
 
+  // Mode 1 keeps the panel's name and statuses and redraws only below them.
   if (mode == 1)
     panelStyle = STATUS_PANEL_LOWER_ONLY;
   switch (Item_GetDirectFar(inventoryEntry & INVENTORY_ITEM_ID_MASK)->type) {
@@ -1787,7 +1792,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   menu = gMenuWork;
   item = Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
-  if (item->type == 0) { // usable items
+  if (item->type == ITEM_TYPE_NONE) { // usable items
     commandStates[ITEM_COMMAND_USE] = ITEM_COMMAND_STATE_AVAILABLE;
     commandStates[ITEM_COMMAND_EQUIP] = ITEM_COMMAND_STATE_DISABLED;
   } else {
@@ -1957,7 +1962,7 @@ void ItemMenu_TryBreak(void) {
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct ItemMenuWork *menu = gMenuWork;
 
-  Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, 2);
+  Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, WINDOW_FLAG_INSTANT);
   Palette_LoadIconsIntoHighlight();
 
   if (menu->selectedItems[itemIndex] != 0)
@@ -1966,9 +1971,10 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   return 1;
 }
 
-/// The item menu's Details screen: describes the item entry value in a large
-/// window (the whole top half after patch 1) and waits for A or B.
-s32 ItemMenu_ShowDetails(s32 value) {
+/// The item menu's Details screen: describes inventoryEntry in a window over
+/// the top half (13 tiles wide in Japanese) and waits for A or B. Up and Down
+/// step a page from 0 to 4 that nothing draws; returns that page, or -1 for B.
+s32 ItemMenu_ShowDetails(s32 inventoryEntry) {
 #if TBS_PATCH_1
   s32 changed = 1;
   struct ItemMenuWork *menu = gMenuWork;
@@ -1978,7 +1984,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   s32 changed = 1;
 #endif
   struct Window *window;
-  s32 counter = 0;
+  s32 page = 0;
 
 #if TBS_PATCH_1
   itemIcon->motion = ICON_HIDDEN;
@@ -2003,23 +2009,23 @@ s32 ItemMenu_ShowDetails(s32 value) {
 
     if (changed != 0) {
       changed = 0;
-      counter = (counter + 5) % 5;
-      ItemMenu_DrawItemDetails(window, value);
+      page = (page + 5) % 5;
+      ItemMenu_DrawItemDetails(window, inventoryEntry);
     }
 
     if (gKeysPressed & KEY_A)
       break;
     if (gKeysPressed & KEY_B) {
-      counter = -1;
+      page = -1;
       break;
     }
 
     if (gKeysRepeat & KEY_UP) {
-      counter -= 1;
+      page -= 1;
       changed = 1;
     }
     if (gKeysRepeat & KEY_DOWN) {
-      counter += 1;
+      page += 1;
       changed = 1;
     }
     wait(1);
@@ -2046,8 +2052,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #if TBS_PATCH_1
     cursor->motion = ICON_SHOWN;
 #else
-
-    cursor->motion = 1;
+    cursor->motion = ICON_SHOWN;
     menu->flags = 1;
 #endif
   }
@@ -2055,7 +2060,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   Window_DrawBorderFar(13, 0, 17, 10);
 #endif
 
-  return counter;
+  return page;
 }
 
 /// Writes the description of the inventoryEntry into window, one line a row:
@@ -2131,7 +2136,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
           (u8)((def->effects[i].kind - EQUIP_EFFECT_ADD_VENUS_POWER) %
                ELEMENT_COUNT) +
               1,
-          0, row, 2);
+          0, row, TILEMAP_ENTRY_HIGHLIGHT);
       Text_DrawMessageAsTilesFar(def->effects[i].kind + MsgEquipEffectName,
                                  window, 8, row * 8);
       ItemMenu_DrawStat(amount, 3, window, 64, row * 8);
@@ -2195,13 +2200,13 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
   // "Number of Uses" and what using it costs, except for items that cost
   // nothing and Hermes' Water (ITEM_USE_EMPTIES); a Psynergy item has no
   // heading and no line.
-  if (def->useType != ITEM_USE_EMPTIES && def->useType != 0) {
+  if (def->useType != ITEM_USE_EMPTIES && def->useType != ITEM_USE_FREE) {
     if (!bestowsPsynergy) {
       Text_DrawMessageAsTilesFar(MsgUsesHeading, window, 16, row * 8);
       row++;
     }
     switch (def->useType) {
-    case 0:
+    case ITEM_USE_FREE:
       break;
     case ITEM_USE_CONSUMED:
       Text_DrawMessageAsTilesFar(MsgSingleUse, window, 0, row * 8);
@@ -2380,7 +2385,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
       menu->sideMember[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   // Two dial sprites, left and right of the number.
   block = VramCache_FindFreeEntry();
-  if (block != VRAM_CACHE_ENTRY_COUNT) { // no free VRAM block
+  // VRAM_CACHE_ENTRY_COUNT: no free VRAM block, and no dial.
+  if (block != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(block, 256, 0);
     WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 48, 32);
     rightDial = WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 80, 32);
@@ -2778,7 +2784,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
   result = 0;
   previous = 0;
   menu->equipPreview = result;
-  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, WINDOW_FLAG_INSTANT);
   window = menu->listWindow;
   done = 0;
 

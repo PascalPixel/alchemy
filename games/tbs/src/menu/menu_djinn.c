@@ -502,7 +502,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *menu = gMenuWork;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
 
-  Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, WINDOW_FLAG_INSTANT);
   wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
   Iwram_CopyWords(backdrop->palette,

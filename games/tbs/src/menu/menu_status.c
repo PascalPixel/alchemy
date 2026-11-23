@@ -710,7 +710,8 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
   created = 0;
   window = menu->statusWindow;
   if (window == 0) {
-    created = Window_UpdateOrCreate(&menu->statusWindow, 0, 5, 30, 15, 2);
+    created = Window_UpdateOrCreate(&menu->statusWindow, 0, 5, 30, 15,
+                                    WINDOW_FLAG_INSTANT);
     window = menu->statusWindow;
   }
   if (created != 0) {
@@ -753,7 +754,7 @@ s32 StatusScreen_SelectCommand(void) {
   if (djinnTotal != 0)
     hasDjinn = 1;
   // The help window covers the top of the screen.
-  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
   Task_Remove(Menu_PlacePartyFigures);
   for (i = 0; i < 4; i++)
     menu->rowY[i] = STATUS_FIGURE_FULL_PAGE_ROW_Y;
@@ -1487,7 +1488,7 @@ s32 PsynergyMenu_SelectAction(void) {
   done = 0;
   Menu_BuildPatternTiles();
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-  Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
   // slotY is StatusScreenWork's rowY: the four Djinn figures go above the
   // screen while this page is up, until the party member row or the status
   // page puts them back.
@@ -1771,7 +1772,7 @@ s32 ItemMenu_SelectItem(void) {
     Unit_GetFar(menu->memberIds[memberId]);
   }
   Window_UpdateOrCreate(&menu->equipWindow, 0, 10, STATUS_EQUIP_WINDOW_WIDTH,
-                        10, 2);
+                        10, WINDOW_FLAG_INSTANT);
   ItemMenu_PositionCategory();
 
   for (iconIndex = 0; iconIndex < MENU_ENTRY_ICONS; iconIndex++) {

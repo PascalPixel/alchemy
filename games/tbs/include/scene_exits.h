@@ -3581,8 +3581,8 @@ enum {
 enum {
   SUHALLA_FROM_INN = 1,
   SUHALLA_FROM_SANCTUM = 2,
-  SUHALLA_FROM_HOUSE_WEST = 3,
-  SUHALLA_FROM_HOUSE_NORTHEAST = 4,
+  SUHALLA_FROM_SHOP = 3,
+  SUHALLA_FROM_HOUSE_SOUTH = 4,
   SUHALLA_FROM_HOUSE_EAST = 5,
   /// In the table at (120, 272), facing east, but led to by no exit.
   SUHALLA_SIXTH_UNUSED = 6,
@@ -3597,8 +3597,8 @@ enum {
 enum {
   SUHALLA_TO_INN = 1,
   SUHALLA_TO_SANCTUM = 2,
-  SUHALLA_TO_HOUSE_WEST = 3,
-  SUHALLA_TO_HOUSE_NORTHEAST = 4,
+  SUHALLA_TO_SHOP = 3,
+  SUHALLA_TO_HOUSE_SOUTH = 4,
   SUHALLA_TO_HOUSE_EAST = 5,
   SUHALLA_TO_WORLD_MAP = 10,
   SUHALLA_TO_WORLD_MAP_NORTH = 11,
@@ -3611,16 +3611,15 @@ enum {
   TIMBER_ROOMS_A_SANCTUM =
       2, ///< the room behind Suhalla's sanctum door;
          ///< the room holds the sanctum; through SUHALLA_TO_SANCTUM
-  TIMBER_ROOMS_A_HOUSE_WEST = 3, ///< the room behind Suhalla's house west
-                                 ///< door; through SUHALLA_TO_HOUSE_WEST
-  TIMBER_ROOMS_A_HOUSE_NORTHEAST =
-      4, ///< the room behind Suhalla's house northeast door; through
-         ///< SUHALLA_TO_HOUSE_NORTHEAST
+  TIMBER_ROOMS_A_SHOP = 3,        ///< the shop behind Suhalla's south-west
+                                  ///< door; through SUHALLA_TO_SHOP
+  TIMBER_ROOMS_A_HOUSE_SOUTH = 4, ///< the room behind Suhalla's house south
+                                  ///< door; through SUHALLA_TO_HOUSE_SOUTH
   TIMBER_ROOMS_A_HOUSE_EAST = 5,    ///< the room behind Suhalla's house east
                                     ///< door; through SUHALLA_TO_HOUSE_EAST
   TIMBER_ROOMS_A_SANCTUM_NORTH = 6, ///< before the priest in Suhalla Sanctum,
                                     ///< where a party defeated in Suhalla wakes
-  TIMBER_ROOMS_A_HOUSE_WEST_UNUSED = 7, ///< no exit leads here
+  TIMBER_ROOMS_A_SHOP_UNUSED = 7,   ///< no exit leads here
   TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_WEST = 10,
   TIMBER_ROOMS_A_INN_FROM_GUEST_ROOM_EAST = 11,
   TIMBER_ROOMS_A_GUEST_ROOM_WEST_FROM_INN = 12,
@@ -3636,8 +3635,8 @@ enum {
 enum {
   TIMBER_ROOMS_A_INN_TO_SUHALLA = 1,
   TIMBER_ROOMS_A_SANCTUM_TO_SUHALLA = 2,
-  TIMBER_ROOMS_A_HOUSE_WEST_TO_SUHALLA = 3,
-  TIMBER_ROOMS_A_HOUSE_NORTHEAST_TO_SUHALLA = 4,
+  TIMBER_ROOMS_A_SHOP_TO_SUHALLA = 3,
+  TIMBER_ROOMS_A_HOUSE_SOUTH_TO_SUHALLA = 4,
   TIMBER_ROOMS_A_HOUSE_EAST_TO_SUHALLA = 5,
   TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_WEST = 10,
   TIMBER_ROOMS_A_INN_TO_GUEST_ROOM_EAST = 11,

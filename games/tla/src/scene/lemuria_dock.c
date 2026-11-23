@@ -201,6 +201,8 @@ void LemuriaDock_CyclePalette(void) {
   }
 }
 
+/// Sets up the dock: the ship's colours cycling, no area name, and from patch 1
+/// Loho's cannon on deck once the ship carries it.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -217,6 +219,8 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
+  // XXX: what these cells show before the ship can fly; probes of the dock
+  // with and without FLAG_SHIP_FLIES would show it.
   if (!Flag_IsSet(FLAG_SHIP_FLIES)) {
     MapGrid_CopyCellsTo(57, 52, 64, 15, 1, 1);
     MapGrid_CopyCellsTo(60, 53, 67, 16, 6, 3);

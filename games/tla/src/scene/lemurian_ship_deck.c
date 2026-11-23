@@ -94,6 +94,10 @@ enum LemurianShipDeckCellBehavior {
 /// Felix stands east of the cabin door; stepping beside it clears this.
 #define FLAG_STANDING_EAST_OF_DOOR FLAG_SCENE_TEMP_12
 
+/// Draws the cabin door open, from spare cells of the map at (51, 38).
+#define LemurianShipDeck_DrawCabinDoorOpen()                                   \
+  MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2)
+
 extern struct ActorPlacement gLemurianShipDeck_Placements[];
 extern struct ActorPlacement gLemurianShipDeck_TillerPlacements[];
 
@@ -128,7 +132,7 @@ void LemurianShipDeck_EnterCabin(void) {
     }
     if (!Event_GetFlag(FLAG_CABIN_DOOR_OPEN)) {
       Event_PlaySound(SE_DOOR_OPEN);
-      MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
+      LemurianShipDeck_DrawCabinDoorOpen();
     }
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -242,29 +246,17 @@ void LemurianShipDeck_BobDeck(void) {
   gLemurianShipDeck_BobPhase += TRIG_TURN / 128;
 }
 
-struct Actor;
+extern s32 gLemurianShipDeck_JennaLooksAround[];
 
-extern s32 gLemurianShipDeck_FirstCrewLooksAround[];
+extern s32 gLemurianShipDeck_ShebaLooksAround[];
 
-extern s32 gLemurianShipDeck_SecondCrewLooksAround[];
-
-extern s32 gLemurianShipDeck_ThirdCrewLooksAround[];
-
-void LemurianShipDeck_RotateSurfColors(void);
-
-void LemurianShipDeck_ScrollWaves(void);
-
-void LemurianShipDeck_BobDeck(void);
-
-void LemurianShipDeck_TakeTheTiller(void);
+extern s32 gLemurianShipDeck_KradenLooksAround[];
 
 void FieldCamera_WaitForArrival(void);
 
 extern s16 gLemurianShipDeck_Puddles[];
 
 void FlagBlock_PlaceAll(const void *data);
-
-void LemurianShipDeck_ShowArrival(void);
 
 void FlagBlock_ApplyFlags(const void *data);
 
@@ -275,13 +267,6 @@ void Actor_Release(struct Actor *actor);
 
 extern s32 gLemurianShipDeck_ReachPiersShipScript[];
 extern u32 gLemurianShipDeck_SplashFades[];
-
-void LemurianShipDeck_EnterCabin(void);
-
-void LemurianShipDeck_TryHeldDoor(void);
-
-void LemurianShipDeck_RotateHullBandColors(void);
-void LemurianShipDeck_HoldOnToTiller(void);
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
 /// facing is, as Madra's and Loho's scenes also place them.
@@ -318,9 +303,9 @@ void LemurianShipDeck_TakeTheTiller(void) {
                                FACING_SOUTH);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_FirstCrewLooksAround);
-  Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_SecondCrewLooksAround);
-  Actor_SetScript(ACTOR_KRADEN, gLemurianShipDeck_ThirdCrewLooksAround);
+  Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_JennaLooksAround);
+  Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_ShebaLooksAround);
+  Actor_SetScript(ACTOR_KRADEN, gLemurianShipDeck_KradenLooksAround);
   Event_StartScreenTransition();
   gLemurianShipDeck_WaveScroll = 0;
   Task_AddFrame(LemurianShipDeck_ScrollWaves, TASK_PASS_FRAME);
@@ -362,14 +347,14 @@ void LemurianShipDeck_TakeTheTiller(void) {
                                             0) == 0) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-    // "I don't think that's a good idea."
+    // Yes: "I don't think that's a good idea."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     gFieldWork->message++;
-    // "I'm with Felix. I don't think that would be a wise course of action."
+    // No: "I'm with Felix. I don't think that would be a wise course of..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -434,11 +419,11 @@ void LemurianShipDeck_TakeTheTiller(void) {
 }
 
 /// Sends actor id at a run to where Felix stands, and off the deck.
-static inline void RunToFelix(s32 id) {
+static inline void LemurianShipDeck_RunToFelix(s32 id) {
   struct Actor *target;
 
   Actor_SetSpeed(id, 1.2);
-  Actor_SetAnimation(id, 2);
+  Actor_SetAnimation(id, ANIM_WALK);
   target = Actor_GetById(ACTOR_FELIX);
   if (target != NULL)
     Actor_SetDestination(id, target->x.part[0].integer,
@@ -574,11 +559,11 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(40);
-  RunToFelix(ACTOR_PIERS);
-  RunToFelix(ACTOR_JENNA);
-  RunToFelix(ACTOR_SHEBA);
-  RunToFelix(ACTOR_KRADEN);
-  FieldEvent_SetExitRequest(1);
+  LemurianShipDeck_RunToFelix(ACTOR_PIERS);
+  LemurianShipDeck_RunToFelix(ACTOR_JENNA);
+  LemurianShipDeck_RunToFelix(ACTOR_SHEBA);
+  LemurianShipDeck_RunToFelix(ACTOR_KRADEN);
+  FieldEvent_SetExitRequest(LEMURIAN_SHIP_TILLER_TO_WORLD_MAP_A);
 }
 
 /// The deck by the tiller (SCENE_LEMURIAN_SHIP_TILLER): the surf and the band
@@ -636,7 +621,7 @@ s32 Scene_PrepareMap(void) {
 /// (`FLAG_MENARDIS_SHIP_SEEN`).
 void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
-  s32 owner;
+  s32 leader;
 
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0) {
     Event_SetFlag(FLAG_MENARDIS_SHIP_SEEN);
@@ -686,31 +671,35 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   answer =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  owner = gMainRoutineWork.leaderActorId;
+  leader = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(leader);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+    // Yes: "Yes, Felix, That would be logical..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
-    Actor_WaitForAnimationChange(owner);
-    FieldEvent_SetMessageId(MsgLemurianShipDeckLookItsMenardisShip +
-                            5); // the fifth message after it
-    // "How else could it have come to be here, Felix?"
+    Actor_WaitForAnimationChange(leader);
+    FieldEvent_SetMessageId(MsgLemurianShipDeckLookItsMenardisShip + 5);
+    // No: "How else could it have come to be here, Felix?"
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "If we had that thingie Saturos had, we could just take their boat."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  // "For all we know, the orb is at the bottom of the sea...with them..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "Well, there's no point in hanging around here all day."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_Get(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_KRADEN, 288, 144);
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
+  // "Let's go see about finding ourselves a ship we can use."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -862,8 +851,8 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
 ///
 /// It sets FLAG_PIERS_BACK_ON_HIS_SHIP.
 void LemurianShipDeck_ReturnToShip(void) {
-  struct Actor *handle;
-  void (*func)(void);
+  struct Actor *crystal;
+  void (*sparkles)(void);
   struct Actor *actor;
 
   if (Event_GetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP) != 0)
@@ -897,11 +886,11 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_WalkToAndWait(ACTOR_PIERS, 360, 424);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   Event_PlaySound(SE_GEM_SET);
-  handle = LemurianShipDeck_CreateBlackCrystal();
+  crystal = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
   Event_PlaySound(SE_SHIMMER);
-  func = LemurianShipDeck_EmitSparkle;
-  Task_Add(func, TASK_PASS_FRAME);
+  sparkles = LemurianShipDeck_EmitSparkle;
+  Task_Add(sparkles, TASK_PASS_FRAME);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
@@ -911,11 +900,11 @@ void LemurianShipDeck_ReturnToShip(void) {
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
-  MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
+  LemurianShipDeck_DrawCabinDoorOpen();
   Event_SetFlag(FLAG_CABIN_DOOR_OPEN);
-  FieldTask_Remove(func);
-  if (handle != 0)
-    Actor_Release(handle);
+  FieldTask_Remove(sparkles);
+  if (crystal != 0)
+    Actor_Release(crystal);
   FieldEvent_Wait(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(20);
@@ -1021,7 +1010,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
-    // "What's with the guilt trip? Piers hasn't even given us his answer yet!"
+    // Yes: "What's with the guilt trip? Piers hasn't even given us his..."
     Event_ShowMessage(ACTOR_JENNA, 0);
     // "Kraden! Felix! Stop trying to pressure Piers!"
     Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -1030,7 +1019,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
     gFieldWork->message += 2;
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-    // "Sheba is right! You guys just let Piers give us his answer!"
+    // No: "Sheba is right! You guys just let Piers give us his answer!"
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -1180,13 +1169,13 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_OpenMessage(ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 1) {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-    // "Don't worry about me. I've waited this long. I can wait a little..."
+    // No: "Don't worry about me. I've waited this long. I can wait a..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message += 1;
   } else {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     gFieldWork->message += 1;
-    // "I have no objection, so why not? Let's go."
+    // Yes: "I have no objection, so why not? Let's go."
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
@@ -1280,10 +1269,10 @@ s16 gLemurianShipDeck_Puddles[] = {
 /// The party walking off across the shore, into Felix's party, once Piers has
 /// agreed to sail for Lemuria.
 s32 gLemurianShipDeck_ReachPiersShipScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(263, 0, 176),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
@@ -1293,10 +1282,10 @@ s32 gLemurianShipDeck_ReachPiersShipScript[] = {
 /// Felix stepping back from the cabin door and turning to watch Piers open
 /// it.
 s32 gLemurianShipDeck_ReturnToShipScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(368, 0, 448),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
@@ -1308,16 +1297,20 @@ s32 gLemurianShipDeck_ReturnToShipScript[] = {
 };
 
 /// Jenna looking about the deck as the ship first sails.
-s32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
-      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
-      SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
-      SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(10),                        
-      SC_SET(SW_FACING, FACING_SOUTHEAST), SC_WAIT(70),                        
-      SC_LOOP(SC_FOREVER, SC_TOP),                                             
-  };
+s32 gLemurianShipDeck_JennaLooksAround[] = {
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(30),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(50),
+    SC_SET(SW_FACING, FACING_SOUTH),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTHEAST),
+    SC_WAIT(70),
+    SC_LOOP(SC_FOREVER, SC_TOP),
+};
 
 /// Sheba looking about the deck as the ship first sails.
-s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
+s32 gLemurianShipDeck_ShebaLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
@@ -1326,7 +1319,7 @@ s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
 };
 
 /// Kraden looking about the deck as the ship first sails.
-s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
+s32 gLemurianShipDeck_KradenLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -1388,18 +1381,24 @@ struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_CABIN_DOOR, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_TryHeldDoor)},
     {TRIGGER_STEP, CELL_BEHAVIOR_EAST_OF_DOOR, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_KradenGoesToFindShip)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_EAST_OF_DOOR, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_StepBesideEastOfDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(LemurianShipDeck_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(LemurianShipDeck_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
-/// A sparkle fading as it rises.
+/// A sparkle drifting in to the Black Crystal, gone as it arrives.
 u32 gLemurianShipDeck_SparkleFades[] = {
-    0, 10, 1, 3, 0, 1,
-    38,
+    SC_WAIT(10),
+    SC_SYNC,
+    SC_POSITION_ORIGIN,
+    SC_WAIT(1),
+    SC_RELEASE,
 };
 
-/// A splash rising and fading.
+/// A wading splash, gone after a quarter of a second.
 u32 gLemurianShipDeck_SplashFades[] = {
-    0, 15, 3, 0, 1, 38,
+    SC_WAIT(15),
+    SC_POSITION_ORIGIN,
+    SC_WAIT(1),
+    SC_RELEASE,
 };
 // clang-format on

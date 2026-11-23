@@ -262,7 +262,6 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
           void *o = (void *)OBJ_TILES(
               (struct Sprite *)work->sprites[gEclipse_TileObjects[i]]);
-          // Default: set for real below.
           s32 size = 0;
           size = OBJ_32X32_8BPP_BYTES;
           Iwram_CopyWordsEntry(o, &dst[i * OBJ_32X32_8BPP_BYTES], size);
@@ -477,7 +476,6 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       if (frame >= 148 && frame < ECLIPSE_DRAGON_FRAMES) {
         for (j = 0; j != 4; j++) {
           s32 t = (frame + j) & 3;
-          // Default: set for real below.
           s32 x = 0;
           s32 y = 0;
 
@@ -584,7 +582,6 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     // DEAD: the blast ends before frame 110, so this test is always true; the
     // ROM keeps its compare.
     if (frame <= 109) {
-      // Default: set for real below.
       struct RenderModel *model = 0;
       void *verts = 0;
 
@@ -707,7 +704,6 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         struct Particle *q =
             EXTRA_PARTICLES +
             ((frame * ECLIPSE_MOTES_A_FRAME + i) & (ECLIPSE_MOTE_COUNT - 1));
-        // Default: set for real below.
         s32 a = 0;
         s32 r = 0;
 
@@ -954,6 +950,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
 
+  // The last form's change runs on while the screen whitens.
   frames = 100;
   if (kind != FORMATION_DOOM_DRAGON_C)
     frames = 76;
@@ -991,6 +988,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     }
     if (frame == FORM_CHANGE_BURST)
       Sound_PlayFar(SE_CLATTER);
+    // The dragon roars after the burst, and shows white from frame 32 to 68.
     if (frame == 56)
       Sound_PlayFar(SE_BOSS_ROAR);
     if (frame == 32)

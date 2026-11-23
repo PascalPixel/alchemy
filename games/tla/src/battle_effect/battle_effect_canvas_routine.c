@@ -78,4 +78,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
     } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
   }
 }
-#undef BLITTER
+
+#undef WIPE_LAG_MAX
+#undef WIPE_ACROSS_END
+#undef CANVAS_WIPE_NONE

@@ -288,7 +288,7 @@ static void Kalay_UpdatePacingGuides(void);
 static void Kalay_IvanMeetsPalaceGuards(void);
 static void Kalay_HammetReturnsToPalace(void);
 static void Kalay_UpdateTunnelPassages(void);
-static void Kalay_UpdateTunnelEmitters(void);
+static void Kalay_UpdateTunnelStatues(void);
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z);
 static void Kalay_UpdateNutOrbit(void);
 
@@ -1294,7 +1294,7 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_STATUE), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_STATUE), 0);
-  Task_AddFrame(Kalay_UpdateTunnelEmitters, TASK_PASS_FRAME);
+  Task_AddFrame(Kalay_UpdateTunnelStatues, TASK_PASS_FRAME);
   // Once the tunnel is open, the man who waited for it stands here and the
   // barred gate beside him stands open.
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
@@ -2175,9 +2175,16 @@ static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #endif
 }
 
-/// While a hall's pool in the Kalay Tunnel is still full, sparkles stream from
-/// its statue as it nears the waterfall.
-static void Kalay_UpdateTunnelEmitters(void) {
+/// The x at or west of which each hall's statue, near its waterfall, sparkles
+/// while its pool is still full.
+#define FIRST_STATUE_SPARKLE_X 245
+#define SECOND_STATUE_SPARKLE_X 709
+
+/// Each frame in the Kalay Tunnel's halls: while a pool is still full, sparkles
+/// stream from its statue as it nears the waterfall, with the sound of water
+/// draining the first time. While the first statue stands a cell east of where
+/// it starts, it is drawn at the leader's priority.
+static void Kalay_UpdateTunnelStatues(void) {
   struct Actor *firstStatue;
   struct Actor *secondStatue;
 
@@ -2188,7 +2195,8 @@ static void Kalay_UpdateTunnelEmitters(void) {
     firstStatue->sprite->image.priority =
         Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
-             firstStatue->x.part[0].integer <= 245 && (gFrameCount & 1) == 0) {
+             firstStatue->x.part[0].integer <= FIRST_STATUE_SPARKLE_X &&
+             (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);
@@ -2198,7 +2206,8 @@ static void Kalay_UpdateTunnelEmitters(void) {
                               firstStatue->z.fixed);
   }
   if (!GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
-      secondStatue->x.part[0].integer <= 709 && (gFrameCount & 1) == 0) {
+      secondStatue->x.part[0].integer <= SECOND_STATUE_SPARKLE_X &&
+      (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);

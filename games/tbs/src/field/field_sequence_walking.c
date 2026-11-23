@@ -426,7 +426,7 @@ s32 Party_ApplyPoisonDamage(void) {
 
 /// Starts an event or menu on the World Map: ends any colour ratio transition
 /// in progress, pauses camera movement and freezes the perspective view as a
-/// still picture.
+/// still image.
 void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
@@ -442,7 +442,7 @@ void WorldMap_Freeze(void) {
       state->step = 0;
     }
     work->camera->paused = 1;
-    WorldMap_StartStillPictureFar();
+    WorldMap_StartStillImageFar();
   }
 }
 

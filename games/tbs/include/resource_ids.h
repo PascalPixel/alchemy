@@ -50,8 +50,8 @@ extern char ResourceId_CamelotLogo;
 /// menu, by FileScreen_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
 #define RESOURCE_GOLDEN_SUN_LOGO ((s32)&ResourceId_GoldenSunLogo)
-/// The still world map WorldPicture_Show shows for a
-/// FIELD_RAISED_TRIGGER_WORLD_PICTURE event; it loads this one whatever picture
+/// The still world map MapScreen_Show shows for a
+/// FIELD_RAISED_TRIGGER_MAP_SCREEN event; it loads this one whatever picture
 /// it's passed.
 extern char ResourceId_WorldMapPicture;
 #define RESOURCE_WORLD_MAP_PICTURE ((s32)&ResourceId_WorldMapPicture)
@@ -378,7 +378,7 @@ extern char ResourceId_CrystalSheet;
 extern char ResourceId_PerspectiveDataA;
 #define RESOURCE_PERSPECTIVE_DATA_A ((s32)&ResourceId_PerspectiveDataA)
 /// The world map cells WorldMap_InitializePerspective decodes into
-/// Ram_MapGridCellBuffer, and that the still pictures put back on their way
+/// Ram_MapGridCellBuffer, and that the still images put back on their way
 /// out.
 extern char ResourceId_DefaultGridCells;
 #define RESOURCE_DEFAULT_GRID_CELLS ((s32)&ResourceId_DefaultGridCells)

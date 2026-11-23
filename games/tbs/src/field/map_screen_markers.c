@@ -1,5 +1,5 @@
 /// @file
-/// The world picture's markers (WorldPicture_Show).
+/// The map screen's markers (MapScreen_Show).
 
 #include "battle/battle.h"
 #include "flags.h"
@@ -12,11 +12,11 @@
   (tile) << 16 | FLAG_AREA_VISITED(group), (scene)
 
 /// A row for each World Map actor from WORLD_MAP_FIRST_AREA_ACTOR, whose
-/// marker is drawn where that actor stands, so a place's spot on the picture
+/// marker is drawn where that actor stands, so a place's spot on the image
 /// is its actor's on the World Map. A row of zeros is an actor with no
 /// marker, and -1 ends the table.
 // clang-format off
-const s32 gWorldPicture_AreaMarkers[] = {
+const s32 gMapScreen_AreaMarkers[] = {
     AREA_MARKER(1, 3, SCENE_VALE_PROLOGUE),
     AREA_MARKER(1, 5, SCENE_VAULT),
     AREA_MARKER(1, 25, SCENE_ALTIN),

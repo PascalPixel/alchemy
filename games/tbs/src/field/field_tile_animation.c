@@ -170,14 +170,14 @@ void TilesetAnim_StartAll(const u16 *script) {
     Task_Add(TilesetAnim_Update, TASK_PASS_FRAME);
 }
 
-/// Suspends the tileset animations, unless the world map's still picture is
+/// Suspends the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
-/// Resumes the tileset animations, unless the world map's still picture is
+/// Resumes the tileset animations, unless the world map's still image is
 /// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)

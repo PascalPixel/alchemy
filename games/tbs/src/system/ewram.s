@@ -227,7 +227,7 @@ gOverlayArea:
 @ through gActorSpriteSlots and gDecodeBuffer, so neither holds anything else
 @ while a layout is loaded. Only code that loads the cells again afterwards
 @ writes there: a battle; the Battle Arena, which leaves the partner's party in
-@ gActorSpriteSlots for the link battle; the world map's still picture, which
+@ gActorSpriteSlots for the link battle; the world map's still image, which
 @ saves BG1's tiles to gDecodeBuffer; and the debug sprite viewer. The tileset
 @ animation reads only past gDecodeBuffer, from gMapGridAnimTiles.
 	.global gMapGridCellBuffer

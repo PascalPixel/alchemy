@@ -75,7 +75,7 @@ void ActorSystem_SuspendProjectionAndShowSpritesFar(void);
 void ActorSystem_ResumeProjectionAndHideLayersFar(void);
 s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
 void Actor_RegisterSpriteMetadataFar(struct Actor *actor, s32 no);
-void WorldMap_StartStillPictureFar(void);
+void WorldMap_StartStillImageFar(void);
 void WorldMap_LoadAreaGraphicsFar(void);
 void Actor_SetSpriteColorModeFar(struct Actor *actor, u32 val);
 void Sprite_SetAnimationColorModesFar(void *raw_parent, u32 value);

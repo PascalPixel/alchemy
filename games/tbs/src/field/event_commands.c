@@ -3,7 +3,7 @@
 /// items, questions, destinations, actors, messages and the camera),
 /// moving on the field (views, jumps and climbing), the field's weather and
 /// line scrolls, Djinn joining the party, each field Psynergy, the
-/// field effect sprites its particles use, and the World Map screen.
+/// field effect sprites its particles use, and the map screen.
 /// event_commands_internal.h holds the includes and the macros, types and
 /// inline helpers more than one part uses; the code is in the
 /// event_commands_*.c files beside it, included here in link order, one family
@@ -55,4 +55,4 @@
 #include "event_commands_retreat.c"
 #include "event_commands_avoid.c"
 #include "event_commands_field_particles.c"
-#include "event_commands_world_picture.c"
+#include "event_commands_map_screen.c"

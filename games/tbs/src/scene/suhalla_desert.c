@@ -199,7 +199,7 @@ static u16 sSuhallaDesertSavedColor;
 #define SUHALLA_REVEAL_PALETTE_COLOR BG_PLTT_COLOR(12, 15)
 
 /// Lalivero's area, whose FLAG_AREA_VISITED says the party has been there
-/// (gWorldPicture_AreaMarkers marks it at SCENE_LALIVERO).
+/// (gMapScreen_AreaMarkers marks it at SCENE_LALIVERO).
 #define AREA_LALIVERO 55
 
 #include "shared/field_effect_create.c"

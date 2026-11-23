@@ -1,5 +1,5 @@
 /// @file
-/// The world map: its perspective view, its tiles, and the still picture of
+/// The world map: its perspective view, its tiles, and the still image of
 /// the view BG1 shows while a menu or event runs.
 // Part of field.c.
 
@@ -63,8 +63,8 @@ struct WorldMapCell {
 /// value has the tileset animations copy 64-byte tiles.
 #define WORLD_MAP_WIDE_TILES 128
 
-/// The window rows WorldMap_StartStillPicture sets, below the screen: the
-/// frame update then picks mode 0 and BG1 shows the still picture.
+/// The window rows WorldMap_StartStillImage sets, below the screen: the
+/// frame update then picks mode 0 and BG1 shows the still image.
 #define WORLD_MAP_STILL_WINDOW_TOP 200
 #define WORLD_MAP_STILL_WINDOW_BOTTOM 255
 #define WORLD_MAP_STILL_TILES (DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT)
@@ -369,9 +369,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
   // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
-  // screen block 6 numbers a 30 by 20 tile picture from
+  // screen block 6 numbers a 30 by 20 tile image from
   // WORLD_MAP_STILL_FIRST_TILE, two tile numbers a word, for the still
-  // picture WorldMap_StartStillPicture shows.
+  // image WorldMap_StartStillImage shows.
   Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE(127)), BG_SCREEN_BLOCK(5), 1536);
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = MAP_ENTRY_PAIR(WORLD_MAP_STILL_FIRST_TILE,
@@ -440,8 +440,8 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->shownTop = perspective->windowTop;
   perspective->shownBottom = perspective->windowBottom;
   // DISPCNT_MODE_2 (the affine ground) for the load's rows 0 to 159;
-  // DISPCNT_MODE_0 for WorldMap_StartStillPicture's 200 and 255, which show the
-  // still picture on BG1.
+  // DISPCNT_MODE_0 for WorldMap_StartStillImage's 200 and 255, which show the
+  // still image on BG1.
   windowTop = perspective->shownTop;
   mode = 0;
   if (windowTop < WORLD_MAP_STILL_WINDOW_TOP) {
@@ -688,7 +688,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 }
 
 /// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM.
-void WorldMap_PresentStillPicture(void) {
+void WorldMap_PresentStillImage(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
   Dma_Set(gMapGridCellBuffer,
@@ -696,10 +696,10 @@ void WorldMap_PresentStillPicture(void) {
           DMA_COPY_WORDS(WORLD_MAP_STILL_TILES * TILE_SIZE_8BPP / 4), REG_DMA3);
 }
 
-/// Freezes the world map's perspective view as a still picture on BG1: saves
+/// Freezes the world map's perspective view as a still image on BG1: saves
 /// BG1's tiles, draws the current affine frame into pixels and hands the window
 /// and VBlank to it.
-void WorldMap_StartStillPicture(void) {
+void WorldMap_StartStillImage(void) {
   struct WorldMapAffineWork *affineWork =
       HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
   struct WorldMapView *perspective = gMapGridWork[0];
@@ -713,7 +713,7 @@ void WorldMap_StartStillPicture(void) {
                           (u8 *)gMapGridCellBuffer);
   perspective->windowTop = WORLD_MAP_STILL_WINDOW_TOP;
   perspective->windowBottom = WORLD_MAP_STILL_WINDOW_BOTTOM;
-  gVBlankCallback = WorldMap_PresentStillPicture;
+  gVBlankCallback = WorldMap_PresentStillImage;
 }
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
@@ -722,7 +722,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
   Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(8192), REG_DMA3);
 }
 
-/// Reloads the world map area's palette and tiles after the still picture, puts
+/// Reloads the world map area's palette and tiles after the still image, puts
 /// the default cells back and returns to the perspective view.
 void WorldMap_LoadAreaGraphics(void) {
   struct WorldMapView *perspective;
@@ -746,7 +746,7 @@ void WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(graphicsResources[4]),
                       Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3);
   // The VBlank copies the tiles back and the next frame shows the ground;
-  // only then is the still picture's buffer refilled with the cells.
+  // only then is the still image's buffer refilled with the cells.
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
@@ -759,7 +759,7 @@ void WorldMap_LoadAreaGraphics(void) {
   wait(1);
 }
 
-/// Puts the default world map cells back after the still picture and returns to
+/// Puts the default world map cells back after the still image and returns to
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
   struct WorldMapView *perspective = gMapGridWork[0];

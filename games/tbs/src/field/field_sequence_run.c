@@ -202,10 +202,9 @@ s32 FieldSequence_Run(s32 entrance) {
               goto done;
             }
             WorldMap_Unfreeze();
-          } else if (work->raisedTrigger ==
-                     FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
+          } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_MAP_SCREEN) {
             Leader_StopMoving();
-            WorldPicture_Show(RESOURCE_WORLD_MAP_PICTURE);
+            MapScreen_Show(RESOURCE_WORLD_MAP_PICTURE);
           } else if (work->raisedTrigger ==
                      FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
             Leader_StopMoving();

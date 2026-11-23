@@ -197,7 +197,7 @@
 /// (Actor_UpdatePlayerControl). Nothing in the game sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The areas the party has visited, one flag for each, set by Scene_Arrive as
-/// the party enters the area; the world map screen shows a marker for each.
+/// the party enters the area; the map screen shows a marker for each.
 #define FLAG_AREA_VISITED(group) (0x180 + (group))
 /// A scene's own flags, cleared on every ordinary entry (Scene_Arrive): puzzles
 /// reset when the party walks back in.

@@ -2679,7 +2679,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
 
   wait(1);
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
-  WorldMap_StartStillPicture();
+  WorldMap_StartStillImage();
   FieldDecompress_TaggedLz(gWorldMapPackedTiles, buffer);
   FieldDecompress_TaggedLz(gWorldMapPackedPictures,
                            buffer + LIGHT_BALL_TILES_SIZE);

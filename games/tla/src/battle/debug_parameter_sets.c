@@ -1,6 +1,8 @@
 /// @file
 /// The debug parameter sets: runs of party members, each run ended by
-/// DEBUG_PARAMETER_SET_END, that DebugParameterSet_Load gives the party.
+/// DEBUG_PARAMETER_SET_END, that DebugParameterSet_Load gives the party when
+/// the man hidden below the Battle lobby is given the run's number. From set
+/// 70 on, an even set brings the odd one after it too.
 
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -10,6 +12,7 @@
 
 // clang-format off
 struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
+    // Set 0
     {
         .owner = FELIX,
         .level = 90,
@@ -20,6 +23,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 1
     {
         .owner = FELIX,
         .level = 90,
@@ -49,6 +53,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 2
     {
         .owner = JENNA,
         .level = 50,
@@ -78,6 +83,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 3
     {
         .owner = FELIX,
         .level = 90,
@@ -107,6 +113,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 4
     {
         .owner = FELIX,
         .level = 90,
@@ -135,6 +142,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 5
     {
         .owner = JENNA,
         .level = 5,
@@ -156,6 +164,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 6
     {
         .owner = JENNA,
         .level = 6,
@@ -178,6 +187,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 7
     {
         .owner = JENNA,
         .level = 7,
@@ -201,6 +211,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 8
     {
         .owner = JENNA,
         .level = 8,
@@ -224,6 +235,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 9
     {
         .owner = JENNA,
         .level = 9,
@@ -247,6 +259,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 10
     {
         .owner = JENNA,
         .level = 10,
@@ -270,6 +283,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 11
     {
         .owner = JENNA,
         .level = 11,
@@ -293,6 +307,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 12
     {
         .owner = JENNA,
         .level = 12,
@@ -316,6 +331,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 13
     {
         .owner = JENNA,
         .level = 13,
@@ -339,6 +355,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 14
     {
         .owner = JENNA,
         .level = 14,
@@ -362,6 +379,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 15
     {
         .owner = JENNA,
         .level = 15,
@@ -385,6 +403,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 16
     {
         .owner = JENNA,
         .level = 16,
@@ -408,6 +427,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 17
     {
         .owner = JENNA,
         .level = 17,
@@ -431,6 +451,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 18
     {
         .owner = JENNA,
         .level = 18,
@@ -454,6 +475,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 19
     {
         .owner = JENNA,
         .level = 19,
@@ -483,6 +505,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 20
     {
         .owner = JENNA,
         .level = 20,
@@ -512,6 +535,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 21
     {
         .owner = JENNA,
         .level = 21,
@@ -541,6 +565,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 22
     {
         .owner = JENNA,
         .level = 22,
@@ -570,6 +595,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 23
     {
         .owner = JENNA,
         .level = 23,
@@ -599,6 +625,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 24
     {
         .owner = JENNA,
         .level = 24,
@@ -628,6 +655,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 25
     {
         .owner = JENNA,
         .level = 25,
@@ -657,6 +685,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 26
     {
         .owner = JENNA,
         .level = 26,
@@ -686,6 +715,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 27
     {
         .owner = JENNA,
         .level = 27,
@@ -715,6 +745,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 28
     {
         .owner = JENNA,
         .level = 28,
@@ -744,6 +775,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 29
     {
         .owner = JENNA,
         .level = 29,
@@ -773,6 +805,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 30
     {
         .owner = JENNA,
         .level = 30,
@@ -802,6 +835,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 31
     {
         .owner = JENNA,
         .level = 31,
@@ -831,6 +865,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 32
     {
         .owner = JENNA,
         .level = 32,
@@ -860,6 +895,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 33
     {
         .owner = ISAAC,
         .level = 1,
@@ -886,6 +922,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 34
     {
         .owner = ISAAC,
         .level = 1,
@@ -912,6 +949,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 35
     {
         .owner = ISAAC,
         .level = 1,
@@ -938,6 +976,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 36
     {
         .owner = ISAAC,
         .level = 1,
@@ -964,6 +1003,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 37
     {
         .owner = JENNA,
         .level = 26,
@@ -986,6 +1026,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 38
     {
         .owner = FELIX,
         .level = 27,
@@ -1015,6 +1056,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 39
     {
         .owner = JENNA,
         .level = 32,
@@ -1044,6 +1086,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 40
     {
         .owner = JENNA,
         .level = 5,
@@ -1063,6 +1106,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 41
     {
         .owner = JENNA,
         .level = 29,
@@ -1092,6 +1136,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 42
     {
         .owner = JENNA,
         .level = 20,
@@ -1121,6 +1166,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 43
     {
         .owner = JENNA,
         .level = 29,
@@ -1150,6 +1196,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 44
     {
         .owner = ISAAC,
         .level = 1,
@@ -1176,6 +1223,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 45
     {
         .owner = JENNA,
         .level = 5,
@@ -1197,6 +1245,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 46
     {
         .owner = JENNA,
         .level = 9,
@@ -1220,6 +1269,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 47
     {
         .owner = JENNA,
         .level = 12,
@@ -1243,6 +1293,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 48
     {
         .owner = JENNA,
         .level = 14,
@@ -1266,6 +1317,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 49
     {
         .owner = JENNA,
         .level = 15,
@@ -1289,6 +1341,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 50
     {
         .owner = JENNA,
         .level = 17,
@@ -1312,6 +1365,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 51
     {
         .owner = JENNA,
         .level = 19,
@@ -1341,6 +1395,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 52
     {
         .owner = JENNA,
         .level = 23,
@@ -1370,6 +1425,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 53
     {
         .owner = JENNA,
         .level = 24,
@@ -1399,6 +1455,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 54
     {
         .owner = JENNA,
         .level = 25,
@@ -1428,6 +1485,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 55
     {
         .owner = JENNA,
         .level = 27,
@@ -1457,6 +1515,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 56
     {
         .owner = JENNA,
         .level = 31,
@@ -1486,6 +1545,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 57
     {
         .owner = JENNA,
         .level = 32,
@@ -1515,6 +1575,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 58
     {
         .owner = JENNA,
         .level = 33,
@@ -1544,6 +1605,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 59
     {
         .owner = JENNA,
         .level = 35,
@@ -1573,6 +1635,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 60
     {
         .owner = FELIX,
         .level = 40,
@@ -1602,6 +1665,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 61
     {
         .owner = FELIX,
         .level = 30,
@@ -1631,6 +1695,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 62
     {
         .owner = FELIX,
         .level = 20,
@@ -1660,6 +1725,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 63
     {
         .owner = FELIX,
         .level = 15,
@@ -1689,6 +1755,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 64
     {
         .owner = FELIX,
         .level = 10,
@@ -1718,6 +1785,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 65
     {
         .owner = FELIX,
         .level = 40,
@@ -1741,6 +1809,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 66
     {
         .owner = FELIX,
         .level = 30,
@@ -1764,6 +1833,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 67
     {
         .owner = FELIX,
         .level = 20,
@@ -1787,6 +1857,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 68
     {
         .owner = FELIX,
         .level = 15,
@@ -1810,6 +1881,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 69
     {
         .owner = FELIX,
         .level = 10,
@@ -1833,6 +1905,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 70
     {
         .owner = JENNA,
         .level = 33,
@@ -1862,6 +1935,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 71
     {
         .owner = IVAN,
         .level = 33,
@@ -1892,6 +1966,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 72
     {
         .owner = JENNA,
         .level = 34,
@@ -1921,6 +1996,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 73
     {
         .owner = IVAN,
         .level = 34,
@@ -1951,6 +2027,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 74
     {
         .owner = JENNA,
         .level = 35,
@@ -1980,6 +2057,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 75
     {
         .owner = IVAN,
         .level = 35,
@@ -2010,6 +2088,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 76
     {
         .owner = JENNA,
         .level = 36,
@@ -2039,6 +2118,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 77
     {
         .owner = IVAN,
         .level = 36,
@@ -2069,6 +2149,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 78
     {
         .owner = JENNA,
         .level = 37,
@@ -2098,6 +2179,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 79
     {
         .owner = IVAN,
         .level = 37,
@@ -2128,6 +2210,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 80
     {
         .owner = JENNA,
         .level = 38,
@@ -2157,6 +2240,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 81
     {
         .owner = IVAN,
         .level = 38,
@@ -2187,6 +2271,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 82
     {
         .owner = JENNA,
         .level = 39,
@@ -2216,6 +2301,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 83
     {
         .owner = IVAN,
         .level = 39,
@@ -2246,6 +2332,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 84
     {
         .owner = JENNA,
         .level = 40,
@@ -2275,6 +2362,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 85
     {
         .owner = IVAN,
         .level = 40,
@@ -2305,6 +2393,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 86
     {
         .owner = JENNA,
         .level = 50,
@@ -2334,6 +2423,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 87
     {
         .owner = IVAN,
         .level = 50,
@@ -2364,6 +2454,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 88
     {
         .owner = JENNA,
         .level = 60,
@@ -2393,6 +2484,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 89
     {
         .owner = IVAN,
         .level = 60,
@@ -2423,6 +2515,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 90
     {
         .owner = JENNA,
         .level = 70,
@@ -2452,6 +2545,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 91
     {
         .owner = IVAN,
         .level = 70,
@@ -2482,6 +2576,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 92
     {
         .owner = JENNA,
         .level = 35,
@@ -2511,6 +2606,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 93
     {
         .owner = IVAN,
         .level = 35,
@@ -2541,6 +2637,7 @@ struct DebugPartyEntry gDebug_ParameterSets[] ALIGNED(4) = {
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },
+    // Set 94: none, a second end marker
     {
         .owner = DEBUG_PARAMETER_SET_END,
     },

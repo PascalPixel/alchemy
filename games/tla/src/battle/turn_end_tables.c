@@ -7,6 +7,8 @@
 #include "battle/presentation.h"
 #include "system/matrix.h"
 
+/// The party takes its turn-end effects first, then the enemies; the second
+/// console of a link battle swaps them (Battle_ProcessTurnEnd).
 const struct BattleSideOrder gBattleParty_TurnEndSideOrder = {
     {BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES},
 };

@@ -64,9 +64,6 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode);
 void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags);
 
-// The three kinds the scenes ask for.
-enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
-
 /// A point of a streak: x, y and z.
 struct StreakPoint {
   s32 x;
@@ -385,6 +382,7 @@ enum ModelKind {
 #define REAPER_SHEET_SWUNG_HEIGHT 69
 #define REAPER_SHEET_CRESCENT_WIDTH 128
 #define REAPER_SHEET_CRESCENT_HEIGHT 91
+/// Where each picture starts in ReaperSheet, in bytes.
 enum ReaperSheetPicture {
   REAPER_SHEET_RAISED = 0,
   REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
@@ -400,6 +398,7 @@ enum ReaperSheetPicture {
 #define RED_CRESCENT_FADE_C_HEIGHT 29
 #define RED_CRESCENT_FADE_D_WIDTH 76
 #define RED_CRESCENT_FADE_D_HEIGHT 25
+/// Where each picture starts in RedCrescentSheetA, in bytes.
 enum RedCrescentPicture {
   RED_CRESCENT_FADE_A = 0,
   RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +

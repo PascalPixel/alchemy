@@ -654,6 +654,7 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_FLAME_SIZE 32
 #define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
 #define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
+/// Where each picture starts in ParticleStreamsSheet, in bytes.
 enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
   PARTICLE_STREAMS_FLAMES = 0,

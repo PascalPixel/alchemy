@@ -1883,8 +1883,12 @@ ask:
 /// cover whatever of Felix a raised cell beside him should hide; from here they
 /// follow him.
 void Kibombo_OverlayFollowsLeader(void) {
-  // XXX: whether the masks visibly hide part of Felix behind a pole; a
-  // recording of Felix walking round cells (20, 8) and (20, 9) would settle it.
+  // Walking round the ring's west side from cell (18, 9), up to the painted
+  // pole and back, Felix stays drawn whole in front of the pole: nothing of
+  // him is hidden there.
+  // XXX: whether the masks hide part of him once he passes north of (behind)
+  // a pole; a recording of Felix walking round the far side of the ring would
+  // settle it.
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
   work->actor =

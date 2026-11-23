@@ -285,8 +285,10 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgKolimaMustHorribleBeyondRiverAm);
+    // "It must be horrible beyond the river... I am so worried about..."
   } else {
     Event_SetMessageId(MsgKolimaHealingWatersMercuryLighthouseMight);
+    // "The healing waters of Mercury Lighthouse might save Tret..."
   }
   Event_ShowMessage(ACTOR_LAUREL, 0);
   Event_End();
@@ -298,8 +300,10 @@ static void KolimaForestTree_ReadTretThoughts(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgKolimaKnowCannotStopButPlease);
+    // "I know that I cannot stop you, but please be careful beyond..."
   } else {
     Event_SetMessageId(MsgKolimaPeopleKolimaForgiveMe);
+    // "People of Kolima... Forgive me..."
   }
   Event_ShowMessage(ACTOR_TRET, 0);
   Event_End();

@@ -112,7 +112,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLacquerRoomsB_ActorPlacements;
 }
 
-/// Reads the leader's facing before a conversation changes actor state.
+/// The way the leader faces, read before the event turns anyone.
 static inline u32 LacquerRoomsB_GetLeaderFacing(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   return leader->facing;
@@ -125,14 +125,17 @@ static void LacquerRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
   Event_Start();
+  // Across the counter: facing north, between northwest and northeast.
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_WEAPON_STOCK, ACTOR_XIAN_WEAPON_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       Event_SetMessageId(MsgXianXianHasMartialArtsBut);
+      // "Xian has martial arts, but kung fu alone is not enough...."
     } else {
       Event_SetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
+      // "Hsu's injury taught a good lesson. Even kung fu is no good..."
     }
     Event_ShowMessage(ACTOR_XIAN_WEAPON_MERCHANT, 0);
   }
@@ -146,14 +149,17 @@ static void LacquerRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
   Event_Start();
+  // Across the counter: facing north, between northwest and northeast.
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_ARMOR_STOCK, ACTOR_XIAN_ARMOR_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       Event_SetMessageId(MsgXianMartialArtistsCantUseHeavy);
+      // "Martial artists can't use heavy armor. If they do, they can't..."
     } else {
       Event_SetMessageId(MsgXianKungFuMakesQuickDoes);
+      // "Kung fu makes you quick, does it not? Even so, Hsu could not..."
     }
     Event_ShowMessage(ACTOR_XIAN_ARMOR_MERCHANT, 0);
   }
@@ -168,6 +174,7 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
   Event_Start();
+  // Across the counter: facing north, between northwest and northeast.
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_ITEM_STOCK, ACTOR_XIAN_ITEM_MERCHANT);
@@ -192,13 +199,16 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
   Event_Start();
+  // Across the counter: facing east, between northeast and southeast.
   if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
     Inn_CheckIn(XIAN_INN, ACTOR_XIAN_INNKEEPER);
   } else {
     if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       Event_SetMessageId(MsgXianWarriorsShouldLearnAboutTowns);
+      // "Warriors should learn about the towns they visit. Just..."
     } else {
       Event_SetMessageId(MsgXianWeHaveFewCustomersThese);
+      // "We have few customers these days. Customers can't come if..."
     }
     Event_ShowMessage(ACTOR_XIAN_INNKEEPER, 0);
   }

@@ -18,8 +18,8 @@
 ///   kalay.c's events), Layana talks of Dodonpa's spies.
 ///
 ///   Afterwards she stands elsewhere in her room, and the first time they
-///   speak she scolds `Isaac, you sneaked into Lunpa? That's far too
-///   dangerous!` (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS). From then on
+///   speak she scolds "Isaac, you sneaked into Lunpa? That's far too
+///   dangerous!" (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS). From then on
 ///   she talks of Dodonpa's greed.
 ///
 /// - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
@@ -37,8 +37,8 @@
 /// ACTOR_ASKING_ABOUT_THE_SILK_TRADE) have one line before Hammet is free and
 /// another after.
 ///
-/// Walking north into a door (step triggers 2, 3, 4 and 14) opens it. The
-/// other exits join the rooms plainly.
+/// Walking north into the doors of the entrance room and of the landing
+/// opens them. The other exits join the rooms plainly.
 ///
 /// HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS leads out to the front of the palace
 /// (HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE), and
@@ -46,7 +46,7 @@
 /// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE).
 ///
 /// Searching finds a turban, the symbol of Kalay's soldiers, and two books,
-/// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
+/// "Business and You" and "The Good Host". A chest holds a Water Jacket and a
 /// barrel a Nut.
 
 #include "ability_ids.h"
@@ -136,7 +136,7 @@ static void HammetPalace_FacePartyOutward(s32 waitFrames);
 static void HammetPalace_FacePartyNorth(s32 waitFrames);
 static void HammetPalace_HammetsHomecoming(void);
 
-/// Advances within the current conversation's consecutive message block.
+/// Skips messages of the conversation, past an answer not taken.
 static inline void HammetPalace_AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
@@ -156,8 +156,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 
-/// Applies actor placement clipping before returning Hammet Palace's
-/// actor rows.
+/// Hammet Palace's actors, the people only of the room the party enters
+/// (CONDITION_IN_VIEW).
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_HAMMET_PALACE) {
     Scene_AssignViewFlags(gHammetPalaceActorPlacements);
@@ -166,7 +166,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gHammetPalaceActorPlacementsOther;
 }
 
-/// Selects Hammet Palace's dialogue and doorway handlers.
+/// Hammet Palace's triggers, or none for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -220,15 +220,19 @@ static void HammetPalace_LayanaScoldsLunpaVisit(void) {
   Event_End();
 }
 
-/// Walking north into a door of Hammet Palace (step triggers 2, 3, 4 and 14):
-/// it opens, and the leader walks through it to the next room.
+/// Walking north into a door of the entrance room or the landing: it opens,
+/// and the leader walks through it to the next room.
+///
+/// Each step trigger's cell is the number of its exit. The door to Layana's
+/// room thumps open, and the leader walks straight on rather than first
+/// lining up with the middle of his column.
 static void HammetPalace_LeaveThroughDoor(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
   Event_Start();
   Event_Wait(10);
-  if (work->stepTrigger == 4) {
+  if (work->stepTrigger == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
     Sound_Play(SE_THUMP);
   } else {
     Sound_Play(SE_DOOR_OPEN);
@@ -238,7 +242,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (work->stepTrigger == 4) {
+  if (work->stepTrigger == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
   } else {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
@@ -250,8 +254,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
   Event_End();
 }
 
-/// Opens Hammet Palace with its window transition and runs
-/// entrance-specific setup.
+/// Sets up Hammet Palace as the party enters.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -261,7 +264,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up the room the party enters by.
+/// Sets up the room the party enters by: every door drawn shut, Layana and
+/// Hammet where the story has them, and the door to the underground passage
+/// open once Layana has had it opened.
 static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
@@ -294,6 +299,7 @@ static void HammetPalace_SetUpEntrance(void) {
   case HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING:
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
     if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
+      // The door to the underground passage stands open.
       MapGrid_CopyCellsTo(58, 70, 54, 70, 4, 3);
       MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
       MapGrid_CenterOnFollowedPoint();
@@ -391,7 +397,6 @@ static void HammetPalace_IvanReportsToLayana(void) {
   wait(60);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Event_SetMessageId(MsgKalayWhenHeardWereBackIvan);
-  // The following replies advance through this conversation's message block.
   // "When I heard that you were back, Ivan, I had dared to..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
@@ -468,10 +473,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_NORTH_NORTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
+  // "What should we do? How can we rescue Hammet?"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "What... What if something has happened to him!?"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
+  // "Let us handle this!"
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHWEST, 10);
@@ -481,11 +489,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_WEST_NORTHWEST, 40);
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_EAST_NORTHEAST, 20);
+  // "My lady, this is exactly what the soldiers of Kalay are here for!"
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_NORTH_NORTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
+  // Yes, Lady Layana! Please let us handle this!
   Event_ShowMessageThenWait(ACTOR_SECOND_SOLDIER, 0, 10);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_WEST_NORTHWEST, 40);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
@@ -493,21 +503,28 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_FIRST_SOLDIER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_NORTH_NORTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
+  // "Command us to attack, and we shall!"
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 20);
   HammetPalace_FacePartyNorth(20);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
   Event_Wait(40);
+  // "I cannot do that... Not without thinking it over carefully..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "How can we guarantee Hammet's safety if we send soldiers to attack?"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "I cannot do it. I cannot put Hammet's life at risk..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
+  // "Can't we do something to help?"
+  // Yes: "Oh! Well, it's about time you started agreeing with me, Isaac!"
+  // No: "What!? Look, we both know Hammet's life is in danger!"
   Event_OpenMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   advanceAfterReply = 1;
@@ -527,15 +544,19 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 20);
+  // "What are you two talking about?"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 10);
+  // "Garet thinks that we can help."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
+  // "It is too dangerous... If you fail, your lives would be in danger, too."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "Besides, don't you have your own quests to pursue?"
   Event_OpenMessage(ACTOR_LAYANA, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -543,12 +564,16 @@ static void HammetPalace_IvanReportsToLayana(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+    // "I thought so... I knew there had to be a reason Ivan had stayed with
+    // you, instead of returning home directly from Vault."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
     gFieldWork->message++;
   } else {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
+    // "I do not believe that... Ivan would not have stayed with you for so long
+    // if you did not have an important task ahead."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   }
   HammetPalace_FacePartyNorth(20);
@@ -556,29 +581,38 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
+  // "Then what will happen to Lord Hammet?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "Hammet is a good hostage for them... They will not kill him."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 2);
+  // "We shall wait for another message from Lunpa."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 868, 472);
+  // "Lady Layana, I cannot leave like this..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "It will be fine, Ivan. Hammet would not want to distract you from..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   HammetPalace_FacePartyNorth(20);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "I apologize. I have said more than I should..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "It sounds like Hammet knows about our mission ...doesn't it?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHWEST, 10);
+  // "I suppose I can keep it a secret no longer..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 10);
+  // "Very well, I shall tell you... He swore an oath to a Jupiter Adept."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -589,8 +623,10 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "A Jupiter Adept!?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "Have you heard of a village called Vale?"
   Event_OpenMessage(ACTOR_LAYANA, 0);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
@@ -603,24 +639,29 @@ static void HammetPalace_IvanReportsToLayana(void) {
     Actor_SetAttachedEffect(ACTOR_LAYANA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "You are from Vale? Really? Then the prophecy was true."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
     gFieldWork->message += 2;
   } else {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     gFieldWork->message++;
+    // "Give me a break! You don't know Vale!? It's our hometown!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_SetAttachedEffect(ACTOR_LAYANA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "You are from Vale...? Really? Then the prophecy was true."
     Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   }
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
+  // "What prophecy?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "Three years after the terrible storm that struck only Mt. Aleph..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -631,18 +672,25 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "Ivan must depart on a journey with warriors from Vale... So it was
+  // foretold."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  // "I've heard nothing of any such prophecy."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "It happened several years before Hammet founded Kalay... He was off
+  // traveling."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
+  // "Hammet felt he had reached an impasse as a merchant then."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   HammetPalace_FacePartyNorth(10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "He risked his life on a journey to find a new source of business..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
@@ -651,57 +699,80 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetAttachedEffect(ACTOR_LAYANA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
+  // "He was in mortal danger at the southwestern edge of the world, when some
+  // Adepts appeared and saved his life."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "He had lost consciousness. When he awoke, he found himself in their
+  // village."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   HammetPalace_FacePartyNorth(20);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+  // "Just a moment... Am I from that village?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // Yes. The Adept gave him the Shaman's Rod and you... along with some
+  // doubloons.
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Doubloons... Were they golden doubloons?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  // Yes... Let's see... You are...called...
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
+  // "I am Mia, Lady Layana."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "It was a lot of gold, Mia, but he also received some business advice."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Business advice? Hammet? The greatest merchant ever known?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // Yes, Garet. Hammet has the Adepts to thank for his success.
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
   Actor_SetAnimationAndWait(ACTOR_FIRST_SOLDIER, ANIM_SHAKE_HEAD);
+  // "Wow... I've never heard anything like that..."
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "He was advised to buy silk in Xian and sell it in Tolbi."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "To see anything sell so well, it's like a dream come true."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHWEST, 10);
+  // "There's no denying that was when Hammet picked up his knack for business."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+  // "Did he have to promise them anything in return?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 10);
+  // "Ah, yes, Ivan... It is something you will need on your journey."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   HammetPalace_FacePartyOutward(40);
   HammetPalace_FacePartyNorth(20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+  // "Something we need on our journey..."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "The Adept asked Hammet to use the Shaman's Rod to obtain it."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "He looked for this object wherever he went... But he could never find it."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
+  // "Then, three years ago, a storm struck, one that hit only Mt. Aleph..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -709,43 +780,62 @@ static void HammetPalace_IvanReportsToLayana(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "Hammet was worried that time was running out..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
+  // "But he had managed to unearth a clue just in time."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimation(ACTOR_LAYANA, ANIM_NOD);
+  // "That, Ivan, is why he took you with the caravan on his last journey
+  // north."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "I had no idea... So that must be why he left the rod in my care. But
+  // then..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
+  // "No, Ivan... You mustn't blame yourself..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 10);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  // "It was my carelessness that caused the rod to be stolen. And ultimately,
+  // that's why Lord Hammet is being held in Lunpa..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "You must continue your journey and complete your quest. You can't blame
+  // yourself."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 10);
+  // "But what will happen to Hammet?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
+  // "I will handle this."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_FIRST_SOLDIER, 2);
+  // "And don't forget the soldiers of Kalay!"
   Event_ShowMessageThenWait(ACTOR_FIRST_SOLDIER, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
+  // "Continue on your journey, and do not worry about Hammet!"
   Event_ShowMessageThenWait(ACTOR_SECOND_SOLDIER, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "I am sorry I cannot tell you more about the Shaman's Rod..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+  // "No, don't apologize..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
+  // "The Shaman's Rod'll help us find that thing we need for our quest, right?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
+  // "Will you look for it?"
   Event_OpenMessage(ACTOR_LAYANA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
@@ -757,21 +847,25 @@ static void HammetPalace_IvanReportsToLayana(void) {
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(10);
+    // "If Isaac says we will, then there's nothing to worry about!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     gFieldWork->message += 2;
   } else {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     gFieldWork->message++;
+    // "What's wrong with you, Isaac? Did you forget why we're here?"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     HammetPalace_FacePartyNorth(10);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(10);
+    // "If we need it for our quest, we'll have to find it sooner or later."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "Very well... Take care of yourselves."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 40);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHWEST, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
@@ -784,6 +878,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_RunRepeatedMotion(ACTOR_SECOND_SOLDIER, 1);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // "Return to your posts, everyone!"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_SOLDIER, ANIM_NOD);
@@ -928,6 +1023,8 @@ static void HammetPalace_HammetsHomecoming(void) {
     Actor_SetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
     answeredYes = 0;
   }
+  // Yes: "Yes. Your mission is to recover the Elemental Stars."
+  // No: "Have you completely forgotten your own quest!?"
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   if (answeredYes != 0) {
     HammetPalace_AdvanceMessage(1);
@@ -936,31 +1033,40 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_SetAttachedEffect(ACTOR_HAMMET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
+  // "Layana, you shouldn't..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_EAST_SOUTHEAST, 10);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 3);
+  // "I... I had to rescue Hammet, no matter the cost..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 60);
+  // "It's already done. There is nothing more to be said."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
+  // "Hold on! We all wanted to save Hammet as badly as Ivan did."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 10);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+  // "It doesn't matter, Garet. I'm the one at fault!"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+  // "I made a mistake. We will leave immediately on Felix's trail!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
+  // Yes. That would be best. Leave immediately.
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
+  // "Isaac, we should be going."
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 10);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "Ivan, is that really what you want?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(80);
@@ -968,37 +1074,48 @@ static void HammetPalace_HammetsHomecoming(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  // "Well, if Ivan says so... Should we go, Isaac?"
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(20);
     HammetPalace_AdvanceMessage(1);
   } else {
     Event_Wait(20);
+    // "If both Isaac and Ivan want to leave, then I guess that's it."
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   HammetPalace_FacePartyNorth(20);
   Actor_RunRepeatedMotion(ACTOR_HAMMET, 2);
+  // "Take your Shaman's Rod and go to Hesperia."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+  // "To Hesperia...?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
+  // "That is what the Jupiter Adept said."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  // "Hesperia... Where is that?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_IVAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_HAMMET, 1);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 10);
+  // "It is the continent to the west of Angara."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "What are we going to find in Hesperia if we go?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_SHAKE_HEAD);
+  // "That, I do not know..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
+  // "The continent to the west? On the other side of the sea?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LAYANA, 1);
   Event_Wait(20);
+  // "Do not waste time chattering. You must set out immediately."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -1018,18 +1135,26 @@ static void HammetPalace_HammetsHomecoming(void) {
   Event_End();
 }
 
+/// Garet, Ivan and Mia walk into Isaac and fall in behind him.
 s32 gHammetPalace_PartyActions[] = {
-    SC_ANIMATION(2),      SC_MOVE(856, 0, 486), SC_SYNC, SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_END,
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(856, 0, 486),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_END,
 };
 
 struct SceneEntrance gHammetPalaceEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gHammetPalaceEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {HAMMET_PALACE_FROM_HAMMET_PALACE_GROUNDS, CONDITION_ALWAYS, 240, 0, 648,
      FACING_NORTH, 0, 45, 360, 440, 680, 0},
     {HAMMET_PALACE_ENTRANCE_ROOM_FROM_WEST_WING, CONDITION_ALWAYS, 88, 0, 552,
@@ -1136,9 +1261,9 @@ struct Trigger gHammetPalaceTriggersOther[] = {
 
 struct Trigger gHammetPalaceTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), HAMMET_PALACE_ENTRANCE_ROOM_TO_WEST_WING, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), HAMMET_PALACE_ENTRANCE_ROOM_TO_EAST_WING, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, HAMMET_PALACE_ENTRANCE_ROOM_TO_LANDING },
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, HAMMET_PALACE_WEST_WING_TO_ENTRANCE_ROOM },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, HAMMET_PALACE_EAST_WING_TO_ENTRANCE_ROOM },
@@ -1148,7 +1273,7 @@ struct Trigger gHammetPalaceTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM },
     { TRIGGER_EXIT, 12, CONDITION_ALWAYS, HAMMET_PALACE_BEDROOM_TO_LANDING },
     { TRIGGER_EXIT, 13, CONDITION_ALWAYS, HAMMET_PALACE_LANDING_TO_ENTRANCE_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), HAMMET_PALACE_LANDING_TO_BEDROOM, CONDITION_ALWAYS, EVENT(HammetPalace_LeaveThroughDoor) },
     { TRIGGER_TALK, ACTOR_LAYANA, FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, MSGNO(MsgHammetPalaceDodonpaIsAVeryShrewdMan) },
     { TRIGGER_TALK, ACTOR_LAYANA, FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS, EVENT(HammetPalace_LayanaScoldsLunpaVisit) },
     { TRIGGER_TALK, ACTOR_LAYANA, FLAG_DODONPA_LOCKED_UP, MSGNO(MsgHammetPalaceDodonpaPlansToUseHammetTo) },

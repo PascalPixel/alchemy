@@ -915,6 +915,10 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
 /// Eye room's long channel (cell (15, 27)) would float it back to the foot of
 /// the channel. The log never stops there, as
 /// FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop says.
+///
+/// The same routine as
+/// FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle under another
+/// name: the room's step table holds both.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);

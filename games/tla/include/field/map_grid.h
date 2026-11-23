@@ -105,6 +105,9 @@ enum CellBehavior {
 
 /// MapCell.attributeB's bits.
 enum MapCellAttribute {
+  /// Scoop digs here, or everywhere else where the scene's attributes turn it
+  /// round (FieldWork.sceneAttributeLow, MapGrid_CanScoop).
+  MAP_CELL_SCOOP = 0x01,
   /// Pushing against the cell pushes the actor ahead (Field_RunPushCell).
   MAP_CELL_PUSH = 0x02,
   /// Random battles here roll on the scene's second encounter zone

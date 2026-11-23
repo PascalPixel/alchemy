@@ -73,6 +73,22 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 /// plank bridge on its way back out (Champa_MeetAlex).
 #define FLAG_WALKED_INTO_THE_VILLAGE 0x970
 
+/// The map cells Champa's step and examine triggers answer; a door's cell
+/// takes the number of the exit it leaves by.
+enum ChampaCellBehavior {
+  /// Across the path up from the plank bridge (Champa_WalkIntoTheVillage),
+  /// and the plank bridge itself (Champa_MeetAlex).
+  CELL_BEHAVIOR_PATH_INTO_THE_VILLAGE = 19,
+  CELL_BEHAVIOR_PLANK_BRIDGE = 20,
+  /// The sign at the village's south end: "Champa ahead!"
+  CELL_BEHAVIOR_VILLAGE_SIGN = 24,
+  /// Before the two sailors at the mouth of Briggs's cave
+  /// (Champa_SailorsSpotFelix).
+  CELL_BEHAVIOR_BEFORE_BRIGGS_CAVE = 26,
+  /// The path past the six gravestones (Champa_FeizhiArrives).
+  CELL_BEHAVIOR_GRAVESTONE_PATH = 100
+};
+
 /// The last of the two waterfalls' colours in background palettes 3, 4 and 5,
 /// which run from colour 1, each a band of blues from light to dark and back.
 #define WATERFALL_LAST_COLOR 14
@@ -1822,16 +1838,18 @@ struct Trigger gChampa_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      CHAMPA_TO_CHAMPA_CLIFF_CAVES_OBABA, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_VILLAGE_SIGN,
+     CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
-    {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
-    {TRIGGER_STEP, 19, FLAG_WALKED_INTO_THE_VILLAGE,
-     EVENT(Champa_WalkIntoTheVillage)},
-    {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_GRAVESTONE_PATH, FLAG_FEIZHI_CAME,
+     EVENT(Champa_FeizhiArrives)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PATH_INTO_THE_VILLAGE,
+     FLAG_WALKED_INTO_THE_VILLAGE, EVENT(Champa_WalkIntoTheVillage)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PLANK_BRIDGE, FLAG_CHAMPA_MET_ALEX,
+     EVENT(Champa_MeetAlex)},
     {TRIGGER_TALK, ACTOR_HUNGRY_YOUNG_MAN, CONDITION_ALWAYS,
      MSGNO(MsgChampaOhImSoHungryAnd)},
     {TRIGGER_TALK, ACTOR_WOMAN_WAITING_FOR_FOOD, CONDITION_ALWAYS,
@@ -1913,17 +1931,19 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      CHAMPA_TO_CHAMPA_CLIFF_CAVES_OBABA, CONDITION_ALWAYS,
      EVENT(Champa_EnterDoor)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 24, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_VILLAGE_SIGN,
+     CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgChampaChampaAhead))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Champa_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
-    {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
-    {TRIGGER_STEP, 19, FLAG_WALKED_INTO_THE_VILLAGE,
-     EVENT(Champa_WalkIntoTheVillage)},
-    {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
-    {TRIGGER_STEP, 26, FLAG_SAILORS_SPOTTED_FELIX,
+    {TRIGGER_STEP, CELL_BEHAVIOR_GRAVESTONE_PATH, FLAG_FEIZHI_CAME,
+     EVENT(Champa_FeizhiArrives)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PATH_INTO_THE_VILLAGE,
+     FLAG_WALKED_INTO_THE_VILLAGE, EVENT(Champa_WalkIntoTheVillage)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PLANK_BRIDGE, FLAG_CHAMPA_MET_ALEX,
+     EVENT(Champa_MeetAlex)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_BRIGGS_CAVE, FLAG_SAILORS_SPOTTED_FELIX,
      EVENT(Champa_SailorsSpotFelix)},
     {TRIGGER_TALK, ACTOR_HUNGRY_YOUNG_MAN, CONDITION_ALWAYS,
      MSGNO(MsgChampaBriggsCameBackWithA)},

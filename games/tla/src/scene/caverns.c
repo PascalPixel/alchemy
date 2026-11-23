@@ -13,6 +13,7 @@
 /// (Caverns_OpenAngaraDoor), where two grey spiral blocks are pushed, Moved and
 /// Carried until one stands on the other as a step up to the tablet
 /// (Caverns_FinishMovingAngaraBlock).
+
 #include "types.h"
 #include "system/io_reg.h"
 #include "field/scene_tables.h"
@@ -24,6 +25,29 @@
 #include "field/map.h"
 #include "field/objdisp.h"
 #include "scene/dehkan_plateau.h"
+#include "flags.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/object.h"
+#include "scene/scene.h"
+#include "scene/event_layer.h"
+#include "field/actor.h"
+#include "field/field_sprite.h"
+#include "system/field_effect.h"
+#include "fixed_math.h"
+#include "macros.h"
+#include "field/field_sequence.h"
+#include "field/field_sequence_event.h"
+#include "field/field_work.h"
+#include "field/map_grid.h"
+#include "field/field_psynergy_work.h"
+#include "ability_ids.h"
 
 /// Story flags: Osenia Cavern's passage dug open by Scoop, Atteka Cavern's
 /// water dried by Parch.
@@ -35,6 +59,23 @@
 #define FLAG_ANGARA_CELLS_RAISED FLAG_SCENE_TEMP_13
 /// Indra Cavern: set once Lash has tied the rope between its posts.
 #define FLAG_INDRA_ROPE_TIED FLAG_SCENE_TEMP_00
+
+/// The map cells the caves' step, examine and Psynergy triggers answer.
+enum CavernsCellBehavior {
+  /// Osenia Cavern's two holes down to the tunnel: the west one, and the one
+  /// Scoop digs. Each takes the number of the exit it leads down by.
+  CELL_BEHAVIOR_WEST_HOLE = 2,
+  CELL_BEHAVIOR_SCOOPED_HOLE = 3,
+  /// The sand in the pocket of rocks where Scoop digs the second hole.
+  CELL_BEHAVIOR_SCOOP_SAND = 10,
+  /// Indra Cavern's ledge edge by Zagan's tablet, over the gap.
+  CELL_BEHAVIOR_GAP_EDGE = 10,
+  /// Atteka Cavern's green pool before Coatlicue's tablet.
+  CELL_BEHAVIOR_GREEN_POOL = 60,
+  /// Angara Cavern's stone door to Haurus's chamber, which takes the number of
+  /// the exit it leads through.
+  CELL_BEHAVIOR_HAURUS_DOOR = 8
+};
 
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
@@ -56,33 +97,7 @@ void Caverns_PrepareAngara(void);
 void Caverns_InitializeAngara(void);
 /// Jumps the leader across to the position given when nothing is in the way.
 s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position);
-#include "flags.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "field/object.h"
-#include "scene/scene.h"
-#include "scene/event_layer.h"
-#include "field/event_inline.h"
-#include "field/actor.h"
-#include "field/field_sprite.h"
-#include "system/ram_buffer.h"
-#include "system/field_effect.h"
-#include "fixed_math.h"
-#include "macros.h"
-#include "system/main_routine_work.h"
-#include "field/field_sequence_event.h"
-#include "field/field_work.h"
-#include "field/map_grid.h"
-#include "field/field_psynergy_work.h"
-#include "ability_ids.h"
+
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
@@ -172,7 +187,7 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
 }
 
 /// The terrain height of layer 2 at a point.
-static __inline__ s32 GetHeight(s32 x, s32 z) {
+static __inline__ s32 Caverns_GetLayer2Height(s32 x, s32 z) {
   return Map_GetTerrainHeight(2, x, z);
 }
 
@@ -184,7 +199,7 @@ static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
 /// Sets the layer 2 cell at (x, z), 16.16 pixels, to the ground height there
 /// plus offset, in height steps, with `height` keeping it.
 #define SET_CELL_HEIGHT(x, z)                                                  \
-  height = CELL_HEIGHT_STEPS(GetHeight(x, z)) + offset;                        \
+  height = CELL_HEIGHT_STEPS(Caverns_GetLayer2Height(x, z)) + offset;          \
   FieldMapGrid_SetCellHeight(x, z, 2, height)
 
 /// The z of Angara Cavern's two rows of cells the blocks start in: the second
@@ -433,7 +448,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == SCENE_CAVERNS_INDRA)
     Caverns_InitializeIndra();
   if (gMainRoutineWork.next == SCENE_CAVERNS_ANGARA)
@@ -583,7 +599,7 @@ void Caverns_OpenOseniaPassage(void) {
 void Caverns_WalkIntoPassage(void) {
   s32 value = ((struct FieldWork *)Ram_HeapSlots->fieldWork)->stepTrigger;
 
-  if (value == 2)
+  if (value == CELL_BEHAVIOR_WEST_HOLE)
     Actor_SetPosition(ACTOR_PASSAGE_MARKER, 144, 224);
   else
     Actor_SetPosition(ACTOR_PASSAGE_MARKER, 224, 224);
@@ -719,7 +735,7 @@ void Caverns_OpenAngaraDoor(void) {
   MapGrid_CopyCellsTo(7, 94, 6, 94, 1, 2);
   Event_Wait(16);
   Sound_Play(SE_MAP_EXIT);
-  Import_EventSetExitRequest(8);
+  Import_EventSetExitRequest(CELL_BEHAVIOR_HAURUS_DOOR);
   Event_End();
 }
 
@@ -801,13 +817,13 @@ struct ActorPlacement gCaverns_AngaraPlacements[] = {
 /// on the sand where the second is dug.
 struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CAVERNS_OSENIA_TO_WORLD_MAP},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT(Caverns_WalkWestIntoPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 2, CONDITION_ALWAYS, EVENT(Caverns_WalkEastIntoPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 3, CONDITION_ALWAYS, EVENT(Caverns_WalkWestIntoPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 3, CONDITION_ALWAYS, EVENT(Caverns_WalkEastIntoPassage)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_OSENIA_CAVERN_SCOOPED, EVENT(Caverns_ScoopOseniaPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_WEST_HOLE, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_WEST_HOLE, CONDITION_ALWAYS, EVENT(Caverns_WalkWestIntoPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_WEST_HOLE, CONDITION_ALWAYS, EVENT(Caverns_WalkEastIntoPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_SCOOPED_HOLE, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_SCOOPED_HOLE, CONDITION_ALWAYS, EVENT(Caverns_WalkWestIntoPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_SCOOPED_HOLE, CONDITION_ALWAYS, EVENT(Caverns_WalkEastIntoPassage)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_SCOOP_SAND, FLAG_OSENIA_CAVERN_SCOOPED, EVENT(Caverns_ScoopOseniaPassage)},
     {TRIGGER_TABLE_END},
 };
 
@@ -815,7 +831,7 @@ struct Trigger gCaverns_OseniaTriggers[] = {
 /// Move on the pillar.
 struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CAVERNS_INDRA_TO_WORLD_MAP},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_GAP_EDGE, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_LOWER_ROPE_POST, FLAG_INDRA_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(Caverns_MoveIndraPillar)},
     {TRIGGER_TABLE_END},
@@ -824,7 +840,7 @@ struct Trigger gCaverns_IndraTriggers[] = {
 /// Atteka Cavern's exit and Parch on its pool.
 struct Trigger gCaverns_AttekaTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, CAVERNS_ATTEKA_TO_WORLD_MAP},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, CONDITION_ALWAYS, EVENT(Caverns_ParchAttekaWater)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_GREEN_POOL, CONDITION_ALWAYS, EVENT(Caverns_ParchAttekaWater)},
     {TRIGGER_TABLE_END},
 };
 
@@ -838,7 +854,7 @@ struct Trigger gCaverns_AngaraTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Caverns_OpenAngaraDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_HAURUS_DOOR, CONDITION_ALWAYS, EVENT(Caverns_OpenAngaraDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_PUSH, 0, FLAG_ANGARA_BLOCK_ON_TOP, EVENT(Caverns_StartMovingAngaraBlock)},
     {TRIGGER_PUSHED, 0, FLAG_ANGARA_BLOCK_ON_TOP, EVENT(Caverns_FinishMovingAngaraBlock)},

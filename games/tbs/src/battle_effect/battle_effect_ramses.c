@@ -38,15 +38,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
-  u8 *sheet;
-  struct Point2D base;
+  u8 *motes;
+  struct Point2D statue;
   struct Point2D fist;
   s32 i;
   s32 k;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -76,18 +76,18 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
-  REG_WIN0H = WIN_RANGE(0, 240);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+  REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
   wait(1);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_DESERT_BACKDROP,
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  base.x = toFIXED(188);
-  base.y = toFIXED(92);
+  statue.x = toFIXED(188);
+  statue.y = toFIXED(92);
   fist.x = toFIXED(160);
   fist.y = toFIXED(92);
   for (i = 0; i != RAMSES_ROCKS; i++) {
@@ -123,8 +123,9 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != RAMSES_STATUE_SPRITES; i++) {
-      position.x = INTtoFIXED(gRamses_StatueColumns[i]) + base.x - toFIXED(32);
-      position.y = INTtoFIXED(gRamses_StatueRows[i]) + base.y - toFIXED(32);
+      position.x =
+          INTtoFIXED(gRamses_StatueColumns[i]) + statue.x - toFIXED(32);
+      position.y = INTtoFIXED(gRamses_StatueRows[i]) + statue.y - toFIXED(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The fist circles.
@@ -260,7 +261,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, FIXEDtoINT(spark->x),
+        EFFECT_DRAW_MOTE(draw[i & 1], canvas, motes, FIXEDtoINT(spark->x),
                          FIXEDtoINT(spark->y), size);
         Particle_AdvanceWithGravity2D(spark, 62, toFIXED(1) / 16);
         spark->variant--;

@@ -67,6 +67,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   if (mode != SWIRL_SWIPE_SPINNING_BEAT)
     frames = 48;
   for (frame = 0; frame != frames; frame++) {
+    // The swirl's four pictures, then the two of its tail, four frames each.
     picture = frame / 4;
     if (picture <= 5) {
       if (picture <= 3)
@@ -185,9 +186,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
     }
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
+    EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
@@ -198,3 +197,5 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 #undef SPIDER_WEB_CENTER_Y
 #undef SPIDER_WEB_LEFT
 #undef SPIDER_WEB_TOP
+#undef SPIDER_WEB_QUARTER_WIDTH
+#undef SPIDER_WEB_QUARTER_HEIGHT

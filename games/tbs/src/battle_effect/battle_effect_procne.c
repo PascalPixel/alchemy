@@ -14,15 +14,16 @@
 
 #define PROCNE_SPRITES 9 ///< Procne's sprites, on gProcne_GridX and _GridY
 
-/// The whirlwind sheet: three whirlwind cels, shown 4 frames each, then the
+/// The whirlwind sheet: three whirlwind pictures, shown 4 frames each, then the
 /// dust.
 #define PROCNE_WHIRLWIND_WIDTH 48
 #define PROCNE_WHIRLWIND_HEIGHT 64
-#define PROCNE_WHIRLWIND_CEL (PROCNE_WHIRLWIND_WIDTH * PROCNE_WHIRLWIND_HEIGHT)
-/// The whirlwind rises in two pieces: its foot, a cel's upper rows, then a
-/// whole cel above it.
+#define PROCNE_WHIRLWIND_PICTURE                                               \
+  (PROCNE_WHIRLWIND_WIDTH * PROCNE_WHIRLWIND_HEIGHT)
+/// The whirlwind rises in two pieces: its foot, a picture's upper rows, then a
+/// whole picture above it.
 #define PROCNE_WHIRLWIND_FOOT_HEIGHT 48
-#define PROCNE_DUST (3 * PROCNE_WHIRLWIND_CEL)
+#define PROCNE_DUST (3 * PROCNE_WHIRLWIND_PICTURE)
 #define PROCNE_COMET_PICTURES 13824
 
 #define PROCNE_DUST_MOTES 24 ///< dust motes that swirl up the whirlwind
@@ -73,14 +74,14 @@
 /// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{FIXED_ONE, FIXED_ONE}}};
-  void **slots;
+  void **heap;
   void *canvas;
   struct BattleCamera *camera;
   struct BattleEffectWork *work;
   BlitterPair draw;
   s32 frame;
-  u8 *graphics;
-  struct Point2D wave;
+  u8 *motes;
+  struct Point2D procne;
   struct Point2D drift;
   struct Actor *actor;
   struct BattleObject *battleObject;
@@ -92,7 +93,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 index;
   s32 slot;
   s32 size;
-  s32 span;
+  s32 moteSize;
   s32 dist;
   s32 arrived;
   s32 width = PROCNE_WHIRLWIND_WIDTH;
@@ -101,30 +102,28 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 radius[8];
   s32 spin[8];
   struct Point2D home[8];
-  s32 baseAngle[8];
+  s32 homeFacing[8];
   struct Vector3 world;
   struct ScreenPoint screen;
   struct Vector3 depthOffset;
   struct SpritePlacement place;
   struct SpriteScale scale;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
-  canvas = slots[0];
-  camera = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
-  work =
-      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
-  graphics =
-      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
+  heap = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
+  canvas = heap[0];
+  camera = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_EFFECT);
+  motes = HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
 
   BattleEffect_StartCanvasLayer(0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
+  draw[0] = (DrawRectangle)HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                                           HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_CANVAS,
+  draw[1] = (DrawRectangle)HEAP_SLOT_FROM(heap, HEAP_SLOT_BATTLE_CANVAS,
                                           HEAP_SLOT_RAM_CODE_PAIRED);
 
   resource = Resource_GetTableEntry(RESOURCE_WHIRLWIND_SHEET);
@@ -132,12 +131,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
-                      graphics);
+                      motes);
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  wave.x = toFIXED(128);
-  wave.y = toFIXED(40);
+  procne.x = toFIXED(128);
+  procne.y = toFIXED(40);
   drift.x = 0;
   drift.y = 0;
 
@@ -147,7 +146,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     actor = battleObject->actor;
     home[index].x = actor->x.fixed;
     home[index].y = actor->z.fixed;
-    baseAngle[index] = actor->facing;
+    homeFacing[index] = actor->facing;
     heading[index] = (u16)Trig_Atan(actor->x.fixed, actor->z.fixed);
     radius[index] = Iwram_Sqrt((actor->x.fixed >> 8) * (actor->x.fixed >> 8) +
                                (actor->z.fixed >> 8) * (actor->z.fixed >> 8)) >>
@@ -160,7 +159,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     point = &work->particles[index];
     point->z = 120;
     point->y = 0;
-    Random16();
+    Random16(); // drawn and thrown away
     point->velocityY = 0;
     point->velocityX = 0;
     point->variant = Random16() & 63;
@@ -234,13 +233,13 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     }
 
     // The whirlwind's foot grows from frame 16, its top from 48; once Procne
-    // arrives it stands two cels high.
+    // arrives it stands two pictures high.
     if (frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 32;
       if (size > footHeight)
         size = footHeight;
       draw[0](canvas,
-              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_CEL +
+              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
                            (footHeight - size) * PROCNE_WHIRLWIND_WIDTH],
               32, 112 - size, width, size);
     }
@@ -250,14 +249,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (size > PROCNE_WHIRLWIND_HEIGHT)
         size = PROCNE_WHIRLWIND_HEIGHT;
       draw[0](canvas,
-              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_CEL +
+              &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE +
                            (PROCNE_WHIRLWIND_HEIGHT - size) *
                                PROCNE_WHIRLWIND_WIDTH],
               32, 64 - size, width, size);
     }
 
     if (frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
-      image = work->sheet + frame / 4 % 3 * PROCNE_WHIRLWIND_CEL;
+      image = work->sheet + frame / 4 % 3 * PROCNE_WHIRLWIND_PICTURE;
       draw[0](canvas, image, 8, 0, width, PROCNE_WHIRLWIND_HEIGHT);
       draw[0](canvas, image, 8, 64, width, PROCNE_WHIRLWIND_HEIGHT);
     }
@@ -351,11 +350,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (frame - PROCNE_ARRIVAL_FRAME <= 64)
         size = PROCNE_BOB * 2;
 
-      wave.x -=
+      procne.x -=
           (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 7) * PROCNE_SWAY) >> 6;
-      wave.y += (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
-      wave.x += drift.x;
-      wave.y += drift.y;
+      procne.y += (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
+      procne.x += drift.x;
+      procne.y += drift.y;
       drift.x /= 2;
       drift.y /= 2;
 
@@ -365,9 +364,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       // Sprite i stands lower and higher by the same amount, which cancel on
       // the screen but give it a later draw slot.
       for (index = 0; index != PROCNE_SPRITES; index++) {
-        place.x = INTtoFIXED(gProcne_GridX[index]) + wave.x + toFIXED(40);
+        place.x = INTtoFIXED(gProcne_GridX[index]) + procne.x + toFIXED(40);
         place.height = toFIXED(255) + index * toFIXED(64);
-        place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + wave.y;
+        place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + procne.y;
         Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
                                          0);
       }
@@ -399,14 +398,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             if (dist != 0) {
               Projection_Point(&point->x, &screen);
               // The canvas is shown at twice its width.
-              screen.x =
-                  (FIXEDtoINT(screen.x) >> 1) + (FIXEDtoINT(wave.x) >> 1) + 32;
-              screen.y = FIXEDtoINT(screen.y) + FIXEDtoINT(wave.y) - 4;
+              screen.x = (FIXEDtoINT(screen.x) >> 1) +
+                         (FIXEDtoINT(procne.x) >> 1) + 32;
+              screen.y = FIXEDtoINT(screen.y) + FIXEDtoINT(procne.y) - 4;
               screen.depth = FIXEDtoINT(screen.depth);
               CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
-              span = PROCNE_SPARK_SIZE(screen.depth, 6);
-              EFFECT_DRAW_MOTE(draw[1], canvas, graphics, screen.x, screen.y,
-                               span);
+              moteSize = PROCNE_SPARK_SIZE(screen.depth, 6);
+              EFFECT_DRAW_MOTE(draw[1], canvas, motes, screen.x, screen.y,
+                               moteSize);
               point->x -= point->x / dist;
               point->y -= point->y / dist;
               point->z -= point->z / dist;
@@ -416,10 +415,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           }
 
           if (arrived > 0) {
-            span = arrived / 10 + 1;
-            draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
-                    (FIXEDtoINT(wave.x) >> 1) - span / 2 + 32,
-                    FIXEDtoINT(wave.y) - span - 4, span, span * 2);
+            moteSize = arrived / 10 + 1;
+            draw[1](canvas, motes + gBattleEffect_MotePictures[moteSize - 1],
+                    (FIXEDtoINT(procne.x) >> 1) - moteSize / 2 + 32,
+                    FIXEDtoINT(procne.y) - moteSize - 4, moteSize,
+                    moteSize * 2);
           }
         }
 
@@ -461,9 +461,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 screen.y = FIXEDtoINT(screen.y) + 56;
                 screen.depth = FIXEDtoINT(screen.depth);
                 CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
-                span = PROCNE_SPARK_SIZE(screen.depth, 3);
-                EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
-                                 span);
+                moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
+                EFFECT_DRAW_MOTE(draw[0], canvas, motes, screen.x, screen.y,
+                                 moteSize);
                 spark[index].x += spark[index].velocityX;
                 spark[index].y += spark[index].velocityY;
 #ifdef BUGFIX
@@ -483,11 +483,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           comet = &work->particles[index + PROCNE_COMET_PARTICLES];
           launch = index * PROCNE_COMET_INTERVAL + PROCNE_COMET_FRAME;
           if (frame == launch) {
-            comet->x = (FIXEDtoINT(wave.x) >> 1) + 32;
-            comet->y = FIXEDtoINT(wave.y) - 4;
+            comet->x = (FIXEDtoINT(procne.x) >> 1) + 32;
+            comet->y = FIXEDtoINT(procne.y) - 4;
             // Where it leaves Procne, kept for the ring of light.
-            comet->velocityX = (FIXEDtoINT(wave.x) >> 1) + 32;
-            comet->velocityY = FIXEDtoINT(wave.y) - 4;
+            comet->velocityX = (FIXEDtoINT(procne.x) >> 1) + 32;
+            comet->velocityY = FIXEDtoINT(procne.y) - 4;
 
             for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
               work->particles[slot + PROCNE_RING].variant = 4;
@@ -519,15 +519,15 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
               spark = &work->particles[PROCNE_RING];
               for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
-                struct Particle *step;
+                struct Particle *mote;
 
-                step = &spark[slot];
+                mote = &spark[slot];
                 world.x = 0;
-                world.y = step->variant *
+                world.y = mote->variant *
                           Trig_Cos(slot * (TRIG_TURN / PROCNE_RING_MOTES));
-                world.z = step->variant *
+                world.z = mote->variant *
                           Trig_Sin(slot * (TRIG_TURN / PROCNE_RING_MOTES));
-                step->variant += 2;
+                mote->variant += 2;
                 Projection_Point(&world.x, &screen);
                 screen.x =
                     (FIXEDtoINT(screen.x) >> 1) +
@@ -537,9 +537,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                     work->particles[index + PROCNE_COMET_PARTICLES].velocityY;
                 screen.depth = FIXEDtoINT(screen.depth);
                 CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
-                span = PROCNE_SPARK_SIZE(screen.depth, 3);
-                EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
-                                 span);
+                moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
+                EFFECT_DRAW_MOTE(draw[0], canvas, motes, screen.x, screen.y,
+                                 moteSize);
               }
             }
           }
@@ -560,7 +560,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     actor = battleObject->actor;
     actor->x.fixed = home[index].x;
     actor->z.fixed = home[index].y;
-    actor->facing = baseAngle[index];
+    actor->facing = homeFacing[index];
   }
 
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -582,7 +582,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 #undef PROCNE_SPRITES
 #undef PROCNE_WHIRLWIND_WIDTH
 #undef PROCNE_WHIRLWIND_HEIGHT
-#undef PROCNE_WHIRLWIND_CEL
+#undef PROCNE_WHIRLWIND_PICTURE
 #undef PROCNE_WHIRLWIND_FOOT_HEIGHT
 #undef PROCNE_DUST
 #undef PROCNE_COMET_PICTURES

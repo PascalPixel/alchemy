@@ -4,7 +4,8 @@
 
 #include "battle_effect_internal.h"
 
-/// Packs a picture to half width, keeping every second byte.
+/// Packs the six yellow orb pictures to half width, keeping every second
+/// byte. Its rows are always the orbs' own; rowCount is not read.
 void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 row = 0;
   s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
@@ -24,7 +25,8 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 /// The first pair of sparks' frames of life; each pair after lives a frame
 /// longer.
 #define RUSHING_STRIKE_SPARK_FRAMES 16
-/// One ring picture.
+/// One ring picture: a yellow orb packed to half width, in the map grid
+/// buffer.
 #define RUSHING_STRIKE_RING_BYTES PICTURE_BYTES(YELLOW_ORB_PACKED)
 
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
@@ -73,7 +75,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   BlitterPair draw;
   struct BattleCamera *camera;
-  u8 *sheet;
+  u8 *motes;
   struct Particle *spark;
   struct Particle *newSpark;
   struct ScreenPoint origin;
@@ -85,13 +87,13 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 size;
   s32 ringFrame;
   s32 paletteId;
-  u8 *cells;
+  u8 *rings;
 
-  cells = Ram_MapGridCellBuffer;
+  rings = Ram_MapGridCellBuffer;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
@@ -111,9 +113,9 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
-  BattleEffect_PackTileRows(work->sheet, (u8 *)cells, YELLOW_ORB_WIDTH,
+  BattleEffect_PackTileRows(work->sheet, (u8 *)rings, YELLOW_ORB_WIDTH,
                             YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, work->sheet, 1, 1);
   switch (mode) {
@@ -169,7 +171,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     ringFrame = frame - RUSHING_STRIKE_RING_FRAME;
     if (ringFrame >= 0 && ringFrame < RUSHING_STRIKE_RING_FRAMES) {
       s32 ring = ringFrame / 2;
-      draw[0](canvas, cells + ring * RUSHING_STRIKE_RING_BYTES,
+      draw[0](canvas, rings + ring * RUSHING_STRIKE_RING_BYTES,
               origin.x / 2 - 16, screen.y - 40, YELLOW_ORB_PACKED_WIDTH,
               YELLOW_ORB_PACKED_HEIGHT);
     }
@@ -184,7 +186,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           size >>= 4;
           size += 2;
           sparkScreen.x >>= 1;
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, sparkScreen.x, sparkScreen.y,
+          EFFECT_DRAW_MOTE(draw[0], canvas, motes, sparkScreen.x, sparkScreen.y,
                            size);
           Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 128);
           spark->variant--;

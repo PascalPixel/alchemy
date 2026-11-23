@@ -10,25 +10,25 @@
 // effects anchor on it.
 
 /// Moves a particle one frame in three dimensions.
-void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
+void Particle_AdvanceWithGravity3D(struct Particle *particle, s32 damping,
                                    s32 gravity) {
-  step->x += step->velocityX;
-  step->y += step->velocityY;
-  step->z += step->velocityZ;
-  step->velocityY += gravity;
-  SET_VELOCITY(step, step->velocityX * damping / DAMPING_SCALE,
-               step->velocityY * damping / DAMPING_SCALE,
-               step->velocityZ * damping / DAMPING_SCALE);
+  particle->x += particle->velocityX;
+  particle->y += particle->velocityY;
+  particle->z += particle->velocityZ;
+  particle->velocityY += gravity;
+  SET_VELOCITY(particle, particle->velocityX * damping / DAMPING_SCALE,
+               particle->velocityY * damping / DAMPING_SCALE,
+               particle->velocityZ * damping / DAMPING_SCALE);
 }
 
 /// Moves a particle one frame on the screen.
-void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
+void Particle_AdvanceWithGravity2D(struct Particle *particle, s32 damping,
                                    s32 gravity) {
-  step->x += step->velocityX;
-  step->y += step->velocityY;
-  step->velocityY += gravity;
-  step->velocityX = step->velocityX * damping / DAMPING_SCALE;
-  step->velocityY = step->velocityY * damping / DAMPING_SCALE;
+  particle->x += particle->velocityX;
+  particle->y += particle->velocityY;
+  particle->velocityY += gravity;
+  particle->velocityX = particle->velocityX * damping / DAMPING_SCALE;
+  particle->velocityY = particle->velocityY * damping / DAMPING_SCALE;
 }
 
 /// Projects a point in the current transform onto the screen, 16 pixels
@@ -64,17 +64,17 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera = gBattleCamera;
   struct Actor *actor;
-  struct Sprite *info;
+  struct Sprite *sprite;
   FIXED scale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   UNUSED s32 unused[3];
 
   actor = GetBattleObjectSlotFar(unit)->actor;
-  info = GetMotionRecordFar(actor, 0);
+  sprite = GetMotionRecordFar(actor, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
   scale =
-      Iwram_MulFX(Matrix_ProjectPoint(&actor->x.fixed, screen), info->scale);
+      Iwram_MulFX(Matrix_ProjectPoint(&actor->x.fixed, screen), sprite->scale);
   screen[1] -=
       Iwram_MulFX(scale, FIXEDtoINT(BattleUnit_GetEffectHeightFar(unit)) >> 1);
   return 0;

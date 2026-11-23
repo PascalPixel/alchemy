@@ -4,11 +4,11 @@
 
 #include "battle_effect_internal.h"
 
-#define SHARDS_PER_CRYSTAL 16
+#define PRISM_SHARDS_PER_CRYSTAL 16
 #define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
 #define PRISM_SHARD_PICTURES                                                   \
-  PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
-#define SHATTERED 1      ///< a crystal's z once it has hit the ground
+  PICTURE_BYTES(CRYSTAL)  ///< the shards, after the crystal
+#define PRISM_SHATTERED 1 ///< a crystal's z once it has hit the ground
 /// The x in gPrism_ShardStarts over the crystal's middle.
 #define PRISM_SHARD_START_MIDDLE 40
 /// The shard kinds a crystal breaks into, and the pictures of each as it
@@ -106,18 +106,18 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
       for (i = 0; i != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
            i++) {
         crystal = &work->particles[i];
-        if (crystal->z == SHATTERED) {
+        if (crystal->z == PRISM_SHATTERED) {
           // A shattered crystal's shards fly and spin; kind 4 asks for pictures
           // past the twelve the tables hold, whose heights read as zero, so
           // those three shards of every crystal never show.
           // XXX (no evidence): whether a fifth kind of shard was meant; the
           // twelve pictures and their tables are all the ROM holds.
-          for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
+          for (j = 0; j != PRISM_SHARDS_PER_CRYSTAL; j++) {
             picture = (j % PRISM_SHARD_KINDS) * PRISM_SHARD_SPIN_PICTURES +
-                      (shards[i * SHARDS_PER_CRYSTAL + j].variant /
+                      (shards[i * PRISM_SHARDS_PER_CRYSTAL + j].variant /
                        PRISM_SHARD_SPIN_STEP) %
                           PRISM_SHARD_SPIN_PICTURES;
-            shard = &shards[i * SHARDS_PER_CRYSTAL + j];
+            shard = &shards[i * PRISM_SHARDS_PER_CRYSTAL + j];
             draw[j <= 2](
                 canvas,
                 work->sheet + gPrism_ShardPictures[picture] +
@@ -140,10 +140,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                                         FIXED_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground.
-            crystal->z = SHATTERED;
+            crystal->z = PRISM_SHATTERED;
             crystal->y = PRISM_GROUND_Y;
-            for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
-              shard = &shards[i * SHARDS_PER_CRYSTAL + j];
+            for (j = 0; j != PRISM_SHARDS_PER_CRYSTAL; j++) {
+              shard = &shards[i * PRISM_SHARDS_PER_CRYSTAL + j];
               shard->x = INTtoFIXED(gPrism_ShardStarts[j][PRISM_SHARD_START_X] -
                                     PRISM_SHARD_START_MIDDLE) +
                          crystal->x;
@@ -220,10 +220,10 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
   Iwram_CopyWords(&BG_PLTT[1], palette, sizeof(palette));
 }
 
-#undef SHARDS_PER_CRYSTAL
+#undef PRISM_SHARDS_PER_CRYSTAL
 #undef PRISM_GROUND_Y
 #undef PRISM_SHARD_PICTURES
-#undef SHATTERED
+#undef PRISM_SHATTERED
 #undef PRISM_SHARD_START_MIDDLE
 #undef PRISM_SHARD_KINDS
 #undef PRISM_SHARD_SPIN_PICTURES

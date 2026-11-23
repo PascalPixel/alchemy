@@ -27,18 +27,17 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 i;
-  u8 *sprites;
+  u8 *motes;
   s32 count;
   s32 frame;
   s32 k;
   s32 start;
-  s32 *life;
   struct Particle *spark;
   struct Particle *sparks;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -50,17 +49,14 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   if (work->args->variant != EFFECT_VARIANT_STRONGEST) {
     void *palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_B);
     Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
-  life = &((struct Particle *)PARTICLES)->variant;
-  for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
-    *life = 0;
-    life += 7;
-  }
+  for (k = 0; k != PLASMA_SPARK_COUNT; k++)
+    PARTICLES[k].variant = 0;
   sparks = PARTICLES;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   count = gPlasma_Counts[work->args->variant];
@@ -155,7 +151,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
             y = FIXEDtoINT(spark->y);
             size = spark->variant / 8 + 1;
-            EFFECT_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
+            EFFECT_DRAW_MOTE(draw[k & 1], canvas, motes, x, y, size);
           }
         }
       }
@@ -167,7 +163,8 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Bursts go off behind the battle's first layer.
+/// Bursts of light go off among the targets, each ringed by fading flashes
+/// and throwing sparks.
 ///
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb.
 void BattleEffect_RunNova(struct BattleEffectParams *args) {
@@ -196,7 +193,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   s32 i;
   s32 frame;
-  u8 *graphics;
+  u8 *motes;
   s32 originX;
   s32 originY;
   s32 j;
@@ -207,7 +204,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   if (mode == SPARK_GROUPS_NOVA) {
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -231,7 +228,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
@@ -386,7 +383,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
               s16 y = FIXEDtoINT(spark->y);
               s32 size = spark->variant / 5 + 1;
 
-              EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);
+              EFFECT_DRAW_MOTE(draw[j & 1], canvas, motes, x, y, size);
             }
           }
         }

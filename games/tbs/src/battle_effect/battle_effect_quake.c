@@ -26,6 +26,9 @@ struct RockWallHeights {
 #define QUAKE_GROUND_X 32
 #define QUAKE_GROUND_Y 96
 #define QUAKE_GROUND_HEIGHT 16
+/// A pillar's left edge on the canvas, and the canvas row it stands on.
+#define QUAKE_PILLAR_X(pillar) ((pillar) * QUAKE_PILLAR_WIDTH + 8)
+#define QUAKE_PILLAR_FOOT 112
 
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
@@ -41,7 +44,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  s32 column;
+  s32 pillar;
   DrawRectangle draw;
   struct BattleCamera *camera;
   s32 xOffset;
@@ -50,7 +53,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   s32 member;
   s32 row;
-  s32 col;
+  s32 x;
   s32 y;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -68,11 +71,10 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
   for (row = 0; row != QUAKE_GROUND_HEIGHT; row++) {
     y = row + QUAKE_GROUND_Y;
-    for (col = 0; col != QUAKE_PILLAR_WIDTH; col++) {
-      s32 pixel = BACKGROUND_PIXEL_OFFSET(col + QUAKE_GROUND_X, y);
+    for (x = 0; x != QUAKE_PILLAR_WIDTH; x++) {
+      s32 pixel = BACKGROUND_PIXEL_OFFSET(x + QUAKE_GROUND_X, y);
 
-      work->sheet[row * QUAKE_PILLAR_WIDTH + col] =
-          Ram_MapGridCellBuffer[pixel];
+      work->sheet[row * QUAKE_PILLAR_WIDTH + x] = Ram_MapGridCellBuffer[pixel];
     }
   }
 
@@ -99,13 +101,13 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
     if (frame == gQuake_Timings[work->args->variant][QUAKE_TIMING_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    for (column = 0; column != 3; column++) {
-      s32 riseFrame = column * 4 + 16;
+    for (pillar = 0; pillar != 3; pillar++) {
+      s32 riseFrame = pillar * 4 + 16;
 
       // DEAD: never true, as the left side is 32 or more and riseFrame at
       // most 24; the ROM keeps the test and its store.
       if ((frame & 31) + 32 == riseFrame)
-        heights.column[column] += 32;
+        heights.column[pillar] += 32;
       if (frame >= riseFrame &&
           frame < riseFrame + gQuake_Timings[work->args->variant]
                                             [QUAKE_TIMING_RISE_FRAMES]) {
@@ -114,14 +116,15 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
         // A pillar rises and sinks along a sine, once, twice or three times by
         // variant.
-        height = FIXEDtoINT(heights.column[column] *
+        height = FIXEDtoINT(heights.column[pillar] *
                             Trig_Sin((frame - riseFrame) * (TRIG_TURN / 64)));
         if (height < 0)
           height = -height;
-        top = 112 - height;
-        draw(canvas, work->sheet + QUAKE_WALL_PICTURE,
-             column * QUAKE_PILLAR_WIDTH + 8, top, QUAKE_PILLAR_WIDTH, height);
-        draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
+        top = QUAKE_PILLAR_FOOT - height;
+        draw(canvas, work->sheet + QUAKE_WALL_PICTURE, QUAKE_PILLAR_X(pillar),
+             top, QUAKE_PILLAR_WIDTH, height);
+        draw(canvas, work->sheet, QUAKE_PILLAR_X(pillar),
+             QUAKE_PILLAR_FOOT - QUAKE_GROUND_HEIGHT - height,
              QUAKE_PILLAR_WIDTH, QUAKE_GROUND_HEIGHT);
 
         // Throw up the targets standing on the pillar.
@@ -132,9 +135,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
           SET_VECTOR(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x += xOffset;
-          if (screen.x >= column * QUAKE_PILLAR_WIDTH + 8 &&
-              screen.x <=
-                  column * QUAKE_PILLAR_WIDTH + 8 + QUAKE_PILLAR_WIDTH &&
+          if (screen.x >= QUAKE_PILLAR_X(pillar) &&
+              screen.x <= QUAKE_PILLAR_X(pillar) + QUAKE_PILLAR_WIDTH &&
               screen.y >= top) {
             actor->velocityY = toFIXED(12);
             actor->gravity = BATTLE_UNIT_GRAVITY;
@@ -149,12 +151,13 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor;
-      struct Particle *state;
+      struct Particle *landing;
 
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      state = &work->particles[member];
-      if (state->variant == 0 && actor->y.fixed <= 0 && actor->velocityY < 0) {
-        state->variant = 1;
+      landing = &work->particles[member];
+      if (landing->variant == 0 && actor->y.fixed <= 0 &&
+          actor->velocityY < 0) {
+        landing->variant = 1;
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
       }
@@ -172,3 +175,5 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 #undef QUAKE_GROUND_X
 #undef QUAKE_GROUND_Y
 #undef QUAKE_GROUND_HEIGHT
+#undef QUAKE_PILLAR_X
+#undef QUAKE_PILLAR_FOOT

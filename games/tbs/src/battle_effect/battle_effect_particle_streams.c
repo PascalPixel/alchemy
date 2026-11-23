@@ -4,6 +4,7 @@
 
 #include "battle_effect_internal.h"
 
+#define PARTICLE_STREAMS_FALL_FRAMES 192 ///< frames of the fall
 #define PARTICLE_STREAMS_BURST_FRAMES 54 ///< frames of the burst
 
 /// The particle streams' modes (BattleEffect_RunParticleStreams).
@@ -223,7 +224,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, work->sheet, 1, 1);
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords(colors,
-                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
+                    SHEET_PALETTE_BYTES);
   Dma_Fill32Cell(fill, CANVAS_FILL_WORD(1), Ram_MapGridCellBuffer, 256 * 128);
   Iwram_CopyWords(BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
@@ -250,7 +252,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     ((u8 *)canvas)[CANVAS_PIXEL_OFFSET(x, y)] = shade;
   }
   Iwram_CopyWords(BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
-  // The dissolve: the map is erased from the top in ragged columns.
+  // The dissolve: the battle background is erased from the top in ragged
+  // columns, uncovering the starfield behind it.
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   BattleEffect_SelectLivingTargets(work->args);
   work->bg2x = 0;
@@ -274,9 +277,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       for (; row != limit; row++) {
         s32 x;
 
-        for (x = 0; x != 256; x++) {
+        for (x = 0; x != BATTLE_BACKGROUND_WIDTH; x++) {
           s32 y = row - offsets[x & 127];
 
+          // Background pixel (x, y), laid out in 8x8 tiles.
           if (y >= 0)
             if (y <= 127)
               Ram_MapGridCellBuffer[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 +
@@ -286,7 +290,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       EFFECT_PRESENT_CANVAS(work);
     } while (limit < CANVAS_SIZE + PARTICLE_STREAMS_RAGGED_EDGE);
   }
-  // The fall.
+  // The fall, drawn on the battle background's picture (BG1, over the
+  // starfield), which darkens a little each frame to leave trails.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   {
@@ -297,12 +302,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+    // A blitter for the background's 256-pixel rows.
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
     draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
-    EFFECT_FREE_PARTICLES(i, work->particles, 64);
+    EFFECT_FREE_PARTICLES(i, work->particles, ARRAY_COUNT(work->particles));
     view->busy = 1;
     work->frame = 0;
     frame = 0;
@@ -476,7 +482,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       EFFECT_PRESENT_CANVAS(work);
       frame++;
       work->frame++;
-    } while (frame != 192);
+    } while (frame != PARTICLE_STREAMS_FALL_FRAMES);
     wait(1);
     view->busy = 0;
     Task_Remove(BattleEffect_AdvanceBg2OnInterval);
@@ -523,13 +529,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
-    s32 size = (frame + 464) << 8;
+    FIXED dragonScale = (frame + 464) << 8;
     struct BattleCamera *camera = gBattleCamera;
     s32 elapsed = frame - PARTICLE_STREAMS_FLASH_FRAME;
     struct SpriteScale scale;
     s32 x;
     s32 y;
-    s32 grow;
+    FIXED meteorScale;
 
     if (elapsed >= PARTICLE_STREAMS_BRIGHTEN_DELAY)
       Palette_BrightenBgEntries(2, 2, 2);
@@ -632,19 +638,19 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
-    grow = (frame << 8) + toFIXED(2);
+    meteorScale = (frame << 8) + toFIXED(2);
     position.groundHeight = 0;
     position.height = toFIXED(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-      scale.x = size;
-      scale.y = size;
+      scale.x = dragonScale;
+      scale.y = dragonScale;
       position.x = INTtoFIXED(x) + toFIXED(96);
       position.y = INTtoFIXED(96 - y);
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
       Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale, 0);
     } else {
-      scale.x = grow;
-      scale.y = grow;
+      scale.x = meteorScale;
+      scale.y = meteorScale;
       position.x = INTtoFIXED(x) + toFIXED(96);
       position.y = INTtoFIXED(96 - y);
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
@@ -661,6 +667,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 }
 
 #undef PARTICLE_STREAMS_EMBERS
+#undef PARTICLE_STREAMS_FALL_FRAMES
 #undef PARTICLE_STREAMS_FLASHES_DRAWN
 #undef PARTICLE_STREAMS_EMBERS_DRAWN
 #undef PARTICLE_STREAMS_FLAME_COUNT

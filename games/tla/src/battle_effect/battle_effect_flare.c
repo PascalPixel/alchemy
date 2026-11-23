@@ -1,5 +1,5 @@
 /// @file
-/// Flare.
+/// Flare, and an unused routine that lists the indices around a value.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"

@@ -591,6 +591,7 @@ void Menu_SetupSelectionBothSides(void) {
 }
 
 extern u8 gMenu_CursorActorTiles[];
+/// The picture of the selection row's left arrow (sprite_cursors.s).
 extern u8 gMenu_CursorLeftActorTiles[];
 
 /// Sets up the left (side 0) or right (1) arrow of the selection row, shown

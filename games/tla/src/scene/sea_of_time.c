@@ -1596,15 +1596,10 @@ struct ActorPlacement gSeaOfTime_ToLemuriaPlacements[] = {
 /// counted, the way it turns and the frame of its last step; then the waves'
 /// start frame and state.
 u16 gSeaOfTime_LastLapCell = 0;
-
 u16 gSeaOfTime_LapCount = 0;
-
 s16 gSeaOfTime_LapTurn = 0;
-
 u32 gSeaOfTime_LastLapFrame = 0;
-
 volatile u32 gSeaOfTime_WaveStartFrame = 0;
-
 u32 gSeaOfTime_WaveState = 0;
 
 struct Trigger gSeaOfTime_SwirlsTriggers[] = {

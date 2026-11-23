@@ -1021,40 +1021,47 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Each beacon flight's camera: where it starts and ends and where it returns
-/// to, in pixels; its zoom at the start and end; its frames; its turns; and the
-/// glow's fade in.
+/// Where each beacon flight's camera starts, in pixels
+/// (StaffCredit_ShowBeacon).
 // clang-format off
 LATE_DATA s16 gStaffCredit_FlightStarts[][2] = {
     {9276, 1782}, {10754, 3137}, {10160, 6268}, {8243, 7334}, {8926, 5100},
 };
 
+/// Where each flight ends, over its lighthouse, in pixels.
 LATE_DATA s16 gStaffCredit_FlightEnds[][2] = {
     {9020, 782}, {10101, 4284}, {10179, 7270}, {7255, 7305}, {9801, 5100},
 };
 
+/// Where the camera flies back to from each beacon, in pixels.
 LATE_DATA s16 gStaffCredit_FlightReturns[][2] = {
     {9570, 2573}, {12179, 4639}, {8727, 7317}, {9751, 6829}, {9751, 5220},
 };
 
+/// Each flight's zoom as it starts, as a 16.16 ratio.
 LATE_DATA s32 gStaffCredit_StartZooms[] = {
     FIXED_ONE / 2, FIXED_ONE * 4 / 5, FIXED_ONE * 3 / 2,
     FIXED_ONE * 3 / 5, FIXED_ONE * 9 / 10,
 };
 
+/// Each flight's zoom over its beacon, as a 16.16 ratio.
 LATE_DATA s32 gStaffCredit_EndZooms[] = {
     FIXED_ONE, FIXED_ONE * 4 / 5, FIXED_ONE * 7 / 10,
     FIXED_ONE * 13 / 10, FIXED_ONE * 3 / 5,
 };
 
+/// Each flight's length, in frames.
 LATE_DATA u8 gStaffCredit_FlightFrames[] = {
     130, 170, 120, 126,
 };
 
+/// How far the camera's pitch turns on each of a flight's last 64 frames, read
+/// from the second entry on by stage.
 LATE_DATA u8 gStaffCredit_FlightTurns[] = {
     107, 108, 64, 108, 108, 108,
 };
 
+/// The beacon glow's blend weights as it fades in.
 LATE_DATA u16 gStaffCredit_GlowFadeIn[] = {
     BLEND_ALPHA(0, 14), BLEND_ALPHA(0, 13), BLEND_ALPHA(0, 12), BLEND_ALPHA(0, 11),
     BLEND_ALPHA(0, 10), BLEND_ALPHA(0, 9),  BLEND_ALPHA(0, 8),

@@ -47,8 +47,8 @@ void Message_SetDecodeFlagsFar(s32 flags);
 /// window tiles' map through the cell picture routine copied to RAM.
 void ScanlineWindow_FillSpansFar(u16 *pairs);
 /// As Text_GetMessageSizeFar, but measuring every page of the message.
-void Text_GetMessageSizeAltFar(s32 message, s32 *left, s32 *top, u32 *width,
-                               u32 *height);
+void Text_GetMessageSizeAllPagesFar(s32 message, s32 *left, s32 *top,
+                                    u32 *width, u32 *height);
 /// Decodes a message and fits a window for its first page on the screen near
 /// tile (*left, *top), returning its place and size in tiles.
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, u32 *width,

@@ -2902,6 +2902,8 @@ void ShamanVillage_BlowChimneySmoke(void) {
     Actor_SetSpritePriority(n2, variant);                                      \
   }
 
+/// A task: the sprout and the girl below the cave take the leader's sprite
+/// priority each frame, so they pass behind what he passes behind.
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerVillageActors, ACTOR_SPROUT,
                          ACTOR_GIRL_BELOW_THE_CAVE)
 
@@ -3003,6 +3005,8 @@ void ShamanVillage_SetUpInn(void) {
   }
 }
 
+/// A task: the sanctum's two shamans take the leader's sprite priority each
+/// frame.
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors,
                          ACTOR_SANCTUM_SHAMAN_A, ACTOR_SANCTUM_SHAMAN_B)
 

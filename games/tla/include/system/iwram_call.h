@@ -71,6 +71,7 @@ static inline s32 Iwram_SignedDivide(s32 dividend, s32 divisor) {
   return Iwram_SignedDivideEntry(dividend, divisor);
 }
 
+/// The unsigned quotient, rounded down.
 static inline u32 Iwram_UnsignedDivide(u32 dividend, u32 divisor) {
   return Iwram_UnsignedDivideEntry(dividend, divisor);
 }
@@ -128,6 +129,7 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
 /// from the linked IWRAM code rather than at its fixed address.
 #define Iwram_MulFXOffset FIXED_OFFSET(284, IwramMulFX, IwramIrqMain)
 
+/// The IWRAM routine behind Iwram_MulFX, called by its linked name.
 FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 
 #endif

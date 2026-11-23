@@ -1113,6 +1113,7 @@ s32 Actor_HasArrived(struct Actor *actor);
 
 #include "shared/slide_on_ice_from_edge.c"
 
+/// Stops the leader's slide on the ice where it is (nonzero), or lets it run.
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"

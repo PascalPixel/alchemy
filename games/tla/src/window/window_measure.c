@@ -123,8 +123,10 @@ void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
     return 1;                                                                  \
   }
 
+/// Fits message no's window on screen, sized by its first page.
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
-DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
+/// As Text_GetMessageSize, sized to hold every page.
+DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAllPages, 1)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in
@@ -308,7 +310,7 @@ done:
 /// with each line's extra character gap in spacing as Text_MeasureDecoded.
 /// The text must fit 16 pages. Outside Japanese the gaps have no ceiling, and
 /// past the first page they do not fit their lines; its one caller,
-/// Text_GetMessageSizeAlt, passes no spacing.
+/// Text_GetMessageSizeAllPages, passes no spacing.
 void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                           u16 *spacing) {
   u32 pageHeights[16];

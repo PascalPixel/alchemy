@@ -233,7 +233,7 @@ static void MercuryLighthouseEntrance_RippleAroundLeader(void) {
 /// the column of light over him swells and fades.
 ///
 /// It answers the edge tiles of every pool on this floor
-/// (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM), the goddess's hands at cell
+/// (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP), the goddess's hands at cell
 /// (12, 32) among them, once Ply has worked.
 static void MercuryLighthouseEntrance_LoseLights(void) {
   MercuryLighthouse_LoseLights();
@@ -246,7 +246,7 @@ static void MercuryLighthouseEntrance_LoseLights(void) {
 /// It answers the pools' heart, open-water and edge tiles alike
 /// (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART,
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER and
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM), laid two cells apart with
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP), laid two cells apart with
 /// water that cannot be walked between them.
 static void MercuryLighthouseEntrance_HopAcrossPool(void) {
   MercuryLighthouse_HopAcrossPool();
@@ -509,8 +509,8 @@ s32 Scene_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST:
     // Once Ply has honored the heart, the twin fountains' two pools take the
-    // ground the goddess's pool takes: cells out in the water, hearts and rim
-    // cells, which the hops and lights answer, with the water between them a
+    // ground the goddess's pool takes: cells out in the water, hearts and plain
+    // squares, which the hops and lights answer, with the water between them a
     // wall.
     if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       MapGrid_CopyCellAttributes(84, 5, 10, 7, 20, 5);
@@ -936,8 +936,8 @@ struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[] = {
 };
 
 struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
-    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_LoseLights) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_LoseLights) },
     { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_RippleAroundLeader) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },

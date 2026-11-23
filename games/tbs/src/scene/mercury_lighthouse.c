@@ -189,7 +189,8 @@ enum { ANIM_MIA_KNEEL = 16 };
 /// cells are their exits' numbers past EXIT_CELL_BEHAVIOR_OFFSET.
 enum {
   /// The great pool room: two cells of the floor beside the Sleep Bomb chest,
-  /// (7, 15) and (9, 15), which put out Isaac's lights like the pool's rim
+  /// (7, 15) and (9, 15), which put out Isaac's lights like the pool's plain
+  /// squares
   /// but are no place to hop from.
   CELL_BEHAVIOR_SLEEP_BOMB_LEDGE = 32,
   /// The crystal room's hole behind its blue crystal, (29, 37), and the edge
@@ -459,7 +460,7 @@ static void MercuryLighthouse_RippleWhileInPool(void) {
 /// and fade away.
 ///
 /// The squares and the floor's edge are
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM. Two cells beside the Sleep Bomb
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP. Two cells beside the Sleep Bomb
 /// chest, CELL_BEHAVIOR_SLEEP_BOMB_LEDGE, do the same but are no place to hop
 /// from.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
@@ -3355,8 +3356,8 @@ struct Trigger gMercuryLighthouseLowerTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
     { TRIGGER_STEP, CELL_BEHAVIOR_SLEEP_BOMB_LEDGE, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
-    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_STEP, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
     { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_RippleWhileInPool) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },

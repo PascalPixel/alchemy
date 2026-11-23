@@ -188,7 +188,7 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 value);
 extern s16 gSlideOnIce_SteerAngles[];
 
-extern u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[];
+extern u32 gDebris_Script[];
 
 /// Six chips of ice burst from an actor and bounce away: the wind stone's
 /// sprite, tinted to ice.
@@ -210,7 +210,7 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
       angle = Random16();
       radius = Random16();
       scale = ((u32)Random16() >> 1) + FIXED_ONE / 4;
-      Actor_StartScript(actor, gMarsLighthouseStarRoom_ScatterIceChipsScript);
+      Actor_StartScript(actor, gDebris_Script);
       Actor_SetSpriteFlags(actor, 0);
       actor->velocityY = angle * 4 + toFIXED(2);
       actor->velocityZ = Iwram_MulFX(radius * 8, Trig_Cos(angle));
@@ -1517,19 +1517,9 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 extern s32 gMarsLighthouseStarRoom_TorchScript[];
 
-// clang-format off
-/// A chip of ice flies for 40 frames, then blinks ten times and is gone.
-u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
+// clang-format off
 s32 gMarsLighthouseStarRoom_WestSparkleRoute[] = {
     SC_CALL(Actor_PopUp),
     SC_MOVE(616, 0, 264),

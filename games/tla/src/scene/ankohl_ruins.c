@@ -244,7 +244,6 @@ enum AnkohlRuinsCrystalPowderChestActorId {
 /// The Left Prong, lying on the top of the ruins.
 #define ACTOR_LEFT_PRONG_CHEST 64
 
-void AnkohlRuins_SettleObject(s32 id, s32 cue);
 void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
 void AnkohlRuins_SlideGreatFace(void);
@@ -596,28 +595,7 @@ void AnkohlRuins_PushStoneFaceOffLedge(s32 unused, s32 objectId) {
   }
 }
 
-/// A pushed half face, or Felix, falls to the ground below and lands, the cue
-/// sounding if there is one: it falls for at most a second, and ten frames
-/// after it lands it stands still again. Gaia Rock's GaiaRock_DropPillar is
-/// the same routine in every edition but the Japanese, whose
-/// GaiaRock_DropPillar plays no cue and tests for landing before counting the
-/// frame down.
-void AnkohlRuins_SettleObject(s32 id, s32 cue) {
-  s32 frames = 60;
-  struct Actor *actor = Actor_Get(id);
-
-  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  while (frames != 0) {
-    System_Wait(1);
-    frames--;
-    if (actor->velocityY == 0)
-      break;
-  }
-  if (cue != 0)
-    Event_PlaySound(cue);
-  System_Wait(10);
-  actor->motionFlags = 0;
-}
+#include "shared/actor_wait_to_land_with_cue.h"
 
 /// Sand pours down from above: `rows` rows of `count` grains a cell apart,
 /// each row two pixels further south, `frames` apart.
@@ -675,11 +653,11 @@ void AnkohlRuins_PlaceFaceHalves(s32 unused, s32 id) {
 
   if (id == ACTOR_LEFT_FACE_HALF && column == 12 && row == 45) {
     Event_SetFlag(FLAG_LEFT_FACE_HALF_PLACED);
-    AnkohlRuins_SettleObject(ACTOR_LEFT_FACE_HALF, SE_BOOM);
+    Actor_WaitToLandWithCue(ACTOR_LEFT_FACE_HALF, SE_BOOM);
   }
   if (id == ACTOR_RIGHT_FACE_HALF && column == 14 && row == 45) {
     Event_SetFlag(FLAG_RIGHT_FACE_HALF_PLACED);
-    AnkohlRuins_SettleObject(ACTOR_RIGHT_FACE_HALF, SE_BOOM);
+    Actor_WaitToLandWithCue(ACTOR_RIGHT_FACE_HALF, SE_BOOM);
   }
   if (!GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED) ||
       !GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED))
@@ -731,7 +709,7 @@ void AnkohlRuins_PlaceThanatosFaceHalf(s32 unused, s32 id) {
   if (id != ACTOR_THANATOS_FACE_HALF || column != 12 || row != 5)
     return;
   Event_SetFlag(FLAG_THANATOS_FACE_HALF_PLACED);
-  AnkohlRuins_SettleObject(ACTOR_THANATOS_FACE_HALF, SE_BOOM);
+  Actor_WaitToLandWithCue(ACTOR_THANATOS_FACE_HALF, SE_BOOM);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(15);
@@ -857,7 +835,7 @@ void AnkohlRuins_CarriedOffLedge(void) {
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SE_DUST_PUFF);
-  AnkohlRuins_SettleObject(gMainRoutineWork.leaderActorId, SE_THUMP);
+  Actor_WaitToLandWithCue(gMainRoutineWork.leaderActorId, SE_THUMP);
   actor->steeringFlags = ACTOR_FACES_MOTION;
   Event_End();
 }
@@ -1464,7 +1442,7 @@ void AnkohlRuins_PushStatueIntoGap(void) {
       FIELD_CELL(actor->z.fixed) == GAP_ROW) {
     Event_SetFlag(FLAG_FACE_HALF_PUSHED_INTO_GAP);
     Event_PlaySound(SE_DUST_PUFF);
-    AnkohlRuins_SettleObject(ACTOR_FACE_HALF_FOR_THE_GAP, 0);
+    Actor_WaitToLandWithCue(ACTOR_FACE_HALF_FOR_THE_GAP, 0);
     Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
     ObjectTable_Snapshot();
     FieldEvent_SetExitRequest(

@@ -253,32 +253,32 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x00, 60, 0, 0, Sound_WaveEyesGlow, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave50, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveRing, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveSpiral, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_Wave52, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x00, 60, 0, 0, Sound_Wave53, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WavePound, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveSeaOfTimeOpens, 255, 0, 255, 226
-	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveHiss, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_Wave57, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveHowl, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveJawsOpen, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 0
-	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave56, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveHiss, 255, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_WaveHiss, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveHiss, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveSurf, 255, 0, 255, 0
 	voice 0x00, 60, 0, 0, Sound_WaveSurf, 255, 0, 255, 204
 	voice 0x00, 60, 0, 0, Sound_WaveSurf, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveIceCrack, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveStatueStirs, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveCurrent, 255, 0, 255, 226
-	voice 0x00, 60, 0, 0, Sound_Wave64, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveCrackle, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_Wave65, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave66, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveWhoosh, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveStatueRise, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveSpinAway, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0

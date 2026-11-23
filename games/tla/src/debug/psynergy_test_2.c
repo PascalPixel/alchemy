@@ -1,10 +1,10 @@
 /// @file
-/// The second debug room of Psynergy tests. It stands on the Psynergy test's
-/// map, but its entrances lie east of that map's drawn cells, so the party
-/// walks in the dark among a fire, a stake and two posts: Douse and Pound take
-/// the fire away, Grind stands the stake up and Tremor on it does nothing,
-/// talking to it scatters rocks, and a rope is coiled between the posts. Its
-/// Burst and battle rows answer cells it does not reach.
+/// The second debug room of Psynergy tests, on the east side of the Psynergy
+/// test's map, where a fire, a stake sunk flat and two posts stand: Douse and
+/// Pound take the fire away, Grind stands the stake up and Tremor on it does
+/// nothing, talking to it scatters rocks, and a rope is coiled between the
+/// posts. Its Burst row answers the Psynergy test's first Scoop spot, west of
+/// this room's view, and its battle row a cell behavior no cell holds.
 
 #include "battle/battle.h"
 #include "field/field_sequence.h"

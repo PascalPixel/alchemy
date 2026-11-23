@@ -1,6 +1,7 @@
 /// @file
-/// The debug menus: the sound test, the five rows of MsgFullPpAndMoney, the
-/// debug warp and the ability grid.
+/// The debug menus, none of which the game opens: the sound test, a debug menu
+/// of five rows ("Full PP and Money" to "Change of hero"), the warp menu's nine
+/// story presets, and the grid of field Psynergy to set as a shortcut.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -14,6 +15,17 @@
 #include "window/settings_menu.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "field/field_sequence.h"
+
+/// The sound test's rows (SoundTestValues.values), and how many sound presets
+/// its last row steps through.
+enum SoundTestRow {
+  SOUND_TEST_MUSIC = 0,
+  SOUND_TEST_JINGLE = 1,
+  SOUND_TEST_SOUND_EFFECT = 2,
+  SOUND_TEST_PRESET = 3,
+  SOUND_TEST_ROWS = 4
+};
+#define SOUND_TEST_PRESETS 5
 
 /// The sound test's per-frame task: moves the cursor.
 void DebugSoundTest_StepCursor(void) {
@@ -69,7 +81,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
   s32 cursor = 0;
   struct OptionMenuWork *work;
   struct Window *window;
-  s32 rows = 4;
+  s32 rows = SOUND_TEST_ROWS;
   s32 i;
   s32 y;
   s32 *value;
@@ -83,11 +95,13 @@ UNUSED s32 DebugSoundTest_Run(void) {
     if (redraw != 0) {
       redraw = 0;
       cursor = (cursor + rows) % rows;
-      test.values[3] = (test.values[3] + 5) % 5;
+      test.values[SOUND_TEST_PRESET] =
+          (test.values[SOUND_TEST_PRESET] + SOUND_TEST_PRESETS) %
+          SOUND_TEST_PRESETS;
       WindowSprite_RedrawSavedRect((struct Window *)window);
-      for (i = 0, y = 2; i < 3; i++, y += 2)
+      for (i = 0, y = 2; i < SOUND_TEST_ROWS - 1; i++, y += 2)
         Window_DrawDividerLine((struct Window *)window, 0, y, 14, y);
-      for (i = 0, value = test.values; i < 4; i++)
+      for (i = 0, value = test.values; i < SOUND_TEST_ROWS; i++)
         Text_DrawNumberInWindow(*value++, 0, (s32)window, 72, i * 16);
       Text_DrawStringInWindow((u8 *)SoundTest_MusicString, (s32)window, 8, 0);
       Text_DrawStringInWindow((u8 *)SoundTest_JingleString, (s32)window, 8, 16);
@@ -100,8 +114,8 @@ UNUSED s32 DebugSoundTest_Run(void) {
     if (gInput.pressed & KEY_B)
       break;
     if (gInput.pressed & KEY_A) {
-      if (cursor == 3)
-        Sound_LoadReverbCode(test.values[3]);
+      if (cursor == SOUND_TEST_PRESET)
+        Sound_LoadReverbCode(test.values[SOUND_TEST_PRESET]);
       else
         Sound_PlayFar(test.values[cursor]);
     }
@@ -134,7 +148,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
       redraw = 1;
     }
   } while (1);
-  Window_Close((struct Window *)window, 2);
+  Window_Close((struct Window *)window, WINDOW_FLAG_INSTANT);
   DebugSoundTest_Release();
   wait(1);
   return 0;
@@ -184,7 +198,7 @@ struct Window *DebugMenu_Open(void) {
   return window;
 }
 
-/// Unused: nothing calls it. Shows the debug menu with the cursor on row
+/// Unused: shows the debug menu with the cursor on row
 /// index, lets Up and Down move it (wrapping), and returns the row A chooses,
 /// or -1 for B.
 UNUSED s32 DebugMenu_Run(s32 index) {
@@ -233,15 +247,18 @@ UNUSED s32 DebugMenu_Run(s32 index) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
-  Window_Close(window, 2);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   DebugMenu_Release();
   wait(1);
   return index;
 }
 
-/// The debug warp presets, each named for its row of gDebugWarp_Presets
-/// ("0:Jupiter" to "8:Kaoru Special1"): each sets the flags, items and
-/// events of a point in the story and sends the party to one room.
+// The warp menu's presets, named for their rows of gDebugWarp_Presets: each
+// sets the flags and items of a point in the story and sends the party to one
+// room.
+
+/// Preset 0, "Jupiter": Felix holds the Red Key and the Blue Key. To the
+/// Jupiter Lighthouse's room of locked doors.
 void DebugWarp_Jupiter(void) {
   Inventory_AddItemFar(FELIX, ITEM_RED_KEY);
   Inventory_AddItemFar(FELIX, ITEM_BLUE_KEY);
@@ -384,7 +401,7 @@ struct Window *DebugWarp_Open(void) {
   return window;
 }
 
-/// Unused: nothing calls it. Shows the nine debug warp presets with the cursor
+/// Unused: shows the nine warp presets with the cursor
 /// on row index, lets Up and Down move it (wrapping), and returns the row A
 /// chooses after running its handler, or -1 for B.
 UNUSED s32 DebugWarp_Run(s32 index) {
@@ -435,7 +452,7 @@ UNUSED s32 DebugWarp_Run(s32 index) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
-  Window_Close(window, 2);
+  Window_Close(window, WINDOW_FLAG_INSTANT);
   DebugWarp_Release();
   wait(1);
   if (index != -1)
@@ -443,14 +460,14 @@ UNUSED s32 DebugWarp_Run(s32 index) {
   return index;
 }
 
-/// The ability grid's per-frame task: moves the cursor.
+/// The shortcut grid's per-frame task: moves the cursor.
 void DebugShortcut_StepCursor(void) {
   struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
 
   MenuCursor_AdvanceFar(&work->cursor);
 }
 
-/// Allocates the ability grid's work block and starts its cursor task.
+/// Allocates the shortcut grid's work block and starts its cursor task.
 void DebugShortcut_Initialize(void) {
   void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
                                    sizeof(struct OptionMenuWork));
@@ -459,7 +476,7 @@ void DebugShortcut_Initialize(void) {
   Task_Add(DebugShortcut_StepCursor, TASK_PASS_FRAME);
 }
 
-/// Stops the ability grid's cursor task and frees its work block.
+/// Stops the shortcut grid's cursor task and frees its work block.
 void DebugShortcut_Release(void) {
   Task_Remove(DebugShortcut_StepCursor);
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
@@ -467,7 +484,8 @@ void DebugShortcut_Release(void) {
 
 extern const u8 gDebugShortcut_NoAbilityName[];
 
-/// Draws the ability's name; ability 0 draws a dash placeholder.
+/// Draws an ability's name in the shortcut grid; ability 0, an empty place,
+/// draws gDebugShortcut_NoAbilityName.
 void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
   if (ability != 0)
     Text_DrawMessageAsTiles(ability + (s32)MsgAbilityName,
@@ -476,8 +494,9 @@ void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
     Text_DrawStringInWindow((u8 *)gDebugShortcut_NoAbilityName, window, x, y);
 }
 
-/// Opens the ability grid's window: eight dividers, then the four columns
-/// of gDebugShortcut_Abilities in nine rows, as DebugMenu_Open draws its grid.
+/// Opens the shortcut grid's window: the four columns of
+/// gDebugShortcut_Abilities in nine rows, a divider under each row but the
+/// last.
 struct Window *DebugShortcut_Open(void) {
   struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
   struct Window *window = Window_Create(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
@@ -506,14 +525,15 @@ struct Window *DebugShortcut_Open(void) {
 
 s32 Party_FindOwnerWithActionFar(s32 action);
 
-/// The PP the debug ability grid gives Felix, Jenna, Sheba and Piers, full.
+/// The PP the shortcut grid gives Felix, Jenna, Sheba and Piers, full.
 #define DEBUG_SHORTCUT_PP 500
 
-/// Unused: nothing calls it. The debug ability grid, drawn by
-/// DebugShortcut_Open: the cursor moves over four columns of nine abilities
-/// (gDebugShortcut_Abilities); A, L and R give the chosen ability, packed with
-/// its owner, to slot 0, 1 or 2 and give Felix, Jenna, Sheba and Piers
-/// DEBUG_SHORTCUT_PP PP; B cancels. Returns the slot, or -1.
+/// Unused: the shortcut grid, drawn by DebugShortcut_Open. The cursor moves
+/// over four columns of nine field Psynergy (gDebugShortcut_Abilities); A makes
+/// the chosen one, with the party member who knows it, the field Psynergy to
+/// use (FieldWork.psynergy), L and R the L or R shortcut, and each fills
+/// Felix's, Jenna's, Sheba's and Piers's PP to DEBUG_SHORTCUT_PP; B cancels.
+/// Returns 0, 1 or 2 for A, L or R, or -1.
 UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
   struct OptionMenuWork *work;
@@ -592,7 +612,7 @@ UNUSED s32 DebugShortcut_Run(void) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     }
   }
-  Window_Close((struct Window *)window, 2);
+  Window_Close((struct Window *)window, WINDOW_FLAG_INSTANT);
   DebugShortcut_Release();
   wait(1);
   if (result != -1) {

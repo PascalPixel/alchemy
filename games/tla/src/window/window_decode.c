@@ -1,5 +1,7 @@
 /// @file
-/// The message decoder: articles, names and numbers written out.
+/// The message decoder: a stored message expanded into the ring of decoded
+/// text, its arguments, names and numbers written out, and outside Japanese
+/// the articles, plurals and possessives each language puts around them.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -51,6 +53,9 @@ enum {
   // with its operands (one, one and two), and only one message uses one of
   // them (12, in MsgLemuriaInteriorsWhatInWhatsWithAll), so nothing the game
   // shows tells them apart.
+  MESSAGE_CONTROL_11 = 11,
+  MESSAGE_CONTROL_12 = 12,
+  MESSAGE_CONTROL_14 = 14,
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
@@ -119,12 +124,36 @@ enum {
 /// codes BUTTON_ICON_FIRST_CODE + 2 * n and the next.
 #define BUTTON_ICON_FIRST_CODE 128
 
+/// The operand of an item, class or name code: how its name is written.
+enum ArticleForm {
+  ARTICLE_FORM_BARE = 0,    ///< the name alone
+  ARTICLE_FORM_ARTICLE = 1, ///< with its article in front
+  /// English: the plural ending after it; elsewhere the article, and for an
+  /// item its plural name
+  ARTICLE_FORM_PLURAL = 2,
+  /// The article while the last number was -1, 0 or 1, else as
+  /// ARTICLE_FORM_PLURAL
+  ARTICLE_FORM_BY_COUNT = 3,
+  /// No article; an item's plural name, and in French "de" in front
+  ARTICLE_FORM_DE = 4,
+  ARTICLE_FORM_MASK = 7,
+  /// Spanish: the indefinite article rather than the definite
+  ARTICLE_FORM_INDEFINITE = 8
+};
+
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-/// Copies a name into the decoded text at writePosition, with its English
-/// article in front when articleForm is 1 (or 3 with plural clear) and a
-/// plural ending after it when articleForm is 2 (or 3 with plural set); mode
-/// wraps the name in line breaks.
-/// Returns the next position in the 512-entry ring.
+/// The English articles (articles.c) a name with no article class takes.
+enum {
+  ARTICLE_A = 1,
+  ARTICLE_AN = 2 ///< before a capital vowel
+};
+
+/// Copies a name into the decoded text at writePosition and returns the
+/// position after it: with its article in front (ARTICLE_FORM_ARTICLE, or
+/// ARTICLE_FORM_BY_COUNT for one) and an s or es after it (ARTICLE_FORM_PLURAL,
+/// or ARTICLE_FORM_BY_COUNT for several). With mode set, a space and a line
+/// spacing of TEXT_DEFAULT_LINE_SPACING go before the name, and a line spacing
+/// of 8 and a space after it. suffix is left 1 when the name ends in s.
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix) {
@@ -132,16 +161,17 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   s32 kind;
   u16 head;
   u16 c;
-  u8 *p;
-  s8 c8;
-  s32 cnt;
+  u8 *article;
+  s8 letter;
+  s32 letters;
 
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
     TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
     TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
-  if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
+  if (articleForm == ARTICLE_FORM_ARTICLE ||
+      (articleForm == ARTICLE_FORM_BY_COUNT && plural == 0)) {
     kind = 0;
     table = gArticle_Table;
     head = name[0];
@@ -152,15 +182,15 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     if (kind == 0) {
       if (head == 'A' || head == 'I' || head == 'U' || head == 'E' ||
           head == 'O')
-        kind = 2;
+        kind = ARTICLE_AN;
       else
-        kind = 1;
+        kind = ARTICLE_A;
     }
-    p = table.text[kind & 7];
-    for (cnt = 0; cnt < 8; cnt++) {
-      if ((c8 = *p++) == 0)
+    article = table.text[kind & ARTICLE_KIND_MASK];
+    for (letters = 0; letters < 8; letters++) {
+      if ((letter = *article++) == 0)
         break;
-      TEXT_APPEND(entries, writePosition, c8);
+      TEXT_APPEND(entries, writePosition, letter);
     }
   } else {
     head = name[0];
@@ -175,7 +205,8 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     else
       *suffix = 0;
   }
-  if (articleForm == 2 || (articleForm == 3 && plural != 0)) {
+  if (articleForm == ARTICLE_FORM_PLURAL ||
+      (articleForm == ARTICLE_FORM_BY_COUNT && plural != 0)) {
     if (*suffix != 0) {
       TEXT_APPEND(entries, writePosition, 'e');
     }
@@ -190,12 +221,13 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 }
 
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
-/// Copies a name into the decoded text at writePosition: forms 0 and 4 take no
-/// article, the others the article of the name's kind (in Spanish, form bit 3
-/// asks for the indefinite article), its first letter a capital when suffix is
-/// 2. In French, form 4 puts "de" (elided before a capital vowel) in front.
-/// mode wraps the name in line breaks.
-/// Returns the next position in the 512-entry ring.
+/// Copies a name into the decoded text at writePosition and returns the
+/// position after it: ARTICLE_FORM_BARE and ARTICLE_FORM_DE take no article,
+/// the other forms the article of the name's class, its first letter a capital
+/// when suffix is 2 (a sentence's start); in French, ARTICLE_FORM_DE puts "de"
+/// (elided before a capital vowel) in front. mode sets the name apart as the
+/// English routine does. suffix is left 1 when the name ends in s (in German
+/// also z or x).
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix) {
@@ -208,13 +240,13 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   s32 kind;
   u16 head;
   u16 c;
-  u8 *p;
-  s8 c8;
-  s32 cnt;
+  u8 *article;
+  s8 letter;
+  s32 letters;
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
-  count = articleForm & 7;
-  indefinite = articleForm & 8;
+  count = articleForm & ARTICLE_FORM_MASK;
+  indefinite = articleForm & ARTICLE_FORM_INDEFINITE;
 #endif
   if (mode != 0) {
     TEXT_APPEND(entries, writePosition, ' ');
@@ -222,7 +254,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
   }
 #if (LANGUAGE == LANGUAGE_FRENCH)
-  if (articleForm == 4) {
+  if (articleForm == ARTICLE_FORM_DE) {
     struct DeArticles de;
     u8 *word;
     s8 letter;
@@ -242,9 +274,9 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   }
 #endif
 #if (LANGUAGE == LANGUAGE_SPANISH)
-  if (count == 0 || count == 4) {
+  if (count == ARTICLE_FORM_BARE || count == ARTICLE_FORM_DE) {
 #else
-  if (articleForm == 0 || articleForm == 4) {
+  if (articleForm == ARTICLE_FORM_BARE || articleForm == ARTICLE_FORM_DE) {
 #endif
     head = name[0];
     if (head == MESSAGE_ARTICLE_CLASS)
@@ -261,18 +293,18 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     }
 #if (LANGUAGE == LANGUAGE_SPANISH)
     if (indefinite == 0)
-      p = table.text[kind & ARTICLE_KIND_MASK];
+      article = table.text[kind & ARTICLE_KIND_MASK];
     else
-      p = indefiniteTable.text[kind & ARTICLE_KIND_MASK];
+      article = indefiniteTable.text[kind & ARTICLE_KIND_MASK];
 #else
-    p = table.text[kind & ARTICLE_KIND_MASK];
+    article = table.text[kind & ARTICLE_KIND_MASK];
 #endif
-    for (cnt = 0; cnt < 8; cnt++) {
-      if ((c8 = *p++) == 0)
+    for (letters = 0; letters < 8; letters++) {
+      if ((letter = *article++) == 0)
         break;
-      if (cnt == 0 && *suffix == 2)
-        c8 -= 'a' - 'A';
-      TEXT_APPEND(entries, writePosition, c8);
+      if (letters == 0 && *suffix == 2)
+        letter -= 'a' - 'A';
+      TEXT_APPEND(entries, writePosition, letter);
     }
   }
   while (*name != 0) {
@@ -356,7 +388,14 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix);
 
-s32 Message_Decode(s32 script, s32 clear) {
+/// Decodes message into the ring of decoded text (WindowWork.textBuffer) after
+/// the text decoded last, and returns where it starts; message -1 returns the
+/// last decoded message's start again. Its argument codes take the message
+/// arguments (MessageArgument_Push), which clear set empties after. Halting
+/// speech (Message_SetDecodeFlags) puts a pause before each character and
+/// breaks the message off with "..." after its first word, or its first
+/// HALTING_SPEECH_LENGTH characters.
+s32 Message_Decode(s32 message, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
 #if !TLA_PATCH_2
@@ -382,7 +421,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
   s32 (*decode)(struct TextReader *);
   u32 nextPosition;
-  s32 no;
+  s32 articleForm;
   u32 j;
   u32 i;
   u32 value;
@@ -407,14 +446,14 @@ s32 Message_Decode(s32 script, s32 clear) {
   // clears it before it is read; the ROM keeps the store.
   afterItem = 0;
 #endif
-  if (script == -1) {
+  if (message == -1) {
     start = work->lastMessageStart;
   } else {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
     heap = Ram_HeapSlots;
     decode = (s32 (*)(struct TextReader *))heap->messageDecoder;
-    Message_Find(&reader, script);
+    Message_Find(&reader, message);
 
     do {
       previousCode = code;
@@ -567,28 +606,30 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + (s32)MsgClassName, name,
                               MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(
-                0, name, writePosition, entry, no, plural, &suffix);
+                0, name, writePosition, entry, articleForm, plural, &suffix);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
 #if TLA_PATCH_2
             {
               s32 lastChar;
               u16 k;
 
 #if LANGUAGE == LANGUAGE_SPANISH
-              form = no & 7;
+              form = articleForm & ARTICLE_FORM_MASK;
 #else
-              form = no;
+              form = articleForm;
 #endif
               argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear) &
                          INVENTORY_ITEM_ID_MASK;
-              if (form == 2 || (form == 3 && plural != 0) || form == 4)
+              if (form == ARTICLE_FORM_PLURAL ||
+                  (form == ARTICLE_FORM_BY_COUNT && plural != 0) ||
+                  form == ARTICLE_FORM_DE)
                 Message_DecodeRaw(
                     argument + (s32)(MsgItemName + PLURAL_ITEM_NAMES_OFFSET),
                     name, MESSAGE_NAME_HALFWORDS);
@@ -596,7 +637,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 Message_DecodeRaw(argument + (s32)MsgItemName, name,
                                   MESSAGE_NAME_HALFWORDS);
               writePosition = Message_AppendArticleName(
-                  0, name, writePosition, entry, no, plural, &suffix);
+                  0, name, writePosition, entry, articleForm, plural, &suffix);
               for (k = 0; name[k] != 0; k++)
                 lastChar = (s16)name[k];
               if ((u16)lastChar == '.')
@@ -610,7 +651,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                   (s32)MsgItemName,
                               name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(
-                0, name, writePosition, entry, no, plural, &suffix);
+                0, name, writePosition, entry, articleForm, plural, &suffix);
 #endif
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
@@ -656,7 +697,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, &suffix);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
             nameBytes = (Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR,
                                                          clear)))
                             ->name;
@@ -669,7 +710,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               nameOutput++;
             } while (j < UNIT_NAME_SIZE);
             writePosition = Message_AppendArticleName(
-                0, name, writePosition, entry, no, plural, &suffix);
+                0, name, writePosition, entry, articleForm, plural, &suffix);
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(&reader) - 1;
@@ -726,9 +767,10 @@ s32 Message_Decode(s32 script, s32 clear) {
 #if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
             // A counted noun, singular or plural, by its kind.
-            no = decode(&reader) - 1;
+            articleForm = decode(&reader) - 1;
             for (nameBytes =
-                     (u8 *)gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
+                     (u8 *)gLocalizedWord_CountedNouns[(articleForm & 7) * 2 +
+                                                       plural];
                  *nameBytes != 0; nameBytes++) {
               TEXT_APPEND(entry, writePosition, *nameBytes);
             }
@@ -868,8 +910,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 
-// An enemy's id is 8 above its name's place after MsgEnemyName.
-
 extern u8 MsgWaitingForOpponent[];
 
 /// なぞの男 ("Mystery Man"), the message after MsgWaitingForOpponent; なぞの女
@@ -905,10 +945,10 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
 }
 
 /// The Japanese Message_Decode: no articles or plurals, and a battle message
-/// (WINDOW_BATTLE_MESSAGE) sets its names off and doubles each space. While
-/// menuState is set, the Mystery Man and Mystery Woman are named from
+/// (WINDOW_BATTLE_MESSAGE) sets its names off and doubles each space. Outside
+/// the field, the Mystery Man and Mystery Woman are named from
 /// MYSTERY_MAN_MESSAGE and the message after it rather than their unit names.
-s32 Message_Decode(s32 script, s32 clear) {
+s32 Message_Decode(s32 message, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
   s32 lineStart = 1;
@@ -925,7 +965,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   u32 i;
   u32 j;
   s32 argument;
-  s32 message;
+  s32 mysteryName;
   s32 value;
   u32 length;
   struct Unit *unit;
@@ -937,14 +977,14 @@ s32 Message_Decode(s32 script, s32 clear) {
   struct TextReader reader;
   struct HeapSlots *heap;
 
-  if (script == -1) {
+  if (message == -1) {
     start = work->lastMessageStart;
   } else {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
     heap = Ram_HeapSlots;
     decode = (s32 (*)(struct TextReader *))heap->messageDecoder;
-    Message_Find(&reader, script);
+    Message_Find(&reader, message);
 
     do {
       previousCode = code;
@@ -1101,10 +1141,10 @@ s32 Message_Decode(s32 script, s32 clear) {
             if (work->battleMode != WINDOW_FIELD &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
-              message = MYSTERY_MAN_MESSAGE;
+              mysteryName = MYSTERY_MAN_MESSAGE;
               if (unit->enemyId == ENEMY_MYSTERY_WOMAN)
-                message++;
-              Message_DecodeRaw(message, name, MYSTERY_NAME_CAPACITY);
+                mysteryName++;
+              Message_DecodeRaw(mysteryName, name, MYSTERY_NAME_CAPACITY);
               writePosition = Message_AppendArticleName(
                   mode, name, writePosition, entry, 0, 0, 0);
             } else {
@@ -1185,6 +1225,4 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef PLURAL_ITEM_NAMES_OFFSET
 #undef SUFFIX_START
 #undef POSSESSIVE_COUNT
-#undef ENEMY_MYSTERY_MAN
-#undef ENEMY_MYSTERY_WOMAN
 #undef MYSTERY_MAN_MESSAGE

@@ -2,9 +2,10 @@
 #define ALCHEMY_WINDOW_INTERNAL_H
 
 /// @file
-/// What every part of the window object shares: its includes. window.c
-/// includes it before the parts, and each part includes it too, so that a part
-/// read on its own still resolves.
+/// What the parts of the window object share: their includes, the codes of
+/// decoded message text and the sizes several parts read. window.c includes it
+/// before the parts, and each part includes it too, so that a part read on its
+/// own still resolves.
 
 /// The window object defines these with its own types.
 #define OWN_UiTextResource_Initialize
@@ -114,6 +115,12 @@
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4         ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
+/// The glyph spacing text starts with (WindowWork.glyphSpacing): a glyph
+/// sprite sits half of it right of its place in the line.
+#define TEXT_DEFAULT_GLYPH_SPACING 9
+/// The glyph sheet's size in sprite VRAM: the four tiles of a 16x16 glyph for
+/// each window sprite.
+#define GLYPH_SHEET_SIZE (WINDOW_SPRITE_COUNT * 4 * TILE_SIZE_4BPP)
 /// The pixels a line of text takes in a window fitted to it.
 #define TEXT_LINE_HEIGHT 15
 
@@ -133,6 +140,12 @@ enum {
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
   TEXT_LINE_SPACING = 10,
+  // XXX (no evidence): what codes 11, 12 and 14 do (the PO catalogs'
+  // control_11, control_12 and control_14); every reader skips them with their
+  // one, one and two operands (MESSAGE_CONTROL_11, window_decode.c).
+  TEXT_CONTROL_11 = 11,
+  TEXT_CONTROL_12 = 12,
+  TEXT_CONTROL_14 = 14,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
@@ -324,7 +337,7 @@ enum BattleTargetHint {
 /// `position` takes the hand's spot, `margin` pixels left of the window and
 /// 20 below the row's top, and `sprite` becomes a plain 16x16 sprite, its
 /// position still to come. The Djinn, item, summon and Psynergy battle menus
-/// each place their cursor so; the name is ours, as The Broken Seal's.
+/// each place their cursor so.
 #define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
   do {                                                                         \
     (position).x = (s16)(window)->x * 8 - (margin);                            \

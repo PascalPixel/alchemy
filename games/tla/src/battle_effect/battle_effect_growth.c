@@ -88,9 +88,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   duration = gGrowth_ColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
-  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
-    PARTICLES[i].variant = -1;
-  }
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 
   for (i = 0; i != GROWING_COLUMNS; i++) {
     setup = &((struct DualColumn *)work->particles)[i];
@@ -191,8 +189,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         if ((frame == reactFrame) || (frame == (start + 8))) {
           for (n = 0, flare = PARTICLES; n != GROWTH_FLARES; flare++, n++) {
             if (flare->variant == -1) {
-              flare->x = ((Random16() & 0xf) + column->x) - 8;
-              flare->y = (Random16() & 0xf) + 80;
+              flare->x = ((Random16() & 15) + column->x) - 8;
+              flare->y = (Random16() & 15) + 80;
               flare->variant = 0;
               break;
             }
@@ -384,9 +382,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   frameCount = gGrowth_Counts[args->variant] * THORN_INTERVAL + 56;
 
-  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
-    PARTICLES[i].variant = -1;
-  }
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 
   for (frame = 0; frame != frameCount; frame++) {
     if (frame == frameCount - 64) {

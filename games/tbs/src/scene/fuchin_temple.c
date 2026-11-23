@@ -2709,7 +2709,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gFuchinTemple_JumpingStudentScript[] = {
-    SC_ANIMATION(0),
+    SC_ANIMATION(ANIM_STILL),
     SC_SET(SW_GRAVITY, toFIXED(3) / 5),
     SC_LABEL(1),
     SC_SET(SW_VELOCITY_Y, toFIXED(3)),
@@ -2766,7 +2766,8 @@ u16 gFuchinTemple_FehsDoorCloses[] = {
 };
 
 struct SceneEntrance gFuchinTempleGroundsEntrances[] = {
-    {0, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 296, 0, 488, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP, CONDITION_ALWAYS, 296, 0, 504,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {FUCHIN_TEMPLE_GROUNDS_FROM_LACQUER_ROOMS_A, CONDITION_ALWAYS, 296, 0, 304,
@@ -2779,7 +2780,8 @@ struct SceneEntrance gFuchinTempleGroundsEntrances[] = {
 };
 
 struct SceneEntrance gFuchinTempleEntrancesOther[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 552, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 168, 0, 552,
      FACING_NORTH, 0, 48, 384, 288, 576, 0},
     {LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN, CONDITION_ALWAYS, 256, 0, 264,

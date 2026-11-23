@@ -444,9 +444,10 @@ void GabombaCatacombs_FreezeFirstPuddle(void) {
 /// Frost on the puddle in the north-east of the ring of six weeds at the dead
 /// end below the hidden wall, cell (8, 15), freezes it into an ice pillar. The
 /// ring's pillars, unlike the cross's, do not become squares to hop onto: each
-/// takes the plain attributes of cell (0, 4).
-// XXX: what the ring's puddles and pillars are for; the walkthrough passes
-// them by, and a play of the ring with its pillars frozen would settle it.
+/// takes the attributes of cell (0, 4), plain ground 48 pixels up, 16 above the
+/// ring's floor. The ring's six cells, (6, 15), (8, 15), (9, 16), (8, 17),
+/// (6, 17) and (5, 16), lie on that floor and not over a gap, so its pillars
+/// bridge nothing; the walkthrough passes them by.
 void GabombaCatacombs_FreezeSecondPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SECOND_PUDDLE);
 

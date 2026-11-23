@@ -210,19 +210,19 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
   Actor_Get(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   {
-    struct Actor *record = Actor_Get(ACTOR_STUMP);
+    struct Actor *stump = Actor_Get(ACTOR_STUMP);
 
-    record->collisionFlags = ACTOR_NEAR_PSYNERGY | record->collisionFlags;
+    stump->collisionFlags = ACTOR_NEAR_PSYNERGY | stump->collisionFlags;
   }
   // The player never targets the stump's ivy; only Ivan's Whirlwind in
   // GomaCaveEntrance_IvanJoins removes it.
   {
-    struct Actor *record = Actor_Get(ACTOR_STUMP_IVY);
+    struct Actor *ivy = Actor_Get(ACTOR_STUMP_IVY);
 
-    record->collisionFlags = ACTOR_NOT_TARGETED | record->collisionFlags;
+    ivy->collisionFlags = ACTOR_NOT_TARGETED | ivy->collisionFlags;
   }
-  // The cells GomaCaveEntrance_IvanJoins copies as it sets the flag, redrawn
-  // on arrival.
+  // The cell GomaCaveEntrance_IvanJoins copies once the stump's ivy is gone,
+  // copied again on each arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
@@ -241,7 +241,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
     // The cells GomaCaveEntrance_MoveWestPillar copies as it sets the flag,
-    // redrawn on arrival.
+    // copied again on each arrival.
     if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) != 0) {
       Actor_SetPosition(ACTOR_WEST_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
@@ -282,7 +282,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  // "It's no use. Our Psynergy isn't strong enough to free that..."
+  // "It's no use. Our Psynergy isn't strong enough to free that stump."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
@@ -298,7 +298,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Actor_SetPosition(ACTOR_GARET, 0, 0);
     Event_End();
   } else {
-    // Ivan comes up from the south: "You want to move the stump, right?"
+    // Ivan walks up from the east.
     Actor_SetPosition(ACTOR_IVAN, 360, 248);
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 248);
@@ -358,7 +358,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
-    // "I have a great idea. Leave it to me!": Whirlwind.
+    // He blows the ivy off the stump with Whirlwind.
     GomaCaveEntrance_WhirlwindOnStumpIvy();
     Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
     Event_Wait(20);
@@ -369,6 +369,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_Jump(ACTOR_GARET, 2, 0);
     Event_Wait(20);
+    // "All right, Ivan!"
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_WalkToAndWait(ACTOR_IVAN, 264, 184);
     Event_Wait(10);
@@ -378,6 +379,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
+    // "I did it!"
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -390,11 +392,13 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Event_Wait(10);
+    // "...Thanks for the help. But why are you here, Ivan?"
     GomaCaveEntrance_SayThenWait(ACTOR_GARET, 20);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Event_Wait(60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "I couldn't get into Lunpa..."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
@@ -403,12 +407,14 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
+    // "Don't get me wrong! I didn't come here to ask for your help."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Event_Wait(80);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
+    // "Your quest has been on my mind ever since I left Vault."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -419,6 +425,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Event_Wait(60);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "Remember? I read everything that happened in your minds."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
@@ -428,20 +435,23 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
+    // "I couldn't just leave, not with all these terrible things happening."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
+    // "If I can't rescue Master Hammet, then I want to help you..."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
+    // "Please, allow me to join your quest."
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
-    // "Please, allow me to join your quest.": Ivan joins with his rod.
+    // Ivan joins the party, and his Shaman's Rod with him.
     Event_AddPartyMember(IVAN, 1);
     Event_Wait(60);
     GomaCaveEntrance_GiveShamansRod();
@@ -449,10 +459,12 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 184);
     Event_Wait(20);
+    // "Are you trying to get to Bilibin through this cave?"
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
     Event_Wait(120);
+    // "Then let's go!"
     GomaCaveEntrance_SayThenWait(ACTOR_IVAN, 30);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GARET, ACTOR_IVAN, 0);
@@ -480,7 +492,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
 /// waterfall with a crash and a splash, and sinks until only its top shows
 /// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
 ///
-/// The cells by the pool become squares Isaac can jump across on it.
+/// The cells by the pool change so that Isaac can jump across on it.
 static void GomaCaveEntrance_MoveStump(void) {
   s32 column;
 
@@ -490,7 +502,7 @@ static void GomaCaveEntrance_MoveStump(void) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
-    MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
+    MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
     GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
   }
   Event_End();
@@ -511,12 +523,11 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   FieldPsynergy_StopCasterUpdate();
 }
 
-/// Spins the leaping stump a little each frame.
+/// Spins the leaping stump a thirty-second of a turn each frame.
 static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
-  struct Sprite *state = actor->sprite;
-  s32 v = state->rotation - TRIG_TURN / 32;
+  struct Sprite *sprite = actor->sprite;
 
-  state->rotation = v;
+  sprite->rotation -= TRIG_TURN / 32;
 }
 
 #include "shared/actor_wait_below_height.c"
@@ -525,7 +536,7 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
 /// with a shake and a ring of dust, bounces once and sinks with a splash.
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
-  struct EffectOptions params;
+  struct EffectOptions options;
   struct Actor *stump;
   u32 i;
 
@@ -562,15 +573,15 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_WaitBelowHeight(stump, toFIXED(32));
   stump->update = NULL;
   stump->sprite->rotation = TRIG_TURN / 16;
-  params.type = SPRITE_SPLASH;
-  params.startScaleX = FIXED_ONE / 2;
-  params.startScaleY = 4 * FIXED_ONE / 5;
-  params.targetScaleX = 3 * FIXED_ONE / 2;
-  params.targetScaleY = 6 * FIXED_ONE / 5;
+  options.type = SPRITE_SPLASH;
+  options.startScaleX = FIXED_ONE / 2;
+  options.startScaleY = 4 * FIXED_ONE / 5;
+  options.targetScaleX = 3 * FIXED_ONE / 2;
+  options.targetScaleY = 6 * FIXED_ONE / 5;
   FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_SCALE_TO_TARGET,
-                    &params);
+                    &options);
   Sound_Play(SE_CAST);
   Actor_SetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
@@ -583,6 +594,10 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 #define SHAMANS_ROD_TRIES 1000
 
 /// Gives Ivan the Shaman's Rod and equips it.
+///
+/// While his pack is full, a weapon of his is thrown away to make room, or
+/// failing that a consumable item; after SHAMANS_ROD_TRIES tries a slot is
+/// emptied by force.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Unit *member;
   struct ItemDefinition *item;
@@ -638,6 +653,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// Stretches the tall ivy over the cave's mouth to 1.6 times its height.
 s32 gGomaCaveEntranceTallIvyScript[] = {
     SC_SET(SW_SCALE_Y, 8 * FIXED_ONE / 5),
     SC_END,

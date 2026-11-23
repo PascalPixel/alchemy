@@ -1,5 +1,6 @@
 /// @file
-/// Nirvana, Stone Justice, Soul Shatter and Serac.
+/// Nirvana, Stone Justice, Soul Shatter and Serac, and the entries of Heavy
+/// Divide and Strong Hit.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -185,7 +186,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
           rock->x = INTtoFIXED(Random16() % 40 + 8);
         else
           rock->x = INTtoFIXED(120 - Random16() % 40);
-        Random16();
+        Random16(); // a number drawn and not used
         rock->y = INTtoFIXED(i * 2 + 96);
         rock->velocityX = 0;
         rock->velocityY = -((Random16() & 127) + 32) << 11;
@@ -362,8 +363,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       }
     }
 
-    // The cues: the burst, the target thrown up 32 pixels, the user's
-    // glow, the drain and the target's fall.
+    // The cues: the burst, the target thrown up 32 pixels, the user raising
+    // a hand, the drain and the target's fall.
     if (frame == 4)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 10) {
@@ -377,7 +378,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
     if (frame == 80)
       target->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
     if (frame == 24)
-      BattleEffect_TintBattler(args->user, TINT_KEEP, 3, TINT_KEEP, 0);
+      BattleEffect_TintBattler(args->user, TINT_KEEP, POSE_CAST, TINT_KEEP, 0);
     if (frame == 40)
       Sound_PlayFar(SE_SWIRL);
     if (frame == 32)
@@ -619,8 +620,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
     struct RenderModel *model;
     void *vertices;
     u8 color[1];
-    s32 savedScrollX;
-    s32 savedScrollY;
+    s32 savedCenterX;
+    s32 savedCenterY;
     s32 row;
     s32 column;
     s32 i;
@@ -654,39 +655,40 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             SERAC_SPIRE_CORNERS[row * SERAC_SPIRE_SIDES + column].z =
                 FIXEDtoINT(Trig_Cos(angle) * radius);
             // Each quad between this ring and the next is two triangles of the
-            // mesh: three corners, then the u and v of their texels.
+            // mesh.
             if (row < SERAC_SPIRE_RINGS - 1) {
-              u8 *firstTriangle =
-                  SERAC_SPIRE_MESH + (row * SERAC_SPIRE_SIDES + column) * 24;
-              u8 *secondTriangle;
+              struct MeshTriangle *firstTriangle =
+                  (struct MeshTriangle *)SERAC_SPIRE_MESH +
+                  (row * SERAC_SPIRE_SIDES + column) * 2;
+              struct MeshTriangle *secondTriangle;
               s32 bottom = row * 8 + 7;
               s32 left = column * SERAC_SPIRE_QUAD_TEXELS;
               s32 right = left + SERAC_SPIRE_QUAD_TEXELS - 1;
               s32 next;
               s32 here;
 
-              firstTriangle[4] = right;
-              firstTriangle[5] = row * 8;
-              firstTriangle[6] = right;
-              firstTriangle[9] = bottom;
-              firstTriangle[7] = bottom;
-              firstTriangle[8] = left;
-              secondTriangle = SERAC_SPIRE_MESH + 12 +
-                               (row * SERAC_SPIRE_SIDES + column) * 24;
-              secondTriangle[4] = left;
-              secondTriangle[8] = left;
-              secondTriangle[5] = row * 8;
-              secondTriangle[9] = bottom;
-              secondTriangle[6] = right;
-              secondTriangle[7] = row * 8;
+              firstTriangle->uv[0][0] = right;
+              firstTriangle->uv[0][1] = row * 8;
+              firstTriangle->uv[1][0] = right;
+              firstTriangle->uv[2][1] = bottom;
+              firstTriangle->uv[1][1] = bottom;
+              firstTriangle->uv[2][0] = left;
+              secondTriangle = (struct MeshTriangle *)SERAC_SPIRE_MESH +
+                               (row * SERAC_SPIRE_SIDES + column) * 2 + 1;
+              secondTriangle->uv[0][0] = left;
+              secondTriangle->uv[2][0] = left;
+              secondTriangle->uv[0][1] = row * 8;
+              secondTriangle->uv[2][1] = bottom;
+              secondTriangle->uv[1][0] = right;
+              secondTriangle->uv[1][1] = row * 8;
               next = (column + 1) % SERAC_SPIRE_SIDES + row * SERAC_SPIRE_SIDES;
-              firstTriangle[0] = next;
+              firstTriangle->vertex[0] = next;
               here = column % SERAC_SPIRE_SIDES + row * SERAC_SPIRE_SIDES;
-              firstTriangle[1] = here + SERAC_SPIRE_SIDES;
-              firstTriangle[2] = next + SERAC_SPIRE_SIDES;
-              secondTriangle[0] = here;
-              secondTriangle[1] = here + SERAC_SPIRE_SIDES;
-              secondTriangle[2] = next;
+              firstTriangle->vertex[1] = here + SERAC_SPIRE_SIDES;
+              firstTriangle->vertex[2] = next + SERAC_SPIRE_SIDES;
+              secondTriangle->vertex[0] = here;
+              secondTriangle->vertex[1] = here + SERAC_SPIRE_SIDES;
+              secondTriangle->vertex[2] = next;
             }
           }
         }
@@ -720,9 +722,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
 
       vertices = Heap_AllocEwram(1024);
       model = Render_AllocateModelList(1);
-      savedScrollX = gProjection.centerX;
-      savedScrollY = gProjection.centerY;
-      gProjection.centerY = savedScrollY - 16;
+      savedCenterX = gProjection.centerX;
+      savedCenterY = gProjection.centerY;
+      gProjection.centerY = savedCenterY - 16;
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
       world[0] = target->x;
@@ -976,8 +978,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       }
       Heap_Release(model);
       Heap_Release(vertices);
-      gProjection.centerX = savedScrollX;
-      gProjection.centerY = savedScrollY;
+      gProjection.centerX = savedCenterX;
+      gProjection.centerY = savedCenterY;
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
     }
@@ -985,11 +987,15 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+/// A great sword swings down onto the target, trailing blue after-images.
+///
 /// Abilities: Heavy Divide.
 void BattleEffect_RunHeavyDivide(struct BattleEffectParams *args) {
   BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_HEAVY_DIVIDE);
 }
 
+/// An axe spins across from the user to the target.
+///
 /// Abilities: Strong Hit.
 void BattleEffect_RunStrongHit(struct BattleEffectParams *args) {
   BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_STRONG_HIT);

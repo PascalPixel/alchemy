@@ -1,6 +1,6 @@
 /// @file
-/// Trident, the leaping strikes of Planet Diver and Planetary, and Meteor
-/// Blow's palette DMA.
+/// Trident, the leaping strikes of Planet Diver and Planetary, Meteor Blow's
+/// palette DMA, and the grid mesh builder.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -11,8 +11,6 @@ enum LeapingStrikeMode {
   LEAPING_STRIKE_PLANET_DIVER,
   LEAPING_STRIKE_PLANETARY
 };
-
-struct StripQuad;
 
 extern const struct Scale gTrident_UnitScale;
 
@@ -399,7 +397,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             Matrix_RotateY(DEGtoANG(180));
           }
           spinner->z += spinner->velocityZ;
-          Matrix_Scale(FIXED_ONE * 2, 75536, FIXED_ONE);
+          Matrix_Scale(FIXED_ONE * 2, FIXED_ONE + 10000, FIXED_ONE);
           Render_TransformVertices(gTrident_ProngCorners + x * 4, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -461,17 +459,18 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       for (i = 0, cellTable = (const u8 *)gBattleEffect_MotePictures,
           drawn = TRIDENT_SPARKS;
            i != TRIDENT_SPARK_COUNT; i++, drawn++) {
-        s32 spark;
+        s32 moteSize;
         s32 at;
 
         if (drawn->variant < 0) {
           continue;
         }
-        spark = (drawn->variant >> 3) + 1;
-        at = (spark - 1) * 2;
+        moteSize = (drawn->variant >> 3) + 1;
+        at = (moteSize - 1) * 2;
         blit[0](canvas, sprites + *(const u16 *)(cellTable + at),
-                FIXED_INTEGER_PART(drawn->x) - spark / 2,
-                FIXED_INTEGER_PART(drawn->y) - spark, spark, spark * 2);
+                FIXED_INTEGER_PART(drawn->x) - moteSize / 2,
+                FIXED_INTEGER_PART(drawn->y) - moteSize, moteSize,
+                moteSize * 2);
         drawn->variant--;
         Particle_AdvanceWithGravity2D(drawn, 56, toFIXED(1) / 8);
       }
@@ -489,7 +488,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         u32 flip = Random16();
 
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-                            gTrident_GlintFlips[flip & 3] | 3, 1);
+                            gTrident_GlintFlips[flip & 3] | EFFECT_CLIP_BOUNDS,
+                            BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],
@@ -695,7 +695,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         caster->velocityX = toFIXED(8);
       if (mode == LEAPING_STRIKE_PLANETARY)
         caster->velocityX = -caster->velocityX;
-      Actor_SelectAnimationFar(caster, 2);
+      Actor_SelectAnimationFar(caster, POSE_LEAP);
       work->shakeFrames = 4;
       Sound_PlayFar(SE_WHOOSH);
     }
@@ -705,6 +705,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       s32 slide = LEAPING_STRIKE_SLIDE_FRAMES;
 
       caster->verticalMotionStrength = 0;
+      // Planetary's depth of 0 is overwritten at once: both come down at the
+      // target's depth.
       if (mode == LEAPING_STRIKE_PLANET_DIVER)
         caster->z = target->z;
       else
@@ -928,9 +930,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
 /// Meteor Blow's horizontal-blank callback, the same routine as
 /// battle_effect_particle_streams.c's BattleEffect_ArmPaletteHBlankDma: stops
-/// DMA 0,
-/// then arms it to copy one BG palette word per scanline from the line table in
-/// the effect work, so the backdrop's colour changes down the screen.
+/// DMA 0, then arms it to copy one BG palette word per scanline from the line
+/// table in the effect work, so the backdrop's colour changes down the screen.
 void BattleEffect_ArmMeteorBlowPaletteDma(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;

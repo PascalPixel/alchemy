@@ -1,5 +1,6 @@
 /// @file
-/// Star Mine and the enemy's Rising Dragon.
+/// Star Mine, the enemies' Rising Dragon and the backdrop it scrolls, then the
+/// entry points of the rushing strikes.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -136,8 +137,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       s32 dx;
       s32 dy;
       s32 dz;
-      s32 a;
-      FIXED b;
+      s32 starX;
+      FIXED targetX;
 
       member = i % args->targetCount;
       target = BattleObject_GetFar(args->targets[member])->object;
@@ -163,15 +164,16 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       star->velocityX += dx;
       star->velocityY += dy;
       star->velocityZ += dz;
-      a = star->x;
-      if (a < 0) {
-        a = -a;
+      // Until it has passed its target, farther from the field's middle.
+      starX = star->x;
+      if (starX < 0) {
+        starX = -starX;
       }
-      b = target->x.fixed;
-      if (b < 0) {
-        b = -b;
+      targetX = target->x.fixed;
+      if (targetX < 0) {
+        targetX = -targetX;
       }
-      if (a <= b) {
+      if (starX <= targetX) {
         continue;
       }
 
@@ -269,8 +271,6 @@ void BattleEffect_BuildRepeatingTilemap(void) {
   }
 }
 
-struct StripQuad;
-
 /// Two corners of a row of the strip.
 struct CornerRow {
   struct Corner corners[2];
@@ -284,11 +284,12 @@ struct CornerRow {
 #define RISING_DRAGON_ENEMY_SPARK_COUNT 256
 #define TRAIL_SPARKS (RISING_DRAGON_ENEMY_SPARK_COUNT / 2)
 
-/// The dragon's body: a strip of SEGMENTS rows, RISING_DRAGON_ENEMY_BODY_WIDTH
-/// across, each row swaying RISING_DRAGON_ENEMY_ROW_PHASE further along than
-/// the one before, the sway turning a 64th of a turn a frame; the strip is
-/// drawn at RISING_DRAGON_ENEMY_BODY_SCALE.
-#define SEGMENTS 33
+/// The dragon's body: a strip of RISING_DRAGON_ENEMY_SEGMENTS rows,
+/// RISING_DRAGON_ENEMY_BODY_WIDTH across, each row swaying
+/// RISING_DRAGON_ENEMY_ROW_PHASE further along than the one before, the sway
+/// turning a 64th of a turn a frame; the strip is drawn at
+/// RISING_DRAGON_ENEMY_BODY_SCALE.
+#define RISING_DRAGON_ENEMY_SEGMENTS 33
 #define RISING_DRAGON_ENEMY_BODY_WIDTH 20
 #define RISING_DRAGON_ENEMY_ROW_PHASE 2018
 #define RISING_DRAGON_ENEMY_BODY_SCALE toFIXED(2.09156)
@@ -334,7 +335,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct BattleCamera *camera;
   s16 savedYaw;
   s32 height;
-  s32 savedMode;
+  s32 savedMotionStrength;
   s32 savedX;
   s32 savedZ;
   struct ScreenPoint source;
@@ -367,7 +368,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = camera->yaw;
   height = 0;
-  savedMode = victim->verticalMotionStrength;
+  savedMotionStrength = victim->verticalMotionStrength;
   savedX = victim->x;
   savedZ = victim->z;
   EffectPosition_ProjectBattler(args->targets[0], &source);
@@ -381,7 +382,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       work->sheet + RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   REG_BG2PA = Q_8_8(0.5);
-  Render_BuildQuadStrip(strip, 4, 32, SEGMENTS - 1);
+  Render_BuildQuadStrip(strip, 4, 32, RISING_DRAGON_ENEMY_SEGMENTS - 1);
 
   for (frame = 0; frame != RISING_DRAGON_ENEMY_FRAMES; frame++) {
     if (frame == 0) {
@@ -430,7 +431,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame == 166) {
       camera->yaw = savedYaw;
-      victim->verticalMotionStrength = savedMode;
+      victim->verticalMotionStrength = savedMotionStrength;
       victim->x = savedX;
       victim->y = toFIXED(100);
       victim->z = savedZ;
@@ -562,7 +563,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       if (frame >= 0) {
 
         // The dragon's body, swaying.
-        for (j = 0; j != SEGMENTS; j++) {
+        for (j = 0; j != RISING_DRAGON_ENEMY_SEGMENTS; j++) {
           for (i = 0; i != 2; i++) {
             (cells[j].corners + i)->x =
                 i * RISING_DRAGON_ENEMY_BODY_WIDTH +
@@ -594,11 +595,13 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           Matrix_RotateY(DEGtoANG(180));
         }
         Matrix_ScaleUniform(RISING_DRAGON_ENEMY_BODY_SCALE);
-        Render_TransformVertices(cells, vertices, SEGMENTS * 2);
+        Render_TransformVertices(cells, vertices,
+                                 RISING_DRAGON_ENEMY_SEGMENTS * 2);
         Render_DrawModelList(model);
         Matrix_Pop();
+        // The dragon's head, its jaws about the target, until frame 16 and
+        // again from frame 60 until the burst.
         if (frame <= 133 && (u32)(frame - 17) > 42) {
-          // The dragon's head, its jaws about the target.
           texture.logWidth = 6;
           texture.logHeight = 6;
           model->mesh = gBattleEffect_SquareMesh;
@@ -608,7 +611,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           Matrix_Translate(INTtoFIXED(target.x - 124), INTtoFIXED(height - 144),
                            0);
           Matrix_RotateZ(DEGtoANG(90));
-          Matrix_Scale(105536, 85536, FIXED_ONE);
+          // Drawn one and a third to one and a half times its size.
+          Matrix_Scale(FIXED_ONE + 40000, FIXED_ONE + 20000, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -792,7 +796,7 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
 #undef TRAIL_SPARKS
 #undef RISING_DRAGON_ENEMY_VERTICES
 #undef RISING_DRAGON_ENEMY_STRIP
-#undef SEGMENTS
+#undef RISING_DRAGON_ENEMY_SEGMENTS
 #undef RISING_DRAGON_ENEMY_BODY_WIDTH
 #undef RISING_DRAGON_ENEMY_ROW_PHASE
 #undef RISING_DRAGON_ENEMY_BODY_SCALE

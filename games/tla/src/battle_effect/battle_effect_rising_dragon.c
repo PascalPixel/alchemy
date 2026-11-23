@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
 /// On every strike after the first, the target's motion goes to this percent of
 /// its anchor's x, lowered from patch 1.
 #if TLA_PATCH_1
@@ -481,8 +479,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       }
     }
 
-    // The heart: held up to frame 47, then burning six frames a picture from
-    // 56.
+    // The heart: held up until frame 47, then in the closed fist, where from
+    // frame 62 it burns away, a picture every six frames.
     if (frame > 39) {
       if (frame <= 47) {
         if (args->side == EFFECT_SIDE_ENEMIES)

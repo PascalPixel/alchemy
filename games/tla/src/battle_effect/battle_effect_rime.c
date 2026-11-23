@@ -1,5 +1,6 @@
 /// @file
-/// Rime and Haze.
+/// Rime and Haze, whose Djinni rises while its sign turns over the target,
+/// then the entry points of the abilities BattleEffect_RunGaspFamily plays.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"

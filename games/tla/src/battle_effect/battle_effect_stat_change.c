@@ -527,6 +527,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
           lowerFlags = drawFlags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          // Built for the 128 by 128 canvas, 7 the shift of each side.
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,
                                     BLITTER_MAX);
           wisp =
@@ -539,7 +540,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           EFFECT_RELEASE_BLITTERS();
         }
       } else {
-        // Six 40x40 pictures four frames apart, ADDITIVE.
+        // Six 40x40 pictures four frames apart, added to the canvas.
         if (frame >=
                 member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
             frame < member * STAT_BOOST_TARGET_DELAY +
@@ -622,7 +623,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 origin[3];
   struct ScreenPoint screen;
   FIXED point[3];
-  DrawRectangle callbacks[2];
+  DrawRectangle draw[2];
   s32 i;
   void *palette;
 
@@ -692,7 +693,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(args->side, callbacks);
+  BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != args->targetCount * STAT_REDUCTION_TARGET_DELAY + 64;
@@ -726,18 +727,16 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         y = screen.y;
         if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
           if (targetFrame <= 26)
-            callbacks[0](canvas,
-                         work->sheet +
-                             targetFrame / 4 % 7 * PICTURE_BYTES(DAGGER),
-                         x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2,
-                         DAGGER_WIDTH, DAGGER_HEIGHT);
+            draw[0](canvas,
+                    work->sheet + targetFrame / 4 % 7 * PICTURE_BYTES(DAGGER),
+                    x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2, DAGGER_WIDTH,
+                    DAGGER_HEIGHT);
         } else {
           if (targetFrame <= 23)
-            callbacks[1](canvas,
-                         work->sheet +
-                             targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
-                         x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2,
-                         SHIELD_WIDTH, SHIELD_HEIGHT);
+            draw[1](canvas,
+                    work->sheet + targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
+                    x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
+                    SHIELD_HEIGHT);
         }
         // The chime as the picture breaks.
         /* FAKEMATCH(temporary): the target's frame worked out again, here and
@@ -764,13 +763,13 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
             EffectPosition_ProjectPoint((s32 *)shard, &screen);
             x = screen.x + xOffset;
             y = screen.y;
-            callbacks[0](canvas,
-                         work->sheet +
-                             (level * STAT_REDUCTION_SHARD_BYTES +
-                              gStatChange_ShardPictures[picture]) +
-                             STAT_REDUCTION_SHARD_PICTURES,
-                         x, y, gStatChange_ShardWidths[picture],
-                         gStatChange_ShardHeights[picture]);
+            draw[0](canvas,
+                    work->sheet +
+                        (level * STAT_REDUCTION_SHARD_BYTES +
+                         gStatChange_ShardPictures[picture]) +
+                        STAT_REDUCTION_SHARD_PICTURES,
+                    x, y, gStatChange_ShardWidths[picture],
+                    gStatChange_ShardHeights[picture]);
             Particle_AdvanceWithGravity3D(shard, 60, 0);
           }
         }

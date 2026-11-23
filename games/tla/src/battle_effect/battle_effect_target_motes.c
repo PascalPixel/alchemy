@@ -377,9 +377,9 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   struct ScreenPoint middle;
-  FIXED record[3];
-  struct Particle *one;
+  FIXED anchor[3];
   struct Particle *sheep;
+  struct Particle *flock;
   s32 i;
   s32 frame;
   DrawRectangle drawFlipped;
@@ -387,12 +387,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   s32 scroll;
   s32 member;
 
-  sheep = (struct Particle *)Ram_MapCellBuffer;
+  flock = (struct Particle *)Ram_MapCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   scroll = 0;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  REG_BLDCNT = scroll;
+  REG_BLDCNT = scroll; // still 0: no blending
   Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
@@ -403,23 +403,23 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != SLEEP_SEEDED; i++) {
-    one = &sheep[i];
-    one->x = INTtoFIXED((Random16() & 63) + 32);
-    one->y = -toFIXED(32);
-    one->velocityY = Random16() & 0;
-    one->z = Random16() & 3;
-    one->variant = Random16() & 255;
+    sheep = &flock[i];
+    sheep->x = INTtoFIXED((Random16() & 63) + 32);
+    sheep->y = -toFIXED(32);
+    sheep->velocityY = Random16() & 0;
+    sheep->z = Random16() & 3;
+    sheep->variant = Random16() & 255;
   }
 
   // Centre the canvas on the targets; what BG2 cannot reach moves the sheep.
   BattleEffect_GetTargetsMidpoint(&middle);
-  middle.x -= 64;
+  middle.x -= CANVAS_SIZE / 2;
   if (middle.x < 0) {
     scroll = middle.x;
     middle.x = 0;
-  } else if (middle.x > 112) {
-    scroll = middle.x - 112;
-    middle.x = 112;
+  } else if (middle.x > NARROW_CANVAS_PARTY_X) {
+    scroll = middle.x - NARROW_CANVAS_PARTY_X;
+    middle.x = NARROW_CANVAS_PARTY_X;
   }
   REG_BG2X = -middle.x << 8;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -432,7 +432,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);
 
-    // Place each target, and from frame 64 restore its palette, one
+    // Place each target, and from frame 64 restore its palette, sheep
     // target every 16 frames.
     EFFECT_FOR_EACH_TARGET(member, args) {
       struct MotionObject *object;
@@ -440,10 +440,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       object = BattleObject_GetFar(args->targets[member])->object;
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
-      record[0] = object->x;
-      record[1] = toFIXED(40);
-      record[2] = object->z;
-      Matrix_TranslateVector(record);
+      anchor[0] = object->x;
+      anchor[1] = toFIXED(40);
+      anchor[2] = object->z;
+      Matrix_TranslateVector(anchor);
       if (frame == member * 16 + 64)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
                                  POSE_DAMAGE, TINT_KEEP, 0);
@@ -451,41 +451,42 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
     // The sheep fall, each tumbling through its eight pictures: the first
     // four drawn as they are, the last four flipped.
-    one = sheep;
-    for (i = 0; i != SLEEP_SHEEP; i++, one++) {
-      if (frame > i * 4 && one->y <= toFIXED(128) - 1) {
+    sheep = flock;
+    for (i = 0; i != SLEEP_SHEEP; i++, sheep++) {
+      if (frame > i * 4 && sheep->y <= toFIXED(128) - 1) {
         s32 picture;
 
-        picture = (one->variant / SHEEP_TUMBLE_STEP) & 7;
+        picture = (sheep->variant / SHEEP_TUMBLE_STEP) & 7;
         if (picture < SHEEP_PICTURES)
           drawUpright(canvas,
                       work->sheet + picture * PICTURE_BYTES(SHEEP) +
                           PICTURE_BYTES(CARD),
-                      scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
-                      FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                      scroll + FIXEDtoINT(sheep->x) - SHEEP_WIDTH / 2,
+                      FIXEDtoINT(sheep->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                       SHEEP_HEIGHT);
         else
-          drawFlipped(
-              canvas,
-              work->sheet + picture * PICTURE_BYTES(SHEEP) -
-                  SHEEP_PICTURES * PICTURE_BYTES(SHEEP) + PICTURE_BYTES(CARD),
-              scroll + FIXEDtoINT(one->x) - SHEEP_WIDTH / 2,
-              FIXEDtoINT(one->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH, SHEEP_HEIGHT);
-        one->y += one->velocityY;
-        one->velocityY += toFIXED(1) / 8;
-        one->variant += one->z;
+          drawFlipped(canvas,
+                      work->sheet + picture * PICTURE_BYTES(SHEEP) -
+                          SHEEP_PICTURES * PICTURE_BYTES(SHEEP) +
+                          PICTURE_BYTES(CARD),
+                      scroll + FIXEDtoINT(sheep->x) - SHEEP_WIDTH / 2,
+                      FIXEDtoINT(sheep->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                      SHEEP_HEIGHT);
+        sheep->y += sheep->velocityY;
+        sheep->velocityY += toFIXED(1) / 8;
+        sheep->variant += sheep->z;
         // BUG: meant to bounce a sheep off the ground, tumbling faster, but
         // it tests for a speed of exactly 0 just after gravity was added, so
         // the sheep fall on through. BUGFIX bounces any sheep that is falling.
 #ifdef BUGFIX
-        if (one->y > GROUND_Y && one->velocityY > 0) {
+        if (sheep->y > GROUND_Y && sheep->velocityY > 0) {
 #else
-        if (one->y > GROUND_Y && one->velocityY == 0) {
+        if (sheep->y > GROUND_Y && sheep->velocityY == 0) {
 #endif
-          s32 speed = one->velocityY + 1;
-          one->y = GROUND_Y;
-          one->z += 4;
-          one->velocityY = -speed / 2;
+          s32 speed = sheep->velocityY + 1;
+          sheep->y = GROUND_Y;
+          sheep->z += 4;
+          sheep->velocityY = -speed / 2;
         }
       }
     }
@@ -514,7 +515,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
-  struct Particle *marker;
+  struct Particle *flame;
   s32 i;
   s32 frame;
   s32 start;
@@ -556,7 +557,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
         if (frame >= start && frame < start + CURSE_CANDLE_FRAMES) {
           // The candle on the target's head, then its flame, six frames a
           // picture.
-          marker = &work->particles[i];
+          flame = &work->particles[i];
           EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
           if (args->side == EFFECT_SIDE_PARTY) {
             pos.x -= NARROW_CANVAS_PARTY_X;
@@ -569,7 +570,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           // DEAD: always true here; the ROM keeps the test.
           if (frame >= start) {
             picture =
-                ((frame - start) + marker->variant) / 6 % CURSE_FLAME_PICTURES;
+                ((frame - start) + flame->variant) / 6 % CURSE_FLAME_PICTURES;
             draw[0](canvas, work->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
                     pos.x - CURSE_FLAME_WIDTH / 2, pos.y - 16,
                     CURSE_FLAME_WIDTH, CURSE_FLAME_HEIGHT);
@@ -627,11 +628,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   FIXED position[3];
   FIXED target[3];
   FIXED delta[3];
-  s32 rider[3];
+  s32 bob[3];
   struct ScreenPoint screen;
   FIXED point[3];
   struct ScreenPoint view;
-  DrawRectangle callbacks[2];
+  DrawRectangle blitters[2];
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -640,7 +641,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw = blitters);
   actor = BattleObject_GetFar(args->user)->object;
   goal = BattleObject_GetFar(args->targets[0])->object;
 
@@ -725,7 +726,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         size = DJINN_HEAL_MOTE_SIZE_MAX -
                (screen.depth - DJINN_HEAL_MOTE_DEPTH_NEAR) /
                    DJINN_HEAL_MOTE_DEPTH_STEP;
-        EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
+        EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, screen.x, screen.y, size);
         Particle_AdvanceWithGravity3D(spark, 60, 0);
         if (frame > i + 30) {
           s32 dx = -spark->x >> 8;
@@ -741,10 +742,10 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
     // The Djinni appears and bobs, for the last 15 frames.
     if (frame > 82) {
-      rider[0] = 0;
-      rider[1] = Trig_Sin(frame * (TRIG_TURN / 64)) * 4;
-      rider[2] = 0;
-      EffectPosition_ProjectPoint(rider, &screen);
+      bob[0] = 0;
+      bob[1] = Trig_Sin(frame * (TRIG_TURN / 64)) * 4;
+      bob[2] = 0;
+      EffectPosition_ProjectPoint(bob, &screen);
       screen.x >>= 1;
       draw[1](canvas, work->sheet, screen.x - SMALL_DJINNI_WIDTH / 2,
               screen.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
@@ -778,11 +779,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     point[2] = target[2] + Trig_Sin(frame * (TRIG_TURN / 32)) * DJINN_HEAL_SWAY;
     EffectPosition_ProjectPoint(point, &view);
     view.x >>= 1;
-    callbacks[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
-                 view.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
-                 MERCURY_SMALL_DJINNI_HEIGHT);
+    blitters[0](canvas, work->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
+                view.y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+                MERCURY_SMALL_DJINNI_HEIGHT);
 
-    // Each target in turn, eight frames apart: its puffs close in around
+    // Each target in turn, eight frames apart: its sparkles close in around
     // it, and it flashes from 40 to 64 frames into its turn.
     EFFECT_FOR_EACH_TARGET(member, args) {
       struct MotionObject *object =

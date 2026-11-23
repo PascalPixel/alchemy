@@ -393,10 +393,16 @@ static void ColosseumSatrageMatch_PushBoardWalkPillar(void) {
 /// pillar to the ledge's height and west behind the chest. Its rows above,
 /// (x, 0..7), are open across, and the vine Growth raises opens column 32, so
 /// a climb up the vine and down column 35 is open on the cells.
-/// XXX: whether the race lets Isaac climb that way, and so whether a player
-/// ever sees the opening; a race recorded with Growth cast and the vine
-/// climbed would settle it. Staged with FLAG_PLANT_GROWN at the vine's foot,
-/// (32, 17), and north held, he stands there and does not climb.
+/// In the race the vine is climbed only from the sprout's own cell. A climb
+/// starts from the cell the leader stands on: a climbing cell
+/// (CELL_BEHAVIOR_CLIMB, read by Field_UpdateWalking), with his way blocked for
+/// more than FIELD_PUSH_FRAMES frames and Up held (Field_RunPushCell). Column
+/// 32's climbing cells on the ground layer are (32, 15) and (32, 16), and the
+/// sprout, which blocks the way, stands on (32, 16). Put at the vine's foot,
+/// (32, 17), and holding Up for five seconds, Isaac stands against it and does
+/// not climb; put on (32, 16) itself, he climbs the vine up The Wall's face and
+/// walks on north over its top. Going down column 35 past the opened cell was
+/// not seen.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 column;
   s32 row;

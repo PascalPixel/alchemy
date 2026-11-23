@@ -212,12 +212,11 @@ enum StuccoRoomsBCellBehavior {
 #define STUCCO_ROOMS_B_SOUTH_ROOM_CAMERA_MAX_Z 936
 #endif
 
-/// The shop rows used by the room trigger tables below.
+/// Tolbi's shops, as Shop_Run numbers their stock.
 enum {
   STUCCO_ROOMS_B_WEAPON_SHOP = 26,
   STUCCO_ROOMS_B_ARMOR_SHOP = 27,
-  STUCCO_ROOMS_B_ITEM_SHOP = 28,
-  STUCCO_ROOMS_B_ACTOR_SLOT_END = 66
+  STUCCO_ROOMS_B_ITEM_SHOP = 28
 };
 
 /// Asks a yes/no question, then answers with the message after the question
@@ -225,7 +224,7 @@ enum {
 static inline void StuccoRoomsB_AskYesNo(s32 question, s32 speaker) {
   Event_SetMessageId(question);
   Event_OpenMessage(speaker, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
@@ -238,7 +237,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gStuccoRoomsBEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gStuccoRoomsBExits; }
 
@@ -302,8 +301,7 @@ static void StuccoRoomsB_EnterDoor(void) {
   s32 doorIndex;
 
   work = gFieldWork;
-  for (actorId = ACTOR_FIRST_PLACED; actorId < STUCCO_ROOMS_B_ACTOR_SLOT_END;
-       actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId < ACTOR_ID_COUNT; actorId++) {
     actor = Actor_Get(actorId);
     if (actor != NULL) {
       actor->motionFlags = 0;
@@ -440,7 +438,9 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_End();
 }
 
-/// Sets up the rooms on entry.
+/// After Colosso, sets the stranded passengers and the woman who hid the medal
+/// where they now stand, and plays each guest room's short event the first
+/// time the party walks in.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -498,6 +498,9 @@ static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
     // "They require a lot of healing herbs once the finals begin...."
     Event_ShowMessage(speaker, 0);
   } else {
+    // "Is this your first time to Tolbi?"
+    // Yes: "Tolbi offers many chances to powerful warriors..."
+    // No: "Tolbi is a fun place, no matter how many times you visit!..."
     StuccoRoomsB_AskYesNo(MsgTolbiFirstTimeTolbi, speaker);
   }
 }
@@ -508,6 +511,10 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
   if ((u16)FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_WEAPON_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
+    // "Did you come all the way from Kalay?"
+    // Yes: "It's too bad you can't go back..."
+    // No: "The people visiting from the east are all stuck at Karagol Sea
+    // Port."
     StuccoRoomsB_AskYesNo(MsgTolbiComeWayKalay, speaker);
   } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     Event_SetMessageId(MsgTolbiColossoFinalsFinally);
@@ -549,6 +556,9 @@ static void StuccoRoomsB_TalkToArmorMerchant(s32 speaker) {
 /// In Tolbi, the chef asks whether the party watched Colosso, which he missed.
 static void StuccoRoomsB_TalkToChef(s32 speaker) {
   Event_Start();
+  // "You look like a warrior, but you were watching Colosso, right?"
+  // Yes: "Tsk! Just watching doesn't make you any better than the next guy!..."
+  // No: "Oh? Didn't even watch? What are you, crazy?..."
   StuccoRoomsB_AskYesNo(MsgTolbiLookLikeWarrior, speaker);
   Event_End();
 }
@@ -566,6 +576,9 @@ static void StuccoRoomsB_TalkToWaitress(s32 speaker) {
 /// stay with them, then admits the house is already full.
 static void StuccoRoomsB_TalkToHost(s32 speaker) {
   Event_Start();
+  // "Do you want to stay with us?"
+  // Yes: "Actually, I'm sorry, but we're already full..."
+  // No: "That's good... Our place is already full, anyway."
   StuccoRoomsB_AskYesNo(MsgTolbiWantStay, speaker);
   Event_End();
 }
@@ -577,6 +590,9 @@ static void StuccoRoomsB_TalkToHost(s32 speaker) {
 static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
   Event_Start();
   if (GameFlag_Get(FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN) == 0) {
+    // "Hee hee! Do I look like I'm that excited?"
+    // Yes: "I see. That must be because the weather is nice."
+    // No: "Yeah! I'm the same as always."
     StuccoRoomsB_AskYesNo(MsgTolbiHeeHeeLook, speaker);
   } else {
     if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO) == 0) {
@@ -625,6 +641,9 @@ static void StuccoRoomsB_TalkToAngryPassenger(s32 speaker) {
 /// with no way back.
 static void StuccoRoomsB_TalkToFellowPassenger(s32 speaker) {
   Event_Start();
+  // "Hey! You're the would-be warrior! Do you remember me?"
+  // Yes: "You do? Wow! That's great! Neither of us can get back to Kalay..."
+  // No: "It's me! We rode the same ship from Kalay! I guess you forgot."
   StuccoRoomsB_AskYesNo(MsgTolbiWarriorRemember, speaker);
   Event_End();
 }
@@ -659,25 +678,25 @@ s32 gStuccoRoomsBSquashStretch[] = {
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -1024),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -1024),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -1024),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -1024),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

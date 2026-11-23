@@ -237,14 +237,16 @@ struct DropSplashBuffer {
 
 /// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
 /// two sets of motes): the falling drop, a blue bubble; the small splash it
-/// lands in; then the large splash.
+/// lands in, as large as the drop; then the large splash.
 #define DOUSE_DROP_WIDTH 24
 #define DOUSE_DROP_HEIGHT 24
-#define DOUSE_BURST_PICTURE_WIDTH 42
-#define DOUSE_BURST_PICTURE_HEIGHT 42
-#define DOUSE_FALLING_PICTURE (2 * MOTE_SET_BYTES)
-#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + PICTURE_BYTES(DOUSE_DROP))
-#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+#define DOUSE_LARGE_SPLASH_WIDTH 42
+#define DOUSE_LARGE_SPLASH_HEIGHT 42
+#define DOUSE_DROP_PICTURE (2 * MOTE_SET_BYTES)
+#define DOUSE_SMALL_SPLASH_PICTURE                                             \
+  (DOUSE_DROP_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+#define DOUSE_LARGE_SPLASH_PICTURE                                             \
+  (DOUSE_SMALL_SPLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 
 /// Drops of water fall diagonally onto the targets' side of the field, 8 pixels
 /// down and 4 across a frame, each bursting in a splash that throws up droplets
@@ -268,7 +270,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
-                             work->sheet + DOUSE_FALLING_PICTURE, 1, 1);
+                             work->sheet + DOUSE_DROP_PICTURE, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, work->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -293,7 +295,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
     drop = &work->particles[i];
     x = Random16() & 63;
-    y = -(i * gFalling_Counts[work->args->variant][FALLING_BOLT_SPACING] + 16);
+    y = -(i * gFalling_Counts[work->args->variant][DOUSE_DROP_SPACING] + 16);
     if (work->args->side == EFFECT_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
@@ -324,16 +326,13 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  for (frame = 0;
-       frame != gFalling_Counts[work->args->variant][FALLING_BOLT_DURATION];
+  for (frame = 0; frame != gFalling_Counts[work->args->variant][DOUSE_FRAMES];
        frame++) {
-    if (frame ==
-        gFalling_Counts[work->args->variant][FALLING_BOLT_DURATION] - 64)
+    if (frame == gFalling_Counts[work->args->variant][DOUSE_FRAMES] - 64)
       EFFECT_SHOW_DAMAGE(SE_WATER);
 
     // Drops fall down the slant, then splash.
-    for (i = 0;
-         i != gFalling_Counts[work->args->variant][FALLING_BOLT_WAVE_COUNT];
+    for (i = 0; i != gFalling_Counts[work->args->variant][DOUSE_DROP_COUNT];
          i++) {
       s32 x;
       s32 y;
@@ -342,7 +341,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       x = drop->x / 8;
       y = drop->y / 8;
       if (drop->variant == -1) {
-        drawDrop(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
+        drawDrop(canvas, work->sheet + DOUSE_DROP_PICTURE, x, y,
                  DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         if (drop->y <= FALLING_LAND_Y) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
@@ -353,13 +352,15 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         } else {
           // Droplets fly up from the middle of the landed drop.
           drop->variant = 0;
-          for (k = 0; k != gFalling_Counts[work->args->variant]
-                                          [FALLING_BOLT_SPARKS_PER_BOLT];
+          for (k = 0;
+               k !=
+               gFalling_Counts[work->args->variant][DOUSE_DROPLETS_PER_DROP];
                k++) {
-            droplet = &DOUSE_SPLASH_BUFFER->droplets
-                           [i * gFalling_Counts[work->args->variant]
-                                               [FALLING_BOLT_SPARKS_PER_BOLT] +
-                            k];
+            droplet =
+                &DOUSE_SPLASH_BUFFER
+                     ->droplets[i * gFalling_Counts[work->args->variant]
+                                                   [DOUSE_DROPLETS_PER_DROP] +
+                                k];
             droplet->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
             droplet->y = INTtoFIXED(y);
             droplet->velocityX = ((Random16() & 255) - 128) << 9;
@@ -379,13 +380,13 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       } else {
         // Four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          drawDrop(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
+          drawDrop(canvas, work->sheet + DOUSE_SMALL_SPLASH_PICTURE, x, y,
                    DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         else if (drop->variant <= 7)
-          drawDrop(canvas, work->sheet + DOUSE_BURST_PICTURE,
-                   x - (DOUSE_BURST_PICTURE_WIDTH - DOUSE_DROP_WIDTH) / 2,
-                   y - (DOUSE_BURST_PICTURE_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
-                   DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
+          drawDrop(canvas, work->sheet + DOUSE_LARGE_SPLASH_PICTURE,
+                   x - (DOUSE_LARGE_SPLASH_WIDTH - DOUSE_DROP_WIDTH) / 2,
+                   y - (DOUSE_LARGE_SPLASH_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
+                   DOUSE_LARGE_SPLASH_WIDTH, DOUSE_LARGE_SPLASH_HEIGHT);
         if (drop->variant <= FALLING_LANDED_LAST_FRAME)
           drop->variant++;
       }
@@ -421,6 +422,10 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 #undef ICE_PUFF_FRAMES
 #undef FALLING_LAND_Y
 #undef DOUSE_SPLASH_BUFFER
-#undef DOUSE_FALLING_PICTURE
-#undef DOUSE_FLASH_PICTURE
-#undef DOUSE_BURST_PICTURE
+#undef DOUSE_DROP_WIDTH
+#undef DOUSE_DROP_HEIGHT
+#undef DOUSE_LARGE_SPLASH_WIDTH
+#undef DOUSE_LARGE_SPLASH_HEIGHT
+#undef DOUSE_DROP_PICTURE
+#undef DOUSE_SMALL_SPLASH_PICTURE
+#undef DOUSE_LARGE_SPLASH_PICTURE

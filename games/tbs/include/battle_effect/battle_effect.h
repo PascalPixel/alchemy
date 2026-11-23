@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_H
 #define ALCHEMY_BATTLE_EFFECT_H
 
+/// @file
+/// The battle effects: the effect kinds an ability plays, and the runners in
+/// src/battle_effect/ that draw them over the battle, part by part.
+
 #include "types.h"
 #include "fixed_math.h"
 #include "battle/battle_effect_work.h"
@@ -494,7 +498,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args);
 // battle_effect_fire.c
 void BattleEffect_RunFire(struct BattleEffectParams *args);
 
-// frost.c
+// battle_effect_frost.c
 void BattleEffect_RunFrost(struct BattleEffectParams *args);
 
 // battle_effect_ray.c
@@ -504,7 +508,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args);
 void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args);
 void BattleEffect_RunBlast(struct BattleEffectParams *args);
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority);
+void BattleEffect_SpawnObjects(s32 count, s32 spriteId, u32 priority);
 void BattleEffect_DoNothing(void);
 
 // battle_effect_burst_shower.c
@@ -526,7 +530,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args);
 // battle_effect_atalanta.c
 void BattleEffect_RunAtalanta(struct BattleEffectParams *args);
 
-// growth.c
+// battle_effect_growth.c
 void BattleEffect_RunGrowth(struct BattleEffectParams *args);
 void BattleEffect_RunPunji(struct BattleEffectParams *args);
 void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode);

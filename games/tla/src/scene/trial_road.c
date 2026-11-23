@@ -169,6 +169,12 @@ enum TrialRoadCell {
 /// The four stages' flags, from FLAG_AREA_TEMP_81: each set once Moapa reached
 /// that stage's door before Felix.
 #define FLAG_RIVAL_FIRST_AT_DOOR_BASE FLAG_AREA_TEMP_81
+/// Each cracked pillar of the crumbling stage: set once Felix has first
+/// stepped on it and it has flashed, and once it has crumbled away.
+#define FLAG_WEST_CRUMBLING_PILLAR_STEPPED_ON FLAG_AREA_TEMP_42
+#define FLAG_WEST_CRUMBLING_PILLAR_CRUMBLED FLAG_AREA_TEMP_43
+#define FLAG_EAST_CRUMBLING_PILLAR_STEPPED_ON FLAG_AREA_TEMP_44
+#define FLAG_EAST_CRUMBLING_PILLAR_CRUMBLED FLAG_AREA_TEMP_45
 /// Set once Felix climbs to the summit ahead of Moapa.
 #define FLAG_PARTY_FIRST_AT_PEAK FLAG_AREA_TEMP_85
 /// Set once the stages' order has been dealt from the leader's name.
@@ -4068,7 +4074,9 @@ s8 gTrialRoad_TreasureStages[] = {
     6, 7,
 };
 
-/// The stage numbers TrialRoad_DealStageOrder deals into the stage order.
+/// The stages each path's order must hold at least one of: the pillar, weeds
+/// pillar, Pound and sand stages. TrialRoad_DealStageOrder reads only these
+/// first four.
 s8 gTrialRoad_KeyStages[] = {
     0, 2, 3, 7, 1, 4, 5, 6,
 };
@@ -4587,7 +4595,9 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
 /// The crumbling stage's two cracked pillars, west and east, each with the flag
 /// that remembers its first step (Leader_CheckCrumblingStep), ended by -1.
 LAST_DATA s16 gTrialRoad_CrumblingPillars[] = {
-    15, 834, 16, 836, -1, 0,
+    ACTOR_WEST_CRUMBLING_PILLAR, FLAG_WEST_CRUMBLING_PILLAR_STEPPED_ON,
+    ACTOR_EAST_CRUMBLING_PILLAR, FLAG_EAST_CRUMBLING_PILLAR_STEPPED_ON,
+    -1, 0,
 };
 // clang-format on
 
@@ -4649,10 +4659,10 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BESIDE_CRUMBLING_PILLAR,
      CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     CELL_WEST_CRUMBLING_PILLAR, FLAG_AREA_TEMP_43,
+     CELL_WEST_CRUMBLING_PILLAR, FLAG_WEST_CRUMBLING_PILLAR_CRUMBLED,
      EVENT(TrialRoad_CrumbleWestPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
-     CELL_EAST_CRUMBLING_PILLAR, FLAG_AREA_TEMP_45,
+     CELL_EAST_CRUMBLING_PILLAR, FLAG_EAST_CRUMBLING_PILLAR_CRUMBLED,
      EVENT(TrialRoad_CrumbleEastPillar)},
     {TRIGGER_TABLE_END},
 };

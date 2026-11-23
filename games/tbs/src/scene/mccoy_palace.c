@@ -658,9 +658,12 @@ static inline void McCoyPalace_PrepareCompanionApproach(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
 }
 
-/// McCoy's Palace, through McCoy's door before the curse is lifted, the first
-/// audience: the captain announces the party and McCoy asks whether they can
-/// save Kolima.
+/// The first audience, on walking through McCoy's door before Kolima's curse
+/// is lifted: the captain announces the party, McCoy calls Isaac closer and
+/// asks whether they will go to Kolima Forest. On no he sends them away as
+/// too young, and a return lets Isaac change his mind. On yes he tosses Isaac
+/// the key to the barricades, then, seeing how young the party is, takes it
+/// back and has his captain see them out.
 static void McCoyPalace_AudienceWithMcCoy(void) {
   struct Actor *actor;
 
@@ -1154,10 +1157,10 @@ leave:
   Event_End();
 }
 
-/// McCoy's Palace, at MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM after the
-/// first audience: outside McCoy's door, his captain is sorry the party was
-/// rejected, asks them not to go to Kolima and lets slip that the barricade may
-/// not need a key.
+/// Back in the hall after the first audience, McCoy's door opens behind the
+/// party and the captain comes out. He is sorry Isaac was rejected, asks him to
+/// promise not to go to Kolima, lets slip "That barricade... You may not need
+/// a key.", and leaves down the red carpet.
 static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_Start();
   Event_StartScreenTransition();
@@ -1230,8 +1233,10 @@ static void McCoyPalace_FaceCompanionsForAudience(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
 }
 
-/// McCoy's Palace, once Kolima's curse is lifted: brought in under arrest, the
-/// party is thanked by McCoy and sent to choose a reward.
+/// Once Kolima's curse is lifted, the guards march the party into McCoy's room
+/// as if under arrest. McCoy thanks Isaac, explains he only feared they would
+/// not stop by on the way back, and has the captain take them down to the
+/// treasure room to choose a reward.
 static void McCoyPalace_McCoyRewardsParty(void) {
   struct Actor *viewCenter;
   struct Actor *actor;
@@ -1516,9 +1521,10 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_End();
 }
 
-/// McCoy's Palace, at MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM, the
-/// treasure room: the captain shows the four chests and the soldier who keeps
-/// the treasure explains that only one may be chosen.
+/// In the treasure room, the captain walks the party up to four chests in a
+/// row before the barred gate. He tells the soldier at the gate that Lord
+/// McCoy ordered Isaac and his companions brought here, and the soldier says
+/// "You may select a single item from among these four chests."
 static void McCoyPalace_PresentRewardChests(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

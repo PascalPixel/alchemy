@@ -1343,7 +1343,7 @@ static inline void AltinPeak_PlayLandingShake(s32 amplitude, s32 holdFrames) {
 /// hops round by the east ledge and across the ice to the west ledge, and
 /// cries again.
 ///
-/// It happens once (FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN). The beast then
+/// It happens once (FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP). The beast then
 /// keeps turning to face Isaac. The ice stays a square to hop on, at cell (18,
 /// 13), so Isaac can follow it across.
 static void AltinPeak_ShowFirstBeastRoute(void) {
@@ -1458,7 +1458,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   FieldActor_WatchAndStartScript(ACTOR_FIRST_WATER_BEAST,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                  gAltinPeak_FaceLeaderScript);
-  GameFlag_Set(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP);
   Event_End();
 }
 
@@ -1466,7 +1466,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
 /// and (21, 14)), the water beast across the ice cries out, hops away to the
 /// west end of its ledge and settles there to spit water east.
 ///
-/// It happens once (FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN), and the beast
+/// It happens once (FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY), and the beast
 /// spits there until its battle. The view stays on it for one to two
 /// seconds, less if a button is pressed, before going back to Isaac.
 static void AltinPeak_FirstBeastHopsAway(void) {
@@ -1545,7 +1545,7 @@ static void AltinPeak_FirstBeastHopsAway(void) {
   FieldCamera_MoveWithinMapBounds(actor->x.fixed, actor->y.fixed,
                                   actor->z.fixed, 1);
   FieldCamera_WaitForMove();
-  GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY);
   Event_End();
 }
 
@@ -1605,7 +1605,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   }
   if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
     Actor_SetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
-    if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN) != 0) {
+    if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY) != 0) {
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
       Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
           FieldEffect_UpdateFrostGlint;
@@ -1619,7 +1619,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       AltinPeak_StartSpitting(130, 0, 168, FACING_EAST);
       return;
     }
-    if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
+    if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP) == 0) {
       return;
     }
     Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
@@ -3063,8 +3063,8 @@ struct Trigger gAltinPeak_TriggersOther[] = {
 
 struct Trigger gAltinPeak_FirstWaterBeastTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
-    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_FIRST_BEAST, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT(AltinPeak_ShowFirstBeastRoute)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_EAST_LEDGE_BY_GAP, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT(AltinPeak_FirstBeastHopsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_FIRST_BEAST, FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP, EVENT(AltinPeak_ShowFirstBeastRoute)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_EAST_LEDGE_BY_GAP, FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY, EVENT(AltinPeak_FirstBeastHopsAway)},
     {TRIGGER_TALK, ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS, EVENT(AltinPeak_FightFirstWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS,
         EVENT(AltinPeak_FightFirstWaterBeast)},

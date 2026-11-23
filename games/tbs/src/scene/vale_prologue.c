@@ -111,7 +111,7 @@ extern s32 gValePrologue_BoulderRollsDownriver[];
 extern struct SceneEntrance gValePrologue_Entrances[];
 extern u32 gValePrologue_Exits[];
 extern struct ActorPlacement gValePrologue_ActorPlacements[];
-extern struct ActorPlacement gValePrologue_BoulderWatchers[];
+extern struct ActorPlacement gValePrologue_BoulderElders[];
 extern struct Trigger gValePrologue_Triggers[];
 extern u16 gValePrologue_SanctumDoorOpens[];
 extern u16 gValePrologue_IsaacsDoorOpens[];
@@ -142,7 +142,7 @@ static void ValePrologue_CycleBoulderPalette(void);
 static void ValePrologue_CopyLeaderSpritePriority(void);
 
 /// The placed actors, numbered in the order of gValePrologue_ActorPlacements.
-/// The elders holding back the Boulder (gValePrologue_BoulderWatchers) follow
+/// The elders holding back the Boulder (gValePrologue_BoulderElders) follow
 /// them.
 enum StormNightActorId {
   /// The strongman who comes back to the river with Jenna, his Psynergy
@@ -181,7 +181,7 @@ enum StormNightActorId {
   /// (ValePrologue_FlickerBoulderShadow).
   ACTOR_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
-  // elders!", vale_plaza.c), from gValePrologue_BoulderWatchers, which
+  // elders!", vale_plaza.c), from gValePrologue_BoulderElders, which
   // ValePrologue_WatchBoulderFall places after the scene's own actors and
   // removes.
   // Two invisible actors stand on the spots of ACTOR_ELDER_EAST and
@@ -1434,7 +1434,7 @@ static void ValePrologue_WatchBoulderFall(void) {
 
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     Event_Start();
-    Event_AppendActorPlacements(gValePrologue_BoulderWatchers);
+    Event_AppendActorPlacements(gValePrologue_BoulderElders);
     Scene_StartEventPsynergy();
     wait(1);
     Sound_Play(SE_RUMBLE);
@@ -3307,7 +3307,7 @@ struct ActorPlacement gValePrologue_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ActorPlacement gValePrologue_BoulderWatchers[] = {
+struct ActorPlacement gValePrologue_BoulderElders[] = {
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, 7,
         124, 0, 375, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

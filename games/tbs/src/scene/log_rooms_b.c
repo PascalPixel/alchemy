@@ -356,7 +356,7 @@ static void LogRoomsB_TalkToInnkeeper(void) {
 /// Mind Read on the girl at the inn: before she has given Isaac a Bone she is
 /// tempted to taste the cooking; after, she thinks Isaac really likes bones and
 /// wonders whether he has a calcium deficiency.
-static void LogRoomsB_ReadBoneGiverMind(void) {
+static void LogRoomsB_ReadInnGirlsMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     Event_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
@@ -520,7 +520,7 @@ struct Trigger gLogRoomsB_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT(LogRoomsB_ReadBoneGiverMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT(LogRoomsB_ReadInnGirlsMind) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL, CONDITION_ALWAYS, EVENT(Vault_FindBone) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_LOG_ROOMS_A_JAR, FLAG_LOG_ROOMS_A_JAR_COINS, FIND_COINS(7) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_LOG_ROOMS_A_FIRST_BARREL, FLAG_LOG_ROOMS_A_BARREL_COINS, FIND_COINS(4) },

@@ -156,8 +156,8 @@ extern struct Trigger gBilibinTreasuryTriggers[];
 extern u16 *gBilibin_DoorSteps[];
 /// Each door's cell, as column and row.
 extern s16 gBilibin_DoorCells[][2];
-/// The crates' lane, as column and row pairs.
-extern u8 gBilibin_CratesLaneCells[];
+/// The cells round the crates' place that push them, as column and row pairs.
+extern u8 gBilibin_CratesPushCells[];
 extern s32 gPushedActor_DirectionSteps[];
 extern s32 gBilibin_RippleScript[];
 
@@ -179,7 +179,7 @@ static void Bilibin_RestoreRiverActors(void);
 /// the road to Kolima.
 ///
 /// The same work follows every push and every arrival at the barricade: the
-/// ten cells round the crate's place, listed in gBilibin_CratesLaneCells, are
+/// ten cells round the crate's place, listed in gBilibin_CratesPushCells, are
 /// made ground that pushes the crate, and the crate's own cell is walled off.
 static void Bilibin_UpdateCratesCells(void);
 static void Bilibin_SetUpTreasury(void);
@@ -844,7 +844,7 @@ static void Bilibin_RestoreRiverActors(void) {
   Bilibin_UpdateCratesCells();
 }
 
-/// The cells round the crate's place, as gBilibin_CratesLaneCells lists them.
+/// The cells round the crate's place, as gBilibin_CratesPushCells lists them.
 #define CRATES_LANE_CELLS 10
 
 static void Bilibin_UpdateCratesCells(void) {
@@ -858,8 +858,8 @@ static void Bilibin_UpdateCratesCells(void) {
   cratesRow = FIELD_CELL(actor->z.fixed);
 
   for (i = 0; i < 2 * CRATES_LANE_CELLS; i += 2) {
-    MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesLaneCells[i],
-                               gBilibin_CratesLaneCells[i + 1]);
+    MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesPushCells[i],
+                               gBilibin_CratesPushCells[i + 1]);
   }
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
@@ -1324,9 +1324,9 @@ s16 gBilibin_DoorCells[][2] = {
     {54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };
 
-/// The ten cells of the crates' lane at the Bilibin Barricade, as column and
-/// row.
-u8 gBilibin_CratesLaneCells[] = {
+/// The ten cells round the crates' place at the Bilibin Barricade that push
+/// them, as column and row.
+u8 gBilibin_CratesPushCells[] = {
     8,  18, 9,  18, 10, 18, 8,  19, 9,  19,
     10, 19, 11, 19, 9,  20, 10, 20, 11, 20,
 };

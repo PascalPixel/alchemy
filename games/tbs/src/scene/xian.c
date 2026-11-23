@@ -173,7 +173,7 @@ static void Xian_MistJoins(void) {
 }
 
 /// Keeps the ice pillar drawn under Isaac while he stands on top of it.
-static void Xian_UpdateFrozenPuddleLayer(void) {
+static void Xian_UpdateFrozenWaterLayer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader->y.part[0].integer > 31) {
     Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -495,7 +495,7 @@ static void Xian_FreezeSpilledWater(void) {
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   MapGrid_CopyCellAttributes(3, 17, 1, 1, FIELD_CELL(puddleX),
                              (FIELD_CELL(puddle->z.fixed)));
-  Task_AddFrame(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
+  Task_AddFrame(Xian_UpdateFrozenWaterLayer, TASK_PASS_FRAME);
   GameFlag_Set(FLAG_XIAN_SPILLED_WATER_FROZEN);
   Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 2);
   Event_End();
@@ -827,7 +827,7 @@ s32 Scene_Initialize(void) {
           3, 17, 1, 1, FIELD_CELL(puddleX),
           FIELD_CELL(Actor_Get(ACTOR_SPILLED_WATER)->z.fixed));
     }
-    Task_AddFrame(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
+    Task_AddFrame(Xian_UpdateFrozenWaterLayer, TASK_PASS_FRAME);
   }
   // The water carrier's sprite is drawn with its green and blue swapped.
   Actor_SetSpriteColorById(ACTOR_WOMAN_CARRYING_WATER, SPRITE_COLOR_RBG);

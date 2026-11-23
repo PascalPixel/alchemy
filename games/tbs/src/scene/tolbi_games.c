@@ -82,7 +82,7 @@ extern const u16 gTolbiSpring_AlphaSteps[];
 extern const u32 gTolbiSpring_PrizeItems[];
 extern const u16 gTolbiSpring_CoinPrizes[];
 extern const u32 gTolbiSpring_LuckyWheelsPrizeItems[];
-extern const u8 gTolbiSpring_SliderFrames[];
+extern const u8 gTolbiSpring_CrabFrames[];
 extern const u8 gTolbiSpring_CircleFrames[];
 extern const u8 gTolbiSpring_ActorPixelX[];
 extern const u8 gTolbiSpring_ActorPixelZ[];
@@ -1443,14 +1443,14 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
           Vector3_Coordinates(&obstacle->position), 0,
-          gTolbiSpring_SliderFrames[obstacle->speedMode],
+          gTolbiSpring_CrabFrames[obstacle->speedMode],
           obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
       break;
     case 1:
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1,
           Vector3_Coordinates(&obstacle->position), 0,
-          gTolbiSpring_SliderFrames[obstacle->speedMode],
+          gTolbiSpring_CrabFrames[obstacle->speedMode],
           obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
       break;
     case 2:
@@ -1789,7 +1789,7 @@ const u32 gTolbiSpring_LuckyWheelsPrizeItems[] = {
     ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
-const u8 gTolbiSpring_SliderFrames[] = {
+const u8 gTolbiSpring_CrabFrames[] = {
     0, 1, 9,
 };
 

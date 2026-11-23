@@ -1228,6 +1228,8 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_PlaySound(SE_STAIRS_DOWN);
   VenusLighthouse_GoDownStairs(ACTOR_JENNA, -1);
   FieldEvent_Wait(40);
+  // Behind them the floor switch springs back up and the statue stands where
+  // it was.
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
   Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);

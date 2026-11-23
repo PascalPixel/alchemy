@@ -14,12 +14,13 @@
 /// Makes each listed actor (ids, ended by ACTOR_LIST_END) a block in the map:
 /// its cell's shape is tagged BLOCK_HEIGHT_STEPS above the ground, so the party
 /// can stand on it, its cell is marked MAP_CELL_JUMP, a gap to jump onto from
-/// another block (the old mark kept in the actor), and layer 2 blocks it. A
+/// another block (the old mark kept in the actor), and the overhead layer's
+/// cell is a wall. A
 /// leader below the new ground is lifted onto it. Scenes call it as they
 /// start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *blocks = map->layers[2].cells;
+  struct MapCell *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
   s32 height;
@@ -83,7 +84,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
       u8 *grid = gMapShapeGrid;
       struct MapCell *cells = map->layers[target->layer].cells;
-      struct MapCell *blocks = map->layers[2].cells;
+      struct MapCell *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                           target->z.fixed);
@@ -114,7 +115,7 @@ void Actor_PlaceMovedBlock(void) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     u8 *grid = Ram_MapShapeGrid;
     struct MapCell *cells = map->layers[target->layer].cells;
-    struct MapCell *blocks = map->layers[2].cells;
+    struct MapCell *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
     u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
     u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                         target->z.fixed);
@@ -135,7 +136,7 @@ void Actor_PlaceMovedBlock(void) {
   }
 }
 
-struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
+struct Actor *Actor_FindAtCell(s32 *position, s32 checkY);
 
 /// Returns the actor one cell, or failing that two cells, ahead of the leader
 /// at the leader's height, or NULL.
@@ -225,6 +226,13 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 #include "system/affine.h"
 
+/// An OAM entry's affine mode (attribute 0's two bits).
+enum OamAffineMode {
+  OAM_AFFINE_OFF = 0,    ///< drawn as it is
+  OAM_AFFINE_NORMAL = 1, ///< through its matrix
+  OAM_AFFINE_DOUBLE = 3  ///< through its matrix, in a box twice the size
+};
+
 /// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 /// affine matrix; any other takes one, and one scaled past 1 is drawn in a
 /// double-size box. The picture's pivot is turned and scaled with it, so the
@@ -252,13 +260,13 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
   // The affine matrix, unless the sprite is drawn as it is.
   if (scaleX == FIXED_ONE && scaleY == scaleX && sprite->angle == 0) {
     matrix = 0;
-    affineMode = 0;
+    affineMode = OAM_AFFINE_OFF;
   } else {
     transform.angle = sprite->angle;
     transform.scaleX = scaleX >> 8;
     transform.scaleY = scaleY >> 8;
     matrix = OamMatrix_AllocFromTransform(&transform);
-    affineMode = 1;
+    affineMode = OAM_AFFINE_NORMAL;
   }
 
   // Grown past its own size, it needs the double-size box.
@@ -267,7 +275,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     magnitude = -magnitude;
   if (magnitude > FIXED_ONE ||
       (magnitude = scaleY < 0 ? -scaleY : scaleY, magnitude > FIXED_ONE)) {
-    affineMode = 3;
+    affineMode = OAM_AFFINE_DOUBLE;
     width *= 2;
     height *= 2;
   }

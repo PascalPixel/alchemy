@@ -1,5 +1,6 @@
 /// @file
-/// The ropes' phases and the field effects' tables.
+/// The ropes' phases, the tints a field Psynergy fades toward, and the
+/// scripts that hold and release a field effect.
 
 #include "field/actor_script.h"
 #include "types.h"
@@ -20,8 +21,9 @@ const s32 gTightrope_LashPhase = 0;
 const s32 gTightrope_UntiePhase = 0;
 const s32 gTightrope_DebugSwinging = 0;
 
-/// Eight colours (BGR555).
-// As The Broken Seal's gBattleEffect_TargetColors are.
+/// The eight tints the screen fades toward while a field Psynergy is cast:
+/// picked by the Psynergy, by a FLAG_PSYNERGY_TINT flag, or at a summon tablet
+/// by the frame counter.
 // clang-format off
 const u32 gFieldEffect_TargetColors[8] = {
     RGB(4, 4, 16),  RGB(4, 16, 4),  RGB(16, 4, 4), RGB(2, 10, 10),
@@ -29,6 +31,8 @@ const u32 gFieldEffect_TargetColors[8] = {
 };
 // clang-format on
 
+/// A script that releases its actor at once: a Mind Read sign's end, once it
+/// has come to rest.
 const s32 gBattleEffect_UntargetedObjectScript[] = {
     SC_RELEASE,
 };

@@ -1,5 +1,6 @@
 /// @file
-/// Running a field Psynergy by its kind, and an object's priority and depth.
+/// Running a field Psynergy by its kind, and the priority and depth its
+/// sprites take to be drawn with an actor.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -34,9 +35,9 @@ void FieldPsynergy_ParchOnTarget(s32 targetId);
 void FieldPsynergy_BurstOnTarget(s32 targetId);
 void FieldPsynergy_PoundOnTarget(s32 targetId);
 
-/// Runs the animation's handler for kind: 0 runs it with no target chosen, 1
-/// on the chosen target (secondActorId), 2 finishes it and 3 runs the kind's
-/// extra step.
+/// Runs one step of the scene's field Psynergy: cast with no target, cast on
+/// the chosen target (secondActorId), Mind Read's end, or what a lasting
+/// Psynergy does when it ends.
 void FieldPsynergy_RunHandler(s32 kind) {
   if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
     FieldPsynergy_Run();
@@ -348,16 +349,16 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
   return depth;
 }
 
-/// Per-frame callback: draws the scene's sprite (FieldEffectWork.sprite).
+/// Draws the Psynergy's canvas sprite (FieldEffectWork.sprite) each frame.
 void BattleEffect_DrawSceneSprite(void) {
   EffectSprite_Draw(
       &((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->sprite);
 }
 
-/// When the caster faces away (FACING_NORTH), starts the scene's sprite
-/// (FieldEffectWork.sprite): a blank 32x32 sprite of its own VRAM cache entry,
-/// twice as tall, 28 pixels above the caster in front of everything, drawn
-/// each frame by BattleEffect_DrawSceneSprite until
+/// When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
+/// sprite (FieldEffectWork.sprite): a blank 32x32 sprite of its own VRAM cache
+/// entry, twice as tall, 28 pixels above the caster in front of everything,
+/// drawn each frame by BattleEffect_DrawSceneSprite until
 /// FieldPsynergy_ReleaseSceneSprite.
 void FieldPsynergy_StartSceneSprite(void) {
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
@@ -395,4 +396,3 @@ void FieldPsynergy_StartSceneSprite(void) {
 }
 #undef WORLD_MAP_GROUND_DEPTH
 #undef WORLD_MAP_GROUND_SLOT
-#undef SIDE_TURN

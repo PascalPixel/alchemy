@@ -1,5 +1,6 @@
 /// @file
-/// Actor motion, each frame.
+/// Actors' motion each frame: their scripts, steering toward a target, falling,
+/// floating and riding a platform, and being sent somewhere.
 // Part of field.c.
 
 #include "field_internal.h"
@@ -167,9 +168,9 @@ void Actor_UpdateAllThumb(void) {
     if (object->frozen == 0) {
       if (object->motionFlags == 0) {
         if (object->targetX != ACTOR_NO_TARGET) {
-          dx = (object->targetX - x) / 65536;
-          dy = (object->targetY - y) / 65536;
-          dz = (object->targetZ - z) / 65536;
+          dx = (object->targetX - x) / FIXED_ONE;
+          dy = (object->targetY - y) / FIXED_ONE;
+          dz = (object->targetZ - z) / FIXED_ONE;
           distance = Iwram_Sqrt(Object_Square(dx) + Object_Square(dy) +
                                 Object_Square(dz));
           if (distance == 0) {
@@ -217,8 +218,8 @@ void Actor_UpdateAllThumb(void) {
       } else {
         // On the ground: steer in the XZ plane the same way.
         if (object->targetX != ACTOR_NO_TARGET) {
-          dx = (object->targetX - x) / 65536;
-          dz = (object->targetZ - z) / 65536;
+          dx = (object->targetX - x) / FIXED_ONE;
+          dz = (object->targetZ - z) / FIXED_ONE;
           distance = toFIXED(Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)));
           if (distance <= toFIXED(256) - 1) {
             dx = object->targetX - x;
@@ -259,7 +260,7 @@ void Actor_UpdateAllThumb(void) {
           }
         }
 
-        // Follow the ground, or the top of an object 16 pixels below.
+        // Follow the ground, or the top of a platform 16 pixels below.
         if (object->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
@@ -406,7 +407,7 @@ void Actor_UpdateAllThumb(void) {
       object->targetX = ACTOR_NO_TARGET;
       object->targetY = ACTOR_NO_TARGET;
       object->targetZ = ACTOR_NO_TARGET;
-      object->arrivalAxis = 0;
+      object->arrivalAxis = ARRIVAL_AXIS_NONE;
     }
 
     object->moved[0] = x - object->x;
@@ -416,7 +417,7 @@ void Actor_UpdateAllThumb(void) {
 
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame.
-    if (object->actionFlags & 1) {
+    if (object->actionFlags & ACTOR_FACES_MOTION) {
       x = object->velocityX;
       z = object->velocityZ;
       if (x != 0 || z != 0) {
@@ -437,9 +438,10 @@ void Actor_UpdateAllThumb(void) {
   }
 }
 
-/// Task: each actor riding another (priority flag 64, its carrier at offset
-/// 0x7c) moves with its carrier's last step (the carrier's words at 0x70,
-/// 0x74 and 0x78), and one standing on it is set on its top, 16 pixels up.
+/// Each frame: an actor that walks on platforms
+/// (ACTOR_PRIORITY_WALKS_ON_PLATFORMS) and rides one, its carrier, moves with
+/// the carrier's last step; one standing on it as it rises or sinks is set on
+/// its top, 16 pixels up.
 void Actor_MoveWithCarriers(void) {
   struct Actor *actor = Ram_HeapSlots->actors;
   s32 i;
@@ -472,7 +474,7 @@ void Actor_MoveWithCarriers(void) {
   }
 }
 
-// Objects: set position and cancel motion.
+// Placing an actor, and sending it somewhere.
 
 /// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
 /// and stops it.

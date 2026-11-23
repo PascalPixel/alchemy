@@ -1,5 +1,6 @@
 /// @file
-/// Blaze, and the check whether an actor is blocked.
+/// Blaze, and the check whether an actor stands where the map or another
+/// actor blocks it.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -26,6 +27,10 @@ void Field_StartColorTransition(s32 frames, s32 color);
 #define BLAZE_SPRAY_FRAMES 80
 /// How far in front of the caster the jet's drops are drawn.
 #define BLAZE_DROP_DEPTH 10
+
+/// The flame's colour, after the torch it is cast at: an index of
+/// gBlaze_TintColors.
+enum BlazeLook { BLAZE_RED, BLAZE_VIOLET, BLAZE_YELLOW, BLAZE_BLUE };
 
 /// Blaze: a jet of flame sprays from the caster, with smoke, until B is pressed
 /// or for BLAZE_SPRAY_FRAMES at most: red, or violet, yellow or blue to match
@@ -67,16 +72,16 @@ void FieldPsynergy_Blaze(void) {
   scene = Ram_HeapSlots->fieldEffectWork;
   event = Ram_HeapSlots->fieldWork;
   caster = scene->mainActor;
-  look = 0;
+  look = BLAZE_RED;
   actor = scene->child;
   if (Actor_GetSpriteIdFar(actor) == SPRITE_MARS_TORCH_LIT) {
     kind = ACTOR_FIRST_LAYER(actor)->colorMode;
     if (kind == SPRITE_COLOR_GBR)
-      look = 1;
+      look = BLAZE_VIOLET;
     if (kind == SPRITE_COLOR_GRB)
-      look = 2;
+      look = BLAZE_YELLOW;
     if (kind == SPRITE_COLOR_BGR)
-      look = 3;
+      look = BLAZE_BLUE;
   }
   Field_StartColorTransition(8, gBlaze_TintColors[look]);
   work->mode = BLAZE_FLICKER;
@@ -159,16 +164,16 @@ void FieldPsynergy_Blaze(void) {
     work->angle = scene->angle8;
     work->targetAngle = scene->angle8;
     switch (look) {
-    case 0:
+    case BLAZE_RED:
       resourceId = RESOURCE_RED_FLAME_BURST;
       break;
-    case 1:
+    case BLAZE_VIOLET:
       resourceId = RESOURCE_VIOLET_FLAME_BURST;
       break;
-    case 2:
+    case BLAZE_YELLOW:
       resourceId = RESOURCE_YELLOW_FLAME_BURST;
       break;
-    case 3:
+    case BLAZE_BLUE:
       resourceId = RESOURCE_BLUE_FLAME_BURST;
       break;
     default:

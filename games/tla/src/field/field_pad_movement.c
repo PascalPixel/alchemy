@@ -181,7 +181,7 @@ update_object:
         if (rippleSprite != 0) {
           Sprite_StartAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
-          rippleSprite->objectMode = 1;
+          rippleSprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
           rippleSprite->priority = 2;
         }
         actor->timer = 10;
@@ -208,9 +208,9 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 /// wider than FIELD_BLOCKED_TURN_MAX; a narrower one it makes at once.
 #define SHIP_TURN_STEP (TRIG_TURN / 64)
 
-/// Script command 0x1f (control mode 6): the ship moved by the direction pad
+/// SC_SAIL (LEADER_MOVEMENT_SHIP_ON_MAP): the ship moved by the direction pad
 /// on a field map, as the party's actor (gMainRoutineWork.ownerOverride), as at
-/// Lemuria's entrance.
+/// Lemuria's entrance; A leaves the ship.
 s32 Actor_SailOnMap(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
@@ -225,7 +225,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   u16 direction;
   s32 angleIndex;
   s32 headingCount;
-  s32 onObject;
+  s32 onPlatform;
   s32 difference;
   struct Actor *other;
   struct FieldWork *work;
@@ -275,7 +275,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(toFIXED(19), (u16)angle, &position);
   if (actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-    onObject = 0;
+    onPlatform = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
     for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED dy;
@@ -292,7 +292,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
         continue;
       if (SAME_CELL(actor->x.fixed, other->x.fixed) &&
           SAME_CELL(actor->z.fixed, other->z.fixed))
-        onObject = 1;
+        onPlatform = 1;
       if (SAME_CELL(position.x, other->x.fixed) &&
           SAME_CELL(position.z, other->z.fixed)) {
         collision = 0;
@@ -300,7 +300,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
         goto counted;
       }
     }
-    if (onObject && !MapGrid_CheckCollision(actor, &position)) {
+    if (onPlatform && !MapGrid_CheckCollision(actor, &position)) {
       collision = 0;
       heading = angle;
       goto counted;
@@ -392,7 +392,7 @@ push_objects:
     if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
-    if ((other->collisionFlags & 2) && other->paused == 0) {
+    if ((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0) {
       direction = Trig_Atan(other->z.fixed - actor->z.fixed,
                             other->x.fixed - actor->x.fixed);
       SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
@@ -445,9 +445,9 @@ counted:
     work->heldKeys = gInput.held;
   }
   if (pushed != 0 || collision != 0)
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, ANIM_STAND);
   else
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
 
   if (gInput.pressed & gMainRoutineWork.aKeys) {
     gFieldWork->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
@@ -482,7 +482,7 @@ counted:
                           (struct FieldPosition *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
-    actor->steeringFlags &= ~1;
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
     difference = (s16)((u16)angle - actor->facing);
     if (difference > FIELD_BLOCKED_TURN_MAX)
       difference = SHIP_TURN_STEP;
@@ -497,12 +497,10 @@ counted:
   return 1;
 }
 
-/// Script command 0x20 (control mode 7): the ship sailing the world map, laid
-/// out as The Broken Seal's later Actor_MoveOnWorldMap (one probe ahead, then
-/// four 22.5 and 45 degrees off it; six headings to retry). It keeps the kind
-/// of water under the ship in FieldWork.terrainKind, sails at a run, and turns
-/// at most 22.5 degrees a step; A goes ashore, and a dash key takes off once
-/// the ship has its wings (FieldWork.hoverReady).
+/// SC_WORLD_SAIL (LEADER_MOVEMENT_SHIP): the ship sailing the world map. It
+/// keeps the kind of water under the ship in FieldWork.terrainKind, sails at a
+/// run and turns a little at a time, leaving ripples; A goes ashore, and a dash
+/// key takes off once the ship has its wings (FieldWork.hoverReady).
 s32 Actor_SailOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -632,9 +630,9 @@ update_object:
     work->heldKeys = gInput.held;
   }
   if (collision != 0)
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, ANIM_STAND);
   else
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
 
   if (gInput.pressed & gMainRoutineWork.aKeys) {
     gFieldWork->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
@@ -676,7 +674,7 @@ update_object:
                           (struct FieldPosition *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
-    actor->steeringFlags &= ~1;
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
     difference = (s16)(direction - actor->facing);
     if (difference > FIELD_BLOCKED_TURN_MAX)
       difference = SHIP_TURN_STEP;
@@ -697,7 +695,7 @@ update_object:
   camera->yaw += yawStep;
 
   kind = actor->spriteStorageKind;
-  if (kind == 1) {
+  if (kind == ACTOR_SPRITE_ONE) {
     WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
     if (actor->timer == 0 && collision == 0) {
       ripple = Actor_Create(SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed,
@@ -710,7 +708,7 @@ update_object:
         if (rippleSprite != 0) {
           Sprite_StartAnimation(rippleSprite, 2);
           rippleSprite->flags = 0;
-          rippleSprite->objectMode = 0;
+          rippleSprite->objectMode = OBJ_MODE_NORMAL;
           rippleSprite->priority = 2;
         }
         actor->timer = 10;
@@ -722,8 +720,11 @@ update_object:
   return 1;
 }
 
-/// Script command 0x21 (control mode 8): the ship with its wings on the world
-/// map, flying over the ground the sea alone would stop (WorldMap_IsFlyable).
+/// SC_WORLD_FLY (LEADER_MOVEMENT_FLYING_SHIP): the ship with its wings on the
+/// world map, flying over the ground the sea alone would stop
+/// (WorldMap_IsFlyable). A or B climbs, up to 12 pixels, and the ship sinks
+/// otherwise, faster once the party's PP is spent; coming down after a climb
+/// lands it.
 s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -795,7 +796,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
               Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
                                     direction - DEGtoANG(45), &testPosition);
               if (WorldMap_IsFlyable(actor, &testPosition) == 0)
-                goto check_objects;
+                goto check_actors;
             }
           }
         }
@@ -837,11 +838,11 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
         if (WorldMap_IsFlyable(actor, &testPosition) != 0)
           continue;
         angle = (s16)direction;
-        goto check_objects;
+        goto check_actors;
       }
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
-    check_objects:
+    check_actors:
       other = Ram_HeapSlots->actors;
       for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
         if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
@@ -863,9 +864,9 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   if (actor->y.fixed >= toFIXED(4))
     Actor_SelectAnimation(actor, 6);
   else if (collision != 0)
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, ANIM_STAND);
   else
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
 
   if (collision != 0) {
     actor->targetX = ACTOR_NO_TARGET;
@@ -895,7 +896,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
                           (struct FieldPosition *)&actor->velocityX);
     if (actor->timer != 0)
       actor->timer--;
-    actor->steeringFlags &= ~1;
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
     difference = (s16)(direction - actor->facing);
     if (difference > FIELD_BLOCKED_TURN_MAX)
       difference = SHIP_TURN_STEP;
@@ -917,7 +918,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   camera->yaw += yawStep;
 
   kind = actor->spriteStorageKind;
-  if (kind == 1) {
+  if (kind == ACTOR_SPRITE_ONE) {
     if (actor->y.fixed < toFIXED(4)) {
       if (actor->timer == 0 && collision == 0) {
         ripple =
@@ -930,7 +931,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
           if (rippleSprite != 0) {
             Sprite_StartAnimation(rippleSprite, 1);
             rippleSprite->flags = 0;
-            rippleSprite->objectMode = 1;
+            rippleSprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
             rippleSprite->priority = 2;
           }
           actor->timer = 10;

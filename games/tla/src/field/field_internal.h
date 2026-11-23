@@ -58,7 +58,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
                                 struct FieldPosition *position);
 
-typedef void (*ConvertFn)(void *destination, void *source, void *saved);
+/// The map converter copied to RAM (Render_ConvertMapCode), which joins a
+/// decoded map's planes into its cell words.
+typedef void (*ConvertMapRoutine)(void *destination, void *source, void *saved);
 
 /// The words of an object's script. As in The Broken Seal's ActorScriptWords,
 /// a flat word pointer changes one load's base and index order.
@@ -172,8 +174,8 @@ struct MapGridCellAnimationStep {
 } __attribute__((packed, aligned(2)));
 
 /// A sprite (struct Sprite) whose image priority, its layer, is copied a
-/// byte at a time, under struct Sprite's names.
-struct Child {
+/// byte at a time, under struct Sprite's names: a wading splash's.
+struct SpriteLayerView {
   u8 unused[9];    ///< no code names it
   u8 tileHigh : 2; ///< tile number bits 9..8
   u8 layer : 2;

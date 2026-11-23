@@ -1,5 +1,6 @@
 /// @file
-/// Ground particles and lightning on the field.
+/// The weather on the field: The Broken Seal's rain kept whole, this game's
+/// rain, and the storm's lightning.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -10,8 +11,9 @@
 #include "field/ground_mask.h"
 #include "field/event.h"
 
-/// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
-/// whole. Each particle plays its GROUND_PARTICLE_FRAMES frames of
+/// The Broken Seal's rain each frame (GroundParticles_Start, which nothing
+/// calls), kept whole: each drop falls from up to the right, splashes and
+/// plays its GROUND_PARTICLE_FRAMES frames of
 /// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
 /// while FLAG_WEATHER_HELD is set.
 void GroundParticles_Update(void) {
@@ -58,13 +60,12 @@ void GroundParticles_Update(void) {
   }
 }
 
-/// The Broken Seal's routine with fixed sprites, and
-/// GroundParticles_Update's sibling for the same 64 ground particles: each
-/// counts down its frame (held while FLAG_WEATHER_HELD is set), is drawn at its
-/// picture's offset (gGroundParticles_Offsets, pairs) with the work's tile,
-/// shape 1 and size 2 when on screen, and when its count runs out is placed
-/// again at a random point (x within -64 to +192, z within -128 to +128 pixels
-/// of the map's focus), on the ground, for 12 frames.
+/// This game's rain each frame (Weather_StartRain), outside Mars Lighthouse
+/// and on its ledges: each of
+/// the 64 streaks falls down and to the right onto a spot on the ground, a pair
+/// of gGroundParticles_Offsets a frame, and then starts again 12 frames up from
+/// a random spot (x within -64 to +192, z within -128 to +128 pixels of the
+/// map's focus). FLAG_WEATHER_HELD holds them where they are.
 void Weather_UpdateRain(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct WeatherWork *work = Ram_HeapSlots->weather;
@@ -83,6 +84,10 @@ void Weather_UpdateRain(void) {
       continue;
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
+    // XXX: a streak started at 12 frames reads its first offsets one pair past
+    // the table's end; is it drawn a frame at its spot, by the next table's
+    // first pair? A frame-by-frame recording of Mars Lighthouse's rain would
+    // settle it.
     frame = &gGroundParticles_Offsets[2 * particle->timer];
     x = (particle->posX - originX) / FIXED_ONE + *frame++;
     y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
@@ -108,7 +113,7 @@ void Weather_UpdateRain(void) {
   }
 }
 
-/// Task for the storm: lightning flashes the BG colours three times, 5 frames
+/// The storm each frame: lightning flashes the BG colours three times, 5 frames
 /// apart, with thunder; while lightning is on, the next burst comes 51 to 549
 /// frames later. While FLAG_WEATHER_HELD is set no burst comes.
 void Weather_UpdateLightning(void) {

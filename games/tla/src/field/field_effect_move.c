@@ -1,11 +1,12 @@
 /// @file
-/// A field effect's motion, growth and spin each frame.
+/// A field effect's motion, growth and spin each frame, with no drag.
 
 #include "types.h"
 #include "system/field_effect.h"
 #include "field/sprite.h"
 
-/// Integrates linear motion, scale changes and rotation once per effect frame.
+/// An effect's update routine: moves the effect by its velocity, which keeps
+/// its speed, grows it at its rates and turns its sprite by its spin.
 void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object) {
   s32 x;
   s32 velocityX;

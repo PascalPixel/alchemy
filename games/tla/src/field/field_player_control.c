@@ -56,8 +56,9 @@ enum FootprintAnimation {
   FOOTPRINT_BOTH_FEET = 2
 };
 
-/// Script command 0x24 (control mode 11): the player control at one pace,
-/// a pixel a frame whatever the keys. Unused: no code sets control mode 11.
+/// SC_WALK (LEADER_MOVEMENT_WALKING): the leader's control at one pace, a
+/// pixel a frame whatever the keys. Unused: nothing sets
+/// LEADER_MOVEMENT_WALKING.
 s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -70,7 +71,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   s16 heading;
   s32 angleIndex;
   s32 headingCount;
-  s32 onObject;
+  s32 onPlatform;
   struct Actor *other;
   struct FieldWork *work;
 
@@ -97,7 +98,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(toFIXED(8), angle, &position);
   if (actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-    onObject = 0;
+    onPlatform = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
     for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED dy;
@@ -113,12 +114,12 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
         continue;
       if (SAME_CELL(actor->x.fixed, other->x.fixed) &&
           SAME_CELL(actor->z.fixed, other->z.fixed))
-        onObject = 1;
+        onPlatform = 1;
       if (SAME_CELL(position.x, other->x.fixed) &&
           SAME_CELL(position.z, other->z.fixed))
         goto clear;
     }
-    if (onObject && !MapGrid_CheckCollision(actor, &position)) {
+    if (onPlatform && !MapGrid_CheckCollision(actor, &position)) {
       // DEAD: collision is already 0 here; the ROM keeps its clearing.
       collision = 0;
       goto counted;
@@ -217,7 +218,7 @@ push_objects:
     if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
-    if ((other->collisionFlags & 2) && other->paused == 0) {
+    if ((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0) {
       u16 direction;
 
       direction = Trig_Atan(other->z.fixed - actor->z.fixed,
@@ -297,7 +298,7 @@ counted:
       actor->facing += difference;
     }
     actor->timer = 0;
-    actor->userValue = 2;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     Actor_SetMoveTarget(actor, position.x, position.y, position.z);
     if (actor->timer != 0)
@@ -378,8 +379,8 @@ s32 Field_CheckConfiguredKeys(void) {
   return result;
 }
 
-/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
-/// radii radius_a and radius_b (pixels); -1 otherwise.
+/// Returns 0 when two spheres overlap: at firstPosition and secondPosition
+/// (16.16 pixels) with radii radiusA and radiusB (pixels); -1 otherwise.
 s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
                               FIXED *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -407,7 +408,7 @@ s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
 /// step; mode is the map's kind of wading, and kind 2 takes another picture.
 void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
   struct Actor *created;
-  struct Child *sprite;
+  struct SpriteLayerView *sprite;
 
   created = Actor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
                          actor->y.fixed + toFIXED(4), actor->z.fixed);
@@ -415,7 +416,7 @@ void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
   if (!(actor->userValue & 1))
     Sound_PlayFar(SE_WADE);
   if (created != NULL) {
-    struct Child *child = created->sprite;
+    struct SpriteLayerView *child = created->sprite;
 
     created->groundHeight = actor->groundHeight;
     Actor_StartScript(created, gActor_SplashScript);
@@ -451,7 +452,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   s32 movementAnimation;
   s32 headingCount;
   s32 footprintAngle;
-  s32 onObject;
+  s32 onPlatform;
   struct FieldWork *work;
   struct MapWork *map;
   u16 angle;
@@ -462,7 +463,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
   sprite = actor->sprite;
   movementAnimation = ANIM_WALK;
-  onObject = 0;
+  onPlatform = 0;
   work = Ram_HeapSlots->fieldWork;
   map = Ram_HeapSlots->mapGrid;
   collision = 0;
@@ -511,7 +512,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
         continue;
       if (SAME_CELL(actor->x.fixed, other->x.fixed) &&
           SAME_CELL(actor->z.fixed, other->z.fixed))
-        onObject = 1;
+        onPlatform = 1;
       if (SAME_CELL(position.x, other->x.fixed) &&
           SAME_CELL(position.z, other->z.fixed) &&
 #if TLA_PATCH_1
@@ -523,7 +524,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
           other->targetX == ACTOR_NO_TARGET && other->targetZ == other->targetX)
         goto clear;
     }
-    if (onObject && !MapGrid_CheckCollision(actor, &position)) {
+    if (onPlatform && !MapGrid_CheckCollision(actor, &position)) {
       collision = 0;
       heading = angle;
       goto push_objects;
@@ -605,7 +606,7 @@ clear:
   heading = angle;
 
 push_objects:
-  // Push the movable objects just ahead a quarter pixel further, when they
+  // Push the movable actors just ahead a quarter pixel further, when they
   // have room; any other solid actor there blocks the step.
   SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
@@ -623,7 +624,7 @@ push_objects:
     if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
-    if ((other->collisionFlags & 2) && other->paused == 0) {
+    if ((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0) {
       direction = Trig_Atan(other->z.fixed - actor->z.fixed,
                             other->x.fixed - actor->x.fixed);
       SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
@@ -704,7 +705,7 @@ counted:
       actor->facing += difference;
     }
     actor->timer = 0;
-    actor->userValue = 2;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     FIXED speed;
 
@@ -728,8 +729,8 @@ counted:
       cells = ((struct MapWork *)map)->layers[actor->layer].cells;
     else
       cells = gMapGridCellBuffer;
-    cells +=
-        actor->x.fixed / toFIXED(16) + (actor->z.fixed / toFIXED(16)) * 128;
+    cells += actor->x.fixed / toFIXED(16) +
+             (actor->z.fixed / toFIXED(16)) * MAPGRID_SIZE;
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
     if (attribute & MAP_CELL_WATER) {
@@ -738,7 +739,7 @@ counted:
         sprite->flags =
             ((u8)oldFlags | SPRITE_FLAG_SHADED) & ~SPRITE_FLAG_SHADOW;
       }
-      if (actor->timer == 0 && collision == 0 && !onObject) {
+      if (actor->timer == 0 && collision == 0 && !onPlatform) {
         Actor_SpawnWaterSplash(actor,
                                GROUND_EFFECTS_WADING(map->groundEffects));
         if (movementAnimation == ANIM_LEADER_RUN)
@@ -768,21 +769,21 @@ counted:
       effect->groundHeight = actor->groundHeight;
       effectSprite = effect->sprite;
       Actor_StartScript(effect, gActor_FootprintScript);
-      effect->priorityFlags = 2;
+      effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {
-        Sprite_StartAnimation(effectSprite, 1);
+        Sprite_StartAnimation(effectSprite, FOOTPRINT_ONE_FOOT);
         effectSprite->flags = collision;
         effectSprite->rotation = footprintAngle + DEGtoANG(90);
         effectSprite->priority = 3;
       }
-      if (*(s16 *)&actor->userValue == 2) {
-        Sprite_StartAnimation(effectSprite, 2);
+      if (*(s16 *)&actor->userValue == FOOTPRINT_BOTH_FEET) {
+        Sprite_StartAnimation(effectSprite, FOOTPRINT_BOTH_FEET);
         actor->userValue = collision;
       }
       if (*(s16 *)&actor->userValue != 0)
         effect->facing = DEGtoANG(180);
-      if (movementAnimation == 5)
+      if (movementAnimation == ANIM_LEADER_RUN)
         actor->timer = 12;
       else
         actor->timer = 18;

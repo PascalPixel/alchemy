@@ -1,5 +1,7 @@
 /// @file
-/// Actor scripts: moving, turning and the built-in movement types.
+/// Actors' movement types and what they attach, and the leader's moves off the
+/// ground: jumping a gap, climbing a wall up and down, and stepping onto and
+/// off a rope or tightrope.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -75,8 +77,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
         ((struct PlacedSprite *)actor->sprite)->priority;
 }
 
-/// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
-/// its collision flags, so nothing collides with it.
+/// The SC_CALL routine of MOVEMENT_TYPE_CLEAR_COLLISION: clears an actor's
+/// sprite flags and its collision flags, so nothing collides with it.
 s32 Actor_ClearChildAndCollisionFlags(void *obj) {
   Actor_SetSpriteFlagsFar(obj, 0);
   ((struct Actor *)obj)->collisionFlags = 0;
@@ -96,7 +98,9 @@ s32 Actor_IgnoreRises(struct Actor *actor) {
   return 0;
 }
 
-/// The SC_CALL routine of movement type 5: follows the watched actor.
+/// The SC_CALL routine of MOVEMENT_TYPE_FOLLOW_WATCHED: walks toward the
+/// watched actor, setting out each frame for 16/timer of the way there, and
+/// stands once within its timer's pixels of it.
 s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 step;
   struct Actor *target;
@@ -134,8 +138,8 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   return 1;
 }
 
-/// The SC_CALL routine of movement type 6: turns the actor toward its watched
-/// actor, at most 1/16 turn a frame.
+/// The SC_CALL routine of MOVEMENT_TYPE_FACE_LEADER: turns the actor toward its
+/// watched actor, at most 1/16 turn a frame.
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s16 turnStep;
   u16 currentAngle;
@@ -161,13 +165,14 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   return 1;
 }
 
-/// Makes the object watch target and keeps it facing it.
+/// Keeps an actor turning to face another.
 void Actor_WatchActor(struct Actor *actor, struct Actor *target) {
   actor->watchedActor = target;
   actor->update = Actor_TurnTowardWatchedActor;
 }
 
-/// Gives the object the party leader's display layer.
+/// Gives an actor the leader's sprite priority, so it is drawn in front of
+/// and behind what he is, and keeps it there.
 s32 Actor_TakeLeaderLayer(struct Actor *actor) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   s32 layer = ((struct PlacedSprite *)leader->sprite)->priority;
@@ -557,7 +562,7 @@ s32 Field_ClimbDown(void) {
     position[2] = leader->z.fixed + toFIXED(16);
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < ACTOR_COUNT; i++, entry++) {
-      if (entry->script != NULL && (entry->collisionFlags & 1) &&
+      if (entry->script != NULL && (entry->collisionFlags & ACTOR_SOLID) &&
           entry != leader &&
           Field_CheckSpheresOverlapFar(&entry->x.fixed, radius, position,
                                        entry->radius - 2) >= 0)
@@ -569,7 +574,7 @@ s32 Field_ClimbDown(void) {
     leader->speedLimit = toFIXED(1);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
-    leader->steeringFlags = 1;
+    leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->motionFlags = 0;
     spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
@@ -583,14 +588,14 @@ s32 Field_ClimbDown(void) {
   } else {
     // Let go of the wall and fall.
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB);
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->velocityY = toFIXED(4);
     leader->groundHeight = leader->y.fixed;
     spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-    leader->steeringFlags = 1;
+    leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
     leader->userValue = 0;
@@ -653,9 +658,9 @@ s32 Field_ClimbUp(void) {
     // Step to the middle of the tile, crouch, jump and grab the wall.
     leader->steeringFlags = result;
     Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
-    Actor_SelectAnimationFar(leader, 6);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     wait(4);
-    Actor_SelectAnimationFar(leader, 7);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
     leader->velocityY = toFIXED(4);
     wait(4);
     leader->motionFlags = result;
@@ -666,7 +671,7 @@ s32 Field_ClimbUp(void) {
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLING);
     wait(4);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
-    leader->steeringFlags = 1;
+    leader->steeringFlags = ACTOR_FACES_MOTION;
     wait(8);
     leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   } else {
@@ -680,7 +685,7 @@ s32 Field_ClimbUp(void) {
     i = 0;
     entry = Ram_HeapSlots->actors;
     for (; i < ACTOR_COUNT; i++, entry++) {
-      if (entry->script != NULL && (entry->collisionFlags & 1) &&
+      if (entry->script != NULL && (entry->collisionFlags & ACTOR_SOLID) &&
           entry != leader &&
           Field_CheckSpheresOverlapFar(&entry->x.fixed, radius, position,
                                        entry->radius - 2) >= 0)
@@ -694,13 +699,13 @@ s32 Field_ClimbUp(void) {
                            leader->y.fixed + toFIXED(8),
                            INTtoFIXED(gridZ) - toFIXED(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->groundHeight = leader->y.fixed;
     spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(4);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-    leader->steeringFlags = 1;
+    leader->steeringFlags = ACTOR_FACES_MOTION;
     leader->timer = 0;
     leader->userValue = 0;
   }
@@ -716,7 +721,7 @@ failure:
 /// in pixels.
 #define ROPE_NODE_REACH 32
 
-/// Returns the nearest tied rope node within reach of position, or NULL.
+/// Returns the nearest crossable rope node within reach of position, or NULL.
 struct RopeNode *Rope_FindNodeNear(s32 *position) {
   struct RopeNode *found;
   struct RopeNode *result;
@@ -752,8 +757,8 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
   return result;
 }
 
-/// Hops the leader onto the nearest tied rope node, to cross the rope (render
-/// mode 3); returns 0 when none is in reach.
+/// Hops the leader onto the nearest crossable rope node, to cross the rope
+/// (LEADER_MOVEMENT_ROPE); returns 0 when none is in reach.
 s32 Leader_StepOntoRope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *sprite = leader->sprite;
@@ -768,14 +773,14 @@ s32 Leader_StepOntoRope(void) {
   leader->speedLimit = toFIXED(2);
   leader->velocityY = toFIXED(4);
   leader->watchedActor = (struct Actor *)node;
-  Actor_SelectAnimationFar(leader, 2);
+  Actor_SelectAnimationFar(leader, ANIM_WALK);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
   leader->userValue = sprite->flags;
   leader->savedSpritePriority = sprite->image.priority;
-  leader->priorityFlags = *flags & ~1;
+  leader->priorityFlags = *flags & ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->flags = 0;
   sprite->image.priority = 1;
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_ROPE;
@@ -806,7 +811,7 @@ s32 Leader_StepOffRope(void) {
       MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
-  leader->priorityFlags |= 1;
+  leader->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   leader->motionFlags = leader->timer;
   leader->scaleX = FIXED_ONE;
   sprite->flags = leader->userValue;
@@ -815,7 +820,7 @@ s32 Leader_StepOffRope(void) {
   leader->speedLimit = toFIXED(2);
   leader->velocityY = toFIXED(4);
   leader->acceleration = toFIXED(1);
-  Actor_SelectAnimationFar(leader, 2);
+  Actor_SelectAnimationFar(leader, ANIM_WALK);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
   sprite->image.priority = leader->savedSpritePriority;
@@ -823,7 +828,8 @@ s32 Leader_StepOffRope(void) {
   return 1;
 }
 
-/// Returns the nearest tightrope node within reach of position, or NULL.
+/// Returns the nearest crossable tightrope node within reach of position, or
+/// NULL.
 struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   struct TightropeNode *found;
   struct TightropeNode *result;
@@ -859,8 +865,8 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
   return result;
 }
 
-/// Hops the leader onto the nearest tightrope node (render mode 4); returns 0
-/// when none is in reach.
+/// Hops the leader onto the nearest crossable tightrope node
+/// (LEADER_MOVEMENT_TIGHTROPE); returns 0 when none is in reach.
 s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = Actor_Lookup(work->leaderActorId);
@@ -876,14 +882,14 @@ s32 Leader_StepOntoTightrope(void) {
   leader->speedLimit = toFIXED(2);
   leader->velocityY = toFIXED(4);
   leader->watchedActor = (struct Actor *)node;
-  Actor_SelectAnimationFar(leader, 2);
+  Actor_SelectAnimationFar(leader, ANIM_WALK);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   leader->userValue = sprite->flags;
   leader->savedSpritePriority = sprite->image.priority;
   flags = &leader->priorityFlags;
-  leader->priorityFlags = *flags & ~1;
+  leader->priorityFlags = *flags & ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->flags = 0;
   sprite->image.priority = 1;
   work->movementMode = LEADER_MOVEMENT_TIGHTROPE;
@@ -914,7 +920,7 @@ s32 Leader_StepOffTightrope(void) {
       MapGrid_CheckCollisionFar(leader, position))
     return 0;
   leader->facing = angle;
-  leader->priorityFlags |= 1;
+  leader->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   leader->motionFlags = leader->timer;
   sprite->flags = leader->userValue;
   sprite->rotation = 0;
@@ -922,7 +928,7 @@ s32 Leader_StepOffTightrope(void) {
   leader->acceleration = toFIXED(1);
   leader->speedLimit = toFIXED(2);
   leader->velocityY = toFIXED(4);
-  Actor_SelectAnimationFar(leader, 2);
+  Actor_SelectAnimationFar(leader, ANIM_WALK);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
   sprite->image.priority = leader->savedSpritePriority;

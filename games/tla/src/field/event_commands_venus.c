@@ -36,7 +36,6 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   // event_commands_mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
   wait(30);
-  // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);

@@ -2,11 +2,11 @@
 /// The field_psynergy object: the field Psynergy that spread effects around
 /// their target, then in ROM order the tile copies, the field Psynergy The Lost
 /// Age adds, from Cyclone to Hover (each part named for the Psynergy it runs,
-/// its kind in FieldPsynergy_Run), the actors' cells, the step vectors and
-/// field particles, and the world and World Map pictures.
+/// its kind in FieldPsynergy_Run), the summon tablets, the actors' cells, the
+/// step vectors and field particles, and the world and World Map pictures.
 /// field_psynergy_internal.h holds the includes every part shares; the parts
-/// under field_psynergy/ are included here in ROM order. The ROM shows one
-/// object; the parts are ours.
+/// beside it, field_psynergy_<part>.c, are included here in ROM order. The ROM
+/// shows one object; the parts are ours.
 
 #include "field_psynergy_internal.h"
 

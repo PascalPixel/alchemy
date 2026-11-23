@@ -314,8 +314,8 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
   return 1;
 }
 
-/// SC_FACE_WATCHED: stores the angle from the actor to its watched actor in
-/// scriptValue, measured on the ground plane (x and z).
+/// SC_FACE_WATCHED: turns the actor to face its watched actor across the
+/// ground.
 s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
   struct Actor *target;
 
@@ -489,7 +489,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 }
 
 /// SC_WANDER(base, range, limit): walks to a random point base to base + range
-/// away, within 90 degrees either side of its heading (scriptValue), that no
+/// away, within 90 degrees either side of the way it faces, that no
 /// solid actor or wall blocks, with clear ground 8 pixels further at 45 degrees
 /// either side, and within limit pixels of home.
 s32 Actor_Wander(struct Actor *actor) {

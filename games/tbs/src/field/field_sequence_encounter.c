@@ -4,9 +4,6 @@
 
 #include "field_sequence_internal.h"
 
-// encounter_zones.c defines the zones; the code reads them through struct
-// EncounterZone or as halfwords (gEncounterZones in battle.h).
-
 /// Chooses the current scene's encounter zones, one for each kind of ground the
 /// party can stand on (gFieldWork->encounterZones, read by
 /// Encounter_RollMapStep), from the first rule matching the scene and entrance.
@@ -235,7 +232,7 @@ void Scene_ChooseMusic(void) {
   s16 music = SOUND_KEEP_BGM;
   s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
-  s16 group = gMainRoutineWork.area;
+  s16 area = gMainRoutineWork.area;
   const struct MapMusicRule *rule = gScene_MusicRules;
 
   for (; rule->id != -1; rule++) {
@@ -249,7 +246,7 @@ void Scene_ChooseMusic(void) {
       music = rule->music;
       break;
     }
-    if (rule->id != group)
+    if (rule->id != area)
       continue;
     if (rule->entrance != -1 && rule->entrance != entrance)
       continue;
@@ -367,7 +364,7 @@ void BattleBackground_SelectForEnvironment(s32 environment) {
 void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 key = ENCOUNTER_KEY(zone, slot);
   const u16 *table = gEncounter_BattleMusic;
-  // gEncounter_BattleMusic opens with a song marker, so the loop assigns music
+  // gEncounter_BattleMusic opens with a music marker, so the loop assigns music
   // before either stopping test holds.
   u16 music;
   u16 value;

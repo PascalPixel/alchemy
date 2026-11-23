@@ -1,12 +1,11 @@
 /// @file
-/// The party's sprites, placing a scene's actors, and the actor
-/// table.
+/// The party's sprites, placing a scene's actors, and the actor slots.
 // Part of field_sequence.c.
 
 #include "field_sequence_internal.h"
 
 enum {
-  /// 20 flags per element: the Djinn's caught flags are 48 to 127.
+  /// 20 flags per element: the Djinn's caught flags are 0x30 to 0x7f.
   ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * 20
 };
 
@@ -77,7 +76,8 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
   work = gFieldWork;
   // Remember the table once, before consuming slots for its actor
   // placements.
-  for (tableIndex = 0; tableIndex < 4; tableIndex++) {
+  for (tableIndex = 0; tableIndex < (s32)ARRAY_COUNT(work->tables);
+       tableIndex++) {
     if (work->tables[tableIndex] == entry)
       break;
     if (work->tables[tableIndex] == 0) {
@@ -144,10 +144,10 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       actor->collisionFlags = ACTOR_SOLID;
       Actor_SetMovementType(actor, entry->movement);
       Actor_SelectAnimationFar(actor, ANIM_STAND);
-      (actor)->homeX = actor->x.fixed / FIXED_ONE;
-      (actor)->homeZ = actor->z.fixed / FIXED_ONE;
-      // An actor placement with a height is lifted half a pixel more and takes
-      // motion flags 4, floating: it neither follows the ground nor falls.
+      actor->homeX = actor->x.fixed / FIXED_ONE;
+      actor->homeZ = actor->z.fixed / FIXED_ONE;
+      // An actor placement with a height is lifted half a pixel more and
+      // floats (ACTOR_FLOATS): it neither follows the ground nor falls.
       if (actor->y.fixed != 0) {
         actor->motionFlags = ACTOR_FLOATS;
         actor->y.fixed += toFIXED(1) / 2;
@@ -187,8 +187,8 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
     {
       void *empty = NULL;
 
-      // Get also accepts words past the actor array, within the field
-      // work.
+      // Actor_Lookup also accepts ids past the actor slots, within the
+      // field work.
       memcpy((u8 *)work + offsetof(struct FieldWork, actors) +
                  (u32)actorIndex * sizeof(empty),
              &empty, sizeof(empty));
@@ -221,7 +221,7 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
                                                           leaderPlacements));
   entry[0] = gField_DefaultActorPlacements[0];
   entry[1] = gField_DefaultActorPlacements[1];
-  for (pos = 0; pos < 4; pos++)
+  for (pos = 0; pos < (s32)ARRAY_COUNT(work->tables); pos++)
     work->tables[pos] = 0;
   Actor_ClearAll();
   entry->condition = -1;
@@ -535,7 +535,7 @@ void Actor_Restore(void) {
   while (actorIndex != ACTOR_SNAPSHOT_EMPTY) {
     actor = Actor_Lookup(actorIndex);
     if (actor != NULL) {
-      // The copy also brings back the sprite pointer saved with the actor.
+      // The actor keeps the sprite it has now, not the one saved with it.
       sprite = actor->sprite;
       Dma_Set(snapshot, actor, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
               REG_DMA3);
@@ -546,7 +546,6 @@ void Actor_Restore(void) {
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
-      // Through the sprite union this store moves.
       *(struct Sprite **)&actor->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (actorIndex == gMainRoutineWork.leaderActorId) {

@@ -89,7 +89,7 @@
 
 struct Actor;
 
-extern s32 gShipRooms_TurnSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 extern s32 gShipRooms_LeaveHold[];
 extern s32 gShipRooms_LeaveCaptainsQuarters[];
 extern s32 gShipRooms_AnchorCharmPulse[];
@@ -1262,7 +1262,7 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   Actor_SetSpeed(passengerId, 1.6);
   Actor_SetAnimation(passengerId, ANIM_WALK);
   {
-    s32 step = gShipRooms_TurnSteps[direction];
+    s32 step = gPushedActor_DirectionSteps[direction];
 
     Actor_SetDestinationOffset(passengerId, DIRECTION_STEP_X(step),
                                DIRECTION_STEP_Z(step));
@@ -1281,7 +1281,7 @@ enum {
 /// holds no actor and no wall, else 0.
 static s32 ShipRooms_IsSpotFree(s32 direction) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
-  u32 step = gShipRooms_TurnSteps[direction];
+  u32 step = gPushedActor_DirectionSteps[direction];
   s32 x = actor->x.part[0].integer + DIRECTION_STEP_X(step);
   s32 z = actor->z.part[0].integer + DIRECTION_STEP_Z(step);
 
@@ -4375,15 +4375,7 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
   GameFlag_Set(firstSeatFlags + secondPassenger);
 }
 
-/// The step beside the leader for each of the 16 facings.
-s32 gShipRooms_TurnSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.c"
 
 /// The warriors walk out of the hold.
 s32 gShipRooms_LeaveHold[] = {

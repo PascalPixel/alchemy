@@ -112,7 +112,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern u32 gPushedActor_DirectionSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gVenusBalancePlatformHeights[];
 extern struct SwitchCell gVenusFourthFloorSockets[];
@@ -3600,16 +3600,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *light) {
 
 #include "shared/field_effect_duration_scripts.c"
 
-/// The cell ahead for each of sixteen headings, 16 pixels east-west in the
-/// upper halfword and north-south in the lower (DIRECTION_STEP).
-u32 gPushedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.c"
 
 /// The third floor's four sockets, by cell: northwest, northeast, southwest
 /// and southeast.

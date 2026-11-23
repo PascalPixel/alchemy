@@ -103,7 +103,7 @@ u8 gKalay_UnusedBeforePacingStep[12] BSS_DATA ALIGNED(8);
 /// Which of the two guides' turns Kalay_UpdatePacingGuides is at, 0 to 4.
 s32 gKalay_PacingStep BSS_DATA;
 
-extern s32 gKalay_TileStepByFacing[];
+extern s32 gPushedActor_DirectionSteps[];
 extern s32 gKalay_TourGroupWalkScript[];
 extern s32 gKalay_TourGroupLeaveScript[];
 extern s32 gKalay_WaitingTouristScript[];
@@ -1971,13 +1971,14 @@ static void Kalay_PushTunnelStatue(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = FACING_INDEX(leader->facing);
   leaderX = leader->x.part[0].integer;
-  probeStep = gKalay_TileStepByFacing[direction];
+  probeStep = gPushedActor_DirectionSteps[direction];
   statue = Actor_FindAtCell(
       (leaderX + DIRECTION_STEP_X(probeStep)) >> 4,
       (leader->z.part[0].integer + DIRECTION_STEP_Z(probeStep)) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
-    Actor_StepFrom(&destination, statue, gKalay_TileStepByFacing[direction]);
+    Actor_StepFrom(&destination, statue,
+                   gPushedActor_DirectionSteps[direction]);
     if (FieldActor_CheckMovementCollision(statue, &destination) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
@@ -2253,15 +2254,7 @@ static void Kalay_FreezePuddle(void) {
 
 #include "shared/actor_orbit.c"
 
-/// One cell in each facing direction.
-s32 gKalay_TileStepByFacing[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.c"
 
 s32 gKalay_TourGroupWalkScript[] = {
     SC_ANIMATION(2), SC_MOVE_BY(-80, 0, 0), SC_SYNC,

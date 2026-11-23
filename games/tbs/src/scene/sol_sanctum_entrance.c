@@ -102,7 +102,7 @@ extern struct Trigger gSolEntrance_Triggers[];
 extern struct Trigger gSolSanctumReliefs_Triggers[];
 extern struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[];
 extern struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[];
-extern s32 gSolSanctumPushSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 
 /// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet
 /// and Jenna, placed before him, take their own party slots.
@@ -638,14 +638,16 @@ static void SolSanctumEntrance_PushStatue(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = FACING_INDEX(leader->facing);
-  statue = Actor_FindAtCell(
-      (leader->x.part[0].integer +
-       (FIXEDtoINT(gSolSanctumPushSteps[direction]))) >>
-          4,
-      (leader->z.part[0].integer + (s16)gSolSanctumPushSteps[direction]) >> 4);
+  statue =
+      Actor_FindAtCell((leader->x.part[0].integer +
+                        (FIXEDtoINT(gPushedActor_DirectionSteps[direction]))) >>
+                           4,
+                       (leader->z.part[0].integer +
+                        (s16)gPushedActor_DirectionSteps[direction]) >>
+                           4);
   if (statue != NULL) {
     statue->layer = 2;
-    Actor_StepFrom(&target, statue, gSolSanctumPushSteps[direction]);
+    Actor_StepFrom(&target, statue, gPushedActor_DirectionSteps[direction]);
     // Move only after the statue's proposed position passes collision.
     if (FieldActor_CheckMovementCollision(statue, &target) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
@@ -1568,12 +1570,4 @@ struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
 };
 // clang-format on
 
-/// The push step for each of the 16 facings.
-s32 gSolSanctumPushSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.c"

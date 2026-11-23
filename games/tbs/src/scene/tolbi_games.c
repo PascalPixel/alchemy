@@ -1644,7 +1644,7 @@ const u32 gTolbiSpring_Exits[] = {
     SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI, Tolbi,
                       TOLBI_FROM_LUCKY_DICE, 0xffffffff),
     SCENE_EXIT_UNLESS(STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI, Tolbi,
-                      TOLBI_FROM_HOUSE_NORTHEAST, 0xffffffff),
+                      TOLBI_FROM_LUCKY_WHEELS, 0xffffffff),
     SCENE_EXITS_END,
 };
 

@@ -2877,16 +2877,16 @@ enum {
 
 /// SceneId_Tolbi's entrances.
 enum {
-  TOLBI_FROM_HOUSE_SOUTH = 1,
+  TOLBI_FROM_WORLD_MAP = 1,
   TOLBI_FROM_HOUSE_NORTHWEST = 2,
-  TOLBI_FROM_INN = 3,
-  TOLBI_FROM_STUCCO_ROOMS_B_EAST = 4,
-  TOLBI_FROM_HOUSE_NORTHEAST = 5,
+  TOLBI_FROM_HOUSE_NORTH = 3,
+  TOLBI_FROM_INN = 4,
+  TOLBI_FROM_LUCKY_WHEELS = 5,
   TOLBI_FROM_HOUSE_EAST = 6,
-  TOLBI_FROM_WEAPON_AND_ARMOR_SHOP = 7,
-  TOLBI_FROM_HOUSE_SOUTHWEST = 8,
-  TOLBI_FROM_SANCTUM = 9,
-  TOLBI_FROM_STUCCO_ROOMS_B_WEST = 10,
+  TOLBI_FROM_HOUSE_SOUTHEAST = 7,
+  TOLBI_FROM_WEAPON_AND_ARMOR_SHOP = 8,
+  TOLBI_FROM_HOUSE_SOUTHWEST = 9,
+  TOLBI_FROM_SANCTUM = 10,
   TOLBI_FROM_BABI_PALACE_ENTRANCE = 11,
   TOLBI_FROM_COLOSSEUM_ENTRANCE = 12,
   TOLBI_FROM_LUCKY_DICE = 13,
@@ -2894,12 +2894,12 @@ enum {
 };
 /// SceneId_Tolbi's exits.
 enum {
-  TOLBI_TO_HOUSE_SOUTH = 1,
-  TOLBI_TO_HOUSE_NORTHWEST = 2,
+  TOLBI_TO_HOUSE_NORTHWEST = 1,
+  TOLBI_TO_HOUSE_NORTH = 2,
   TOLBI_TO_INN = 3,
   TOLBI_TO_LUCKY_WHEELS = 4,
-  TOLBI_TO_HOUSE_NORTHEAST = 5,
-  TOLBI_TO_HOUSE_EAST = 6,
+  TOLBI_TO_HOUSE_EAST = 5,
+  TOLBI_TO_HOUSE_SOUTHEAST = 6,
   TOLBI_TO_WEAPON_AND_ARMOR_SHOP = 7,
   TOLBI_TO_HOUSE_SOUTHWEST = 8,
   TOLBI_TO_SANCTUM = 9,
@@ -2912,16 +2912,16 @@ enum {
 
 /// SceneId_StuccoRoomsB's entrances.
 enum {
-  STUCCO_ROOMS_B_HOUSE_NORTHEAST =
-      1, ///< the room behind Tolbi's house northeast door; through
-         ///< TOLBI_TO_HOUSE_NORTHEAST
-  STUCCO_ROOMS_B_HOUSE_NORTHWEST =
-      2, ///< the room behind Tolbi's house northwest door; through
-         ///< TOLBI_TO_HOUSE_NORTHWEST
-  STUCCO_ROOMS_B_HOUSE_EAST = 3,  ///< the room behind Tolbi's house east door;
+  STUCCO_ROOMS_B_HOUSE_EAST = 1,  ///< the room behind Tolbi's house east door;
                                   ///< through TOLBI_TO_HOUSE_EAST
-  STUCCO_ROOMS_B_HOUSE_SOUTH = 4, ///< the room behind Tolbi's house south
-                                  ///< door; through TOLBI_TO_HOUSE_SOUTH
+  STUCCO_ROOMS_B_HOUSE_NORTH = 2, ///< the room behind Tolbi's house north
+                                  ///< door; through TOLBI_TO_HOUSE_NORTH
+  STUCCO_ROOMS_B_HOUSE_SOUTHEAST =
+      3, ///< the room behind Tolbi's house southeast door; through
+         ///< TOLBI_TO_HOUSE_SOUTHEAST
+  STUCCO_ROOMS_B_HOUSE_NORTHWEST =
+      4, ///< the room behind Tolbi's house northwest door; through
+         ///< TOLBI_TO_HOUSE_NORTHWEST
   STUCCO_ROOMS_B_HOUSE_SOUTHWEST =
       5, ///< the room behind Tolbi's house southwest door; through
          ///< TOLBI_TO_HOUSE_SOUTHWEST
@@ -2947,14 +2947,15 @@ enum {
 /// SceneId_StuccoRoomsB's exits.
 enum {
   STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI = 1,
-  STUCCO_ROOMS_B_INN_TO_TOLBI = 2,
-  STUCCO_ROOMS_B_TO_TOLBI_EAST = 3,
-  STUCCO_ROOMS_B_HOUSE_NORTHEAST_TO_TOLBI = 4,
+  STUCCO_ROOMS_B_HOUSE_NORTH_TO_TOLBI = 2,
+  STUCCO_ROOMS_B_INN_TO_TOLBI = 3,
+  /// No cell leads to it; it puts the party outside the Lucky Wheels door.
+  STUCCO_ROOMS_B_UNUSED_TO_TOLBI = 4,
   STUCCO_ROOMS_B_HOUSE_EAST_TO_TOLBI = 5,
-  STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI = 6,
-  STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI = 7,
-  STUCCO_ROOMS_B_SANCTUM_TO_TOLBI = 8,
-  STUCCO_ROOMS_B_TO_TOLBI_WEST = 9,
+  STUCCO_ROOMS_B_HOUSE_SOUTHEAST_TO_TOLBI = 6,
+  STUCCO_ROOMS_B_WEAPON_AND_ARMOR_SHOP_TO_TOLBI = 7,
+  STUCCO_ROOMS_B_HOUSE_SOUTHWEST_TO_TOLBI = 8,
+  STUCCO_ROOMS_B_SANCTUM_TO_TOLBI = 9,
   STUCCO_ROOMS_B_INN_TO_INN_PASSAGE = 10,
   STUCCO_ROOMS_B_INN_PASSAGE_TO_INN = 11,
   STUCCO_ROOMS_B_INN_PASSAGE_TO_GUEST_ROOM_SOUTHWEST = 12,

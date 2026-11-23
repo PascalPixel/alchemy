@@ -45,8 +45,8 @@ struct SparkWork {
 STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
               offsetof(struct BattleEffectWork, trackedCanvas.origin));
 
-// Draws the star field's next frame: each spark falls towards the centre and
-// shrinks as its life runs out, and the three rings move outward.
+/// Draws the star field's next frame: each spark falls towards the centre and
+/// shrinks as its life runs out, and the three rings move outward.
 UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   s32 ringIndex;
   s32 picture;
@@ -158,8 +158,8 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   work->ready = 1;
 }
 
-// Copies the drawn canvas to BG2's tiles. UB: the task runner invokes a void
-// task.
+/// Copies the drawn canvas to BG2's tiles.
+// UB: the task runner invokes a void task.
 #ifdef UBFIX
 void ElementGlow_UploadStarField(void) {
 #else

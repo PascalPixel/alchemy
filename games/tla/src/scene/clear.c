@@ -2002,10 +2002,7 @@ u16 gClear_ImportedFlags[] = {
 };
 // clang-format on
 
-struct SceneEntrance gSceneEntrances[] = {
-    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
-};
+#include "shared/scene_entrances_mapless.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS_END,

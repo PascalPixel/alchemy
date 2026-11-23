@@ -1,5 +1,7 @@
 /// @file
-/// Message strings and arguments, symbol decoding and portrait windows.
+/// Messages copied out as strings, the message arguments, closing windows, a
+/// message's flash, the story crawl's text, the symbol decoder and the
+/// portrait windows.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -487,6 +489,8 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, u32 ch, s32 x, s32 row) {
   return width;
 }
 #else
+/// Draws a character on the canvas at (x, row) with its shadow and returns its
+/// width.
 s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
   u16 *glyph = (u16 *)((u8 *)gFont_Glyphs +
                        (((ch & TEXT_LAST_FONT_CODE) - TEXT_SPACE) << 5));
@@ -604,12 +608,12 @@ void Message_Find(struct TextReader *reader, s32 message) {
 /// message's previous symbol picks the row.
 extern const void *const Text_MessageContexts[][2];
 
-/// Decodes the next symbol of a message. Messages are Huffman coded with one
-/// tree per previous symbol: the previous code picks the tree, the message's
-/// bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
-/// becomes the next context.
-/// Tree traversal consumes bytes; reader->words retains that byte position
-/// between calls. Nothing calls it.
+/// Unused: the symbol decoder in C, as the copy run from RAM
+/// (Text_DecodeSymbolCode) decodes. Messages are Huffman coded with one tree
+/// per previous symbol: the previous code picks the tree, the message's bits
+/// walk it to a leaf, and the leaf's 12-bit symbol is returned and becomes the
+/// next context. reader->words keeps the byte the bits are read from between
+/// calls.
 UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   u32 code;
   u32 contextBank;
@@ -703,8 +707,8 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
 extern const s16 gPortrait_CharacterMap[];
 extern const s16 gPortrait_SpriteMap[];
 
-/// Marks both portrait slots free (resource 999). Only the window system's
-/// setup calls it.
+/// Marks both portrait slots free (PORTRAIT_SLOT_EMPTY), as the window
+/// system's field setup does.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
   s32 index;
@@ -727,7 +731,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
 
   // The party members' small sprites speak as the party members.
   switch (value) {
-  case SPRITE_JENNA_SMALL - 1: // Felix's small sprite
+  case SPRITE_FELIX_SMALL:
     value = FELIX;
     break;
   case SPRITE_SHEBA_SMALL:
@@ -814,9 +818,8 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   return window;
 }
 
-/// Closes the portrait window showing speaker entry, if one is open, at once.
-/// portraitPictures selects the portrait slot, then portraitSprites identifies
-/// its window sprite, found as the first sprite of some window.
+/// Closes at once the portrait window showing the speaker's portrait, if one is
+/// open: the window whose first sprite is that portrait slot's.
 void Portrait_CloseWindow(s32 speaker) {
   struct WindowWork *state;
   struct Window *window;

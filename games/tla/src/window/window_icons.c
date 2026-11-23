@@ -1,5 +1,7 @@
 /// @file
-/// Item, Psynergy and command icons.
+/// The 16x16 icons of items, Psynergy and commands, built from their pictures,
+/// a frame under them and the marks over them, and the 32x32 icons and
+/// portraits loaded with their colours.
 // Part of window.c.
 
 #include "window_internal.h"
@@ -13,7 +15,26 @@ extern u8 *gIcon_OverlayPointerTable[];
 extern u8 *gIcon_MarkPointers[];
 extern u8 *gIcon_DigitPointers[];
 
-void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
+/// The frames an icon is drawn over (gIcon_BasePointerTable).
+enum IconBase {
+  ICON_BASE_COMMAND = 0,
+  ICON_BASE_COMMAND_RED = 1,
+  ICON_BASE_ITEM = 2
+};
+
+/// The marks drawn over an item's icon (gIcon_MarkPointers).
+enum IconMark {
+  ICON_MARK_EQUIPPED = 0, ///< the E of an item equipped
+  ICON_MARK_BROKEN = 1,   ///< the cross of a broken item
+  /// The phi of an equipped item that cannot be removed (ICON_ARTIFACT)
+  ICON_MARK_ARTIFACT = 2
+};
+
+/// gIcon_DigitPointers: the digits 0 to 9, then the tens 10 to 30 from this
+/// entry.
+#define ICON_DIGIT_TENS_FIRST 10
+
+void Icon_Decode(GlyphTransfer *glyph, s32 overlay);
 void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                              s32 *tileOut, s32 reuse);
 
@@ -47,9 +68,10 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
-/// Builds the icon of a battle action's item.
-void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
-                          s32 reuse) {
+/// Unused: builds the icon of a battle action as an item's icon
+/// (Icon_BuildItemIconTiles), where Ability_LoadGlyph builds its Psynergy icon.
+UNUSED void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
+                                 s32 reuse) {
   Icon_BuildItemIconTiles(Ability_Get(action)->icon, withBase, slot, tile,
                           reuse);
 }
@@ -69,7 +91,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gIcon_BasePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[ICON_BASE_ITEM];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -105,7 +127,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   if (work == NULL)
     return -1;
   if (layers & ICON_BASE) {
-    work->encoded = gIcon_BasePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[ICON_BASE_ITEM];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -116,20 +138,20 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   work->height = 2;
   Icon_Decode(work, overlay);
   if ((layers & ICON_BROKEN) && (code & INVENTORY_BROKEN)) {
-    work->encoded = gIcon_MarkPointers[1];
+    work->encoded = gIcon_MarkPointers[ICON_MARK_BROKEN];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
   }
   if ((layers & ICON_EQUIPPED) && (code & INVENTORY_EQUIPPED)) {
-    work->encoded = gIcon_MarkPointers[0];
+    work->encoded = gIcon_MarkPointers[ICON_MARK_EQUIPPED];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
   }
   if ((layers & ICON_ARTIFACT) && (code & INVENTORY_EQUIPPED) &&
       (item->flags & ITEM_CURSED) && (item->flags & ITEM_CANNOT_UNEQUIP)) {
-    work->encoded = gIcon_MarkPointers[2];
+    work->encoded = gIcon_MarkPointers[ICON_MARK_ARTIFACT];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 1);
@@ -144,8 +166,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
     count++;
   }
-  // Counts up to a full stack show: the ones digit from digits 0 to 9, the
-  // tens from a second set at 10 to 12.
+  // Counts up to a full stack show: the ones digit, and over it the tens.
   if (count != 0 && count <= INVENTORY_STACK_MAX) {
     s32 ones = count % 10;
 
@@ -154,7 +175,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     work->height = 2;
     Icon_Decode(work, 1);
     if (count / 10 != 0) {
-      work->encoded = gIcon_DigitPointers[count / 10 + 9];
+      work->encoded =
+          gIcon_DigitPointers[count / 10 + (ICON_DIGIT_TENS_FIRST - 1)];
       work->width = 2;
       work->height = 2;
       Icon_Decode(work, 1);
@@ -163,8 +185,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   return 256;
 }
 
-/// Composes an inventory icon with the requested layers and loads it into
-/// cacheSlot. The temporary glyph block is released after the upload.
+/// Draws an item's icon from its inventory code with the layers asked for
+/// (ItemIcon_Compose) and loads it into VRAM cache entry cacheSlot.
 s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -224,7 +246,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
     glyph = 0;
 
   if (withBase != 0) {
-    work->encoded = gIcon_BasePointerTable[2];
+    work->encoded = gIcon_BasePointerTable[ICON_BASE_ITEM];
     work->width = 2;
     work->height = 2;
     Icon_Decode(work, 0);
@@ -288,8 +310,8 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 }
 
-/// An empty function. Nothing in the tree names it but its prototype.
-void Icon_ReservedNoOp(void) {}
+/// Unused: does nothing.
+UNUSED void Icon_ReservedNoOp(void) {}
 
 /// The tile routines RamCode_Load copies to RAM to run, and their sizes, as
 /// these symbols' addresses.
@@ -301,16 +323,15 @@ extern u8 Tile_ExpandMaskedCodeSize[];
 extern u8 Tile_ExpandOpaqueCodeSize[];
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,
-/// opaque for the first layer or masked over what is there when outlined is
-/// set. Releases each copied decoder before loading the next routine into the
-/// same slot. glyph->width and height are the icon's size in tiles.
-void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
+/// opaque for the first layer, or over what is there, its colour 0 clear, when
+/// overlay is set. glyph->width and height are the icon's size in tiles.
+void Icon_Decode(GlyphTransfer *glyph, s32 overlay) {
   void *code;
 
   RamCode_Load(code, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
   Heap_Release(code);
-  if (outlined)
+  if (overlay)
     RamCode_Load(code, Tile_ExpandMaskedCode, Tile_ExpandMaskedCodeSize);
   else
     RamCode_Load(code, Tile_ExpandOpaqueCode, Tile_ExpandOpaqueCodeSize);

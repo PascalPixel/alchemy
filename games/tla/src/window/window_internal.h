@@ -140,12 +140,6 @@ enum {
   /// The next entry is the line spacing; a glyph sprite sits half of it below
   /// its line's top.
   TEXT_LINE_SPACING = 10,
-  // XXX (no evidence): what codes 11, 12 and 14 do (the PO catalogs'
-  // control_11, control_12 and control_14); every reader skips them with their
-  // one, one and two operands (MESSAGE_CONTROL_11, window_decode.c).
-  TEXT_CONTROL_11 = 11,
-  TEXT_CONTROL_12 = 12,
-  TEXT_CONTROL_14 = 14,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
@@ -176,6 +170,13 @@ enum {
 
 /// The window system's work, as ☀️'s WINDOW_WORK.
 #define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
+
+/// Window_FitOnScreen's flags.
+enum WindowFitFlag {
+  WINDOW_FIT_ALL_PAGES = 1, ///< size the window for every page, not the first
+  /// take the size given, in tiles, rather than measuring the text
+  WINDOW_FIT_SIZE_GIVEN = 2
+};
 
 // The window object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.

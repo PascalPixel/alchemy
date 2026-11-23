@@ -22,11 +22,9 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #define WINDOW_PAD_Y 15
 
 /// Sizes a window for decoded text entryIndex and moves (*windowX, *windowY) so
-/// the window fits on the screen. flags: bit 0 measures every page
-/// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
-/// *windowWidth and *windowHeight as given, in tiles, instead of measuring. In
-/// the Japanese release, while a mind-read window is open, a measured window is
-/// 2 tiles wider and kept off the screen's last column.
+/// the window fits on the screen, as flags (enum WindowFitFlag) say. In the
+/// Japanese release, while a mind-read window is open, a measured window is 2
+/// tiles wider and kept off the screen's last column.
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
@@ -48,8 +46,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   y = *windowY;
   rightLimit = DISPLAY_TILE_WIDTH;
 
-  if (!(flags & 2)) {
-    if (flags & 1)
+  if (!(flags & WINDOW_FIT_SIZE_GIVEN)) {
+    if (flags & WINDOW_FIT_ALL_PAGES)
       Text_MeasureAllPages(entryIndex, windowWidth, windowHeight, spacing);
     else
       Text_MeasureDecoded(entryIndex, windowWidth, windowHeight, spacing);
@@ -59,7 +57,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     return;
 
   // Pixels to tiles, with room for the border and a margin.
-  if (!(flags & 2)) {
+  if (!(flags & WINDOW_FIT_SIZE_GIVEN)) {
     *windowWidth = (*windowWidth + WINDOW_PAD_X) >> 3;
     *windowHeight = (*windowHeight + WINDOW_PAD_Y) >> 3;
 #if !TLA_PATCH_1
@@ -107,30 +105,32 @@ void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
   Text_MeasureDecoded(Message_Decode(message, 0), (u32 *)x, (u32 *)y, 0);
 }
 
-/// Builds the render entries of message no and fits its window on screen,
-/// passing flags to Window_FitOnScreen; returns 0 when the message is empty.
-#define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)                            \
-  s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height) {                  \
+/// Defines a routine that decodes message and sizes its window to fit on the
+/// screen near tile (*x, *y), as Window_FitOnScreen does with flags; it
+/// returns 0 when the message is empty.
+#define DEFINE_MESSAGE_SIZE(name, flags)                                       \
+  s32 name(s32 message, s32 *x, s32 *y, u32 *width, u32 *height) {             \
     struct WindowWork *work;                                                   \
-    s32 idx;                                                                   \
+    s32 entry;                                                                 \
                                                                                \
     work = WINDOW_WORK;                                                        \
-    idx = Message_Decode(no, 0);                                               \
-    if (work->textBuffer[idx] == 0) {                                          \
+    entry = Message_Decode(message, 0);                                        \
+    if (work->textBuffer[entry] == 0) {                                        \
       return 0;                                                                \
     }                                                                          \
-    Window_FitOnScreen(idx, x, y, width, height, 0, flags);                    \
+    Window_FitOnScreen(entry, x, y, width, height, 0, flags);                  \
     return 1;                                                                  \
   }
 
-/// Fits message no's window on screen, sized by its first page.
-DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
-/// As Text_GetMessageSize, sized to hold every page.
-DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAllPages, 1)
+/// Sizes a message's window by its first page.
+DEFINE_MESSAGE_SIZE(Text_GetMessageSize, 0)
+/// Sizes a message's window to hold every page.
+DEFINE_MESSAGE_SIZE(Text_GetMessageSizeAllPages, WINDOW_FIT_ALL_PAGES)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in
-/// pixels. With spacing set, fills one entry per line, four at most, with the
+/// pixels. With spacing set, fills one entry per line, MESSAGE_LINE_COUNT at
+/// most, with the
 /// extra gap between characters, in 1/256 pixel, that spreads the line across
 /// the window. It leaves WindowWork.outline at the last style it passed.
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
@@ -144,8 +144,8 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 code;
   u32 glyph;
   u32 lineIndex;
-  u16 lineSpacingCounts[4];
-  u16 lineWidths[4];
+  u16 lineSpacingCounts[MESSAGE_LINE_COUNT];
+  u16 lineWidths[MESSAGE_LINE_COUNT];
   s32 gap;
   u32 step;
   u32 style;
@@ -219,7 +219,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       lineWidths[lines] = lineWidth;
       if (width < lineWidth)
         width = lineWidth;
-      if (lines < 3)
+      if (lines < MESSAGE_LINE_COUNT - 1)
         lines++;
       count = 0;
       lineWidth = 0;
@@ -259,6 +259,8 @@ done:
   if (work->mindRead)
     width = width + 2;
 #endif
+  // In textMode a message of three lines or more is squeezed into 32 pixels,
+  // and spacing's last entry tells Message_Start so (Message.compressLines).
   if (work->textMode != 0) {
     if (height > 44) {
       spacing[3] = 1;
@@ -314,8 +316,8 @@ done:
 void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                           u16 *spacing) {
   u32 pageHeights[16];
-  u16 lineSpacingCounts[4];
-  u16 lineWidths[4];
+  u16 lineSpacingCounts[MESSAGE_LINE_COUNT];
+  u16 lineWidths[MESSAGE_LINE_COUNT];
   struct WindowWork *work;
   u32 maxWidth;
   u32 line;
@@ -409,7 +411,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       lineWidths[line] = width;
       if (page == 0 && maxWidth < width)
         maxWidth = width;
-      if (line < 3)
+      if (line < MESSAGE_LINE_COUNT - 1)
         line++;
       count = 0;
       width = 0;
@@ -491,4 +493,4 @@ done:
   Text_ResetStyle();
 }
 
-#undef DEFINE_GET_RESOURCE_DIMENSIONS
+#undef DEFINE_MESSAGE_SIZE

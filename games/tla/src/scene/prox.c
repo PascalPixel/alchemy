@@ -327,8 +327,8 @@ extern s32 gProx_ThirdChildRuns[];
 /// Felix comes down the stairs from a house into its basement.
 void Prox_ComeDownStairs(s32 westOrSouth);
 extern s32 gProx_KradenStepsForward[];
-extern s32 gProx_SecondParentWalksSouth[];
-extern s32 gProx_ThirdParentWalksSouth[];
+extern s32 gProx_JennasFatherWalksSouth[];
+extern s32 gProx_JennasMotherWalksSouth[];
 extern s32 gProx_LeftFileWalksSouth[];
 extern s32 gProx_JennaWalksSouth[];
 extern s32 gProx_LeaderWalksSouth[];
@@ -2071,52 +2071,67 @@ void Prox_SayFarewell(void) {
     if (Event_GetFlag(FLAG_TRANSFERRED_VISITED_SICK_DORA) != 0) {
       Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
       Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+      // "But last time I saw her, she looked so sick, so weak... Even if..."
       Event_ShowMessage(ACTOR_ISAAC, 0);
       Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_NORTH_NORTHEAST);
+      // "Don't worry, Isaac. I'm sure she's in wonderful shape. I think..."
       Event_ShowMessage(ACTOR_KYLE, 0);
       gFieldWork->message++;
     } else {
       gFieldWork->message += 2;
       Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_NORTH_NORTHEAST);
+      // "And she wouldn't let anything happen until you came home."
       Event_ShowMessage(ACTOR_KYLE, 0);
     }
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
     Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "Sorry to keep you all waiting. At last, the time has come for us..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_FaceDirection(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
     Actor_FaceDirection(ACTOR_SOUTH_GATE_KRADEN, FACING_WEST, 20);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHWEST);
+    // "As soon as we leave Prox, we'll head toward Angara, and from..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_FaceDirectionAndWait(ACTOR_JENNAS_MOTHER, FACING_WEST);
+    // "I can't wait to see this winged ship of yours! It sounds so incredible!"
     Event_ShowMessage(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_JENNAS_MOTHER, 0);
     Actor_FaceDirectionAndWait(ACTOR_JENNAS_FATHER, FACING_EAST);
     Actor_SetAnimation(ACTOR_JENNAS_FATHER, 3);
+    // "I remember so little of our trip to Prox... This is really my..."
     Event_ShowMessage(
         SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_JENNAS_FATHER, 0);
     Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_EAST);
+    // "I've heard that the wind and waves make the boat rock... I hope I..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_KYLE,
                       0);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "This ancient ship of ours actually flies above the ocean... It's..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-    Event_OpenMessage(SPEAKER_WINDOW_BELOW | 0, 0);
+    // "It looks like we've got an exciting last trip ahead of us, doesn't it?"
+    // Yes: "Wow... Setting out like this takes me back to our own..."
+    // No: "I'm still worried about my mother, but I'll try to put it..."
+    Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
+      // "Wow... Setting out like this takes me back to our own quest's..."
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
       gFieldWork->message++;
     } else {
       gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+      // "I'm still worried about my mother, but I'll try to put it aside..."
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
     }
     Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHWEST);
     FieldActor_Jump(ACTOR_JENNA, 2, 10);
     FieldActor_Jump(ACTOR_JENNA, 4, 10);
+    // "If you keep talking like this, we'll never go anywhere! Let's go..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
@@ -2156,8 +2171,8 @@ void Prox_SayFarewell(void) {
     FieldActor_SetSpritePriority(ACTOR_GARET, 2);
     FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveTo(144, CAMERA_KEEP, 246, 1);
-    Actor_SetScript(ACTOR_JENNAS_FATHER, gProx_SecondParentWalksSouth);
-    Actor_SetScript(ACTOR_JENNAS_MOTHER, gProx_ThirdParentWalksSouth);
+    Actor_SetScript(ACTOR_JENNAS_FATHER, gProx_JennasFatherWalksSouth);
+    Actor_SetScript(ACTOR_JENNAS_MOTHER, gProx_JennasMotherWalksSouth);
     FieldEvent_Wait(10);
     Actor_SetScript(ACTOR_KYLE, gProx_LeftFileWalksSouth);
     Actor_SetScript(ACTOR_MIA, gProx_RightFileWalksSouth);
@@ -2183,6 +2198,9 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+    // "What's the matter, boys? Are you reluctant to depart?"
+    // Yes: "It's hard to believe that our quest is almost at its end. I..."
+    // No: "After all that we've been through, you can't possibly be..."
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2190,6 +2208,7 @@ void Prox_SayFarewell(void) {
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
+      // "It's hard to believe that our quest is almost at its end. I know..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
@@ -2197,46 +2216,60 @@ void Prox_SayFarewell(void) {
     } else {
       gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
+      // "After all that we've been through, you can't possibly be nervous..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
     }
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
+    // "I just hope that Vale came out of this in as good a condition as..."
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 4);
+    // "We won't know until we get there."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     FieldActor_Jump(ACTOR_GARET, 2, 10);
+    // "I can't stop thinking about how my parents are doing..."
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
     Actor_FaceDirection(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
+    // "Were the both of them in Vale?"
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+    // "Can't you make a guess, Kraden? Will Vale still be standing when..."
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
+    // "Not even I can know that..."
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    // "I can see it in your eyes, Kraden! You think something's happened..."
     FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "It's a possibility... One that cannot be ignored..."
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
+    // "If it's not there, then what's the point in even going back?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                     0);
+    // "Is that really how you feel, Isaac? What about you, Felix?"
+    // Yes: "Have you already forgotten all that we discussed? You ought..."
+    // No: "You remember, don't you, Felix? Think about it for a moment..."
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
+      // "Have you already forgotten all that we discussed? You ought to..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
@@ -2244,20 +2277,26 @@ void Prox_SayFarewell(void) {
     } else {
       gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
+      // "You remember, don't you, Felix? Think about it for a moment, Isaac."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
     }
     FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    // "What do you mean?"
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST);
+    // "Our conversation with Hamma after we ignited the beacon..."
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    // "Don't you remember us talking to the children from Imil at the..."
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "When they were warning people away from the lighthouses?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "Yes. The Wise One instructed everyone to seek refuge."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2266,25 +2305,32 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
     FieldEvent_Wait(20);
+    // "Yeah, so what about it?"
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                     0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST);
+    // "You still don't see, Garet?"
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "Even if Vale were destroyed, I'd expect that the villagers have..."
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+    // "I guess that's true... They might still be all right."
     Event_ShowMessage(ACTOR_JENNA, 0);
     FieldActor_Jump(ACTOR_GARET, 2, 10);
+    // "That's true... So whatever happens, my family's alive!"
     Event_ShowMessage(ACTOR_GARET, 0);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+    // "I'd forgotten about that... Thanks, Kraden."
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+    // "Garet, can you make sure everyone else knows that?"
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_EAST);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -2297,19 +2343,26 @@ void Prox_SayFarewell(void) {
     FieldEvent_Wait(20);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "OK, let's go. The both of you! We have to catch up to everyone."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_WalkToAndWait(ACTOR_SOUTH_GATE_KRADEN, 156, 256);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
+    // "Kraden..."
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+    // "Why did the Wise One change our parents into a dragon? Why did he..."
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
+    // "I mean, we almost killed them... He tried to make us kill our own..."
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
                     40);
+    // "Do you think that he intended for them to die from the start?"
+    // Yes: "I cannot speak for him, but I think he knew that they would..."
+    // No: "Ah... You don't understand why he put you through all this..."
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2317,6 +2370,7 @@ void Prox_SayFarewell(void) {
     if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
+      // "I cannot speak for him, but I think he knew that they would be..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
@@ -2324,19 +2378,23 @@ void Prox_SayFarewell(void) {
     } else {
       gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
+      // "Ah... You don't understand why he put you through all this if he..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
     }
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 4);
+    // "We cannot hope to fathom the motives of a being as all-powerful as..."
     FieldEvent_ShowMessageThenWait(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_SOUTH_GATE_KRADEN,
         0, 20);
+    // "You don't know either, Kraden?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
     FieldEvent_Wait(20);
+    // "I can only hazard a guess... The Wise One... wanted to test you."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2344,20 +2402,24 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
+    // "What do you mean, test us?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 4);
+    // "I cannot tell you more... It is up to you to find the answer."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+    // "Will we use Alchemy to wage war, to raise armies? Or will we use..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
+    // "You were willing to sacrifice everything for your quest. I'd say..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2368,22 +2430,26 @@ void Prox_SayFarewell(void) {
                     0);
     Actor_FaceDirection(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
     FieldActor_Jump(ACTOR_SOUTH_GATE_KRADEN, 4, 10);
+    // "Oops! Is everyone else that far ahead of us?"
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
+    // "We'd better hurry and catch up to the others before they leave us..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST);
     FieldActor_Jump(ACTOR_SOUTH_GATE_KRADEN, 2, 10);
     FieldActor_Jump(ACTOR_SOUTH_GATE_KRADEN, 4, 10);
+    // "After all, I'm not terribly interested in trying to walk all the..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
+    // "If you feel the same, then we'd better be hurrying."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2393,6 +2459,7 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST);
+    // "Isaac! Felix! We're off!"
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
@@ -2713,7 +2780,7 @@ struct ActorPlacement gProx_MoldPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PROX_WOMAN_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 178, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_ALWAYS, 7, 436, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 436, 0, 208, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_MOLD), MOVEMENT_TYPE_STAND, 404, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
@@ -3051,7 +3118,7 @@ s32 gProx_KradenStepsForward[] = {
     SC_END,
 };
 
-s32 gProx_SecondParentWalksSouth[] = {
+s32 gProx_JennasFatherWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(136, 0, 348),
     SC_SYNC,
@@ -3062,7 +3129,7 @@ s32 gProx_SecondParentWalksSouth[] = {
     SC_END,
 };
 
-s32 gProx_ThirdParentWalksSouth[] = {
+s32 gProx_JennasMotherWalksSouth[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),
     SC_SYNC,
@@ -3173,7 +3240,7 @@ s32 gProx_JennaRunsAhead[] = {
     SC_END,
 };
 
-// The same script as gProx_ThirdParentWalksSouth, under another name.
+// The same script as gProx_JennasMotherWalksSouth, under another name.
 s32 gProx_GaretRunsAhead[] = {
     SC_ANIMATION(2),
     SC_MOVE(152, 0, 348),

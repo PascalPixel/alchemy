@@ -259,7 +259,7 @@ void LinkLobby_WriteSlotValue(s32 slot) {
   dst[gLinkLobby_SlotColumns[slot]] = *src;
 }
 
-s32 gLinkLobby_WaitFrames BSS_DATA;
+s32 gLinkLobby_WaitFrames BSS_DATA; ///< frames without the partner
 s32 gLinkLobby_CallFrames BSS_DATA;
 
 /// The lobby's task each frame: counts frames without the opponent, clears

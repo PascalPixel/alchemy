@@ -33,7 +33,7 @@
 void MercuryLighthouse_HearVoices(void);
 
 extern s32 gMercuryLighthouse_GlintScript[];
-u32 gMercuryLighthouse_GlintFrames BSS_DATA;
+u32 gMercuryLighthouse_GlintFrames BSS_DATA; ///< frames the glint has run
 
 void FieldPsynergy_StopMindReadWave(void);
 

@@ -9,16 +9,16 @@
 const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareScriptAddress,     // 0 SW_SCRIPT
     ActorScript_SetOrCompareCursor,            // 1 SW_CURSOR
-    ActorScript_SetOrCompareFacing,            // 2
+    ActorScript_SetOrCompareFacing,            // 2, as SW_FACING
     ActorScript_SetOrCompareFacing,            // 3 SW_FACING
-    ActorScript_SetOrCompareFacing,            // 4
+    ActorScript_SetOrCompareFacing,            // 4, as SW_FACING
     ActorScript_SetOrCompareX,                 // 5 SW_X
     ActorScript_SetOrCompareY,                 // 6 SW_Y
     ActorScript_SetOrCompareZ,                 // 7 SW_Z
     ActorScript_SetOrCompareRadius,            // 8 SW_RADIUS
     ActorScript_SetOrCompareScaleX,            // 9 SW_SCALE_X
     ActorScript_SetOrCompareScaleY,            // 10 SW_SCALE_Y
-    ActorScript_SetOrCompareScaleY,            // 11
+    ActorScript_SetOrCompareScaleY,            // 11, as SW_SCALE_Y
     ActorScript_SetOrCompareVelocityX,         // 12 SW_VELOCITY_X
     ActorScript_SetOrCompareVelocityY,         // 13 SW_VELOCITY_Y
     ActorScript_SetOrCompareVelocityZ,         // 14 SW_VELOCITY_Z
@@ -30,9 +30,9 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrCompareVerticalMotion,    // 20 SW_BOUNCE
     ActorScript_SetOrCompareGravity,           // 21 SW_GRAVITY
     ActorScript_SetOrCompareTerrainHeight,     // 22 SW_GROUND
-    ActorScript_SetOrCompareRiseBaseY,         // 23
-    ActorScript_SetOrCompareSprite,            // 24
-    ActorScript_SetOrCompareSpriteStorageKind, // 25
+    ActorScript_SetOrCompareRiseBaseY,         // 23 SW_RISE_BASE_Y
+    ActorScript_SetOrCompareSprite,            // 24 SW_SPRITE
+    ActorScript_SetOrCompareSpriteStorageKind, // 25 SW_SPRITE_KIND
     ActorScript_SetOrCompareMotionFlags,       // 26 SW_MOTION
     ActorScript_SetOrCompareArrivalAxis,       // 27 SW_ARRIVAL
     ActorScript_SetOrCompareComparisonResult,  // 28 SW_RESULT
@@ -42,9 +42,9 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
     ActorScript_SetOrComparePaused,            // 32 SW_PAUSED
     ActorScript_SetOrCompareRepeatCount,       // 33 SW_REPEAT
     ActorScript_SetOrCompareWait,              // 34 SW_WAIT
-    ActorScript_SetOrCompareTimer,             // 35
-    ActorScript_SetOrCompareUserValue,         // 36
-    ActorScript_SetOrCompareWatchedActor,      // 37
+    ActorScript_SetOrCompareTimer,             // 35 SW_TIMER
+    ActorScript_SetOrCompareUserValue,         // 36 SW_USER_VALUE
+    ActorScript_SetOrCompareWatchedActor,      // 37 SW_WATCHED_ACTOR
     ActorScript_SetOrCompareUpdateAddress,     // 38 SW_HOOK
     ActorScript_SetOrCompareRiseCounter,       // 39 SW_RISE_COUNTER
     ActorScript_SetOrCompareRiseEnabled,       // 40 SW_RISE_ENABLED

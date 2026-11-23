@@ -28,7 +28,7 @@ void FieldEffect_SpawnFallingParticles(void) {
 }
 
 /// The sparkles Carry scatters from the target, 8 to 32 pixels out.
-#define CARRY_SHARD_MAX 20
+#define CARRY_SPARKLE_COUNT 20
 
 /// Tests the target's move with its ground height raised 16 pixels, so a
 /// carried target passes over ground up to 24 pixels above its own (a step
@@ -50,34 +50,36 @@ FieldEffect_CheckRaisedTargetCollision(struct Actor *target,
 /// where it is.
 void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct FieldEffectWork *effectWork;
-  struct Actor *src;
+  struct Actor *caster;
   struct Actor *target;
-  struct Actor *shards[CARRY_SHARD_MAX];
+  struct Actor *sparkles[CARRY_SPARKLE_COUNT];
   struct Vector3 pos;
   struct Actor *hands[2];
   struct Actor *actor;
-  struct Actor *right;
+  struct Actor *westHand;
   s32 i;
   s32 angle;
   FIXED dist;
 
   effectWork = gFieldEffectWork;
-  src = effectWork->mainActor;
+  caster = effectWork->mainActor;
   target = effectWork->child;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  src->watchedActor = target;
-  Actor_StartScriptFar(src, gFieldEffect_SourceHoldScript);
+  caster->watchedActor = target;
+  Actor_StartScriptFar(caster, gFieldEffect_SourceHoldScript);
 
-  // The hands appear 32 pixels to either side and move to 16 pixels.
+  // The hands appear 32 pixels to either side and move to 16 pixels: the east
+  // one, hands[0], is held in actor until the sparkles.
   SET_POSITION(&pos, effectWork->x, effectWork->y + toFIXED(16), effectWork->z);
   actor = FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z,
                                      FACING_WEST);
   hands[0] = actor;
-  right = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z, 0);
-  hands[1] = right;
-  if (hands[0] == NULL || right == NULL) {
+  westHand = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z,
+                                        FACING_EAST);
+  hands[1] = westHand;
+  if (hands[0] == NULL || westHand == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
@@ -85,16 +87,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
   Actor_SetMoveTargetFar(actor, pos.x + toFIXED(16), pos.y, pos.z);
-  Actor_SetMoveTargetFar(right, pos.x - toFIXED(16), pos.y, pos.z);
+  Actor_SetMoveTargetFar(westHand, pos.x - toFIXED(16), pos.y, pos.z);
   Actor_WaitForMoveFar(actor);
-  Actor_WaitForMoveFar(right);
+  Actor_WaitForMoveFar(westHand);
   actor->x.fixed = pos.x + toFIXED(16);
   actor->velocityX = 0;
-  right->x.fixed = pos.x - toFIXED(16);
-  right->velocityX = 0;
+  westHand->x.fixed = pos.x - toFIXED(16);
+  westHand->velocityX = 0;
 
-  // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
-  // flag bit 2) with no shadow and its colours cycling.
+  // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating with no
+  // shadow and its colours cycling.
   target->update = Actor_CycleSpriteColors;
   Task_Add(FieldEffect_SpawnFallingParticles, TASK_PASS_FRAME);
   Sound_PlayFar(SE_PSYNERGY_START);
@@ -103,7 +105,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= toFIXED(24)) {
       actor->y.fixed += toFIXED(3) / 8;
-      right->y.fixed += toFIXED(3) / 8;
+      westHand->y.fixed += toFIXED(3) / 8;
       target->y.fixed += toFIXED(3) / 8;
       wait(1);
     }
@@ -112,12 +114,12 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   hands[0]->acceleration = toFIXED(1) / 2;
   hands[1]->speedLimit = toFIXED(4);
   hands[1]->acceleration = toFIXED(1) / 2;
-  // As in Move: the target keeps its facing and reads its ground from layer
-  // 2 while it is carried.
+  // As in Move: the target keeps its facing and reads its ground from the
+  // overhead layer while it is carried.
   target->speedLimit = toFIXED(2) / 5;
   target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = 0;
-  target->layer = 2;
+  target->layer = MAPGRID_LAYER_OVERHEAD;
 
   // Move with the d-pad.
   for (;;) {
@@ -202,7 +204,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     }
   }
 
-  // Shards fly from the target, the hands vanish, and the target hops and
+  // Sparkles fly from the target, the hands vanish, and the target hops and
   // drops.
   Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
   Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
@@ -213,11 +215,11 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
-  for (i = 0; i < CARRY_SHARD_MAX; i++) {
+  // Sparkles: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
+  for (i = 0; i < CARRY_SPARKLE_COUNT; i++) {
     actor = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-    // DEAD: nothing reads the shards back; the ROM keeps the stores.
-    shards[i] = actor;
+    // DEAD: nothing reads the sparkles back; the ROM keeps the stores.
+    sparkles[i] = actor;
     if (actor != NULL) {
       Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);
       actor->speedLimit = Random16() + toFIXED(2);
@@ -240,9 +242,9 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   target->velocityY = toFIXED(10);
   target->bounce = FIXED_ONE / 5;
-  target->layer = 0;
-  src->update = 0;
-  Actor_SetSpriteColorModeFar(src, SPRITE_COLOR_NORMAL);
+  target->layer = MAPGRID_LAYER_GROUND;
+  caster->update = 0;
+  Actor_SetSpriteColorModeFar(caster, SPRITE_COLOR_NORMAL);
   if (effectWork->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
@@ -260,39 +262,39 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
 /// When Carry is cast with no target, two hands appear 16 pixels above the spot
 /// in front of the caster and 32 pixels to either side, close in 24 pixels and
-/// scatter into shards.
-DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnCarryHand)
+/// clap, and sparkles scatter.
+DEFINE_CLAPPING_HANDS_CAST(FieldPsynergy_Carry, FieldEffect_SpawnCarryHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
 /// spinning 1/8 turn a frame, from a quarter to full size over 24 frames; angle
 /// is the way it faces once grown.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
-  struct Actor *fragment;
+  struct Actor *hand;
   FIXED scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
-  if (fragment != NULL) {
-    fragment->scaleY = FIXED_ONE / 4;
-    fragment->scaleX = FIXED_ONE / 4;
-    fragment->speedLimit = toFIXED(3);
-    fragment->acceleration = toFIXED(3);
-    fragment->steeringFlags = 0;
-    Actor_SelectAnimationFar(fragment, MOVE_HAND_ANIMATION_OPEN);
-    scale = fragment->scaleX;
+  hand = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
+  if (hand != NULL) {
+    hand->scaleY = FIXED_ONE / 4;
+    hand->scaleX = FIXED_ONE / 4;
+    hand->speedLimit = toFIXED(3);
+    hand->acceleration = toFIXED(3);
+    hand->steeringFlags = 0;
+    Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_OPEN);
+    scale = hand->scaleX;
     if (scale < FIXED_ONE) {
       do {
         scale += FIXED_ONE / 32;
-        fragment->scaleY = scale;
-        fragment->scaleX = scale;
-        fragment->facing += DEGtoANG(45);
+        hand->scaleY = scale;
+        hand->scaleX = scale;
+        hand->facing += DEGtoANG(45);
         wait(1);
-        scale = fragment->scaleX;
+        scale = hand->scaleX;
       } while (scale < FIXED_ONE);
     }
-    fragment->facing = angle;
+    hand->facing = angle;
   }
-  return fragment;
+  return hand;
 }
 
-#undef CARRY_SHARD_MAX
+#undef CARRY_SPARKLE_COUNT

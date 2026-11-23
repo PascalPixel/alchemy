@@ -2,7 +2,8 @@
 #define ALCHEMY_GROUND_MASK_H
 
 /// @file
-/// The fade overlay, the weather particles and the actor effect work.
+/// The fade overlay's marks beside an actor, and the work of the weather's
+/// ground particles, motes of light and sparkles.
 
 #include "edition.h"
 #include "fixed_math.h"

@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_ACTOR_SCRIPT_OPERANDS_H
 #define ALCHEMY_ACTOR_SCRIPT_OPERANDS_H
 
+/// @file
+/// The handlers of the script work values that SC_SET, SC_ADD and SC_CMP
+/// reach (actor_script_operands.c).
+
 #include "types.h"
 
 struct ScriptOperands;

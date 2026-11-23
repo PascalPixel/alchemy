@@ -1,6 +1,12 @@
 #ifndef ALCHEMY_FACING_H
 #define ALCHEMY_FACING_H
 
+/// @file
+/// The constant tables of facing.c: which picture of an animation an actor
+/// shows for each way it faces, and beside them the sprite dissolve's pixel
+/// order, the fixed camera's matrix, a floating actor's bob, the actor
+/// scripts' end script and the World Map camera's lean for the direction pad.
+
 #include "fixed_math.h"
 #include "types.h"
 

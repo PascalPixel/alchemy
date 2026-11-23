@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_ACTOR_UPDATE_ARM_H
 #define ALCHEMY_ACTOR_UPDATE_ARM_H
 
+/// @file
+/// The unused ARM copy of the actors' update (actor_update_arm.c), and the
+/// arrival axes both copies watch.
+
 #include "types.h"
 
 /// The axis a moving actor watches to know it has arrived at its target: the

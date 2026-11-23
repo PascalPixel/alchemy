@@ -95,8 +95,8 @@ static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 cellX,
   WorldMap_SetWindowCellTile(x, y, cellX, cellY);
 }
 
-/// Puts an actor on the leader and sends it walking off by (dx, dz),
-/// then starts the movement type facing names (Actor_LaunchFromLeader).
+/// Puts an actor on the leader and sends it walking off by (dx, dz), then
+/// turns it to face facing (Actor_LaunchFromLeader).
 static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
                                                s32 facing) {
   Actor_LaunchFromLeader(actorId, dx, dz, facing);

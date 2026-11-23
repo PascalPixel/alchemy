@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_LUCKY_DICE_H
 #define ALCHEMY_LUCKY_DICE_H
 
+/// @file
+/// Lucky Dice, the dice game in Tolbi (lucky_dice.c), and the small
+/// fixed-point helpers it keeps for its 3D camera.
+
 #include "fixed_math.h"
 #include "types.h"
 

@@ -1,11 +1,11 @@
 /// @file
-/// The event camera.
+/// The camera an event moves: following an actor, panning to a point kept
+/// inside the map, and waiting for it to arrive.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 
-/// The event command "camera follow actor": the camera (the event's view
-/// centre) follows actorId.
+/// Makes the camera, the event's view centre, follow actorId.
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   struct Actor *subject;
   struct Actor *camera;
@@ -32,22 +32,21 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
   }
 }
 
-/// The event command "camera set speed": the camera's top speed and
-/// acceleration, 16.16 pixels per frame.
+/// Sets the camera's top speed and acceleration, in 16.16 pixels per frame.
 void FieldCamera_SetSpeedParameters(FIXED speedLimit, FIXED acceleration) {
-  struct FieldWork *owner =
+  struct FieldWork *fieldWork =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  owner->camera->speedLimit = speedLimit;
-  owner->camera->acceleration = acceleration;
+  fieldWork->camera->speedLimit = speedLimit;
+  fieldWork->camera->acceleration = acceleration;
 }
 
-/// The event command "camera move to": sends the camera to the requested axes,
-/// 16.16 pixels (CAMERA_KEEP keeps that axis), kept far enough inside the map
-/// that the screen never shows past its edge.
+/// Pans the camera to a point in 16.16 pixels (CAMERA_KEEP keeps that axis),
+/// or cuts there when glide is 0, kept far enough inside the map that the
+/// screen never shows past its edge.
 void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
                                      FIXED requestedZ, s32 glide) {
   s32 shouldGlide;
-  struct FieldWork *runtimeBlock;
+  struct FieldWork *fieldWork;
   FIXED minimumX;
   FIXED minimumZ;
   FIXED maximumX;
@@ -63,8 +62,8 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   positionY = requestedY;
   shouldGlide = glide;
   positionZ = requestedZ;
-  runtimeBlock = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  camera = runtimeBlock->camera;
+  fieldWork = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  camera = fieldWork->camera;
   grid = gMapGridWork[0];
 
   // Keep the screen inside the map: the view centre stays 120 pixels from
@@ -101,8 +100,8 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   }
   if (shouldGlide == 0) {
     SET_ACTOR_POSITION(camera, positionX, positionY, positionZ);
-    wait(1U);
-    if (runtimeBlock->mode != ACTOR_SYSTEM_WORLD_MAP) {
+    wait(1);
+    if (fieldWork->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
@@ -110,8 +109,8 @@ void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
   }
 }
 
-/// The event command "camera move to actor":
-/// FieldCamera_MoveWithinMapBounds to the actor's x and z.
+/// Moves the camera to an actor's x and z, as FieldCamera_MoveWithinMapBounds
+/// does to a point.
 void FieldCamera_MoveToActorById(s32 actorId, s32 glide) {
   struct Actor *subject;
 
@@ -124,8 +123,7 @@ void FieldCamera_MoveToActorById(s32 actorId, s32 glide) {
   }
 }
 
-/// The event command "camera wait for move": waits (at most 600 frames) for
-/// the camera to arrive, then 2 frames more.
+/// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
   Actor_WaitForMoveFar(((struct FieldWork *)HeapSlot_AllocEwram(
                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
@@ -133,7 +131,7 @@ void FieldCamera_WaitForArrival(void) {
   Event_Wait(2);
 }
 
-/// The event command "get view centre": returns the camera actor.
+/// Returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
   return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
                                                   sizeof(struct FieldWork)))

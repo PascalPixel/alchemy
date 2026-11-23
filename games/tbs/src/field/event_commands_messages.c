@@ -10,7 +10,7 @@
 /// Portrait_OpenWindow's window is 5 tiles square.
 #define PORTRAIT_WINDOW_TILES 5
 
-/// The event command "open message": opens the event's current message in a
+/// Opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
 struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
@@ -231,7 +231,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   return handle;
 }
 
-/// The event command "show message": opens the current message at actorId
+/// Opens the current message at actorId
 /// (FieldMessage_ShowAtActor) and waits until it has been read and its window
 /// has closed; the speaker's portrait is closed once the text is typed out.
 void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
@@ -269,14 +269,14 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   wait(1);
 }
 
-/// The event command "show message and wait": shows the message, then waits the
+/// Shows the message, then waits the
 /// given number of frames.
 void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames) {
   Event_ShowMessageAndWait(actorId, flags);
   Event_Wait(frames);
 }
 
-/// The event command "ask yes or no": opens the question at actorId, lets the
+/// Opens the question at actorId, lets the
 /// leader answer, then shows the next message for yes or the one after it for
 /// no.
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
@@ -436,7 +436,7 @@ void Actor_ClosePortrait(s32 actorId) {
     Portrait_CloseWindowFar(sprite);
 }
 
-/// The event command "show two messages and wait": two actors speak at
+/// Two actors speak at
 /// once, each message at its own (x, y) with its portrait at (portraitX,
 /// portraitY), all in tiles. Waits for A, B, L or R, then closes both.
 void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,

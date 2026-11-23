@@ -56,7 +56,7 @@ struct SpriteAnimation {
   u8 kind;
   u8 colorMode; ///< SpriteColorMode its pixels are drawn with; 0 when taken
   u8 priority; ///< drawing order 0 to 3 among the animations; above 3 not drawn
-  u8 mode;     ///< picture codec: 1 tagged LZ, 3 LZ, anything else raw
+  u8 mode;     ///< an enum SpritePictureCodec; anything else is raw
   void **pictures; ///< picture pointers, from the metadata or a picture cache
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null when stopped (ANIMCMD_END)
@@ -88,7 +88,8 @@ struct SpritePictureCache {
   ((id) + ((slot) << PICTURE_CACHE_TAG_SLOT_SHIFT))
 
 /// The actor system's work: the flag that suspends sprite projection, the
-/// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.
+/// outline's edge and fill colours, and the sprite picture caches
+/// (HEAP_SLOT_ACTOR_SYSTEM).
 struct ActorSystemWork {
   u16 used; ///< sprite pixel bytes composed since the camera reset it
   u8 unused[2];
@@ -134,7 +135,7 @@ struct AnimationSpritePart {
 /// four sprite animations.
 struct Sprite {
   struct AnimationSpritePart image;
-  /// Its shadow, shown while flags bit 0 is set.
+  /// Its shadow, shown while flags has SPRITE_FLAG_SHADOW.
   struct AnimationSpritePart shadow;
   FIXED scale; ///< 16.16 fixed point, FIXED_ONE full size
   u8 slot;     ///< VRAM cache entry holding its tiles
@@ -151,8 +152,8 @@ struct Sprite {
   /// The animation number last selected, which selecting again skips.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
-  /// bits: 1 outlined in ActorSystemWork's edge and fill colours |
-  /// 0 shadow drawn (set when created)
+  /// SpriteFlag bits: SPRITE_FLAG_OUTLINED and SPRITE_FLAG_SHADOW (set when
+  /// created).
   u8 flags;
   u8 count; ///< layers in use, up to the last one present
   struct SpriteAnimation *entries[4]; ///< its layers; empty ones null

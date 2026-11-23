@@ -111,11 +111,12 @@ enum ActorScriptCommand {
 /// Set the acceleration, in pixels a frame per frame.
 #define SC_ACCELERATION(acceleration)                                          \
   SC_SET(SW_ACCELERATION, toFIXED(acceleration))
-#define SC_PLAYER SCRIPT_COMMAND_PLAYER ///< Player input control
-/// Move 8 pixels at a time by the direction pad
+#define SC_PLAYER SCRIPT_COMMAND_PLAYER ///< Hand the actor to the player.
+/// Move 8 pixels at a time by the direction pad.
 #define SC_KEYS SCRIPT_COMMAND_KEYS
-#define SC_WORLD SCRIPT_COMMAND_WORLD ///< World map control
-#define SC_RELEASE SCRIPT_COMMAND_RELEASE
+#define SC_WORLD                                                               \
+  SCRIPT_COMMAND_WORLD ///< Hand it to the player on the World Map.
+#define SC_RELEASE SCRIPT_COMMAND_RELEASE ///< Free the actor's slot.
 /// Switch the sprites to animation v.
 #define SC_ANIMATION(v) SCRIPT_COMMAND_ANIMATION, (v)
 #define SC_NOP(v) SCRIPT_COMMAND_NOP, (v) ///< Skip its operand.
@@ -129,7 +130,8 @@ enum ActorScriptCommand {
 #define SC_CALL(fn) SCRIPT_COMMAND_CALL, (s32)(fn)
 #define SC_KEY_COUNT SCRIPT_COMMAND_KEY_COUNT ///< Check the configured keys.
 
-/// Script work values for SC_SET, SC_ADD and SC_CMP
+/// Script work values for SC_SET, SC_ADD and SC_CMP: the actor's fields, by
+/// their place in gActorScript_OperandHandlerTable.
 enum ActorScriptValue {
   SW_SCRIPT = 0,
   SW_CURSOR = 1,
@@ -151,6 +153,9 @@ enum ActorScriptValue {
   SW_BOUNCE = 20,
   SW_GRAVITY = 21,
   SW_GROUND = 22,
+  SW_RISE_BASE_Y = 23, ///< Actor.riseBaseY, scene code's own word
+  SW_SPRITE = 24,      ///< the sprite, or its list of four
+  SW_SPRITE_KIND = 25, ///< Actor.spriteStorageKind
   SW_MOTION = 26,
   SW_ARRIVAL = 27,
   SW_RESULT = 28,
@@ -166,6 +171,7 @@ enum ActorScriptValue {
   /// Actor.userValue, scene scratch: an event sets it for the scene code
   /// that reads or waits on it.
   SW_USER_VALUE = 36,
+  SW_WATCHED_ACTOR = 37, ///< the actor it follows or faces
   SW_HOOK = 38,
   SW_RISE_COUNTER = 39, ///< Actor.riseCounter, scene code's own byte
   SW_RISE_ENABLED = 40  ///< Actor.riseEnabled, scene code's own byte

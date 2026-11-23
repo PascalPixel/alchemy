@@ -2,9 +2,10 @@
 #define ALCHEMY_ACTOR_ARM_VIEW_H
 
 /// @file
-/// The words of an actor's script as the motion loops index them, the target
-/// value that is no coordinate, and ActorArmView, struct Actor as
-/// actor_update_arm.c reads it.
+/// What the actors' ARM update can read: the words of an actor's script as the
+/// motion loops index them, the target value that is no coordinate, the motion
+/// and steering flags, and ActorArmView, struct Actor as actor_update_arm.c
+/// reads it.
 
 #include "fixed_math.h"
 #include "static_assert.h"
@@ -17,6 +18,27 @@ struct Actor;
 enum ActorTarget {
   /// A target coordinate that is not set: the actor has no target.
   ACTOR_NO_TARGET = (s32)0x80000000
+};
+
+/// Actor.motionFlags bits.
+enum ActorMotionFlag {
+  ACTOR_FOLLOWS_TERRAIN = 0x01, ///< moves with the ground height under it
+  ACTOR_FALLS = 0x02,           ///< falls by its gravity and bounces
+  ACTOR_FLOATS = 0x04,          ///< bobs up and down by its gravity
+  ACTOR_FLOATS_HIGH = 0x08,     ///< with ACTOR_FLOATS, four times as far
+  /// Keeps its speed on slopes, which slow others down.
+  ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10,
+  /// Unused: nothing sets or reads it; a jump clears it with
+  /// ACTOR_FOLLOWS_TERRAIN.
+  ACTOR_MOTION_SPARE = 0x80,
+  /// The motion flags a jump keeps as the actor leaves the ground: all but
+  /// ACTOR_FOLLOWS_TERRAIN and the spare bit.
+  ACTOR_JUMP_KEEPS_MOTION = (u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE)
+};
+
+/// Actor.steeringFlags bits.
+enum ActorSteeringFlag {
+  ACTOR_FACES_MOTION = 0x01 ///< turns toward its velocity, 1/16 turn a frame
 };
 
 // UB: scripts have variable lengths, so a one-word member cannot describe them.
@@ -75,14 +97,13 @@ struct ActorArmView {
   void *sprite;
   u8 spriteStorageKind;
   ///@}
-  /// bits: 4 no slowdown on slopes | 3 bigger float | 2 floats | 1 falls |
-  /// 0 follows the terrain; zero is free flight in 3D
+  /// ActorMotionFlag bits; zero is free flight in 3D.
   u8 motionFlags;
   u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
   u8 conditionResult; ///< the actor script's last flag test; not named here
   u8 snapToTarget;    ///< nonzero lands it exactly on its target
   u8 collisionFlags;  ///< bit 7: a solid actor refuses its move
-  u8 steeringFlags;   ///< bit 0: turns toward its velocity, 1/16 turn a frame
+  u8 steeringFlags;   ///< ActorSteeringFlag bits
   u8 paused; ///< nonzero skips its script and motion, not its update routine
   /// Actor's flag that keeps its sprite's VRAM, and the actor script's
   /// SC_LOOP count; not named here.

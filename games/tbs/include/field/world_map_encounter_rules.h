@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_WORLD_MAP_ENCOUNTER_RULES_H
 #define ALCHEMY_WORLD_MAP_ENCOUNTER_RULES_H
 
+/// @file
+/// Which encounter zone each part of the World Map takes, and the Djinn
+/// battles' formations.
+
 #include "types.h"
 
 /// The World Map's encounter zone for an encounter region and battle

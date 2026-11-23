@@ -105,9 +105,8 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
     }                                                                          \
   }
 
-/// A particle's sprite (struct Sprite), seen as the two fields
-/// Douse and Mind Read set on it; the notes give the Sprite fields
-/// at the same offsets.
+/// A particle's sprite (struct Sprite), seen as the two fields Douse and Mind
+/// Read set on it; each member says which Sprite fields it covers.
 struct WaveEffectSprite {
   u32 linkAndPosition[2]; ///< image.link and its first two attributes
   u8 tileLow;             ///< image.tile's low byte
@@ -133,13 +132,14 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   }
 }
 
-/// The shards DEFINE_ITEM_BREAK_EFFECT's casts scatter.
-#define ITEM_BREAK_SHARD_MAX 24
+/// The sparkles DEFINE_CLAPPING_HANDS_CAST's casts scatter.
+#define CLAP_SPARKLE_COUNT 24
 
-/// Defines a field Psynergy cast with no target: spawn makes a hand 16 pixels
+/// Defines Lift's or Carry's cast with no target: spawn makes a hand 16 pixels
 /// above the cast's position and 32 pixels to either side, each facing the
-/// middle; each moves 24 pixels inward, then 24 shards scatter 8 to 32 pixels.
-#define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
+/// middle; the two move 24 pixels inward and clap, and 24 sparkles scatter 8 to
+/// 32 pixels.
+#define DEFINE_CLAPPING_HANDS_CAST(name, spawn)                                \
   void name(void) {                                                            \
     struct FieldEffectWork *effectWork;                                        \
     struct Actor *obj;                                                         \
@@ -168,7 +168,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
                                                                                \
     Actor_WaitForMoveFar(pair[0]);                                             \
     Sound_PlayFar(SE_HEAVY_IMPACT);                                            \
-    for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
+    for (n = 0; n < CLAP_SPARKLE_COUNT; n++) {                                 \
       pos.x = effectWork->x;                                                   \
       pos.y = effectWork->y + toFIXED(16);                                     \
       pos.z = effectWork->z;                                                   \

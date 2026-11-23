@@ -80,7 +80,7 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
 
   if (presetIndex >= ENEMY_ELEMENT_PRESET_COUNT)
     presetIndex = 0;
-  return gEnemy_ElementPresetTable[presetIndex].first;
+  return gEnemy_ElementPresetTable[presetIndex].attackElement;
 }
 
 /// Writes a unit's base Power and Resist in each element, from its element

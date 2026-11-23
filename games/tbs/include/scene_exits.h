@@ -1103,8 +1103,8 @@ enum {
   TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR = 14,
   TREE_ROOMS_TRET_FROM_ENTRANCE = 15,
   TREE_ROOMS_ENTRANCE_FROM_TRET = 16,
-  /// The fall from the fifth floor's centre cocoon to Tret: from
-  /// TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON on the fourth floor the leader
+  /// The fall from the fifth floor's centre leaf to Tret: from
+  /// TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF on the fourth floor the leader
   /// falls on through the third floor, the second floor and the entrance room,
   /// each entrance ten lower than the last, and lands in Tret's room at
   /// TREE_ROOMS_FALL_LANDING.
@@ -1113,39 +1113,39 @@ enum {
   TREE_ROOMS_FALL_THROUGH_B = 30,
   TREE_ROOMS_FALL_THROUGH_A = 40,
   TREE_ROOMS_AFTER_FIGHT_TRET = 19,
-  // The landings below the cocoons, each numbered as its cocoon's cell
-  // behavior (TreeRooms_StepOnCocoon) and lying straight below it, one room
+  // The landings below the leaves, each numbered as its leaf's cell
+  // behavior (TreeRooms_StepOnLeaf) and lying straight below it, one room
   // down.
-  /// The second floor's nine cocoons drop into the entrance room. They are
+  /// The second floor's nine leaves drop into the entrance room. They are
   /// lettered A to I row by row from the north, west to east within a row.
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A = 21,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B = 22,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C = 23,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D = 24,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E = 25,
-  /// Lands one cell east of its cocoon.
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F = 26,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G = 27,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H = 28,
-  TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I = 29,
-  /// The third floor's two cocoons drop onto the second floor. The cocoon
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A = 21,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B = 22,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C = 23,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D = 24,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E = 25,
+  /// Lands one cell east of its leaf.
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F = 26,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G = 27,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H = 28,
+  TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I = 29,
+  /// The third floor's two leaves drop onto the second floor. The leaf
   /// drawn on the southwest web has no step trigger.
-  TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON = 31,
-  TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON = 32,
+  TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF = 31,
+  TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF = 32,
   /// The way down to Tret: the leader falls on from here.
-  TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON = 50,
-  /// The fifth floor's other cocoons drop onto the fourth floor.
-  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON = 51,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON = 52,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON = 53,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON = 54,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON = 55,
-  /// Lands where TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON does, two cells
-  /// north of its cocoon, though the cell below it is open ground.
-  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON = 56,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON = 57,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON = 58,
-  TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON = 59,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF = 50,
+  /// The fifth floor's other leaves drop onto the fourth floor.
+  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF = 51,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF = 52,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF = 53,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF = 54,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF = 55,
+  /// Lands where TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF does, two cells
+  /// north of its leaf, though the cell below it is open ground.
+  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF = 56,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF = 57,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF = 58,
+  TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF = 59,
 };
 /// SceneId_TreeRooms's exits.
 enum {
@@ -3611,10 +3611,10 @@ enum {
   TIMBER_ROOMS_A_SANCTUM =
       2, ///< the room behind Suhalla's sanctum door;
          ///< the room holds the sanctum; through SUHALLA_TO_SANCTUM
-  TIMBER_ROOMS_A_SHOP = 3,        ///< the shop behind Suhalla's south-west
-                                  ///< door; through SUHALLA_TO_SHOP
-  TIMBER_ROOMS_A_HOUSE_SOUTH = 4, ///< the room behind Suhalla's house south
-                                  ///< door; through SUHALLA_TO_HOUSE_SOUTH
+  TIMBER_ROOMS_A_SHOP = 3,          ///< the shop behind Suhalla's south-west
+                                    ///< door; through SUHALLA_TO_SHOP
+  TIMBER_ROOMS_A_HOUSE_SOUTH = 4,   ///< the room behind Suhalla's house south
+                                    ///< door; through SUHALLA_TO_HOUSE_SOUTH
   TIMBER_ROOMS_A_HOUSE_EAST = 5,    ///< the room behind Suhalla's house east
                                     ///< door; through SUHALLA_TO_HOUSE_EAST
   TIMBER_ROOMS_A_SANCTUM_NORTH = 6, ///< before the priest in Suhalla Sanctum,

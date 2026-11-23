@@ -221,9 +221,9 @@ enum ActorAnimation {
   ANIM_LEADER_LEAVE = 26,
   ///@}
   /// ANIM_WALK's six pictures in reverse order, three frames each, played as a
-  /// log carries the leader across water or a torn cocoon drops him.
+  /// log carries the leader across water or a torn leaf drops him.
   // XXX (no evidence): what the player sees of it; render event reaches
-  // neither a torn cocoon's fall (the second touch of one cocoon) nor a ride
+  // neither a torn leaf's fall (the second touch of one leaf) nor a ride
   // on Crossbone Isle's floating logs.
   ANIM_LEADER_WALK_BACKWARDS = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head

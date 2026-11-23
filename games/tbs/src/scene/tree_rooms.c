@@ -137,7 +137,7 @@ enum TreeRoomsCellBehavior {
 #define TRET_TINT_END 99
 
 /// The fall from the fifth floor's centre leaf goes down a floor at a time
-/// through entrances ten apart: TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON on
+/// through entrances ten apart: TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF on
 /// the fourth floor, then TREE_ROOMS_FALL_THROUGH_A to _C, then
 /// TREE_ROOMS_FALL_LANDING in Tret's room.
 #define FALL_ENTRANCE_STEP                                                     \
@@ -323,7 +323,7 @@ static void TreeRooms_StepOnLeaf(s32 leafFlag, s32 sourceColumn, s32 sourceRow,
     actor->facing += 2 * FACING_STEP;
     wait(1);
   }
-  if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON)
+  if (entrance != TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF)
     GameFlag_Set(FLAG_ARRIVE_FALLING);
 }
 
@@ -337,7 +337,7 @@ static void TreeRooms_StepOnLeaf(s32 leafFlag, s32 sourceColumn, s32 sourceRow,
 /// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafA(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_A_TORN, 64, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A);
 }
 
 /// The east leaf of the pair in the north of the second floor's web (cell (51,
@@ -345,7 +345,7 @@ static void TreeRooms_StepOnSecondFloorLeafA(void) {
 /// and he falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafB(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_B_TORN, 65, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B);
 }
 
 /// Isaac landing on the upper of the two leaves down the west side of the
@@ -354,7 +354,7 @@ static void TreeRooms_StepOnSecondFloorLeafB(void) {
 /// the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafC(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_C_TORN, 66, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C);
 }
 
 /// Isaac landing on the lower of the two leaves down the west side of the
@@ -362,7 +362,7 @@ static void TreeRooms_StepOnSecondFloorLeafC(void) {
 /// and he falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafD(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_D_TORN, 67, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D);
 }
 
 /// Isaac landing on the west leaf of the pair in the middle of the second
@@ -370,7 +370,7 @@ static void TreeRooms_StepOnSecondFloorLeafD(void) {
 /// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafE(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_E_TORN, 68, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E);
 }
 
 /// Isaac landing on the east leaf of the pair in the middle of the second
@@ -378,7 +378,7 @@ static void TreeRooms_StepOnSecondFloorLeafE(void) {
 /// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafF(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_F_TORN, 69, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F);
 }
 
 /// Isaac landing on the west leaf of the row along the south of the second
@@ -386,7 +386,7 @@ static void TreeRooms_StepOnSecondFloorLeafF(void) {
 /// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafG(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_G_TORN, 70, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G);
 }
 
 /// Isaac landing on the middle leaf of the row along the south of the second
@@ -394,7 +394,7 @@ static void TreeRooms_StepOnSecondFloorLeafG(void) {
 /// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafH(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_H_TORN, 71, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H);
 }
 
 /// Isaac landing on the east leaf of the row along the south of the second
@@ -402,7 +402,7 @@ static void TreeRooms_StepOnSecondFloorLeafH(void) {
 /// falls into the entrance room below.
 static void TreeRooms_StepOnSecondFloorLeafI(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_SECOND_FLOOR_LEAF_I_TORN, 72, 35,
-                       TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I);
+                       TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I);
 }
 
 /// Isaac landing on the leaf on the third floor's west web (cell (7, 23)), west
@@ -410,7 +410,7 @@ static void TreeRooms_StepOnSecondFloorLeafI(void) {
 /// falls to the second floor.
 static void TreeRooms_StepOnThirdFloorWestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_THIRD_FLOOR_WEST_LEAF_TORN, 73, 35,
-                       TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON);
+                       TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF);
 }
 
 /// Isaac landing on the leaf on the third floor's east web (cell (13, 24)),
@@ -418,7 +418,7 @@ static void TreeRooms_StepOnThirdFloorWestLeaf(void) {
 /// tears it. Landing on it again breaks it, and he falls to the second floor.
 static void TreeRooms_StepOnThirdFloorEastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_THIRD_FLOOR_EAST_LEAF_TORN, 74, 35,
-                       TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON);
+                       TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF);
 }
 
 /// Isaac landing on the leaf in the middle of the fifth floor's web (cell (50,
@@ -428,7 +428,7 @@ static void TreeRooms_StepOnThirdFloorEastLeaf(void) {
 /// of the tree.
 static void TreeRooms_StepOnFifthFloorCenterLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_CENTER_LEAF_TORN, 79, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF);
 }
 
 /// Isaac landing on the north-west leaf of the fifth floor's web (cell (48,
@@ -436,7 +436,7 @@ static void TreeRooms_StepOnFifthFloorCenterLeaf(void) {
 /// floor.
 static void TreeRooms_StepOnFifthFloorNorthwestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_LEAF_TORN, 75, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF);
 }
 
 /// The north leaf of the fifth floor's web (cell (50, 24)) is torn from the
@@ -444,7 +444,7 @@ static void TreeRooms_StepOnFifthFloorNorthwestLeaf(void) {
 /// fourth floor.
 static void TreeRooms_StepOnFifthFloorNorthLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_LEAF_TORN, 76, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF);
 }
 
 /// Isaac landing on the north-east leaf of the fifth floor's web (cell (52,
@@ -452,7 +452,7 @@ static void TreeRooms_StepOnFifthFloorNorthLeaf(void) {
 /// he falls to the fourth floor.
 static void TreeRooms_StepOnFifthFloorNortheastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_LEAF_TORN, 77, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF);
 }
 
 /// The west leaf of the fifth floor's web (cell (48, 26)) is torn from the
@@ -460,14 +460,14 @@ static void TreeRooms_StepOnFifthFloorNortheastLeaf(void) {
 /// fourth floor.
 static void TreeRooms_StepOnFifthFloorWestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_LEAF_TORN, 78, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF);
 }
 
 /// Isaac landing on the east leaf of the fifth floor's web (cell (52, 26))
 /// tears it. Landing on it again breaks it, and he falls to the fourth floor.
 static void TreeRooms_StepOnFifthFloorEastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_EAST_LEAF_TORN, 80, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF);
 }
 
 /// Isaac landing on the south-west leaf of the fifth floor's web (cell (48,
@@ -476,14 +476,14 @@ static void TreeRooms_StepOnFifthFloorEastLeaf(void) {
 /// leaf's fall lands (cell (28, 26)).
 static void TreeRooms_StepOnFifthFloorSouthwestLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_LEAF_TORN, 81, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF);
 }
 
 /// Isaac landing on the south leaf of the fifth floor's web (cell (50, 28))
 /// tears it. Landing on it again breaks it, and he falls to the fourth floor.
 static void TreeRooms_StepOnFifthFloorSouthLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_LEAF_TORN, 82, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF);
 }
 
 /// The south-east leaf of the fifth floor's web (cell (52, 28)) is torn from
@@ -491,7 +491,7 @@ static void TreeRooms_StepOnFifthFloorSouthLeaf(void) {
 /// the fourth floor.
 static void TreeRooms_StepOnFifthFloorSoutheastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_LEAF_TORN, 83, 35,
-                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON);
+                       TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF);
 }
 
 /// Isaac landing on the leaf at the east end of the fifth floor's south row
@@ -499,7 +499,7 @@ static void TreeRooms_StepOnFifthFloorSoutheastLeaf(void) {
 /// it, and he falls to the fourth floor.
 static void TreeRooms_StepOnFifthFloorFarSoutheastLeaf(void) {
   TreeRooms_StepOnLeaf(FLAG_TRET_TREE_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF_TORN, 84,
-                       35, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON);
+                       35, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF);
 }
 
 /// Walking while Isaac stands on a leaf in Tret Tree makes him jump two cells
@@ -903,7 +903,7 @@ s32 Scene_Initialize(void) {
   // Falling through a room, Isaac falls on to the entrance numbered ten lower;
   // at the fall's end he lands in a ring of dust in Tret's room.
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
-  if (entrance == TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON ||
+  if (entrance == TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF ||
       entrance == TREE_ROOMS_FALL_THROUGH_A ||
       entrance == TREE_ROOMS_FALL_THROUGH_B ||
       entrance == TREE_ROOMS_FALL_THROUGH_C) {
@@ -1435,27 +1435,27 @@ struct SceneEntrance gTreeRoomsEntrances[] = {
     { TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { TREE_ROOMS_TRET_FROM_ENTRANCE, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
     { TREE_ROOMS_ENTRANCE_FROM_TRET, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-    { TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON, CONDITION_ALWAYS, 488, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON, CONDITION_ALWAYS, 520, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON, CONDITION_ALWAYS, 520, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON, CONDITION_ALWAYS, 488, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
-    { TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS, 488, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS, 520, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS, 520, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS, 456, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS, 488, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS, 520, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF, CONDITION_ALWAYS, 552, 0, 456, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
+    { TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS, 488, 0, 424, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { TREE_ROOMS_FALL_THROUGH_A, CONDITION_ALWAYS, 168, 0, 424, FACING_SOUTH, 0, 32, 272, 304, 544, 0 },
     { TREE_ROOMS_FALL_THROUGH_B, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { TREE_ROOMS_FALL_THROUGH_C, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
@@ -1544,109 +1544,109 @@ struct Trigger gTreeRoomsTriggers[] = {
     {TRIGGER_EXIT, TREE_ROOMS_ENTRANCE_TO_TRET, CONDITION_ALWAYS,
      TREE_ROOMS_ENTRANCE_TO_TRET},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
-     TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON, CONDITION_ALWAYS,
+     TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpOffLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_A, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafA)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_B, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafB)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_C, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafC)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_D, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafD)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_E, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafE)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_F, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafF)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_G, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafG)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_H, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafH)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_SECOND_FLOOR_LEAF_I, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnSecondFloorLeafI)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_THIRD_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnThirdFloorWestLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_THIRD_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnThirdFloorEastLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnFifthFloorCenterLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON,
-     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorNorthwestLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_LEAF, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorNorthwestLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTH_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnFifthFloorNorthLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_COCOON,
-     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorNortheastLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHEAST_LEAF, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorNortheastLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_WEST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnFifthFloorWestLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnFifthFloorEastLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON,
-     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorSouthwestLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_COCOON, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_LEAF, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorSouthwestLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTH_LEAF, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnFifthFloorSouthLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_COCOON,
-     CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorSoutheastLeaf)},
-    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_COCOON,
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHEAST_LEAF, CONDITION_ALWAYS,
+     EVENT(TreeRooms_StepOnFifthFloorSoutheastLeaf)},
+    {TRIGGER_STEP, TREE_ROOMS_FROM_FIFTH_FLOOR_FAR_SOUTHEAST_LEAF,
      CONDITION_ALWAYS, EVENT(TreeRooms_StepOnFifthFloorFarSoutheastLeaf)},
     {TRIGGER_STEP, CELL_BEHAVIOR_TREE_ROOMS_BEFORE_TRET, FLAG_TRET_DEFEATED,
      EVENT(TreeRooms_FightTret)},

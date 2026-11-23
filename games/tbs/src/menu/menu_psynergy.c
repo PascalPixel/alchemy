@@ -581,11 +581,11 @@ s32 PsynergyMenu_SetShortcut(s32 memberId, s32 abilityId, s32 shortcutIndex) {
   return 1;
 }
 
-// Writes the L and R Psynergy shortcuts into window: each one's Psynergy and
-// party member, or that it is empty, under a heading that says how to change
-// them. A name too wide for the line (measured as a window, over 10 tiles; 11
-// in Japanese) hides the party member (international) or drops the colon after
-// "L" and "R" (Japanese). Returns 1.
+/// Writes the L and R Psynergy shortcuts into window: each one's Psynergy and
+/// party member, or that it is empty, under a heading that says how to change
+/// them. A name too wide for the line (measured as a window, over 10 tiles; 11
+/// in Japanese) hides the party member (international) or drops the colon after
+/// "L" and "R" (Japanese). Returns 1.
 #if LANGUAGE != LANGUAGE_JAPANESE
 
 s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 memberId) {

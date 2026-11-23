@@ -456,7 +456,7 @@ void LemurianShip_WalkIntoPassage(void) {
                         leader->y.fixed, leader->z.fixed);
     FieldActor_WaitForMove(leader);
     leader->facing = FACING_NORTH;
-    Actor_SetScript(party->leaderActorId, gLemurianShip_IntoPassage);
+    Actor_SetScript(party->leaderActorId, gLeader_WalkThroughDoorScript);
     wait(12);
     Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
@@ -1907,16 +1907,7 @@ void LemurianShip_SetUpEngineRoom(void) {
 }
 
 // clang-format off
-/// The leader shrinking away into the passage.
-s32 gLemurianShip_IntoPassage[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, -toFIXED(1) / 2),                                                   
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
-      SC_WAIT(1),                                                              
-      SC_LOOP(24, SC_TOP),                                                     
-      SC_END,                                                                  
-  };
+#include "shared/leader_walk_through_door_script.c"
 
 /// A beaten jelly melting away.
 s32 gLemurianShip_JellyMelts[] = {

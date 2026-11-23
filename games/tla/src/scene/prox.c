@@ -304,7 +304,7 @@ extern struct Trigger gProx_CavesTriggers[];
 extern s32 gProx_KradenStepsUpToPuelle[];
 
 extern s32 gProx_StepBackFromPuelle[];
-extern s32 gProx_EnterDoorScript[];
+extern s32 gLeader_WalkThroughDoorScript[];
 
 /// Sets up the lower village: after the ending, its three children play chase
 /// outside the igloo.
@@ -1334,7 +1334,8 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
     FieldActor_WaitForMove(actor);
     actor->facing = FACING_NORTH;
   }
-  Actor_SetScript(gMainRoutineWork.leaderActorId, gProx_EnterDoorScript);
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
+                  gLeader_WalkThroughDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -2485,15 +2486,7 @@ extern u32 gFieldEffect_LongScript[];
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-s32 gProx_EnterDoorScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -toFIXED(0.5)),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+#include "shared/leader_walk_through_door_script.c"
 
 #include "shared/slide_on_ice_angles.c"
 

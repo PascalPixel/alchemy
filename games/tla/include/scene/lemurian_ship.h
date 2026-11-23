@@ -22,7 +22,7 @@ extern struct ActorPlacement gLemurianShip_PillarRoomPlacements[];
 extern struct ActorPlacement gLemurianShip_EngineRoomPlacements[];
 extern struct LemurianShipWarp gLemurianShip_Doors[];
 extern struct LemurianShipWarp gLemurianShip_LowerDoors[];
-extern s32 gLemurianShip_IntoPassage[];
+extern s32 gLeader_WalkThroughDoorScript[];
 extern struct Trigger gLemurianShip_Triggers[];
 extern struct Trigger gLemurianShip_CabinTriggers[];
 extern struct Trigger gLemurianShip_TwoJellyRoomTriggers[];

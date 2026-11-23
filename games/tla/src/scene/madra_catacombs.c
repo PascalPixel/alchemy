@@ -160,7 +160,7 @@ extern s32 gMadraCatacombs_FlameFlaresUp[];
 
 extern s32 gMadraCatacombs_GreatFlameFlaresUp[];
 extern s16 gMadraCatacombs_VinePillar[];
-extern s32 gMadraCatacombs_WalkThroughDoor[];
+extern s32 gLeader_WalkThroughDoorScript[];
 
 void Actor_DisableById(s32 id);
 
@@ -566,7 +566,7 @@ void MadraCatacombs_EnterDoor(void) {
                       actor->y.fixed, actor->z.fixed);
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
-  Actor_SetScript(party->leaderActorId, gMadraCatacombs_WalkThroughDoor);
+  Actor_SetScript(party->leaderActorId, gLeader_WalkThroughDoorScript);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -602,7 +602,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
     actor->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.leaderActorId,
-                  gMadraCatacombs_WalkThroughDoor);
+                  gLeader_WalkThroughDoorScript);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -785,17 +785,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 }
 
 // clang-format off
-/// Felix's actor script for walking north through an opened door, growing
-/// smaller as he goes.
-s32 gMadraCatacombs_WalkThroughDoor[] = {                                                               
-      SC_SET(SW_MOTION, 0),                                                    
-      SC_ADD(SW_Z, -toFIXED(1) / 2),                                                   
-      SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
-      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
-      SC_WAIT(1),                                                              
-      SC_LOOP(24, SC_TOP),                                                     
-      SC_END,                                                                  
-  };
+#include "shared/leader_walk_through_door_script.c"
 
 /// A brazier's flame's actor script as it flares up.
 s32 gMadraCatacombs_FlameFlaresUp[] = {

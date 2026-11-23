@@ -357,7 +357,7 @@ void ShamanVillage_StepBackFromTrial(void);
 void ShamanVillage_CheckTrialEntry(void);
 void ShamanVillage_CountDownToStart(void);
 
-extern s32 gShamanVillage_EnterDoorScript[];
+extern s32 gLeader_WalkThroughDoorScript[];
 extern s32 gShamanVillage_HopFortuneTellerScript[];
 extern struct SceneEntrance gSceneEntrances[];
 extern struct SceneEntrance gShamanVillageTentsEntrances[];
@@ -2593,7 +2593,7 @@ void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
     actor->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.leaderActorId,
-                  gShamanVillage_EnterDoorScript);
+                  gLeader_WalkThroughDoorScript);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -3079,15 +3079,7 @@ u8 gShamanVillage_LetteringPaletteOffsets[] = {
 // clang-format on
 
 // clang-format off
-s32 gShamanVillage_EnterDoorScript[] = {
-    SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Z, -toFIXED(0.5)),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
-    SC_WAIT(1),
-    SC_LOOP(24, SC_TOP),
-    SC_END,
-};
+#include "shared/leader_walk_through_door_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

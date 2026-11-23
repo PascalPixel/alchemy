@@ -1251,7 +1251,7 @@ s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/ride_get_entry_flags.c"
 
-#include "shared/ride_set_slot.h"
+#include "shared/ride_set_slot_actor.h"
 
 #include "shared/party_take_fall_damage.h"
 

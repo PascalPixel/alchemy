@@ -1564,13 +1564,7 @@ UNUSED s32 Ride_GetEntryFlags(s32 index) {
   return (work->entries + index)->flags;
 }
 
-/// Sets the actor the flames check against in slot `index`.
-UNUSED void Ride_SetSlotActor(u32 index, s32 value) {
-  struct FlameHitWork *work = RIDE_WORK;
-
-  if (index <= 3)
-    work->slots[index].id = value;
-}
+#include "shared/ride_set_slot_actor.h"
 
 #include "shared/party_take_fall_damage.h"
 

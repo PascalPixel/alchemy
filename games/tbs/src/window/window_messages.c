@@ -73,7 +73,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   // in 16 bits.
   while ((value = decode(&reader)) != 0) {
     switch (value) {
-    case 14:
+    case MESSAGE_UNUSED_14:
       capacity -= 3;
       if (capacity <= 0)
         goto done;
@@ -90,8 +90,8 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
     case MESSAGE_TEXT_COLOR:
     case MESSAGE_TEXT_EFFECT:
     case MESSAGE_LINE_SPACING:
-    case 11:
-    case 12:
+    case MESSAGE_UNUSED_11:
+    case MESSAGE_UNUSED_12:
     case MESSAGE_WINDOW_EFFECT:
 #if defined(DECODE_EUROPEAN)
     case MESSAGE_ARTICLE_CLASS:

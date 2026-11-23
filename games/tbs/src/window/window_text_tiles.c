@@ -161,11 +161,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           work->colour = *text++;
           pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
           break;
-        // TEXT_COLORS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
+        // TEXT_RESET_STYLE, TEXT_STYLE and TEXT_LINE_SPACING all reset the
         // colour here, and the last two leave their operand to be read as the
         // next code.
-        case TEXT_COLORS_RESET:
-        case TEXT_OUTLINE:
+        case TEXT_RESET_STYLE:
+        case TEXT_STYLE:
         case TEXT_LINE_SPACING:
           work->colour = TEXT_DEFAULT_COLOR;
           pens[1] = gFont_ColorPens[work->colour];
@@ -175,14 +175,14 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           break;
         // Codes 11, 12, 14 and TEXT_ACTOR_NAME_START, which nothing in this
         // game acts on, are skipped with their operands.
-        case 14:
+        case TEXT_UNUSED_14:
         case TEXT_WINDOW_STATE:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.
           // Fall through.
-        case 11:
-        case 12:
+        case TEXT_UNUSED_11:
+        case TEXT_UNUSED_12:
         case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
         case TEXT_ARTICLE_CLASS:

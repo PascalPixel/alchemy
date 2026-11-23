@@ -213,7 +213,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       work->outline = TEXT_STYLE_PLAIN;
       goto done;
 #endif
-    case 14:
+    case TEXT_UNUSED_14:
     case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
@@ -224,7 +224,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
-    case TEXT_OUTLINE:
+    case TEXT_STYLE:
       work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
@@ -414,7 +414,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #endif
       page++;
       break;
-    case 14:
+    case TEXT_UNUSED_14:
     case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
@@ -425,7 +425,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
-    case TEXT_OUTLINE:
+    case TEXT_STYLE:
       work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;

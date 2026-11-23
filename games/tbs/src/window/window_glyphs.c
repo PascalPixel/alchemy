@@ -298,7 +298,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         work->colour = *text;
         text++;
         break;
-      case TEXT_OUTLINE:
+      case TEXT_STYLE:
         work->outline = *text;
         text++;
         break;
@@ -306,21 +306,21 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         work->lineSpacing = *text;
         text++;
         break;
-      case TEXT_COLORS_RESET:
+      case TEXT_RESET_STYLE:
         Text_ResetStyle();
         break;
       case TEXT_NEWLINE:
         x = lineStartX;
         y += TEXT_LINE_HEIGHT;
         break;
-      case 14:
+      case TEXT_UNUSED_14:
       case TEXT_WINDOW_STATE:
       case TEXT_ACTOR_NAME_START:
         text++;
         // Skip the second operand too.
         // Fall through.
-      case 11:
-      case 12:
+      case TEXT_UNUSED_11:
+      case TEXT_UNUSED_12:
       case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
       case TEXT_ARTICLE_CLASS:
@@ -428,18 +428,18 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           x = lineStartX;
           y++;
           break;
-        case 14:
+        case TEXT_UNUSED_14:
         case TEXT_WINDOW_STATE:
         case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.
           // Fall through.
-        case TEXT_COLORS_RESET:
+        case TEXT_RESET_STYLE:
         case TEXT_COLOR:
-        case TEXT_OUTLINE:
+        case TEXT_STYLE:
         case TEXT_LINE_SPACING:
-        case 11:
-        case 12:
+        case TEXT_UNUSED_11:
+        case TEXT_UNUSED_12:
         case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
         case TEXT_ARTICLE_CLASS:

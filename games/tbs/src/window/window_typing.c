@@ -279,7 +279,7 @@ s32 Message_Type(struct Message *message) {
         Message_ApplyStyle(message);
         break;
 
-      case TEXT_OUTLINE:
+      case TEXT_STYLE:
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         message->outline = work->textBuffer[message->textIndex];
         Message_ApplyStyle(message);
@@ -291,7 +291,7 @@ s32 Message_Type(struct Message *message) {
         Message_ApplyStyle(message);
         break;
 
-      case TEXT_COLORS_RESET:
+      case TEXT_RESET_STYLE:
         message->colour = TEXT_DEFAULT_COLOR;
         message->outline = TEXT_STYLE_PLAIN;
         message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;

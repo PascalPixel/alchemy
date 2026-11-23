@@ -52,13 +52,16 @@ enum {
   MESSAGE_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
   MESSAGE_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
   MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOR
-  /// Kept with its operand as TEXT_OUTLINE: the style of sprite text, 1
+  /// Kept with its operand as TEXT_STYLE: the style of sprite text, 1
   /// outlined (Text_DrawGlyphPair), 2 to 5 a motion (Glyph_Draw).
   MESSAGE_TEXT_EFFECT = 9,
   MESSAGE_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
+  MESSAGE_UNUSED_11 = 11,    ///< kept with its operand as TEXT_UNUSED_11
+  MESSAGE_UNUSED_12 = 12,    ///< kept with its operand as TEXT_UNUSED_12
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
+  MESSAGE_UNUSED_14 = 14, ///< kept with its two operands as TEXT_UNUSED_14
   /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
   MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gMainRoutineWork.leaderActorId names.

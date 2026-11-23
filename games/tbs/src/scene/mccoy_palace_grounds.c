@@ -1,40 +1,36 @@
-/// @file The grounds of McCoy's Palace in Bilibin.
+/// @file The grounds of McCoy's Palace, at the top of Bilibin.
 ///
-/// The scene is SceneId_McCoyPalaceGrounds, with the area name McCoy's Palace,
-/// which the palace itself shares (mccoy_palace.c). Workers build Lady McCoy a
-/// new palace here, and two guards keep the gate of McCoy's own.
+/// The grounds are their own scene, SceneId_McCoyPalaceGrounds, sharing the
+/// area name McCoy's Palace with the palace itself (mccoy_palace.c). Steps
+/// lead up from Bilibin to a sandy yard before the palace door, where two
+/// soldiers in spiked helmets stand guard. West of the yard, workers with
+/// pickaxes have been building Lady McCoy a new palace, stopped since the
+/// lumber from Kolima vanished, and Lady McCoy herself complains of it. A Nut
+/// hangs in the orange tree west of the steps for Catch, and a dry stone well
+/// stands by the palace's east corner.
 ///
-/// Its people and talk follow two story flags. One is
-/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, set once McCoy has turned the
-/// party away. The other is FLAG_KOLIMA_CURSE_LIFTED.
+/// Talking to the east guard is the way in
+/// (McCoyPalaceGrounds_TalkToEastGuard). He asks whether the party is up to
+/// meeting his lord; on yes the two guards confer, the west guard opens the
+/// door (McCoyPalaceGrounds_OpenGate) and goes in ahead, and walking north into
+/// the doorway takes the party inside (McCoyPalaceGrounds_EnterPalace). After
+/// McCoy has turned it away, the guards only talk.
 ///
-/// Talking to the east guard (McCoyPalaceGrounds_TalkToEastGuard) is the way
-/// in. On yes the guards confer, the gate opens (McCoyPalaceGrounds_OpenGate)
-/// and the west guard goes in ahead (FLAG_MCCOY_PALACE_ADMITTED). Walking north
-/// into the gate (step trigger 2, McCoyPalaceGrounds_EnterPalace) takes
-/// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the palace.
+/// The first time the party comes back once Kolima's curse is lifted, the
+/// guards stop it on the steps, ask whether it broke the curse of the holy
+/// tree until Isaac says yes, put it "under arrest" and march it straight into
+/// McCoy's room for its reward (McCoyPalaceGrounds_GuardsArrestParty). After
+/// the curse, Lady McCoy stands at the west edge of the yard.
 ///
-/// The guard's scolding for keeping McCoy waiting is unused
-/// (McCoyPalaceGrounds_TalkToEastGuard).
+/// Its people follow three story flags: FLAG_MCCOY_PALACE_ADMITTED,
+/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY (set once McCoy has turned the
+/// party away) and FLAG_KOLIMA_CURSE_LIFTED; McCoyPalaceGrounds_RestoreStory
+/// places them by those flags.
 ///
-/// Once the curse is lifted, the first arrival until McCoy has rewarded the
-/// party (FLAG_MCCOY_PALACE_PARTY_REWARDED) plays
-/// McCoyPalaceGrounds_GuardsArrestParty. The guards repeat their accusation
-/// until the player says yes. Then they march the party into the palace
-/// (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST), where McCoy rewards it.
-///
-/// McCoyPalaceGrounds_RestoreStory places the guards by the same flags. It
-/// also floats a Nut over the grounds until Catch takes it
-/// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
-///
-/// A dry well can be searched, and MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back
-/// to Bilibin.
-///
-/// From TBS_PATCH_3 on, a patch of ivy (SPRITE_IVY) stands at (132, 388), over
+/// From TBS_PATCH_3 on, a patch of ivy (SPRITE_IVY) grows at cell (8, 24), over
 /// a dark opening at the foot of the cliff on the grounds' south edge. The
-/// earlier editions leave the opening bare. No
-/// exit or trigger answers that opening, so the ivy only hides a way in that
-/// leads nowhere.
+/// earlier editions leave the opening bare. No exit or trigger answers that
+/// opening, so the ivy only hides a way in that leads nowhere.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -70,28 +66,40 @@ extern struct Trigger gMcCoyPalaceGroundsTriggers[];
 /// The placed actors, numbered in the order of
 /// gMcCoyPalaceGroundsActorPlacements.
 enum McCoyPalaceGroundsActorId {
-  /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
-  /// ordered from Kolima disappeared..."
+  /// A worker with a pickaxe at the west edge of the yard, by the new palace.
+  /// Before the curse is lifted: "The lumber I ordered from Kolima disappeared
+  /// after the incident."
   ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
-  /// The worker with a pickaxe who wanders by the new palace. "Have you seen
-  /// the barricade we built on..."
+  /// The worker with a pickaxe who wanders by the new palace, north of the
+  /// other. "Have you seen the barricade we built on the road to Kolima?"
   ACTOR_NORTH_WORKER,
-  /// A woman with curly purple hair in a pink dress. "Hmph! My palace is not
-  /// finished!"
+  /// Lady McCoy, a woman with curly purple hair in a pink dress, at the foot of
+  /// the new palace. Once the curse is lifted she stands at the west edge
+  /// of the yard:
+  /// "Hmph! My palace is not finished!"
   ACTOR_LADY_MCCOY,
-  /// The soldier in a spiked helmet at the gate who goes in ahead of the party.
-  /// "Lord McCoy is so upset about this curse that he can't even eat."
+  /// The west guard at the palace door, a soldier in a spiked helmet, who goes
+  /// in ahead of the party. "Lord McCoy is so upset about this curse that he
+  /// can't even eat."
   ACTOR_WEST_GUARD,
-  /// "The lord will only meet with brave..."
+  /// The east guard at the palace door, who decides who may see McCoy. "The
+  /// lord will only meet with brave and mighty warriors."
   ACTOR_EAST_GUARD,
-  /// The Nut over the grounds, gone once Catch has taken it
+  /// The Nut in the orange tree west of the steps, gone once Catch has taken it
   /// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
   ACTOR_FLOATING_NUT
 };
 
+/// The stone well by the palace's east corner, cells (28, 16) to (29, 17),
+/// which the triggers answer besides the exits, whose cell behaviors are their
+/// exits' numbers.
+enum McCoyPalaceGroundsCellBehavior {
+  CELL_BEHAVIOR_MCCOY_PALACE_GROUNDS_WELL = 90
+};
+
 /// The grounds' temporary flags.
 enum {
-  /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the scene
+  /// The palace door stands open (McCoyPalaceGrounds_OpenGate), until the scene
   /// is left.
   FLAG_GATE_OPEN = FLAG_SCENE_TEMP_00,
   /// The east guard has scolded the party for keeping McCoy waiting.
@@ -131,13 +139,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMcCoyPalaceGroundsNoActorPlacements;
 }
 
-/// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
-/// it to the party.
+/// Catch on the Nut in the orange tree west of the steps pulls it down and
+/// gives it to the party.
 static void McCoyPalaceGrounds_CatchFloatingNut(void) {
   Scene_CatchNut(ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
 }
 
-/// McCoy's Palace, outside: searching the dry well.
+/// Searching the stone well by the palace's east corner (cells (28, 16) to
+/// (29, 17)): "Isaac peered into the well... Upon closer inspection, it seems
+/// the well is dried up." Nothing is found.
 static void McCoyPalaceGrounds_SearchWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -153,8 +163,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMcCoyPalaceGroundsNoTriggers;
 }
 
-/// McCoy's Palace, outside, before the curse is lifted: the north worker asks
-/// whether the party has seen the barricade they built on the road to Kolima.
+/// Before the curse is lifted, the wandering worker asks whether the party has
+/// seen the barricade they built on the road to Kolima. On yes he admits it is
+/// pretty shabby, built on short notice; on no he says it is off to the east.
 static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveYouSeenBarricadeWe);
@@ -165,8 +176,10 @@ static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
   Event_End();
 }
 
-/// McCoy's Palace, outside, before the curse is lifted: Lady McCoy asks
-/// whether the party blames her for the curse.
+/// Before the curse is lifted, Lady McCoy asks "Are you telling me that I'm
+/// responsible for this?" On yes she owns that she had the tree cut down for
+/// her palace, but calls herself the victim; on no she calls the curse a
+/// foolish old superstition.
 static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinTellingMeImResponsibleFor);
@@ -177,8 +190,9 @@ static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
   Event_End();
 }
 
-/// McCoy's Palace, outside, after the reward: the west guard asks whether he
-/// can become as fine a warrior as the leader.
+/// After the reward, the west guard asks "Do you think I can become as fine a
+/// warrior as you?" On yes he will try his best; on no he begs Isaac to just
+/// say yes.
 static void McCoyPalaceGrounds_TalkToWestGuard(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoThinkCanBecomeAs);
@@ -189,8 +203,13 @@ static void McCoyPalaceGrounds_TalkToWestGuard(void) {
   Event_End();
 }
 
-/// McCoy's Palace, outside, until McCoy turns the party away: the east guard
-/// asks whether the party is brave enough to meet his lord.
+/// The east guard at the palace door asks whether the party is up to meeting
+/// his lord. On yes he and the west guard confer, decide nobody else seems up
+/// to the challenge, and the west guard says "All right. I shall let you pass.
+/// Follow me!", opens the door and goes in; on no the guard says he cannot
+/// send such inexperienced children. Once the party is let in, he warns that
+/// Lord McCoy is a very difficult man, and keeps turning to watch Isaac.
+/// After McCoy has turned the party away, he only talks.
 ///
 /// Unused: the branch for a party back from Bilibin never runs. In it he
 /// scolds the party once for keeping McCoy waiting (MsgBilibinWhere,
@@ -280,8 +299,9 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
   Event_End();
 }
 
-/// McCoy's Palace, outside, step trigger 2: walking north into the palace gate
-/// opens it if it is still shut, and the leader walks into the palace.
+/// Walking north into the palace doorway (cell (20, 16)), once the guards have
+/// let the party in and stepped aside: the door swings open if it
+/// is shut, Isaac walks through, and the palace's hall appears.
 static void McCoyPalaceGrounds_EnterPalace(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_GATE_OPEN) == 0) {
@@ -296,7 +316,8 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
   Event_End();
 }
 
-/// Sets up the grounds outside McCoy's Palace.
+/// Sets up the grounds outside McCoy's Palace, and plays the guards' arrest
+/// once the curse is lifted.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *actor;
@@ -314,7 +335,13 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The guards stand where the party left them.
+/// Places the people by the story. After the guards let the party in, the
+/// west guard is gone inside and the east guard stands aside, watching Isaac,
+/// until McCoy has turned the party away; then both stand either side of the
+/// door. Once the curse is lifted, Lady McCoy moves to the west edge of the
+/// yard and the worker by
+/// the new palace turns east, and the guards' arrest plays until McCoy has
+/// rewarded the party. The Nut is hung in its tree until it is caught.
 static void McCoyPalaceGrounds_RestoreStory(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_GATE_OPEN);
@@ -345,9 +372,13 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
   }
 }
 
-/// McCoy's Palace, outside, on entry once Kolima's curse is lifted: the guards
-/// stop the party, ask whether they broke the curse of the holy tree until
-/// they answer yes, and march them into the palace to McCoy.
+/// The first time the party climbs the steps after lifting Kolima's curse, the
+/// guards cry "Oh! Sir!" and "We've been looking everywhere for you!", and ask
+/// "The curse of the holy tree... You're the ones who broke it, right?" Each
+/// no brings "That's not true. We have witnesses who say they saw you in the
+/// forest!" and the question again. On yes the west guard declares "You're
+/// under arrest!", opens the door and marches Isaac straight into McCoy's
+/// room.
 static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -437,7 +468,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Event_End();
 }
 
-/// The gate of McCoy's Palace swings open.
+/// The palace door swings open with a thump.
 static void McCoyPalaceGrounds_OpenGate(void) {
   Sound_Play(SE_THUMP);
   MapGrid_PlayMapEdit(gPalaceGateOpenSteps, 52, 11);
@@ -447,12 +478,13 @@ static void McCoyPalaceGrounds_OpenGate(void) {
 #include "shared/actor_orbit.c"
 
 // clang-format off
-/// The gate opening: three steps of cells, 5 frames each.
+/// The door's opening, drawn in three steps of 5 frames each from the spare
+/// cells at (34, 25) to (36, 27).
 u16 gPalaceGateOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(34, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(35, 25, 1, 3, 5), MAPGRID_ANIMATION_STEP(36, 25, 1, 3, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// A guard turns to keep facing the party.
+/// A guard turns to keep facing Isaac.
 s32 gGuardWatchesParty[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -505,7 +537,7 @@ struct Trigger gMcCoyPalaceGroundsNoTriggers[] = {
 
 struct Trigger gMcCoyPalaceGroundsTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, MCCOY_PALACE_GROUNDS_TO_BILIBIN },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(McCoyPalaceGrounds_EnterPalace) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE, CONDITION_ALWAYS, EVENT(McCoyPalaceGrounds_EnterPalace) },
     { TRIGGER_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
     { TRIGGER_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
     { TRIGGER_TALK, ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(McCoyPalaceGrounds_TalkToNorthWorker) },
@@ -531,7 +563,7 @@ struct Trigger gMcCoyPalaceGroundsTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT(McCoyPalaceGrounds_SearchWell) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_MCCOY_PALACE_GROUNDS_WELL, CONDITION_ALWAYS, EVENT(McCoyPalaceGrounds_SearchWell) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT, EVENT(McCoyPalaceGrounds_CatchFloatingNut) },
     { TRIGGER_TABLE_END },
 };

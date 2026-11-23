@@ -261,7 +261,7 @@ enum { CELL_BEHAVIOR_CROSSBONE_ISLE_WEST_OF_PILLAR = 20 };
 enum CrossboneIsleFloorActorId {
   /// The stone pillar on the west ledge, at the edge of the gap between the
   /// ledges, that drops into the gap when pushed east.
-  ACTOR_SINKING_PILLAR = ACTOR_FIRST_PLACED
+  ACTOR_PILLAR = ACTOR_FIRST_PLACED
 };
 
 /// The nine floors' entrances, as the code the floors share names them.
@@ -572,20 +572,20 @@ static void CrossboneIsle_RestorePillar(void) {
   struct Actor *actor;
   s32 cleared;
 
-  actor = Actor_Get(ACTOR_SINKING_PILLAR);
+  actor = Actor_Get(ACTOR_PILLAR);
   cleared = GameFlag_Get(
       (gMainRoutineWork.next + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                 SCENE_CROSSBONE_ISLE_FIRST_FLOOR)));
   if (cleared != 0) {
-    Actor_SetPosition(ACTOR_SINKING_PILLAR, 650, 168);
+    Actor_SetPosition(ACTOR_PILLAR, 650, 168);
     actor->y.fixed = -toFIXED(32);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
-    Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR), 0);
+    Actor_SetSpritePriority(ACTOR_PILLAR, 3);
     actor->motionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(42, 10, 1, 1, 40, 10);
   } else {
-    Actor_Get(ACTOR_SINKING_PILLAR)->motionFlags = 0;
+    Actor_Get(ACTOR_PILLAR)->motionFlags = 0;
   }
 }
 
@@ -601,7 +601,7 @@ static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_Get(ACTOR_SINKING_PILLAR);
+  pillar = Actor_Get(ACTOR_PILLAR);
   column = FIELD_CELL(pillar->x.fixed);
   if (column != 40) {
     return;
@@ -618,12 +618,12 @@ static void CrossboneIsle_MovePillar(void) {
   pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
   Event_Wait(8);
-  CrossboneIsle_SpawnPillarMovedBurst(ACTOR_SINKING_PILLAR);
+  CrossboneIsle_SpawnPillarMovedBurst(ACTOR_PILLAR);
   Sound_Play(SE_WHOOSH);
   Event_Wait(40);
 
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
-  Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR), 0);
+  Actor_SetSpritePriority(ACTOR_PILLAR, 3);
 
   pillar->motionFlags = 0;
   pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -2428,7 +2428,7 @@ struct Trigger gCrossboneIsle_FloorTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), FLOOR_TO_SIDE_ROOM_EAST, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenEastDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), FLOOR_TO_SIDE_ROOM_WEST, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenWestDoor) },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_WEST_OF_PILLAR, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR, CONDITION_ALWAYS, EVENT(CrossboneIsle_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(CrossboneIsle_MovePillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC, FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN, FIND_MIMIC | 4 },
     { TRIGGER_TABLE_END },
 };

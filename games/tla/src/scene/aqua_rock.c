@@ -263,7 +263,7 @@ struct Actor;
 
 void AquaRock_SetSparkleAnchor(s32 id);
 void AquaRock_SetBubbleAnchor(s32 id);
-void AquaRock_FlowWithStream(void);
+void Leader_FlowWithStream(void);
 void Actor_SpawnWadingSplash(struct Actor *actor);
 void AquaRock_AddMoaiWater(s32 id);
 void Actor_EmitWaterDrop(struct Actor *actor);
@@ -734,7 +734,7 @@ UNUSED void Actor_WaitBelowHeight(struct Actor *actor, FIXED height) {
 /// is carried up it, splashing, once the stone has been Doused; at the head of
 /// the slopes' stream he spins up out of the water and away into the Mist
 /// Sabre chest's room. Until then, or once Doused again, the stream carries
-/// him down instead (AquaRock_FlowWithStream).
+/// him down instead (Leader_FlowWithStream).
 /// It runs every frame he stands on the stream's cells, moving him and the
 /// camera two pixels north, and leaping him up each ledge the stream climbs.
 void AquaRock_RideStreamUp(void) {
@@ -815,7 +815,7 @@ void AquaRock_RideStreamUp(void) {
     carried->z.fixed -= toFIXED(2);
     leader->z.fixed -= toFIXED(2);
   } else
-    AquaRock_FlowWithStream();
+    Leader_FlowWithStream();
 }
 
 /// The attribute byte of a cell of a layer.
@@ -846,7 +846,7 @@ void AquaRock_StepIntoCurrent(void) {
     col = FIELD_CELL(actor->x.fixed);
     row = FIELD_CELL(actor->z.fixed - actor->y.fixed);
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
-      AquaRock_FlowWithStream();
+      Leader_FlowWithStream();
   }
 }
 
@@ -1342,71 +1342,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "shared/actor_emit_water_drop.h"
 
-/// Felix, walking into one of the streams that run down the slopes, is
-/// carried down it, splashing, and off a ledge he drops with the water and
-/// lands sitting down.
-/// It runs every frame he stands on the stream's cells, moving him and the
-/// camera two pixels south until something blocks the way.
-void AquaRock_FlowWithStream(void) {
-  struct Actor *anchor;
-  s32 owner;
-  struct Actor *leader;
-  FIXED position[3];
-  s32 result;
-
-  {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-    owner = gMainRoutineWork.leaderActorId;
-    anchor = work->camera;
-  }
-  leader = Actor_GetById(owner);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI &&
-      leader->groundHeight == 0)
-    return;
-  position[0] = leader->x.fixed;
-  position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + toFIXED(2);
-  result = MapGrid_CheckCollision(leader, position);
-  if ((gFrameCount & 4) == 0)
-    Actor_SpawnWadingSplash(leader);
-  if (result < 0) {
-    Actor_SetAttachedEffect(owner,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
-                        leader->z.fixed + toFIXED(8));
-    Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
-    Actor_WaitForMove(leader);
-    do {
-      wait(1);
-    } while (leader->y.fixed != leader->groundHeight);
-    Actor_SpawnWadingSplash(leader);
-    Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
-    wait(3);
-    return;
-  }
-  position[0] = leader->x.fixed;
-  position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + toFIXED(8);
-  result = MapGrid_CheckCollision(leader, position);
-  if (result > 0)
-    return;
-  position[0] = leader->x.fixed + (toFIXED(57) / 10);
-  position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + (toFIXED(57) / 10);
-  result = MapGrid_CheckCollision(leader, position);
-  if (result > 0)
-    return;
-  position[0] = leader->x.fixed - (toFIXED(57) / 10);
-  position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + (toFIXED(57) / 10);
-  result = MapGrid_CheckCollision(leader, position);
-  if (result > 0)
-    return;
-  anchor->z.fixed += toFIXED(2);
-  leader->z.fixed += toFIXED(2);
-  leader->facing = FACING_SOUTH;
-}
+#include "shared/leader_flow_with_stream.h"
 
 /// Gives a moai its water: the pool in the top of its head, pouring from its
 /// mouth.
@@ -1940,7 +1876,7 @@ LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_EAST_MOAI_STREAM, FLAG_PILLAR_BEFORE_EAST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
     {TRIGGER_STEP, CELL_BEHAVIOR_LOWER_WEST_MOAI_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
     {TRIGGER_STEP, CELL_BEHAVIOR_LOWER_EAST_MOAI_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {TRIGGER_STEP, CELL_BEHAVIOR_TURNING_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
     {TRIGGER_RAISED, TRIGGER_DROP_DOWN_FALLS, CONDITION_ALWAYS, EVENT(AquaRock_DropDownFalls)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_DRY_MOAI, FLAG_AQUA_ROCK_DRY_MOAI_FILLED, EVENT(AquaRock_DouseDryMoai)},
@@ -1959,7 +1895,7 @@ LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {TRIGGER_STEP, CELL_BEHAVIOR_TURNING_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, EVENT(AquaRock_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN, EVENT(AquaRock_FreezeSecondPuddle)},

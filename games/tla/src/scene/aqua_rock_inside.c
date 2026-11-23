@@ -2158,70 +2158,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/actor_emit_water_drop.h"
 
-/// While Felix wades in the stream of Steam's room or the Tear Stone's room,
-/// the current carries him south, splashing, until something blocks him; where
-/// the stream pours off a ledge he sits and drops with the water. The routine
-/// is the slopes' AquaRock_FlowWithStream, whose test for Aqua Rock's Moai room
-/// never holds in these rooms.
-void AquaRockInside_FlowWithStream(void) {
-  struct Actor *center;
-  s32 id;
-  struct Actor *actor;
-  FIXED position[3];
-  s32 hit;
-
-  {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-    id = gMainRoutineWork.leaderActorId;
-    center = work->camera;
-  }
-  actor = Actor_Get(id);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI && actor->groundHeight == 0)
-    return;
-  position[0] = actor->x.fixed;
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + toFIXED(2);
-  hit = MapGrid_CheckCollision(actor, position);
-  if ((gFrameCount & 4) == 0)
-    Actor_SpawnWadingSplash(actor);
-  if (hit < 0) {
-    Actor_SetAttachedEffect(id,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldActor_SetMoveTargetFX(actor, actor->x.fixed, actor->y.fixed,
-                               actor->z.fixed + toFIXED(8));
-    Actor_SelectAnimation(actor, ANIM_LEADER_SIT);
-    FieldActor_WaitForMove(actor);
-    do {
-      System_Wait(1);
-    } while (actor->y.fixed != actor->groundHeight);
-    Actor_SpawnWadingSplash(actor);
-    Actor_SelectAnimation(actor, ANIM_LEADER_SIT);
-    System_Wait(3);
-    return;
-  }
-  position[0] = actor->x.fixed;
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + toFIXED(8);
-  hit = MapGrid_CheckCollision(actor, position);
-  if (hit > 0)
-    return;
-  position[0] = actor->x.fixed + (toFIXED(57) / 10);
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + (toFIXED(57) / 10);
-  hit = MapGrid_CheckCollision(actor, position);
-  if (hit > 0)
-    return;
-  position[0] = actor->x.fixed - (toFIXED(57) / 10);
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + (toFIXED(57) / 10);
-  hit = MapGrid_CheckCollision(actor, position);
-  if (hit > 0)
-    return;
-  center->z.fixed += toFIXED(2);
-  actor->z.fixed += toFIXED(2);
-  actor->facing = FACING_SOUTH;
-}
+#include "shared/leader_flow_with_stream.h"
 
 #include "shared/actor_show_parts.h"
 
@@ -3142,7 +3079,7 @@ LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {TRIGGER_TALK, ACTOR_STEAM, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STEAM_ROOM_PILLAR, FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED, EVENT(AquaRockInside_PushPillarOffLedge)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PushPillarOffLedge)},
@@ -3267,7 +3204,7 @@ LATE_DATA struct Trigger gAquaRockInside_TearStoneTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePuzzlePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_C, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_D, CONDITION_ALWAYS, 0},

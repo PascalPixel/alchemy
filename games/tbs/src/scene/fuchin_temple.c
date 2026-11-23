@@ -779,6 +779,17 @@ static void FuchinTemple_KnockTreeDownSouth(void) {
                     0);
 }
 
+/// The fallen tree trunk is set up again at its place in the school.
+static inline void FuchinTemple_SetTreeUpAgain(void) {
+  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
+  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
+  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = toFIXED(12);
+  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * FIXED_ONE / 5;
+  Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = DEGtoANG(180);
+  Sound_Play(SE_CHEST_OPEN);
+}
+
 /// The student by the tree walks round to the fallen trunk, on the side away
 /// from Isaac.
 static void FuchinTemple_StudentWalksAroundTree(void) {
@@ -850,13 +861,7 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Event_ShowMessageThenWait(ACTOR_TREE_STUDENT, 0, 20);
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
-  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
-  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = toFIXED(12);
-  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
-  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * FIXED_ONE / 5;
-  Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = DEGtoANG(180);
-  Sound_Play(SE_CHEST_OPEN);
+  FuchinTemple_SetTreeUpAgain();
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 30);
@@ -865,8 +870,6 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
 /// The students see the tree trunk fall, Feh will not count it because it was
 /// not done from the line, and the student sets the trunk up again.
 static void FuchinTemple_StudentsSeeTreeFall(void) {
-  struct Actor *tree;
-
   Actor_FaceActor(ACTOR_PROUD_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_FaceActor(ACTOR_WATCHING_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_FaceActor(ACTOR_TREE_STUDENT, ACTOR_TRAINING_TREE, 0);
@@ -900,19 +903,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Actor_SetSpeed(ACTOR_TREE_STUDENT, 0.8);
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
-  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
-  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = toFIXED(12);
-  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
-  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * FIXED_ONE / 5;
-  tree = Actor_Get(ACTOR_TRAINING_TREE);
-  {
-    struct Sprite *sprite = tree->sprite;
-    s32 rotation = DEGtoANG(180);
-
-    sprite->rotation = rotation;
-  }
-  Sound_Play(SE_CHEST_OPEN);
+  FuchinTemple_SetTreeUpAgain();
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTH, 30);
@@ -1239,19 +1230,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WalkToAndWait(ACTOR_FEH, 240, 184);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
-  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
-  Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = toFIXED(12);
-  Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
-  Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * FIXED_ONE / 5;
-  actor = Actor_Get(ACTOR_TRAINING_TREE);
-  {
-    struct Sprite *sprite = actor->sprite;
-    s32 rotation = DEGtoANG(180);
-
-    sprite->rotation = rotation;
-  }
-  Sound_Play(SE_CHEST_OPEN);
+  FuchinTemple_SetTreeUpAgain();
   // "The tree... It fell. What happened?"
   Event_ShowMessageThenWait(ACTOR_FEH, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -1547,12 +1526,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = toFIXED(12);
   Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
-  {
-    struct Sprite *sprite = actor->sprite;
-    s32 rotation = DEGtoANG(180);
-
-    sprite->rotation = rotation;
-  }
+  actor->sprite->rotation = DEGtoANG(180);
   Sound_Play(SE_CHEST_OPEN);
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 216, 152);

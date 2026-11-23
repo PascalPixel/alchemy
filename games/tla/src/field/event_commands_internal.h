@@ -62,7 +62,7 @@
 /// Seal names them.
 #define ITEM_BREAK_SHARD_MAX 24
 
-/// The steps, one a frame, in which a Psynergy's object, Douse's rain cloud
+/// The steps, one a frame, in which a Psynergy's actor, Douse's rain cloud
 /// among them, grows out of the caster on its way to the target or shrinks
 /// back into it: FieldEffect_Interpolate's tenths.
 #define GROW_STEPS 10

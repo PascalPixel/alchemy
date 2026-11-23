@@ -38,23 +38,24 @@ enum PostAnimation {
 /// and a tightrope's sprites this, a hanging vine's links HANGING_VINE_DEPTH.
 #define ROPE_DEPTH 58
 
-// The ropes Lash ties (HEAP_SLOT_ROPE): eight slots, each a chain of nodes
-// between two posts, coiled at the first post until tied; tied, the rope runs
-// from post to post and is wound round both. Probes of the Shrine of the Sea
-// God's rope room (render probe --only scene --scene ShrineOfTheSeaGodRope
-// --edition tla-en) show rope 0 coiled round the foot of its first post from
-// --entrance 2, and with FLAG_SHRINE_ROPE_TIED set (--set 0x203) wound
-// round that post from --entrance 2 and round the far post from --entrance 0.
-// A tied rope can be crossed hand over hand (LEADER_MOVEMENT_ROPE). Pushing at
-// a rope's post for more than ROPE_PUSH_STEPS frames raises
+// The ropes Lash ties (HEAP_SLOT_ROPE), as in the Shrine of the Sea God: eight
+// slots, each a chain of nodes between two posts, coiled round the foot of the
+// first post until tied; tied, the rope runs from post to post and is wound
+// round both, and can be crossed hand over hand (LEADER_MOVEMENT_ROPE). Pushing
+// at a rope's post for more than ROPE_PUSH_STEPS frames raises
 // FIELD_RAISED_TRIGGER_ROPE_ON, whose scene event puts the leader on the rope;
 // on it, it raises FIELD_RAISED_TRIGGER_ROPE_OFF. Actor_CrossRope, which
 // gActor_RopeScript runs once a frame, adds half a pixel to the rope's swing,
 // up to two, on each frame it sends the leader on toward a node, so the swing
 // is full within a few frames of setting off. Rope_Update and Rope_LayBowed bow
 // the middle of the rope that far either way of its line, in a cycle of 16
-// frames, the swing losing a twentieth a frame. The code settles the swing;
-// the render probe stages a scene and plays no crossing.
+// frames, the swing losing a twentieth a frame.
+
+/// RopeSlot.state.
+enum RopeState {
+  ROPE_COILED, ///< at its first post, or pulled back there
+  ROPE_THROWN  ///< thrown or laid tied from post to post
+};
 
 /// The leader steps onto a rope or tightrope once it has pushed against its
 /// post (FieldWork.blockedSteps) for more than this many frames.
@@ -234,7 +235,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
   if (first != NULL && second != NULL) {
     struct RopeSlot *slot;
 
-    if (first->spriteStorageKind == 1)
+    if (first->spriteStorageKind == ACTOR_SPRITE_ONE)
       priority = ((struct Sprite *)first->sprite)->image.priority;
     slot = &work->slots[index];
     slot->first = id;
@@ -300,7 +301,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
     link = &node->next;
   }
   *link = NULL;
-  slot->state = 1;
+  slot->state = ROPE_THROWN;
   slot->swinging = 1;
   slot->amplitude = FIXED_ONE;
   slot->phase = DEGtoANG(90);
@@ -364,7 +365,7 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
   if (first != NULL && second != NULL) {
     struct RopeSlot *slot;
 
-    if (first->spriteStorageKind == 1)
+    if (first->spriteStorageKind == ACTOR_SPRITE_ONE)
       priority = ((struct Sprite *)first->sprite)->image.priority;
     slot = &work->slots[index];
     slot->first = firstId;
@@ -513,9 +514,9 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   u16 angle;
   struct RopeNode **nodes;
 
-  if (slot->state == 1)
+  if (slot->state == ROPE_THROWN)
     return;
-  slot->state = 1;
+  slot->state = ROPE_THROWN;
   segments = slot->segments;
   cursor = nodes = Heap_Alloc(512);
   for (i = 0; i <= segments; i++) {
@@ -610,9 +611,9 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   s32 lastY;
   void **nodes;
 
-  if (slot->state == 0)
+  if (slot->state == ROPE_COILED)
     return;
-  slot->state = 0;
+  slot->state = ROPE_COILED;
   segments = slot->segments;
   cursor = nodes = Heap_Alloc(512);
   slot->swinging = 0;
@@ -746,7 +747,7 @@ s32 Rope_FindById(s32 id, s32 *value, s32 *index) {
   return -1;
 }
 
-/// Returns rope index's state (1 once tied), or -1 while the ropes have no
+/// Returns rope index's enum RopeState, or -1 while the ropes have no
 /// work.
 s32 Rope_GetState(s32 index) {
   struct RopeWork *work = ROPE_WORK;
@@ -773,13 +774,10 @@ void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId) {
     Rope_Tie(index, firstId, secondId);
 }
 
-// The tightropes (HEAP_SLOT_TIGHTROPE): ropes stretched straight from post to
-// post across a drop, that the party walks (LEADER_MOVEMENT_TIGHTROPE) and that
-// wobble underfoot. The family copies the ropes' routines. A probe of Champa
-// (render probe --only scene --scene Champa --entrance 4 --edition tla-en)
-// shows tightrope 0, which Champa's Scene_Initialize strings between
-// ACTOR_TIGHTROPE_START and ACTOR_TIGHTROPE_END, running straight from its post
-// across the drop between two ledges.
+// The tightropes (HEAP_SLOT_TIGHTROPE), as in Champa: ropes stretched straight
+// from post to post across a drop, that the party walks
+// (LEADER_MOVEMENT_TIGHTROPE) and that wobble underfoot. The family copies the
+// ropes' routines.
 
 /// Allocates the tightropes' work, loads their node picture and starts
 /// Tightrope_Draw and Tightrope_Update.
@@ -1352,13 +1350,11 @@ enum HangingVineLinkKind {
 
 // The hanging vines (HEAP_SLOT_HANGING_VINE): eight slots, each seven links
 // hung below an anchor actor, as the leafy vine that hangs down a wall in Gaia
-// Rock's altar room. A vine sways, swings less while the leader stands beside
-// it (HangingVine_Update), and once Whirlwind blows on it, swings the leader
+// Rock's altar room, hanging down the wall to just over the leader's head. A
+// vine sways, swings less while the leader stands beside it
+// (HangingVine_Update), and once Whirlwind blows on it, swings the leader
 // across (HangingVine_Swing, which FieldPsynergy_Whirlwind calls on its
-// target). A probe of that room (render probe --only scene --scene
-// GaiaRockInsideAltar --entrance 5 --edition tla-en) shows the vine
-// gaia_rock_inside.c hangs on ACTOR_HANGING_VINE as leaves down the wall to
-// just over the leader's head.
+// target).
 
 /// Starts the hanging vines: takes and clears their work, loads the vine's
 /// pictures for an anchor of SPRITE_SPROUTING_LEAVES, else the chain's, and
@@ -1585,7 +1581,7 @@ struct HangingVineLink *HangingVine_AllocLink(void) {
   s32 index;
 
   for (index = 0; index < ROPE_NODE_COUNT; index++) {
-    if (link->kind == 0)
+    if (link->kind == VINE_LINK_FREE)
       return link;
     link++;
   }
@@ -1631,11 +1627,11 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   // Clear the collision codes of the five cells the vine hangs over.
   x = FIELD_CELL(actor->x.fixed);
   z = FIELD_CELL(actor->z.fixed - actor->y.fixed);
-  cells = map->layers[2].cells;
+  cells = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
   for (i = 0; i < 5; i++) {
     z++;
     cell = cells;
-    cell += x + z * 128;
+    cell += x + z * MAPGRID_SIZE;
     cell->collisionCode = 0;
   }
 
@@ -1852,7 +1848,7 @@ void HangingVine_Swing(s32 id) {
   }
   slot->active = 1;
   Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
-  leader->motionFlags = motionFlags & ~1;
+  leader->motionFlags = motionFlags & ~ACTOR_FOLLOWS_TERRAIN;
   leader->velocityY = toFIXED(4);
   for (i = 0; i < 8; i++) {
     slot->spacing -= toFIXED(1) / 16;
@@ -1861,7 +1857,7 @@ void HangingVine_Swing(s32 id) {
   slot->spacing = toFIXED(14);
   heldSprite->rotation = 0;
   Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
-  Actor_SetSpriteFlagsFar(leader, 1);
+  Actor_SetSpriteFlagsFar(leader, SPRITE_FLAG_SHADOW);
   leader->motionFlags = motionFlags;
   wait(6);
   slot->active = 1;
@@ -1884,3 +1880,5 @@ void HangingVine_Place(s32 id, s32 force) {
     }
   }
 }
+
+#undef SIDE_TURN

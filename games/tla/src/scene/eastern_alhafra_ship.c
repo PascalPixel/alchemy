@@ -265,53 +265,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-extern u32 gEasternAlhafraShip_QuestionMarkScript[];
+extern u32 gQuestionMark_Script[];
 
-/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
-/// frames.
-void EasternAlhafraShip_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
-                                        s32 frames) {
-  struct Actor *object;
-  struct Sprite *sprite;
+#include "shared/question_mark_pop.h"
 
-  object = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
-  if (object != NULL) {
-    sprite = object->sprite;
-    Actor_SelectAnimation(object, EMOTE_QUESTION);
-    Actor_StartScript(object, gEasternAlhafraShip_QuestionMarkScript);
-    object->motionFlags = 0;
-    object->wait = frames;
-    sprite->flags = 0;
-    sprite->rotation = rotation;
-  }
-}
-
-/// Four "?" bubbles pop up over an actor in turn, to its right and its left,
-/// each tilted, a quarter of a second apart.
-void EasternAlhafraShip_PopQuestionMarks(s32 id) {
-  struct Actor *actor = Actor_GetById(id);
-
-  EasternAlhafraShip_PopQuestionMark(actor->x.fixed + toFIXED(8),
-                                     actor->y.fixed + toFIXED(28),
-                                     actor->z.fixed, TRIG_TURN / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-  EasternAlhafraShip_PopQuestionMark(actor->x.fixed - toFIXED(8),
-                                     actor->y.fixed + toFIXED(28),
-                                     actor->z.fixed, TRIG_TURN * 15 / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-  EasternAlhafraShip_PopQuestionMark(actor->x.fixed + toFIXED(8),
-                                     actor->y.fixed + toFIXED(28),
-                                     actor->z.fixed, TRIG_TURN / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-  EasternAlhafraShip_PopQuestionMark(actor->x.fixed - toFIXED(8),
-                                     actor->y.fixed + toFIXED(28),
-                                     actor->z.fixed, TRIG_TURN * 15 / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-}
+#include "shared/actor_pop_question_marks.h"
 
 extern u32 gEasternAlhafraShip_LeaveUpTheStairsScript[];
 
@@ -422,7 +380,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(40);
   Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
-  EasternAlhafraShip_PopQuestionMarks(ACTOR_BRIGGS_MATE);
+  Actor_PopQuestionMarks(ACTOR_BRIGGS_MATE);
   Sound_Play(SE_LIGHT_APPEAR);
   Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHEAST, 0);
@@ -1568,7 +1526,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "So, what shall we do?"
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
-  EasternAlhafraShip_PopQuestionMarks(ACTOR_MADRAS_MAYOR);
+  Actor_PopQuestionMarks(ACTOR_MADRAS_MAYOR);
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   // "I know... Come to Madra after our boat has been fixed and we've..."
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
@@ -1849,6 +1807,6 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u32 gEasternAlhafraShip_QuestionMarkScript[] = {
+u32 gQuestionMark_Script[] = {
     SC_RELEASE,
 };

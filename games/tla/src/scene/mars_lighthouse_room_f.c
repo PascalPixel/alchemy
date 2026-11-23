@@ -662,7 +662,7 @@ void MarsLighthouseRoomF_BlazeTorch(void) {
   MarsLighthouseRoomF_ShootFireballAtWall();
 }
 
-extern u32 gMarsLighthouseRoomF_RubbleScriptA[];
+extern u32 gDebris_Script[];
 extern u32 gMarsLighthouseRoomF_RubbleScriptB[];
 
 /// The pieces of wall MarsLighthouseRoomF_ScatterRubble throws.
@@ -688,7 +688,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
       s32 scale = (Random16() >> 1) + FIXED_ONE / 4;
 
       if (Random16() <= 32767)
-        Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptA);
+        Actor_StartScript(actor, gDebris_Script);
       else
         Actor_StartScript(actor, gMarsLighthouseRoomF_RubbleScriptB);
       Actor_SetSpriteFlags(actor, 0);
@@ -1411,35 +1411,7 @@ extern s32 gWhirlwindEndScript[];
 
 #include "shared/whirlwind_update.h"
 
-/// Unused here: a whirlwind starts from a gust.
-UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
-  struct Vector3 position;
-  struct EffectOptions options;
-  struct Actor *actor;
-
-  Event_PlaySound(SE_WHIRLWIND);
-  position.x =
-      source->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(source->facing));
-  position.z =
-      source->z.fixed + Iwram_MulFX(toFIXED(8), Math_Sin(source->facing));
-  actor = FieldActor_Create(SPRITE_WHIRLWIND, position.x, source->y.fixed,
-                            position.z);
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetSpriteFlags(actor, 0);
-  actor->motionFlags = 0;
-  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  actor->facing = source->facing;
-  actor->timer = 0;
-  actor->riseCounter = 0;
-  actor->riseEnabled = 0;
-  actor->update = Whirlwind_Update;
-  actor->speedLimit = toFIXED(3) / 2;
-  options.priority = 1;
-  options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
-                    0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
-  return actor;
-}
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks_b.h"
 
@@ -1697,47 +1669,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 extern u16 gPushKinds[PUSH_KINDS];
 extern s8 gPushFootprints[][4];
 
-/// Makes the cells under a pushable actor solid, by its footprint.
-s32 PushTarget_FillFootprint(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *actor = Actor_Get(id);
-  s16 shape = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
-  s16 i = 0;
-  u32 j;
-  s32 width;
-  s32 height;
-  s32 x;
-  s32 z;
-  s32 mapX;
-  s32 mapZ;
-  s32 toX;
-  s32 toZ;
-
-  if ((u16)shape != gPushKinds[(u16)i]) {
-    do {
-      j = (u16)NEXT_HALFWORD(i);
-      i = j;
-    } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
-  }
-  j = (u16)i;
-  if (j == PUSH_KINDS)
-    return 0;
-  width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
-  height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
-  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
-  mapX = FIELD_CELL(map->layers[1].offsetX);
-  i = mapX;
-  mapZ = FIELD_CELL(map->layers[1].offsetY);
-  toX = x + (u16)i;
-  toZ = z + (u16)mapZ;
-  MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
-  PushedActor_FillGridAttributeRectangle(0, x, z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, x, z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  return 1;
-}
+#include "shared/push_target_fill_footprint.h"
 
 /// Sets the cell behavior of a rectangle of one layer's cells.
 void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
@@ -1769,117 +1701,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
 
 #include "shared/push_target_find_ahead.h"
 
-/// The leader pushes the object to its resting place: the cells it leaves are
-/// floor again and the cells it comes to are walls.
-void PushTarget_Push(struct PushTarget target) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *actor = Actor_Get(target.id);
-  s32 cell[3];
-  FIXED from[3];
-  s32 footprint;
-  s32 width;
-  s32 height;
-  s32 originX;
-  s32 originZ;
-  s32 direction;
-  s32 speed;
-  s32 acceleration;
-
-  // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
-  // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
-  // meant: every push takes direction 0 (east), so the pushed thing rolls with
-  // animation 2 whichever way it goes and the leader's step after it is none.
-#ifdef BUGFIX
-  direction = FACING_INDEX(leader->facing);
-#else
-  direction = FIXEDtoINT(leader->facing);
-#endif
-  footprint = target.footprint;
-  speed = leader->speedLimit;
-  acceleration = leader->acceleration;
-  from[0] = actor->x.fixed;
-  from[2] = actor->z.fixed;
-  cell[0] = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[footprint][1]));
-  width = (ABS(gPushFootprints[footprint][0]) +
-           ABS(gPushFootprints[footprint][2])) >>
-          4;
-  height = (ABS(gPushFootprints[footprint][1]) +
-            ABS(gPushFootprints[footprint][3])) >>
-           4;
-  PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
-  System_Wait(15);
-  // The leader follows the object half its way.
-  {
-    s32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
-    s32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
-
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
-  }
-  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
-  System_Wait(4);
-  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
-      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
-    Actor_SelectAnimation(actor, 3);
-  else
-    Actor_SelectAnimation(actor, 2);
-  Event_PlaySound(SE_HEAVY_MOVE);
-  Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFX(actor, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  // BUG: the leader's step after the push reads both halves from the step's
-  // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
-  // meant). With direction 0 both are 0.
-  {
-    s32 step = gPushLeaderSteps[direction];
-
-#ifdef BUGFIX
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                               PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
-#else
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                               toFIXED(step) >> 31,
-                               FIXEDtoINT(toFIXED(step)) >> 1);
-#endif
-  }
-  if (target.callback != 0)
-    ((void (*)(void))target.callback)();
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  leader->update = NULL;
-  leader->speedLimit = speed;
-  leader->acceleration = acceleration;
-  FieldActor_WaitForMove(actor);
-  Event_PlaySound(SE_STOP_EXIT_SE);
-  Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(actor, target.x, actor->y.fixed,
-                                       target.z);
-  Actor_SelectAnimation(actor, 1);
-  target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
-  target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
-  target.x >>= 20;
-  target.z >>= 20;
-  originX = FIELD_CELL(map->layers[1].offsetX);
-  originZ = FIELD_CELL(map->layers[1].offsetY);
-  MapGrid_CopyCellAttributes(target.x, target.z, width, height,
-                             originX + target.x, originZ + target.z);
-  PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
-                                         CELL_BEHAVIOR_WALL);
-  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
-  originX += cell[0];
-  originZ += cell[2];
-  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  PushedActor_FillGridAttributeRectangle(2, cell[0], cell[2], width, height, 0);
-  Event_NoOp();
-}
+#include "shared/push_target_push.h"
 
 #include "shared/actor_stop_at_push_target.h"
 
@@ -2056,19 +1878,9 @@ s16 gMarsLighthouseRoomF_StatueFlameThrowers[] = {
     ACTOR_HIDDEN_FLAME_THROWER_B, 0,
 };
 
-/// A piece of rubble lies a while, blinks ten times and is gone.
-u32 gMarsLighthouseRoomF_RubbleScriptA[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
-/// As gMarsLighthouseRoomF_RubbleScriptA, two frames later.
+/// As gDebris_Script, two frames later.
 u32 gMarsLighthouseRoomF_RubbleScriptB[] = {
     SC_WAIT(42),
     SC_LABEL(1),

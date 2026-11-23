@@ -215,11 +215,10 @@ static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
 
-#include "shared/palette_cycle_step_at.h"
+#include "shared/palette_cycle_step.h"
 
 void MapGrid_SetCellHeight();
 
-#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
@@ -235,7 +234,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"
 
-#include "shared/whirlwind_spawn_upper.h"
+#include "shared/whirlwind_spawn.h"
 
 // Unused: nothing in the entrance sets Actor_EmitRisingSparks as an update.
 #include "shared/actor_emit_rising_sparks.h"
@@ -333,7 +332,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
-#include "shared/cracked_tile_find_lower.h"
+#include "shared/cracked_tile_find.h"
 
 #include "shared/leader_center_in_cell.h"
 

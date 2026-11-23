@@ -122,7 +122,7 @@ void Actor_StartScript(struct Actor *actor, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);
 void Field_TryJumpForward(void);
-void AquaRockInside_SpawnSplash(struct Actor *actor);
+void Actor_SpawnWadingSplash(struct Actor *actor);
 s32 Actor_EmitMist(struct Actor *actor);
 
 void AquaRockInside_DrainStream(void);
@@ -147,7 +147,7 @@ struct PillarWork gAquaRockInside_Pillars BSS_DATA;
 struct BeamWork gAquaRockInside_Splashes BSS_DATA;
 extern u32 gAquaRockInside_SparkScript[];
 extern u32 gAquaRockInside_SplashScript[];
-extern u32 gAquaRockInside_StreamSplashScript[];
+extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 /// The water pillars' tiles, compressed (graphics/aqua_rock_inside/tiles.s).
 extern const u8 gAquaRockInside_PillarTiles[];
@@ -1040,7 +1040,7 @@ void AquaRockInside_RideFalls(s32 value) {
     // away from the waterfall; whether the waterfall's own splash actor
     // (ACTOR_VIAL_CHEST_SPLASH) was meant, nothing in reach settles.
     if ((i & 7) == 0)
-      AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
+      Actor_SpawnWadingSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
   }
   Event_End();
@@ -1702,7 +1702,7 @@ void AquaRockInside_FallThroughWater(void) {
     Actor_SetSpriteFlags(actor, 0);
     System_Wait(1);
   }
-  AquaRockInside_SpawnSplash(actor);
+  Actor_SpawnWadingSplash(actor);
   Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   *flags = saved;
@@ -1814,18 +1814,18 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     if ((u32)(entrance - 5) <= 1) {
-      // AquaRockInside_StartVents, defined below, is called with no prototype
+      // Vents_Start, defined below, is called with no prototype
       // in scope.
-      AquaRockInside_StartVents(gAquaRockInside_CrystalPowderChestVents,
-                                gAquaRockInside_CrystalPowderChestVentPillars,
-                                AquaRockInside_UpdateVents);
+      Vents_Start(gAquaRockInside_CrystalPowderChestVents,
+                  gAquaRockInside_CrystalPowderChestVentPillars,
+                  AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_AMBIENT_WATER);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST) {
     if (entrance == 5 || entrance == 7) {
-      AquaRockInside_StartVents(gAquaRockInside_VialChestVents,
-                                gAquaRockInside_VialChestVentPillars,
-                                AquaRockInside_UpdateVents);
+      Vents_Start(gAquaRockInside_VialChestVents,
+                  gAquaRockInside_VialChestVentPillars,
+                  AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_AMBIENT_WATER);
       AquaRockInside_SettleVentPillars(0, ACTOR_VIAL_CHEST_WEST_VENT_PILLAR);
     }
@@ -2151,125 +2151,15 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// A splash at the actor's feet, on its sprite's priority.
-void AquaRockInside_SpawnSplash(struct Actor *actor) {
-  struct Actor *child = FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
-                                          actor->y.fixed + toFIXED(4),
-                                          actor->z.fixed + toFIXED(4));
-  struct FieldSprite *source = actor->sprite;
-
-  if (child != 0) {
-    struct FieldSprite *sprite = child->sprite;
-
-    child->groundHeight = actor->groundHeight;
-    Actor_StartScript(child, gAquaRockInside_StreamSplashScript);
-    child->motionFlags = 0;
-    if (sprite != 0) {
-      Sprite_StartAnimation(sprite, 1);
-      sprite->flags = 0;
-      sprite->priority = source->priority;
-    }
-  }
-}
+#include "shared/actor_spawn_wading_splash.h"
 
 #include "shared/actor_emit_water_drop.h"
 
-/// While Felix wades in the stream of Steam's room or the Tear Stone's room,
-/// the current carries him south, splashing, until something blocks him; where
-/// the stream pours off a ledge he sits and drops with the water. The routine
-/// is the slopes' AquaRock_FlowWithStream, whose test for Aqua Rock's Moai room
-/// never holds in these rooms.
-void AquaRockInside_FlowWithStream(void) {
-  struct Actor *center;
-  s32 id;
-  struct Actor *actor;
-  FIXED position[3];
-  s32 hit;
-
-  {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-    id = gMainRoutineWork.leaderActorId;
-    center = work->camera;
-  }
-  actor = Actor_Get(id);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI && actor->groundHeight == 0)
-    return;
-  position[0] = actor->x.fixed;
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + toFIXED(2);
-  hit = MapGrid_CheckCollision(actor, position);
-  if ((gFrameCount & 4) == 0)
-    AquaRockInside_SpawnSplash(actor);
-  if (hit < 0) {
-    Actor_SetAttachedEffect(id,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldActor_SetMoveTargetFX(actor, actor->x.fixed, actor->y.fixed,
-                               actor->z.fixed + toFIXED(8));
-    Actor_SelectAnimation(actor, ANIM_LEADER_SIT);
-    FieldActor_WaitForMove(actor);
-    do {
-      System_Wait(1);
-    } while (actor->y.fixed != actor->groundHeight);
-    AquaRockInside_SpawnSplash(actor);
-    Actor_SelectAnimation(actor, ANIM_LEADER_SIT);
-    System_Wait(3);
-    return;
-  }
-  position[0] = actor->x.fixed;
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + toFIXED(8);
-  hit = MapGrid_CheckCollision(actor, position);
-  if (hit > 0)
-    return;
-  position[0] = actor->x.fixed + (toFIXED(57) / 10);
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + (toFIXED(57) / 10);
-  hit = MapGrid_CheckCollision(actor, position);
-  if (hit > 0)
-    return;
-  position[0] = actor->x.fixed - (toFIXED(57) / 10);
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed + (toFIXED(57) / 10);
-  hit = MapGrid_CheckCollision(actor, position);
-  if (hit > 0)
-    return;
-  center->z.fixed += toFIXED(2);
-  actor->z.fixed += toFIXED(2);
-  actor->facing = FACING_SOUTH;
-}
+#include "shared/leader_flow_with_stream.h"
 
 #include "shared/actor_show_parts.h"
 
-/// Unused: the leader spins round, sinking, with splashes at the place of the
-/// Vial chest's room's third puddle, and leaves by `entrance`.
-UNUSED void Leader_SpinAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  leader->motionFlags = 0;
-  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Event_PlaySound(SE_SPLASH_SMALL);
-  Actor_SelectAnimation(leader, ANIM_LEADER_TUMBLE_IN_WATER);
-  Event_PlaySound(SE_SPIN_AWAY);
-  for (i = 0; i < 60; i++) {
-    s32 angle;
-
-    if (i == 30)
-      Event_FinishScreenTransition();
-    leader->y.fixed -= toFIXED(1) / 4;
-    angle = leader->facing;
-    leader->facing = angle + TRIG_TURN / 16;
-    if ((i & 7) == 0)
-      AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
-    System_Wait(1);
-  }
-  Event_End();
-  FieldEvent_SetExitRequest(entrance);
-}
+#include "shared/leader_spin_away.h"
 
 // On odd frames, spawns a drifting effect above the object, swaying with the
 // frame count.
@@ -2697,62 +2587,7 @@ void Vent_Puff(s32 *position, s32 base) {
 
 #include "shared/vent_update.h"
 
-/// Places a room's vents from its table and the actors their puffs land on,
-/// unless the party comes back to the room as it left it, and starts the
-/// routine that times their gusts; their puffs are drawn half seen through.
-void AquaRockInside_StartVents(u16 *points, u16 *ids, void (*cycle)(void)) {
-  struct VentWork *work = VENT_WORK;
-  struct VentEntry *point = work->entries;
-
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 x;
-    s32 i;
-
-    Iwram_ClearWordsEntry(work, sizeof(struct VentWork));
-    x = *points++;
-    i = 0;
-    while (x > 0) {
-      s32 z = points[0];
-      s32 speed = points[1];
-
-      point->active = 0;
-      point->x = toFIXED(x);
-      point->z = toFIXED(z);
-      point->y = Map_GetTerrainHeight(0, toFIXED(x), toFIXED(z) + toFIXED(16));
-      point->value = toFIXED(speed);
-      point->timer = i++;
-      points += 2;
-      point++;
-      if (i > VENTS_MAX - 1)
-        break;
-      x = *points++;
-    }
-    if (ids != 0) {
-      x = *ids++;
-      i = 0;
-      if (x > 0) {
-        do {
-          work->ids[i++] = x;
-          if (i > VENT_IDS_MAX - 1)
-            break;
-          x = *ids++;
-        } while (x > 0);
-      }
-    }
-  }
-  work->hook = (s32 (*)(void))cycle;
-  if (REG_BLDCNT == 0) {
-    {
-      s32 alpha = BLEND_ALPHA(8, 12);
-      REG_BLDALPHA = alpha;
-    }
-    {
-      s32 cnt = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      REG_BLDCNT = cnt;
-    }
-  }
-  Task_AddFrame(Vent_Update, TASK_PASS_FRAME);
-}
+#include "shared/vents_start.h"
 
 /// Unused: whether vent index is blowing now.
 UNUSED s32 Vent_IsBlowing(s32 index) {
@@ -2880,8 +2715,8 @@ u16 gAquaRockInside_VialChestVentPillars[] ALIGNED(4) = {
     ACTOR_VIAL_CHEST_WEST_VENT_PILLAR, ACTOR_VIAL_CHEST_EAST_VENT_PILLAR, 0, 0,
 };
 
-/// A splash's script in a stream.
-u32 gAquaRockInside_StreamSplashScript[] = {
+/// A splash's script: it shows for 20 frames, then is released.
+u32 gWadingSplash_Script[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };
@@ -3158,7 +2993,7 @@ LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {TRIGGER_TALK, ACTOR_STEAM, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STEAM_ROOM_PILLAR, FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED, EVENT(AquaRockInside_PushPillarOffLedge)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PushPillarOffLedge)},
@@ -3283,7 +3118,7 @@ LATE_DATA struct Trigger gAquaRockInside_TearStoneTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Leader_FlowWithStream)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePuzzlePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_C, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TEAR_STONE_WATER_PILLAR_D, CONDITION_ALWAYS, 0},

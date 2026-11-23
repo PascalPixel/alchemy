@@ -2344,7 +2344,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-#include "shared/whirlwind_spawn_upper.h"
+#include "shared/whirlwind_spawn.h"
 
 #include "shared/actor_emit_rising_sparks_b.h"
 

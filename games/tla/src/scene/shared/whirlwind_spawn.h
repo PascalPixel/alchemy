@@ -1,4 +1,5 @@
-/// A whirlwind blows out of the stone face at `source`.
+/// A whirlwind blows out of the stone face at `source`. Mars Lighthouse keeps
+/// a copy nothing calls, its whirlwinds starting from a gust.
 struct Actor *Whirlwind_Spawn(struct Actor *source) {
   struct Vector3 position;
   struct EffectOptions options;

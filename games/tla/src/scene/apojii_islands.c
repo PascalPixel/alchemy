@@ -155,14 +155,14 @@ void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
 void ApojiiIslands_InitializeHaze(void);
 void ApojiiIslands_EnterSeaOfTimeIsletHouse(void);
-void ApojiiIslands_SpawnSplash(struct Actor *actor);
+void Actor_SpawnWadingSplash(struct Actor *actor);
 s32 Actor_EmitMist(struct Actor *actor);
 void Leader_RiseFromWater(void);
 void ApojiiIslands_DrawCellMarkers(void);
 void ApojiiIslands_StartCellMarkers(void);
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel);
 void GroundParticles_Draw(void);
-void ApojiiIslands_StartSparkles(void);
+void GroundParticles_Start(void);
 void ApojiiIslands_SetSparkleAnchor(s32 id);
 
 /// The markers the woken Aqua Stone lays over the spring: at most this many.
@@ -219,7 +219,7 @@ u16 gApojiiIslands_UpperScrollX BSS_DATA;
 u16 gApojiiIslands_LowerScrollX BSS_DATA;
 /// The markers drawn over the spring once the Aqua Stone is woken.
 struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
-extern u32 gApojiiIslands_SplashScript[];
+extern u32 gWadingSplash_Script[];
 extern u32 gWaterDropScript[];
 
 /// Creates an actor of `kind` at a point (Import_ActorCreate).
@@ -511,7 +511,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   wait(30);
   Sound_Play(MUS_AQUA_ROCK);
-  ApojiiIslands_StartSparkles();
+  GroundParticles_Start();
   ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_AMBIENT_WATER);
   i = 3;
@@ -886,28 +886,7 @@ void ApojiiIslands_EnterSeaOfTimeIsletHouse(void) {
 /// with no jump.
 void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
-/// A splash at the actor's feet, on its sprite's priority.
-void ApojiiIslands_SpawnSplash(struct Actor *actor) {
-  struct Actor *child;
-  struct FieldSprite *parent;
-  struct FieldSprite *sprite;
-
-  child = (FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
-                             actor->y.fixed + toFIXED(4),
-                             actor->z.fixed + toFIXED(4)));
-  parent = actor->sprite;
-  if (child != NULL) {
-    sprite = child->sprite;
-    child->groundHeight = actor->groundHeight;
-    Actor_StartScript(child, gApojiiIslands_SplashScript);
-    child->motionFlags = 0;
-    if (sprite != NULL) {
-      Sprite_StartAnimation(sprite, 1);
-      sprite->flags = 0;
-      sprite->priority = parent->priority;
-    }
-  }
-}
+#include "shared/actor_spawn_wading_splash.h"
 
 #include "shared/actor_emit_water_drop.h"
 
@@ -928,7 +907,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
     position[2] = leader->z.fixed + toFIXED(2);
     result = MapGrid_CheckCollision(leader, position);
     if ((gFrameCount & 4) == 0)
-      ApojiiIslands_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -939,7 +918,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
       do {
         System_Wait(1);
       } while (leader->y.fixed != leader->groundHeight);
-      ApojiiIslands_SpawnSplash(leader);
+      Actor_SpawnWadingSplash(leader);
       Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
       System_Wait(3);
     } else {
@@ -974,35 +953,7 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
 /// aqua_rock_inside.c names it.
 enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
 
-/// Unused here: in Aqua Rock the leader spins up and away to `entrance`,
-/// splashing at the Vial chest room's third puddle.
-UNUSED void Leader_SpinAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 i;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
-  leader->motionFlags = 0;
-  leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Event_PlaySound(SE_SPLASH_SMALL);
-  Actor_SelectAnimation(leader, ANIM_LEADER_TUMBLE_IN_WATER);
-  Event_PlaySound(SE_SPIN_AWAY);
-  for (i = 0; i < 60; i++) {
-    s32 angle;
-
-    if (i == 30)
-      Event_FinishScreenTransition();
-    leader->y.fixed -= toFIXED(1) / 4;
-    angle = leader->facing;
-    leader->facing = angle + TRIG_TURN / 16;
-    if ((i & 7) == 0)
-      ApojiiIslands_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
-    System_Wait(1);
-  }
-  Event_End();
-  FieldEvent_SetExitRequest(entrance);
-}
+#include "shared/leader_spin_away.h"
 
 #include "shared/actor_emit_mist.h"
 
@@ -1181,46 +1132,7 @@ extern s16 gGroundParticleFrames[];
 
 #include "shared/ground_particles_draw.h"
 
-/// Starts the sparkles: their tiles decoded into VRAM and every sparkle on the
-/// ground at the map's origin with a staggered timer, drawn semi-transparent
-/// (GroundParticles_Draw); the overlay's copy of
-/// FieldEffect_InitializeSparkles.
-void ApojiiIslands_StartSparkles(void) {
-  struct GroundParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct GroundParticleWork));
-  struct GroundParticle *p = work->particles;
-  u8 *buf;
-  u32 i;
-  u32 size;
-  volatile u32 zero;
-
-  size = 0;
-  zero = size;
-  Dma_Set((const void *)&zero, work,
-          DMA_FILL_WORDS(sizeof(struct GroundParticleWork) / 4), REG_DMA3);
-  buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-  Decompress_ByteLz(gField_GroundTiles, buf);
-  work->entry = VramCache_FindFreeEntry();
-  work->tileBase = Vram_Load(work->entry, 768, buf);
-  HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  work->leader = (s32 *)size;
-  i = 0;
-  do {
-    size = (u32)p;
-    *(u32 *)size = 0;
-    size += 4;
-    *(u32 *)size = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    size += 4;
-    *(u32 *)size = OBJ_PRIORITY(1) | OBJ_PALETTE(11);
-    p->posX = 0;
-    p->posZ = 0;
-    p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-    p->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
-    i++;
-    p++;
-  } while (i < ARRAY_COUNT(work->particles));
-  Task_AddFrame(GroundParticles_Draw, TASK_PASS_FRAME);
-}
+#include "shared/ground_particles_start.h"
 
 /// Ties the sparkles to the actor `id`, or to none.
 void ApojiiIslands_SetSparkleAnchor(s32 id) {
@@ -1236,35 +1148,14 @@ void ApojiiIslands_SetSparkleAnchor(s32 id) {
 #include "shared/field_effect_duration_scripts.c"
 
 /// A splash's script: it shows for 20 frames, then is released.
-u32 gApojiiIslands_SplashScript[] = {
+u32 gWadingSplash_Script[] = {
     SC_WAIT(20),
     SC_RELEASE,
 };
 
-/// A water drop's script: it falls a quarter of a pixel a frame for 31 frames,
-/// then is released.
-u32 gWaterDropScript[] = {
-    SC_ADD(SW_Y, toFIXED(1) / 4),
-    SC_WAIT(1),
-    SC_LOOP(30, SC_TOP),
-    SC_RELEASE,
-};
+#include "shared/water_drop_script.c"
 
-/// The sparkles' frames, read by GroundParticles_Draw.
-s16 gGroundParticleFrames[] = {                                                               
-      -8,  -12,  20,  0,   1,    -8,  -12,  20,  0,    1,   -8,   -12,         
-      20,  0,    1,   -8,  -12,  16,  0,    1,   -8,   -12, 16,   0,           
-      1,   -8,   -12, 12,  0,    1,   -8,   -12, 8,    0,   1,    0,           
-      -32, 0,    2,   2,   8,    -48, 0,    2,   2,    16,  -64,  0,           
-      2,   2,    24,  -80, 0,    2,   2,    32,  -96,  0,   2,    2,           
-      40,  -112, 0,   2,   2,    48,  -128, 0,   2,    2,   56,   -144,        
-      0,   2,    2,   64,  -160, 0,   2,    2,   -2,   12,  -4,   12,          
-      -6,  12,   -8,  8,   -10,  8,   -12,  8,   -14,  8,   -16,  8,           
-      -19, 4,    -21, 4,   -24,  4,   -27,  4,   -30,  4,   -33,  4,           
-      -36, 4,    -40, 4,   -44,  4,   -48,  0,   -52,  0,   -56,  0,           
-      -60, 0,    -64, 0,   -68,  0,   -72,  0,   -76,  0,   -80,  0,           
-      -85, 0,    -90, 0,   -95,  0,   -100, 0,   -110, 0,   -120, 0,           
-  };
+#include "shared/ground_particle_frames.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

@@ -1,14 +1,15 @@
 /// @file
 /// MapCell_SetAttributes, the field's routine that replaces a map cell's
 /// collision code and attributes, as the scenes that change their cells keep
-/// a copy of it: included at its place in each scene's overlay, after the
-/// field's map_cell_get.c or before it as the ROM has it.
+/// a copy of it (Treasure Isle's unused): included at its place in each
+/// scene's overlay, after the field's map_cell_get.c or before it as the ROM
+/// has it.
 
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "field/map_grid.h"
 
-extern u8 gMapGridCellBuffer[];
+extern struct MapCell gMapGridCellBuffer[];
 
 /// Replaces a cell's collision code and attributes on a layer, or in the cell
 /// buffer for a layer above 2, and returns the old value.
@@ -22,7 +23,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = (struct MapCell *)gMapGridCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += x + (z << 7);
   old = (cell->collisionCode << 8) | cell->attributeB;
   cell->collisionCode = value >> 8;

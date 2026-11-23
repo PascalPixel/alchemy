@@ -68,8 +68,8 @@ void FieldCamera_WaitForArrival(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-s32 SeaOfTime_GetCellAttributes(u32 layer, s32 x, s32 y);
-s32 SeaOfTime_SetCellAttributes(u32 layer, s32 x, s32 y, s32 value);
+s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
+s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value);
 s32 Position_FlatDistance(FIXED *a, FIXED *b);
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
@@ -116,42 +116,9 @@ s32 SeaOfTime_ResetAnimationFrame(struct Actor *actor) {
   return 1;
 }
 
-/// A map cell's collision code and second attribute, as one number, the code in
-/// the high byte, as the field's MapCell_GetAttributes reads them. Layers above
-/// 2 read the cell buffer.
-s32 SeaOfTime_GetCellAttributes(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
+#include "../field/map_cell_get.c"
 
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += x + (y << 7);
-  return (cell->collisionCode << 8) | cell->attributeB;
-}
-
-/// Sets a map cell's collision code and second attribute from one number, as
-/// SeaOfTime_GetCellAttributes reads them, and returns the old one.
-s32 SeaOfTime_SetCellAttributes(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += x + (y << 7);
-  old = (cell->collisionCode << 8) | cell->attributeB;
-  cell->collisionCode = value >> 8;
-  cell->attributeB = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 #include "shared/position_flat_distance.h"
 
@@ -330,8 +297,8 @@ void SeaOfTime_CircleSwirl(void) {
       actor->z.fixed += toFIXED(0.2);
     else
       actor->z.fixed -= toFIXED(0.2);
-    if (SeaOfTime_GetCellAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center[0]),
-                                    FIELD_CELL(center[2])) >>
+    if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center[0]),
+                              FIELD_CELL(center[2])) >>
             8 ==
         CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
       turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
@@ -432,8 +399,8 @@ void SeaOfTime_RideCurrent(void) {
     else
       actor->z.fixed -= toFIXED(1) / 2;
   }
-  if (SeaOfTime_GetCellAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center.x),
-                                  FIELD_CELL(center.z)) >>
+  if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, FIELD_CELL(center.x),
+                            FIELD_CELL(center.z)) >>
           8 ==
       CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE) {
     turn[0] = SeaOfTime_Cos(-TRIG_TURN / 128);
@@ -540,8 +507,8 @@ void SeaOfTime_FollowChannel(void) {
   actor->acceleration = toFIXED(4);
   targetZ = 0;
   targetX = 0;
-  if (SeaOfTime_GetCellAttributes(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
-                                  z + (dx < 0 ? -dx : dx)) >>
+  if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
+                            z + (dx < 0 ? -dx : dx)) >>
           8 ==
       work->stepTrigger) {
     targetX = (dz < 0 ? -dz : dz) * toFIXED(15);
@@ -549,7 +516,7 @@ void SeaOfTime_FollowChannel(void) {
   }
   targetX += FIELD_CELL_ORIGIN(x);
   targetZ += FIELD_CELL_ORIGIN(z);
-  while (SeaOfTime_GetCellAttributes(MAPGRID_LAYER_MIDDLE, x, z) >> 8 ==
+  while (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, x, z) >> 8 ==
          work->stepTrigger) {
     x += dx;
     z += dz;
@@ -648,11 +615,11 @@ void SeaOfTime_CountLaps(void) {
   u32 *frame;
   u32 *stamp;
 
-  index = (SeaOfTime_GetCellAttributes(MAPGRID_LAYER_GROUND,
-                                       FIELD_CELL(actor->x.fixed),
-                                       FIELD_CELL(actor->z.fixed)) >>
-           8) -
-          1;
+  index =
+      (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed)) >>
+       8) -
+      1;
   frame = &gFrameCount;
   stamp = &gSeaOfTime_LastLapFrame;
 
@@ -1128,10 +1095,10 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
   s32 cx = FIELD_CELL(x);
   s32 cz = FIELD_CELL(z);
 
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, cx - 1, cz - 1, 0);
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, cx, cz - 1, 0);
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, cx - 1, cz, 0);
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, cx, cz, 0);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, cx - 1, cz - 1, 0);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, cx, cz - 1, 0);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, cx - 1, cz, 0);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, cx, cz, 0);
   Actor_SetPosition(actor, 0, 0);
 }
 
@@ -1296,14 +1263,13 @@ void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
                       FIELD_HALF_CELL_ORIGIN(z) + toFIXED(8));
   x >>= 1;
   z >>= 1;
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, x, z,
-                              CELL_BEHAVIOR_WALL << 8);
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, x + 1, z,
-                              CELL_BEHAVIOR_WALL << 8);
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, x, z + 1,
-                              CELL_BEHAVIOR_WALL << 8);
-  SeaOfTime_SetCellAttributes(MAPGRID_LAYER_MIDDLE, x + 1, z + 1,
-                              CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, x, z, CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, x + 1, z,
+                        CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, x, z + 1,
+                        CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(MAPGRID_LAYER_MIDDLE, x + 1, z + 1,
+                        CELL_BEHAVIOR_WALL << 8);
 }
 
 /// A rock rises out of the sea: the camera goes to it, the screen shakes with

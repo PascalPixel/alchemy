@@ -239,7 +239,7 @@ enum {
   ACTOR_ALTAR = 9,
   ACTOR_HANGING_VINE = 10,
   /// The three stone heads that burst out of the wall of handholds under Felix
-  /// (GaiaRockInside_StoneHeadBurstsOut).
+  /// (StoneHead_BurstOut).
   ACTOR_STATUE_A = 11,
   ACTOR_STATUE_B = 12,
   ACTOR_STATUE_C = 13,
@@ -2054,24 +2054,24 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
 /// reaches its west trap hold, drawn at cell (24, 37) (cell (24, 101) of the
 /// wall's overhead layer): a yellow stone head with red eyes bursts out of the
 /// wall under him in a shower of rocks, he flails, and he is left standing on
-/// it, no longer climbing (GaiaRockInside_StoneHeadBurstsOut). Unlike at the
+/// it, no longer climbing (StoneHead_BurstOut). Unlike at the
 /// stone faces outside, he does not fall to the floor: he stays standing up
 /// there beside the head.
 void GaiaRockInside_ClimbOntoWestStoneHead(void) {
-  GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
+  StoneHead_BurstOut(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
 }
 
 /// As GaiaRockInside_ClimbOntoWestStoneHead, for the middle trap hold, a
 /// little lower and to the east: drawn at cell (28, 39), cell (28, 103) of the
 /// overhead layer.
 void GaiaRockInside_ClimbOntoMiddleStoneHead(void) {
-  GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
+  StoneHead_BurstOut(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
 }
 
 /// As GaiaRockInside_ClimbOntoWestStoneHead, for the east trap hold: drawn at
 /// cell (35, 39), cell (35, 103) of the overhead layer.
 void GaiaRockInside_ClimbOntoEastStoneHead(void) {
-  GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
+  StoneHead_BurstOut(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
 }
 
 extern struct Trigger gGaiaRockInside_Triggers[];
@@ -2302,7 +2302,7 @@ struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
 void GaiaRockInside_TurnFaceToAltar();
 void GaiaRockInside_RingOfDust(void);
-void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z);
+void StoneHead_Place(s32 id, s32 x, s32 y, s32 z);
 void GaiaRockInside_StartWallTriggers(void);
 void Actor_Release();
 void BlendScript_Resume(void);
@@ -2958,14 +2958,11 @@ s32 Scene_Initialize(void) {
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       GaiaRockInside_StartWallTriggers();
     if (Test(FLAG_STATUE_A_RISEN))
-      GaiaRockInside_PlaceStatue(ACTOR_STATUE_A, toFIXED(384), toFIXED(75),
-                                 toFIXED(680));
+      StoneHead_Place(ACTOR_STATUE_A, toFIXED(384), toFIXED(75), toFIXED(680));
     if (Test(FLAG_STATUE_B_RISEN))
-      GaiaRockInside_PlaceStatue(ACTOR_STATUE_B, toFIXED(463), toFIXED(51),
-                                 toFIXED(680));
+      StoneHead_Place(ACTOR_STATUE_B, toFIXED(463), toFIXED(51), toFIXED(680));
     if (Test(FLAG_STATUE_C_RISEN))
-      GaiaRockInside_PlaceStatue(ACTOR_STATUE_C, toFIXED(565), toFIXED(55),
-                                 toFIXED(680));
+      StoneHead_Place(ACTOR_STATUE_C, toFIXED(565), toFIXED(55), toFIXED(680));
     if (Test(FLAG_ALTAR_ROOM_SUNBEAM)) {
       s32 width;
       s32 height;
@@ -3458,106 +3455,12 @@ void GaiaRockInside_BlankLayer(s32 layer, s32 keep) {
 
 #include "shared/gaia_rock_trigger_wall_cell.c"
 
-/// Sets stone head id out of the wall where (x, y, z) is drawn, and makes that
-/// cell of the wall solid.
-void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
-  struct Actor *actor = Actor_Get(id);
-  struct MapCell *cell =
-      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2].cells;
-  s32 column = x / toFIXED(16);
-  s32 row = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
+#include "shared/stone_head_place.h"
 
-  cell += column + (row << 7);
-  cell->collisionCode = CELL_BEHAVIOR_WALL;
-  actor->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
-  actor->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
-  actor->y.fixed = actor->z.fixed - FIELD_CELL_ORIGIN(row);
-  actor->motionFlags = 0;
-  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpriteFlags(actor, 0);
-}
+extern s32 gStoneHead_RiseScript[];
+extern u32 gDebris_Script[];
 
-extern s32 gGaiaRockInside_StatueRiseScript[];
-extern u32 gGaiaRockInside_FlyingRockScript[];
-
-/// Stone head id bursts out of the wall of handholds under Felix in a shower
-/// of rocks as the screen shakes. He flails, drops onto whatever is under him,
-/// the view settles on him, and he is left walking rather than climbing; flag
-/// then keeps the head out.
-void GaiaRockInside_StoneHeadBurstsOut(s32 id, s32 flag) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 gravity = leader->gravity;
-  struct Actor *pillar;
-  s32 i;
-  s32 frame;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  pillar = Actor_Get(id);
-  GaiaRockInside_PlaceStatue(id, leader->x.fixed, leader->y.fixed,
-                             leader->z.fixed);
-  Actor_StartScript(pillar, gGaiaRockInside_StatueRiseScript);
-  for (i = 0; i < STATUE_ROCKS; i++) {
-    struct Actor *rock =
-        FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
-                          leader->y.fixed + toFIXED(16), leader->z.fixed);
-
-    if (rock != 0) {
-      s32 angle;
-      s32 speed;
-      u32 size;
-      s32 scale;
-
-      Actor_StartScript(rock, gGaiaRockInside_FlyingRockScript);
-      angle = Random16();
-      speed = Random16();
-      size = Random16();
-      scale = (size >> 1) + FIXED_ONE / 8;
-      rock->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
-      rock->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
-      rock->acceleration = 0;
-      rock->scaleX = scale;
-      rock->scaleY = scale;
-      rock->gravity = toFIXED(33) / 100;
-      rock->bounce = FIXED_ONE / 2;
-    }
-  }
-  Event_PlaySound(SE_STATUE_RISE);
-  Event_PlaySound(SE_FLOOR_SWITCH);
-  MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SelectAnimation(leader, ANIM_LEADER_FLAIL);
-  FieldEvent_Wait(40);
-  Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader->gravity = toFIXED(33) / 100;
-  for (frame = 0; frame < 180; frame++) {
-    System_Wait(1);
-    if (leader->y.fixed <= leader->groundHeight)
-      break;
-  }
-  Event_PlaySound(SE_THUMP);
-  leader->gravity = gravity;
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
-                          ATTACHED_EFFECT_REMOVE);
-  Actor_SelectAnimation(leader, ANIM_LEADER_STILL);
-  MapGrid_SetShake(1, 4, 1);
-  System_Wait(10);
-  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  System_Wait(20);
-  FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-  FieldCamera_WaitForArrival();
-  FieldEvent_Wait(20);
-  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-  Actor_SelectAnimation(leader, ANIM_STAND);
-  leader->velocityY = toFIXED(4);
-  System_Wait(20);
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-  Event_End();
-  Event_SetFlag(flag);
-}
+#include "shared/stone_head_burst_out.h"
 
 /// Starts GaiaRock_TriggerWallCell each frame.
 void GaiaRockInside_StartWallTriggers(void) {
@@ -4143,60 +4046,9 @@ struct Trigger gGaiaRockInside_AltarTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Each rock of a rising statue's burst flies for 40 frames, then blinks for
-/// 20 and is gone.
-u32 gGaiaRockInside_FlyingRockScript[] = {
-    SC_WAIT(40),
-    SC_LABEL(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
-    SC_WAIT(1),
-    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
-    SC_WAIT(1),
-    SC_LOOP(10, SC_TO(1)),
-    SC_RELEASE,
-};
+#include "shared/debris_script.c"
 
-s32 gGaiaRockInside_StatueRiseScript[] = {
-    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, FIXED_ONE / 2),
-    SC_ADD(SW_SCALE_Y, FIXED_ONE / 2),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 4),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
-    SC_WAIT(4),
-    SC_WAIT(20),
-    SC_LOOP(3, SC_TOP),
-    SC_END,
-};
+#include "shared/stone_head_rise_script.c"
 // clang-format on
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT

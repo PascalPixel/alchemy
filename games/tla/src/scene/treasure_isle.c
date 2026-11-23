@@ -245,25 +245,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-/// Unused: stores value as the collision code and attribute of the cell at x, y
-/// of a map layer (the cell buffer above layer 2) and returns what it held.
-UNUSED s32 TreasureIsle_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += x + (y << 7);
-  old = (cell->collisionCode << 8) | cell->attributeB;
-  cell->collisionCode = value >> 8;
-  cell->attributeB = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 /// Draws a spiky rock risen at its cell, blocks the cell and sets its flag.
 void TreasureIsle_SetSpikyRock(struct TreasureIsleCell *cells, s16 index) {

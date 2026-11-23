@@ -844,7 +844,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 
 void TundariaTower_ScatterDust(s32 spread);
-void TundariaTower_SetLeaderCellShape(s32 a, s32 b);
+void Leader_SetCellShapeAt(s32 a, s32 b);
 
 void TundariaTower_SpawnDustRing(void);
 
@@ -1242,10 +1242,10 @@ UNUSED void TundariaTower_CheckCrumblingStep(const u16 *table) {
         TundariaTower_ScatterDust(0);
         wait(8);
         Actor_SelectAnimation(trap, 2);
-        TundariaTower_SetLeaderCellShape(-2, trap->layer);
+        Leader_SetCellShapeAt(-2, trap->layer);
         TundariaTower_ScatterDust(1);
         wait(16);
-        TundariaTower_SetLeaderCellShape(-2, trap->layer);
+        Leader_SetCellShapeAt(-2, trap->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -1442,10 +1442,10 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
           TundariaTower_ScatterDust(0);
           wait(8);
           Actor_SelectAnimation(partner, 2);
-          TundariaTower_SetLeaderCellShape(-2, trap->layer);
+          Leader_SetCellShapeAt(-2, trap->layer);
           TundariaTower_ScatterDust(1);
           wait(16);
-          TundariaTower_SetLeaderCellShape(-2, trap->layer);
+          Leader_SetCellShapeAt(-2, trap->layer);
           wait(4);
           MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
           wait(8);
@@ -1552,10 +1552,7 @@ void TundariaTower_SpawnDustRing(void) {
 
 #include "shared/actor_set_cell_shape.h"
 
-/// Sets the shape of the cell under the leader (Actor_SetCellShape).
-void TundariaTower_SetLeaderCellShape(s32 level, s32 layer) {
-  Actor_SetCellShape(level, layer, gMainRoutineWork.leaderActorId);
-}
+#include "shared/leader_set_cell_shape.h"
 
 #include "shared/particle_update_falling.h"
 

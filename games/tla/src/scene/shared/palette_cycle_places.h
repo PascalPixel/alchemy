@@ -1,4 +1,4 @@
-/// The palette cycle PaletteCycle_Step and its copy PaletteCycle_StepAt run:
+/// The palette cycle PaletteCycle_Step runs:
 /// BG palette CYCLE_PALETTE's colours from CYCLE_FIRST_COLOR take their places
 /// among CYCLE_PLACES one further every CYCLE_STEP_FRAMES frames. Each step
 /// writes all but the last place, so one of the five colours is never shown.

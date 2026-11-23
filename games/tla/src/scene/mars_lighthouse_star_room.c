@@ -1533,27 +1533,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/cracked_tile_step.h"
 
-void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 dx = FieldGameFlag_GetByte(gCrackedTiles.flagByte);
-  s32 dz = FieldGameFlag_GetByte(gCrackedTiles.flagByte + 8);
-
-  if (dx != 0 || dz != 0) {
-    struct Actor *marker;
-
-    GameFlag_SetByte(gCrackedTiles.flagByte, 0);
-    GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = FIELD_CELL_CENTER(dx + x);
-    leader->z.fixed = FIELD_CELL_CENTER(dz + z);
-    marker = work->camera;
-    marker->x.fixed = leader->x.fixed;
-    marker->z.fixed = leader->z.fixed;
-    MapGrid_CenterOnFollowedPoint();
-    CrackedTile_DropIn();
-    gFieldWork->transition = effect;
-  }
-}
+#include "shared/cracked_tile_place_landing.h"
 
 extern s32 gMarsLighthouseStarRoom_TorchScript[];
 

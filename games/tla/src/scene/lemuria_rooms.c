@@ -106,7 +106,7 @@ enum { ANIM_WHITE_BIRD_PERCH = 1, ANIM_WHITE_BIRD_FLAP = 3 };
 void LemuriaRooms_PiersVisitsUncle(void);
 
 extern struct SceneRegion gSceneRegions[];
-extern u32 gLemuriaRooms_QuestionMarkScript[];
+extern u32 gQuestionMark_Script[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -807,51 +807,9 @@ void LemuriaRooms_LeavePiersToMourn(void) {
 
 void Actor_StartScript(struct Actor *actor, const void *script);
 
-/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
-/// frames.
-void LemuriaRooms_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
-                                  s32 frames) {
-  struct Actor *actor;
-  struct Sprite *sprite;
+#include "shared/question_mark_pop.h"
 
-  actor = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
-  if (actor != 0) {
-    sprite = actor->sprite;
-    Actor_SelectAnimation(actor, EMOTE_QUESTION);
-    Actor_StartScript(actor, gLemuriaRooms_QuestionMarkScript);
-    actor->motionFlags = 0;
-    actor->wait = frames;
-    sprite->flags = 0;
-    sprite->rotation = rotation;
-  }
-}
-
-/// Four "?" bubbles pop up over an actor in turn, to its right and its left,
-/// each tilted, a quarter of a second apart.
-void LemuriaRooms_PopQuestionMarks(s32 id) {
-  struct Actor *actor = Actor_GetById(id);
-
-  LemuriaRooms_PopQuestionMark(actor->x.fixed + toFIXED(8),
-                               actor->y.fixed + toFIXED(28), actor->z.fixed,
-                               TRIG_TURN / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-  LemuriaRooms_PopQuestionMark(actor->x.fixed - toFIXED(8),
-                               actor->y.fixed + toFIXED(28), actor->z.fixed,
-                               TRIG_TURN * 15 / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-  LemuriaRooms_PopQuestionMark(actor->x.fixed + toFIXED(8),
-                               actor->y.fixed + toFIXED(28), actor->z.fixed,
-                               TRIG_TURN / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-  LemuriaRooms_PopQuestionMark(actor->x.fixed - toFIXED(8),
-                               actor->y.fixed + toFIXED(28), actor->z.fixed,
-                               TRIG_TURN * 15 / 16, 15);
-  Sound_Play(SE_LIGHT_APPEAR);
-  Event_Wait(15);
-}
+#include "shared/actor_pop_question_marks.h"
 
 #include "shared/actor_cycle_pictures.h"
 
@@ -1057,7 +1015,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  LemuriaRooms_PopQuestionMarks(ACTOR_LUNPA);
+  Actor_PopQuestionMarks(ACTOR_LUNPA);
   Event_PlaySound(SE_LIGHT_APPEAR);
   Actor_ShowEmote(ACTOR_LUNPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_NORTH_NORTHWEST, 0);
@@ -1659,6 +1617,6 @@ struct Trigger gSceneEvents[] = {
 };
 
 /// The script each "?" bubble runs: it is released once its frames are up.
-u32 gLemuriaRooms_QuestionMarkScript[] = {
+u32 gQuestionMark_Script[] = {
     SC_RELEASE,
 };

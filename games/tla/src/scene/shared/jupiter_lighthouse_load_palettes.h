@@ -1,13 +1,7 @@
 /// @file
 /// The Jupiter Lighthouse rooms' palettes, which most of them keep a copy of.
-/// An includer whose cycle steps through PaletteCycle_StepAt defines
-/// PALETTE_CYCLE_TASK as that first.
 
 #include "palette_cycle_places.h"
-
-#ifndef PALETTE_CYCLE_TASK
-#define PALETTE_CYCLE_TASK PaletteCycle_Step
-#endif
 
 /// The BG palette after the cycle's, which holds its colours as they are while
 /// the lighthouse is unlit.
@@ -29,7 +23,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
     PaletteCycle_SetFrame(0);
-    Task_Add(PALETTE_CYCLE_TASK, TASK_PASS_FRAME);
+    Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
   } else {
     Dma_Set(gPaletteCycleUnlitColors,
             (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),

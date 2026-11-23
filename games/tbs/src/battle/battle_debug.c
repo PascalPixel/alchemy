@@ -4,7 +4,7 @@
 
 #include "battle_internal.h"
 
-// The first message of the viewer's second range.
+/// The first message of the viewer's second range.
 #if LANGUAGE == LANGUAGE_ENGLISH
 #define DEBUG_SECOND_FORM MsgBecameCursed
 #elif LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH

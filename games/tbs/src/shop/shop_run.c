@@ -163,7 +163,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   return 0;
 }
 
-// The debug shop sells Vale's armor in Japanese and its weapons from patch 1.
+/// The debug shop sells Vale's armor in Japanese and its weapons from patch 1.
 #if TBS_PATCH_1
 #define SHOP_DEBUG_STOCK_ROW SHOP_STOCK_ROW_VALE_WEAPONS
 #else

@@ -41,8 +41,8 @@ enum TargetStrikeStyle {
   TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES
 };
 
-// Every table battle_effect_table.c defines, in its order. A table read by
-// columns is a two-dimensional array, its columns named by the enum above it.
+/// Every table battle_effect_table.c defines, in its order. A table read by
+/// columns is a two-dimensional array, its columns named by the enum above it.
 extern u16 gBattleEffect_MotePictures[];
 extern u16 gBattleEffect_FlarePictures[];
 extern u16 gBattleEffect_SparklePictures[];

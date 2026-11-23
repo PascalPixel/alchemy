@@ -20,7 +20,7 @@
 #include "system/ram_code.h"
 #include "system/system.h"
 
-// Credits text uses six 32-pixel sprites across each 192-pixel line.
+/// Credits text uses six 32-pixel sprites across each 192-pixel line.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6

@@ -387,9 +387,9 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
-// How the link timer's heading is drawn: Spanish and French at a pixel
-// offset (Text_DrawStringAtOffset), the others one tile a character
-// (Text_DrawStringInWindow).
+/// How the link timer's heading is drawn: Spanish and French at a pixel
+/// offset (Text_DrawStringAtOffset), the others one tile a character
+/// (Text_DrawStringInWindow).
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
 #define LINK_COUNTDOWN_DRAW_HEADING Text_DrawStringAtOffset
 #else

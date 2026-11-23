@@ -5,16 +5,16 @@
 
 #include "menu_internal.h"
 
-// From patch 1 the menu resets eight party figure rows rather than four, and
-// saves and clears more window tiles for the extra text tiles it then uses; the
-// editions outside Japanese also lay the menu out for longer words.
+/// From patch 1 the menu resets eight party figure rows rather than four, and
+/// saves and clears more window tiles for the extra text tiles it then uses;
+/// the editions outside Japanese also lay the menu out for longer words.
 #if TBS_PATCH_1
 #define MEMBER_CHOOSER_MEMBER_COUNT 8
 #else
 #define MEMBER_CHOOSER_MEMBER_COUNT 4
 #endif
 
-// The window tiles the Status menu saves and restores.
+/// The window tiles the Status menu saves and restores.
 #if TBS_PATCH_1
 #define STATUS_SAVED_TILE_BYTES 8192
 #else
@@ -30,15 +30,15 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_PAGE_NO_CLEAR (1 << 8)
 #define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
-// The longest status help text, in characters.
+/// The longest status help text, in characters.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_HELP_TEXT_MAX 128
 #else
 #define STATUS_HELP_TEXT_MAX 64
 #endif
 
-// The stat column of the status page's top rows: three digits from 200 or
-// four from 192, both ending at pixel 224.
+/// The stat column of the status page's top rows: three digits from 200 or
+/// four from 192, both ending at pixel 224.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_STAT_DIGITS 3
 #define STATUS_STAT_X 200
@@ -47,14 +47,14 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_STAT_X 192
 #endif
 
-// Items to a page of the equipment page's list.
+/// Items to a page of the equipment page's list.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_EQUIP_PAGE_SIZE 5
 #else
 #define STATUS_EQUIP_PAGE_SIZE 6
 #endif
 
-// The hand cursor on the Psynergy page.
+/// The hand cursor on the Psynergy page.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_PSYNERGY_CURSOR_X 55
 #define STATUS_PSYNERGY_CURSOR_Y 60
@@ -63,7 +63,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_PSYNERGY_CURSOR_Y 52
 #endif
 
-// The highlight over the equipment window's four slot rows.
+/// The highlight over the equipment window's four slot rows.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_EQUIP_SLOT_X 1
 #define STATUS_EQUIP_SLOT_WIDTH 12
@@ -72,8 +72,8 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_EQUIP_SLOT_WIDTH 9
 #endif
 
-// The equipment page's item list: its page icons, the item names, and the
-// Attack and Defense figures.
+/// The equipment page's item list: its page icons, the item names, and the
+/// Attack and Defense figures.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_ITEM_PAGE_ICONS_X 119
 #define STATUS_ITEM_NAME_X 128
@@ -90,7 +90,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_ITEM_EMPTY_MESSAGE_X 120
 #endif
 
-// The equipment window, and the equipped items' names in it.
+/// The equipment window, and the equipped items' names in it.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_EQUIP_WINDOW_WIDTH 15
 #define STATUS_EQUIPPED_NAME_X 8

@@ -116,10 +116,10 @@
 /// returns NULL for it.
 #define BATTLE_OBJECT_NONE 255
 
-// BattleWork.defeatState: whether the last enemy fell alone, or with others
-// before it, or a party member's action ended the battle with a single
-// defeat. The messages are "has been downed!" and "'s party goes down!",
-// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
+/// BattleWork.defeatState: whether the last enemy fell alone, or with others
+/// before it, or a party member's action ended the battle with a single
+/// defeat. The messages are "has been downed!" and "'s party goes down!",
+/// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
 #define DEFEAT_ONE 0
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
@@ -158,8 +158,8 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// A group's sprite word (ACTOR_SPRITE_GROUP) points to a table of four
-// sprites.
+/// A group's sprite word (ACTOR_SPRITE_GROUP) points to a table of four
+/// sprites.
 #define ACTOR_SPRITE_GROUP_SIZE 4
 
 /// BattleActionRun_Build's results besides 0, which stages the action.

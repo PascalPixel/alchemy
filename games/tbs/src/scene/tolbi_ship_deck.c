@@ -491,6 +491,8 @@ UNUSED static s32 sUnusedAfterRockX; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 
+/// The eight oars' strokes (TolbiShipDeck_ChooseOarStrokes) and the z each
+/// swings about, in 16.16.
 // The oar strokes and depths come after the file's other statics, the strokes
 // on a 16-byte boundary.
 static u32 sOarStroke[8] __attribute__((aligned(16)));

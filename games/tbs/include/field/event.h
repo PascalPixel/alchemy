@@ -46,8 +46,8 @@ extern u8 gSceneLocalState[];
 
 #include "field/actor.h"
 
-// Speaker bits, above the actor id in the low 12 bits of a message command's
-// speaker, as FieldMessage_ShowAtActor reads them.
+/// Speaker bits, above the actor id in the low 12 bits of a message command's
+/// speaker, as FieldMessage_ShowAtActor reads them.
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
 #define SPEAKER_WINDOW_ABOVE 0x4000 ///< the message window above the speaker

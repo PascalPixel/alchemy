@@ -213,10 +213,10 @@ enum {
   FLAG_LAMAKAN_DESERT_SECOND_PSYNERGY_STONE = FLAG_AREA_TEMP_51
 };
 
-// A secret of the east and Smog scenes is a 4-by-2 patch of the map grid. On
-// entry each is saved to a spare patch of its own on row 126, numbered from
-// the west from column 64; hidden, it is drawn over with the plain sand at
-// (70, 68); Reveal copies it back.
+/// A secret of the east and Smog scenes is a 4-by-2 patch of the map grid. On
+/// entry each is saved to a spare patch of its own on row 126, numbered from
+/// the west from column 64; hidden, it is drawn over with the plain sand at
+/// (70, 68); Reveal copies it back.
 #define SECRET_WIDTH 4
 #define SECRET_HEIGHT 2
 #define SECRET_SPARE_FIRST_COLUMN 64
@@ -237,9 +237,9 @@ enum {
 #define SHOW_SECRET(secret, column, row)                                       \
   MapGrid_CopyCells(SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW,             \
                     SECRET_WIDTH, SECRET_HEIGHT, column, row)
-// A pit's secret also changes the ground a row further south: hidden, the row
-// two below the patch's top takes the sand's ground; shown, the two rows from
-// one below its top take the ground of the saved patch's two rows.
+/// A pit's secret also changes the ground a row further south: hidden, the row
+/// two below the patch's top takes the sand's ground; shown, the two rows from
+/// one below its top take the ground of the saved patch's two rows.
 #define HIDE_SECRET_SOUTH_ROW(column, row)                                     \
   MapGrid_CopyCellAttributes(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,  \
                              1, column, (row) + 2)
@@ -1270,7 +1270,7 @@ void HeatGauge_Start(void) {
 /// While held (1), the gauge stays on screen.
 static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
-// Lamakan Desert keeps its duration scripts with its read-only data.
+/// Lamakan Desert keeps its duration scripts with its read-only data.
 #define FIELD_EFFECT_DURATION_SCRIPTS_READ_ONLY
 #include "shared/field_effect_duration_scripts.c"
 

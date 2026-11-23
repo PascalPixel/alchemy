@@ -1538,10 +1538,10 @@ void LuckyWheels_Run(void) {
   }
 }
 
-// The LZ packer: a window of PACK_WINDOW_SIZE bytes with a hash chain for each
-// byte value, PACK_LOOKAHEAD bytes read ahead of the one being packed and the
-// PACK_HISTORY behind it kept in the chains, and matches of up to
-// PACK_MATCH_MAX bytes at most PACK_DISTANCE_MAX back.
+/// The LZ packer: a window of PACK_WINDOW_SIZE bytes with a hash chain for each
+/// byte value, PACK_LOOKAHEAD bytes read ahead of the one being packed and the
+/// PACK_HISTORY behind it kept in the chains, and matches of up to
+/// PACK_MATCH_MAX bytes at most PACK_DISTANCE_MAX back.
 #define PACK_WINDOW_SIZE 1024
 #define PACK_WINDOW_MASK (PACK_WINDOW_SIZE - 1)
 #define PACK_BYTE_VALUES 256

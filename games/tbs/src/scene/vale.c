@@ -152,17 +152,17 @@ extern s32 gVale_GuardStepsBeforeTheDoor[];
 extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
 
-// Where Garet lands after his jump once Dora has gone in, at the roof's end
-// (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
-// editions.
+/// Where Garet lands after his jump once Dora has gone in, at the roof's end
+/// (Vale_RoofMended): two pixels further south in the TBS_PATCH_2
+/// editions.
 #if TBS_PATCH_2
 #define VALE_GARET_REUNION_Z 829
 #else
 #define VALE_GARET_REUNION_Z 827
 #endif
 
-// Where Dora stands by the house in the opening and before the party leaves:
-// two pixels further north in the TBS_PATCH_4 editions.
+/// Where Dora stands by the house in the opening and before the party leaves:
+/// two pixels further north in the TBS_PATCH_4 editions.
 #if TBS_PATCH_4
 #define VALE_DORA_Z 887
 #else

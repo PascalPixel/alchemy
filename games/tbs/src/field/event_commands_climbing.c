@@ -4,8 +4,8 @@
 
 #include "event_commands_internal.h"
 
-// The map grid's cells seen one row south and one row north:
-// MAPGRID_CELLS_SOUTH[i] is the cell below MAPGRID_CELLS[i].
+/// The map grid's cells seen one row south and one row north:
+/// MAPGRID_CELLS_SOUTH[i] is the cell below MAPGRID_CELLS[i].
 #define MAPGRID_CELLS_SOUTH (MAPGRID_CELLS + MAPGRID_SIZE)
 #define MAPGRID_CELLS_NORTH (MAPGRID_CELLS - MAPGRID_SIZE)
 /// The middle pixel of the map cell a whole pixel lies in.

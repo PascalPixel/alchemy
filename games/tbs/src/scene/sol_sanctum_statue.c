@@ -98,8 +98,8 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 /// Set once Kraden has explained the statue puzzle's trap.
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED FLAG_AREA_TEMP_0B
 
-// The third patch draws the back row of drifting sprites 6 pixels below the
-// other two rather than 8.
+/// The third patch draws the back row of drifting sprites 6 pixels below the
+/// other two rather than 8.
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
 #else

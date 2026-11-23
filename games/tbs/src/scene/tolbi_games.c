@@ -266,9 +266,9 @@ enum {
 #define TOLBI_SPRING_CENTER_X toFIXED(120)
 #define TOLBI_SPRING_CENTER_Z toFIXED(71)
 
-// The window of the party's coins and Lucky Medals, and the menu of what to
-// toss, in window cells, with the counts' x in pixels: the European editions'
-// longer words widen both and move the counts right.
+/// The window of the party's coins and Lucky Medals, and the menu of what to
+/// toss, in window cells, with the counts' x in pixels: the European editions'
+/// longer words widen both and move the counts right.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE
 #define TOLBI_SPRING_COUNT_WIDTH 17
 #else

@@ -8,9 +8,9 @@
 /// COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
 /// COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
 
-// Byte flags (eight flags each) holding where a friend cheers from: the cell
-// column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
-// COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
+/// Byte flags (eight flags each) holding where a friend cheers from: the cell
+/// column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
+/// COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
 #define COLOSSO_CHEER_COLUMN FLAG_AREA_TEMP_70
 #define COLOSSO_CHEER_ROW FLAG_AREA_TEMP_78
 #define COLOSSO_CHEER_SLOT(character) ((character) << 4)

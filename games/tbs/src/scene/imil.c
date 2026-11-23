@@ -242,10 +242,10 @@ enum IceRoomsCellBehavior {
   CELL_BEHAVIOR_ICE_ROOMS_ARMOR_COUNTER = 11
 };
 
-// The leader faces a counter: FACING_IS_NORTH, in the two spellings the sites
-// match with, the shops' from the heading read as s16 and the inn's and the
-// Sanctum's from the halfword. UB: the shops' form shifts a negative heading
-// left.
+/// The leader faces a counter: FACING_IS_NORTH, in the two spellings the sites
+/// match with, the shops' from the heading read as s16 and the inn's and the
+/// Sanctum's from the halfword.
+// UB: the shops' form shifts a negative heading left.
 #ifdef UBFIX
 #define IMIL_FACES_COUNTER(facing) FACING_IS_NORTH((u16)(facing))
 #else

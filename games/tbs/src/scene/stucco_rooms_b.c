@@ -196,12 +196,12 @@ enum StuccoRoomsBCellBehavior {
 /// The stranded passengers' argument has played.
 #define FLAG_STUCCO_ROOMS_B_PASSENGERS_SEEN FLAG_AREA_TEMP_00
 
-// From TBS_PATCH_1 on, the camera stops 8 pixels further in the inn's
-// corridor (INN) and its guest rooms, the southern pair lying east on the map
-// (EAST_ROOM) and the northern pair south of it (SOUTH_ROOM). Renders of
-// tbs-ja and tbs-en show what it fixes: before it, the last 8 pixels of these
-// rooms stayed off screen, cutting off the corridor's south openings, the
-// southern rooms' east walls and the northern rooms' doorways.
+/// From TBS_PATCH_1 on, the camera stops 8 pixels further in the inn's
+/// corridor (INN) and its guest rooms, the southern pair lying east on the map
+/// (EAST_ROOM) and the northern pair south of it (SOUTH_ROOM). Renders of
+/// tbs-ja and tbs-en show what it fixes: before it, the last 8 pixels of these
+/// rooms stayed off screen, cutting off the corridor's south openings, the
+/// southern rooms' east walls and the northern rooms' doorways.
 #if !TBS_PATCH_1
 #define STUCCO_ROOMS_B_INN_CAMERA_MAX_Z 736
 #define STUCCO_ROOMS_B_EAST_ROOM_CAMERA_MAX_X 944

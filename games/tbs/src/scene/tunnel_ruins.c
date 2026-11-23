@@ -514,8 +514,8 @@ static void TunnelRuins_HopDownStep(void) {
   Event_End();
 }
 
-// The update functions the stones take, cast to the update slot's type
-// where they return a value.
+/// The update functions the stones take, cast to the update slot's type
+/// where they return a value.
 #ifdef UBFIX
 #define UPDATE_BY_RELATIVE_DEPTH Actor_SetFlagBitByRelativeDepth
 #else

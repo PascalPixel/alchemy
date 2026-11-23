@@ -4,8 +4,8 @@
 
 #include "window_internal.h"
 
-// Pixels added to the page arrow's and the sprite glyphs' screen y, which
-// differ by language.
+/// Pixels added to the page arrow's and the sprite glyphs' screen y, which
+/// differ by language.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ARROW_Y_OFFSET 1
 #define GLYPH_SPRITE_Y_OFFSET 0

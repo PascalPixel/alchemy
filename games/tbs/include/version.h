@@ -21,10 +21,10 @@
 #error Edition definitions must be 1
 #endif
 
-// Observed cumulative logic changes from the Japanese baseline. These are our
-// patch groups, not recovered Camelot version numbers or a release chronology.
-// Each conditional stays beside the behavior it changes; language choices
-// use LANGUAGE independently of these groups.
+/// Observed cumulative logic changes from the Japanese baseline. These are our
+/// patch groups, not recovered Camelot version numbers or a release chronology.
+/// Each conditional stays beside the behavior it changes; language choices
+/// use LANGUAGE independently of these groups.
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
 #define TBS_PATCH_LEVEL 4
 #elif defined(TBS_EDITION_FR)

@@ -179,15 +179,18 @@ extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
 /// What the send in progress sends from, 0 when none is running.
 extern s32 gSerialSendSource;
+/// The bytes the send in progress has left to send.
 // volatile: Serial_StartSend sets it while Serial_StepBlockTransfer, which the
 // VBlank handler runs, counts it down, so it is no device.
 extern volatile u16 gSerialSendSize;
 /// Where the receive in progress writes, 0 when none is running.
 extern s32 gSerialReceiveDestination;
+/// The bytes the receive in progress has taken so far.
 // volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
 // up while the link code outside the interrupt polls it, so it is no device.
 extern volatile u16 gSerialReceivedSize;
 extern struct SerialTransferState gSerialPeerPayloads[4];
+/// The number of the block being sent or received, from 0 at each transfer.
 // volatile: Serial_StartSend and Serial_StartReceive reset it while
 // Serial_StepBlockTransfer, which the VBlank handler runs, steps it, so it is
 // no device.

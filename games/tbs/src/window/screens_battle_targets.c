@@ -4,10 +4,10 @@
 
 #include "screens_internal.h"
 
-// Widths in tiles that fit each language's text: the "Set Djinni" window
-// (MsgTargetSetDjinni) and the list of conditions an action cures; and the
-// Mystery names' copy, which Japanese decodes raw where the other languages
-// copy it expanded.
+/// Widths in tiles that fit each language's text: the "Set Djinni" window
+/// (MsgTargetSetDjinni) and the list of conditions an action cures; and the
+/// Mystery names' copy, which Japanese decodes raw where the other languages
+/// copy it expanded.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TARGET_SET_DJINNI_WIDTH 8
 #define TARGET_CONDITION_LIST_WIDTH 14
@@ -21,8 +21,8 @@
 #endif
 
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-// These editions size the windows by the cartridge's language as it runs:
-// wider for Italian and Spanish.
+/// These editions size the windows by the cartridge's language as it runs:
+/// wider for Italian and Spanish.
 #define TARGET_SET_DJINNI_WIDTH_ITALIAN 10
 #define TARGET_SET_DJINNI_WIDTH_SPANISH 11
 #define TARGET_CONDITION_LIST_WIDTH_SPANISH 17
@@ -33,9 +33,9 @@
 #define TARGET_GAUGE_WIDTH 13
 #define TARGET_ONE_LINE_WIDTH 12
 
-// The help window's column, `back` tiles left of the aimed party member's; a
-// window `windowWidth` tiles wide that would run past the screen's right edge
-// stands against it instead.
+/// The help window's column, `back` tiles left of the aimed party member's; a
+/// window `windowWidth` tiles wide that would run past the screen's right edge
+/// stands against it instead.
 #define TARGET_HELP_COLUMN(back, windowWidth)                                  \
   {                                                                            \
     s32 anchor = selectedPosition.x / 8;                                       \
@@ -45,8 +45,8 @@
       helpColumn = DISPLAY_TILE_WIDTH - (windowWidth);                         \
   }
 
-// The window listing the conditions an action cures, helpRow down and `count`
-// lines tall.
+/// The window listing the conditions an action cures, helpRow down and `count`
+/// lines tall.
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \

@@ -36,7 +36,8 @@
 #define Ram_FrameWaitStackTop                                                  \
   FIXED_ADDRESS((u8 *), 0x03007a00, gFrameWaitStackTop)
 
-// IWRAM variables the code reaches as constants; German moves them 16 bytes up.
+/// IWRAM variables the code reaches as constants; German moves them 16 bytes
+/// up.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \
@@ -47,8 +48,8 @@
   FIXED_ADDRESS((u8 *), 0x03001b10, gVramCacheEntries)
 #endif
 
-// Work pointers in the gHeapSlots table. Their users include heap.h,
-// which the sound library's include path cannot reach.
+/// Work pointers in the gHeapSlots table. Their users include heap.h,
+/// which the sound library's include path cannot reach.
 #define Ram_MapGridWork ((void **)&gHeapSlots[HEAP_SLOT_MAP_GRID])
 #define Ram_CameraWork ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
 #define Ram_FieldWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD])

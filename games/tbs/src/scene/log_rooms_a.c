@@ -3337,8 +3337,8 @@ static void LogRoomsA_StartActorStops(void) {
 }
 
 // clang-format off
-// A missing edge keeps both sentinel bytes; valid facings use the angle's high
-// byte.
+/// A missing edge keeps both sentinel bytes; valid facings use the angle's high
+/// byte.
 #define NO_CONNECTION {LOG_STOP_NONE, 255, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
 struct LogRoomsAStop gLogRoomsA_Stops[LOG_STOP_COUNT] = {

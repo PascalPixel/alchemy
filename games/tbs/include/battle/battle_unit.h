@@ -285,7 +285,7 @@ enum AbilityUse {
 #define DEFEND_NORMAL 1
 #define DEFEND_TOTAL 2
 
-// The caps on a unit's level and stats.
+/// The caps on a unit's level and stats.
 #define UNIT_LEVEL_MAX 99
 #define UNIT_HP_MAX 9999           ///< maximum HP and PP, an enemy's
 #define UNIT_CHARACTER_HP_MAX 1999 ///< maximum HP and PP, a character's

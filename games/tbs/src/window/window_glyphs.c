@@ -4,11 +4,11 @@
 
 #include "window_internal.h"
 
-// Text_DrawGlyphPair draws its glyphs into a buffer of one byte per pixel
-// (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 16
-// bytes apart, then packs its top 16 rows into 4bpp tiles.
-// A glyph is drawn from row 2, its shadow a pixel right of and below it, and
-// a kana's mark at the top right.
+/// Text_DrawGlyphPair draws its glyphs into a buffer of one byte per pixel
+/// (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 16
+/// bytes apart, then packs its top 16 rows into 4bpp tiles.
+/// A glyph is drawn from row 2, its shadow a pixel right of and below it, and
+/// a kana's mark at the top right.
 #define GLYPH_BUFFER_WIDTH 16
 #define GLYPH_PIXEL(x, y) ((y) * GLYPH_BUFFER_WIDTH + (x))
 /// The pixels across a tile, which the packing reads a row at a time.
@@ -206,8 +206,8 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   return width;
 }
 
-// From the German release on, every code up to TEXT_LAST_FONT_CODE counts as 10
-// pixels, and those above as nothing.
+/// From the German release on, every code up to TEXT_LAST_FONT_CODE counts as
+/// 10 pixels, and those above as nothing.
 #if TBS_PATCH_2
 #define WIDE_WIDTH_FIXED 1
 #endif

@@ -31,9 +31,9 @@ extern u32 gSolSanctumPsynergyStoneExits[];
 extern struct ActorPlacement gSolSanctumPsynergyStoneActorPlacements[];
 extern struct Trigger gSolSanctumPsynergyStoneTriggers[];
 
-// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
-// party enters another area, and other areas use the numbers for
-// their own.
+/// Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
+/// party enters another area, and other areas use the numbers for
+/// their own.
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN FLAG_AREA_TEMP_50
 
 const struct SceneEntrance *Scene_GetEntrances(void) {

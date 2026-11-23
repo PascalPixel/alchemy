@@ -216,8 +216,8 @@ enum {
   WINDOW_FLAG_FIXED_X = 0x100,
 };
 
-// The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for the
-// interior of a full-width window six tiles tall.
+/// The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for the
+/// interior of a full-width window six tiles tall.
 #define TEXT_CANVAS_VRAM ((void *)0x06002500)
 #define TEXT_CANVAS_SIZE (120 * TILE_SIZE_4BPP)
 #define TEXT_CANVAS_FIRST_TILE 296
@@ -292,10 +292,10 @@ enum TextColor {
 /// time.
 #define WINDOW_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
-// The two page arrows beside a paged list's page numbers, in the menus and
-// the File Screen: tiles 296 and 297 of character block 0, which
-// Link_DrawPageArrows slides back and forth each frame, and their
-// tilemap entries.
+/// The two page arrows beside a paged list's page numbers, in the menus and
+/// the File Screen: tiles 296 and 297 of character block 0, which
+/// Link_DrawPageArrows slides back and forth each frame, and their
+/// tilemap entries.
 #define PAGE_ARROW_TILE 296
 #define PAGE_ARROW_VRAM                                                        \
   ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)

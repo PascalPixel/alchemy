@@ -1037,8 +1037,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The cave keeps its pushed-actor steps with its read-only data, though they
-// are not const: the pushes read the step again after each call.
+/// The cave keeps its pushed-actor steps with its read-only data, though they
+/// are not const: the pushes read the step again after each call.
 #define PUSHED_ACTOR_TABLES_READ_ONLY
 #include "shared/pushed_actor_direction_steps.c"
 // clang-format off

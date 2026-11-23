@@ -254,9 +254,9 @@ enum MogallForestCellBehavior {
 /// Scene flag, kept while the party stays in the area.
 enum { FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14 };
 
-// The third area's east ape: in the first patch it is placed only until it
-// has come out, and from the first patch on the hiding place that shares its
-// sprite too.
+/// The third area's east ape: in the first patch it is placed only until it
+/// has come out, and from the first patch on the hiding place that shares its
+/// sprite too.
 #if TBS_PATCH_LEVEL == 1
 #define MOGALL_FOREST_EAST_ACTOR_CONDITION                                     \
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT

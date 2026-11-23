@@ -6,9 +6,9 @@
 
 #include "menu_internal.h"
 
-// The status panel's name and status column starts further left in the
-// international editions, whose status labels are longer, and so does
-// "Can't equip" (MsgCannotEquip).
+/// The status panel's name and status column starts further left in the
+/// international editions, whose status labels are longer, and so does
+/// "Can't equip" (MsgCannotEquip).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_PANEL_TEXT_X 32
 #define STATUS_PANEL_CANNOT_EQUIP_X 0
@@ -17,8 +17,8 @@
 #define STATUS_PANEL_CANNOT_EQUIP_X 16
 #endif
 
-// A Psynergy item's panel: Spanish puts "Learned" or "Will learn" above the
-// Psynergy's name, the other editions below it.
+/// A Psynergy item's panel: Spanish puts "Learned" or "Will learn" above the
+/// Psynergy's name, the other editions below it.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define STATUS_PANEL_LEARN_NAME_Y 56
 #define STATUS_PANEL_LEARN_STATUS_Y 48

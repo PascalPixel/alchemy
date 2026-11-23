@@ -2716,9 +2716,9 @@ s32 gFuchinTemple_HiddenSpriteScript[] = {
     SC_END,
 };
 
-// The doors' map cells, frame by frame: Fuchin Temple's door opening as Isaac
-// walks in (FuchinTemple_EnterTemple), and the door Feh and Feizhi come out of
-// in Master Feh's school, opening and closing behind them.
+/// The doors' map cells, frame by frame: Fuchin Temple's door opening as Isaac
+/// walks in (FuchinTemple_EnterTemple), and the door Feh and Feizhi come out of
+/// in Master Feh's school, opening and closing behind them.
 u16 gFuchinTemple_TempleDoorOpens[] = {
     MAPGRID_ANIMATION_STEP(66, 46, 3, 2, 5),
     MAPGRID_ANIMATION_STEP(63, 46, 3, 2, 5),

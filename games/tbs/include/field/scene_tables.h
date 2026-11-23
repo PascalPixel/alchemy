@@ -354,8 +354,8 @@ enum PsynergyEventTarget {
   ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY_ANYWHERE |           \
    TRIGGER_PSYNERGY)
 
-// Using an item (one byte) on a cell behavior, or on an actor, as
-// Field_FindItemTrigger reads them.
+/// Using an item (one byte) on a cell behavior, or on an actor, as
+/// Field_FindItemTrigger reads them.
 #define TRIGGER_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (TRIGGER_ITEM | (item) << 8)
 #define USE_ITEM_ON_ACTOR(item)                                                \

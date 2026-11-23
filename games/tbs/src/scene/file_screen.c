@@ -56,9 +56,9 @@ extern u16 gFileScreen_PasswordKeyItems[];
 extern u16 gFileScreen_PasswordStackItems[];
 
 // Edition-specific text and window layout values.
-// The password buffer: a Gold password is 260 symbols
-// (FileScreen_EncodePassword) in every edition, which the Japanese buffer holds
-// exactly.
+/// The password buffer: a Gold password is 260 symbols
+/// (FileScreen_EncodePassword) in every edition, which the Japanese buffer
+/// holds exactly.
 // XXX (no evidence): why the other editions reserve 320; nothing in this game
 // writes or reads past 260, so the bytes show only the space.
 #if TBS_PATCH_1
@@ -76,8 +76,8 @@ extern u16 gFileScreen_PasswordStackItems[];
 #define FILE_SCREEN_LINK_WINDOW_WIDTH 18
 #endif
 
-// The first letter of the greeting a cable transfer waits for, before V, T
-// and S (Scene_Initialize).
+/// The first letter of the greeting a cable transfer waits for, before V, T
+/// and S (Scene_Initialize).
 #if LANGUAGE == LANGUAGE_GERMAN
 #define FILE_SCREEN_LINK_LANGUAGE_TAG 'E'
 #elif LANGUAGE == LANGUAGE_FRENCH

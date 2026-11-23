@@ -4,8 +4,8 @@
 
 #include "screens_internal.h"
 
-// A recovering Djinni's turns left: its digits and their x in the list, in
-// pixels.
+/// A recovering Djinni's turns left: its digits and their x in the list, in
+/// pixels.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define DJINN_RECOVERY_DIGITS 1
 #define DJINN_RECOVERY_X 48
@@ -17,9 +17,9 @@
 /// The party status window's layout, whose Djinn column the menu blinks.
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
-// A battle Djinn entry packs a Djinni's DJINN_COMMAND (bits 11..8 its element,
-// 7..0 its number in the element, DJINN_COMMAND_INDEX), its standby bit and
-// its recovery turns.
+/// A battle Djinn entry packs a Djinni's DJINN_COMMAND (bits 11..8 its element,
+/// 7..0 its number in the element, DJINN_COMMAND_INDEX), its standby bit and
+/// its recovery turns.
 #define BATTLE_DJINN_ENTRY_ELEMENT(entry) (((entry) & 0xf00) >> 8)
 /// The Djinni is on standby or recovering, not Set.
 #define BATTLE_DJINN_ENTRY_STANDBY 0x10000

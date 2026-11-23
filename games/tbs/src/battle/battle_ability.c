@@ -27,8 +27,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
 
-// The turns a stat change or a status lasts; a status or a lowered stat may end
-// sooner.
+/// The turns a stat change or a status lasts; a status or a lowered stat may
+/// end sooner.
 #define STAT_CHANGE_TURNS 7
 #define AGILITY_CHANGE_TURNS 5
 #define STATUS_TURNS 7

@@ -728,7 +728,7 @@ void FileList_DrawDjinnCounts(struct Window *window,
   }
 }
 
-// Where each edition draws the "Lv" label and the coin label, in pixels.
+/// Where each edition draws the "Lv" label and the coin label, in pixels.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56

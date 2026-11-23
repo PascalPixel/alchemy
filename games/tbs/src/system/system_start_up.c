@@ -4,8 +4,8 @@
 
 #include "system_internal.h"
 
-// The German, French, Spanish and Italian editions also take the
-// cartridge-removed interrupt, whose handler is Iwram_Halt.
+/// The German, French, Spanish and Italian editions also take the
+/// cartridge-removed interrupt, whose handler is Iwram_Halt.
 #if TBS_PATCH_2
 #define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
 #endif

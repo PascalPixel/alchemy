@@ -177,8 +177,8 @@ enum {
 //   after a battle comes back by the entrance the party last came in
 //   by, so the condition never stops a Move.
 
-// An exit's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
-// flag 0xfff, which nothing sets, so the exit is always taken.
+/// An exit's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
+/// flag 0xfff, which nothing sets, so the exit is always taken.
 #define EXIT_FLAG_NONE 0xffffffff
 
 /// The cell behaviors of the cells the Sol Sanctum entrance's coord, bg and

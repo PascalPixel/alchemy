@@ -364,17 +364,17 @@ s32 EffectSprite_DrawAtWorldXYZ(struct EffectSprite *sprite, s32 x, s32 y,
 void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
                                       s32 pivotY, u32 attributes);
 
-/// The old houseguest's update: draws a second sprite of his 12 pixels above
-/// him.
-// XXX: what the second sprite shows; a close render of the couple with the
-// sprite drawn and without would settle it.
+/// The old houseguest's update: draws his head and upper body again, 12 pixels
+/// above him, over the stack of crates he stands in front of; without it the
+/// crates cover him from the waist up and only his legs show.
 s32 AlhafraRooms_DrawFirstGuestSprite(struct Actor *guest) {
   EffectSprite_DrawAtWorldXYZ(&gAlhafraRooms_FirstGuestSprite, guest->x.fixed,
                               guest->y.fixed + toFIXED(12), guest->z.fixed);
   return 0;
 }
 
-/// His wife's: the same, 8 pixels above her.
+/// His wife's: the same, 8 pixels above her, so she too shows whole in front of
+/// the crates.
 s32 AlhafraRooms_DrawSecondGuestSprite(struct Actor *guest) {
   EffectSprite_DrawAtWorldXYZ(&gAlhafraRooms_SecondGuestSprite, guest->x.fixed,
                               guest->y.fixed + toFIXED(8), guest->z.fixed);

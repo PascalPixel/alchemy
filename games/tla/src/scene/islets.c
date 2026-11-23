@@ -1537,14 +1537,16 @@ void Islets_JumpDownLedge(void) {
 }
 
 /// Sand on N Osenia Islet or the Sea of Time Islet: Felix sinks into the
-/// ground and moves through it; on N Osenia Islet this is how he reaches the
-/// cow's yard. The event only puts him on the map's upper layer, which holds
-/// the ways open to Sand.
+/// ground and moves through it as a mound of sand. On N Osenia Islet, cast on
+/// the strip of sand west of the cow's fence, the mound slides north along the
+/// strip past the barrels and he rises out of the sand at its north end, onto
+/// the grass. On the Sea of Time Islet, cast at the foot of the cliff by the
+/// palms, it travels east along the cliff's foot and down the beach to the
+/// water's edge, where he rises. The event only puts him on the map's upper
+/// layer, which holds the ways open to Sand.
 void Islets_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  // XXX: where Sand takes Felix on each islet, and what it reaches on the Sea
-  // of Time Islet; a recording of Sand cast by the cow's fence and by the hut.
   leader->layer = 2;
 }
 
@@ -2513,8 +2515,13 @@ void Islets_SinkInSea(void) {
 /// south off the shore west of the healer (cell (16, 16)), he jumps out onto
 /// the iceberg moored below, where there is one to land on.
 void Islets_JumpForward(void) {
-  // XXX: the jump from E Tundaria Islet's shore onto the iceberg is read from
-  // the map's jump cells, not seen; a recording from cell (16, 16).
+  // Pushing south off the shore at cell (16, 16) for some nine seconds, a
+  // whole round of the icebergs' drift, Felix sees them drift out and back
+  // below but none comes to rest under the shore, and he does not jump.
+  // XXX: the jump onto an iceberg from E Tundaria Islet's shore is still read
+  // from the map's jump cells, not seen; a recording from another of the
+  // shore's jump cells, or with the icebergs held still by Reveal where one
+  // lies below, would settle it.
   Field_TryJumpForward();
   return;
 }

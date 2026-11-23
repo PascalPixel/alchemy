@@ -1329,13 +1329,15 @@ void MagmaRockInside_DrainLava(void) {
   Event_End();
 }
 
-#define DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(name, n1, n2)                    \
+/// Defines what Burst does to a cracked pillar: it crumbles
+/// (MagmaRockInside_BurstCrackedPillar) and its flag is set.
+#define DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(name, pillar, flag)              \
   void name(s32 stage, s32 cue) {                                              \
     struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
                                                                                \
-    work->child = Actor_Get(n1);                                               \
+    work->child = Actor_Get(pillar);                                           \
     MagmaRockInside_BurstCrackedPillar(stage, cue);                            \
-    Event_SetFlag(n2);                                                         \
+    Event_SetFlag(flag);                                                       \
   }
 
 /// Burst cast at the tall cracked pillar east of the cracked pillars' room's
@@ -1481,12 +1483,14 @@ void MagmaRockInside_TakeFlame(void) {
   }
 }
 
-#define DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(name, n1, n2, n3, n4)             \
+/// Defines what Blaze at a torch does: unless litFlag is set, flame waits
+/// hidden on it at (x, z), a sixteenth of its size.
+#define DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(name, litFlag, flame, x, z)       \
   void name(void) {                                                            \
-    if (!Event_GetFlag(n1)) {                                                  \
-      FieldActor_SetSpriteColor(Actor_Get(n2), SPRITE_COLOR_HIDDEN);           \
-      Actor_SetPosition(n2, n3, n4);                                           \
-      Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = FIXED_ONE / 16;          \
+    if (!Event_GetFlag(litFlag)) {                                             \
+      FieldActor_SetSpriteColor(Actor_Get(flame), SPRITE_COLOR_HIDDEN);        \
+      Actor_SetPosition(flame, x, z);                                          \
+      Actor_Get(flame)->scaleX = Actor_Get(flame)->scaleY = FIXED_ONE / 16;    \
     }                                                                          \
   }
 
@@ -2221,7 +2225,10 @@ void MagmaRockInside_ReadBlazeTabletFromNorth(void) {
   }
 }
 
-#define DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(name, n1)                    \
+/// Defines a routine for reading the Blaze tablet from one side: once Blaze
+/// is learned only its inscription shows; before, Felix walks from sideX round
+/// to its front, faces it, and reads it.
+#define DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(name, sideX)                 \
   void name(void) {                                                            \
     if (Event_GetFlag(FLAG_BLAZE_LEARNED)) {                                   \
       Event_Start();                                                           \
@@ -2229,7 +2236,7 @@ void MagmaRockInside_ReadBlazeTabletFromNorth(void) {
       Message_ShowCentered(MsgBlazeTabletInscription, 1);                      \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, n1, 136);            \
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, sideX, 136);         \
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 136);           \
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);    \
       FieldEvent_Wait(10);                                                     \

@@ -567,6 +567,9 @@ void YampiDesert_PoundBlitzStake(s32 mode, s32 count) {
   Pound_SinkTarget(gYampiDesertBlitzStakes, mode, count);
 }
 
+/// Defines what Pound on one of a room's stakes does: it sinks
+/// (Pound_SinkTarget), and once down it raises the watch for whether the King
+/// Scorpion is stopped.
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, stakes)                     \
   void name(s32 mode, s32 count) {                                             \
     Pound_SinkTarget(stakes, mode, count);                                     \

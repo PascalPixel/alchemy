@@ -614,12 +614,15 @@ void MarsLighthouseRoomF_PushPipe(void) {
   }
 }
 
-#define DEFINE_BURST_WALL(name, n1, n2, n3)                                    \
+/// Defines what Burst does to a cracked wall: it breaks open, drawn from the
+/// spare cells at x wallX on the ground layer and upperX on the upper layer,
+/// row 50, and its flag is set.
+#define DEFINE_BURST_WALL(name, wallX, upperX, flag)                           \
   void name(s32 state, s32 unused) {                                           \
     if (state == 1) {                                                          \
-      MapGrid_CopyCells(29, 56, 3, 4, n1, 50);                                 \
-      MapGrid_CopyCellsLayered(93, 56, 3, 4, n2, 50);                          \
-      Event_SetFlag(n3);                                                       \
+      MapGrid_CopyCells(29, 56, 3, 4, wallX, 50);                              \
+      MapGrid_CopyCellsLayered(93, 56, 3, 4, upperX, 50);                      \
+      Event_SetFlag(flag);                                                     \
     }                                                                          \
   }
 
@@ -1073,17 +1076,20 @@ void MarsLighthouseRoomF_MeltPuddle(s32 id) {
   ActorFlags_Set(&Actor_Get(id)->priorityFlags, ACTOR_PRIORITY_UNDERFOOT);
 }
 
-#define DEFINE_FROST_PUDDLE(name, n1, n2)                                      \
+/// Defines what Frost does to a puddle: it freezes and its flag is set; unless
+/// the flame thrower flameThrower stands dry, the flame melts it again
+/// and the flag is cleared.
+#define DEFINE_FROST_PUDDLE(name, flag, flameThrower)                          \
   void name(s32 unused, s32 id) {                                              \
     MarsLighthouseRoomF_FreezePuddle(id);                                      \
-    Flag_Set(n1);                                                              \
-    if (Ride_GetEntryFlags(n2) != FLAME_THROWER_DRY) {                         \
+    Flag_Set(flag);                                                            \
+    if (Ride_GetEntryFlags(flameThrower) != FLAME_THROWER_DRY) {               \
       struct Actor *actor = Actor_Get(id);                                     \
                                                                                \
       actor->update = NULL;                                                    \
       Actor_SetSpriteColorMode(actor, 0);                                      \
       Actor_SetAnimation(id, 6);                                               \
-      Flag_Clear(n1);                                                          \
+      Flag_Clear(flag);                                                        \
       MarsLighthouseRoomF_MeltPuddle(id);                                      \
     }                                                                          \
   }
@@ -1904,11 +1910,9 @@ u32 gMarsLighthouseRoomF_RubbleScriptB[] = {
 u16 gMarsLighthouseRoomF_MarsButtonFlameThrowers[] = {
     ACTOR_BUTTON_FLAME_THROWER, FLAME_THROWER_DRY | 3, 0,
 };
-
 u16 gMarsLighthouseRoomF_MarsButtonFlameStops[] = {
     ACTOR_UNLIT_MARS_TORCH, 1, 0,
 };
-
 u16 gMarsLighthouseRoomF_MarsPipeFlameThrowers[] = {
     ACTOR_PIPE_FLAME_A, FLAME_LANDING_FORWARD | 1,
     ACTOR_PIPE_FLAME_B, FLAME_BACKWARD | 1,
@@ -1916,11 +1920,9 @@ u16 gMarsLighthouseRoomF_MarsPipeFlameThrowers[] = {
     ACTOR_MARS_PIPE_B_FLAME_THROWER, FLAME_FORWARD | 3,
     0,
 };
-
 u16 gMarsLighthouseRoomF_MarsPipeFlameStops[] = {
     ACTOR_PIPE_STATUE, 0, 0,
 };
-
 u16 gMarsLighthouseRoomF_MercuryFlameThrowers[] = {
     ACTOR_MERCURY_PIPE_FLAME_A, FLAME_LANDING_FORWARD | 1,
     ACTOR_MERCURY_PIPE_FLAME_B, FLAME_LANDING_BACKWARD | 1,
@@ -1928,48 +1930,39 @@ u16 gMarsLighthouseRoomF_MercuryFlameThrowers[] = {
     ACTOR_MERCURY_FLAME_THROWER, FLAME_SPARK | 3,
     0,
 };
-
 u16 gMarsLighthouseRoomF_MercuryFlameStops[] = {
     ACTOR_ICEBERG_TORCH, 1, 0,
 };
-
 u16 gMarsLighthouseRoomF_JupiterUpperFlameThrowers[] = {
     ACTOR_UPPER_FLAME_THROWER, FLAME_FORWARD | 3, 0,
 };
-
 u16 gMarsLighthouseRoomF_JupiterUpperFlameStops[] = {
     ACTOR_DROP_TORCH, 1, 0,
 };
-
 u16 gMarsLighthouseRoomF_JupiterFlameThrowers[] = {
     ACTOR_JUPITER_FLAME_THROWER_A, FLAME_FORWARD | 3,
     ACTOR_JUPITER_FLAME_THROWER_B, FLAME_FORWARD | 3,
     ACTOR_JUPITER_FLAME_THROWER_C, FLAME_FORWARD | 3,
     0,
 };
-
 u16 gMarsLighthouseRoomF_JupiterFlameStops[] = {
     ACTOR_JUPITER_STATUE, 0, 0,
 };
-
 u16 gMarsLighthouseRoomF_VenusFlameThrowers[] = {
     ACTOR_VENUS_FLAME_THROWER_A, FLAME_FORWARD | 3,
     ACTOR_VENUS_FLAME_THROWER_B, FLAME_FORWARD | 3,
     ACTOR_VENUS_FLAME_THROWER_C, FLAME_FORWARD | 3,
     0,
 };
-
 u16 gMarsLighthouseRoomF_VenusFlameStops[] = {
     ACTOR_FIRST_STONE, 0, 0,
 };
-
 u16 gMarsLighthouseRoomF_VenusStatueFlameThrowers[] = {
     ACTOR_HIDDEN_FLAME_THROWER_A, FLAME_FORWARD | 3,
     ACTOR_HIDDEN_FLAME_THROWER_B, FLAME_FORWARD | 3,
     ACTOR_HIDDEN_FLAME_THROWER_C, FLAME_FORWARD | 3,
     0,
 };
-
 u16 gMarsLighthouseRoomF_VenusStatueFlameStops[] = {
     ACTOR_TRAP_STATUE_A, 0, ACTOR_TRAP_STATUE_B, 0, ACTOR_TRAP_STATUE_C, 0,
     ACTOR_TRAP_STATUE_D, 0, ACTOR_TRAP_STATUE_E, 0, 0,

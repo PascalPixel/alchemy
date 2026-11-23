@@ -546,6 +546,7 @@ struct BeamWork {
   struct Actor *second;
 };
 
+/// The value t of n steps of the way from from to to.
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))
 
 /// The steps of an archer's beam (BeamWork.step).

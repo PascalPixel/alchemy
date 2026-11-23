@@ -13,6 +13,8 @@ struct CellTargetEntry;
 struct MapCell;
 struct Position;
 
+/// The leader is thrown back by the flames that struck them
+/// (shared/leader_knock_back.c).
 s32 Leader_KnockBack(void);
 
 void Ride_SpawnForward();

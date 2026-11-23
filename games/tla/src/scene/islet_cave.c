@@ -1016,12 +1016,16 @@ struct Trigger gIsletCave_SentinelRoomTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// A grey stone door sliding open, as MAPGRID_ANIMATION_STEP rows: two steps of
+/// two frames.
 s16 gIsletCave_DoorFrames[] = {
     72, 4, 2, 2, 2, 73, 4, 2,
     2, 2, -1, 0,
 };
 // clang-format on
 
+/// The five corridors' doors, a row for each exit from the first: the opening
+/// and the cell it plays at.
 struct MapGridCellAnimation gIsletCave_Doors[] = {
     {gIsletCave_DoorFrames, 72, 4},  {gIsletCave_DoorFrames, 84, 4},
     {gIsletCave_DoorFrames, 96, 4},  {gIsletCave_DoorFrames, 107, 4},

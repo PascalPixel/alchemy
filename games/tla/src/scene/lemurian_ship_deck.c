@@ -187,10 +187,14 @@ DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHullBandColors,
 
 void TilesetAnim_Resume(s32 channelIndex);
 
-/// The entrance whose arrival lights the band along the hull, and the map's two
-/// tile animations, held until then, that light it one after the other.
+/// The entrance whose arrival lights the band along the hull.
 #define MAIN_DECK_ARRIVAL_ENTRANCE 99
-enum { HULL_BAND_FIRST_ANIMATION = 13, HULL_BAND_SECOND_ANIMATION };
+enum {
+  /// The map's two tile animations, held until that arrival, that light the
+  /// band one after the other.
+  HULL_BAND_FIRST_ANIMATION = 13,
+  HULL_BAND_SECOND_ANIMATION
+};
 
 /// The party arrives on the shore by MAIN_DECK_ARRIVAL_ENTRANCE: the screen
 /// opens and the blue band along the ship's hull lights up in two steps.

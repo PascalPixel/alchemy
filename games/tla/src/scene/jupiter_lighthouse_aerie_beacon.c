@@ -172,6 +172,7 @@ void JupiterLighthouse_KarstAndAgatioWait(void);
 void SceneActor_ParkRecord(struct Actor *actor);
 
 s32 gJupiterLighthouse_ElevatorLevel BSS_DATA;
+/// Unused: nothing reads these bytes.
 u8 gJupiterLighthouse_UnusedAfterElevatorLevel[4] BSS_DATA;
 s32 gJupiterLighthouse_BeaconRiseFrame BSS_DATA;
 s32 gWhirlwindRiding BSS_DATA;

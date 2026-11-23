@@ -416,7 +416,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 s16 gIzumoRuins_FirstRoomPillars[] = {
     ACTOR_FIRST_ROOM_PILLAR, -1,
 };
-
 s16 gIzumoRuins_SecondRoomPillars[] = {
     ACTOR_RING_NORTHWEST_PILLAR, ACTOR_RING_NORTHEAST_PILLAR,
     ACTOR_RING_WEST_PILLAR, ACTOR_RING_SOUTHWEST_PILLAR,
@@ -439,6 +438,8 @@ s16 gIzumoRuins_FirstRoomStakes[] = {
     -1,
 };
 
+/// The second room's two stakes that Pound sinks: each stake, its kind and the
+/// flag set once it is sunk, ended by -1.
 s16 gIzumoRuins_SecondRoomStakes[] = {
     ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
     ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,

@@ -33,6 +33,7 @@ extern struct Trigger gAirsRock_FujinShieldChestTriggers[];
 void AirsRock_DriftFog(void);
 void AirsRock_LiftFog(void);
 
+/// The great whirlwind's sway: BG0's line scroll, by HBlank DMA.
 void AirsRock_ScrollWave(void);
 
 extern s16 gAirsRock_EntrancePillars[];

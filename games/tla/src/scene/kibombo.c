@@ -156,6 +156,7 @@ extern u32 gKibombo_PartyGathersScript[];
 extern s32 gKibombo_EyesShakeScript[];
 extern s32 gKibombo_EyesPopScript[];
 extern s16 gKibombo_FrozenPuddle[];
+/// Unused: nothing reads these bytes.
 u8 gKibombo_UnusedBeforeFireColors[4] BSS_DATA;
 /// The signal fire's four colours as the village has them, which its flicker
 /// brightens and dims.
@@ -1965,6 +1966,10 @@ void Kibombo_FlickerRedColor(s32 index, s32 entry, s32 delta) {
   }
 }
 
+/// Defines a frame task in which, every eighth frame outside menus and
+/// Psynergy, the fires' four colours flicker: the first by up to 5 either way,
+/// the others by a random amount below their range less their bias, the fourth
+/// through flickerFourth.
 #define DEFINE_KIBOMBO_FLICKER_FIRES(name, secondIndex, secondRange,           \
                                      secondBias, thirdIndex, flickerFourth,    \
                                      fourthIndex, fourthRange, fourthBias)     \
@@ -2220,6 +2225,8 @@ void Kibombo_HideInnBlocks(void) {
   Kibombo_RestoreBlocks();
 }
 
+/// Defines a routine that gives the eight warriors, ACTOR_WARRIOR_A to H, one
+/// animation.
 #define DEFINE_KIBOMBO_SET_CROWD_MODE(name, animation)                         \
   void name(void) {                                                            \
     u32 i;                                                                     \
@@ -2609,6 +2616,10 @@ void Kibombo_StepOntoFirstLadder(void) {
   Kibombo_ClimbDownLadder(680, 352);
 }
 
+/// Defines a step trigger by a ladder: Felix climbs down to (ladderX, ladderZ)
+/// only if he steps on from the west cell (westX, sideZ) holding right, the
+/// east cell (eastX, sideZ) holding left, or the south cell (southX, southZ)
+/// holding up.
 #define DEFINE_KIBOMBO_STEP_WHEN_HELD(name, sideZ, westX, eastX, southX,       \
                                       southZ, ladderX, ladderZ)                \
   void name(void) {                                                            \
@@ -3982,6 +3993,7 @@ s32 gKibombo_CrowdDanceScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The puddle Frost freezes into a pillar, and the flag set while it stands.
 s16 gKibombo_FrozenPuddle[] = {
     ACTOR_PUDDLE, FLAG_KIBOMBO_PUDDLE_FROZEN, -1, 0,
 };

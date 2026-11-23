@@ -929,6 +929,7 @@ s32 gJupiterLighthouse_PulseScript[] = {
       SC_END,                                                                  
   };
 
+/// The three blocks Move pushes, ended by -1.
 s16 gJupiterLighthouse_PushedBlocks[] = {
     ACTOR_FIRST_PUSHED_BLOCK, ACTOR_FIRST_PUSHED_BLOCK + 1, ACTOR_LAST_PUSHED_BLOCK, -1,
 };

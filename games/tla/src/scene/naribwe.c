@@ -537,6 +537,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
+/// The village's people until Gabomba's message is carried.
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements)
 
 struct ActorPlacement gNaribwe_FireLitPlacements[] = {
@@ -549,6 +550,7 @@ struct ActorPlacement gNaribwe_FireLitPlacements[] = {
 };
 // clang-format on
 
+/// The same people once it has been.
 DEFINE_NARIBWE_PLACEMENTS(gNaribwe_PlacementsOnReturn)
 
 struct Trigger gNaribwe_Triggers[] = {

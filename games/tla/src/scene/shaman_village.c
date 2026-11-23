@@ -219,6 +219,7 @@ s16 gShamanVillage_LetteringSpeedFrom BSS_DATA;
 s16 gShamanVillage_LetteringSpeed BSS_DATA ALIGNED(4);
 s16 gShamanVillage_LetteringScaleFrame BSS_DATA ALIGNED(4);
 
+/// The whirlwind's swirl: a VBlank task that wavers its lines.
 void ShamanVillage_WaveWhirlwindLines(void);
 
 extern u32 gShamanVillage_KradenStandsByRodScript[];
@@ -2892,14 +2893,16 @@ void ShamanVillage_BlowChimneySmoke(void) {
   }
 }
 
-#define DEFINE_LEADER_LAYER_TASK(name, n1, n2)                                 \
+/// Defines a task in which two actors take the leader's sprite priority each
+/// frame, so they pass behind what he passes behind.
+#define DEFINE_LEADER_LAYER_TASK(name, first, second)                          \
   void name(void) {                                                            \
     struct FieldSprite *sprite =                                               \
         Actor_GetById(gMainRoutineWork.leaderActorId)->sprite;                 \
     s32 variant = sprite->priority;                                            \
                                                                                \
-    Actor_SetSpritePriority(n1, variant);                                      \
-    Actor_SetSpritePriority(n2, variant);                                      \
+    Actor_SetSpritePriority(first, variant);                                   \
+    Actor_SetSpritePriority(second, variant);                                  \
   }
 
 /// A task: the sprout and the girl below the cave take the leader's sprite
@@ -3027,6 +3030,8 @@ void ShamanVillage_SetUpSanctum(void) {
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// A countdown digit: it shrinks from twice its size as it fades in, holds
+/// half a second and fades out.
 s16 gShamanVillage_LetteringDigitScript[] = {
     LETTERING_SCALE, 512, 1,
     LETTERING_FADE, 0, 1,
@@ -3312,6 +3317,8 @@ s16 gShamanVillage_LetteringVramEntry[] = {
 #define LETTERING_GO_LARGE_SCALE 384
 #endif
 
+/// Unused: the match title, placed and faded in, set moving and stopped, then
+/// sent on after a second.
 s16 gShamanVillage_LetteringTitleScript[] = {
     LETTERING_PLACE, -188, 2048,
     LETTERING_SCALE, LETTERING_TITLE_SCALE, 1,
@@ -3324,6 +3331,8 @@ s16 gShamanVillage_LetteringTitleScript[] = {
     LETTERING_END,
 };
 
+/// GO shrinks in as it fades in, then pulses between its two sizes, fading out
+/// as it goes on.
 s16 gShamanVillage_LetteringGoScript[] = {
     LETTERING_SCALE, LETTERING_GO_START_SCALE, 1,
     LETTERING_FADE, 0, 1,
@@ -3360,6 +3369,8 @@ void ShamanVillage_ReadTrialRoadSign(void);
 void ShamanVillage_TalkToWestKnight(void);
 
 // clang-format off
+/// Unused: WIN grows in as it fades in, holds a second, then bounces between
+/// sizes.
 s16 gShamanVillage_LetteringWinScript[] ALIGNED(4) = {
     LETTERING_SCALE, 128, 1,
     LETTERING_FADE, 0, 1,

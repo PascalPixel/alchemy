@@ -659,7 +659,10 @@ void Lemuria_OfferSpringLuck(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Which of gLemuria_RippleLines' two tables the HBlank DMA reads; the other is
+/// filled for the next frame.
 u8 gLemuria_RippleBuffer BSS_DATA;
+/// The water's two tables of BG2 horizontal offsets, a halfword a screen line.
 s16 gLemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
 
 /// Background palette `n`, as the water's colour cycle turns it.

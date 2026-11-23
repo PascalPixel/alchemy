@@ -106,6 +106,8 @@ extern u32 gFieldEffect_LongScript[];
 extern s32 gSeaOfTime_ShipRests[];
 
 s32 Actor_HasArrived(struct Actor *actor);
+/// The sea's horizontal offset for each screen line as it ripples sideways
+/// (SeaOfTime_AnimateSea).
 u16 gSeaOfTime_RippleLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
 #include "shared/ship_drop_shadow.h"
@@ -1096,6 +1098,8 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
+/// Defines what Grind on a rock does: the rock is ground away
+/// (SeaOfTime_RemoveRock) and its flag set, so it is gone for good.
 #define DEFINE_GRIND_ROCK(name, rock, flag)                                    \
   void name(void) {                                                            \
     struct Actor *actor;                                                       \
@@ -1132,6 +1136,7 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 DEFINE_GRIND_ROCK(SeaOfTime_GrindSouthRock, ACTOR_ROCK_A,
                   FLAG_ROCK_SOUTH_CLEARED)
 
+/// Defines a step trigger that leaves the scene by exit, the screen closing.
 #define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \
   void name(void) {                                                            \
     Event_Start();                                                             \

@@ -262,6 +262,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
+/// The value of type at byte off of base.
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \

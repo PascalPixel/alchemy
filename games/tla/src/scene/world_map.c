@@ -3327,10 +3327,10 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// A cloud of dust as the earthquake shakes the land, gone after 16 frames.
 LATE_DATA u32 gWorldMap_CollapseDustScript[] = {
-    0,
-    16,
-    38,
+    SC_WAIT(16),
+    SC_RELEASE,
 };
 
 LATE_DATA s32 gWorldMap_PlacedActorScript[] = {

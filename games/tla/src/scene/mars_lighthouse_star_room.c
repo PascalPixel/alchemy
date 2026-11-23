@@ -1248,6 +1248,8 @@ s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
 #include "shared/actor_setup_scripted_part.h"
 
+/// Defines a routine that spawns a Blaze flame at position, moving back at
+/// speed under updateRoutine, its sprite kept cached when flag is set.
 #define DEFINE_RIDE_SPAWN_BACKWARD(name, updateRoutine)                        \
   void name(s32 *position, s32 speed, s32 flag) {                              \
     struct Actor *actor = FieldActor_Create(SPRITE_BLAZE_FLAME, position[0],   \
@@ -1516,10 +1518,16 @@ void GameFlag_SetByte(s32 flag, s32 value);
 extern s32 gMarsLighthouseStarRoom_TorchScript[];
 
 // clang-format off
+/// A chip of ice flies for 40 frames, then blinks ten times and is gone.
 u32 gMarsLighthouseStarRoom_ScatterIceChipsScript[] = {
-    0, 40, 0x80010000, 22, 25, 0,
-    0, 1, 22, 25, 1, 0,
-    1, 13, 10, 0xc0010000, 38,
+    SC_WAIT(40),
+    SC_LABEL(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),
+    SC_WAIT(1),
+    SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_ONE),
+    SC_WAIT(1),
+    SC_LOOP(10, SC_TO(1)),
+    SC_RELEASE,
 };
 
 s32 gMarsLighthouseStarRoom_WestSparkleRoute[] = {

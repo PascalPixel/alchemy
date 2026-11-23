@@ -1008,10 +1008,8 @@ static s32 BattleArena_ChooseBattleMode(void) {
   s32 messageBase;
   s32 messageId;
 
-  // The attendant's lines from MsgLobbyPleaseSpeakWhen: +1 asks the player to
-  // apply, +2 to accept the opponent's request, +3 and +7 send the player to
-  // the circle, +4 says the request is made, +5 offers a monster battle and
-  // +6 asks the player to wait for an opponent.
+  // The attendant's lines follow "Please speak to me when you want to fight in
+  // a battle." (MsgLobbyPleaseSpeakWhen), as quoted where each is chosen.
   messageBase = MsgLobbyPleaseSpeakWhen;
   Event_Start();
   Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
@@ -1034,6 +1032,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
         GameFlag_Clear(FLAG_LINK_BATTLE);
         GameFlag_Set(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE);
+        // "When you finish your preparations, please step into the circle!"
         messageId = messageBase + 7;
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -1041,9 +1040,11 @@ static s32 BattleArena_ChooseBattleMode(void) {
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
       GameFlag_Set(FLAG_LINK_BATTLE);
       BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
+      // "Please wait until an opponent arrives, then."
       messageId = messageBase + 6;
       goto message;
     } else {
+      // "When you finish your preparations, please step into the circle!"
       messageId = messageBase + 3;
       goto message;
     }
@@ -1058,6 +1059,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
     if (GameFlag_Get(FLAG_BATTLE_ARENA_AGREED_TO_BATTLE)) {
+      // "When you finish your preparations, please step into the circle!"
       messageId = messageBase + 3;
       // The lone player's answers above show their line here too, and an
       // accepted request below comes back to open its own.
@@ -1074,8 +1076,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
     } else {
       GameFlag_Set(FLAG_BATTLE_ARENA_ATTENDANT_EXPLAINED);
       if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED)) {
+        // "Your opponent has asked for a battle. Do you accept?"
         Event_SetMessageId(messageBase + 2);
       } else {
+        // "Would you like to apply?"
         Event_SetMessageId(messageBase + 1);
       }
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
@@ -1085,8 +1089,10 @@ static s32 BattleArena_ChooseBattleMode(void) {
           GameFlag_Set(FLAG_LINK_BATTLE);
           GameFlag_Set(FLAG_LINK_BATTLE_ARRANGED);
           if (GameFlag_Get(FLAG_BATTLE_ARENA_OPPONENT_ASKED)) {
+            // "When you finish your preparations, please step into the circle!"
             Event_SetMessageId(messageBase + 3);
           } else {
+            // "You have asked for a battle. We will call your name if your..."
             Event_SetMessageId(messageBase + 4);
           }
           BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ASKED);

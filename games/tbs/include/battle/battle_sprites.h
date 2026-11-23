@@ -12,23 +12,15 @@
 /// A unit's row of gBattleSprites: an enemy's battle sprite, size, attack
 /// effect, palette and defeat-sound kind.
 struct BattleSpriteDefinition {
-  u16 animation; ///< the enemy's battle sprite
-  /// The byte at 2.
-  /// bits: 7..5 attackHop | 4..1 attackEffect | 0 isSmall
-  ///@{
+  u16 animation;  ///< the enemy's battle sprite
   u8 isSmall : 1; ///< 1 for a small enemy, which takes one sprite slot
   /// The beam its attack plays, an enum BeamKind (battle_effect_beams.c); 0
   /// reads as 1.
   u8 attackEffect : 4;
-  u8 attackHop : 3; ///< the attack-hop height
-  ///@}
-  /// The byte at 3.
-  /// bits: 7..5 defeatSound | 4..1 palette | 0 heavyImpact
-  ///@{
+  u8 attackHop : 3;   ///< how high it hops as it runs up to attack, in pixels
   u8 heavyImpact : 1; ///< 1 for an enemy whose beam blow lands heavily
   u8 palette : 4;     ///< the sprite's palette
   u8 defeatSound : 3; ///< the defeat-sound kind; above 4 reads as none
-  ///@}
   /// The height a battle effect is drawn at over the enemy, in pixels; 0 for
   /// its size's default.
   u8 effectHeight;

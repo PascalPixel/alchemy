@@ -21,7 +21,7 @@
 #define PROCNE_WHIRLWIND_PICTURE                                               \
   (PROCNE_WHIRLWIND_WIDTH * PROCNE_WHIRLWIND_HEIGHT)
 /// The whirlwind rises in two pieces: its foot, a picture's upper rows, then a
-/// whole cel above it.
+/// whole picture above it.
 #define PROCNE_WHIRLWIND_FOOT_HEIGHT 48
 #define PROCNE_DUST (3 * PROCNE_WHIRLWIND_PICTURE)
 #define PROCNE_COMET_PICTURES 13824

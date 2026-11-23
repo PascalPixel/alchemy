@@ -17,6 +17,10 @@
 #define ENTRANCE_SPARK_DEPTH_NEAR 250
 #define ENTRANCE_SPARK_DEPTH_STEP 64
 #define ENTRANCE_SPARK_DEPTH_FAR 634
+/// The entrance's frames, and the long entrance's, which ends in a burst of
+/// motes.
+#define ENTRANCE_FRAMES 64
+#define ENTRANCE_LONG_FRAMES 84
 
 /// Sparks swirl around a point that travels from the user to the goal and
 /// gather into a Djinni, which sways for 16 frames and bursts into motes.
@@ -31,27 +35,27 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
-  u8 *sheet;
+  u8 *motes;
   s32 frameCount;
   struct Actor *target;
   struct Actor *user;
-  u8 *palette;
+  u8 *resource;
   s32 sheetId;
   s32 frame;
   s32 i;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   if (element > ELEMENT_JUPITER) {
     element -= DJINNI_ENTRANCE_LONG;
-    frameCount = 84;
+    frameCount = ENTRANCE_LONG_FRAMES;
   } else {
-    frameCount = 64;
+    frameCount = ENTRANCE_FRAMES;
   }
   switch (element) {
   case ELEMENT_VENUS:
@@ -67,10 +71,10 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     sheetId = RESOURCE_JUPITER_DJINN_SMALL_SHEET;
     break;
   }
-  palette = Resource_GetTableEntry(sheetId);
-  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz(palette + SHEET_PALETTE_BYTES, work->sheet);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  resource = Resource_GetTableEntry(sheetId);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  Decompress_TaggedLz(resource + SHEET_PALETTE_BYTES, work->sheet);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -169,7 +173,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         size = ENTRANCE_SPARK_SIZE_MAX -
                (position.depth - ENTRANCE_SPARK_DEPTH_NEAR) /
                    ENTRANCE_SPARK_DEPTH_STEP;
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y, size);
+        EFFECT_DRAW_MOTE(draw[1], canvas, motes, position.x, position.y, size);
         Particle_AdvanceWithGravity3D(spark, 60, 0);
         if (frame >= i / 8 + 24) {
           s32 pullX = -spark->x >> 7;
@@ -200,7 +204,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
               SMALL_DJINNI_HEIGHT);
     }
     // The long version's Djinni bursts into motes.
-    if (frame == 64) {
+    if (frame == ENTRANCE_FRAMES) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -213,14 +217,14 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         mote->variant = (Random16() & 15) + 8;
       }
     }
-    if (frame > 63) {
+    if (frame >= ENTRANCE_FRAMES) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXEDtoINT(mote->x),
+          EFFECT_DRAW_MOTE(draw[0], canvas, motes, FIXEDtoINT(mote->x),
                            FIXEDtoINT(mote->y), size);
           Particle_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
@@ -386,7 +390,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   s32 frame;
   BlitterPair draw;
   struct BattleCamera *camera;
-  u8 *sheet;
+  u8 *motes;
   s32 soundCooldown;
   s32 total;
   s32 comet;
@@ -401,7 +405,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  motes = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
   work->args = args;
   comet = args->variant;
@@ -432,7 +436,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   }
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
   if (mode == PROJECTILE_VOLLEY_SLASH ||
       mode == PROJECTILE_VOLLEY_CUTTING_EDGE ||
       mode == PROJECTILE_VOLLEY_IMPACT_COMETS) {
@@ -459,6 +463,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     Resource_LoadAndDecompress(RESOURCE_WIND_STREAK_SHEET,
                                work->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
                                1, 0);
+    // The ice colours again, though the streaks left them as they were.
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
       Iwram_CopyWords(BG_PLTT, pal, SHEET_PALETTE_BYTES);
@@ -613,6 +618,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_ADDITIVE);
         draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
+        // Drawn twice, so brighter, over its first four frames.
         if (frame <= 3)
           draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                   SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
@@ -882,7 +888,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 3) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXEDtoINT(particle->x),
+          EFFECT_DRAW_MOTE(draw[0], canvas, motes, FIXEDtoINT(particle->x),
                            FIXEDtoINT(particle->y), size);
           Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
           if (particle->y > toFIXED(112))
@@ -899,7 +905,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 4) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXEDtoINT(particle->x),
+          EFFECT_DRAW_MOTE(draw[0], canvas, motes, FIXEDtoINT(particle->x),
                            FIXEDtoINT(particle->y), size);
           Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 4);
           particle->variant--;
@@ -987,3 +993,5 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
 #undef ENTRANCE_SPARK_DEPTH_NEAR
 #undef ENTRANCE_SPARK_DEPTH_STEP
 #undef ENTRANCE_SPARK_DEPTH_FAR
+#undef ENTRANCE_FRAMES
+#undef ENTRANCE_LONG_FRAMES

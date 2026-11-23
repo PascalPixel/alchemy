@@ -1720,7 +1720,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s1 = Trig_Sin(a);
           b += DEGtoANG(45);
           y1 = (s1 << 5) + Trig_Cos(b) * 24;
-          Matrix_RotateZ((y0 - y1) / 512 + -1024);
+          Matrix_RotateZ((y0 - y1) / 512 - TRIG_TURN / 64);
         }
         Matrix_Scale(135536, 105536, FIXED_ONE);
         Render_TransformVertices(gBattleEffect_SquareCorners, quads, 4);

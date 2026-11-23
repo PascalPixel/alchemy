@@ -55,6 +55,9 @@ enum { FACING_STEP = TRIG_TURN / 16 };
 /// A sliver of a turn off a heading: an actor turning round to face the
 /// opposite way turns by the side the nudge leans to.
 enum { FACING_NUDGE = 10 };
+/// The quarter of a turn a facing lies in, what is past it dropped: east,
+/// south, west or north.
+#define FACING_QUARTER(facing) ((facing) & 0xc000)
 /// The eighth of a turn a facing lies in, what is past it dropped.
 #define FACING_EIGHTH(facing) ((facing) & 0xe000)
 /// The eighth of a turn a facing lies in, as a number from 0 (east) to 7.

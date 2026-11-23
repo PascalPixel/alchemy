@@ -946,6 +946,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The palette cycle's frame, -1 before it starts, and whether events hold it
+/// (PaletteCycle_Step).
 s32 gPaletteCycleFrame = -1;
 
 s32 gPaletteCyclePausesInEvents = 1;

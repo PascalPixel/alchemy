@@ -1053,6 +1053,8 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
+/// The broken bridge's middle less the leader's place, 16.16 pixels, as he
+/// rocks on it.
 FIXED gShrineOfTheSeaGod_BridgeOffset[3] BSS_DATA;
 
 /// On a broken bridge's middle the leader sways twice, the middle dipping under

@@ -2664,6 +2664,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Which of gEasternAlhafra_WaveLines' two tables the screen reads; the other
+/// is being filled.
 u8 gEasternAlhafra_WaveTableIndex[] = {
     0,
 };

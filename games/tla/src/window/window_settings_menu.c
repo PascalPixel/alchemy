@@ -202,6 +202,7 @@ void SettingsMenu_Release(void) {
 #define OPTION_SLIDER_WIDTH 60
 
 extern const u8 gPointingHandTiles[];
+/// The hue and brightness sliders' picture and colours.
 extern const u8 gSettingsMenu_SliderTiles[];
 extern const u16 gSettingsMenu_SliderPalette[];
 

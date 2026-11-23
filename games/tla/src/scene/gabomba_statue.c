@@ -3903,6 +3903,7 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// The way the cogs turn, which each tooth an actor rides steps by.
 LATE_DATA s32 gGabombaStatue_CogDirection = 0;
 
 LATE_DATA u32 gGabombaStatue_LeaderFocusScript[] = {

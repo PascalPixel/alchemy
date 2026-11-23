@@ -1519,11 +1519,14 @@ s32 Scene_PrepareMap(void) {
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
+/// The steps round each trunk the ship must sail before the waves start.
 u8 gSeaOfTime_LapsNeeded[] = {
     2 * LAP_CELLS, 3 * LAP_CELLS, 2 * LAP_CELLS,
     3 * LAP_CELLS, 2 * LAP_CELLS, 3 * LAP_CELLS,
 };
 
+/// Where the sparkles rise round each trunk as the ship's laps add up, in 16.16
+/// pixels.
 struct Spots gSeaOfTime_LapSpots = {{
     {toFIXED(672), toFIXED(704)},
     {toFIXED(896), toFIXED(320)},
@@ -1589,6 +1592,9 @@ struct ActorPlacement gSeaOfTime_ToLemuriaPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The ship's laps round a trunk: the last step trigger it crossed, the steps
+/// counted, the way it turns and the frame of its last step; then the waves'
+/// start frame and state.
 u16 gSeaOfTime_LastLapCell = 0;
 
 u16 gSeaOfTime_LapCount = 0;
@@ -1720,6 +1726,7 @@ struct Trigger gSeaOfTime_SouthPartTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The step the sea's red pulse takes each time it brightens or dims.
 s16 gSeaOfTime_RedPulseStep[] = {
     1,
 };

@@ -428,6 +428,8 @@ void SelectionMenu_Draw(void) {
   state->status += 1;
 }
 
+/// The pictures of the selection row's right and left arrows
+/// (sprite_cursors.s).
 extern u8 gMenu_CursorActorTiles[], gMenu_CursorLeftActorTiles[];
 
 /// Draws the selection screen's left (index 0) or right (1) arrow, nudged

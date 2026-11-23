@@ -2022,6 +2022,8 @@ s16 gAnemosInnerSanctum_OrihalconChestBlocks[] = {
     ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, ACTOR_ORIHALCON_CHEST_SECOND_PILLAR, -1,
 };
 
+/// Where the sparks fly to round the leader as a symbol lights, in pixels from
+/// him in x and z.
 s32 gAnemosInnerSanctum_PlateOffsets[][2] = {
     {-48, -32}, {48, -32}, {-64, -16}, {64, -16}, {-32, -16}, {32, -16},
     {-48, 0}, {48, 0}, {-32, 0}, {32, 0}, {-64, 16}, {64, 16}, {-32, 16},
@@ -2030,6 +2032,8 @@ s32 gAnemosInnerSanctum_PlateOffsets[][2] = {
 
 #include "shared/field_effect_duration_scripts.c"
 
+/// The field effects' scripts by how long they last, which FieldEffect_Spawn
+/// picks by its flags (EFFECT_SCRIPT_MASK).
 s32 gAnemosInnerSanctum_DurationScripts[] = {
     (s32)gAnemosInnerSanctum_ShortScript,
     (s32)gAnemosInnerSanctum_MediumScript,

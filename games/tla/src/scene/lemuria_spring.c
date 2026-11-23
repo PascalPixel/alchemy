@@ -178,6 +178,7 @@ void Summon_Learn(s32 summonId);
 
 struct SpringTossMotion gLemuriaSpring_Toss BSS_DATA ALIGNED(16);
 s32 gLemuriaSpring_TossKind BSS_DATA;
+/// The crabs and turtles in the toss's way, as the toss moves them.
 struct SpringObstacle gLemuriaSpring_Obstacles[4] BSS_DATA ALIGNED(16);
 s32 gLemuriaSpring_TossFrame BSS_DATA;
 s32 gLemuriaSpring_TossEnded BSS_DATA;

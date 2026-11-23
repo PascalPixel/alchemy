@@ -213,6 +213,7 @@ extern u32 gWorldMap_GlowColorModes[];
 
 s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
+/// The party members hidden as the ship first takes off, -1 for none.
 s32 gWorldMap_HiddenMembers[8] BSS_DATA;
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
 u16 gWorldMapBlend BSS_DATA;
@@ -223,6 +224,7 @@ u32 gGauge_Sprite[3] BSS_DATA;
 u8 gGauge_Tiles[8][32] BSS_DATA;
 u8 gGauge_SourceTiles[12][32] BSS_DATA;
 
+/// The tidal wave's tiles, pictures and palettes, tagged LZ.
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
@@ -2742,6 +2744,7 @@ s32 gWorldMap_SparkScript[] = {
 
 #include "shared/world_map_particle_script.c"
 
+/// The colour modes the ship's glow steps through, one every other frame.
 u32 gWorldMap_GlowColorModes[] = {
     0, 9, 0, 6,
 };

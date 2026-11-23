@@ -1629,11 +1629,14 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
+/// The ice columns of the room of ice columns: each one's cell and its Pound
+/// flag, ending -1.
 s16 gTundariaTowerIceColumnsColumns[] = {
     8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
     FLAG_ICE_COLUMN_POUNDED + 2, 11, 7, FLAG_ICE_COLUMN_POUNDED + 3, -1,
 };
 
+/// The ice columns of the room of pillars, as gTundariaTowerIceColumnsColumns.
 s16 gTundariaTowerPillarPuzzleColumns[] = {
     8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
     FLAG_ICE_COLUMN_POUNDED + 2, -1, 0,

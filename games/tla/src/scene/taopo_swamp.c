@@ -2247,18 +2247,21 @@ u16 gTaopoSwampVentsVents[] = {
 /// The actors the vents room's puffs land on, its two pillars, ended by 0.
 u16 gTaopoSwampVentsPillars[] = {ACTOR_WEST_VENT_PILLAR, ACTOR_EAST_VENT_PILLAR, 0};
 
+/// The pillar gap room's vents, as gTaopoSwampVentsVents.
 u16 gTaopoSwampPillarGapVents[] = {
     424, 104, 4,
     536, 136, 4,
     0,
 };
 
+/// The drips room's vents, as gTaopoSwampVentsVents.
 u16 gTaopoSwampDripsVents[] = {
     408, 408, 4,
     472, 360, 4,
     0,
 };
 
+/// The rock room's vents, as gTaopoSwampVentsVents.
 u16 gTaopoSwamp_RockRoomVents[] = {
     216, 184, 4,
     312, 136, 4,
@@ -2551,9 +2554,7 @@ struct Trigger gTaopoSwampDripsTriggers[] = {
 /// (TaopoSwamp_PuffSteam); the frames the passage takes to dry, eight to a row
 /// (TaopoSwamp_OpenPassage); and the pool's flickers (TaopoSwamp_FlickerPool).
 s32 gTaopoSwamp_SteamPuffs = 112;
-
 s32 gTaopoSwamp_PassageFrames = 120;
-
 s32 gTaopoSwamp_PoolFrames = 24;
 
 struct Trigger gTaopoSwampTremorTriggers[] = {
@@ -2629,4 +2630,5 @@ struct Trigger gTaopoSwampStarDustTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The Star Dust's sparkle, in frames from 0 to 59.
 s32 gTaopoSwamp_SparkleFrame = 0;

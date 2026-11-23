@@ -2150,6 +2150,7 @@ void ChampaCliffCaves_FlareAndDieDown(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
+/// The three prongs Obaba throws into her forge, in turn.
 struct TridentProngs gChampaCliffCaves_Prongs = {
     {ITEM_RIGHT_PRONG, ITEM_LEFT_PRONG, ITEM_CENTER_PRONG}};
 

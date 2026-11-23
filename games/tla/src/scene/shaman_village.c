@@ -3289,6 +3289,7 @@ s32 gShamanVillage_HopFortuneTellerScript[] = {
     SC_END,
 };
 
+/// The VRAM cache entry the lettering's picture takes; -1 for none.
 s16 gShamanVillage_LetteringVramEntry[] = {
     -1,
 };

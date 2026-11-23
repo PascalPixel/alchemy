@@ -117,6 +117,7 @@ void FadeOverlay_FillTiles(s32 a);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
 struct EffectSprite gJupiterLighthouse_GlowSprite BSS_DATA ALIGNED(16);
+/// Where the glow over the Cyclone pad in use stands.
 s32 gJupiterLighthouse_GlowPosition[3] BSS_DATA;
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;

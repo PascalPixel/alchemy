@@ -1519,6 +1519,8 @@ s32 Contigo_SelectLuckyWheelsPrize(s32 icon) {
   return gContigo_WheelsPrizes[index + icon + variant];
 }
 
+/// The scene's own work in EWRAM (ewram.s), which each scene lays out its own
+/// way.
 extern u8 gSceneState[];
 
 /// The dice games cost 10 coins for each level of the party's average level;

@@ -74,18 +74,24 @@ FIXED Party_GetPpRatio(void);
 /// flight out until the turn ends.
 #define FLIGHT_TURN_STEP (TRIG_TURN / 2048)
 
+/// The beams' palette when they light up.
 extern s32 gStaffCredit_BeamsLightPalette[];
 
 u16 gStaffCredit_BlendLevel BSS_DATA;
 u16 gStaffCredit_BlendSteady BSS_DATA;
+/// The actors the World Map has placed (world_map_objects.c).
 struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
 u16 gStaffCredit_TransitionBlend BSS_DATA;
 s16 gGauge_Shown BSS_DATA ALIGNED(4);
 s16 gGauge_Vram BSS_DATA;
 s16 gGauge_Countdown BSS_DATA;
+/// The Psynergy gauge's sprite, its tiles as drawn, and the pictures they are
+/// drawn from (world_map_gauge.c).
 u32 gGauge_Sprite[3] BSS_DATA;
 u8 gGauge_Tiles[8][32] BSS_DATA;
 u8 gGauge_SourceTiles[12][32] BSS_DATA;
+/// The beacon scene's pictures: the beacons' palettes, the beams' palette,
+/// their maps and their tiles.
 extern u8 gStaffCredit_BeaconPalettes[];
 extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
@@ -904,6 +910,7 @@ s32 gWorldMap_SparkScript[] = {
 // clang-format off
 #include "shared/world_map_particle_script.c"
 
+/// The colour modes the ship's glow steps through, one every other frame.
 u32 gStaffCredit_GlowColorModes[] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_BLUE_TINT, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GREY,
 };
@@ -1014,6 +1021,9 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// Each beacon flight's camera: where it starts and ends and where it returns
+/// to, in pixels; its zoom at the start and end; its frames; its turns; and the
+/// glow's fade in.
 // clang-format off
 LATE_DATA s16 gStaffCredit_FlightStarts[][2] = {
     {9276, 1782}, {10754, 3137}, {10160, 6268}, {8243, 7334}, {8926, 5100},

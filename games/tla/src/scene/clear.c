@@ -64,6 +64,8 @@ extern s16 gClear_CodeUnlocked;
 
 extern u16 gClear_PasswordStackItems[];
 
+/// The step of the logo's fade in (Clear_FadeInBlend), then the second
+/// code's unlock and both codes' progress and held keys.
 extern u16 gClear_BlendFrame[];
 extern s16 gClear_ExtraCodeUnlocked;
 extern s16 gClear_CodeProgress;
@@ -100,6 +102,7 @@ extern u8 gClear_SecondPasswordRow[];
 extern u8 gClear_ThirdPasswordRow[];
 void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
 
+/// The password screen's grid of kana, a 24 by 13 window tilemap (tilemap.s).
 extern u8 gClear_PasswordGrid[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -698,6 +701,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 #else
 #define PASSWORD_BUFFER_SIZE PASSWORD_GOLD_LENGTH
 #endif
+/// The password as the player enters it, a symbol a byte.
 u8 gClear_PasswordText[PASSWORD_BUFFER_SIZE] BSS_DATA;
 /// The entered password's bytes, decoded (Clear_DecodePassword).
 u8 gClear_DecodedPassword[PASSWORD_GOLD_BYTES] BSS_DATA;
@@ -2057,16 +2061,19 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef TILE_GRID_FIRST_TILE
 #undef WORD
 
+/// The four whose data a Broken Seal password brings in, in its order.
 // clang-format off
 LATE_DATA s32 gClear_ImportedMembers[] = {
     ISAAC, GARET, IVAN, MIA,
 };
 
+/// The key items a Broken Seal password gives Isaac's party, in its order.
 LATE_DATA u16 gClear_ImportedKeyItems[] = {
     ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP, ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
     ITEM_HALT_GEM, ITEM_CLOAK_BALL, ITEM_CARRY_STONE, ITEM_CATCH_BEADS,
 };
 
+/// The items a Broken Seal password gives a count of, in its order.
 LATE_DATA u16 gClear_ImportedStackItems[] = {
     ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
     ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_WATER_OF_LIFE, ITEM_POWER_BREAD,
@@ -2076,6 +2083,7 @@ LATE_DATA u16 gClear_ImportedStackItems[] = {
     ITEM_CRYSTAL_POWDER, ITEM_NONE,
 };
 
+/// The same list as gClear_ImportedMembers, under another name.
 LATE_DATA s32 gClear_PasswordMembers[] = {
     ISAAC, GARET, IVAN, MIA,
 };
@@ -2096,6 +2104,7 @@ LATE_DATA u16 gClear_PasswordKeyItems[] = {
     ITEM_HALT_GEM, ITEM_CLOAK_BALL, ITEM_CARRY_STONE, ITEM_CATCH_BEADS,
 };
 
+/// The same list as gClear_ImportedStackItems, under another name.
 LATE_DATA u16 gClear_PasswordStackItems[] = {
     ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
     ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_WATER_OF_LIFE, ITEM_POWER_BREAD,

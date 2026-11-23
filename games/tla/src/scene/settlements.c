@@ -362,6 +362,7 @@ void FieldEffect_StartBlankOverlay(s32 a);
 
 void Actor_PlaceBlocks(const void *data);
 
+/// The falls' water colours as they run, and as the map loads them.
 u16 gSettlements_WaterColors[16] BSS_DATA;
 u16 gSettlements_WaterColorsSaved[16] BSS_DATA;
 u8 gSettlements_UnusedAfterWaterColorsSaved[64] BSS_DATA;
@@ -1606,4 +1607,5 @@ struct Trigger gSettlements_AttekaIsletHousesTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The frames the falls' water colours have run; -1 before they start.
 s32 gSettlements_WaterColorFrame = -1;

@@ -1657,6 +1657,7 @@ u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0,
 };
 
+/// The music and sounds the song request offers, numbered from 0 in its window.
 u16 gLinkLobby_SongRequestSounds[] = {
     MUS_TRY_YOUR_LUCK,
     MUS_THE_BROKEN_SEAL,

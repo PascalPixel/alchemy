@@ -584,6 +584,7 @@ struct PopTransform {
   u32 padding : 16;
 };
 
+/// The page arrow's pictures, a frame each.
 extern const u8 gWindowSprite_PageArrowTiles[];
 extern const u8 gWindowSprite_CursorBobOffsets[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];

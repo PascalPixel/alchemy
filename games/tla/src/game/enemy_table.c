@@ -6,6 +6,7 @@
 
 #include "game_internal.h"
 
+/// The enemies' definitions, a row an enemy (Enemy_GetDefinition).
 // clang-format off
 const struct EnemyDefinition gEnemy_Definitions[] = {
     // ???

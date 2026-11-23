@@ -2841,6 +2841,7 @@ u32 gGaroh_WerewolfLookAroundScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// The path's colours by night, BG palette 6's colours 1 to 9.
 u16 gGaroh_HypnosSwordChestNightColors[] = {
     31, 31, 31, 29, 29, 30, 27, 28,
     29, 25, 27, 28, 23, 25, 27, 21,
@@ -2848,6 +2849,7 @@ u16 gGaroh_HypnosSwordChestNightColors[] = {
     5, 6, 6,
 };
 
+/// The path's colours by day, BG palette 1's colours 8 to 15.
 u16 gGaroh_HypnosSwordChestDayColors[] = {
     24, 28, 30, 19, 24, 27, 15, 20,
     25, 11, 16, 23, 7, 12, 21, 3,
@@ -3227,6 +3229,7 @@ struct Trigger gGaroh_WerewolfCaveTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The frames counted at night; a wolf howls every 1,024.
 s32 gGaroh_HowlFrames = 0;
 
 u32 gGaroh_QuestionMarkScript[] = {

@@ -4019,5 +4019,7 @@ struct Trigger gAirsRockInside_PsynergyStoneTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The great hall's level the leader stood at when its ledge cells were last
+/// set; -1 before.
 s32 gAirsRockInside_LeaderLevel = -1;
 #undef Actor_SetHorizontalPositionWithTerrain

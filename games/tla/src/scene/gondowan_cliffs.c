@@ -385,6 +385,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGondowanCliffs_Triggers;
 }
 
+/// The water's colours as the map loads them, which the shimmer turns through.
 u16 gGondowanCliffs_SavedWaterColors[WATER_COLORS] BSS_DATA;
 
 /// Makes the water shimmer: its four colours turn one step every 16 frames.

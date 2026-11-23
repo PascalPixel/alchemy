@@ -646,6 +646,10 @@
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3
 /// KolimaForestFloodgate's chest.
 #define FLAG_KOLIMA_FOREST_FUR_COAT 0xf00
+/// Tret Tree's chest on the third floor, between its webs (TreeRooms).
+#define FLAG_TRET_TREE_HEALING_RING 0xf5b
+/// Tret Tree's chest on the fifth floor, east of its web (TreeRooms).
+#define FLAG_TRET_TREE_NUT 0xf5c
 
 // Lamakan Desert
 /// The Manticore, on the third scene, is beaten.

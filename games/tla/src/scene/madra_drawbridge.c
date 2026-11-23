@@ -55,7 +55,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// The east guard asks whether the party is bound for Osenia, and without the
 /// elder's permission sends it back to town for a permit.
-/// "You goin' to Osenia?"
 void MadraDrawbridge_AskGoingToOsenia(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -102,6 +101,7 @@ void MadraDrawbridge_BlockBridge(void) {
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     Event_SetFlag(FLAG_GUARDS_BLOCKED_BRIDGE);
     FieldCamera_WaitForArrival();
+    // The guards now stand across the bridge: no one walks past them.
     MapGrid_CopyCellAttributes(11, 9, 4, 1, 8, 14);
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       Event_SetMessageId((s32)MsgMadraNeedEldersPermission);
@@ -118,8 +118,7 @@ void MadraDrawbridge_BlockBridge(void) {
   }
 }
 
-/// With the elder's permission, the guards let the party through.
-/// "Yeah, we heard about you already."
+/// With the elder's permission, the guards greet the party and let it through.
 void MadraDrawbridge_LetPermittedPartyThrough(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -156,8 +155,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 188, 0, 260,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 188, 0, 260, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MADRAN_SOLDIER, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 132, 0, 260, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),

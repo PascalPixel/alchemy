@@ -4015,6 +4015,8 @@ s16 gTrialRoad_StageMapCells[][2] = {
     {15, 70}, {29, 70}, {1, 92}, {15, 92},
 };
 
+/// The stage pattern each of the ten treasures belongs to: as a stage is laid,
+/// the treasures of the others are put aside at (0, 0).
 s8 gTrialRoad_RulesTreasureStages[] = {
     0, 1, 2, 3, 4, 4, 4, 5,
     6, 7,

@@ -2544,6 +2544,9 @@ struct Trigger gTaopoSwampDripsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The cooled pool's countdowns: the steam puffs still to rise, one a frame
+/// (TaopoSwamp_PuffSteam); the frames the passage takes to dry, eight to a row
+/// (TaopoSwamp_OpenPassage); and the pool's flickers (TaopoSwamp_FlickerPool).
 s32 gTaopoSwamp_SteamPuffs = 112;
 
 s32 gTaopoSwamp_PassageRows = 120;

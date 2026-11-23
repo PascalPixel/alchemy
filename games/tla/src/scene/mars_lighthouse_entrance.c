@@ -2709,6 +2709,7 @@ struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// 1 while the dragon face at the west end of the long hall breathes fire.
 u32 gMarsLighthouseEntrance_DragonFireOn[] = {
     0,
 };

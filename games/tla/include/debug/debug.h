@@ -2,13 +2,12 @@
 #define ALCHEMY_DEBUG_H
 
 /// @file
-/// DEBUG
+/// What the debug menus and the debug rooms share: the warp menu's presets,
+/// the shortcut grid's abilities, the palette editor's swatches and the steps
+/// the debug choosers take.
 
 #include "types.h"
 #include "edition.h"
-
-s32 Scene_ApplyEntrance(s32);
-s32 Field_PlaceAtEntrance(void);
 
 /// The palette editor's swatch tiles, compressed; it decompresses them to
 /// tile 208 of character block 0, one tile a colour.
@@ -41,6 +40,8 @@ extern const s16 gDebugShortcut_Abilities[4][9];
 /// chooser (battle_debug.c) takes it on Up and Down, ten encounters.
 #define DEBUG_LARGE_STEP 10
 
+/// The warp menu's handlers, one a row of gDebugWarp_Presets, each named for
+/// its row's label ("0:Jupiter" to "8:Kaoru Special1").
 void DebugWarp_Jupiter(void);
 void DebugWarp_Arafura2(void);
 void DebugWarp_EnergySample(void);

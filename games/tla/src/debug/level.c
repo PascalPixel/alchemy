@@ -63,15 +63,15 @@ enum {
   ENTRANCE_NAMES_FIRST = 99
 };
 
-/// The entrances the code tests against: up to the first is the debug room's,
-/// above the second the rooms of names'.
+/// Entrances up to ENTRANCE_DEBUG_ROOM_LAST open the debug room; those above
+/// ENTRANCE_NAMES_ABOVE take the rooms of names' triggers.
 enum { ENTRANCE_DEBUG_ROOM_LAST = 89, ENTRANCE_NAMES_ABOVE = 94 };
 
 /// The debug room's actors, numbering the rows of
 /// gIncreaseItemAndLevel_ActorPlacements, as The Broken Seal's.
 enum IncreaseItemAndLevelActorId {
-  ACTOR_ITEM_BROWSER = 8, ///< IncreaseItemAndLevel_SelectItem
-  ACTOR_ICON_BROWSER,     ///< IncreaseItemAndLevel_OpenIconBrowser
+  ACTOR_ITEM_BROWSER = ACTOR_FIRST_PLACED, ///< IncreaseItemAndLevel_SelectItem
+  ACTOR_ICON_BROWSER, ///< IncreaseItemAndLevel_OpenIconBrowser
   /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs
   /// IncreaseItemAndLevel_RunMotionTest.
   ACTOR_PORTRAIT_BROWSER,
@@ -81,7 +81,6 @@ enum IncreaseItemAndLevelActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/// The region at Tret's foot that leads into the Tret Tree.
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
@@ -104,8 +103,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define LEVEL_EDITOR_SCALE (FIXED_ONE * 17 / 10)
 
 /// Shows the name of the person talked to in a room of names: actor `actorId`
-/// says the message its room's list of names gives it. The first room's list
-/// starts at Master Poi, the third's at Alex.
+/// says the message its room's list of names gives it. Each base below is the
+/// message ACTOR_FIRST_PLACED lines before its room's first name: "Master Poi"
+/// in the first room, "Susa" in the second, "Alex" in the third and "Weapons
+/// Shop" in the fourth.
 void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -148,13 +149,13 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIncreaseItemAndLevel_Triggers;
 }
 
-/// Raises one party member's level by amount, then recalculates that unit.
+/// Raises one party member `amount` levels and works out their new stats.
 void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   Unit_LevelUpTo(ownerId, Unit_Get(ownerId)->level + amount);
   Unit_Calculate(ownerId);
 }
 
-/// Applies the level change to every party member.
+/// Raises every party member `amount` levels.
 void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   s32 ownerCount;
@@ -165,19 +166,11 @@ void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
     IncreaseItemAndLevel_AdjustOwnerLevel(ownerIds[i], amount);
 }
 
-/// The pressed keys under a mask, for the last test of a group: the next
-/// test loads gInput's address again.
-static inline u32 Input_PressedFenced(u32 mask) {
-  u32 keys = gInput.pressed & mask;
-
-  return keys;
-}
-
 /// Displays the leader's level and changes the whole party's, as The Broken
 /// Seal's: talking to ACTOR_LEVEL_EDITOR shows `Raise everyone's level.` over
 /// the leader's name and level; Start or Select raises the whole party five
-/// levels with a jingle (sound 93), A one level (sound 91). B closes the
-/// window and recalculates the original four heroes.
+/// levels to the Super Lucky jingle, A one level to the Lucky one. B closes
+/// the window and works out the stats of Isaac, Garet, Mia and Ivan again.
 void IncreaseItemAndLevel_RunLevelEditor(void) {
   struct Unit *unit;
   struct Window *window;
@@ -204,7 +197,7 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
     }
 
     if ((gInput.pressed & KEY_START) != 0 ||
-        Input_PressedFenced(KEY_SELECT) != 0) {
+        (gInput.pressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
       Sound_Play(MUS_SUPER_LUCKY);
       redraw = 1;
@@ -248,7 +241,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
   void *details;
   s32 selectedItemId;
   s32 redraw;
-  s32 messageOrDefinitionId;
+  s32 itemId;
   s32 entryCount;
   s8 seekDirection;
 
@@ -257,15 +250,15 @@ void IncreaseItemAndLevel_SelectItem(void) {
   Sound_Play(SE_MENU_CONFIRM);
   selectedItemId = 1;
   redraw = 1;
-  window = Window_Create(0, 0, 30, 7, 2);
+  window = Window_Create(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 #if LANGUAGE < LANGUAGE_GERMAN
-  details = Window_Create(0, 8, 13, 10, 2);
+  details = Window_Create(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 #else
-  details = Window_Create(0, 9, 18, 10, 2);
+  details = Window_Create(0, 9, 18, 10, WINDOW_FLAG_INSTANT);
 #endif
-  // Lend the highlight palette (BG palette 14) to the item icons, as The
-  // Broken Seal's: sprite palette 0 into it, then the window background colour
-  // over its text background.
+  // Lend the highlight palette to the item icons, as The Broken Seal's: sprite
+  // palette 0 into it, then the window background colour over its text
+  // background.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
@@ -283,12 +276,10 @@ void IncreaseItemAndLevel_SelectItem(void) {
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
-        messageOrDefinitionId = selectedItemId & INVENTORY_ITEM_ID_MASK;
-        Item_GetDirect(messageOrDefinitionId);
-        Text_DrawMessageAsTiles(messageOrDefinitionId + (s32)MsgItemName,
-                                window, 120, 0);
-        Text_DrawMessage(messageOrDefinitionId + (s32)MsgItemPlainName, window,
-                         0, 16);
+        itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
+        Item_GetDirect(itemId);
+        Text_DrawMessageAsTiles(itemId + (s32)MsgItemName, window, 120, 0);
+        Text_DrawMessage(itemId + (s32)MsgItemPlainName, window, 0, 16);
         WindowSprite_RedrawSavedRect(details);
         ItemMenu_DrawItemDetails(details, selectedItemId);
       } else {
@@ -593,8 +584,8 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
 };
 
 /// The rooms of names' triggers: each party member says their name, and each
-/// placed person from actor 8 to 32 theirs. The debug room's two Force rows
-/// stay at the end.
+/// of the first 25 people placed theirs. The debug room's two Force rows stay
+/// at the end.
 struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
     {TRIGGER_TALK, ISAAC, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_ShowCharacterName)},
@@ -610,31 +601,56 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
      EVENT(IncreaseItemAndLevel_ShowCharacterName)},
     {TRIGGER_TALK, PIERS, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_ShowCharacterName)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 0, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 1, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 2, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 3, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 4, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 5, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 6, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 7, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 8, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 9, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 10, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 11, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 12, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 13, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 14, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 15, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 16, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 17, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 18, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 19, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 20, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 21, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 22, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 23, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
+    {TRIGGER_TALK, ACTOR_FIRST_PLACED + 24, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_ShowName)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -653,9 +669,9 @@ void IncreaseItemAndLevel_RequestExit(s32 countdown) {
   Import_EventSetExitRequest(countdown);
 }
 
-/// The scene's initialize entry: starts the window transition, and in the
-/// debug room (entrances up to 89) draws ACTOR_LEVEL_EDITOR 1.7 times its
-/// size, as The Broken Seal's Japanese edition does.
+/// Opens the room through the window transition, and in the debug room draws
+/// ACTOR_LEVEL_EDITOR 1.7 times its size, as The Broken Seal's Japanese
+/// edition does.
 s32 Scene_Initialize(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -683,7 +699,7 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
   Event_End();
 }
 
-/// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force
+/// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run just before Force is
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is.
 void IncreaseItemAndLevel_EnableEffectChildMode(void) {
@@ -694,10 +710,10 @@ void IncreaseItemAndLevel_EnableEffectChildMode(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Opens the icon browser. Talking to ACTOR_ICON_BROWSER.
+/// Talking to ACTOR_ICON_BROWSER: pages of item, Psynergy and status icons.
 void IncreaseItemAndLevel_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
-/// Opens the portrait browser. Talking to ACTOR_PORTRAIT_BROWSER.
+/// Talking to ACTOR_PORTRAIT_BROWSER: the portraits, one at a time.
 void IncreaseItemAndLevel_OpenPortraitBrowser(void) {
   DebugBrowser_Portraits();
 }

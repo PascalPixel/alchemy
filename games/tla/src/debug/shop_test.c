@@ -46,6 +46,9 @@
 /// FLAG_SUNSHINE_FORGING is; here only leaving the room clears it.
 #define FLAG_SHOP_TEST_SUNSHINE_FORGING FLAG_SCENE_TEMP_00
 
+/// The stage Scoop passes its spot's event each frame of the dig.
+enum { SCOOP_STAGE_DUG = 1, SCOOP_STAGE_AFTER_DIG };
+
 /// The room's people, numbered in the order of gActorPlacements: the shops'
 /// people, then the testers, each named for what talking to it opens
 /// (gSceneEvents).
@@ -184,24 +187,25 @@ void ShopTest_BrowseSanctumMessages(void) {
   ShopTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers, SANCTUM_MESSAGES);
 }
 
-/// The shops and the inn, each passed the keeper's actor id.
+/// The shops and the inn, each passed the keeper's actor id: Daila's weapon
+/// shop.
 void ShopTest_OpenWeaponShop(s32 keeper) {
   Shop_Run(SHOP_DAILA_WEAPONS, keeper);
 }
 
-/// Opens the armor shop.
+/// Daila's armor shop.
 void ShopTest_OpenArmorShop(s32 keeper) { Shop_Run(SHOP_DAILA_ARMOR, keeper); }
 
-/// Opens the item shop.
+/// Daila's item shop.
 void ShopTest_OpenItemShop(s32 keeper) { Shop_Run(SHOP_DAILA_ITEMS, keeper); }
 
-/// Opens the general store.
+/// Izumo's general store.
 void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(SHOP_IZUMO, keeper); }
 
-/// Opens the inn.
+/// Daila's inn.
 void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(DAILA_INN, keeper); }
 
-/// Opens the Sanctum.
+/// Talking to ACTOR_SANCTUM_PRIEST opens the Sanctum.
 void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
 
 s32 PartyInventory_FindRoom(s32 item);
@@ -649,11 +653,11 @@ void Party_AddIsaacsParty(void);
 /// ENTRANCE_WITH_ISAACS_PARTY.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 *effect = &work->transition;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  s32 *transition = &work->transition;
+  struct MainRoutineWork *mainWork = &gMainRoutineWork;
 
-  *effect = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  party->messageSpeed = MESSAGE_SPEED_FAST;
+  *transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  mainWork->messageSpeed = MESSAGE_SPEED_FAST;
   Actor_SetAnimationById(ACTOR_SANCTUM_MESSAGES, EMOTE_ELLIPSIS);
   Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, EMOTE_ELLIPSIS);
   Actor_SetAnimationById(ACTOR_ARMOR_SHOP_MESSAGES, EMOTE_ELLIPSIS);
@@ -662,7 +666,7 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimationById(ACTOR_LIGHT_BULB_B, EMOTE_LIGHT_BULB);
   Actor_SetAnimationById(ACTOR_LIGHT_BULB_C, EMOTE_LIGHT_BULB);
   Actor_SetAnimationById(ACTOR_LIGHT_BULB_D, EMOTE_LIGHT_BULB);
-  if (party->entrance == ENTRANCE_WITH_ISAACS_PARTY)
+  if (mainWork->entrance == ENTRANCE_WITH_ISAACS_PARTY)
     Party_AddIsaacsParty();
   return 0;
 }
@@ -845,32 +849,32 @@ void ShopTest_SelectItem(void) {
   Window_Close(details, 2);
 }
 
-/// Opens the icon browser.
+/// Talking to ACTOR_ICON_BROWSER: pages of item, Psynergy and status icons.
 void ShopTest_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
-/// Opens the portrait browser.
+/// Talking to ACTOR_PORTRAIT_BROWSER: the portraits, one at a time.
 void ShopTest_OpenPortraitBrowser(void) { DebugBrowser_Portraits(); }
 
 /// Unused: the Psynergy test's PsynergyTest_DigCells again.
-UNUSED void ShopTest_DigCells(s32 mode, s32 sourceX, s32 sourceY, s32 width,
+UNUSED void ShopTest_DigCells(s32 stage, s32 sourceX, s32 sourceY, s32 width,
                               s32 height, s32 destinationX, s32 destinationY) {
-  if (mode == 1)
+  if (stage == SCOOP_STAGE_DUG)
     Map_CopyCellsRect(sourceX, sourceY, width, height, destinationX,
                       destinationY);
 }
 
 /// Unused: the Psynergy test's PsynergyTest_GrowActor again.
-UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void ShopTest_GrowActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
   s32 scale;
 
   actor = Actor_GetById(id);
-  if (mode == 1) {
+  if (stage == SCOOP_STAGE_DUG) {
     Actor_SetPosition(id, x, z);
     actor->scaleX = 0;
     actor->scaleY = 0;
   }
-  if (mode == 2) {
+  if (stage == SCOOP_STAGE_AFTER_DIG) {
     while (actor->scaleX < FIXED_ONE) {
       wait(1);
       scale = actor->scaleX;
@@ -884,14 +888,14 @@ UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
 }
 
 /// Unused: the Psynergy test's PsynergyTest_DropActor again.
-UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void ShopTest_DropActor(s32 stage, s32 id, s32 x, s32 z) {
   struct Actor *actor;
 
   actor = Actor_GetById(id);
-  if (mode == 2) {
+  if (stage == SCOOP_STAGE_AFTER_DIG) {
     Actor_SetPosition(id, x, z);
     actor->y.fixed = toFIXED(32);
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->gravity = toFIXED(0.09);
     wait(50);
   }
@@ -899,21 +903,19 @@ UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
 
 void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 
-/// Unused: the Psynergy test's PsynergyTest_RaiseStatue again. Mode 1 places a
-/// brown boulder at (x, z) in pixels; mode 2 grows a winged statue there from
-/// two fifths to full size while it turns, then turns it opposite the leader's
-/// facing and starts the battle in slot `slot` of encounter zone `zone`.
-UNUSED void ShopTest_RaiseStatue(s32 mode, s32 x, s32 z, s32 zone, s32 slot) {
+/// Unused: the Psynergy test's PsynergyTest_RaiseStatue again, which starts
+/// the battle in slot `slot` of encounter zone `zone`.
+UNUSED void ShopTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 zone, s32 slot) {
   struct Actor *actor;
 
-  if (mode == 1) {
+  if (stage == SCOOP_STAGE_DUG) {
     actor = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
     if (actor != NULL) {
       Actor_SetSpriteFlags(actor, 0);
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     }
   }
-  if (mode == 2) {
+  if (stage == SCOOP_STAGE_AFTER_DIG) {
     actor = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE,
                                                 toFIXED(x), 0, toFIXED(z)));
     if (actor != NULL) {
@@ -938,4 +940,3 @@ UNUSED void ShopTest_RaiseStatue(s32 mode, s32 x, s32 z, s32 zone, s32 slot) {
     }
   }
 }
-#undef ITEM_SELECTOR_ITEM_COUNT

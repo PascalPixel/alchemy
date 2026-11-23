@@ -1965,12 +1965,16 @@ void ShrineOfTheSeaGod_LightTorch(void) {
 }
 
 /// Casting Sand in the rope room turns Felix to sand as anywhere, and here also
-/// lets him slip under the rocks at the room's west edge into the dark beyond.
-/// The cells sand can cross are on the map's overhead layer, and the game
-/// moves him onto it.
+/// moves him onto the map's overhead layer. That layer's cells here (behaviour
+/// 232, ringed by cells 16 pixels down) mark out a winding way under the ridge
+/// of rock round the south ladder, cells (13, 21) to (25, 23) and (21, 18) to
+/// (20, 27), reaching the floor west of the ridge, the corridor south of it
+/// and the ledge east of it. Cast by the
+/// south ladder with no key held, Felix sinks into the sand and rises again in
+/// place a second later.
 void ShrineOfTheSeaGod_CastSand(void) {
-  // XXX: where the sand's way under the west rocks leads; a recording of Felix
-  // as sand following it would settle it.
+  // XXX: where the way leads as sand; a recording that holds the pad while he
+  // is sand (the recorder's keys start only once he has risen) would settle it.
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 

@@ -90,7 +90,7 @@ void FieldPsynergy_StartCloak(void) {
   }
 }
 
-/// Per-frame update of a falling mote: once it reaches its floor it starts the
+/// A Douse drop's per-frame update: once it reaches its ground it starts the
 /// shared particle script and stops updating.
 void BattleEffect_LandFallingObject(struct Actor *actor) {
   if (actor->y.fixed <= actor->groundHeight) {
@@ -134,7 +134,7 @@ void FieldPsynergy_Douse(void) {
   s32 y;
   s32 n;
   struct Actor *particle;
-  struct PendingEvent *ev;
+  struct PendingEvent *trigger;
 
   cloud = Actor_Spawn(SPRITE_RAIN_CLOUD, i = raised = 0, 0, 0);
   if (cloud == 0)
@@ -202,11 +202,12 @@ void FieldPsynergy_Douse(void) {
       Sound_PlayFar(SE_WATER);
       wait(6);
       if (n == DOUSE_TARGET_DROP) {
-        ev = Scene_FindPsynergyTrigger(
+        trigger = Scene_FindPsynergyTrigger(
             PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_DOUSE,
             Scene_SelectPsynergyTarget(FIELD_PSYNERGY_DOUSE));
-        if (ev != 0)
-          Field_RunPsynergyEvent(ev, work->firstActorId, work->secondActorId);
+        if (trigger != 0)
+          Field_RunPsynergyEvent(trigger, work->firstActorId,
+                                 work->secondActorId);
       }
     }
     wait(10);
@@ -352,7 +353,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->speedLimit = toFIXED(2) / 5;
   target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = 0;
-  target->layer = 2;
+  target->layer = MAPGRID_LAYER_OVERHEAD;
   for (;;) {
     wait(1);
     if ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
@@ -382,8 +383,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
                  target->z.fixed);
     Vector_AddPolarOffset(toFIXED(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
-    // Both tests jump into the one blocked arm; as one || test the routine
-    // differs in 382 of its 551 instructions.
+    // Blocked by an actor or by the ground: the hands strain and a buzz
+    // sounds.
     if (i != 0)
       goto blocked;
     if (Actor_ProbeRaised(target, &position) > 0) {
@@ -455,10 +456,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SetSpriteColorModeFar(target, work->savedPalette);
   Actor_StartScriptFar(target, (u32)(work->savedScript));
   target->update = work->savedCallback;
-  target->motionFlags = 3;
+  target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   target->velocityY = toFIXED(10);
   target->bounce = toFIXED(1) / 5;
-  target->layer = 0;
+  target->layer = MAPGRID_LAYER_GROUND;
   source->update = NULL;
   Actor_SetSpriteColorModeFar(source, SPRITE_COLOR_NORMAL);
   if ((s8)work->childOption != 0) {

@@ -6,7 +6,9 @@
 #include "field/terrain_tables.h"
 #include "types.h"
 
-/// Height-curve tables, indexed by (row << 4) + column within a 16x16 cell.
+/// Which sample a TERRAIN_ROUNDED_SQUARE cell takes at each pixel, by
+/// (row << 4) + column: the second (1) inside a square whose corners are
+/// rounded off, the first (0) in the corners.
 // clang-format off
 const u8 gTerrain_LerpWeightTable[256] = {
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,

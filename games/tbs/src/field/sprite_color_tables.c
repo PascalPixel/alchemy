@@ -1,10 +1,14 @@
 /// @file
-/// The five sprite colour tables, 256 bytes each.
+/// The colour tables of SpriteColorModes 1 to 5, which swap a sprite's colour
+/// channels, 256 bytes each: a pixel's colour number to the one it is drawn
+/// in. A sprite picture cache loaded with variant 1 to 5 is recoloured
+/// through the same tables (SpritePictureCache_Load).
 
 #include "system/system.h"
 
 // clang-format off
 const u8 gSpriteColorTables[][256] = {
+    // SPRITE_COLOR_GRB
     {
         0, 1, 5, 33, 4, 2, 45, 186, 8, 135, 106, 21, 50, 13, 14, 15,
         32, 27, 181, 31, 125, 11, 22, 28, 34, 44, 96, 17, 23, 29, 35, 19,
@@ -23,6 +27,7 @@ const u8 gSpriteColorTables[][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
+    // SPRITE_COLOR_RBG
     {
         0, 1, 2, 78, 186, 8, 80, 7, 5, 95, 126, 76, 12, 13, 14, 15,
         42, 77, 18, 109, 110, 111, 112, 113, 114, 145, 146, 147, 148, 149, 150, 31,
@@ -41,6 +46,7 @@ const u8 gSpriteColorTables[][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
+    // SPRITE_COLOR_BGR
     {
         0, 1, 8, 193, 7, 5, 6, 4, 2, 160, 201, 121, 73, 13, 14, 15,
         187, 157, 37, 19, 55, 91, 127, 163, 199, 25, 61, 97, 133, 169, 205, 109,
@@ -59,6 +65,7 @@ const u8 gSpriteColorTables[][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
+    // SPRITE_COLOR_GBR
     {
         0, 1, 8, 183, 186, 2, 45, 4, 5, 165, 196, 111, 73, 13, 14, 15,
         182, 147, 37, 31, 40, 76, 112, 148, 184, 44, 41, 77, 113, 149, 185, 109,
@@ -77,6 +84,7 @@ const u8 gSpriteColorTables[][256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
+    // SPRITE_COLOR_BRG
     {
         0, 1, 5, 103, 7, 8, 80, 186, 2, 100, 141, 91, 50, 13, 14, 15,
         67, 97, 181, 109, 115, 121, 127, 133, 139, 145, 151, 157, 163, 169, 175, 19,

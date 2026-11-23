@@ -135,33 +135,60 @@ extern struct Trigger gShipRooms_RowingDeckTriggersArrived[];
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_PLACED FLAG_SCENE_TEMP_00
 
 /// Operations shared by the captain's quarters, passenger hold and rowing-deck
-/// events.
+/// events (ShipRooms_RunEventCommand), with what each takes as its arg and opt.
 enum ShipEventCommand {
+  /// The leader and Ivan face east, Garet and Mia west; then wait opt frames.
   SHIP_FACE_PARTY_EAST_AND_WEST,
+  /// The party faces the heading arg; then wait opt frames.
   SHIP_FACE_PARTY,
+  /// The party nods, waiting for Mia's nod to end if arg; then opt frames.
   SHIP_PLAY_PARTY_ANIMATION,
+  /// Each of the party shows its attached effect once; then wait opt frames
+  /// (arg is not read).
   SHIP_SHOW_PARTY_EMOTE,
+  /// The first arg oarsmen leave their seats.
   SHIP_HIDE_FIRST_OARSMEN,
+  /// Actor arg rows, at animation speed opt.
   SHIP_START_ROWING_ANIMATION,
+  /// Actor arg rows facing the other way, at animation speed opt.
   SHIP_START_MIRRORED_ROWING_ANIMATION,
+  /// Actor arg takes its rowing pose, held still unless opt.
   SHIP_SET_SELECTED_ROWER_POSE,
+  /// The screen opens, waiting for it if arg (opt is not read).
   SHIP_OPEN_SCREEN,
+  /// The screen closes, then the party takes exit arg if it is not 0.
   SHIP_CLOSE_SCREEN,
+  /// The companions are placed, the chosen passengers take their seats and the
+  /// party stands together on the rowing deck, facing south.
   SHIP_SETUP_ROWING_PARTY,
+  /// The oarsmen of the fourth seat on stand at their seats, the fourth only if
+  /// arg, and the oars are put back beside the seats.
   SHIP_RESTORE_ROWING_DECK_POSES,
+  /// Actor arg stands, facing south-southeast if opt, else south-southwest.
   SHIP_RESTORE_ROWER_POSE,
   SHIP_HIDE_QUARTERS_CREW,
   SHIP_HIDE_OURANOS_AND_SEAN,
+  /// The view goes to the captain in his cabin, with the anchor charm if arg,
+  /// opening the screen if opt.
   SHIP_SETUP_CAPTAINS_QUARTERS,
+  /// Only Kaja stands on the rowing deck, by the stairs.
   SHIP_SETUP_RECRUITMENT_DECK,
   SHIP_HIDE_OARS,
+  /// Five passengers take their places in the hold, and Ouranos and Sean go.
   SHIP_SETUP_PASSENGER_HOLD,
+  /// The crew and oarsmen take their places as the monsters strike, actors arg
+  /// and opt among them at the west seats.
   SHIP_SETUP_MONSTER_ENCOUNTER,
+  /// Clears the flags arg to opt.
   SHIP_CLEAR_FLAG_RANGE,
+  /// Clears every seat's chosen rower and the attacks' flags.
   SHIP_CLEAR_ROWING_SELECTIONS,
+  /// The companions go and the third oarsman trembles.
   SHIP_RESTORE_TREMBLING_OARSMAN,
   SHIP_RELEASE_COMPANIONS,
+  /// The camera stays where it is, its actor held still if arg.
   SHIP_RESET_CAMERA,
+  /// The companions are placed, with attack arg's monsters (1 to 3).
   SHIP_PLACE_COMPANIONS_AND_MONSTERS
 };
 
@@ -322,15 +349,13 @@ enum TolbiShipRowingDeckActorId {
 /// their animation tables and frames under graphics/sprite draw them.
 enum ShipRoomsAnimation {
   /// Pulling an oar from a seat, as the oarsmen's sheet
-  /// (man_in_red_bandana.png) and most
-  /// passengers' sheets draw it.
+  /// (man_in_red_bandana.png) and most passengers' sheets draw it.
   ANIM_ROW = 5,
   /// The tour guide's sheet rowing with a pink oar in place of ANIM_ROW's
   /// brown one (man_carrying_a_pack.png).
   ANIM_SECOND_GUIDE_ROW = 6,
   /// An oarsman lying on his back, arms flung out (man_in_red_bandana.png): "An
-  /// oarsman
-  /// was injured by a sea monster?"
+  /// oarsman was injured by a sea monster?"
   ANIM_OARSMAN_INJURED = 6,
   /// The drummer standing with his drum at his side (man_in_green_bandana.png).
   ANIM_DRUMMER_HOLD_DRUM = 5,
@@ -432,7 +457,7 @@ static void ShipRooms_MoveCameraAndWaitFX(FIXED x, FIXED y, FIXED z, u32 flags);
   ShipRooms_MoveCameraAndWaitFX(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),  \
                                 EVENT_CAMERA_FIXED(z), flags)
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt);
-static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 inHold);
+static s32 ShipRooms_FindSeatRower(u32 seat, s32 inHold);
 static void ShipRooms_HideSelectedPassengers(void);
 static void ShipRooms_HideSelectedPassenger(s32 actorId, s32 firstFlag);
 static void ShipRooms_StartSecondAttack(void);
@@ -450,9 +475,7 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
                                           s32 secondSeatFlags);
 
 /// An actor script call that stands the actor still at the origin, with no
-/// velocity and no target.
-///
-/// Returns 0.
+/// velocity and no target, once, before its script goes on.
 static s32 ShipRooms_ResetActor(struct Actor *actor) {
   Actor_SelectAnimation(actor, ANIM_STAND);
   actor->x.fixed = 0;
@@ -466,9 +489,8 @@ static s32 ShipRooms_ResetActor(struct Actor *actor) {
 
 /// Floats the actor up and down between the floor and 8 pixels up, by a random
 /// half pixel to a pixel each frame. The actor's userValue says which way it is
-/// going, 1 down and 0 up.
-///
-/// Returns 1.
+/// going, 1 down and 0 up. It runs every frame for as long as its script
+/// does.
 static s32 ShipRooms_Float(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
     actor->y.fixed -= Random_Below(toFIXED(1) / 2) + toFIXED(1) / 2;
@@ -485,9 +507,7 @@ static s32 ShipRooms_Float(struct Actor *actor) {
 }
 
 /// Now and then (two chances in 64) turns the actor to face south-southeast or
-/// south-southwest.
-///
-/// Returns 1.
+/// south-southwest, every frame for as long as its script runs.
 static s32 ShipRooms_LookAround(struct Actor *actor) {
   u32 choice = Random_Below(64);
 
@@ -618,9 +638,8 @@ static void ShipRooms_WatchKaja(struct Actor *captain) {
 }
 
 /// An actor script call that hides the actor: never a talk or Psynergy
-/// target, without its shadow, drawn underfoot in SPRITE_COLOR_HIDDEN.
-///
-/// Returns 1.
+/// target, without its shadow, drawn underfoot in SPRITE_COLOR_HIDDEN, every
+/// frame for as long as its script runs.
 static s32 ShipRooms_Hide(struct Actor *work) {
   struct Sprite *sprite = work->sprite;
 
@@ -1330,7 +1349,7 @@ static s32 ShipRooms_GetChosenOarsman(void) {
     seat = 1;
   }
 
-  return ShipRooms_FindFirstSetFlag(seat, 1);
+  return ShipRooms_FindSeatRower(seat, 1);
 }
 
 /// What a passenger at the oars says, or thinks under Mind Read, while the
@@ -2787,35 +2806,36 @@ static void ShipRooms_SetOarCollision(void) {
   }
 }
 
-/// Puts each recruited rower at its seat and hides the original occupant.
-static void ShipRooms_PlaceFoundActors(s32 gated) {
+/// Puts each chosen passenger at the seat they took, in place of its oarsman;
+/// if gated, only those whose seat's attack has since been fought off.
+static void ShipRooms_SeatChosenRowers(s32 gated) {
   s32 actorId;
 
   if (gated && !GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF)) {
     return;
   }
-  if ((actorId = ShipRooms_FindFirstSetFlag(0, 0)) != 0) {
+  if ((actorId = ShipRooms_FindSeatRower(0, 0)) != 0) {
     ShipRooms_PlaceActor(actorId, 410, 172, FACING_NORTH_NORTHEAST);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN, 0, 0);
   }
   if (gated && !GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF)) {
     return;
   }
-  if ((actorId = ShipRooms_FindFirstSetFlag(1, 0)) != 0) {
+  if ((actorId = ShipRooms_FindSeatRower(1, 0)) != 0) {
     ShipRooms_PlaceActor(actorId, 470, 172, FACING_NORTH_NORTHWEST);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 1, 0, 0);
   }
   if (gated && !GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED)) {
     return;
   }
-  if ((actorId = ShipRooms_FindFirstSetFlag(2, 0)) != 0) {
+  if ((actorId = ShipRooms_FindSeatRower(2, 0)) != 0) {
     ShipRooms_PlaceActor(actorId, 410, 204, FACING_NORTH_NORTHEAST);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 2, 0, 0);
   }
   if (gated) {
     return;
   }
-  if ((actorId = ShipRooms_FindFirstSetFlag(3, 0)) != 0) {
+  if ((actorId = ShipRooms_FindSeatRower(3, 0)) != 0) {
     ShipRooms_PlaceActor(actorId, 470, 204, FACING_NORTH_NORTHWEST);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 3, 0, 0);
   }
@@ -3211,7 +3231,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
   halfStep = toFIXED(1) / 2;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 432, 134, FACING_WEST);
-  ShipRooms_PlaceFoundActors(1);
+  ShipRooms_SeatChosenRowers(1);
   wait(1);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -3222,7 +3242,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   Event_Wait(20);
   Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
-    rowerId = ShipRooms_FindFirstSetFlag(seat, 0);
+    rowerId = ShipRooms_FindSeatRower(seat, 0);
     Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
     Event_Wait(20);
     Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 10);
@@ -3352,7 +3372,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
 /// their own pace, ShipRooms_PoseActor).
 static void ShipRooms_InstallRowingDeckActors(u32 animationStep) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
-    s32 rowerId = ShipRooms_FindFirstSetFlag(0, 0);
+    s32 rowerId = ShipRooms_FindSeatRower(0, 0);
     Actor_SetPosition(rowerId, 410, 172);
     ShipRooms_RunEventCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId,
                               animationStep);
@@ -3363,7 +3383,7 @@ static void ShipRooms_InstallRowingDeckActors(u32 animationStep) {
   }
 
   if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
-    s32 rowerId = ShipRooms_FindFirstSetFlag(1, 0);
+    s32 rowerId = ShipRooms_FindSeatRower(1, 0);
     Actor_SetPosition(rowerId, 470, 172);
     Actor_Get(rowerId)->scaleX = -FIXED_ONE;
     ShipRooms_RunEventCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId,
@@ -3375,7 +3395,7 @@ static void ShipRooms_InstallRowingDeckActors(u32 animationStep) {
   }
 
   if (GameFlag_Get(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF) != 0) {
-    s32 rowerId = ShipRooms_FindFirstSetFlag(2, 0);
+    s32 rowerId = ShipRooms_FindSeatRower(2, 0);
     Actor_SetPosition(rowerId, 410, 204);
     ShipRooms_RunEventCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId,
                               animationStep);
@@ -3386,7 +3406,7 @@ static void ShipRooms_InstallRowingDeckActors(u32 animationStep) {
   }
 
   if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
-    s32 rowerId = ShipRooms_FindFirstSetFlag(3, 0);
+    s32 rowerId = ShipRooms_FindSeatRower(3, 0);
     Actor_SetPosition(rowerId, 470, 204);
     Actor_Get(rowerId)->scaleX = -FIXED_ONE;
     ShipRooms_RunEventCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId,
@@ -3585,7 +3605,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   case SHIP_SETUP_ROWING_PARTY:
     ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
     ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 0, 0);
-    ShipRooms_PlaceFoundActors(0);
+    ShipRooms_SeatChosenRowers(0);
     ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 432, 168, FACING_SOUTH);
     ShipRooms_PlaceActor(ACTOR_GARET, 448, 168, FACING_SOUTH);
     ShipRooms_PlaceActor(ACTOR_IVAN, 424, 152, FACING_SOUTH);
@@ -3779,7 +3799,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
 
 /// The passenger chosen for a seat (0 to 3): their actor in the hold at sea if
 /// inHold, else on the rowing deck; 0 if no one has been chosen.
-static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 inHold) {
+static s32 ShipRooms_FindSeatRower(u32 seat, s32 inHold) {
   s32 flag = 0;
   s32 id = ACTOR_SEA_HOLD_FIRST_PASSENGER;
   u32 i;
@@ -3843,7 +3863,7 @@ static void ShipRooms_StartSecondAttack(void) {
   const s32 *rowerScript;
   const s32 *entryScript;
 
-  firstRower = ShipRooms_FindFirstSetFlag(0, 0);
+  firstRower = ShipRooms_FindSeatRower(0, 0);
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 2, 0);
@@ -4038,12 +4058,12 @@ static void ShipRooms_FindOarsmanMissing(void) {
 /// Back on the rowing deck after the second battle, with the first rower
 /// chosen in his seat, Kaja finds another oarsman hurt.
 static void ShipRooms_EndSecondAttack(void) {
-  s32 firstRower = ShipRooms_FindFirstSetFlag(0, 0);
+  s32 firstRower = ShipRooms_FindSeatRower(0, 0);
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 0, 0);
-  ShipRooms_PlaceFoundActors(0);
+  ShipRooms_SeatChosenRowers(0);
   ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, firstRower,
                             ACTOR_ROWING_FIRST_OARSMAN + 2);
   Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 1, 0, 0);
@@ -4060,8 +4080,8 @@ static void ShipRooms_StartThirdAttack(void) {
   const s32 *rowerScript;
   const s32 *entryScript;
 
-  firstRower = ShipRooms_FindFirstSetFlag(0, 0);
-  secondRower = ShipRooms_FindFirstSetFlag(1, 0);
+  firstRower = ShipRooms_FindSeatRower(0, 0);
+  secondRower = ShipRooms_FindSeatRower(1, 0);
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 3, 0);
@@ -4086,13 +4106,13 @@ static void ShipRooms_StartThirdAttack(void) {
 /// Back on the rowing deck after the third battle, Kaja finds another oarsman
 /// hurt.
 static void ShipRooms_EndThirdAttack(void) {
-  s32 firstRower = ShipRooms_FindFirstSetFlag(0, 0);
-  s32 secondRower = ShipRooms_FindFirstSetFlag(1, 0);
+  s32 firstRower = ShipRooms_FindSeatRower(0, 0);
+  s32 secondRower = ShipRooms_FindSeatRower(1, 0);
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 0, 0);
-  ShipRooms_PlaceFoundActors(0);
+  ShipRooms_SeatChosenRowers(0);
   ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, firstRower,
                             secondRower);
   Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 1, 0, 0);
@@ -4115,9 +4135,9 @@ static void ShipRooms_NoticeShipRocking(void) {
   s32 firstRower;
   const s32 *action;
 
-  firstRower = ShipRooms_FindFirstSetFlag(0, 0);
-  secondRower = ShipRooms_FindFirstSetFlag(1, 0);
-  thirdRower = ShipRooms_FindFirstSetFlag(2, 0);
+  firstRower = ShipRooms_FindSeatRower(0, 0);
+  secondRower = ShipRooms_FindSeatRower(1, 0);
+  thirdRower = ShipRooms_FindSeatRower(2, 0);
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
   ShipRooms_RunEventCommand(SHIP_HIDE_OARS, 0, 0);
@@ -4300,10 +4320,10 @@ static void ShipRooms_ReachIsland(void) {
   const s32 *stepOut;
   const s32 *joinLeader;
 
-  firstRower = ShipRooms_FindFirstSetFlag(0, 0);
-  secondRower = ShipRooms_FindFirstSetFlag(1, 0);
-  thirdRower = ShipRooms_FindFirstSetFlag(2, 0);
-  fourthRower = ShipRooms_FindFirstSetFlag(3, 0);
+  firstRower = ShipRooms_FindSeatRower(0, 0);
+  secondRower = ShipRooms_FindSeatRower(1, 0);
+  thirdRower = ShipRooms_FindSeatRower(2, 0);
+  fourthRower = ShipRooms_FindSeatRower(3, 0);
   Event_Start();
   ShipRooms_SetOarCollision();
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
@@ -4433,10 +4453,10 @@ static void ShipRooms_SwitchLeftAndRightTeams(void) {
   s32 thirdRower;
   s32 secondRower;
 
-  firstRower = ShipRooms_FindFirstSetFlag(0, 0);
-  secondRower = ShipRooms_FindFirstSetFlag(1, 0);
-  thirdRower = ShipRooms_FindFirstSetFlag(2, 0);
-  fourthRower = ShipRooms_FindFirstSetFlag(3, 0);
+  firstRower = ShipRooms_FindSeatRower(0, 0);
+  secondRower = ShipRooms_FindSeatRower(1, 0);
+  thirdRower = ShipRooms_FindSeatRower(2, 0);
+  fourthRower = ShipRooms_FindSeatRower(3, 0);
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
   ShipRooms_PlaceActor(ACTOR_ROWING_CREWMAN, 472, 144, FACING_SOUTH_SOUTHWEST);

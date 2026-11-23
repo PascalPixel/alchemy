@@ -1,5 +1,5 @@
 /// @file
-/// Stucco rooms B (SceneId_StuccoRoomsB), a sheet of rooms drawn in stucco, all
+/// Stucco rooms B (SceneId_StuccoRoomsB), a rooms map drawn in stucco, all
 /// of them Tolbi's.
 ///
 /// They are its houses, inns and shops, which the area names call Tolbi, and

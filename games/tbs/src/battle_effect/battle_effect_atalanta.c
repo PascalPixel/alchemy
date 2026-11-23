@@ -21,8 +21,9 @@
 #define ATALANTA_TRAIL_FRAMES 16
 #define ATALANTA_FLASH_FRAMES 5
 
-/// A landed shaft's burst of light: the ember streak sheet's six pictures,
-/// four frames each, the shaft still drawn over its first twelve frames.
+/// A landed shaft's burst of light: the ember streak sprite sheet's six
+/// pictures, four frames each, the shaft still drawn over its first twelve
+/// frames.
 #define ATALANTA_BURST_PICTURES 6
 #define ATALANTA_BURST_PICTURE_FRAMES 4
 #define ATALANTA_BURST_SHAFT_FRAMES 12
@@ -44,8 +45,8 @@
 #define ATALANTA_TRAIL_DROP 16
 #endif
 
-/// The pictures in the slash sheet: five flash pictures, then the shaft in
-/// three parts, each in its own size.
+/// The pictures in the slash sprite sheet: five flash pictures, then the shaft
+/// in three parts, each in its own size.
 #define ATALANTA_SHAFT_FLASH_A_WIDTH 14
 #define ATALANTA_SHAFT_FLASH_A_HEIGHT 28
 #define ATALANTA_SHAFT_FLASH_B_WIDTH 23
@@ -72,7 +73,7 @@
 #define ATALANTA_SHAFT_MIDDLE_HEIGHT 35
 #define ATALANTA_SHAFT_BOTTOM_WIDTH 21
 #define ATALANTA_SHAFT_BOTTOM_HEIGHT 24
-/// Where each picture begins in the slash sheet, in bytes.
+/// Where each picture begins in the slash sprite sheet, in bytes.
 enum SlashSheetPicture {
   ATALANTA_SHAFT_FLASH_A = 0,
   ATALANTA_SHAFT_FLASH_B = ATALANTA_SHAFT_FLASH_A +

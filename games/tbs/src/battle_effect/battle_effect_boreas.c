@@ -40,8 +40,8 @@
 #define BOREAS_STREAK_WIDTH 40
 #define BOREAS_STREAK_HEIGHT 80
 
-/// The pictures in the ice block sheet that this file draws; the tables in
-/// battle_effect_table.c read the rest.
+/// The pictures in the ice block sprite sheet that this file draws; the tables
+/// in battle_effect_table.c read the rest.
 enum IceBlockSheetPicture {
   /// After the three crystals and the four large shards.
   BOREAS_BIG_BLOCK = 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 +

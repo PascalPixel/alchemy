@@ -87,7 +87,7 @@ enum LemuriaSpringActorId {
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
 /// Animations of the spring's sprites, as The Broken Seal names Tolbi's. The
-/// coin's and the Lucky Medal's sheets (spring_coin.png,
+/// coin's and the Lucky Medal's sprite sheets (spring_coin.png,
 /// spring_lucky_medal.png) are drawn alike.
 enum LemuriaSpringAnimation {
   ANIM_TOKEN_TUMBLE = 0, ///< turning over once as it is tossed
@@ -100,7 +100,7 @@ enum LemuriaSpringAnimation {
   ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (crab.png)
   ANIM_TURTLE_SWIM = 2,      ///< paddling (turtle.png)
   ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (turtle.png)
-  /// The signpost sheet's second picture, a grey slab (signpost.png).
+  /// The signpost sprite sheet's second picture, a grey slab (signpost.png).
   ANIM_SIGN_SLAB = 2
 };
 

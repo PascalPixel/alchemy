@@ -195,8 +195,8 @@ enum TolbiSpringActorId {
 };
 
 /// Animations of the spring's sprites, as their animation tables and frames
-/// under graphics/sprite draw them. The coin's and the Lucky Medal's sheets
-/// (spring_coin.png, spring_lucky_medal.png) are drawn alike.
+/// under graphics/sprite draw them. The coin's and the Lucky Medal's sprite
+/// sheets (spring_coin.png, spring_lucky_medal.png) are drawn alike.
 enum TolbiSpringAnimation {
   ANIM_TOKEN_TUMBLE = 0, ///< turning over once as it is tossed
   ANIM_TOKEN_FLOAT = 1,  ///< turning as it drifts toward the rings
@@ -208,7 +208,8 @@ enum TolbiSpringAnimation {
   ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (crab.png)
   ANIM_TURTLE_SWIM = 2,      ///< paddling (turtle.png)
   ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (turtle.png)
-  /// The signpost sheet's second picture, a tuft of grass (signpost.png).
+  /// The signpost sprite sheet's second picture, a tuft of grass
+  /// (signpost.png).
   ANIM_SIGN_GRASS = 2
 };
 

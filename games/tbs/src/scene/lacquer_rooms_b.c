@@ -1,6 +1,6 @@
 /// @file
 /// The insides of Xian (SceneId_LacquerRoomsB): its houses, its inn and its
-/// shop, red lacquered rooms laid side by side on one sheet, and the small
+/// shop, red lacquered rooms laid side by side on one rooms map, and the small
 /// bedroom behind Master Feh's school.
 ///
 /// Each of Xian's doors opens into a room of its own here. Three are villagers'
@@ -256,7 +256,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Each room opens with the window transition. The inn and the shop also get
-/// unseen still actors of SPRITE_CHEST's sheet near their counters
+/// unseen still actors of SPRITE_CHEST's sprite sheet near their counters
 /// (Actor_CreateConfigured), and the bedroom lays Hsu in his bed.
 s32 Scene_Initialize(void) {
   s16 entrance;

@@ -35,8 +35,8 @@ enum DragonFireMode {
 
 #define PROCNE_SPRITES 9 ///< Procne's sprites, on gProcne_GridX and _GridY
 
-/// The whirlwind sheet: three whirlwind cels, shown 4 frames each, then the
-/// dust.
+/// The whirlwind sprite sheet: three whirlwind cels, shown 4 frames each, then
+/// the dust.
 #define PROCNE_WHIRLWIND_WIDTH 48
 #define PROCNE_WHIRLWIND_HEIGHT 64
 #define PROCNE_WHIRLWIND_CEL (PROCNE_WHIRLWIND_WIDTH * PROCNE_WHIRLWIND_HEIGHT)
@@ -634,7 +634,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define DRAGON_FIRE_EMBERS 512        ///< embers in PARTICLES
 #define DRAGON_FIRE_BREATH 24 ///< puffs of breath, work->particles 0 to 23
 #define DRAGON_FIRE_SPARKS 24 ///< sparks, work->particles 40 to 63
-/// The flames a fireball burns with where it lands, in the sheet.
+/// The flames a fireball burns with where it lands, in the sprite sheet.
 #define DRAGON_FIRE_FLAME_PICTURES 12288
 /// A puff of breath shows the flash burst's six pictures, four frames each.
 #define DRAGON_FIRE_PUFF_PICTURES 6
@@ -649,9 +649,9 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// two frames turn it CANVAS_LEVEL_BRIGHTEST.
 #define DRAGON_FIRE_FLASH_LEVEL 16
 
-/// Tiamat's pieces (work->sprites), each showing its own picture of the sheet:
-/// piece n shows animation n. As it breathes, its head, horns, jaw and throat
-/// show the fire-lit pictures of its open mouth.
+/// Tiamat's pieces (work->sprites), each showing its own picture of the sprite
+/// sheet: piece n shows animation n. As it breathes, its head, horns, jaw and
+/// throat show the fire-lit pictures of its open mouth.
 enum TiamatPiece {
   TIAMAT_HEAD = 0,
   TIAMAT_HORNS = 1,

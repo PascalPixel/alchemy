@@ -14,8 +14,8 @@ void BattleEffect_CallDoNothing(s32 count) {
 }
 
 /// Runs one of the large battle effects, the summons and the scenes of a few
-/// abilities: takes the effect's sheet, work and canvas, runs the effect of
-/// args->kind (enum SummonEffectId) and frees them again.
+/// abilities: takes the effect's sprite sheet, work and canvas, runs the effect
+/// of args->kind (enum SummonEffectId) and frees them again.
 void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
 
@@ -123,8 +123,8 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sheet,
-/// work and canvas it lends.
+/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
+/// sheet, work and canvas it lends.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
 

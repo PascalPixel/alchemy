@@ -53,7 +53,7 @@ directions nobody drew. So an animation is written once and works facing
 any way.
 
 Every figure the field or a battle can draw has a row in the sprite table,
-`sprite/sprites.tsv`: its size, a scale it is drawn at, its sheet and its
+`sprite/sprites.tsv`: its size, a scale it is drawn at, its sprite sheet and its
 animations. There are 367.
 
 ## Monsters
@@ -84,10 +84,10 @@ Three things worth knowing if you want to make one:
 
 A town is not painted as one picture. It is built from a
 [tileset](../../glossary.md#tileset): a palette of 14 short lists of 16
-colours, and sheets of 512 tiles each. The [map](../../glossary.md#map)
+colours, and tile sheets of 512 tiles each. The [map](../../glossary.md#map)
 says which tile goes where ([Maps](../map/README.md#cells)).
 
-A map does not name a tileset as a whole. It names a palette and its sheets
+A map does not name a tileset as a whole. It names a palette and its tile sheets
 one by one, so maps borrow freely: the game's 182 maps are drawn from 69
 folders. The cheapest borrowing is the same tiles under new colours. The
 walls of Mercury Lighthouse appear in four places under nine palettes.
@@ -105,7 +105,7 @@ the credits melt one into the next.
 - `battle_effects/` holds the flashes and blasts of a battle. An effect's
   pictures are often different sizes, so each is a PNG of its own
   ([Battle effects](../battle_effect/README.md)).
-- `font/` holds the letters: one sheet for each language, a letter to a 16
+- `font/` holds the letters: one font sheet for each language, a letter to a 16
   by 16 square, with a table of widths beside it so that an `i` takes less
   room than a `W`.
 - `ui/` is the windows' borders, icons and cursors, and `title/` the

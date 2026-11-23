@@ -18,8 +18,8 @@ struct RockWallHeights {
 };
 
 #define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
-/// The rock picture in the sheet; the sheet starts with the 40x16 strip of
-/// ground cut from the background.
+/// The rock picture in the sprite sheet; the sprite sheet starts with the 40x16
+/// strip of ground cut from the background.
 #define QUAKE_WALL_PICTURE 7680
 /// The strip of ground that caps each pillar, cut from the battle background
 /// at (QUAKE_GROUND_X, QUAKE_GROUND_Y).

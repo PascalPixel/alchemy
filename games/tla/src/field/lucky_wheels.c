@@ -48,8 +48,8 @@ void LuckyWheels_Run(void);
 #define LUCKY_WHEELS_CANVAS_TILES                                              \
   (BG_CHAR_BLOCK(0) + LUCKY_WHEELS_CANVAS_FIRST_TILE * TILE_SIZE_8BPP)
 #define LUCKY_WHEELS_CANVAS_CLEAR_TILE 191
-/// The canvas's first 64 colours, its sparks', from a Djinn sheet's palette and
-/// cycled through others while a win shows.
+/// The canvas's first 64 colours, its sparks', from a Djinn sprite sheet's
+/// palette and cycled through others while a win shows.
 #define LUCKY_WHEELS_SPARK_COLORS 64
 /// The paylines' green on the canvas, colour 64, and its lighter centre.
 #define LUCKY_WHEELS_LINE_COLOR 64
@@ -92,8 +92,9 @@ void LuckyWheels_Run(void);
 /// The stop prompt's sound plays this many frames into a spin.
 #define LUCKY_WHEELS_STOP_PROMPT_FRAME 16
 /// Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte
-/// steps (a 256-colour tile is two): the sheet is 32 pixels wide, so a picture
-/// starts at the tile numbered as its row. The six symbols are 16 apart from 0.
+/// steps (a 256-colour tile is two): the sprite sheet is 32 pixels wide, so a
+/// picture starts at the tile numbered as its row. The six symbols are 16 apart
+/// from 0.
 #define LUCKY_WHEELS_LAMP_TILES 96         ///< a wheel's lamp, not locked
 #define LUCKY_WHEELS_LOCKED_LAMP_TILES 128 ///< a locked wheel's lamp
 #define LUCKY_WHEELS_CORNER_LIGHT_TILES 224

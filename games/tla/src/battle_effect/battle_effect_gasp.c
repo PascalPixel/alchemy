@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// Where the small Djinni sheet is decoded in the effect's pictures, as
+/// Where the small Djinni sprite sheet is decoded in the effect's pictures, as
 /// The Broken Seal places it.
 #define GASP_DJINNI_PICTURE 26048
 /// The small Djinni: a 20 x 40 picture drawn over the canvas.
@@ -91,7 +91,7 @@
 #define GASP_LULL_RING_FRAMES 64
 #define GASP_LULL_TILT 18288
 
-/// Mold: the Djinni's picture shrinks GASP_MOLD_SHRINK a frame; for its first
+/// Mold: the Djinni's sprite shrinks GASP_MOLD_SHRINK a frame; for its first
 /// GASP_MOLD_SLOW_FADE_FRAMES the canvas keeps three quarters of each pixel,
 /// then half.
 #define GASP_MOLD_SHRINK 4592
@@ -138,8 +138,8 @@
 /// Meld, Shine, Lull, Counter-rush, Demon Eye, Emu and its kind's four other
 /// abilities, Call Dullahan and Formina Sage, Beat Dance, Element Swap, Cage,
 /// Clarion Cry and Psy Boost. GASP_MODE_UNUSED has no caller. Each mode loads
-/// its own sheets, then draws a canvas layer and a model layer every frame for
-/// the mode's length.
+/// its own sprite sheets, then draws a canvas layer and a model layer every
+/// frame for the mode's length.
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -822,7 +822,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == GASP_MODE_MOLD) {
-      // The Djinni's picture, twice, shrinks onto the target.
+      // The Djinni's sprite, twice, shrinks onto the target.
       if ((u32)(frame - 16) <= 64) {
         s32 t = frame - 16;
         s32 scale;

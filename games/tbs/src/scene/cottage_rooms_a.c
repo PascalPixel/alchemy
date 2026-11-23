@@ -1,5 +1,5 @@
 /// @file
-/// Cottage rooms A (SceneId_CottageRoomsA) is a sheet of rooms drawn as
+/// Cottage rooms A (SceneId_CottageRoomsA) is a rooms map drawn as
 /// cottages.
 ///
 /// The game packs rooms that share a tile style onto one map, and every room
@@ -22,7 +22,7 @@
 ///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST,
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH and
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
-/// - Unused: a ninth room drawn at the sheet's lower left, whose camera box no
+/// - Unused: a ninth room drawn at the map's lower left, whose camera box no
 ///   entrance gives, so no door leads in.
 ///
 /// The actor placements and triggers follow the story:

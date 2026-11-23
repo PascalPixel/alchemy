@@ -8,7 +8,7 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// Bind's sheet: the rune, the flare pictures, then Luff's Djinni.
+/// Bind's sprite sheet: the rune, the flare pictures, then Luff's Djinni.
 #define BIND_FLARE_PICTURES 4096
 #define BIND_DJINNI_PICTURE 8192
 /// The corners of Bind's triangle.

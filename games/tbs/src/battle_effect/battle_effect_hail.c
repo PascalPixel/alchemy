@@ -63,7 +63,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (frame > 47)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frame);
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
-    // whatever the sheet holds.
+    // whatever the sprite sheet holds.
     if (frame == 1) {
       Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET,
                                  work->sheet + HAIL_CHIP_PICTURES, 1, 1);
@@ -149,7 +149,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The small Venus Djinni in the portal sheet.
+/// The small Venus Djinni in the portal sprite sheet.
 #define GROUND_DJINNI_PICTURE 26048
 /// The portals set out in work->particles from 0, and the first of them, the
 /// ones drawn.

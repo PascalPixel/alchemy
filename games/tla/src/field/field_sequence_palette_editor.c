@@ -10,9 +10,9 @@
 /// 13 of row 1 of screen block 4.
 #define EDITOR_PALETTE ((u16 *)BG_PLTT)
 #define EDITOR_MAP ((u16 *)BG_SCREEN_BLOCK(4) + BG_SCREEN_WIDTH + 13)
-/// The swatch sheet's tiles, from tile 208 of character block 0: colour n is
-/// drawn with EDITOR_SWATCH_TILE + n, and the 32 tiles after the swatches show
-/// the numbers 0 to 31.
+/// The swatch tile sheet's tiles, from tile 208 of character block 0: colour n
+/// is drawn with EDITOR_SWATCH_TILE + n, and the 32 tiles after the swatches
+/// show the numbers 0 to 31.
 #define EDITOR_SWATCH_TILE 208
 /// The map entry of the tile showing the number 0, in WINDOW_PALETTE: number n
 /// is EDITOR_NUMBER_TILE + n.

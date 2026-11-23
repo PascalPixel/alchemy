@@ -64,7 +64,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
-  // Set up the canvas, the flash sheet, the rings' texture and a clipped
+  // Set up the canvas, the flash sprite sheet, the rings' texture and a clipped
   // blitter keeping the brighter; Death Leap takes violet colours.
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);

@@ -43,7 +43,7 @@ struct MeshVertex {
 /// Catastrophe's sprites, all 32x32: the chained demon (ChainedDemonTiles),
 /// its mirrored copy's six, the golden shield, and the eleven of the sword (its
 /// hilt's five, then its white blade's six). The demon's lowest four are copies
-/// of its top row, sharing their tiles: those show the sheet's last four
+/// of its top row, sharing their tiles: those show the sprite sheet's last four
 /// pictures, and the top row's own from frame 339 to 450.
 #define CATASTROPHE_DEMON 0
 #define CATASTROPHE_DEMON_TILED 24

@@ -6,15 +6,15 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The Djinni's picture, after the sign's pictures in the work sheet.
+/// The Djinni's picture, after the sign's pictures in the work sprite sheet.
 #define DJINNI_SIGN_DJINNI_PICTURE 26048
 /// How far the Djinni sways either side as it rises, in pixels.
 #define DJINNI_SIGN_DJINNI_SWAY 32
 #define DJINNI_SIGN_FRAMES 48
 
 /// Rime's seal: the 64x64 texture after RuneSheet's half, which the rune's
-/// half and its mirror fill (RUNE_TEXTURE_RUNE); the stretch of the sheet
-/// cleared for it is four times the texture.
+/// half and its mirror fill (RUNE_TEXTURE_RUNE); the stretch of the sprite
+/// sheet cleared for it is four times the texture.
 #define RIME_SEAL_TEXTURE PICTURE_BYTES(RUNE_HALF)
 #define RIME_SEAL_CLEARED_BYTES 16384
 

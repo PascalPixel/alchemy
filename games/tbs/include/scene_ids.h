@@ -30,10 +30,10 @@ extern char SceneId_ValePlaza;
 #define SCENE_VALE_PLAZA ((s32)&SceneId_ValePlaza)
 extern char SceneId_ValeKradensCottage;
 #define SCENE_VALE_KRADENS_COTTAGE ((s32)&SceneId_ValeKradensCottage)
-/// A sheet of rooms drawn as cottages, all of them Vale's.
+/// A rooms map drawn as cottages, all of them Vale's.
 extern char SceneId_CottageRoomsA;
 #define SCENE_COTTAGE_ROOMS_A ((s32)&SceneId_CottageRoomsA)
-/// A sheet of rooms drawn as cottages, of more than one place.
+/// A rooms map drawn as cottages, of more than one place.
 extern char SceneId_CottageRoomsB;
 #define SCENE_COTTAGE_ROOMS_B ((s32)&SceneId_CottageRoomsB)
 extern char SceneId_Sanctum;
@@ -61,15 +61,15 @@ extern char SceneId_SolEntrance;
 #define SCENE_SOL_ENTRANCE ((s32)&SceneId_SolEntrance)
 extern char SceneId_Vault;
 #define SCENE_VAULT ((s32)&SceneId_Vault)
-/// A sheet of rooms drawn in logs, all of them Vault's.
+/// A rooms map drawn in logs, all of them Vault's.
 extern char SceneId_LogRoomsA;
 #define SCENE_LOG_ROOMS_A ((s32)&SceneId_LogRoomsA)
-/// A sheet of rooms of more than one place, drawn in stone.
+/// A rooms map of more than one place, drawn in stone.
 extern char SceneId_StoneRooms;
 #define SCENE_STONE_ROOMS ((s32)&SceneId_StoneRooms)
 extern char SceneId_VaultRevisit;
 #define SCENE_VAULT_REVISIT ((s32)&SceneId_VaultRevisit)
-/// A sheet of rooms drawn in logs, all of them Vault's.
+/// A rooms map drawn in logs, all of them Vault's.
 extern char SceneId_LogRoomsB;
 #define SCENE_LOG_ROOMS_B ((s32)&SceneId_LogRoomsB)
 extern char SceneId_GomaCaveEntrance;
@@ -84,7 +84,7 @@ extern char SceneId_GomaCaveBridge;
 #define SCENE_GOMA_CAVE_BRIDGE ((s32)&SceneId_GomaCaveBridge)
 extern char SceneId_Bilibin;
 #define SCENE_BILIBIN ((s32)&SceneId_Bilibin)
-/// A sheet of rooms drawn as cottages, all of them Bilibin's.
+/// A rooms map drawn as cottages, all of them Bilibin's.
 extern char SceneId_CottageRoomsC;
 #define SCENE_COTTAGE_ROOMS_C ((s32)&SceneId_CottageRoomsC)
 extern char SceneId_BilibinTreasury;
@@ -97,7 +97,7 @@ extern char SceneId_BilibinBarricade;
 #define SCENE_BILIBIN_BARRICADE ((s32)&SceneId_BilibinBarricade)
 extern char SceneId_Kolima;
 #define SCENE_KOLIMA ((s32)&SceneId_Kolima)
-/// A sheet of rooms drawn in logs, all of them Kolima's.
+/// A rooms map drawn in logs, all of them Kolima's.
 extern char SceneId_LogRoomsC;
 #define SCENE_LOG_ROOMS_C ((s32)&SceneId_LogRoomsC)
 extern char SceneId_KolimaTunnel;
@@ -114,7 +114,7 @@ extern char SceneId_KolimaForestFloodgate;
 #define SCENE_KOLIMA_FOREST_FLOODGATE ((s32)&SceneId_KolimaForestFloodgate)
 extern char SceneId_KolimaForestTree;
 #define SCENE_KOLIMA_FOREST_TREE ((s32)&SceneId_KolimaForestTree)
-/// A sheet of rooms drawn inside a tree.
+/// A rooms map drawn inside a tree.
 extern char SceneId_TreeRooms;
 #define SCENE_TREE_ROOMS ((s32)&SceneId_TreeRooms)
 extern char SceneId_TretTreeBranch;
@@ -127,7 +127,7 @@ extern char SceneId_BilibinCaveEntrance;
 #define SCENE_BILIBIN_CAVE_ENTRANCE ((s32)&SceneId_BilibinCaveEntrance)
 extern char SceneId_Imil;
 #define SCENE_IMIL ((s32)&SceneId_Imil)
-/// A sheet of rooms drawn in ice, all of them Imil's.
+/// A rooms map drawn in ice, all of them Imil's.
 extern char SceneId_IceRooms;
 #define SCENE_ICE_ROOMS ((s32)&SceneId_IceRooms)
 extern char SceneId_ImilFallsCave;
@@ -151,7 +151,7 @@ extern char SceneId_UnusedMercuryLighthouseAerieCopy;
   ((s32)&SceneId_UnusedMercuryLighthouseAerieCopy)
 extern char SceneId_FuchinTempleGrounds;
 #define SCENE_FUCHIN_TEMPLE_GROUNDS ((s32)&SceneId_FuchinTempleGrounds)
-/// A sheet of rooms drawn in red lacquer, of more than one place.
+/// A rooms map drawn in red lacquer, of more than one place.
 extern char SceneId_LacquerRoomsA;
 #define SCENE_LACQUER_ROOMS_A ((s32)&SceneId_LacquerRoomsA)
 extern char SceneId_FuchinFallsCaveEntrance;
@@ -180,14 +180,14 @@ extern char SceneId_MogallForestSidePaths;
 #define SCENE_MOGALL_FOREST_SIDE_PATHS ((s32)&SceneId_MogallForestSidePaths)
 extern char SceneId_Xian;
 #define SCENE_XIAN ((s32)&SceneId_Xian)
-/// A sheet of rooms drawn in red lacquer, all of them Xian's.
+/// A rooms map drawn in red lacquer, all of them Xian's.
 extern char SceneId_LacquerRoomsB;
 #define SCENE_LACQUER_ROOMS_B ((s32)&SceneId_LacquerRoomsB)
 extern char SceneId_AlpineCrossing;
 #define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
 extern char SceneId_Altin;
 #define SCENE_ALTIN ((s32)&SceneId_Altin)
-/// A sheet of rooms drawn as cottages, all of them Altin's.
+/// A rooms map drawn as cottages, all of them Altin's.
 extern char SceneId_CottageRoomsD;
 #define SCENE_COTTAGE_ROOMS_D ((s32)&SceneId_CottageRoomsD)
 extern char SceneId_AltinPeakFirstWaterBeast;
@@ -239,7 +239,7 @@ extern char SceneId_VaultCaveMouth;
 #define SCENE_VAULT_CAVE_MOUTH ((s32)&SceneId_VaultCaveMouth)
 extern char SceneId_Kalay;
 #define SCENE_KALAY ((s32)&SceneId_Kalay)
-/// A sheet of rooms drawn in stucco, all of them Kalay's.
+/// A rooms map drawn in stucco, all of them Kalay's.
 extern char SceneId_StuccoRoomsA;
 #define SCENE_STUCCO_ROOMS_A ((s32)&SceneId_StuccoRoomsA)
 extern char SceneId_KalaySanctum;
@@ -250,21 +250,21 @@ extern char SceneId_HammetPalace;
 #define SCENE_HAMMET_PALACE ((s32)&SceneId_HammetPalace)
 extern char SceneId_Lunpa;
 #define SCENE_LUNPA ((s32)&SceneId_Lunpa)
-/// A sheet of rooms cut into rock, of more than one place.
+/// A rooms map cut into rock, of more than one place.
 extern char SceneId_RockRooms;
 #define SCENE_ROCK_ROOMS ((s32)&SceneId_RockRooms)
 extern char SceneId_WestLunpaCave;
 #define SCENE_WEST_LUNPA_CAVE ((s32)&SceneId_WestLunpaCave)
 extern char SceneId_KalayDocks;
 #define SCENE_KALAY_DOCKS ((s32)&SceneId_KalayDocks)
-/// A sheet of rooms drawn as cottages, of more than one place.
+/// A rooms map drawn as cottages, of more than one place.
 extern char SceneId_CottageRoomsE;
 #define SCENE_COTTAGE_ROOMS_E ((s32)&SceneId_CottageRoomsE)
 extern char SceneId_TolbiShipDeck;
 #define SCENE_TOLBI_SHIP_DECK ((s32)&SceneId_TolbiShipDeck)
 extern char SceneId_TolbiShipMast;
 #define SCENE_TOLBI_SHIP_MAST ((s32)&SceneId_TolbiShipMast)
-/// A sheet of rooms drawn as a ship's cabins.
+/// A rooms map drawn as a ship's cabins.
 extern char SceneId_ShipRooms;
 #define SCENE_SHIP_ROOMS ((s32)&SceneId_ShipRooms)
 extern char SceneId_TolbiDocks;
@@ -324,10 +324,10 @@ extern char SceneId_CrossboneIsleNinthFloor;
 #define SCENE_CROSSBONE_ISLE_NINTH_FLOOR ((s32)&SceneId_CrossboneIsleNinthFloor)
 extern char SceneId_Tolbi;
 #define SCENE_TOLBI ((s32)&SceneId_Tolbi)
-/// A sheet of rooms drawn in stucco, all of them Tolbi's.
+/// A rooms map drawn in stucco, all of them Tolbi's.
 extern char SceneId_StuccoRoomsB;
 #define SCENE_STUCCO_ROOMS_B ((s32)&SceneId_StuccoRoomsB)
-/// A sheet of rooms drawn in stucco, both of them Tolbi's.
+/// A rooms map drawn in stucco, both of them Tolbi's.
 extern char SceneId_StuccoRoomsC;
 #define SCENE_STUCCO_ROOMS_C ((s32)&SceneId_StuccoRoomsC)
 extern char SceneId_BabiPalace;
@@ -392,7 +392,7 @@ extern char SceneId_SuhallaDesertCaves;
 #define SCENE_SUHALLA_DESERT_CAVES ((s32)&SceneId_SuhallaDesertCaves)
 extern char SceneId_Suhalla;
 #define SCENE_SUHALLA ((s32)&SceneId_Suhalla)
-/// A sheet of rooms drawn in timber, all of them Suhalla's.
+/// A rooms map drawn in timber, all of them Suhalla's.
 extern char SceneId_TimberRoomsA;
 #define SCENE_TIMBER_ROOMS_A ((s32)&SceneId_TimberRoomsA)
 extern char SceneId_SuhallaGateCheckpoint;
@@ -415,10 +415,10 @@ extern char SceneId_RoadToBabiLighthouse;
 #define SCENE_ROAD_TO_BABI_LIGHTHOUSE ((s32)&SceneId_RoadToBabiLighthouse)
 extern char SceneId_Lalivero;
 #define SCENE_LALIVERO ((s32)&SceneId_Lalivero)
-/// The first of two sheets of Lalivero's rooms, drawn in timber.
+/// The first of Lalivero's two rooms maps, drawn in timber.
 extern char SceneId_TimberRoomsB;
 #define SCENE_TIMBER_ROOMS_B ((s32)&SceneId_TimberRoomsB)
-/// The second of two sheets of Lalivero's rooms, drawn in timber.
+/// The second of Lalivero's two rooms maps, drawn in timber.
 extern char SceneId_TimberRoomsC;
 #define SCENE_TIMBER_ROOMS_C ((s32)&SceneId_TimberRoomsC)
 extern char SceneId_VenusLighthouseEntry;

@@ -40,7 +40,7 @@ enum {
   /// (gLemuriaEntrance_ShipSailsOut).
   ACTOR_SHIP = ACTOR_FIRST_PLACED,
   /// Boats moored in the harbor: four SPRITE_MOORED_BOAT and six on the
-  /// winged ship's sheet (SPRITE_WINGED_SHIP).
+  /// winged ship's sprite sheet (SPRITE_WINGED_SHIP).
   ACTOR_MOORED_BOAT_A,
   ACTOR_MOORED_BOAT_B,
   ACTOR_MOORED_BOAT_C,

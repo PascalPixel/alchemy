@@ -193,10 +193,10 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 /// TARGET_STRIKE_STAR_SCALE 256ths, about 2.4 times.
 #define TARGET_STRIKE_STAR_STEP_SHIFT 11
 #define TARGET_STRIKE_STAR_SCALE 612
-/// The hit's pictures in the sheet, by style: SmokeSheet's six 24x48 puffs,
-/// FlashBurstSheet's six 32x64 bursts, or StarCrossSheet's star.
+/// The hit's pictures in the sprite sheet, by style: SmokeSheet's six 24x48
+/// puffs, FlashBurstSheet's six 32x64 bursts, or StarCrossSheet's star.
 #define TARGET_STRIKE_HIT_PICTURES 12800
-/// The bite's stages after the tornado sheet: BeamImage for a slash,
+/// The bite's stages after the tornado sprite sheet: BeamImage for a slash,
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
 
@@ -237,7 +237,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     work->fadeStep = 0;
   }
 
-  // The sheets: motes, the tornado, the slashes or fangs, the style's
+  // The sprite sheets: motes, the tornado, the slashes or fangs, the style's
   // colours and the hit's pictures (smoke, flashes or the star).
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);

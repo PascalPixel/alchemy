@@ -77,7 +77,7 @@ other bolt by adding, and the crossings flare.
 
 An effect's pictures are the PNGs in
 [`graphics/battle_effects`](../graphics/battle_effects). When it starts it
-unpacks the ones it needs into its sheet.
+unpacks the ones it needs into its sprite sheet.
 
 Sparks, embers and chips of rock are particles: a position, a speed and
 one spare number the effect uses as it likes, often the frames left to
@@ -91,7 +91,7 @@ the battle camera, and drawn onto the canvas by a rasterizer, a small ARM
 routine copied into fast memory for a run of models of one kind
 (`Render_DrawModelList`). The kind says how each pixel lands, as a
 blitter's does: a solid model fills its faces with their colours, a
-textured one maps a picture across them, and a shaded one adds the
+textured one maps a texture across them, and a shaded one adds the
 model's shade to each texel and leaves out those it darkens to nothing.
 Each of them replaces the canvas, keeps the brighter, or adds
 (`enum ModelKind`). The rings, columns and whirlpools of the summons are

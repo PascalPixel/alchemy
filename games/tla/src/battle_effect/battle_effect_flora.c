@@ -116,9 +116,9 @@ struct FloraWork {
 #define FLORA_WHEEL_FRAME 186
 #define FLORA_WHEEL_FRAMES 80
 
-/// The effect work's sheet.
+/// The effect work's sprite sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
-  /* FAKEMATCH(wrapper): the sheet's address through this inline. */
+  /* FAKEMATCH(wrapper): the sprite sheet's address through this inline. */
   return owner->sheet;
 }
 

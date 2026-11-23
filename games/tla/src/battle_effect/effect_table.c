@@ -24,17 +24,17 @@
 const u16 gBattleEffect_MotePictures[] = {0,   2,   10,  28,  60,
                                           110, 182, 280, 408, 570};
 
-/// Each flare size's picture: its byte offset in the spark sheet, by size less
-/// one.
+/// Each flare size's picture: its byte offset in the spark sprite sheet, by
+/// size less one.
 const u16 gBattleEffect_FlarePictures[] = {0,   4,   20,  56,  120,
                                            220, 364, 560, 816, 1140};
 
-/// Each circle picture's byte offset in Cruel Ruin's sheet.
+/// Each circle picture's byte offset in Cruel Ruin's sprite sheet.
 const u16 gCruelRuin_CirclePictures[] = {0,   8,   40,   112,  240,
                                          440, 728, 1120, 1632, 2280};
 
-/// Each sparkle picture's byte offset in the sheet (gBattleEffect_SparkleSizes
-/// gives its side).
+/// Each sparkle picture's byte offset in the sprite sheet
+/// (gBattleEffect_SparkleSizes gives its side).
 const u16 gBattleEffect_SparklePictures[] = {0,   25,  74,  123, 172,
                                              221, 246, 255, 256};
 
@@ -51,10 +51,10 @@ const u8 gBattleEffect_PuffArcPictureHeights[] = {23, 32, 37, 49, 53, 52};
 /// How far below its anchor each puff arc picture's top goes.
 const u8 gBattleEffect_PuffArcPictureBiasY[] = {41, 32, 26, 11, 4, 2};
 
-/// Each puff arc picture's byte offset in the sheet.
+/// Each puff arc picture's byte offset in the sprite sheet.
 const u16 gBattleEffect_PuffArcPictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
-/// Each glint picture's byte offset in the sheet.
+/// Each glint picture's byte offset in the sprite sheet.
 const u16 gBattleEffect_GlintPictures[] = {0, 589, 1302, 2015, 2414, 2750};
 
 /// Each glint picture's width, in pixels.
@@ -71,12 +71,13 @@ const u8 gSpire_ShardWidths[] = {5,  11, 10, 7,  7,  12, 13, 9,
 const u8 gSpire_ShardHeights[] = {11, 6,  10, 11, 10, 7,  17, 21,
                                   12, 21, 17, 13, 16, 16, 15};
 
-/// Each shard picture's byte offset in Spire's sheet.
+/// Each shard picture's byte offset in Spire's sprite sheet.
 const u16 gSpire_ShardPictures[] = {0,    55,   121,  221,  298,  368,
                                     452,  673,  862,  1090, 1342, 1631,
                                     1917, 2157, 2413, 2623};
 
-/// Each shard picture's byte offset in a shade of the stat change's sheet.
+/// Each shard picture's byte offset in a shade of the stat change's sprite
+/// sheet.
 const u16 gStatChange_ShardPictures[] = {0,   120, 180, 258, 298, 352,
                                          408, 471, 567, 607, 631, 661};
 
@@ -126,7 +127,7 @@ const u8 gTargetStrike_Widths[] = {38, 54, 71, 74, 77, 65};
 /// Each Target Strike picture's height, in pixels.
 const u8 gTargetStrike_Heights[] = {7, 9, 11, 13, 13, 11};
 
-/// Each Target Strike picture's byte offset in Target Strike's sheet.
+/// Each Target Strike picture's byte offset in Target Strike's sprite sheet.
 const u16 gTargetStrike_Pictures[] = {3200, 3466, 3952, 4733, 5695, 6696};
 
 /// How far each slash picture reaches past its middle, in pixels.
@@ -138,8 +139,8 @@ const u8 gTargetStrike_BiteStages[] = {0, 1, 2, 3, 2};
 /// The flips a glint may be drawn with, one picked at random.
 const u8 gTargetStrike_GlintDrawFlags[] = {0, 4, 8, 12};
 
-/// The 33 pieces of the shattered picture: each one's width; the tables after
-/// it give their heights, places in the sheet and starting points.
+/// The 33 pieces of the shattered screen: each one's width; the tables after
+/// it give their heights, places in the sprite sheet and starting points.
 const u8 gDeathPlunge_PieceWidths[] = {
     21, 20, 24, 30, 35, 69, 19, 23, 9, 22, 33, 10, 18, 9, 7,  9, 17,
     55, 30, 25, 40, 29, 10, 28, 14, 5, 32, 23, 19, 32, 8, 43, 15};
@@ -149,7 +150,7 @@ const u8 gDeathPlunge_PieceHeights[] = {
     23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12, 13,
     37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50, 21, 35, 12, 57, 11, 0};
 
-/// Each piece picture's byte offset in Death Plunge's sheet.
+/// Each piece picture's byte offset in Death Plunge's sprite sheet.
 const u16 gDeathPlunge_PiecePictures[] = {
     0,     483,   1423,  2023,  3223,  3923,  7580,  8112,  8779,
     8986,  9294,  10449, 10619, 10943, 11069, 11174, 11282, 11503,
@@ -283,7 +284,7 @@ const u8 gPrism_ShardWidths[] = {5, 10, 11, 14, 12, 11, 19, 18, 23, 12, 22, 22};
 const u8 gPrism_ShardHeights[] = {14, 10, 7,  13, 14, 14, 32,
                                   30, 24, 38, 20, 20, 0,  0};
 
-/// Each crystal shard picture's byte offset in Prism's sheet.
+/// Each crystal shard picture's byte offset in Prism's sprite sheet.
 const s32 gPrism_ShardPictures[] = {0,   70,   170,  247,  429,  597,
                                     751, 1359, 1899, 2451, 2907, 3347};
 
@@ -294,7 +295,7 @@ const u8 gGatheringLights_Counts[] = {16, 88, 8, 72, 12, 80, 16, 88};
 /// The mote's picture for each step of its sway.
 const u8 gDjinnBeams_MotePictures[] = {2, 1, 0, 1, 2, 3, 4, 3};
 
-/// The beam's head: its three pictures' byte offsets in the sheet.
+/// The beam's head: its three pictures' byte offsets in the sprite sheet.
 const u16 gMirroredWall_Pictures[] = {2702, 3535, 4580};
 
 /// Each head picture's width, in pixels.
@@ -317,7 +318,7 @@ const u8 gLobbedShells_ShardWidths[] = {9, 10, 9, 9, 9, 11, 11, 11, 12,
 const u8 gLobbedShells_ShardHeights[] = {12, 12, 12, 12, 12, 12, 12, 12, 12,
                                          8,  7,  6,  6,  8,  6,  4,  3,  3};
 
-/// Each shard picture's byte offset in the sheet.
+/// Each shard picture's byte offset in the sprite sheet.
 const u16 gLobbedShells_ShardPictures[] = {0,    108,  228,  336,  444,  552,
                                            684,  816,  948,  1092, 1140, 1189,
                                            1231, 1273, 1321, 1357, 1389, 1413};
@@ -358,7 +359,7 @@ const u8 gProcne_PictureHeights[] = {14, 19, 24};
 /// A strike's three pictures: how far each is raised above its mark.
 const u8 gProcne_PictureBiasY[] = {8, 12, 17};
 
-/// A strike's three pictures: their byte offsets in the sheet.
+/// A strike's three pictures: their byte offsets in the sprite sheet.
 const u16 gProcne_Pictures[] = {13824, 14020, 14476};
 
 /// Each grain's added speed.
@@ -379,7 +380,7 @@ const u8 gTiamat_FlameHeights[] = {23, 32, 37, 49, 53, 52};
 /// The streak's six pictures: how far below the streak each is drawn.
 const u8 gTiamat_FlameDrops[] = {41, 32, 26, 11, 4, 2};
 
-/// The streak's six pictures: their byte offsets in the sheet.
+/// The streak's six pictures: their byte offsets in the sprite sheet.
 const u16 gTiamat_FlamePictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// The three water columns' feet, x and y.
@@ -798,7 +799,7 @@ void (*const gBattleEffect_Handlers[BATTLE_EFFECT_COUNT - 1])(
 /// The poses Cybele's sprites take, a pair for each pose.
 const u8 gCybele_ObjectPoses[] = {8, 10, 9, 11, 3, 4};
 
-/// Each thorn picture's byte offset in Cybele's sheet.
+/// Each thorn picture's byte offset in Cybele's sprite sheet.
 const u16 gCybele_ThornPictures[] = {3920, 3932, 3947, 3955, 3970};
 
 /// Each thorn picture's width, in pixels.
@@ -807,13 +808,13 @@ const u8 gCybele_ThornWidths[] = {2, 5, 2, 5, 3};
 /// Each thorn picture's height, in pixels.
 const u8 gCybele_ThornHeights[] = {6, 3, 4, 3, 3};
 
-/// Each flower picture's byte offset in Cybele's sheet.
+/// Each flower picture's byte offset in Cybele's sprite sheet.
 const u16 gCybele_FlowerPictures[] = {3456, 3712, 3856};
 
 /// Each flower's size, in pixels.
 const u8 gCybele_FlowerSizes[] = {16, 12, 8};
 
-/// Each chip picture's byte offset in Cybele's sheet.
+/// Each chip picture's byte offset in Cybele's sprite sheet.
 const u16 gCybele_ChipPictures[] = {3920, 3932, 3947, 3955, 3970};
 
 /// Each chip picture's width, in pixels.
@@ -822,13 +823,13 @@ const u8 gCybele_ChipWidths[] = {2, 5, 2, 5, 3};
 /// Each chip picture's height, in pixels.
 const u8 gCybele_ChipHeights[] = {6, 3, 4, 3, 3};
 
-/// Each spark picture's byte offset in Cybele's sheet.
+/// Each spark picture's byte offset in Cybele's sprite sheet.
 const u16 gCybele_SparkPictures[] = {3979, 4043, 4268, 4389, 4470};
 
 /// Each spark's size, in pixels.
 const u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
 
-/// Each blast picture's byte offset in Cybele's sheet.
+/// Each blast picture's byte offset in Cybele's sprite sheet.
 const u16 gCybele_BlastPictures[] = {5760,  6016,  7040, 9344,
                                      11648, 13952, 16256};
 
@@ -844,7 +845,7 @@ const u8 gBoreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
 /// Each shake's offset.
 const s8 gBoreas_ShakeOffsets[] = {-4, -3, -2, 0};
 
-/// Each crystal picture's byte offset in Boreas's sheet.
+/// Each crystal picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_CrystalPictures[] = {0, 1152, 2064};
 
 /// Each crystal picture's width, in pixels.
@@ -862,7 +863,7 @@ const u8 gBoreas_DebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
 /// Each debris picture's height, in pixels.
 const u8 gBoreas_DebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
 
-/// Each debris picture's byte offset in Boreas's sheet.
+/// Each debris picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_DebrisPictures[] = {2584, 2704, 2880, 2992, 5062, 5094,
                                       5142, 5157, 5185, 5227, 5299};
 
@@ -872,10 +873,10 @@ const u8 gBoreas_SprayWidths[] = {16, 16, 16};
 /// Each spray picture's height, in pixels.
 const u8 gBoreas_SprayHeights[] = {16, 16, 16};
 
-/// Each spray picture's byte offset in Boreas's sheet.
+/// Each spray picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_SprayPictures[] = {4294, 4550, 4806};
 
-/// Each rising crystal picture's byte offset in Boreas's sheet.
+/// Each rising crystal picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_RisingCrystalPictures[] = {0, 1152, 2064};
 
 /// Each rising crystal picture's width, in pixels.
@@ -890,7 +891,7 @@ const u8 gBoreas_FallWidths[] = {24, 24, 20};
 /// Each fall picture's height, in pixels.
 const u8 gBoreas_FallHeights[] = {48, 38, 26};
 
-/// Each fall picture's byte offset in Boreas's sheet.
+/// Each fall picture's byte offset in Boreas's sprite sheet.
 const u16 gBoreas_FallPictures[] = {0, 1152, 2064};
 
 /// The gravities Drain's motes fall with.
@@ -915,7 +916,7 @@ const u8 gFire_FlareHeights[] = {23, 32, 37, 49, 53, 52};
 /// How far below its anchor each flare picture's top goes.
 const u8 gFire_FlareBiasY[] = {41, 32, 26, 11, 4, 2};
 
-/// Each flare picture's byte offset in Fire's sheet.
+/// Each flare picture's byte offset in Fire's sprite sheet.
 const u16 gFire_FlarePictures[] = {0, 552, 1480, 2590, 3913, 5185};
 
 /// Where each frost mound rises, x and y.
@@ -933,10 +934,10 @@ const u8 gFrost_MoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 /// Each mote picture's height, in pixels.
 const u8 gFrost_MoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 
-/// Each mote picture's byte offset in Frost's sheet.
+/// Each mote picture's byte offset in Frost's sprite sheet.
 const u16 gFrost_MoteCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
-/// Each mound picture's byte offset in Frost's sheet.
+/// Each mound picture's byte offset in Frost's sprite sheet.
 const u16 gFrost_MoundPictures[] = {0, 768, 1280};
 
 /// Each mound picture's height, in pixels.
@@ -948,7 +949,7 @@ const u8 gFrost_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 /// Each chip picture's height, in pixels.
 const u8 gFrost_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 
-/// Each ice chip picture's byte offset in Frost's sheet.
+/// Each ice chip picture's byte offset in Frost's sprite sheet.
 const u16 gFrost_ChipCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
 
 /// Each variant's sparks: a byte nothing reads, then the sparks each bolt
@@ -958,7 +959,7 @@ const u8 gRay_Sparks[][2] = {{2, 4}, {2, 6}, {4, 8}};
 /// Eruption's counts, by variant.
 const u8 gEruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 
-/// Each puff picture's byte offset in Eruption's sheet.
+/// Each puff picture's byte offset in Eruption's sprite sheet.
 const u16 gEruption_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /// Each puff's size, in pixels.
@@ -976,13 +977,13 @@ const u8 gGrowth_VineWidths[] = {21, 28, 19};
 /// The tallest a column grows, by column in threes.
 const u8 gGrowth_HeightLimits[] = {119, 119, 102};
 
-/// Each vine picture's byte offset in Growth's sheet.
+/// Each vine picture's byte offset in Growth's sprite sheet.
 const u16 gGrowth_VinePictures[] = {0, 2499, 5831};
 
 /// Each pillar picture's width, in pixels.
 const u8 gGrowth_PillarWidths[] = {10, 8, 9};
 
-/// Each pillar picture's byte offset in Growth's sheet.
+/// Each pillar picture's byte offset in Growth's sprite sheet.
 const u16 gGrowth_PillarPictures[] = {0, 1080, 1888};
 
 /// The columns, by strength.
@@ -1001,7 +1002,7 @@ const s8 gGrowth_PuffWidths[] = {5, 7, 11, 16, 23, 27, 16};
 /// Each puff picture's height, in pixels.
 const u8 gGrowth_PuffHeights[] = {10, 14, 21, 32, 45, 50, 32};
 
-/// Each dust puff picture's byte offset in Growth's sheet.
+/// Each dust puff picture's byte offset in Growth's sprite sheet.
 const u16 gGrowth_PuffPictures[] = {0, 50, 148, 379, 891, 1926, 3276};
 
 /// Each vine's x about the middle of the targets.
@@ -1024,7 +1025,7 @@ const s8 gGrowth_ThornPuffWidths[] = {5, 7, 11, 17, 32, 32, 19};
 /// Each dust puff picture's height, in pixels, as a thorn bursts out.
 const u8 gGrowth_ThornPuffHeights[] = {10, 14, 21, 34, 59, 60, 38};
 
-/// Each thorn puff picture's byte offset in Growth's sheet.
+/// Each thorn puff picture's byte offset in Growth's sprite sheet.
 const u16 gGrowth_ThornPuffPictures[] = {5888, 5938, 6036, 6267,
                                          6845, 8733, 10653};
 
@@ -1063,11 +1064,11 @@ const u8 gProjectileVolley_FlashSteps[] = {2, 3, 4, 4, 5, 6, 6};
 /// How far each step of the flash rises.
 const u8 gProjectileVolley_FlashRises[] = {0, 3, 5, 7, 10, 12, 12, 0};
 
-/// Each flash picture's byte offset in Projectile Volley's sheet.
+/// Each flash picture's byte offset in Projectile Volley's sprite sheet.
 const u16 gProjectileVolley_FlashPictures[] = {8192, 8312,  8582, 9014,
                                                9674, 10646, 11738};
 
-/// Each pellet picture's byte offset in Projectile Volley's sheet.
+/// Each pellet picture's byte offset in Projectile Volley's sprite sheet.
 const u16 gProjectileVolley_PelletPictures[] = {2308, 2372, 2436, 2500};
 
 /// The glints' flips, one picked at random.
@@ -1096,7 +1097,7 @@ const u8 gHail_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
 /// Each portal picture's height, in pixels.
 const u8 gHail_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
 
-/// Each portal picture's byte offset in Hail's sheet.
+/// Each portal picture's byte offset in Hail's sprite sheet.
 const u16 gHail_PortalPictures[] = {0,    1152, 1243, 1341, 1533,
                                     1677, 1898, 2098, 2252};
 
@@ -1142,14 +1143,14 @@ const u8 gFlurry_Styles[][8] = {
 /// A glint's four flips.
 const u8 gFlurry_GlintFlips[] = {0, 4, 8, 12, 0};
 
-/// Each row picture's byte offset in Gaia's sheet.
+/// Each row picture's byte offset in Gaia's sprite sheet.
 const u16 gGaia_RowPictures[] = {0,    160,  352,  640, 1024,
                                  1504, 2080, 2752, 3776};
 
 /// The growing wall's nine rows: their widths.
 const u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 
-/// Each flame picture's byte offset in Gaia's sheet.
+/// Each flame picture's byte offset in Gaia's sprite sheet.
 const u16 gGaia_FlamePictures[] = {10672, 11505, 12550};
 
 /// The flame's three pictures: their widths.
@@ -1178,7 +1179,7 @@ const u8 gUlysses_PictureWidths[] = {12, 9, 6,  5,  8,  9, 12, 9, 8,
 const u8 gUlysses_PictureHeights[] = {18, 17, 15, 12, 14, 15, 16, 13, 8,
                                       4,  4,  6,  9,  9,  10, 10, 13, 16};
 
-/// Each Ulysses picture's byte offset in Ulysses's sheet.
+/// Each Ulysses picture's byte offset in Ulysses's sprite sheet.
 const u16 gUlysses_Pictures[] = {0,    216,  369,  459,  519,  631,
                                  766,  958,  1075, 1139, 1171, 1203,
                                  1263, 1362, 1452, 1532, 1592, 1670};
@@ -1274,7 +1275,8 @@ const u8 gCastingImpact_SapGlintFlips[] = {0, 4, 8, 12};
 /// The fangs' picture for each two of their first eight frames, by number.
 const u8 gCastingImpact_BitePictures[] = {0, 1, 2, 3};
 
-/// Each Raiden's Wrath picture's byte offset in the casting impacts' sheet.
+/// Each Raiden's Wrath picture's byte offset in the casting impacts' sprite
+/// sheet.
 const u16 gCastingImpact_RaidensWrathPictures[] = {
     8448, 8712, 11462, 16646, 16646, 24351, 24351, 28201, 28201, 28201};
 
@@ -1294,7 +1296,7 @@ const u16 gCastingImpact_RaidensWrathX[] = {58, 19, 0,   6,   6,
 const u16 gCastingImpact_RaidensWrathY[] = {17, 19, 24, 44, 44,
                                             42, 42, 37, 37, 37};
 
-/// Each Apocalypse picture's byte offset in the casting impacts' sheet.
+/// Each Apocalypse picture's byte offset in the casting impacts' sprite sheet.
 const u16 gCastingImpact_ApocalypsePictures[] = {5700,  7128,  10414, 14089,
                                                  19152, 23148, 26752};
 
@@ -1310,7 +1312,8 @@ const u16 gCastingImpact_ApocalypseX[] = {85, 65, 50, 19, 0, 0, 58};
 /// Each Apocalypse's y, in pixels.
 const u16 gCastingImpact_ApocalypseY[] = {62, 66, 78, 41, 19, 0, 5};
 
-/// Each Apocalypse burst picture's byte offset in the casting impacts' sheet.
+/// Each Apocalypse burst picture's byte offset in the casting impacts' sprite
+/// sheet.
 const u16 gCastingImpact_ApocalypseBurstPictures[] = {27788, 28464, 29724};
 
 /// Each Apocalypse burst picture's width, in pixels.
@@ -1323,7 +1326,7 @@ const u8 gCastingImpact_ApocalypseBurstHeights[] = {26, 36, 48};
 const u8 gCastingImpact_ApocalypseBurstPoints[][2] = {
     {37, 104}, {19, 81}, {20, 47}};
 
-/// Each ice chip picture's byte offset in the casting impacts' sheet.
+/// Each ice chip picture's byte offset in the casting impacts' sprite sheet.
 const u16 gCastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500};
 
 /// The flips a glint may be drawn with, one picked at random.
@@ -1395,7 +1398,7 @@ const u8 gHelmSplitter_ImpactBurstPictureWidths[] = {48, 48, 46, 36,
 const u8 gHelmSplitter_ImpactBurstPictureHeights[] = {96, 96, 90, 74,
                                                       74, 62, 52, 12};
 
-/// Each impact burst picture's byte offset in Helm Splitter's sheet.
+/// Each impact burst picture's byte offset in Helm Splitter's sprite sheet.
 const u16 gHelmSplitter_ImpactBurstPictures[] = {0,     4608,  9216,  13356,
                                                  16020, 18684, 20668, 22020};
 
@@ -1408,7 +1411,7 @@ const s16 gParticleStreams_OrbitPoints[][3] = {
 const s16 gParticleStreams_FireballPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 
-/// Each flash picture's byte offset in Particle Streams's sheet.
+/// Each flash picture's byte offset in Particle Streams's sprite sheet.
 const u16 gParticleStreams_FlashPictures[] = {0,    256,  1280, 3584,
                                               5888, 8192, 10496};
 
@@ -1421,7 +1424,7 @@ const u8 gRamses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 /// Each of the statue's sprites: its y in the statue.
 const u8 gRamses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 
-/// Each puff picture's byte offset in Ramses's sheet.
+/// Each puff picture's byte offset in Ramses's sprite sheet.
 const u16 gRamses_PuffPictures[] = {0, 256, 1280, 3584, 5888, 8192, 10496};
 
 /// Each puff's size, in pixels.
@@ -1444,7 +1447,7 @@ const s32 gTitanBlade_DustGravity[] = {toFIXED(0.5), toFIXED(0.25),
 const u8 gJudgment_BurstPictures[] = {0, 1, 2,  3,  4,  5,  6,
                                       7, 9, 10, 11, 13, 14, 0};
 
-/// Each shard picture's byte offset in Judgment's sheet.
+/// Each shard picture's byte offset in Judgment's sprite sheet.
 const u16 gJudgment_ShardPictures[] = {1536, 2125, 2838, 3551, 3950, 4286};
 
 /// Each shard picture's width, in pixels.
@@ -1463,7 +1466,7 @@ const u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 const s32 gNeptune_Gravity[] = {toFIXED(0.5), toFIXED(0.25), toFIXED(0.25),
                                 toFIXED(0.125)};
 
-/// Each spark picture's byte offset in Undead Sword's sheet.
+/// Each spark picture's byte offset in Undead Sword's sprite sheet.
 const u16 gUndeadSword_SparkPictures[] = {0,    256,  1280, 3584,
                                           5888, 8192, 10496};
 
@@ -1821,7 +1824,7 @@ const u8 gHeartbreak_SwingWidths[] = {32, 39, 42, 71};
 /// Each swing picture's height, in pixels.
 const u8 gHeartbreak_SwingHeights[] = {29, 32, 48, 57};
 
-/// Each swing picture's byte offset in Heartbreak's sheet.
+/// Each swing picture's byte offset in Heartbreak's sprite sheet.
 const u16 gHeartbreak_SwingPictures[] = {0, 928, 2176, 4192};
 
 /// Each fist picture's height, in pixels.
@@ -1830,7 +1833,7 @@ const u8 gHeartbreak_FistHeights[] = {29, 37, 48, 47, 52, 32, 22, 17};
 /// Each fist's y, in pixels.
 const u8 gHeartbreak_FistY[] = {34, 26, 15, 14, 7, 11, 8, 6};
 
-/// Each fist picture's byte offset in Heartbreak's sheet.
+/// Each fist picture's byte offset in Heartbreak's sprite sheet.
 const u16 gHeartbreak_FistPictures[] = {0,    928,  2112, 3648,
                                         5152, 6816, 7840, 8544};
 
@@ -1847,7 +1850,7 @@ const u8 gJuggle_Styles[][7] = {{1, 24, 4, 64, 32, 4, 0},
 /// Each petal's size, in pixels.
 const u8 gFlora_PetalSizes[] = {4, 8, 16, 24, 0};
 
-/// Each petal picture's byte offset in Flora's sheet.
+/// Each petal picture's byte offset in Flora's sprite sheet.
 const u16 gFlora_PetalPictures[] = {0, 32, 160, 672};
 
 /// The bloom frames.
@@ -1977,7 +1980,7 @@ const u8 gBubbleColumn_PictureWidths[] = {16, 15, 14, 13, 12, 11, 10, 9,
 const u8 gBubbleColumn_PictureHeights[] = {32, 30, 28, 26, 24, 22, 20, 18,
                                            16, 14, 12, 10, 8,  6,  4,  0};
 
-/// The glowing oval's fifteen pictures: their byte offsets in the sheet.
+/// The glowing oval's fifteen pictures: their byte offsets in the sprite sheet.
 const u16 gBubbleColumn_Pictures[] = {0,    512,  962,  1354, 1692,
                                       1980, 2222, 2422, 2584, 2712,
                                       2810, 2882, 2932, 2964, 2988};
@@ -1990,7 +1993,7 @@ const u8 gCoatlicue_PictureWidths[] = {16, 15, 14, 13, 12, 11, 10, 9,
 const u8 gCoatlicue_PictureHeights[] = {32, 30, 28, 26, 24, 22, 20, 18,
                                         16, 14, 12, 10, 8,  6,  4};
 
-/// Each Coatlicue picture's byte offset in Coatlicue's sheet.
+/// Each Coatlicue picture's byte offset in Coatlicue's sprite sheet.
 const u16 gCoatlicue_Pictures[] = {0,    512,  962,  1354, 1692,
                                    1980, 2222, 2422, 2584, 2712,
                                    2810, 2882, 2932, 2964, 2988};
@@ -2133,7 +2136,7 @@ const s16 gCatastrophe_StrikeTurns[] = {
     -356, -124, -256, 712, -64, 256, 0,   0, -228, 356,  0, 0,
     406,  64,   -256, 0,   -64, 0,   128, 0, 328,  -356, 0, 0};
 
-/// Each strike picture's byte offset in Catastrophe's sheet.
+/// Each strike picture's byte offset in Catastrophe's sprite sheet.
 const s16 gCatastrophe_StrikePictures[] = {
     0,  1, -1, 0,  1, -1, 0, 1, -1, 0, -1, 0, 2, 1,  0, -1, 2,  2,
     -1, 0, 1,  -1, 2, -1, 0, 1, -1, 0, -1, 0, 1, -1, 0, 1,  -1, 0};
@@ -2225,7 +2228,7 @@ const u8 gHelmSplitter_PictureWidths[] = {26, 46, 63, 77, 60, 39, 32};
 /// Each Helm Splitter picture's height, in pixels.
 const u8 gHelmSplitter_PictureHeights[] = {11, 20, 37, 65, 65, 54, 39, 0};
 
-/// Each Helm Splitter picture's byte offset in Helm Splitter's sheet.
+/// Each Helm Splitter picture's byte offset in Helm Splitter's sprite sheet.
 const u16 gHelmSplitter_Pictures[] = {0, 286, 1206, 3537, 8542, 12442, 14548};
 
 /// How far right of its anchor each picture is drawn, mirrored on the other
@@ -2321,7 +2324,7 @@ const u8 gMeteorBlow_PictureWidths[] = {30, 16, 16, 16, 10, 8, 8};
 /// Each Meteor Blow picture's height, in pixels.
 const u8 gMeteorBlow_PictureHeights[] = {30, 16, 16, 16, 16, 8, 8};
 
-/// Each Meteor Blow picture's byte offset in Meteor Blow's sheet.
+/// Each Meteor Blow picture's byte offset in Meteor Blow's sprite sheet.
 const u16 gMeteorBlow_Pictures[] = {0, 900, 1156, 1412, 1668, 1828, 1892};
 
 /// The frame each wave starts on.

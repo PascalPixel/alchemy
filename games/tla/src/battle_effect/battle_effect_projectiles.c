@@ -493,9 +493,9 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 #define SHORT_STREAK_WIDTH 17
 #define SHORT_STREAK_HEIGHT 2
 #define PROJECTILE_VOLLEY_STING_HIT_PICTURES PICTURE_BYTES(SHORT_STREAK)
-/// Hydro Slash's bubble, BlueBeamSheet's first picture, decoded at the sheet's
-/// start; its three pictures copied at every second byte after it, which
-/// nothing draws.
+/// Hydro Slash's bubble, BlueBeamSheet's first picture, decoded at the sprite
+/// sheet's start; its three pictures copied at every second byte after it,
+/// which nothing draws.
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_PICTURES 4096
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_BYTES                                  \
   ((2 * PICTURE_BYTES(BLUE_BUBBLE) + PICTURE_BYTES(BLUE_LARGE_SPLASH)) / 2)
@@ -531,8 +531,8 @@ enum VolleyField {
 /// The hit flashes turned on their side, after the upright ones.
 #define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
   (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
-/// The yellow spark sheet: the small spark first, then the medium one, then
-/// the large one.
+/// The yellow spark sprite sheet: the small spark first, then the medium one,
+/// then the large one.
 #define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH 12
 #define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT 8
 #define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH 18

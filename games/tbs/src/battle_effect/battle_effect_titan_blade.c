@@ -19,7 +19,7 @@
 #define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
-/// The flash pictures in the sheet, after the 34x104 fire pillar.
+/// The flash pictures in the sprite sheet, after the 34x104 fire pillar.
 #define TITAN_BLADE_FLASH_PICTURES PICTURE_BYTES(FIRE_PILLAR)
 /// A flash counts down from TITAN_BLADE_FLASH_START, half a frame later for
 /// each flash, and shows its six pictures over the last of it, three frames

@@ -67,7 +67,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (frame >= HAIL_FRAMES - HAIL_FADE_FRAMES)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(HAIL_FRAMES - frame);
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
-    // whatever the sheet holds.
+    // whatever the sprite sheet holds.
     if (frame == 1) {
       Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET,
                                  work->sheet + HAIL_CHIP_PICTURES, 1, 1);
@@ -153,7 +153,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The small Venus Djinni in the portal sheet.
+/// The small Venus Djinni in the portal sprite sheet.
 #define GROUND_DJINNI_PICTURE 26048
 /// The crackles round the portals, four a portal, in work->particles from
 /// GROUND_FIRST_CRACKLE.
@@ -216,8 +216,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     }
 
     for (frame = 0; frame != GROUND_FRAMES; frame++) {
-      // The canvas's colours step towards the portal sheet's, and the portals
-      // turn from yellow to violet.
+      // The canvas's colours step towards the portal sprite sheet's, and the
+      // portals turn from yellow to violet.
       if (frame > 16)
         BattleEffect_StepPaletteToResource(RESOURCE_PORTAL_SHEET);
       // The Djinni circles above the user, then rises away.

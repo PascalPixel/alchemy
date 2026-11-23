@@ -4,7 +4,7 @@
 
 #include "battle_effect_internal.h"
 
-/// Bind's sheet: the rune, the flare pictures, then the Djinni.
+/// Bind's sprite sheet: the rune, the flare pictures, then the Djinni.
 #define BIND_FLARE_PICTURES 4096
 #define BIND_DJINNI_PICTURE 8192
 /// The particles each target's triangle keeps, and the flares along each edge.

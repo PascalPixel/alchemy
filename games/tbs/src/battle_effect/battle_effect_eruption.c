@@ -32,7 +32,7 @@ enum {
   ERUPTION_FIELD_FRAMES ///< frames in the whole effect
 };
 
-/// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
+/// The mote pictures in the sprite sheet: two sets, MOTE_SET_BYTES apart.
 #define ERUPTION_FIELD_MOTE_PICTURES 12800
 
 /// The puffs of smoke given a start; the variant's ERUPTION_FIELD_PUFFS of

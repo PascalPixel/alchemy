@@ -347,8 +347,8 @@ enum VolleyField {
 /// The hit flashes turned on their side, after the upright ones.
 #define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
   (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
-/// The yellow spark sheet: the small spark first, then the medium one, then
-/// the large one.
+/// The yellow spark sprite sheet: the small spark first, then the medium one,
+/// then the large one.
 #define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH 12
 #define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT 8
 #define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH 18

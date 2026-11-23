@@ -10,7 +10,7 @@
 #define TARGET_STRIKE_SPARK_COUNT 512
 #define TARGET_STRIKE_SPARKS (PARTICLES + TARGET_STRIKE_MOTE_SLOTS)
 
-/// The smoke pictures in the sheet: six 24x48 puffs, each shown for
+/// The smoke pictures in the sprite sheet: six 24x48 puffs, each shown for
 /// TARGET_STRIKE_SMOKE_FRAMES as a puff rises.
 #define TARGET_STRIKE_SMOKE_PICTURES 12800
 #define TARGET_STRIKE_SMOKE_PUFFS 6
@@ -30,7 +30,7 @@
 #define TARGET_STRIKE_MOTE_FLIGHT_FRAMES 10
 /// The canvas row the fangs' pictures start at.
 #define TARGET_STRIKE_BITE_Y 56
-/// The bite's stages after the tornado sheet: BeamImage for a slash,
+/// The bite's stages after the tornado sprite sheet: BeamImage for a slash,
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
 #define TARGET_STRIKE_BITE_WIDTH 18

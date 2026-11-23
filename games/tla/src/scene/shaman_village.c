@@ -250,8 +250,9 @@ enum LetteringCommand {
   LETTERING_END = -1
 };
 
-/// The lettering pictures, in the sheet's order (ShamanVillage_LoadLettering);
-/// the village shows only the countdown and `GO`.
+/// The lettering pictures, in the sprite sheet's order
+/// (ShamanVillage_LoadLettering); the village shows only the countdown and
+/// `GO`.
 enum LetteringPicture {
   LETTERING_PICTURE_LEND_A_HAND = 0,
   LETTERING_PICTURE_MATCH_TITLE_FIRST =
@@ -2138,7 +2139,7 @@ void ShamanVillage_StartLettering(s32 shape, s32 secondHalf) {
   gShamanVillage_LetteringX = 0;
 }
 
-/// The European editions' lettering sheet has one more palette row.
+/// The European editions' lettering sprite sheet has one more palette row.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_PALETTE_ROWS 6
@@ -2146,8 +2147,8 @@ void ShamanVillage_StartLettering(s32 shape, s32 secondHalf) {
 #define LETTERING_PALETTE_ROWS 5
 #endif
 
-/// The decoded lettering sheet: its palette rows, then eight pictures of 32
-/// tiles each.
+/// The decoded lettering sprite sheet: its palette rows, then eight pictures of
+/// 32 tiles each.
 struct LetteringSheet {
   u8 palettes[LETTERING_PALETTE_ROWS][32];
   u8 pictures[8][1024];
@@ -2156,8 +2157,8 @@ struct LetteringSheet {
 /// Loads lettering picture into the lettering's VRAM block (taken once) and its
 /// palette into sprite palette LETTERING_PALETTE.
 void ShamanVillage_LoadLettering(s32 picture) {
-  // BUG: this holds seven pictures of the sheet's eight, so decoding the sheet
-  // writes 1024 bytes past the block.
+  // BUG: this holds seven pictures of the sprite sheet's eight, so decoding the
+  // sprite sheet writes 1024 bytes past the block.
 #ifdef BUGFIX
   struct LetteringSheet *sheet = Heap_AllocEwram(sizeof(struct LetteringSheet));
 #else
@@ -3073,7 +3074,7 @@ s16 gShamanVillage_LetteringLoseScript[] = {
     LETTERING_END,
 };
 
-/// `GO` has a palette row of its own in the European editions' sheet.
+/// `GO` has a palette row of its own in the European editions' sprite sheet.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_GO_PALETTE_OFFSET (5 * 32)
 #else

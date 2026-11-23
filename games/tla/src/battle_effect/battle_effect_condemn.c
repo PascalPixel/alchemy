@@ -42,7 +42,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 pictureColumn;
   s32 pictureRow;
   /* FAKEMATCH(temporary): cells, the cell buffer's address held in a local for
-   * the crescent sheet's load. */
+   * the crescent sprite sheet's load. */
   u8 *cells;
   s32 frame;
 

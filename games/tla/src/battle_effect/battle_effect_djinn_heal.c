@@ -23,7 +23,7 @@
 #define TUMBLING_QUADS_TILT 3000
 
 /// Where the quads' texture (CometTexture, or FeatherSheet's feather) and the
-/// Djinni sit in the sheet; the light line is at its start.
+/// Djinni sit in the sprite sheet; the light line is at its start.
 #define TUMBLING_QUADS_TEXTURE 10000
 #define TUMBLING_QUADS_DJINNI 26048
 /// How far the Djinni sways to either side, in screen pixels.
@@ -67,7 +67,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
 
-  // The mode's canvas, sheets and palette.
+  // The mode's canvas, sprite sheets and palette.
   if (mode == TUMBLING_QUADS_BALM) {
     BattleEffect_RunDjinniEntrance(args,
                                    DJINNI_ENTRANCE(ELEMENT_MERCURY,
@@ -279,7 +279,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 #define ZAGAN_STREAKS 20
 #define ZAGAN_STREAK_WIDTH 32
 #define ZAGAN_STREAK_LEVEL 16
-/// The mote copies made in the battle sheet, each 7 levels fainter.
+/// The mote copies made in the battle sprite sheet, each 7 levels fainter.
 #define ZAGAN_FAINT_MOTES 10
 /// As the field darkens, each of its colours steps toward the battle
 /// background's own, less these levels of red, green and blue.

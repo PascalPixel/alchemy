@@ -31,8 +31,8 @@
 /// FlashBurstSheet, the spray, decoded after the drops in the map cell buffer.
 #define OCEAN_FIST_SPRAY_SHEET (Ram_MapCellBuffer + 16384)
 /// The sprays given a countdown, of which the first OCEAN_FIST_SPRAYS burst at
-/// the column's foot, one a frame; each shows the sheet's six pictures for
-/// three frames apiece.
+/// the column's foot, one a frame; each shows the sprite sheet's six pictures
+/// for three frames apiece.
 #define OCEAN_FIST_SPRAY_SLOTS 32
 #define OCEAN_FIST_SPRAYS 24
 #define OCEAN_FIST_SPRAY_FRAMES (6 * 3)
@@ -108,7 +108,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         work->shakeFrames = 16;
       }
 
-      // From the strike, each frame halves the brightness of the picture
+      // From the strike, each frame halves the brightness of the canvas
       // shown, so each of the three fades to a sixteenth.
       if (frame >= OCEAN_FIST_STRIKE_FRAME &&
           frame < OCEAN_FIST_STRIKE_FRAME + OCEAN_FIST_FADE_FRAMES) {

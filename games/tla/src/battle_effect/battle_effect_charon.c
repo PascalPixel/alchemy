@@ -106,15 +106,16 @@ extern const struct Scale gCharon_PulseScale;
 extern const struct Scale gCharon_RevealScale;
 extern const struct Scale gCharon_FinaleScale;
 
-/// Where the pictures that load once are decoded in the effect's sheet: the
-/// rune seal as it is stamped (RuneSealSheet, 184 by 80), then at frame 132
+/// Where the pictures that load once are decoded in the effect's sprite sheet:
+/// the rune seal as it is stamped (RuneSealSheet, 184 by 80), then at frame 132
 /// Charon's, its wisp's and ParticleSpritesD's in turn.
 #define CHARON_BEAST_PICTURES 9216
 #define CHARON_RUNE_SEAL 9216
 #define RUNE_SEAL_WIDTH 184
 #define RUNE_SEAL_HEIGHT 80
-/// Where each act decodes its own sheet in the effect's pictures: SwirlTexture
-/// with CharmRingSheet, CurseSealSheet, FireRingTexture or shaded circles.
+/// Where each act decodes its own sprite sheet in the effect's pictures:
+/// SwirlTexture with CharmRingSheet, CurseSealSheet, FireRingTexture or shaded
+/// circles.
 #define CHARON_ACT_PICTURES 4096
 /// The finale's brightest block, which the four columns of light are drawn
 /// from, and GlowRingTexture made all bright.
@@ -125,8 +126,8 @@ extern const struct Scale gCharon_FinaleScale;
 
 /// The ring of motes the seal sends out: CHARON_RING_MOTES motes of mote
 /// picture CHARON_RING_MOTE (4 pixels wide, 8 tall), drawn from
-/// CHARON_RING_SHADES copies in the battle sheet, each 7 levels darker than
-/// the last.
+/// CHARON_RING_SHADES copies in the battle sprite sheet, each 7 levels darker
+/// than the last.
 #define CHARON_RING_MOTES 256
 #define CHARON_RING_MOTE 4
 #define CHARON_RING_SHADES 10

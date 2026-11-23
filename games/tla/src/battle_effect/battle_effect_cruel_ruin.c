@@ -17,16 +17,16 @@
 
 #define SHATTERING_OPENING_FRAMES 128
 
-#define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the picture breaks
+#define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the screen breaks
 /// How long a flash floats up, its six pictures four frames each and the last
 /// held.
 #define SHATTERING_OPENING_FLASH_FRAMES 40
-#define SHATTERING_OPENING_PIECES 33 ///< pieces the picture breaks into
+#define SHATTERING_OPENING_PIECES 33 ///< pieces the screen breaks into
 #define SHATTERING_OPENING_DISC_X 96 ///< the centre of the opening disc
 #define SHATTERING_OPENING_DISC_Y 60 ///< the centre of the opening disc
 
 /// As the battle with the Doom Dragon opens over the Serpent's stars, the
-/// screen turns white and the picture breaks into pieces that fly apart and
+/// screen turns white and breaks into pieces that fly apart and
 /// fall, while a grey disc grows over it and the battle background's colours
 /// return.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
@@ -327,7 +327,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         piece->velocityY = 0;
         piece->variant = 0;
       }
-      // From here each transfer halves the old picture, leaving a trail.
+      // From here each transfer halves the canvas, leaving a trail.
       work->transferMode = CANVAS_COPY_AND_FADE;
       work->transferValue = CANVAS_FADE_HALF;
     }

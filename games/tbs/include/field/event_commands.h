@@ -201,8 +201,8 @@ enum Emote {
   EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_CHIME
   EMOTE_SCOWL = 7,      ///< a scowling face
   EMOTE_SMILE = 8,      ///< a smiling face
-  /// A sweat drop; no scene shows it, and the Japanese sheet has no tenth
-  /// bubble.
+  /// A sweat drop; no scene shows it, and the Japanese sprite sheet has no
+  /// tenth bubble.
   EMOTE_SWEAT_DROP = 9
 };
 /// FieldEffect_SetAttached's flags: a mode in the low two bits, and

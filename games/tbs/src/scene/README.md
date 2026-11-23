@@ -188,7 +188,7 @@ Two choices explain the folder.
 
 Rooms are packed several to a map. The inside of a house is not a map of
 its own: rooms drawn in one style sit side by side on one map, a
-[sheet of rooms](../../glossary.md#sheet-of-rooms), and the entrance picks
+[rooms map](../../glossary.md#rooms-map), and the entrance picks
 the room. So a file like `cottage_rooms_b.c` is named for a style, not a
 town, and holds rooms from several towns.
 

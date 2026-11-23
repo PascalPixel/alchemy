@@ -64,7 +64,7 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// HEAP_SLOT_BATTLE_EFFECT heap slot.
 struct BattleEffectWork {
   /// Images and scanline tables reuse the storage before the particles.
-  /// The tile-effect mask extends beyond sheet into the table area.
+  /// The tile-effect mask extends beyond sprite sheet into the table area.
   union {
     struct {
       u8 sheet[27008];    ///< the effect's decoded pictures, at fixed offsets

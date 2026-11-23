@@ -66,7 +66,7 @@ void BattleEffect_RunFlash(struct BattleEffectParams *args) {
 void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_ZEPHYR);
 }
-/// Where each picture sits in the sheet.
+/// Where each picture sits in the sprite sheet.
 enum StatBoostSheet {
   STAT_BOOST_FLARES = 0,      ///< flares (ParticleSpritesD)
   STAT_BOOST_BURST = 1550,    ///< six bursts of light (GlowOrb)
@@ -74,7 +74,7 @@ enum StatBoostSheet {
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
 };
 
-/// When the first target's flares burst and its picture appears, with the
+/// When the first target's flares burst and its sprite appears, with the
 /// damage; each later target follows STAT_BOOST_TARGET_DELAY frames behind.
 #define STAT_BOOST_BURST_FRAME 52
 #define STAT_BOOST_PICTURE_FRAME 80
@@ -446,13 +446,14 @@ void BattleEffect_RunImpair(struct BattleEffectParams *args) {
 void BattleEffect_RunWeaken(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
-/// Breaks the shield picture into fading shards as Weaken does; no effect table
+/// Breaks the shield sprite into fading shards as Weaken does; no effect table
 /// entry reaches it.
 UNUSED void
 BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_UNUSED);
 }
-/// The shard picture in the sheet, then its DIMMED_COPIES - 1 dimmed copies.
+/// The shard picture in the sprite sheet, then its DIMMED_COPIES - 1 dimmed
+/// copies.
 #define STAT_REDUCTION_SHARD_PICTURES 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
 /// Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
@@ -514,7 +515,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     xOffset = 0;
   }
 
-  // The shards start in a grid where the picture was, in rows 6 pixels apart
+  // The shards start in a grid where the sprite was, in rows 6 pixels apart
   // up from 10 below its centre, four to a row 2 pixels apart from 2 to one
   // side (dagger) or 8 apart from 16 (shield), and fly away from the user's
   // side, scattering and rising.

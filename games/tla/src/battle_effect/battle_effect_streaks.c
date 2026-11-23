@@ -155,7 +155,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
-  // Each transfer halves the old picture, leaving a trail.
+  // Each transfer halves the canvas, leaving a trail.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = BattleObject_GetFar(args->user)->object;

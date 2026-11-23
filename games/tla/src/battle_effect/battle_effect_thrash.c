@@ -123,7 +123,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
+  // The pictures: 1 and 2 in the sprite sheet, 3 and 4 in the map cell
   // buffer (Twin Shear's four half pictures all there).
   if (mode == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->sheet, 1, 0);

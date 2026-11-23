@@ -1,5 +1,5 @@
 /// @file
-/// Stone rooms (SceneId_StoneRooms), a sheet of rooms drawn in stone.
+/// Stone rooms (SceneId_StoneRooms), a rooms map drawn in stone.
 ///
 /// The game packs rooms of several places that share a tile style onto one
 /// map. This one holds two, whose area names differ by entrance.

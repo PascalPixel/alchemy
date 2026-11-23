@@ -169,7 +169,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
 
   pos.groundHeight = 0;
   pos.height = toFIXED(255);
-  // Render_ApplyProjectedPlacement draws each picture 255 pixels above its y,
+  // Render_ApplyProjectedPlacement draws each sprite 255 pixels above its y,
   // while its draw slot and shadow follow y itself.
   switch (formation) {
   case SUMMON_FORMATION_THOR:

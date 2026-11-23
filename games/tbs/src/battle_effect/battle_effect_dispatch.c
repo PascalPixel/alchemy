@@ -69,8 +69,8 @@ void BattleEffect_RunSummon(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sheet,
-/// work and canvas it lends.
+/// Runs an ordinary battle effect from gBattleEffect_Handlers, with the sprite
+/// sheet, work and canvas it lends.
 void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
   s32 kind;
   struct BattleEffectWork *work;

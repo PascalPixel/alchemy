@@ -292,14 +292,14 @@ enum ActorAnimation {
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
   /// Hanging from a rope by his hands as he crosses it.
   ANIM_LEADER_CROSS_ROPE = 29,
-  /// ANIM_LEADER_RUN again, on every party member's sheet.
+  /// ANIM_LEADER_RUN again, on every party member's sprite sheet.
   ANIM_PARTY_RUN = 30,
   /// Hanging from a vine, seen from behind with an arm raised.
   ANIM_LEADER_HANG = 32,
   /// Slumping and falling forward onto his face, then lying there: the leader
   /// as the whole party falls.
   ANIM_LEADER_FALL_ON_FACE = 36,
-  /// ANIM_STILL's picture held again on the leader's sheet: the leader
+  /// ANIM_STILL's picture held again on the leader's sprite sheet: the leader
   /// standing as he lands on a statue that rose under him.
   ANIM_LEADER_STILL = 38,
   /// Swinging an arm out to throw something.

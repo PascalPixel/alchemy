@@ -1,5 +1,5 @@
 /// @file
-/// Fuchin Temple's grounds, and the sheet of rooms that shares its overlay.
+/// Fuchin Temple's grounds, and the rooms map that shares its overlay.
 ///
 /// The game packs rooms of several places that share a tile style onto one
 /// map. Here that is the inside of Fuchin Temple with two masters' rooms in
@@ -25,7 +25,7 @@
 ///   Back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
 ///   sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 ///
-/// - Lacquer rooms A (SceneId_LacquerRoomsA), a sheet of rooms drawn in red
+/// - Lacquer rooms A (SceneId_LacquerRoomsA), a rooms map drawn in red
 ///   lacquer. Each is a camera box of its own, chosen by the entrance the
 ///   party comes in by. In story order, by the exits that lead in:
 ///   - Fuchin Temple (by LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS or the

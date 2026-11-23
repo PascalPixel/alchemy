@@ -15,9 +15,9 @@
 // screen and throwing up dust from its root, and the targets react a few frames
 // later.
 
-/// The dust pictures in the vine sheet, after the vines.
+/// The dust pictures in the vine sprite sheet, after the vines.
 #define GROWING_COLUMNS_VINE_DUST_PICTURES 7769
-/// The dust pictures in the pillar sheet, after the pillars.
+/// The dust pictures in the pillar sprite sheet, after the pillars.
 #define GROWING_COLUMNS_PILLAR_DUST_PICTURES 2815
 /// ThornSheet: the big thorn, then the small one.
 #define THORN_BIG_WIDTH 48

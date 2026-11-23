@@ -12,7 +12,7 @@ extern const struct SpriteScale gKirin_ChargeScale;
 #define KIRIN_CHARGE_FRAMES 96 ///< frames of the charge and the wall of fire
 #define KIRIN_SWEEP_FRAMES 120 ///< frames of Kirin's bound through the hoop
 
-/// The bytes of one of the sheet's four fire blobs.
+/// The bytes of one of the sprite sheet's four fire blobs.
 #define KIRIN_BLOB_BYTES PICTURE_BYTES(FIRE_BLOB)
 
 /// The sprites Kirin is drawn from, each at its gKirin_Columns and gKirin_Rows.

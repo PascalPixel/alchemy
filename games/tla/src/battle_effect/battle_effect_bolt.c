@@ -31,7 +31,7 @@ enum {
 #define BOLT_COUNT(variant, column)                                            \
   gBolt_Counts[(variant) * BOLT_COUNT_COLUMNS + (column)]
 
-/// Where the bolt pictures start in the sheet, after the six glints.
+/// Where the bolt pictures start in the sprite sheet, after the six glints.
 #define BOLT_PICTURES GLINT_SET_BYTES
 
 /// A bolt of lightning strikes each target in turn, and sparks fly up from
@@ -56,7 +56,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  // The tornado sheet only for its glints.
+  // The tornado sprite sheet only for its glints.
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + BOLT_PICTURES, 1, 1);

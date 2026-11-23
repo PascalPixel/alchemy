@@ -146,8 +146,8 @@ void Actor_FallOverById(u32 id, u32 angle) {
   }
 }
 
-/// Actor_FallOverById with an animation of the actor's sheet (-1 for none)
-/// and the fall moving the actor itself half a cell the way it falls.
+/// Actor_FallOverById with an animation of the actor's sprite sheet (-1 for
+/// none) and the fall moving the actor itself half a cell the way it falls.
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation) {
   struct Actor *actor = Actor_GetById(id);
   struct Sprite *sprite = actor->sprite;

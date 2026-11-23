@@ -27,8 +27,8 @@
 /// The dust drawn: the rest is set out and never shown.
 #define GAIA_DUST_SHOWN 64
 
-/// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
-/// rows, the standing wall's top and foot, then the flames.
+/// The pictures Gaia rebuilds from the earth wall sprite sheet: the rising
+/// wall's rows, the standing wall's top and foot, then the flames.
 #define GAIA_ROW_HEIGHT 32
 /// The rising wall's rows, narrowest first, and the flames at its foot.
 #define GAIA_ROW_PICTURES 9

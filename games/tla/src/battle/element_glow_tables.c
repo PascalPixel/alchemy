@@ -1,5 +1,5 @@
 /// @file
-/// Where the element glow's sparks and rings sit on their sheet.
+/// Where the element glow's sparks and rings sit on their sprite sheet.
 
 #include "types.h"
 

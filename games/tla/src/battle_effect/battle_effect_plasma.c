@@ -14,7 +14,7 @@
 #define PLASMA_GROUND_Y 104
 
 #define PLASMA_SPACING 8 ///< frames between pillars
-/// The second picture in the sheet, after the first 48x112 one.
+/// The second picture in the sprite sheet, after the first 48x112 one.
 #define PLASMA_SECOND_PICTURE PICTURE_BYTES(LIGHTNING_PILLAR)
 /// The canvas level a strike floods the whole canvas with: the flash that
 /// tints the battle as each pillar comes down.

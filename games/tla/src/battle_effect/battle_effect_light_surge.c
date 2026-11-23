@@ -9,8 +9,8 @@
 #define LIGHT_SURGE_FRAMES 74
 /// The frame the battle shows the damage.
 #define LIGHT_SURGE_DAMAGE_FRAME 64
-/// From this frame the colours step towards the Mercury Djinn sheet's, one
-/// step every fourth frame.
+/// From this frame the colours step towards the Mercury Djinn sprite sheet's,
+/// one step every fourth frame.
 #define LIGHT_SURGE_RECOLOR_FRAME 32
 
 /// The work's particles: each bolt's flash from the first, its glow from

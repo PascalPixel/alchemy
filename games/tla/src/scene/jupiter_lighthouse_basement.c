@@ -58,7 +58,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// The side room's sparks, which take turns at the particle sheet's two
+/// The side room's sparks, which take turns at the particle sprite sheet's two
 /// swells.
 #define JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT 16
 

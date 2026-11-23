@@ -2,7 +2,7 @@
 /// Picture layouts, timing rows and handler entries for the battle effects.
 /// Each table is read only by the part its prefix names, except the
 /// gBattleEffect_ tables, which many parts share. Picture offsets are byte
-/// offsets from the sheet start, accumulated as width times height.
+/// offsets from the sprite sheet start, accumulated as width times height.
 
 #include "battle_effect/battle_effect_table.h"
 #include "fixed_math.h"
@@ -16,8 +16,8 @@
 
 struct BattleEffectParams;
 
-// Picture layouts that several effects read from the same sheet; each effect
-// keeps its own copy, defined from one of these.
+// Picture layouts that several effects read from the same sprite sheet; each
+// effect keeps its own copy, defined from one of these.
 
 /// The six pictures of an erupting flame puff: width, height, how far below its
 /// anchor its top goes, so that all six stand on one line, and where each
@@ -52,8 +52,8 @@ struct BattleEffectParams;
 
 // Shared picture layouts, read by many parts.
 
-/// Mote pictures: particle sheets hold ten, picture n (from 0) n + 1 pixels
-/// wide and twice that tall. It stays the first table, where the blitter
+/// Mote pictures: particle sprite sheets hold ten, picture n (from 0) n + 1
+/// pixels wide and twice that tall. It stays the first table, where the blitter
 /// template's walk ends.
 u16 gBattleEffect_MotePictures[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
 /// Flare pictures: the first ten are squares 2x2 to 20x20, picture n (from 0) n
@@ -69,8 +69,8 @@ u16 gBattleEffect_SparklePictures[] = {0, 25, 74, 123, 172, 221, 246, 255, 256};
 u8 gBattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 /// The six pictures of an erupting flame puff: width, height, how far below its
 /// anchor its top goes (so that all six stand on about the same line) and
-/// where each begins in the sheet. Each is drawn centred across x; the Mars
-/// Djinni shows each for 8 frames, centred on the flame's x. Read by the
+/// where each begins in the sprite sheet. Each is drawn centred across x; the
+/// Mars Djinni shows each for 8 frames, centred on the flame's x. Read by the
 /// Djinn attacks, Flare, the casting impacts, Atalanta and the dragon cloud.
 u8 gBattleEffect_PuffArcPictureWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
 u8 gBattleEffect_PuffArcPictureHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
@@ -149,7 +149,7 @@ u8 gTargetStrike_Styles[][7] = {
         {STRIKE_KIND_BITE, 3, STRIKE_ABSORB, STRIKE_COLOR_MARS, 4, COMPOSITE_ADDITIVE, 96},
 };
 // clang-format on
-/// The six slash pictures: size, sheet offset and reach from the target.
+/// The six slash pictures: size, sprite sheet offset and reach from the target.
 u8 gTargetStrike_Widths[] = SLASH_PICTURE_WIDTHS;
 u8 gTargetStrike_Heights[] = SLASH_PICTURE_HEIGHTS;
 u16 gTargetStrike_Pictures[] = {3200, 3466, 3952, 4733, 5695, 6696};
@@ -196,8 +196,9 @@ u8 gDeathPlunge_PieceStartY[] = {0,  0,  0,  0,  0,  0,  19, 17, 23,  28, 8,
 s8 gDeathPlunge_X[] = {0, 32, 0, 32};
 s8 gDeathPlunge_Y[] = {0, 0, 32, 32};
 u8 gDeathPlunge_DrawFlags[] = GLINT_FLIPS;
-/// The six pictures: the first four from the swirl sheet, the last two from the
-/// tail sheet. gSpiderWeb_PictureX has six entries for each side.
+/// The six pictures: the first four from the swirl sprite sheet, the last two
+/// from the tail sprite sheet. gSpiderWeb_PictureX has six entries for each
+/// side.
 u8 gSpiderWeb_PictureWidths[] = {40, 112, 112, 112, 88, 64};
 u8 gSpiderWeb_PictureHeights[] = {56, 80, 64, 64, 80, 88};
 u16 gSpiderWeb_Pictures[] = {0, 2240, 11200, 18368, 0, 7040};
@@ -218,7 +219,8 @@ u8 gGatheringLights_Counts[][2] = {
 // battle_effect_mirrored_wall.c: Mirrored earth wall pictures.
 
 /// The earth wall's three images: the mirrored wall reads them at the start of
-/// its sheet, the rising wall after its rebuilt rows. Both share the sizes.
+/// its sprite sheet, the rising wall after its rebuilt rows. Both share the
+/// sizes.
 u16 gMirroredWall_Pictures[] = EARTH_WALL_PICTURES;
 u8 gMirroredWall_PictureWidths[] = EARTH_WALL_PICTURE_WIDTHS;
 u8 gMirroredWall_PictureHeights[] = EARTH_WALL_PICTURE_HEIGHTS;
@@ -300,7 +302,7 @@ u8 gTiamat_EmberSpeeds[] = {0, 8, 12, 16};
 u8 gTiamat_SparkPixels[] = {32, 32};
 /// Ember sizes, by ember index & 3: mote pictures 1x2, 1x2, 2x4 and 3x6.
 u8 gTiamat_EmberSizes[] = {1, 1, 2, 3};
-/// The six flame pictures: size, drop below the flame and sheet offset.
+/// The six flame pictures: size, drop below the flame and sprite sheet offset.
 u8 gTiamat_FlameWidths[] = FLAME_PUFF_PICTURE_WIDTHS;
 u8 gTiamat_FlameHeights[] = FLAME_PUFF_PICTURE_HEIGHTS;
 u8 gTiamat_FlameDrops[] = FLAME_PUFF_PICTURE_BIAS_Y;
@@ -794,8 +796,8 @@ u8 gCybele_ChipHeights[] = {6, 3, 4, 3, 3};
 /// The five pictures of a spark, square.
 u16 gCybele_SparkPictures[] = {3979, 4043, 4268, 4389, 4470};
 u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
-/// The seven growing pictures of the blast sheet, square. Cybele draws only the
-/// last, largest one, as a dust cloud.
+/// The seven growing pictures of the blast sprite sheet, square. Cybele draws
+/// only the last, largest one, as a dust cloud.
 u16 gCybele_BlastPictures[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
 u16 gCybele_BlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
 /// Boreas: where the crystals stand (and in the second half the rising
@@ -1008,8 +1010,8 @@ u8 gHail_CrackleFlips[] = {
     EFFECT_CLIP_BOUNDS, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP};
 /// The portal (picture 0), its white core (1 and 2) and its crackles (3 to 8)
-/// in the portal sheet: size, where each begins in the sheet, and its offset
-/// from the portal's corner.
+/// in the portal sprite sheet: size, where each begins in the sprite sheet, and
+/// its offset from the portal's corner.
 u8 gHail_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
 u8 gHail_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
 u16 gHail_PortalPictures[] = {0,    1152, 1243, 1341, 1533,
@@ -1075,7 +1077,7 @@ u8 gFlurry_Styles[][7] = {
         {FLURRY_ARCS_AND_WAVES, FLURRY_PALETTE_BLUE_ARC, 3, 32, 12, 52, 1},
 };
 // clang-format on
-/// Rising wall: the nine rows of the growing wall in the rebuilt sheet.
+/// Rising wall: the nine rows of the growing wall in the rebuilt sprite sheet.
 u16 gGaia_RowPictures[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
 u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 /// The three pictures of the flames at the wall's foot, after the rebuilt
@@ -1145,13 +1147,14 @@ s16 gParticleStreams_OrbitPoints[][3] = {
 /// Where the seven fireballs fall, in pixels.
 s16 gParticleStreams_FireballPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
-/// The seven growing flash pictures of the blast sheet, square.
+/// The seven growing flash pictures of the blast sprite sheet, square.
 u16 gParticleStreams_FlashPictures[] = BLAST_PICTURES;
 u16 gParticleStreams_FlashSizes[] = BLAST_PICTURE_SIZES;
 /// Where the statue's sprites stand, in pixels from its corner.
 u8 gRamses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
 u8 gRamses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
-/// The puff pictures of the blast sheet, square; only the last four are used.
+/// The puff pictures of the blast sprite sheet, square; only the last four are
+/// used.
 u16 gRamses_PuffPictures[] = BLAST_PICTURES;
 u16 gRamses_PuffSizes[] = BLAST_PICTURE_SIZES;
 
@@ -1177,7 +1180,7 @@ s32 gTitanBlade_DustGravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
 /// tall, from JUDGMENT_SHEET_BURST.
 u8 gJudgment_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
 u16 gJudgment_BurstPictures[] = {0, 8, 26, 58, 130, 330, 572};
-/// The six shard pictures thrown from the burst, from the sheet's start.
+/// The six shard pictures thrown from the burst, from the sprite sheet's start.
 u16 gJudgment_ShardPictures[] = {2396, 2985, 3698, 4411, 4810, 5146};
 u8 gJudgment_ShardWidths[] = {19, 23, 23, 19, 16, 17};
 u8 gJudgment_ShardHeights[] = {31, 31, 31, 21, 21, 24};

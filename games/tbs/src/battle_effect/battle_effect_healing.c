@@ -10,7 +10,7 @@
 // mode of each effect. Each mote keeps its place relative to its target, so the
 // swirl is one turn of the whole group.
 
-#define HEALING_DJINNI_PICTURE 4096 ///< the Djinni picture in the sheet
+#define HEALING_DJINNI_PICTURE 4096 ///< the Djinni picture in the sprite sheet
 /// How far the Djinni sways to either side, in screen pixels.
 #define HEALING_DJINNI_SWAY 20
 /// Each target's motes: HEALING_MOTES for the stronger variant, half that for
@@ -56,7 +56,7 @@ void BattleEffect_RunWish(struct BattleEffectParams *args) {
   BattleEffect_RunHealingMotes(args, HEALING_MODE_WISH);
 }
 /// A ring of healing motes below each target closes in on it, in the blast
-/// sheet's colours.
+/// sprite sheet's colours.
 ///
 /// Abilities: Cure, Cure Well, Potent Cure, Corn; Worms.
 void BattleEffect_RunCure(struct BattleEffectParams *args) {

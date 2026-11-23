@@ -142,8 +142,8 @@ Resource_SubtitlePalette:
 	.endif
 	.endif
 	.endif
-@ The subtitle's words in each language, each sheet three 64x64 word pieces
-@ placed side by side in one row, as the title shows them, in four stages
+@ The subtitle's words in each language, each sprite sheet three 64x64 word
+@ pieces placed side by side in one row, as the title shows them, in four stages
 @ from blurred (subtitle_a) to sharp (subtitle_d), in Resource_SubtitlePalette's
 @ colours.
 @ Streams are rounded to four bytes; PACKER rows name the buffer's last writer.

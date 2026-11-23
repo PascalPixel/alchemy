@@ -101,7 +101,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The burst's six pictures in the sheet, after the smoke's six.
+/// The burst's six pictures in the sprite sheet, after the smoke's six.
 #define TARGET_BURST_PICTURES (6 * PICTURE_BYTES(SMOKE_PUFF))
 
 #define TARGET_BURSTS_FRAMES 96

@@ -211,7 +211,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     }
 
     // From the hit on, the sparks fly and burn down, drawn by turns with
-    // the two blitters; their picture shrinks as they burn.
+    // the two blitters; their sprites shrink as they burn.
     // DEAD: frame < 64 is always true, as the loop ends at
     // RUSHING_STRIKE_FRAMES; the ROM keeps the compare.
     if (frame >= RUSHING_STRIKE_FRAME && frame < 64) {

@@ -16,9 +16,9 @@
 // Growing columns and thorns spring up one after another, each shaking the
 // screen and flaring at its root, and the targets react a few frames later.
 
-/// The impact flare's pictures in the vine sheet, after the vines.
+/// The impact flare's pictures in the vine sprite sheet, after the vines.
 #define GROWING_COLUMNS_VINE_FLARE_PICTURES 7769
-/// The impact flare's pictures in the pillar sheet, after the pillars.
+/// The impact flare's pictures in the pillar sprite sheet, after the pillars.
 #define GROWING_COLUMNS_PILLAR_FLARE_PICTURES 2815
 
 /// What the growing columns grow (BattleEffect_RunGrowingColumns).

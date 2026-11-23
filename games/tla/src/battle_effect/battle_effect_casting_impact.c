@@ -156,8 +156,8 @@ enum CastingImpact {
 #define CASTING_IMPACT_SPARK_LIFE 32
 #define CASTING_IMPACT_SPARK_SHRINK 20
 
-/// Asura's sheet: the masked swordsman with his sword low, then swung up, then
-/// the red crescent his stroke leaves.
+/// Asura's sprite sheet: the masked swordsman with his sword low, then swung
+/// up, then the red crescent his stroke leaves.
 #define ASURA_SHEET_LOW_WIDTH 80
 #define ASURA_SHEET_LOW_HEIGHT 96
 #define ASURA_SHEET_SWUNG_WIDTH 80
@@ -180,8 +180,8 @@ enum CastingImpact {
 #define ASURA_CRESCENT_FADE_D                                                  \
   (ASURA_CRESCENT_FADE_C + CANVAS_SIZE * ASURA_CRESCENT_FADE_C_HEIGHT)
 
-/// Sarcophagus's sheet: the coffin, then seven pictures of the ghost rising
-/// out of it, one after another.
+/// Sarcophagus's sprite sheet: the coffin, then seven pictures of the ghost
+/// rising out of it, one after another.
 #define SARCOPHAGUS_COFFIN_WIDTH 69
 #define SARCOPHAGUS_COFFIN_HEIGHT 96
 #define SARCOPHAGUS_GHOST_A PICTURE_BYTES(SARCOPHAGUS_COFFIN)
@@ -518,7 +518,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   }
 
   // The small Djinni of the impact's element when a Djinni's entrance came
-  // first (action->prelude), else only its sheet's colours.
+  // first (action->prelude), else only its sprite sheet's colours.
   switch (kind) {
   case CASTING_IMPACT_IMPACT_BANE:
   case CASTING_IMPACT_IMPACT_FLINT:

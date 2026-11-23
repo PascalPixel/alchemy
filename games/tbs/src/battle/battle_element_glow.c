@@ -20,8 +20,8 @@ struct Spark {
 #define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
 #define STAR_FIELD_RING_SIZE 32
 #define STAR_FIELD_FRAMES 45 ///< the frames a cast's glow lasts
-/// The blue ring sheet's colours, before its pictures; an element's palette
-/// replaces them.
+/// The blue ring sprite sheet's colours, before its pictures; an element's
+/// palette replaces them.
 #define STAR_FIELD_COLORS 64
 /// The sparks and rings move in 1/1024 canvas pixels: STAR_FIELD_PIXEL to a
 /// pixel.
@@ -30,7 +30,7 @@ struct Spark {
 
 /// The star field's work, for the 45 frames of a cast's glow.
 struct SparkWork {
-  /// The blue ring sheet's pictures, the sparks' and the rings'.
+  /// The blue ring sprite sheet's pictures, the sparks' and the rings'.
   u8 sheet[4544];
   struct Spark sparks[STAR_FIELD_SPARKS];
   struct Ring rings[STAR_FIELD_RINGS];
@@ -242,8 +242,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   work->canvasOrigin.queued = 0;
   Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS],
                    STAR_FIELD_SIZE * STAR_FIELD_SIZE);
-  // The sheet's colours, then its pictures; then the element's own colours
-  // over them.
+  // The sprite sheet's colours, then its pictures; then the element's own
+  // colours over them.
   graphics = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
   Iwram_CopyWords(BG_PLTT, graphics, STAR_FIELD_COLORS * 2);
   graphics += STAR_FIELD_COLORS * 2;

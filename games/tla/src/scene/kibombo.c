@@ -2235,7 +2235,8 @@ void Kibombo_HideInnBlocks(void) {
       Actor_SetAnimationById(i + ACTOR_WARRIOR_A, animation);                  \
   }
 
-/// The eight warriors, ACTOR_WARRIOR_A to H, bow (their sheet's animation 5).
+/// The eight warriors, ACTOR_WARRIOR_A to H, bow (their sprite sheet's
+/// animation 5).
 DEFINE_KIBOMBO_SET_CROWD_MODE(Kibombo_CrowdBows, 5)
 
 /// The eight warriors stand again.

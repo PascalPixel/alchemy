@@ -678,17 +678,23 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // and cunning as he is.
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
+  // "The elders of Vale must not permit anyone to enter it, not..."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 10);
+  // "Kraden... Can we use him?"
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
+  // "Hmm... His knowledge is no meager thing. ...We can use him."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH, 60);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
+  // "But he's more stubborn than we expected..."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
+  // "And cunning, too... Cunning beyond measure."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
+  // "If he won't go willingly, then we can always..."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 6);
   // They sense they are watched; Saturos looks about, and both walk round to
   // face the party.
@@ -718,9 +724,11 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // Saturos demands what they are doing; Garet throws it back; Menardi asks
   // whether they were eavesdropping.
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
+  // "You there! What are you doing?"
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+  // "What are we doing?"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0);
@@ -898,15 +906,18 @@ static void ValeKradensCottage_OverhearKraden(void) {
     FieldCamera_WaitForMove();
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+    // "They already know too much about Sol Sanctum..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 0.2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 216, 232);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Event_Wait(10);
+    // "...things that even the elders of Vale don't know."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
     Actor_Jump(ACTOR_KRADEN, 2, 10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 10);
+    // "And what were they saying about the elements?"
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // He turns over what they said of the elements and the Elemental Stars,
     // things even he does not know.
@@ -914,16 +925,19 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_Wait(20);
+    // "The elements of Alchemy: earth, water, fire, and wind..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
+    // "And the four Elemental Stars are the key?"
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 232, 232);
     Event_Wait(2);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 4);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_Wait(4);
+    // "These are things even I, a trained Alchemy sage, do not know."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 2);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_Wait(20);

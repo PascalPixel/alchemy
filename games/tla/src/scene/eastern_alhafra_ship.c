@@ -57,6 +57,10 @@
 /// room the party boards into.
 enum { ENTRANCE_FOOT_OF_STAIRS = 3, ENTRANCE_AFTER_BRIGGS_BATTLE = 99 };
 
+/// The cells just below the foot of those stairs, (28, 24) and (29, 24), where
+/// the party first overhears Briggs (EasternAlhafraShip_MayorArrives).
+enum { CELL_BELOW_THE_STAIRS = 20 };
+
 /// The people and things aboard, numbering the rows of
 /// gEasternAlhafraShip_ActorPlacements whose sprites are not the party's.
 enum EasternAlhafraShipActorId {
@@ -211,6 +215,10 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Sets up the ship as the story stands: back from the battle, Briggs gives
+/// himself up; once he is caught his crew are gone, and Chaucha and Eoleo stay
+/// aboard after their visit to him, until the mast is cleared; and the tall
+/// crate, the stacked crates and the Large Bread are where the party left them.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -1691,8 +1699,10 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
 }
 
 // clang-format off
+/// Briggs and his mate running out to the party once Jenna gives it away
+/// (EasternAlhafraShip_MayorArrives).
 u32 gEasternAlhafraShip_BriggsRunsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(32, 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, 28),
@@ -1703,14 +1713,14 @@ u32 gEasternAlhafraShip_BriggsRunsScript[] = {
     SC_SYNC,
     SC_MOVE(456, 0, 440),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEasternAlhafraShip_MateRunsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(32, 0, 0),
     SC_SYNC,
     SC_MOVE_BY(12, 0, -12),
@@ -1721,14 +1731,16 @@ s32 gEasternAlhafraShip_MateRunsScript[] = {
     SC_SYNC,
     SC_MOVE(472, 0, 440),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(1),
     SC_END,
 };
 
+/// The way up the stairs and off the ship that Briggs, his crew and their
+/// guard take once he is caught.
 u32 gEasternAlhafraShip_LeaveUpTheStairsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(472, 0, 264),
     SC_SYNC,
     SC_MOVE(440, 0, 264),
@@ -1782,7 +1794,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 20, FLAG_MAYOR_ARRIVED_AT_THE_SHIP,
+    {TRIGGER_STEP, CELL_BELOW_THE_STAIRS, FLAG_MAYOR_ARRIVED_AT_THE_SHIP,
      EVENT(EasternAlhafraShip_MayorArrives)},
     {TRIGGER_TALK, ACTOR_EOLEO, CONDITION_ALWAYS,
      EVENT(EasternAlhafraShip_EoleoLifts)},

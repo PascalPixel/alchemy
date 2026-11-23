@@ -88,8 +88,9 @@ crossings flare.
 An effect's pictures are the PNGs in
 [`graphics/battle_effects`](../graphics/battle_effects). When it starts it
 unpacks the ones it needs into its sprite sheet. Two sets are shared by almost
-all of them: one spark and one square, each at ten sizes, so a spark
-shrinks as it dies just by being asked for at a smaller size.
+all of them: the round [mote](../../glossary.md#mote) and the square flare,
+each at ten sizes, so a mote shrinks as it dies just by being asked for at a
+smaller size.
 
 Sparks, embers and chips of rock are particles: a position, a speed and
 one spare number the effect uses as it likes, often the frames left to

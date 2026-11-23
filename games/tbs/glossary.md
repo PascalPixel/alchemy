@@ -373,6 +373,9 @@ Sega’s library for the Saturn, whose fixed-point, angle and matrix design this
 code matches; the current matrix and its `Matrix_Push`, `Matrix_RotateX` and
 `Matrix_Translate` are named the same way.
 
+Evidence: SGL's FIXED, toFIXED and the FX suffix; plain English: fixed-point
+number.
+
 ### Work
 
 A work is the block of memory where one part of the game keeps what it is
@@ -511,7 +514,8 @@ one, and all it does is jump to `Battle_Run`. The lists a [bank](#bank)
 and an [overlay](#overlay) open with are made of them
 ([The Game Pak](src/gamepak/README.md#a-veneer)).
 
-Evidence: plain English; the project's own word.
+Evidence: tradition: the ARM and GNU linkers' "veneer", the stub they place
+for a branch that cannot reach its target.
 
 ### Overlay
 
@@ -557,8 +561,8 @@ Evidence: plain English.
 
 A file is one of the three saves the File Screen offers. Each is kept on
 the [flash chip](#flash-chip) as two parts, and each part fills one of the
-chip's 4 KB sectors. A newly saved part is written to a free sector first,
-and only then is the old copy given up, so there is no moment at which
+chip's 4 KB sectors. A new copy of a part is written to a free sector
+first, and only then is the old copy given up, so there is no moment at which
 neither copy is on the chip ([System code](src/system/README.md#saving)).
 
 Evidence: Camelot: "Please choose a file." (きろくばしょを えらんでください).
@@ -616,10 +620,11 @@ Evidence: plain English; no word of the time names one layer of a sprite.
 
 A picture is one drawing on a [sprite sheet](#sprite-sheet), such as one
 pose of Isaac's walk. It is the stored drawing; the
-[sprite](#sprite-and-oam) is what shows it on screen. A
-[sprite animation](#sprite-animation) shows a picture for a number of
-[frames](#frame) before the next one takes its place, and the animation of a
-map's tiles steps through pictures the same way
+[sprite](#sprite-and-oam) is what shows it on screen, or a
+[battle effect](#battle-effect)'s blitter copies it onto the canvas the
+effect draws on. A [sprite animation](#sprite-animation) shows a picture for
+a number of [frames](#frame) before the next one takes its place, and the
+animation of a map's tiles steps through pictures the same way
 ([Field code](src/field/README.md#sprites-and-their-animation)).
 
 Evidence: SGL's PICTURE, the picture data a sprite shows; plain English,
@@ -649,7 +654,8 @@ So one drawing can appear in several colourings: three kinds of enemy share
 the Skeleton's drawings, each with a palette of its own
 ([Graphics](src/graphics/README.md#how-the-console-draws-an-image)).
 
-Evidence: plain English for the hardware's own field.
+Evidence: plain English for the hardware's own field, GBATEK's "Palette
+Number".
 
 ### Palette fade
 
@@ -1075,6 +1081,22 @@ what the hit does
 Evidence: Camelot: the credits' "Battle Effects", beside "Battle Characters"
 and "Battle Backgrounds", a Graphic Arts heading; the code is the Battle
 division's.
+
+### Mote
+
+A mote is one of the small specks an effect scatters by the dozen: the
+specks of light that tumble in on each target of Wish, or the ring of them
+the summon Thor draws. Each has its own place, speed and life, and the
+effect moves every one of them each [frame](#frame). A
+[battle effect](#battle-effect)'s mote is not a [sprite](#sprite-and-oam):
+the effect's blitter copies its [picture](#picture) onto the canvas the
+effect draws on, most often a round glowing dot at one of ten sizes, often
+a smaller one the farther the mote is
+([Battle effects](src/battle_effect/README.md#pictures-and-particles)). On
+the field a mote is a sprite, such as the motes that circle down onto the
+leader as a Venus Djinni joins.
+
+Evidence: plain English: a mote, a speck.
 
 ### Battle background
 

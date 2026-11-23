@@ -7,8 +7,8 @@
 
 struct StripQuad;
 
-// On every strike after the first, the target's motion goes to this percent of
-// its anchor's x, lowered from patch 1.
+/// On every strike after the first, the target's motion goes to this percent of
+/// its anchor's x, lowered from patch 1.
 #if TLA_PATCH_1
 #define TARGET_ANCHOR_PERCENT 200
 #else
@@ -333,8 +333,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 #define FIGURE_SPARK_BURST_FRAME 30
 #define FIGURE_HIT_FRAME 80 ///< the blow, which starts the result phase
 
-// The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
-// map cells.
+/// The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
+/// map cells.
 #define FIGURE_BODY 0
 #define FIGURE_BODY_WIDTH 96
 #define FIGURE_BODY_HEIGHT 83

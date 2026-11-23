@@ -4022,7 +4022,7 @@ s8 gTrialRoad_RulesTreasureStages[] = {
     6, 7,
 };
 
-// The same table as gTrialRoad_RulesTreasureStages, under another name.
+/// The same table as gTrialRoad_RulesTreasureStages, under another name.
 s8 gTrialRoad_TreasureStages[] = {
     0, 1, 2, 3, 4, 4, 4, 5,
     6, 7,

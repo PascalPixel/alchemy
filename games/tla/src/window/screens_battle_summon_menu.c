@@ -7,8 +7,8 @@
 #include "gamepak/far_call/game.h"
 #include "window/screens.h"
 
-// Where the Japanese layout differs: the summon list's window and its Djinn
-// costs, in tiles.
+/// Where the Japanese layout differs: the summon list's window and its Djinn
+/// costs, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SUMMON_MENU_WINDOW_X 13
 #define SUMMON_MENU_WINDOW_WIDTH 17

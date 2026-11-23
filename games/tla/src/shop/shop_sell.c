@@ -84,7 +84,7 @@ s32 Shop_ChooseMember(void) {
   return result;
 }
 
-// The price window and the item details window are sized to their text.
+/// The price window and the item details window are sized to their text.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PRICE_WINDOW_X 16
 #define PRICE_WINDOW_WIDTH 14
@@ -250,8 +250,8 @@ s32 Shop_SelectSell(s32 unitId) {
 #undef PRICE_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH
 
-// Where the item grid writes MsgNoItems for a party member with no items, in
-// pixels.
+/// Where the item grid writes MsgNoItems for a party member with no items, in
+/// pixels.
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12

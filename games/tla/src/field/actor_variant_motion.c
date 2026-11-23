@@ -47,7 +47,7 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
     {57, 16},  {58, 28},  {246, 16}, {243, 16}, {245, 16}, {244, 16}, {487, -1},
     {255, -1}, {450, -1}, {325, -1}, {489, -1}, {421, -1}, {0, 16},
 };
-// Each bounce is 128 bytes, 32 words.
+/// Each bounce is 128 bytes, 32 words.
 #define VARIANT_BOUNCE                                                         \
   SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \

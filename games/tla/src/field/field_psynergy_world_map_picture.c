@@ -160,7 +160,7 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
   }
 }
 
-// The scrolled name's left edge, in pixels left of its place.
+/// The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define WORLD_MAP_NAME_LEFT 3
 #else

@@ -4,8 +4,8 @@
 
 #include "window_internal.h"
 
-// The number of article kinds in each edition's table (articles.c), and the
-// mask a name's kind is read through.
+/// The number of article kinds in each edition's table (articles.c), and the
+/// mask a name's kind is read through.
 #if (LANGUAGE == LANGUAGE_ITALIAN)
 #define ARTICLE_KINDS 11
 #elif (LANGUAGE == LANGUAGE_SPANISH)
@@ -301,12 +301,12 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 }
 #endif
 
-// The European editions keep a second item name table after the first,
-// read for the plural forms; its distance from MsgItemName is a message id.
+/// The European editions keep a second item name table after the first,
+/// read for the plural forms; its distance from MsgItemName is a message id.
 #define PLURAL_ITEM_NAMES_OFFSET 461
 
-// What suffix starts as: the European editions use 2 to capitalize the
-// first letter of a sentence.
+/// What suffix starts as: the European editions use 2 to capitalize the
+/// first letter of a sentence.
 #if TLA_PATCH_2
 #define SUFFIX_START 2
 #else
@@ -321,8 +321,8 @@ extern u8 MsgClassName[], MsgItemName[], MsgAbilityName[], MsgDebugAreaName[];
 #if LANGUAGE == LANGUAGE_FRENCH
 extern const s8 gLocalizedWord_ItemPronoun[];
 #else
-// The possessives (articles.c), copied whole: Spanish {singular, plural},
-// German and Italian one for each item gender (gLocalizedWord_ItemGenders).
+/// The possessives (articles.c), copied whole: Spanish {singular, plural},
+/// German and Italian one for each item gender (gLocalizedWord_ItemGenders).
 #if LANGUAGE == LANGUAGE_SPANISH
 #define POSSESSIVE_COUNT 2
 #else
@@ -870,8 +870,8 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 extern u8 MsgWaitingForOpponent[];
 
-// なぞの男 ("Mystery Man"), the message after MsgWaitingForOpponent; なぞの女
-// ("Mystery Woman") follows it.
+/// なぞの男 ("Mystery Man"), the message after MsgWaitingForOpponent; なぞの女
+/// ("Mystery Woman") follows it.
 #define MYSTERY_MAN_MESSAGE ((s32)MsgWaitingForOpponent + 1)
 
 /// Copies a name into the decoded text at writePosition and returns the

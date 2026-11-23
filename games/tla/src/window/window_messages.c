@@ -415,8 +415,8 @@ void Message_DecodeAppend(s32 message) {
 /// credits' tile ring.
 #define CRAWL_CANVAS_WIDTH 192
 
-// The rows of a glyph drawn: all twelve of the Japanese font's, and fourteen of
-// the European fonts' fifteen.
+/// The rows of a glyph drawn: all twelve of the Japanese font's, and fourteen
+/// of the European fonts' fifteen.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PLOT_GLYPH_ROWS 12
 #else

@@ -48,10 +48,10 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
 void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
                                  s32 originY);
 
-// Where the edition's text goes. The international editions have longer
-// words, and some languages move a message to fit its own.
-//
-// The x of the small message windows "You were cursed!" and "Removed".
+/// Where the edition's text goes. The international editions have longer
+/// words, and some languages move a message to fit its own.
+///
+/// The x of the small message windows "You were cursed!" and "Removed".
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define ITEM_MODAL_SHORT_X 14
 #define ITEM_MODAL_REMOVED_X 14
@@ -60,8 +60,8 @@ void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
 #define ITEM_MODAL_REMOVED_X 17
 #endif
 
-// "Can't trade it!" starts four tiles further left in French, over the status
-// window, which is redrawn after it.
+/// "Can't trade it!" starts four tiles further left in French, over the status
+/// window, which is redrawn after it.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define ITEM_CANNOT_TRADE_X 11
 #else
@@ -1116,8 +1116,8 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
-// The Japanese release writes the item's description into the info window as
-// text, the others as tiles.
+/// The Japanese release writes the item's description into the info window as
+/// text, the others as tiles.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define TRADE_LABEL_X 16
 #define IN_STOCK_LABEL_X 24
@@ -1973,8 +1973,8 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   return 1;
 }
 
-// The Details window's width in tiles: Japanese opens it over the left part
-// only, beside the item window, the other editions over the whole top half.
+/// The Details window's width in tiles: Japanese opens it over the left part
+/// only, beside the item window, the other editions over the whole top half.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ITEM_DETAILS_WINDOW_WIDTH 13
 #else
@@ -2095,8 +2095,8 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item) {
 #define ITEM_DETAILS_NUMBER_X 16
 #endif
 
-// Japanese draws the values nearer the names, and a multiplier further left to
-// leave room for its suffix.
+/// Japanese draws the values nearer the names, and a multiplier further left to
+/// leave room for its suffix.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ITEM_DETAILS_VALUE_X 64
 #define ITEM_DETAILS_MULTIPLIER_X 48
@@ -2439,11 +2439,11 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 // the top row, draws the counter こ after each count held, and keeps its cursor
 // further left.
 #if LANGUAGE == LANGUAGE_JAPANESE
-// いくつ?, the message three before MsgShortcutHelp.
+/// いくつ?, the message three before MsgShortcutHelp.
 #define HOW_MANY_MESSAGE ((s32)MsgShortcutHelp - 3)
 #define HOW_MANY_X 0
 #define HOW_MANY_Y 32
-// こ, the counter after a count: the message before MsgItemCommandUse.
+/// こ, the counter after a count: the message before MsgItemCommandUse.
 #define PIECE_MESSAGE ((s32)MsgItemCommandUse - 1)
 #define HOW_MANY_CURSOR_X 88
 #else
@@ -2584,7 +2584,7 @@ void ItemMenu_DrawItemHead(void) {
                              menu->questionWindow, 16, 8);
 }
 
-// The French question starts at the window's left edge.
+/// The French question starts at the window's left edge.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define ITEM_DROP_QUESTION_X 0
 #else
@@ -2683,8 +2683,8 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
 #define EQUIP_QUESTION_X 0
 #endif
 
-// The question is named in the English catalog alone; in every edition it is
-// the second message after MsgConfirmDrop.
+/// The question is named in the English catalog alone; in every edition it is
+/// the second message after MsgConfirmDrop.
 #if LANGUAGE == LANGUAGE_ENGLISH
 #define EQUIP_QUESTION ((s32)MsgEquipThisItem)
 #else
@@ -2857,7 +2857,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
   return 1;
 }
 
-// The Japanese page draws its page icons and names further right.
+/// The Japanese page draws its page icons and names further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define ITEM_PAGE_ICONS_X 120
 #define ENTRY_X 32

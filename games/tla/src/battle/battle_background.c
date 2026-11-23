@@ -432,7 +432,7 @@ BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
 /// Unused: returns value divided by 16.
 UNUSED s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
-// What Select picks: another value in the Japanese release.
+/// What Select picks: another value in the Japanese release.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define DEBUG_VALUE_SELECT 411
 #else

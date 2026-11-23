@@ -152,8 +152,8 @@ extern u8 gDebugTextEnabled;
 /// A message of the story crawl takes two scroll lines of 8 pixels.
 #define CRAWL_MESSAGE_PIXELS (2 * 8)
 
-// The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
-// 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
+/// The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
+/// 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
 #define ENDING_PICTURE_COLUMNS 15
 #define ENDING_PICTURE_STRIP_BYTES 4096
 #define ENDING_PICTURE_SCREEN_BYTES BG_SCREEN_SIZE
@@ -1280,7 +1280,7 @@ static const u8 sBlankCreditLine[] = "";
 #define CREDITS_SUBTITLE "L'ERA PERDUTA"
 #endif
 
-// The Spanish, French and Italian fonts draw í at '`'.
+/// The Spanish, French and Italian fonts draw í at '`'.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define RODRIGUEZ "Rodriguez"
 #else

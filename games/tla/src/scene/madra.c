@@ -576,6 +576,7 @@ void Madra_AskAboutIceShaft(s32 actor) {
   Event_End();
 }
 
+/// The actor the lines of the boy who asks about Briggs open beside.
 // BUG: the boy's lines open beside ACTOR_FIRST_PLACED, the young man who talks
 // of the elder, wherever he stands, and not beside the boy:
 // FieldMessage_ShowAtActor places the window by its speaker's place on screen.

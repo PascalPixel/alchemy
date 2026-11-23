@@ -287,9 +287,9 @@ extern u8 MsgLemuriaSpringWhatWillYouThrow[], MsgLemuriaSpringCoins[],
     MsgLemuriaSpringToss[], MsgLemuriaSpringYouWonCoin[];
 s32 Menu_SelectCoinsOrMedals();
 
-// French draws the coin window two tiles wider, its numbers 16 pixels further
-// right; Japanese draws them 16 pixels further left, each followed by its
-// counter word.
+/// French draws the coin window two tiles wider, its numbers 16 pixels further
+/// right; Japanese draws them 16 pixels further left, each followed by its
+/// counter word.
 #if LANGUAGE == LANGUAGE_FRENCH
 #define COIN_WINDOW_WIDTH 19
 #define COIN_NUMBER_X 88
@@ -301,8 +301,8 @@ s32 Menu_SelectCoinsOrMedals();
 #define COIN_NUMBER_X 72
 #endif
 
-// The toss prompt's window: two tiles narrower in Japanese, against the right
-// edge.
+/// The toss prompt's window: two tiles narrower in Japanese, against the right
+/// edge.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TOSS_WINDOW_X 22
 #define TOSS_WINDOW_WIDTH 7

@@ -180,6 +180,8 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   }
 }
 
+/// The flag a Yes to "Can you tell me where you have come from?" sets, and
+/// the actor the hot-weather line after it opens at.
 // BUG: a Yes sets FLAG_ASKED_ABOUT_EXPEDITION, the expedition woman's flag,
 // where FLAG_ASKED_WHERE_FROM was meant: she asks every time, the line on the
 // heat after it is never shown (and would be at the expedition woman), and the
@@ -481,8 +483,8 @@ extern s16 gNaribwe_DoorOpening[];
   };
 
 // clang-format off
-// Unused: a list of the pilgrim and FLAG_SCENE_TEMP_00, in a flag block's
-// pairs; nothing reads it.
+/// Unused: a list of the pilgrim and FLAG_SCENE_TEMP_00, in a flag block's
+/// pairs; nothing reads it.
 s16 gNaribwe_UnusedList[] = {
     ACTOR_PILGRIM, FLAG_SCENE_TEMP_00, -1, 0,
 };

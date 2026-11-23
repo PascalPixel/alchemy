@@ -83,10 +83,10 @@ void Window_CloseIfOpen(void **handle, s32 style) {
   }
 }
 
-// Japanese draws the name and the ailment labels 8 pixels further right, the
-// Lv label through Text_DrawStringInWindowFar, and the equip panel's "cannot
-// equip" line 16 pixels in, as the class panel's is. Spanish swaps the learn
-// panel's two lines: the note above the Psynergy's name.
+/// Japanese draws the name and the ailment labels 8 pixels further right, the
+/// Lv label through Text_DrawStringInWindowFar, and the equip panel's "cannot
+/// equip" line 16 pixels in, as the class panel's is. Spanish swaps the learn
+/// panel's two lines: the note above the Psynergy's name.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define STATUS_PANEL_NAME_X 40
 #define STATUS_PANEL_CANNOT_EQUIP_X 16

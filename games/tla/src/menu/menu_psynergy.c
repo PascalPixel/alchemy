@@ -605,12 +605,12 @@ s32 PsynergyMenu_SetShortcut(s32 memberId, s32 id, s32 second) {
 }
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-// Japanese drops the colon after "L" and "R" and draws the ability's name 8
-// pixels further left when that name is wider than this.
+/// Japanese drops the colon after "L" and "R" and draws the ability's name 8
+/// pixels further left when that name is wider than this.
 #define COLON_NAME_WIDTH_LIMIT 11
 #elif TLA_PATCH_2
-// German, Spanish, French and Italian leave out the owner's name when the
-// ability's name is wider than this.
+/// German, Spanish, French and Italian leave out the owner's name when the
+/// ability's name is wider than this.
 #define OWNER_NAME_WIDTH_LIMIT 10
 #endif
 
@@ -917,8 +917,8 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   return 1;
 }
 
-// The Japanese page draws its page icons, PP heading and names at other
-// columns.
+/// The Japanese page draws its page icons, PP heading and names at other
+/// columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PSYNERGY_PAGE_ICONS_X 120
 #define PSYNERGY_PP_HEADING_X 72
@@ -1001,7 +1001,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 #undef PSYNERGY_PP_HEADING_X
 #undef PSYNERGY_NAME_X
 
-// The Japanese list puts its cursor further right.
+/// The Japanese list puts its cursor further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PSYNERGY_LIST_CURSOR_X 98
 #else

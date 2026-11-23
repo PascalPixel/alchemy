@@ -240,8 +240,8 @@ s32 Clear_IsRetreatBlocked(void) {
 
 #include "text/msg_ids.h"
 
-// The play time the save kept in the scene's own state, which a sound save
-// matches.
+/// The play time the save kept in the scene's own state, which a sound save
+/// matches.
 #define SAVED_PLAY_TIME (*(u32 *)gSceneLocalState)
 
 s32 Save_ChooseAndLoadFile(s32 mode);
@@ -830,7 +830,7 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 #define LINK_RECEIVE_FRAMES 600000
 #define LINK_SILENT_FRAMES 10
 
-// The windows are as wide as each language's text needs.
+/// The windows are as wide as each language's text needs.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define RECEIVE_WINDOW_X 2
 #define RECEIVE_WINDOW_WIDTH 26
@@ -2090,7 +2090,7 @@ LATE_DATA u16 gClear_PasswordFlags[] = {
     FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
-// The same list as gClear_ImportedKeyItems, under another name.
+/// The same list as gClear_ImportedKeyItems, under another name.
 LATE_DATA u16 gClear_PasswordKeyItems[] = {
     ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP, ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
     ITEM_HALT_GEM, ITEM_CLOAK_BALL, ITEM_CARRY_STONE, ITEM_CATCH_BEADS,

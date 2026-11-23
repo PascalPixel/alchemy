@@ -1695,8 +1695,8 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   slot->spacing = toFIXED(14);
 }
 
-// The half turn on the leader's side of the anchor: 0 on its right, 1 on its
-// left.
+/// The half turn on the leader's side of the anchor: 0 on its right, 1 on its
+/// left.
 #define SIDE_TURN(side) ((side) * (DEGtoANG(180)))
 
 /// A vine's phase within one turn, its low byte dropped: a phase grows by

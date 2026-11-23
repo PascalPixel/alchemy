@@ -137,9 +137,9 @@ struct FileListWork {
   FIXED partyMemberScale[4]; ///< 16.16 fixed point, FIXED_ONE full size
 };
 
-// The battle menus' message buffers, in halfwords, and the copier that fills
-// them: the Japanese edition decodes the message (Message_DecodeRaw), the
-// others copy its text (Message_CopyExpanded).
+/// The battle menus' message buffers, in halfwords, and the copier that fills
+/// them: the Japanese edition decodes the message (Message_DecodeRaw), the
+/// others copy its text (Message_CopyExpanded).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
 #define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded

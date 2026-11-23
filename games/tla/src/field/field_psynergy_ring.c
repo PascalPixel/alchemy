@@ -413,7 +413,7 @@ void FieldPsynergy_EndRing(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-// How far the view stays from the edge it is beside, in pixels.
+/// How far the view stays from the edge it is beside, in pixels.
 #define VIEW_EDGE_MARGIN 12
 
 /// A map's view bounds, in 8-pixel units.

@@ -91,7 +91,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
           DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
 
-// A new line in tile text advances by a space's width: tile text is one line.
+/// A new line in tile text advances by a space's width: tile text is one line.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define TILE_TEXT_NEWLINE_WIDTH gFont_GlyphWidths[0]
 #else

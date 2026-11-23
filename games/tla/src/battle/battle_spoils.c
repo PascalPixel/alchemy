@@ -52,9 +52,9 @@ void BattleSpoils_Clear(void) {
     items[index] = 0;
 }
 
-// The scan looks for the first of FIRST_DIGIT_COUNT character codes from
-// FIRST_DIGIT_BASE: the digits 1 to 9 outside Japan, and the codes 65 to 90 in
-// the Japanese release.
+/// The scan looks for the first of FIRST_DIGIT_COUNT character codes from
+/// FIRST_DIGIT_BASE: the digits 1 to 9 outside Japan, and the codes 65 to 90 in
+/// the Japanese release.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define FIRST_DIGIT_BASE 65
 #define FIRST_DIGIT_COUNT 26

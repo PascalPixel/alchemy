@@ -18,8 +18,8 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
   return result;
 }
 
-// The tile column where a party member's command row ends and its name window
-// begins.
+/// The tile column where a party member's command row ends and its name window
+/// begins.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define WINDOW_X 22
 #else

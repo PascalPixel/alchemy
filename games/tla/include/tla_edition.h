@@ -9,16 +9,16 @@
 /// The window renderer's windows, 12 in every edition.
 #define WINDOW_COUNT 12
 
-// The window text ring: 256 codes in Japanese, 512 in the others.
+/// The window text ring: 256 codes in Japanese, 512 in the others.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TEXT_BUFFER_MASK 0xFF
 #else
 #define TEXT_BUFFER_MASK 0x1FF
 #endif
 
-// Two icon menus' widths, wider outside Japanese: the field menu's (Psynergy,
-// Djinn, Item, Status) and the File Screen's (New Game, Continue, Copy, Erase,
-// and Battle and Update when they are offered).
+/// Two icon menus' widths, wider outside Japanese: the field menu's (Psynergy,
+/// Djinn, Item, Status) and the File Screen's (New Game, Continue, Copy, Erase,
+/// and Battle and Update when they are offered).
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SELECT_MENU_WIDTH 7
 #define TYPE_MENU_WIDTH 7
@@ -27,7 +27,7 @@
 #define TYPE_MENU_WIDTH 4
 #endif
 
-// Where the debug destination list's cursor sits; further right in Japanese.
+/// Where the debug destination list's cursor sits; further right in Japanese.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define MENU_TEXT_X 74
 #else
@@ -44,15 +44,15 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
-// The first of the letters that tell enemies of one kind apart in battle: the
-// alphabet from 'A' in Japanese, the digits from '1' in the others.
+/// The first of the letters that tell enemies of one kind apart in battle: the
+/// alphabet from 'A' in Japanese, the digits from '1' in the others.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define LIST_MARKER_CHAR 'A'
 #else
 #define LIST_MARKER_CHAR '1'
 #endif
 
-// The letters of Lucky Wheels' title.
+/// The letters of Lucky Wheels' title.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define LUCKY_WHEELS_TITLE_LETTERS 9
 #else

@@ -126,7 +126,7 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
   }
 }
 
-// Where the line at the bottom starts: further left in French.
+/// Where the line at the bottom starts: further left in French.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define TOTAL_LABEL_X 24
 #else

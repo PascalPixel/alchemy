@@ -23,9 +23,9 @@
 /// 1.0 in the 24-bit fixed point SampleFreqSet takes the rate's reciprocal in.
 #define SOUND_RATE_STEP_ONE (1 << 24)
 
-// A sound mode word, as m4aSoundMode and a song header's mode byte take it,
-// under pret's names (include/gba/m4a_internal.h); a zero field leaves its
-// setting unchanged.
+/// A sound mode word, as m4aSoundMode and a song header's mode byte take it,
+/// under pret's names (include/gba/m4a_internal.h); a zero field leaves its
+/// setting unchanged.
 #define SOUND_MODE_REVERB_VAL 0x0000007F ///< the reverb level
 #define SOUND_MODE_REVERB_SET 0x00000080 ///< sets the reverb level
 #define SOUND_MODE_MAXCHN 0x00000F00     ///< PCM notes in use

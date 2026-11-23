@@ -127,10 +127,10 @@
 /// BattleUnit_RefreshPlacement fills the list with it.
 #define BATTLE_OBJECT_NONE 255
 
-// BattleWork.defeatState: whether the last enemy fell alone, or with others
-// before it, or a party member's action ended the battle with a single
-// defeat. The messages are "has been downed!" and "'s party goes down!",
-// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
+/// BattleWork.defeatState: whether the last enemy fell alone, or with others
+/// before it, or a party member's action ended the battle with a single
+/// defeat. The messages are "has been downed!" and "'s party goes down!",
+/// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
 #define DEFEAT_ONE 0
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3

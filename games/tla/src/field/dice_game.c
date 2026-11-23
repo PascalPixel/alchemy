@@ -353,10 +353,10 @@ s32 SuperLuckyDice_ScoreDice(s32 *dice) {
 const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
                                         3, 9,  13, 4, 7,  6, 5, 17, 11};
 
-// What differs between the editions: the windows' sizes and text columns by
-// language; the hi-lo games B cannot leave (CANNOT_QUIT), only the first until
-// patch 1 and every one from it; and the first bet shown, clamped to the
-// player's coins until patch 2.
+/// What differs between the editions: the windows' sizes and text columns by
+/// language; the hi-lo games B cannot leave (CANNOT_QUIT), only the first until
+/// patch 1 and every one from it; and the first bet shown, clamped to the
+/// player's coins until patch 2.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define COIN_WINDOW_X 19
 #define COIN_WINDOW_WIDTH 11

@@ -243,8 +243,8 @@ STATIC_ASSERT(offsetof(struct ShopWork, iconsVisible) == 3302);
 STATIC_ASSERT(offsetof(struct ShopWork, listWindow) == 3304);
 STATIC_ASSERT(sizeof(struct ShopWork) == 3308);
 
-// The quantity cursor's x, in pixels: buy.c and sell.c both place it, further
-// left in the longer languages.
+/// The quantity cursor's x, in pixels: buy.c and sell.c both place it, further
+/// left in the longer languages.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_QUANTITY_CURSOR_X 120
 #elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||           \

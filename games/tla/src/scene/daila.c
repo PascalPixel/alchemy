@@ -259,6 +259,7 @@ void Daila_TalkIndraMoved(void) {
   Event_End();
 }
 
+/// The actor the boat sailor's question and answer open at.
 // BUG: the question and its answer open at the woman who felt Indra move, as
 // in Daila_TalkIndraMoved, not at the sailor who asks.
 #if BUGFIX
@@ -603,6 +604,7 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFourthPuddle, 17, 11, 18,
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
                           ACTOR_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED)
 
+/// The actor Parch on the sixth puddle hides.
 // BUG: hides actor 31, which the sixth puddle would be if Jenna's and Sheba's
 // rows took numbers of their own; they place the party's actors, so the puddle
 // is actor 29, no actor 31 exists, and the puddle stays on its dried cell.

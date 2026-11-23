@@ -18,8 +18,8 @@
 // The other editions have no marks: in the first function's place they keep
 // one that accepts every letter, and they drop the second.
 #if LANGUAGE == LANGUAGE_JAPANESE
-// The keyboard's keys for the kana voicing marks (TEXT_MARK_VOICED and
-// TEXT_MARK_SEMIVOICED), as its tilemap's low bytes hold them.
+/// The keyboard's keys for the kana voicing marks (TEXT_MARK_VOICED and
+/// TEXT_MARK_SEMIVOICED), as its tilemap's low bytes hold them.
 #define NAME_VOICED_KEY 254
 #define NAME_SEMIVOICED_KEY 255
 
@@ -183,9 +183,9 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 #define NAME_IS_GAP_COLUMN(column)                                             \
   ((column) == 5 || (column) == 11 || (column) == 17)
 
-// The Japanese keyboard is a kana grid of eleven rows with a blank row in its
-// middle, and its command column has a third key, at the top, that turns to
-// the other kana page.
+/// The Japanese keyboard is a kana grid of eleven rows with a blank row in its
+/// middle, and its command column has a third key, at the top, that turns to
+/// the other kana page.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define NAME_KEYBOARD_HEIGHT 13
 #define NAME_DIVIDER_BOTTOM 12
@@ -203,7 +203,7 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 #define NAME_BLANK_ROW 5
 #define NAME_LAST_ROW NAME_FINISH_ROW
 
-// The width of the window showing the name, in tiles.
+/// The width of the window showing the name, in tiles.
 #if LANGUAGE == LANGUAGE_SPANISH
 #define NAME_LABEL_WIDTH 9
 #else
@@ -224,8 +224,8 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 #define NAME_FINISH_WIDTH 3
 #endif
 
-// A dakuten or handakuten, which joins the kana before it and is no letter of
-// its own.
+/// A dakuten or handakuten, which joins the kana before it and is no letter of
+/// its own.
 #define IS_KANA_MARK(c)                                                        \
   ((u8)((c) - TEXT_MARK_VOICED) <= TEXT_MARK_SEMIVOICED - TEXT_MARK_VOICED)
 

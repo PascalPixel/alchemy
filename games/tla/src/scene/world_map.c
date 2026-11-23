@@ -245,10 +245,10 @@ void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
 
-// Once the party has walked nine tenths of the encounter threshold, a coin
-// toss either requests the Djinni's battle now or makes the party walk the
-// whole threshold first. From the international editions on, only while the
-// party walks the World Map, not aboard the ship or as sand.
+/// Once the party has walked nine tenths of the encounter threshold, a coin
+/// toss either requests the Djinni's battle now or makes the party walk the
+/// whole threshold first. From the international editions on, only while the
+/// party walks the World Map, not aboard the ship or as sand.
 #if !TLA_PATCH_1
 #define WORLD_MAP_TRY_ENCOUNTER(actorId, djinni)                               \
   {                                                                            \

@@ -82,7 +82,7 @@ void SaveProgress_Advance(s32 step) {
     *dst++ = *src++ + WINDOW_TILE(PROGRESS_BAR_FIRST_TILE);
 }
 
-// Heading x coordinate: only French differs.
+/// Heading x coordinate: only French differs.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define SAVING_X 40
 #define ERASING_X 48
@@ -907,7 +907,7 @@ void FileList_DrawDjinnCounts(struct Window *win, struct SaveSummary *summary) {
   }
 }
 
-// Edition-specific x positions of the level and coin labels, in pixels.
+/// Edition-specific x positions of the level and coin labels, in pixels.
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
@@ -968,8 +968,8 @@ void FileList_DrawSummary(struct Window *win, struct SaveSummary *summary) {
   }
 }
 
-// Where the leader's name and the area name start in a file's row of the file
-// list, in pixels: the European languages start both farther left.
+/// Where the leader's name and the area name start in a file's row of the file
+/// list, in pixels: the European languages start both farther left.
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
 #define FILE_LIST_LEADER_X 12
 #define FILE_LIST_AREA_X 72

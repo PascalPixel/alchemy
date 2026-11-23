@@ -3064,7 +3064,7 @@ s16 gShamanVillage_LetteringLoseScript[] = {
     LETTERING_END,
 };
 
-// `GO` has a palette row of its own in the European editions' sheet.
+/// `GO` has a palette row of its own in the European editions' sheet.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define LETTERING_GO_PALETTE_OFFSET (5 * 32)
 #else
@@ -3289,7 +3289,7 @@ s16 gShamanVillage_LetteringVramEntry[] = {
     -1,
 };
 
-// The title's and `GO`'s scales, which fit each language's lettering.
+/// The title's and `GO`'s scales, which fit each language's lettering.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define LETTERING_TITLE_SCALE 384
 #define LETTERING_GO_START_SCALE 512

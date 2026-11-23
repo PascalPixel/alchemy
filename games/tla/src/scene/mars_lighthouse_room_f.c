@@ -2024,7 +2024,7 @@ s32 gMarsLighthouseRoomF_FireballDrop[] = {
 
 #undef MapLayer
 
-// The stones fill the gaps from patch 1; before it, their rows run nothing.
+/// The stones fill the gaps from patch 1; before it, their rows run nothing.
 #if !TLA_PATCH_1
 #define MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES 0
 #else

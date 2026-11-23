@@ -5,8 +5,8 @@
 #include "window_internal.h"
 #include "system/mul_fx.h"
 
-// The glyph's pixels, 16 to a line as its tiles are read: 16 lines for the
-// Japanese font, 24 for the other languages' taller one.
+/// The glyph's pixels, 16 to a line as its tiles are read: 16 lines for the
+/// Japanese font, 24 for the other languages' taller one.
 #define GLYPH_BUFFER_WIDTH 16
 #define GLYPH_PIXEL(x, y) ((y) * GLYPH_BUFFER_WIDTH + (x))
 

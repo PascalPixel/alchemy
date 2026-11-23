@@ -993,8 +993,8 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
   state->dispcnt = dispcnt;
 }
 
-// A map edit's flag word: the flag in its low 12 bits, and a bit that makes it
-// copy the cells' attributes rather than their pictures.
+/// A map edit's flag word: the flag in its low 12 bits, and a bit that makes it
+/// copy the cells' attributes rather than their pictures.
 #define MAP_EDIT_FLAG_MASK 0xfff
 #define MAP_EDIT_ATTRIBUTES 0x1000
 /// The flag word of all ones that ends a map's edits, the one that one more

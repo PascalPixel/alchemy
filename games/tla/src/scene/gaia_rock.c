@@ -102,8 +102,9 @@ enum {
 
 /// The cell behaviors of the trigger tables.
 enum GaiaRockCellBehavior {
-  /// The bushes below the cliff east of the cave mouth, which answer Cyclone.
-  CELL_BEHAVIOR_CAVE_MOUTH_BUSHES = 20,
+  /// The tufts of weeds below the cliff east of the cave mouth, which Cyclone
+  /// blows away.
+  CELL_BEHAVIOR_CAVE_MOUTH_WEEDS = 20,
   /// The great wall's three trap holds, lowest first, in its overhead layer
   /// (GaiaRock_TriggerWallCell reads them as Felix climbs).
   CELL_BEHAVIOR_LOWEST_STONE_FACE = 20,
@@ -112,6 +113,28 @@ enum GaiaRockCellBehavior {
   /// The path just south of where Susa lies by the cave mouth.
   CELL_BEHAVIOR_PAST_SUSA = 42
 };
+
+/// The passages within the first two areas. Each of their maps holds two
+/// parts, each with a camera of its own: on the first cliffs, the path to the
+/// cave mouth in the south and the cliffs above it in the north; on the next
+/// cliffs, the cliffs of vines in the west and the great wall under the two
+/// wind statues in the east. A passage's exit and the entrance it leads to.
+enum GaiaRockPassage {
+  GAIA_ROCK_SUSA_CLIFFS_TO_CAVE_MOUTH = 2,
+  GAIA_ROCK_SUSA_CAVE_MOUTH_TO_CLIFFS,
+  GAIA_ROCK_SUSA_CLIFFS_FROM_CAVE_MOUTH = 2,
+  GAIA_ROCK_SUSA_CAVE_MOUTH_FROM_CLIFFS,
+  GAIA_ROCK_STATUE_SPOTS_VINES_TO_WALL = 2,
+  GAIA_ROCK_STATUE_SPOTS_WALL_TO_VINES,
+  GAIA_ROCK_STATUE_SPOTS_VINES_FROM_WALL = 2,
+  GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES
+};
+
+/// Whether the party arrives on the next cliffs' great wall side: by its
+/// passage, or down from the mesa (the entrance after it).
+#define ARRIVES_AT_GREAT_WALL()                                                \
+  ((u16)(gMainRoutineWork.entrance -                                           \
+         GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES) <= 1)
 
 /// The whirlwind's circling leaves.
 enum { WHIRLWIND_LEAVES = 16 };
@@ -281,9 +304,6 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   }
 }
 
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
-
 /// Nothing visible happens as Felix starts to push or Move the stone pillar at
 /// the east edge of the summit where he arrives, which slides north and south
 /// in its slot (cells (13, 14) to (13, 18)); the game frees the slot's cell
@@ -310,7 +330,7 @@ void GaiaRock_FinishPushingPillar(void) {
 /// south of them stay as they were. The game takes each tuft's picture from
 /// the overhead layer's block at cells (110, 64) to (123, 75) of map.txt into
 /// its place, in the block from (110, 47) that the overhead layer shows here.
-void GaiaRock_CycloneClearsWall(void) {
+void GaiaRock_CycloneBlowsAwayWeeds(void) {
   FieldTileCopies_CopyTouchedCells(110, 64, 14, 12, 110, 47, 1);
 }
 
@@ -498,16 +518,14 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
   return 0;
 }
 
-/// The hanging vine of actor id, or null (as HangingVine_FindSlot).
+/// The hanging vine of actor id, or NULL: this overlay's copy of
+/// HangingVine_FindSlot.
 static inline struct HangingVineSlot *FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
-  s32 i;
+  s32 i = 0;
 
-  // Default: as HangingVine_FindSlot, the index zero is copied from found.
-  i = 0;
-
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < ROPE_SLOT_COUNT; i++) {
     if (work->slots[i].id == id) {
       found = &work->slots[i];
       break;
@@ -532,7 +550,7 @@ void GaiaRock_WhirlwindBlowsVineHarder(void) {
   slot->swing += TRIG_TURN / 512;
 }
 
-void Actor_PlaySoundInView(struct Actor *actor, s32 a);
+void Actor_PlaySoundInView(struct Actor *actor, s32 sound);
 
 /// Every 256 frames the stone statue on the upper ledge of the first cliffs
 /// blows a whirlwind west at the hanging vine beside it, setting it swinging.
@@ -646,7 +664,7 @@ s32 Scene_Initialize(void) {
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 4, 1);
     Call2((void (*)())HangingVine_Place, ACTOR_FIRST_VINE + 5, 1);
     HangingVine_Place(ACTOR_FIRST_VINE + 6, 1);
-    if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
+    if (ARRIVES_AT_GREAT_WALL()) {
       GaiaRock_StartWallTriggers();
     }
     if (GameFlag_Get(FLAG_FIRST_STATUE_RISEN)) {
@@ -678,7 +696,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
-      (u16)(gMainRoutineWork.entrance - 3) <= 1) {
+      ARRIVES_AT_GREAT_WALL()) {
     struct MapLayer *layer =
         &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
 
@@ -706,28 +724,28 @@ struct SceneEntrance gSceneEntrances[] = {
 
 // clang-format off
 struct SceneRegion gGaiaRock_SusaExitRegions[] = {
-    {771, -28, 484, 779, -20, 492, CONDITION_ALWAYS, 2},
-    {771, 180, 707, 779, 188, 715, CONDITION_ALWAYS, 3},
+    {771, -28, 484, 779, -20, 492, CONDITION_ALWAYS, GAIA_ROCK_SUSA_CLIFFS_TO_CAVE_MOUTH},
+    {771, 180, 707, 779, 188, 715, CONDITION_ALWAYS, GAIA_ROCK_SUSA_CAVE_MOUTH_TO_CLIFFS},
     {SCENE_TABLE_END},
 };
 
 struct SceneRegion gGaiaRock_StatueSpotsExitRegions[] = {
-    {195, 296, 323, 203, 304, 331, CONDITION_ALWAYS, 2},
-    {707, -554, 452, 715, -546, 460, CONDITION_ALWAYS, 3},
+    {195, 296, 323, 203, 304, 331, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_VINES_TO_WALL},
+    {707, -554, 452, 715, -546, 460, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_WALL_TO_VINES},
     {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GaiaRockSusa),
     SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS, GaiaRockStatueSpots, GAIA_ROCK_STATUE_SPOTS_FROM_GAIA_ROCK_SUSA, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GaiaRockSusa, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GaiaRockSusa, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_CLIFFS_TO_CAVE_MOUTH, GaiaRockSusa, GAIA_ROCK_SUSA_CAVE_MOUTH_FROM_CLIFFS, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_CAVE_MOUTH_TO_CLIFFS, GaiaRockSusa, GAIA_ROCK_SUSA_CLIFFS_FROM_CAVE_MOUTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_SUSA, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_GAIA_ROCK_SUSA, EXIT_FLAG_NONE),
     SCENE_EXITS(GaiaRockStatueSpots),
     SCENE_EXIT_UNLESS(GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA, GaiaRockSusa, GAIA_ROCK_SUSA_FROM_GAIA_ROCK_STATUE_SPOTS, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GaiaRockStatueSpots, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GaiaRockStatueSpots, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_STATUE_SPOTS_VINES_TO_WALL, GaiaRockStatueSpots, GAIA_ROCK_STATUE_SPOTS_WALL_FROM_VINES, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_STATUE_SPOTS_WALL_TO_VINES, GaiaRockStatueSpots, GAIA_ROCK_STATUE_SPOTS_VINES_FROM_WALL, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_DANCING_IDOL, GaiaRockDancingIdol, GAIA_ROCK_DANCING_IDOL_FROM_GAIA_ROCK_STATUE_SPOTS, EXIT_FLAG_NONE),
     SCENE_EXITS(GaiaRockDancingIdol),
     SCENE_EXIT_UNLESS(GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS, GaiaRockStatueSpots, GAIA_ROCK_STATUE_SPOTS_FROM_GAIA_ROCK_DANCING_IDOL, EXIT_FLAG_NONE),
@@ -744,14 +762,14 @@ struct ActorPlacement gGaiaRock_Placements[] = {
 };
 
 struct ActorPlacement gGaiaRock_SusaActorPlacements[] = {
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1000, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 936, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1000, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 936, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (s32)gGaiaRock_PillarScript, 120, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 295, 0, 442, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WHIRLWIND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -761,13 +779,13 @@ struct ActorPlacement gGaiaRock_SusaActorPlacements[] = {
 };
 
 struct ActorPlacement gGaiaRock_StatueSpotsActorPlacements[] = {
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 440, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 808, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -809,7 +827,7 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 5, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 6, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 7, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_CAVE_MOUTH_BUSHES, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneClearsWall)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_CAVE_MOUTH_WEEDS, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneBlowsAwayWeeds)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_SECOND_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},

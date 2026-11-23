@@ -2,7 +2,8 @@
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the scripts of the raised prize and its sparkles (colosso_finish.c).
 
-/// A sparkle beside the raised prize sinks for a second, then is released.
+/// A sparkle beside the raised prize sinks for a second, then is released: the
+/// field's sparkle by a found item (gFieldEffect_ParticleScript), kept again.
 s32 gColosso_PrizeSparkleScript[] = {
     SC_ADD(SW_Y, -toFIXED(1) / 4),
     SC_WAIT(1),

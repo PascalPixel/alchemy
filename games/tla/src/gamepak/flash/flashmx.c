@@ -10,8 +10,9 @@
 #define FLASH_ID_PANASONIC (0x1b << 8 | 0x32)
 
 // clang-format off
-/// The Macronix chip's waits by timing: milliseconds, the timer's reload value
-/// and its control.
+/// The Macronix chip's time limits in milliseconds, by enum FlashPhase (see
+/// FlashSetupInfo.maxTime): 10 to program a byte, 2 seconds to erase a sector
+/// or the whole chip.
 const u16 Flash_MaxTimeMacronix[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -21,7 +22,8 @@ const u16 Flash_MaxTimeMacronix[] = {
 // clang-format on
 
 // clang-format off
-/// The Panasonic chip's waits, as Flash_MaxTimeMacronix's.
+/// The Panasonic chip's time limits, as Flash_MaxTimeMacronix's: half a second
+/// to erase.
 const u16 Flash_MaxTimePanasonic[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,

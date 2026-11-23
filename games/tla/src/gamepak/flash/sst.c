@@ -6,10 +6,10 @@
 #include "gamepak/flash_data.h"
 #include "system/io_reg.h"
 
-/// The erases a sector is given before it reads blank.
+/// How many times a sector is erased, at most, until it reads blank.
 #define FLASH_ERASE_ATTEMPTS 81
 
-/// Issues the chip-erase command and waits for an erased byte.
+/// Erases the whole chip and waits until it reads blank.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -68,7 +68,9 @@ u16 ProgramFlashByte(u8 *source, u8 *destination) {
   return gWaitForFlashWrite(FLASH_PHASE_PROGRAM, destination, *source);
 }
 
-/// Erases and verifies a sector with retries, then programs its bytes.
+/// Erases a 4 KB sector until it reads blank, up to FLASH_ERASE_ATTEMPTS times,
+/// erases it once more (six times more when the first erase failed), then
+/// programs it from source.
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   u8 ramCode[96];
   u16 status;

@@ -2,7 +2,8 @@
 #define ALCHEMY_FLASH_H
 
 /// @file
-/// Flash memory: erasing, programming and reading sectors.
+/// The flash chip that keeps the save files: its commands, its errors and the
+/// routines that erase, program and read it.
 
 #include "types.h"
 
@@ -56,28 +57,58 @@ enum FlashPhase {
 /// The last of the sixteen 4 KB sectors every chip is addressed by.
 #define FLASH_LAST_SECTOR 15
 
+// The library's routines (flash.c, sst.c, atmel.c, program_flash_sector.c).
+// Those that erase or program return 0, or one of the FLASH_ERROR_ values.
+/// Erases one of the sixteen 4 KB sectors.
 u16 EraseFlashSector(u16 sector);
+/// Programs one byte and waits for it to read back.
 u16 ProgramFlashByte(u8 *source, u8 *destination);
+/// Erases a 4 KB sector until it reads blank, then programs it from source
+/// (SST's, and an unknown chip's).
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source);
+/// Erases a 4 KB sector and programs it from source (Macronix's and
+/// Panasonic's).
 u16 ProgramFlashSector(u16 sector, u8 *source);
-void StopFlashTimer(void);
 u8 ReadFlashByte(u8 *source);
+/// Copies ReadFlashByte into destination and points gFlashReadRoutine at it.
 void CopyFlashReadRoutineToRam(void *destination);
+/// Returns the chip's device id above its maker id.
 s32 ReadFlashId(void);
+/// Installs the routines of the chip the cartridge holds; returns 1 when it is
+/// not one the library knows.
 s32 IdentifyFlash(void);
+/// Erases the whole chip.
 u16 EraseFlashChip(void);
+/// Waits until the byte at address reads expected, within the time limit of
+/// phase timingIndex (an enum FlashPhase).
 u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected);
+/// Erases the whole Atmel chip.
 u16 EraseAtmelFlashChip(void);
+/// Erases one of the Atmel chip's own 128-byte sectors.
 u16 EraseAtmelFlashSector(u16 sector);
-u16 EraseAtmelFlashBlock(u16 block);
+/// Erases a 4 KB sector of the Atmel chip, 128 bytes at a time.
+u16 EraseAtmelFlashBlock(u16 sector);
+/// Programs one of the Atmel chip's own 128-byte sectors from source.
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source);
-u16 ProgramAtmelFlashBlock(u16 block, u8 *source);
+/// Programs a 4 KB sector of the Atmel chip from source, 128 bytes at a time.
+u16 ProgramAtmelFlashBlock(u16 sector, u8 *source);
 void FlashTimerIntr(void);
-s32 SetFlashTimerIntr(u8 timer_index, void (**callback)(void));
+/// Chooses the timer the flash waits are timed with, and hands back its
+/// interrupt routine in *callback.
+s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void));
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
+/// Reads size bytes from offset in a 4 KB sector into destination.
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
+/// Compares a 4 KB sector with source; returns 0 when they match.
 s32 Flash_VerifySector(u16 sector, u8 *source);
+/// Returns 0 when the 4 KB sector at cursor reads blank throughout.
+s32 CountRemainingErasedFlashBytes(u8 *cursor);
+/// Returns 0 when verify finds the sector blank, else FLASH_ERROR_NOT_ERASED.
+s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
+/// Starts the flash timer on the wait for phase timingIndex.
+void StartFlashTimer(u8 timingIndex);
+void StopFlashTimer(void);
 
 /// The byte reader copied to RAM (CopyFlashReadRoutineToRam), good only until
 /// the caller that holds the copy returns.
@@ -97,9 +128,6 @@ extern u16 gFlashSavedIme;
 extern u8 gFlashTimeoutFlag;
 /// The timer, 0 to 3, the flash library times its operations with.
 extern u8 gFlashTimerNum;
-s32 CountRemainingErasedFlashBytes(u8 *ptr);
-s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
-void StartFlashTimer(u8 index);
 /// The chip's program routine (FlashSetupInfo.program), which
 /// Save_WriteSector calls.
 extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);

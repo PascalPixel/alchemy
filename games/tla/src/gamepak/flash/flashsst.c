@@ -9,8 +9,9 @@
 #define FLASH_ID_SST (0xd4 << 8 | 0xbf)
 
 // clang-format off
-/// The SST chip's waits by timing: milliseconds, the timer's reload value and
-/// its control.
+/// The SST chip's time limits in milliseconds, by enum FlashPhase (see
+/// FlashSetupInfo.maxTime): 10 to program a byte, 40 to erase a sector, 200 the
+/// whole chip.
 const u16 Flash_MaxTimeSst[] = {
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
     10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
@@ -19,6 +20,8 @@ const u16 Flash_MaxTimeSst[] = {
 };
 // clang-format on
 
+/// What a chip the library does not know is taken for: SST's routines and
+/// timings, with no id.
 const struct FlashSetupInfo gFlash_ChipDefault = {
     .program = ProgramFlashSectorWithEraseRetry,
     .eraseChip = EraseFlashChip,

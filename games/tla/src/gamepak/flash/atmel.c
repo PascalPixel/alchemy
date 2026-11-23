@@ -11,7 +11,7 @@
 /// The 128-byte sectors in each 4 KB standard sector.
 #define ATMEL_SMALL_SECTORS_PER_SECTOR 32
 
-/// Erases the Atmel chip and waits for completion with its configured timing.
+/// Erases the whole Atmel chip and waits until it reads blank.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -95,8 +95,8 @@ u16 EraseAtmelFlashBlock(u16 sector) {
   return result;
 }
 
-/// Programs a small Atmel sector with interrupts disabled, then polls its last
-/// byte.
+/// Programs one small Atmel sector, its 128 bytes in one run with interrupts
+/// off, then waits for its last byte to read back.
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
@@ -124,7 +124,8 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   }
 }
 
-/// Programs an Atmel block in small sectors, trying each sector at most twice.
+/// Programs 4 KB sector `sector` from source, 128 bytes at a time, trying each
+/// small sector at most twice.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;

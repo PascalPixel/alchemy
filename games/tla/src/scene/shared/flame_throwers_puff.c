@@ -92,6 +92,8 @@ void FlameThrowers_Puff(void) {
     offScreen = entry->offScreen;
     x = FIXEDtoINT(dx);
     y = FIXEDtoINT(y) - 8;
+    // Unless it puffs off screen, only one in view: x from -7 to 327, y from
+    // -47 to 239.
     if (offScreen == 0) {
       if ((u32)(x + 7) > 334)
         continue;
@@ -122,7 +124,7 @@ void FlameThrowers_Puff(void) {
         Ride_SpawnForward(&entry->actor->x.fixed, entry->reach, offScreen);
         break;
       }
-      value = 8;
+      value = 8; // the next in nine frames
     } else {
       value = y - 1;
     }

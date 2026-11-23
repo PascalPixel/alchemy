@@ -22,7 +22,7 @@ void Whirlwind_CarryLeaderLower(void) {
     if (i <= toFIXED(4) - 1)
       i += toFIXED(0.1);
     actor->facing = (u8)gFrameCount * FACING_STEP;
-    actor->priorityFlags ^= 2 << (gFrameCount & 1);
+    actor->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (gFrameCount & 1);
     System_Wait(1);
   }
   work->glow = 1;

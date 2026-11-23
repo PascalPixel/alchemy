@@ -1323,10 +1323,10 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
 /// high west level (cell (22, 34)). Either sets `FLAG_CRACKED_PILLAR_A_BURST`.
 /// The high west statue's fireball breaks that pillar through the statue's own
 /// rows instead (MagmaRock_BurstStatue), not this.
-DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarA,
-                               ACTOR_CRACKED_PILLAR_A,
-                               ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
-                               FLAG_CRACKED_PILLAR_A_BURST)
+DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarA,
+                                   ACTOR_CRACKED_PILLAR_A,
+                                   ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
+                                   FLAG_CRACKED_PILLAR_A_BURST)
 
 /// Burst breaks the north-east one of the four cracked pillars in front of the
 /// slide's cave mouth (cell (17, 31)), or the cracked pillar on the cliff's low

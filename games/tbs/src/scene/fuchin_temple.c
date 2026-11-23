@@ -238,7 +238,7 @@ static UNREAD_RESULT FuchinTemple_FaceLeader(struct Actor *actor) {
 #endif
 }
 
-/// The entrances outside, or those of the sheet of rooms.
+/// The entrances outside, or those of the rooms map.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 

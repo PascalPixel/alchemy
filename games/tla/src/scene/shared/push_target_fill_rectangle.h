@@ -30,7 +30,7 @@ s32 PushTarget_FillRectangle(s32 id) {
   height = (ABS(gPushRectangles[j][1]) + ABS(gPushRectangles[j][3])) >> 4;
   x = FIELD_CELL(actor->x.fixed + toFIXED(gPushRectangles[j][0]));
   z = FIELD_CELL(actor->z.fixed + toFIXED(gPushRectangles[j][1]));
-  mapX = FIELD_CELL(map->layers[1].offsetX);
+  mapX = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
   i = mapX;
   mapZ = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
   toX = x + (u16)i;

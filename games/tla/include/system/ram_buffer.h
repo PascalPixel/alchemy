@@ -35,16 +35,13 @@
 /// Lemuria read it.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
-/// The map screen's scroll (x, then y, 16.16 pixels).
-/// MapScreen_UpdateScroll reads it at constant addresses: the y word
-/// loads from its own literal, or as the x word's address plus 4 where that is
-/// live, which only constants give.
+/// The map screen's scroll (x, then y, 16.16 pixels), as
+/// MapScreen_UpdateScroll reads it.
 #define Ram_WorldMapScroll                                                     \
   FIXED_ADDRESS((s32 *), 0x0202a630, gMapScreen_ScrollX)
 
-/// The map screen's work. Its setup (MapScreen_Initialize) reaches it
-/// at a constant address: the work's fields are read again after stores to the
-/// screen values whose addresses it passes out, which only a constant gives.
+/// The map screen's work, as its setup (MapScreen_Initialize) reaches
+/// it.
 #define Ram_WorldMapWork                                                       \
   FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
 /// Where MapScreen_UpdateScroll reads the cursor from (x, then y, 16.16

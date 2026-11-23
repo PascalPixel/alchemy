@@ -9,29 +9,15 @@
 /// they stop.
 ///
 /// A large thing is a log, a pipe or a fallen column, lying west to east or
-/// north to south: one of six footprints, by its sprite
-/// (gPushedActor_FootprintKinds), with its edges in
-/// gPushedActor_FootprintBounds (pushed_actor_tables.c).
+/// north to south: one of six rectangles, by its sprite
+/// (gPushedActor_RectangleKinds), with its edges in
+/// gPushedActor_Rectangles (pushed_actor_tables.c).
 
 #include "field/map_grid_scroll.h"
 #include "scene/actor_step.h"
 #include "system/point.h"
 #include "system/iwram_call.h"
 #include "system/system_call.h"
-
-// Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
-// Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
-// Cave, Kolima Forest (SceneId_KolimaForestEntrance to
-// SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
-// entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): things
-// pushed a cell at a time, such as stone pillars, and logs and other large
-// things that roll until they meet something, redrawn into the map grid where
-// they stop.
-//
-// A large thing is one of six rectangles, by its sprite's animation
-// (gPushedActor_RectangleKinds): its bounds in
-// gPushedActor_Rectangles are four words a rectangle, the left, top,
-// right and bottom edges in pixels from its position.
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 extern s32 gPushedActor_DirectionSteps[];

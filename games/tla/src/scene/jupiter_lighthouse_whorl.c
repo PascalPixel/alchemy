@@ -127,9 +127,6 @@ enum JupiterLighthouseWhorlCellBehavior {
 #define ENTRANCE_FROM_BRIDGE_FLOOR 12
 /// The first of the two ways into the east hall; the other is the next.
 #define ENTRANCE_EAST_HALL_FIRST 3
-/// The stakes are stone ones, in stake.png's second look (Actor_SetCellOpen's
-/// kind).
-#define STAKE_STONE 1
 
 /// The whorl's actors, numbering its placement table.
 enum JupiterLighthouseWhorlActorId {

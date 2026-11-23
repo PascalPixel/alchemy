@@ -396,7 +396,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
            BattleArena_PeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE))) {
         GameFlag_Set(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED)) {
-          work->raisedTrigger = LOBBY_EVENT_ASK_TO_PARTICIPATE;
+          work->raisedTrigger = BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE;
         }
         result = 1;
       } else {
@@ -421,7 +421,7 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
     GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
     GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
-    BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+    BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
   }
   if (GameFlag_Get(FLAG_BATTLE_ARENA_LINK_DISCONNECTED)) {
     work->raisedTrigger = BATTLE_ARENA_EVENT_DISCONNECTED;
@@ -438,9 +438,9 @@ u32 gBattleArenaCallFrames;
 /// circle!", and calls it again now and then while the player keeps her
 /// waiting.
 ///
-/// `BattleArena_WatchOpponent` raises it (LOBBY_EVENT_ASK_TO_PARTICIPATE) while
-/// both have applied, and every LOBBY_ASK_AGAIN_CALLS calls the flag that keeps
-/// her quiet is cleared.
+/// `BattleArena_WatchOpponent` raises it
+/// (BATTLE_ARENA_EVENT_ASK_TO_PARTICIPATE) while both have applied, and every
+/// BATTLE_ARENA_ASK_AGAIN_CALLS calls the flag that keeps her quiet is cleared.
 ///
 /// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
 /// FLAG_BATTLE_ARENA_ATTENDANT_ASKED is set and nothing is shown. The path that
@@ -888,7 +888,7 @@ static s32 BattleArena_EnterBattle(void) {
         GameFlag_Set(FLAG_BATTLE_ARENA_LINK_DISCONNECTED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_OPPONENT_ASKED);
         GameFlag_Clear(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
-        BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
+        BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
         failed = 1;
         GameFlag_Clear(FLAG_BATTLE_ARENA_ATTENDANT_ASKED);
         break;
@@ -1032,6 +1032,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
         GameFlag_Clear(FLAG_LINK_BATTLE_ARRANGED);
         GameFlag_Clear(FLAG_LINK_BATTLE);
         GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
+        // "When you finish your preparations, please step into the circle!"
         messageId = messageBase + 7;
         gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK] = answer;
         goto message;
@@ -1058,6 +1059,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
       GameFlag_Clear(FLAG_MONSTER_BATTLE);
     }
     if (GameFlag_Get(FLAG_BATTLE_ARENA_PLAYER_APPLIED)) {
+      // "When you finish your preparations, please step into the circle!"
       messageId = messageBase + 3;
       // The lone player's answers above show their line here too, and an
       // accepted request below comes back to open its own.
@@ -1093,7 +1095,7 @@ static s32 BattleArena_ChooseBattleMode(void) {
             // "You have asked for a battle. We will call your name if your..."
             Event_SetMessageId(messageBase + 4);
           }
-          BattleArena_WriteSlotValue(LOBBY_SLOT_ASKED);
+          BattleArena_WriteSlotValue(BATTLE_ARENA_SLOT_ASKED);
           GameFlag_Set(FLAG_BATTLE_ARENA_PLAYER_APPLIED);
           goto open_message;
         } else {

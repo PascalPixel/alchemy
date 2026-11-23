@@ -1,11 +1,12 @@
 /// @file
-/// The window sprite pool, opening and closing windows, starting messages.
+/// The window system's setup and tilemap upload, the pool of window sprites,
+/// opening and closing windows, and starting a message typing into one.
 // Part of window.c.
 
 #include "window_internal.h"
 
 void Window_DrawOpened(struct Window *window);
-void Window_WaitZoom(void *work);
+void Window_WaitZoom(void *window);
 
 /// A text tile battle keeps for the bottom border's lower rows: neither taken
 /// nor shown, it is never free (WindowWork.textTileState).
@@ -90,8 +91,9 @@ void WindowSystem_InitField(void) {
 }
 
 /// Sets up the window system for battle, as WindowSystem_InitField does for the
-/// field.
-void WindowSystem_InitBattle(s32 kind) {
+/// field, starting the field's window update when loadGlyphTiles is set
+/// (WindowSystem_StartBattleUpdate).
+void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   struct WindowWork *work;
   s32 i;
   // Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of
@@ -120,7 +122,7 @@ void WindowSystem_InitBattle(s32 kind) {
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
-  WindowSystem_StartBattleUpdate(kind);
+  WindowSystem_StartBattleUpdate(loadGlyphTiles);
   // The first three text tiles take the lower rows of the bottom border
   // tiles, and are kept from text.
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT,
@@ -168,7 +170,8 @@ void WindowSystem_UploadTilemap(void) {
 }
 
 /// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
-/// and frees the text tiles it showed.
+/// and frees the text tiles it showed; in battle the rows of the command window
+/// go back to its panel.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = &canvas->tilemap[y][x];
@@ -197,7 +200,7 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
       u32 column;
 
       if (canvas->battleMode != 0) {
-        if ((u32)(y + row) > 16)
+        if ((u32)(y + row) >= COMMAND_ROW_TOP)
           tile = WINDOW_TILE_COMMAND_PANEL;
         else
           tile = WINDOW_TILE_BLANK;
@@ -307,56 +310,58 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
 }
 
 /// Waits until a zooming window has finished opening or closing.
-void Window_WaitZoom(void *work) {
-  if (!(WINDOW_FLAG_INSTANT & ((struct Window *)work)->flags) &&
-      (((struct Window *)work)->duration != 0)) {
+void Window_WaitZoom(void *window) {
+  if (!(WINDOW_FLAG_INSTANT & ((struct Window *)window)->flags) &&
+      (((struct Window *)window)->duration != 0)) {
     do {
       wait(1);
-    } while (((struct Window *)work)->duration != 0);
+    } while (((struct Window *)window)->duration != 0);
   }
 }
 
-void WindowSprite_PrepareForRedraw(struct Window *work);
+void WindowSprite_PrepareForRedraw(struct Window *window);
 void WindowSprite_RedrawSavedRect(struct Window *window);
 
-/// Closes a window: clears its contents and remembers its last rectangle.
-void Window_Close(struct Window *work, s32 release) {
-  if (work == 0)
+/// Closes a window, its sprites and contents going at once: with instant set
+/// (callers pass WINDOW_FLAG_INSTANT or 1) its rectangle is erased and its slot
+/// freed now, else its frame shrinks away over WINDOW_CLOSE_FRAMES.
+void Window_Close(struct Window *window, s32 instant) {
+  if (window == 0)
     return;
 
-  WindowSprite_PrepareForRedraw(work);
-  work->flags = 0;
-  work->previousX = work->x;
-  work->previousY = work->y;
-  work->previousWidth = work->width;
-  work->previousHeight = work->height;
+  WindowSprite_PrepareForRedraw(window);
+  window->flags = 0;
+  window->previousX = window->x;
+  window->previousY = window->y;
+  window->previousWidth = window->width;
+  window->previousHeight = window->height;
 
-  if (release != 0) {
-    Window_EraseBorderRect((s16)work->x, (s16)work->y, work->width,
-                           work->height);
-    work->sprites.head = NULL;
-    work->sprites.tailLink = NULL;
-    work->width = 0;
-    work->height = 0;
-    work->x = 0;
-    work->y = 0;
-    work->opened = 0;
-    work->animation = 0;
-    work->state = 0;
-    work->flags = 0;
-    work->zoomStage = 0;
-    work->duration = 0;
-    work->previousX = 0;
-    work->previousY = 0;
-    work->previousWidth = 0;
-    work->previousHeight = 0;
+  if (instant != 0) {
+    Window_EraseBorderRect((s16)window->x, (s16)window->y, window->width,
+                           window->height);
+    window->sprites.head = NULL;
+    window->sprites.tailLink = NULL;
+    window->width = 0;
+    window->height = 0;
+    window->x = 0;
+    window->y = 0;
+    window->opened = 0;
+    window->animation = 0;
+    window->state = 0;
+    window->flags = 0;
+    window->zoomStage = 0;
+    window->duration = 0;
+    window->previousX = 0;
+    window->previousY = 0;
+    window->previousWidth = 0;
+    window->previousHeight = 0;
   } else {
-    work->zoomStage = release;
-    work->duration = WINDOW_CLOSE_FRAMES;
+    window->zoomStage = instant;
+    window->duration = WINDOW_CLOSE_FRAMES;
   }
 }
 
-/// Clears a window's contents: redraws it empty and releases the render
+/// Clears a window's contents: redraws it empty and releases the
 /// window sprites it carries. A text canvas window is left alone.
 void WindowSprite_PrepareForRedraw(struct Window *window) {
   if (!(WINDOW_FLAG_TEXT_CANVAS & window->flags)) {
@@ -529,12 +534,12 @@ struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
   return found;
 }
 
-void Text_StartCanvasScroll(struct Message *channel);
+void Text_StartCanvasScroll(struct Message *message);
 
-/// Starts a channel typing the decoded text at entry into the battle message
-/// window. A channel that already serves a finished window continues below
+/// Starts a message typing the decoded text at entry into the battle message
+/// window. A message that already serves a typed-out window continues below
 /// its last line (scrolling up once both lines are used) unless keepPosition
-/// is set. Returns the channel, or NULL when all three are busy.
+/// is set. Returns the message, or NULL when all three are busy.
 struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
                                        s32 keepPosition) {
   struct Message *slot;
@@ -627,19 +632,19 @@ void Message_ResetIdle(void) {
   }
 }
 
-/// Copies the message's text colour, outline and line spacing into the shared
-/// glyph renderer before that message draws its next character.
-void Message_ApplyStyle(struct Message *channel) {
+/// Makes the message's text colour, style and line spacing the ones glyphs are
+/// drawn with, before it draws its next character.
+void Message_ApplyStyle(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->colour = channel->colour;
-  work->outline = channel->outline;
-  work->lineSpacing = channel->lineSpacing;
+  work->colour = message->colour;
+  work->outline = message->outline;
+  work->lineSpacing = message->lineSpacing;
 }
 
 /// Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a
 /// frame over two frames (Message_Type, Text_ScrollCanvasUp), during which
 /// the message types nothing.
-void Text_StartCanvasScroll(struct Message *channel) {
-  channel->transition = 2;
+void Text_StartCanvasScroll(struct Message *message) {
+  message->transition = 2;
 }

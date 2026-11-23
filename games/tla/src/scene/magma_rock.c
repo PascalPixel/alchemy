@@ -1357,15 +1357,14 @@ DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarE,
                                       ACTOR_CRACKED_PILLAR_E,
                                       FLAG_CRACKED_PILLAR_E_BURST)
 
-/// Nothing visible happens when Felix, after the game has moved him onto the
-/// cave mouth above the slide's cracked pillars (cell (16, 28)), takes a step
-/// of his own there. The game clears `FLAG_CAVE_DOOR_USED`, so that walking
-/// north into the cave takes him back inside from then on
-/// (MagmaRock_EnterCave).
+/// Nothing visible happens when Felix, come out of the Ember Stone's room
+/// (MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_INSIDE_EMBER_STONE), takes his first step
+/// of his own in the cave mouth above the slide's cracked pillars (cell
+/// (16, 28)). He arrives standing in the mouth facing out, and the game's
+/// placing him there only sets `FLAG_CAVE_DOOR_USED` (MagmaRock_EnterCave), so
+/// he is not sent straight back in; this step clears it, so that walking north
+/// into the cave takes him back inside from then on.
 void MagmaRock_ResetCaveDoor(void) {
-  // XXX: whether coming out of the cave is the move that leaves the flag set;
-  // a render of the arrival by
-  // MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_INSIDE_EMBER_STONE would settle it.
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS)

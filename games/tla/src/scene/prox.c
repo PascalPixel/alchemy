@@ -1276,56 +1276,27 @@ void Prox_StartScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 /// as Felix found it.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
-/// Each frame, a puff of chimney smoke drifts sideways ever faster, rises and
-/// spreads, until its frames run out and it is gone.
-void Prox_RiseSmoke(struct Actor *actor) {
-  actor->x.fixed += actor->timer << 8;
-  actor->y.fixed += toFIXED(1) / 2;
-  actor->scaleX += FIXED_ONE / 50;
-  actor->scaleY += FIXED_ONE / 50;
-  actor->timer += 2;
-  if (--*(s32 *)&actor->watchedActor == 0)
-    Actor_Release(actor);
-}
+#include "shared/smoke_drift.h"
 
-/// Adds one cloud of smoke rising from a chimney.
-void Prox_AddSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
-
-  if (actor != NULL) {
-    actor->retainSpriteCache = 2;
-    actor->motionFlags = 0;
-    actor->timer = 0;
-    actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
-    ((struct FieldSprite *)actor->sprite)->priority = 1;
-    Actor_SetSpriteFlags(actor, 0);
-    actor->scaleX = FIXED_ONE / 2;
-    actor->scaleY = FIXED_ONE / 2;
-    *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-    actor->update = (ObjectUpdate)Prox_RiseSmoke;
-    Actor_SelectAnimation(actor, 5);
-    Actor_SetBlendMode(actor, 1);
-  }
-}
+#include "shared/smoke_spawn.h"
 
 void Prox_SmokeFromChimneys(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddSmoke(toFIXED(536), toFIXED(40), toFIXED(232));
+      Smoke_Spawn(toFIXED(536), toFIXED(40), toFIXED(232));
     if (((gFrameCount + 60) & 63) == 0)
-      Prox_AddSmoke(toFIXED(168), toFIXED(40), toFIXED(296));
+      Smoke_Spawn(toFIXED(168), toFIXED(40), toFIXED(296));
     if (((gFrameCount + 20) & 63) == 0) {
-      Prox_AddSmoke(toFIXED(280), toFIXED(42), toFIXED(184));
-      Prox_AddSmoke(toFIXED(152), toFIXED(48), toFIXED(424));
+      Smoke_Spawn(toFIXED(280), toFIXED(42), toFIXED(184));
+      Smoke_Spawn(toFIXED(152), toFIXED(48), toFIXED(424));
     }
     if (((gFrameCount + 40) & 63) == 0)
-      Prox_AddSmoke(toFIXED(336), toFIXED(42), toFIXED(362));
+      Smoke_Spawn(toFIXED(336), toFIXED(42), toFIXED(362));
   } else if (scene == SCENE_PROX_MOLD) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddSmoke(toFIXED(568), toFIXED(104), toFIXED(296));
+      Smoke_Spawn(toFIXED(568), toFIXED(104), toFIXED(296));
   }
 }
 

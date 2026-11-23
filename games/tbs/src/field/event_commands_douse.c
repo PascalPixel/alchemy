@@ -1,5 +1,6 @@
 /// @file
-/// Douse.
+/// Douse: a rain cloud floats out over the target and rains on it, then
+/// shrinks back into the caster.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -10,42 +11,43 @@
 #define DOUSE_DROPS_ON_TARGET 24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
 
-/// Per-frame update of a falling drop: on reaching altitude it is released 2
-/// frames later and scatters three half-size splashes, which hop toward
-/// points 32 pixels away and are released after 6 frames.
+/// Per-frame update of a falling drop: on reaching its ground height it is
+/// released 2 frames later and scatters three half-size splashes, which hop
+/// toward points 32 pixels away and are released after 6 frames.
 void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   s32 i;
-  struct Actor *p;
+  struct Actor *splash;
   s32 dropWait = 2;
-  s16 *pp;
+  s16 *splashWaitField;
 
   if (particle->y.fixed <= particle->groundHeight) {
     particle->wait = dropWait;
     Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
-    p = NULL;
+    splash = NULL;
     particle->update = NULL;
 
     // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
     // away.
     for (i = 0; i <= 2; i++) {
-      p = Actor_Spawn(SPRITE_DROPLET, particle->x.fixed, particle->y.fixed,
-                      particle->z.fixed);
-      if (p == NULL) {
+      splash = Actor_Spawn(SPRITE_DROPLET, particle->x.fixed, particle->y.fixed,
+                           particle->z.fixed);
+      if (splash == NULL) {
         break;
       }
-      p->scaleY = FIXED_ONE / 2;
-      p->scaleX = FIXED_ONE / 2;
-      p->motionFlags = 2;
-      p->velocityY = toFIXED(1);
-      p->speedLimit = Random16() + toFIXED(6) / 5;
-      Actor_SetTargetPositionFromMagnitudeAngle(p, toFIXED(32), Random16());
-      pp = &p->wait;
+      splash->scaleY = FIXED_ONE / 2;
+      splash->scaleX = FIXED_ONE / 2;
+      splash->motionFlags = ACTOR_FALLS;
+      splash->velocityY = toFIXED(1);
+      splash->speedLimit = Random16() + toFIXED(6) / 5;
+      Actor_SetTargetPositionFromMagnitudeAngle(splash, toFIXED(32),
+                                                Random16());
+      splashWaitField = &splash->wait;
       {
         s32 splashWait = 6;
 
-        *pp = splashWait;
-        Actor_StartScriptFar(p, gFieldEffect_SharedParticleScript);
+        *splashWaitField = splashWait;
+        Actor_StartScriptFar(splash, gFieldEffect_SharedParticleScript);
       }
     }
   }
@@ -94,8 +96,8 @@ void FieldPsynergy_Douse(void) {
     effectWork->z = caster->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), effectWork->angle,
                           (struct Vector3 *)&effectWork->x);
-    effectWork->y =
-        MapGrid_GetTerrainHeightFar(0, effectWork->x, effectWork->z);
+    effectWork->y = MapGrid_GetTerrainHeightFar(MAPGRID_LAYER_GROUND,
+                                                effectWork->x, effectWork->z);
   }
   SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
                caster->z.fixed);
@@ -141,7 +143,7 @@ void FieldPsynergy_Douse(void) {
       if (particle != 0) {
         particle->groundHeight = pos.y - toFIXED(32);
         particle->update = FieldEffect_UpdateDouseDrop;
-        particle->motionFlags = 2;
+        particle->motionFlags = ACTOR_FALLS;
       }
       Sound_PlayFar(SE_WATER);
       wait(6);

@@ -42,14 +42,22 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 /// The field effect sprites of a field Psynergy (FieldEffectWork.particles).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (event_commands_requests.c,
-/// event_commands_djinni.c): a Djinni battle's event is this plus the Djinni's
-/// id (DJINN_PER_ELEMENT to an element), with DJINN_NO_HOP beside it.
+/// A pending Djinni battle's event (gMainRoutineWork.pendingDjinni,
+/// event_commands_requests.c, event_commands_djinni.c): this plus the
+/// Djinni's id (DJINN_PER_ELEMENT to an element), with DJINN_NO_HOP beside it.
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
-/// bits: 15..12 kind | 11..0 event or flag.
+/// bits: 15..12 kind (enum PendingBattleKind) | 11..0 event or flag.
 #define DJINN_PENDING_KIND_MASK 0xf000
+/// What waits in gMainRoutineWork.pendingDjinni through a battle.
+enum PendingBattleKind {
+  /// A Djinni battle, by its DJINNI_BATTLE_EVENT_FIRST event.
+  PENDING_DJINNI_BATTLE = 0,
+  /// A mimic chest's battle, by the chest's flag, which the field sequence
+  /// stores with CONDITION_FLAG_SET (field_sequence_triggers.c).
+  PENDING_MIMIC_CHEST = CONDITION_FLAG_SET
+};
 #define DJINN_PENDING_EVENT_MASK 0xfff
 /// A Djinni battle's event without DJINN_NO_HOP.
 #define DJINN_PENDING_BATTLE_EVENT_MASK 0x7ff

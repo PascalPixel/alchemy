@@ -252,7 +252,7 @@ struct FieldParticle;
 
 void Actor_MoveHalfwayTowardTarget(struct Actor *actor);
 void Djinn_RunBattleStartHop(s32 djinniId);
-void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
+void Djinn_JoinParty(s32 actorId, s32 element, s32 djinn);
 void Djinn_RestoreActorAfterBattle(void);
 // Declared without a prototype: FieldSequence_Run calls it with one argument
 // and with two.

@@ -1,28 +1,26 @@
 /// @file
-/// Cloak.
+/// Cloak: the leader blinks into a dark outline and stays hidden while it
+/// walks on cells that allow it (CELL_BEHAVIOR_CLOAK).
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 
-/// The cell behavior of the cells Cloak can stay hidden on: byte 2 of a
-/// cell (MapGridCell.behavior), or of a 4-byte gCellPictures entry on the
-/// World Map.
-#define CLOAK_TILE 251
 /// The World Map block of a 16.16 coordinate.
 #define WORLD_MAP_BLOCK(coordinate) ((coordinate) >> WORLD_MAP_BLOCK_SHIFT)
 
-/// Task of Cloak: when the cell under the leader is not CLOAK_TILE, requests
-/// CLOAK_END.
+/// Task of Cloak: when the cell under the leader is not CELL_BEHAVIOR_CLOAK,
+/// requests CLOAK_END. The behavior is byte 2 of a cell (MapGridCell.behavior),
+/// or of a 4-byte gCellPictures entry on the World Map.
 void FieldPsynergy_CheckCloakTile(void) {
   struct FieldWork *work;
   struct Actor *leader;
-  u8 *tile;
+  u8 *cell;
   FIXED x;
   FIXED y;
 
   work = gFieldWork;
   leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  tile = gMapGridWork[0];
+  cell = gMapGridWork[0];
 
   // Whole blocks or cells, rounded toward zero as a division would be.
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -39,13 +37,13 @@ void FieldPsynergy_CheckCloakTile(void) {
       y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
     ty = WORLD_MAP_BLOCK(y) & (WORLD_MAP_BLOCKS_ACROSS - 1);
 
-    tile = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
+    cell = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
   } else {
-    if (leader->layer <= 2) {
-      tile =
-          (u8 *)((struct MapGridScrollWork *)tile)->layers[leader->layer].cells;
+    if (leader->layer < MAPGRID_LAYER_COUNT) {
+      cell =
+          (u8 *)((struct MapGridScrollWork *)cell)->layers[leader->layer].cells;
     } else
-      tile = (u8 *)gMapGridCellBuffer;
+      cell = (u8 *)gMapGridCellBuffer;
 
     x = leader->x.fixed;
     if (x < 0)
@@ -57,11 +55,11 @@ void FieldPsynergy_CheckCloakTile(void) {
       if (y < 0)
         y += toFIXED(MAPGRID_CELL_PIXELS) - 1;
 
-      tile = (u8 *)(tile + ((tx + FIELD_CELL(y) * MAPGRID_SIZE) << 2));
+      cell = (u8 *)(cell + ((tx + FIELD_CELL(y) * MAPGRID_SIZE) << 2));
     }
   }
 
-  if (tile[2] != CLOAK_TILE)
+  if (cell[2] != CELL_BEHAVIOR_CLOAK)
     work->psynergy = CLOAK_END;
 }
 
@@ -69,13 +67,13 @@ void FieldPsynergy_CheckCloakTile(void) {
 /// clearing cloaked.
 void FieldPsynergy_EndCloak(void) {
   struct Actor *actor;
-  struct Sprite *animation;
+  struct Sprite *sprite;
   struct SpriteAnimation *entry;
   u32 i;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  animation = actor->sprite;
-  entry = animation->entries[0];
+  sprite = actor->sprite;
+  entry = sprite->entries[0];
 
   Sound_PlayFar(SE_CAST);
   Task_Remove(FieldPsynergy_CheckCloakTile);
@@ -84,25 +82,25 @@ void FieldPsynergy_EndCloak(void) {
 
   for (i = 0; i < 5; ++i) {
     entry->colorMode = SPRITE_COLOR_WHITE;
-    animation->dirty = 1;
-    animation->flags = SPRITE_FLAG_OUTLINED;
+    sprite->dirty = 1;
+    sprite->flags = SPRITE_FLAG_OUTLINED;
     wait(2);
-    animation->dirty = 1;
-    animation->flags = 0;
+    sprite->dirty = 1;
+    sprite->flags = 0;
     wait(2);
   }
 
   for (i = 0; i < 5; ++i) {
     entry->colorMode = SPRITE_COLOR_WHITE;
-    animation->dirty = 1;
-    animation->flags = 0;
+    sprite->dirty = 1;
+    sprite->flags = 0;
     wait(2);
     entry->colorMode = SPRITE_COLOR_NORMAL;
-    animation->dirty = 1;
+    sprite->dirty = 1;
     wait(2);
   }
 
-  animation->flags = SPRITE_FLAG_SHADOW;
+  sprite->flags = SPRITE_FLAG_SHADOW;
   gMainRoutineWork.cloaked = 0;
 }
 
@@ -119,8 +117,8 @@ void FieldPsynergy_ResumeCloakCheck(void) {
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct Sprite *animation = leader->sprite;
-  struct SpriteAnimation *entry = animation->entries[0];
+  struct Sprite *sprite = leader->sprite;
+  struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
   void (*check)(void);
 
@@ -129,17 +127,17 @@ void FieldPsynergy_StartCloak(void) {
   leader->update = 0;
   for (n = 0; n <= 9; n++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
-    animation->dirty = 1;
-    animation->flags = SPRITE_FLAG_OUTLINED;
+    sprite->dirty = 1;
+    sprite->flags = SPRITE_FLAG_OUTLINED;
     wait(2);
-    animation->dirty = 1;
-    animation->flags = 0;
+    sprite->dirty = 1;
+    sprite->flags = 0;
     wait(2);
   }
   n = 0;
   entry->colorMode = n;
-  animation->flags = SPRITE_FLAG_OUTLINED;
-  animation->dirty = 1;
+  sprite->flags = SPRITE_FLAG_OUTLINED;
+  sprite->dirty = 1;
   // Check the cell at once: off a Cloak cell, unhide and drop the request
   // the check just raised (n is 0 here).
   check = FieldPsynergy_CheckCloakTile;
@@ -152,5 +150,4 @@ void FieldPsynergy_StartCloak(void) {
   }
 }
 
-#undef CLOAK_TILE
 #undef WORLD_MAP_BLOCK

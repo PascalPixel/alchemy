@@ -2375,7 +2375,7 @@ UNUSED void MagmaRock_StepOnTrap(u16 *list) {
 
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 
-#include "shared/rubble_scatter.c"
+#include "shared/dust_scatter.c"
 
 /// Throws a ring of dust clouds out from Felix as he lands with a crumbled
 /// pillar.
@@ -2399,7 +2399,7 @@ void MagmaRock_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gRubble_BurstScript);
+      Actor_StartScript(effect, gDust_BurstScript);
       angle = i * (TRIG_TURN / DUST_RING_PUFFS);
       effect->velocity.x = Trig_Cos(angle);
       effect->velocity.y = 0;
@@ -2583,9 +2583,9 @@ s16 gMagmaRock_StatueStatues[] = {
     -1, 0,
 };
 
-#include "shared/rubble_spray_script.c"
+#include "shared/dust_scatter_script.c"
 
-#include "shared/rubble_burst_script.c"
+#include "shared/dust_burst_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

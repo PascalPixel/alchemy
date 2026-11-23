@@ -322,7 +322,7 @@ void Scene_SetRestartPoint(void) {
 }
 
 /// Where the party comes out on the world map after reaching scene and
-/// entrance (Teleport's choice calls it). With FLAG_SHIP_SAILABLE set (the
+/// entrance (Teleport's choice calls it). With FLAG_SHIP_CAN_SAIL set (the
 /// party has the ship, whose mooring the world map screen marks), finds the
 /// first rule of gParty_PairResolveRules for scene and entrance (-1 on either
 /// side matches any entrance) and copies its position, x and z in 16.16 and the
@@ -330,7 +330,7 @@ void Scene_SetRestartPoint(void) {
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
+  if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;
   for (; rule[0] != -1; rule += 8) {
     if (rule[0] == scene &&
@@ -344,12 +344,12 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
 }
 
 /// WorldMap_SetReturnForScene's twin for the rule's return scene and entrance
-/// (its third and fourth values): with FLAG_SHIP_SAILABLE set, clears
+/// (its third and fourth values): with FLAG_SHIP_CAN_SAIL set, clears
 /// ownerOverride and copies the rule's position to the party's saved position.
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   const s16 *rule = gParty_PairResolveRules;
 
-  if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
+  if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;
   gMainRoutineWork.ownerOverride = 0;
   for (; rule[0] != -1; rule += 8) {

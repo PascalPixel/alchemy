@@ -1271,7 +1271,7 @@ s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 #include "shared/slide_on_ice_from_edge.c"
 
 /// Stops or restarts Felix's slide on the ice (Leader_SlideOnIce).
-void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
+void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 

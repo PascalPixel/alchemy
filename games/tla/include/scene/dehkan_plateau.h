@@ -25,9 +25,9 @@ extern u16 gDehkanPlateau_PoundCubeCracks[][6];
 
 void CrumblingPillar_Prepare(s32 id);
 
-void Rubble_Spray(s32 spread);
+void Dust_Scatter(s32 spread);
 
-void Rubble_Burst(void);
+void Dust_Burst(void);
 
 void Leader_SetCellShapeAt(s32 a, s32 b);
 

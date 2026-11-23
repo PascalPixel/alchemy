@@ -443,7 +443,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   case WORLD_MAP_DRIFT_NORTH:
     return gWorldMap_DriftPlacements;
   case WORLD_MAP_FIRST_VOYAGE:
-    if (!Event_GetFlag(FLAG_SHIP_SAILABLE))
+    if (!Event_GetFlag(FLAG_SHIP_CAN_SAIL))
       return gWorldMap_FirstVoyagePlacements;
   case WORLD_MAP_IDEJIMA_DRIFTING:
     return gWorldMap_DriftingIdejimaPlacements;
@@ -513,7 +513,7 @@ void WorldMap_BoardShip(void) {
   struct Actor *ship;
   s32 kind, dx, dz, distance;
 
-  if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
+  if (GameFlag_Get(FLAG_SHIP_CAN_SAIL) == 0)
     return;
   kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -880,7 +880,7 @@ s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      GameFlag_Get(FLAG_SHIP_SAILABLE) != 0 &&
+      GameFlag_Get(FLAG_SHIP_CAN_SAIL) != 0 &&
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.shipX != 0) {
     struct Actor *ship = Actor_GetById(ACTOR_SHIP);
 
@@ -973,7 +973,7 @@ s32 Scene_Initialize(void) {
     break;
   case WORLD_MAP_DEBUG_FLIGHT:
     gMainRoutineWork.ownerOverride = 1;
-    Event_SetFlag(FLAG_SHIP_SAILABLE);
+    Event_SetFlag(FLAG_SHIP_CAN_SAIL);
     Event_SetFlag(FLAG_SHIP_FLIES);
     Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
     // Flag 0x11d changes nothing: no code of this game reads it, and only
@@ -2034,7 +2034,7 @@ void WorldMap_ShowAirsRockFromAlhafra(void) {
 /// The first voyage: the party takes the ship's tiller and learns to sail.
 void WorldMap_TakeTheTiller(void) {
   s32 scale;
-  s32 seen = Event_GetFlag(FLAG_SHIP_SAILABLE);
+  s32 seen = Event_GetFlag(FLAG_SHIP_CAN_SAIL);
 
   if (seen == 0) {
     Event_Start();
@@ -2122,7 +2122,7 @@ void WorldMap_TakeTheTiller(void) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     gMainRoutineWork.ownerOverride = 1;
     WorldMap_ReloadPendingAreaGraphics();
-    Event_SetFlag(FLAG_SHIP_SAILABLE);
+    Event_SetFlag(FLAG_SHIP_CAN_SAIL);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
     Actor_SetPosition(ACTOR_VOYAGE_KRADEN, 0, 0);
@@ -2144,7 +2144,7 @@ void WorldMap_SailToShipDeck(void) {
   FieldEvent_SetExitRequest(WORLD_MAP_TO_LEMURIAN_SHIP_TILLER_A);
 }
 
-/// The ship's first flight once it has wings (FLAG_SHIP_HAS_FLOWN).
+/// The ship's first flight once it has wings (FLAG_SHIP_TOOK_OFF).
 void WorldMap_TakeOff(void) {
   s32 x, z, i;
 
@@ -2152,7 +2152,7 @@ void WorldMap_TakeOff(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_SetFlag(FLAG_SHIP_HAS_FLOWN);
+  Event_SetFlag(FLAG_SHIP_TOOK_OFF);
   Actor_MoveToAndWait(ACTOR_SHIP, 7158, 8532);
   WorldMap_SetUpShip();
   x = Actor_Get(ACTOR_SHIP)->x.fixed / toFIXED(1);
@@ -3187,7 +3187,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      WORLD_MAP_TO_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(4), CONDITION_ALWAYS,
      WORLD_MAP_TO_DEHKAN_PLATEAU_TIGHTROPES},
-    {TRIGGER_EXIT, STEP_TRIGGER_AREA(5), FLAG_SHIP_SAILABLE,
+    {TRIGGER_EXIT, STEP_TRIGGER_AREA(5), FLAG_SHIP_CAN_SAIL,
      WORLD_MAP_TO_LEMURIAN_SHIP_MAIN_DECK_NORTH},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(6), CONDITION_ALWAYS, WORLD_MAP_TO_MADRA},
     {TRIGGER_EXIT, STEP_TRIGGER_AREA(7), CONDITION_ALWAYS,
@@ -3309,7 +3309,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(WorldMap_MoorAtAttekaInlet)},
     {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_AWAY_FROM_CONTIGO, CONDITION_ALWAYS,
      EVENT(WorldMap_RefuseToRunAway)},
-    {TRIGGER_STEP, 40, FLAG_SHIP_HAS_FLOWN, EVENT(WorldMap_TakeOff)},
+    {TRIGGER_STEP, 40, FLAG_SHIP_TOOK_OFF, EVENT(WorldMap_TakeOff)},
     {TRIGGER_EXIT, WORLD_MAP_TO_NORTHERN_REACHES_SOUTH, CONDITION_ALWAYS,
      WORLD_MAP_TO_NORTHERN_REACHES_SOUTH},
     {TRIGGER_EXIT, WORLD_MAP_TO_NORTHERN_REACHES_NORTH, CONDITION_ALWAYS,

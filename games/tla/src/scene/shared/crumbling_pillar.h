@@ -101,7 +101,7 @@ void CrumblingPillar_Step(u16 *list) {
         Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
-        Rubble_Spray(0);
+        Dust_Scatter(0);
         GameFlag_Set(flag);
       } else if (!GameFlag_Get(flag + 1)) {
         u8 *flags = &leader->motionFlags;
@@ -109,11 +109,11 @@ void CrumblingPillar_Step(u16 *list) {
         *flags = 0;
         Sound_Play(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        Rubble_Spray(0);
+        Dust_Scatter(0);
         wait(8);
         Actor_SelectAnimation(pillar, 2);
         Leader_SetCellShapeAt(-2, pillar->layer);
-        Rubble_Spray(1);
+        Dust_Scatter(1);
         wait(16);
         Leader_SetCellShapeAt(-2, pillar->layer);
         wait(4);
@@ -124,7 +124,7 @@ void CrumblingPillar_Step(u16 *list) {
         Actor_SetPositionAndResetMotion(pillar, 0, 0, 0);
         wait(2);
         Sound_Play(SE_THUMP);
-        Rubble_Burst();
+        Dust_Burst();
         wait(20);
         GameFlag_Set(flag + 1);
       }
@@ -152,18 +152,18 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
       if (!Event_GetFlag(flag + 1)) {
         Event_PlaySound(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        Rubble_Spray(0);
+        Dust_Scatter(0);
         System_Wait(8);
         Actor_SelectAnimation(actor, 2);
         Actor_SetCellShape(-4, actor->layer, id);
-        Rubble_Spray(1);
+        Dust_Scatter(1);
         System_Wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         System_Wait(8);
         FieldActor_SetPositionAndResetMotion(actor, 0, 0, 0);
         System_Wait(2);
         Event_PlaySound(SE_THUMP);
-        Rubble_Burst();
+        Dust_Burst();
         System_Wait(20);
         Event_SetFlag(flag);
         Event_SetFlag(flag + 1);
@@ -187,7 +187,7 @@ void Actor_PlaceOnActor(s32 id, s32 target);
 /// loads the stand-in's and the two pictures' sprites beside the leader, the
 /// cracked one showing its cracks, then puts them out of sight; a cracked
 /// pillar takes the cracked picture.
-void CrumblingPillar_PlaceWithStandIns(u16 *list) {
+void CrumblingPillar_PlaceWithStandIn(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
@@ -290,7 +290,7 @@ void CrumblingPillar_StepWithStandIn(u16 *list) {
         wait(4);
         Actor_SetSpriteColor(Actor_GetById(ACTOR_PILLAR_STAND_IN),
                              SPRITE_COLOR_NORMAL);
-        Rubble_Spray(0);
+        Dust_Scatter(0);
         Actor_TakePlaceOf(pillar, standIn);
         wait(1);
         GameFlag_Set(flag);
@@ -304,11 +304,11 @@ void CrumblingPillar_StepWithStandIn(u16 *list) {
         *flags = 0;
         Sound_Play(SE_PUSH);
         MapGrid_SetShake(1, 4, 1);
-        Rubble_Spray(0);
+        Dust_Scatter(0);
         wait(8);
         Actor_SelectAnimation(standIn, 2);
         Leader_SetCellShapeAt(-2, pillar->layer);
-        Rubble_Spray(1);
+        Dust_Scatter(1);
         wait(16);
         Leader_SetCellShapeAt(-2, pillar->layer);
         wait(4);
@@ -319,7 +319,7 @@ void CrumblingPillar_StepWithStandIn(u16 *list) {
         Actor_SetPositionAndResetMotion(standIn, 0, 0, 0);
         wait(2);
         Sound_Play(SE_THUMP);
-        Rubble_Burst();
+        Dust_Burst();
         wait(20);
         GameFlag_Set(flag + 1);
       }

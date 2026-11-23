@@ -1,11 +1,11 @@
 /// @file
 /// The dust a crumbling pillar throws up around the leader.
 
-extern u32 gRubble_SprayScript[];
+extern u32 gDust_ScatterScript[];
 
 /// Eight clouds of dust rise in a row across the leader, 2 pixels apart, and
 /// fly out from him in eight directions when `spread` is set.
-void Rubble_Spray(s32 spread) {
+void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   void *frame = 0;
@@ -23,7 +23,7 @@ void Rubble_Spray(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
-      Actor_StartScript(effect, gRubble_SprayScript);
+      Actor_StartScript(effect, gDust_ScatterScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -43,11 +43,11 @@ void Rubble_Spray(s32 spread) {
   }
 }
 
-extern u32 gRubble_BurstScript[];
+extern u32 gDust_BurstScript[];
 
 /// Throws a ring of dust clouds out from the leader as a pillar lands, the
 /// first thrown twice.
-void Rubble_Burst(void) {
+void Dust_Burst(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   void *frame;
@@ -65,7 +65,7 @@ void Rubble_Burst(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation((struct Actor *)effect, 2);
-      Actor_StartScript(effect, gRubble_BurstScript);
+      Actor_StartScript(effect, gDust_BurstScript);
       effect->velocity.x = Trig_Cos(i * (TRIG_TURN / DUST_RING_PUFFS));
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i * (TRIG_TURN / DUST_RING_PUFFS));

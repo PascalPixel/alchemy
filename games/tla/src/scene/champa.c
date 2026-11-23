@@ -7,9 +7,10 @@
 /// (Champa_FeizhiArrives). Leaving by the same bridge the first time, the
 /// party meets Alex, who left it on Indra, with Karst and Agatio
 /// (Champa_MeetAlex); after he has gone, Kraden's hints leave Jenna and Sheba
-/// at odds (Champa_JennaAndShebaGlare). Once Briggs has sailed from Alhafra,
-/// the people and triggers change, and two sailors at the mouth of Briggs's
-/// cave spot Felix and send Briggs running inside (Champa_SailorsSpotFelix).
+/// puzzled (Champa_JennaAndShebaLookPuzzled). Once Briggs has sailed from
+/// Alhafra, the people and triggers change, and two sailors at the mouth of
+/// Briggs's cave spot Felix and send Briggs running inside
+/// (Champa_SailorsSpotFelix).
 
 #include "system/task.h"
 #include "shared/tables.h"
@@ -660,13 +661,13 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-extern u32 gChampa_GlareSparkScript[];
+extern u32 gChampa_QuestionMarkScript[];
 
 void Actor_StartScript(struct Actor *actor, const void *script);
 
-/// A spark over someone's head, drawn with the emote sprite turned to `angle`,
+/// A question mark over someone's head, the emote sprite's, turned to `angle`,
 /// for `frames` frames.
-void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
+void Champa_SpawnQuestionMark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
   struct Actor *actor;
   struct FieldSprite *sprite;
@@ -675,7 +676,7 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   if (actor != 0) {
     sprite = actor->sprite;
     Actor_SelectAnimation(actor, 1);
-    Actor_StartScript(actor, gChampa_GlareSparkScript);
+    Actor_StartScript(actor, gChampa_QuestionMarkScript);
     actor->motionFlags = 0;
     actor->wait = frames;
 
@@ -690,28 +691,28 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
 /// twice each, each with a chime, before they both say they do not follow him.
 /// The bubble is the emote sprite's question mark, turned 22.5 degrees one way
 /// or the other.
-void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
+void Champa_JennaAndShebaLookPuzzled(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_Get(firstId);
   struct Actor *second = Actor_Get(secondId);
   s32 rise = toFIXED(28);
   FIXED y;
 
   y = first->y.fixed;
-  Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed,
-                         DEGtoANG(22.5), 15);
+  Champa_SpawnQuestionMark(first->x.fixed, y + rise, first->z.fixed,
+                           DEGtoANG(22.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   y = second->y.fixed;
-  Champa_SpawnGlareSpark(second->x.fixed, y + rise, second->z.fixed,
-                         DEGtoANG(337.5), 15);
+  Champa_SpawnQuestionMark(second->x.fixed, y + rise, second->z.fixed,
+                           DEGtoANG(337.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Champa_SpawnGlareSpark(first->x.fixed, first->y.fixed + rise, first->z.fixed,
-                         DEGtoANG(22.5), 15);
+  Champa_SpawnQuestionMark(first->x.fixed, first->y.fixed + rise,
+                           first->z.fixed, DEGtoANG(22.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Champa_SpawnGlareSpark(second->x.fixed, second->y.fixed + rise,
-                         second->z.fixed, DEGtoANG(337.5), 15);
+  Champa_SpawnQuestionMark(second->x.fixed, second->y.fixed + rise,
+                           second->z.fixed, DEGtoANG(337.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
@@ -1397,7 +1398,7 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST + 1);
   FieldEvent_Wait(25);
-  Champa_JennaAndShebaGlare(ACTOR_JENNA, ACTOR_SHEBA);
+  Champa_JennaAndShebaLookPuzzled(ACTOR_JENNA, ACTOR_SHEBA);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1803,7 +1804,7 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// A glare spark's script: it is released when its wait runs out.
-u32 gChampa_GlareSparkScript[] = {
+/// A question mark's script: it is released when its wait runs out.
+u32 gChampa_QuestionMarkScript[] = {
     SC_RELEASE,
 };

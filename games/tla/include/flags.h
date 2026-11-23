@@ -395,14 +395,14 @@
 /// Set as Move sends the stump on the Gondowan Cliffs leaping into the stream,
 /// where it stands as a step.
 #define FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER 0x884
-/// Set as Whirlwind blows away the foliage before the cave of Kibombo
+/// Set as Whirlwind blows away the weeds before the cave of Kibombo
 /// warriors.
-#define FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN 0x885
+#define FLAG_GONDOWAN_CLIFFS_WEEDS_BLOWN 0x885
 /// Set as Scoop digs up the geyser in the yellow sand.
 #define FLAG_GONDOWAN_CLIFFS_GEYSER_DUG 0x886
 /// Set once the leader takes the Lemurian Ship's tiller: the ship can sail, the
 /// world map marks its mooring and the party comes back to it there.
-#define FLAG_SHIP_SAILABLE 0x8de
+#define FLAG_SHIP_CAN_SAIL 0x8de
 /// Set as Grind breaks up the rock that blocks the way south.
 #define FLAG_GONDOWAN_CLIFFS_ROCK_GROUND 0x8e6
 
@@ -448,7 +448,7 @@
 #define FLAG_SHIP_FLIES 0x8df
 /// Set once the winged ship has first taken off from the World Map
 /// (WorldMap_TakeOff).
-#define FLAG_SHIP_HAS_FLOWN 0xa78
+#define FLAG_SHIP_TOOK_OFF 0xa78
 
 /// Set once the pillar on the floor below Jupiter Lighthouse's aerie stands on
 /// the button by its door: the door stays open, a shortcut.

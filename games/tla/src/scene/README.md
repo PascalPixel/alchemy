@@ -222,10 +222,10 @@ A family of routines that works on one kind of thing keeps one set of
 names in every scene that has it: the cracked floors of the Jupiter
 Lighthouse rooms (`cracked_tile_fall.h` and its neighbours, over each
 room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
-(`pillar_place.h`, `pound_sink_target.h`), the rubble (`rubble.h`), the
-slide over ice (`leader_slide_on_ice.h`) and the Mars Lighthouse flame
-throwers (`beam_*.h` and the `ride_*` files, over one `FlameHitWork` in
-[`ride.h`](../../include/scene/ride.h)).
+(`pillar_place.h`, `pound_sink_target.h`), the dust a crumbling pillar
+throws up (`dust.h`), the slide over ice (`leader_slide_on_ice.h`) and
+the Mars Lighthouse flame throwers (`beam_*.h` and the `ride_*` files,
+over one `FlameHitWork` in [`ride.h`](../../include/scene/ride.h)).
 
 Tables the cartridge keeps in many overlays are shared files too: the
 field effects' three duration scripts

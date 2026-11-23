@@ -3502,7 +3502,7 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   to->bits = bits;
 }
 
-extern u32 gRubble_SprayScript[];
+extern u32 gDust_ScatterScript[];
 
 void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -3525,7 +3525,7 @@ void Dust_Scatter(s32 spread) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript((struct Actor *)effect, gRubble_SprayScript);
+      Actor_StartScript((struct Actor *)effect, gDust_ScatterScript);
       effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -3545,7 +3545,7 @@ void Dust_Scatter(s32 spread) {
   }
 }
 
-extern u32 gRubble_BurstScript[];
+extern u32 gDust_BurstScript[];
 /// The clouds of dust MagmaRockInside_SpawnDustRing throws out in a ring.
 #define DUST_RING_PIECES 17
 
@@ -3567,7 +3567,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript((struct Actor *)effect, gRubble_BurstScript);
+      Actor_StartScript((struct Actor *)effect, gDust_BurstScript);
       effect->velocity.x = Trig_Cos(i * (TRIG_TURN / 16));
       effect->velocity.y = 0;
       effect->velocity.z = Trig_Sin(i * (TRIG_TURN / 16));
@@ -4153,10 +4153,10 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef MARKER
 
 // clang-format off
-#define RUBBLE_SCRIPT_SECTION LATE_DATA
-#include "shared/rubble_spray_script.c"
+#define DUST_SCRIPT_SECTION LATE_DATA
+#include "shared/dust_scatter_script.c"
 
-#include "shared/rubble_burst_script.c"
+#include "shared/dust_burst_script.c"
 // clang-format on
 
 void TrialRoad_FightGasp(void);

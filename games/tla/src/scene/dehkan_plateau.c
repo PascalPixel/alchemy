@@ -337,7 +337,7 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 
 #include "../field/field_effect_advance_motion_priority.c"
 
-#include "shared/rubble.h"
+#include "shared/dust.h"
 
 #include "shared/actor_set_cell_shape.h"
 
@@ -1761,7 +1761,7 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
           ACTOR_PRIORITY_AUTOMATIC;
     }
   }
-  CrumblingPillar_PlaceWithStandIns(
+  CrumblingPillar_PlaceWithStandIn(
       gDehkanPlateau_ThemisAxeChestCrumblingPillars);
   DehkanPlateau_SetThemisAxeChestStandingPillarCells();
   Pillar_Place(gDehkanPlateau_ThemisAxeChestStakes);
@@ -2138,9 +2138,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
-#include "shared/rubble_spray_script.c"
+#include "shared/dust_scatter_script.c"
 
-#include "shared/rubble_burst_script.c"
+#include "shared/dust_burst_script.c"
 
 #include "shared/field_effect_duration_scripts.c"
 

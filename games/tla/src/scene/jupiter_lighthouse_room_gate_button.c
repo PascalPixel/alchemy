@@ -104,10 +104,13 @@ void JupiterLighthouse_LeaveByCyclone(void) {
       JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
 }
 
-/// Opens both sandstone gates; with `animate` 1 they thud and slide open
-/// through their half-open picture, otherwise they simply stand open.
-void JupiterLighthouse_OpenGates(s32 animate) {
-  if (animate == 1) {
+/// How JupiterLighthouse_OpenGates opens the gates.
+enum { GATES_STAND_OPEN, GATES_SLIDE_OPEN };
+
+/// Opens both sandstone gates: GATES_SLIDE_OPEN has them thud and slide open
+/// through their half-open picture, GATES_STAND_OPEN simply shows them open.
+void JupiterLighthouse_OpenGates(s32 how) {
+  if (how == GATES_SLIDE_OPEN) {
     Event_PlaySound(SE_IMPACT);
     MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
     MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
@@ -140,7 +143,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
       FIELD_CELL(actor->x.fixed) == GATES_BUTTON_CELL_X &&
       FIELD_CELL(actor->z.fixed) == GATES_BUTTON_CELL_Z) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
-    JupiterLighthouse_OpenGates(1);
+    JupiterLighthouse_OpenGates(GATES_SLIDE_OPEN);
   }
 }
 
@@ -149,7 +152,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_GATES_BUTTON_HELD)) {
     Event_SetFlag(FLAG_GATES_BUTTON_HELD);
-    JupiterLighthouse_OpenGates(1);
+    JupiterLighthouse_OpenGates(GATES_SLIDE_OPEN);
   }
 }
 
@@ -179,13 +182,14 @@ s32 Scene_Initialize(void) {
     Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_GATES_PILLAR, 280, 536);
-    JupiterLighthouse_OpenGates(0);
+    JupiterLighthouse_OpenGates(GATES_STAND_OPEN);
   }
   if (Event_GetFlag(FLAG_GATES_BUTTON_HELD))
-    JupiterLighthouse_OpenGates(0);
+    JupiterLighthouse_OpenGates(GATES_STAND_OPEN);
   return 0;
 }
 
+/// Sets the scene's arrival flags before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   return 0;
@@ -278,9 +282,9 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ROOM_BEAM},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_EAST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_ENTRANCE_WEST},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, TRIGGER_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
@@ -310,7 +314,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect_move.c"
 
 #undef FLAG_GATES_BUTTON_HELD
-// The floor's copy of the effect spawner.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -336,16 +339,6 @@ struct CellTargetEntry;
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The cracked tiles' steps and landings.
-
-void GameFlag_SetByte(s32 flag, s32 value);
-void MapGrid_CenterOnFollowedPoint(void);
-
-void JupiterLighthouse_StepOnButton(void);
-void JupiterLighthouse_StepOffButton(void);
-extern u32 gFieldEffect_ShortScript[];
-extern u32 gFieldEffect_MediumScript[];
-extern u32 gFieldEffect_LongScript[];
 
 #include "shared/cracked_tile_drop_in.h"
 

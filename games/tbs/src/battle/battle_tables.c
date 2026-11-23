@@ -97,7 +97,8 @@ const FIXED gBattleCamera_CommandMatrix[] = {
 };
 // clang-format on
 
-// The same in both games.
+// Percentages by a target's distance from the aimed one, 0 to 5
+// (range_falloff.h).
 const u8 gRangeFalloff_EffectChance[] = {100, 60, 30, 30, 30, 30};
 const s32 gRangeFalloff_PpLoss[] = {100, 50, 30, 10, 10, 10};
 const s32 gRangeFalloff_HealHp[] = {100, 80, 60, 40, 20, 10};

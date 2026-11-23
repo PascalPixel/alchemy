@@ -61,18 +61,18 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 /// BattleUnit_CountDownAttackStage is, a lowered stat ending early at bias.
 #define DEFINE_COUNT_DOWN_MODIFIER(name, counter, level, bias)                 \
   s32 name(s32 unitId) {                                                       \
-    struct Unit *state = Unit_GetFar(unitId);                                  \
+    struct Unit *unit = Unit_GetFar(unitId);                                   \
                                                                                \
-    if (state->counter != 0) {                                                 \
-      state->counter--;                                                        \
-      if (state->counter == 0) {                                               \
-        state->level = 0;                                                      \
+    if (unit->counter != 0) {                                                  \
+      unit->counter--;                                                         \
+      if (unit->counter == 0) {                                                \
+        unit->level = 0;                                                       \
         return 1;                                                              \
       }                                                                        \
-      if (state->level < 0 &&                                                  \
-          BattleUnit_RollCounterEarlyEnd(unitId, state->counter, bias) != 0) { \
-        state->level = 0;                                                      \
-        state->counter = 0;                                                    \
+      if (unit->level < 0 &&                                                   \
+          BattleUnit_RollCounterEarlyEnd(unitId, unit->counter, bias) != 0) {  \
+        unit->level = 0;                                                       \
+        unit->counter = 0;                                                     \
         return 1;                                                              \
       }                                                                        \
     }                                                                          \
@@ -92,13 +92,13 @@ DEFINE_COUNT_DOWN_MODIFIER(BattleUnit_CountDownResistanceStage, resistanceTurns,
 /// clears it and returns 1 when the status ends early at `bias`.
 #define DEFINE_COUNT_DOWN_STATUS(name, counter, bias)                          \
   s32 name(s32 unitId) {                                                       \
-    struct Unit *state = Unit_GetFar(unitId);                                  \
-    if (state->counter != 0) {                                                 \
-      state->counter--;                                                        \
-      if (state->counter == 0)                                                 \
+    struct Unit *unit = Unit_GetFar(unitId);                                   \
+    if (unit->counter != 0) {                                                  \
+      unit->counter--;                                                         \
+      if (unit->counter == 0)                                                  \
         return 1;                                                              \
-      if (BattleUnit_RollCounterEarlyEnd(unitId, state->counter, bias) != 0) { \
-        state->counter = 0;                                                    \
+      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->counter, bias) != 0) {  \
+        unit->counter = 0;                                                     \
         return 1;                                                              \
       }                                                                        \
     }                                                                          \
@@ -570,15 +570,15 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
       BattlePlayback_Push(PLAYBACK_NUMBER, plan->hauntDamage);
       PUSH_MESSAGE(MsgCurseDamage);
       if (Unit_AddHpFar(unitId, -plan->hauntDamage) == 0) {
-        s32 text;
+        s32 message;
         BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
-          text = MsgGoesDown;
+          message = MsgGoesDown;
         } else {
-          text = MsgStrengthExhausted;
+          message = MsgStrengthExhausted;
         }
-        PUSH_MESSAGE(text);
+        PUSH_MESSAGE(message);
       } else {
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
       }
@@ -589,7 +589,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     // A tenth of the maximum HP, a fifth for deadly poison (POISON_VENOM).
     if (*poison != 0) {
       s32 damage = unit->hpMax * *poison / 10;
-      struct BattleWork *state = gBattleWork;
+      struct BattleWork *battle = gBattleWork;
       BattlePlayback_Push(PLAYBACK_HIT, unitId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
@@ -598,20 +598,20 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
       // SE_HEAVY_IMPACT; the ROM keeps the reread of *poison, the compare and
       // both stores.
       if (*poison != 0) {
-        state->playback.pendingSound = SE_HEAVY_IMPACT;
+        battle->playback.pendingSound = SE_HEAVY_IMPACT;
       } else {
-        state->playback.pendingSound = SE_IMPACT;
+        battle->playback.pendingSound = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
-        s32 text;
+        s32 message;
         BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         if (unitId >= 0 && unitId <= ALLY_MAX) {
-          text = MsgGoesDown;
+          message = MsgGoesDown;
         } else {
-          text = MsgStrengthExhausted;
+          message = MsgStrengthExhausted;
         }
-        PUSH_MESSAGE(text);
+        PUSH_MESSAGE(message);
       } else {
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
       }

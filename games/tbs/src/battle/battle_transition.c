@@ -212,6 +212,8 @@ void BattleTransition_DrawRows(void) {
 
   transitionFrame = *gBattleEntryTimer;
   if (transitionFrame >= 0 && transitionFrame < TRANSITION_OPEN_FRAMES) {
+    // Over its eight frames a row steps through the seven edge tiles to the
+    // clear one.
     tileEntry = (7 & transitionFrame) + TRANSITION_CURTAIN_ENTRY(1);
     tileRow = TRANSITION_CURTAIN_MIDDLE_ROW - transitionFrame / 8;
     tilemap = (u16 *)BG_SCREEN_BLOCK(TRANSITION_CURTAIN_SCREEN) +

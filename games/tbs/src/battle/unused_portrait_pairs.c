@@ -9,7 +9,7 @@
 
 // clang-format off
 /// {character, portrait} pairs, as in gPortrait_CharacterMap.
-const s16 gBattle_UnusedCharacterIdPairs[][2] = {
+const s16 gBattle_UnusedCharacterPortraits[][2] = {
     {SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD},
     {GARET, PORTRAIT_GARET},
     {SPRITE_GARET_CHILD, PORTRAIT_GARET_CHILD},
@@ -23,7 +23,7 @@ const s16 gBattle_UnusedCharacterIdPairs[][2] = {
 
 /// {sprite, portrait} pairs, as in gPortrait_SpriteMap: portrait n is the row
 /// PORTRAIT_JUPITER_DJINNI + n.
-const s16 gBattle_UnusedActorKindIdPairs[][2] = {
+const s16 gBattle_UnusedSpritePortraits[][2] = {
     {SPRITE_JUPITER_DJINNI, 0},
     {SPRITE_VENUS_DJINNI, 1},
     {SPRITE_MARS_DJINNI, 2},

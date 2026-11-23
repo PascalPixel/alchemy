@@ -14,7 +14,7 @@ struct BattleWorkUnitListView {
 /// Picks a random place: a party member still standing with requireLivingUnit,
 /// otherwise any enemy place in use. Returns 0 when there is none.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
-  u16 positions[6];
+  u16 places[6];
   s32 count;
 
   // UB: the view treats distinct BattleWork members as one array.
@@ -33,59 +33,57 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       continue;
     if (requireLivingUnit && Unit_GetFar(unitId)->hp == 0)
       continue;
-    positions[count++] = place | sideTag;
+    places[count++] = place | sideTag;
   }
 #else
-  struct BattleWorkUnitListView *order;
+  struct BattleWorkUnitListView *lists;
   s16 *entry;
   u16 *cursor;
-  s32 value;
-  s32 index;
+  s32 listedUnit;
+  s32 place;
   s32 slot;
   s32 tail;
   s32 offset;
 
   count = 0;
-  order = (struct BattleWorkUnitListView *)gBattleWork;
+  lists = (struct BattleWorkUnitListView *)gBattleWork;
 
   // The party's standing places, else the enemies' places in use.
   if (requireLivingUnit != 0) {
-    index = 0;
+    place = 0;
     slot = offsetof(struct BattleWork, partyUnits) / sizeof(s16);
-    if (order->items[slot] != BATTLE_UNIT_LIST_END) {
-      entry = order->items;
-      // The walk leaves by a break, so its loop's end note lies just before
-      // the else branch.
+    if (lists->items[slot] != BATTLE_UNIT_LIST_END) {
+      entry = lists->items;
       for (;;) {
-        value = entry[slot];
-        if (value != BATTLE_UNIT_REMOVED) {
-          if (Unit_GetFar(value)->hp != 0) {
-            positions[count] = index | PLACE_PARTY;
+        listedUnit = entry[slot];
+        if (listedUnit != BATTLE_UNIT_REMOVED) {
+          if (Unit_GetFar(listedUnit)->hp != 0) {
+            places[count] = place | PLACE_PARTY;
             count++;
           }
         }
         slot++;
-        index++;
+        place++;
         if (entry[slot] == BATTLE_UNIT_LIST_END)
           break;
       }
     }
   } else {
-    index = 0;
+    place = 0;
     slot = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
     tail = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
     offset = tail * 2;
-    entry = (order->items + 1);
+    entry = (lists->items + 1);
     if (*(s16 *)((char *)entry + offset) != BATTLE_UNIT_LIST_END) {
       cursor = entry;
       do {
         if ((s16)cursor[slot] != BATTLE_UNIT_REMOVED) {
-          positions[count] = index | PLACE_ENEMY;
+          places[count] = place | PLACE_ENEMY;
           count++;
         }
         slot++;
         tail++;
-        index++;
+        place++;
       } while (entry[tail] != BATTLE_UNIT_LIST_END);
     }
   }
@@ -93,8 +91,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 
   if (count == 0)
     return 0;
-  // A 16-bit roll times the count, over 65536: an index below count.
-  return positions[Random16_Below(count)];
+  return places[Random16_Below(count)];
 }
 
 // BUG: Restore cures stun and never confusion or charm, as its description
@@ -258,8 +255,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
         (applies) = 100;                                                       \
       break;                                                                   \
     case ABILITY_EFFECT_NONE:                                                  \
-    case 1:                                                                    \
-    case 2:                                                                    \
+    case ABILITY_EFFECT_RESTORE_HP:                                            \
+    case ABILITY_EFFECT_RESTORE_PP:                                            \
       break;                                                                   \
     default:                                                                   \
       (applies) = 1;                                                           \
@@ -302,10 +299,10 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 /// among those it would affect; a single-target attack by an enemy with a
 /// strategy favours the strongest.
 s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
-  u16 orderPositions[6];
+  u16 candidatePlaces[6];
   s32 unitIds[6];
-  s32 targetPositions[6];
-  struct BattleWork *turnOrder;
+  s32 targetPlaces[6];
+  struct BattleWork *battle;
   struct Unit *unit;
   struct Unit *nextUnit;
   struct Unit *thisUnit;
@@ -324,7 +321,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u32 roll;
   s16 *slot;
 
-  turnOrder = gBattleWork;
+  battle = gBattleWork;
   targetCount = 0;
   candidateCount = 0;
 
@@ -338,29 +335,29 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     if (((userId < 0 || userId > ALLY_MAX) && ownSide == 0) ||
         (userId >= 0 && userId <= ALLY_MAX && ownSide != 0)) {
       for (targetIndex = 0;
-           turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END;
+           battle->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END;
            targetIndex++) {
-        slot = &turnOrder->partyUnits[targetIndex];
+        slot = &battle->partyUnits[targetIndex];
         unitId = *slot;
         if (unitId != BATTLE_UNIT_REMOVED) {
           if (action->targetMode != ABILITY_TARGET_SELF || unitId == userId) {
             unitIds[candidateCount] = unitId;
-            orderPositions[candidateCount] = PLACE_PARTY;
-            orderPositions[candidateCount] |= targetIndex;
+            candidatePlaces[candidateCount] = PLACE_PARTY;
+            candidatePlaces[candidateCount] |= targetIndex;
             candidateCount++;
           }
         }
       }
     } else {
       for (targetIndex = 0;
-           turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END;
+           battle->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END;
            targetIndex++) {
-        unitId = turnOrder->enemyIds[targetIndex];
+        unitId = battle->enemyIds[targetIndex];
         if (unitId != BATTLE_UNIT_REMOVED) {
           if (action->targetMode != ABILITY_TARGET_SELF || unitId == userId) {
             unitIds[candidateCount] = unitId;
-            orderPositions[candidateCount] = PLACE_ENEMY;
-            orderPositions[candidateCount] |= targetIndex;
+            candidatePlaces[candidateCount] = PLACE_ENEMY;
+            candidatePlaces[candidateCount] |= targetIndex;
             candidateCount++;
           }
         }
@@ -377,7 +374,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
     if (applies != 0) {
       unitIds[targetCount] = unitIds[targetIndex];
-      targetPositions[targetCount] = orderPositions[targetIndex];
+      targetPlaces[targetCount] = candidatePlaces[targetIndex];
       targetCount++;
     }
   }
@@ -411,9 +408,9 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
           temp = unitIds[innerIndex];
           unitIds[innerIndex] = unitIds[innerIndex + 1];
           unitIds[innerIndex + 1] = temp;
-          temp = targetPositions[innerIndex];
-          targetPositions[innerIndex] = targetPositions[innerIndex + 1];
-          targetPositions[innerIndex + 1] = temp;
+          temp = targetPlaces[innerIndex];
+          targetPlaces[innerIndex] = targetPlaces[innerIndex + 1];
+          targetPlaces[innerIndex + 1] = temp;
         }
       }
     }
@@ -454,7 +451,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     }
 
     if (selected >= 0)
-      return targetPositions[selected];
+      return targetPlaces[selected];
   }
-  return targetPositions[Random16_Below(targetCount)];
+  return targetPlaces[Random16_Below(targetCount)];
 }

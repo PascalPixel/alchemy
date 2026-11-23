@@ -465,7 +465,7 @@ s32 Scene_TalkToActor(s32 id) {
       ((void (*)(s32))talk->result)(id);
     }
     if (!paused) {
-      if (object->script[object->scriptCursor] == SCRIPT_CMD_END) {
+      if (object->script[object->scriptCursor] == SCRIPT_COMMAND_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
           object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
           object->steeringFlags |= ACTOR_FACES_MOTION;

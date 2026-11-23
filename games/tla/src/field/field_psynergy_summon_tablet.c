@@ -359,7 +359,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         Actor_FaceDirectionById(ownerId, FACING_SOUTH, 0);
         break;
       }
-      if (owner->script[owner->scriptCursor] == SCRIPT_CMD_END) {
+      if (owner->script[owner->scriptCursor] == SCRIPT_COMMAND_END) {
         state++;
         timer = -1;
       }

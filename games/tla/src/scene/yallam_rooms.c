@@ -128,15 +128,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Sunshine the blacksmith thinks of the swamp he cannot reach without rain,
 /// and once the party has had him forge, of his joy at working.
 s32 YallamRooms_MindReadSunshine(void) {
-
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
+    // "It's been a long time since I've been able to work. I'm so excited!..."
     Event_SetMessageId((s32)MsgYallamInteriorsItsBeenALong);
   } else {
+    // "If it's not raining, I can't get into Taopo Swamp. And if I can't..."
     Event_SetMessageId((s32)MsgYallamInteriorsIfItsNotRaining);
   }
-  // "If it's not raining, I can't get into Taopo Swamp. And if I can't..."
   Event_ShowMessage(ACTOR_SUNSHINE, 0);
   Event_End();
   return 0;
@@ -145,15 +145,15 @@ s32 YallamRooms_MindReadSunshine(void) {
 /// Sunshine's wife thinks him stubborn, and once he forges, wonders what came
 /// over him.
 s32 YallamRooms_MindReadSunshinesWife(void) {
-
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
+    // "What happened to Sunshine? He's so happy, and he just talks about..."
     Event_SetMessageId((s32)MsgYallamInteriorsWhatHappenedToSunshine);
   } else {
+    // "Sunshine's a pretty stubborn guy. If he says he isn't going to work..."
     Event_SetMessageId((s32)MsgYallamInteriorsSunshinesAPrettyStubborn);
   }
-  // "Sunshine's a pretty stubborn guy. If he says he isn't going to work..."
   Event_ShowMessage(ACTOR_SUNSHINES_WIFE, 0);
   Event_End();
   return 0;
@@ -162,15 +162,15 @@ s32 YallamRooms_MindReadSunshinesWife(void) {
 /// Sunshine's child thinks of the artist in Dad, and once he forges, of Dad at
 /// work again.
 s32 YallamRooms_MindReadSunshinesChild(void) {
-
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
+    // "Now that my dad's working again, I have to watch his every move..."
     Event_SetMessageId((s32)MsgYallamInteriorsNowThatMyDads);
   } else {
+    // "Everyone thinks Dad is stubborn, but he's not... He's a true artist..."
     Event_SetMessageId((s32)MsgYallamInteriorsEveryoneThinksDadIs);
   }
-  // "Everyone thinks Dad is stubborn, but he's not... He's a true artist..."
   Event_ShowMessage(ACTOR_SUNSHINES_CHILD, 0);
   Event_End();
   return 0;
@@ -179,15 +179,15 @@ s32 YallamRooms_MindReadSunshinesChild(void) {
 /// "Dad's not doing any work right now, but I'm making some basic things for
 /// the villagers."
 s32 YallamRooms_TalkToSunshinesChild(void) {
-
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_SUNSHINE_FORGING)) {
+    // "It's so weird, but something really inspired my father to work!..."
     Event_SetMessageId((s32)MsgYallamInteriorsItsSoWeirdBut);
   } else {
+    // "Dad's not doing any work right now, but I'm making some basic things..."
     Event_SetMessageId((s32)MsgYallamInteriorsDadsNotDoingAny);
   }
-  // "Dad's not doing any work right now, but I'm making some basic things..."
   Event_ShowMessage(ACTOR_SUNSHINES_CHILD, 0);
   Event_End();
   return 0;
@@ -467,10 +467,10 @@ void YallamRooms_TalkToSunshine(void) {
         Actor_WaitForMoveById(ACTOR_SUNSHINE);
         Actor_WalkTo(ACTOR_SUNSHINES_CHILD, 632, 346);
         Actor_FaceDirection(ACTOR_SUNSHINES_CHILD, FACING_SOUTH, 0);
-        Actor_SetAnimation(ACTOR_SUNSHINES_CHILD, 0);
+        Actor_SetAnimation(ACTOR_SUNSHINES_CHILD, ANIM_STILL);
         Actor_WalkTo(ACTOR_SUNSHINE, 600, 360);
         Actor_WaitForMoveById(ACTOR_SUNSHINE);
-        Actor_SetAnimation(ACTOR_SUNSHINE, 0);
+        Actor_SetAnimation(ACTOR_SUNSHINE, ANIM_STILL);
         Actor_FaceDirection(ACTOR_SUNSHINE, FACING_SOUTH, 0);
         Actor_GetById(ACTOR_SUNSHINE)->collisionFlags =
             ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID;
@@ -598,43 +598,42 @@ u32 gYallamRooms_ChildrensSongsVillagerPacing[] = {
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(120, 0, 104),
     SC_SYNC,
     SC_MOVE(128, 0, 92),
     SC_SYNC,
     SC_WAIT(20),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(120, 0, 104),
     SC_SYNC,
     SC_MOVE(88, 0, 104),
     SC_SYNC,
     SC_WAIT(20),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
     // Unused: a second walk, between two spots of the house behind the south
-    // door, which no
-    // row takes.
+    // door, which no row takes.
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
     SC_LABEL(1),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(437, 0, 127),
     SC_SYNC,
     SC_WAIT(20),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(60),
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(453, 0, 114),
     SC_SYNC,
     SC_WAIT(20),
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TO(1)),

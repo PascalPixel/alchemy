@@ -1,3 +1,7 @@
+/// @file
+/// The Trial Road's race progress, kept in the inventory snapshot, and the
+/// declarations the Trial Road shares with the Izumo Ruins and Magma Rock's
+/// inside: the calls their overlays make, some through their own import rows.
 #ifndef ALCHEMY_TRIAL_ROAD_H
 #define ALCHEMY_TRIAL_ROAD_H
 

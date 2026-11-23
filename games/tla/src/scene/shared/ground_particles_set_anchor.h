@@ -1,4 +1,4 @@
-/// Ties the sparkles to actor `id`, or to none.
+/// Lets the rain fall about actor `id`, or, for 0, nowhere on screen.
 void GroundParticles_SetAnchor(s32 id) {
   struct GroundParticleWork *work = Ram_HeapSlots->weather;
   struct Actor *actor = Actor_GetById(id);

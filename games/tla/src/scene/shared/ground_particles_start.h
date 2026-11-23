@@ -1,5 +1,5 @@
-/// Starts the sparkles: their tiles decoded into VRAM and every sparkle on the
-/// ground at the map's origin with a staggered timer, drawn semi-transparent
+/// Starts the rain about a doused stone: its tiles decoded into VRAM and every
+/// drop at the map's origin with a staggered timer, drawn semi-transparent
 /// (GroundParticles_Draw); the overlay's copy of
 /// FieldEffect_InitializeSparkles.
 void GroundParticles_Start(void) {

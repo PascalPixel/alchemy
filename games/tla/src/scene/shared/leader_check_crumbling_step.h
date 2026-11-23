@@ -1,5 +1,6 @@
-/// Checks the trap under the leader: the first step sets it off, the second
-/// drops it.
+/// Stepping onto a crumbling pillar of an (actor, flag) list, as
+/// CrumblingPillar_Step: the first time it flashes and cracks, the second time
+/// it gives way under the leader with a shake, dust and a thump.
 void Leader_CheckCrumblingStep(const u16 *table) {
   struct Actor *leader;
   struct Actor *trap;
@@ -27,14 +28,14 @@ void Leader_CheckCrumblingStep(const u16 *table) {
     Event_Start();
     if (!GameFlag_Get(flag)) {
       Sound_Play(SE_CHEST_CLOSE);
-      Actor_SetSpriteColor(Actor_GetById(id), 7);
+      Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
       wait(2);
       Actor_SelectAnimation(trap, 0);
-      Actor_SetSpriteColor(Actor_GetById(id), 0);
+      Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
       wait(2);
-      Actor_SetSpriteColor(Actor_GetById(id), 7);
+      Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_WHITE);
       wait(4);
-      Actor_SetSpriteColor(Actor_GetById(id), 0);
+      Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_NORMAL);
       Dust_Scatter(0);
       GameFlag_Set(flag);
     } else {

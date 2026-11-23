@@ -15,7 +15,7 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
   u8 *shapes;
   struct MapCell *cell;
   s32 index;
-  u8 *grid = gMapShapeGrid; /* the shape grid, read once */
+  u8 *grid = gMapShapeGrid;
 
   Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
   Actor_PlaceOnActor(ACTOR_CRACKED_PILLAR_SPRITE,

@@ -1,17 +1,18 @@
-/// Creates an actor of `kind` at a point, standing still, drawn over the room.
-struct Actor *Scene_CreateActor(s32 a0, s32 a1, s32 a2, s32 a3) {
-  struct Actor *t0;
+/// Creates a hidden, still actor of `kind` at (x, y, z), untargeted and drawn
+/// underfoot, its sprite at priority 1.
+struct Actor *Scene_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
+  struct Actor *actor;
 
-  t0 = FieldActor_Create(a3, a0, a1, a2);
-  if (t0 != 0) {
-    Scene_SetActorSpritePriority(t0, 1);
-    t0->motionFlags = 0;
-    t0->collisionFlags = ACTOR_NOT_TARGETED;
-    Actor_SetSpriteFlags(t0, 0);
-    FieldActor_SetSpriteColor(t0, SPRITE_COLOR_HIDDEN);
-    t0->priorityFlags = ACTOR_PRIORITY_UNDERFOOT |
-                        ACTOR_PRIORITY_IGNORES_RISES | t0->priorityFlags;
-    return t0;
+  actor = FieldActor_Create(kind, x, y, z);
+  if (actor != 0) {
+    Scene_SetActorSpritePriority(actor, 1);
+    actor->motionFlags = 0;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
+    Actor_SetSpriteFlags(actor, 0);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT |
+                           ACTOR_PRIORITY_IGNORES_RISES | actor->priorityFlags;
+    return actor;
   }
   return 0;
 }

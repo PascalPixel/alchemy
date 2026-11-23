@@ -23,7 +23,7 @@ struct Actor *Whirlwind_Spawn(struct Actor *source) {
   actor->update = Whirlwind_Update;
   actor->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   FieldEffect_Spawn(position.x, source->y.fixed, position.z - toFIXED(6), 0, 0,
                     0, EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY, &options);
   return actor;

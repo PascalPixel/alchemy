@@ -1146,7 +1146,7 @@ void ShrineOfTheSeaGod_BreakCrossroadsBridge(void) {
   while (leader->velocityY != 0);
   Sound_Play(SE_TOPPLE);
   MapGrid_SetShakeFX(toFIXED(1), toFIXED(2), FIXED_ONE);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 64 / 100;
   options.startScaleY = FIXED_ONE * 64 / 100;
@@ -1164,7 +1164,7 @@ void ShrineOfTheSeaGod_BreakCrossroadsBridge(void) {
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed - toFIXED(4),
                       leader->z.fixed, velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                          EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
   leader->velocityY = toFIXED(4);

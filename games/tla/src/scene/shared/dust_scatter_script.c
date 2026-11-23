@@ -1,8 +1,7 @@
 /// @file
 /// The script of a piece of rubble or a cloud of dust thrown out as stone
 /// breaks or a pillar crumbles, which Dehkan Plateau, the Izumo ruins, Magma
-/// Rock, the Trial Road and Tundaria Tower keep a copy of (Dust_Scatter,
-/// Dust_Scatter).
+/// Rock, the Trial Road and Tundaria Tower keep a copy of (Dust_Scatter).
 ///
 /// An includer whose overlay places the script after its pictures defines
 /// DUST_SCRIPT_SECTION as LATE_DATA first.

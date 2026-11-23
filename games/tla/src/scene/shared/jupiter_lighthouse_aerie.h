@@ -1,3 +1,7 @@
+/// @file
+/// What Jupiter Lighthouse's rooms share (and Mars Lighthouse's room F, which
+/// copies some of their code): the aerie's angels, archers and well lid, the
+/// time the angels take to rise, and the calls the overlays make.
 #ifndef ALCHEMY_JUPITER_LIGHTHOUSE_AERIE_H
 #define ALCHEMY_JUPITER_LIGHTHOUSE_AERIE_H
 

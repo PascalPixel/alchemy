@@ -1,5 +1,4 @@
-/// Creates a hidden, still actor of `type` at a point, untargeted and drawn
-/// underfoot: Scene_CreateActor with the extra priority flags.
+/// Scene_CreateActor through the overlay's import of the actor creator.
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor = Import_ActorCreate(type, x, y, z);
 

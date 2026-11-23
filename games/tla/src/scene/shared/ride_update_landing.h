@@ -18,7 +18,7 @@ void Flame_UpdateLanding(struct Actor *actor) {
   actor->scaleY += actor->acceleration;
   ((struct FieldSprite *)actor->sprite)->rotation += actor->timer;
   if (other->y.fixed == other->groundHeight && Actor_IsTouching(actor, other) &&
-      gMainRoutineWork.movementMode == 0) {
+      gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     if (actor->riseBaseY != 0) {
       work->direction.z = 0;
       direction = &work->direction;

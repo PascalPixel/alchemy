@@ -99,7 +99,7 @@ extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
 /// Scrolls the credits from the page CREDITS_FROM_PAGE gives (Credits_Run,
 /// through the overlay's own import row).
-void StaffCredit_RunCredits(s32 value);
+void StaffCredit_RunCredits(s32 mode);
 s32 WorldMap_GetBlockCellBehavior(s32 *position);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -701,7 +701,6 @@ static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
   FieldCamera_MoveToFX(x, y, z, mode);
 }
 
-/// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
 /// Unused: the copy of the world map's WorldMap_PlayLighthouseTransition, the

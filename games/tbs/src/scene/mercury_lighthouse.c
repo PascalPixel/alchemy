@@ -1,87 +1,77 @@
 /// @file
-/// Mercury Lighthouse (SceneId_MercuryLighthouseLower,
-/// SceneId_MercuryLighthouseMiddle, SceneId_MercuryLighthouseUpper and
-/// SceneId_MercuryLighthouseExterior), four of the lighthouse's scenes.
+/// Mercury Lighthouse, the lighthouse of water north of Imil that Mia and the
+/// Mercury Clan guard: the ground outside its door
+/// (SceneId_MercuryLighthouseExterior) and three of its upper scenes
+/// (SceneId_MercuryLighthouseLower, SceneId_MercuryLighthouseMiddle and
+/// SceneId_MercuryLighthouseUpper). The ground floor inside the door, with the
+/// Lizard Man and the goddess's pool, is mercury_lighthouse_entrance.c, and the
+/// beacon at the top, the Lighthouse Aerie, is mercury_lighthouse_aerie.c. The
+/// four scenes here share one exit table, and every arrival sets
+/// FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts regain PP faster.
+/// Retreat leads out to the foot of the causeway
+/// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP).
 ///
-/// They share the game's area name Mercury Lighthouse with
-/// SceneId_MercuryLighthouseEntrance (mercury_lighthouse_entrance.c), the floor
-/// inside the door. The Lighthouse Aerie at the top is
-/// SceneId_MercuryLighthouseAerie (mercury_lighthouse_aerie.c). The four share
-/// one exit table.
+/// In the order the party meets them:
 ///
-/// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
-/// regain PP faster. Retreat leads out to MercuryLighthouseExterior's
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP.
-///
-/// The story flags order the floors. The door opens only to Mia's Ply, once
-/// the party has met her in Imil (FLAG_IMIL_MET_MIA). The fountain whose water
-/// heals Tret flows only once Saturos is beaten.
-///
-/// - SceneId_MercuryLighthouseExterior, the lighthouse's door and the ground
-///   around it, reached from the World Map
-///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). Until Mia has hurried here
-///   the door stays shut. Then she stands before it, blocked by a statue
-///   (ACTOR_DOOR_STATUE), and senses someone inside
-///   (MercuryLighthouse_MiaSensesSomeoneInside,
-///   FLAG_MIA_SENSED_SOMEONE_INSIDE). Move on the statue plays
-///   MercuryLighthouse_MiaOpensEntranceWithPly. Mia saw the force that pushed
-///   it, and learns the word Psynergy. She opens the door with Ply, the power
-///   handed down in her clan, and goes in
+/// - Outside. The party comes from the World Map up a causeway between two
+///   blue statues standing in the water, past the dry Fountain of Healing and
+///   its sign, to the lighthouse door. Until the party has met Mia in Imil
+///   (FLAG_IMIL_MET_MIA) the door glows and searching it shows "Strange forces
+///   are at work...". Then Mia kneels before it, and a stone statue stands in
+///   her way. Spoken to, she senses someone inside; Move pushes the statue
+///   aside, she asks whether Isaac did that, learns the word Psynergy from
+///   Garet and Ivan, and opens the door with Ply before going in alone
 ///   (FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA).
-///   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE, through the
-///   door, leads into MercuryLighthouseEntrance.
-/// - SceneId_MercuryLighthouseLower. Mia is blocked again by a statue that was
-///   not there before. Move pushes it aside, and she joins the party with Fizz,
-///   a Mercury Djinni (MercuryLighthouse_MiaJoinsAfterRescue,
-///   FLAG_MIA_JOINED_PARTY). Three pipe sections pushed into place let the
-///   water run (FLAG_PIPE_1_JOINED to _3_JOINED) and carry the party down to
-///   MercuryLighthouseEntrance
-///   (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE,
-///   FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN). The pipe room before and after is
+/// - SceneId_MercuryLighthouseLower: the floor above the goddess's pool. Its
+///   great pool room is set with stepping squares, some marked with a cross.
+///   Stairs from the platform in its middle lead to a ledge where Mia is stuck
+///   again, before a blue statue that was not there before; Move drops it into
+///   the gap at her feet and she joins the party with Fizz, a Mercury Djinni
+///   (FLAG_MIA_JOINED_PARTY). In the pipe room three pipe sections pushed
+///   across their grated pools join the channels (FLAG_PIPE_1_JOINED to
+///   FLAG_PIPE_3_JOINED), and the water runs on into the rooms below
+///   (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN): before and after are
 ///   places/mercury-lighthouse-lower/map-4.png and
 ///   places/mercury-lighthouse-lower_mercury-lighthouse-channels-open/map-4.png.
-///   Once Ply has worked in MercuryLighthouseEntrance
-///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), the pool's heart gives the
-///   leader golden rings of light (SPRITE_GOLDEN_RINGS). They carry him across
-///   the water, a ring spent with each hop, as there
-///   (shared/mercury_lighthouse_pillar.c). A chest holds a Sleep Bomb.
-/// - SceneId_MercuryLighthouseMiddle. One pipe section raises or lowers stairs
-///   (FLAG_STAIRS_RAISED), and another starts a fountain
-///   (FLAG_FOUNTAIN_RUNNING). A statue moved onto a floor switch holds a gate
-///   open for good (FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN). Standing on the
-///   switch opens it only while the leader stays. Sleet, a Mercury Djinni,
-///   fights when spoken to. Chests hold a Psy Crystal and a Nut.
-/// - SceneId_MercuryLighthouseUpper. A pipe section pushed along a row opens
-///   one of three stone doors by its column. At column 48 it sends a statue
-///   sliding over the floor to a square opening, and the statue falls to the
-///   floor below (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL). There Move sets it on
-///   the gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN).
-///   Five stone statues stand in a row. Moved to a set column, the last of
-///   them and one more statue each change a cell's behavior.
-/// - MercuryLighthouseExterior again, higher up, reached from
-///   MercuryLighthouseMiddle
-///   (MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR) and
-///   MercuryLighthouseUpper
-///   (MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST and
-///   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST). It holds a
-///   lift down from the Lighthouse Aerie
-///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE), the Fountain
-///   of Healing, whose sign promises the Water of Hermes, and a waterfall.
-///   Arriving at the waterfall
-///   (MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH) shows its
-///   riddle, `He who honors the goddess of rainbows shall be guided to the
-///   heavens upon wings of fluid grace.` Ply on its statue stops it and opens
-///   the way up (MercuryLighthouse_PlyOpensWaterfallPassage). The first time,
-///   Mia rises first and the party follows
-///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the World Map's
-///   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends
-///   at the Lighthouse Aerie). There the beacon has already been lit, and the
-///   party fights Saturos (mercury_lighthouse_aerie.c). Once Saturos is beaten
-///   (FLAG_SATUROS_BEATEN_AT_MERCURY) the leader rises alone
-///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE, the aerie's
-///   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR). The fountain
-///   flows, people come to drink from it, and an Empty Bottle used at it
-///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
+///   In a small room a hole behind a blue crystal drops to the goddess's pool.
+///   Once Ply has woken that pool (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), the
+///   cross-marked squares here give Isaac golden rings of light, each of which
+///   holds him up on the water for one hop
+///   (shared/mercury_lighthouse_pillar.c). That is the way across the great
+///   pool room, whose chest holds a Sleep Bomb.
+/// - SceneId_MercuryLighthouseMiddle. In the big pipe room one pipe section,
+///   joined, sets water spouting from four pipe ends (FLAG_SPOUTS_RUNNING); a
+///   chest there holds a Psy Crystal. In the gate room a blue statue moved
+///   onto the floor switch holds the sealed arch on the dais open for good
+///   (FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN), where Isaac standing on the
+///   switch holds it only while he stays; past it is the crystal room.
+///   In the room with the Nut chest a pipe joined across its pool sends a jet
+///   along the north wall and opens a doorway up to the room of six
+///   waterfalls (FLAG_FOUNTAIN_RUNNING). Sleet, a Mercury Djinni, waits in a
+///   room of its own and fights when spoken to.
+/// - SceneId_MercuryLighthouseUpper. Walking into the third waterfall from the
+///   west of the first room of six waterfalls leads down to Sleet. In the room
+///   of jets a pipe pushed along its pool turns the water from one pipe end to
+///   another, and each jet pushes a blue statue a step, until it slides into a
+///   square hole and falls to the gate room below
+///   (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL). There Move sets it on the floor
+///   switch, which holds the middle arch open
+///   (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). Past it, five stone
+///   statues stand along the wall; the third and the fifth hide doorways down
+///   to the room with the Nut chest. In the second room of six waterfalls the
+///   easternmost leads to a room of vines, where Move pushes a stone statue
+///   off the doorway to the paths outside.
+/// - Outside again, high up. The paths end at a waterfall under a rainbow,
+///   whose riddle appears on arrival: "He who honors the goddess of rainbows
+///   shall be guided to the heavens upon wings of fluid grace." Ply on the
+///   blue statue beside it reverses the waterfall, and Mia, Isaac, Garet and
+///   Ivan rise up the water one by one to the Lighthouse Aerie, where Saturos
+///   waits (mercury_lighthouse_aerie.c). Once he is beaten
+///   (FLAG_SATUROS_BEATEN_AT_MERCURY) the lift brings the party down from the
+///   aerie to the fountain, which flows again. People come to drink from it,
+///   and an Empty Bottle used there becomes Hermes' Water, once a visit
+///   (FLAG_HERMES_WATER_TAKEN). The waterfall still carries the leader up,
+///   alone.
 
 #include "scene/mercury_lighthouse.h"
 #include "ability_ids.h"
@@ -162,10 +152,10 @@ extern s32 gPaletteCycleGreen;
 extern s32 gPaletteCycleBlue;
 
 #if TBS_PATCH_1
-#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(actorId, x, z)                 \
+#define MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK(actorId, x, z)                    \
   Actor_MoveToAndWait(actorId, x, z)
 #else
-#define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(actorId, x, z)                 \
+#define MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK(actorId, x, z)                    \
   Actor_SetDestination(actorId, x, z)
 #endif
 
@@ -180,9 +170,9 @@ extern s32 gPaletteCycleBlue;
 
 static void MercuryLighthouse_OpenGateWithMovedStatue(void);
 static void MercuryLighthouse_OpenUpperGateWithMovedStatue(void);
-static void MercuryLighthouse_SyncRowStatueFlags(void);
-static void MercuryLighthouse_RaiseStairsWithSparkles(void);
-static void MercuryLighthouse_LowerStairsWithSparkles(void);
+static void MercuryLighthouse_RecordRowStatues(void);
+static void MercuryLighthouse_StartSpoutsWithSparkles(void);
+static void MercuryLighthouse_StopSpoutsWithSparkles(void);
 static void MercuryLighthouse_SparkleAroundLeader(void);
 static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z);
 static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z);
@@ -191,17 +181,70 @@ static void MercuryLighthouse_RideLift(void);
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void);
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 
-/// MercuryLighthouseLower: Mia, the statue that blocks her and the pipe pieces
-/// that join the channels.
 /// Mia kneeling with her hands together, as she senses someone inside the
 /// lighthouse (mia.png's frame 76).
 enum { ANIM_MIA_KNEEL = 16 };
 
+/// The cells the four scenes' triggers answer, named for where they are. Exit
+/// cells are their exits' numbers past EXIT_CELL_BEHAVIOR_OFFSET.
+enum {
+  /// The great pool room: two cells of the floor beside the Sleep Bomb chest,
+  /// (7, 15) and (9, 15), which put out Isaac's lights like the pool's rim
+  /// but are no place to hop from.
+  CELL_BEHAVIOR_SLEEP_BOMB_LEDGE = 32,
+  /// The crystal room's hole behind its blue crystal, (29, 37), and the edge
+  /// of the gate room's terrace above another blue crystal, (13, 19).
+  CELL_BEHAVIOR_BY_CRYSTAL = 15,
+  /// Beside the three pipe sections of the pipe room.
+  CELL_BEHAVIOR_CHANNEL_PIPE_PUSH = 25,
+  /// Beside the spout pipe of the big pipe room.
+  CELL_BEHAVIOR_SPOUT_PIPE_PUSH = 1,
+  /// The three spouts of the big pipe room once they run: the one shooting
+  /// east from (10, 38), the one shooting south from (22, 41) and the one
+  /// shooting west at (16, 49) to (18, 49).
+  CELL_BEHAVIOR_EAST_SPOUT = 2,
+  CELL_BEHAVIOR_SOUTH_SPOUT = 3,
+  CELL_BEHAVIOR_WEST_SPOUT = 4,
+  /// Beside the pipe across the pool in the room with the Nut chest.
+  CELL_BEHAVIOR_FOUNTAIN_PIPE_PUSH = 45,
+  /// The jet along that room's north wall once it runs, (43, 36) to
+  /// (45, 36), copied there from (43, 55) to (45, 55).
+  CELL_BEHAVIOR_FOUNTAIN_JET = 46,
+  /// Both gate rooms: the floor round the floor switch, which is also where
+  /// the gate statue is pushed from.
+  CELL_BEHAVIOR_GATE_ROOM_FLOOR = 10,
+  /// The floor switch of the gate room in the middle scene, (5, 13), and of
+  /// the one in the upper scene, (10, 23).
+  CELL_BEHAVIOR_GATE_FLOOR_SWITCH = 12,
+  /// The three cells round the middle scene's floor switch, (5, 12), (4, 13)
+  /// and (6, 13).
+  CELL_BEHAVIOR_BESIDE_GATE_FLOOR_SWITCH = 13,
+  /// The sealed arch of either gate room, searched from in front.
+  CELL_BEHAVIOR_SEALED_GATE = 20,
+  /// Beside the two pipes of the room of jets.
+  CELL_BEHAVIOR_JET_ROOM_PIPE_PUSH = 40,
+  /// Beside the stone statues along the wall, (39, 5) to (53, 5), (57, 5)
+  /// and (59, 5).
+  CELL_BEHAVIOR_ROW_STATUE_PUSH = 47,
+  /// Outside: the lighthouse door while it is sealed, (52, 36).
+  CELL_BEHAVIOR_SEALED_DOOR = 10,
+  /// Outside: the open door, (52, 36) once Mia has opened it, and the way
+  /// back to the World Map at the foot of the causeway, (51, 54) to (53, 54).
+  CELL_BEHAVIOR_LIGHTHOUSE_DOOR = 44,
+  CELL_BEHAVIOR_CAUSEWAY_FOOT = 43,
+  /// Outside: the Fountain of Healing, (52, 47), and its sign, (52, 50).
+  CELL_BEHAVIOR_HEALING_FOUNTAIN = 5,
+  CELL_BEHAVIOR_FOUNTAIN_SIGN = 42
+};
+
+/// MercuryLighthouseLower: the statue in Mia's way, and the pipe room's pipe
+/// sections and pipe end.
 enum MercuryLighthouseLowerActorId {
   ACTOR_STATUE_BLOCKING_MIA = ACTOR_FIRST_PLACED,
-  /// Move pushes the pipe pieces (SPRITE_PIPE_WEST_EAST for the first two,
-  /// SPRITE_PIPE_NORTH_SOUTH for the third) along until each joins its
-  /// channel's pipes.
+  /// Isaac pushes these pipe sections, by walking into them, across their
+  /// grated pools until each joins the pipes on either side
+  /// (SPRITE_PIPE_WEST_EAST for the first two, SPRITE_PIPE_NORTH_SOUTH for the
+  /// third).
   ACTOR_FIRST_PIPE,
   ACTOR_SECOND_PIPE,
   ACTOR_THIRD_PIPE,
@@ -212,36 +255,41 @@ enum MercuryLighthouseLowerActorId {
   ACTOR_PIPE_END
 };
 
-/// MercuryLighthouseMiddle: the stair and fountain pipes, the statue for the
-/// gate's floor switch and Sleet, a Mercury Djinni.
+/// MercuryLighthouseMiddle: the spout pipe of the big pipe room, the pipe in
+/// the room with the Nut chest, the statue for the gate's floor switch and
+/// Sleet, a Mercury Djinni.
 enum MercuryLighthouseMiddleActorId {
-  ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
-  /// It stands 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs
-  /// are raised. Nothing moves it.
-  ACTOR_STAIR_PIPE_END,
+  ACTOR_SPOUT_PIPE = ACTOR_FIRST_PLACED,
+  /// It stands 59 pixels south of where ACTOR_SPOUT_PIPE rests once it is
+  /// joined. Nothing moves it.
+  ACTOR_SPOUT_PIPE_END,
   ACTOR_FOUNTAIN_PIPE,
   ACTOR_GATE_STATUE,
   ACTOR_SLEET
 };
 
-/// MercuryLighthouseUpper: the sliding statue and where it lands below, the
-/// pipes before the stone doors, the five statues of the row and the gap
-/// statue.
+/// MercuryLighthouseUpper: the blue statue of the room of jets and where it
+/// lands below, that room's two pipes and pipe ends, the five stone statues
+/// along the wall and the stone statue of the room of vines.
 enum MercuryLighthouseUpperActorId {
-  /// The statue of ACTOR_SLIDING_STATUE once it has fallen to the floor
+  /// The statue of ACTOR_SLIDING_STATUE once it has fallen to the gate room
   /// below.
   ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED,
-  /// At rest beside a jet of water. Its first slide takes it under the jet.
-  /// When the door switch pipe stops at column 48, it slides over the floor to
-  /// the square hole in the floor at (840,744) and falls through it. That hole
-  /// is a cell whose ground lies below the floor's.
+  /// At rest beside the jet that falls from the pipe end north of it. Each
+  /// jet that hits it pushes it a step, and the last slides it east over the
+  /// floor to the square hole at (840, 744), whose ground lies below the
+  /// floor's, and it falls through.
   ACTOR_SLIDING_STATUE,
-  ACTOR_DOOR_ROOM_PIPE,
-  ACTOR_DOOR_SWITCH_PIPE,
-  /// Three in a row south of the stone doors' pipes. Nothing moves them.
-  ACTOR_FIRST_DOOR_PIPE_END,
+  /// The pipe section lying west to east, which only stands in the way.
+  ACTOR_WEST_EAST_PIPE,
+  /// The pipe section lying north to south that turns the water from one jet
+  /// to another.
+  ACTOR_JET_SWITCH_PIPE,
+  /// Three in a row south of the pool the switch pipe slides along. Nothing
+  /// moves them.
+  ACTOR_FIRST_JET_ROOM_PIPE_END,
   /// Five in a row along the north wall.
-  ACTOR_FIRST_ROW_STATUE = ACTOR_FIRST_DOOR_PIPE_END + 3,
+  ACTOR_FIRST_ROW_STATUE = ACTOR_FIRST_JET_ROOM_PIPE_END + 3,
   ACTOR_LAST_ROW_STATUE = ACTOR_FIRST_ROW_STATUE + 4,
   ACTOR_GAP_STATUE
 };
@@ -267,36 +315,34 @@ enum MercuryLighthouseExteriorActorId {
 
 /// Puzzle states kept until the party leaves the lighthouse.
 enum {
-  FLAG_STAIRS_RAISED = FLAG_AREA_TEMP_02,
+  /// The big pipe room's spout pipe is joined and its spouts run.
+  FLAG_SPOUTS_RUNNING = FLAG_AREA_TEMP_02,
   FLAG_FOUNTAIN_RUNNING = FLAG_AREA_TEMP_06,
   FLAG_FOUNTAIN_SHOWN =
       FLAG_AREA_TEMP_07, ///< the camera has shown it start once
-  /// MercuryLighthouseLower's first pipe piece has been pushed into place,
-  /// joining the water pipes. With all three joined the water carries the party
-  /// down.
+  /// The pipe room's first pipe section has been pushed into place, joining
+  /// the water pipes. With all three joined the water runs on below.
   FLAG_PIPE_1_JOINED = FLAG_AREA_TEMP_10,
   FLAG_PIPE_2_JOINED = FLAG_AREA_TEMP_11,
   FLAG_PIPE_3_JOINED = FLAG_AREA_TEMP_12,
   /// Unused: cleared with the three, but nothing sets or tests it.
   FLAG_UNUSED_PIPE_4_JOINED = FLAG_AREA_TEMP_13,
-  FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_AREA_TEMP_18,
-  /// Where the door switch pipe rests. Each column opens a different stone door
-  /// (MercuryLighthouse_PushStoneDoorPipes). At column 47 it opens
-  /// STONE_DOOR_NORTH, along the sliding statue's row.
-  FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR = FLAG_AREA_TEMP_19,
-  /// At column 48 it opens STONE_DOOR_SOUTH, where the statue slides out and
-  /// falls.
-  FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR = FLAG_AREA_TEMP_1A,
-  /// At column 53 it leaves every door shut. With none of the three set it
-  /// opens STONE_DOOR_WEST.
-  FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS = FLAG_AREA_TEMP_1B,
-  /// Two flags per statue of MercuryLighthouseUpper's row along the north wall,
-  /// one for each column it can rest at, then the last statue's.
+  FLAG_WEST_EAST_PIPE_PUSHED = FLAG_AREA_TEMP_18,
+  /// Where the switch pipe rests in the room of jets, and so which jet runs
+  /// (MercuryLighthouse_PushJetRoomPipes). At column 47 it is JET_WESTWARD,
+  /// along the sliding statue's row.
+  FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET = FLAG_AREA_TEMP_19,
+  /// At column 48 it is JET_EASTWARD, which slides the statue into the hole.
+  FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET = FLAG_AREA_TEMP_1A,
+  /// At column 53 no jet runs. With none of the three set JET_SOUTHWARD runs.
+  FLAG_SWITCH_PIPE_STOPS_JETS = FLAG_AREA_TEMP_1B,
+  /// Two flags per stone statue of the row along the north wall, one for each
+  /// column it can be pushed to, then the last statue's.
   FLAG_FIRST_ROW_STATUE = FLAG_AREA_TEMP_30,
   FLAG_LAST_ROW_STATUE_WEST = FLAG_AREA_TEMP_38,
   FLAG_LAST_ROW_STATUE_EAST = FLAG_AREA_TEMP_39,
-  /// The statue at the way in from MercuryLighthouseExterior has been moved
-  /// west for good.
+  /// The stone statue of the room of vines has been moved west off the
+  /// doorway out to the paths, for good.
   FLAG_PASSAGE_STATUE_MOVED = FLAG_AREA_TEMP_48
 };
 
@@ -326,8 +372,9 @@ enum {
 #include "shared/field_effect_spawn.c"
 #include "shared/staged_actor.c"
 
-/// MercuryLighthouseMiddle: talking to Sleet, a Mercury Djinni, starts its
-/// battle.
+/// Talking to Sleet, the Mercury Djinni in the small room that the third
+/// waterfall from the west of the first room of six waterfalls leads to, starts
+/// a battle with it.
 static void MercuryLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_SLEET, DJINNI_SLEET);
 }
@@ -396,38 +443,56 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMercuryLighthouseActorPlacementsOther;
 }
 
-/// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue
-/// ripples spreading from the leader.
+/// Ripples spread round Isaac while he stands out on the open water of the
+/// great pool room, held up by one of his lights.
+///
+/// The open water's cells are CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER only
+/// once Ply has woken the goddess's pool below
+/// (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), when `Scene_Initialize` copies the
+/// pool's cells in.
 static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM
-/// or cell behavior 32: the leader loses his lights.
+/// Stepping onto a plain stepping square or the floor at the edge of the great
+/// pool room puts out the golden rings of light over Isaac's head, which swell
+/// and fade away.
+///
+/// The squares and the floor's edge are
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM. Two cells beside the Sleep Bomb
+/// chest, CELL_BEHAVIOR_SLEEP_BOMB_LEDGE, do the same but are no place to hop
+/// from.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
 }
 
-/// MercuryLighthouseLower, walking into
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART,
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER or
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM: one step across the pool,
-/// spending a light.
+/// In the great pool room, pushing against the water from a stepping square,
+/// the floor's edge or the open water, Isaac hops two cells the way he faces,
+/// to the next square or out onto the water.
+///
+/// A hop onto open water spends one of the golden rings over his head, which
+/// flies ahead to hold him up where he lands; with none left he does not hop
+/// out onto it (shared/mercury_lighthouse_pillar.c).
 static void MercuryLighthouse_HopAcrossPoolOnLower(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-/// MercuryLighthouseLower, touching
-/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, the pool's heart: the column of
-/// lights over the leader grows a stage.
+/// Stepping onto one of the great pool room's stepping squares marked with a
+/// cross puts golden rings of light over Isaac's head, one more every half
+/// second up to three. Each lets him hop once onto the open water.
+///
+/// The cross-marked squares are CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART
+/// once Ply has woken the goddess's pool below.
 static void MercuryLighthouse_ChargeLightsOnLower(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-/// MercuryLighthouseExterior, searching cell behavior 10. "Strange forces
-/// are at work..."
-static void MercuryLighthouse_InspectBlockedPassage(void) {
+/// Searching the lighthouse door before Mia has opened it, cell (52, 36), shows
+/// "Strange forces are at work... It seems impossible to proceed."
+///
+/// The door glows until then (MercuryLighthouse_CycleEntrancePalette). Once Mia
+/// opens it, the cell becomes the door's exit, CELL_BEHAVIOR_LIGHTHOUSE_DOOR.
+static void MercuryLighthouse_InspectSealedDoor(void) {
   Event_Start();
   FieldMessage_Show(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
   Event_End();
@@ -451,34 +516,44 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 #include "shared/mercury_lighthouse_passage.c"
 
-/// MercuryLighthouseUpper, walking north into cell behavior 53: the leader
-/// rises through
-/// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
-/// cell behavior less EXIT_CELL_BEHAVIOR_OFFSET), a sparkling passage as in
-/// MercuryLighthouseEntrance.
+/// Walking north into the third of the six waterfalls from the west, in the
+/// first room of waterfalls (cell (16, 7)), Isaac vanishes in a trail of
+/// sparkles and comes out in Sleet's small room.
+///
+/// The waterfall is one of the sparkling passages of
+/// shared/mercury_lighthouse_passage.c. Its cell's behaviour is its exit's
+/// number, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST,
+/// past EXIT_CELL_BEHAVIOR_OFFSET.
 static void MercuryLighthouse_LeaveUpperByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
                                         EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
-/// MercuryLighthouseUpper, walking north into cell behavior 63: the same,
-/// through MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
+/// Walking north into the easternmost of the six waterfalls of the second room
+/// of waterfalls (cell (28, 37)), Isaac vanishes in a trail of sparkles and
+/// comes out at the foot of the room of vines, through
+/// MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_LeaveUpperWaterfallsByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
                                         EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
-/// MercuryLighthouseExterior, walking north into cell behavior 55: the
-/// same, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
+/// Walking north into the waterfall under the rainbow (cell (49, 13)), Isaac
+/// vanishes in a trail of sparkles and comes out again on the path that led
+/// there, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gFieldWork->stepTrigger -
                                         EXIT_CELL_BEHAVIOR_OFFSET);
 }
 
-/// MercuryLighthouseLower: with all three channel pipes in place the floor
-/// shakes, the screen fades and the party is carried down to
-/// MercuryLighthouseEntrance
-/// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE).
+/// Once all three pipe sections of the pipe room are joined, the floor rumbles
+/// and shakes and the screen fades out. It shows the ground floor's room that
+/// the channels feed for two seconds
+/// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE), with Isaac
+/// hidden, and then the party is back in the pipe room.
+///
+/// From then on FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN chooses the running
+/// channels' entrances in mercury_lighthouse_entrance.c.
 static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   if (GameFlag_Get(FLAG_PIPE_1_JOINED) != 0 &&
       GameFlag_Get(FLAG_PIPE_2_JOINED) != 0 &&
@@ -507,9 +582,15 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
 #define SECOND_PIPE_JOINED_ROW 12
 #define THIRD_PIPE_JOINED_COLUMN 40
 
-/// MercuryLighthouseLower, pushing a channel pipe (walking into cell
-/// behavior 25): each pipe opens one channel when it reaches its place, and the
-/// water runs on through the ones before it.
+/// Walking into one of the pipe room's three pipe sections, Isaac pushes it
+/// across its grated pool. Where it joins the pipes on either side, water
+/// bursts from the next pipe end in a spray of sparkles; pushed away again, it
+/// breaks the channel. With all three joined the water runs on below
+/// (MercuryLighthouse_ExitWhenChannelsOpen).
+///
+/// The cells copied redraw the water in the joined pipes. The second pipe's
+/// spray shows only once the first is joined, as the water reaches it through
+/// the first.
 static void MercuryLighthouse_PushChannelPipes(void) {
   struct PushedActorProbe probe;
   s32 column;
@@ -570,10 +651,17 @@ static void MercuryLighthouse_PushChannelPipes(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle, touching cell behavior 2, 3 or 4 once the
-/// stairs are raised, or 46: the leader is carried to the landing in a trail of
-/// sparkles.
-static void MercuryLighthouse_WalkLeaderIn(void) {
+/// Walking into one of the spouts of water that shoot from the pipe ends of the
+/// big pipe room while its spout pipe is joined, Isaac is carried back out to
+/// the spout's tip, standing, in a trail of sparkles: the spouts bar the way.
+/// The jet along the north wall of the room with the Nut chest does the same
+/// while it runs.
+///
+/// Each spout's cell behaviour picks the tip he is carried to. Every edition
+/// but the Japanese carries him a step further back from the jet in the Nut
+/// chest's room and pauses half a second (MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK
+/// and TBS_PATCH_1).
+static void MercuryLighthouse_PushLeaderOutOfSpout(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -583,15 +671,14 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Sound_Play(SE_SPARKLING_PASSAGE);
-  // Each touched entry has its own landing point; the patched path waits first.
-  if (work->stepTrigger == 2) {
+  if (work->stepTrigger == CELL_BEHAVIOR_EAST_SPOUT) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 232, 616);
-  } else if (work->stepTrigger == 3) {
+  } else if (work->stepTrigger == CELL_BEHAVIOR_SOUTH_SPOUT) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 360, 728);
-  } else if (work->stepTrigger == 4) {
+  } else if (work->stepTrigger == CELL_BEHAVIOR_WEST_SPOUT) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, 248, 792);
   } else {
-    MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY(ACTOR_PARTY_LEADER, 696, 592);
+    MERCURY_LIGHTHOUSE_CARRY_LEADER_BACK(ACTOR_PARTY_LEADER, 696, 592);
 #if TBS_PATCH_1
     Actor_SetDestination(ACTOR_PARTY_LEADER, 696, 600);
     Event_Wait(30);
@@ -603,9 +690,10 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle, pushing the gate statue (walking into cell
-/// behavior 10) while the gate is shut: it moves a step, and may come to rest
-/// on the floor switch.
+/// In the gate room, walking into the blue statue on the terrace pushes it a
+/// step while the sealed arch on the dais is shut, until it rests on the floor
+/// switch at the terrace's west end
+/// (MercuryLighthouse_OpenGateWithMovedStatue).
 static void MercuryLighthouse_PushGateSwitchStatue(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -613,9 +701,13 @@ static void MercuryLighthouse_PushGateSwitchStatue(void) {
   MercuryLighthouse_OpenGateWithMovedStatue();
 }
 
-/// MercuryLighthouseMiddle, Move on the gate statue, or after a push: resting
-/// on the floor switch at (5, 13), it sinks two pixels and the gate opens for
-/// good.
+/// Once the gate room's blue statue stands on the floor switch at the west end
+/// of the terrace (cell (5, 13)), whether moved by Move or pushed, the switch
+/// sinks under it and the sealed arch at the top of the ladder on the dais
+/// opens for good.
+///
+/// The statue is lowered 2 pixels onto the sunken switch, and the arch's cell
+/// (9, 10) takes the open doorway's behaviour from (9, 5).
 static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
   s32 column;
   s32 row;
@@ -636,9 +728,12 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle, touching cell behavior 12 while the gate is
-/// shut: standing on the floor switch sinks the leader two pixels and opens the
-/// gate.
+/// Standing on the gate room's floor switch, at the west end of the terrace
+/// (cell (5, 13)), sinks it under Isaac and opens the sealed arch at the top of
+/// the ladder on the dais, for as long as he stays on it.
+///
+/// The switch answers only once Isaac stands near its middle, the x and z range
+/// checked here.
 static void MercuryLighthouse_PressGateFloorSwitch(void) {
   s32 x;
   s32 z;
@@ -661,9 +756,9 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   }
 }
 
-/// MercuryLighthouseMiddle, touching cell behavior 10 or 13: stepping off
-/// the switch closes the gate again.
-static void MercuryLighthouse_CloseFloorSwitch(void) {
+/// Stepping off the gate room's floor switch lets it rise again, and the arch
+/// at the top of the ladder seals itself.
+static void MercuryLighthouse_ReleaseGateFloorSwitch(void) {
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
@@ -678,7 +773,11 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   }
 }
 
-/// Animates the fountain's map grid strips between the requested steps.
+/// Draws the jet along the north wall of the room with the Nut chest a step at
+/// a time, the floor shaking at each step when delayFrames is not 0, and copies
+/// in the doorway that opens in the wall above it,
+/// MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST, with
+/// its cells.
 static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
                                                    s32 firstStep, s32 endStep) {
   u32 step;
@@ -703,7 +802,8 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   MapGrid_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
 
-/// Restores the fountain's map grid strips after moving its pipe away.
+/// Takes the jet and its doorway away again a step at a time, the floor
+/// shaking, as the pipe is pushed back.
 static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   u32 step;
   s32 destinationColumn;
@@ -748,13 +848,13 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   MapGrid_WaitForShakeToSettle();
 }
 
-/// Task: sparkles at the fountain while it runs.
+/// Task: sparkles on the jet while it runs.
 static void MercuryLighthouse_SparkleAtFountain(void) {
   MercuryLighthouse_SparkleAt(toFIXED(690), 0, toFIXED(584));
 }
 
-/// Opens the fountain row by row, each row's edge throwing up spray and
-/// sparkles, and keeps it sparkling.
+/// Starts the jet along the north wall of the room with the Nut chest, its
+/// leading edge throwing up spray and sparkles, and keeps it sparkling.
 static void MercuryLighthouse_OpenFountain(s32 delayFrames) {
   u32 row;
   s32 rowOffset;
@@ -810,8 +910,8 @@ static void MercuryLighthouse_OpenFountain(s32 delayFrames) {
   MapGrid_WaitForShakeToSettle();
 }
 
-/// As the fountain pipe moves away (the push's callback): spray drifts from the
-/// fountain's rows and its sparkles stop.
+/// As the pipe moves away (the push's callback): spray drifts off the jet and
+/// its sparkles stop.
 static void MercuryLighthouse_StopFountain(void) {
   u32 row;
   u32 particleIndex;
@@ -842,18 +942,25 @@ static void MercuryLighthouse_StopFountain(void) {
   Task_Remove(MercuryLighthouse_SparkleAtFountain);
 }
 
-/// The stair pipe raises the stairs at this column and lowers them anywhere
-/// else.
-#define STAIR_PIPE_RAISED_COLUMN 11
-/// The fountain pipe starts the fountain at the first row and stops it at the
-/// second.
+/// The spout pipe joins the pipes above and below its pool at this column, and
+/// the spouts run; anywhere else they stop.
+#define SPOUT_PIPE_JOINED_COLUMN 11
+/// The pipe in the room with the Nut chest joins the pipes either side of its
+/// pool at the first row, and the jet runs; at the second it stops.
 #define FOUNTAIN_PIPE_RUNNING_ROW 40
 #define FOUNTAIN_PIPE_STOPPED_ROW 42
 
-/// MercuryLighthouseMiddle, pushing a pipe (walking into cell behavior 1 or
-/// 45): the stair pipe raises or lowers the stairs, and the fountain pipe
-/// starts or stops the fountain.
-static void MercuryLighthouse_PushStairAndFountainPipes(void) {
+/// Walking into a pipe section, Isaac pushes it across its grated pool. In the
+/// big pipe room the spout pipe, joined to the pipes above and below it, sets
+/// water spouting from four pipe ends, one of them a tall spout in the room's
+/// west; in the room with the Nut chest the pipe joined across its pool sends a
+/// jet along the north wall and opens a doorway in the wall above it, the
+/// camera turning to show it the first time. Pushed away again, each stops its
+/// water.
+///
+/// Three of the spouts bar the way (MercuryLighthouse_PushLeaderOutOfSpout),
+/// and so does the jet.
+static void MercuryLighthouse_PushSpoutAndFountainPipes(void) {
   struct PushedActorProbe probe;
   s32 pillarId;
   s32 column;
@@ -861,24 +968,24 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     pillarId = probe.actorSlot;
-    // The first pipe opens the stairs; the other starts or stops the
-    // fountain.
-    if (pillarId == ACTOR_STAIR_PIPE) {
+    // The spout pipe starts or stops the spouts; the other starts or stops
+    // the jet.
+    if (pillarId == ACTOR_SPOUT_PIPE) {
       column = probe.position.x;
-      if (FIELD_CELL(column) == STAIR_PIPE_RAISED_COLUMN) {
+      if (FIELD_CELL(column) == SPOUT_PIPE_JOINED_COLUMN) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(30);
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-        MercuryLighthouse_RaiseStairsWithSparkles();
+        MercuryLighthouse_StartSpoutsWithSparkles();
         MapGrid_CopyCellsTo(76, 60, 74, 38, 3, 1);
         MapGrid_CopyCellsTo(77, 60, 76, 38, 2, 1);
         MapGrid_CopyCellsTo(75, 58, 86, 41, 1, 3);
         MapGrid_CopyCellsTo(75, 59, 86, 43, 1, 2);
         MapGrid_CopyCellsTo(76, 59, 80, 49, 2, 1);
         MapGrid_CopyCellsTo(77, 59, 82, 49, 2, 1);
-        GameFlag_Set(FLAG_STAIRS_RAISED);
+        GameFlag_Set(FLAG_SPOUTS_RUNNING);
       } else {
-        probe.callback = MercuryLighthouse_LowerStairsWithSparkles;
+        probe.callback = MercuryLighthouse_StopSpoutsWithSparkles;
         MapGrid_CopyCellsTo(75, 57, 86, 41, 1, 1);
         MapGrid_CopyCellsTo(71, 59, 86, 42, 1, 1);
         MapGrid_CopyCellsTo(71, 59, 86, 43, 1, 1);
@@ -888,7 +995,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         MapGrid_CopyCellsTo(71, 59, 82, 49, 1, 1);
         MapGrid_CopyCellsTo(78, 58, 83, 49, 1, 1);
         Actor_MoveAndRedraw(probe);
-        GameFlag_Clear(FLAG_STAIRS_RAISED);
+        GameFlag_Clear(FLAG_SPOUTS_RUNNING);
       }
     } else if (pillarId == ACTOR_FOUNTAIN_PIPE) {
       if (FIELD_CELL(probe.position.z) == FOUNTAIN_PIPE_RUNNING_ROW) {
@@ -915,9 +1022,10 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, pushing the fallen statue (walking into cell
-/// behavior 10 or 12) while the gate is shut: it moves a step and may
-/// come to rest on the floor switch.
+/// In the upper gate room, walking into the blue statue that fell from the room
+/// of jets pushes it a step while the middle arch is shut, until it rests on
+/// the floor switch in the middle of the room
+/// (MercuryLighthouse_OpenUpperGateWithMovedStatue).
 static void MercuryLighthouse_PushUpperGateSwitchStatue(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -925,9 +1033,13 @@ static void MercuryLighthouse_PushUpperGateSwitchStatue(void) {
   MercuryLighthouse_OpenUpperGateWithMovedStatue();
 }
 
-/// MercuryLighthouseUpper, Move on the fallen statue, or after a push: resting
-/// on the switch at (10, 23), it sinks two pixels and the gate opens for
-/// good.
+/// Once the fallen blue statue stands on the floor switch in the middle of the
+/// upper gate room (cell (10, 23)), whether moved by Move or pushed, the switch
+/// sinks under it and the sealed middle arch of the three in the north wall
+/// opens for good.
+///
+/// The statue is lowered 2 pixels onto the sunken switch, and the arch's cell
+/// (10, 19) takes the open doorway's behaviour from (10, 16).
 static void MercuryLighthouse_OpenUpperGateWithMovedStatue(void) {
   s32 column = Actor_Get(ACTOR_FALLEN_STATUE)->x.fixed / toFIXED(16);
   s32 row = Actor_Get(ACTOR_FALLEN_STATUE)->z.fixed / toFIXED(16);
@@ -946,8 +1058,9 @@ static void MercuryLighthouse_OpenUpperGateWithMovedStatue(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, touching cell behavior 12 while the gate
-/// is shut: standing on its switch opens it.
+/// Standing on the floor switch in the middle of the upper gate room, cell
+/// (10, 23), sinks it under Isaac and opens the sealed middle arch of the three
+/// in the north wall, for as long as he stays on it.
 static void MercuryLighthouse_PressUpperGateFloorSwitch(void) {
   s32 x;
   s32 z;
@@ -974,8 +1087,8 @@ static void MercuryLighthouse_PressUpperGateFloorSwitch(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, touching cell behavior 10: stepping off the
-/// switch closes the gate.
+/// Stepping off the upper gate room's floor switch lets it rise again, and the
+/// middle arch seals itself.
 static void MercuryLighthouse_ReleaseUpperGateFloorSwitch(void) {
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
@@ -991,40 +1104,44 @@ static void MercuryLighthouse_ReleaseUpperGateFloorSwitch(void) {
   }
 }
 
-/// MercuryLighthouseUpper's three stone doors, named by where they stand.
-/// The west one opens along its column and the other two along their rows.
-/// The north one is two cells above the south one.
-enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
+/// The three jets of the room of jets, named for the way each pushes the blue
+/// statue: JET_SOUTHWARD falls from the pipe end north of the statue's first
+/// place, JET_EASTWARD shoots along the row of the square hole from the pipe
+/// end at its west, and JET_WESTWARD shoots along the statue's first row from
+/// the pipe end at its east.
+enum { JET_SOUTHWARD = 0, JET_EASTWARD = 1, JET_WESTWARD = 2 };
 
-/// The door switch pipe's stops along its row, in cells: at the first two it
-/// opens the north or the south stone door, at the third it shuts them all,
-/// and anywhere else, as at the last, it opens the west one.
-#define DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN 47
-#define DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN 48
-#define DOOR_SWITCH_PIPE_SHUT_COLUMN 53
-#define DOOR_SWITCH_PIPE_WEST_DOOR_COLUMN 54
-/// The door room pipe's row once it has been pushed
-/// (FLAG_DOOR_ROOM_PIPE_PUSHED).
-#define DOOR_ROOM_PIPE_PUSHED_ROW 38
+/// Where the switch pipe stops along its pool, in cells: at the first column
+/// the water runs to JET_WESTWARD, at the second to JET_EASTWARD, at the third
+/// no jet runs, and anywhere else, as at the last, where it starts, the water
+/// falls as JET_SOUTHWARD.
+#define SWITCH_PIPE_WESTWARD_JET_COLUMN 47
+#define SWITCH_PIPE_EASTWARD_JET_COLUMN 48
+#define SWITCH_PIPE_NO_JET_COLUMN 53
+#define SWITCH_PIPE_SOUTHWARD_JET_COLUMN 54
+/// The row of the pipe lying west to east once it has been pushed south into
+/// the pool (FLAG_WEST_EAST_PIPE_PUSHED).
+#define WEST_EAST_PIPE_PUSHED_ROW 38
 
-/// Chooses the random speed component used by stone-door particles.
-static inline s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
+/// A random speed for the spray a jet throws up.
+static inline s32 MercuryLighthouse_RandomSpraySpeed(void) {
   return Random_Below(8) * (toFIXED(1) / 5);
 }
 
-/// Opens the selected stone door with particles along its moving edge.
-static void MercuryLighthouse_OpenStoneDoor(s32 side) {
+/// Starts one jet of the room of jets: the water reaches out from its pipe end
+/// a cell at a time, throwing up spray.
+static void MercuryLighthouse_StartJet(s32 jet) {
   struct EffectOptions options;
   u32 particleIndex;
   u32 row;
 
   Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-  if (side == STONE_DOOR_WEST) {
+  if (jet == JET_SOUTHWARD) {
     MapGrid_CopyCellsTo(111, 57, 113, 42, 1, 1);
     MapGrid_CopyCellsTo(111, 59, 113, 43, 1, 1);
-  } else if (side == STONE_DOOR_SOUTH) {
-    MapGrid_CopyCellsTo(113, 58, 112, 46, side, side);
-    MapGrid_CopyCellsTo(115, 58, 113, 46, side, side);
+  } else if (jet == JET_EASTWARD) {
+    MapGrid_CopyCellsTo(113, 58, 112, 46, jet, jet);
+    MapGrid_CopyCellsTo(115, 58, 113, 46, jet, jet);
   } else {
     MapGrid_CopyCellsTo(115, 57, 116, 44, 1, 1);
     MapGrid_CopyCellsTo(113, 57, 115, 44, 1, 1);
@@ -1035,37 +1152,37 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   for (row = 0; row <= 1; row++) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
-        if (side == STONE_DOOR_WEST) {
+        if (jet == JET_SOUTHWARD) {
           FieldEffect_Spawn(
               toFIXED(792), 0,
               toFIXED(704) + (row * 16 + particleIndex) * toFIXED(1),
-              MercuryLighthouse_RandomDoorParticleSpeed() - toFIXED(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() - toFIXED(4) / 5,
+              MercuryLighthouse_RandomSpraySpeed() - toFIXED(4) / 5, 0,
+              MercuryLighthouse_RandomSpraySpeed() - toFIXED(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
-        } else if (side == STONE_DOOR_SOUTH) {
+        } else if (jet == JET_EASTWARD) {
           FieldEffect_Spawn(
               toFIXED(800) + (row * 16 + particleIndex) * toFIXED(1), 0,
               toFIXED(746),
-              MercuryLighthouse_RandomDoorParticleSpeed() - toFIXED(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() - toFIXED(4) / 5,
+              MercuryLighthouse_RandomSpraySpeed() - toFIXED(4) / 5, 0,
+              MercuryLighthouse_RandomSpraySpeed() - toFIXED(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
               toFIXED(812) + (row * 16 + particleIndex) * -toFIXED(1), 0,
               toFIXED(714),
-              MercuryLighthouse_RandomDoorParticleSpeed() - toFIXED(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() - toFIXED(4) / 5,
+              MercuryLighthouse_RandomSpraySpeed() - toFIXED(4) / 5, 0,
+              MercuryLighthouse_RandomSpraySpeed() - toFIXED(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
       }
     }
-    if (side == STONE_DOOR_WEST) {
+    if (jet == JET_SOUTHWARD) {
       MapGrid_CopyCellsTo(111, 58, 113, row + 43, 1, 1);
       MapGrid_CopyCellsTo(111, 59, 113, row + 44, 1, 1);
-    } else if (side == STONE_DOOR_SOUTH) {
-      MapGrid_CopyCellsTo(114, 58, row + 113, 46, side, side);
-      MapGrid_CopyCellsTo(115, 58, row + 114, 46, side, side);
+    } else if (jet == JET_EASTWARD) {
+      MapGrid_CopyCellsTo(114, 58, row + 113, 46, jet, jet);
+      MapGrid_CopyCellsTo(115, 58, row + 114, 46, jet, jet);
     } else {
       MapGrid_CopyCellsTo(114, 57, 115 - row, 44, 1, 1);
       MapGrid_CopyCellsTo(113, 57, 114 - row, 44, 1, 1);
@@ -1073,8 +1190,9 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   }
 }
 
-/// Restores the selected stone door's tiles with trailing particles.
-static void MercuryLighthouse_CloseStoneDoor(s32 side) {
+/// Stops a jet: the water draws back into its pipe end a cell at a time, spray
+/// drifting from it. The first cell of all three jets is put back as it starts.
+static void MercuryLighthouse_StopJet(s32 jet) {
   struct EffectOptions options;
   u32 particleIndex, row;
 
@@ -1088,13 +1206,13 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   for (row = 0; row <= 2; row++) {
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
-        if (side == STONE_DOOR_WEST) {
+        if (jet == JET_SOUTHWARD) {
           FieldEffect_Spawn(
               INTtoFIXED(793 - Random_Below(5)), 0,
-              (row * 4 + particleIndex) * toFIXED(2) + toFIXED(695), 0, side,
+              (row * 4 + particleIndex) * toFIXED(2) + toFIXED(695), 0, jet,
               toFIXED(1) / 4, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
               &options);
-        } else if (side == STONE_DOOR_SOUTH) {
+        } else if (jet == JET_EASTWARD) {
           FieldEffect_Spawn(
               (row * 4 + particleIndex) * toFIXED(2) + toFIXED(786), 0,
               INTtoFIXED(Random_Below(5)) + toFIXED(744), toFIXED(1) / 4, 0, 0,
@@ -1108,22 +1226,26 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
         Event_Wait(1);
       }
     }
-    if (side == STONE_DOOR_WEST)
+    if (jet == JET_SOUTHWARD)
       MapGrid_CopyCellsTo(112, 58, 113, row + 43, 1, 1);
-    else if (side == STONE_DOOR_SOUTH)
-      MapGrid_CopyCellsTo(112, 58, row + 113, 46, side, side);
+    else if (jet == JET_EASTWARD)
+      MapGrid_CopyCellsTo(112, 58, row + 113, 46, jet, jet);
     else
       MapGrid_CopyCellsTo(112, 58, 115 - row, 44, 1, 1);
   }
 }
 
-/// The sliding statue's row under the jet of water, where its first slide takes
-/// it.
+/// The blue statue's first row, along which JET_WESTWARD pushes it under the
+/// pipe end of JET_SOUTHWARD.
 #define SLIDING_STATUE_UNDER_JET_ROW 44
 
-/// The camera turns to the sliding statue, which moves on only for the door
-/// switch pipe positions recorded.
-/// Returns 1 when the next slide is its last, to the square opening.
+/// The camera turns to the blue statue of the room of jets, and the jet just
+/// started pushes it a step if the statue stands where that jet hits it:
+/// JET_WESTWARD from its first place, then JET_SOUTHWARD from under the falling
+/// jet's pipe end, then JET_EASTWARD from the row of the hole, into the hole.
+/// Returns 1 when the slide is that last one.
+///
+/// The flags read are the switch pipe's new place, set before this is called.
 static s32 MercuryLighthouse_StartStatueSlide(void) {
   s32 cellX;
   s32 cellZ;
@@ -1133,21 +1255,21 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   FieldCamera_SetSpeed(5);
   FieldCamera_MoveTo(816, CAMERA_KEEP, 712, 1);
   FieldCamera_WaitForArrival();
-  // Only the recorded pipe arrangements allow the pipe's next push.
+  // A slide answers only the jet that hits the statue where it stands.
   if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
-    if (cellX == 50 && GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+    if (cellX == 50 && GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
       Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptA);
     } else if (cellX == 49) {
       if (cellZ == SLIDING_STATUE_UNDER_JET_ROW &&
-          !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR) &&
-          !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR) &&
-          !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+          !GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET) &&
+          !GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET) &&
+          !GameFlag_Get(FLAG_SWITCH_PIPE_STOPS_JETS)) {
         Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptB);
       } else if (cellZ == SLIDING_STATUE_UNDER_JET_ROW &&
-                 GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+                 GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
         Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptC);
       } else if (cellZ == 46 &&
-                 GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+                 GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
         Actor_SetScript(ACTOR_SLIDING_STATUE, gMercuryLighthouse_PushScriptD);
         Event_Wait(30);
         return 1;
@@ -1184,10 +1306,15 @@ static s32 MercuryLighthouse_StopStatueSparkles(void) {
   return 0;
 }
 
-/// MercuryLighthouseUpper, pushing a pipe before the stone doors (walking
-/// into cell behavior 40): the door switch pipe opens a different stone
-/// door at each column.
-static void MercuryLighthouse_PushStoneDoorPipes(void) {
+/// In the room of jets, walking into a pipe section, Isaac pushes it along its
+/// pool. The pipe lying north to south turns the water to another pipe end
+/// where it stops: the old jet stops, the new one starts, and the camera turns
+/// to the blue statue, which the new jet may push a step. When JET_EASTWARD
+/// slides the statue into the square hole, it falls through, and the view cuts
+/// to the gate room below as it lands
+/// (MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE_STATUE_FALLS). The pipe lying
+/// west to east only moves.
+static void MercuryLighthouse_PushJetRoomPipes(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
   s32 startColumn;
@@ -1195,43 +1322,43 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
     switch (probe.actorSlot) {
-    case ACTOR_DOOR_ROOM_PIPE:
+    case ACTOR_WEST_EAST_PIPE:
       Actor_MoveAndRedraw(probe);
-      if (FIELD_CELL(probe.position.z) == DOOR_ROOM_PIPE_PUSHED_ROW)
-        GameFlag_Set(FLAG_DOOR_ROOM_PIPE_PUSHED);
+      if (FIELD_CELL(probe.position.z) == WEST_EAST_PIPE_PUSHED_ROW)
+        GameFlag_Set(FLAG_WEST_EAST_PIPE_PUSHED);
       else
-        GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
+        GameFlag_Clear(FLAG_WEST_EAST_PIPE_PUSHED);
       break;
-    case ACTOR_DOOR_SWITCH_PIPE:
-      startColumn = FIELD_CELL(Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed);
+    case ACTOR_JET_SWITCH_PIPE:
+      startColumn = FIELD_CELL(Actor_Get(ACTOR_JET_SWITCH_PIPE)->x.fixed);
       Actor_MoveAndRedraw(probe);
       destinationColumn = FIELD_CELL(probe.position.x);
-      if (destinationColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN) {
-        GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+      if (destinationColumn == SWITCH_PIPE_WESTWARD_JET_COLUMN) {
+        GameFlag_Set(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STOPS_JETS);
         MercuryLighthouse_StartStatueSlide();
-        if (startColumn == DOOR_SWITCH_PIPE_WEST_DOOR_COLUMN)
-          MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-        else if (startColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN)
-          MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
+        if (startColumn == SWITCH_PIPE_SOUTHWARD_JET_COLUMN)
+          MercuryLighthouse_StopJet(JET_SOUTHWARD);
+        else if (startColumn == SWITCH_PIPE_EASTWARD_JET_COLUMN)
+          MercuryLighthouse_StopJet(JET_EASTWARD);
+        MercuryLighthouse_StartJet(JET_WESTWARD);
         Event_Wait(60);
-      } else if (destinationColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN) {
-        GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+      } else if (destinationColumn == SWITCH_PIPE_EASTWARD_JET_COLUMN) {
+        GameFlag_Set(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STOPS_JETS);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
         if (MercuryLighthouse_StartStatueSlide() != 0) {
           FIXED x;
 
-          MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
+          MercuryLighthouse_StopJet(JET_WESTWARD);
           x = toFIXED(840);
 #ifdef UBFIX
           MercuryLighthouse_StopStatueSparkles(NULL);
 #else
           MercuryLighthouse_StopStatueSparkles();
 #endif
-          MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
+          MercuryLighthouse_StartJet(JET_EASTWARD);
           Actor_WaitForScriptEndById(ACTOR_SLIDING_STATUE);
           Actor_PrepareFX(x, 0, toFIXED(786), SPRITE_CRATE);
           Actor_PrepareFX(x, 0, toFIXED(818), SPRITE_CRATE);
@@ -1249,32 +1376,32 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           Import_EventSetExitRequest(
               MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE_STATUE_FALLS);
         } else {
-          MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
+          MercuryLighthouse_StopJet(JET_WESTWARD);
 #ifdef UBFIX
           MercuryLighthouse_StopStatueSparkles(NULL);
 #else
           MercuryLighthouse_StopStatueSparkles();
 #endif
-          MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
+          MercuryLighthouse_StartJet(JET_EASTWARD);
           Event_Wait(60);
         }
-      } else if (destinationColumn == DOOR_SWITCH_PIPE_SHUT_COLUMN) {
-        GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+      } else if (destinationColumn == SWITCH_PIPE_NO_JET_COLUMN) {
+        GameFlag_Set(FLAG_SWITCH_PIPE_STOPS_JETS);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
         MercuryLighthouse_StartStatueSlide();
-        MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
+        MercuryLighthouse_StopJet(JET_SOUTHWARD);
         Event_Wait(60);
       } else {
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STOPS_JETS);
         MercuryLighthouse_StartStatueSlide();
-        if (startColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN)
-          MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
-        else if (startColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN)
-          MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
+        if (startColumn == SWITCH_PIPE_WESTWARD_JET_COLUMN)
+          MercuryLighthouse_StopJet(JET_WESTWARD);
+        else if (startColumn == SWITCH_PIPE_EASTWARD_JET_COLUMN)
+          MercuryLighthouse_StopJet(JET_EASTWARD);
+        MercuryLighthouse_StartJet(JET_SOUTHWARD);
         Event_Wait(60);
       }
       break;
@@ -1283,18 +1410,24 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, pushing a row statue (walking into cell
-/// behavior 47): it moves a step and where the statues rest is saved.
-static void MercuryLighthouse_PushAndSaveRowStatuePositions(void) {
+/// Walking into one of the five stone statues along the north wall of the room
+/// of statues pushes it a step along the wall. The third from the west and the
+/// fifth, alone in its alcove to the east, stand in front of doorways to the
+/// room with the Nut chest, which open when they are pushed aside
+/// (MercuryLighthouse_RecordRowStatues).
+static void MercuryLighthouse_PushRowStatue(void) {
   Event_Start();
   PushedActor_AdvancePair();
-  MercuryLighthouse_SyncRowStatueFlags();
+  MercuryLighthouse_RecordRowStatues();
   Event_End();
 }
 
-/// MercuryLighthouseUpper, Move on a row statue, or after a push: each
-/// statue's column is saved in its pair of flags.
-static void MercuryLighthouse_SyncRowStatueFlags(void) {
+/// Move on one of the stone statues along the north wall of the room of
+/// statues, or a push, moves it a step along the wall. Where each stands is
+/// kept until the party leaves the lighthouse, so the statues stay where they
+/// were pushed when Isaac comes back, and the fifth, pushed off its doorway,
+/// lets him jump the gap in front of its alcove.
+static void MercuryLighthouse_RecordRowStatues(void) {
   s32 statueIndex;
   s32 positionFlag;
   s32 column;
@@ -1316,11 +1449,11 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
       GameFlag_Clear(positionFlag + 1);
     }
   }
-  // The last statue stands before the door back down to the middle floors.
-  // Moved a column west or east it clears the door, and the cell at (58, 7)
-  // becomes a jump spot: pushing north from it, the leader jumps the cell
-  // between and walks up to the door. With the statue in place the cell is
-  // plain ground and the leader stays south of it.
+  // The last statue stands before the doorway to the room with the Nut
+  // chest. Moved a column west or east it clears the doorway, and the cell at
+  // (58, 7) becomes a jump spot: pushing north from it, the leader jumps the
+  // cell between and walks up to the doorway. With the statue in place the cell
+  // is plain ground and the leader stays south of it.
   column = Actor_Get(ACTOR_LAST_ROW_STATUE)->x.fixed / toFIXED(16);
   if (column == 57) {
     GameFlag_Set(FLAG_LAST_ROW_STATUE_WEST);
@@ -1338,14 +1471,21 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
   Event_End();
 }
 
-/// MercuryLighthouseUpper, Move on the gap statue: at column 28 it stays for
-/// good (FLAG_PASSAGE_STATUE_MOVED) and the cell at (31, 20) takes the behavior
-/// of the cell at (29, 20), a jump spot.
-static void MercuryLighthouse_ChangeCellForGapStatue(void) {
+/// Move on the stone statue standing in the doorway at the head of the room of
+/// vines: pushed one step west, to column 28, it stays there for good
+/// (FLAG_PASSAGE_STATUE_MOVED), and the doorway, which leads up to the paths
+/// outside, can be reached.
+///
+/// The cell (31, 20) takes the behaviour of (29, 20),
+/// CELL_BEHAVIOR_JUMP_FORWARD, a cell the leader jumps across.
+static void MercuryLighthouse_MoveGapStatueOffDoorway(void) {
   Event_Start();
   if (Actor_Get(ACTOR_GAP_STATUE)->x.fixed / toFIXED(16) == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
+      // XXX: which way Isaac then jumps to reach the doorway; a recording of
+      // the room with the statue moved, walking up from its foot, would
+      // settle it.
       MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
     }
   }
@@ -1376,14 +1516,16 @@ static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
   }
 }
 
-/// While the lighthouse door is shut its light shimmers: background palette
+/// While the lighthouse door is sealed its light shimmers: background palette
 /// 2, colors 8 to 15, rotates every eight frames.
 static void MercuryLighthouse_CycleEntrancePalette(void) {
   MercuryLighthouse_RotatePaletteRange((u16 *)&BG_PLTT_COLOR(2, 8), 8);
 }
 
-/// MercuryLighthouseExterior, talking to Mia at the door or Mind Read on her,
-/// before it is open: she senses someone. "Somebody...is here."
+/// Talking to Mia, kneeling before the lighthouse door, or Mind Read on her,
+/// the first time: "Somebody...is here." She is sure it can only be Alex, the
+/// one other than her who can enter, and turns to the door to find the stone
+/// statue in her way: "But this statue is blocking my way..."
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_MIA, 0.8);
@@ -1435,8 +1577,8 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Event_End();
 }
 
-/// MercuryLighthouseExterior, talking to Mia again. "This statue is blocking
-/// the entrance."
+/// Talking to Mia again while the statue still blocks the door: she shakes her
+/// head. "This statue is blocking the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Event_Start();
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
@@ -1480,9 +1622,14 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
   } while (whiteColors <= 7);
 }
 
-/// MercuryLighthouseExterior, Move on the door statue: once it stands at column
-/// 51 Mia asks whether the party did that, learns of Psynergy, and uses Ply to
-/// open the door.
+/// Move on the stone statue in front of the lighthouse door while Mia waits
+/// there: once it has slid aside, to column 51, Mia turns and asks "Did you do
+/// that?" She saw the force that pushed it, Garet and Ivan tell her of
+/// Psynergy, and she opens the door with Ply in a flash of light, then jumps up
+/// and goes in alone.
+///
+/// Garet and Ivan appear beside the leader for the talk and walk back into him
+/// at the end.
 static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   struct Actor *actor;
   s32 column;
@@ -1644,13 +1791,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   Event_End();
 }
 
-/// The waterfall shimmers: background palette 6, colors 1 to 7, rotates every
-/// eight frames.
+/// The rainbow over the waterfall shimmers: background palette 6, colors 1 to
+/// 7, rotates every eight frames.
 static void MercuryLighthouse_CycleWaterfallPalette(void) {
   MercuryLighthouse_RotatePaletteRange((u16 *)&BG_PLTT_COLOR(6, 1), 7);
 }
 
-/// The waterfall's colors fade to black as it stops.
+/// The rainbow's colours fade to black, so it vanishes, as Ply takes effect.
 static void MercuryLighthouse_FadePaletteToBlack(void) {
   // Palette RAM is hardware, read through a volatile pointer.
   volatile u16 *palette;
@@ -1682,8 +1829,8 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   } while (blackColors != 7);
 }
 
-/// Raises an actor into the passage with sparks for 96 frames, moving it every
-/// two frames.
+/// Raises one of the party up the reversed waterfall in a shower of sparks,
+/// faster and faster, for 96 frames.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
   struct Actor *actor;
@@ -1726,8 +1873,17 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 #define WATERFALL_BURST_SPARKS 16
 #define WATERFALL_ROW_SPRAY 32
 
-/// MercuryLighthouseExterior, Ply on the waterfall statue: the waterfall
-/// darkens and stops, sparkles rise and the way behind it opens.
+/// Ply on the blue statue beside the waterfall under the rainbow: the rainbow
+/// fades, sparks gather over the water, the floor rumbles and the waterfall
+/// turns to stream upward. The first time Mia steps in and rises with it, and
+/// Isaac, Garet and Ivan follow her one by one; the screen turns white and the
+/// party is shown the lighthouse's beacon from outside before landing at the
+/// Lighthouse Aerie. Once Saturos is beaten, Isaac rises alone.
+///
+/// The first time the exit is
+/// MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, whose World Map
+/// view ends at the aerie; later it is
+/// MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE.
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
   u32 wave;
@@ -1925,8 +2081,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-/// MercuryLighthouseExterior, searching cell behavior 42 shows the fountain's
-/// sign.
+/// Searching the sign in front of the Fountain of Healing, at the top of the
+/// causeway (cell (52, 50)), shows "Fountain of Healing" and "Water of Hermes:
+/// It brings rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainSign(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1936,8 +2093,9 @@ static void MercuryLighthouse_ReadHermesFountainSign(void) {
   Event_End();
 }
 
-/// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching cell
-/// behavior 20: the door is locked tight.
+/// Searching the sealed arch of either gate room while it is shut, the one at
+/// the top of the ladder on the dais or the middle one of three: "The door is
+/// tightly locked."
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1945,9 +2103,12 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
   Event_End();
 }
 
-/// MercuryLighthouseExterior, searching the Fountain of Healing (cell
-/// behavior 5) before taking its water: it seems dry, or once Saturos is beaten
-/// flows with water.
+/// Searching the Fountain of Healing at the top of the causeway, cell
+/// (52, 47), until its water has been taken this visit: "The fountain seems
+/// dry." before Saturos is beaten, "The fountain is flowing with water." after.
+///
+/// With an Empty Bottle in the party it then asks for the field menu
+/// (gFieldWork->fieldMenu), so the bottle can be used there.
 static void MercuryLighthouse_InspectHealingFountain(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1962,9 +2123,8 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
   Event_End();
 }
 
-/// MercuryLighthouseExterior, using the Empty Bottle at the fountain
-/// (USE_ITEM(ITEM_EMPTY_BOTTLE)) once Saturos is beaten: the bottle becomes
-/// Hermes' Water, once a visit.
+/// Using the Empty Bottle at the Fountain of Healing once Saturos is beaten
+/// fills it: the bottle becomes Hermes' Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Event_Start();
   Sound_Play(MUS_TREASURE_FOUND);
@@ -1978,12 +2138,14 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Event_End();
 }
 
-/// MercuryLighthouseLower or MercuryLighthouseMiddle, walking south into
-/// cell behavior 15: on the first the leader steps to the hole and drops
-/// into MercuryLighthouseEntrance
-/// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE, its
-/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE).
-static void MercuryLighthouse_EnterRisingPassage(void) {
+/// Walking south into the hole behind the blue crystal of the crystal room
+/// (cell (29, 37)), Isaac drops through the floor and lands in the goddess's
+/// pool on the ground floor
+/// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE).
+///
+/// In the gate room the same cell, at the terrace's edge above another blue
+/// crystal (cell (13, 19)), only jumps him down to the floor below.
+static void MercuryLighthouse_JumpDownPastCrystal(void) {
   Event_Start();
   if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 472, 600);
@@ -2009,9 +2171,10 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
 
 #include "shared/mercury_lighthouse_arrive.c"
 
-/// Raises the stairs: their cells are redrawn row by row, two rows, with
-/// sparkles rising along their edge.
-static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
+/// Starts the tall spout in the west of the big pipe room: the water rises from
+/// its pointed pipe end a cell at a time, two cells, sparkles rising along its
+/// edge.
+static void MercuryLighthouse_StartSpoutsWithSparkles(void) {
   struct EffectOptions options;
   u32 particleIndex, row;
 
@@ -2038,9 +2201,10 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
   }
 }
 
-/// Lowers the stairs as the stair pipe moves away (the push's callback):
-/// three steps of cells redrawn, each in a scatter of sparkles.
-static void MercuryLighthouse_LowerStairsWithSparkles(void) {
+/// Stops the spouts as the spout pipe moves away (the push's callback): the
+/// tall spout and the one shooting east draw back a cell at a time, each in a
+/// scatter of sparkles.
+static void MercuryLighthouse_StopSpoutsWithSparkles(void) {
   struct EffectOptions options;
   u32 row;
   u32 particleIndex;
@@ -2074,8 +2238,8 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
   }
 }
 
-/// Task: a sparkle from the leader every fourth frame, as he is
-/// carried to a landing.
+/// Task: a sparkle from the leader every fourth frame, as a spout carries him
+/// back.
 static void MercuryLighthouse_SparkleAroundLeader(void) {
   struct EffectOptions options;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2201,7 +2365,7 @@ s32 Scene_Initialize(void) {
   else
     MercuryLighthouse_ClearPalette();
   if (gMainRoutineWork.next == SCENE_MERCURY_LIGHTHOUSE_LOWER) {
-    // Entrance pillars, the channel puzzle and Mia's rescue share this overlay.
+    // The great pool room, the pipe room and Mia's ledge.
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
@@ -2263,16 +2427,16 @@ s32 Scene_Initialize(void) {
     switch (gMainRoutineWork.entrance) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
-      SetEffectRecordMode(Actor_Get(ACTOR_STAIR_PIPE), 1);
-      SetEffectRecordMode(Actor_Get(ACTOR_STAIR_PIPE_END), 1);
-      // With the stair pipe pushed into its pool, joining the pipe above to
-      // the one below, water runs on through the room's pipes and jets from
+      SetEffectRecordMode(Actor_Get(ACTOR_SPOUT_PIPE), 1);
+      SetEffectRecordMode(Actor_Get(ACTOR_SPOUT_PIPE_END), 1);
+      // With the spout pipe pushed into its pool, joining the pipe above to
+      // the one below, water runs on through the room's pipes and spouts from
       // their open ends. The pipe is put back in the pool, and the cells
       // copied here are that state's.
-      if (GameFlag_Get(FLAG_STAIRS_RAISED)) {
+      if (GameFlag_Get(FLAG_SPOUTS_RUNNING)) {
         wait(1);
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-        Actor_SetPosition(ACTOR_STAIR_PIPE, 184, 528);
+        Actor_SetPosition(ACTOR_SPOUT_PIPE, 184, 528);
         MapGrid_CopyCellAttributes(11, 31, 1, 4, 9, 31);
         MapGrid_CopyCellAttributes(7, 30, 1, 4, 11, 31);
         MapGrid_CopyCellsTo(74, 58, 70, 32, 1, 2);
@@ -2350,7 +2514,7 @@ s32 Scene_Initialize(void) {
         statueX += toFIXED(64);
         positionFlag += 2;
       }
-      // The cells MercuryLighthouse_SyncRowStatueFlags copies as it sets the
+      // The cells MercuryLighthouse_RecordRowStatues copies as it sets the
       // flag, redrawn on arrival.
       if (GameFlag_Get(FLAG_LAST_ROW_STATUE_WEST)) {
         Actor_SetPosition(ACTOR_LAST_ROW_STATUE, 920, 88);
@@ -2363,7 +2527,7 @@ s32 Scene_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST:
     case MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS:
       // The gap statue one column west of the door it hid, and the jump spot
-      // that reaches the door (MercuryLighthouse_ChangeCellForGapStatue).
+      // that reaches the door (MercuryLighthouse_MoveGapStatueOffDoorway).
       if (GameFlag_Get(FLAG_PASSAGE_STATUE_MOVED)) {
         Actor_SetPosition(ACTOR_GAP_STATUE, 456, 328);
         MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
@@ -2405,33 +2569,33 @@ s32 Scene_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE_STATUE_FALLS:
       wait(1);
 #if TBS_PATCH_2
-      if (GameFlag_Get(FLAG_DOOR_ROOM_PIPE_PUSHED))
-        Actor_SetPosition(ACTOR_DOOR_ROOM_PIPE, 816, 608);
-      if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR))
-        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 776, 576);
-      else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR))
-        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 760, 576);
-      else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS))
-        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 856, 576);
+      if (GameFlag_Get(FLAG_WEST_EAST_PIPE_PUSHED))
+        Actor_SetPosition(ACTOR_WEST_EAST_PIPE, 816, 608);
+      if (GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET))
+        Actor_SetPosition(ACTOR_JET_SWITCH_PIPE, 776, 576);
+      else if (GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET))
+        Actor_SetPosition(ACTOR_JET_SWITCH_PIPE, 760, 576);
+      else if (GameFlag_Get(FLAG_SWITCH_PIPE_STOPS_JETS))
+        Actor_SetPosition(ACTOR_JET_SWITCH_PIPE, 856, 576);
 #else
-      Actor_SetPosition(ACTOR_DOOR_ROOM_PIPE, 816, 608);
-      Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 776, 576);
+      Actor_SetPosition(ACTOR_WEST_EAST_PIPE, 816, 608);
+      Actor_SetPosition(ACTOR_JET_SWITCH_PIPE, 776, 576);
 #endif
       SetEffectRecordMode(Actor_Get(ACTOR_PARTY_LEADER), 1);
-      MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
+      MercuryLighthouse_StopJet(JET_SOUTHWARD);
 #if TBS_PATCH_2
-      if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
+      if (GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
+        MercuryLighthouse_StartJet(JET_WESTWARD);
         if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) ==
             SLIDING_STATUE_UNDER_JET_ROW)
           Task_AddFrame(MercuryLighthouse_SparkleAboveStatue, TASK_PASS_FRAME);
-      } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-      } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
+      } else if (GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
+        MercuryLighthouse_StartJet(JET_EASTWARD);
+      } else if (!GameFlag_Get(FLAG_SWITCH_PIPE_STOPS_JETS)) {
+        MercuryLighthouse_StartJet(JET_SOUTHWARD);
       }
 #else
-      MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
+      MercuryLighthouse_StartJet(JET_EASTWARD);
 #endif
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE:
@@ -2439,34 +2603,34 @@ s32 Scene_Initialize(void) {
           MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
       SetEffectRecordMode(Actor_Get(ACTOR_SLIDING_STATUE), 1);
-      Actor_SetSpritePriority(ACTOR_DOOR_ROOM_PIPE, 2);
-      Actor_Get(ACTOR_DOOR_ROOM_PIPE)->layer = 2;
-      SetEffectRecordMode(Actor_Get(ACTOR_DOOR_SWITCH_PIPE), 1);
-      SetEffectRecordMode(Actor_Get(ACTOR_FIRST_DOOR_PIPE_END), 1);
-      SetEffectRecordMode(Actor_Get(ACTOR_FIRST_DOOR_PIPE_END + 1), 1);
-      SetEffectRecordMode(Actor_Get(ACTOR_FIRST_DOOR_PIPE_END + 2), 1);
-      Scene_RedrawActorFootprint(ACTOR_DOOR_ROOM_PIPE);
-      Scene_RedrawActorFootprint(ACTOR_DOOR_SWITCH_PIPE);
+      Actor_SetSpritePriority(ACTOR_WEST_EAST_PIPE, 2);
+      Actor_Get(ACTOR_WEST_EAST_PIPE)->layer = 2;
+      SetEffectRecordMode(Actor_Get(ACTOR_JET_SWITCH_PIPE), 1);
+      SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END), 1);
+      SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END + 1), 1);
+      SetEffectRecordMode(Actor_Get(ACTOR_FIRST_JET_ROOM_PIPE_END + 2), 1);
+      Scene_RedrawActorFootprint(ACTOR_WEST_EAST_PIPE);
+      Scene_RedrawActorFootprint(ACTOR_JET_SWITCH_PIPE);
       if (gMainRoutineWork.entrance !=
           MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         break;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_Clear(FLAG_WEST_EAST_PIPE_PUSHED);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET);
+        GameFlag_Clear(FLAG_SWITCH_PIPE_STOPS_JETS);
         break;
       }
-      MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-      if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
+      MercuryLighthouse_StopJet(JET_SOUTHWARD);
+      if (GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_WESTWARD_JET)) {
+        MercuryLighthouse_StartJet(JET_WESTWARD);
         if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) ==
             SLIDING_STATUE_UNDER_JET_ROW)
           Task_AddFrame(MercuryLighthouse_SparkleAboveStatue, TASK_PASS_FRAME);
-      } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-      } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
-        MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
+      } else if (GameFlag_Get(FLAG_SWITCH_PIPE_STARTS_EASTWARD_JET)) {
+        MercuryLighthouse_StartJet(JET_EASTWARD);
+      } else if (!GameFlag_Get(FLAG_SWITCH_PIPE_STOPS_JETS)) {
+        MercuryLighthouse_StartJet(JET_SOUTHWARD);
       }
       break;
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS:
@@ -2601,8 +2765,14 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// MercuryLighthouseLower, Move on the statue blocking Mia, before she has
-/// joined: once it stands at column 48, Mia thanks the party.
+/// Move on the blue statue in Mia's way, on the ledge up the stairs from the
+/// great pool room: once it has dropped into the gap at her feet, at column 48,
+/// Mia thanks the party ("You've saved me again, haven't you!"), asks their
+/// business in the lighthouse until they own to it, and joins them, bringing
+/// Fizz, a Mercury Djinni, already set.
+///
+/// The gap's row (46, 39) to (50, 39) takes the walkable cells of (110, 39) to
+/// (114, 39).
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 questionMessage;
@@ -2695,9 +2865,13 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Event_End();
 }
 
-/// MercuryLighthouseExterior,
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE: the leader rides
-/// the lift down from the Lighthouse Aerie beside its statue.
+/// Coming down from the Lighthouse Aerie
+/// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE), Isaac rides the
+/// lift down beside its blue statue, slowing as it nears the bottom, hops off,
+/// and the lift goes back up without him.
+///
+/// The lift is drawn on the overhead layer, scrolled with both riders over 137
+/// pixels.
 static void MercuryLighthouse_RideLift(void) {
   struct MapGridLayerScroll *liftLayer;
   FIXED liftSpeed;
@@ -3172,26 +3346,26 @@ struct ActorPlacement gMercuryLighthouseExteriorActorPlacements[] = {
 };
 
 struct Trigger gMercuryLighthouseLowerTriggers[] = {
-    { TRIGGER_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST },
-    { TRIGGER_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL },
-    { TRIGGER_EXIT, 60, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS },
-    { TRIGGER_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST },
-    { TRIGGER_EXIT, 61, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE },
-    { TRIGGER_EXIT, 62, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH },
-    { TRIGGER_EXIT, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
-    { TRIGGER_STEP, 32, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_WEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_POOL_TO_STATUE },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_POOL },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_STATUE_TO_WATERFALLS },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_TO_STATUE },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_SOUTH },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_NORTHEAST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_UPPER },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SLEEP_BOMB_LEDGE, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_LoseLightsOnLower) },
     { STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_RippleWhileInPool) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_HopAcrossPoolOnLower) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouse_ChargeLightsOnLower) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT(MercuryLighthouse_EnterRisingPassage) },
-    { STEP_TRIGGER_WALKING, 25, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushChannelPipes) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_BY_CRYSTAL, CONDITION_ALWAYS, EVENT(MercuryLighthouse_JumpDownPastCrystal) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_CHANNEL_PIPE_PUSH, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushChannelPipes) },
     { TRIGGER_TALK, ACTOR_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThePathIsBlockedAgainWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIA, FLAG_MIA_JOINED_PARTY, MSGNO(MsgMercuryLighthouseThisStatueWasntHereBeforeI) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
@@ -3201,29 +3375,29 @@ struct Trigger gMercuryLighthouseLowerTriggers[] = {
 };
 
 struct Trigger gMercuryLighthouseMiddleTriggers[] = {
-    { TRIGGER_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES },
-    { TRIGGER_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH },
-    { TRIGGER_EXIT, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH },
-    { TRIGGER_EXIT, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE },
-    { TRIGGER_EXIT, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR },
-    { TRIGGER_EXIT, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST },
-    { TRIGGER_EXIT, 58, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST },
-    { TRIGGER_EXIT, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST },
-    { TRIGGER_EXIT, 60, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 15, CONDITION_ALWAYS, EVENT(MercuryLighthouse_EnterRisingPassage) },
-    { STEP_TRIGGER_WALKING, 1, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushStairAndFountainPipes) },
-    { TRIGGER_STEP, 2, IF_FLAG_SET(FLAG_STAIRS_RAISED), EVENT(MercuryLighthouse_WalkLeaderIn) },
-    { TRIGGER_STEP, 3, IF_FLAG_SET(FLAG_STAIRS_RAISED), EVENT(MercuryLighthouse_WalkLeaderIn) },
-    { TRIGGER_STEP, 4, IF_FLAG_SET(FLAG_STAIRS_RAISED), EVENT(MercuryLighthouse_WalkLeaderIn) },
-    { STEP_TRIGGER_WALKING, 10, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushGateSwitchStatue) },
-    { TRIGGER_STEP, 12, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PressGateFloorSwitch) },
-    { TRIGGER_STEP, 10, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_CloseFloorSwitch) },
-    { TRIGGER_STEP, 13, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_CloseFloorSwitch) },
-    { STEP_TRIGGER_WALKING, 45, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushStairAndFountainPipes) },
-    { TRIGGER_STEP, 46, CONDITION_ALWAYS, EVENT(MercuryLighthouse_WalkLeaderIn) },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_GATE_TO_PIPES },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_NORTH },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTH },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_PIPES_TO_GATE },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_WEST_NORTHWEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHWEST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTHEAST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_BY_CRYSTAL, CONDITION_ALWAYS, EVENT(MercuryLighthouse_JumpDownPastCrystal) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SPOUT_PIPE_PUSH, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushSpoutAndFountainPipes) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_EAST_SPOUT, IF_FLAG_SET(FLAG_SPOUTS_RUNNING), EVENT(MercuryLighthouse_PushLeaderOutOfSpout) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SOUTH_SPOUT, IF_FLAG_SET(FLAG_SPOUTS_RUNNING), EVENT(MercuryLighthouse_PushLeaderOutOfSpout) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_WEST_SPOUT, IF_FLAG_SET(FLAG_SPOUTS_RUNNING), EVENT(MercuryLighthouse_PushLeaderOutOfSpout) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_GATE_ROOM_FLOOR, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushGateSwitchStatue) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_GATE_FLOOR_SWITCH, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PressGateFloorSwitch) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_GATE_ROOM_FLOOR, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_ReleaseGateFloorSwitch) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_GATE_FLOOR_SWITCH, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_ReleaseGateFloorSwitch) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FOUNTAIN_PIPE_PUSH, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushSpoutAndFountainPipes) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_FOUNTAIN_JET, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushLeaderOutOfSpout) },
     { TRIGGER_TALK, ACTOR_SLEET, CONDITION_ALWAYS, EVENT(MercuryLighthouse_StartDjinnBattle) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectLockedDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SEALED_GATE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectLockedDoor) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATE_STATUE, FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN, EVENT(MercuryLighthouse_OpenGateWithMovedStatue) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CHEST_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },
@@ -3232,46 +3406,46 @@ struct Trigger gMercuryLighthouseMiddleTriggers[] = {
 };
 
 struct Trigger gMercuryLighthouseUpperTriggers[] = {
-    { TRIGGER_EXIT, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST },
-    { TRIGGER_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT(MercuryLighthouse_LeaveUpperByPassage) },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 57, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER },
-    { TRIGGER_EXIT, 59, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GATE_TO_ROW_STATUES },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 58, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS },
-    { TRIGGER_EXIT, 61, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 60, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
-    { TRIGGER_EXIT, 62, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 63, CONDITION_ALWAYS, EVENT(MercuryLighthouse_LeaveUpperWaterfallsByPassage) },
-    { TRIGGER_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_TO_GATE },
-    { TRIGGER_EXIT, 55, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST },
-    { TRIGGER_EXIT, 56, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 64, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE },
-    { STEP_TRIGGER_WALKING, 10, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushUpperGateSwitchStatue) },
-    { STEP_TRIGGER_WALKING, 12, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushUpperGateSwitchStatue) },
-    { TRIGGER_STEP, 12, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PressUpperGateFloorSwitch) },
-    { TRIGGER_STEP, 10, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_ReleaseUpperGateFloorSwitch) },
-    { STEP_TRIGGER_WALKING, 40, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushStoneDoorPipes) },
-    { STEP_TRIGGER_WALKING, 47, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushAndSaveRowStatuePositions) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectLockedDoor) },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST, CONDITION_ALWAYS, EVENT(MercuryLighthouse_LeaveUpperByPassage) },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_GATE_TO_ROW_STATUES, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GATE_TO_ROW_STATUES },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP, CONDITION_ALWAYS, EVENT(MercuryLighthouse_LeaveUpperWaterfallsByPassage) },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_TO_GATE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_TO_GATE },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_TO_GATE },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_GATE_ROOM_FLOOR, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushUpperGateSwitchStatue) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_GATE_FLOOR_SWITCH, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PushUpperGateSwitchStatue) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_GATE_FLOOR_SWITCH, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_PressUpperGateFloorSwitch) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_GATE_ROOM_FLOOR, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_ReleaseUpperGateFloorSwitch) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_JET_ROOM_PIPE_PUSH, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushJetRoomPipes) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ROW_STATUE_PUSH, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PushRowStatue) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SEALED_GATE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectLockedDoor) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLEN_STATUE, FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN, EVENT(MercuryLighthouse_OpenUpperGateWithMovedStatue) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 1, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 2, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 3, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROW_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_SyncRowStatueFlags) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GAP_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_ChangeCellForGapStatue) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RecordRowStatues) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 1, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RecordRowStatues) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 2, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RecordRowStatues) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROW_STATUE + 3, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RecordRowStatues) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROW_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RecordRowStatues) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GAP_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_MoveGapStatueOffDoorway) },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gMercuryLighthouseTriggersOther[] = {
-    { TRIGGER_EXIT, 44, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE },
-    { TRIGGER_EXIT, 43, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 51, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE },
-    { TRIGGER_EXIT, 52, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST },
-    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 53, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST },
-    { TRIGGER_EXIT, 54, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT(MercuryLighthouse_LeaveWaterfallByPassage) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_LIGHTHOUSE_DOOR, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_CAUSEWAY_FOOT, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_EAST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_MIDDLE },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_WEST },
+    { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_UPPER_EAST },
+    { TRIGGER_EXIT, EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL, CONDITION_ALWAYS, MERCURY_LIGHTHOUSE_EXTERIOR_UPPER_PATH_TO_WATERFALL },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CELL_BEHAVIOR_OFFSET + MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH, CONDITION_ALWAYS, EVENT(MercuryLighthouse_LeaveWaterfallByPassage) },
     { TRIGGER_TALK, ACTOR_MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT(MercuryLighthouse_MiaSensesSomeoneInside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_MIA, FLAG_MIA_SENSED_SOMEONE_INSIDE, EVENT(MercuryLighthouse_MiaSensesSomeoneInside) },
     { TRIGGER_TALK, ACTOR_MIA, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT(MercuryLighthouse_MiaDiscussesBlockedEntrance) },
@@ -3284,14 +3458,14 @@ struct Trigger gMercuryLighthouseTriggersOther[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_VISITOR + 1, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseAllThatLivesThatMeansIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_VISITOR + 2, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseIKnewItWouldWorkBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_VISITOR + 3, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), MSGNO(MsgMercuryLighthouseINeverBelievedThoseStoriesBut) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 10, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectBlockedPassage) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(MercuryLighthouse_ReadHermesFountainSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 5, FLAG_HERMES_WATER_TAKEN, EVENT(MercuryLighthouse_InspectHealingFountain) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SEALED_DOOR, CONDITION_ALWAYS, EVENT(MercuryLighthouse_InspectSealedDoor) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_FOUNTAIN_SIGN, CONDITION_ALWAYS, EVENT(MercuryLighthouse_ReadHermesFountainSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_HEALING_FOUNTAIN, FLAG_HERMES_WATER_TAKEN, EVENT(MercuryLighthouse_InspectHealingFountain) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_IMIL_MET_MIA, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOOR_STATUE, FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA, EVENT(MercuryLighthouse_MiaOpensEntranceWithPly) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_WATERFALL_STATUE, CONDITION_ALWAYS, EVENT(MercuryLighthouse_PlyOpensWaterfallPassage) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
-    { USE_ITEM(ITEM_EMPTY_BOTTLE), 5, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), EVENT(MercuryLighthouse_FillHermesWaterBottle) },
+    { USE_ITEM(ITEM_EMPTY_BOTTLE), CELL_BEHAVIOR_HEALING_FOUNTAIN, IF_FLAG_SET(FLAG_SATUROS_BEATEN_AT_MERCURY), EVENT(MercuryLighthouse_FillHermesWaterBottle) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on

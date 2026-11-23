@@ -80,7 +80,7 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 #define ACTOR_FROZEN_CENTER_PRONG ACTOR_FIRST_PLACED
 /// The Center Prong where it falls when the crystal breaks, glinting
 /// (TundariaTower_SparkleCenterProng).
-#define ACTOR_FALLEN_CENTER_PRONG 68
+#define ACTOR_FALLEN_CENTER_PRONG (FIELD_TREASURE_ACTOR + 4)
 /// Reflux, the Mars Djinni (SceneId_TundariaTowerReflux).
 #define ACTOR_REFLUX ACTOR_FIRST_PLACED
 /// The two stone pillars on the ledge in the room of pillars
@@ -332,7 +332,7 @@ void TundariaTower_OpenDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   choice = &work->stepTrigger;
-  if (*choice == 3)
+  if (*choice == CELL_BEHAVIOR_TUNDARIA_TOWER_LEFT_DOOR)
     x = 25;
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(30, 38, x, 49, 1, 2);
@@ -437,7 +437,8 @@ void TundariaTower_SparkleCenterProng(struct Actor *actor) {
 
   if (phase == 0) {
     {
-      // The mask, named where it is declared, is built before the draw.
+      /* FAKEMATCH(temporary): the mask held in a local of its own; as
+       * Random16() & 15. */
       s32 mask = 15;
 
       dx = mask & Random16();
@@ -517,9 +518,12 @@ void TundariaTower_RefluxAppears(void) {
   Actor_WaitForMoveById(ACTOR_REFLUX);
   GameFlag_Set(FLAG_REFLUX_APPEARED);
   Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
-  MapCell_SetAttributes(0, 21, 33, CELL_BEHAVIOR_TUNDARIA_TOWER_ICE << 8);
-  MapCell_SetAttributes(0, 22, 33, CELL_BEHAVIOR_TUNDARIA_TOWER_ICE << 8);
-  MapCell_SetAttributes(0, 26, 33, CELL_BEHAVIOR_WALL << 8);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 21, 33,
+                        CELL_ATTRIBUTES(CELL_BEHAVIOR_TUNDARIA_TOWER_ICE, 0));
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 22, 33,
+                        CELL_ATTRIBUTES(CELL_BEHAVIOR_TUNDARIA_TOWER_ICE, 0));
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 26, 33,
+                        CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
   Event_End();
 }
 
@@ -592,14 +596,15 @@ void TundariaTower_JumpDownSlide(void) {
   Event_Wait(40);
   MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(19), FIELD_CELL_ORIGIN(57), 0, -12);
   Actor_GetById(gMainRoutineWork.leaderActorId)->bounce = 0;
-  Import_EventSetExitRequest(11);
+  Import_EventSetExitRequest(
+      TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_SOUTH);
   Event_End();
 }
 
-/// Nothing visible happens as Felix starts to push or Move a stone pillar in
-/// the room of pillars or the Burst Brooch's room. The game takes the pillar
-/// off the map grid and, in the room of pillars, remembers the cell it
-/// started from, so that Move can send it on sliding the same way.
+/// As Felix starts to push or Move a stone pillar in the room of pillars or the
+/// Burst Brooch's room, it is taken off the map grid; in the room of pillars
+/// the cell it started from is kept, so that Move can send it on sliding the
+/// same way.
 void TundariaTower_StartPillarMove(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -633,10 +638,12 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   dx = (FIELD_CELL(actor->x.fixed)) - (actor->timer >> 8);
   dz = (FIELD_CELL(actor->z.fixed)) - (actor->timer & START_CELL_ROW_MASK);
   actor->speedLimit = toFIXED(1) / 2;
-  while ((MapCell_GetAttributes(1, (FIELD_CELL(actor->x.fixed)) + dx,
+  while ((MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE,
+                                (FIELD_CELL(actor->x.fixed)) + dx,
                                 (FIELD_CELL(actor->z.fixed)) + dz) >>
           8) == CELL_BEHAVIOR_TUNDARIA_TOWER_ICE &&
-         (MapCell_GetAttributes(2, (FIELD_CELL(actor->x.fixed)) + dx,
+         (MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD,
+                                (FIELD_CELL(actor->x.fixed)) + dx,
                                 (FIELD_CELL(actor->z.fixed)) + dz) >>
           8) != CELL_BEHAVIOR_WALL) {
     Actor_SetMoveTarget(actor, INTtoFIXED(dx * 16) + actor->x.fixed,
@@ -689,6 +696,8 @@ void TundariaTower_SetDownPillar(void) {
 void TundariaTower_EndRevealHiddenWay(void) {
   BlendScript_Resume();
   GameFlag_Clear(FLAG_HIDDEN_WAY_REVEALED);
+  // The icy wall's part of the map is entered by 6, from the Burst Brooch's
+  // room, or 7.
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
@@ -714,16 +723,17 @@ void TundariaTower_RevealHiddenWay(void) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
     if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed) > 38)
-      MapCell_SetAttributes(0, 54, 37,
-                            CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END << 8);
+      MapCell_SetAttributes(
+          0, 54, 37,
+          CELL_ATTRIBUTES(CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END, 0));
     else
-      MapCell_SetAttributes(0, 54, 39,
-                            CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END << 8);
+      MapCell_SetAttributes(
+          0, 54, 39,
+          CELL_ATTRIBUTES(CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END, 0));
   }
 }
 
-/// Nothing visible happens at the cells where the ice ends in the room of
-/// pillars; the game stops Felix sliding there.
+/// The cells where the ice ends in the room of pillars stop Felix sliding.
 void TundariaTower_StopSliding(void) { Event_ResolvePendingActions(0); }
 
 /// Burst on the icy wall at the end of the left door's way, cell (7, 35), in
@@ -952,9 +962,9 @@ void TundariaTower_LandFromSlide(void) {
 void TundariaTower_UpdateBrownWallCell(void) {
   if (FIELD_HALF_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed) !=
       0)
-    MapCell_SetAttributes(0, 14, 17, 0);
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 14, 17, 0);
   else
-    MapCell_SetAttributes(0, 14, 17,
+    MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 14, 17,
                           CELL_BEHAVIOR_TUNDARIA_TOWER_BROWN_WALL << 8);
 }
 
@@ -1015,9 +1025,11 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(ACTOR_REFLUX, 344, 536);
           MapCell_SetAttributes(
               0, 21, 33, CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS << 8);
-          MapCell_SetAttributes(0, 22, 33, CELL_BEHAVIOR_WALL << 8);
+          MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 22, 33,
+                                CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
         } else if (!GameFlag_Get(FLAG_FIGHTING_REFLUX)) {
-          MapCell_SetAttributes(0, 26, 33, CELL_BEHAVIOR_WALL << 8);
+          MapCell_SetAttributes(MAPGRID_LAYER_GROUND, 26, 33,
+                                CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
         }
         Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
       }
@@ -1665,21 +1677,21 @@ struct SceneRegion gTundariaTowerBurstBroochExitRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(TundariaTowerEntrance),
-    SCENE_EXIT_UNLESS(1, WorldMap, 46, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTowerCenterProng, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ENTRANCE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_TUNDARIA_TOWER_ENTRANCE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ENTRANCE_TO_TUNDARIA_TOWER_CENTER_PRONG, TundariaTowerCenterProng, TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_ENTRANCE, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTowerCenterProng),
-    SCENE_EXIT_UNLESS(1, TundariaTowerEntrance, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_ENTRANCE, TundariaTowerEntrance, TUNDARIA_TOWER_ENTRANCE_FROM_TUNDARIA_TOWER_CENTER_PRONG, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TundariaTowerCenterProng, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TundariaTowerCenterProng, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TundariaTowerCenterProng, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTowerPillarPuzzle, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_CENTER_PRONG_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, TundariaTowerCenterProng, 16, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTowerCenterProng, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTowerCenterProng, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, TundariaTowerCenterProng, 18, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, TundariaTowerIceSlide, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_ICE_SLIDE, TundariaTowerIceSlide, TUNDARIA_TOWER_ICE_SLIDE_FROM_TUNDARIA_TOWER_CENTER_PRONG, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, TundariaTowerCenterProng, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, TundariaTowerPillarPuzzle, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_CENTER_PRONG_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_CENTER_PRONG_NORTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, TundariaTowerCenterProng, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, TundariaTowerCenterProng, 17, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, TundariaTowerCenterProng, 13, EXIT_FLAG_NONE),
@@ -1691,47 +1703,47 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, TundariaTowerIceSlide, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TundariaTowerIceSlide, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TundariaTowerIceSlide, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTowerReflux, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_SLIDE_TO_TUNDARIA_TOWER_REFLUX, TundariaTowerReflux, TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_SLIDE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, TundariaTowerIceSlide, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTowerIceSlide, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTowerIceSlide, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, TundariaTowerCenterProng, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_SLIDE_TO_TUNDARIA_TOWER_CENTER_PRONG, TundariaTowerCenterProng, TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_ICE_SLIDE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, TundariaTowerIceSlide, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, TundariaTowerIceSlide, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, TundariaTowerIceSlide, 8, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTowerReflux),
-    SCENE_EXIT_UNLESS(1, TundariaTowerIceColumns, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTowerIceSlide, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TundariaTowerIceColumns, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TundariaTowerIceColumns, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTHWEST, TundariaTowerIceColumns, TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_REFLUX_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_SLIDE, TundariaTowerIceSlide, TUNDARIA_TOWER_ICE_SLIDE_FROM_TUNDARIA_TOWER_REFLUX, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTHEAST, TundariaTowerIceColumns, TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_REFLUX_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_REFLUX_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTH, TundariaTowerIceColumns, TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_REFLUX_NORTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, TundariaTowerReflux, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, TundariaTowerReflux, 5, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTowerIceColumns),
     SCENE_EXIT_UNLESS(1, TundariaTowerIceColumns, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTowerReflux, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTHWEST, TundariaTowerReflux, TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_COLUMNS_NORTHWEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TundariaTowerIceColumns, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TundariaTowerIceColumns, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTowerReflux, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TundariaTowerReflux, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, TundariaTowerPillarPuzzle, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTH, TundariaTowerReflux, TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_COLUMNS_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_NORTHEAST, TundariaTowerReflux, TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_COLUMNS_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_ICE_COLUMNS_NORTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTowerIceColumns, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, TundariaTowerPillarPuzzle, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, TundariaTowerPillarPuzzle, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, TundariaTowerReflux, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTHWEST, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_ICE_COLUMNS_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_ICE_COLUMNS_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_ICE_COLUMNS_TO_TUNDARIA_TOWER_REFLUX_SOUTH, TundariaTowerReflux, TUNDARIA_TOWER_REFLUX_FROM_TUNDARIA_TOWER_ICE_COLUMNS_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTowerPillarPuzzle),
-    SCENE_EXIT_UNLESS(1, TundariaTowerIceColumns, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTowerIceColumns, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TundariaTowerBurstBrooch, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TundariaTowerCenterProng, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTowerCenterProng, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TundariaTowerBurstBrooch, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_NORTH, TundariaTowerIceColumns, TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_SOUTHWEST, TundariaTowerIceColumns, TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_BURST_BROOCH_SOUTH, TundariaTowerBurstBrooch, TUNDARIA_TOWER_BURST_BROOCH_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_CENTER_PRONG_NORTH, TundariaTowerCenterProng, TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_CENTER_PRONG_SOUTH, TundariaTowerCenterProng, TUNDARIA_TOWER_CENTER_PRONG_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_BURST_BROOCH_NORTH, TundariaTowerBurstBrooch, TUNDARIA_TOWER_BURST_BROOCH_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTowerPillarPuzzle, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTowerPillarPuzzle, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, TundariaTowerIceColumns, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_PILLAR_PUZZLE_TO_TUNDARIA_TOWER_ICE_COLUMNS_SOUTH, TundariaTowerIceColumns, TUNDARIA_TOWER_ICE_COLUMNS_FROM_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, TundariaTowerPillarPuzzle, 10, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTowerBurstBrooch),
-    SCENE_EXIT_UNLESS(1, TundariaTowerPillarPuzzle, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTowerPillarPuzzle, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_BURST_BROOCH_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_NORTH, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(TUNDARIA_TOWER_BURST_BROOCH_TO_TUNDARIA_TOWER_PILLAR_PUZZLE_SOUTH, TundariaTowerPillarPuzzle, TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_SOUTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

@@ -38,8 +38,8 @@
 /// two ways, into the Treasury, the cave where Gust hides.
 ///
 /// One way is the cave mouth at the west edge, behind a bush of ivy
-/// (ACTOR_IVY). The walkthrough reaches it from the Sanctum over the pillar
-/// tops and blows the ivy away with Whirlwind. The ivy's Whirlwind row runs no
+/// (ACTOR_IVY). Isaac reaches it from the Sanctum over the pillar tops and
+/// blows the ivy away with Whirlwind. The ivy's Whirlwind row runs no
 /// event of its own, so nothing remembers that, and the ivy is back on the next
 /// visit unless the party has just come out of that cave
 /// (BILIBIN_FROM_BILIBIN_TREASURY_WEST).
@@ -77,12 +77,12 @@
 /// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
 /// where McCoy's barricade stands, reached from the World Map at either end.
 /// Its sign reads `This area is off-limits to all those without a permit.
-/// —Lord McCoy`, and a door there stays locked.
+/// —Lord McCoy`, and the door in the barricade stays locked until the curse is
+/// lifted, when it stands open.
 ///
 /// The barricade is a wall of wooden crates. The stack of two crates at its
 /// left end (ACTOR_BARRICADE_CRATES) slides out under Move or a push, which
-/// opens the way through to Kolima, as the walkthrough has it
-/// (Bilibin_UpdateCratesCells).
+/// opens the way through to Kolima (Bilibin_UpdateCratesCells).
 ///
 /// By the river stand three trees, one on another's shoulders. They are
 /// ACTOR_BOTTOM_TREE, ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32
@@ -154,7 +154,6 @@ extern struct Trigger gBilibinTriggers[];
 extern struct Trigger gBilibinBarricadeTriggers[];
 extern struct Trigger gBilibinTreasuryTriggers[];
 extern u16 *gBilibin_DoorSteps[];
-/// Each door's cell, as column and row.
 extern s16 gBilibin_DoorCells[][2];
 /// The cells round the crates' place that push them, as column and row pairs.
 extern u8 gBilibin_CratesPushCells[];
@@ -288,6 +287,59 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 /// before he can.
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
 
+/// Cell behaviors the three maps' triggers answer besides the exits and the
+/// doors, whose cell behaviors are their exits' numbers.
+enum BilibinCellBehavior {
+  /// Bilibin's well, cells (20..21, 13..14).
+  CELL_BEHAVIOR_BILIBIN_WELL = 90,
+  /// The jar at cell (22, 10), with a Herb in it.
+  CELL_BEHAVIOR_BILIBIN_HERB_JAR = 100,
+  /// The jar at cell (9, 19), with 5 coins in it.
+  CELL_BEHAVIOR_BILIBIN_COINS_JAR = 101,
+  /// The cells round the village statue's dotted square, (15..17, 12..14),
+  /// where walking into the statue pushes it.
+  CELL_BEHAVIOR_BILIBIN_STATUE_SQUARE = 20,
+  /// At the barricade, cell (14, 10), from which Isaac hops north.
+  CELL_BEHAVIOR_BILIBIN_BARRICADE_HOP_NORTH = 9,
+  /// At the barricade, cell (8, 17) beside the crates: Isaac hops west from it
+  /// or pushes the crates south.
+  CELL_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_CRATES = 10,
+  /// The barricade's sign, cell (5, 22).
+  CELL_BEHAVIOR_BILIBIN_BARRICADE_SIGN = 11,
+  /// The cells round the crates' place, where walking into them pushes them.
+  CELL_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH = 12,
+  /// Beside the Gang of Three, cells (13, 10..12) to their west and
+  /// (18, 10..12) to their east.
+  CELL_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_GANG = 13,
+  /// The barricade's door, cell (10, 17), locked until the curse is lifted.
+  CELL_BEHAVIOR_BILIBIN_BARRICADE_DOOR = 30,
+  /// The Treasury's sign, cell (16, 14).
+  CELL_BEHAVIOR_BILIBIN_TREASURY_SIGN = 10,
+  /// The statue's alcove at the top of the walkway, cell (14, 6), when empty:
+  /// Isaac hops east or west from it across the pools, or pushes the statue
+  /// south.
+  CELL_BEHAVIOR_BILIBIN_TREASURY_ALCOVE = 11,
+  /// The walkway's foot, cell (14, 9), when empty: Isaac pushes the statue
+  /// north from it, or hops south off the walkway.
+  CELL_BEHAVIOR_BILIBIN_TREASURY_WALKWAY_FOOT = 12,
+  /// The walkway between them, cells (14, 7) and (14, 8).
+  CELL_BEHAVIOR_BILIBIN_TREASURY_WALKWAY = 13
+};
+
+/// Spare cells in row 0 of each map, whose behaviors are copied where a statue
+/// or the crates leave or land.
+enum BilibinSpareCell {
+  SPARE_CELL_ROW = 0,
+  VILLAGE_HOLE_CELL_COLUMN = 0, ///< Bilibin's: the exit down into the Treasury
+  VILLAGE_WALL_CELL_COLUMN = 1,
+  TREASURY_ALCOVE_CELL_COLUMN = 0, ///< the empty alcove's
+  TREASURY_FOOT_CELL_COLUMN = 1,   ///< the empty walkway foot's
+  TREASURY_WALL_CELL_COLUMN = 2,
+  BARRICADE_WALL_CELL_COLUMN = 0,
+  BARRICADE_PUSH_CELL_COLUMN =
+      1 ///< CELL_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH
+};
+
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -361,16 +413,16 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gBilibinTriggersOther;
 }
 
-/// The Bilibin Barricade's sign forbids passing without a permit. Searching it
-/// shows Lord McCoy's notice that no one may pass without one.
+/// Searching the sign at the Bilibin Barricade: "This area is off-limits to all
+/// those without a permit. —Lord McCoy"
 static void Bilibin_ReadOffLimitsSign(void) {
   Event_Start();
   FieldMessage_Show(MsgBilibinAreaOffLimitsThoseWithout, 1);
   Event_End();
 }
 
-/// Searching the sign in the Bilibin Treasury, which calls it McCoy's hidden
-/// warehouse. `McCoy's Hidden Warehouse / Do Not Enter!`
+/// Searching the sign in the Bilibin Treasury: "McCoy's Hidden Warehouse / Do
+/// Not Enter!"
 static void Bilibin_ReadWarehouseSign(void) {
   Event_Start();
   FieldMessage_Show(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
@@ -752,11 +804,12 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 12);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 13);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 14);
-  MapGrid_CopyCellAttributes(1, 0, 1, 1, FIELD_CELL(statueX), statueRow);
+  MapGrid_CopyCellAttributes(VILLAGE_WALL_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                             FIELD_CELL(statueX), statueRow);
   if (FIELD_CELL(statueX) != TREASURY_WAY_COLUMN ||
       statueRow != TREASURY_WAY_ROW) {
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, TREASURY_WAY_COLUMN,
-                               TREASURY_WAY_ROW);
+    MapGrid_CopyCellAttributes(VILLAGE_HOLE_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                               TREASURY_WAY_COLUMN, TREASURY_WAY_ROW);
   }
   // The statue may have moved onto the leader while this event was running.
   if (leaderColumn == TREASURY_WAY_COLUMN) {
@@ -794,6 +847,7 @@ static void Bilibin_RestoreRiverActors(void) {
     Actor_SetPosition(ACTOR_BOTTOM_TREE, 0, 0);
     Actor_SetPosition(ACTOR_MIDDLE_TREE, 0, 0);
     Actor_SetPosition(ACTOR_JILL_TREE, 0, 0);
+    // The door in the barricade stands open, and the party can walk through.
     MapGrid_CopyCellsTo(56, 15, 40, 15, 1, 2);
     MapGrid_CopyCellAttributes(26, 15, 1, 3, 10, 15);
     if (GameFlag_Get(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
@@ -858,11 +912,13 @@ static void Bilibin_UpdateCratesCells(void) {
   cratesRow = FIELD_CELL(actor->z.fixed);
 
   for (i = 0; i < 2 * CRATES_LANE_CELLS; i += 2) {
-    MapGrid_CopyCellAttributes(1, 0, 1, 1, gBilibin_CratesPushCells[i],
+    MapGrid_CopyCellAttributes(BARRICADE_PUSH_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                               gBilibin_CratesPushCells[i],
                                gBilibin_CratesPushCells[i + 1]);
   }
 
-  MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
+  MapGrid_CopyCellAttributes(BARRICADE_WALL_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                             cratesColumn, cratesRow);
 }
 
 /// Sets up the Bilibin Treasury.
@@ -981,7 +1037,7 @@ static void Bilibin_SpawnRipple(struct Actor *actor) {
 
   Sprite_StartAnimation(sprite, 2);
   sprite->flags = 0;
-  sprite->image.objectMode = 1;
+  sprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
   sprite->image.priority = 3;
 }
 
@@ -993,14 +1049,18 @@ static void Bilibin_UpdateTreasuryStatueCells(void) {
     return;
 
   if (FIELD_CELL(statue->z.fixed) == 6)
-    MapGrid_CopyCellAttributes(2, 0, 1, 1, 14, 6);
+    MapGrid_CopyCellAttributes(TREASURY_WALL_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                               14, 6);
   else
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 14, 6);
+    MapGrid_CopyCellAttributes(TREASURY_ALCOVE_CELL_COLUMN, SPARE_CELL_ROW, 1,
+                               1, 14, 6);
 
   if (FIELD_CELL(statue->z.fixed) == 9)
-    MapGrid_CopyCellAttributes(2, 0, 1, 1, 14, 9);
+    MapGrid_CopyCellAttributes(TREASURY_WALL_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                               14, 9);
   else
-    MapGrid_CopyCellAttributes(1, 0, 1, 1, 14, 9);
+    MapGrid_CopyCellAttributes(TREASURY_FOOT_CELL_COLUMN, SPARE_CELL_ROW, 1, 1,
+                               14, 9);
 }
 
 s32 gBilibin_FaceLeaderScript[] = {
@@ -1042,7 +1102,8 @@ struct SceneEntrance gBilibinEntrances[] = {
 };
 
 struct SceneEntrance gBilibinBarricadeEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_BARRICADE_FROM_WORLD_MAP_WEST, CONDITION_ALWAYS, 56, 0, 376,
      FACING_EAST, 0, 16, 16, 400, 400, 0},
     {BILIBIN_BARRICADE_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 376, 0, 184,
@@ -1051,7 +1112,8 @@ struct SceneEntrance gBilibinBarricadeEntrances[] = {
 };
 
 struct SceneEntrance gBilibinTreasuryEntrances[] = {
-    {0, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 232, 0, 144, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {BILIBIN_TREASURY_FROM_BILIBIN_SOUTH, CONDITION_ALWAYS, 120, 0, 408,
      FACING_NORTH, 0, 0, 288, 240, 448, 0},
     {BILIBIN_TREASURY_LOWER_FROM_UPPER, CONDITION_ALWAYS, 120, 0, 384,
@@ -1065,8 +1127,8 @@ struct SceneEntrance gBilibinTreasuryEntrances[] = {
 
 // clang-format off
 s16 gBilibinTreasuryRegions[] = {
-    66, 26, 128, 78, 38, 140, -1, 3,
-    290, 26, 224, 302, 38, 236, -1, BILIBIN_TREASURY_TO_BILIBIN_NORTH,
+    66, 26, 128, 78, 38, 140, CONDITION_ALWAYS, BILIBIN_TREASURY_UPPER_TO_LOWER,
+    290, 26, 224, 302, 38, 236, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_NORTH,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
@@ -1169,13 +1231,13 @@ struct Trigger gBilibinTriggers[] = {
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TO_MCCOY_PALACE_GROUNDS },
     { TRIGGER_EXIT, 10, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_WEST },
     { TRIGGER_EXIT, 11, CONDITION_ALWAYS, BILIBIN_TO_BILIBIN_TREASURY_EAST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_INN, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_HOUSE_EAST, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_HOUSE_WEST, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_HOUSE_NORTH, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_ITEM_SHOP, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BILIBIN_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Bilibin_OpenDoorAndLeave) },
     { TRIGGER_TALK, ACTOR_TREE_MAN, CONDITION_ALWAYS, EVENT(Bilibin_ExamineTreeMan) },
     { TRIGGER_TALK, ACTOR_FORMER_TREE_MAN, CONDITION_ALWAYS, EVENT(Bilibin_AskAboutBeingATree) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_WELCOME, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWelcomeToBilibinPleaseJustIgnore) },
@@ -1221,11 +1283,11 @@ struct Trigger gBilibinTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatExplosionMustHaveBeenA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_STRANGE_CREATURES, CONDITION_ALWAYS, MSGNO(MsgBilibinAsLongAsImOkayI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VILLAGE_STATUE, CONDITION_ALWAYS, EVENT(Bilibin_UpdateVillageStatueCells) },
-    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BILIBIN_STATUE_SQUARE, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS, 0 },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 100, FLAG_BILIBIN_HERB, FIND_ITEM(ITEM_HERB) },
-    { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_BILIBIN_COINS, FIND_COINS(5) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 90, CONDITION_ALWAYS, EVENT(Bilibin_InspectWell) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_BILIBIN_HERB_JAR, FLAG_BILIBIN_HERB, FIND_ITEM(ITEM_HERB) },
+    { EXAMINE_TRIGGER(EXAMINE_JAR), CELL_BEHAVIOR_BILIBIN_COINS_JAR, FLAG_BILIBIN_COINS, FIND_COINS(5) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BILIBIN_WELL, CONDITION_ALWAYS, EVENT(Bilibin_InspectWell) },
     { TRIGGER_TABLE_END },
 };
 
@@ -1254,14 +1316,14 @@ struct Trigger gBilibinBarricadeTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GANG_MEMBER_WEST, FLAG_BILIBIN_JILL_RESCUED, MSGNO(MsgBilibinWhatACruelWorldWeJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GANG_MEMBER_WEST, CONDITION_ALWAYS, MSGNO(MsgBilibinWellItWasntMyIdeaTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JILL, CONDITION_ALWAYS, MSGNO(MsgBilibinThesePersimmonsAreJustLikeMy) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 11, CONDITION_ALWAYS, EVENT(Bilibin_ReadOffLimitsSign) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
-    { TRIGGER_STEP, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT(Bilibin_JillGivesHardNut) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BILIBIN_BARRICADE_SIGN, CONDITION_ALWAYS, EVENT(Bilibin_ReadOffLimitsSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BILIBIN_BARRICADE_DOOR, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_GANG, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT(Bilibin_JillGivesHardNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT(Bilibin_PullJillFromRiver) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING, 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_BILIBIN_BARRICADE_HOP_NORTH, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_CRATES, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_BILIBIN_BARRICADE_BESIDE_CRATES, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BILIBIN_BARRICADE_CRATES_PUSH, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT(Bilibin_UpdateCratesCells) },
     { TRIGGER_TABLE_END },
 };
@@ -1269,15 +1331,15 @@ struct Trigger gBilibinBarricadeTriggers[] = {
 struct Trigger gBilibinTreasuryTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, BILIBIN_TREASURY_TO_BILIBIN_SOUTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, BILIBIN_TREASURY_LOWER_TO_UPPER },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 10, CONDITION_ALWAYS, EVENT(Bilibin_ReadWarehouseSign) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BILIBIN_TREASURY_SIGN, CONDITION_ALWAYS, EVENT(Bilibin_ReadWarehouseSign) },
     { TRIGGER_TALK, ACTOR_GUST, CONDITION_ALWAYS, EVENT(Bilibin_GustJoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TREASURY_STATUE, CONDITION_ALWAYS, EVENT(Bilibin_UpdateTreasuryStatueCells) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING, 13, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_BILIBIN_TREASURY_ALCOVE, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_BILIBIN_TREASURY_WALKWAY_FOOT, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BILIBIN_TREASURY_WALKWAY, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_BILIBIN_TREASURY_ALCOVE, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_BILIBIN_TREASURY_ALCOVE, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_BILIBIN_TREASURY_WALKWAY_FOOT, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
     { TRIGGER_TABLE_END },
 };
 
@@ -1313,7 +1375,12 @@ u16 *gBilibin_DoorSteps[] = {
     gBilibin_SanctumDoorSteps,
 };
 
-/// Each door's cell, in the order of gBilibin_DoorSteps.
+/// Where each door's opening is drawn on the map grid, in the order of
+/// gBilibin_DoorSteps. These are not the doors' own cells (the inn's is
+/// (23, 22)) but 31 columns east of them and two rows up, four for the
+/// Sanctum's.
+// XXX: why the openings are drawn off to the east; the map grid's layers
+// around (54, 20) would settle it.
 s16 gBilibin_DoorCells[][2] = {
     {54, 20}, {43, 18}, {37, 19}, {41, 11}, {35, 11}, {49, 9}, {55, 6},
 };

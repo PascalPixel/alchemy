@@ -108,13 +108,7 @@ extern s32 gSeaOfTime_ShipRests[];
 s32 Actor_HasArrived(struct Actor *actor);
 u16 gSeaOfTime_RippleLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
-/// When the Lemurian ship is placed, puts it on the sea's own layer with its
-/// sprite's flags cleared.
-s32 SeaOfTime_ResetAnimationFrame(struct Actor *actor) {
-  ((struct FieldSprite *)actor->sprite)->flags = 0;
-  actor->layer = MAPGRID_LAYER_MIDDLE;
-  return 1;
-}
+#include "shared/ship_drop_shadow.h"
 
 #include "../field/map_cell_get.c"
 
@@ -1541,7 +1535,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSeaOfTime_ShipRests[] = {
-    SC_CALL((s32)SeaOfTime_ResetAnimationFrame),
+    SC_CALL((s32)Ship_DropShadow),
     SC_END,
 };
 

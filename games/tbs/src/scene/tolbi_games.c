@@ -1441,16 +1441,14 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
           Vector3_Coordinates(&obstacle->position), 0,
           gTolbiSpring_SliderFrames[obstacle->speedMode],
-          obstacle->speedMode * SPRITE_ANIMATION_STEP_NORMAL +
-              SPRITE_ANIMATION_STEP_NORMAL);
+          obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
       break;
     case 1:
       TolbiSpring_SetActorAppearance(
           ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1,
           Vector3_Coordinates(&obstacle->position), 0,
           gTolbiSpring_SliderFrames[obstacle->speedMode],
-          obstacle->speedMode * SPRITE_ANIMATION_STEP_NORMAL +
-              SPRITE_ANIMATION_STEP_NORMAL);
+          obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
       break;
     case 2:
       TolbiSpring_SetActorAppearance(
@@ -1458,8 +1456,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           Vector3_Coordinates(&obstacle->position),
           DEGtoANG(180) - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
-          obstacle->speedMode * SPRITE_ANIMATION_STEP_NORMAL +
-              SPRITE_ANIMATION_STEP_NORMAL);
+          obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
       break;
     case 3:
       TolbiSpring_SetActorAppearance(
@@ -1467,8 +1464,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           Vector3_Coordinates(&obstacle->position),
           TRIG_TURN - 1 - obstacle->heading,
           gTolbiSpring_CircleFrames[obstacle->speedMode],
-          obstacle->speedMode * SPRITE_ANIMATION_STEP_NORMAL +
-              SPRITE_ANIMATION_STEP_NORMAL);
+          obstacle->speedMode * ANIM_STEP_NORMAL + ANIM_STEP_NORMAL);
       break;
     }
   }
@@ -1480,19 +1476,19 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   if (sTossKind == SPRING_TOSS_MEDAL) {
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL,
                                    Vector3_Coordinates(&toss->trail[0]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_MEDAL_SHADOW,
                                    Vector3_Coordinates(&toss->shadow), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(1),
                                    Vector3_Coordinates(&toss->trail[1]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(2),
                                    Vector3_Coordinates(&toss->trail[2]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(3),
                                    Vector3_Coordinates(&toss->trail[3]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(1)),
                           ANIM_TOKEN_GLINT);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(2)),
@@ -1502,19 +1498,19 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   } else {
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN,
                                    Vector3_Coordinates(&toss->trail[0]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN_SHADOW,
                                    Vector3_Coordinates(&toss->shadow), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(1),
                                    Vector3_Coordinates(&toss->trail[1]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(2),
                                    Vector3_Coordinates(&toss->trail[2]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(3),
                                    Vector3_Coordinates(&toss->trail[3]), 0, 0,
-                                   SPRITE_ANIMATION_STEP_NORMAL);
+                                   ANIM_STEP_NORMAL);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(1)),
                           ANIM_TOKEN_GLINT);
     Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(2)),

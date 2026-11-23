@@ -446,7 +446,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
 
     djinni = Actor_Get(ACTOR_BANE);
     djinni->sprite->rotation = 0;
-    Actor_SetAnimationSpeed(djinni, SPRITE_ANIMATION_STEP_NORMAL);
+    Actor_SetAnimationSpeed(djinni, ANIM_STEP_NORMAL);
     Sound_Play(SE_JUMP);
     Actor_Get(ACTOR_BANE)->velocityY = toFIXED(8);
     Actor_FaceDirection(ACTOR_BANE, FACING_WEST, 30);
@@ -1586,7 +1586,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
       Actor_SetPosition(ACTOR_BANE, 888, 664);
       djinni = Actor_Get(ACTOR_BANE);
       djinni->sprite->rotation = 0;
-      Actor_SetAnimationSpeed(djinni, SPRITE_ANIMATION_STEP_NORMAL);
+      Actor_SetAnimationSpeed(djinni, ANIM_STEP_NORMAL);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       Actor_SetPosition(ACTOR_BANE, 584, 680);
     } else {

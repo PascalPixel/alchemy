@@ -506,8 +506,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Sanctum_UpdateBurst);
-  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member],
-                              SPRITE_ANIMATION_STEP_NORMAL);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], ANIM_STEP_NORMAL);
   Shop_RestoreFieldPalette();
   wait(30);
   shop->cursor.anchor->motion = savedCursorMode;

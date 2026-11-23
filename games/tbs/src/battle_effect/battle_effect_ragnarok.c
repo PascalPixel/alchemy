@@ -62,7 +62,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
   // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
-  Actor_SetAnimationSpeedFar(user, SPRITE_ANIMATION_STEP_NORMAL * 3);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL * 3);
 
   Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
@@ -249,7 +249,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Actor_SetAnimationSpeedFar(user, SPRITE_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
 }
 

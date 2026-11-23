@@ -456,7 +456,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               toFIXED(BattleSprite_GetAttackHop(unit->id)));
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
-                             SPRITE_ANIMATION_STEP_NORMAL);
+                             ANIM_STEP_NORMAL);
   BattleObject_Get(work.effect.targets[0]);
 
   if ((u16)work.effect.targets[0] <= ALLY_MAX)
@@ -591,7 +591,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
-                             SPRITE_ANIMATION_STEP_NORMAL);
+                             ANIM_STEP_NORMAL);
   BattleObject_Get(savedInput->targetIds[0]);
 
   if (savedInput->targetIds[0] <= ALLY_MAX)
@@ -642,7 +642,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   actor = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(actor, POSE_CAST);
-  Actor_SetAnimationSpeedFar(actor, SPRITE_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.effect.side = EFFECT_SIDE_PARTY;
   else
@@ -814,7 +814,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(object, POSE_CAST);
-  Actor_SetAnimationSpeedFar(object, SPRITE_ANIMATION_STEP_NORMAL);
+  Actor_SetAnimationSpeedFar(object, ANIM_STEP_NORMAL);
   Sound_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STREAKS, 0);

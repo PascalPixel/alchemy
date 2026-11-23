@@ -211,7 +211,7 @@ void FieldPsynergy_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    Actor_SetOthersPaused(caster, 0, SPRITE_ANIMATION_STEP_NORMAL);
+    Actor_SetOthersPaused(caster, 0, ANIM_STEP_NORMAL);
   }
   if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
     if (effectWork->visible != 0) {

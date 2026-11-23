@@ -101,6 +101,11 @@
 /// back to the tower's first room.
 #define JUPITER_TOWER_THROUGH_HOLE 16
 
+/// The Mercury tower's exit back into itself, and the entrance it lands at,
+/// once its pipeline is first mended: the tower is loaded afresh and the
+/// torch the pipeline feeds flares up.
+#define MERCURY_TOWER_PIPELINE_MENDED 9
+
 /// The Jupiter tower's landings from Cyclone's whirlwinds, each where an exit
 /// of a Cyclone circle sets the party down: most on the circle that takes it
 /// back, the rest in the big room of the white dragon statue.
@@ -389,7 +394,7 @@ extern struct ActorPlacement gMarsLighthouseRoomF_MarsTowerPlacements[];
 extern struct ActorPlacement gMarsLighthouseRoomF_JupiterTowerPlacements[];
 extern struct ActorPlacement gMarsLighthouseRoomF_MercuryTowerPlacements[];
 
-/// The towers' torches start with their sprite flags clear.
+/// A torch's script call: the towers' torches stand without a shadow.
 s32 MarsLighthouseRoomF_SetUpTorch(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
@@ -431,7 +436,7 @@ void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
     s32 x = FIELD_CELL(actor->x.fixed);
     s32 z = FIELD_CELL(actor->z.fixed);
 
-    if (facing != 0)
+    if (facing != FACING_EAST)
       x--;
     else
       x++;
@@ -537,7 +542,7 @@ void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
   } else if (id == ACTOR_FIRST_STONE) {
     Actor_Get(ACTOR_FIRST_STONE)->motionFlags =
         ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-#if TLA_PATCH_1 /* From patch 1. */
+#if TLA_PATCH_1
     MarsLighthouseRoomF_FillGapsWithStones();
 #endif
   }
@@ -547,10 +552,11 @@ void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
 /// aside, a dragon head that was hidden behind it shows and breathes fire.
 void MarsLighthouseRoomF_UncoverFlameThrower(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
-  s32 kind;
+  s32 flameThrower;
 
-  kind = gMarsLighthouseRoomF_StatueFlameThrowers[id - ACTOR_TRAP_STATUE_A];
-  Actor_SetPositionFX(kind, INTtoFIXED(actor->homeX),
+  flameThrower =
+      gMarsLighthouseRoomF_StatueFlameThrowers[id - ACTOR_TRAP_STATUE_A];
+  Actor_SetPositionFX(flameThrower, INTtoFIXED(actor->homeX),
                       (INTtoFIXED(actor->homeZ)) - toFIXED(8));
 }
 
@@ -560,17 +566,17 @@ void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
   const s16 *table;
   s32 offset;
   FIXED x;
-  s32 kind;
+  s32 flameThrower;
 
   table = gMarsLighthouseRoomF_StatueFlameThrowers;
   x = actor->x.fixed;
   offset = (id - ACTOR_TRAP_STATUE_A) * 2;
-  kind = *(s16 *)((u8 *)table + offset);
+  flameThrower = *(s16 *)((u8 *)table + offset);
   if (FIELD_CELL(x) == actor->timer >> 4)
-    Actor_SetPosition(kind, 0, 0);
+    Actor_SetPosition(flameThrower, 0, 0);
 }
 
-#if TLA_PATCH_1 /* From patch 1. */
+#if TLA_PATCH_1
 /// From patch 1: the gaps at cells (38, 8) and (43, 8), and (47, 8) for the
 /// first stone, are floor wherever a stone fills them.
 void MarsLighthouseRoomF_FillGapsWithStones(void) {
@@ -969,7 +975,7 @@ void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
     FieldCamera_MoveTo(616, CAMERA_KEEP, 24, 1);
     FieldEvent_Wait(60);
     ObjectTable_Snapshot();
-    FieldEvent_SetExitRequest(9);
+    FieldEvent_SetExitRequest(MERCURY_TOWER_PIPELINE_MENDED);
   }
 }
 
@@ -1240,7 +1246,7 @@ s32 Scene_Initialize(void) {
     Ride_SetEntryCount(3, 1);
     if (entrance == 2)
       Ride_ReleaseHandle();
-    if (entrance == 9) {
+    if (entrance == MERCURY_TOWER_PIPELINE_MENDED) {
       Flag_Set(FLAG_SAW_PIPELINE_MENDED);
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -1580,8 +1586,8 @@ s32 Fireball_CarryLeader(void) {
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
-                                                leader->z.fixed) != 7) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(
+            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {
@@ -1764,7 +1770,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 /// Sets the priority the glow sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
-/// The torches' script: their sprite flags cleared, nothing more.
+/// The towers' torches' script.
 s32 gMarsLighthouseRoomF_TorchScript[] = {
     SC_CALL(MarsLighthouseRoomF_SetUpTorch),
     SC_END,
@@ -1775,7 +1781,7 @@ s32 gMarsLighthouseRoomF_TorchScript[] = {
 /// the wall, pausing at each end.
 s32 gMarsLighthouseRoomF_VenusEastFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SPEED(0.5),
     SC_ACCELERATION(0.03125),
     SC_MOVE(680, 0, 304),
@@ -1789,7 +1795,7 @@ s32 gMarsLighthouseRoomF_VenusEastFlameThrowerRoute[] = {
 
 s32 gMarsLighthouseRoomF_VenusWestFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SPEED(0.5),
     SC_ACCELERATION(0.03125),
     SC_MOVE(584, 0, 304),
@@ -1805,7 +1811,7 @@ s32 gMarsLighthouseRoomF_VenusWestFlameThrowerRoute[] = {
 /// button (FLAG_BUTTON_PRESSED), then slides east and west for good.
 s32 gMarsLighthouseRoomF_ButtonFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SET(SW_Y, toFIXED(48)),
     SC_SET(SW_GROUND, toFIXED(48)),
     SC_SPEED(0.5),
@@ -1832,7 +1838,7 @@ s32 gMarsLighthouseRoomF_ButtonFlameThrowerRoute[] = {
 /// wall; the east one also rises and drops.
 s32 gMarsLighthouseRoomF_JupiterWestFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SET(SW_Y, toFIXED(32)),
     SC_SET(SW_GROUND, toFIXED(32)),
     SC_SPEED(0.5),
@@ -1882,7 +1888,7 @@ s32 gMarsLighthouseRoomF_JupiterEastFlameThrowerRoute[] = {
 /// The Jupiter tower's flame thrower that stays put, raised on its wall.
 s32 gMarsLighthouseRoomF_JupiterLowerFlameThrowerSetUp[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SET(SW_Y, toFIXED(32)),
     SC_SET(SW_GROUND, toFIXED(32)),
     SC_SPEED(0.5),
@@ -1892,7 +1898,7 @@ s32 gMarsLighthouseRoomF_JupiterLowerFlameThrowerSetUp[] = {
 
 s32 gMarsLighthouseRoomF_JupiterFarFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SET(SW_Y, toFIXED(48)),
     SC_SET(SW_GROUND, toFIXED(48)),
     SC_SPEED(0.5),
@@ -2090,7 +2096,8 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(MARS_LIGHTHOUSE_MERCURY_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
                MarsLighthouseRoomMFlame,
                MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER),
-    SCENE_EXIT(9, MarsLighthouseMercuryTower, 9),
+    SCENE_EXIT(MERCURY_TOWER_PIPELINE_MENDED, MarsLighthouseMercuryTower,
+               MERCURY_TOWER_PIPELINE_MENDED),
     SCENE_EXITS(MarsLighthouseJupiterTower),
     SCENE_EXIT(
         MARS_LIGHTHOUSE_JUPITER_TOWER_TO_MARS_LIGHTHOUSE_JUPITER_LEDGE,
@@ -2210,7 +2217,7 @@ LATE_DATA struct ActorPlacement gMarsLighthouseRoomF_JupiterTowerPlacements[] = 
 
 LATE_DATA u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
-    SC_SET(SW_MOTION, 2),
+    SC_SET(SW_MOTION, ACTOR_FALLS),
     SC_SET(SW_Y, toFIXED(80)),
     SC_SET(SW_GROUND, toFIXED(80)),
     SC_SPEED(0.5),

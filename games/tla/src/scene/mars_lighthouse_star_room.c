@@ -1399,8 +1399,8 @@ s32 Fireball_CarryLeader(void) {
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
-                                                leader->z.fixed) != 7) {
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(
+            0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {

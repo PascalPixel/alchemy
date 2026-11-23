@@ -1339,7 +1339,7 @@ s32 Fireball_CarryLeader(void) {
     s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
                                                        leader->z.fixed);
 
-    if (kind != 7) {
+    if (kind != TERRAIN_ROUNDED_SQUARE) {
       leader->x.fixed += ride->car->stepX;
       leader->z.fixed += ride->car->stepZ;
     } else {

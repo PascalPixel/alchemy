@@ -189,9 +189,9 @@ enum SpriteId {
   SPRITE_GIRL_IN_PINK,
   SPRITE_MUSCULAR_MAN_WITH_TOPKNOT,
   SPRITE_MAN_CARRYING_A_PACK,
-  /// A row sprites.tsv leaves empty, which only Vault's unused
-  /// Vault_SpawnDriftingEffect makes an actor of.
-  SPRITE_172,
+  /// Row 172, the first of the rows sprites.tsv leaves empty, which only
+  /// Vault's unused Vault_SpawnDriftingEffect makes an actor of.
+  SPRITE_NO_IMAGE,
   /// Toadonpa in Lunpa Fortress, before his battle.
   SPRITE_TOADONPA = 187,
   /// The Tolbi-bound Ship's oars and the sea monsters that attack it.

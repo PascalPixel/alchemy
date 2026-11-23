@@ -1,7 +1,8 @@
 /// @file
 /// A second copy of the ten sprite colour tables in
 /// field/sprite_color_tables.c, the five conversion tables then the five byte
-/// remap tables, in the field sequence bank.
+/// remap tables, in the field sequence bank: the picture decoder's data
+/// (decode_picture_data.s) points at this copy.
 
 #include "types.h"
 

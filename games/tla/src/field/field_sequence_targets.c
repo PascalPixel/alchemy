@@ -107,15 +107,13 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   return -1;
 }
 
-/// The Lift-style animation measures height by the actor's footing, not y.
-#define ANIM_MEASURES_FOOTING 18
 /// A facing's sixteenths of a turn (FACING_STEP), as a shift.
 #define FACING_STEP_SHIFT 12
 
 /// How far actor otherId stands from actor selfId, in pixels over the ground,
-/// when it lies within the animation's reach in front of selfId; -1 when it
-/// does not.
-s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
+/// when it lies within the reach of field Psynergy kind in front of selfId; -1
+/// when it does not.
+s32 Field_MeasurePsynergyReach(s32 kind, s32 selfId, s32 otherId) {
   struct Actor *self;
   struct Actor *other;
   const struct FieldPsynergyReach *rule;
@@ -135,10 +133,11 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
       (other->collisionFlags & ACTOR_NOT_TARGETED) != 0)
     return -1;
 
-  // Height: within the rule's pixels above or below.
-  rule = Field_GetPsynergyReach(animation);
+  // Height: within the rule's pixels above or below; Pound compares the
+  // ground the two stand on, not their own heights.
+  rule = Field_GetPsynergyReach(kind);
   height = toFIXED(rule->height);
-  if (animation == ANIM_MEASURES_FOOTING) {
+  if (kind == FIELD_PSYNERGY_POUND) {
     if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;
   } else {
@@ -176,16 +175,16 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   return distance;
 }
 
-/// Returns the actor nearest in front of actor id that a field Psynergy of the
-/// given kind can reach, or -1.
-s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
+/// Returns the actor nearest in front of actor self that field Psynergy kind
+/// can reach, or -1.
+s32 Field_FindNearbyPsynergyTarget(s32 self, s32 kind) {
   s32 nearest = BEYOND_REACH;
   s32 found = -1;
   s32 i;
 
   for (i = 0; i <= FIELD_ACTOR_COUNT; i++) {
     if (i != self) {
-      s32 distance = Field_MeasurePsynergyReach(effect, self, i);
+      s32 distance = Field_MeasurePsynergyReach(kind, self, i);
 
       if (distance != -1 && nearest > distance) {
         found = i;
@@ -196,8 +195,9 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   return found;
 }
 
-/// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4 and, 12
-/// frames later, shows itemId in front of actor with sparkles.
+/// Unused: only the far-call table refers to it. Opens a chest: if actor target
+/// exists, plays SE_CHEST_OPEN, gives it its animation 4 and, 12 frames later,
+/// shows itemId in front of actor actorId with sparkles.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
                                                s32 itemId) {
   void *targetActor;
@@ -238,12 +238,15 @@ s32 Leader_CanPushObjectAhead(void) {
   position[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = owner->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
-  target = Actor_FindAtCell(position, 1);
+  target = Actor_FindAtCell(position, TRUE);
   if (target == 0)
     return 0;
   if (target->riseCounter != 0)
     return 0;
 #if TLA_PATCH_1
+  // XXX: the test passes over actor 1 where -1, no halted actor, looks
+  // meant; what Actor_GetById(-1) returns with nothing halted would settle
+  // whether it is a bug.
   id = gMainRoutineWork.haltedActor;
   if (id != 1 && target == Actor_GetById(id))
     return 0;
@@ -252,13 +255,13 @@ s32 Leader_CanPushObjectAhead(void) {
   position[1] = target->y.fixed;
   position[2] = target->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
-  hit = Actor_FindAtCell(position, 1);
+  hit = Actor_FindAtCell(position, TRUE);
   if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
     return 0;
   above[0] = target->x.fixed;
   above[1] = target->y.fixed + toFIXED(16);
   above[2] = target->z.fixed;
-  hit = Actor_FindAtCell(above, 1);
+  hit = Actor_FindAtCell(above, TRUE);
   if (hit != 0 && (hit->collisionFlags & ACTOR_SOLID))
     return 0;
   terrain = target->layer;
@@ -287,7 +290,7 @@ void Leader_PushObjectAhead(void) {
   position[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = owner->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
-  target = Actor_FindAtCell(position, 1);
+  target = Actor_FindAtCell(position, TRUE);
   position[0] = target->x.fixed;
   position[1] = target->y.fixed;
   position[2] = target->z.fixed;
@@ -323,5 +326,4 @@ void Leader_PushObjectAhead(void) {
   }
 }
 
-#undef ANIM_MEASURES_FOOTING
 #undef FACING_STEP_SHIFT

@@ -34,6 +34,7 @@
 #include "field/field_effect.h"
 #include "field/field_psynergy_work.h"
 #include "field/field_event.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
 #include "field/flag_call.h"
@@ -951,7 +952,8 @@ void TundariaTower_LandFromSlide(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = toFIXED(1);
   leader->bounce = FIXED_ONE / 4;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
 
@@ -977,7 +979,8 @@ s32 Scene_Initialize(void) {
   s32 scene;
   s32 flag;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_TUNDARIA_TOWER_ENTRANCE) {
   } else if (scene == SCENE_TUNDARIA_TOWER_CENTER_PRONG) {

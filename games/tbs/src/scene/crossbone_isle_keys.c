@@ -73,7 +73,7 @@
 
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
 extern s32 gCrossboneIsleKeys_BaneWalkTargets[][2];
-extern struct SceneEntrance gCrossboneIsleKeysEntrancesOther[];
+extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gCrossboneIsleKeysRoomEntrances[];
 extern struct SceneEntrance gCrossboneIsleStatuesEntrances[];
 extern struct SceneEntrance gCrossboneIsleBaneEntrances[];
@@ -304,7 +304,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (selector == SCENE_CROSSBONE_ISLE_BANE) {
     return gCrossboneIsleBaneEntrances;
   }
-  return gCrossboneIsleKeysEntrancesOther;
+  return gScene_FallbackEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -1645,10 +1645,7 @@ s32 gCrossboneIsleKeys_BaneWalkTargets[][2] = {
     { 888, 840 },
 };
 
-struct SceneEntrance gCrossboneIsleKeysEntrancesOther[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gCrossboneIsleKeysRoomEntrances[] = {
     { CROSSBONE_ISLE_KEYS_FROM_CROSSBONE_ISLE_THIRD_FLOOR_EAST, CONDITION_ALWAYS, 200, 0, 968, FACING_NORTH, 0, 24, 560, 504, 1008, 0 },

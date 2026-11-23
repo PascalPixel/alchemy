@@ -2239,12 +2239,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// Unused: an entrance table nothing reads, one way in at (120, 152) facing
-/// south, with no camera box.
-struct SceneEntrance gCrossboneIsle_UnusedEntrances[] = {
-    { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gCrossboneIsle_IsleEntrances[] = {
     { CROSSBONE_ISLE_FROM_WORLD_MAP, CONDITION_ALWAYS, 280, 0, 544, FACING_NORTH, 0, 0, 0, 512, 560, 0 },

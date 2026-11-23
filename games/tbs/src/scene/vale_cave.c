@@ -68,7 +68,7 @@
 #include "system/system_call.h"
 
 extern s32 gValeCave_WalkTargets[][2];
-extern struct SceneEntrance gValeCave_EntrancesOther[];
+extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gValeCave_MouthEntrances[];
 extern struct SceneEntrance gValeCave_KiteEntrances[];
 extern struct SceneEntrance gValeCave_LogsEntrances[];
@@ -261,7 +261,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_VALE_CAVE_LOGS) {
     return gValeCave_LogsEntrances;
   }
-  return gValeCave_EntrancesOther;
+  return gScene_FallbackEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
@@ -890,10 +890,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-struct SceneEntrance gValeCave_EntrancesOther[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gValeCave_MouthEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, 16, 0, 336, 368, 0 },

@@ -93,7 +93,7 @@ extern u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[];
-extern struct SceneEntrance gCrossboneIsleSteppingStonesEntrancesOther[];
+extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gCrossboneIsleSteppingStonesEntrances[];
 extern struct SceneEntrance gCrossboneIsleIcePillarsEntrances[];
 extern struct SceneEntrance gCrossboneIsleFloodgateEntrances[];
@@ -671,7 +671,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_CROSSBONE_ISLE_DRAGON_STATUE) {
     return gCrossboneIsleDragonStatueEntrances;
   }
-  return gCrossboneIsleSteppingStonesEntrancesOther;
+  return gScene_FallbackEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
@@ -1702,10 +1702,7 @@ u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[] = {
     MAPGRID_ANIMATION_STEP(75, 38, 2, 1, 4), MAPGRID_ANIMATION_STEP(77, 38, 2, 1, 6), MAPGRID_ANIMATION_STEP(79, 38, 2, 1, 8), MAPGRID_ANIMATION_STEP(65, 53, 2, 1, 1), MAPGRID_ANIMATION_STEPS_END,
 };
 
-struct SceneEntrance gCrossboneIsleSteppingStonesEntrancesOther[] = {
-    { 0, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gCrossboneIsleSteppingStonesEntrances[] = {
     { CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST, CONDITION_ALWAYS, 712, 0, 760, FACING_NORTH, 0, 560, 368, 992, 792, 0 },

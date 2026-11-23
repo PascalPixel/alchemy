@@ -76,7 +76,7 @@
 
 extern s32 gPushedActor_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
-extern struct SceneEntrance gVaultCave_FallbackEntrances[];
+extern struct SceneEntrance gScene_FallbackEntrances[];
 extern struct SceneEntrance gVaultCavePassage_Entrances[];
 extern struct SceneEntrance gVaultCaveVambrace_Entrances[];
 extern struct SceneEntrance gVaultCaveMouth_Entrances[];
@@ -205,7 +205,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_VAULT_CAVE_MOUTH) {
     return gVaultCaveMouth_Entrances;
   }
-  return gVaultCave_FallbackEntrances;
+  return gScene_FallbackEntrances;
 }
 
 /// Returns the region boxes used by the cave's exits.
@@ -1047,10 +1047,7 @@ const s32 gVaultCave_PuffScript[] = {
     SC_RELEASE,
 };
 
-struct SceneEntrance gVaultCave_FallbackEntrances[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
-};
+#include "shared/fallback_entrances.c"
 
 struct SceneEntrance gVaultCavePassage_Entrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 120, 0, 152, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },

@@ -39,7 +39,8 @@
 /// omelettes in the ovens, and a book called "All About Items".
 ///
 /// Scene_Initialize opens the rooms with a window around the leader
-/// and draws one diner, ACTOR_BILIBIN_DINER, at a fixed sprite priority.
+/// and draws one diner, ACTOR_BILIBIN_DINER_WITH_PICKAXE, at a fixed sprite
+/// priority.
 ///
 /// He stands at the north edge of the restaurant's table, on cell (7, 49).
 /// That cell alone of the diners' cells gives an actor standing on it priority
@@ -87,16 +88,16 @@ enum { BILIBIN_INN = 2 };
 /// gCottageRoomsCActorPlacements from ACTOR_FIRST_PLACED.
 ///
 /// Each room's actors are together: two in each house, then the shops'
-/// customers and keepers, the inn and its restaurant, and the room behind the
-/// inn's inner door.
+/// customers and keepers, the inn and its restaurant, and the inn's upstairs.
 enum CottageRoomsCActorId {
   /// A young man with brown hair, in the house east.
   ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN = ACTOR_FIRST_PLACED,
-  /// A woman with fair hair.
-  ACTOR_BILIBIN_VILLAGER_PALACE,
+  /// A woman with fair hair. "McCoy had the trees cut down so he could build"
+  /// his wife a palace.
+  ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE,
   /// A burly grey-haired man in the house west, who wants to see Mia again.
   ACTOR_BILIBIN_MIA_ADMIRER,
-  /// A small boy with fair hair.
+  /// A small boy with fair hair. "We rarely see any snow around Bilibin."
   ACTOR_BILIBIN_BOY_SNOW,
   /// A woman in a green dress, in the house north.
   ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA,
@@ -105,7 +106,8 @@ enum CottageRoomsCActorId {
   ACTOR_BILIBIN_GIRL_SILK,
   /// An old man with a cane, in the item shop.
   ACTOR_BILIBIN_OLD_MAN_WATER_OF_HERMES,
-  /// An old woman.
+  /// An old woman. "But even the legendary Water of Hermes cannot turn back
+  /// time."
   ACTOR_BILIBIN_OLD_WOMAN_LOST_YOUTH,
   ACTOR_BILIBIN_WEAPON_MERCHANT,
   ACTOR_BILIBIN_ARMOR_MERCHANT,
@@ -121,17 +123,20 @@ enum CottageRoomsCActorId {
   ACTOR_BILIBIN_WAITRESS,
   /// A man with a pack, waiting for his dinner.
   ACTOR_BILIBIN_HUNGRY_DINER,
-  /// A diner with a pack.
+  /// A diner with a pack, who "came to Bilibin hoping to sell furniture".
   ACTOR_BILIBIN_FURNITURE_SELLER,
-  /// A strongman at the table.
+  /// A strongman at the table. "I think that big tree deep in the forest looks
+  /// suspicious!"
   ACTOR_BILIBIN_DINER_BIG_TREE,
   /// A diner with a pickaxe, drawn at a fixed sprite priority.
-  ACTOR_BILIBIN_DINER,
+  ACTOR_BILIBIN_DINER_WITH_PICKAXE,
   /// An old man at the table.
   ACTOR_BILIBIN_DINER_TODAYS_SPECIAL,
-  /// A man in a red bandana, in the room behind the inn's inner door.
+  /// A man in a red bandana, upstairs at the inn. "I went to Lord McCoy
+  /// looking for work..."
   ACTOR_BILIBIN_JOB_SEEKER,
-  /// A man with a lute.
+  /// A man with a lute, upstairs at the inn. "I've heard songs that tell of
+  /// ancient trees developing strange powers."
   ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES
 };
 
@@ -143,8 +148,7 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gCottageRoomsCExits; }
 
-/// Marks actor placements outside the current room's view before
-/// actors are spawned.
+/// Places Bilibin's townsfolk, leaving out those of the rooms not in view.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   Scene_AssignViewFlags(gCottageRoomsCActorPlacements);
   return gCottageRoomsCActorPlacements;
@@ -192,7 +196,7 @@ static void CottageRoomsC_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Returns both story stages' triggers.
+/// Returns the triggers, whose rows for while the curse holds come first.
 const struct Trigger *Scene_GetTriggers(void) { return gCottageRoomsCTriggers; }
 
 /// Bilibin's armor merchant opens the shop across the counter, or talks.
@@ -258,15 +262,15 @@ static void CottageRoomsC_TalkToHungryDiner(void) {
 static void CottageRoomsC_AskAboutTreeSpirit(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
-  Actor_FaceActor(ACTOR_BILIBIN_DINER, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_BILIBIN_DINER_WITH_PICKAXE, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
   // "Do you believe a tree spirit can curse a man?"
-  Event_OpenMessage(ACTOR_BILIBIN_DINER, 0);
+  Event_OpenMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
-  Event_ShowMessage(ACTOR_BILIBIN_DINER, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_DINER, FACING_SOUTH, 10);
+  Event_ShowMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
+  Actor_FaceDirection(ACTOR_BILIBIN_DINER_WITH_PICKAXE, FACING_SOUTH, 10);
   Event_End();
 }
 
@@ -381,7 +385,7 @@ static void CottageRoomsC_TalkAboutMeal(void) {
   // "That was some meal! Don't you just love the food here?"
   // Yes: "I know how you feel. Go find a table and pig out!"
   // No: "What!? Why am I even talking to you, when I could be eating!?"
-  Event_AskYesNo(ACTOR_BILIBIN_DINER, 0);
+  Event_AskYesNo(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
   Event_End();
 }
 
@@ -404,14 +408,15 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  actor = Actor_Get(ACTOR_BILIBIN_DINER);
+  actor = Actor_Get(ACTOR_BILIBIN_DINER_WITH_PICKAXE);
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 2;
   return 0;
 }
 
 struct SceneEntrance gCottageRoomsCEntrances[] = {
-    {0, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, -1, -1,
+     -1, -1, 0},
     {COTTAGE_ROOMS_C_HOUSE_EAST, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0,
      24, 32, 264, 240, 0},
     {COTTAGE_ROOMS_C_HOUSE_WEST, CONDITION_ALWAYS, 400, 0, 264, FACING_NORTH, 0,
@@ -512,7 +517,7 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS },
     { TRIGGER_TALK, ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThatTreeAtTheEntranceIs) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinMccoyHadTheTreesCutDown) },
     { TRIGGER_TALK, ACTOR_BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheSnowIsAlreadyPilingUp) },
     { TRIGGER_TALK, ACTOR_BILIBIN_BOY_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeRarelySeeAnySnowAround) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHowArePeopleDoingInKolima) },
@@ -530,12 +535,12 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { TRIGGER_TALK, ACTOR_BILIBIN_HUNGRY_DINER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToHungryDiner) },
     { TRIGGER_TALK, ACTOR_BILIBIN_FURNITURE_SELLER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_BIG_TREE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_DINER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_AskAboutTreeSpirit) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_DINER_WITH_PICKAXE, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_AskAboutTreeSpirit) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantWaitToSeeTodays) },
     { TRIGGER_TALK, ACTOR_BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
     { TRIGGER_TALK, ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, CONDITION_ALWAYS, EVENT(CottageRoomsC_AskAboutHolyTree) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
     { TRIGGER_TALK, ACTOR_BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIAlwaysMissAltinInThe) },
     { TRIGGER_TALK, ACTOR_BILIBIN_BOY_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherSaysThatItsWarm) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinTheRoadToKolimaIsOpen) },
@@ -553,12 +558,12 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { TRIGGER_TALK, ACTOR_BILIBIN_HUNGRY_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinImALittleSurprisedThatThe) },
     { TRIGGER_TALK, ACTOR_BILIBIN_FURNITURE_SELLER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoBusinessHereSoIm) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_BIG_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyServedSoMuchFoodToday) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_DINER, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkAboutMeal) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_DINER_WITH_PICKAXE, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkAboutMeal) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_TODAYS_SPECIAL, CONDITION_ALWAYS, MSGNO(MsgBilibinOooohThatsItITriedMy) },
     { TRIGGER_TALK, ACTOR_BILIBIN_JOB_SEEKER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheIncidentWasResolvedBeforeI) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_ReadMiaAdmirersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_BOY_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItMustBeDifficultToLive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
@@ -576,12 +581,12 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_HUNGRY_DINER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinArghhhThatsItIJustWant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_FURNITURE_SELLER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICameToBilibinHopingTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER_BIG_TREE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinISeeWhyTheyCallThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIDontCareWhoDoesIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER_WITH_PICKAXE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIDontCareWhoDoesIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYippeeIsItReadyYetMy) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinImGettingALittleScaredHearing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItHasBeenSaidThatA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, CONDITION_ALWAYS, MSGNO(MsgBilibinItTakesManyYearsForA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesIWishICouldSee) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesIWishICouldSee) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderIfThereAreStill) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_BOY_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherHasTraveledAllOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinTravelingMakesYoungWarriorsStronger) },
@@ -599,7 +604,7 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_HUNGRY_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinItUsedToTakeThemSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_FURNITURE_SELLER, CONDITION_ALWAYS, MSGNO(MsgBilibinWhenTheyStoppedBuildingThePalace) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER_BIG_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishICouldEatLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinIdBetterEatALotThat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER_WITH_PICKAXE, CONDITION_ALWAYS, MSGNO(MsgBilibinIdBetterEatALotThat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_DINER_TODAYS_SPECIAL, CONDITION_ALWAYS, MSGNO(MsgBilibinTheFoodIsSuchAGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_JOB_SEEKER, CONDITION_ALWAYS, MSGNO(MsgBilibinIfAKidLikeThisCould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES, CONDITION_ALWAYS, MSGNO(MsgBilibinItLooksLikeScaryThingsAre) },

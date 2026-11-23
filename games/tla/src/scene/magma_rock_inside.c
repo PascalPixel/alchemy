@@ -431,11 +431,11 @@ void MagmaRockInside_FightFury(void) {
 }
 
 /// Talking to the Mars Djinni in the entrance hall's south (it stands at cell
-/// (18, 31)) makes it join the party. It is the Djinni the text calls
-/// "Fire19", kept for one of The Broken Seal's Mars Djinn the party never
-/// found there; the walkthrough says such a Djinni may wait here.
-// XXX: which Djinni's name and picture the player meets; a save carried over
-// from The Broken Seal, missing a Mars Djinni, would settle it.
+/// (18, 31)) makes it join the party. It is always the Djinni the text calls
+/// "Fire19" (DJINNI_FIRE19), wearing the Mars Djinni's sprite, and it stands
+/// there only while that Djinni has not joined (its FLAG_DJINNI); it is kept
+/// for one of The Broken Seal's Mars Djinn the party never found there, and
+/// the walkthrough says such a Djinni may wait here.
 void MagmaRockInside_MeetDjinni(void) {
   Djinn_JoinParty(ACTOR_FIRE19, DJINNI_FIRE19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_FIRE19));

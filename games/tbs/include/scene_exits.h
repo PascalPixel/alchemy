@@ -111,14 +111,12 @@ enum {
   /// discarded and WORLD_MAP_TO_ROCK_ROOMS leads on.
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,
   WORLD_MAP_JENNA_AND_KRADEN_ADRIFT = 80,
-  WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT =
-      90, ///< the World Map's Scene_Initialize plays
-          ///< WorldMap_PlayLighthouseTransition here in Mercury Lighthouse's
-          ///< colours, then sends the party to the aerie
-  WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT =
-      91, ///< the World Map's Scene_Initialize plays
-          ///< WorldMap_PlayLighthouseTransition here in Venus Lighthouse's
-          ///< colours, then sends the party back to the aerie
+  /// The ball of light that swells over Mercury Lighthouse once its beacon is
+  /// lit (WorldMap_PlayLighthouseTransition); then on to the aerie.
+  WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT = 90,
+  /// As WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, over Venus Lighthouse; then
+  /// back to the aerie.
+  WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT = 91,
   /// The world map's debug entrance, which sets FLAG_NO_ENCOUNTERS,
   /// FLAG_NO_ENCOUNTERS_IN_AREA and FLAG_DEBUG_STEPS_OFF.
   WORLD_MAP_FROM_DEBUG = 99,
@@ -810,17 +808,14 @@ enum {
 
 /// SceneId_CottageRoomsC's entrances.
 enum {
-  COTTAGE_ROOMS_C_HOUSE_EAST = 1,  ///< the room behind Bilibin's house east
-                                   ///< door; through BILIBIN_TO_HOUSE_EAST
-  COTTAGE_ROOMS_C_HOUSE_WEST = 2,  ///< the room behind Bilibin's house west
-                                   ///< door; through BILIBIN_TO_HOUSE_WEST
-  COTTAGE_ROOMS_C_HOUSE_NORTH = 3, ///< the room behind Bilibin's house north
-                                   ///< door; through BILIBIN_TO_HOUSE_NORTH
-  COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP =
-      4,                         ///< through BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
-  COTTAGE_ROOMS_C_ITEM_SHOP = 5, ///< through BILIBIN_TO_ITEM_SHOP
-  COTTAGE_ROOMS_C_INN = 6, ///< the room behind Bilibin's inn door; the room
-                           ///< holds the inn; through BILIBIN_TO_INN
+  /// The rooms behind Bilibin's doors, each reached through the exit of its
+  /// name (COTTAGE_ROOMS_C_HOUSE_EAST through BILIBIN_TO_HOUSE_EAST).
+  COTTAGE_ROOMS_C_HOUSE_EAST = 1,
+  COTTAGE_ROOMS_C_HOUSE_WEST = 2,
+  COTTAGE_ROOMS_C_HOUSE_NORTH = 3,
+  COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP = 4,
+  COTTAGE_ROOMS_C_ITEM_SHOP = 5,
+  COTTAGE_ROOMS_C_INN = 6,
   COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN = 7,
   COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS = 8,
 };
@@ -1025,8 +1020,7 @@ enum {
 
 /// SceneId_KolimaForestEntrance's entrances.
 enum {
-  /// Only the two unused exits lead here, and the entrance table has no
-  /// row
+  /// Only the two unused exits lead here, and the entrance table has no row
   /// for it.
   KOLIMA_FOREST_ENTRANCE_UNUSED = 1,
   KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE = 2,

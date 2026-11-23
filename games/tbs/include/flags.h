@@ -4,8 +4,7 @@
 /// @file
 /// Game flags, named where their meaning is shown.
 
-/// Set while `character` (character_ids.h) is in the party
-/// (Party_AddMember).
+/// Set while `character` (character_ids.h) is in the party (Party_AddMember).
 #define FLAG_IN_PARTY(character) (character)
 /// The prologue: Isaac and Garet are children. It ends with the caption
 /// "Three years later..." over Vale's repairs.
@@ -15,12 +14,12 @@
 /// SPRITE_ISAAC_TUNIC. Party_EndChildhood clears it.
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
 /// The first of the 80 Djinn flags, DJINNI_FLINT's.
-#define FLAG_DJINN_FIRST 48
+#define FLAG_DJINN_FIRST 0x30
 /// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
 /// FLAG_DJINN_FIRST.
 #define FLAG_DJINNI(djinni) (FLAG_DJINN_FIRST + (djinni))
 /// The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's.
-#define FLAG_DJINN_HIDING_FIRST 128
+#define FLAG_DJINN_HIDING_FIRST 0x80
 /// Set while `djinni` is hiding, its DjinniId counting from
 /// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
 /// fled Djinni battle, and the Djinni's actor stays away until the scene
@@ -77,8 +76,7 @@
 /// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
 #define FLAG_ARRIVAL_STAIRS_DOWN 0x121
 /// The leader falls into the next scene from 160 pixels above
-/// (Entrance_PlayArrival), as when the world map's airborne
-/// travel ends.
+/// (Entrance_PlayArrival), as when the world map's airborne travel ends.
 #define FLAG_ARRIVE_FALLING 0x122
 /// The party is in a town (SCENE_TYPE_TOWN); the scene loader sets and
 /// clears it, and the Colosso's log sets it as it ends.
@@ -114,10 +112,9 @@
 /// No random encounters while set (Encounter_CountStepsAndSelectFormation),
 /// unless FLAG_IGNORE_ENCOUNTER_CHECKS is set; debug entrances set it.
 #define FLAG_NO_ENCOUNTERS 0x160
-/// No random battles until the party enters another area: Venus
-/// Lighthouse sets it on its Reveal path, the world map's debug
-/// entrance too, and Scene_Arrive clears it with a new
-/// area.
+/// No random battles until the party enters another area: Venus Lighthouse sets
+/// it on its Reveal path, the world map's debug entrance too, and Scene_Arrive
+/// clears it with a new area.
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
 /// In debug mode, steps on the field are not processed (FieldSequence_Run) and
@@ -126,34 +123,34 @@
 #define FLAG_DEBUG_STEPS_OFF 0x163
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
 #define FLAG_LURE_CAP 0x167
-/// Auto battle: every living unit, party and enemies, makes a plain attack
-/// each turn with no command menu (AutoBattle_BuildActions).
-/// The debug battle menu sets it, and clears it again for its chooser.
+/// Auto battle: every living unit, party and enemies, makes a plain attack each
+/// turn with no command menu (AutoBattle_BuildActions). The debug battle menu
+/// sets it, and clears it again for its chooser.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 /// The next battle is a link battle (Battle_Run); the Battle Arena
 /// sets it, and every normal scene entry (not a return keeping the party's
 /// position) clears it.
 #define FLAG_LINK_BATTLE 0x16c
-// XXX: likely a debug switch at the Colosseum too, because Jenna is never in
+// XXX: likely a debug switch at the colosseum too, because Jenna is never in
 // the party there in normal play; a reader outside the debug keys would say
 // otherwise.
 /// In debug mode, with it set, holding R as an action is planned defeats every
 /// enemy, and R with Select the party (BattleActionRun_Build); that is its only
 /// reader. The debug story preset for Vale's plaza sets it, and so do the
-/// Colosseum's escorts as they swap Mia in for Jenna.
+/// colosseum's escorts as they swap Mia in for Jenna.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
-/// Set, the highest of these picks the tint a field Psynergy fades
+/// The highest of these that is set picks the tint a field Psynergy fades
 /// toward, gFieldEffect_TargetColors[n], in place of the frame counter's pick
 /// (FieldPsynergy_FadeToCastColor).
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
 /// In debug mode, each step beeps (SE_CLICK) while fewer than 136 of the 512
 /// resource blocks are free.
-#define FLAG_DEBUG_RESOURCE_BEEP 350
+#define FLAG_DEBUG_RESOURCE_BEEP 0x15e
 /// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
 /// FLAG_NO_ENCOUNTERS_IN_AREA, a zone of 0 or Cloak would stop them
 /// (Encounter_CountStepsAndSelectFormation).
-#define FLAG_IGNORE_ENCOUNTER_CHECKS 351
+#define FLAG_IGNORE_ENCOUNTER_CHECKS 0x15f
 /// Flint's lesson on Djinn, after he joins on the world map: in its battle the
 /// party strikes first, two of Flint's messages follow each turn, and no
 /// spoils are handed out. The world map sets it.
@@ -192,8 +189,8 @@
 /// Scene_Arrive as the party enters the section; the world map
 /// screen shows a marker for each.
 #define FLAG_AREA_VISITED(group) (0x180 + (group))
-/// A scene's own flags, cleared on every ordinary entry
-/// (Scene_Arrive): puzzles reset when the party walks back in.
+/// A scene's own flags, cleared on every ordinary entry (Scene_Arrive): puzzles
+/// reset when the party walks back in.
 #define FLAG_SCENE_TEMP_FIRST 0x200
 #define FLAG_SCENE_TEMP_LAST 0x2ff ///< the last of the scene's 256 flags
 /// An area's flags, kept while the party moves between the scenes of one
@@ -202,8 +199,8 @@
 #define FLAG_AREA_TEMP_FIRST 0x300
 #define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
 // Byte flags, read and written eight at a time.
-#define FLAG_LINK_PARTY_COUNT                                                  \
-  0x3f0 ///< the party members the linked opponent sent
+/// The party members the linked opponent sent.
+#define FLAG_LINK_PARTY_COUNT 0x3f0
 /// Monster Battles won in a row, added to the monsters' level; -1 after the
 /// series ends.
 #define FLAG_MONSTER_BATTLE_WINS 0x3f8
@@ -371,9 +368,9 @@
 /// it.
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
 /// Altin's stone statue stands where Move pushes it (altin.c's
-/// STONE_STATUE_MOVED_COLUMN). Checked
-/// after every Move (Altin_CheckStatueMoved), which clears it if the statue
-/// is anywhere else; the setup puts the statue back there while it is set.
+/// STONE_STATUE_MOVED_COLUMN). Checked after every Move
+/// (Altin_CheckStatueMoved), which clears it if the statue is anywhere else;
+/// the setup puts the statue back there while it is set.
 #define FLAG_ALTIN_STATUE_MOVED 0x906
 /// A barrel in the houses.
 #define FLAG_ALTIN_NUT 0xf73
@@ -453,7 +450,7 @@
 
 // Babi Palace
 /// The Colosso finals have been fought, won or lost; Babi's Palace, the
-/// Colosseum, the docks and Gondowan Passage take their after-Colosso people
+/// colosseum, the docks and Gondowan Passage take their after-Colosso people
 /// and talk.
 #define FLAG_COLOSSO_OVER 0x950
 /// The party won the finals.
@@ -508,7 +505,7 @@
 #define FLAG_BILIBIN_HARD_NUT 0xf54
 
 // Colosso
-/// The trial attendant in the Colosseum's stands has shown the party a warrior
+/// The trial attendant in the colosseum's stands has shown the party a warrior
 /// failing his trial and explained it; the next time, he shows one clearing
 /// his.
 #define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3
@@ -522,7 +519,7 @@
 /// passages east of the waiting room lead to Colosseum Final 3.
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
 // XXX: no code of this game reads it; a reader would say what it changes.
-/// The soldiers have taken the party into the Colosseum on the finals day.
+/// The soldiers have taken the party into the colosseum on the finals day.
 #define FLAG_COLOSSEUM_FINALS_ENTERED 0x93f
 // Also FLAG_COLOSSO_OVER: the colosseum is closed until next year.
 // Also FLAG_BABI_SAVED: the trials are over, the finals day.
@@ -1542,10 +1539,9 @@
 /// Buried, found by searching.
 #define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf
 
-/// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF:
-/// Scene_Arrive clears them on every ordinary entry, and each
-/// scene keeps its own puzzle and event states in them. A scene says beside its
-/// uses what each one holds there.
+/// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: Scene_Arrive clears
+/// them on every ordinary entry, and each scene keeps its own puzzle and event
+/// states in them. A scene says beside its uses what each one holds there.
 #define FLAG_SCENE_TEMP_00 0x200
 #define FLAG_SCENE_TEMP_01 0x201
 #define FLAG_SCENE_TEMP_02 0x202
@@ -1803,11 +1799,10 @@
 #define FLAG_SCENE_TEMP_FE 0x2fe
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
-/// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF:
-/// Scene_Arrive clears them whenever the party enters a different
-/// area, so they keep what should last while the party is
-/// anywhere inside one area, such as where Fuchin Falls Cave's logs
-/// float. A scene says beside its uses what each one holds there.
+/// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF: Scene_Arrive clears them
+/// whenever the party enters a different area, so they keep what should last
+/// while the party is anywhere inside one area, such as where Fuchin Falls
+/// Cave's logs float. A scene says beside its uses what each one holds there.
 #define FLAG_AREA_TEMP_00 0x300
 #define FLAG_AREA_TEMP_01 0x301
 #define FLAG_AREA_TEMP_02 0x302

@@ -17,9 +17,8 @@ extern char SceneId_FileScreen;
 #define SCENE_FILE_SCREEN ((s32)&SceneId_FileScreen)
 extern char SceneId_WorldMap;
 #define SCENE_WORLD_MAP ((s32)&SceneId_WorldMap)
-/// The World Map's map, row 1 of gMaps (field/scenes.s names it with
-/// the World Map's scene row), which the field compares
-/// gMainRoutineWork.mapId with.
+/// The World Map's map, row 1 of gMaps (field/scenes.s names it with the World
+/// Map's scene row), which the field compares gMainRoutineWork.mapId with.
 extern char MapIndex_World;
 #define MAP_INDEX_WORLD ((s32)&MapIndex_World)
 /// Vale on the stormy night of the prologue, which Camelot labels PLOGV00.
@@ -447,6 +446,9 @@ extern char SceneId_TolbiSpring;
 #define SCENE_TOLBI_SPRING ((s32)&SceneId_TolbiSpring)
 extern char SceneId_BattleArena;
 #define SCENE_BATTLE_ARENA ((s32)&SceneId_BattleArena)
+/// The debug rooms, which only the debug scene selector reaches. Test 0 to
+/// Test 7 are one room (debug/test_scenes.c), where talking to Flint, Fizz,
+/// Forge or Gust gives that Djinni.
 extern char SceneId_Test0;
 #define SCENE_TEST_0 ((s32)&SceneId_Test0)
 extern char SceneId_Test1;
@@ -463,8 +465,12 @@ extern char SceneId_Test6;
 #define SCENE_TEST_6 ((s32)&SceneId_Test6)
 extern char SceneId_Test7;
 #define SCENE_TEST_7 ((s32)&SceneId_Test7)
+/// Increase item and level, whose actors raise the party's levels and give
+/// any item (debug/level.c).
 extern char SceneId_IncreaseItemAndLevel;
 #define SCENE_INCREASE_ITEM_AND_LEVEL ((s32)&SceneId_IncreaseItemAndLevel)
+/// Menu test, whose actors each test the menus, the shops or the bags
+/// (debug/test.c).
 extern char SceneId_MenuTest;
 #define SCENE_MENU_TEST ((s32)&SceneId_MenuTest)
 

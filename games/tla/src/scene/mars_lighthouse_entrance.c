@@ -1023,12 +1023,13 @@ extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
 
 /// Felix steps onto cell (52, 8) in the Valkyrie Mail rooms' long hall, at
-/// the head of the slide down the ice: with a click the dragon face at the
-/// hall's east end wakes and begins its slow crawl west breathing fire, and
-/// the game can no longer be saved. Felix has to cross the ice ahead of it.
-// XXX: what happens if the face reaches the hall's west end before Felix is
-// through (the walkthrough says a great fireball sends him back to the start);
-// a render that waits there would settle it.
+/// the head of the slide down the ice: with a click the dragon face wakes,
+/// and the game can no longer be saved. Great fireballs roll east along the
+/// ice towards him, shattering the ice blocks in their way and bursting into
+/// flames at the hall's east end, and the face crawls along the hall's north
+/// wall, coming east almost to Felix, then turning and crawling back west out
+/// of sight, still spitting fire. Felix has to cross the ice ahead of it.
+/// While he stays at the head of the slide nothing else happens to him.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
   Event_PlaySound(SE_BUTTON_PRESS);
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);

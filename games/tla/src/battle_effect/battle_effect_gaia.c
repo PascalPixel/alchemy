@@ -30,6 +30,9 @@
 /// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
 /// rows, the standing wall's top and foot, then the flames.
 #define GAIA_ROW_HEIGHT 32
+/// The rising wall's rows, narrowest first, and the flames at its foot.
+#define GAIA_ROW_PICTURES 9
+#define GAIA_FLAME_PICTURES 3
 /// The standing wall's top, stretched from a 48x32 row, and its foot.
 #define GAIA_WALL_TOP_WIDTH 48
 #define GAIA_WALL_TOP_HEIGHT 96
@@ -116,7 +119,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   src = Ram_MapCellBuffer;
   sheetIndex = 0;
-  for (j = 0; j != 9; j++) {
+  for (j = 0; j != GAIA_ROW_PICTURES; j++) {
     for (i = 0; i != GAIA_ROW_HEIGHT; i++) {
       for (k = 0; k != gGaia_RowWidths[j]; k++, sheetIndex++)
         work->sheet[sheetIndex] = src[k];
@@ -132,7 +135,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   for (i = 0; i != GAIA_WALL_FOOT_WIDTH * GAIA_WALL_FOOT_HEIGHT; i++)
     work->sheet[sheetIndex++] = *src++;
-  for (i = 0; i != 3; i++) {
+  for (i = 0; i != GAIA_FLAME_PICTURES; i++) {
     for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       work->sheet[sheetIndex++] = *src++;
   }
@@ -389,8 +392,6 @@ struct SpriteAnimation *AnimationObject_AllocateEmpty(void) {
   return found;
 }
 
-struct SpriteAnimation;
-
 /// A struct Sprite as EffectSprite_CreateWithTiles searches and fills it: its
 /// OAM attributes and its shadow's written as words.
 struct SpriteWords {
@@ -407,21 +408,23 @@ struct SpriteWords {
   s32 scale;
   u8 slot;
   u8 retainCacheEntry : 1;
-  u8 otherFlags : 7;
+  u8 useOwnScale : 1;
+  u8 sunkRows : 6;
   u16 rotation;
   u8 width;
   u8 height;
   u8 offsetX;
   u8 offsetY;
-  u8 lastNoAndDirty[2];
+  u8 lastNo;
+  u8 dirty;
   u8 flags;
   u8 count;
   /// The shadow's link, attributes 0 and 1, and attribute 2.
   s32 shadowLink;
   s32 shadowAttributes;
   s32 shadowTile;
-  struct SpriteAnimation *entry;
-  u8 moreEntries[12];
+  struct SpriteAnimation *entry; ///< its first layer
+  struct SpriteAnimation *otherEntries[3];
 };
 
 /// Makes an effect sprite with tiles of its own in object VRAM: a free VRAM
@@ -434,7 +437,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   s32 vramEntry = VramCache_FindFreeEntry();
   struct SpriteWords *sprite = Ram_HeapSlots->sprites;
   s32 i = 0;
-  struct ActorSystemWork *objects;
+  struct ActorSystemWork *actorSystem;
   s32 size;
   s32 tile;
   struct VramCacheEntry *entries;
@@ -481,12 +484,12 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   sprite->flags = 0;
   Sprite_StartAnimationFar(sprite, 0);
 
-  objects = Ram_HeapSlots->actorSystem;
+  actorSystem = Ram_HeapSlots->actorSystem;
   size = sprite->width * sprite->height;
   if (!(attributes & OBJ_256_COLORS))
     size = (u32)size >> 1;
   VramCache_Load(sprite->slot, size, 0);
-  objects->used += size;
+  actorSystem->used += size;
   sprite->oam.bits.tile = entries[sprite->slot].offset >> 5;
   return found;
 }
@@ -502,6 +505,8 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 #undef GAIA_DUST
 #undef GAIA_DUST_SHOWN
 #undef GAIA_ROW_HEIGHT
+#undef GAIA_ROW_PICTURES
+#undef GAIA_FLAME_PICTURES
 #undef GAIA_WALL_TOP_WIDTH
 #undef GAIA_WALL_TOP_HEIGHT
 #undef GAIA_WALL_FOOT_WIDTH

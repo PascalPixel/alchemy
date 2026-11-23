@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
 /// Where the small Djinni sheet is decoded in the effect's pictures, as
 /// The Broken Seal places it.
 #define GASP_DJINNI_PICTURE 26048
@@ -71,6 +69,10 @@ struct StripQuad;
 #define GASP_SWIRL_MOTES 48
 #define GASP_SWIRL_MOTE_FRAMES 32
 #define GASP_SWIRL_SCALE (FIXED_ONE * 375 / 512)
+/// The swirl grows to its full scale over its first 32 frames, and shrinks
+/// away twice as fast.
+#define GASP_SWIRL_GROWTH (GASP_SWIRL_SCALE / 32)
+#define GASP_SWIRL_SHRINK (GASP_SWIRL_SCALE / 16)
 
 /// Shine: the Djinni glides a GASP_SHINE_GLIDE-th of the way to over the user
 /// a frame, then falls onto the target a GASP_SHINE_FALL-th of the way more
@@ -131,13 +133,13 @@ struct StripQuad;
 /// GASP_PSY_BOOST_RING_FRAMES.
 #define GASP_PSY_BOOST_RING_FRAMES 16
 
-/// The shared body of sixteen abilities' effects, named for the first (its
-/// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
-/// and Meld (4), Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and
-/// its kind's four other abilities (9), Call Dullahan and Formina Sage (10),
-/// Beat Dance (11), Element Swap (12), Cage (13), Clarion Cry (14) and Psy
-/// Boost (15). Mode 1 has no caller. Each mode loads its own sheets, then draws
-/// a canvas layer and a model layer every frame for the mode's length.
+/// The shared body of sixteen abilities' effects, named for the first; the
+/// wrappers in rime.c pick a GaspMode: Gasp, Reflux, Djinn Counter, Mold and
+/// Meld, Shine, Lull, Counter-rush, Demon Eye, Emu and its kind's four other
+/// abilities, Call Dullahan and Formina Sage, Beat Dance, Element Swap, Cage,
+/// Clarion Cry and Psy Boost. GASP_MODE_UNUSED has no caller. Each mode loads
+/// its own sheets, then draws a canvas layer and a model layer every frame for
+/// the mode's length.
 void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -685,6 +687,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       model->vertices = verts;
+      // One ring: the loop that could start another every 32 frames runs once.
       for (k = 0; k != 1; k++) {
         if (frame >= k * 32) {
           s32 t = frame - k * 32;
@@ -1087,8 +1090,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 0) {
         void *user = BattleObject_GetFar(args->user)->object;
 
-        Actor_SelectAnimationFar(user, 0);
-        Actor_SelectAnimationFar(user, 2);
+        // Another pose first, so that the leap starts over, held on its first
+        // picture until frame 14.
+        Actor_SelectAnimationFar(user, POSE_ENEMY_HELD);
+        Actor_SelectAnimationFar(user, POSE_LEAP);
         Actor_SetAnimationSpeedFar(user, 0);
         Sound_PlayFar(SE_POWER_UP);
       }
@@ -1352,6 +1357,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           }
         }
       }
+      // Three steps a frame towards each Djinni's colours in turn.
       for (i = 0; i != 3; i++) {
         if (frame > 7) {
           if (frame <= 15)
@@ -1431,16 +1437,18 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       texture.pixels = work->sheet;
       if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
         if (frame <= 31)
-          scale = frame * 1500;
+          scale = frame * GASP_SWIRL_GROWTH;
         else if (frame > 59)
-          scale = 228000 - frame * 3000;
+          scale = GASP_SWIRL_SCALE + 60 * GASP_SWIRL_SHRINK -
+                  frame * GASP_SWIRL_SHRINK;
         else
           scale = GASP_SWIRL_SCALE;
       } else {
         if (frame <= 31)
-          scale = frame * 1500;
+          scale = frame * GASP_SWIRL_GROWTH;
         else if (frame > 39)
-          scale = 168000 - frame * 3000;
+          scale = GASP_SWIRL_SCALE + 40 * GASP_SWIRL_SHRINK -
+                  frame * GASP_SWIRL_SHRINK;
         else
           scale = GASP_SWIRL_SCALE;
       }

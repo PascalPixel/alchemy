@@ -106,7 +106,7 @@ s32 ItemMenu_Run(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Menu_InitializeWork(0);
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
@@ -1418,7 +1418,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 }
 
 /// Shows party member ownerId's items in the item window, laid out for layout
-/// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
+/// mode (see ItemMenu_PlaceItemIcons), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   struct ItemMenuWork *menu;
   struct Unit *owner;
@@ -1429,7 +1429,7 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   items = menu->items;
   menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
   WindowSprite_RedrawSavedRectFar(menu->itemWindow);
-  ItemMenu_RefreshEntry(mode);
+  ItemMenu_PlaceItemIcons(mode);
   ItemMenu_DrawIcons(items, 0);
   if (ItemMenu_CountItems(ownerId) == 0)
     Text_DrawMessageAsTilesFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8, 24);
@@ -1957,7 +1957,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item);
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
-  Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, 2);
+  Window_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, WINDOW_FLAG_INSTANT);
   Palette_LoadIconsIntoHighlight();
 
   if (menu->selectedItems[itemIndex] != 0)
@@ -2929,7 +2929,7 @@ s32 ItemMenu_RunList(s32 pane) {
   result = 0;
   previous = 0;
   menu->equipPreview = result;
-  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, WINDOW_FLAG_INSTANT);
   window = menu->listWindow;
   done = 0;
 

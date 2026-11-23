@@ -65,8 +65,9 @@ struct Window;
 struct WindowSprite;
 struct DjinnMenuBackdrop;
 
-/// One 4-bit tile (backdrop.4bpp) the Start prompt blinks while a menu watches
-/// for Start (MENU_START_PROMPT_TILE), every four frames.
+/// The down arrow from the class now to the class an equipment would give
+/// (backdrop.4bpp), which Menu_WatchStart blinks every four frames at
+/// CLASS_CHANGE_ARROW_TILE.
 extern u8 gMenu_StartPromptTile[];
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 first);
 void Event_FinishScreenTransitionFar(void);

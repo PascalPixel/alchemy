@@ -70,7 +70,7 @@ s32 PartyMemberChooser_Open(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Menu_InitializeWork(0);
 
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
@@ -141,7 +141,7 @@ s32 StatusScreen_Run(void) {
   // Window 0 shows only the windows' layer and the sprites.
   transition->active = WININ_WIN0_BG0 | WININ_WIN0_OBJ;
   Menu_SuspendFieldTasks();
-  Window_InitializeWork(0);
+  Menu_InitializeWork(0);
   page = &state->page;
   *page = 0;
   state->partyCount = Party_ListMembersFar(state->memberIds);
@@ -626,7 +626,8 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   created = 0;
   handle = state->statusWindow;
   if (handle == 0) {
-    created = Window_UpdateOrCreate(&state->statusWindow, 0, 5, 30, 15, 2);
+    created = Window_UpdateOrCreate(&state->statusWindow, 0, 5, 30, 15,
+                                    WINDOW_FLAG_INSTANT);
     handle = state->statusWindow;
   }
   if (created != 0) {
@@ -679,7 +680,7 @@ s32 StatusScreen_SelectCommand(void) {
   selected = 0;
   result = 0;
   window = menu->statusWindow;
-  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->helpWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
   helpWindow = menu->helpWindow;
   if (Party_SumDjinnCountsFar(-1) != 0)
     hasDjinn = 1;
@@ -1474,7 +1475,7 @@ s32 PsynergyMenu_SelectAction(void) {
   result = 0;
   refresh = 2;
   listNeedsRedraw = 1;
-  Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
+  Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, WINDOW_FLAG_INSTANT);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
@@ -1789,7 +1790,8 @@ s32 ItemMenu_SelectItem(void) {
   refresh = 2;
   listNeedsRedraw = 1;
   owner = Unit_Get(menu->sideMember[0]);
-  Window_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, 2);
+  Window_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10,
+                        WINDOW_FLAG_INSTANT);
   Menu_SpawnIconEntries(menu, menu->questionWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
@@ -1931,19 +1933,19 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
        entryIndex <= MENU_ENTRY_ICONS - 1; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
-      Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
+      Menu_PlaceEntryIconInGrid(icon, entryIndex, originX, originY, columns);
     }
   }
 }
 
-/// The side of a cell of the grids Menu_PlaceEntryActorInGrid places icons in.
+/// The side of a cell of the grids Menu_PlaceEntryIconInGrid places icons in.
 #define ENTRY_ICON_CELL_SIZE 16
 
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
 /// ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY),
 /// and shows it.
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
-                                s32 originX, s32 originY, s32 columns) {
+void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
+                               s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
 
   entryIndex = index;

@@ -191,16 +191,16 @@ enum DjinnCompareOperation {
 #include "graphics/vram_tab.h"
 #include "window/item_icon.h"
 
-void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
-                                s32 originX, s32 originY, s32 columns);
-void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
-                                      s32 x, s32 y, s32 columns);
+void Menu_PlaceEntryIconInGrid(struct WindowSprite *icon, s32 index,
+                               s32 originX, s32 originY, s32 columns);
+void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **icons, s32 index, s32 x,
+                                 s32 y, s32 columns);
 void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,
                         s32 columns);
 void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
                       s32 height);
 
-/// The item menu's work, Ram_HeapSlots->menuWork (heap slot 220): its
+/// The item menu's work, Ram_HeapSlots->menuWork (HEAP_SLOT_MENU): its
 /// windows, the party figures, the items listed and the two choices a command
 /// makes. The Broken Seal's ItemMenuWork, whose names its members take: from
 /// itemWindow to the entry icons it lies 4 bytes further on than The Broken
@@ -326,7 +326,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 1289);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 3020);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 3090);
 
-/// The work of the party member chooser and the Status menu (heap slot 220),
+/// The work of the party member chooser and the Status menu (HEAP_SLOT_MENU),
 /// which each takes as it opens and frees before it returns. The Broken Seal's
 /// StatusScreenWork, laid out as ItemMenuWork is here.
 struct StatusScreenWork {
@@ -393,7 +393,7 @@ STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 544);
 STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 560);
 STATIC_ASSERT(sizeof(struct StatusScreenWork) == 576);
 
-/// The Psynergy menu's work (heap slot 220): its windows, icons and cursors,
+/// The Psynergy menu's work (HEAP_SLOT_MENU): its windows, icons and cursors,
 /// the party members' tabs and the Psynergy listed for the chosen party
 /// member. The Broken Seal's PsynergyMenuWork, laid out as ItemMenuWork is
 /// here. The menu's shared routines (MenuCursor_Create, MenuCursor_Slide,
@@ -474,8 +474,8 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 620);
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window);
-void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
-                             s32 work);
+void Text_DrawStatComparison(const struct Unit *after,
+                             const struct Unit *before, s32 window);
 void Text_DrawMessageAsTilesFar(s32 message, struct Window *window, s32 x,
                                 s32 y);
 

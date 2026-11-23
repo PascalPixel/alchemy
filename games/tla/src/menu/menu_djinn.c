@@ -82,7 +82,7 @@ s32 DjinnMenu_Run(void) {
   enabled = Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Menu_InitializeWork(0);
   backdrop = Heap_AllocEwram(sizeof(*backdrop));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
@@ -486,7 +486,7 @@ void Menu_OpenBackdropScreen(void) {
   s32 x;
   s32 y;
 
-  Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, WINDOW_FLAG_INSTANT);
   wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0),

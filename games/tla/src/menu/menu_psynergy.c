@@ -40,7 +40,7 @@ s32 PsynergyMenu_Run(void) {
   Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Menu_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), MENU_SAVED_TILE_BYTES);
@@ -398,9 +398,11 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   shown = 0;
   menu->mode = result;
   unit = Unit_Get(ownerIds[selection]);
-  if (Window_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10, 2))
+  if (Window_UpdateOrCreate(&menu->psynergyWindow, 13, 3, 17, 10,
+                            WINDOW_FLAG_INSTANT))
     Menu_SpawnIconEntries(menu, menu->psynergyWindow);
-  if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
+  if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4,
+                            WINDOW_FLAG_INSTANT)) {
     menu->cursorIcon = WindowSprite_CreateFromResourceFar(
         ICON_KIND_ITEM, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->motion = ICON_HIDDEN;
@@ -489,7 +491,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   menu->psynergyCount =
       PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
-  PsynergyMenu_RefreshMemberEntries(108, 32, 8);
+  PsynergyMenu_PlaceEntryIcons(108, 32, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
   if (menu->psynergyCount == 0) {
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyMenuEmpty, menu->psynergyWindow,
@@ -1036,7 +1038,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   previous = 0;
   shortcutHelp = 0;
   menu->sideIcon[paneIndex]->motion = ICON_HIDDEN;
-  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
+  Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, WINDOW_FLAG_INSTANT);
   window = menu->listWindow;
   done = 0;
 

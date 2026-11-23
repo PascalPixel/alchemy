@@ -9,7 +9,8 @@
 #include "sounds.h"
 
 /// Window_UpdateOrCreate: keep an existing window as it is, without redrawing
-/// its saved rectangle. The low byte of the flags is the window style.
+/// its saved rectangle. The low byte of its flags is the new window's
+/// (WINDOW_FLAG_*).
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
@@ -38,7 +39,7 @@ s32 Menu_SuspendFieldTasks(void) {
 
 /// Clears the whole menu work and sets its defaults: no side selected, one
 /// entry in each side, and a 1x1 cursor grid.
-void Window_InitializeWork(s32 unused) {
+void Menu_InitializeWork(s32 unused) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   Dma_Fill32(0, menu, MENU_WORK_SIZE);
@@ -56,7 +57,6 @@ void WindowSprite_RedrawSavedRectFar(struct Window *window);
 
 /// Creates *handle's window if absent and returns 1. Otherwise returns 0,
 /// redrawing its saved rectangle unless flags has WINDOW_KEEP_EXISTING set.
-/// flags: the low 8 bits select the window style.
 s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
   struct Window *window;
   s32 style;
@@ -74,11 +74,11 @@ s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
   return 1;
 }
 
-/// Closes *handle's window if present, with style, then sets the handle to
-/// NULL.
-void Window_CloseIfOpen(void **handle, s32 style) {
+/// Closes *handle's window if present, erasing it at once when release is set,
+/// then sets the handle to NULL.
+void Window_CloseIfOpen(void **handle, s32 release) {
   if (*handle != NULL) {
-    Window_CloseFar(*handle, style);
+    Window_CloseFar(*handle, release);
     *handle = NULL;
   }
 }
@@ -151,8 +151,8 @@ void *Portrait_CreateFar(s32 owner, s32 position, s32 side,
                          struct Window *window, s32 x, s32 y);
 void Unit_UpdateClassFar(s32 owner);
 
-/// Draws the status panel of the Item and Psynergy screens for the party
-/// party member `member` (window at tile 0,5, 13 by 12): the name, up to two
+/// Draws the status panel of the Item and Psynergy screens for party member
+/// owner (window at tile 0,5, 13 by 12): the name, up to two
 /// statuses or the level, the party member's portrait, and below them what
 /// mode's panel kind asks for. slot is the inventory slot of the item the panel
 /// is about, for the equipment and Psynergy item panels. The first parameter,
@@ -181,7 +181,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
     created = Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
-                                    WINDOW_KEEP_EXISTING | 2);
+                                    WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT);
   window = state->statusWindow;
 
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
@@ -348,11 +348,8 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
 /// so it only bounds the loop.
 #define DIGIT_COUNT_LIMIT 16
 
-/// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
-/// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
-/// adds one for each division by ten that leaves 10 or more, then adds the
-/// leading digit; a number under 10 has its one digit counted as both, which
-/// is where the minimum of 2 comes from.
+/// Returns how many decimal digits number has, but at least 2: a number under
+/// 10 has its one digit counted twice, as the units and as the leading digit.
 static inline s32 CountDigitsAtLeastTwo(s32 number) {
   s32 count;
 
@@ -366,26 +363,11 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
   return count;
 }
 
-/// Draws number right-aligned in a field that ends at pixel column x and
-/// allows 8 pixels for each digit, at least two digits wide.
-///
-/// The international editions draw a character's HP and PP with it
-/// (StatusPanel_DrawHpPp). The Japanese editions draw those figures in
-/// four-character fields padded with spaces, which keeps the digits in line
-/// because the Japanese font's space is as wide as a digit (7 pixels). The
-/// Latin font's space is 5 pixels, so here each figure gets a field as wide
-/// as its digits instead.
-///
-/// The number writer draws the digits 7 pixels apart, so a number ends about
-/// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
-/// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
-/// before x.
-///
-/// number: the value to draw, 0 or more
-/// window: the window to draw in, its struct Window pointer held as an
-///         s32, as its callers hold it
-/// x:      the field's right edge, in pixels within the window
-/// y:      the pixel row of the text, within the window
+/// Draws number right-aligned in a field ending at pixel x of window, 8 pixels
+/// a digit and at least two digits wide: the HP and PP figures outside Japan.
+/// Japanese pads them with spaces, its font's space as wide as a digit; the
+/// Latin font's space is narrower, so each figure gets a field as wide as its
+/// digits instead.
 void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
 
@@ -397,14 +379,9 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 
 #endif
 
-/// Draws a character's HP and PP into window as two rows, "HP current/maximum"
-/// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
-/// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
-/// then the colour goes back to 15, the default text colour.
-///
-/// unit:   the character whose figures are drawn
-/// window: the window to draw in, its struct Window pointer held as an
-///         s32
+/// Draws a party member's HP and PP into window as two rows, "HP
+/// current/maximum" at pixel row 40 and "PP current/maximum" at row 48. The
+/// current HP is yellow below a quarter of the maximum, and red at 0.
 void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
   s16 value; // each figure in turn
 
@@ -467,39 +444,39 @@ enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 /// Writes Attack, Defense and Agility into a status window as they are now
 /// (before), and beside each one that changes its new value (after) with an up
 /// or down arrow: the equipment preview.
-void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
-                             s32 work) {
-  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct Window *)work, 0,
+void Text_DrawStatComparison(const struct Unit *after,
+                             const struct Unit *before, s32 window) {
+  Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct Window *)window, 0,
                              32);
-  Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
-  if (alt->atk != base->atk) {
-    Text_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
-    if (alt->atk > base->atk) {
-      Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_UP);
+  Text_DrawNumberAtOffsetFar(before->atk, 3, window, 16, 40);
+  if (after->atk != before->atk) {
+    Text_DrawNumberAtOffsetFar(after->atk, 3, window, 64, 40);
+    if (after->atk > before->atk) {
+      Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_DOWN);
+      Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
     }
   }
-  Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel, (struct Window *)work,
+  Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel, (struct Window *)window,
                              0, 48);
-  Text_DrawNumberAtOffsetFar(base->def, 3, work, 16, 56);
-  if (alt->def != base->def) {
-    Text_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
-    if (alt->def > base->def) {
-      Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_UP);
+  Text_DrawNumberAtOffsetFar(before->def, 3, window, 16, 56);
+  if (after->def != before->def) {
+    Text_DrawNumberAtOffsetFar(after->def, 3, window, 64, 56);
+    if (after->def > before->def) {
+      Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_DOWN);
+      Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
     }
   }
-  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct Window *)work, 0,
+  Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct Window *)window, 0,
                              64);
-  Text_DrawNumberAtOffsetFar(base->agi, 3, work, 16, 72);
-  if (alt->agi != base->agi) {
-    Text_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
-    if (alt->agi > base->agi) {
-      Icon_CreateStatChangeArrow(work, 44, 68, STAT_ARROW_UP);
+  Text_DrawNumberAtOffsetFar(before->agi, 3, window, 16, 72);
+  if (after->agi != before->agi) {
+    Text_DrawNumberAtOffsetFar(after->agi, 3, window, 64, 72);
+    if (after->agi > before->agi) {
+      Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 68, STAT_ARROW_DOWN);
+      Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);
     }
   }
 }
@@ -519,15 +496,14 @@ s32 Icon_CreateWithResource(struct Window *window, s32 x, s32 y) {
   return icon;
 }
 
-/// Turns an icon's window sprite on and copies its screen position into its
-/// OAM attributes, with no affine matrix.
-void Icon_PrepareActor(struct WindowSprite *object) {
-  if (object != NULL) {
-    object->motion = ICON_SHOWN;
-    object->sprite.oam.x = object->x;
-    object->sprite.oam.y = object->y;
-    object->sprite.oam.matrix = 0;
-    object->sprite.oam.affineMode = 0;
+/// Shows an icon at its place, unscaled.
+void Icon_PrepareActor(struct WindowSprite *icon) {
+  if (icon != NULL) {
+    icon->motion = ICON_SHOWN;
+    icon->sprite.oam.x = icon->x;
+    icon->sprite.oam.y = icon->y;
+    icon->sprite.oam.matrix = 0;
+    icon->sprite.oam.affineMode = 0;
   }
 }
 
@@ -547,7 +523,8 @@ struct Window *MenuCursor_Create(void *source) {
   s32 slot;
 
   menu->auxiliaryWindow = NULL;
-  Window_UpdateOrCreate((s32 *)&menu->auxiliaryWindow, 0, 0, 13, 5, 2);
+  Window_UpdateOrCreate((s32 *)&menu->auxiliaryWindow, 0, 0, 13, 5,
+                        WINDOW_FLAG_INSTANT);
   window = menu->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
   icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
@@ -686,16 +663,16 @@ void MenuCursor_Slide(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-void PsynergyMenu_RefreshMemberEntries(s32 x, s32 y, s32 width);
+void PsynergyMenu_PlaceEntryIcons(s32 x, s32 y, s32 width);
 
-/// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
-void PsynergyMenu_RefreshMemberEntriesDefault(void) {
-  PsynergyMenu_RefreshMemberEntries(108, 40, 8);
+/// Unused: lays the entry icons out eight to a row from (108, 40).
+UNUSED void PsynergyMenu_PlaceEntryIconsDefault(void) {
+  PsynergyMenu_PlaceEntryIcons(108, 40, 8);
 }
 
 /// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
 /// columns wide, from (originX, originY); empty slots keep their place.
-void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
+void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   s32 index;
@@ -705,17 +682,18 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   scan = slot;
   do {
     if (*scan++ != NULL) {
-      PsynergyMenu_PositionMemberEntry(slot, index, originX, originY, columns);
+      PsynergyMenu_PlaceEntryIcon(slot, index, originX, originY, columns);
     }
     index++;
     slot++;
   } while (index < MENU_ENTRY_ICONS);
 }
 
-/// Places the icon in *slot at grid cell index (0 above 31) of a grid of
-/// 16x16 cells, columns wide, from (originX, originY), and shows it.
-void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
-                                      s32 originX, s32 originY, s32 columns) {
+/// Places the icon in *slot at cell index of a grid of 16x16 cells, columns
+/// wide, from (originX, originY), and shows it; an index past the last entry
+/// is taken as 0.
+void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **slot, s32 index,
+                                 s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
 
   if (index > MENU_ENTRY_ICONS - 1) {
@@ -727,8 +705,9 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
   Icon_PrepareActor(icon);
 }
 
-/// Places the icon in *slot at slotIndex (0 above INVENTORY_SLOTS) in a
-/// columns-wide grid of 24x16 cells from (originX, originY), and shows it.
+/// Places the icon in *slot at slotIndex in a columns-wide grid of 24x16 cells
+/// from (originX, originY), and shows it; a slotIndex past INVENTORY_SLOTS is
+/// taken as 0.
 void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
                         s32 originY, s32 columns) {
   struct WindowSprite *icon;
@@ -743,7 +722,7 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
 
 /// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
 /// y): y is 56 for layout 1 and 40 otherwise.
-void ItemMenu_RefreshEntry(s32 layout) {
+void ItemMenu_PlaceItemIcons(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
   struct WindowSprite *icon;
@@ -790,7 +769,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
-                              WINDOW_KEEP_EXISTING | 2) == 0)
+                              WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT) == 0)
       Window_SetBounds(menu->modalWindow, x, y, width, height);
     window = menu->modalWindow;
   } else {
@@ -991,6 +970,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   if (previous) {
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     if (--*cursor < 0) {
+      // DEAD: a store the next overwrites; the ROM keeps it.
       *cursor = pageSize - 1;
       *cursor = count - *page * pageSize - 1;
       if (*cursor > pageSize - 1)
@@ -1191,7 +1171,7 @@ s32 Sound_PlayReturnOne(s32 cue) {
   return 1;
 }
 
-/// A VBlank task while the menus watch for Start: blinks the class change's
+/// A task while the menus watch for Start: blinks the class change's down
 /// arrow every four frames, and on Start plays the cancel sound, sets
 /// FLAG_MENU_START_PRESSED and removes itself.
 void Menu_WatchStart(void) {
@@ -1240,18 +1220,14 @@ void Menu_StopWatchingStart(void) {
   }
 }
 
-/// Draws the next text in TEXT_COLOR_NORMAL.
-UNUSED void UiPalette_SetNormalColor(void) {
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
-}
+/// Unused: draws the next text in TEXT_COLOR_NORMAL.
+UNUSED void Text_SetNormalColor(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
 
-/// Draws the next text in TEXT_COLOR_RED.
-UNUSED void UiPalette_SetRedColor(void) { Text_SetColorFar(TEXT_COLOR_RED); }
+/// Unused: draws the next text in TEXT_COLOR_RED.
+UNUSED void Text_SetRedColor(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 
-/// Draws the next text in TEXT_COLOR_YELLOW.
-UNUSED void UiPalette_SetYellowColor(void) {
-  Text_SetColorFar(TEXT_COLOR_YELLOW);
-}
+/// Unused: draws the next text in TEXT_COLOR_YELLOW.
+UNUSED void Text_SetYellowColor(void) { Text_SetColorFar(TEXT_COLOR_YELLOW); }
 
 #undef STATUS_PANEL_LEARN_NOTE_Y
 #undef DIGIT_COUNT_LIMIT

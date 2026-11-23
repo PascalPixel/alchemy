@@ -125,6 +125,11 @@ enum JupiterLighthouseWhorlCellBehavior {
 #define BLOCK_LANDING_FRAMES 30
 /// The way in from the bridge's floor, through its west arch.
 #define ENTRANCE_FROM_BRIDGE_FLOOR 12
+/// The first of the two ways into the east hall; the other is the next.
+#define ENTRANCE_EAST_HALL_FIRST 3
+/// The stakes are stone ones, in stake.png's second look (Actor_SetCellOpen's
+/// kind).
+#define STAKE_STONE 1
 
 /// The whorl's actors, numbering its placement table.
 enum JupiterLighthouseWhorlActorId {
@@ -310,42 +315,48 @@ s32 JupiterLighthouse_CountBlocksInGaps(void) {
 void JupiterLighthouse_DrawBlocksInGaps(void) {
   // Every gap empty, two height steps deep, and no Hover tile.
   MapGrid_CopyCellsLayered(94, 60, 9, 8, 94, 10);
-  Call4((void (*)())MapGrid_SetCellHeight, toFIXED(560), toFIXED(240), 0, -2);
-  Call4((void (*)())MapGrid_SetCellHeight, toFIXED(496), toFIXED(256), 0, -2);
-  Call4((void (*)())MapGrid_SetCellHeight, toFIXED(528), toFIXED(160), 0, -2);
-  FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160), 2, 0);
-  FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 2, 0);
-  FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224), 2, 0);
+  Call4((void (*)())MapGrid_SetCellHeight, toFIXED(560), toFIXED(240),
+        MAPGRID_LAYER_GROUND, -2);
+  Call4((void (*)())MapGrid_SetCellHeight, toFIXED(496), toFIXED(256),
+        MAPGRID_LAYER_GROUND, -2);
+  Call4((void (*)())MapGrid_SetCellHeight, toFIXED(528), toFIXED(160),
+        MAPGRID_LAYER_GROUND, -2);
+  FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160),
+                               MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_NORMAL);
+  FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160),
+                               MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_NORMAL);
+  FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224),
+                               MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_NORMAL);
   if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
       Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
-    MapGrid_SetCellHeight(toFIXED(560), toFIXED(240), 0, 0);
+    MapGrid_SetCellHeight(toFIXED(560), toFIXED(240), MAPGRID_LAYER_GROUND, 0);
   if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
       Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)))
-    MapGrid_SetCellHeight(toFIXED(496), toFIXED(256), 0, 0);
+    MapGrid_SetCellHeight(toFIXED(496), toFIXED(256), MAPGRID_LAYER_GROUND, 0);
   if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)) ||
       Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
-    MapGrid_SetCellHeight(toFIXED(528), toFIXED(160), 0, 0);
+    MapGrid_SetCellHeight(toFIXED(528), toFIXED(160), MAPGRID_LAYER_GROUND, 0);
   if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP))) {
     MapGrid_CopyCellsLayered(96, 56, 7, 2, 96, 15);
     MapGrid_CopyCellsLayered(111, 51, 1, 1, 99, 15);
     if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP))) {
       MapGrid_CopyCellsLayered(105, 51, 1, 3, 95, 14);
-      FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224), 2,
-                                   CELL_BEHAVIOR_HOVER);
+      FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224),
+                                   MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_HOVER);
     }
     if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
       MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   } else if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP))) {
     MapGrid_CopyCellsLayered(98, 51, 5, 1, 98, 10);
     MapGrid_CopyCellsLayered(99, 52, 4, 5, 99, 11);
-    FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160), 2,
-                                 CELL_BEHAVIOR_HOVER);
+    FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160),
+                                 MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_HOVER);
     if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)))
       MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP))) {
       MapGrid_CopyCellsLayered(109, 51, 3, 1, 95, 10);
-      FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 2,
-                                   CELL_BEHAVIOR_HOVER);
+      FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160),
+                                   MAPGRID_LAYER_OVERHEAD, CELL_BEHAVIOR_HOVER);
     }
   } else {
     if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)))
@@ -382,7 +393,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(80, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(80, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(78, 47, 1, 1, 8, 74);
-    MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), 0, 4);
+    MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), MAPGRID_LAYER_GROUND, 4);
     if (mode == 1) {
       for (frame = 0; frame <= 15; frame++) {
         for (i = 0; i <= 5; i++) {
@@ -406,7 +417,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(72, 46, 1, 7, 72, 9);
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(70, 47, 1, 1, 8, 74);
-    MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), 0, 6);
+    MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), MAPGRID_LAYER_GROUND, 6);
     FieldActor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(ACTOR_THIRD_PATH_BLOCK, 0, 0);
     if (mode == 1) {
@@ -438,9 +449,10 @@ void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   if (id == ACTOR_THIRD_PATH_BLOCK) {
-    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 6);
-    MapGrid_ClearAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0,
-                                  MAP_CELL_JUMP);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
+                          6);
+    MapGrid_ClearAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
+                                  MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
 }
 
@@ -494,6 +506,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     if (place == STRAIGHT_BLOCK_IN_NORTH_GAP &&
         Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
       Event_PlaySound(SE_MAP_TRANSITION);
+    // The block is drawn into the floor now, its actor put away.
     Actor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(id, 0, 0);
     if (JupiterLighthouse_CountBlocksInGaps() != 2 ||
@@ -538,9 +551,10 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, actor->layer,
                                  CELL_BEHAVIOR_WALL);
   } else {
-    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 8);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0,
-                                MAP_CELL_JUMP);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
+                          8);
+    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
+                                MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
 }
 
@@ -728,7 +742,9 @@ void LightSprites_AddCounted();
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
+  // In the east hall the leader is drawn by the cells under him, never hidden
+  // behind the rises in front.
+  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_EAST_HALL_FIRST) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;
@@ -778,7 +794,7 @@ s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer);
 /// west hall's path follow. Returns 0.
 s32 Scene_PrepareMap(void) {
   struct Actor *actor;
-  s32 value;
+  s32 height;
 
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(1);
@@ -815,10 +831,12 @@ s32 Scene_PrepareMap(void) {
   JupiterLighthouse_DrawBlocksInGaps();
   if (!Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
     actor = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
-    value = MapGrid_GetCellHeight(actor->x.fixed, actor->z.fixed, 0);
-    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, value + 2);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0,
-                                MAP_CELL_JUMP);
+    height = MapGrid_GetCellHeight(actor->x.fixed, actor->z.fixed,
+                                   MAPGRID_LAYER_GROUND);
+    MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, MAPGRID_LAYER_GROUND,
+                          height + 2);
+    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed,
+                                MAPGRID_LAYER_GROUND, MAP_CELL_JUMP);
   }
   JupiterLighthouse_LightWestPath(0);
   return 0;
@@ -830,7 +848,7 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Restarts the palette cycle at the given frame.
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -907,6 +925,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add_counted.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -964,7 +983,7 @@ s16 gJupiterLighthouse_WestPathCells[][2] = {
 /// The two stakes Pound sinks: each stake, its kind and the flag set once it is
 /// sunk, ended by -1.
 LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
-    ACTOR_EAST_STAKE, 1, FLAG_EAST_STAKE_SUNK, ACTOR_WEST_STAKE, 1, FLAG_WEST_STAKE_SUNK, -1, 0,
+    ACTOR_EAST_STAKE, STAKE_STONE, FLAG_EAST_STAKE_SUNK, ACTOR_WEST_STAKE, STAKE_STONE, FLAG_WEST_STAKE_SUNK, -1, 0,
 };
 
 #define SCENE_ENTRANCES_SECTION LATE_DATA
@@ -1021,6 +1040,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STRAIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CORNER_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CORNER_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
+    // A push trigger answers every pushed actor; its 35 is never compared.
     {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
     {TRIGGER_PUSHED, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THIRD_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
@@ -1045,7 +1065,9 @@ LATE_DATA s32 gPaletteCycleFrame = -1;
 LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
 LATE_DATA s32 gWhirlwindEndScript[] = {
-    39, 5, 0, 12, 38,
+    SC_ANIMATION(5),
+    SC_WAIT(12),
+    SC_RELEASE,
 };
 // clang-format on
 

@@ -7,13 +7,20 @@
 /// the lighthouse is unlit.
 #define UNLIT_PALETTE (CYCLE_PALETTE + 1)
 
-/// Keeps a copy of the room's cycling palette and of UNLIT_PALETTE (mode 2
-/// keeps the copies it has), then starts the cycle once the lighthouse is lit
-/// (FLAG_JUPITER_LIGHTHOUSE_ACTIVATED), or for mode 1 whatever the flag; else
-/// the cycle's places show the unlit colours.
+/// How JupiterLighthouse_LoadPalettes treats a room.
+enum LighthousePalettes {
+  LIGHTHOUSE_PALETTES_BY_FLAG,    ///< lit once the lighthouse is
+  LIGHTHOUSE_PALETTES_LIT,        ///< lit whatever the flag
+  LIGHTHOUSE_PALETTES_KEEP_COPIES ///< by the flag, keeping the copies it has
+};
+
+/// Keeps a copy of the room's cycling palette and of UNLIT_PALETTE, then starts
+/// the cycle once the lighthouse is lit (FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
+/// else the cycle's places show the unlit colours. `mode` is enum
+/// LighthousePalettes.
 void JupiterLighthouse_LoadPalettes(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
+  if (mode != LIGHTHOUSE_PALETTES_KEEP_COPIES) {
     Iwram_CopyWordsEntry(gPaletteCycleColors,
                          (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, 0),
                          PALETTE_BYTES);
@@ -21,7 +28,8 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
                          (void *)&BG_PLTT_COLOR(UNLIT_PALETTE, 0),
                          PALETTE_BYTES);
   }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
+  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
+      mode == LIGHTHOUSE_PALETTES_LIT) {
     PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
   } else {

@@ -66,10 +66,13 @@ struct ShopWork {
   /// The frames the hand cursor's next move takes (MenuCursor_Place):
   /// SHOP_CURSOR_ENTER_FRAMES into a new list, then a few a step.
   u8 cursorFrames;
-  u8 shopType;    ///< the stock row's type (enum ShopType)
-  s8 action;      ///< the counter chosen (enum ShopAction)
-  s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
-                  ///< none
+  u8 shopType; ///< the stock row's type (enum ShopType)
+  /// The counter chosen (enum ShopAction), or at a sanctum the service (enum
+  /// SanctumService).
+  s8 action;
+  /// The party member whose icon flickers through colours in the sanctum's
+  /// burst, or -1 for none.
+  s8 burstMember;
   u8 warriorShop; ///< 1 for stock rows 16 to 18, which greet as warriors'
   u8 padding[3];  ///< up to the word effects starts on
   /// the sanctum service's particles
@@ -196,7 +199,7 @@ s32 Sanctum_CountMembersInNeed(void);
 s32 Sanctum_GetServiceMessage(s32 messageId);
 void Sanctum_ShowKeeperMessage(s32 messageId);
 void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId);
-s32 Sanctum_Run(s32 unitId);
+s32 Sanctum_Run(s32 keeperId);
 s32 Sanctum_RunPartyService(void);
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind);
 void Sanctum_HighlightMembers(struct Window *window, s32 selected);

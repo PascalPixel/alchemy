@@ -1326,8 +1326,10 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 // XXX: the button's cell, behaviour 43, is (18, 7) in the map, 16 pixels up,
 // beside the first sand room's (18, 8); both lie east of every camera box of
 // the scene (x 288, the sand rooms' boxes ending at 272), so no picture of the
-// rooms shows them. Where the player finds it in the second room would take a
-// recording of Felix stepping on it, the second room full of sand.
+// rooms shows them, and the recorder, with the second room's switch pressed
+// first (--first AnkohlRuins_PressSecondSandSwitch), finds the cell in no room
+// an entrance shows. Where the player finds it in the second room would take a
+// recording of Felix carried up by the sand there and stepping on it.
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
                               FLAG_SECOND_SAND_DOOR_OPENED, 2, 83, 1, 23)
 

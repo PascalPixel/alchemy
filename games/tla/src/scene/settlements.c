@@ -763,14 +763,12 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// Nothing visible happens when Felix climbs onto cell (5, 12), the top of
-/// the climbable cells on Kalt Island's frozen river's west bank; from then
-/// on the ice no longer slides him, until he comes back down past cell
-/// (5, 13).
-// XXX: where the climb leads, whether to the rope's west post at cell (7, 12)
-// so that Felix can cross over the ice on the rope; a recording of the ice
-// route the walkthrough gives (LDRULURULURULDL), then the climb, would settle
-// it.
+/// Nothing visible happens when Felix climbs the ladder up the low cliff on
+/// Kalt Island's frozen river's west bank onto cell (5, 12), the ledge at its
+/// top; from then on the ice no longer slides him, until he comes back down
+/// past cell (5, 13). The ledge is the one the rope's west post stands on, at
+/// the river's edge: walking east from the ladder's top Felix stops beside
+/// the rope lying coiled on its post.
 void Settlements_StopIceSlides(void) { GameFlag_Set(FLAG_ICE_SLIDES_STOPPED); }
 
 /// Nothing visible happens when Felix climbs down onto cell (5, 13) on Kalt
@@ -1060,8 +1058,15 @@ void Settlements_RestoreWallCells(void) {
 /// the cliff west of Hesperia Settlement's wall; the game swaps in the wall
 /// top's cells until he steps on cell (10, 9). Until the crate is pushed off
 /// the wall it is done again when he comes back after a battle there.
-// XXX: what the swapped cells let Felix do on the wall top; a recording of
-// him climbing the stairs and walking along the wall would settle it.
+// The cells swapped in are the overhead layer's (map.txt's rows 73 on are its
+// rows 9 on): its closed block over the wall, cells (11, 11) to (20, 14),
+// becomes open ground 96 pixels up at (12, 12) to (19, 14), ringed by closed
+// cells, as the probe of the room with FLAG_ON_WALL set shows.
+// XXX: what the opened cells let Felix do on the wall top. Walking down from
+// cell (12, 9) onto (13, 11), east along the fence to the stones before the
+// crate and south into the fenced square plays frame for frame the same with
+// the crate's flag (FLAG_WALL_CRATE_DROPPED) set; a recording of the crate
+// pushed along the wall, with and without the swap, would settle it.
 void Settlements_StepOntoWall(void) {
   if (!Event_GetFlag(FLAG_WALL_CRATE_DROPPED) && !Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);

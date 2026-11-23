@@ -683,17 +683,16 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
 }
 
 /// Jenna and Sheba, turned to each other while Kraden talks of what he has
-/// learned, each get a spark over the head in turn, twice, each with a chime,
-/// before they both say they do not follow him.
+/// learned, puzzle at each other: a white bubble with a question mark in it,
+/// tilted towards the other, pops up over Jenna's head and then over Sheba's,
+/// twice each, each with a chime, before they both say they do not follow him.
+/// The bubble is the emote sprite's question mark, turned 22.5 degrees one way
+/// or the other.
 void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_Get(firstId);
   struct Actor *second = Actor_Get(secondId);
   s32 rise = toFIXED(28);
   FIXED y;
-
-  // XXX: what the sparks look like on screen (glare, surprise); a recording of
-  // Champa_MeetAlex, which needs the party to have walked into the village
-  // first, would settle it.
 
   y = first->y.fixed;
   Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed,

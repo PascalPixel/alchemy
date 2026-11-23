@@ -238,8 +238,12 @@ void JupiterLighthouse_RideUpperWhirlwind(void) {
 /// blows out, catches him and carries him off towards the right tower
 /// (Whirlwind_CarryLeader). Walking there without Hover does nothing.
 void JupiterLighthouse_RideWhirlwind(void) {
-  // XXX: where the east whirlwind sets Felix down; a recording of Hover from
-  // the lit pad, the energy block in its gap, would settle it.
+  // XXX: where the east whirlwind sets Felix down. The pad's cell, at
+  // (1040, 160) on the overhead layer, is made one once the energy block is in
+  // its gap. Hover has no row of its own here for the
+  // recorder to cast, and a staged walk from entrance 4 with the block's flag
+  // set that opens the field menu to cast it runs past four minutes. A
+  // recording of Hover cast on the pad, then floated east, would settle it.
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

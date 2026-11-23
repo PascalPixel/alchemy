@@ -43,8 +43,8 @@
 
 #ifdef MODERN
 // The menu object calls these window functions with no prototype in scope, so
-// their arguments take the old promotions (window/window.h says why for
-// each); a current GCC, which refuses implicit declarations, gets them here.
+// their arguments take the old promotions (window/window.h lists them); a
+// current GCC, which refuses implicit declarations, gets them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);
 struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,

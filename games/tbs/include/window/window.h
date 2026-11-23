@@ -5,10 +5,12 @@
 /// Windows, the messages that type into them, and the window renderer's
 /// work.
 
+#include "edition.h"
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "tbs_edition.h"
 #include "types.h"
+#include "graphics/glyph.h"
 #include "graphics/render_input.h"
 #include "system/heap.h"
 #include "window/screens.h"
@@ -86,8 +88,6 @@ STATIC_ASSERT(offsetof(struct Message, flags) == 36);
   do {                                                                         \
     (render)->dirty |= 2 << ((u32)(y) >> 2);                                   \
   } while (0)
-
-#include "edition.h"
 
 /// Window sprites in the shared pool: every sprite the windows show at once,
 /// glyphs, icons and portraits together.
@@ -183,8 +183,6 @@ enum MessageDecodeFlag {
 
 /// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
 #define gWindowWork (*(u8 *(*)[]) & gHeapSlots[HEAP_SLOT_WINDOW])
-
-#include "graphics/glyph.h"
 
 struct AbilityListEntry;
 struct BattleAction;
@@ -538,6 +536,14 @@ enum {
   MESSAGE_ARGUMENT_LOCATION = 6,
 };
 
+// Some of the window object's routines have no prototype here: the menu
+// object (screens.c) calls them unprototyped, with the old argument
+// promotions, and screens_internal.h declares them for a current GCC. They are
+// WindowSprite_AppendToList, Message_Start (the joined-party messages pass
+// five of its six arguments), Text_DrawWideStringInWindow, Window_PutGlyph
+// (PartyStatus_Draw passes four of its five) and
+// Text_DrawPrefixedNumberAtOffset; Window_ClearTextTilesInRect is called
+// before its definition.
 struct WindowSprite *WindowSprite_AcquireFree(void);
 void WindowSprite_ReleaseFree(struct WindowSprite *out);
 void WindowSprite_InitializeFreeList(void);
@@ -555,10 +561,7 @@ void WindowSprite_ClearList(void *sprites);
 void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
                                u32 right, u32 bottom);
 void WindowSprite_UpdateListTail(struct WindowSpriteList *list);
-// screens.c calls WindowSprite_AppendToList with no prototype in scope.
 void WindowSprite_Release(struct WindowSprite *entry);
-// screens.c calls Message_Start with no prototype in scope: the join messages
-// pass five of its six arguments.
 struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
                                        s32 keepPosition);
 s32 Text_ClearCanvas(void);
@@ -623,7 +626,6 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
 void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *window,
                                     s32 offsetX, s32 offsetY);
-// screens.c calls Text_DrawWideStringInWindow with no prototype in scope.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                               s32 plural, s32 *suffix);
@@ -640,8 +642,6 @@ void Text_MeasureDecoded(s32 pos, u32 *out_width, u32 *out_height,
 void Text_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
                           u16 *spacing);
 s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
-// screens.c calls Window_PutGlyph with no prototype in scope, and
-// PartyStatus_Draw passes four of its five arguments.
 
 /// How Window_SetTilemapEntry writes its value (its mode argument): as given,
 /// or as a tile number in one of the palettes the menus keep for their
@@ -826,8 +826,6 @@ s32 PauseMenu_Choose(void);
 
 void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap);
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
-// Window_ClearTextTilesInRect is called before its definition with no
-// prototype in scope.
 void Window_MarkVisibleTextTiles(void);
 void Text_UseExtraTiles(s32 flag);
 void Window_ReservedNoOp(void);
@@ -847,7 +845,6 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
                              s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
                              s32 y);
-// screens.c calls Text_DrawPrefixedNumberAtOffset with no prototype in scope.
 
 /// The menus' compressed 64x16 headings, Save to Setup (menu_titles.s).
 extern const u8 *gMenuTitlePictures[];

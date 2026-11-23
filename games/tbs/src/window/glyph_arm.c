@@ -313,9 +313,12 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
 }
 
-/// Builds the hardware window's horizontal extent for each of the screen's 160
-/// scanlines from the window borders in the UI tilemap at tilemap
-/// (BG_SCREEN_WIDTH tiles a row, DISPLAY_TILE_WIDTH shown).
+/// Builds the screen transition's window 1 edges for each of the screen's 160
+/// scanlines from the window borders in the UI tilemap at `tilemap`
+/// (BG_SCREEN_WIDTH tiles a row, DISPLAY_TILE_WIDTH shown), so the windows
+/// stay in view while the transition covers the rest: each line takes a pair
+/// of halfwords in `scanlineBounds`, the second (left << 8) | right, and a
+/// corner's line is a pixel narrower.
 void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
@@ -367,6 +370,9 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
           break;
         // Outside Japanese the left edge meeting a divider counts as a side
         // too.
+        // XXX: tile 7 is blank in every edition's window tiles and no code
+        // draws it; a tilemap that places it at a window's side would say why
+        // it counts as one.
         case WINDOW_TILE(7):
         case WINDOW_TILE_BORDER_LEFT:
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -404,8 +410,8 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
         }
       }
     }
-    // The tileRow's eight scanlines: its top line, six middle lines and its
-    // bottom line.
+    // The tile row's eight scanlines, the second halfword of each pair: its
+    // top line, six middle lines and its bottom line.
     horizontalBounds = topRight + (topLeft << 8);
     *scanlineBounds++ = horizontalBounds;
     horizontalBounds = right + (left << 8);

@@ -889,9 +889,13 @@ void Garoh_SinkFourthPillarOnCell(void) {
 /// From the ledge its top is a dead end: holding west or south there takes him
 /// no further, and he can only step back east onto the ledge. The second
 /// pillar's top is the same (Garoh_PlaceSecondPillar).
-// XXX: what the fourth pillar's sunk top gives; the recorder could not reach
-// it with the first two placed first (the leader cannot walk near the second
-// pillar's spot), so a recording of Move on it would settle it.
+// XXX: what the fourth pillar's sunk top gives. Move cast on it from cell
+// (15, 23), the ledge just north of it (entered by entrance 2), shows the hand
+// pressing south but the pillar does not move, and Felix then walks south onto
+// its top as it stands; with the first two placed first the recorder could not
+// walk near the second pillar's spot. A play of the way up in the
+// walkthrough's order, Moving the fourth pillar from where it does slide,
+// would settle it.
 void Garoh_PlaceFirstPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_SinkFirstPillarOnCell();

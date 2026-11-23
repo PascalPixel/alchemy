@@ -233,7 +233,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           PLOT(x1, y1);
           left = cx - px;
           x1 = left + 1;
-          x2 = px + 97;
+          x2 = px + (SHATTERING_OPENING_DISC_X + 1);
           if (x1 < 0)
             x1 = 0;
           if (x2 > 255)
@@ -261,7 +261,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           PLOT(x1, y2);
           PLOT(x1, y1);
           x1 = spanLeft + 1;
-          x2 = py + 97;
+          x2 = py + (SHATTERING_OPENING_DISC_X + 1);
           if (x1 < 0)
             x1 = 0;
           if (x2 > 255)
@@ -327,9 +327,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         piece->velocityY = 0;
         piece->variant = 0;
       }
-      work->transferMode =
-          CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
-      work->transferValue = CANVAS_FADE_HALF; // leaving a trail
+      // From here each transfer halves the old picture, leaving a trail.
+      work->transferMode = CANVAS_COPY_AND_FADE;
+      work->transferValue = CANVAS_FADE_HALF;
     }
 
     // The flashes start i/4 frames late and rise, a picture every 4 frames.
@@ -847,7 +847,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   FIXED place[4];
   struct ModelTexture texture;
   struct ModelTexture streakTexture;
-  struct Scale req;
+  struct Scale canopyScale;
   struct ModelTexture burstTexture;
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -855,7 +855,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
    * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   s32 frame;
-  u8 *sprites;
+  u8 *motePictures;
   struct BattleBackgroundWork *backdrop;
   s32 savedScroll;
   FIXED scrollX;
@@ -871,12 +871,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   FIXED greenStep;
   FIXED blueStep;
   s32 fadeFrames;
-  s32 u;
+  s32 step;
   struct RuinObject *obj;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  sprites = Ram_HeapSlots->battleSheet;
+  motePictures = Ram_HeapSlots->battleSheet;
   backdrop = Ram_HeapSlots->battleBackground;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
@@ -926,7 +926,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   REG_BG2X = 0;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, gMapGridCellBuffer, 0,
                              0);
   Resource_LoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, work->sheet, 1, 0);
@@ -1143,11 +1143,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             }
           }
         }
-        u = frame - 124;
-        if ((u32)u < CRUEL_RUIN_RING_FRAMES) {
-          s32 sc = u * (FIXED_ONE / 2);
+        step = frame - 124;
+        if ((u32)step < CRUEL_RUIN_RING_FRAMES) {
+          s32 sc = step * (FIXED_ONE / 2);
 
-          shade = CRUEL_RUIN_RING_SHINE_FRAMES * 8 - u * 8;
+          shade = CRUEL_RUIN_RING_SHINE_FRAMES * 8 - step * 8;
           if (shade > 0) {
             shade = 0;
           }
@@ -1338,11 +1338,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                                work->sheet + CRUEL_RUIN_PINK_BAR, 0, 0);
     Graphics_LoadGreyRamp();
     {
-      u8 *e = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
+      u8 *canopy = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
 
       Iwram_FillWords((void *)&OBJ_PLTT_COLOR(CRUEL_RUIN_CANOPY_PALETTE, 0),
                       PALETTE_BANK_BYTES, COLOR_PAIR(RGB_WHITE));
-      Decompress_TaggedLz(e + PALETTE_BANK_BYTES, work->sheet);
+      Decompress_TaggedLz(canopy + PALETTE_BANK_BYTES, work->sheet);
     }
     {
       s32 q;
@@ -1357,6 +1357,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               CRUEL_RUIN_CANOPY_SIZE, CRUEL_RUIN_CANOPY_SIZE, OBJ_SIZE_32X32,
               OBJ_PALETTE(CRUEL_RUIN_CANOPY_PALETTE));
           work->sprites[q * CRUEL_RUIN_CANOPY_COLUMNS + i] = obj;
+          // The sprite takes priority 1, in bits 2 and 3 of the high byte of
+          // its OAM attribute 2.
           {
             s32 b = ((u8 *)obj)[9];
             u8 x = b & -13;
@@ -1414,16 +1416,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
         Palette_BrightenSavedBattleBg(red, green, blue);
         if (frame <= 16) {
-          u16 *e = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
+          u16 *canopy = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
           u16 *dst = (u16 *)&OBJ_PLTT_COLOR(CRUEL_RUIN_CANOPY_PALETTE, 0);
           s32 add;
 
           i = 0;
           add = 32 - frame * fadeStep;
-          for (; i != PALETTE_COLORS; i++, e++, dst++) {
-            s32 cr = RGB_RED(*e) + add;
-            s32 cg = (u16)RGB_GREEN(*e) + add;
-            s32 cb = (u16)RGB_BLUE(*e) + add;
+          for (; i != PALETTE_COLORS; i++, canopy++, dst++) {
+            s32 cr = RGB_RED(*canopy) + add;
+            s32 cg = (u16)RGB_GREEN(*canopy) + add;
+            s32 cb = (u16)RGB_BLUE(*canopy) + add;
 
             if (cr > RGB_LEVEL_MAX) {
               cr = RGB_LEVEL_MAX;
@@ -1544,13 +1546,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
       }
       {
-        s32 six = 6;
-        streakTexture.logWidth = six;
+        streakTexture.logWidth = 6;
         streakTexture.logHeight = 5;
         streakTexture.pixels = work->sheet + CRUEL_RUIN_PINK_BAR;
         Render_BuildQuadStrip(strip, 2, 32, CRUEL_RUIN_RIBBON_QUADS);
         model->mesh = strip;
-        model->kind = six;
+        model->kind = MODEL_SHADED_MAX;
         model->scrollU = ~CRUEL_RUIN_RIBBON_SCROLL & TEXTURE_SCROLL_MASK;
       }
       {
@@ -1619,7 +1620,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       }
       Heap_Release(model);
       Heap_Release(verts);
-      req = gCruelRuin_UnitScale;
+      canopyScale = gCruelRuin_UnitScale;
       place[3] = 0;
       place[1] = toFIXED(255);
       // The forest rushes by, a sprite's width every so often, when each
@@ -1643,7 +1644,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           place[2] = toFIXED(121) + INTtoFIXED(j * CRUEL_RUIN_CANOPY_SIZE);
           /* FAKEMATCH(dead): a store both arms below overwrite. */
           if (i == 300 && row == j && last == 0)
-            u = 0;
+            step = 0;
           // The sprite's picture: tile % CRUEL_RUIN_CANOPY_PICTURE_COUNT, the
           // last sprite taking the one before the first's.
           if (i == CRUEL_RUIN_CANOPY_COLUMNS - 1) {
@@ -1658,7 +1659,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                 cycleStart = cycle + (CRUEL_RUIN_CANOPY_PICTURE_COUNT - 1);
               cycleStart >>= 3;
               cycleStart <<= 3;
-              u = cycle - cycleStart;
+              step = cycle - cycleStart;
             }
           } else {
             /* FAKEMATCH(temporary): j * CRUEL_RUIN_CANOPY_COLUMNS written again
@@ -1677,13 +1678,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                                      CRUEL_RUIN_CANOPY_PICTURE_COUNT - 1);
               cycleStart >>= 3;
               cycleStart <<= 3;
-              u = tile - cycleStart;
+              step = tile - cycleStart;
             }
           }
           /* FAKEMATCH(dead): a once-only block round the tile's update,
            * declaring v and x. */
           {
-            s32 v = work->particles[row + u].variant & OBJ_TILE_MASK;
+            s32 v = work->particles[row + step].variant & OBJ_TILE_MASK;
             s32 x = obj->attr.all & mask;
             obj->attr.all = x | v;
           }
@@ -1692,7 +1693,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           }
           Render_ApplyProjectedPlacementFar(
               work->sprites[j * CRUEL_RUIN_CANOPY_COLUMNS + i], place,
-              (s32 *)&req, 0);
+              (s32 *)&canopyScale, 0);
         }
       }
       BattleEffect_CountDownBattlerTints();

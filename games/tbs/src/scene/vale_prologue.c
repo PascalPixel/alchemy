@@ -328,8 +328,8 @@ enum StormNightAreaFlag {
 
 /// 0 while the westernmost elder strains at the Boulder, 1 once he lets go.
 static s32 sShakeDone;
-/// How hard the elders strain as the Boulder slips, 0 to 2: each step puts
-/// RINGS_INTERVAL_STEP more frames between their rings.
+/// 0 to 2, raised and lowered as the Boulder lurches and settles: each step
+/// puts RINGS_INTERVAL_STEP more frames between the elders' rings.
 static s32 sShakeShift;
 
 /// How long the elders call up their Psynergy once the camera reaches the

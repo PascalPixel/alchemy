@@ -168,6 +168,10 @@ static s32 TolbiShipDeck_GetSeatStroke(u32 seat);
 static void TolbiShipDeck_RowOars(void);
 static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot);
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags);
+
+/// How TolbiShipDeck_SwingOar swings an oar: on the starboard side, mirrored;
+/// and at rest, at the angle it has rather than its stroke's.
+enum { OAR_SWING_MIRRORED = 1, OAR_SWING_AT_REST = 2 };
 static void TolbiShipDeck_RestOars(void);
 static void TolbiShipDeck_CopyUnderwayCells(void);
 static void TolbiShipDeck_CopyAnchoredCells(void);
@@ -202,8 +206,7 @@ enum TolbiShipDeckActorId {
   /// The eight oars at the ship's sides (SPRITE_OAR).
   ///
   /// There are four at x 132, then four at x 300, which are drawn mirrored.
-  /// The rowing deck's map shows them out while the ship is rowed
-  /// (https://alchemy.pascalpixel.com/places/tolbi-ship-deck_tolbi-ship-rowing/map-0.png).
+  /// They stand out from the hull while the ship is rowed.
   ACTOR_FIRST_OAR = ACTOR_FIRST_STROKE_OAR + 4,
 
   // At Kalay: gTolbiShipDeckActorPlacements, then
@@ -365,9 +368,8 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
 
 // The diving scripts own the actor's scratch fields: riseBaseY is
 // sideways drift in 16.16 pixels per frame, riseCounter the dive step (0
-// hovering), riseEnabled the return side, timer the drift direction and work
-// the bob direction. Using the actor's fields keeps one layout for the
-// whole slot.
+// hovering), riseEnabled the return side, timer the drift direction and
+// userValue the bob direction.
 
 /// Defines `name`, the update of a sea monster hovering by one warrior's side
 /// of the deck while the monsters attack.
@@ -483,7 +485,7 @@ static u16 sStrokePhase[4] ALIGNED(16);
 
 /// The deck's rocking up and down (65,536 to a turn).
 static s32 sRockAngleY;
-UNUSED static s32 sUnusedAfterRockY; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnusedAfterRockY; ///< Unused: nothing reads or writes it.
 
 /// Each oar's angle in its swing (65,536 to a turn).
 static u16 sOarAngle[8];
@@ -494,16 +496,14 @@ static s32 sSeaScroll[2];
 
 /// The deck's rocking from side to side (65,536 to a turn).
 static s32 sRockAngleX;
-UNUSED static s32 sUnusedAfterRockX; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnusedAfterRockX; ///< Unused: nothing reads or writes it.
 
 /// How fast the sea scrolls across and down, 16.16 pixels a frame.
 static s32 sSeaSpeed[2];
 
 /// The eight oars' strokes (TolbiShipDeck_ChooseOarStrokes) and the z each
 /// swings about, in 16.16.
-// The oar strokes and depths come after the file's other statics, the strokes
-// on a 16-byte boundary.
-static u32 sOarStroke[8] __attribute__((aligned(16)));
+static u32 sOarStroke[8] ALIGNED(16);
 static s32 sOarDepth[8];
 
 /// Bobs the actor between 4 and 12 pixels high by a random amount
@@ -898,30 +898,42 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
     Event_SetMessageId(MsgTolbiShipWonderCouldHaveHappened);
+    // "I wonder what could have happened."
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
+    // "You mean you still intend to cross this dangerous sea?"
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     Actor_RunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
     Actor_FaceDirection(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST, 0);
+    // "It would be too big a loss to let so many passengers get away..."
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     Actor_RunRepeatedMotion(ACTOR_KALAY_CREWMAN, 1);
     TolbiShipDeck_Turn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHWEST);
+    // "Say, Kaja, how are the oarsmen doing?"
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     TolbiShipDeck_Turn(ACTOR_KALAY_KAJA, FACING_SOUTH_SOUTHEAST);
     Actor_SetAnimation(ACTOR_KALAY_KAJA, ANIM_NOD);
+    // "They're fearless. There's no problem there. It's just that..."
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     Actor_ShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_FaceDirection(ACTOR_KALAY_CAPTAIN, FACING_WEST, 20);
+    // ""It's just that"...what?"
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(ACTOR_KALAY_KAJA, FACING_EAST);
     Actor_SetAnimationAndWait(ACTOR_KALAY_KAJA, ANIM_SHAKE_HEAD);
+    // "If a whole bunch of...them appear while we're crossing the sea, I won't
+    // be able to handle them alone."
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     40);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
+    // "I'm sorry, but you'll have to. I can't let anyone else fight but you,
+    // Kaja."
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
+    // "Remember, the oarsmen will have their hands full rowing. They can't
+    // fight."
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST);
     Actor_SetAnimation(ACTOR_KALAY_KAJA, ANIM_NOD);
@@ -931,24 +943,33 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     TolbiShipDeck_Turn(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST);
     Event_SetMessageId(MsgTolbiShipTheresNothingWeCanDo);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
+    // "There's nothing we can do... Let's set sail!"
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
+    // "Wha-What are you talking about! If we set sail now, we'll never make it
+    // to Tolbi."
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     Actor_ShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+    // "We'll be fine... We have a protective amulet!"
     Event_ShowMessageThenWait(
         SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
     Actor_ShowEmote(ACTOR_KALAY_KAJA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+    // "Amulet... Amulet, you say... You mean that little anchor charm?"
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(ACTOR_KALAY_CAPTAIN, FACING_WEST);
     Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
+    // "The little anchor has always protected us from danger."
     Event_ShowMessageThenWait(
         SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
+    // "Captain, get ahold of yourself! That's just foolish superstition!"
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     TolbiShipDeck_Turn(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST);
     Actor_SetAnimation(ACTOR_KALAY_CAPTAIN, ANIM_SHAKE_HEAD);
+    // "It's okay. We'll be fine. Even if we can't find any mercenaries, that
+    // little charm will protect us."
     TolbiShipDeck_Say(ACTOR_KALAY_CAPTAIN);
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_KALAY_KAJA, FACING_SOUTH_SOUTHEAST, 40);
@@ -956,6 +977,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 2);
     Event_Wait(20);
+    // "Now then, let's hurry up! Prepare to set sail!"
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     Actor_SetAttachedEffect(ACTOR_KALAY_KAJA,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -963,6 +985,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
+    // "This is great... We'll be setting sail soon!"
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(182, CAMERA_KEEP, 760, 1);
@@ -977,6 +1000,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     60);
     TolbiShipDeck_Turn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST);
+    // "(Not if I have anything to say about it.)"
     Event_ShowMessageThenWait(ACTOR_KALAY_CREWMAN, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_NOD);
     Actor_Jump(ACTOR_KALAY_CREWMAN, 4, 0);
@@ -1019,6 +1043,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
       Actor_Get(ACTOR_KALAY_CREWMAN)->steeringFlags |= ACTOR_FACES_MOTION;
       Event_Wait(20);
       Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
+      // "Really, I mean it..."
       TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
       Actor_SetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
       Actor_Get(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1057,6 +1082,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
       Actor_Get(ACTOR_KALAY_CREWMAN)->steeringFlags |= ACTOR_FACES_MOTION;
       Event_Wait(20);
       Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
+      // "Really, I mean it..."
       TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
       Actor_SetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
       Actor_Get(ACTOR_KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1102,7 +1128,9 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
 }
 
-/// Sets up the scene on entry.
+/// Boards the deck: the view centred, the sea still, the rocking's angles
+/// drawn at random, and then the voyage's stage and event set up
+/// (TolbiShipDeck_ApplyEntryState).
 s32 Scene_Initialize(void) {
   struct MapGridLayerScroll *sea =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -1123,7 +1151,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Applies the voyage's state.
+/// Redraws the deck for the voyage's stage, starts the oars, the rocking and
+/// the sea as the ship moves, plays the event the entrance names, and
+/// otherwise places the people on deck for the stage.
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
@@ -1430,7 +1460,8 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Import_EventSetExitRequest(TOLBI_SHIP_DECK_TO_TOLBI_SHIP_MAST_COURSE_CLEAR);
 }
 
-/// Sea monsters are sighted.
+/// Kaja calls "Aye, Captain! Sea monsters!" and Sean begs the captain to turn
+/// the rudder hard to starboard, which leads to the captain's quarters.
 static void TolbiShipDeck_SightSeaMonsters(void) {
   Event_Start();
   Event_AppendActorPlacements(
@@ -1450,6 +1481,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(ACTOR_SEA_SEAN, 4, 20);
   Actor_StartRepeatedMotion(ACTOR_SEA_SEAN, 2);
+  // "Captain, turn the rudder hard to starboard!"
   Event_ShowMessageThenWait(
       SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT), 0,
       20);
@@ -1458,7 +1490,9 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   Import_EventSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_TURN);
 }
 
-/// The monsters leap aboard and someone cries out.
+/// Ouranos runs up the deck crying it is too late, three monsters leap over
+/// the rail and go below by the carved door, and Ouranos is heard to cry
+/// "Arrgh!" as the fight moves below.
 static void TolbiShipDeck_MonstersBoard(void) {
   const s32 *shared;
 
@@ -1481,6 +1515,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Actor_WalkToAndWait(ACTOR_SEA_OURANOS, 182, 654);
   Actor_RunRepeatedMotion(ACTOR_SEA_OURANOS, 2);
   Event_SetMessageId(MsgTolbiShipNoUseLate);
+  // "It's no use. It's too late!"
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_OURANOS,
                             SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.4);
@@ -1520,6 +1555,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Event_Wait(10);
   ActorSystem_SuspendProjectionAndShowSprites();
   Message_SetVoiceFromActor(ACTOR_SEA_OURANOS);
+  // "Arrgh!"
   FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Import_EventSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_FIRST_ATTACK);
@@ -1552,6 +1588,8 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Actor_SetPosition(ACTOR_SEA_SEAN, 256, 640);
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_LookAroundActions);
   Actor_SetPosition(ACTOR_SEA_OURANOS, 268, 692);
+  // XXX: Sean is given this script twice and Ouranos none; whether Ouranos
+  // keeps still through the second attack would settle whether it is a slip.
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_LookAroundActions);
   Actor_SetPosition(ACTOR_SEA_FIRST_HOVERING_MONSTER, 242, 604);
   Actor_SetPosition(ACTOR_SEA_FIRST_HOVERING_MONSTER + 1, 264, 600);
@@ -1623,6 +1661,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Event_Wait(10);
   ActorSystem_SuspendProjectionAndShowSprites();
   Message_SetVoiceFromActor(ACTOR_SEA_OURANOS);
+  // "Arrgh!"
   FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Import_EventSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_SECOND_ATTACK);
@@ -1744,6 +1783,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Event_Wait(10);
   ActorSystem_SuspendProjectionAndShowSprites();
   Message_SetVoiceFromActor(ACTOR_SEA_OURANOS);
+  // "Arrgh!"
   FieldMessage_ShowCentered(MsgTolbiShipArrgh, 1, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Import_EventSetExitRequest(TOLBI_SHIP_DECK_TO_SHIP_ROOMS_THIRD_ATTACK);
@@ -1862,7 +1902,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Event_End();
 }
 
-/// Isaac is thanked for the Kraken.
+/// After the Kraken, Kaja thanks Isaac, says they lost another oarsman and
+/// asks him to find someone to row while he checks the hull, and goes below.
 static void TolbiShipDeck_ThankForKraken(void) {
   Event_Start();
   Event_AppendActorPlacements(
@@ -1886,13 +1927,16 @@ static void TolbiShipDeck_ThankForKraken(void) {
   TolbiShipDeck_Turn(ACTOR_PARTY_LEADER, FACING_WEST);
   Actor_RunRepeatedMotion(ACTOR_SEA_KAJA, 1);
   Event_SetMessageId(MsgTolbiShipThankIsaacDidGoodAgainst);
+  // "Thank you, Isaac. You did good against that Kraken."
   TolbiShipDeck_Say(ACTOR_SEA_KAJA);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_ShowEmote(ACTOR_SEA_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "We lost another oarsman, though."
   Event_ShowMessageThenWait(ACTOR_SEA_KAJA, 0, 40);
   TolbiShipDeck_Turn(ACTOR_SEA_KAJA, FACING_EAST);
+  // "I need to check the hull. Go find someone to row the ship."
   TolbiShipDeck_Say(ACTOR_SEA_KAJA);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
@@ -1910,7 +1954,8 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Event_End();
 }
 
-/// Land is sighted.
+/// Sean sees land, Ouranos says they have made it, and the ship sails on to
+/// Tolbi on the World Map.
 static void TolbiShipDeck_SightLand(void) {
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
@@ -1940,12 +1985,14 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_Jump(ACTOR_SEA_SEAN, 4, 10);
   Actor_Jump(ACTOR_SEA_SEAN, 6, 20);
   Event_SetMessageId(MsgTolbiShipCanSeeLand);
+  // "Hey, I can see land!"
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
   Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 3);
   Actor_WalkToAndWait(ACTOR_SEA_OURANOS, 180, 546);
   Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 40);
   Actor_RunRepeatedMotion(ACTOR_SEA_OURANOS, 1);
+  // "It looks like we made it!"
   TolbiShipDeck_Say(ACTOR_SEA_OURANOS);
   Import_EventSetExitRequest(TOLBI_SHIP_DECK_TO_WORLD_MAP_REACH_TOLBI);
 }
@@ -2049,32 +2096,42 @@ static void TolbiShipDeck_RowersDisembark(void) {
     switch (category[index]) {
     case ROWER_REPLY_FINALLY_LUCKY:
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      // "We made it? Finally! We're lucky to be alive after all those attacks!"
       Event_SetMessageId(MsgTolbiShipMadeFinallyLucky);
       break;
     case ROWER_REPLY_OTHERS_ALREADY:
       TolbiShipDeck_Turn(actorId, FACING_NORTH_NORTHEAST);
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+      // "The other passengers have already disembarked... Didn't even say
+      // good-bye."
       Event_SetMessageId(MsgTolbiShipOtherPassengersAlready);
       break;
     case ROWER_REPLY_DONE_ROWING:
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+      // "We don't have to row anymore? Oh, what a relief!"
       Event_SetMessageId(MsgTolbiShipDontRowAnymore);
       break;
     case ROWER_REPLY_NO_WORKOUT:
       Actor_RunRepeatedMotion(actorId, 1);
+      // "Ohhh! I haven't had a workout like that in years!"
       Event_SetMessageId(MsgTolbiShipOhhhHaventWorkout);
       break;
     case ROWER_REPLY_ROWING_MORE:
       Actor_SetAnimationAndWait(actorId, ANIM_NOD);
+      // "Rowing the ship was more fun than I expected! I'm pretty buff now!"
       Event_SetMessageId(MsgTolbiShipRowingShipMore);
       break;
     case ROWER_REPLY_LOST_AT_SEA:
       Actor_SetAnimation(actorId, ANIM_SHAKE_HEAD);
+      // "I totally lost out... An ocean cruise, and I didn't get to enjoy the
+      // view!"
       Event_SetMessageId(MsgTolbiShipTotallyLostOcean);
       break;
     case ROWER_REPLY_OLD_MAN:
       Actor_SetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
+      // "You make an old man row the ship, then you try to beat him onshore?
+      // That's pretty pathetic."
       Event_SetMessageId(MsgTolbiShipMakeOldMan);
       break;
     default:
@@ -2095,6 +2152,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 600);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 190, 612);
   Event_SetMessageId(MsgTolbiShipThanksHardWork);
+  // "Thanks for all your hard work."
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 
@@ -2106,12 +2164,16 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_WalkToAndWait(ACTOR_ARRIVED_KAJA, 182, 555);
   Actor_FaceDirection(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_ARRIVED_KAJA, 1);
+  // "Your efforts got this ship to shore."
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
+  // "I thank you again."
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   Actor_FaceDirection(ACTOR_ARRIVED_KAJA, FACING_WEST, 40);
+  // "Hurry, everyone! Colosso is already underway in Tolbi!"
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   TolbiShipDeck_Turn(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST);
+  // "You'd better get moving to Tolbi, too."
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
@@ -2230,7 +2292,7 @@ static void TolbiShipDeck_ShowOar(s32 actorId) {
     oar->collisionFlags = 0;
     {
       s32 flags;
-      flags = 2 | oar->priorityFlags;
+      flags = ACTOR_PRIORITY_UNDERFOOT | oar->priorityFlags;
       oar->priorityFlags = flags;
     }
   }
@@ -2312,10 +2374,10 @@ static void TolbiShipDeck_RowOars(void) {
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 1, 1, 0);
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 2, 2, 0);
   TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 3, 3, 0);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 4, 4, 1);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 5, 5, 1);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 6, 6, 1);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 7, 7, 1);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 4, 4, OAR_SWING_MIRRORED);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 5, 5, OAR_SWING_MIRRORED);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 6, 6, OAR_SWING_MIRRORED);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 7, 7, OAR_SWING_MIRRORED);
 }
 
 /// Advances one stroke's phase.
@@ -2339,13 +2401,14 @@ static void TolbiShipDeck_AdvanceStroke(s32 actorId, s32 slot) {
   }
 }
 
-/// Swings one oar to its angle.
+/// Swings one oar at the side to its angle, turning it and moving it fore and
+/// aft about its depth; a rowing oar first takes its stroke's angle and frames.
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   struct Actor *actor = Actor_Get(id);
   struct Sprite *sprite = actor->sprite;
   FIXED sine;
 
-  if ((flags & 2) == 0) {
+  if ((flags & OAR_SWING_AT_REST) == 0) {
     switch (sOarStroke[slot]) {
     case 1:
       sOarAngle[slot] = sStrokePhase[0];
@@ -2365,7 +2428,7 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
       break;
     }
   }
-  if (flags & 1) {
+  if (flags & OAR_SWING_MIRRORED) {
     sine = Trig_Sin(sOarAngle[slot]);
     sprite->rotation = Trig_Sin(sOarAngle[slot] + DEGtoANG(180)) >> 5;
     actor->z.fixed = sOarDepth[slot] - (sine << 2) - (sine << 1);
@@ -2438,14 +2501,18 @@ static void TolbiShipDeck_RestOars(void) {
   wait(1);
   Actor_SetPosition(ACTOR_FIRST_STROKE_OAR, 132, 632);
   wait(1);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_STROKE_OAR, 0, 2);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 1, 1, 2);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 2, 2, 2);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 3, 3, 2);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 4, 4, 3);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 5, 5, 3);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 6, 6, 3);
-  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 7, 7, 3);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_STROKE_OAR, 0, OAR_SWING_AT_REST);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 1, 1, OAR_SWING_AT_REST);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 2, 2, OAR_SWING_AT_REST);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 3, 3, OAR_SWING_AT_REST);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 4, 4,
+                         OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 5, 5,
+                         OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 6, 6,
+                         OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
+  TolbiShipDeck_SwingOar(ACTOR_FIRST_OAR + 7, 7,
+                         OAR_SWING_AT_REST | OAR_SWING_MIRRORED);
 }
 
 /// Redraws a block of the deck's cells and attributes, as it is whenever the
@@ -2502,9 +2569,11 @@ static void TolbiShipDeck_SightIsland(void) {
   Actor_WalkToAndWait(ACTOR_SEA_OURANOS, 182, 532);
   Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 40);
   Event_SetMessageId(MsgTolbiShipFinallyReachedTolbi);
+  // "Hmm... So we've finally reached Tolbi, huh?"
   TolbiShipDeck_Say(ACTOR_SEA_OURANOS);
   Actor_RunRepeatedMotion(ACTOR_SEA_KAJA, 2);
   Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_SHAKE_HEAD);
+  // "Umm... No. That doesn't look like Tolbi's coast."
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST, 0);
@@ -2512,6 +2581,7 @@ static void TolbiShipDeck_SightIsland(void) {
   Actor_ShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_NOD);
+  // "We must be off course. I don't recognize this place."
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   Actor_SetAttachedEffect(ACTOR_SEA_OURANOS,
@@ -2530,14 +2600,18 @@ static void TolbiShipDeck_SightIsland(void) {
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 210, 508);
   TolbiShipDeck_Turn(ACTOR_SEA_KAJA, FACING_NORTH_NORTHWEST);
   Actor_RunRepeatedMotion(ACTOR_SEA_OURANOS, 1);
+  // "You're right... That looks like an island."
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_OURANOS, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT));
   Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST);
+  // "Hmm... Maybe we should stop for a minute."
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_WEST, 20);
   Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_SHAKE_HEAD);
+  // "We need time to check the ship's position... Let's head for that island
+  // and get our bearings."
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 204, 536);
@@ -2586,20 +2660,30 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   TolbiShipDeck_Turn(ACTOR_MIA, FACING_WEST);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_EAST);
   Event_SetMessageId(MsgTolbiShipIsaacTalkedPassengersDidntTour);
+  // "Isaac, you talked to the passengers, didn't you? The tour group is arguing
+  // about whether they should leave the ship."
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
   TolbiShipDeck_Turn(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST);
+  // "We'd like to go ashore and see if it's safe out there... But we promised
+  // we'd protect the ship."
   Event_ShowMessageThenWait(ACTOR_SEA_OURANOS, 0, 40);
   Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(ACTOR_SEA_SEAN, 1);
+  // "...That's it! Isaac! Can you go check out the island and see if there are
+  // any monsters?"
   Event_OpenMessage(ACTOR_SEA_SEAN, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    // "The passengers all seem to be upset, so let's try to do as they ask."
     TolbiShipDeck_Say(ACTOR_IVAN);
     TolbiShipDeck_Turn(ACTOR_MIA, FACING_NORTHWEST);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+    // "That's right. We have to do something, or there'll be no resolving
+    // this."
     TolbiShipDeck_Say(ACTOR_MIA);
     TolbiShipDeck_Turn(ACTOR_GARET, FACING_SOUTHWEST);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
+    // "It would be fun to explore the island! What do you say, Isaac?"
     Event_OpenMessage(ACTOR_GARET, 0);
     for (;;) {
       if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
@@ -2614,6 +2698,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_SEA_SEAN, ANIM_NOD);
   Event_SetMessageId(MsgTolbiShipSeeYoureGoingGoFor);
+  // "I see, you're going to go for me, aren't you? I'm sure no one will
+  // complain if we scout out the island."
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
   Actor_SetSpeed(ACTOR_SEA_SEAN, 1);
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 1);
@@ -2627,6 +2713,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Actor_Get(ACTOR_SEA_OURANOS)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHEAST, 0);
   TolbiShipDeck_Turn(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST);
+  // "There's no telling what kind of monsters are lurking on this island... Be
+  // extremely careful!"
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
   Actor_WalkTo(ACTOR_GARET, 180, 654);
   Actor_WalkTo(ACTOR_IVAN, 180, 654);
@@ -2655,11 +2743,16 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   Event_OpenMessage(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+    // "If we don't decide if we can go ashore, they'll never stop whining. ...I
+    // hate to ask you, but would you go exploring one more time?"
     TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT));
     Event_End();
     return;
   }
   gFieldWork->message++;
+  // "Well... Did you see any monsters out there?"
+  // Yes: "...I see. Then we can't let the tourists go ashore after all?"
+  // No: "If there aren't any monsters, I guess we can let the tourists out!"
   Event_AskYesNo(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
   TolbiShipDeck_OpenFirstDoor();
   Actor_SetPosition(ACTOR_TOUR_GUIDE_AT_ANCHOR, 216, 588);
@@ -2672,37 +2765,48 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(ACTOR_TOUR_GUIDE_AT_ANCHOR, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2, 0);
   Actor_SetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, ANIM_SHAKE_HEAD);
+  // "The passengers are going stir crazy! They're out of control! You're going
+  // to have to let the passengers go ashore."
   Event_ShowMessage(ACTOR_TOUR_GUIDE_AT_ANCHOR, 0);
   Actor_SetPosition(ACTOR_SEA_KAJA, 180, 777);
   Actor_SetSpeed(ACTOR_SEA_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 180, 664);
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_NORTH_NORTHEAST, 0);
+  // "There's no need for that."
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE_AT_ANCHOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   60);
   Actor_RunRepeatedMotion(ACTOR_SEA_KAJA, 1);
+  // "We figured out the course to Tolbi."
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   Actor_StartRepeatedMotion(ACTOR_SEA_OURANOS, 2);
+  // "Really? We can go?"
   TolbiShipDeck_Say(ACTOR_SEA_OURANOS);
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_NOD);
+  // "Let's go to Tolbi before the sea gets any rougher. Tell our tourists they
+  // can enjoy a nice, long break after we arrive."
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   Actor_Jump(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2, 20);
   Actor_SetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, ANIM_SHAKE_HEAD);
+  // "It's too late... Nothing we can say will calm them down."
   TolbiShipDeck_Say(ACTOR_TOUR_GUIDE_AT_ANCHOR);
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 182, 640);
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_NORTH_NORTHEAST, 0);
+  // "If we hurry, we can make it to Colosso in time."
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_BELOW));
   Actor_ShowEmote(ACTOR_TOUR_GUIDE_AT_ANCHOR,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_StartRepeatedMotion(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2);
+  // "I see! If we can get them to Colosso, they'll all be happy."
   TolbiShipDeck_Say(ACTOR_TOUR_GUIDE_AT_ANCHOR);
   Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_EAST);
   Actor_RunRepeatedMotion(ACTOR_SEA_SEAN, 1);
+  // "All right then, go and tell the tourists."
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
   Actor_SetSpeed(ACTOR_SEA_SEAN, 1.6);
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_GoBelowActions);
@@ -2713,6 +2817,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   Actor_SetScript(ACTOR_TOUR_GUIDE_AT_ANCHOR, gTolbiShipDeck_GoBelowActions);
   Event_Wait(40);
   TolbiShipDeck_Turn(ACTOR_SEA_KAJA, FACING_WEST);
+  // "It's not much farther. I'll ask the oarsmen to work 'til the very end."
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   TolbiShipDeck_Turn(ACTOR_PARTY_LEADER, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -3298,7 +3403,7 @@ const struct Trigger gTolbiShipDeckTriggers[] = {
     { TRIGGER_STEP, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT(TolbiShipDeck_GoBelow) },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_KALAY_DOCKS },
+    { TRIGGER_EXIT, TOLBI_SHIP_DECK_TO_KALAY_DOCKS, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_KALAY_DOCKS },
     { TRIGGER_TALK, ACTOR_KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, MSGNO(MsgTolbiShipDeckThereAreALotOfPassengers) },
     { TRIGGER_TALK, ACTOR_KALAY_CREWMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckOhAtTheRiskOfSounding) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KALAY_CREWMAN, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, MSGNO(MsgTolbiShipDeckTheReplacementShipFromTolbiShould) },
@@ -3362,7 +3467,7 @@ const struct Trigger gTolbiShipDeckTriggersArrived[] = {
     { TRIGGER_STEP, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT(TolbiShipDeck_GoBelow) },
-    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_TOLBI_DOCKS },
+    { TRIGGER_EXIT, TOLBI_SHIP_DECK_TO_TOLBI_DOCKS, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_TOLBI_DOCKS },
     { TRIGGER_TALK, ACTOR_ARRIVED_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckYouLookinForSeanAndOuranos) },
     { TRIGGER_TALK, ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO, CONDITION_ALWAYS, EVENT(TolbiShipDeck_AskHeadedForColosso) },
     { TRIGGER_TALK, ACTOR_ARRIVED_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThisGroupThatCameOnOur) },
@@ -3380,7 +3485,8 @@ const struct Trigger gTolbiShipDeckTriggersAtIsland[] = {
     { TRIGGER_STEP, TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CRATE_HOLD, CONDITION_ALWAYS, EVENT(TolbiShipDeck_GoBelowWhileFacingWest) },
 #endif
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TOLBI_SHIP_DECK_TO_SHIP_ROOMS_CAPTAINS_ROOM, CONDITION_ALWAYS, EVENT(TolbiShipDeck_GoBelow) },
-    { TRIGGER_EXIT, 6, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE },
+    // At anchor the west gangplank's cells lead to Crossbone Isle.
+    { TRIGGER_EXIT, TOLBI_SHIP_DECK_TO_TOLBI_DOCKS, CONDITION_ALWAYS, TOLBI_SHIP_DECK_TO_WORLD_MAP_CROSSBONE_ISLE },
     { TRIGGER_TALK, ACTOR_SEA_CREW_MEMBER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckKajaAndTheCaptainAreProfessionals) },
     { TRIGGER_TALK, ACTOR_SEA_SEAN, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, EVENT(TolbiShipDeck_OfferToScoutIsland) },
     { TRIGGER_TALK, ACTOR_SEA_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckTheresNoTellingWhatKindOf) },
@@ -3397,5 +3503,6 @@ const struct Trigger gTolbiShipDeckTriggersAtIsland[] = {
 
 /// How hard each passenger rows, from ACTOR_ARRIVED_FIRST_PASSENGER on.
 ///
-/// 1 leaves the oar still, 2 to 4 row ever faster.
+/// 1 leaves the oar still, 2 to 4 row ever faster; an empty seat's oars take
+/// stroke 3 (TolbiShipDeck_ChooseOarStrokes).
 const s32 gTolbiShipDeckRowerStrokes[] = {3, 2, 3, 1, 4, 4, 2, 1, 1};

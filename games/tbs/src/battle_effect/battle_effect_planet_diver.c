@@ -401,8 +401,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
                FIXEDtoINT(Trig_Sin(spin) * ORBITING_SPIRALS_RADIUS)) +
               offsetX;
           y = screen.y + FIXEDtoINT(Trig_Cos(spin) * ORBITING_SPIRALS_RADIUS);
-          // Each spiral turns through its four pictures, mirrored every other 16
-          // frames.
+          // Each spiral turns through its four pictures, mirrored every other
+          // 16 frames.
           phase = frame / 16;
           draw[phase & 1](canvas,
                           work->sheet +

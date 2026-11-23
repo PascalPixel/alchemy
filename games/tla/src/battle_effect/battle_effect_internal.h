@@ -2,7 +2,9 @@
 #define ALCHEMY_BATTLE_EFFECT_INTERNAL_H
 
 /// @file
-/// What every part of the battle_effect object shares: its includes.
+/// What every part of the battle_effect object shares: its includes, the
+/// canvas's and the shared sheets' sizes, the modes of the bodies several
+/// effects play, and the routines and tables the parts reach across each other.
 /// battle_effect.c includes it before the parts, and each part includes it too.
 
 #include "types.h"
@@ -923,7 +925,6 @@ struct StripQuad;
 
 // display.c
 void BattleEffect_AdvanceScrollOnInterval(void);
-// Configures the battle display for an effect.
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_AdvanceBg2OnInterval(void);
 
@@ -933,13 +934,13 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 /// Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_StartTiledCanvas(s32 bg_control);
-void BattleEffect_StartTiledCanvasFilled(s32 bg_control);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void BattleEffect_ProcessPendingBlock2Transfer(void);
 void Display_ApplyBg2Affine(void);
-// Sets up the canvas tile map on BG1.
+/// Sets up the canvas tile map on BG1.
 void BattleEffect_SetupCanvasTileMap(void);
-// Marks the transition done and shows the battle view again.
+/// Marks the transition done and shows the battle view again.
 void BattleEffect_HideBg1AndRestoreBackdrop(void);
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
@@ -981,9 +982,10 @@ void BattleEffect_CallDoNothing(s32 cnt);
 void BattleEffect_BuildWindowEdgeTable(void);
 
 // battler_tint.c
-/// Flashes an actor in a palette for some frames.
-void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
-                              s32 stateSlot, s32 stateValue);
+/// Shows a battler in a palette and a pose, for `frames` frames counted in
+/// timer slot `timerSlot`; TINT_KEEP leaves any of them as it is.
+void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 pose, s32 timerSlot,
+                              s32 frames);
 void BattleEffect_SetupBlendedDisplay(void);
 
 // stat_change.c
@@ -1006,7 +1008,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
 // djinn_attacks.c
-void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal);
+void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
+                                s32 copyPalette);
 
 // hail.c
 /// Shakes the camera while work->shakeFrames lasts.
@@ -1017,8 +1020,8 @@ void Camera_ApplyVerticalShake(s32 range);
 struct SpriteAnimation *AnimationObject_AllocateEmpty(void);
 
 // spider_web.c
-// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
-// flags, mode), whose result it returns.
+/// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
+/// flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
@@ -1030,7 +1033,7 @@ void Graphics_LoadGreyRamp(void);
 
 // azul.c
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
-// The middle between the first and the last target.
+/// The middle between the first and the last target.
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position);
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
@@ -1044,7 +1047,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *effect);
 void BattleEffect_RunAttackSlash(struct BattleEffectParams *effect);
 
 // casting_impact.c
-// Steps the background colours one shade toward a resource's palette.
+/// Steps the background colours one shade toward a resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource);
 
 // canvas_routine.c
@@ -1058,7 +1061,7 @@ void Render_ApplyProjectedPlacementFar(struct Sprite *sprite, s32 *position,
                                        s32 *scale, s32 mode);
 
 // ramses.c
-// An actor's recoil motion, through a far call.
+/// An actor's recoil motion, through a far call.
 void BattleMotion_ApplyKnockbackFar(s32 actor, s32 motion);
 
 // ragnarok.c
@@ -1123,8 +1126,8 @@ void BattleEffect_ArmMeteorBlowPaletteDma(void);
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *effect);
 
 // odyssey.c
-// The five-argument blitter builder's far call, which nothing calls; it serves
-// only the never-taken call below.
+/// The five-argument blitter builder's far call, which only a call in
+/// odyssey.c that is never taken names.
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
                                  s32 flags, u32 mode);
 void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void));
@@ -1136,6 +1139,12 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 
+// target_motes.c
+/// Glowing orbs spiral in on each target.
+///
+/// Abilities: Mystic Flame.
+void BattleEffect_RunMysticFlame(struct BattleEffectParams *args);
+
 // Routines of other banks the parts call.
 s32 Sprite_StartAnimationFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
@@ -1146,10 +1155,6 @@ void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 /// two units.
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
 void BattleCamera_SetViewFar(s32 x, s32 depth, s32 y, s32 zoom);
-/// Glowing orbs spiral in on each target.
-///
-/// Abilities: Mystic Flame.
-void BattleEffect_RunMysticFlame(struct BattleEffectParams *args);
 void BattleObject_PutFar(void);
 /// Spawns the battle objects of a list of units through its far call.
 void BattleObject_SpawnObjectsForListFar(s16 *unitIds, s32 refreshPoses,
@@ -1175,7 +1180,6 @@ void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 void Sprite_RemoveAnimationFar(void *record, s32 entry);
 void Matrix_RotateX(s32 angle);
-// The roll step of the scene transform.
 void Matrix_RotateZ(s32 angle);
 void Matrix_RotateY(s32 angle);
 void Matrix_Pop(void);
@@ -1745,11 +1749,12 @@ extern const u16 gIris_ConeMesh[];
 
 // The buffers and tables the parts share, by the first part that reads them.
 
-/// falling.c
-/// The cone's 64 vertices, stored at the buffer's constant address.
+// falling.c
+/// The map cell buffer at its own address, which the effects borrow: no map is
+/// loaded during a battle.
 extern u8 gMapGridCellBuffer[];
 
-/// thor.c
+// thor.c
 extern const s16 gThor_Points[6][2]; ///< the three lines' end points
 
 // flurry.c
@@ -1794,23 +1799,19 @@ enum FlurryExtra {
 
 extern const struct Scale gGaia_UnitScale;
 
-/// spider_web.c
+// spider_web.c
 /// A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gUlysses_ParticleScale;
 
-// The 64 sparks, past the map cells' first 16 KB.
-
-/// neptune.c
+// neptune.c
 extern const struct Scale gNeptune_UnitScale; ///< the serpent's scale
 
-// geode.c
-
-/// nirvana.c
+// nirvana.c
 extern u8 gSerac_MeshEnd[]; ///< the mesh's end, after 112 faces
 
 extern const s8 gVoidBeam_Corners[][2]; ///< the hexagon's corners (z, y)
 
-/// flora.c
+// flora.c
 extern const struct Scale gFlora_UnitScale;
 /// Inside gEffectScratch: FloraWork from its second tile number on, read at
 /// its fixed place.
@@ -1818,8 +1819,7 @@ extern u16 gFlora_PetalTiles[];
 /// Inside gEffectScratch: FloraWork.palette, the object palette as it fades.
 extern u16 gFlora_SpritePalettes[];
 
-// ocean_fist.c
-
+// daedalus.c
 extern const struct Scale gDaedalus_CanopyScale;
 extern const struct Scale gDaedalus_MachineScale;
 extern const struct Scale gDaedalus_MissileScale;
@@ -1828,18 +1828,18 @@ extern const struct Scale gCoatlicue_UnitScale;
 
 extern const struct Scale gCatastrophe_UnitScale;
 
-/// haures.c
-/// In the map cell buffer: the wing's faces, eight bytes a quad.
+// haures.c
+/// In the map cell buffer: the mound's faces, eight bytes a quad.
 extern u8 gHaures_WingStrip[];
-/// The face after the wing's last, which ends the strip.
+/// The face after the mound's last, which ends the strip.
 extern u8 gHaures_WingStripEnd[];
-/// In the map cell buffer: each wing corner's shade.
+/// In the map cell buffer: each mound corner's shade.
 extern u8 gHaures_WingShades[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
 
-/// moloch.c
+// moloch.c
 extern const u8 gMoloch_MoteSizes[];
 /// In the map cell buffer: the tiles Iris draws its sprites from.
 extern u8 gIris_TileBuffer[];

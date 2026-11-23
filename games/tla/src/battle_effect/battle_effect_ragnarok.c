@@ -1,5 +1,6 @@
 /// @file
-/// Ragnarok, and the great sword that falls onto the target.
+/// Ragnarok, and the great sword that falls onto the target in Titan Blade and
+/// Acheron's Grief.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -523,7 +524,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       blit(canvas, src, x, SWORD_GROUND_Y - scroll, FIRE_PILLAR_WIDTH, scroll);
     }
 
-    // The dust grows as it falls and toward the end.
+    // The dust grows as it falls and toward the end. It stops at frame 71, so
+    // only the first two of the later sizes, and never the lift from frame
+    // 80, are reached.
     if (frame <= 71) {
       for (i = 0; i != TITAN_BLADE_DRAWN_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
@@ -669,6 +672,5 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 #undef FLASH_BURN_FRAMES
 #undef SWORD_GROUND_Y
 
-struct StripQuad;
-
+/// Judgment's sprite scale, read by the part that follows.
 extern const struct Scale gJudgment_UnitScale;

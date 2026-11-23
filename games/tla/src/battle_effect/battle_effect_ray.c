@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define RAY_FRAMES 64 ///< frames of the effect
+#define RAY_FRAMES 64
 
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 /// The columns of a gRay_Sparks row, one row a variant.
@@ -81,7 +81,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     REG_BG2X = -midpoint.x << 8;
   }
 
-  // Every spark waits to be thrown.
+  // Every spark waits to be thrown. The place and speeds set here are never
+  // read: a spark is given its own as it is thrown.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
     struct Particle *spark = &PARTICLES[i];
     s32 speed;
@@ -111,7 +112,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         s32 x;
         s32 y;
 
-        // The radius across shrinks from 32 a pixel a frame.
+        // The bolts close in from 32 pixels either side, a pixel a frame,
+        // each turning at its own rate.
         thrown = 0;
         angle = (frame * (TRIG_TURN / 32) + DEGtoANG(90)) * bolt;
         x = FIXEDtoINT((32 - frame) * Trig_Sin(angle)) + 64;

@@ -118,9 +118,8 @@ s32 FieldSequence_Run(s32 entrance) {
         ScreenTransition_Start(work->transition, work->transitionFrames);
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
-        // An arrival the last scene asked for
-        // (Entrance_PlayArrival) plays through the fade; with none,
-        // wait out half of it.
+        // An arrival the last scene asked for (Entrance_PlayArrival) plays
+        // through the fade; with none, wait out half of it.
         if (Entrance_PlayArrival() == 0)
           wait((work->transitionFrames + 1) / 2);
       }
@@ -242,6 +241,8 @@ s32 FieldSequence_Run(s32 entrance) {
 
           AreaNameWindow_HideFar();
           object = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+          // mode, done with, holds whether there is something to talk to, then
+          // the cell behavior ahead.
           mode = 0;
           if (object != -1) {
             mode = Scene_FindActorTalkTrigger(object) != 0;
@@ -260,7 +261,8 @@ s32 FieldSequence_Run(s32 entrance) {
           }
           work->aButton = 0;
         } else if (work->fieldMenu != 0) {
-          // The File Screen (B + Select in debug mode opens the debug menu).
+          // The field menu (in debug mode, B + Select opens the debug flag
+          // editor).
           AreaNameWindow_HideFar();
           Leader_StopMoving();
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -302,8 +304,8 @@ s32 FieldSequence_Run(s32 entrance) {
           WorldMap_Unfreeze();
           work->item = 0;
         } else if (work->pauseMenu != 0) {
-          // The Pause menu (in debug mode, B opens the debug menu and L the
-          // palette editor).
+          // The Pause menu (in debug mode, B opens the debug scene select and L
+          // the palette editor).
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           WorldMap_Freeze();
@@ -313,7 +315,7 @@ s32 FieldSequence_Run(s32 entrance) {
           } else if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0) {
             PaletteEditor_Run();
           } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
-            // As for the File Screen above.
+            // As for the field menu above.
             work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
           } else {
             Field_EndBusyAndReveal();

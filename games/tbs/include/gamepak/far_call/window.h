@@ -53,7 +53,8 @@ void Portrait_CloseWindowFar(u32 entry);
 s32 Text_GetMessageSizeFar(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 /// As Text_GetMessageSize, but measuring every page of the message;
 /// the field's speaker windows use it.
-s32 Text_GetMessageSizeAltFar(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+s32 Text_GetMessageSizeAllPagesFar(s32 no, s32 *x, s32 *y, u32 *width,
+                                   u32 *height);
 void MessageArgument_ClearAllFar(void);
 void MessageArgument_PushFar(u32 value, u32 kind);
 void PartyStatus_CreateWindowFar(s32 flags);

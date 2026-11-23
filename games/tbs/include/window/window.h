@@ -631,7 +631,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 flags);
 void Text_MeasureMessage(s32 no, s32 *x, s32 *y);
 s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
-s32 Text_GetMessageSizeAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
+s32 Text_GetMessageSizeAllPages(s32 no, s32 *x, s32 *y, u32 *width,
+                                u32 *height);
 void Text_MeasureDecoded(s32 pos, u32 *out_width, u32 *out_height,
                          u16 *spacing);
 void Text_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,

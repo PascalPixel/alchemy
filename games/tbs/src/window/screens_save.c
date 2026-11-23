@@ -804,9 +804,9 @@ enum FileMenuMode {
 /// FileList_SelectFile's result when no file can be chosen in its mode.
 #define FILE_LIST_NO_FILE -2
 
-// The file list: lists the three files with each one's leader and area (or why
-// it cannot be chosen) and, for the file under the cursor, its summary, its
-// party and its Djinn, with the file's own palette glow.
+/// The file list: lists the three files with each one's leader and area (or why
+/// it cannot be chosen) and, for the file under the cursor, its summary, its
+/// party and its Djinn, with the file's own palette glow.
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct Window *fileList;
 #if TBS_PATCH_1

@@ -61,6 +61,15 @@ enum {
   ENTRANCE_SKIP_TO_CREDITS = 10
 };
 
+/// Alex's lines that open a run of the summit's talk, as messages after
+/// MsgGoldenSunEternalLifeAndPower.
+enum MtAlephSummitAlexLine {
+  ALEX_WHO_ARE_YOU = 4, ///< "Wh-Who are you?" (MsgGoldenSunWhoAreYou)
+  /// "If you are trying to anger me, have a little taste of exactly how much
+  /// power I have attained!"
+  ALEX_TRYING_TO_ANGER_ME = 12
+};
+
 #include "../field/field_effect_move.c"
 
 /// The palette fade's three channels of one 16-colour palette.
@@ -542,7 +551,8 @@ s32 Scene_Initialize(void) {
     Actor_WalkToAndWait(ACTOR_WISE_ONE, 216, 96);
     Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower + 4);
+    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower +
+                            ALEX_WHO_ARE_YOU);
     // "Wh-Who are you?"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     Event_PlaySound(MUS_ELEMENTAL_STARS);
@@ -577,7 +587,8 @@ s32 Scene_Initialize(void) {
     // "Yes. You also have nearly endless life. And your Psynergy is..."
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower + 12);
+    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower +
+                            ALEX_TRYING_TO_ANGER_ME);
     // "If you are trying to anger me, have a little taste of exactly how..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     Actor_SetAnimation(ACTOR_ALEX, 13);

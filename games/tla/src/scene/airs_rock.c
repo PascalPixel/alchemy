@@ -575,7 +575,7 @@ void AirsRock_BlowGust(void) {
   cell.x = FIELD_CELL(effect->child->x.fixed);
   cell.z = FIELD_CELL(effect->child->z.fixed);
   // The leader's facing rounded to the nearest of east, south, west and north.
-  angle = (leader->facing + DEGtoANG(45)) & 0xc000;
+  angle = FACING_QUARTER(leader->facing + DEGtoANG(45));
   delta.x = FIXEDtoINT(Trig_Cos(angle));
   delta.z = FIXEDtoINT(Trig_Sin(angle));
   do {

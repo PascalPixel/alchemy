@@ -58,10 +58,6 @@
 #include "graphics/palette_buffers.h"
 #include "macros.h"
 
-/// The quarter of a turn a facing lies in, what is past it dropped: east,
-/// south, west or north, as The Broken Seal's scene_tables.h has it.
-#define FACING_QUARTER(facing) ((facing) & 0xc000)
-
 /// Story flags of the mast puzzle and its events.
 #define FLAG_DOCK_CRATE_SUNK 0x8a0 ///< ACTOR_DOCK_CRATE
 #define FLAG_SAIL_CRATE_SUNK 0x8a1 ///< ACTOR_SAIL_CRATE

@@ -249,7 +249,7 @@ void Caverns_StartMovingAngaraBlock(void) {
       Caverns_ShiftAngaraCellHeights(1);
   } else {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-    angle = (leader->facing + DEGtoANG(45)) & 0xc000;
+    angle = FACING_QUARTER(leader->facing + DEGtoANG(45));
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;

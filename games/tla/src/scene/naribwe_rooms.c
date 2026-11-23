@@ -97,6 +97,22 @@ void NaribweRooms_ReadOtherItem(void);
 /// "It costs 20 coins to hear what your future holds. Will you pay?"
 #define FORTUNE_PRICE 20
 
+/// The Trident's reading, as messages after MsgNaribweInteriorsAreYouPrepared.
+enum TridentReadingMessage {
+  /// "That object you have placed before me... It is a fearsome weapon to a
+  /// particular beast."
+  TRIDENT_FEARSOME_WEAPON = 29,
+  /// "If you wield this weapon, you can defeat the legendary beast!"
+  TRIDENT_DEFEAT_THE_BEAST = 30,
+  /// "But there are no more beasts for you to fear in this part of the world."
+  TRIDENT_NO_MORE_BEASTS = 31
+};
+
+/// "From the garb you have placed before me, I sense the presence of the one
+/// you await.", which opens a Djinni's hint, as the message this many before
+/// MsgNaribweInteriorsInItemYouHavePlaced.
+#define ARMOR_PRESENCE_SENSED_BEFORE 42
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
@@ -430,15 +446,15 @@ void NaribweRooms_ReadFortune(void) {
   if ((u16)(item - ITEM_RIGHT_PRONG) <= ITEM_CENTER_PRONG - ITEM_RIGHT_PRONG) {
     NaribweRooms_ReadProng();
   } else if ((u16)item == ITEM_TRIDENT) {
-    FieldEvent_SetMessageId(message + 29);
+    FieldEvent_SetMessageId(message + TRIDENT_FEARSOME_WEAPON);
     // "That object you have placed before me... It is a fearsome weapon to..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     if (!Event_GetFlag(FLAG_SEA_OF_TIME_OPENED)) {
-      FieldEvent_SetMessageId(message + 30);
+      FieldEvent_SetMessageId(message + TRIDENT_DEFEAT_THE_BEAST);
       // "If you wield this weapon, you can defeat the legendary beast!"
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     } else {
-      FieldEvent_SetMessageId(message + 31);
+      FieldEvent_SetMessageId(message + TRIDENT_NO_MORE_BEASTS);
       // "But there are no more beasts for you to fear in this part of the..."
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     }
@@ -580,7 +596,8 @@ void NaribweRooms_ReadArmor(void) {
     // "In the item you have placed before me, I can see nothing of the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   } else {
-    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsInItemYouHavePlaced - 42);
+    FieldEvent_SetMessageId((s32)MsgNaribweInteriorsInItemYouHavePlaced -
+                            ARMOR_PRESENCE_SENSED_BEFORE);
     // "From the garb you have placed before me, I sense the presence of the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     FieldEvent_SetMessageId(message);

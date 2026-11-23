@@ -248,7 +248,7 @@ s32 Scene_TalkToActor(s32 id) {
     if (!actorHalted) {
       // An actor whose script has ended goes back to what its talk facing
       // says: watching the leader or its old angle.
-      if (actor->script[actor->scriptCursor] == SCRIPT_CMD_END) {
+      if (actor->script[actor->scriptCursor] == SCRIPT_COMMAND_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
           actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
           actor->steeringFlags |= ACTOR_FACES_MOTION;

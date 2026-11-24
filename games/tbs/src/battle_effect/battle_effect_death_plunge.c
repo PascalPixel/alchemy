@@ -24,6 +24,9 @@
 #define DEATH_PLUNGE_RUN_PERCENT 90
 /// The flashes thrown in a ring after the strike.
 #define DEATH_PLUNGE_RING_FLASHES 16
+/// The pose the user comes down in: animation 0 of a battle sprite, its first
+/// standing picture held still, without POSE_STANDING's breathing.
+#define POSE_STILL 0
 
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
@@ -146,7 +149,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       user->scaleY = -user->scaleY;
       user->y.fixed -= userHeight;
       target->y.fixed -= targetHeight;
-      Actor_SelectAnimationFar(user, 0);
+      Actor_SelectAnimationFar(user, POSE_STILL);
     }
     if (frame == DEATH_PLUNGE_STRIKE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -355,7 +358,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
   state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   camera = gBattleCamera;
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
@@ -867,7 +870,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
   state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
   state->args = args;
   BattleEffect_StartCanvasLayer(0);
   // Setup, as for the element pillar.
@@ -1117,3 +1120,4 @@ void BattleEffect_EndElementStreaks(void) {
 #undef STREAK_START_DISTANCE
 #undef STREAK_LENGTH
 #undef ELEMENT_BURST_MOTE_LIFE
+#undef POSE_STILL

@@ -204,6 +204,10 @@ enum {
 /// The debug start's entrance into Venus Lighthouse's grounds: the path south
 /// of the round stone platform.
 #define DEBUG_VENUS_LIGHTHOUSE_START 10
+/// The debug start's entrance into Mt. Aleph's summit, one no stretch of the
+/// ending uses: Alex stands on the summit while B is held, and the staff
+/// credits' opening follows.
+#define DEBUG_MT_ALEPH_START 1
 
 /// The main routine: runs one sequence after another and never returns. mode,
 /// an enum GameStart, chooses the first scene. As The Broken Seal's, with this
@@ -224,7 +228,7 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineState.entrance = CLEAR_FROM_TITLE;
   } else if (gDebugMode && mode == GAME_START_DEBUG_MT_ALEPH) {
     gMainRoutineState.next = SCENE_MT_ALEPH_SUMMIT;
-    gMainRoutineState.entrance = 1;
+    gMainRoutineState.entrance = DEBUG_MT_ALEPH_START;
   } else if (gDebugMode && mode == GAME_START_DEBUG_TITLE) {
     gMainRoutineState.next = SCENE_TITLE;
     gMainRoutineState.entrance = TITLE_STORY_CRAWL;

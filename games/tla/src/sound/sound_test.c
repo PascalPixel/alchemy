@@ -40,6 +40,9 @@ void SoundTest_Run(void) {
   cues = sSoundTestCues;
   row = 0;
   reverbCode = SOUND_REVERB_LONG;
+  // Clears the build stamp's first word, as The Broken Seal's test does.
+  // Nothing in either game reads the stamp once System_CopyBuildStamp has
+  // written it at power-on, so nothing on screen changes.
   Io_Write32(0, &gBuildStamp[0]);
   gSoundVBlankState.soundTestActive = 1;
   timer = 20;

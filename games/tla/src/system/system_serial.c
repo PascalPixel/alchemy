@@ -113,13 +113,44 @@ void Serial_DisableTransfer(void) {
   state->transferEnabled = 0;
 }
 
+/// The parent's connection: timer 3, not the serial interrupt, now clocks the
+/// transfers, in `mode` (SERIAL_MODE_CLOCKING).
+static __inline__ void Serial_StartClocking(volatile u32 *siocnt, u8 mode) {
+  Io_Write16(0, &REG_IME);
+  {
+    u32 ie = REG_IE;
+
+    Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
+    Io_Write16(1, &REG_IME);
+    // SIOCNT's high byte: clear SIO_INTR_ENABLE.
+    *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
+    REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
+    REG_TM3CNT = SERIAL_TIMER_RELOAD;
+    gSerialState.mode = mode;
+  }
+}
+
+/// The link status the polls return, from SIOCNT's `control`: the consoles
+/// heard from, LINK_STATUS_CLOCKING, LINK_STATUS_ERROR and
+/// LINK_STATUS_EXTRA_CONSOLE when the multiplayer id says a third is there.
+static __inline__ s32 Serial_GetLinkStatus(u32 control) {
+  s32 status;
+  s32 result;
+
+  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
+  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
+    status |= LINK_STATUS_CLOCKING;
+  result = Serial_AddErrorFlag(status);
+  if (SIO_ID_OF(control) > 1)
+    result |= LINK_STATUS_EXTRA_CONSOLE;
+  return result;
+}
+
 /// Looks for the link partner and, once connected, does one exchange (as
 /// Serial_ExchangePayloads).
 s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
-  s32 status;
-  s32 result;
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
@@ -134,22 +165,8 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
         (mode = control & (SIO_START | SIO_MULTI_SD)) == SERIAL_MODE_CLOCKING) {
       u8 serialError = control & SIO_MULTI_SI;
 
-      if (serialError == 0 && gSerialState.sendIndex == -1) {
-
-        Io_Write16(0, &REG_IME);
-        {
-          u32 ie = REG_IE;
-
-          Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
-          Io_Write16(1, &REG_IME);
-          // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
-          // the transfers
-          *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
-          REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-          REG_TM3CNT = SERIAL_TIMER_RELOAD;
-          gSerialState.mode = mode;
-        }
-      }
+      if (serialError == 0 && gSerialState.sendIndex == -1)
+        Serial_StartClocking(siocnt, mode);
     } else if (multiplayerId == 0) {
       break;
     }
@@ -163,13 +180,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   }
 
   gSerialState.packetNumber++;
-  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
-  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
-    status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddErrorFlag(status);
-  if (SIO_ID_OF(control) > 1)
-    result |= LINK_STATUS_EXTRA_CONSOLE;
-  return result;
+  return Serial_GetLinkStatus(control);
 }
 
 /// As Serial_PollAndTransfer, without exchanging data: wait() calls
@@ -178,8 +189,6 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
 s32 Serial_PollStatus(void) {
   volatile u32 *siocnt;
   u32 control;
-  s32 status;
-  s32 result;
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
@@ -189,34 +198,14 @@ s32 Serial_PollStatus(void) {
     if (mode == SERIAL_MODE_CLOCKING) {
       u8 serialError = control & SIO_MULTI_SI;
 
-      if (serialError == 0 && gSerialState.sendIndex == -1) {
-
-        Io_Write16(0, &REG_IME);
-        {
-          u32 ie = REG_IE;
-
-          Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
-          Io_Write16(1, &REG_IME);
-          // SIOCNT's high byte: clear SIO_INTR_ENABLE, as timer 3 now clocks
-          // the transfers
-          *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
-          REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-          REG_TM3CNT = SERIAL_TIMER_RELOAD;
-          gSerialState.mode = mode;
-        }
-      }
+      if (serialError == 0 && gSerialState.sendIndex == -1)
+        Serial_StartClocking(siocnt, mode);
       gSerialState.phase = SERIAL_PHASE_CONNECTED;
     }
     gSerialState.packetNumber++;
   }
 
-  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
-  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
-    status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddErrorFlag(status);
-  if (SIO_ID_OF(control) > 1)
-    result |= LINK_STATUS_EXTRA_CONSOLE;
-  return result;
+  return Serial_GetLinkStatus(control);
 }
 
 /// Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
@@ -230,8 +219,6 @@ s32 Serial_PollStatus(void) {
 s32 Serial_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
-  s32 status;
-  s32 result;
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
@@ -240,14 +227,7 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
     Serial_PrepareSendPacket(send);
     gSerialState.packetNumber++;
   }
-  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
-  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
-    status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddErrorFlag(status);
-  // SIOCNT bits 4 and 5, the multiplayer id
-  if (SIO_ID_OF(control) > 1)
-    result |= LINK_STATUS_EXTRA_CONSOLE;
-  return result;
+  return Serial_GetLinkStatus(control);
 }
 
 /// Builds the packet to send in sendBuffer[0] (struct SerialPacket): the packet

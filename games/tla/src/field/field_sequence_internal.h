@@ -208,4 +208,13 @@ extern s16 gSceneItems[];
 
 extern const u8 gField_ExamineTriggerMessageOffsets[];
 
+/// The chest sprite's animations, for the targets and treasure spot parts.
+enum {
+  TREASURE_SPOT_CHEST_OPEN = 2,    ///< standing open
+  TREASURE_SPOT_CHEST_OPENING = 4, ///< its lid lifting
+  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
+  TREASURE_SPOT_CHEST_OPENING_EMPTY = 6, ///< its lid lifting on nothing inside
+  TREASURE_SPOT_CHEST_MIMIC = 7          ///< jumping up as a mimic
+};
+
 #endif

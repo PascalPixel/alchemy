@@ -10,16 +10,6 @@
 #include "field/map.h"
 #include "system/system.h"
 
-/// The chest sprite's animations, for this part and
-/// field_sequence_treasure_spots.c after it.
-enum {
-  TREASURE_SPOT_CHEST_OPEN = 2,    ///< standing open
-  TREASURE_SPOT_CHEST_OPENING = 4, ///< its lid lifting
-  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
-  TREASURE_SPOT_CHEST_OPENING_EMPTY = 6, ///< its lid lifting on nothing inside
-  TREASURE_SPOT_CHEST_MIMIC = 7          ///< jumping up as a mimic
-};
-
 /// Picks the actor nearest actor id, under 32 pixels away and 48 pixels in
 /// height. Distances to treasure spots count double and to actors with
 /// ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the actor must also lie

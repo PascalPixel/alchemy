@@ -14,6 +14,10 @@
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 
+/// SPRITE_PARTICLE's twinkle: its full glow and the next size down in turn, 3
+/// frames each.
+#define ANIM_PARTICLE_TWINKLE 7
+
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into PSYNERGY_EFFECT_SLOT_COUNT lights, which circle
 /// and close in on the leader, who turns to the camera and raises its arms
@@ -63,7 +67,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(
         effect->sprite, (Random16() * (SPRITE_COLOR_GREY + 1)) >> 16);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33

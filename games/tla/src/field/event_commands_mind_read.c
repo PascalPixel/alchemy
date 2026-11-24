@@ -33,6 +33,19 @@
 #include "field/object.h"
 #include "window/item_icon.h"
 
+/// Actor_SetLayersColorMode's value that cycles the actor's colours.
+#define LAYERS_COLOR_CYCLING 0
+
+/// SPRITE_MOVE_HAND's animations, The Broken Seal's sheet and numbers.
+enum MoveHandAnimation {
+  MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread
+  MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping
+  /// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
+  /// strains against what it pushes.
+  MOVE_HAND_ANIMATION_FLEX = 4,
+  MOVE_HAND_ANIMATION_FIST = 5
+};
+
 /// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
 /// a turn every 160 phase steps.
 #define MIND_READ_WAVE_OFFSET(phase) (Trig_Sin(((phase) << 16) / 160) >> 14)
@@ -75,7 +88,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         RGB(state->red, state->green, state->blue) | PALETTE_TINT_CUSTOM, 1);
     PaletteFade_StartInterpolation(1);
   }
-  Actor_SetLayersColorMode(Actor_GetById(state->sourceId), 0);
+  Actor_SetLayersColorMode(Actor_GetById(state->sourceId),
+                           LAYERS_COLOR_CYCLING);
 
   if (state->counter == 0 || state->counter == MIND_READ_PARTICLE_GAP ||
       state->counter == 2 * MIND_READ_PARTICLE_GAP) {
@@ -143,9 +157,9 @@ void MindRead_StartRipple(void) {
   if (!state->delay) {
     u16 *line = state->lines[state->page];
     volatile u16 *dma = REG_DMA0;
-    dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
-    dma[5] &= ~DMA_ENABLE;
-    (void)dma[5];
+    dma[DMA0_CONTROL] &= ~DMA_START_TIMING_DRQ_REPEAT;
+    dma[DMA0_CONTROL] &= ~DMA_ENABLE;
+    (void)dma[DMA0_CONTROL];
     Dma_Set(line, REG_BG0HOFS, DMA_HBLANK_HALFWORD_PER_LINE,
             (volatile u32 *)dma);
   }
@@ -204,8 +218,9 @@ void MindRead_UpdateCrescent(struct Actor *target) {
   }
 }
 
-/// Gives every part of an actor's sprite (but those at palette 15) palette - 1,
-/// or for palette 0 the next palette of a cycle that changes every 2 frames.
+/// Gives an actor's sprite colour mode value - 1 (enum SpriteColorMode), or for
+/// LAYERS_COLOR_CYCLING the next of gAnim_ChildPaletteCycle's swapped colours,
+/// a step every 2 frames, as Mind Read's wave does to its caster.
 void Actor_SetLayersColorMode(void *object, s32 value) {
   s32 child = value - 1;
 
@@ -341,7 +356,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
                    target->z.fixed);
       Vector_AddPolarOffset(toFIXED(16), angle, &position);
       Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-      Actor_SelectAnimationFar(pusher, 1);
+      Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_OPEN);
       pusher->velocityX = 0;
       pusher->velocityY = 0;
       pusher->velocityZ = 0;
@@ -359,7 +374,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     SET_POSITION(&beyond, target->x.fixed, target->y.fixed, target->z.fixed);
     Vector_AddPolarOffset(toFIXED(32), direction, &beyond);
     if (MapGrid_CheckCollisionFar(target, &position) > 0) {
-      Actor_SelectAnimationFar(pusher, 4);
+      Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
@@ -367,7 +382,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     hit = ActorScript_FindOverlappingActorFar(target, &position);
     if (hit != NULL) {
       if (hit != user) {
-        Actor_SelectAnimationFar(pusher, 4);
+        Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
@@ -376,7 +391,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
       cellZ = user->z.fixed & FIELD_CELL_MASK;
       if (cellX == (position.x & FIELD_CELL_MASK) &&
           cellZ == (position.z & FIELD_CELL_MASK)) {
-        Actor_SelectAnimationFar(pusher, 4);
+        Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
@@ -384,7 +399,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
       if (cellX == (beyond.x & FIELD_CELL_MASK) &&
           cellZ == (beyond.z & FIELD_CELL_MASK)) {
         if (MapGrid_GetTerrainKindFar(user->layer, beyond.x, beyond.z) != 0) {
-          Actor_SelectAnimationFar(pusher, 4);
+          Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(SE_MENU_ERROR);
           continue;
@@ -434,7 +449,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   target->update = (ObjectUpdate)scene->savedCallback;
   if (pushed) {
     pusher->update = NULL;
-    Actor_SelectAnimationFar(pusher, 4);
+    Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
     Actor_SetPositionAndResetMotionFar(pusher, pusher->x.fixed, pusher->y.fixed,
                                        pusher->z.fixed);
     Field_RunPsynergyEvent(event, scene->casterId, scene->targetId);
@@ -509,7 +524,7 @@ void FieldPsynergy_Move(void) {
   object = FieldEffect_SpawnMoveHand(object);
   FieldEffect_GrowHandAndWait(object);
   if (object != 0) {
-    Actor_SelectAnimationFar(object, 4);
+    Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FLEX);
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
@@ -541,7 +556,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   parent->speedLimit = toFIXED(2);
   parent->acceleration = toFIXED(2);
   parent->motionFlags = 0;
-  Actor_SelectAnimationFar(parent, 3);
+  Actor_SelectAnimationFar(parent, MOVE_HAND_ANIMATION_GRIP);
   Actor_SetTargetPositionFromMagnitudeAngle(parent, toFIXED(16), angle);
 
   for (fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
@@ -918,7 +933,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       obj->speedLimit = toFIXED(3) / 2;
       obj->motionFlags = 0;
       Actor_SetSpriteColorModeFar(obj, SPRITE_COLOR_GREEN_TINT);
-      Actor_SelectAnimationFar(obj, 7);
+      Actor_SelectAnimationFar(obj, ANIM_PARTICLE_TWINKLE);
       Actor_StartScriptFar(obj, gFieldEffect_ReleaseScript + 1);
 
       Actor_SetSpriteFlagsFar(obj, SPRITE_FLAG_SHADOW);
@@ -1060,7 +1075,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
     actor->scaleX = actor->scaleY = FIXED_ONE / 4;
     actor->acceleration = actor->speedLimit = toFIXED(3);
     ((struct Sprite *)actor->sprite)->image.priority = 0;
-    Actor_SelectAnimationFar(actor, 3);
+    Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_GRIP);
     scale = actor->scaleX;
     if (scale < FIXED_ONE) {
       do {
@@ -1212,7 +1227,7 @@ void FieldPsynergy_Force(void) {
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
-    FieldParticle_SetAnimation(slot, 7);
+    FieldParticle_SetAnimation(slot, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(slot->sprite, SPRITE_COLOR_BLUE_TINT);
     slot->scaleY = FIXED_ONE * 7 / 10;
     slot->scaleX = FIXED_ONE * 7 / 10;
@@ -1235,7 +1250,7 @@ void FieldPsynergy_Force(void) {
   actor->speedLimit = toFIXED(4);
   actor->acceleration = toFIXED(4);
   actor->motionFlags = 0;
-  Actor_SelectAnimationFar(actor, 5);
+  Actor_SelectAnimationFar(actor, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_BGR);
   scale = actor->scaleX;
   if (scale < FIXED_ONE) {
@@ -1260,7 +1275,7 @@ void FieldPsynergy_Force(void) {
       copy->speedLimit = toFIXED(4);
       copy->acceleration = toFIXED(4);
       copy->motionFlags = 0;
-      Actor_SelectAnimationFar(copy, 5);
+      Actor_SelectAnimationFar(copy, MOVE_HAND_ANIMATION_FIST);
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
     }
@@ -1415,14 +1430,14 @@ void FieldPsynergy_Frost(void) {
   struct FieldEffectState *scene;
   struct Actor *target;
   struct Actor *particle;
-  struct PendingEvent *ev;
-  s32 cnt;
+  struct PendingEvent *event;
+  s32 i;
 
   scene = Ram_HeapSlots->fieldEffectState;
   target = scene->target;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ICE);
-  for (cnt = 0; cnt < FROST_SNOWFLAKES; cnt++) {
+  for (i = 0; i < FROST_SNOWFLAKES; i++) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
@@ -1461,7 +1476,7 @@ void FieldPsynergy_Frost(void) {
   if (target != NULL && scene->aimAhead == 0) {
     Sound_PlayFar(SE_POWER_UP);
 
-    for (cnt = 0; cnt < 8; cnt++) {
+    for (i = 0; i < 8; i++) {
       Actor_SetSpriteColorModeFar((struct Actor *)target, SPRITE_COLOR_WHITE);
       wait(1);
       Actor_SetSpriteColorModeFar((struct Actor *)target, SPRITE_COLOR_NORMAL);
@@ -1474,11 +1489,11 @@ void FieldPsynergy_Frost(void) {
     }
 
     target->update = (ObjectUpdate)FieldEffect_UpdateFrostGlint;
-    ev = Scene_FindPsynergyTrigger(
+    event = Scene_FindPsynergyTrigger(
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FROST,
         Scene_SelectPsynergyTarget(FIELD_PSYNERGY_FROST));
-    if (ev != NULL)
-      Field_RunPsynergyEvent(ev, scene->casterId, scene->targetId);
+    if (event != NULL)
+      Field_RunPsynergyEvent(event, scene->casterId, scene->targetId);
     wait(20);
   }
 

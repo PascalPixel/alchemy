@@ -15,6 +15,10 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
+/// A Djinni's lively animation, facing the player: Venus bounces, Mars, Jupiter
+/// and Mercury wave their arms. It plays as the Djinni shrinks away on joining.
+#define DJINNI_ANIMATION_EXCITED 3
+
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of sparks
 /// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and raises
@@ -57,7 +61,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   djinni->timer = 0;
   wait(80);
   djinni->update = (ObjectUpdate)FieldEffect_ShrinkActorAndDestroySlow;
-  Actor_SelectAnimationFar(djinni, 3);
+  Actor_SelectAnimationFar(djinni, DJINNI_ANIMATION_EXCITED);
 
   // The sparks start where the Djinni is on screen.
   position.x = djinni->x.fixed;
@@ -71,7 +75,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
-    FieldParticle_SetAnimation(effect, 7);
+    FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
     Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
@@ -103,7 +107,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader stops pulsing.
   wait(10);
-  // effect, done with the sparks, carries the NULL.
+  /* FAKEMATCH(temporary): effect, done with the sparks, holding the NULL; as
+   * leader->update = NULL. */
   effect = NULL;
   leader->update = (void *)effect;
   leader->scaleX = FIXED_ONE;
@@ -116,19 +121,20 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
 /// Spins an actor 1/8 turn and shrinks it by 1/64 a frame, releasing it once
 /// its scale falls below 3/16: 53 frames from full size.
-void FieldEffect_ShrinkActorAndDestroyFast(void *actor) {
+void FieldEffect_ShrinkActorAndDestroyFast(void *obj) {
+  struct Actor *actor = obj;
   s32 step = -(FIXED_ONE / 64);
   s32 scaleY;
   s32 scale;
   s32 angle;
 
-  scaleY = ((struct MotionObject *)actor)->scaleY + step;
-  scale = ((struct MotionObject *)actor)->scaleX;
-  ((struct MotionObject *)actor)->scaleY = scaleY;
-  angle = ((struct MotionObject *)actor)->angle;
+  scaleY = actor->scaleY + step;
+  scale = actor->scaleX;
+  actor->scaleY = scaleY;
+  angle = actor->facing;
   scale += step;
-  ((struct MotionObject *)actor)->angle = angle + DEGtoANG(45);
-  ((struct MotionObject *)actor)->scaleX = scale;
+  actor->facing = angle + DEGtoANG(45);
+  actor->scaleX = scale;
   if (scale < FIXED_ONE * 3 / 16)
     Actor_ReleaseFar(actor);
 }

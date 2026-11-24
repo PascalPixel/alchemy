@@ -680,7 +680,7 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
       kraden->x.fixed > toFIXED(340)) {
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 232);
   } else {
-    // The result is unused.
+    // DEAD: the flag's value is dropped; the ROM keeps its read.
     GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
   }
   Actor_WalkToAndWait(ACTOR_KRADEN, 288, 232);
@@ -699,37 +699,46 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
   Event_End();
 }
 
+/// One frame of a falling light in the Luna room, counted on `timer`.
+///
+/// Three frames in four it advances its timer: the light appears at (column,
+/// top) from its staging column, falls four rows and flashes, and on frame
+/// `cleared` its path is put back. It starts again after `restart` frames and
+/// up to 40 more.
+#define STEP_FALLING_LIGHT(timer, staging, column, top, cleared, restart)      \
+  if ((Random_Next() & 3) != 0) {                                              \
+    switch (timer) {                                                           \
+    case 0:                                                                    \
+      Sound_Play(SE_FALLING_LIGHT);                                            \
+      DRAW_LIGHT(staging, column, top);                                        \
+      break;                                                                   \
+    case 1:                                                                    \
+      MOVE_LIGHT_DOWN(staging, column, (top) + 1);                             \
+      break;                                                                   \
+    case 2:                                                                    \
+      MOVE_LIGHT_DOWN(staging, column, (top) + 2);                             \
+      break;                                                                   \
+    case 3:                                                                    \
+      MOVE_LIGHT_DOWN(staging, column, (top) + 3);                             \
+      break;                                                                   \
+    case 4:                                                                    \
+      gSolSanctumLunaSolRooms_LandingShake = 2;                                \
+      MOVE_LIGHT_DOWN(staging, column, (top) + 4);                             \
+      break;                                                                   \
+    case cleared:                                                              \
+      CLEAR_LIGHT_PATH(staging, column, top);                                  \
+      break;                                                                   \
+    }                                                                          \
+    timer++;                                                                   \
+    if (timer > (Random_Below(40)) + (restart)) {                              \
+      timer = 0;                                                               \
+    }                                                                          \
+  }
+
 /// The first light falling through the Luna room, which also shakes the rooms
 /// as any of the four lands.
 static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
-  if ((Random_Next() & 3) != 0) {
-    switch (gSolSanctumLunaSolRooms_Light1Timer) {
-    case 0:
-      Sound_Play(SE_FALLING_LIGHT);
-      DRAW_LIGHT(46, 30, 33);
-      break;
-    case 1:
-      MOVE_LIGHT_DOWN(46, 30, 34);
-      break;
-    case 2:
-      MOVE_LIGHT_DOWN(46, 30, 35);
-      break;
-    case 3:
-      MOVE_LIGHT_DOWN(46, 30, 36);
-      break;
-    case 4:
-      gSolSanctumLunaSolRooms_LandingShake = 2;
-      MOVE_LIGHT_DOWN(46, 30, 37);
-      break;
-    case 80:
-      CLEAR_LIGHT_PATH(46, 30, 33);
-      break;
-    }
-    gSolSanctumLunaSolRooms_Light1Timer++;
-    if (gSolSanctumLunaSolRooms_Light1Timer > (Random_Below(40)) + 90) {
-      gSolSanctumLunaSolRooms_Light1Timer = 0;
-    }
-  }
+  STEP_FALLING_LIGHT(gSolSanctumLunaSolRooms_Light1Timer, 46, 30, 33, 80, 90)
   if (gSolSanctumLunaSolRooms_LandingShake != 0) {
     if (gSolSanctumLunaSolRooms_LandingShake == 2) {
       MapGrid_SetShake(1, 1, 1);
@@ -741,43 +750,11 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
 }
 
 /// Defines `name`, the task of one more falling light in the Luna room, with
-/// its own random restart delay, as the first.
-///
-/// Three frames in four it advances its timer: the light appears at (column,
-/// top) from its staging column, falls four rows and flashes, and on frame
-/// `cleared` its path is put back. It starts again after `restart` frames and
-/// up to 40 more.
+/// its own timer and random restart delay (STEP_FALLING_LIGHT).
 #define SOL_SANCTUM_FALLING_LIGHT(name, timer, staging, column, top, cleared,  \
                                   restart)                                     \
   static void name(void) {                                                     \
-    if ((Random_Next() & 3) != 0) {                                            \
-      switch (timer) {                                                         \
-      case 0:                                                                  \
-        Sound_Play(SE_FALLING_LIGHT);                                          \
-        DRAW_LIGHT(staging, column, top);                                      \
-        break;                                                                 \
-      case 1:                                                                  \
-        MOVE_LIGHT_DOWN(staging, column, (top) + 1);                           \
-        break;                                                                 \
-      case 2:                                                                  \
-        MOVE_LIGHT_DOWN(staging, column, (top) + 2);                           \
-        break;                                                                 \
-      case 3:                                                                  \
-        MOVE_LIGHT_DOWN(staging, column, (top) + 3);                           \
-        break;                                                                 \
-      case 4:                                                                  \
-        gSolSanctumLunaSolRooms_LandingShake = 2;                              \
-        MOVE_LIGHT_DOWN(staging, column, (top) + 4);                           \
-        break;                                                                 \
-      case cleared:                                                            \
-        CLEAR_LIGHT_PATH(staging, column, top);                                \
-        break;                                                                 \
-      }                                                                        \
-      timer++;                                                                 \
-      if (timer > (Random_Below(40)) + (restart)) {                            \
-        timer = 0;                                                             \
-      }                                                                        \
-    }                                                                          \
+    STEP_FALLING_LIGHT(timer, staging, column, top, cleared, restart)          \
   }
 
 /// The Luna room's second falling light.
@@ -1533,6 +1510,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->page = 0;
   palette->duration = 1;
   palette->step = 1;
+  // DEAD: nothing reads the fade's last byte; the ROM keeps its store.
   palette->padding = 1;
   Io_Write16(0, &PLTT_BACKDROP);
   gFieldState->transition =

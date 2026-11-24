@@ -395,8 +395,10 @@ enum {
   SANCTUM_UNUSED = 0, ///< no exit leads here and it places nobody; the area
                       ///< names call it Sanctum
   SANCTUM_FROM_VALE = 1,
-  /// Vale Sanctum, inside by the healers and facing south; no exit leads here.
-  SANCTUM_VALE_UNUSED = 2,
+  /// Vale Sanctum, inside by the healers and facing south, where a party
+  /// defeated in Vale wakes (its return point in field/scene_rules.s); no exit
+  /// leads here.
+  SANCTUM_VALE_AFTER_DEFEAT = 2,
   SANCTUM_FROM_VAULT = 10,
   SANCTUM_FROM_VAULT_REVISIT = 11,
   SANCTUM_FROM_LOG_ROOMS_A = 12,
@@ -2333,6 +2335,9 @@ enum {
 /// SceneId_KalaySanctum's entrances.
 enum {
   KALAY_SANCTUM_FROM_KALAY = 1,
+  /// Behind the counter, where a party defeated in Kalay wakes (its return
+  /// point in field/scene_rules.s).
+  KALAY_SANCTUM_AFTER_DEFEAT = 2,
 };
 /// SceneId_KalaySanctum's exits.
 enum {

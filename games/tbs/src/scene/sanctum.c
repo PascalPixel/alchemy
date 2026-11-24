@@ -204,7 +204,7 @@ const u32 *Scene_GetExits(void) { return gSanctum_Exits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineState.entrance) {
   case SANCTUM_FROM_VALE:
-  case SANCTUM_VALE_UNUSED:
+  case SANCTUM_VALE_AFTER_DEFEAT:
     return gSanctum_ValeActorPlacements;
 
   case SANCTUM_FROM_VAULT:
@@ -2276,7 +2276,7 @@ s32 gSanctum_ItemIconEndScript[] = {
 struct SceneEntrance gSanctum_Entrances[] = {
     { SANCTUM_UNUSED, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SANCTUM_FROM_VALE, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
-    { SANCTUM_VALE_UNUSED, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
+    { SANCTUM_VALE_AFTER_DEFEAT, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_VAULT_REVISIT, CONDITION_ALWAYS, 199, 0, 246, FACING_NORTH, 0, 64, 8, 336, 272, 0 },
     { SANCTUM_FROM_LOG_ROOMS_A, CONDITION_ALWAYS, 199, 0, 164, FACING_SOUTH, 0, 64, 8, 336, 272, 0 },

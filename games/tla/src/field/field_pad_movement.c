@@ -12,20 +12,6 @@
 #include "field/resource_slot.h"
 #include "gamepak/far_call/game.h"
 
-/// FieldState.terrainKind: the ground the ship was last over, which sets where
-/// WorldMap_IsFlyable lets it fly.
-enum ShipTerrainKind {
-  /// The sea from WORLD_MAP_COLLISION_SEA_FIRST, short of
-  /// WORLD_MAP_COLLISION_SEA_LAST.
-  SHIP_TERRAIN_SEA = 0,
-  /// WORLD_MAP_COLLISION_WALKABLE_FIRST and shallow water.
-  SHIP_TERRAIN_SHALLOWS = 1,
-  SHIP_TERRAIN_SEA_LAST = 2, ///< WORLD_MAP_COLLISION_SEA_LAST
-  /// WORLD_MAP_COLLISION_DEFAULT to WORLD_MAP_COLLISION_WALKABLE_LAST, the
-  /// rest of the ground the party walks on.
-  SHIP_TERRAIN_GROUND = 3
-};
-
 /// The flying ship's animation once it is 4 pixels up: its picture moved 10
 /// pixels (ANIMCMD_OFFSET_Y) and its wings beating, the seventh of
 /// winged_ship_flying_small.tsv.

@@ -127,6 +127,17 @@ enum {
   ACTOR_SIGN
 };
 
+/// SPRITE_LOG_NORTH_SOUTH's and SPRITE_LOG_WEST_EAST's animations besides
+/// LogAnimation's (log_north_south.tsv): picture 10 held, a log lying still on
+/// dry ground, and pictures 10 to 13 in turn, the roll a shove east or south
+/// plays (gKolimaForestFloodgate_PushAnimations), as LOG_ANIMATION_ROLL_WEST
+/// plays them backwards. The bank log rolls this way whichever way it goes.
+#define LOG_ANIMATION_AT_REST 1
+#define LOG_ANIMATION_ROLL_EAST 2
+
+/// A map grid row, MAPGRID_SIZE cells, as a shift.
+#define MAPGRID_ROW_SHIFT 7
+
 /// The most cells one shove rolls a log.
 #define LOG_ROLL_MAX_CELLS 11
 
@@ -242,7 +253,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
     log = record->actor;
 
     if (*gKolimaForestFloodgate_WaterHigh == 1) {
-      Actor_SelectAnimation(log, 4);
+      Actor_SelectAnimation(log, LOG_ANIMATION_FLOAT);
       log->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
       log->motionFlags = 0;
       log->y.fixed = toFIXED(26);
@@ -253,13 +264,21 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
         MapGrid_CopyCells(70, 40, 4, 1, record->x + 32, record->z);
       }
     } else {
-      Actor_SelectAnimation(log, 1);
+      Actor_SelectAnimation(log, LOG_ANIMATION_AT_REST);
       log->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
       log->motionFlags = ACTOR_FALLS;
       log->y.fixed = 0;
     }
   }
 
+  // The full pool's own cell (10, 50), which it copies in as cell (10, 18),
+  // takes cell (70, 42): a wall cell (render probe scene
+  // KolimaForestFloodgate --cells 8,48,12,52 reads 255 there), so the water
+  // under the west end of the last log of gKolimaForestFloodgate_DefaultLogs
+  // stays a wall once the log has been shoved away. Its picture shows from the
+  // next time the pool fills.
+  // XXX: what that picture is; a map photo of the full pool with that log
+  // shoved off (10, 18) would settle it.
   MapGrid_CopyCells(70, 42, 1, 1, 10, 50);
 
   if (*gKolimaForestFloodgate_WaterHigh == 1) {
@@ -427,7 +446,7 @@ static void KolimaForestFloodgate_PushBankLogWest(void) {
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_BANK_LOG, 0.5, 0.2);
-  Actor_SetAnimation(ACTOR_BANK_LOG, 2);
+  Actor_SetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_ROLL_EAST);
   Actor_SetDestination(ACTOR_BANK_LOG, 72, 176);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -436,7 +455,7 @@ static void KolimaForestFloodgate_PushBankLogWest(void) {
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_BANK_LOG);
-  Actor_SetAnimation(ACTOR_BANK_LOG, 1);
+  Actor_SetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_AT_REST);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
@@ -454,7 +473,7 @@ static void KolimaForestFloodgate_PushBankLogEast(void) {
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(ACTOR_BANK_LOG, 0.5, 0.2);
-  Actor_SetAnimation(ACTOR_BANK_LOG, 2);
+  Actor_SetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_ROLL_EAST);
   Actor_SetDestination(ACTOR_BANK_LOG, 104, 176);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -463,7 +482,7 @@ static void KolimaForestFloodgate_PushBankLogEast(void) {
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMoveById(ACTOR_BANK_LOG);
-  Actor_SetAnimation(ACTOR_BANK_LOG, 1);
+  Actor_SetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_AT_REST);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
@@ -532,7 +551,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     if (actor == NULL)
       return;
     entry->actor = actor;
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, LOG_ANIMATION_AT_REST);
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->radius = 32;
@@ -557,8 +576,9 @@ void KolimaForestFloodgate_MarkLogCells(const struct FloodgateLog *records,
     column = record->x;
     row = record->z;
     for (i = 0; i < 4; i++) {
-      ((struct MapGridCell *)gMapGridCellBuffer)[column + (row << 7)].behavior =
-          value;
+      ((struct MapGridCell *)
+           gMapGridCellBuffer)[column + (row << MAPGRID_ROW_SHIFT)]
+          .behavior = value;
       if (record->vertical == 0)
         column++;
       else
@@ -678,7 +698,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs) {
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_WaitForMove(actor);
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, LOG_ANIMATION_AT_REST);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   Event_Wait(15);
@@ -701,7 +721,12 @@ struct FloodgateLog gKolimaForestFloodgate_DefaultLogs[] = {
 
 /// For each quarter turn of the way a log is pushed: its rolling animation, and
 /// the leader's step after it in pixels.
-u8 gKolimaForestFloodgate_PushAnimations[] = {2, 2, 3, 3};
+u8 gKolimaForestFloodgate_PushAnimations[] = {
+    LOG_ANIMATION_ROLL_EAST,
+    LOG_ANIMATION_ROLL_EAST,
+    LOG_ANIMATION_ROLL_WEST,
+    LOG_ANIMATION_ROLL_WEST,
+};
 s8 gKolimaForestFloodgate_PushStepX[] = {8, 0, -8, 0};
 s8 gKolimaForestFloodgate_PushStepZ[] = {0, 8, 0, -8};
 

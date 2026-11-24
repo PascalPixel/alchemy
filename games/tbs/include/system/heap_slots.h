@@ -30,9 +30,10 @@ struct ScreenTransitionState;
 #define gFieldEffectState (*(void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
 // EWRAM buffers
-/// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is
-/// loaded they run on through gActorSpriteSlots and gDecodeBuffer.
-extern struct Particle gMapGridCellBuffer[];
+/// The map's cells at 0x02010000, 128 by 128 words (struct MapGridCell): 64 KB,
+/// so while a map is loaded they run on through gActorSpriteSlots and
+/// gDecodeBuffer.
+extern u32 gMapGridCellBuffer[];
 /// 16 KB of EWRAM at 0x0201c000.
 extern u8 gDecodeBuffer[];
 /// 16 KB of EWRAM at 0x02018000, where the battle's actor sprite buffers

@@ -107,13 +107,13 @@ STATIC_ASSERT(offsetof(struct SaveFileSummary, secondPartPlayTime) == 56);
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 /// Waits until `channel`'s transfer is done.
-static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
+static __inline__ void Dma_Wait(struct DmaRegisters volatile *channel) {
   while ((channel->control & DMA_BUSY) != 0) {
   }
 }
 
 /// Waits until a START_DMA transfer is done.
-#define WAIT_DMA() WaitDma(DMA3)
+#define WAIT_DMA() Dma_Wait(DMA3)
 
 /// Nonzero offers Send on the File Screen: Save_ScanFileSummaries sets it
 /// when a file has its send flag set and R and Left are held.

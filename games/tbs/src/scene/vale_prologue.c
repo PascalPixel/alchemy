@@ -2344,8 +2344,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(247, 128, 917, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(30);
   wait(30);
   Task_AddFrame(ValePrologue_UpdateBoulderShadow, TASK_PASS_FRAME);
@@ -2458,12 +2458,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   TilesetAnim_Pause(3);
   TilesetAnim_Pause(4);
   TilesetAnim_Pause(5);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(120);
   wait(160);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
-  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(80);
   Event_Wait(80);
   Event_Wait(100);
@@ -2524,8 +2524,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_FIRST_ROCK + 6, 144, 1070);
   Actor_SetPosition(ACTOR_FIRST_ROCK + 7, 276, 1270);
   wait(60);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(80);
   Event_Wait(60);
   Scene_PlayQueuedMusic();
@@ -2544,8 +2544,8 @@ static void ValePrologue_FlashLightning(void) {
   TilesetAnim_Pause(3);
   TilesetAnim_Pause(4);
   TilesetAnim_Pause(5);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(1);
   wait(120);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);

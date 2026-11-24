@@ -553,7 +553,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     FieldCamera_SetSpeed(0.5);
     FieldCamera_MoveToActorById(ACTOR_NYUNPA, 1);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-    PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+    PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
     PaletteFade_StartInterpolation(30);
     Event_WaitTransitionFrames();
     FieldCamera_WaitForArrival();

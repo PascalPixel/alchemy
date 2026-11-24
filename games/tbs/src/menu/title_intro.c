@@ -881,9 +881,9 @@ void TitlePaletteFade_Update(void) {
   }
 }
 
-/// The warm, dark tint: red halved, green cut by a third, then red and green
+/// PALETTE_TINT_DIMMER: red halved, green cut by a third, then red and green
 /// raised and blue lowered, each channel through its own curve.
-#define BUILD_WARM_DARK_COLORS()                                               \
+#define BUILD_DIMMER_COLORS()                                                  \
   for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {                \
     color = *source++;                                                         \
     red = RGB_RED(color);                                                      \
@@ -907,7 +907,7 @@ void TitlePaletteFade_Update(void) {
 /// in the high bits of a halfword). `mode` picks the tint: a colour below
 /// PALETTE_TINT_FROM_SOURCE fills every colour with it;
 /// PALETTE_TINT_FROM_SOURCE takes that colour from source[0]; PALETTE_TINT_NONE
-/// to PALETTE_TINT_WARM_DARK are the whole-palette filters; the CUSTOM, BLEND
+/// to PALETTE_TINT_DIMMER are the whole-palette filters; the CUSTOM, BLEND
 /// and SPLIT flags carry a colour in their low bits; anything else is the
 /// address of components to copy. `selectedPalettes` is an enum
 /// PaletteSelection.
@@ -924,7 +924,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     mode = *source;
   if (selectedPalettes == PALETTES_BG) {
     colorCount = BG_PLTT_COLORS;
-  } else if (selectedPalettes == PALETTES_OBJECTS) {
+  } else if (selectedPalettes == PALETTES_SPRITES) {
     destination += 3 * BG_PLTT_COLORS;
     source += BG_PLTT_COLORS;
     colorCount = BG_PLTT_COLORS;
@@ -984,10 +984,10 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         *destination++ = gTitlePaletteFade_ChannelCurveLight[red];
       }
       break;
-    case PALETTE_TINT_WARM:
+    case PALETTE_TINT_DIM:
       // Unlike the field's fade, the intro's builds this tint as
-      // PALETTE_TINT_WARM_DARK.
-      BUILD_WARM_DARK_COLORS();
+      // PALETTE_TINT_DIMMER.
+      BUILD_DIMMER_COLORS();
       break;
     case PALETTE_TINT_MUTED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
@@ -1054,8 +1054,8 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         destination += 3;
       }
       break;
-    case PALETTE_TINT_WARM_DARK:
-      BUILD_WARM_DARK_COLORS();
+    case PALETTE_TINT_DIMMER:
+      BUILD_DIMMER_COLORS();
       break;
     default:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
@@ -1128,7 +1128,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       destination[colorIndex * 3 + 2] = (color & RED_BITS) << BLUE_SHIFT;
     }
   } else {
-    if (selectedPalettes == PALETTES_OBJECTS)
+    if (selectedPalettes == PALETTES_SPRITES)
       mode += 3 * BG_PLTT_SIZE;
     Dma_Set((const void *)mode, destination,
             DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);

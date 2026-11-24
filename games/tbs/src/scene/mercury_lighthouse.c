@@ -2689,7 +2689,7 @@ s32 Scene_Initialize(void) {
       MercuryLighthouse_ArriveWithSparks();
       Scene_QueueMusic(SE_AMBIENT_WATER);
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+      PaletteFade_ApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
       PaletteFade_StartInterpolation(30);
       Event_WaitTransitionFrames();
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

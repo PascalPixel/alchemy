@@ -1449,7 +1449,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_NO_TINT);
   GameFlag_Clear(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(60);
   wait(100);
   // Both look around, bewildered, as the rooms give a jolt.

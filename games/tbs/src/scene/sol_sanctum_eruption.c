@@ -323,10 +323,10 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   FieldCamera_WaitForMove();
   Sound_Play(SE_MAP_TRANSITION);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 20, 20),
-                          PALETTES_OBJECTS);
+                          PALETTES_SPRITES);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(20);
   Event_Wait(200);
   // Garet: "That rock... It's floating... Do you know what it is?" Yes:
@@ -1500,7 +1500,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   Task_AddFrame(SolSanctumEruption_UpdateWiseOnePalette, TASK_PASS_FRAME);
   Event_Wait(20);
-  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(60);
   wait(100);
   PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);

@@ -1718,7 +1718,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetPosition(ACTOR_GARETS_GRANDFATHER, 0, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(1);
   Event_Wait(1);
   window = Window_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);

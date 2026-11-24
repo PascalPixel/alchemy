@@ -106,7 +106,7 @@ void PaletteFade_Update(void) {
 /// every colour alike; PALETTE_TINT_FROM_SOURCE for the backdrop colour alike;
 /// a PALETTE_TINT_* value to tint each colour; or the address of ready
 /// channels to copy. half is the palette selection: PALETTES_ALL for all 448
-/// colours, PALETTES_BG for the BG's 224, PALETTES_OBJECTS for the OBJ's 224.
+/// colours, PALETTES_BG for the BG's 224, PALETTES_SPRITES for the OBJ's 224.
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
@@ -119,7 +119,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
     mode = *(u16 *)BG_PLTT;
   if (half == PALETTES_BG) {
     colorCount = COLOR_HALF;
-  } else if (half == PALETTES_OBJECTS) {
+  } else if (half == PALETTES_SPRITES) {
     dst += COLOR_HALF * 3;
     src += COLOR_HALF;
     colorCount = COLOR_HALF;
@@ -174,7 +174,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gColorBuffer_ChannelCurveLight[red];
       }
       break;
-    case PALETTE_TINT_WARM:
+    case PALETTE_TINT_DIM:
       // Half R + 10, two thirds G + 8, B - 7; black stays black.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
@@ -264,7 +264,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TINT_WARM_DARK:
+    case PALETTE_TINT_DIMMER:
       // Half R + 6, two thirds G + 4, B - 6.
       for (i = 0; i < colorCount; i++) {
         color = *src++;
@@ -365,7 +365,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   } else {
     // Copy a ready buffer: mode is its address, and the OBJ half starts 224
     // colours of three halfwords in.
-    if (half == PALETTES_OBJECTS)
+    if (half == PALETTES_SPRITES)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst, DMA_COPY_WORDS((colorCount * 6) >> 2),
             REG_DMA3);

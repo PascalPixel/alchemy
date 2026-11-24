@@ -1551,7 +1551,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetPosition(ACTOR_IVAN, 1464, 192);
   Actor_SetPosition(ACTOR_MIA, 1560, 200);
   ActorSystem_SuspendProjectionAndShowSprites();
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(1);
   Event_SetMessageId(MsgColossoIsaacFellAsleep);
   // "Isaac fell asleep..."

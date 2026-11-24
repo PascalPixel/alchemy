@@ -423,7 +423,7 @@ void FieldEffect_InitializeSparkles(void) {
 }
 
 /// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
-/// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
+/// (PALETTE_TINT_DIM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
 /// fade, and arms the first burst to end in 600 frames, repeating.
 void Weather_StartLightning(void) {
   struct FieldBlendState *state;
@@ -433,7 +433,7 @@ void Weather_StartLightning(void) {
                               sizeof(struct FieldBlendState));
   buffers = gPaletteFadeState;
   Dma_Fill32(0, state, sizeof(struct FieldBlendState));
-  PaletteFade_Build(PALETTE_TINT_WARM, buffers, state, 1);
+  PaletteFade_Build(PALETTE_TINT_DIM, buffers, state, 1);
   PaletteFade_Build(PALETTE_TINT_PALE, buffers, state->to, 1);
   PaletteFade_CalculateSteps(state->to, state->from, state->delta, 12);
   PaletteFade_Build((s32)state, 0, buffers->target, 1);

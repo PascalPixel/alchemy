@@ -778,7 +778,7 @@ static void Kolima_WitnessForestCurse(void) {
   Task_AddFrame(Kolima_SpawnCurseSparkle, TASK_PASS_FRAME);
   wait(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(16, 16, 20), PALETTES_BG);
-  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
   PaletteFade_StartInterpolation(120);
   wait(60);
   squashActions = gKolima_PartySquashScript;

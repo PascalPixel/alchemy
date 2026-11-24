@@ -102,7 +102,7 @@ enum PaletteTint {
   /// sprites keep their colours, between the lightning's flashes and at the
   /// ending's darkened sea. Half R + 10, two thirds G + 8, B - 7; black stays
   /// black.
-  PALETTE_TINT_WARM,
+  PALETTE_TINT_DIM,
   /// The backgrounds World Map fades to as Venus Lighthouse shakes after its
   /// beacon is lit: each channel held to a narrow range (MUTED_RED_MIN to
   /// MUTED_RED_MAX and so on), then G and B + 2.
@@ -110,12 +110,12 @@ enum PaletteTint {
   /// A lightning flash: the storm's backgrounds wash out almost to white. Half
   /// of each channel, plus their mean.
   PALETTE_TINT_PALE,
-  /// The red Vale's eruption lightning flashes to from PALETTE_TINT_WARM: R
+  /// The red Vale's eruption lightning flashes to from PALETTE_TINT_DIM: R
   /// plus an eighth of G and of B; G and B two thirds.
   PALETTE_TINT_RED,
-  /// PALETTE_TINT_WARM darker: half R + 6, two thirds G + 4, B - 6. The
-  /// title's intro builds PALETTE_TINT_WARM with this recipe.
-  PALETTE_TINT_WARM_DARK,
+  /// PALETTE_TINT_DIM darker: half R + 6, two thirds G + 4, B - 6. The
+  /// title's intro builds PALETTE_TINT_DIM with this recipe.
+  PALETTE_TINT_DIMMER,
   /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND
   /// carrying an RGB555 colour in the low 15 bits; any other value is the
   /// address of a ready buffer to copy.
@@ -158,7 +158,7 @@ enum PaletteTint {
 enum PaletteSelection {
   PALETTES_ALL = 0,
   PALETTES_BG = 1,
-  PALETTES_OBJECTS = 2
+  PALETTES_SPRITES = 2
 };
 
 #endif

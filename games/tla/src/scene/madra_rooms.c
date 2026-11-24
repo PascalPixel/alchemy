@@ -481,9 +481,8 @@ static inline void MadraRooms_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// the Kibombo's raid, when they are back in the jail.
 void MadraRooms_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    // Pound's fist and Scoop's hand drawn at priority 1, not sorted by depth,
-    // and without Pound's glow on the ground: both PSYNERGY_DRAW_ bits.
-    gFieldState->psynergyDrawFlags = 3;
+    gFieldState->psynergyDrawFlags =
+        PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
     if (!Event_GetFlag(FLAG_PIERS_INTERROGATED)) {
       MadraRooms_ShinAngersPiers();
     } else {
@@ -525,8 +524,8 @@ s32 Scene_Initialize(void) {
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineState.next == SCENE_MADRA_ROOMS_HOUSES) {
     event = Ram_HeapSlots->fieldState;
-    // As in the jail: both PSYNERGY_DRAW_ bits.
-    event->psynergyDrawFlags = 3;
+    event->psynergyDrawFlags =
+        PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
     if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
       Actor_SetPosition(ACTOR_DEKKA, 0, 0);

@@ -416,7 +416,8 @@ void AlhafranCave_SetUpJail(void) {
       gMainRoutineState.entrance == ENTRANCE_UNDER_CRATE) {
     state = Ram_HeapSlots->fieldState;
 
-    state->psynergyDrawFlags = 3;
+    state->psynergyDrawFlags =
+        PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
   }
   Rope_Initialize();
   Rope_Place(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_LOW_POST,

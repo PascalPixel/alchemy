@@ -128,12 +128,6 @@ struct CycloneState {
 #define PUDDLE_ANIMATION_FROZEN 0
 #define PUDDLE_ANIMATION_PUDDLE 1
 
-/// FieldState.psynergyDrawFlags, which a scene sets for Pound and Scoop to
-/// draw in its room.
-#define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground
-/// The fist or hand at priority 1, not sorted by depth.
-#define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
-
 /// The map screen's marker tiles (MapScreen_Initialize draws them).
 enum WorldMarkerTile {
   WORLD_MARKER_TILE_PARTY = 0, ///< where the party is

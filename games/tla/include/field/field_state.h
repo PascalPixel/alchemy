@@ -236,6 +236,12 @@ struct FieldState {
   u8 padding[2];
 };
 
+/// FieldState.psynergyDrawFlags, which a scene sets for Pound and Scoop to
+/// draw in its room.
+#define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground
+/// The fist or hand at priority 1, not sorted by depth.
+#define PSYNERGY_DRAW_FIXED_PRIORITY 0x2
+
 STATIC_ASSERT(sizeof(struct FieldState) == 3408);
 STATIC_ASSERT(offsetof(struct FieldState, triggers) == 16);
 STATIC_ASSERT(offsetof(struct FieldState, actors) == 20);

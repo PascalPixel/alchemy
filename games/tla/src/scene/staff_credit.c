@@ -700,11 +700,6 @@ void StaffCredit_UpdateTransitionBlend(void) {
   }
 }
 
-/// FieldCamera_MoveToFX, under the name shared/camera_jitter.h calls it by.
-static inline void Camera_Move(FIXED x, FIXED y, FIXED z, s32 mode) {
-  FieldCamera_MoveToFX(x, y, z, mode);
-}
-
 #include "shared/camera_jitter.h"
 
 /// Unused: the copy of the world map's WorldMap_PlayLighthouseTransition, the

@@ -50,16 +50,16 @@ void Actor_SetMoveTargetFar(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_WaitForMoveFar(void *actor);
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
 void MapGrid_PlayMapEditFar(u16 *steps, s32 destinationX, u32 destinationY);
-void MapGrid_CopyCellPictureIndicesRectFar(s32 sourceX, s32 sourceY, u32 dstX,
-                                           u32 dstY, u32 width, u32 height);
+void MapGrid_CopyCellTilesIndicesRectFar(s32 sourceX, s32 sourceY, u32 dstX,
+                                         u32 dstY, u32 width, u32 height);
 void TilesetAnim_ResumeFar(u32 channelIndex);
 void TilesetAnim_PauseFar(u32 channelIndex);
 void BlendScript_ResumeFar(void);
 void BlendScript_SuspendFar(void);
 s32 MapGrid_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 y);
-void MapGrid_CopyCellPictureCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
-                                         s32 height, s32 dstX, s32 dstY);
+void MapGrid_CopyCellTilesCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
+                                       s32 height, s32 dstX, s32 dstY);
 void MapGrid_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dstX, s32 dstY);
 void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,

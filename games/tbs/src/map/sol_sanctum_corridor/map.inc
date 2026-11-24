@@ -4,14 +4,14 @@ Field_SolSanctumCorridor:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 88, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 98, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_CELL_PICTURES
+	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_CELL_TILES
 	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_SHAPES
 	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_GRID
 	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_ANIMATION
 	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_BLEND
 	map_offset Field_SolSanctumCorridor, .LField_SolSanctumCorridor_MARKERS
-.LField_SolSanctumCorridor_CELL_PICTURES:
-	.incbin "games/tbs/src/map/sol_sanctum_corridor/cell_pictures.delta1.lz"
+.LField_SolSanctumCorridor_CELL_TILES:
+	.incbin "games/tbs/src/map/sol_sanctum_corridor/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_SolSanctumCorridor_SHAPES:
 	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"

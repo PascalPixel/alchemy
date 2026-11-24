@@ -78,14 +78,14 @@ enum {
   FIELD_SPRITE_FOOTPRINT = 25 ///< a footprint, on maps that show them
 };
 
-/// How a layout's cell picture data is packed: the method byte
+/// How a layout's cell tiles are packed: the method byte
 /// TileMap_DecodeStagedBuffer reads before the halfwords.
-enum CellPicturePacking {
-  CELL_PICTURE_PACKING_RAW = 0, ///< copied as it is
+enum CellTilesPacking {
+  CELL_TILES_PACKING_RAW = 0, ///< copied as it is
   /// All the high bytes, then all the low bytes; each value is XORed with
   /// the one before.
-  CELL_PICTURE_PACKING_SPLIT_DELTA = 1,
-  CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
+  CELL_TILES_PACKING_SPLIT_DELTA = 1,
+  CELL_TILES_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
 /// Where a layout's tileset animation and blend scripts are decoded, in the

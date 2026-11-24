@@ -4,14 +4,14 @@ Field_VenusLighthouseFourthFloor:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_CELL_PICTURES
+	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_CELL_TILES
 	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_SHAPES
 	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_GRID
 	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_ANIMATION
 	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_BLEND
 	map_offset Field_VenusLighthouseFourthFloor, .LField_VenusLighthouseFourthFloor_MARKERS
-.LField_VenusLighthouseFourthFloor_CELL_PICTURES:
-	.incbin "games/tbs/src/map/venus_lighthouse_fourth_floor/cell_pictures.delta2.lz"
+.LField_VenusLighthouseFourthFloor_CELL_TILES:
+	.incbin "games/tbs/src/map/venus_lighthouse_fourth_floor/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_VenusLighthouseFourthFloor_SHAPES:
 	.incbin "games/tbs/src/map/venus_lighthouse_fourth_floor/shapes.table.lz"

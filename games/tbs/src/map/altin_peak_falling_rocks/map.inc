@@ -4,14 +4,14 @@ Field_AltinPeakFallingRocks:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_CELL_PICTURES
+	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_CELL_TILES
 	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_SHAPES
 	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_GRID
 	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_ANIMATION
 	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_BLEND
 	map_offset Field_AltinPeakFallingRocks, .LField_AltinPeakFallingRocks_MARKERS
-.LField_AltinPeakFallingRocks_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altin_peak_falling_rocks/cell_pictures.delta1.lz"
+.LField_AltinPeakFallingRocks_CELL_TILES:
+	.incbin "games/tbs/src/map/altin_peak_falling_rocks/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AltinPeakFallingRocks_SHAPES:
 	.incbin "games/tbs/src/map/altin_peak_falling_rocks/shapes.table.lz"

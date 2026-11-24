@@ -388,10 +388,10 @@ extern char ResourceId_OpponentPathA;
 /// The world map's tileset animations (TilesetAnim_StartAll).
 extern char ResourceId_DefaultTileAnimation;
 #define RESOURCE_DEFAULT_TILE_ANIMATION ((s32)&ResourceId_DefaultTileAnimation)
-/// The world map's cell picture attributes, loaded with its default cells.
-extern char ResourceId_DefaultCellPictureAttributes;
-#define RESOURCE_DEFAULT_CELL_PICTURE_ATTRIBUTES                               \
-  ((s32)&ResourceId_DefaultCellPictureAttributes)
+/// The attributes of the world map's cell tiles, loaded with its default cells.
+extern char ResourceId_DefaultCellTilesAttributes;
+#define RESOURCE_DEFAULT_CELL_TILES_ATTRIBUTES                                 \
+  ((s32)&ResourceId_DefaultCellTilesAttributes)
 
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
 // palette and five tilesets: WorldMap_LoadGraphics decodes the first four

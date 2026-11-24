@@ -10,7 +10,7 @@
 
 /// Task of Cloak: when the cell under the leader is not CELL_BEHAVIOR_CLOAK,
 /// requests CLOAK_END. The behavior is byte 2 of a cell (MapGridCell.behavior),
-/// or of a 4-byte gCellPictures entry on the World Map.
+/// or of a 4-byte gCellTiles entry on the World Map.
 void FieldPsynergy_CheckCloakTile(void) {
   struct FieldState *state;
   struct Actor *leader;
@@ -37,7 +37,7 @@ void FieldPsynergy_CheckCloakTile(void) {
       y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
     ty = WORLD_MAP_BLOCK(y) & (WORLD_MAP_BLOCKS_ACROSS - 1);
 
-    cell = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
+    cell = (u8 *)&gCellTiles[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
   } else {
     if (leader->layer < MAPGRID_LAYER_COUNT) {
       cell = (u8 *)((struct MapGridScrollState *)cell)

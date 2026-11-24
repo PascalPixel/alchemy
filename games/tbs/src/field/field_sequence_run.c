@@ -414,10 +414,10 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     probePosition.vector.z = leader->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), leader->facing,
                           probePosition.coordinates);
-    // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
+    // World Map cell tiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-      cell = Ram_CellPictures +
+      cell = Ram_CellTiles +
              ((((probePosition.vector.x / toFIXED(32)) & 31) +
                (((probePosition.vector.z / toFIXED(32)) & 31) << 5))
               << 2);

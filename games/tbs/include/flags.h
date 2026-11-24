@@ -427,7 +427,7 @@
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
 // Babi Lighthouse
-/// Arrival through room 2's entrance 10 changes its cell pictures and
+/// Arrival through room 2's entrance 10 changes its cell tiles and
 /// behaviors; entrances 10 and 11 restore those changes on later
 /// visits.
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980

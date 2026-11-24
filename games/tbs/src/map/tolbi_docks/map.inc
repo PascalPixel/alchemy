@@ -4,14 +4,14 @@ Field_TolbiDocks:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 60, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_TolbiDocks, .LField_TolbiDocks_CELL_PICTURES
+	map_offset Field_TolbiDocks, .LField_TolbiDocks_CELL_TILES
 	map_offset Field_TolbiDocks, .LField_TolbiDocks_SHAPES
 	map_offset Field_TolbiDocks, .LField_TolbiDocks_GRID
 	map_offset Field_TolbiDocks, .LField_TolbiDocks_ANIMATION
 	map_offset Field_TolbiDocks
 	map_offset Field_TolbiDocks, .LField_TolbiDocks_MARKERS
-.LField_TolbiDocks_CELL_PICTURES:
-	.incbin "games/tbs/src/map/tolbi_docks/cell_pictures.delta1.lz"
+.LField_TolbiDocks_CELL_TILES:
+	.incbin "games/tbs/src/map/tolbi_docks/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_TolbiDocks_SHAPES:
 	.incbin "games/tbs/src/map/tolbi_docks/shapes.table.lz"

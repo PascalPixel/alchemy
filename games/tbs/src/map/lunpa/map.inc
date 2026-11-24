@@ -4,14 +4,14 @@ Field_Lunpa:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Lunpa, .LField_Lunpa_CELL_PICTURES
+	map_offset Field_Lunpa, .LField_Lunpa_CELL_TILES
 	map_offset Field_Lunpa, .LField_Lunpa_SHAPES
 	map_offset Field_Lunpa, .LField_Lunpa_GRID
 	map_offset Field_Lunpa, .LField_Lunpa_ANIMATION
 	map_offset Field_Lunpa, .LField_Lunpa_BLEND
 	map_offset Field_Lunpa, .LField_Lunpa_MARKERS
-.LField_Lunpa_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lunpa/cell_pictures.delta0.lz"
+.LField_Lunpa_CELL_TILES:
+	.incbin "games/tbs/src/map/lunpa/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_Lunpa_SHAPES:
 	.incbin "games/tbs/src/map/lunpa/shapes.table.lz"

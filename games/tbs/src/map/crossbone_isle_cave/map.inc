@@ -5,14 +5,14 @@ Field_CrossboneIsleCave:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_CELL_PICTURES
+	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_CELL_TILES
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_SHAPES
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_GRID
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_ANIMATION
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_BLEND
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_MARKERS
-.LField_CrossboneIsleCave_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_cave/cell_pictures_ja.delta1.lz"
+.LField_CrossboneIsleCave_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_cave/cell_tiles_ja.delta1.lz"
 	.balign 4, 0
 .LField_CrossboneIsleCave_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_cave/shapes.table.lz"
@@ -35,14 +35,14 @@ Field_CrossboneIsleCave:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_CELL_PICTURES
+	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_CELL_TILES
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_SHAPES
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_GRID
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_ANIMATION
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_BLEND
 	map_offset Field_CrossboneIsleCave, .LField_CrossboneIsleCave_MARKERS
-.LField_CrossboneIsleCave_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_cave/cell_pictures.delta2.lz"
+.LField_CrossboneIsleCave_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_cave/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_CrossboneIsleCave_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_cave/shapes.table.lz"

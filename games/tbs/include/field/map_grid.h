@@ -45,21 +45,21 @@ enum CellBehavior {
   CELL_BEHAVIOR_WALL = 255          ///< blocks whatever the heights
 };
 
-/// One cell of a map layer: its cell picture and flags, its cell behavior and
+/// One cell of a map layer: its cell tiles and flags, its cell behavior and
 /// its shape, an index into the shape table.
 struct MapGridCell {
   /// bits: 15..14 the priority an actor standing on it takes, if not 0
   /// (also read by MapGrid_GetCellHighFlags) | 13..12 the layer such an
-  /// actor takes, + 1, if not 0 | 11..0 cell picture (struct ActorCameraTile)
-  u16 cellPictureAndFlags;
+  /// actor takes, + 1, if not 0 | 11..0 cell tiles (struct ActorCameraTile)
+  u16 cellTilesAndFlags;
   u8 behavior; ///< an enum CellBehavior
   /// Indexes the 4-byte shape table (gMapGridShapes): the shape's kind in
   /// the first byte's low four bits, then its height samples.
   u8 shape;
 };
 
-/// The cell picture number in a map cell's low 12 bits.
-#define MAPGRID_CELL_PICTURE_ID_MASK 0x00000fff
+/// The number of the cell tiles a map cell draws, in its low 12 bits.
+#define MAPGRID_CELL_TILES_ID_MASK 0x00000fff
 
 /// The map's running blend script, which sets the blend registers over time
 /// (BlendScript_Run, each frame from BlendScript_Start).
@@ -98,10 +98,10 @@ struct WorldPosition {
   FIXED y;      ///< 16.16 fixed-point pixels
 };
 
-/// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
+/// The layout's cell tiles, 32 KB of EWRAM at 0x02020000: each cell's tiles
 /// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
-extern u32 gCellPictures[];
-/// The World Map's 32-pixel blocks, 32 to a row of gCellPictures, wrapping
+extern u32 gCellTiles[];
+/// The World Map's 32-pixel blocks, 32 to a row of gCellTiles, wrapping
 /// round: a 16.16 coordinate shifted down this far is a block.
 #define WORLD_MAP_BLOCK_SHIFT 21
 #define WORLD_MAP_BLOCK_PIXELS 32

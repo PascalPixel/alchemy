@@ -4,14 +4,14 @@ Field_BabiPalaceEntrance:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 48, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 56, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_BabiPalaceEntrance, .LField_BabiPalaceEntrance_CELL_PICTURES
+	map_offset Field_BabiPalaceEntrance, .LField_BabiPalaceEntrance_CELL_TILES
 	map_offset Field_BabiPalaceEntrance, .LField_BabiPalaceEntrance_SHAPES
 	map_offset Field_BabiPalaceEntrance, .LField_BabiPalaceEntrance_GRID
 	map_offset Field_BabiPalaceEntrance
 	map_offset Field_BabiPalaceEntrance
 	map_offset Field_BabiPalaceEntrance, .LField_BabiPalaceEntrance_MARKERS
-.LField_BabiPalaceEntrance_CELL_PICTURES:
-	.incbin "games/tbs/src/map/babi_palace_entrance/cell_pictures.delta1.lz"
+.LField_BabiPalaceEntrance_CELL_TILES:
+	.incbin "games/tbs/src/map/babi_palace_entrance/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_BabiPalaceEntrance_SHAPES:
 	.incbin "games/tbs/src/map/babi_palace_entrance/shapes.table.lz"

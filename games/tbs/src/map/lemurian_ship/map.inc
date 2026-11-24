@@ -4,14 +4,14 @@ Field_LemurianShip:
 	map_layer 0, 0, 16, 16, 0, 0, 0x3f, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LemurianShip, .LField_LemurianShip_CELL_PICTURES
+	map_offset Field_LemurianShip, .LField_LemurianShip_CELL_TILES
 	map_offset Field_LemurianShip, .LField_LemurianShip_SHAPES
 	map_offset Field_LemurianShip, .LField_LemurianShip_GRID
 	map_offset Field_LemurianShip, .LField_LemurianShip_ANIMATION
 	map_offset Field_LemurianShip, .LField_LemurianShip_BLEND
 	map_offset Field_LemurianShip, .LField_LemurianShip_MARKERS
-.LField_LemurianShip_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lemurian_ship/cell_pictures.delta1.lz"
+.LField_LemurianShip_CELL_TILES:
+	.incbin "games/tbs/src/map/lemurian_ship/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LemurianShip_SHAPES:
 	.incbin "games/tbs/src/map/lemurian_ship/shapes.table.lz"

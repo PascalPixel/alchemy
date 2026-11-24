@@ -4,14 +4,14 @@ Field_Sanctum:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Sanctum, .LField_Sanctum_CELL_PICTURES
+	map_offset Field_Sanctum, .LField_Sanctum_CELL_TILES
 	map_offset Field_Sanctum, .LField_Sanctum_SHAPES
 	map_offset Field_Sanctum, .LField_Sanctum_GRID
 	map_offset Field_Sanctum, .LField_Sanctum_ANIMATION
 	map_offset Field_Sanctum, .LField_Sanctum_BLEND
 	map_offset Field_Sanctum, .LField_Sanctum_MARKERS
-.LField_Sanctum_CELL_PICTURES:
-	.incbin "games/tbs/src/map/sanctum/cell_pictures.delta1.lz"
+.LField_Sanctum_CELL_TILES:
+	.incbin "games/tbs/src/map/sanctum/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_Sanctum_SHAPES:
 	.incbin "games/tbs/src/map/sanctum/shapes.table.lz"

@@ -26,10 +26,10 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
     col = destinationX;
     if (col < destinationX + width)
       do {
-        // A cell picture is four tile map entries, two rows of two, 8 bytes;
+        // A cell's tiles are four tile map entries, two rows of two, 8 bytes;
         // a cell row of the screen block is two rows of BG_SCREEN_WIDTH
         // entries, BG_SCREEN_WIDTH words.
-        u16 tile = *cell++ & MAPGRID_CELL_PICTURE_ID_MASK;
+        u16 tile = *cell++ & MAPGRID_CELL_TILES_ID_MASK;
         u16 picture = tile * 8;
         s32 index =
             (plane * SCREEN_BLOCK_CELLS + (row & (SCREEN_BLOCK_CELLS - 1))) *
@@ -39,9 +39,9 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
         u32 *to;
 
         to = (u32 *)BG_SCREEN_BLOCK(5) + index;
-        from = (u32 *)(Ram_CellPictures + picture);
+        from = (u32 *)(Ram_CellTiles + picture);
         *to = *from;
-        from = (u32 *)(Ram_CellPictures + 4 + picture);
+        from = (u32 *)(Ram_CellTiles + 4 + picture);
         to = (u32 *)(BG_SCREEN_BLOCK(5) + BG_SCREEN_WIDTH * 2) + index;
         *to = *from;
         /* FAKEMATCH(temporary): end takes the row's bound where the loop tests

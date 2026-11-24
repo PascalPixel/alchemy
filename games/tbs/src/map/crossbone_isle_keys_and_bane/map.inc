@@ -5,14 +5,14 @@ Field_CrossboneIsleKeysAndBane:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_CELL_PICTURES
+	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_CELL_TILES
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_SHAPES
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_GRID
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_ANIMATION
 	map_offset Field_CrossboneIsleKeysAndBane
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_MARKERS
-.LField_CrossboneIsleKeysAndBane_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/cell_pictures.delta1.lz"
+.LField_CrossboneIsleKeysAndBane_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_CrossboneIsleKeysAndBane_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/shapes.table.lz"
@@ -39,14 +39,14 @@ Field_CrossboneIsleKeysAndBane:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_CELL_PICTURES
+	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_CELL_TILES
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_SHAPES
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_GRID
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_ANIMATION
 	map_offset Field_CrossboneIsleKeysAndBane
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_MARKERS
-.LField_CrossboneIsleKeysAndBane_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/cell_pictures.delta1.lz"
+.LField_CrossboneIsleKeysAndBane_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_CrossboneIsleKeysAndBane_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/shapes.table.lz"
@@ -72,14 +72,14 @@ Field_CrossboneIsleKeysAndBane:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_CELL_PICTURES
+	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_CELL_TILES
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_SHAPES
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_GRID
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_ANIMATION
 	map_offset Field_CrossboneIsleKeysAndBane
 	map_offset Field_CrossboneIsleKeysAndBane, .LField_CrossboneIsleKeysAndBane_MARKERS
-.LField_CrossboneIsleKeysAndBane_CELL_PICTURES:
-	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/cell_pictures.delta1.lz"
+.LField_CrossboneIsleKeysAndBane_CELL_TILES:
+	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_CrossboneIsleKeysAndBane_SHAPES:
 	.incbin "games/tbs/src/map/crossbone_isle_keys_and_bane/shapes.table.lz"

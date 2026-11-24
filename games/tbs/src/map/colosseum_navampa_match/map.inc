@@ -4,14 +4,14 @@ Field_ColosseumNavampaMatch:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 52, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 104, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_CELL_PICTURES
+	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_CELL_TILES
 	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_SHAPES
 	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_GRID
 	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_ANIMATION
 	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_BLEND
 	map_offset Field_ColosseumNavampaMatch, .LField_ColosseumNavampaMatch_MARKERS
-.LField_ColosseumNavampaMatch_CELL_PICTURES:
-	.incbin "games/tbs/src/map/colosseum_navampa_match/cell_pictures.delta1.lz"
+.LField_ColosseumNavampaMatch_CELL_TILES:
+	.incbin "games/tbs/src/map/colosseum_navampa_match/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_ColosseumNavampaMatch_SHAPES:
 	.incbin "games/tbs/src/map/colosseum_navampa_match/shapes.table.lz"

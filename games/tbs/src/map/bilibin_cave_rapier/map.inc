@@ -4,14 +4,14 @@ Field_BilibinCaveRapier:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_BilibinCaveRapier, .LField_BilibinCaveRapier_CELL_PICTURES
+	map_offset Field_BilibinCaveRapier, .LField_BilibinCaveRapier_CELL_TILES
 	map_offset Field_BilibinCaveRapier, .LField_BilibinCaveRapier_SHAPES
 	map_offset Field_BilibinCaveRapier, .LField_BilibinCaveRapier_GRID
 	map_offset Field_BilibinCaveRapier, .LField_BilibinCaveRapier_ANIMATION
 	map_offset Field_BilibinCaveRapier
 	map_offset Field_BilibinCaveRapier, .LField_BilibinCaveRapier_MARKERS
-.LField_BilibinCaveRapier_CELL_PICTURES:
-	.incbin "games/tbs/src/map/bilibin_cave_rapier/cell_pictures.delta2.lz"
+.LField_BilibinCaveRapier_CELL_TILES:
+	.incbin "games/tbs/src/map/bilibin_cave_rapier/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_BilibinCaveRapier_SHAPES:
 	.incbin "games/tbs/src/map/bilibin_cave_rapier/shapes.table.lz"

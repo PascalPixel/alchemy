@@ -49,7 +49,7 @@ s32 Field_CountRequests(void) {
 }
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
-/// leader (a World Map cell picture on the World Map), or 0 without a leader.
+/// leader (a World Map cell's tiles on the World Map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldState *state;
   struct Actor *leader;
@@ -73,7 +73,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   Vector_AddPolarOffset(toFIXED(16), leader->facing, position.coordinates);
 
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    // World Map cell pictures are 32 pixels square, 32 to a row.
+    // World Map cell tiles are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
 
@@ -88,7 +88,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
       fixedZ += toFIXED(32) - 1;
     tileY = (FIXEDtoINT(fixedZ) >> 5) & 31;
 
-    tile = (u8 *)gCellPictures + ((tileX + (tileY << 5)) << 2);
+    tile = (u8 *)gCellTiles + ((tileX + (tileY << 5)) << 2);
   } else {
     // Map cells are 16 pixels square, 128 to a row.
     tile = (u8 *)gridState->layers[MAPGRID_LAYER_GROUND].cells;
@@ -192,8 +192,8 @@ void Field_UpdateWalking(s32 layer, FIXED x, FIXED y, FIXED z) {
     previousHp[i] = Unit_GetFar(gMainRoutineState.party[i])->hp;
 
   if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    tile = &((
-        struct MapGridCell *)Ram_CellPictures)[((x / toFIXED(32)) & 31) +
+    tile =
+        &((struct MapGridCell *)Ram_CellTiles)[((x / toFIXED(32)) & 31) +
                                                (((z / toFIXED(32)) & 31) << 5)];
   } else {
     if ((u32)layer <= MAPGRID_LAYER_OVERHEAD)

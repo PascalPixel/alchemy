@@ -5,14 +5,14 @@ Field_LunpaFortressUpperFloor:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_CELL_PICTURES
+	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_CELL_TILES
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_SHAPES
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_GRID
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_ANIMATION
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_BLEND
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_MARKERS
-.LField_LunpaFortressUpperFloor_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lunpa_fortress_upper_floor/cell_pictures.delta1.lz"
+.LField_LunpaFortressUpperFloor_CELL_TILES:
+	.incbin "games/tbs/src/map/lunpa_fortress_upper_floor/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LunpaFortressUpperFloor_SHAPES:
 	.incbin "games/tbs/src/map/fuchin_falls_cave_entrance/shapes.table.lz"
@@ -33,14 +33,14 @@ Field_LunpaFortressUpperFloor:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_CELL_PICTURES
+	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_CELL_TILES
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_SHAPES
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_GRID
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_ANIMATION
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_BLEND
 	map_offset Field_LunpaFortressUpperFloor, .LField_LunpaFortressUpperFloor_MARKERS
-.LField_LunpaFortressUpperFloor_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lunpa_fortress_upper_floor/cell_pictures.delta1.lz"
+.LField_LunpaFortressUpperFloor_CELL_TILES:
+	.incbin "games/tbs/src/map/lunpa_fortress_upper_floor/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LunpaFortressUpperFloor_SHAPES:
 	.incbin "games/tbs/src/map/fuchin_falls_cave_entrance/shapes.table.lz"

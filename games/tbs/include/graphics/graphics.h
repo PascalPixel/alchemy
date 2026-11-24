@@ -240,9 +240,9 @@ extern const u8 Text_DecodeSymbol[];
 /// Text_DecodeSymbol, which the message decoders copy into
 /// HEAP_SLOT_MESSAGE_DECODER.
 extern u8 Text_DecodeSymbolCodeSize[];
-/// Tile_BuildCellPictures, copied to the heap by ScanlineWindow_FillSpans for
+/// Tile_BuildCellTiles, copied to the heap by ScanlineWindow_FillSpans for
 /// each frame of a window transition.
-extern u8 Tile_BuildCellPicturesCodeSize[];
+extern u8 Tile_BuildCellTilesCodeSize[];
 /// Interleaves a layout's three decoded cell planes into cell words, for
 /// TileMap_ConvertBuffer.
 extern const u8 Tile_ConvertMapGrid[];

@@ -4,14 +4,14 @@ Field_LamaTemple:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LamaTemple, .LField_LamaTemple_CELL_PICTURES
+	map_offset Field_LamaTemple, .LField_LamaTemple_CELL_TILES
 	map_offset Field_LamaTemple, .LField_LamaTemple_SHAPES
 	map_offset Field_LamaTemple, .LField_LamaTemple_GRID
 	map_offset Field_LamaTemple, .LField_LamaTemple_ANIMATION
 	map_offset Field_LamaTemple, .LField_LamaTemple_BLEND
 	map_offset Field_LamaTemple, .LField_LamaTemple_MARKERS
-.LField_LamaTemple_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lama_temple/cell_pictures.delta0.lz"
+.LField_LamaTemple_CELL_TILES:
+	.incbin "games/tbs/src/map/lama_temple/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_LamaTemple_SHAPES:
 	.incbin "games/tbs/src/map/lama_temple/shapes.table.lz"

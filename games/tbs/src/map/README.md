@@ -12,8 +12,8 @@ A map is a grid of [cells](../../glossary.md#cell), 16 pixels square. In
 `map.txt` a cell is up to three numbers, written `2e:100:3`:
 
 - **What is drawn.** The first number names a
-  [cell picture](../../glossary.md#cell-picture), four tiles two by two,
-  from the map's own list in `cell_pictures.tsv`.
+  [cell tiles](../../glossary.md#cell-tiles), four tiles two by two,
+  from the map's own list in `cell_tiles.tsv`.
 - **What standing there does.** The second is the
   [cell behavior](../../glossary.md#cell-behavior). Zero is plain ground.
   The numbers from 240 up mean the same everywhere: a wall, a ledge, a
@@ -24,7 +24,7 @@ A map is a grid of [cells](../../glossary.md#cell), 16 pixels square. In
   ground, slopes, steps and bumps are all shapes, and walking is decided by
   comparing heights.
 
-A cell can also say who is in front. A digit before the picture number
+A cell can also say who is in front. A digit before the cell tiles number
 changes the drawing priority of whoever stands there, which is how Isaac
 goes behind a roof by walking, with no code involved.
 
@@ -81,17 +81,17 @@ the title, the File Screen and the World Map, the first row `gMaps` counts
 from, is `empty_map/`; the two that no place or scene names keep their
 resource number.
 
-When the party arrives, the grid, the cell pictures, the shapes and the
+When the party arrives, the grid, the cell tiles, the shapes and the
 tiles are unpacked into memory, where the field reads them directly.
 
-The grid comes packed as three planes: the cell pictures, the behaviors
+The grid comes packed as three planes: the cell tiles, the behaviors
 and the shapes. As it is unpacked, a small routine copied into fast RAM
-weaves them into one word a cell, the picture in the low half and the
+weaves them into one word a cell, the cell tiles in the low half and the
 behavior and shape in the high.
 
 ## Where the files are
 
-Each folder holds `map.txt` (the grid), `cell_pictures.tsv`,
+Each folder holds `map.txt` (the grid), `cell_tiles.tsv`,
 `shapes.tsv` and `tileset_anims.tsv`. Where a language changes a map,
 its own grid sits beside it, such as `map_es.txt`. A folder's `map.inc`
 writes the map's header and the pictures it reads, and `maps.s` gathers

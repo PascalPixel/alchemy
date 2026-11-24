@@ -4,14 +4,14 @@ Field_SolSanctumLunaSolRooms:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_CELL_PICTURES
+	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_CELL_TILES
 	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_SHAPES
 	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_GRID
 	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_ANIMATION
 	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_BLEND
 	map_offset Field_SolSanctumLunaSolRooms, .LField_SolSanctumLunaSolRooms_MARKERS
-.LField_SolSanctumLunaSolRooms_CELL_PICTURES:
-	.incbin "games/tbs/src/map/sol_sanctum_luna_sol_rooms/cell_pictures.delta2.lz"
+.LField_SolSanctumLunaSolRooms_CELL_TILES:
+	.incbin "games/tbs/src/map/sol_sanctum_luna_sol_rooms/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_SolSanctumLunaSolRooms_SHAPES:
 	.incbin "games/tbs/src/map/sol_sanctum_luna_sol_rooms/shapes.table.lz"

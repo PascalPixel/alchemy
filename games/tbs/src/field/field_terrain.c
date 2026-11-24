@@ -385,7 +385,7 @@ void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 behavior) {
   }
 }
 
-/// Unused: returns the top two bits of the cell picture halfword of the cell at
+/// Unused: returns the top two bits of the cell tiles halfword of the cell at
 /// pixel (x, y).
 UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / MAPGRID_CELL_PIXELS;
@@ -393,8 +393,8 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   struct MapGridCell *cell =
       (struct MapGridCell *)gMapGridCellBuffer + (cellX + cellY * MAPGRID_SIZE);
 
-  // The high byte of the cell picture halfword; its top two bits are flags.
-  return ((u8 *)&cell->cellPictureAndFlags)[1] >> 6;
+  // The high byte of the cell tiles halfword; its top two bits are flags.
+  return ((u8 *)&cell->cellTilesAndFlags)[1] >> 6;
 }
 
 /// Returns whether an actor can step to position, an enum Collision: whether
@@ -582,7 +582,7 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position, s32 *region) {
   index =
       blockX + ((y >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1)) *
                    WORLD_MAP_BLOCKS_ACROSS;
-  blockWord = gCellPictures + index;
+  blockWord = gCellTiles + index;
   // Bit 31 of the block word selects the second bank; the snowfield the
   // third, whatever bit 31 says.
   if (((u8 *)blockWord)[3] & WORLD_MAP_BLOCK_SECOND_BANK)

@@ -237,7 +237,7 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// Fills `spans`, a page of the screen transition's window edges past its WININ
 /// and WINOUT, with the windows' horizontal extent on each of the 160 scan
 /// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
-/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures,
+/// pair, read from the UI tilemap by the ARM routine Tile_BuildCellTiles,
 /// copied into RAM for the call.
 void ScanlineWindow_FillSpans(void *spans) {
   void *tilemap = gWindowState[0];
@@ -254,8 +254,7 @@ void ScanlineWindow_FillSpans(void *spans) {
   } else {
     WindowSpanRoutine routine;
 
-    RamCode_Load(routine, Tile_BuildCellPictures,
-                 Tile_BuildCellPicturesCodeSize);
+    RamCode_Load(routine, Tile_BuildCellTiles, Tile_BuildCellTilesCodeSize);
     routine(spans, tilemap);
     Heap_Release(routine);
   }

@@ -4,14 +4,14 @@
 
 #include "field_internal.h"
 
-/// A cell word's attributes, the bits above its cell picture number
-/// (MAPGRID_CELL_PICTURE_ID_MASK).
+/// A cell word's attributes, the bits above the number of its cell tiles
+/// (MAPGRID_CELL_TILES_ID_MASK).
 #define MAPGRID_ATTRIBUTE_MASK 0xfffff000
-/// The shift that leaves a cell word's picture number on top, its attributes
+/// The shift that leaves a cell word's cell tiles number on top, its attributes
 /// shifted out. Shifted back down by one less it is the number times 2, the
-/// picture's offset in words in gCellPictures (a word for each of its two rows
+/// cell tiles' offset in words in gCellTiles (a word for each of its two rows
 /// of 2 tiles); by two less, times 4, its offset in halfwords.
-#define MAPGRID_CELL_PICTURE_SHIFT 20
+#define MAPGRID_CELL_TILES_SHIFT 20
 /// The map's 128 by 128 cells, each read whole as its word (a struct
 /// MapGridCell's four bytes).
 #define MAPGRID_CELL_WORDS ((u32 *)Ram_MapGridCellBuffer)
@@ -29,12 +29,12 @@
 /// wrapping at the map's 32; its row as tile entries from the map's start.
 #define MAPGRID_SCREEN_TILE_MASK (BG_SCREEN_WIDTH - 2)
 #define MAPGRID_SCREEN_ROW_MASK (MAPGRID_SCREEN_TILE_MASK * BG_SCREEN_WIDTH)
-/// The cell pictures drawn down a column as the view scrolls sideways: the
+/// The cell tiles drawn down a column as the view scrolls sideways: the
 /// screen's 10 rows of cells and the one partly scrolled in.
 #define MAPGRID_COLUMN_CELLS 11
 /// A map's cells as they are decoded: two planes of a byte a cell, the cells'
-/// attribute bytes, then a plane of their cell picture numbers, a halfword a
-/// cell.
+/// attribute bytes, then a plane of the numbers of their cell tiles, a halfword
+/// a cell.
 #define MAPGRID_BYTE_PLANES_BYTES (2 * MAPGRID_SIZE * MAPGRID_SIZE)
 /// A map's palette: the first 14 of the 16 BG palettes, 224 colours.
 #define MAP_PALETTE_BYTES (14 * PALETTE_COLORS * sizeof(u16))
@@ -49,7 +49,7 @@ void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
   }
 }
 
-/// Unpacks the staged cell picture data into gCellPictures.
+/// Unpacks the staged cell tiles into gCellTiles.
 void TileMap_DecodeStagedBuffer(s32 size) {
   u16 *destinationWords;
   u16 *sourceWords;
@@ -57,15 +57,15 @@ void TileMap_DecodeStagedBuffer(s32 size) {
   s32 i;
 
   sourceWords = (u16 *)(Ram_MapGridCellBuffer + 2);
-  destinationWords = (u16 *)gCellPictures;
+  destinationWords = (u16 *)gCellTiles;
   wordCount = (size - 1) / 2;
   if (size & 1) {
     switch (((u8 *)gMapGridCellBuffer)[1]) {
-    case CELL_PICTURE_PACKING_RAW:
+    case CELL_TILES_PACKING_RAW:
       for (i = 0; i < wordCount; i++)
         *destinationWords++ = *sourceWords++;
       break;
-    case CELL_PICTURE_PACKING_SPLIT_DELTA: {
+    case CELL_TILES_PACKING_SPLIT_DELTA: {
       // The high bytes, then the low bytes, each word XORed with the last.
       u32 previousWord = 0;
       u8 *highBytes = Ram_MapGridCellBuffer + 2;
@@ -78,7 +78,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
       }
       break;
     }
-    case CELL_PICTURE_PACKING_DELTA: {
+    case CELL_TILES_PACKING_DELTA: {
       s32 previousWord = 0;
 
       for (i = 0; i < wordCount; i++) {
@@ -94,22 +94,22 @@ void TileMap_DecodeStagedBuffer(s32 size) {
 
 typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 
-/// Unused: gives each map cell whose cell picture number is 0xfff (a
+/// Unused: gives each map cell whose cell tiles are number 0xfff (a
 /// placeholder) a number of its own, counting up from 0 in map order.
-UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
+UNUSED void TileMap_NumberPlaceholderCellTiles(void) {
   u32 *cell = (u32 *)gMapGridCellBuffer;
   u32 remaining = MAPGRID_SIZE * MAPGRID_SIZE;
-  u32 mask = MAPGRID_CELL_PICTURE_ID_MASK;
+  u32 mask = MAPGRID_CELL_TILES_ID_MASK;
   s32 nextPlaceholder = -1;
 
   for (; remaining != 0; remaining--) {
     u32 value = *cell++;
-    u32 cellPictureId = value & mask;
+    u32 cellTilesId = value & mask;
 
-    if (cellPictureId == mask) {
-      if (nextPlaceholder != cellPictureId)
+    if (cellTilesId == mask) {
+      if (nextPlaceholder != cellTilesId)
         nextPlaceholder++;
-      value = value + nextPlaceholder - cellPictureId;
+      value = value + nextPlaceholder - cellTilesId;
       cell[-1] = value;
     }
   }
@@ -130,39 +130,40 @@ void TileMap_ConvertBuffer(void) {
   Heap_Release(savedCells);
 }
 
-/// Copies one tile column of a cell picture into a BG map: its top and
+/// Copies one tile column of a cell's tiles into a BG map: its top and
 /// bottom tile entries, choosing the left or right half with tileHalf.
-static __inline__ void
-MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
-                                  u32 screenColumnOffset, u32 tileHalf) {
+static __inline__ void MapGrid_CopyCellTilesHalfColumn(u32 *cell, u8 *screenMap,
+                                                       u32 screenRowOffset,
+                                                       u32 screenColumnOffset,
+                                                       u32 tileHalf) {
   u16 *entry;
   u8 *screenTile;
-  u32 index = ((*cell << MAPGRID_CELL_PICTURE_SHIFT) >>
-               (MAPGRID_CELL_PICTURE_SHIFT - 2)) +
-              tileHalf;
+  u32 index =
+      ((*cell << MAPGRID_CELL_TILES_SHIFT) >> (MAPGRID_CELL_TILES_SHIFT - 2)) +
+      tileHalf;
 
-  entry = (u16 *)Ram_CellPictures + index;
+  entry = (u16 *)Ram_CellTiles + index;
   screenTile =
       screenMap + (screenRowOffset + screenColumnOffset + tileHalf) * 2;
   *(u16 *)screenTile = *entry;
-  entry = (u16 *)(Ram_CellPictures + 4) + index;
+  entry = (u16 *)(Ram_CellTiles + 4) + index;
   *(u16 *)(screenTile + MAPGRID_SCREEN_ROW_BYTES) = *entry;
 }
 
-/// Copies a whole cell picture into a BG map: its top two tile entries
+/// Copies all four of a cell's tiles into a BG map: its top two tile entries
 /// and its bottom two, a map row (64 bytes) below.
-static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
-                                                       u32 screenRowOffset,
-                                                       u32 screenColumnOffset) {
+static __inline__ void MapGrid_CopyCellTilesToScreen(u32 *cell, u8 *screenMap,
+                                                     u32 screenRowOffset,
+                                                     u32 screenColumnOffset) {
   u32 *rows;
   u8 *screenTile;
   u32 index =
-      (*cell << MAPGRID_CELL_PICTURE_SHIFT) >> (MAPGRID_CELL_PICTURE_SHIFT - 1);
+      (*cell << MAPGRID_CELL_TILES_SHIFT) >> (MAPGRID_CELL_TILES_SHIFT - 1);
 
-  rows = (u32 *)Ram_CellPictures + index;
+  rows = (u32 *)Ram_CellTiles + index;
   screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
   *(u32 *)screenTile = *rows;
-  rows = (u32 *)(Ram_CellPictures + 4) + index;
+  rows = (u32 *)(Ram_CellTiles + 4) + index;
   *(u32 *)(screenTile + MAPGRID_SCREEN_ROW_BYTES) = *rows;
 }
 
@@ -192,20 +193,20 @@ struct MapHeader {
   struct MapLayer layers[3];
   // Offsets from the header's start, of data packed for Decompress_TaggedLz
   // but for the treasure spots, which are read in place.
-  s32 cellPictures; ///< the cell pictures, staged and unpacked into
-                    ///< gCellPictures
-  s32 shapes;       ///< the shapes, into Ram_MapGridShapes
-  s32 cells;        ///< the cells, into Ram_MapGridCellBuffer
-  s32 animation;    ///< the tileset animation script, or 0 for none
-  s32 blend;        ///< the blend script, or 0 for none
-  s32 markers; ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
+  s32 cellTiles; ///< the cell tiles, staged and unpacked into
+                 ///< gCellTiles
+  s32 shapes;    ///< the shapes, into Ram_MapGridShapes
+  s32 cells;     ///< the cells, into Ram_MapGridCellBuffer
+  s32 animation; ///< the tileset animation script, or 0 for none
+  s32 blend;     ///< the blend script, or 0 for none
+  s32 markers;   ///< the chests and Psynergy stones (Field_PlaceTreasureSpots)
 };
 
 /// One of a layout's resources, from its row of gMaps.
 #define MAPGRID_RESOURCE(offset)                                               \
   Resource_GetTableEntry((offset) + (u32)RESOURCE_EMPTY_MAP)
 
-/// Loads layout index from gMaps: its cell pictures, shapes, cells, tileset
+/// Loads layout index from gMaps: its cell tiles, shapes, cells, tileset
 /// animations, blend script and treasure spots; sets up the three background
 /// layers' origins, parallax and wrap from the layout header; loads the palette
 /// and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are loaded; and
@@ -234,7 +235,7 @@ s32 MapGrid_LoadMap(s32 index) {
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollState));
   mapHeader = MAPGRID_RESOURCE(mapResources->header);
   // The header's offsets count from the header itself.
-  packed = (u8 *)mapHeader + mapHeader->cellPictures;
+  packed = (u8 *)mapHeader + mapHeader->cellTiles;
   TileMap_DecodeStagedBuffer(
       Decompress_TaggedLz(packed, Ram_MapGridCellBuffer + 1));
   packed = (u8 *)mapHeader + mapHeader->shapes;
@@ -381,50 +382,50 @@ void MapGrid_CenterOnFollowedPoint(void) {
   MapGrid_UpdateLayerScroll();
 }
 
-/// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
-/// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
+/// Draws the cell tiles of a row of 16 of a layer's cells (32 tiles) into its
+/// BG map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
 /// wraps every 32 tiles.
-void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
+void MapGrid_RenderCellTilesRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 sourceRow = ((tileY / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
   u32 screenRowOffset = (tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
   u32 sourceColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
   u32 screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
-  u32 cellPictureIndex;
+  u32 cellTilesIndex;
 
-  // A cell picture is 2x2 tiles, so the BG map's tile row and column are kept
+  // A cell's tiles are 2x2, so the BG map's tile row and column are kept
   // even and wrap at 32; the grid wraps at 128 cells.
-  for (cellPictureIndex = 0; cellPictureIndex < MAPGRID_SCREEN_CELLS;
-       cellPictureIndex++) {
+  for (cellTilesIndex = 0; cellTilesIndex < MAPGRID_SCREEN_CELLS;
+       cellTilesIndex++) {
     u32 *cell = MAPGRID_CELL_WORDS;
 
     cell += sourceRow + sourceColumn;
-    MapGrid_CopyCellPictureToScreen(cell, screenMap, screenRowOffset,
-                                    screenColumnOffset);
+    MapGrid_CopyCellTilesToScreen(cell, screenMap, screenRowOffset,
+                                  screenColumnOffset);
     sourceColumn = (sourceColumn + 1) & (MAPGRID_SIZE - 1);
     screenColumnOffset = (screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
   }
 }
 
-/// Draws a column of 11 cell pictures of a layer's cells, one tile wide, into
-/// its BG map, starting at tile (tileX, tileY).
-void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
+/// Draws the cell tiles of a column of 11 of a layer's cells, one tile wide,
+/// into its BG map, starting at tile (tileX, tileY).
+void MapGrid_RenderCellTilesColumn(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 sourceRow = ((tileY / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
   u32 screenRowOffset = (tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
   u32 sourceColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
   u32 screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
   u32 tileHalf = tileX & 1;
-  u32 cellPictureIndex;
+  u32 cellTilesIndex;
 
   // Both the cells and the BG map wrap.
-  for (cellPictureIndex = 0; cellPictureIndex < MAPGRID_COLUMN_CELLS;
-       cellPictureIndex++) {
+  for (cellTilesIndex = 0; cellTilesIndex < MAPGRID_COLUMN_CELLS;
+       cellTilesIndex++) {
     u32 *cell = MAPGRID_CELL_WORDS;
 
     cell += sourceRow + sourceColumn;
-    MapGrid_CopyCellPictureHalfColumn(cell, screenMap, screenRowOffset,
-                                      screenColumnOffset, tileHalf);
+    MapGrid_CopyCellTilesHalfColumn(cell, screenMap, screenRowOffset,
+                                    screenColumnOffset, tileHalf);
 
     sourceRow =
         (sourceRow + MAPGRID_SIZE) & ((MAPGRID_SIZE - 1) * MAPGRID_SIZE);
@@ -436,8 +437,8 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 /// Each frame on a layered map: centres the view on the point the map follows
 /// (origin), clamped to the map's bounds and shaken by any decaying screen
 /// shake; then scrolls each of the three layers by its parallax scale and
-/// automatic scroll (wrapping at its period), draws the cell picture column or
-/// row that scrolls into view, and sets its BG scroll.
+/// automatic scroll (wrapping at its period), draws the column or row
+/// of cell tiles that scrolls into view, and sets its BG scroll.
 void MapGrid_UpdateLayerScroll(void) {
   struct MapGridScrollState *grid;
   struct MapGridLayerScroll *layer;
@@ -513,15 +514,15 @@ void MapGrid_UpdateLayerScroll(void) {
     y = baseY / toFIXED(8);
     if ((layer->x ^ baseX) & toFIXED(8)) {
       if (layer->x < baseX)
-        MapGrid_RenderCellPictureColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
+        MapGrid_RenderCellTilesColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
       else
-        MapGrid_RenderCellPictureColumn(layerIndex, x, y);
+        MapGrid_RenderCellTilesColumn(layerIndex, x, y);
     }
     if ((layer->y ^ baseY) & toFIXED(16)) {
       if (layer->y < baseY)
-        MapGrid_RenderCellPictureRow(layerIndex, x, y + DISPLAY_HEIGHT / 8);
+        MapGrid_RenderCellTilesRow(layerIndex, x, y + DISPLAY_HEIGHT / 8);
       else
-        MapGrid_RenderCellPictureRow(layerIndex, x, y);
+        MapGrid_RenderCellTilesRow(layerIndex, x, y);
     }
     // MAPGRID_LAYER_GROUND scrolls BG3, MAPGRID_LAYER_OVERHEAD BG1.
     gBgScroll[3 - layerIndex].x = FIXEDtoINT(baseX);
@@ -550,7 +551,7 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
     if (grid->enabled[layerIndex]) {
       u32 rows = 2 * MAPGRID_COLUMN_CELLS;
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
-          cellPictureRow, cellPictureColumn;
+          cellTilesRow, cellTilesColumn;
 
       x = Iwram_MulFX(grid->view[0], layer->scaleX);
       y = Iwram_MulFX(grid->view[1], layer->scaleY);
@@ -576,16 +577,16 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
       screenMap = BG_SCREEN_BLOCK(5) + layerIndex * MAPGRID_LAYER_SCREEN_BYTES;
       sourceRow = ((y / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
       screenRowOffset = (y & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
-      for (cellPictureRow = 0; cellPictureRow < rows / 2; cellPictureRow++) {
+      for (cellTilesRow = 0; cellTilesRow < rows / 2; cellTilesRow++) {
         sourceColumn = (x / 2) & (MAPGRID_SIZE - 1);
         screenColumnOffset = x & MAPGRID_SCREEN_TILE_MASK;
-        for (cellPictureColumn = 0; cellPictureColumn < MAPGRID_SCREEN_CELLS;
-             cellPictureColumn++) {
+        for (cellTilesColumn = 0; cellTilesColumn < MAPGRID_SCREEN_CELLS;
+             cellTilesColumn++) {
           u32 *cell = MAPGRID_CELL_WORDS;
 
           cell += sourceRow + sourceColumn;
-          MapGrid_CopyCellPictureToScreen(cell, screenMap, screenRowOffset,
-                                          screenColumnOffset);
+          MapGrid_CopyCellTilesToScreen(cell, screenMap, screenRowOffset,
+                                        screenColumnOffset);
           sourceColumn = (sourceColumn + 1) & (MAPGRID_SIZE - 1);
           screenColumnOffset =
               (screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
@@ -607,12 +608,12 @@ struct MapGridTilePosition {
 /// The redraw the three cell copies below share, for the cell at (cellX, cellY)
 /// just
 /// copied: the first layer whose visible area (16 by 12 cells from its scroll
-/// position) holds it, and that one only, has the cell picture's top two tile
+/// position) holds it, and that one only, has the cell's top two tile
 /// entries and its bottom two (a tile row, 64 bytes, further on) written to its
 /// BG map. The layers' BG maps follow each other, 2,048 bytes apart, from
 /// screen block 5, and in each a row of cells is 128 bytes and a cell 4. It
 /// uses the copy's own locals: row and column (the cell's place in the BG map),
-/// cellPictureId, visibleLayers and the scratch place, offset, bytes, i and
+/// cellTilesId, visibleLayers and the scratch place, offset, bytes, i and
 /// visibleLayer.
 #define MAPGRID_REDRAW_COPIED_CELL(cellX, cellY)                               \
   visibleLayer = visibleLayers;                                                \
@@ -624,19 +625,19 @@ struct MapGridTilePosition {
         visibleLayer->x + MAPGRID_VISIBLE_WIDTH > (cellX) &&                   \
         visibleLayer->y <= (cellY) &&                                          \
         visibleLayer->y + MAPGRID_VISIBLE_HEIGHT > (cellY)) {                  \
-      u8 *screen, *cellPicture;                                                \
+      u8 *screen, *cellTiles;                                                  \
                                                                                \
       screen = BG_SCREEN_BLOCK(5);                                             \
       screen += offset;                                                        \
-      bytes = cellPictureId * 8;                                               \
-      cellPicture = Ram_CellPictures;                                          \
-      cellPicture += bytes;                                                    \
-      *(u32 *)screen = *(u32 *)cellPicture;                                    \
-      cellPicture = Ram_CellPictures + 4;                                      \
-      cellPicture += bytes;                                                    \
+      bytes = cellTilesId * 8;                                                 \
+      cellTiles = Ram_CellTiles;                                               \
+      cellTiles += bytes;                                                      \
+      *(u32 *)screen = *(u32 *)cellTiles;                                      \
+      cellTiles = Ram_CellTiles + 4;                                           \
+      cellTiles += bytes;                                                      \
       screen = BG_SCREEN_BLOCK(5) + MAPGRID_SCREEN_ROW_BYTES;                  \
       screen += offset;                                                        \
-      *(u32 *)screen = *(u32 *)cellPicture;                                    \
+      *(u32 *)screen = *(u32 *)cellTiles;                                      \
       break;                                                                   \
     }                                                                          \
     bytes = MAPGRID_LAYER_SCREEN_BYTES;                                        \
@@ -645,11 +646,11 @@ struct MapGridTilePosition {
     i++;                                                                       \
   } while (i < 3)
 
-/// Copies the cell picture numbers of a rectangle of cells from (sourceX,
+/// Copies the cell tiles numbers of a rectangle of cells from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination's
 /// attributes, and redraws the copied cells that are on screen.
-void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
-                                        u32 dstY, u32 width, u32 height) {
+void MapGrid_CopyCellTilesIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
+                                      u32 dstY, u32 width, u32 height) {
   u32 y;
   u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
   u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
@@ -669,11 +670,11 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
   for (y = dstY; y < dstY + height; y++) {
     for (x = dstX; x < dstX + width; x++) {
       u32 cell = *sourceCells++;
-      u32 cellPictureId = cell & MAPGRID_CELL_PICTURE_ID_MASK;
+      u32 cellTilesId = cell & MAPGRID_CELL_TILES_ID_MASK;
       u32 column, row, place, offset, bytes;
 
       *destinationCells =
-          (*destinationCells & MAPGRID_ATTRIBUTE_MASK) | cellPictureId;
+          (*destinationCells & MAPGRID_ATTRIBUTE_MASK) | cellTilesId;
       column = x & (MAPGRID_SCREEN_CELLS - 1);
       destinationCells++;
       i = 0;
@@ -698,7 +699,7 @@ STATIC_ASSERT(sizeof(struct MapGridCellAnimationStep) == 10);
 
 /// Plays a map edit (struct MapGridCellAnimationStep entries, ended by a source
 /// of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of cell
-/// picture numbers to (destinationX, destinationY) and waits its delay in
+/// tiles numbers to (destinationX, destinationY) and waits its delay in
 /// frames.
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *step =
@@ -726,8 +727,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       s32 delay = rectangle[3];
 
       rectangle += 5;
-      MapGrid_CopyCellPictureIndicesRect(source, (u16)sourceY, destinationX,
-                                         destinationY, (u16)width, (u16)height);
+      MapGrid_CopyCellTilesIndicesRect(source, (u16)sourceY, destinationX,
+                                       destinationY, (u16)width, (u16)height);
       step++;
       wait((u16)delay);
       source = step->source;
@@ -754,8 +755,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells.
-void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
-                                      s32 height, s32 dstX, s32 dstY) {
+void MapGrid_CopyCellTilesCellsRect(s32 sourceX, s32 sourceY, s32 width,
+                                    s32 height, s32 dstX, s32 dstY) {
   s32 y;
   u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
   u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
@@ -775,11 +776,11 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
   for (y = dstY; y < dstY + height; y++) {
     for (x = dstX; x < dstX + width; x++) {
       u32 cell = *sourceCells++;
-      u32 cellPictureId;
+      u32 cellTilesId;
       u32 column, row, place, offset, bytes;
 
       *destinationCells = cell;
-      cellPictureId = cell & MAPGRID_CELL_PICTURE_ID_MASK;
+      cellTilesId = cell & MAPGRID_CELL_TILES_ID_MASK;
       column = x & (MAPGRID_SCREEN_CELLS - 1);
       destinationCells++;
       i = 0;
@@ -793,7 +794,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
 
 /// Copies only the attributes of a rectangle of cells, from (sourceX, sourceY)
 /// to (dstX, dstY), width by height cells, keeping each destination cell's cell
-/// picture number.
+/// tiles number.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
   u32 *destinationCells = MAPGRID_CELL_WORDS;
@@ -809,14 +810,14 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
     u32 *sourceCell = sourceCells + row * MAPGRID_SIZE;
 
     for (column = 0; column < width; column++) {
-      *destinationCell = (*destinationCell & MAPGRID_CELL_PICTURE_ID_MASK) |
+      *destinationCell = (*destinationCell & MAPGRID_CELL_TILES_ID_MASK) |
                          (*sourceCell++ & MAPGRID_ATTRIBUTE_MASK);
       destinationCell++;
     }
   }
 }
 
-/// Copies only the cell picture numbers of a rectangle of cells, from (sourceX,
+/// Copies only the cell tiles numbers of a rectangle of cells, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination
 /// cell's attributes; cells in a visible area update the BG maps too.
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
@@ -840,11 +841,11 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
   for (y = dstY; y < dstY + height; y++) {
     for (x = dstX; x < dstX + width; x++) {
       u32 cell = *sourceCells++;
-      u32 cellPictureId = cell & MAPGRID_CELL_PICTURE_ID_MASK;
+      u32 cellTilesId = cell & MAPGRID_CELL_TILES_ID_MASK;
       u32 column, row, place, offset, bytes;
 
       *destinationCells =
-          (*destinationCells & MAPGRID_ATTRIBUTE_MASK) | cellPictureId;
+          (*destinationCells & MAPGRID_ATTRIBUTE_MASK) | cellTilesId;
       column = x & (MAPGRID_SCREEN_CELLS - 1);
       destinationCells++;
       i = 0;
@@ -870,7 +871,7 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
 
 #undef MAPGRID_CELL_WORDS
 #undef MAPGRID_ATTRIBUTE_MASK
-#undef MAPGRID_CELL_PICTURE_SHIFT
+#undef MAPGRID_CELL_TILES_SHIFT
 #undef MAPGRID_VISIBLE_WIDTH
 #undef MAPGRID_VISIBLE_HEIGHT
 #undef MAPGRID_LAYER_SCREEN_BYTES

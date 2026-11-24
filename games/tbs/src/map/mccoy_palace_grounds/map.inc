@@ -5,14 +5,14 @@ Field_McCoyPalaceGrounds:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_PICTURES
+	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_TILES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_SHAPES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_GRID
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_MARKERS
-.LField_McCoyPalaceGrounds_CELL_PICTURES:
-	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_pictures_es.delta1.lz"
+.LField_McCoyPalaceGrounds_CELL_TILES:
+	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_tiles_es.delta1.lz"
 	.balign 4, 0
 .LField_McCoyPalaceGrounds_SHAPES:
 	.incbin "games/tbs/src/map/mccoy_palace_grounds/shapes.table.lz"
@@ -28,14 +28,14 @@ Field_McCoyPalaceGrounds:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_PICTURES
+	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_TILES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_SHAPES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_GRID
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_MARKERS
-.LField_McCoyPalaceGrounds_CELL_PICTURES:
-	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_pictures_es.delta1.lz"
+.LField_McCoyPalaceGrounds_CELL_TILES:
+	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_tiles_es.delta1.lz"
 	.balign 4, 0
 .LField_McCoyPalaceGrounds_SHAPES:
 	.incbin "games/tbs/src/map/mccoy_palace_grounds/shapes.table.lz"
@@ -51,14 +51,14 @@ Field_McCoyPalaceGrounds:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_PICTURES
+	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_TILES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_SHAPES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_GRID
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_MARKERS
-.LField_McCoyPalaceGrounds_CELL_PICTURES:
-	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_pictures_es.delta1.lz"
+.LField_McCoyPalaceGrounds_CELL_TILES:
+	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_tiles_es.delta1.lz"
 	.balign 4, 0
 .LField_McCoyPalaceGrounds_SHAPES:
 	.incbin "games/tbs/src/map/mccoy_palace_grounds/shapes.table.lz"
@@ -73,14 +73,14 @@ Field_McCoyPalaceGrounds:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_PICTURES
+	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_CELL_TILES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_SHAPES
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_GRID
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds
 	map_offset Field_McCoyPalaceGrounds, .LField_McCoyPalaceGrounds_MARKERS
-.LField_McCoyPalaceGrounds_CELL_PICTURES:
-	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_pictures.delta1.lz"
+.LField_McCoyPalaceGrounds_CELL_TILES:
+	.incbin "games/tbs/src/map/mccoy_palace_grounds/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_McCoyPalaceGrounds_SHAPES:
 	.incbin "games/tbs/src/map/mccoy_palace_grounds/shapes.table.lz"

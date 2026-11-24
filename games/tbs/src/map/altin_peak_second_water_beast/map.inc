@@ -4,14 +4,14 @@ Field_AltinPeakSecondWaterBeast:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_CELL_PICTURES
+	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_CELL_TILES
 	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_SHAPES
 	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_GRID
 	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_ANIMATION
 	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_BLEND
 	map_offset Field_AltinPeakSecondWaterBeast, .LField_AltinPeakSecondWaterBeast_MARKERS
-.LField_AltinPeakSecondWaterBeast_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altin_peak_second_water_beast/cell_pictures.delta1.lz"
+.LField_AltinPeakSecondWaterBeast_CELL_TILES:
+	.incbin "games/tbs/src/map/altin_peak_second_water_beast/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AltinPeakSecondWaterBeast_SHAPES:
 	.incbin "games/tbs/src/map/altin_peak_second_water_beast/shapes.table.lz"

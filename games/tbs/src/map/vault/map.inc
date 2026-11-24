@@ -4,14 +4,14 @@ Field_Vault:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Vault, .LField_Vault_CELL_PICTURES
+	map_offset Field_Vault, .LField_Vault_CELL_TILES
 	map_offset Field_Vault, .LField_Vault_SHAPES
 	map_offset Field_Vault, .LField_Vault_GRID
 	map_offset Field_Vault
 	map_offset Field_Vault
 	map_offset Field_Vault, .LField_Vault_MARKERS
-.LField_Vault_CELL_PICTURES:
-	.incbin "games/tbs/src/map/vault/cell_pictures.delta1.lz"
+.LField_Vault_CELL_TILES:
+	.incbin "games/tbs/src/map/vault/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_Vault_SHAPES:
 	.incbin "games/tbs/src/map/vault/shapes.table.lz"

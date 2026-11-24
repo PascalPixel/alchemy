@@ -4,14 +4,14 @@ Field_MogallForestKillerApe:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 108, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 90, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_MogallForestKillerApe, .LField_MogallForestKillerApe_CELL_PICTURES
+	map_offset Field_MogallForestKillerApe, .LField_MogallForestKillerApe_CELL_TILES
 	map_offset Field_MogallForestKillerApe, .LField_MogallForestKillerApe_SHAPES
 	map_offset Field_MogallForestKillerApe, .LField_MogallForestKillerApe_GRID
 	map_offset Field_MogallForestKillerApe, .LField_MogallForestKillerApe_ANIMATION
 	map_offset Field_MogallForestKillerApe
 	map_offset Field_MogallForestKillerApe, .LField_MogallForestKillerApe_MARKERS
-.LField_MogallForestKillerApe_CELL_PICTURES:
-	.incbin "games/tbs/src/map/mogall_forest_killer_ape/cell_pictures.delta0.lz"
+.LField_MogallForestKillerApe_CELL_TILES:
+	.incbin "games/tbs/src/map/mogall_forest_killer_ape/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_MogallForestKillerApe_SHAPES:
 	.incbin "games/tbs/src/map/mogall_forest_killer_ape/shapes.table.lz"

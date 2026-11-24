@@ -4,14 +4,14 @@ Field_Test3:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_Test3, .LField_Test3_CELL_PICTURES
+	map_offset Field_Test3, .LField_Test3_CELL_TILES
 	map_offset Field_Test3, .LField_Test3_SHAPES
 	map_offset Field_Test3, .LField_Test3_GRID
 	map_offset Field_Test3
 	map_offset Field_Test3
 	map_offset Field_Test3, .LField_Test3_MARKERS
-.LField_Test3_CELL_PICTURES:
-	.incbin "games/tbs/src/map/empty_map/cell_pictures.delta0.lz"
+.LField_Test3_CELL_TILES:
+	.incbin "games/tbs/src/map/empty_map/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_Test3_SHAPES:
 	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"

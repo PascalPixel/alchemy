@@ -830,8 +830,8 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
         {
           s32 stripHeight = 4;
 
-          MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, width,
-                                             stripHeight);
+          MapGrid_CopyCellTilesIndicesRect(105, 51, column, 32, width,
+                                           stripHeight);
           if (delayFrames != 0) {
             MapGrid_SetShake(5, 5, 1);
             MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

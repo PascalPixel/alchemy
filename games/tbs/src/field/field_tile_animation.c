@@ -96,8 +96,7 @@ void TilesetAnim_Update(void) {
       } else {
         if (sourceTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
           Dma_Set(
-              Ram_CellPictures +
-                  sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
+              Ram_CellTiles + sourceTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
               BG_CHAR_BLOCK(2) + destinationTile * TILESET_ANIM_WIDE_TILE_BYTES,
               DMA_COPY_WORDS(tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
               REG_DMA3);

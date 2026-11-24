@@ -4,14 +4,14 @@ Field_AltinPeakRailTunnel:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_CELL_PICTURES
+	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_CELL_TILES
 	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_SHAPES
 	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_GRID
 	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_ANIMATION
 	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_BLEND
 	map_offset Field_AltinPeakRailTunnel, .LField_AltinPeakRailTunnel_MARKERS
-.LField_AltinPeakRailTunnel_CELL_PICTURES:
-	.incbin "games/tbs/src/map/altin_peak_rail_tunnel/cell_pictures.delta1.lz"
+.LField_AltinPeakRailTunnel_CELL_TILES:
+	.incbin "games/tbs/src/map/altin_peak_rail_tunnel/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_AltinPeakRailTunnel_SHAPES:
 	.incbin "games/tbs/src/map/altin_peak_rail_tunnel/shapes.table.lz"

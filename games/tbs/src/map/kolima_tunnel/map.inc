@@ -4,14 +4,14 @@ Field_KolimaTunnel:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_CELL_PICTURES
+	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_CELL_TILES
 	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_SHAPES
 	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_GRID
 	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_ANIMATION
 	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_BLEND
 	map_offset Field_KolimaTunnel, .LField_KolimaTunnel_MARKERS
-.LField_KolimaTunnel_CELL_PICTURES:
-	.incbin "games/tbs/src/map/kolima_tunnel/cell_pictures.delta2.lz"
+.LField_KolimaTunnel_CELL_TILES:
+	.incbin "games/tbs/src/map/kolima_tunnel/cell_tiles.delta2.lz"
 	.balign 4, 0
 .LField_KolimaTunnel_SHAPES:
 	.incbin "games/tbs/src/map/kolima_tunnel/shapes.table.lz"

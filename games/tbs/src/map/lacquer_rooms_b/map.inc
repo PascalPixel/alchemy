@@ -4,14 +4,14 @@ Field_LacquerRoomsB:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_CELL_PICTURES
+	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_CELL_TILES
 	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_SHAPES
 	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_GRID
 	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_ANIMATION
 	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_BLEND
 	map_offset Field_LacquerRoomsB, .LField_LacquerRoomsB_MARKERS
-.LField_LacquerRoomsB_CELL_PICTURES:
-	.incbin "games/tbs/src/map/lacquer_rooms_b/cell_pictures.delta1.lz"
+.LField_LacquerRoomsB_CELL_TILES:
+	.incbin "games/tbs/src/map/lacquer_rooms_b/cell_tiles.delta1.lz"
 	.balign 4, 0
 .LField_LacquerRoomsB_SHAPES:
 	.incbin "games/tbs/src/map/lacquer_rooms_b/shapes.table.lz"

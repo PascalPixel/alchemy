@@ -228,8 +228,8 @@ enum { PARTICLE_DRAG = 10, PARTICLE_DRAG_Y = 3 };
 union CrossboneIslePillarCell {
   struct MapGridCell cell;
   struct CrossboneIslePillarCellBits {
-    u32 cellPicture : 12;
-    u32 lowFlags : 2; ///< bits 13..12 of MapGridCell.cellPictureAndFlags
+    u32 cellTiles : 12;
+    u32 lowFlags : 2; ///< bits 13..12 of MapGridCell.cellTilesAndFlags
     u8 highFlags : 2; ///< bits 15..14, read by MapGrid_GetCellHighFlags
     u8 behavior;
     u8 shape;
@@ -452,7 +452,7 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
 }
 
 /// Copies the cell's flags and cell behavior without replacing its
-/// cell picture.
+/// cell tiles.
 static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
   struct MapGridScrollState *grid = gMapGridState[0];

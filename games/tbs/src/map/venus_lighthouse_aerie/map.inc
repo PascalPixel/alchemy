@@ -4,14 +4,14 @@ Field_VenusLighthouseAerie:
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_offset Field_VenusLighthouseAerie, .LField_VenusLighthouseAerie_CELL_PICTURES
+	map_offset Field_VenusLighthouseAerie, .LField_VenusLighthouseAerie_CELL_TILES
 	map_offset Field_VenusLighthouseAerie, .LField_VenusLighthouseAerie_SHAPES
 	map_offset Field_VenusLighthouseAerie, .LField_VenusLighthouseAerie_GRID
 	map_offset Field_VenusLighthouseAerie, .LField_VenusLighthouseAerie_ANIMATION
 	map_offset Field_VenusLighthouseAerie
 	map_offset Field_VenusLighthouseAerie, .LField_VenusLighthouseAerie_MARKERS
-.LField_VenusLighthouseAerie_CELL_PICTURES:
-	.incbin "games/tbs/src/map/venus_lighthouse_aerie/cell_pictures.delta0.lz"
+.LField_VenusLighthouseAerie_CELL_TILES:
+	.incbin "games/tbs/src/map/venus_lighthouse_aerie/cell_tiles.delta0.lz"
 	.balign 4, 0
 .LField_VenusLighthouseAerie_SHAPES:
 	.incbin "games/tbs/src/map/venus_lighthouse_aerie/shapes.table.lz"

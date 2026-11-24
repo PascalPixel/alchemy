@@ -270,9 +270,9 @@ void ShamanVillageCave_FreezePuddle(void) {
 void ShamanVillageCave_EddyFlees(void) {
   struct Actor *actor = Actor_GetById(ACTOR_EDDY);
   struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
-  s32 leaderX = FIELD_TILE(leader->x.fixed);
-  s32 leaderZ = FIELD_TILE(leader->z.fixed);
-  s32 eddyX = FIELD_TILE(actor->x.fixed);
+  s32 leaderX = FIELD_HALF_CELL(leader->x.fixed);
+  s32 leaderZ = FIELD_HALF_CELL(leader->z.fixed);
+  s32 eddyX = FIELD_HALF_CELL(actor->x.fixed);
   s32 dx;
   s32 dz;
 

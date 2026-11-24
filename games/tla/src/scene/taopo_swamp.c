@@ -2000,11 +2000,11 @@ extern u8 gMapGridCellBuffer[];
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
-  s32 index, fx = FIELD_TILE_ORIGIN(x);
+  s32 index, fx = FIELD_HALF_CELL_ORIGIN(x);
 
   layer = &map->layers[2];
   layer->offsetX = fx;
-  layer->offsetY = FIELD_TILE_ORIGIN(z);
+  layer->offsetY = FIELD_HALF_CELL_ORIGIN(z);
   layer->maskX = MAPGRID_SIZE - 1;
   layer->maskY = MAPGRID_ROW_MASK;
   layer->originY = z << 7;

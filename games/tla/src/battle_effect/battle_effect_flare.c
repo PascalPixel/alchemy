@@ -144,8 +144,9 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 
 /// Lists the indices within indexRadius of where currentValue sits in values,
 /// up to entryLimit, and returns how many.
-UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
-                                               s16 *output) {
+UNUSED s32
+BattleEffect_BuildCenteredIndexList(struct BattleEffectIndexWindow *window,
+                                    s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;
   s32 outputCount = 0;
   s32 centerIndex = 0;

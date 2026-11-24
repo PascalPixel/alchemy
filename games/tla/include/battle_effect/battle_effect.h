@@ -280,14 +280,15 @@ void BattleCamera_ApplyPhasedDelta(void);
 /// The window BattleEffect_BuildCenteredIndexList builds a list of indices
 /// around: its value, radius and limit, and the values it lists. Nothing
 /// calls it, so nothing says what the first and last three words hold.
-typedef struct BattleEffectIndexWindow {
+struct BattleEffectIndexWindow {
   s32 unusedBefore[3];
   s32 currentValue;
   s32 indexRadius;
   s32 entryLimit;
   s32 unusedAfter[3];
   s16 values[1];
-} BattleEffectIndexWindow;
+};
+
 /// What BattleEffect_RunDjinniEntrance takes added to its element; the element
 /// alone plays the 55-frame entrance.
 enum DjinniEntranceLength {

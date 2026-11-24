@@ -499,13 +499,13 @@ static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
 
 /// Nothing visible happens when Force is cast at the tall log by the Board
 /// Walk's channel, just before the fist flies. The scene sets the Psynergy's
-/// `childMode`, so that the fist does not shove the log 16 pixels away as it
+/// `leaveTarget`, so that the fist does not shove the log 16 pixels away as it
 /// shoves what else it hits, and the log topples from where it stands
 /// (ColosseumSatrageMatch_KnockDownLog).
 static void ColosseumSatrageMatch_KeepLogStillForForce(void) {
   u8 *effectState = gFieldEffectState;
 
-  ((struct FieldEffectState *)effectState)->childMode = 1;
+  ((struct FieldEffectState *)effectState)->leaveTarget = 1;
 }
 
 /// Force on the tall log standing at the east end of the Board Walk's channel

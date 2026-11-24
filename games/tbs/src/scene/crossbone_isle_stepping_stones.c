@@ -1328,7 +1328,7 @@ static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   if (FIELD_CELL(puddle->x.fixed) == FIELD_CELL(leader->x.fixed) &&
       FIELD_CELL(puddle->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
-    effectState->childMode = 1;
+    effectState->leaveTarget = 1;
   } else {
     GameFlag_Clear(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
   }

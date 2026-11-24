@@ -222,10 +222,10 @@ static void MenuTest_EditIsaacName(void) { NameEntry_EditMemberName(ISAAC); }
 static void MenuTest_IgnorePsynergy(void) {}
 
 /// Keeps Force from pushing ACTOR_IVY: run as Force is cast at it, before the
-/// shot, this sets the effect's childMode, and the shot then leaves its target
-/// where it is (field/event_commands_force.c).
+/// shot, this sets the effect's leaveTarget, and the shot then leaves its
+/// target where it is (field/event_commands_force.c).
 static void MenuTest_KeepIvyInPlace(void) {
-  ((struct FieldEffectState *)gFieldEffectState)->childMode = 1;
+  ((struct FieldEffectState *)gFieldEffectState)->leaveTarget = 1;
 }
 
 #if TBS_PATCH_3

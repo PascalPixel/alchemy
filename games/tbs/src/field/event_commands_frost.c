@@ -77,8 +77,8 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct Actor *target = effectState->target;
 
   if (target != 0) {
-    // With childMode the target neither flashes nor freezes.
-    if (effectState->childMode != 0) {
+    // With leaveTarget the target neither flashes nor freezes.
+    if (effectState->leaveTarget != 0) {
       effectState->aimAhead = 1;
     }
     target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

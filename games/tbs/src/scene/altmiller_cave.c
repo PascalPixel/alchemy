@@ -573,7 +573,7 @@ static void AltmillerCave_CheckPuddleCovered(void) {
   position.z = target->z.fixed;
 
   if (FieldActor_CheckMovementCollision(target, &position) > 0) {
-    effectState->childMode = 1;
+    effectState->leaveTarget = 1;
   }
 }
 
@@ -587,7 +587,7 @@ static void AltmillerCave_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
   s32 blocked;
 
-  blocked = effectState->childMode;
+  blocked = effectState->leaveTarget;
   if (blocked == 0) {
     MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     if (puddle != NULL) {

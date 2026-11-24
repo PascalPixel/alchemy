@@ -141,7 +141,7 @@ void FieldPsynergy_Force(void) {
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the way:
   // the ground there must be within a step (MapGrid_CheckCollision 0) and free
   // of actors.
-  if (target != NULL && effectState->childMode == 0) {
+  if (target != NULL && effectState->leaveTarget == 0) {
     if (effectState->sceneVariant != 0)
       target->velocityY = toFIXED(8);
     pos.x = target->x.fixed;

@@ -510,13 +510,13 @@ static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
       MessageArgument_Push(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
       // "Let's see...there are four of you, so it will cost ......"
       Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
-      coinsWindow =
-          Window_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
+      coinsWindow = Window_Create(DOCKS_COINS_WINDOW_X, 8,
+                                  DOCKS_COINS_WINDOW_WIDTH, 4, 2);
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
       state = &gMainRoutineState;
       Text_DrawNumberInWindow(state->holdings.coins, 6, coinsWindow,
-                              TICKET_COUNTER_X, 8);
+                              DOCKS_COINS_X, 8);
 #if LANGUAGE == LANGUAGE_JAPANESE
       Text_DrawMessageAsTiles(coinLabel +
                                   (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)),

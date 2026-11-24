@@ -568,8 +568,8 @@ void LuckyWheels_Update(void) {
     if (wheels->state == LUCKY_WHEELS_BETTING) {
       tickets = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
       Text_DrawNumberInWindowFar(tickets - wheels->bet,
-                                 LUCKY_WHEELS_COIN_DIGITS, wheels->subWindow,
-                                 LUCKY_WHEELS_COIN_X, 0);
+                                 LUCKY_WHEELS_TICKET_DIGITS, wheels->subWindow,
+                                 LUCKY_WHEELS_TICKET_X, 0);
       Text_DrawNumberInWindowFar(wheels->bet, 2, wheels->subWindow, 64, 8);
       if (wheels->pressed & KEY_B) {
         struct PartyHoldings *holdings = &gMainRoutineState.holdings;

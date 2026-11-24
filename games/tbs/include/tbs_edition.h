@@ -23,24 +23,24 @@
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TEXT_BUFFER_MASK 0xFF
 #define WINDOW_COUNT 12
-#define SELECT_MENU_WIDTH 5 ///< the field menu's icon row
-#define TYPE_MENU_WIDTH 4   ///< the File Screen's icon row
-#define MENU_TEXT_X 100     ///< the debug scene selector's colons
-#define MENU_LABEL_X 110    ///< its entrance number and area name
-#define LIST_MARKER_CHAR 'A'
+#define FIELD_MENU_ICON_ROW_WIDTH 5      ///< the field menu's icon row
+#define FILE_SCREEN_ICON_ROW_WIDTH 4     ///< the File Screen's icon row
+#define DEBUG_SCENE_SELECTOR_COLON_X 100 ///< the debug scene selector's colons
+#define DEBUG_SCENE_SELECTOR_LABEL_X 110 ///< its entrance number and area name
+#define ENEMY_NAME_SUFFIX_FIRST 'A'
 #else
 #define TEXT_BUFFER_MASK 0x1FF
 #define WINDOW_COUNT 8
-#define SELECT_MENU_WIDTH 7
-#define TYPE_MENU_WIDTH 7
-#define MENU_TEXT_X 74
-#define MENU_LABEL_X 82
-#define LIST_MARKER_CHAR '1'
+#define FIELD_MENU_ICON_ROW_WIDTH 7
+#define FILE_SCREEN_ICON_ROW_WIDTH 7
+#define DEBUG_SCENE_SELECTOR_COLON_X 74
+#define DEBUG_SCENE_SELECTOR_LABEL_X 82
+#define ENEMY_NAME_SUFFIX_FIRST '1'
 #endif
 
 /// The y of the debug scene selector's first row, in pixels, where its arrow
 /// points.
-#define MENU_TEXT_Y 60
+#define DEBUG_SCENE_SELECTOR_FIRST_ROW_Y 60
 
 /// The European editions' Colosso lettering keeps 192 bytes of palettes
 /// before its tiles instead of 160, and the Battle Arena's opponent names take
@@ -48,51 +48,51 @@
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define COLOSSO_PALETTE_BYTES 192
-#define LOBBY_PREFIX_LIMIT 7 ///< the index of the prefix's last letter
+#define BATTLE_ARENA_PREFIX_LAST 7 ///< the index of the prefix's last letter
 #else
 #define COLOSSO_PALETTE_BYTES 160
-#define LOBBY_PREFIX_LIMIT 4
+#define BATTLE_ARENA_PREFIX_LAST 4
 #endif
 
 /// The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
 /// European editions, and where the number sits in it.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
-#define TICKET_COUNTER_WINDOW_X 18
-#define TICKET_COUNTER_WIDTH 12
-#define TICKET_COUNTER_X 32
+#define DOCKS_COINS_WINDOW_X 18
+#define DOCKS_COINS_WINDOW_WIDTH 12
+#define DOCKS_COINS_X 32
 #else
-#define TICKET_COUNTER_WINDOW_X 19
-#define TICKET_COUNTER_WIDTH 11
+#define DOCKS_COINS_WINDOW_X 19
+#define DOCKS_COINS_WINDOW_WIDTH 11
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define TICKET_COUNTER_X 0
+#define DOCKS_COINS_X 0
 #else
-#define TICKET_COUNTER_X 24
+#define DOCKS_COINS_X 24
 #endif
 #endif
 
 /// The menus' layout, which the localized editions widen or rearrange.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define SHOP_LIST_X 16     ///< the shop's sell and repair price window
-#define SHOP_LIST_WIDTH 14 ///< its width, in tiles
-#define HELP_TEXT_X 16     ///< the help line under the item and Psynergy menus
-#define SWITCH_HELP_X 64   ///< the Status menu's help for switching members
-#define PAGE_ROWS 6        ///< the Status menu's Psynergy names a page
-#define MENU_ROW_COUNT 4   ///< member figures the Status menu lowers
+#define SHOP_SELL_PRICE_X 16     ///< the shop's sell and repair price window
+#define SHOP_SELL_PRICE_WIDTH 14 ///< its width, in tiles
+#define HELP_TEXT_X 16   ///< the help line under the item and Psynergy menus
+#define SWITCH_HELP_X 64 ///< the Status menu's help for switching members
+#define STATUS_LIST_PAGE_ROWS 6 ///< the Status menu's Psynergy names a page
+#define STATUS_FIGURE_COUNT 4   ///< member figures the Status menu lowers
 #elif LANGUAGE == LANGUAGE_GERMAN
-#define SHOP_LIST_X 14
-#define SHOP_LIST_WIDTH 16
+#define SHOP_SELL_PRICE_X 14
+#define SHOP_SELL_PRICE_WIDTH 16
 #define HELP_TEXT_X 0
 #define SWITCH_HELP_X 80
-#define PAGE_ROWS 5
-#define MENU_ROW_COUNT 8
+#define STATUS_LIST_PAGE_ROWS 5
+#define STATUS_FIGURE_COUNT 8
 #else
-#define SHOP_LIST_X 15
-#define SHOP_LIST_WIDTH 15
+#define SHOP_SELL_PRICE_X 15
+#define SHOP_SELL_PRICE_WIDTH 15
 #define HELP_TEXT_X 0
 #define SWITCH_HELP_X 80
-#define PAGE_ROWS 5
-#define MENU_ROW_COUNT 8
+#define STATUS_LIST_PAGE_ROWS 5
+#define STATUS_FIGURE_COUNT 8
 #endif
 
 /// The shop's buying screen: the price window's width. The coins window's is
@@ -238,44 +238,39 @@
 #define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 24
 #endif
 /// Lucky Wheels' count of Game Tickets left after the bet
-/// (LUCKY_WHEELS_COIN_DIGITS and _X) takes three digits from the French release
-/// on, one tile further left so that it ends where the two did, and the hold
-/// hint no longer follows the fourth and last spin, after which no wheel can be
-/// held. Neither is about words, so both are patches.
+/// (LUCKY_WHEELS_TICKET_DIGITS and _X) takes three digits from the French
+/// release on, one tile further left so that it ends where the two did, and the
+/// hold hint no longer follows the fourth and last spin, after which no wheel
+/// can be held. Neither is about words, so both are patches.
 #if TBS_PATCH_3
-#define LUCKY_WHEELS_COIN_DIGITS 3
-#define LUCKY_WHEELS_COIN_X 56
+#define LUCKY_WHEELS_TICKET_DIGITS 3
+#define LUCKY_WHEELS_TICKET_X 56
 #define LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN 1
 #else
-#define LUCKY_WHEELS_COIN_DIGITS 2
-#define LUCKY_WHEELS_COIN_X 64
+#define LUCKY_WHEELS_TICKET_DIGITS 2
+#define LUCKY_WHEELS_TICKET_X 64
 #define LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN 0
 #endif
-
-/// The first area name message, for the area name shown on entering a new
-/// area (AreaNameWindow_Show): MsgDebugAreaName, the debug scene selector's
-/// name for the title screen, which the area names follow in every edition.
-#define RENDER_RESOURCE_BASE MsgDebugAreaName
 
 /// The Status menu's Psynergy list: its range icon tiles, rows and columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RANGE_ICON_TILE WINDOW_TILE(512)
-#define LIST_FIRST_ROW 1
-#define LIST_ICONS_X 86
-#define LIST_ICONS_Y 53
-#define LIST_PP_X 144
-#define LIST_NAME_X 96
-#define LIST_PP_NUMBER_X 168
-#define LIST_EMPTY_Y 8
+#define STATUS_PSYNERGY_LIST_FIRST_ROW 1
+#define STATUS_PSYNERGY_LIST_ICONS_X 86
+#define STATUS_PSYNERGY_LIST_ICONS_Y 53
+#define STATUS_PSYNERGY_LIST_PP_X 144
+#define STATUS_PSYNERGY_LIST_NAME_X 96
+#define STATUS_PSYNERGY_LIST_PP_NUMBER_X 168
+#define STATUS_PSYNERGY_LIST_EMPTY_Y 8
 #else
 #define RANGE_ICON_TILE WINDOW_TILE(640)
-#define LIST_FIRST_ROW 2
-#define LIST_ICONS_X 80
-#define LIST_ICONS_Y 58
-#define LIST_PP_X 176
-#define LIST_NAME_X 88
-#define LIST_PP_NUMBER_X 176
-#define LIST_EMPTY_Y 17
+#define STATUS_PSYNERGY_LIST_FIRST_ROW 2
+#define STATUS_PSYNERGY_LIST_ICONS_X 80
+#define STATUS_PSYNERGY_LIST_ICONS_Y 58
+#define STATUS_PSYNERGY_LIST_PP_X 176
+#define STATUS_PSYNERGY_LIST_NAME_X 88
+#define STATUS_PSYNERGY_LIST_PP_NUMBER_X 176
+#define STATUS_PSYNERGY_LIST_EMPTY_Y 17
 #endif
 
 /// Where the save screen's file list puts the leader's name.

@@ -224,7 +224,7 @@ s32 StatusScreen_Run(void) {
   Text_UseExtraTilesFar(1);
 #endif
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-  for (index = 0; index < MENU_ROW_COUNT; index++)
+  for (index = 0; index < STATUS_FIGURE_COUNT; index++)
     menu->memberY[index] = MENU_MEMBER_Y;
   if (Party_SumDjinnCountsFar(-1) != 0)
     DjinnFigures_InitializeTopRow(menu->selectorWindow, 0);
@@ -440,7 +440,7 @@ StatusScreen_SetSelectedMemberRow(struct StatusScreenState *menu,
                                   s32 selectedMember) {
   s32 rowIndex;
 
-  for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
+  for (rowIndex = 0; rowIndex < STATUS_FIGURE_COUNT; rowIndex++)
     menu->memberY[rowIndex] = MENU_MEMBER_Y;
   menu->memberY[selectedMember] = MENU_MEMBER_RAISED_Y;
 }
@@ -586,7 +586,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
       Menu_ReloadMemberPortrait(menu, menu->memberTable[memberIndex]);
-      for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
+      for (rowIndex = 0; rowIndex < STATUS_FIGURE_COUNT; rowIndex++)
         menu->rowPositions[rowIndex] = MENU_MEMBER_Y;
       menu->rowPositions[memberIndex] = MENU_MEMBER_RAISED_Y;
       menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -1306,7 +1306,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
   s32 base;
 
   menu = gMenuState;
-  state->selectedIndex = state->page * PAGE_ROWS + state->row;
+  state->selectedIndex = state->page * STATUS_LIST_PAGE_ROWS + state->row;
 #if TBS_PATCH_1 && !TBS_PATCH_4
   WindowSprite_RedrawSavedRectFar(menu->infoWindow);
 #elif TBS_PATCH_4
@@ -1357,36 +1357,43 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
   }
 
   // Highlight the cursor's row.
-  base = state->page * PAGE_ROWS;
-  for (row = 0; row <= PAGE_ROWS - 1; row++) {
+  base = state->page * STATUS_LIST_PAGE_ROWS;
+  for (row = 0; row <= STATUS_LIST_PAGE_ROWS - 1; row++) {
     if (row == state->row) {
       ability =
           Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                  row * 2 + LIST_FIRST_ROW,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW,
                                   TILEMAP_ENTRY_PLAIN);
-        Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
-                                  HIGHLIGHT_PALETTE);
-        Render_SetTilemapFlagRect(window, 25, row * 2 + LIST_FIRST_ROW, 3, 1,
-                                  HIGHLIGHT_PALETTE);
+        Render_SetTilemapFlagRect(window, 9,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, 15,
+                                  1, HIGHLIGHT_PALETTE);
+        Render_SetTilemapFlagRect(window, 25,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, 3,
+                                  1, HIGHLIGHT_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 19, 1,
-                                  HIGHLIGHT_PALETTE);
+        Render_SetTilemapFlagRect(window, 9,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, 19,
+                                  1, HIGHLIGHT_PALETTE);
       }
     } else {
       ability =
           Ability_Get(menu->psynergies[base + row] & PSYNERGY_ABILITY_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                  row * 2 + LIST_FIRST_ROW, TILEMAP_ENTRY_ICON);
-        Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1,
-                                  WINDOW_PALETTE);
-        Render_SetTilemapFlagRect(window, 25, row * 2 + LIST_FIRST_ROW, 3, 1,
-                                  WINDOW_PALETTE);
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW,
+                                  TILEMAP_ENTRY_ICON);
+        Render_SetTilemapFlagRect(window, 9,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, 15,
+                                  1, WINDOW_PALETTE);
+        Render_SetTilemapFlagRect(window, 25,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, 3,
+                                  1, WINDOW_PALETTE);
       } else {
-        Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 19, 1,
-                                  WINDOW_PALETTE);
+        Render_SetTilemapFlagRect(window, 9,
+                                  row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, 19,
+                                  1, WINDOW_PALETTE);
       }
     }
   }
@@ -1395,8 +1402,8 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
 }
 
 /// Draws one page of the Status menu's Psynergy list into window: up to
-/// PAGE_ROWS names with their icons, PP costs and range icons, the page numbers
-/// or "no Psynergy", and the party member's name, class and level.
+/// STATUS_LIST_PAGE_ROWS names with their icons, PP costs and range icons, the
+/// page numbers or "no Psynergy", and the party member's name, class and level.
 s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
                               const struct PagedList *res) {
   struct PsynergyMenuState *menu = gMenuState;
@@ -1412,16 +1419,19 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
 
   WindowSprite_RedrawSavedRectFar(window);
 
-  firstEntry = res->page * PAGE_ROWS;
+  firstEntry = res->page * STATUS_LIST_PAGE_ROWS;
   rows = (u8)(res->entryCount - firstEntry);
-  if (rows > PAGE_ROWS) {
-    rows = PAGE_ROWS;
+  if (rows > STATUS_LIST_PAGE_ROWS) {
+    rows = STATUS_LIST_PAGE_ROWS;
   }
 
-  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, LIST_ICONS_X, LIST_ICONS_Y);
-  PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
+  Menu_SetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window,
+                    STATUS_PSYNERGY_LIST_ICONS_X, STATUS_PSYNERGY_LIST_ICONS_Y);
+  PagedList_DrawPageNumbers(window, res->entryCount, STATUS_LIST_PAGE_ROWS,
+                            res->page, 28);
 
-  Text_DrawMessageAsTilesFar(MsgPsynergyPp, window, LIST_PP_X, 0);
+  Text_DrawMessageAsTilesFar(MsgPsynergyPp, window, STATUS_PSYNERGY_LIST_PP_X,
+                             0);
 
   row = 0;
   if (rows > row) {
@@ -1435,11 +1445,12 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
           Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[entryIndex]);
       messageId = (menu->psynergies[entryIndex] & PSYNERGY_ABILITY_MASK) +
                   MsgAbilityName;
-      y = row * 16 + LIST_FIRST_ROW * 8;
+      y = row * 16 + STATUS_PSYNERGY_LIST_FIRST_ROW * 8;
 
-      Text_DrawMessageAsTilesFar(messageId, window, LIST_NAME_X, y);
-      Text_DrawNumberAtOffsetFar(action->ppCost, 2, window, LIST_PP_NUMBER_X,
+      Text_DrawMessageAsTilesFar(messageId, window, STATUS_PSYNERGY_LIST_NAME_X,
                                  y);
+      Text_DrawNumberAtOffsetFar(action->ppCost, 2, window,
+                                 STATUS_PSYNERGY_LIST_PP_NUMBER_X, y);
 
       // Range n takes range icon n - 1.
       range = action->range;
@@ -1448,7 +1459,8 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
       } else {
         range--;
       }
-      PsynergyMenu_DrawRange(window, 25, row * 2 + LIST_FIRST_ROW, range, 0);
+      PsynergyMenu_DrawRange(
+          window, 25, row * 2 + STATUS_PSYNERGY_LIST_FIRST_ROW, range, 0);
 
       row++;
       entryIndex++;
@@ -1456,7 +1468,8 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
   }
 
   if (menu->psynergyCount == 0) {
-    Text_DrawMessageAsTilesFar(MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
+    Text_DrawMessageAsTilesFar(MsgNoPsynergy, window, 96,
+                               STATUS_PSYNERGY_LIST_EMPTY_Y);
   }
 
   Text_DrawStringAtOffsetFar(member->name, (void *)window, 40, 0);
@@ -1471,9 +1484,9 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
   return 1;
 }
 
-/// The Status menu's Psynergy page: the party member's Psynergy, PAGE_ROWS to a
-/// page, each with its PP cost and range icon; the cursor's Psynergy is
-/// described in the info window with where it can be used.
+/// The Status menu's Psynergy page: the party member's Psynergy,
+/// STATUS_LIST_PAGE_ROWS to a page, each with its PP cost and range icon; the
+/// cursor's Psynergy is described in the info window with where it can be used.
 s32 PsynergyMenu_SelectAction(void) {
 
   struct PsynergyMenuState *menu;
@@ -1538,8 +1551,8 @@ s32 PsynergyMenu_SelectAction(void) {
         wait(1);
       }
       wait(1);
-      navigationResult = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
-                                               &state.row, &state.page);
+      navigationResult = PagedList_HandleInput(
+          0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
       menu->sideIcon[0]->motion = ICON_SHOWN;
       MenuCursor_Position(STATUS_PSYNERGY_CURSOR_X,
                           state.row * 16 + STATUS_PSYNERGY_CURSOR_Y);
@@ -1620,7 +1633,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
   s32 rowIndex;
 
   menu = gMenuState;
-  firstEntry = state->page * PAGE_ROWS;
+  firstEntry = state->page * STATUS_LIST_PAGE_ROWS;
   state->selectedIndex = firstEntry + state->row;
 #if TBS_PATCH_1 && !TBS_PATCH_4
   WindowSprite_RedrawSavedRectFar(menu->descriptionWindow);
@@ -1640,7 +1653,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
   // An item with an element shows its icon at tile column 27, in palette 0 on
   // the highlighted row and palette 1 (TILEMAP_ENTRY_ICON) elsewhere, and the
   // highlight stops short of it.
-  for (rowIndex = 0; rowIndex < PAGE_ROWS; rowIndex++) {
+  for (rowIndex = 0; rowIndex < STATUS_LIST_PAGE_ROWS; rowIndex++) {
     if (rowIndex == state->row) {
       item = Item_GetDirectFar(menu->items[state->selectedIndex] &
                                INVENTORY_ITEM_ID_MASK);
@@ -1703,8 +1716,9 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 }
 
 /// Draws one page of the Status menu's equipment page into window: up to
-/// PAGE_ROWS item names with their icons and the page numbers, or "no items",
-/// and the party member's name with their Attack and Defense. Returns 1.
+/// STATUS_LIST_PAGE_ROWS item names with their icons and the page numbers, or
+/// "no items", and the party member's name with their Attack and Defense.
+/// Returns 1.
 s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
                           struct PagedList *state) {
   struct ItemMenuState *menu = gMenuState;
@@ -1717,14 +1731,14 @@ s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
 
   unit = Unit_GetFar(menu->sideMember[0]);
   Window_ClearInteriorTilesFar(window, 128, 8, 224, 96);
-  firstEntry = state->page * PAGE_ROWS;
+  firstEntry = state->page * STATUS_LIST_PAGE_ROWS;
   rowCount = (u8)(state->entryCount - firstEntry);
-  if (rowCount > PAGE_ROWS)
-    rowCount = PAGE_ROWS;
-  Menu_SetPageIcons(PAGE_ROWS, firstEntry, window, STATUS_ITEM_PAGE_ICONS_X,
-                    52);
-  PagedList_DrawPageNumbers(window, state->entryCount, PAGE_ROWS, state->page,
-                            28);
+  if (rowCount > STATUS_LIST_PAGE_ROWS)
+    rowCount = STATUS_LIST_PAGE_ROWS;
+  Menu_SetPageIcons(STATUS_LIST_PAGE_ROWS, firstEntry, window,
+                    STATUS_ITEM_PAGE_ICONS_X, 52);
+  PagedList_DrawPageNumbers(window, state->entryCount, STATUS_LIST_PAGE_ROWS,
+                            state->page, 28);
   if (menu->itemCount == 0) {
     Text_DrawMessageAsTilesFar(MsgItemMenuEmpty, window,
                                STATUS_ITEM_EMPTY_MESSAGE_X, 8);
@@ -1751,8 +1765,8 @@ s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
 }
 
 /// The Status menu's equipment page: the party member's items in the first list
-/// order (LIST_SORT_EQUIPPED_THEN_ITEMS), PAGE_ROWS to a page, beside the
-/// equipment window of what they wear.
+/// order (LIST_SORT_EQUIPPED_THEN_ITEMS), STATUS_LIST_PAGE_ROWS to a page,
+/// beside the equipment window of what they wear.
 s32 ItemMenu_SelectItem(void) {
 
   struct ItemMenuState *menu;
@@ -1825,8 +1839,8 @@ s32 ItemMenu_SelectItem(void) {
       MenuCursor_Position(96, state.row * 16 + 52);
       wait(1);
 
-      navigationResult = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
-                                               &state.row, &state.page);
+      navigationResult = PagedList_HandleInput(
+          0, state.entryCount, STATUS_LIST_PAGE_ROWS, &state.row, &state.page);
       if (navigationResult == 1) {
         listNeedsRedraw = 1;
         redraw = 1;

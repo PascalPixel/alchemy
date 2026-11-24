@@ -555,8 +555,8 @@ recordTest:
   }
   wait(2);
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
-  // The prefix's length, at most LOBBY_PREFIX_LIMIT + 1.
-  for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
+  // The prefix's length, at most BATTLE_ARENA_PREFIX_LAST + 1.
+  for (i = 0; i <= BATTLE_ARENA_PREFIX_LAST && namePrefix[i] != 0; i++)
     ;
   // German, Spanish, French and Italian put a space after the prefix.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \

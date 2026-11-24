@@ -53,11 +53,11 @@ void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
   s32 label = Area_GetNameIndexFar(mapIndex, *entrance) + MsgDebugAreaName;
   WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(mapIndex, 3, window, 0, 14);
-  Text_DrawNumber(*entrance, 3, window, MENU_LABEL_X, 14);
-  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 0);
+  Text_DrawNumber(*entrance, 3, window, DEBUG_SCENE_SELECTOR_LABEL_X, 14);
+  Text_DrawString(gMenu_ColonString, window, DEBUG_SCENE_SELECTOR_COLON_X, 0);
   Text_DrawMessage(mapIndex + MsgDebugSceneCode, window, 0, 0);
-  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 14);
-  Text_DrawMessage(label, window, MENU_LABEL_X, 0);
+  Text_DrawString(gMenu_ColonString, window, DEBUG_SCENE_SELECTOR_COLON_X, 14);
+  Text_DrawMessage(label, window, DEBUG_SCENE_SELECTOR_LABEL_X, 0);
 }
 
 /// The debug scene selector: a scene and an entrance number, starting from the
@@ -102,8 +102,9 @@ s16 DebugSceneSelect_Run(void) {
       RETURN_UNREAD(result);
     }
 
-    MenuArrow_SetPosition(&cursor, MENU_TEXT_X,
-                          selectedField * 14 + MENU_TEXT_Y);
+    MenuArrow_SetPosition(&cursor, DEBUG_SCENE_SELECTOR_COLON_X,
+                          selectedField * 14 +
+                              DEBUG_SCENE_SELECTOR_FIRST_ROW_Y);
     sceneId = result;
     wait(1);
   }

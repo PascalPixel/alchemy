@@ -438,7 +438,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
   IconMenu_AddIcon(COMMAND_ICON_ITEM);
   IconMenu_AddIcon(COMMAND_ICON_STATUS);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SELECT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FIELD_MENU_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
 
@@ -529,7 +529,7 @@ s32 FileList_SelectAction(void) {
   if (gTitleSendOptionEnabled != 0) {
     IconMenu_AddIcon(COMMAND_ICON_SEND);
   }
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, FILE_SCREEN_ICON_ROW_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   // With Send shown but not Battle, Send's place maps to SAVE_ACTION_BATTLE:

@@ -129,4 +129,12 @@ STATIC_ASSERT(sizeof(struct SelectionMenuState) == 996);
 /// first entry.
 #define SELECTION_CURSOR_RESET 0x80
 
+void *IconMenu_Open(void);
+void IconMenu_AddIcon(s32 icon);
+void IconMenu_Close(void);
+void SelectionMenu_FreeLargeIcon(void);
+void IconMenu_LayoutIcons(s32 x, s32 y, s32 w, s32 h);
+s32 IconMenu_Run(s32 initial);
+void SelectionMenu_StopDrawing(void);
+
 #endif

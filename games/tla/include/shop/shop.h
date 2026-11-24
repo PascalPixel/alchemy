@@ -105,4 +105,9 @@ void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
 /// The frames the hand cursor takes to glide into a newly opened list.
 #define SHOP_CURSOR_ENTER_FRAMES 12
 
+/// The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
+/// sprite's tiles (Shop_DrawPriceDigit).
+extern u8 gShop_GlyphBytes[];
+s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind);
+
 #endif

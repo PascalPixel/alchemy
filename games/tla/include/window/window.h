@@ -756,4 +756,11 @@ enum SpritePortrait {
   SPRITE_PORTRAIT_MISSING = 76
 };
 
+void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
+struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
+                                                        struct Window *window,
+                                                        s32 x, s32 y);
+void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
+
 #endif

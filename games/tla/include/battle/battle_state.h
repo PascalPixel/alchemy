@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_BATTLE_WORK_H
-#define ALCHEMY_BATTLE_WORK_H
+#ifndef ALCHEMY_BATTLE_STATE_H
+#define ALCHEMY_BATTLE_STATE_H
 
 /// @file
-/// The battle's own work: its units and their places, the turn's actions, the
+/// The battle's own state: its units and their places, the turn's actions, the
 /// spoils, the background's palette and the playback of an action's events.
 
 #include "fixed_math.h"
@@ -36,7 +36,7 @@ struct AdvanceArrowSprite {
 };
 
 /// The battle event queue and the state of its playback.
-struct BattlePlaybackWork {
+struct BattlePlaybackState {
   struct BattlePlaybackQueue queue;
   s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
   s32 eventIndex; ///< the next queued event to play
@@ -51,8 +51,8 @@ struct BattlePlaybackWork {
   s32 flags;
 };
 
-STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 368);
-STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingSound) == 360);
+STATIC_ASSERT(sizeof(struct BattlePlaybackState) == 368);
+STATIC_ASSERT(offsetof(struct BattlePlaybackState, pendingSound) == 360);
 
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
@@ -76,26 +76,26 @@ struct BattleMessageOffset {
 
 /// The battle message window: its window, its message and whether the
 /// next message is marked.
-struct BattleMessageWork {
+struct BattleMessageState {
   struct Window *window;              ///< the message window
   struct BattleMessageOffset *offset; ///< its message
   s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
 };
 
 STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
-STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
+STATIC_ASSERT(sizeof(struct BattleMessageState) == 12);
 
-/// BattleWork.opponentSlots of a party unit with no slot as a link opponent.
+/// BattleState.opponentSlots of a party unit with no slot as a link opponent.
 #define OPPONENT_SLOT_NONE 255
 
 /// The frames a link battle tolerates without a connection before it gives
-/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// up: a count above it pauses the battle (BattleState.linkPaused) or fails
 /// the sync or transfer under way.
 #define LINK_MAX_MISSED_FRAMES 24
 
-/// The battle's own work: its enemies, units and their objects, the turn's
+/// The battle's own state: its enemies, units and their objects, the turn's
 /// actions, the background palette and the events.
-struct BattleWork {
+struct BattleState {
   s32 formation;      ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
   /// The kinds of enemy in the formation, for the letters that tell two of a
@@ -150,7 +150,7 @@ struct BattleWork {
   /// The action being carried out, as BattleActionRun_Build lays it out.
   struct BattlePlan plan;
   s32 skipPlayback; ///< nonzero leaves the action's events unplayed
-  struct BattlePlaybackWork events;
+  struct BattlePlaybackState events;
   /// A value Battle_AdjustDebugValue edits with the d-pad while Start is held.
   s32 debugValue;
   /// The unit ready to counterattack (ABILITY_EFFECT_COUNTER) that was just
@@ -186,27 +186,27 @@ struct BattleWork {
   struct BattleAIState aiStates[4];
 };
 
-STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 65);
-STATIC_ASSERT(offsetof(struct BattleWork, challengeFlag) == 67);
-STATIC_ASSERT(offsetof(struct BattleWork, isLink) == 68);
-STATIC_ASSERT(offsetof(struct BattleWork, firstStrike) == 69);
-STATIC_ASSERT(offsetof(struct BattleWork, partyUnits) == 88);
-STATIC_ASSERT(offsetof(struct BattleWork, enemyIds) == 102);
-STATIC_ASSERT(offsetof(struct BattleWork, placement) == 116);
-STATIC_ASSERT(offsetof(struct BattleWork, slots) == 132);
-STATIC_ASSERT(offsetof(struct BattleWork, actions) == 748);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 1360);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils.queuedSummons) == 1380);
-STATIC_ASSERT(offsetof(struct BattleWork, spoils.queueCount) == 1387);
-STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 1654);
-STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 1656);
-STATIC_ASSERT(offsetof(struct BattleWork, events) == 1764);
-STATIC_ASSERT(offsetof(struct BattleWork, plan) == 1660);
-STATIC_ASSERT(offsetof(struct BattleWork, debugValue) == 2132);
-STATIC_ASSERT(offsetof(struct BattleWork, daedalusFromEnemies) == 2144);
-STATIC_ASSERT(offsetof(struct BattleWork, keepBackdropPalette) == 2151);
-STATIC_ASSERT(offsetof(struct BattleWork, forceField) == 2152);
-STATIC_ASSERT(offsetof(struct BattleWork, aiStates) == 2156);
-STATIC_ASSERT(sizeof(struct BattleWork) == 2172);
+STATIC_ASSERT(offsetof(struct BattleState, partyStatus) == 65);
+STATIC_ASSERT(offsetof(struct BattleState, challengeFlag) == 67);
+STATIC_ASSERT(offsetof(struct BattleState, isLink) == 68);
+STATIC_ASSERT(offsetof(struct BattleState, firstStrike) == 69);
+STATIC_ASSERT(offsetof(struct BattleState, partyUnits) == 88);
+STATIC_ASSERT(offsetof(struct BattleState, enemyIds) == 102);
+STATIC_ASSERT(offsetof(struct BattleState, placement) == 116);
+STATIC_ASSERT(offsetof(struct BattleState, slots) == 132);
+STATIC_ASSERT(offsetof(struct BattleState, actions) == 748);
+STATIC_ASSERT(offsetof(struct BattleState, spoils) == 1360);
+STATIC_ASSERT(offsetof(struct BattleState, spoils.queuedSummons) == 1380);
+STATIC_ASSERT(offsetof(struct BattleState, spoils.queueCount) == 1387);
+STATIC_ASSERT(offsetof(struct BattleState, highlightStep) == 1654);
+STATIC_ASSERT(offsetof(struct BattleState, highlightMode) == 1656);
+STATIC_ASSERT(offsetof(struct BattleState, events) == 1764);
+STATIC_ASSERT(offsetof(struct BattleState, plan) == 1660);
+STATIC_ASSERT(offsetof(struct BattleState, debugValue) == 2132);
+STATIC_ASSERT(offsetof(struct BattleState, daedalusFromEnemies) == 2144);
+STATIC_ASSERT(offsetof(struct BattleState, keepBackdropPalette) == 2151);
+STATIC_ASSERT(offsetof(struct BattleState, forceField) == 2152);
+STATIC_ASSERT(offsetof(struct BattleState, aiStates) == 2156);
+STATIC_ASSERT(sizeof(struct BattleState) == 2172);
 
 #endif

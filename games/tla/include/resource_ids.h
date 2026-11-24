@@ -747,7 +747,7 @@ extern char ResourceId_UiFixedBlockATiles;
 #define RESOURCE_UI_FIXED_BLOCK_A_TILES ((s32)&ResourceId_UiFixedBlockATiles)
 /// Loaded by Icon_CreateWithResource, NameEntry_EditMemberName,
 /// Resource_CopyFixedBlockB, Resource_LoadFixedBlockBIntoFreeSlot and
-/// Shop_InitializeWork.
+/// Shop_InitializeState.
 extern char ResourceId_UiIconTiles;
 #define RESOURCE_UI_ICON_TILES ((s32)&ResourceId_UiIconTiles)
 /// Loaded by GabombaStatue_StartClock.
@@ -1356,7 +1356,7 @@ extern char ResourceId_SnowfieldBBackdrop;
 /// Loaded by BattleBackground_SelectForEnvironment.
 extern char ResourceId_BlizzardBackdrop;
 #define RESOURCE_BLIZZARD_BACKDROP ((s32)&ResourceId_BlizzardBackdrop)
-/// Loaded by Menu_OpenBackdropScreen and Shop_InitializeWork.
+/// Loaded by Menu_OpenBackdropScreen and Shop_InitializeState.
 extern char ResourceId_ShopGemTiles;
 #define RESOURCE_SHOP_GEM_TILES ((s32)&ResourceId_ShopGemTiles)
 /// Loaded by Resource_LoadPairedBlocksIfAvailable.
@@ -1368,14 +1368,14 @@ extern char ResourceId_ItemMenuTilesB;
 /// Item menu workspace (known fields only).
 extern char ResourceId_MenuArrowTiles;
 #define RESOURCE_MENU_ARROW_TILES ((s32)&ResourceId_MenuArrowTiles)
-/// Loaded by Resource_LoadPairedBlocks and Shop_InitializeWork.
+/// Loaded by Resource_LoadPairedBlocks and Shop_InitializeState.
 extern char ResourceId_MenuSmallDownArrowTiles;
 #define RESOURCE_MENU_SMALL_DOWN_ARROW_TILES                                   \
   ((s32)&ResourceId_MenuSmallDownArrowTiles)
-/// Loaded by MenuCursor_Create and Shop_InitializeWork.
+/// Loaded by MenuCursor_Create and Shop_InitializeState.
 extern char ResourceId_ShopUpArrowTiles;
 #define RESOURCE_SHOP_UP_ARROW_TILES ((s32)&ResourceId_ShopUpArrowTiles)
-/// Loaded by MenuCursor_Create and Shop_InitializeWork.
+/// Loaded by MenuCursor_Create and Shop_InitializeState.
 extern char ResourceId_ShopDownArrowTiles;
 #define RESOURCE_SHOP_DOWN_ARROW_TILES ((s32)&ResourceId_ShopDownArrowTiles)
 /// Loaded by TitleIntro_LoadPictureTiles.

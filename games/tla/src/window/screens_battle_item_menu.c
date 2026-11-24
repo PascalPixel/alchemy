@@ -69,7 +69,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 /// when broken; the window above names the one under the cursor
 /// (MsgItemPlainName), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
-  struct WindowWork *work;
+  struct WindowState *state;
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
@@ -79,7 +79,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct {
     s32 x, y;
   } cursorPosition;
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   struct Window *window;
   s32 firstEntry;
   s32 selectedRow;
@@ -95,7 +95,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 iconSlots[BATTLE_LIST_ROWS];
   struct MenuSprite sprites[BATTLE_LIST_ROWS];
 
-  work = Ram_HeapSlots->windowWork;
+  state = Ram_HeapSlots->windowState;
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);
@@ -146,7 +146,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + drawnRow * 2 + 1, window->width - 2,
                            1, WINDOW_PALETTE);
@@ -205,8 +205,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, HIGHLIGHT_PALETTE);
-      work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      state->dirty = 1;
+      state->holdTilemapUpload = 0;
     }
 
     // Each frame: the current page's number lit 12 frames in 16, and the page
@@ -230,7 +230,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
-      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
+      WINDOW_MARK_TILEMAP_ROW(state, (u32)((s16)window->y - 1));
     }
 
     for (i = 0; i < iconCount; i++)
@@ -244,7 +244,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
       Oam_AddSpriteAtDepth(&cursorStorage, OAM_DEPTH_WINDOW + 2);
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
-    navigation = BATTLE_MENU_WORK;
+    navigation = BATTLE_MENU_STATE;
     // A takes a usable item; a broken or refused one plays the error sound and
     // shows why.
     if (gInput.pressed & KEY_A) {

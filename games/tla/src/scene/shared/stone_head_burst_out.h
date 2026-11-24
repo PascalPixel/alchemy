@@ -3,7 +3,7 @@
 /// the view settles on him, and he is left walking rather than climbing;
 /// `flag` then keeps the head out.
 void StoneHead_BurstOut(s32 id, s32 flag) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   s32 gravity = leader->gravity;
   struct Actor *head;
   s32 i;
@@ -43,7 +43,7 @@ void StoneHead_BurstOut(s32 id, s32 flag) {
   Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(leader, ANIM_LEADER_FLAIL);
   FieldEvent_Wait(40);
@@ -57,7 +57,7 @@ void StoneHead_BurstOut(s32 id, s32 flag) {
   }
   Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, ANIM_LEADER_STILL);
   MapGrid_SetShake(1, 4, 1);
@@ -71,7 +71,7 @@ void StoneHead_BurstOut(s32 id, s32 flag) {
   Actor_SelectAnimation(leader, ANIM_STAND);
   leader->velocityY = toFIXED(4);
   System_Wait(20);
-  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+  gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
   Event_End();
   Event_SetFlag(flag);
 }

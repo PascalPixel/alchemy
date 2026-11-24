@@ -23,7 +23,7 @@ enum VramBlockLimits {
   VRAM_CACHE_LOAD_MAX = 8192 ///< the most bytes VramCache_Load takes at once
 };
 
-/// The window sprites' glyph tiles (WindowWork.glyphTiles), a cache entry
+/// The window sprites' glyph tiles (WindowState.glyphTiles), a cache entry
 /// kept for this one use.
 #define VRAM_CACHE_ENTRY_GLYPH_TILES 95
 

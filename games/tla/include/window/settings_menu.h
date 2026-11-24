@@ -2,7 +2,7 @@
 #define ALCHEMY_SETTINGS_MENU_H
 
 /// @file
-/// The settings menu's work.
+/// The settings menu's state.
 
 #include "static_assert.h"
 #include "types.h"
@@ -10,18 +10,18 @@
 
 struct WindowSprite;
 
-/// A menu cursor as a work block keeps it: its moving sprite, or the sprite
+/// A menu cursor as a menu's state keeps it: its moving sprite, or the sprite
 /// alone where only its picture is read.
 union MenuCursorRef {
   struct WindowSprite *sprite; ///< the image alone; cursor.anchor
   struct MenuCursor cursor;
 };
 
-/// The settings menu's work (HEAP_SLOT_SETTINGS_MENU): the settings being
+/// The settings menu's state (HEAP_SLOT_SETTINGS_MENU): the settings being
 /// edited and how many values each takes, the page, and the cursor, markers
 /// and icons. The Pause menu and the debug menus use its cursor, page and
 /// icons too.
-struct OptionMenuWork {
+struct OptionMenuState {
   u8 unused[1024];
   u8 entries[7][52]; ///< unused: nothing in this game reads them
   u8 unusedAfterEntries[8];
@@ -50,10 +50,10 @@ struct OptionMenuWork {
   struct WindowSprite *icon[6]; ///< the Pause menu's entries' icons
 };
 
-STATIC_ASSERT(sizeof(struct OptionMenuWork) == 1576);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, page) == 1396);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, cursor) == 1444);
-STATIC_ASSERT(offsetof(struct OptionMenuWork, icon) == 1552);
+STATIC_ASSERT(sizeof(struct OptionMenuState) == 1576);
+STATIC_ASSERT(offsetof(struct OptionMenuState, page) == 1396);
+STATIC_ASSERT(offsetof(struct OptionMenuState, cursor) == 1444);
+STATIC_ASSERT(offsetof(struct OptionMenuState, icon) == 1552);
 
 /// The sound test's four values: music, jingle, sound effect and sound preset.
 struct SoundTestValues {

@@ -33,7 +33,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/dma.h"
 #include "field/field_sequence_event.h"
 #include "window/item_icon.h"
@@ -194,7 +194,7 @@ void Loho_MeetLull(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
+  if (gMainRoutineState.next == SCENE_LOHO_ROOMS)
     return gLoho_Regions;
   return 0;
 }
@@ -202,7 +202,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
+  if (gMainRoutineState.next == SCENE_LOHO_ROOMS)
     return gLoho_RoomsPlacements;
   return gLoho_TownPlacements;
 }
@@ -246,7 +246,7 @@ void Loho_AskWantCannon(s32 actor) {
 void Loho_ExamineCannon(void) {
   // "It looks like it's empty."
   FieldMessage_Show((s32)MsgLohoItLooksLikeItsEmpty, 1);
-  gFieldWork->fieldMenu = 1;
+  gFieldState->fieldMenu = 1;
 }
 
 void FieldCamera_WaitForArrival();
@@ -570,14 +570,14 @@ inPlace:
   // Yes: "Well, why don't you let us get that cannon onto your boat for you,
   // hm?"
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
-  gFieldWork->message++;
+  gFieldState->message++;
   goto crewLeaves;
 toWest:
   Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
   goto inPlace;
 answeredNo:
   Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_SHAKE_HEAD);
-  gFieldWork->message++;
+  gFieldState->message++;
   // No: "Look, the only way to get here is by boat, and I see a boat right
   // there!"
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
@@ -698,9 +698,9 @@ void Loho_LiftBoulder(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO)
+  if (gMainRoutineState.next == SCENE_LOHO)
     return gLoho_TownTriggers;
-  if (gMainRoutineWork.next == SCENE_LOHO_ROOMS)
+  if (gMainRoutineState.next == SCENE_LOHO_ROOMS)
     return gLoho_RoomsTriggers;
   return gLoho_Triggers;
 }
@@ -709,7 +709,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// cells (9, 8) and (10, 8): "People staying at the inn can check in at the
 /// counter."
 void Loho_ReadInnSign(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -739,7 +739,7 @@ void Loho_TalkToInnkeeper(void) {
 /// breached, "I hear you took our cannon in exchange for knocking down that
 /// ancient wall."
 void Loho_TalkAboutCommerce(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId);
+  Actor_GetById(gMainRoutineState.leaderActorId);
   if (Event_GetFlag(FLAG_LOHO_SHOPKEEPER_AT_COUNTER)) {
     Shop_Run(SHOP_LOHO, ACTOR_VILLAGER_ON_COMMERCE);
   } else {
@@ -757,7 +757,7 @@ void Loho_TalkAboutCommerce(void) {
 /// here for the cannon, you can forget about it.", or once the wall is
 /// breached, a word on the splendid cannon the party has acquired.
 void Loho_TalkAboutCannon(s32 actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -806,7 +806,7 @@ static __inline__ void Loho_AnimateCells(const void *steps, s32 x, s32 y) {
 /// the Sanctum's hall with its green carpet. The town's people stop moving as
 /// he goes.
 void Loho_OpenDoorAndEnter(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s16 *trigger;
   u32 i;
 
@@ -818,13 +818,13 @@ void Loho_OpenDoorAndEnter(void) {
     if (actor != NULL)
       actor->motionFlags = 0;
   }
-  trigger = &work->stepTrigger;
+  trigger = &state->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_SanctumDoor.steps, gLoho_SanctumDoor.x,
                     gLoho_SanctumDoor.y);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
   Import_EventSetExitRequest(*trigger);
@@ -836,19 +836,19 @@ void Loho_OpenDoorAndEnter(void) {
 /// Felix walks north into the open doorway of one of the houses, cells (5, 15),
 /// (5, 24), (24, 26) and (36, 18), and the screen fades to the room inside.
 void Loho_EnterDoor(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -4);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 /// Felix climbs down the ladder through the hatch on the stone platform north
 /// of town into the small room below, by the exit of the cell he stepped from.
 void Loho_ClimbDownLadder(void) {
-  s32 trigger = gFieldWork->stepTrigger;
+  s32 trigger = gFieldState->stepTrigger;
 
   // XXX: the ladder's exits are 6, 8 and 9, never 2, and the town unloads as
   // Felix leaves; what is the first miner moved for? A recording of the
@@ -909,14 +909,14 @@ void Loho_TurnAndClimbDownLadder(void) {
 /// The town opens with the backdrop fade; the cannon is drawn without a
 /// shadow.
 void Loho_SetUpTown(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
 }
 
 /// The houses open with the window transition; the unseen marker on the inn
 /// counter is drawn without a shadow.
 void Loho_SetUpRooms(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_INN_COUNTER), 0);
 }
@@ -930,7 +930,7 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO) {
+  if (gMainRoutineState.next == SCENE_LOHO) {
     if (!Event_GetFlag(FLAG_LOHO_MYTHRIL_SILVER_DUG))
       Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     if (!Event_GetFlag(FLAG_LOHO_WALL_GOLEM_CORE_DUG))
@@ -968,7 +968,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_LOHO &&
+  if (gMainRoutineState.next == SCENE_LOHO &&
       Event_GetFlag(FLAG_LOHO_WALL_BREACHED))
     Loho_DrawBrokenWall();
   return 0;

@@ -9,7 +9,7 @@
 #include "scene_exits.h"
 #include "scene_ids.h"
 #include "types.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 
 /// A scene's row in gScenes: its overlay's resource, its area, its scene type,
 /// its map and its attributes.
@@ -18,8 +18,8 @@ struct Scene {
   /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
   /// and the step counters and moves Retreat's destination (Scene_Arrive).
   s8 area;
-  s8 sceneType; ///< an enum SceneType, copied to gMainRoutineWork.sceneType
-  u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineWork.mapId
+  s8 sceneType; ///< an enum SceneType, copied to gMainRoutineState.sceneType
+  u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineState.mapId
   /// Two nibbles the field sequence reads on arrival
   /// (Field_GetSceneAttributes).
   s16 attributes;
@@ -219,7 +219,7 @@ struct Trigger {
 /// (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 /// Trigger.subject bit 9 on a Psynergy trigger: the cast neither flashes the
-/// caster nor announces the ability (FieldEffectWork.visible and .active).
+/// caster nor announces the ability (FieldEffectState.visible and .active).
 #define TRIGGER_SUBJECT_QUIET 0x200
 /// An item trigger's subject: the heading it needs in bits 15..12, whether it
 /// needs one, and its target, an actor or a cell behavior.
@@ -391,7 +391,7 @@ enum PsynergyPhase {
   PSYNERGY_PHASE_FIRST = 8,
   PSYNERGY_PHASE_ANY = 15 ///< Scene_FindPsynergyTrigger matches every phase
 };
-/// The phase a field Psynergy's work is left in once it has finished, which
+/// The phase a field Psynergy's state is left in once it has finished, which
 /// the cast waits for; its acting events get it as their stage the last time
 /// they run.
 #define FIELD_PSYNERGY_FINISHED 999
@@ -457,7 +457,7 @@ struct SceneRegion {
   s16 maxX, maxY, maxZ; ///< its upper corner in pixels, exclusive
   /// CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else the flag clear
   s16 condition;
-  s16 value; ///< the exit kind, stored in FieldWork's exit
+  s16 value; ///< the exit kind, stored in FieldState's exit
 };
 
 /// The table a scene overlay starts with (gOverlayArea): a veneer word and an

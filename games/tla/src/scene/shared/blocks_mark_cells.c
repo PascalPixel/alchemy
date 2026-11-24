@@ -4,7 +4,7 @@
 void Blocks_MarkCells(u16 *ids) {
   struct Actor *actor;
   u8 *marked;
-  struct MapWork *map;
+  struct MapState *map;
   struct MapCell **cells;
   struct MapCell *cell;
   s32 x, z;

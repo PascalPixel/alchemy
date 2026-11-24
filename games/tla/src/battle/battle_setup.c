@@ -20,8 +20,8 @@ void Matrix_SetTranslation(FIXED *position);
 /// turns the camera a sixteenth of the way toward its target yaw, places it,
 /// and refreshes the background's zoom.
 void BattleCamera_Update(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *background = Ram_HeapSlots->battleBackground;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
+  struct BattleBackgroundState *background = Ram_HeapSlots->battleBackground;
   struct Point eyeOffset;
   s32 *focus;
   s16 delta;
@@ -29,18 +29,18 @@ void BattleCamera_Update(void) {
 
   // The link check: a missed frame counts only while the link is down, and
   // any frame with it up resets the count.
-  if (Ram_HeapSlots->battleWork->isLink != 0) {
+  if (Ram_HeapSlots->battleState->isLink != 0) {
     if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-      Ram_HeapSlots->battleWork->linkMisses++;
-      if (Ram_HeapSlots->battleWork->linkMisses > LINK_MAX_MISSED_FRAMES) {
-        Ram_HeapSlots->battleWork->linkPaused = 1;
+      Ram_HeapSlots->battleState->linkMisses++;
+      if (Ram_HeapSlots->battleState->linkMisses > LINK_MAX_MISSED_FRAMES) {
+        Ram_HeapSlots->battleState->linkPaused = 1;
       }
     } else {
       linkId = SIO_ID_OF(REG_SIOCNT);
-      if (Ram_HeapSlots->battleWork->linkSide != linkId) {
-        Ram_HeapSlots->battleWork->linkPaused = 1;
+      if (Ram_HeapSlots->battleState->linkSide != linkId) {
+        Ram_HeapSlots->battleState->linkPaused = 1;
       }
-      Ram_HeapSlots->battleWork->linkMisses = 0;
+      Ram_HeapSlots->battleState->linkMisses = 0;
     }
   }
 
@@ -74,11 +74,11 @@ void BattleCamera_Update(void) {
 /// each, then whether the party strikes first or is caught by surprise.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s16 *enemy;
   s32 announced;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   MessageArgument_ClearAllFar();
   BattleEnemy_List(enemies);
 
@@ -112,13 +112,13 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
   u16 unitIds[UNIT_MAX];
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
   s32 i;
   s32 position;
   s32 formation;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++)
     battle->partyUnits[i] = unitIds[i];

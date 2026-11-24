@@ -34,12 +34,12 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 
 /// Lets the player choose which reserve member takes a party slot in battle,
 /// previewing each choice in place: left and right cycle through the reserve,
-/// A confirms and swaps the two in gMainRoutineWork.party, and B puts
+/// A confirms and swaps the two in gMainRoutineState.party, and B puts
 /// the slot's member back.
 s32 BattleParty_ChooseReserve(s32 slot) {
   u16 owners[6];
   u16 selected[2];
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 count;
 
   count = BattleParty_PrepareReserveOwnersFar(owners);
@@ -47,16 +47,16 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     s32 sel;
     s32 redraw;
     s32 result;
-    struct BattleMenuWork *menu;
+    struct BattleMenuState *menu;
     s32 current;
     s32 newId;
     s32 i;
 
     sel = 0;
     redraw = 1;
-    battle = Ram_HeapSlots->battleWork;
+    battle = Ram_HeapSlots->battleState;
     result = 0;
-    menu = Ram_HeapSlots->battleMenuWork;
+    menu = Ram_HeapSlots->battleMenuState;
     if (count <= 0)
       return -1;
     // BattleTarget_RunSelection's PLACE_PARTY | place: the place is its low
@@ -85,10 +85,10 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           menu->swappedUnit = current;
           menu->swappedPlace = slot;
           for (i = 0; i < 8; i++) {
-            if (gMainRoutineWork.party[i] == current)
-              gMainRoutineWork.party[i] = newId;
-            else if (gMainRoutineWork.party[i] == newId)
-              gMainRoutineWork.party[i] = current;
+            if (gMainRoutineState.party[i] == current)
+              gMainRoutineState.party[i] = newId;
+            else if (gMainRoutineState.party[i] == newId)
+              gMainRoutineState.party[i] = current;
           }
           goto done;
         }
@@ -117,7 +117,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           to->anchorZ = from->anchorZ;
           Actor_SetPositionAndResetMotionFar(actor, place->x.fixed,
                                              place->y.fixed, place->z.fixed);
-          PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
+          PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
           BattleObject_PutFar();
           selected[0] = newId;
           selected[1] = BATTLE_UNIT_LIST_END;
@@ -137,7 +137,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
       selected[0] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(selected, HIGHLIGHT_OFF);
       PartyStatus_HighlightMembers(selected);
-      PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
+      PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
       BattleObject_PutFar();
       wait(1);
     } while (0);

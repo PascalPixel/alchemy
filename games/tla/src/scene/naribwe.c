@@ -12,12 +12,12 @@
 
 #include "types.h"
 #include "sprite_ids.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "flags.h"
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/field.h"
@@ -119,7 +119,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == NARIBWE_FIRE_LIT_ENTRANCE)
+  if (gMainRoutineState.entrance == NARIBWE_FIRE_LIT_ENTRANCE)
     return gNaribwe_FireLitPlacements;
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gNaribwe_PlacementsOnReturn;
@@ -133,12 +133,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// `NARIBWE_FIRE_LIT_ENTRANCE`, which no exit leads to; there the jet shoots
 /// up long.
 void Naribwe_PrepareBlaze(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s8 *flag;
 
-  flag = &work->blazeLongSpray;
+  flag = &state->blazeLongSpray;
   *flag = 1;
-  if (gMainRoutineWork.entrance != NARIBWE_FIRE_LIT_ENTRANCE)
+  if (gMainRoutineState.entrance != NARIBWE_FIRE_LIT_ENTRANCE)
     *flag = 0;
 }
 
@@ -240,7 +240,7 @@ enum { SHOP_NARIBWE_ITEMS = 16 };
 /// Except for our fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
-          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+          Actor_GetById(gMainRoutineState.leaderActorId)->facing) ==
       FACING_WEST) {
     Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
@@ -258,7 +258,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
 /// should visit the fortune-teller's hut.
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
-          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+          Actor_GetById(gMainRoutineState.leaderActorId)->facing) ==
       FACING_WEST) {
     Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
@@ -277,7 +277,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
 /// Gondowan."
 void Naribwe_TalkToPilgrim(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
-          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+          Actor_GetById(gMainRoutineState.leaderActorId)->facing) ==
       FACING_NORTH) {
     Sanctum_Run(actor);
     return;
@@ -295,7 +295,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
 /// elsewhere the pilgrim says how cold it grows to the south.
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
-          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+          Actor_GetById(gMainRoutineState.leaderActorId)->facing) ==
       FACING_NORTH) {
     Sanctum_Run(actor);
     return;
@@ -315,7 +315,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
 /// Each door's cell carries the number of the exit it leaves by; the other
 /// three houses' doorways are plain exits.
 void Naribwe_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s16 *trigger;
   s32 index;
   u32 id;
@@ -331,15 +331,15 @@ void Naribwe_EnterDoor(void) {
       *flags = 0;
     }
   }
-  trigger = &work->stepTrigger;
+  trigger = &state->stepTrigger;
   index = *trigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
   MapGrid_AnimateCells(gNaribwe_Doors[index].steps, gNaribwe_Doors[index].x,
                        gNaribwe_Doors[index].y);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
   Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -356,14 +356,14 @@ void Naribwe_ScatterWeeds(void) {
   Event_End();
 }
 
-/// Unused: writes the rope's post and end into the event work; nothing calls
+/// Unused: writes the rope's post and end into the event state; nothing calls
 /// it.
-UNUSED void Naribwe_SetRopeWork(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+UNUSED void Naribwe_SetRopeState(void) {
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->targetX = 0;
-  work->targetY = ACTOR_ROPE_POST;
-  work->targetZ = ACTOR_ROPE_END;
+  state->targetX = 0;
+  state->targetY = ACTOR_ROPE_POST;
+  state->targetZ = ACTOR_ROPE_END;
 }
 
 /// Felix casts Reveal anywhere in the village: on the ledge of totem poles
@@ -383,7 +383,7 @@ void Naribwe_HideChest(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEST_BRAZIER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_BRAZIER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEEDS), 0);

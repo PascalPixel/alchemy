@@ -21,7 +21,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "system/iwram_call.h"
 #include "system/dma.h"
@@ -245,16 +245,16 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Sets up the rooms as the party enters: the two chains, and the ring the
 /// party arrives in by a teleporter. Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   HangingVine_Place(ACTOR_WEST_CHAIN, 1);
   HangingVine_Place(ACTOR_EAST_CHAIN, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == ENTRANCE_WEST_RING)
-    Actor_DepartInRing(gMainRoutineWork.leaderActorId);
+      gMainRoutineState.entrance == ENTRANCE_WEST_RING)
+    Actor_DepartInRing(gMainRoutineState.leaderActorId);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == ENTRANCE_EAST_RING)
-    Actor_DepartInRing(gMainRoutineWork.leaderActorId);
+      gMainRoutineState.entrance == ENTRANCE_EAST_RING)
+    Actor_DepartInRing(gMainRoutineState.leaderActorId);
   return 0;
 }
 

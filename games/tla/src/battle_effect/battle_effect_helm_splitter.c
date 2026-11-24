@@ -26,7 +26,7 @@
 ///
 /// Abilities: Helm Splitter, Skull Splitter.
 void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   void *canvas = Ram_HeapSlots->battleCanvas;
   DrawRectangle draw[2];
   struct ScreenPoint position;
@@ -42,16 +42,16 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   if (args->variant == EFFECT_VARIANT_BASIC) {
     REG_BG2PA = Q_8_8(1);
   }
-  Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_SWIRL_SHEET, state->sheet, 1, 1);
   if (args->variant == EFFECT_VARIANT_BASIC) {
     Resource_LoadAndDecompress(RESOURCE_PINK_STAR_SHEET,
-                               work->sheet + HELM_SPLITTER_SPARK_PICTURES, 1,
+                               state->sheet + HELM_SPLITTER_SPARK_PICTURES, 1,
                                0);
-    work->transferValue = CANVAS_FADE_HALF;
+    state->transferValue = CANVAS_FADE_HALF;
   } else {
     // Lift every drawn pixel of the swirl into the upper half of the palette,
     // where the blue flame's colours go.
-    u8 *pixels = work->sheet;
+    u8 *pixels = state->sheet;
 
     for (i = 0; i != HELM_SPLITTER_SWIRL_BYTES; i++) {
       if (pixels[i] != 0) {
@@ -60,24 +60,25 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           pixels[i] = CANVAS_LEVEL_BRIGHTEST;
       }
     }
-    Resource_LoadAndDecompress(
-        RESOURCE_SKULL_SHEET, work->sheet + HELM_SPLITTER_SPARK_PICTURES, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SKULL_SHEET,
+                               state->sheet + HELM_SPLITTER_SPARK_PICTURES, 1,
+                               1);
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                          SHEET_PALETTE_BYTES);
-    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+    state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   }
-  work->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferMode = CANVAS_COPY_AND_FADE;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
 
   // No spark is alive yet.
-  for (i = 0, life = &work->particles[0].variant;
+  for (i = 0, life = &state->particles[0].variant;
        i != HELM_SPLITTER_SPARK_SLOTS; i++) {
     *life = 0;
     life += sizeof(struct Particle) / sizeof(*life);
   }
-  sparks = work->particles;
+  sparks = state->particles;
 
   // The user leaps at the target.
   BattleMotion_ApproachTargetFar(args->user, args->targets[0],
@@ -97,13 +98,13 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         if (picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
           picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+          draw[0](canvas, state->sheet + gHelmSplitter_Pictures[picture],
                   gHelmSplitter_PictureBiasX[picture] + 30,
                   gHelmSplitter_PictureBiasY[picture] + position.y - 60,
                   gHelmSplitter_PictureWidths[picture],
                   gHelmSplitter_PictureHeights[picture]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+          draw[0](canvas, state->sheet + gHelmSplitter_Pictures[picture],
                   -gHelmSplitter_PictureBiasX[picture] -
                       gHelmSplitter_PictureWidths[picture] + 98,
                   gHelmSplitter_PictureBiasY[picture] + position.y - 60,
@@ -119,13 +120,13 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         if (picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
           picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+          draw[0](canvas, state->sheet + gHelmSplitter_Pictures[picture],
                   position.x / 2 + gHelmSplitter_PictureBiasX[picture] - 16,
                   gHelmSplitter_PictureBiasY[picture] + position.y - 92,
                   gHelmSplitter_PictureWidths[picture],
                   gHelmSplitter_PictureHeights[picture]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+          draw[0](canvas, state->sheet + gHelmSplitter_Pictures[picture],
                   position.x / 2 - gHelmSplitter_PictureBiasX[picture] -
                       gHelmSplitter_PictureWidths[picture] + 16,
                   gHelmSplitter_PictureBiasY[picture] + position.y - 92,
@@ -141,7 +142,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       EffectPosition_ProjectBattler(args->targets[0], &position);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
       for (i = 0;
            i != args->variant * HELM_SPLITTER_SPARKS + HELM_SPLITTER_SPARKS;
            i++) {
@@ -175,7 +176,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
           if (args->variant == EFFECT_VARIANT_BASIC)
             draw[0](canvas,
-                    work->sheet + HELM_SPLITTER_SPARK_PICTURES +
+                    state->sheet + HELM_SPLITTER_SPARK_PICTURES +
                         ((frame + i) / 4 % HELM_SPLITTER_STARS) *
                             HELM_SPLITTER_STAR_SIZE * HELM_SPLITTER_STAR_SIZE,
                     sx - HELM_SPLITTER_STAR_SIZE / 2,
@@ -183,7 +184,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
                     HELM_SPLITTER_STAR_SIZE);
           else
             draw[0](canvas,
-                    work->sheet + HELM_SPLITTER_SPARK_PICTURES +
+                    state->sheet + HELM_SPLITTER_SPARK_PICTURES +
                         i % 3 * PICTURE_BYTES(SKULL),
                     sx - SKULL_WIDTH / 2, sy - SKULL_HEIGHT / 2, SKULL_WIDTH,
                     SKULL_HEIGHT);
@@ -192,7 +193,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

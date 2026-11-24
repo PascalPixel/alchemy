@@ -22,7 +22,7 @@ void Leader_SlideOnIceFromEdge(void) {
 
   // gSlideOnIce_Stopped is volatile: a task of the VBlank pass sets it while
   // the slide waits (Leader_SetSlideStopped), and each test reads it again.
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   gSlideOnIce_Stopped = 0;
 retry:
   Leader_StopIfPending();

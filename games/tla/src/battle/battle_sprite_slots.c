@@ -39,12 +39,12 @@ s32 BattleMotion_GetSlotPalette(s32 id) {
 /// Returns 1 if an enemy of the class would find room among the enemy sprite
 /// slots, two side by side for a large one.
 s32 Enemy_HasSpriteRoom(s32 classId) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   s32 needsSingleSlot;
   s32 spriteSlot;
 
   needsSingleSlot = BattleSprite_IsSmall(classId);
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
     if (battle->spriteSlots[spriteSlot] != 0)
       continue;
@@ -66,7 +66,7 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 /// | sprite, or 0 when a load fails.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct Unit *unit = Unit_Get(unitId);
   s32 needsSingleSlot = BattleSprite_IsSmall(unit->enemyId);
   s32 result;
@@ -127,9 +127,9 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
-/// Clears those BattleWork.spriteSlots.
+/// Clears those BattleState.spriteSlots.
 void BattleObject_ReleaseSpriteSlots(s32 unitId) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 spriteSlot;
 
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {

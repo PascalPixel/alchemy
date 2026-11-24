@@ -83,7 +83,7 @@
 /// over the targets' side and settle, as clouds of spray burst from the target
 /// and two swirls (Lethe Albion's runes) spin out over it.
 void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
@@ -112,9 +112,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint targetScreen;
   struct ScreenPoint casterScreen;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   sprites = Ram_HeapSlots->battleSheet;
   unit = Unit_Get(args->targets[0]);
   BattleEffect_StartCanvasLayer(0);
@@ -176,22 +176,22 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
-  work->particles[TWISTING_COLUMN_SAVED_TARGET].x = target->x;
-  work->particles[TWISTING_COLUMN_SAVED_TARGET].y = target->y;
-  work->particles[TWISTING_COLUMN_SAVED_TARGET].z = target->z;
-  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
-  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
+  state->particles[TWISTING_COLUMN_SAVED_TARGET].x = target->x;
+  state->particles[TWISTING_COLUMN_SAVED_TARGET].y = target->y;
+  state->particles[TWISTING_COLUMN_SAVED_TARGET].z = target->z;
+  state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX = target->scaleX;
+  state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY = target->scaleY;
   if (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD) {
-    Resource_LoadAndDecompress(RESOURCE_EMBER_TEXTURE, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_EMBER_TEXTURE, state->sheet, 0, 0);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(
       RESOURCE_JUPITER_DJINN_SMALL_SHEET,
-      work->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
+      state->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   if (mode == WATER_COLUMN_POISON_FLOW) {
     Iwram_CopyWordsEntry(palette,
                          Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
@@ -218,16 +218,16 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         Sound_PlayFar(SE_CURSE_FALL);
       }
       if (frame == 0) {
-        target->x = work->particles[TWISTING_COLUMN_SAVED_TARGET].x;
-        target->y = work->particles[TWISTING_COLUMN_SAVED_TARGET].y;
-        target->z = work->particles[TWISTING_COLUMN_SAVED_TARGET].z;
+        target->x = state->particles[TWISTING_COLUMN_SAVED_TARGET].x;
+        target->y = state->particles[TWISTING_COLUMN_SAVED_TARGET].y;
+        target->z = state->particles[TWISTING_COLUMN_SAVED_TARGET].z;
         target->scaleX =
-            work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
+            state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
         target->scaleY =
-            work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
+            state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
         if (mode == WATER_COLUMN_WHORL) {
           for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++) {
-            struct Particle *mote = &work->particles[i];
+            struct Particle *mote = &state->particles[i];
 
             if (args->side == EFFECT_SIDE_PARTY) {
               mote->x = toFIXED(200);
@@ -242,7 +242,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
         } else if (mode == WATER_COLUMN_GALE) {
           {
-            struct Particle *mote = work->particles;
+            struct Particle *mote = state->particles;
 
             for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++, mote++) {
               SET_POSITION(mote, point[0],
@@ -276,57 +276,57 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         pos[2] = point[2];
         EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)screen);
         blit[0](canvas,
-                work->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
+                state->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
                 screen[0] / 2 - 10, screen[1] - 20, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
       }
       if (frame > 7) {
         if (mode <= WATER_COLUMN_GALE && frame <= 47) {
-          work->shakeFrames = 3;
+          state->shakeFrames = 3;
         }
         if (mode == WATER_COLUMN_WHORL) {
           if (frame == 32) {
             if (args->variant == EFFECT_VARIANT_STRONGER) {
               target->y = toFIXED(124);
             } else {
-              work->shakeFrames = 8;
+              state->shakeFrames = 8;
               EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
               target->scaleX =
-                  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
+                  state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
               target->scaleY =
-                  work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
+                  state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
               BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
                                             toFIXED(8), toFIXED(4), 150);
             }
           } else if (frame <= 19) {
             target->verticalMotionStrength = 0;
             target->x +=
-                (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
+                (pos[0] - state->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
                 TWISTING_COLUMN_DRIFT_STEPS;
             target->y +=
-                (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
+                (pos[1] - state->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
                 TWISTING_COLUMN_DRIFT_STEPS;
             target->z +=
-                (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
+                (pos[2] - state->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
                 TWISTING_COLUMN_DRIFT_STEPS;
           } else if (frame <= 31 && (args->variant == EFFECT_VARIANT_STRONGER ||
                                      frame <= 23)) {
             target->x +=
-                (pos[0] - work->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
+                (pos[0] - state->particles[TWISTING_COLUMN_SAVED_TARGET].x) /
                 TWISTING_COLUMN_LIFT_STEPS;
             target->y +=
-                (pos[1] - work->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
+                (pos[1] - state->particles[TWISTING_COLUMN_SAVED_TARGET].y) /
                 TWISTING_COLUMN_LIFT_STEPS;
             target->z +=
-                (pos[2] - work->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
+                (pos[2] - state->particles[TWISTING_COLUMN_SAVED_TARGET].z) /
                 TWISTING_COLUMN_LIFT_STEPS;
             target->scaleX +=
                 (FIXED_ONE / 4 -
-                 work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX) /
+                 state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX) /
                 TWISTING_COLUMN_LIFT_STEPS;
             target->scaleY +=
                 (FIXED_ONE / 4 -
-                 work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY) /
+                 state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY) /
                 TWISTING_COLUMN_LIFT_STEPS;
           }
         } else if (mode == WATER_COLUMN_GALE) {
@@ -350,7 +350,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       }
       if (frame > 0 && mode <= WATER_COLUMN_GALE) {
         {
-          struct Particle *mote = work->particles;
+          struct Particle *mote = state->particles;
 
           for (i = 0; i != TWISTING_COLUMN_MOTES; i++, mote++) {
             if (frame >= i && frame < i + 30) {
@@ -463,7 +463,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         texture.logWidth = 7;
       }
       texture.logHeight = 5;
-      texture.pixels = work->sheet;
+      texture.pixels = state->sheet;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->texture = &texture;
       model->mesh = mesh;
@@ -476,13 +476,13 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
           BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(7),
                                         100);
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
         if (frame == 0) {
           {
-            struct Particle *spray = work->particles;
+            struct Particle *spray = state->particles;
 
             for (i = 0; i != TWISTING_COLUMN_SAVED_TARGET; i++, spray++) {
               s32 speed = (Random16() & 255) + 256;
@@ -500,7 +500,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         // colours, four frames a picture.
         if (frame > 15) {
           {
-            struct Particle *spray = work->particles;
+            struct Particle *spray = state->particles;
 
             for (i = 0; i != 8; i++, spray++) {
               if (spray->variant < FLASH_BURST_PICTURE_COUNT * 4) {
@@ -585,7 +585,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                                           100);
             BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, i, 8);
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
           }
         }
         model->scrollV = 0;
@@ -658,18 +658,18 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       } else {
         BattleCamera_Shake(4, 4);
       }
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
       frame++;
     } while (frame != frames);
   }
 
   if (unit->classId != CLASS_NONE && mode == WATER_COLUMN_WHORL &&
       args->variant == EFFECT_VARIANT_STRONGER) {
-    target->x = work->particles[TWISTING_COLUMN_SAVED_TARGET].x;
-    target->y = work->particles[TWISTING_COLUMN_SAVED_TARGET].y;
-    target->z = work->particles[TWISTING_COLUMN_SAVED_TARGET].z;
-    target->scaleX = work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
-    target->scaleY = work->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
+    target->x = state->particles[TWISTING_COLUMN_SAVED_TARGET].x;
+    target->y = state->particles[TWISTING_COLUMN_SAVED_TARGET].y;
+    target->z = state->particles[TWISTING_COLUMN_SAVED_TARGET].z;
+    target->scaleX = state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityX;
+    target->scaleY = state->particles[TWISTING_COLUMN_SAVED_TARGET].velocityY;
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

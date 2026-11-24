@@ -24,7 +24,7 @@
 /// TRIPLE_CHOMP_RING_GROWTH a frame for TRIPLE_CHOMP_RING_FRAMES, spark whole
 /// for the first half and then losing TRIPLE_CHOMP_RING_FADE of its shade a
 /// frame.
-#define BITE_RING(bite) (&work->particles[bite])
+#define BITE_RING(bite) (&state->particles[bite])
 #define TRIPLE_CHOMP_RING_FRAMES 16
 #define TRIPLE_CHOMP_RING_GROWTH toFIXED(0.15552)
 #define TRIPLE_CHOMP_RING_FADE 8
@@ -37,7 +37,7 @@
 ///
 /// Abilities: Triple Chomp.
 void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
@@ -52,14 +52,14 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   s32 j;
   u8 *pixels = Ram_MapCellBuffer;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, then let the user lunge.
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 80);
   wait(8);
 
@@ -125,7 +125,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
                                       toFIXED(8), 0, i * 20 + 120);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
       }
 
       // The bite's ring swells and fades.
@@ -178,7 +178,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
     Heap_Release(model);
     Heap_Release(vertices);
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);

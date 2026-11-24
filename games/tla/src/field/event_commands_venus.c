@@ -7,7 +7,7 @@
 #include "sounds.h"
 #include "field/field.h"
 
-struct FieldEffectWork;
+struct FieldEffectState;
 
 /// The motes that circle down onto the leader as a Venus Djinni joins.
 enum { VENUS_JOIN_MOTES = 24 };
@@ -18,20 +18,20 @@ enum { VENUS_JOIN_MOTES = 24 };
 void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct FieldParticle *effect;
   s8 *slotState;
   s32 remaining;
   FIXED scale;
   struct Vector3 position;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
-  effectWork = Ram_HeapSlots->fieldEffectWork;
+  effectState = Ram_HeapSlots->fieldEffectState;
   // Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
   // event_commands_mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
@@ -52,9 +52,9 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineState.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(30);
   MapGrid_SetScreenShakeFar(toFIXED(8) / 5, toFIXED(8) / 5, FIXED_ONE);
@@ -65,8 +65,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One rising particle a frame into each of the 24 field effect sprites.
-  effect = effectWork->particles;
-  remaining = ARRAY_COUNT(effectWork->particles) - 1;
+  effect = effectState->particles;
+  remaining = ARRAY_COUNT(effectState->particles) - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
@@ -81,7 +81,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // After 140 frames every particle still in use stops rising.
   wait(140);
-  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectState, particles,
                                    VENUS_PARTICLE_LAST_RISE);
 
   // A shake of 1/65536 pixel: in effect the shake stops.
@@ -151,7 +151,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Vector3 position;
   s32 state;
 
-  source = Actor_GetById(gMainRoutineWork.leaderActorId);
+  source = Actor_GetById(gMainRoutineState.leaderActorId);
   state = effect->state;
 
   if (state == MERCURY_DROPLET_AIM) {

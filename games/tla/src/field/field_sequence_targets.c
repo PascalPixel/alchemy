@@ -218,12 +218,12 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
 /// to a quarter turn, can be pushed on by 16 pixels: 1 when nothing solid
 /// stands on the cell beyond it or above it and its terrain test passes there,
 /// else 0. Leader_PushObjectAhead, after it, makes the push.
-/// Since patch 1 the actor Halt has stopped (gMainRoutineWork.haltedActor)
+/// Since patch 1 the actor Halt has stopped (gMainRoutineState.haltedActor)
 /// cannot be pushed; the Japanese release has no such test.
 s32 Leader_CanPushObjectAhead(void) {
   s32 position[3];
   FIXED above[3];
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *owner = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *target;
   struct Actor *hit;
   s32 id;
@@ -247,7 +247,7 @@ s32 Leader_CanPushObjectAhead(void) {
   // XXX: the test passes over actor 1 where -1, no halted actor, looks
   // meant; what Actor_GetById(-1) returns with nothing halted would settle
   // whether it is a bug.
-  id = gMainRoutineWork.haltedActor;
+  id = gMainRoutineState.haltedActor;
   if (id != 1 && target == Actor_GetById(id))
     return 0;
 #endif
@@ -277,7 +277,7 @@ s32 Leader_CanPushObjectAhead(void) {
 /// Leader_CanPushObjectAhead allowed.
 void Leader_PushObjectAhead(void) {
   s32 position[3];
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *owner = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *target;
   s32 terrain;
   s32 result;

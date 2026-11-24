@@ -6,7 +6,7 @@ extern u32 gDust_ScatterScript[];
 /// Eight clouds of dust rise in a row across the leader, 2 pixels apart, and
 /// fly out from him in eight directions when `spread` is set.
 void Dust_Scatter(s32 spread) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct FieldEffect *effect;
   void *frame = 0;
   u32 i;
@@ -48,7 +48,7 @@ extern u32 gDust_BurstScript[];
 /// Throws a ring of dust clouds out from the leader as a pillar lands, the
 /// first thrown twice.
 void Dust_Burst(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct FieldEffect *effect;
   void *frame;
   u32 i;

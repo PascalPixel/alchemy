@@ -28,7 +28,7 @@ enum {
 ///
 /// Abilities: Ray, Storm Ray, Destruct Ray.
 void BattleEffect_RunRay(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *sheet;
@@ -39,7 +39,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   struct ScreenPoint midpoint;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   edgeShift = 0;
@@ -57,14 +57,14 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
-                             work->sheet + RAY_PICTURES, 1, 1);
+                             state->sheet + RAY_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
 
   // Destruct Ray's wide canvas is scrolled towards the targets' side; the
   // others' is centred on the targets and kept on the screen, and where it
   // meets an edge the bolts shift by what is left over.
   if (args->variant == EFFECT_VARIANT_STRONGEST) {
-    if (work->args->side == EFFECT_SIDE_PARTY)
+    if (state->args->side == EFFECT_SIDE_PARTY)
       REG_BG2X = -(RAY_WIDE_CANVAS_SHIFT << 8);
     else
       REG_BG2X = RAY_WIDE_CANVAS_SHIFT << 8;
@@ -96,7 +96,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     spark->variant = 0;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != RAY_FRAMES; frame++) {
@@ -120,14 +121,14 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         y = -FIXEDtoINT(Trig_Cos(angle) * 8) - 8;
         if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
-                  work->sheet +
+                  state->sheet +
                       (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                       RAY_PICTURES,
                   edgeShift + x + (Random16() & 7) - 16, y,
                   LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
         else
           draw[bolt & 1](canvas,
-                         work->sheet +
+                         state->sheet +
                              (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
                              RAY_PICTURES,
                          edgeShift + x + (Random16() & 7) - 16, y,
@@ -154,7 +155,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
           }
         }
       }
-      work->shakeFrames = 1;
+      state->shakeFrames = 1;
     }
 
     // Sparks bounce off the bottom.
@@ -184,7 +185,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(2, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

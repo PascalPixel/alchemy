@@ -7,7 +7,7 @@
 /// (PaletteCycle_Step). Returns 0, or -1 when all four cycles are taken.
 UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
                             s16 colorCount) {
-  struct PaletteCycleWork *queue;
+  struct PaletteCycleState *queue;
   struct PaletteCycle *cycle;
   u16 *colors;
   u32 cycleIndex;

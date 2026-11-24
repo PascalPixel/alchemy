@@ -2,15 +2,15 @@
 /// dropping through a cracked tile, sets him there and lowers the camera's
 /// point 8 pixels.
 void Leader_CenterInCell(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 x = actor->x.fixed;
   s32 z = actor->z.fixed;
 
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 4);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 4);
 
   x = FIELD_CELL(x);
   z = FIELD_CELL(z);
-  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId,
+  Actor_MoveToAndWaitById(gMainRoutineState.leaderActorId,
                           x * MAPGRID_CELL_PIXELS + MAPGRID_CELL_PIXELS / 2,
                           z * MAPGRID_CELL_PIXELS + MAPGRID_CELL_PIXELS / 2);
   System_Wait(1);

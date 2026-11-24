@@ -37,7 +37,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct Unit *unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
+    struct Unit *unit = Unit_Get(gMainRoutineState.party[partyIndex]);
 
     if (unit->djinnHeldCounts[element] < DJINN_HELD_PER_ELEMENT_MAX) {
       s32 ownedDjinn = 0;
@@ -46,7 +46,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
         ownedDjinn += unit->djinnHeldCounts[elementIndex];
       if (fewestDjinn > ownedDjinn) {
         fewestDjinn = ownedDjinn;
-        leastLoadedMember = gMainRoutineWork.party[partyIndex];
+        leastLoadedMember = gMainRoutineState.party[partyIndex];
       }
     }
   }

@@ -8,8 +8,8 @@
 #include "macros.h"
 #include "types.h"
 #include "system/ram_buffer.h"
-#include "field/field_psynergy_work.h"
-#include "system/main_routine_work.h"
+#include "field/field_psynergy_state.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "field/sprite.h"
 #include "system/task.h"
@@ -40,7 +40,7 @@
 #define CLOAK_BLINKS 10
 
 /// The drops Douse rains: cast at nothing, cast on a target, and cast on a
-/// target where they sway down (FieldEffectWork.lit).
+/// target where they sway down (FieldEffectState.lit).
 #define DOUSE_DROPS_AT_NOTHING 10
 #define DOUSE_DROPS_ON_TARGET 24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
@@ -53,9 +53,9 @@
 /// then check the ground under it every frame. When it cannot hide where it
 /// stands, show it again at once.
 void FieldPsynergy_StartCloak(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   struct Actor *caster =
-      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
   struct Sprite *sprite = caster->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
@@ -82,7 +82,7 @@ void FieldPsynergy_StartCloak(void) {
   sprite->dirty = 1;
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, order);
-  gMainRoutineWork.cloaked = 1;
+  gMainRoutineState.cloaked = 1;
   check();
   if (event->psynergy == CLOAK_END) {
     FieldPsynergy_EndCloak();
@@ -123,9 +123,9 @@ void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
   struct Vector3 end;
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *target = work->child;
-  struct Actor *caster = work->mainActor;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
+  struct Actor *target = state->child;
+  struct Actor *caster = state->mainActor;
   s32 count;
   struct Actor *cloud;
   s32 raised;
@@ -141,18 +141,19 @@ void FieldPsynergy_Douse(void) {
     return;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
-  if (work->child == 0) {
-    work->x = caster->x.fixed;
-    work->z = caster->z.fixed;
-    Vector_AddPolarOffset(toFIXED(16), work->angle, (struct Vector3 *)&work->x);
+  if (state->child == 0) {
+    state->x = caster->x.fixed;
+    state->z = caster->z.fixed;
+    Vector_AddPolarOffset(toFIXED(16), state->angle,
+                          (struct Vector3 *)&state->x);
   }
   SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
                caster->z.fixed);
-  end.x = work->x;
-  y = work->y;
+  end.x = state->x;
+  y = state->y;
   end.y = y + toFIXED(32);
-  end.z = work->z;
-  if ((s8)work->childOption != 0)
+  end.z = state->z;
+  if ((s8)state->childOption != 0)
     end.y = y + toFIXED(80);
   if (Actor_GetSpriteIdFar(target) == SPRITE_MOAI) {
     end.y += toFIXED(32);
@@ -172,9 +173,9 @@ void FieldPsynergy_Douse(void) {
   }
   wait(10);
 
-  if ((s8)work->lit == 0) {
+  if ((s8)state->lit == 0) {
     count = DOUSE_DROPS_AT_NOTHING;
-    if ((s8)work->enabled == 0)
+    if ((s8)state->enabled == 0)
       count = DOUSE_DROPS_ON_TARGET;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, cloud->x.fixed, cloud->y.fixed, cloud->z.fixed);
@@ -185,7 +186,7 @@ void FieldPsynergy_Douse(void) {
       }
       particle = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        struct Actor *ground = work->child;
+        struct Actor *ground = state->child;
 
         if (ground != 0) {
           particle->groundHeight = ground->y.fixed;
@@ -206,13 +207,13 @@ void FieldPsynergy_Douse(void) {
             PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_DOUSE,
             Scene_SelectPsynergyTarget(FIELD_PSYNERGY_DOUSE));
         if (trigger != 0)
-          Field_RunPsynergyEvent(trigger, work->firstActorId,
-                                 work->secondActorId);
+          Field_RunPsynergyEvent(trigger, state->firstActorId,
+                                 state->secondActorId);
       }
     }
     wait(10);
   } else {
-    if ((s8)work->enabled != 0)
+    if ((s8)state->enabled != 0)
       count = DOUSE_DROPS_AT_NOTHING;
     else
       count = DOUSE_SWAYING_DROPS_ON_TARGET;
@@ -260,7 +261,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   u32 radius;
 
   liftedActor =
-      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->child;
   position.x = liftedActor->x.fixed;
   position.y = liftedActor->y.fixed - Random16() * 16 + toFIXED(24);
   position.z = liftedActor->z.fixed;
@@ -289,7 +290,7 @@ static __inline__ s32 Actor_ProbeRaised(struct Actor *actor,
 /// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 /// where it is.
 void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
-  struct FieldEffectWork *work;
+  struct FieldEffectState *state;
   struct Actor *source;
   struct Actor *target;
   struct Actor *shards[CARRY_SHARDS];
@@ -301,15 +302,15 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   s32 angle;
   s32 magnitude;
 
-  work = Ram_HeapSlots->fieldEffectWork;
-  source = work->mainActor;
-  target = work->child;
+  state = Ram_HeapSlots->fieldEffectState;
+  source = state->mainActor;
+  target = state->child;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
   source->watchedActor = target;
   Actor_StartScriptFar(source, (u32)gFieldEffect_SourceHoldScript);
-  SET_POSITION(&position, work->x, work->y + toFIXED(16), work->z);
+  SET_POSITION(&position, state->x, state->y + toFIXED(16), state->z);
   actor = FieldEffect_SpawnCarryHand(position.x + toFIXED(32), position.y,
                                      position.z, DEGtoANG(180));
   anchors[0] = actor;
@@ -453,16 +454,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(anchors[0]);
   Actor_ReleaseFar(anchors[1]);
-  Actor_SetSpriteColorModeFar(target, work->savedPalette);
-  Actor_StartScriptFar(target, (u32)(work->savedScript));
-  target->update = work->savedCallback;
+  Actor_SetSpriteColorModeFar(target, state->savedPalette);
+  Actor_StartScriptFar(target, (u32)(state->savedScript));
+  target->update = state->savedCallback;
   target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   target->velocityY = toFIXED(10);
   target->bounce = toFIXED(1) / 5;
   target->layer = MAPGRID_LAYER_GROUND;
   source->update = NULL;
   Actor_SetSpriteColorModeFar(source, SPRITE_COLOR_NORMAL);
-  if ((s8)work->childOption != 0) {
+  if ((s8)state->childOption != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);
     wait(1);

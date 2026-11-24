@@ -95,7 +95,7 @@
 ///
 /// Abilities: Megiddo.
 void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   s32 frame;
   s32 doubled;
@@ -105,7 +105,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct ModelVertex *coronaCorners;
   DrawRectangle blit[2];
   u8 *sprites;
-  struct BattleBackgroundWork *background;
+  struct BattleBackgroundState *background;
   struct BattleCamera *camera;
   s16 savedYaw;
   struct ModelVertex *flameCorners;
@@ -132,11 +132,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct ModelTexture scratchTexture;
   s32 twice;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   background = Ram_HeapSlots->battleBackground;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   savedYaw = 0;
   zero = 0;
   coronaCorners = (struct ModelVertex *)gMapGridCellBuffer;
@@ -148,11 +148,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  flameCorners = (struct ModelVertex *)(work->sheet + MEGIDDO_FLAME_CORNERS);
-  flameMesh = work->sheet + MEGIDDO_FLAME_MESH;
+  flameCorners = (struct ModelVertex *)(state->sheet + MEGIDDO_FLAME_CORNERS);
+  flameMesh = state->sheet + MEGIDDO_FLAME_MESH;
   caster = BattleObject_GetFar(args->user)->object;
   x = 0;
   z = 0;
@@ -208,15 +208,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                  Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
-      Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE, work->sheet,
+      Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE, state->sheet,
                                  0, 0);
       // DEAD: GlowBandTextureA, which nothing draws; the ROM keeps its decode.
       Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
-                                 work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
+                                 state->sheet + MEGIDDO_GLOW_BAND, 0, 0);
       Resource_LoadAndDecompress(RESOURCE_FIRE_STRIPES_TEXTURE,
-                                 work->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);
+                                 state->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
-                                 work->sheet + MEGIDDO_DUST_BLOB, 1, 0);
+                                 state->sheet + MEGIDDO_DUST_BLOB, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -341,7 +341,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       target = BattleObject_GetFar(args->targets[0])->object;
       target->x = zero;
       target->z = zero;
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
     }
     if (frame > 154) {
@@ -360,18 +360,18 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL * 8);
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     // The sun strikes.
     if (frame == 171) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
                           CANVAS_FILL_WORD(MEGIDDO_STRIKE_FILL_LEVEL));
     }
     if (frame > 174) {
@@ -397,7 +397,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       place[1] = toFIXED(255);
       place[0] = x;
       place[2] = z;
-      obj = work->sprites[0];
+      obj = state->sprites[0];
       obj->offsetY = 32;
       obj->offsetX = 0;
       if ((u32)(place[2] + toFIXED(52)) < toFIXED(252)) {
@@ -430,7 +430,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       /* FAKEMATCH(dead): the pixels' store alone in a once-only block; as the
        * plain store. */
       do {
-        t->pixels = work->sheet + MEGIDDO_FIRE_STRIPES +
+        t->pixels = state->sheet + MEGIDDO_FIRE_STRIPES +
                     ((frame / 2) % MEGIDDO_FIRE_STRIPES_PICTURES) *
                         PICTURE_BYTES(MEGIDDO_FIRE_STRIPES);
       } while (0);
@@ -456,7 +456,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       t -= frame;
       t->logWidth = 5;
       t->logHeight = 5;
-      t->pixels = work->sheet + MEGIDDO_DUST_BLOB;
+      t->pixels = state->sheet + MEGIDDO_DUST_BLOB;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = flameMesh;
       /* FAKEMATCH(dead): a block that only places the shade's declaration
@@ -506,8 +506,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame == 8) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      p = work->particles;
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
+      p = state->particles;
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++, p++) {
         p->x = Random16() & 127;
         p->y = Random16() & 127;
       }
@@ -515,8 +515,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if ((u32)(frame - 8) <= 79) {
       s32 off = (frame * 2 - 16) & 127;
 
-      p = work->particles;
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
+      p = state->particles;
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++, p++) {
         if (p->variant >= 0) {
           s32 size = 1;
           s32 mx = p->x;
@@ -541,8 +541,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         n = MEGIDDO_FALL_TILT_FRAMES;
       }
       if (frame == 143) {
-        p = work->particles;
-        for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
+        p = state->particles;
+        for (i = 0; i != ARRAY_COUNT(state->particles); i++, p++) {
           SET_POSITION(p, Random16() & 127, Random16() % 192 - 64,
                        Random16() & 127);
         }
@@ -550,8 +550,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Matrix_Initialize();
       Matrix_RotateX(n * (MEGIDDO_FALL_TILT / MEGIDDO_FALL_TILT_FRAMES) -
                      MEGIDDO_FALL_TILT);
-      p = work->particles;
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
+      p = state->particles;
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++, p++) {
         s32 size = 1;
 
         Matrix_ProjectPoint(p, screen);
@@ -604,7 +604,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     model->kind = MODEL_SHADED_ADDITIVE;
     scratchTexture.logWidth = 5;
     scratchTexture.logHeight = 6;
-    scratchTexture.pixels = work->sheet;
+    scratchTexture.pixels = state->sheet;
     model->mesh = gBattleEffect_TallMesh;
     for (i = 0; i != MEGIDDO_RAYS; i++) {
       s32 start = MEGIDDO_RAYS_START + i * 2;
@@ -651,17 +651,17 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
     // Waits until a VBlank has passed since the canvas was last copied.
     do {
-      (void)work->vblanksSinceTransfer;
-    } while (work->vblanksSinceTransfer <= 1);
-    EFFECT_END_FRAME(work);
+      (void)state->vblanksSinceTransfer;
+    } while (state->vblanksSinceTransfer <= 1);
+    EFFECT_END_FRAME(state);
   }
 
-  Sprite_DestroyFar(work->sprites[0]);
+  Sprite_DestroyFar(state->sprites[0]);
   caster->verticalMotionStrength = casterVerticalMotion;
   BattleObject_PutFar();
   background->busy = 0;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           Ram_HeapSlots->battleWork->background,
+                           Ram_HeapSlots->battleState->background,
                            BACKGROUND_DARKEN_FRAMES);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

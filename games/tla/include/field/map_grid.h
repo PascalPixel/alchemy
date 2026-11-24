@@ -85,10 +85,10 @@ enum CellBehavior {
   /// A cell the Cyclone acts on (MapGrid_GetCycloneCellKind's kind 1).
   CELL_BEHAVIOR_CYCLONE = 233,
   /// A cell the Cyclone carries the leader to, its centre kept in
-  /// FieldWork.cycloneCarryX and Z (kind 2).
+  /// FieldState.cycloneCarryX and Z (kind 2).
   CELL_BEHAVIOR_CYCLONE_CARRY = 234,
   /// A cell the Cyclone lifts the leader onto, its centre kept in
-  /// FieldWork.cycloneLiftX and Z (kind 3).
+  /// FieldState.cycloneLiftX and Z (kind 3).
   CELL_BEHAVIOR_CYCLONE_LIFT = 235,
   CELL_BEHAVIOR_HOVER = 236, ///< Hover holds the leader up over it
   /// 242 to 247: examine triggers with lines of their own, the same on every
@@ -106,7 +106,7 @@ enum CellBehavior {
 /// MapCell.attributeB's bits.
 enum MapCellAttribute {
   /// Scoop digs here, or everywhere else where the scene's attributes turn it
-  /// round (FieldWork.sceneAttributeLow, MapGrid_CanScoop).
+  /// round (FieldState.sceneAttributeLow, MapGrid_CanScoop).
   MAP_CELL_SCOOP = 0x01,
   /// Pushing against the cell pushes the actor ahead (Field_RunPushCell).
   MAP_CELL_PUSH = 0x02,
@@ -171,10 +171,10 @@ struct MapLayer {
   u8 *terrainIds;
 };
 
-/// The map grid's work (heap slot HEAP_SLOT_MAP_GRID): the point the view
+/// The map grid's state (heap slot HEAP_SLOT_MAP_GRID): the point the view
 /// follows, the screen shake, the tile animations and blend script, and the
 /// view.
-struct MapWork {
+struct MapState {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels.
   FIXED *origin;
   /// Screen shake amplitudes and the factor that scales them each frame;
@@ -221,20 +221,20 @@ struct MapWork {
   s16 zoomStep;
 };
 
-/// The bytes of MapWork a field map uses: up to its third layer, the last the
+/// The bytes of MapState a field map uses: up to its third layer, the last the
 /// field scrolls.
-#define MAPGRID_FIELD_WORK_SIZE offsetof(struct MapWork, layers[3])
+#define MAPGRID_FIELD_STATE_SIZE offsetof(struct MapState, layers[3])
 
-/// MapWork.groundEffects' kind of wading, its bits 3..2; none where nothing
+/// MapState.groundEffects' kind of wading, its bits 3..2; none where nothing
 /// wades.
 #define GROUND_EFFECTS_WADING_MASK (3 << 2)
 #define GROUND_EFFECTS_WADING(effects) ((u32)((effects) << 28) >> 30)
 
-/// A view of the map work as the screen transitions read it: the display
+/// A view of the map state as the screen transitions read it: the display
 /// control bits, the window edges and interrupt lines of a transition, and
 /// the map's resources.
-struct MapViewWork {
-  u32 unused[5];              ///< map work fields no window view names
+struct MapViewState {
+  u32 unused[5];              ///< map state fields no window view names
   u16 dispcnt;                ///< display control bits ORed into DISPCNT
   u8 unusedAfterDispcnt[234]; ///< no code names it
   s8 animationActive;
@@ -320,18 +320,18 @@ void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 y, u32 width,
                                             u32 height, s32 value);
 
 STATIC_ASSERT(sizeof(struct MapLayer) == 56);
-STATIC_ASSERT(offsetof(struct MapWork, layers) == 264);
+STATIC_ASSERT(offsetof(struct MapState, layers) == 264);
 
 STATIC_ASSERT(sizeof(struct MapAnimation) == 12);
-STATIC_ASSERT(offsetof(struct MapWork, anim) == 24);
-STATIC_ASSERT(offsetof(struct MapWork, blend) == 216);
-STATIC_ASSERT(offsetof(struct MapWork, blendControl) == 263);
-STATIC_ASSERT(offsetof(struct MapWork, minX) == 236);
-STATIC_ASSERT(offsetof(struct MapWork, farPlane) == 2396);
-STATIC_ASSERT(offsetof(struct MapWork, zoomStep) == 2414);
-STATIC_ASSERT(offsetof(struct MapViewWork, dispcnt) == 20);
-STATIC_ASSERT(offsetof(struct MapViewWork, windowTop) == 260);
-STATIC_ASSERT(offsetof(struct MapViewWork, irqPhase) == 268);
+STATIC_ASSERT(offsetof(struct MapState, anim) == 24);
+STATIC_ASSERT(offsetof(struct MapState, blend) == 216);
+STATIC_ASSERT(offsetof(struct MapState, blendControl) == 263);
+STATIC_ASSERT(offsetof(struct MapState, minX) == 236);
+STATIC_ASSERT(offsetof(struct MapState, farPlane) == 2396);
+STATIC_ASSERT(offsetof(struct MapState, zoomStep) == 2414);
+STATIC_ASSERT(offsetof(struct MapViewState, dispcnt) == 20);
+STATIC_ASSERT(offsetof(struct MapViewState, windowTop) == 260);
+STATIC_ASSERT(offsetof(struct MapViewState, irqPhase) == 268);
 
 /// A cell animation step's source column that ends the steps.
 #define MAPGRID_ANIMATION_STEPS_END 65535

@@ -11,7 +11,7 @@
 /// Lets the player choose whose items to sell, repair or forge, by
 /// shop->action, until B or, at the forge, an item is taken.
 s32 Shop_ChooseMember(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  struct ShopState *shop = Ram_HeapSlots->menuState;
   s32 unitId = 0;
   s32 memberIndex = 0;
   struct Window *listWindow;
@@ -108,7 +108,7 @@ s32 Shop_ChooseMember(void) {
 /// B or the inventory is empty. Returns -1 when cancelled, 0 when the
 /// inventory ran out or, at the forge, an item was taken.
 s32 Shop_SelectSell(s32 unitId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Window *descriptionWindow;
   struct Window *priceWindow;
   struct Unit *unit;
@@ -120,7 +120,7 @@ s32 Shop_SelectSell(s32 unitId) {
   s32 result;
   s32 count;
 
-  shop = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuState;
   unit = Unit_Get(unitId);
   slot = 0;
   inventoryCount = 1;
@@ -285,10 +285,10 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 count;
   s32 selection;
   struct ItemDefinition *item;
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Unit *unit;
 
-  shop = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuState;
   unit = Unit_Get(unitId);
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
@@ -316,9 +316,9 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 /// and sells one. The shop refuses an item it pays nothing for and one its
 /// wearer cannot take off.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
 
-  shop = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuState;
   {
     struct Unit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;

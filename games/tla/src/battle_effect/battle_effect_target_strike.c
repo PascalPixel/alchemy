@@ -212,7 +212,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   BlitterPair draw;
   struct ModelTexture texture;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 k;
@@ -223,30 +223,31 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
-    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-    work->fadeStep = 0;
+    state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+    state->fadeStep = 0;
   }
 
   // The sprite sheets: motes, the tornado, the slashes or fangs, the style's
   // colours and the hit's pictures (smoke, flashes or the star).
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
-    Resource_LoadAndDecompress(RESOURCE_BEAM_IMAGE,
-                               work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
+    Resource_LoadAndDecompress(
+        RESOURCE_BEAM_IMAGE, state->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   else
     Resource_LoadAndDecompress(RESOURCE_TWELVE_MODE_IMAGE,
-                               work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
+                               state->sheet + TARGET_STRIKE_BITE_PICTURES, 0,
+                               0);
   switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {
   case STRIKE_COLOR_BLUE:
     resource = RESOURCE_BLUE_BEAM_SHEET;
@@ -275,13 +276,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                        SHEET_PALETTE_BYTES);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH)
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                               work->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
+                               state->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
   else if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
     Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET,
-                               work->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
+                               state->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
   else
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
-                               work->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
+                               state->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
 
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target
    * only. */
@@ -290,8 +291,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     // hit.
     target = BattleObject_GetFar(args->targets[k])->object;
     EffectPosition_ProjectBattler(args->targets[k], &ground);
-    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-      struct Particle *puff = &work->particles[i];
+    for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+      struct Particle *puff = &state->particles[i];
 
       SET_POSITION(puff, INTtoFIXED(ground.x / 2), toFIXED(80), 0);
       puff->velocityX = ((Random16() & 255) - 128) << 9;
@@ -344,11 +345,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     }
   }
 
-  work->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferMode = CANVAS_COPY_AND_FADE;
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
-    work->transferValue = CANVAS_FADE_HALF;
+    state->transferValue = CANVAS_FADE_HALF;
   else
-    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+    state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Aim at the middle of the first target.
@@ -386,7 +387,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_MAX);
-          BLITTER(canvas, work->sheet + gTargetStrike_Pictures[picture],
+          BLITTER(canvas, state->sheet + gTargetStrike_Pictures[picture],
                   targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
                       gTargetStrike_Widths[picture] + 8,
                   targetPosition.y - (gTargetStrike_Heights[picture] / 2),
@@ -395,7 +396,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         } else {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               BLITTER_MAX);
-          BLITTER(canvas, work->sheet + gTargetStrike_Pictures[picture],
+          BLITTER(canvas, state->sheet + gTargetStrike_Pictures[picture],
                   targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
                   targetPosition.y - (gTargetStrike_Heights[picture] / 2),
                   gTargetStrike_Widths[picture],
@@ -449,18 +450,18 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           }
 
           if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
             EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != TARGET_STRIKE_HIT_SPARKS; i++)
               TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
           } else if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) &
                      STRIKE_HEAVY) {
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
             EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
             for (i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++)
               TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
           } else {
-            work->shakeFrames = 4;
+            state->shakeFrames = 4;
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
             for (i = 0; i != TARGET_STRIKE_HIT_SPARKS; i++) {
@@ -479,26 +480,26 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (mode == TARGET_STRIKE_STYLE_ORANGE_FLASH_SPARK_SLASH) {
             for (i = 0; i != 4; i++) {
               struct Particle *puff =
-                  &work->particles[frame /
-                                       (TARGET_STRIKE_VALUE(
-                                            mode,
-                                            TARGET_STRIKE_PICTURE_FRAMES) *
-                                        6) *
-                                       16 +
-                                   i];
+                  &state->particles[frame /
+                                        (TARGET_STRIKE_VALUE(
+                                             mode,
+                                             TARGET_STRIKE_PICTURE_FRAMES) *
+                                         6) *
+                                        16 +
+                                    i];
 
               puff->variant = 0;
             }
           } else {
             for (i = 0; i != 8; i++) {
               struct Particle *puff =
-                  &work->particles[frame /
-                                       (TARGET_STRIKE_VALUE(
-                                            mode,
-                                            TARGET_STRIKE_PICTURE_FRAMES) *
-                                        6) *
-                                       16 +
-                                   i];
+                  &state->particles[frame /
+                                        (TARGET_STRIKE_VALUE(
+                                             mode,
+                                             TARGET_STRIKE_PICTURE_FRAMES) *
+                                         6) *
+                                        16 +
+                                    i];
 
               puff->variant = 0;
             }
@@ -525,7 +526,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       BLITTER(canvas,
-              work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
+              state->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
                   TARGET_STRIKE_BITE_PICTURES,
               targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH,
               TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
@@ -535,7 +536,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
       BLITTER(canvas,
-              work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
+              state->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
                   TARGET_STRIKE_BITE_PICTURES,
               targetPosition.x / 2, TARGET_STRIKE_BITE_Y,
               TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
@@ -547,7 +548,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 3) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         if ((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) ||
             (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY))
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
@@ -558,13 +559,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         else
           Sound_PlayFar(SE_IMPACT);
         if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
           for (i = 0; i != TARGET_STRIKE_HIT_SPARKS; i++)
             TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
         } else if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) &
                    STRIKE_HEAVY) {
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
           for (i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++)
             TARGET_STRIKE_SPARKS[i].variant = (Random16() & 15) + 15;
@@ -583,12 +584,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         }
         for (i = 0; i != 8; i++) {
           struct Particle *puff =
-              &work->particles[frame /
-                                   (TARGET_STRIKE_VALUE(
-                                        mode, TARGET_STRIKE_PICTURE_FRAMES) *
-                                    6) *
-                                   16 +
-                               i];
+              &state->particles[frame /
+                                    (TARGET_STRIKE_VALUE(
+                                         mode, TARGET_STRIKE_PICTURE_FRAMES) *
+                                     6) *
+                                    16 +
+                                i];
 
           puff->variant = 0;
         }
@@ -628,8 +629,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                             gTargetStrike_GlintDrawFlags[flip & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
-        ALT_BLITTER(canvas, work->sheet + gBattleEffect_GlintPictures[image], x,
-                    y, gBattleEffect_GlintPictureWidths[image],
+        ALT_BLITTER(canvas, state->sheet + gBattleEffect_GlintPictures[image],
+                    x, y, gBattleEffect_GlintPictureWidths[image],
                     gBattleEffect_GlintPictureHeights[image]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
@@ -648,14 +649,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
       // Wisps of smoke rise and spread for SMOKE_PUFF_FRAMES.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
-        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-          struct Particle *puff = &work->particles[i];
+        for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+          struct Particle *puff = &state->particles[i];
 
           if (puff->variant >= 0 && puff->variant < SMOKE_PUFF_FRAMES) {
             s32 picture = puff->variant / 4;
 
             draw[i & 1](canvas,
-                        work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
+                        state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                             TARGET_STRIKE_HIT_PICTURES,
                         FIXED_INTEGER_PART(puff->x) - SMOKE_PUFF_WIDTH / 2,
                         FIXED_INTEGER_PART(puff->y) - SMOKE_PUFF_HEIGHT / 2,
@@ -668,13 +669,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
       // Flashes rise twice as fast as smoke.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH) {
-        for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-          struct Particle *flash = &work->particles[i];
+        for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+          struct Particle *flash = &state->particles[i];
 
           if (flash->variant >= 0 &&
               flash->variant < TARGET_STRIKE_FLASH_FRAMES) {
             draw[0](canvas,
-                    work->sheet +
+                    state->sheet +
                         flash->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
                         TARGET_STRIKE_HIT_PICTURES,
                     FIXED_INTEGER_PART(flash->x) - FLASH_BURST_WIDTH / 2,
@@ -756,7 +757,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      texture.pixels = work->sheet + TARGET_STRIKE_HIT_PICTURES;
+      texture.pixels = state->sheet + TARGET_STRIKE_HIT_PICTURES;
       model->kind = MODEL_SHADED_MAX;
       model->mesh = gBattleEffect_SquareMesh;
       model->texture = &texture;
@@ -787,7 +788,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       BattleCamera_Shake(8, 8);
     else
       BattleCamera_Shake(2, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -812,14 +813,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle *blit;
   struct Particle *blade;
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
@@ -833,9 +834,11 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   blit = draw;
-  Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, work->sheet, 1, 1);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
-  work->transferValue = 0;
+  Resource_LoadAndDecompress(RESOURCE_CROSSED_DAGGERS_SHEET, state->sheet, 1,
+                             1);
+  state->transferMode =
+      CANVAS_COPY_AND_CLEAR; // each transfer clears the canvas
+  state->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // Centre BG2 on the first target.
@@ -844,10 +847,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
   // Swords start in columns 16 to 111 near the top of the canvas; the further
   // from the middle, the faster they drift towards it.
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     s32 column;
 
-    blade = &work->particles[i];
+    blade = &state->particles[i];
     column = Random16() % 96 + 16;
     blade->x = column;
     blade->y = toFIXED(BLADE_RAIN_WAIT_Y - i / 4);
@@ -891,7 +894,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       s32 speed;
       s32 picture;
 
-      blade = &work->particles[i];
+      blade = &state->particles[i];
       drift = blade->velocityX;
       speed = drift;
       if (drift < 0)
@@ -899,7 +902,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       picture = speed >> BLADE_RAIN_STEP_SHIFT;
       if (frame < i * 4 + 25) {
         blit[(u32)drift >> 31](
-            canvas, work->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
+            canvas, state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
             FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
             FIXEDtoINT(blade->y) - BLADE_RAIN_SWORD_HEIGHT / 2,
             BLADE_RAIN_SWORD_WIDTH, BLADE_RAIN_SWORD_HEIGHT);
@@ -909,7 +912,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         }
       } else {
         blit[(u32)drift >> 31](
-            canvas, work->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
+            canvas, state->sheet + picture * PICTURE_BYTES(BLADE_RAIN_SWORD),
             FIXEDtoINT(blade->x) - BLADE_RAIN_SWORD_WIDTH / 2,
             FIXEDtoINT(blade->y) - BLADE_RAIN_SWORD_HEIGHT / 2,
             BLADE_RAIN_SWORD_WIDTH, BLADE_RAIN_SWORD_HEIGHT);
@@ -921,12 +924,12 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     if (frame >= 23 && frame <= 87 && (frame & 3) == 0) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 2);
-      work->shakeFrames = 1;
+      state->shakeFrames = 1;
       if ((frame & 7) == 0)
         Sound_PlayFar(SE_IMPACT);
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -955,7 +958,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   struct ScreenPoint ground;
   struct ScreenPoint screenPosition;
   s32 point[3];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   u8 *sheet;
@@ -964,18 +967,18 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   void *palette;
   s32 i;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, ELEMENT_PILLAR_SHEET_BYTES);
-  camera = Ram_HeapSlots->cameraWork;
-  work->vblanksSinceTransfer = 1;
-  work->args = args;
+  camera = Ram_HeapSlots->cameraState;
+  state->vblanksSinceTransfer = 1;
+  state->args = args;
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-  work->fadeStep = 0;
+  state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+  state->fadeStep = 0;
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(ELEMENT_BLEND_LEVEL);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_ICE_TILE_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   switch (args->kind) {
   case ELEMENT_VENUS:
@@ -1001,7 +1004,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     PARTICLES[i].z = (Random16() & 0x1ff) + i * 2;
     PARTICLES[i].variant = -i;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   // The motes' size grows with the variant, from 1 to 4.
@@ -1031,12 +1035,12 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       flags = EFFECT_CLIP_BOUNDS;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-      draw[1](canvas, work->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 47,
+      draw[1](canvas, state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 47,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
               ELEMENT_PILLAR_HALF_HEIGHT);
       n = frame / 4 % 3; // a glow picture every 4 frames
       draw[1](canvas,
-              work->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_GLOW) +
+              state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_GLOW) +
                   ELEMENT_PILLAR_GLOW,
               40, ground.y - 36, ELEMENT_PILLAR_GLOW_WIDTH,
               ELEMENT_PILLAR_GLOW_HEIGHT);
@@ -1045,12 +1049,12 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
       n = frame / 2 % 4;
-      draw[1](canvas, work->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 64,
+      draw[1](canvas, state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 64,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
               ELEMENT_PILLAR_HALF_HEIGHT);
       n = frame / 4 % 3;
       draw[1](canvas,
-              work->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_GLOW) +
+              state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_GLOW) +
                   ELEMENT_PILLAR_GLOW,
               64, ground.y - 36, ELEMENT_PILLAR_GLOW_WIDTH,
               ELEMENT_PILLAR_GLOW_HEIGHT);
@@ -1080,7 +1084,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       }
       fleck->variant++;
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -1094,21 +1098,21 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 /// Unused: nothing refers to it. Shows the cloud swirl
 /// (BattleEffect_RunCloudSwirl), then the battle background fading in, until A.
 void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
-  struct BattleWork *battle;
-  struct BattleBackgroundWork *view;
+  struct BattleState *battle;
+  struct BattleBackgroundState *view;
   s32 frame;
   s32 i;
   s32 j;
   s32 k;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
+  state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   view = Ram_HeapSlots->battleBackground;
-  work->args = args;
-  work->vblanksSinceTransfer = 1;
+  state->args = args;
+  state->vblanksSinceTransfer = 1;
   BattleEffect_RunCloudSwirl(args);
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
@@ -1140,7 +1144,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = 0;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -1152,8 +1156,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
                   BATTLE_BACKGROUND_BYTES);
   Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES,
                   CANVAS_FILL_WORD(1));
-  work->savedBg1X = gBgScroll[1].x;
-  work->savedBg1Y = gBgScroll[1].y;
+  state->savedBg1X = gBgScroll[1].x;
+  state->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                            BATTLE_BACKGROUND_ID(battle), -1);
   Palette_BrightenSavedBattleBg(-RGB_LEVEL_MAX, -RGB_LEVEL_MAX, -RGB_LEVEL_MAX);
@@ -1170,7 +1174,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
       Palette_BrightenSavedBattleBg(frame / 2 - RGB_LEVEL_MAX,
                                     frame / 2 - RGB_LEVEL_MAX,
                                     frame / 2 - RGB_LEVEL_MAX);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   // Put the background and the display back.
@@ -1178,7 +1182,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_TintBattler(args->targets[0], TINT_KEEP, POSE_STANDING,
                            TINT_KEEP, 0);
-  gBgScroll[1].x = work->savedBg1X;
+  gBgScroll[1].x = state->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED,
                               BATTLE_BACKGROUND_ID(battle), 0);

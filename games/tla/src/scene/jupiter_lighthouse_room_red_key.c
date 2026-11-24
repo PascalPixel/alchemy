@@ -24,7 +24,7 @@
 #include "field/field_event.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "macros.h"
 #include "system/task.h"
@@ -315,7 +315,7 @@ static __inline__ void JupiterLighthouse_BringInBeam(s32 id) {
 /// lights cycle, and the four grey blocks over the spikes beside the ladder
 /// rise to hover.
 void JupiterLighthouse_ActivateTheLighthouse(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *a = Actor_GetById(ACTOR_FIRST_RISING_BLOCK);
   struct Actor *b = Actor_GetById(ACTOR_FIRST_RISING_BLOCK + 1);
   struct Actor *c = Actor_GetById(ACTOR_FIRST_RISING_BLOCK + 2);
@@ -329,7 +329,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   FieldEvent_Wait(30);
   leader->update = JupiterLighthouse_FlashColors;
   FieldEvent_Wait(30);
@@ -388,7 +388,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   System_Wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, ANIM_STEP_NORMAL);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId),
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId),
                        SPRITE_FLAG_SHADOW);
   Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_NarrowBeamScript);
   Actor_SetScript(ACTOR_UPPER_BEAM, gJupiterLighthouse_NarrowBeamScript);
@@ -575,11 +575,11 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     // "And you're sure that's all you're going to do?"
     FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
     FieldEvent_Wait(10);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Hmph. They consider you their enemy, and yet you pity them."
     FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   }
@@ -603,7 +603,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   JupiterLighthouse_HealTarget(ACTOR_ALEX, ACTOR_FELIX);
   Party_RestoreHpPp(1);
   // "Everyone recovered fully."
-  Message_ShowCentered((s16)gFieldWork->message++, 5);
+  Message_ShowCentered((s16)gFieldState->message++, 5);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
@@ -623,7 +623,7 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 angle;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL))
     Event_ClearFlag(FLAG_ALEX_WAITING);
@@ -658,7 +658,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
     MapGrid_SetCellBehavior(toFIXED(208), toFIXED(672), MAPGRID_LAYER_OVERHEAD,
@@ -727,7 +727,7 @@ struct Spark {
 
 /// The spark ring in its heap slot: the orbs' pictures, the sparks and their
 /// sprites, the ring's two ends and its VRAM entry.
-struct SparkWork {
+struct SparkRingState {
   u8 tiles[ORB_PICTURES * TILE_SIZE_8BPP];
   struct Spark sparks[ACTIVATION_SPARKS];
   struct EffectSprite sprites[ACTIVATION_SPARKS];
@@ -741,9 +741,9 @@ struct SparkWork {
 /// A frame task: moves each live spark along the way between the ring's ends,
 /// swinging out and back on a half sine, and draws it.
 void JupiterLighthouse_UpdateSparkRing(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuWork;
-  struct Spark *spark = work->sparks;
-  struct EffectSprite *sprite = work->sprites;
+  struct SparkRingState *state = Ram_HeapSlots->menuState;
+  struct Spark *spark = state->sparks;
+  struct EffectSprite *sprite = state->sprites;
   s32 position[3];
   s32 duration;
   s32 i;
@@ -754,15 +754,15 @@ void JupiterLighthouse_UpdateSparkRing(void) {
       continue;
     {
       FIXED sine = Math_Sin((s32)((spark->age * (TRIG_TURN / 2)) / duration));
-      position[0] = work->from[0] +
-                    (work->to[0] - work->from[0]) * spark->age / duration +
+      position[0] = state->from[0] +
+                    (state->to[0] - state->from[0]) * spark->age / duration +
                     sine * spark->dx;
       sine = Math_Sin((s32)((spark->age * (TRIG_TURN / 2)) / duration));
-      position[1] = work->from[1] +
-                    (work->to[1] - work->from[1]) * spark->age / duration +
+      position[1] = state->from[1] +
+                    (state->to[1] - state->from[1]) * spark->age / duration +
                     sine * spark->dy;
-      position[2] =
-          work->from[2] + (work->to[2] - work->from[2]) * spark->age / duration;
+      position[2] = state->from[2] +
+                    (state->to[2] - state->from[2]) * spark->age / duration;
       Camera_WorldToScreen(position);
       sprite->x = position[0];
       sprite->y = position[2];
@@ -775,7 +775,7 @@ void JupiterLighthouse_UpdateSparkRing(void) {
 /// Sends count new sparks along the ring, each swinging up to 64 pixels out to
 /// a random side (never straight down) and taking 16 to 31 frames to arrive.
 void JupiterLighthouse_AddSparks(s32 count) {
-  struct SparkWork *work = Ram_HeapSlots->menuWork;
+  struct SparkRingState *state = Ram_HeapSlots->menuState;
   struct Spark *spark;
   s32 angle;
   s32 i;
@@ -785,7 +785,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
   if (count > 0) {
     i = count;
     do {
-      spark = &work->sparks[work->next];
+      spark = &state->sparks[state->next];
       angle = ((Random16() * 3) >> 2) + DEGtoANG(135);
       radius = toFIXED(64);
       duration = ((Random16() << 4) >> 16) + 16;
@@ -793,8 +793,8 @@ void JupiterLighthouse_AddSparks(s32 count) {
       spark->dy = FIXEDtoINT(-Iwram_MulFX(Math_Sin(angle), radius));
       spark->duration = duration;
       spark->age = 0;
-      work->next++;
-      work->next %= ACTIVATION_SPARKS;
+      state->next++;
+      state->next %= ACTIVATION_SPARKS;
     } while (--i != 0);
   }
 }
@@ -803,27 +803,27 @@ void JupiterLighthouse_AddSparks(s32 count) {
 /// pictures, readies the sparks' sprites at the leader's priority and just in
 /// front of him, and starts the update task.
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
-  struct SparkWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct SparkWork));
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct SparkRingState *state =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct SparkRingState));
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct EffectSprite *sprite;
   struct Spark *spark;
   s32 entry;
   s32 tile;
   s32 i;
 
-  work->from[0] = from[0];
-  work->from[1] = from[1];
-  work->from[2] = from[2];
-  work->to[0] = to[0];
-  work->to[1] = to[1];
-  work->to[2] = to[2];
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
+  state->from[0] = from[0];
+  state->from[1] = from[1];
+  state->from[2] = from[2];
+  state->to[0] = to[0];
+  state->to[1] = to[1];
+  state->to[2] = to[2];
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), state);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, sizeof(work->tiles), work);
-  work->tile = tile;
-  work->vramEntry = entry;
-  for (i = 0, spark = work->sparks, sprite = work->sprites;
+  tile = Vram_Load(entry, sizeof(state->tiles), state);
+  state->tile = tile;
+  state->vramEntry = entry;
+  for (i = 0, spark = state->sparks, sprite = state->sprites;
        i < ACTIVATION_SPARKS; i++, sprite++, spark++) {
     JupiterLighthouse_InitSparkSprite(sprite, 4, 4, 0,
                                       tile + (i & (ORB_PICTURES - 1)) * 2);
@@ -838,17 +838,17 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   {
     s32 firstSlot = 0;
 
-    work->next = firstSlot;
+    state->next = firstSlot;
   }
   Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_FRAME);
 }
 
-/// Stops the spark ring and frees its pictures and work.
+/// Stops the spark ring and frees its pictures and state.
 void JupiterLighthouse_EndSparkRing(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuWork;
+  struct SparkRingState *state = Ram_HeapSlots->menuState;
 
   FieldTask_Remove(JupiterLighthouse_UpdateSparkRing);
-  VramCache_FreeEntry(work->vramEntry);
+  VramCache_FreeEntry(state->vramEntry);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 

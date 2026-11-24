@@ -158,7 +158,7 @@ void BattleEffect_AgeAndCueAtEighty(struct Actor *actor);
 /// leaves the leaves scatter, and there or on a seedling the vine swings
 /// (HangingVine_Swing).
 void FieldPsynergy_Whirlwind(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct Actor *caster = scene->mainActor;
   struct Actor *target = scene->child;
   struct Sprite *sprite = target->sprite;
@@ -301,12 +301,12 @@ void BattleEffect_AgeAndCueAtEighty(struct Actor *actor) {
 /// round 8 pixels above the Psynergy's position on screen, and is freed on
 /// arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Vector3 pos;
   s16 angle;
   s32 state;
 
-  effectWork = Ram_HeapSlots->fieldEffectWork;
+  effectState = Ram_HeapSlots->fieldEffectState;
 top:
   state = effect->state;
   if (state == OUT_AND_BACK_AIM_OUT) {
@@ -329,9 +329,9 @@ top:
     goto top;
   }
   if (state == OUT_AND_BACK_AIM_BACK) {
-    pos.x = effectWork->x;
-    pos.y = effectWork->y + toFIXED(8);
-    pos.z = effectWork->z;
+    pos.x = effectState->x;
+    pos.y = effectState->y + toFIXED(8);
+    pos.z = effectState->z;
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;
@@ -346,10 +346,10 @@ top:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// Pauses the target (effectWork->child) and runs FieldPsynergy_Halt.
+/// Pauses the target (effectState->child) and runs FieldPsynergy_Halt.
 void FieldPsynergy_HaltOnTarget(s32 unused) {
   struct Actor *target =
-      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->child;
 
   target->paused = 1;
   FieldPsynergy_Halt();
@@ -364,8 +364,8 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
 /// Psynergy's position over CAST_THROW_STEPS frames, ticks three low tones
 /// and a high one, and scatters it into HALT_PARTICLES particles.
 void FieldPsynergy_Halt(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *caster = effectWork->mainActor;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
+  struct Actor *caster = effectState->mainActor;
   struct Actor *orb;
   struct FieldParticle *effect;
   struct Vector3 pos;
@@ -374,7 +374,7 @@ void FieldPsynergy_Halt(void) {
   s32 step;
   s32 i;
 
-  effectWork->y = caster->y.fixed;
+  effectState->y = caster->y.fixed;
   orb = Actor_Spawn(SPRITE_STOPWATCH, 0, 0, 0);
   step = 0;
   Actor_SelectAnimationFar(orb, 0);
@@ -386,9 +386,9 @@ void FieldPsynergy_Halt(void) {
   from.x = caster->x.fixed;
   from.y = caster->y.fixed + toFIXED(16);
   from.z = caster->z.fixed;
-  to.x = effectWork->x;
-  to.y = effectWork->y + toFIXED(8);
-  to.z = effectWork->z;
+  to.x = effectState->x;
+  to.y = effectState->y + toFIXED(8);
+  to.z = effectState->z;
   // Grown to full size as it arrives.
   for (;;) {
     s32 steps = CAST_THROW_STEPS + 1;
@@ -421,7 +421,7 @@ void FieldPsynergy_Halt(void) {
 
   // Particles 4 pixels round it fly out, then come back to the Psynergy's
   // position.
-  effect = &effectWork->particles[0];
+  effect = &effectState->particles[0];
   for (i = 0; i < HALT_PARTICLES; i++) {
     pos.x = orb->x.fixed;
     pos.y = orb->y.fixed + toFIXED(8);
@@ -453,7 +453,7 @@ void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
 }
 
 /// Holds an actor still under Halt, keeping its per-frame update and its first
-/// animation's colour mode in gMainRoutineWork for
+/// animation's colour mode in gMainRoutineState for
 /// FieldPsynergy_ResumeHaltedActor.
 void FieldPsynergy_HaltActor(s32 actorId) {
   struct Actor *actor;
@@ -461,12 +461,12 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gMainRoutineWork.pausedUpdate = actor->update;
-    gMainRoutineWork.pausedPose = 0;
+    gMainRoutineState.pausedUpdate = actor->update;
+    gMainRoutineState.pausedPose = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = ((struct Sprite *)actor->sprite)->entries[0];
       if (entry != NULL) {
-        gMainRoutineWork.pausedPose = entry->colorMode;
+        gMainRoutineState.pausedPose = entry->colorMode;
       }
     }
     actor->update = (ObjectUpdate)FieldPsynergy_UpdateHaltedActor;
@@ -482,9 +482,9 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
 
   if (actor != NULL) {
     if (actor->update == (ObjectUpdate)FieldPsynergy_UpdateHaltedActor) {
-      actor->update = gMainRoutineWork.pausedUpdate;
-      gMainRoutineWork.pausedUpdate = NULL;
-      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineWork.pausedPose);
+      actor->update = gMainRoutineState.pausedUpdate;
+      gMainRoutineState.pausedUpdate = NULL;
+      Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineState.pausedPose);
     }
     actor->paused = 0;
     Actor_SetAnimationSpeedFar(actor, ANIM_STEP_NORMAL);
@@ -518,7 +518,7 @@ static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
 /// to the goal in 10 steps, growing from a quarter to full size, presses down
 /// 20 pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back.
 void FieldPsynergy_Catch(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct Actor *mainActor = scene->mainActor;
   struct Actor *secondary = scene->child;
   struct Actor *actor;
@@ -602,7 +602,7 @@ void FieldPsynergy_Catch(void) {
 
 void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
-/// The stages of Lash's hand on a rope (ScatterWork.phase).
+/// The stages of Lash's hand on a rope (ScatterState.phase).
 enum LashPhase {
   LASH_HAND_SHAKES = 0, ///< trembling over the rope's end
   LASH_HAND_STILL = 1,
@@ -614,21 +614,22 @@ enum LashPhase {
 /// Task of the Lash on a rope: the hand trembles, takes the rope's end and
 /// rises away, scattering sparkles all the while.
 void FieldPsynergy_UpdateLash(void) {
-  struct ScatterWork *work = (struct ScatterWork *)Ram_HeapSlots->battleEffect;
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = work->actor;
+  struct ScatterState *state =
+      (struct ScatterState *)Ram_HeapSlots->battleEffect;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct Actor *actor = state->actor;
   struct Vector3 position;
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *particle;
   s32 i;
 
-  work->flash = 0;
-  for (i = 0; i < work->spawnCount; i++) {
+  state->flash = 0;
+  for (i = 0; i < state->spawnCount; i++) {
     FIXED distance;
     s32 speed;
 
-    particle = &work->particles[work->next];
+    particle = &state->particles[state->next];
     SET_POSITION(particle, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     distance = Random16() * 12 + toFIXED(4);
     Vector_AddPolarOffset(distance, Random16(), particle);
@@ -638,20 +639,20 @@ void FieldPsynergy_UpdateLash(void) {
     speed = Random16() + toFIXED(3) / 2;
     Vector_AddPolarOffset(speed, Random16(), &particle->velocityX);
     particle->timer = 0;
-    work->next++;
-    work->next &= SCATTER_PARTICLE_COUNT - 1;
+    state->next++;
+    state->next &= SCATTER_PARTICLE_COUNT - 1;
   }
 
-  for (i = 0, particle = work->particles; i < SCATTER_PARTICLE_COUNT;
+  for (i = 0, particle = state->particles; i < SCATTER_PARTICLE_COUNT;
        i++, particle++) {
     s32 timer = particle->timer;
 
     if (timer >= 0) {
-      sprite = &work->sprites[i];
+      sprite = &state->sprites[i];
       if (i & 1)
-        sprite->oam.index = work->tileA + (timer & 3) * 2;
+        sprite->oam.index = state->tileA + (timer & 3) * 2;
       else
-        sprite->oam.index = work->tileB + (timer & 3) * 2;
+        sprite->oam.index = state->tileB + (timer & 3) * 2;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
       Field_AdvanceWithGravity3D(particle, 63, -(toFIXED(5) / 64));
       if (++particle->timer == 32)
@@ -659,7 +660,7 @@ void FieldPsynergy_UpdateLash(void) {
     }
   }
 
-  switch (work->phase) {
+  switch (state->phase) {
   case LASH_HAND_SHAKES: {
     s32 a = Random16();
     s32 b = Random16();
@@ -672,63 +673,63 @@ void FieldPsynergy_UpdateLash(void) {
     position.z = scene->z;
     Actor_SetPositionAndResetMotionFar(actor, position.x, position.y,
                                        position.z);
-    if (work->timer == 20) {
-      work->phase++;
-      work->timer = -1;
+    if (state->timer == 20) {
+      state->phase++;
+      state->timer = -1;
     }
     break;
   }
   case LASH_HAND_STILL:
     Actor_SetPositionAndResetMotionFar(actor, scene->x, scene->y, scene->z);
-    if (work->timer == 6) {
-      work->phase++;
-      work->timer = -1;
+    if (state->timer == 6) {
+      state->phase++;
+      state->timer = -1;
     }
     break;
   case LASH_HAND_PULLS:
-    if (work->timer == 0)
-      work->flash = 1;
+    if (state->timer == 0)
+      state->flash = 1;
     Rope_GetEndNodePosition(field->targetX, &position);
     SET_ACTOR_POSITION(actor, position.x, position.y - toFIXED(4), position.z);
-    if (work->hit != 0) {
-      work->phase++;
-      work->timer = -1;
+    if (state->hit != 0) {
+      state->phase++;
+      state->timer = -1;
     }
-    if (work->timer == 90) {
-      work->phase++;
-      work->timer = -1;
+    if (state->timer == 90) {
+      state->phase++;
+      state->timer = -1;
     }
     break;
   case LASH_HAND_RISES:
     Actor_SelectAnimationFar(actor, 3);
-    work->spawnCount = 3;
-    actor->y.fixed += work->timer * toFIXED(2);
-    if (work->timer == 10) {
-      work->phase++;
-      work->timer = -1;
+    state->spawnCount = 3;
+    actor->y.fixed += state->timer * toFIXED(2);
+    if (state->timer == 10) {
+      state->phase++;
+      state->timer = -1;
     }
     break;
   case LASH_HAND_GONE:
     actor->scaleX = 0;
-    work->spawnCount = 0;
-    if (work->timer == 30)
-      work->phase = FIELD_PSYNERGY_FINISHED;
+    state->spawnCount = 0;
+    if (state->timer == 30)
+      state->phase = FIELD_PSYNERGY_FINISHED;
     break;
   }
-  work->timer++;
+  state->timer++;
 }
 
 /// Lash cast on a target: finds the rope's two ends (Rope_FindById); with none,
-/// Lash runs as if cast on nothing (enabled), else the field work keeps the
+/// Lash runs as if cast on nothing (enabled), else the field state keeps the
 /// rope and its ends. Then runs FieldPsynergy_Lash.
 void FieldPsynergy_LashOnTarget(s32 value) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
   s32 second;
   s32 first;
 
   if (Rope_FindById(value, &first, &second)) {
-    work->enabled = 1;
+    state->enabled = 1;
   } else {
     field->targetY = value;
     field->targetZ = first;
@@ -746,10 +747,10 @@ void FieldPsynergy_LashOnTarget(s32 value) {
 /// bursts into sparkles; cast on a rope's end it whips out and ties the rope
 /// (Rope_Lash) at the event's target.
 void FieldPsynergy_Lash(void) {
-  struct ScatterWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ScatterWork));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct ScatterState *state =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ScatterState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *caster = scene->mainActor;
   struct Actor *actor;
   struct EffectSprite *sprite;
@@ -772,17 +773,17 @@ void FieldPsynergy_Lash(void) {
       actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SelectAnimationFar(actor, 0);
     Sound_PlayFar(SE_ITEM_BREAK);
-    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SPARKLE_FADE), state);
     slotA = VramCache_FindFreeEntry();
-    tileA = VramCache_Load(slotA, 256, work);
-    work->tileA = tileA;
+    tileA = VramCache_Load(slotA, 256, state);
+    state->tileA = tileA;
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE),
-                        work);
+                        state);
     slotB = VramCache_FindFreeEntry();
-    work->tileB = VramCache_Load(slotB, 256, work);
+    state->tileB = VramCache_Load(slotB, 256, state);
 
-    particle = work->particles;
-    sprite = work->sprites;
+    particle = state->particles;
+    sprite = state->sprites;
     for (i = 0; i < SCATTER_PARTICLE_COUNT; i++) {
       EffectSprite_Init(sprite, 4, 4, 0, tileA);
       sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
@@ -812,18 +813,18 @@ void FieldPsynergy_Lash(void) {
       wait(1);
     } else {
       wait(6);
-      work->actor = actor;
-      work->phase = LASH_HAND_SHAKES;
-      work->timer = 0;
-      work->next = 0;
-      work->spawnCount = 1;
-      work->hit = 0;
+      state->actor = actor;
+      state->phase = LASH_HAND_SHAKES;
+      state->timer = 0;
+      state->next = 0;
+      state->spawnCount = 1;
+      state->hit = 0;
       Task_Add(FieldPsynergy_UpdateLash, TASK_PASS_FRAME);
-      while (work->phase != FIELD_PSYNERGY_FINISHED) {
-        if (work->flash == 1) {
+      while (state->phase != FIELD_PSYNERGY_FINISHED) {
+        if (state->flash == 1) {
           Sound_PlayFar(SE_LASH);
           Rope_Lash(field->targetX, field->targetY, field->targetZ);
-          work->hit = 1;
+          state->hit = 1;
           Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
         }
         wait(1);
@@ -874,7 +875,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
   s32 state;
   u32 spread;
 
-  main = ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
+  main =
+      ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->mainActor;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -915,8 +917,8 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
 /// player, raises their arms, spins faster and faster and shrinks away while
 /// sparks fly up the screen, one a frame.
 void FieldPsynergy_Retreat(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *actor = effectWork->mainActor;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
+  struct Actor *actor = effectState->mainActor;
   struct Vector3 pos;
   struct FieldParticle *effect;
   struct FieldParticle *effects;
@@ -926,7 +928,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_FaceDirectionById(effectWork->firstActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(effectState->firstActorId, FACING_SOUTH, 0);
   wait(30);
   actor->update = (ObjectUpdate)Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -949,7 +951,7 @@ void FieldPsynergy_Retreat(void) {
   SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Camera_WorldToScreen(&pos);
   i = 0;
-  effect = effectWork->particles;
+  effect = effectState->particles;
   effects = effect;
   do {
     FIXED scale;
@@ -995,7 +997,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
-  if (gMainRoutineWork.mapId == SCENE_CLEAR)
+  if (gMainRoutineState.mapId == SCENE_CLEAR)
     limit = particle->groundHeight + toFIXED(4);
 
   y = particle->y.fixed;
@@ -1024,7 +1026,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
-  if (gMainRoutineWork.mapId == SCENE_CLEAR)
+  if (gMainRoutineState.mapId == SCENE_CLEAR)
     limit = particle->groundHeight + toFIXED(4);
 
   y = particle->y.fixed;
@@ -1044,10 +1046,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 }
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
-/// at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
+/// at 0.4 of full size, drawn with the tiles in effectState->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *leader = effectWork->mainActor;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
+  struct Actor *leader = effectState->mainActor;
   struct Actor *actors[2];
   struct Actor *actor;
   struct DescendingArcSprite *sprite;
@@ -1071,7 +1073,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
-    sprite->slot = effectWork->arcTileSlot;
+    sprite->slot = effectState->arcTileSlot;
     sprite->retainCacheEntry = 1;
     sprite->attr.half.tile = gVramCacheEntries[sprite->slot].offset >> 5;
     sprite->fullColor = 0;
@@ -1099,7 +1101,7 @@ void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
   phase = caster->arcPhase;
   elapsedFrames = caster->arcFrames++;
 
-  if (gMainRoutineWork.mapId == SCENE_CLEAR) {
+  if (gMainRoutineState.mapId == SCENE_CLEAR) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -1113,13 +1115,13 @@ void FieldEffect_UpdateAvoidCaster(struct Actor *caster) {
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
-/// Clears gMainRoutineWork.avoidDistance. Reached through
+/// Clears gMainRoutineState.avoidDistance. Reached through
 /// FieldPsynergy_RunExtraHandler when the Psynergy request the leader's walking
 /// raises as Avoid runs out (field_sequence_walking.c) is handled.
 void FieldPsynergy_ShowAvoidWoreOff(void) {
-  gMainRoutineWork.avoidDistance = 0;
+  gMainRoutineState.avoidDistance = 0;
   WorldMap_Freeze();
-  if (gMainRoutineWork.avoidByItem == 0) {
+  if (gMainRoutineState.avoidByItem == 0) {
     MessageArgument_PushFar(ABILITY_AVOID, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgAbilityWoreOff, FIELD_MESSAGE_ZOOM);
   } else {
@@ -1138,7 +1140,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
 /// Avoid: the caster spins and flashes, then blinks, and encounters are kept
 /// away until Avoid wears off.
 void FieldPsynergy_Avoid(void) {
-  struct FieldEffectWork *effectWork;
+  struct FieldEffectState *effectState;
   struct Actor *actor;
   struct Sprite *group;
   struct SpriteAnimation *entry;
@@ -1149,8 +1151,8 @@ void FieldPsynergy_Avoid(void) {
   s32 count;
   s32 phase;
 
-  effectWork = Ram_HeapSlots->fieldEffectWork;
-  actor = effectWork->mainActor;
+  effectState = Ram_HeapSlots->fieldEffectState;
+  actor = effectState->mainActor;
   group = actor->sprite;
   entry = group->entries[0];
   angle = actor->facing;
@@ -1158,11 +1160,11 @@ void FieldPsynergy_Avoid(void) {
   slot = VramCache_FindFreeEntry();
   // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end, and
   // monsters stay away for the next 2,400 pixels the leader walks.
-  effectWork->arcTileSlot = slot;
+  effectState->arcTileSlot = slot;
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 256, tiles);
-  gMainRoutineWork.avoidDistance = toFIXED(2400);
-  gMainRoutineWork.avoidByItem = GameFlag_Get(FLAG_ITEM_USE);
+  gMainRoutineState.avoidDistance = toFIXED(2400);
+  gMainRoutineState.avoidByItem = GameFlag_Get(FLAG_ITEM_USE);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   actor->update = (ObjectUpdate)FieldEffect_UpdateAvoidCaster;
   actor->arcPhase = 0;
@@ -1208,7 +1210,7 @@ void FieldPsynergy_Avoid(void) {
   }
   wait(1);
 
-  VramCache_FreeEntry(effectWork->arcTileSlot);
+  VramCache_FreeEntry(effectState->arcTileSlot);
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }
 
@@ -1217,10 +1219,10 @@ void FieldPsynergy_Avoid(void) {
 /// Waits, at most ARC_GROUPS_WAIT_FRAMES, until both pairs of swelling arcs
 /// have run their 32 frames.
 void BattleEffect_WaitForArcGroups(void) {
-  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
+  struct ArcEffectState *state = Ram_HeapSlots->arcEffect;
   s32 i = 0;
 
-  while (work->age[0] < ARC_GROUP_FRAMES || work->age[1] < ARC_GROUP_FRAMES) {
+  while (state->age[0] < ARC_GROUP_FRAMES || state->age[1] < ARC_GROUP_FRAMES) {
     wait(1);
     i++;
     if (i >= ARC_GROUPS_WAIT_FRAMES)
@@ -1268,22 +1270,22 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode) {
 /// target's priority, then restarts that group's age, records the target and
 /// switches to the other group.
 void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
-  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
-  s32 tiles = gVramCacheEntries[work->resource].offset >> 5;
-  s32 group = work->group;
+  struct ArcEffectState *state = Ram_HeapSlots->arcEffect;
+  s32 tiles = gVramCacheEntries[state->resource].offset >> 5;
+  s32 group = state->group;
   struct EffectSprite *sprite;
   s32 i;
 
   for (i = 0; i < 2; i++) {
-    sprite = &work->sprites[group][i];
+    sprite = &state->sprites[group][i];
     EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tiles);
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 0;
     sprite->oam.priority = BattleEffect_GetObjectPriority(target);
   }
-  work->age[group] = 0;
-  work->target = target;
-  work->group ^= 1;
+  state->age[group] = 0;
+  state->target = target;
+  state->group ^= 1;
 }
 
 /// Task: draws the two pairs of swelling arcs on their actor: each pair swells
@@ -1291,43 +1293,43 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /// frame, the second arc of a pair upside down, one in front of the actor and
 /// one behind.
 void BattleEffect_UpdateArcEffect(void) {
-  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
-  struct Actor *target = work->target;
+  struct ArcEffectState *state = Ram_HeapSlots->arcEffect;
+  struct Actor *target = state->target;
   s32 group;
   FIXED position[3];
   s32 i;
 
   for (group = 0; group < 2; group++) {
-    FIXED scale = Trig_Sin(work->age[group] * (TRIG_TURN / 64));
+    FIXED scale = Trig_Sin(state->age[group] * (TRIG_TURN / 64));
 
-    if (work->age[group] < 0)
+    if (state->age[group] < 0)
       continue;
-    if (work->age[group] < ARC_GROUP_FRAMES) {
+    if (state->age[group] < ARC_GROUP_FRAMES) {
       struct EffectSprite *sprite;
       FIXED x, y;
 
       position[0] = target->x.fixed;
-      position[1] = target->y.fixed + toFIXED(work->age[group]);
+      position[1] = target->y.fixed + toFIXED(state->age[group]);
       position[2] = target->z.fixed;
       Camera_WorldToScreen(position);
       x = position[0];
       y = position[2];
       for (i = 0; i < 2; i++) {
-        sprite = &work->sprites[group][i];
+        sprite = &state->sprites[group][i];
         sprite->x = x;
         sprite->y = y;
         sprite->scaleX = scale;
         sprite->scaleY = scale;
         if (i == 0) {
-          sprite->depth = BattleEffect_GetObjectDepth(work->target) - 1;
+          sprite->depth = BattleEffect_GetObjectDepth(state->target) - 1;
         } else {
-          sprite->depth = BattleEffect_GetObjectDepth(work->target) + 1;
+          sprite->depth = BattleEffect_GetObjectDepth(state->target) + 1;
           sprite->y -= toFIXED(1);
           sprite->scaleY = -sprite->scaleY;
         }
         EffectSprite_Draw(sprite);
       }
-      work->age[group]++;
+      state->age[group]++;
     }
   }
 }
@@ -1335,36 +1337,36 @@ void BattleEffect_UpdateArcEffect(void) {
 /// Starts the swelling arcs over a caster: loads their tiles and starts
 /// BattleEffect_UpdateArcEffect with no pair showing.
 void BattleEffect_StartArcEffect(void) {
-  struct ArcEffectWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_ARC_EFFECT, sizeof(*work));
+  struct ArcEffectState *state =
+      HeapSlot_Alloc(HEAP_SLOT_ARC_EFFECT, sizeof(*state));
 
-  work->resource = VramCache_FindFreeEntry();
-  VramCache_Load(work->resource, 256, gFieldEffect_SparkTiles);
-  work->group = 0;
-  work->age[0] = ARC_GROUP_UNSPAWNED;
-  work->age[1] = ARC_GROUP_UNSPAWNED;
-  work->target = 0;
+  state->resource = VramCache_FindFreeEntry();
+  VramCache_Load(state->resource, 256, gFieldEffect_SparkTiles);
+  state->group = 0;
+  state->age[0] = ARC_GROUP_UNSPAWNED;
+  state->age[1] = ARC_GROUP_UNSPAWNED;
+  state->target = 0;
   Task_Add((s32)BattleEffect_UpdateArcEffect, TASK_PASS_FRAME);
 }
 
-/// Ends the swelling arcs: frees their tiles and their work, and stops their
+/// Ends the swelling arcs: frees their tiles and their state, and stops their
 /// task.
 void BattleEffect_EndArcEffect(void) {
-  struct ArcEffectWork *work = Ram_HeapSlots->arcEffect;
+  struct ArcEffectState *state = Ram_HeapSlots->arcEffect;
 
-  VramCache_FreeEntry(work->resource);
+  VramCache_FreeEntry(state->resource);
   Task_Remove((u32)BattleEffect_UpdateArcEffect);
   HeapSlot_Release(HEAP_SLOT_ARC_EFFECT);
 }
 
-/// Moves the work on to its next phase, its timer restarted.
-#define BOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
+/// Moves the state on to its next phase, its timer restarted.
+#define BOW_NEXT_PHASE(state) ((state)->phase++, (state)->timer = -1)
 /// Of the BOW_SPARK_COUNT sparks, those the bow throws off.
 #define BOW_SPARKS_THROWN 10
 /// While the thrown sparks repeat, each starts again after this many frames.
 #define BOW_SPARK_FRAMES 10
 
-/// The stages of the Arrow (BowWork.phase).
+/// The stages of the Arrow (BowState.phase).
 enum ArrowPhase {
   ARROW_BOW_GROWS = 0, ///< the bow grows and turns to face ahead
   ARROW_BOW_DRAWN = 1, ///< the arrow is drawn back and loosed
@@ -1378,10 +1380,10 @@ enum ArrowPhase {
 /// here for the bow it draws and the arrow it looses): the bow and the flaming
 /// arrow.
 void FieldPsynergy_UpdateArrow(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleEffect;
-  struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct BowState *state = (struct BowState *)Ram_HeapSlots->battleEffect;
+  struct CanvasSpriteState *canvas = Ram_HeapSlots->canvasSprite;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *actor;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
@@ -1392,78 +1394,78 @@ void FieldPsynergy_UpdateArrow(void) {
   s32 dz;
 
 again:
-  switch (work->phase) {
+  switch (state->phase) {
   case ARROW_BOW_GROWS:
-    if (work->timer == 0) {
-      work->sparking = 0;
-      work->sparksRepeat = 1;
-      work->arrowMoving = 0;
-      work->bowGrowing = 1;
-      work->frame = BOW_FRAME_IDLE;
-    } else if (work->bowGrowing == 0) {
-      work->frame = 0;
-      BOW_NEXT_PHASE(work);
+    if (state->timer == 0) {
+      state->sparking = 0;
+      state->sparksRepeat = 1;
+      state->arrowMoving = 0;
+      state->bowGrowing = 1;
+      state->frame = BOW_FRAME_IDLE;
+    } else if (state->bowGrowing == 0) {
+      state->frame = 0;
+      BOW_NEXT_PHASE(state);
     }
     break;
   case ARROW_BOW_DRAWN:
-    if (work->timer == 0) {
-      sprite = &work->arrow;
+    if (state->timer == 0) {
+      sprite = &state->arrow;
       sprite->scaleX = sprite->scaleY = FIXED_ONE;
-      motion = &work->arrowMotion;
+      motion = &state->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
       Vector_AddPolarOffset(toFIXED(3) / 20, scene->angle8 + DEGtoANG(180),
                             pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
-      work->arrowMoving = 1;
+      state->arrowMoving = 1;
     }
-    if (work->timer == 20)
-      work->sparking = 1;
-    if (work->timer == 56) {
-      motion = &work->arrowMotion;
+    if (state->timer == 20)
+      state->sparking = 1;
+    if (state->timer == 56) {
+      motion = &state->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
       Vector_AddPolarOffset(toFIXED(5), scene->angle8, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
-      BOW_NEXT_PHASE(work);
+      BOW_NEXT_PHASE(state);
     }
     break;
   case ARROW_FLIES:
-    motion = &work->arrowMotion;
-    if (work->timer == 90) {
-      BOW_NEXT_PHASE(work);
+    motion = &state->arrowMotion;
+    if (state->timer == 90) {
+      BOW_NEXT_PHASE(state);
       break;
     }
-    dx = work->target[0] - work->start[0];
+    dx = state->target[0] - state->start[0];
     if (dx < 0)
-      dx = work->start[0] - work->target[0];
-    dz = motion->x - work->start[0];
+      dx = state->start[0] - state->target[0];
+    dz = motion->x - state->start[0];
     if (dz < 0)
-      dz = work->start[0] - motion->x;
+      dz = state->start[0] - motion->x;
     if (dx < dz) {
-      BOW_NEXT_PHASE(work);
+      BOW_NEXT_PHASE(state);
       goto again;
     }
-    dx = work->target[2] - work->start[2];
+    dx = state->target[2] - state->start[2];
     if (dx < 0)
-      dx = work->start[2] - work->target[2];
-    dz = motion->z - work->start[2];
+      dx = state->start[2] - state->target[2];
+    dz = motion->z - state->start[2];
     if (dz < 0)
-      dz = work->start[2] - motion->z;
+      dz = state->start[2] - motion->z;
     if (dx < dz) {
-      BOW_NEXT_PHASE(work);
+      BOW_NEXT_PHASE(state);
       goto again;
     }
     pos[0] = motion->x;
     pos[1] = motion->y;
     pos[2] = motion->z;
     if (MapGrid_CheckCollisionFar(scene->mainActor, pos) > 0) {
-      work->done = 1;
-      work->result = -1;
-      work->phase++;
-      work->timer = -1;
+      state->done = 1;
+      state->result = -1;
+      state->phase++;
+      state->timer = -1;
       goto again;
     }
     for (objectIndex = 0; objectIndex < FIELD_ACTOR_COUNT; objectIndex++) {
@@ -1472,142 +1474,143 @@ again:
           (actor->collisionFlags & ACTOR_SOLID) && actor != scene->mainActor &&
           FieldPsynergy_CheckOverlap(&motion->x, 2, &actor->x.fixed,
                                      actor->radius - 2) >= 0) {
-        work->done = 1;
-        work->result = objectIndex;
-        BOW_NEXT_PHASE(work);
+        state->done = 1;
+        state->result = objectIndex;
+        BOW_NEXT_PHASE(state);
         goto again;
       }
     }
     break;
   case ARROW_STOPS:
-    if (work->done != 0) {
-      work->arrowMoving = 0;
+    if (state->done != 0) {
+      state->arrowMoving = 0;
     } else {
-      work->sparksRepeat = 0;
-      work->bowShrinking = 1;
+      state->sparksRepeat = 0;
+      state->bowShrinking = 1;
     }
-    motion = &work->arrowMotion;
+    motion = &state->arrowMotion;
     pos[0] = pos[1] = pos[2] = 0;
     Vector_AddPolarOffset(toFIXED(2), scene->angle8, pos);
     motion->velocityX = pos[0];
     motion->velocityY = pos[1];
     motion->velocityZ = pos[2];
-    BOW_NEXT_PHASE(work);
+    BOW_NEXT_PHASE(state);
     break;
   case ARROW_FALLS:
-    sprite = &work->arrow;
-    if (work->done != 0) {
-      if (work->timer < 32) {
+    sprite = &state->arrow;
+    if (state->done != 0) {
+      if (state->timer < 32) {
         s32 wobble[8];
         s32 fade[4];
         s32 w;
 
         memcpy(wobble, gArrow_WobbleAngles, sizeof(wobble));
         memcpy(fade, gArrow_WobbleFades, sizeof(fade));
-        w = wobble[work->timer & 7];
-        sprite->angle = scene->angle8 + w * fade[work->timer / 8] / (TRIG_TURN);
+        w = wobble[state->timer & 7];
+        sprite->angle =
+            scene->angle8 + w * fade[state->timer / 8] / (TRIG_TURN);
       }
-      if (work->timer == 32)
-        work->bowShrinking = 1;
-      if (work->timer == 50) {
+      if (state->timer == 32)
+        state->bowShrinking = 1;
+      if (state->timer == 50) {
         sprite->scaleX = sprite->scaleY = 0;
-        work->arrowMoving = 1;
-        work->sparksRepeat = 0;
-        BOW_NEXT_PHASE(work);
+        state->arrowMoving = 1;
+        state->sparksRepeat = 0;
+        BOW_NEXT_PHASE(state);
       }
     } else {
       sprite->scaleX += -(FIXED_ONE * 3 / 16);
       sprite->scaleY = sprite->scaleX;
       if (sprite->scaleX < 0) {
         sprite->scaleX = sprite->scaleY = 0;
-        BOW_NEXT_PHASE(work);
+        BOW_NEXT_PHASE(state);
       }
     }
     break;
   case ARROW_BOW_SHRINKS:
-    if (work->bowShrinking == 0)
-      work->phase = FIELD_PSYNERGY_FINISHED;
+    if (state->bowShrinking == 0)
+      state->phase = FIELD_PSYNERGY_FINISHED;
     break;
   }
 
-  if (work->bowGrowing != 0) {
-    sprite = &work->bow;
+  if (state->bowGrowing != 0) {
+    sprite = &state->bow;
     sprite->scaleX += FIXED_ONE / 64;
     sprite->scaleY = sprite->scaleX;
     sprite->angle += DEGtoANG(45);
     if (sprite->scaleX >= FIXED_ONE) {
       sprite->scaleX = sprite->scaleY = FIXED_ONE;
       sprite->angle = scene->angle8;
-      work->bowGrowing = 0;
+      state->bowGrowing = 0;
     }
   }
-  if (work->bowShrinking != 0) {
-    sprite = &work->bow;
+  if (state->bowShrinking != 0) {
+    sprite = &state->bow;
     sprite->scaleX += -(FIXED_ONE / 64);
     sprite->scaleY = sprite->scaleX;
     sprite->angle += DEGtoANG(45);
     if (sprite->scaleX <= toFIXED(0.4) - 1) {
       sprite->scaleX = sprite->scaleY = 0;
-      work->bowShrinking = 0;
+      state->bowShrinking = 0;
     }
   }
 
   // The bow's drawing pose, by frame: drawn back, then loosed and recovered.
-  if (work->frame != BOW_FRAME_IDLE) {
-    work->frame++;
-    sprite = &work->bow;
-    switch (work->frame) {
+  if (state->frame != BOW_FRAME_IDLE) {
+    state->frame++;
+    sprite = &state->bow;
+    switch (state->frame) {
     case 10:
-      sprite->oam.index = work->bowTile + BOW_POSE_TILES;
+      sprite->oam.index = state->bowTile + BOW_POSE_TILES;
       break;
     case 20:
-      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 2;
+      sprite->oam.index = state->bowTile + BOW_POSE_TILES * 2;
       break;
     case 54:
-      sprite->oam.index = work->bowTile + BOW_POSE_TILES;
+      sprite->oam.index = state->bowTile + BOW_POSE_TILES;
       break;
     case 62:
-      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 3;
+      sprite->oam.index = state->bowTile + BOW_POSE_TILES * 3;
       break;
     case 65:
-      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 4;
+      sprite->oam.index = state->bowTile + BOW_POSE_TILES * 4;
       break;
     case 68:
-      sprite->oam.index = work->bowTile + BOW_POSE_TILES * 5;
+      sprite->oam.index = state->bowTile + BOW_POSE_TILES * 5;
       break;
     case 58:
     case 71:
-      sprite->oam.index = work->bowTile;
+      sprite->oam.index = state->bowTile;
       break;
     case 72:
-      work->frame = BOW_FRAME_IDLE;
+      state->frame = BOW_FRAME_IDLE;
       break;
     }
   }
 
-  motion = &work->bowMotion;
+  motion = &state->bowMotion;
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  sprite = &work->bow;
+  sprite = &state->bow;
   Camera_WorldToScreen(pos);
   sprite->x = pos[0];
   sprite->y = pos[2];
   EffectSprite_Draw(sprite);
-  motion = &work->arrowMotion;
+  motion = &state->arrowMotion;
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
   Camera_WorldToScreen(pos);
-  sprite = &work->arrow;
+  sprite = &state->arrow;
   sprite->x = pos[0];
   sprite->y = pos[2];
   EffectSprite_Draw(sprite);
-  if (work->arrowMoving != 0)
+  if (state->arrowMoving != 0)
     Field_AdvanceWithGravity3D(&motion->x, 64, 0);
 
-  if (work->sparking != 0) {
-    motion = work->sparks;
+  if (state->sparking != 0) {
+    motion = state->sparks;
     for (i = 0; i < BOW_SPARKS_THROWN; i++) {
       if (motion->delay == 0) {
         s32 speed;
@@ -1629,13 +1632,13 @@ again:
         Field_AdvanceWithGravity2D(&motion->x, 60, 0);
       }
       motion->delay++;
-      if (work->sparksRepeat == 1 && motion->delay == BOW_SPARK_FRAMES)
+      if (state->sparksRepeat == 1 && motion->delay == BOW_SPARK_FRAMES)
         motion->delay = 0;
       motion++;
     }
   }
 
-  motion = &work->arrowMotion;
+  motion = &state->arrowMotion;
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
@@ -1644,7 +1647,7 @@ again:
   canvas->x = (s16)FIXEDtoINT(pos[0]);
   canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
-  work->timer++;
+  state->timer++;
 }
 
 /// The Arrow cast on a target: runs FieldPsynergy_Arrow. Nothing calls it, as
@@ -1653,13 +1656,13 @@ void FieldPsynergy_ArrowOnTarget(void) { FieldPsynergy_Arrow(); }
 
 /// The Arrow: a bow grows in front of the caster and draws, throwing off
 /// glints, and looses a flaming arrow that flies up to 80 pixels; an actor it
-/// strikes becomes the field work's psynergyHitObject.
+/// strikes becomes the field state's psynergyHitObject.
 void FieldPsynergy_Arrow(void) {
-  struct BowWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowWork));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct CanvasSpriteWork *canvas;
+  struct BowState *state =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BowState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
+  struct CanvasSpriteState *canvas;
   struct EffectSprite *sprite;
   struct BowMotion *motion;
   FIXED pos[3];
@@ -1673,18 +1676,18 @@ void FieldPsynergy_Arrow(void) {
 
   FieldPsynergy_FadeToCastColor();
   // The spark pointer and the sprite pointer are one variable.
-  sprite = (struct EffectSprite *)work->sparks;
+  sprite = (struct EffectSprite *)state->sparks;
   for (i = 0; i < BOW_SPARK_COUNT; i++) {
     ((struct BowMotion *)sprite)->delay = -i;
     sprite = (struct EffectSprite *)((struct BowMotion *)sprite + 1);
   }
 
-  work->tiles = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, BOW_TILE_BYTES);
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BOW_DRAW), work->tiles);
+  state->tiles = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, BOW_TILE_BYTES);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_BOW_DRAW), state->tiles);
   bowSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(bowSlot, BOW_TILE_BYTES, work->tiles);
-  work->bowTile = tile;
-  sprite = &work->bow;
+  tile = VramCache_Load(bowSlot, BOW_TILE_BYTES, state->tiles);
+  state->bowTile = tile;
+  sprite = &state->bow;
   EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X32, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
@@ -1695,15 +1698,15 @@ void FieldPsynergy_Arrow(void) {
   sprite->angle = scene->angle8;
   pos[0] = scene->mainActor->x.fixed;
   pos[2] = scene->mainActor->z.fixed;
-  motion = &work->bowMotion;
+  motion = &state->bowMotion;
   Vector_AddPolarOffset(toFIXED(8), scene->angle8, pos);
   SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FLAMING_ARROW),
-                      work->tiles);
+                      state->tiles);
   arrowSlot = VramCache_FindFreeEntry();
-  tile = VramCache_Load(arrowSlot, 256, work->tiles);
-  sprite = &work->arrow;
+  tile = VramCache_Load(arrowSlot, 256, state->tiles);
+  sprite = &state->arrow;
   EffectSprite_Init(sprite, 12, 8, OBJ_SIZE_16X16, tile);
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
@@ -1714,7 +1717,7 @@ void FieldPsynergy_Arrow(void) {
   sprite->angle = scene->angle8;
   pos[0] = scene->mainActor->x.fixed;
   pos[2] = scene->mainActor->z.fixed;
-  motion = &work->arrowMotion;
+  motion = &state->arrowMotion;
   Vector_AddPolarOffset(toFIXED(18), scene->angle8, pos);
   SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -1726,14 +1729,14 @@ void FieldPsynergy_Arrow(void) {
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->command = 0;
   canvas->angle = scene->angle8;
-  work->start[0] = scene->mainActor->x.fixed;
-  work->start[1] = scene->mainActor->y.fixed;
-  work->start[2] = scene->mainActor->z.fixed;
+  state->start[0] = scene->mainActor->x.fixed;
+  state->start[1] = scene->mainActor->y.fixed;
+  state->start[2] = scene->mainActor->z.fixed;
   blue = RGB(0, 0, RGB_LEVEL_MAX);
-  work->target[0] = scene->mainActor->x.fixed;
-  work->target[1] = scene->mainActor->y.fixed;
-  work->target[2] = scene->mainActor->z.fixed;
-  Vector_AddPolarOffset(toFIXED(80), scene->angle8, work->target);
+  state->target[0] = scene->mainActor->x.fixed;
+  state->target[1] = scene->mainActor->y.fixed;
+  state->target[2] = scene->mainActor->z.fixed;
+  Vector_AddPolarOffset(toFIXED(80), scene->angle8, state->target);
 
   // The canvas palette: blue full, red and green rising from half to full.
   palette = (u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
@@ -1745,18 +1748,18 @@ void FieldPsynergy_Arrow(void) {
 
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
-  work->bowGrowing = 0;
-  work->bowShrinking = 0;
-  work->done = 0;
-  work->result = -1;
-  work->phase = ARROW_BOW_GROWS;
-  work->timer = 0;
+  state->bowGrowing = 0;
+  state->bowShrinking = 0;
+  state->done = 0;
+  state->result = -1;
+  state->phase = ARROW_BOW_GROWS;
+  state->timer = 0;
   Task_Add(FieldPsynergy_UpdateArrow, TASK_PASS_FRAME);
-  while (work->phase != FIELD_PSYNERGY_FINISHED)
+  while (state->phase != FIELD_PSYNERGY_FINISHED)
     wait(1);
   Task_Remove(FieldPsynergy_UpdateArrow);
-  if (work->done != 0 && work->result != -1)
-    field->psynergyHitObject = work->result;
+  if (state->done != 0 && state->result != -1)
+    field->psynergyHitObject = state->result;
   VramCache_FreeEntry(arrowSlot);
   VramCache_FreeEntry(bowSlot);
   FieldPsynergy_FadeFromCastColor();
@@ -1766,14 +1769,14 @@ void FieldPsynergy_Arrow(void) {
 
 /// Finds what Cyclone reaches: of the 21 cells round the caster
 /// (gFieldPsynergy_NearbyCellOffsets) on its layer, those of a CycloneCellKind
-/// within reach are listed, as cells, in the field work's points, which end
+/// within reach are listed, as cells, in the field state's points, which end
 /// with -1, -1. A cell to blow away (CYCLONE_CELL_BURST) also sets
-/// CycloneWork.kind; the last carry and lift cells are kept as the pixels of
+/// CycloneState.kind; the last carry and lift cells are kept as the pixels of
 /// their centres, in cycloneCarryX, Z and cycloneLiftX, Z.
 void FieldPsynergy_GatherNearbyCells(void) {
-  struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct PointWork *field = Ram_HeapSlots->fieldWork;
-  struct CycloneWork *work = Ram_HeapSlots->battleEffect;
+  struct FieldEffectState *effect = Ram_HeapSlots->fieldEffectState;
+  struct PointState *field = Ram_HeapSlots->fieldState;
+  struct CycloneState *state = Ram_HeapSlots->battleEffect;
   s16 *points = field->points;
   struct Actor *owner = effect->mainActor;
   FIXED position[3];
@@ -1782,7 +1785,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
   u32 i;
   s32 count = 0;
 
-  work->kind = count;
+  state->kind = count;
   field->cycloneCarryX = -1;
   field->cycloneCarryZ = -1;
   field->cycloneLiftX = -1;
@@ -1802,7 +1805,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
       points[count * 2] = x / toFIXED(16);
       points[count * 2 + 1] = z / toFIXED(16);
       count++;
-      work->kind = kind;
+      state->kind = kind;
     }
     if (kind == CYCLONE_CELL_CARRY &&
         Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner, position) !=
@@ -1840,11 +1843,11 @@ void FieldPsynergy_GatherNearbyCells(void) {
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 /// Runs the place's Psynergy event once for each kind of cell Cyclone touched
-/// (FieldWork.psynergyCells), lowest cell behaviour first.
+/// (FieldState.psynergyCells), lowest cell behaviour first.
 void FieldPsynergy_RunTouchedEvents(void) {
-  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
-  struct TouchCell *cells = (struct TouchCell *)gFieldWork->psynergyCells;
-  struct Actor *caster = effectWork->mainActor;
+  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
+  struct TouchCell *cells = (struct TouchCell *)gFieldState->psynergyCells;
+  struct Actor *caster = effectState->mainActor;
   s32 count = 0;
   s16 ids[24];
   s32 i, j;
@@ -1879,17 +1882,17 @@ void FieldPsynergy_RunTouchedEvents(void) {
   for (i = 0; ids[i] != -1; i++) {
     s32 id = ids[i];
     s32 event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
-                                          effectWork->fieldPsynergy, id);
+                                          effectState->fieldPsynergy, id);
 
     if (event != 0)
-      Field_RunPsynergyEvent(event, effectWork->firstActorId,
-                             effectWork->secondActorId);
+      Field_RunPsynergyEvent(event, effectState->firstActorId,
+                             effectState->secondActorId);
   }
 }
 
 struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
-/// Clears what Cyclone blew away: each cell of FieldWork.psynergyCells that
+/// Clears what Cyclone blew away: each cell of FieldState.psynergyCells that
 /// falls in the width by height window at (windowX, windowZ) of layerIndex
 /// (counted from the layer's scroll and the leader's height) takes the cell
 /// picture from the same place of the window at (sourceX, sourceZ), is opened
@@ -1897,11 +1900,11 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                                  s32 height, s32 windowX, s16 windowZ,
                                  s32 layerIndex) {
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)field->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = &map->layers[layerIndex];
   s32 i;
 

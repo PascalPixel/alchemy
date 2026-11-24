@@ -29,7 +29,7 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "system/input.h"
 #include "text/msg_ids.h"
@@ -415,7 +415,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(70, 47, 1, 1, 8, 74);
     MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), MAPGRID_LAYER_GROUND, 6);
-    FieldActor_Stop(gMainRoutineWork.leaderActorId);
+    FieldActor_Stop(gMainRoutineState.leaderActorId);
     Actor_SetPosition(ACTOR_THIRD_PATH_BLOCK, 0, 0);
     if (mode == 1) {
       for (frame = 0; frame <= 15; frame++) {
@@ -504,7 +504,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
         Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
       Event_PlaySound(SE_MAP_TRANSITION);
     // The block is drawn into the floor now, its actor put away.
-    Actor_Stop(gMainRoutineWork.leaderActorId);
+    Actor_Stop(gMainRoutineState.leaderActorId);
     Actor_SetPosition(id, 0, 0);
     if (JupiterLighthouse_CountBlocksInGaps() != 2 ||
         !Event_GetFlag(FLAG_EAST_STAKE_SUNK))
@@ -523,7 +523,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, actor->layer,
                                  CELL_BEHAVIOR_WALL);
     Event_Wait(30);
-    EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+    EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
     FieldCamera_WaitForArrival();
     Event_End();
     return;
@@ -647,7 +647,7 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   }
   actor->motionFlags = 0;
   FieldEvent_Wait(30);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
 }
 
@@ -678,7 +678,7 @@ void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
 /// jumps across, where there is floor to land on; over a gap a block fills,
 /// he walks on.
 void JupiterLighthouse_JumpOrPushBlock(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *straight = Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK);
   struct Actor *corner = Actor_Get(ACTOR_CORNER_PATH_BLOCK);
   FIXED position[3];
@@ -737,12 +737,12 @@ void LightSprites_AddCounted();
 /// of its size, the stakes and the bridge as their flags leave them, the
 /// blocks' glow, and the grey blocks as platforms. Returns 0.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // In the east hall the leader is drawn by the cells under him, never hidden
   // behind the rises in front.
-  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_EAST_HALL_FIRST) <= 1)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  if ((u16)(gMainRoutineState.entrance - ENTRANCE_EAST_HALL_FIRST) <= 1)
+    Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;
   Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = FIXED_ONE * 3 / 4;
@@ -767,7 +767,7 @@ s32 Scene_Initialize(void) {
       Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) ||
       Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
     Actor_SetPosition(ACTOR_CORNER_PATH_BLOCK, 0, 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_FIRST_GREY_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   Actor_Get(ACTOR_FIRST_GREY_BLOCK + 1)->priorityFlags |=
@@ -797,7 +797,7 @@ s32 Scene_PrepareMap(void) {
   JupiterLighthouse_LoadPalettes(1);
   // Arriving from the bridge's floor, the grey blocks stand afresh on six of
   // the west hall's path cells.
-  if (gMainRoutineWork.entrance == ENTRANCE_FROM_BRIDGE_FLOOR) {
+  if (gMainRoutineState.entrance == ENTRANCE_FROM_BRIDGE_FLOOR) {
     Actor_SetPosition(ACTOR_FIRST_GREY_BLOCK, 168, 264);
     Actor_SetPosition(ACTOR_FIRST_GREY_BLOCK + 1, 200, 264);
     Actor_SetPosition(ACTOR_FIRST_GREY_BLOCK + 2, 232, 264);

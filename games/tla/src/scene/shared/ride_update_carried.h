@@ -2,11 +2,11 @@
 /// goes: on reaching the leader where he stands it sets the way he is knocked
 /// back, passes under his feet and rises away, and raises the hit trigger; on
 /// reaching a slot's actor it rises away the same, unless the slot is blocked,
-/// which marks the work blocked.
+/// which marks the state blocked.
 void Flame_UpdateForward(struct Actor *flame) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FlameHitState *state = RIDE_STATE;
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   FIXED dx = flame->bounce;
   FIXED dz;
   s32 i;
@@ -22,13 +22,13 @@ void Flame_UpdateForward(struct Actor *flame) {
   flame->scaleY += flame->acceleration;
   ((struct FieldSprite *)flame->sprite)->rotation += flame->timer;
   if (actor->y.fixed == actor->groundHeight && Actor_IsTouching(flame, actor) &&
-      gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
+      gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
     if (flame->riseBaseY != 0) {
-      work->direction.x = 0;
+      state->direction.x = 0;
       if (flame->riseBaseY > 0)
-        work->direction.z = 1;
+        state->direction.z = 1;
       else
-        work->direction.z = -1;
+        state->direction.z = -1;
     }
     flame->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     {
@@ -38,14 +38,14 @@ void Flame_UpdateForward(struct Actor *flame) {
       flame->z.fixed -= speed;
       flame->gravity += speed >> 2;
     }
-    work->active = 1;
-    event->stepTrigger = work->hitTrigger;
+    state->active = 1;
+    event->stepTrigger = state->hitTrigger;
   }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
+  for (i = 0; i < 4 && (id = state->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);
 
     if (actor->y.fixed == actor->groundHeight && Actor_IsBeside(flame, actor)) {
-      if (work->slots[i].blocked == 0) {
+      if (state->slots[i].blocked == 0) {
         FIXED speed;
 
         flame->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -54,7 +54,7 @@ void Flame_UpdateForward(struct Actor *flame) {
         flame->z.fixed -= speed;
         flame->gravity += speed >> 2;
       } else {
-        work->blocked = 1;
+        state->blocked = 1;
       }
     }
   }

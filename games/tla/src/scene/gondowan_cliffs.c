@@ -21,7 +21,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "scene/scene.h"
@@ -111,7 +111,7 @@ void GondowanCliffs_FightKindle(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CLIFFS_PASS)
     return gGondowanCliffs_PassEntrances;
   return gGondowanCliffs_Entrances;
 }
@@ -124,7 +124,7 @@ extern struct ActorPlacement gGondowanCliffs_ActorPlacements[];
 extern struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CLIFFS_PASS)
     return gGondowanCliffs_PassActorPlacements;
   return gGondowanCliffs_ActorPlacements;
 }
@@ -158,10 +158,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 struct Actor;
 struct EffectOptions;
-/// MapWork.groundEffects read as its bit-fields: the footprints, and the kind
+/// MapState.groundEffects read as its bit-fields: the footprints, and the kind
 /// of wading (1 in rooms with a second level).
 struct MapGroundEffects {
-  u8 unusedBeforeGroundEffects[23]; ///< MapWork's fields before it
+  u8 unusedBeforeGroundEffects[23]; ///< MapState's fields before it
   u8 footprints : 2;
   u8 wading : 2;
   u8 unusedHighBits : 4; ///< no code names them
@@ -184,8 +184,8 @@ struct Geyser {
   struct Actor *rider; ///< the platform at its top, which the leader rides
 };
 
-/// The geysers' work, kept in the inventory snapshot's spare room.
-struct GeyserWork {
+/// The geysers' state, kept in the inventory snapshot's spare room.
+struct GeyserState {
   s16 entry;        ///< the VRAM cache entry holding the column's tiles
   s16 firstTerrain; ///< the terrain id and collision slot of the first entry
   struct Geyser entries[GEYSER_ENTRIES];
@@ -356,7 +356,7 @@ void GondowanCliffs_ScoopUpGeyser(s32 stage, s32 frame) {
 /// cell (119, 45), the button opens the field menu instead, as it does where
 /// there is nothing to talk to, so that he can choose Scoop there.
 void GondowanCliffs_TalkToDog(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   struct {
     s32 x, y, z;
   } position;
@@ -367,11 +367,11 @@ void GondowanCliffs_TalkToDog(void) {
   out[2] = actor->z.fixed;
   FieldVector_AddPolarOffset(16, actor->facing, out);
   if (FIELD_CELL(position.x) == 119 && FIELD_CELL(position.z) == 45) {
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_FaceEachOther(ACTOR_DOG, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceEachOther(ACTOR_DOG, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgRrruffRrruff);
     // "Rrruff! Rrruff!"
     Event_ShowMessage(ACTOR_DOG, 0);
@@ -391,7 +391,7 @@ void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CLIFFS_PASS)
     return gGondowanCliffs_PassTriggers;
   return gGondowanCliffs_Triggers;
 }
@@ -417,9 +417,9 @@ void GondowanCliffs_CycleWaterColors(void) {
 /// Sets up the river channel: arriving aboard the ship, the party sails on, the
 /// tightrope across the channel is strung and the water starts to shimmer.
 void GondowanCliffs_SetUpPass(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_PASS_BY_SHIP) {
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
-    gMainRoutineWork.ownerOverride = 1;
+  if (gMainRoutineState.entrance == ENTRANCE_PASS_BY_SHIP) {
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_SHIP;
+    gMainRoutineState.ownerOverride = 1;
     Event_SetDestination(SCENE_GONDOWAN_CLIFFS_PASS,
                          GONDOWAN_CLIFFS_PASS_FROM_WORLD_MAP_NORTH);
   }
@@ -444,21 +444,21 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 552, 488);
-  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  FieldActor_WatchAndSetScript(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 568, 480);
-  FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
-  FieldActor_WatchAndSetScript(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 608, 472);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 552, 488);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineState.leaderActorId);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, gMainRoutineState.leaderActorId);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 568, 480);
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineState.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineState.leaderActorId);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 584, 472);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, gMainRoutineState.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineState.leaderActorId);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   // "Felix! Where do you intend to go?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 10);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 10);
   FieldActor_Jump(ACTOR_JENNA, 6, 15);
   FieldActor_Jump(ACTOR_JENNA, 6, 23);
   // "Kraden's right. I think we should try to help Piers, too."
@@ -467,28 +467,28 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_JENNA, 0);
   // "I completely agree with Kraden and Jenna."
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineState.leaderActorId);
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   // "It looks like the majority wins! Let's go back to Kibombo and help..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 584, 472);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 568, 480);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 568, 480);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 552, 488);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 552, 488);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 528, 488);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 528, 488);
   Event_FinishScreenTransition();
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 512, 488);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 512, 488);
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(GONDOWAN_CLIFFS_TO_WORLD_MAP_A);
 }
@@ -505,9 +505,9 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS) {
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CLIFFS_PASS) {
     GondowanCliffs_SetUpPass();
     return 0;
   }
@@ -518,7 +518,7 @@ s32 Scene_Initialize(void) {
   }
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS) {
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CLIFFS) {
     Rope_Initialize();
     Rope_Place(0, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, ACTOR_ROPE_POST_A,
                ACTOR_ROPE_POST_B);
@@ -566,8 +566,8 @@ s32 Scene_Initialize(void) {
 extern s16 gGondowanCliffs_CameraBoxes[];
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS)
-    ((struct MapWork *)Ram_HeapSlots->mapGrid)->cameraBoxes =
+  if (gMainRoutineState.next == SCENE_GONDOWAN_CLIFFS)
+    ((struct MapState *)Ram_HeapSlots->mapGrid)->cameraBoxes =
         gGondowanCliffs_CameraBoxes;
   return 0;
 }
@@ -581,8 +581,8 @@ s32 Scene_PrepareMap(void) {
 /// Makes actor id the geyser of entry slot, rising from low to high pixels
 /// every six seconds, with an unseen platform at its top for the leader.
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
-  struct GeyserWork *work = GEYSER_WORK;
-  struct Geyser *entry = &work->entries[slot];
+  struct GeyserState *state = GEYSER_STATE;
+  struct Geyser *entry = &state->entries[slot];
   struct Actor *actor = Actor_Get(id);
   struct Actor *rider;
 

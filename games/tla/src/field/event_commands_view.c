@@ -16,7 +16,7 @@
 
 /// Sets the map coordinates the camera keeps the screen inside.
 void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
 
   map->minX = minX;
   map->minZ = minZ;
@@ -27,15 +27,15 @@ void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
 /// Each frame of a World Map zoom: moves the zoom from zoomFrom toward zoomTo
 /// over zoomFrames frames.
 void WorldMap_StepZoom(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s16 *duration;
   s32 *from;
   s16 *step;
   s32 offset;
   s32 delta;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                               sizeof(struct FieldWork)))
+  if (((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                sizeof(struct FieldState)))
           ->camera->paused != 0)
     return;
   duration = &map->zoomFrames;
@@ -56,11 +56,11 @@ void WorldMap_StepZoom(void) {
 
 /// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
 void WorldMap_StartZoom(FIXED zoom, s32 frames) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 result;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                               sizeof(struct FieldWork)))
+  if (((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                sizeof(struct FieldState)))
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
@@ -77,11 +77,11 @@ void WorldMap_StartZoom(FIXED zoom, s32 frames) {
 /// Waits for a zoom transition to end (on the World Map only, at most 300
 /// frames).
 void Event_WaitForZoomTransition(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 frames;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
-                                               sizeof(struct FieldWork)))
+  if (((struct FieldState *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                sizeof(struct FieldState)))
           ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (map->zoomFrames != 0) {

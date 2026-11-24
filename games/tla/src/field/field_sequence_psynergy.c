@@ -6,7 +6,7 @@
 #include "flags.h"
 #include "field/event_commands.h"
 #include "field/object.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 
 /// Shows message with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(user, ability, message)                               \
@@ -18,7 +18,7 @@
 /// (bits 10 to 13; UNIT_NONE for the first party member) and ACT_PACKED to use
 /// it without paying PP.
 s32 Field_UsePsynergy(u32 code) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *fieldState = Ram_HeapSlots->fieldState;
   s32 abilityId = ABILITY_ID(code);
   struct PendingEvent *before;
   s32 group = Ability_Get(abilityId)->fieldPsynergy;
@@ -32,11 +32,11 @@ s32 Field_UsePsynergy(u32 code) {
   s32 target;
   s32 declined;
   s32 hit;
-  struct FieldEffectWork *effect;
+  struct FieldEffectState *effect;
 
   Leader_StopMoving();
-  work->psynergyHitObject = -1;
-  work->standing = retreat;
+  fieldState->psynergyHitObject = -1;
+  fieldState->standing = retreat;
   GameFlag_Clear(FLAG_ITEM_USE);
   if (userId == UNIT_NONE)
     userId = 0;
@@ -47,17 +47,17 @@ s32 Field_UsePsynergy(u32 code) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (abilityId == ABILITY_REVEAL || abilityId == ABILITY_MAGNET) {
       // "<Psynergy>!!! ...Nothing happened."
       PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
     if (abilityId == ABILITY_HOVER) {
-      if (gMainRoutineWork.ownerOverride != 0 &&
+      if (gMainRoutineState.ownerOverride != 0 &&
           GameFlag_Get(FLAG_SHIP_FLIES)) {
         GameFlag_Set(FLAG_SHIP_HOVERING);
-        work->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
+        fieldState->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
         return 0;
       }
       // "<Psynergy>!!! ...Nothing happened."
@@ -65,7 +65,7 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     }
   }
-  if (gMainRoutineWork.ownerOverride != 0 && abilityId == ABILITY_SAND) {
+  if (gMainRoutineState.ownerOverride != 0 && abilityId == ABILITY_SAND) {
     // "Sand!!! ...Nothing happened."
     PSYNERGY_MESSAGE(userId, ABILITY_SAND, MsgKey0dbb);
     return 0;
@@ -88,7 +88,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (declined != 0)
       return 0;
     {
-      struct MainRoutineWork *state = &gMainRoutineWork;
+      struct MainRoutineState *state = &gMainRoutineState;
       s32 scene, entrance;
 
       scene = (u16)state->retreatScene;
@@ -96,7 +96,7 @@ s32 Field_UsePsynergy(u32 code) {
       entrance = (u16)state->retreatEntrance;
       state->entrance = entrance;
     }
-    work->exit = EXIT_KEEP_DESTINATION;
+    fieldState->exit = EXIT_KEEP_DESTINATION;
     retreat = 1;
   }
 
@@ -122,7 +122,7 @@ s32 Field_UsePsynergy(u32 code) {
   during = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
                                      group, selector);
   if (abilityId == ABILITY_TELEPORT &&
-      gMainRoutineWork.next != SCENE_WORLD_MAP && before == NULL &&
+      gMainRoutineState.next != SCENE_WORLD_MAP && before == NULL &&
       after == NULL && during == NULL) {
     // "Teleport... It doesn't work here."
     PSYNERGY_MESSAGE(userId, ABILITY_TELEPORT, MsgKey0dbd);
@@ -139,7 +139,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (unit->pp < ppCost) {
       // Retreat was already accepted: take its exit back.
       if (retreat)
-        work->exit = 0;
+        fieldState->exit = 0;
       // "<Psynergy>... Not enough PP."
       PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dba);
       return 0;
@@ -173,19 +173,19 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Play the Psynergy; an event marked quiet hides its effect.
   FieldPsynergy_LoadResources(abilityId, 0);
-  work->psynergyActing = 1;
+  fieldState->psynergyActing = 1;
   if (before != NULL && (before->flags & TRIGGER_SUBJECT_QUIET)) {
-    effect = Ram_HeapSlots->fieldEffectWork;
+    effect = Ram_HeapSlots->fieldEffectState;
     effect->visible = 0;
     effect->active = 0;
   }
   if (after != NULL && (after->flags & TRIGGER_SUBJECT_QUIET)) {
-    effect = Ram_HeapSlots->fieldEffectWork;
+    effect = Ram_HeapSlots->fieldEffectState;
     effect->visible = 0;
     effect->active = 0;
   }
   if (during != NULL && (during->flags & TRIGGER_SUBJECT_QUIET)) {
-    effect = Ram_HeapSlots->fieldEffectWork;
+    effect = Ram_HeapSlots->fieldEffectState;
     effect->visible = 0;
     effect->active = 0;
   }
@@ -200,18 +200,18 @@ s32 Field_UsePsynergy(u32 code) {
   }
   BattleEffect_StopMainActor();
   // What the Psynergy hit has an event of its own.
-  hit = work->psynergyHitObject;
+  hit = fieldState->psynergyHitObject;
   if (hit != -1) {
     selector = hit | PSYNERGY_TARGET_ACTOR;
     event = Scene_FindPsynergyTrigger(
         PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, selector);
     if (event != NULL)
-      Field_RunPsynergyEvent(event, userId, work->psynergyHitObject);
+      Field_RunPsynergyEvent(event, userId, fieldState->psynergyHitObject);
   }
   Field_RunPsynergyEvent(after, userId, target);
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST))
     FieldPsynergy_FinishMindRead();
-  work->psynergyActing = 0;
+  fieldState->psynergyActing = 0;
   FieldPsynergy_End();
   GameFlag_Clear(FLAG_PLAY_PSYNERGY_CAST);
   GameFlag_Clear(FLAG_PSYNERGY_TARGET);

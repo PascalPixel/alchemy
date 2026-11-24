@@ -22,7 +22,7 @@
 /// Unused: nothing calls it. Stars spin about a point above the field, each on
 /// its own axis, then are drawn back towards it.
 UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   FIXED center[3];
   struct ScreenPoint screen;
@@ -31,10 +31,10 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
   for (i = 0; i != SWIRLING_STARS_PLACED; i++) {
     star = &PARTICLES[i];
@@ -44,10 +44,10 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
     SET_VELOCITY(star, 0, 0, 0);
     star->variant = 0;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   SET_VECTOR(center, 0, toFIXED(80), 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
     EFFECT_VIEW_FROM_CAMERA(camera);
     Matrix_TranslateVector(center);
@@ -80,8 +80,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
             SWIRLING_STAR_LARGEST - (screen.depth - SWIRLING_STAR_DEPTH_NEAR) /
                                         SWIRLING_STAR_DEPTH_STEP;
         draw[0](canvas,
-                work->sheet + ((i & 3) * MOTE_SET_BYTES +
-                               gBattleEffect_MotePictures[size - 1]),
+                state->sheet + ((i & 3) * MOTE_SET_BYTES +
+                                gBattleEffect_MotePictures[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(star, 60, 0);
         // After 30 frames a star springs back towards the centre.
@@ -96,7 +96,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -109,7 +109,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
 /// Unused: nothing calls it. On each target in turn a burst flares while puffs
 /// of smoke scatter around it.
 UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   void *palette;
   s32 frame;
@@ -120,12 +120,12 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   FIXED point[3];
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
-                             work->sheet + TARGET_BURST_PICTURES, 0, 0);
+                             state->sheet + TARGET_BURST_PICTURES, 0, 0);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -134,11 +134,11 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
                       BLITTER_MAX);
   drawSmoke = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
     s32 angle;
     s32 speed;
 
-    puff = &work->particles[i];
+    puff = &state->particles[i];
     angle = Random16() & TRIG_ANGLE_MASK;
     speed = Random16() & 0xff;
     SET_POSITION(puff, 0, 0, 0);
@@ -153,11 +153,12 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     puff->variant = 0;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
     EFFECT_FOR_EACH_TARGET(member, args) {
       struct MotionObject *target;
@@ -171,7 +172,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           s32 picture;
 
           // A picture every six frames, holding the last.
-          puff = &work->particles[member * 6 + i];
+          puff = &state->particles[member * 6 + i];
           picture = puff->variant / 6;
           if (picture > 5)
             picture = 5;
@@ -180,13 +181,14 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, toFIXED(1) / 32);
             drawBurst(canvas,
-                      work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
+                      state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                           TARGET_BURST_PICTURES,
                       screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, toFIXED(1) / 128);
-            drawSmoke(canvas, work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
+            drawSmoke(canvas,
+                      state->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
                       screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
                       SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
@@ -194,7 +196,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
         }
       }
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   EFFECT_FINISH_CANVAS();
 }

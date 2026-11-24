@@ -22,7 +22,7 @@ struct PaletteCycle {
 
 /// The palette cycling queue (HEAP_SLOT_PALETTE_CYCLES): four cycles and how
 /// many are in use.
-struct PaletteCycleWork {
+struct PaletteCycleState {
   struct PaletteCycle entries[4];
   /// Cycles in use, 0 to 4; PaletteCycle_Step runs none when all four are
   /// taken (a BUG there).
@@ -34,11 +34,11 @@ STATIC_ASSERT(offsetof(struct PaletteCycle, position) == 4);
 STATIC_ASSERT(offsetof(struct PaletteCycle, timer) == 6);
 STATIC_ASSERT(offsetof(struct PaletteCycle, delay) == 8);
 STATIC_ASSERT(offsetof(struct PaletteCycle, colors) == 12);
-STATIC_ASSERT(sizeof(struct PaletteCycleWork) == 180);
-STATIC_ASSERT(offsetof(struct PaletteCycleWork, count) == 176);
+STATIC_ASSERT(sizeof(struct PaletteCycleState) == 180);
+STATIC_ASSERT(offsetof(struct PaletteCycleState, count) == 176);
 
 /// The palette cycling queue, in its heap slot (HEAP_SLOT_PALETTE_CYCLES).
-#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
+#define gPaletteState ((struct PaletteCycleState *)Ram_HeapSlots->paletteCycles)
 
 void PaletteCycle_Initialize(void);
 s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,

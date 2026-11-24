@@ -18,7 +18,7 @@
 #include "field/field_sprite.h"
 #include "macros.h"
 #include "field/actor_view.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sequence_event.h"
 #include "field/map_grid.h"
 #include "field/flag_call.h"
@@ -29,34 +29,34 @@ extern struct Actor *gWorldMap_PlacedActors[];
 /// Unused: chooses a passage exit from the leader's east-west approach:
 /// exitBefore while the leader is west of the place's actor, else exitAfter.
 UNUSED void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *area;
   struct Actor *leader;
 
   area = gWorldMap_PlacedActors[trigger - STEP_TRIGGER_AREA_BASE];
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  work = Ram_HeapSlots->fieldWork;
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
+  state = Ram_HeapSlots->fieldState;
   if (leader->x.fixed < area->x.fixed) {
-    work->exit = exitBefore;
+    state->exit = exitBefore;
   } else {
-    work->exit = exitAfter;
+    state->exit = exitAfter;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
 
 /// Chooses a passage exit from the leader's north-south approach.
 void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *area;
   struct Actor *leader;
 
   area = gWorldMap_PlacedActors[trigger - STEP_TRIGGER_AREA_BASE];
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  work = Ram_HeapSlots->fieldWork;
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
+  state = Ram_HeapSlots->fieldState;
   if (leader->z.fixed < area->z.fixed) {
-    work->exit = exitBefore;
+    state->exit = exitBefore;
   } else {
-    work->exit = exitAfter;
+    state->exit = exitAfter;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
@@ -79,9 +79,9 @@ void WorldMap_UpdatePlacedActors(void) {
   s32 next;
   FIXED left, right, top, bottom;
   struct Actor **slot;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Actor *actor = work->camera;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct Actor *actor = state->camera;
   s32 zoom = map->zoom;
   FIXED x = actor->x.fixed;
   u8 kind = placement->flag;
@@ -102,8 +102,8 @@ void WorldMap_UpdatePlacedActors(void) {
   i = 0;
   next = kind;
   slot = objects;
-  /* FAKEMATCH(barrier): an empty asm on leader and work that reads next. */
-  asm("" : "+g"(leader), "+r"(work) : "g"(next));
+  /* FAKEMATCH(barrier): an empty asm on leader and state that reads next. */
+  asm("" : "+g"(leader), "+r"(state) : "g"(next));
   while (next != 0) {
     FIXED px, pz;
 
@@ -139,7 +139,7 @@ void WorldMap_UpdatePlacedActors(void) {
           sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
           *slot = actor;
         }
-        if (gMainRoutineWork.ownerOverride == 0) {
+        if (gMainRoutineState.ownerOverride == 0) {
           s32 scale = ((struct Sprite *)actor->sprite)->scale;
           FIXED dx;
           s32 reach;
@@ -153,10 +153,10 @@ void WorldMap_UpdatePlacedActors(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z.fixed - actor->z.fixed) < reach) {
             if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-              if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WORLD_SAND)
-                work->psynergy = ACT_PACKED | ABILITY_SAND;
+              if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WORLD_SAND)
+                state->psynergy = ACT_PACKED | ABILITY_SAND;
               else
-                work->stepTrigger = i + STEP_TRIGGER_AREA_BASE;
+                state->stepTrigger = i + STEP_TRIGGER_AREA_BASE;
             }
           }
         }

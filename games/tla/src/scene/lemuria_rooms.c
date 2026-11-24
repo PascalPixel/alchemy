@@ -31,7 +31,7 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/event_inline.h"
@@ -270,7 +270,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, ROOM_WINDOW_TRANSITION);
   Actor_SetSpritePriority(ACTOR_BIRD, 1);
   Actor_SetSpritePriority(ACTOR_OLD_MAN_ON_ALCHEMYS_ABUSE, 2);
@@ -507,10 +507,10 @@ void LemuriaRooms_PiersVisitsUncle(void) {
     Event_Wait(20);
     // Yes: "After all we've been through, the least we can do is offer..."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Event_Wait(40);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // No: "You're right. Piers probably needs some time alone right now."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   }
@@ -520,7 +520,7 @@ void LemuriaRooms_PiersVisitsUncle(void) {
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -616,10 +616,10 @@ void LemuriaRooms_LeavePiersToMourn(void) {
     // Yes: "Of course... He must trust you a great deal."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
-    gFieldWork->message = (gFieldWork->message) + 1;
+    gFieldState->message = (gFieldState->message) + 1;
   } else {
     FieldEvent_Wait(40);
-    gFieldWork->message = (gFieldWork->message) + 1;
+    gFieldState->message = (gFieldState->message) + 1;
     // No: "Curious... I can't understand why he would do that..."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
@@ -654,10 +654,10 @@ void LemuriaRooms_LeavePiersToMourn(void) {
     // Yes: "You say he's told you, but you look rather confused."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
-    gFieldWork->message = (gFieldWork->message) + 1;
+    gFieldState->message = (gFieldState->message) + 1;
   } else {
     FieldEvent_Wait(40);
-    gFieldWork->message = (gFieldWork->message) + 1;
+    gFieldState->message = (gFieldState->message) + 1;
     // No: "Did Piers tell you nothing before bringing you here to Lemuria?"
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0,
                                    10);
@@ -893,10 +893,10 @@ void LemuriaRooms_MeetLunpa(void) {
     Event_Wait(20);
     // Yes: "Ah, Piers has done quite well in finding you!"
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(35);
-    gFieldWork->message++;
+    gFieldState->message++;
     // No: "That doesn't make sense... He wouldn't have brought you to..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
   }
@@ -1099,13 +1099,13 @@ void LemuriaRooms_MeetLunpa(void) {
     Event_Wait(10);
     // Yes: "You are kind, Felix, but there are much more important matters..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(35);
     Actor_FaceDirection(ACTOR_LUNPA, FACING_NORTH_NORTHEAST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
-    gFieldWork->message++;
+    gFieldState->message++;
     // No: "Yes, yes... I am sorry we were sidetracked. We have much more..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
   }
@@ -1127,10 +1127,10 @@ void LemuriaRooms_MeetLunpa(void) {
     // Yes: "Clearly, your judgment on this matter is fogged, Felix. I must
     // speak."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(35);
-    gFieldWork->message++;
+    gFieldState->message++;
     // No: "I knew you'd agree."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
@@ -1450,7 +1450,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1458,7 +1458,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1466,7 +1466,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].integer,
                          leader->z.part[0].integer);

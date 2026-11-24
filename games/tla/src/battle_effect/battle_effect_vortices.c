@@ -46,7 +46,7 @@
 /// Abilities: Froth, Froth Sphere, Froth Spiral.
 void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   struct ScreenPoint position;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   struct MotionObject *source;
@@ -63,10 +63,10 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   // Set up: the canvas layer, the vortex sprite sheet and two blitters, the one
   // on the right mirrored. landed is nonzero once a bubble has struck.
   landed = (s8 *)Ram_MapCellBuffer;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -78,7 +78,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   source = BattleObject_GetFar(args->user)->object;
   y = source->y + BattleUnit_GetEffectHeightFar(args->user);
   for (i = 0; i != FROTH_BUBBLE_SLOTS; i++) {
-    point = &work->particles[i];
+    point = &state->particles[i];
     SET_POSITION(point, source->x, y, source->z);
     SET_VELOCITY(point, INTtoFIXED((s32)((Random16() & 255) - 127)) >> 5,
                  INTtoFIXED((s32)((Random16() & 127) - 16)) >> 6,
@@ -89,31 +89,32 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 
   // Each target's seat on the ground.
   EFFECT_FOR_EACH_TARGET(i, args) {
-    seat = &work->particles[FROTH_FIRST_TARGET + i];
+    seat = &state->particles[FROTH_FIRST_TARGET + i];
     object = BattleObject_GetFar(args->targets[i])->object;
     SET_POSITION(seat, object->x, 0, object->z);
   }
 
-  work->cameraDelta = 0;
-  work->cameraPhase = CAMERA_PHASE_IDLE;
+  state->cameraDelta = 0;
+  state->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   Sound_PlayFar(SE_SCATTER);
 
   for (frame = 0; frame != gVortices_Counts[args->variant][FROTH_FRAMES];
        frame++) {
     // The camera turns between frames 17 and 63.
-    camera = Ram_HeapSlots->cameraWork;
+    camera = Ram_HeapSlots->cameraState;
     if (frame >= 17 && frame < 64)
-      work->cameraDelta = TRIG_TURN * 3 / 512;
+      state->cameraDelta = TRIG_TURN * 3 / 512;
     else
-      work->cameraDelta = 0;
+      state->cameraDelta = 0;
     if (frame == gVortices_Counts[args->variant][FROTH_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     for (i = 0; i != gVortices_Counts[args->variant][FROTH_BUBBLE_COUNT]; i++) {
-      point = &work->particles[i];
+      point = &state->particles[i];
 
       // A bubble leaves the user two frames after the one before it.
       if (frame > i * 2 && landed[i] == 0) {
@@ -121,7 +122,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         position.x >>= 1;
         // DEAD: the clamped depth is never read; the ROM keeps the clamp.
         CLAMP(position.depth, FROTH_BUBBLE_DEPTH_NEAR, FROTH_BUBBLE_DEPTH_FAR);
-        draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE,
+        draw[0](canvas, state->sheet + FROTH_BUBBLE_PICTURE,
                 position.x - FROTH_BUBBLE_PICTURE_WIDTH / 2,
                 position.y - FROTH_BUBBLE_PICTURE_HEIGHT / 2,
                 FROTH_BUBBLE_PICTURE_WIDTH, FROTH_BUBBLE_PICTURE_HEIGHT);
@@ -133,7 +134,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       // After 48 frames it steers toward its target's seat, damped for the
       // first 37 of them, and lands.
       if (frame > i * 2 + 48 && landed[i] == 0) {
-        target = &work->particles[FROTH_FIRST_TARGET + i % args->targetCount];
+        target = &state->particles[FROTH_FIRST_TARGET + i % args->targetCount];
         point->velocityX += (target->x - point->x) >> 9;
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
@@ -153,7 +154,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
                                    i % args->targetCount, 4);
           BattleMotion_ApplyKnockbackFar(args->targets[i % args->targetCount],
                                          KNOCKBACK_NUDGE);
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           Sound_PlayFar(SE_WATER);
         }
       }
@@ -162,12 +163,12 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       // drawn as mirrored halves.
       if (point->variant >= 0 && point->variant < FROTH_VORTEX_FRAMES) {
         draw[0](canvas,
-                work->sheet +
+                state->sheet +
                     (point->variant / 2) % 3 * PICTURE_BYTES(FROTH_VORTEX_HALF),
                 point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56,
                 FROTH_VORTEX_HALF_WIDTH, FROTH_VORTEX_HALF_HEIGHT);
         draw[1](canvas,
-                work->sheet +
+                state->sheet +
                     (point->variant / 2) % 3 * PICTURE_BYTES(FROTH_VORTEX_HALF),
                 point->x, point->y - 56, FROTH_VORTEX_HALF_WIDTH,
                 FROTH_VORTEX_HALF_HEIGHT);
@@ -176,9 +177,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(args->variant * 2 + 2, args->variant * 2 + 2);
-    if (work->cameraPhase == CAMERA_PHASE_IDLE)
-      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
-    EFFECT_END_FRAME(work);
+    if (state->cameraPhase == CAMERA_PHASE_IDLE)
+      state->cameraPhase = CAMERA_PHASE_FRAME_DONE;
+    EFFECT_END_FRAME(state);
   }
 
   // Tear down.
@@ -192,7 +193,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
 /// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane.
 void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   FIXED wave;
   struct Particle *glint;
@@ -206,11 +207,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
   // Set up: the canvas layer, the tornado sprite sheet and two max blitters,
   // the second mirrored.
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -219,12 +220,12 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
   // The glints start at random places in their funnel, staggered in time.
   for (j = 0; j != WHIRLWIND_GLINTS; j++) {
-    glint = &work->particles[j];
+    glint = &state->particles[j];
     glint->x = Random16() & 31;
     glint->y = (Random16() & 63) + 16;
     glint->variant = -(Random16() & 15);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0); // invisible to start with
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
@@ -261,26 +262,26 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       y = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32) + i * DEGtoANG(90)) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas,
-              work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
+              state->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
                   WHIRLWIND_TORNADO_PICTURES,
               x, y + 16, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
-              work->sheet + segment * WHIRLWIND_SECTION_BYTES +
+              state->sheet + segment * WHIRLWIND_SECTION_BYTES +
                   (WHIRLWIND_TORNADO_PICTURES + 6 * WHIRLWIND_SECTION_BYTES),
               x, y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
-              work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
+              state->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
                   (WHIRLWIND_TORNADO_PICTURES + WHIRLWIND_SECTION_BYTES),
               x, y + 80, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
 
       // Its four glints, the second of each pair mirrored; each restarts at
       // a new place when its pictures run out.
       for (j = 0; j != 4; j++) {
-        glint = &work->particles[i * 4 + j];
+        glint = &state->particles[i * 4 + j];
         if (glint->variant >= 0) {
           picture = glint->variant / 2 + (j / 2) * 3;
           draw[j & 1](canvas,
-                      work->sheet + gBattleEffect_GlintPictures[picture],
+                      state->sheet + gBattleEffect_GlintPictures[picture],
                       glint->x + x, glint->y + y,
                       gBattleEffect_GlintPictureWidths[picture],
                       gBattleEffect_GlintPictureHeights[picture]);
@@ -304,10 +305,10 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       }
     }
 
-    work->shakeFrames = 1;
+    state->shakeFrames = 1;
     BattleCamera_Shake(gVortices_Shapes[args->variant][WHIRLWIND_SHAKE],
                        gVortices_Shapes[args->variant][WHIRLWIND_SHAKE] * 2);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   // Tear down.

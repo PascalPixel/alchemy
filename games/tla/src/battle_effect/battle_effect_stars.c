@@ -43,7 +43,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint base;
 #endif
   FIXED scale[3];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
@@ -63,10 +63,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *corners;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   caster = (struct Actor *)BattleObject_GetFar(args->user)->object;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -76,7 +76,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(caster, POSE_LEAP);
   Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
@@ -84,7 +84,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   // frames; the second and third aim past it.
   source = (struct Actor *)BattleObject_GetFar(args->user)->object;
   target = (struct Actor *)BattleObject_GetFar(args->targets[0])->object;
-  for (i = 0, point = work->particles; i != 3; i++) {
+  for (i = 0, point = state->particles; i != 3; i++) {
     SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
                  source->z.fixed);
     if (i == 0)
@@ -115,7 +115,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
     for (i = 0; i != 3; i++) {
       start = i * ASTRAL_BLAST_STAR_INTERVAL;
       if (frame >= start) {
-        star = &work->particles[i];
+        star = &state->particles[i];
         size = (frame - start) / 4 + 2;
         if (size > MOTE_SIZE_MAX)
           size = MOTE_SIZE_MAX;
@@ -193,12 +193,12 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
             BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, 0, 8);
           }
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
         }
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -209,7 +209,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 ///
 /// Abilities: Shining Star.
 void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
@@ -227,10 +227,10 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   s32 k;
   struct Particle *corners;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
@@ -238,13 +238,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Each star leaves from above the caster on its own course to the target,
   // the later ones after a longer delay (held in variant).
   source = BattleObject_GetFar(args->user)->object;
   target = BattleObject_GetFar(args->targets[0])->object;
-  for (i = 0, point = work->particles; i != 8; i++) {
+  for (i = 0, point = state->particles; i != 8; i++) {
     s32 delay = i * 8;
 
     SET_POSITION(point, source->x / 2, source->y + toFIXED(120), source->z);
@@ -267,7 +267,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {
-      star = &work->particles[i];
+      star = &state->particles[i];
       if (frame >= star->variant) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         EffectPosition_ProjectPoint(star, &screenPosition);
@@ -308,7 +308,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           star->velocityY = -star->velocityY;
           star->velocityX /= 2;
           star->velocityZ /= 2;
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
           for (j = 0; j != args->targetCount; j++)
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
@@ -320,7 +320,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

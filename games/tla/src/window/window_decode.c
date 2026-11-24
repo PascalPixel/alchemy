@@ -58,7 +58,7 @@ enum {
   MESSAGE_LOCALIZED_WORD = 13,
   /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
   MESSAGE_WINDOW_EFFECT = 15,
-  /// The name of the unit gMainRoutineWork.leaderActorId names.
+  /// The name of the unit gMainRoutineState.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
@@ -385,7 +385,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix);
 
-/// Decodes message into the ring of decoded text (WindowWork.textBuffer) after
+/// Decodes message into the ring of decoded text (WindowState.textBuffer) after
 /// the text decoded last, and returns where it starts; message -1 returns the
 /// last decoded message's start again. Its argument codes take the message
 /// arguments (MessageArgument_Push), which clear set empties after. Halting
@@ -393,13 +393,13 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 /// breaks the message off with "..." after its first word, or its first
 /// HALTING_SPEECH_LENGTH characters.
 s32 Message_Decode(s32 message, s32 clear) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   u32 code = 0;
 #if !TLA_PATCH_2
   s32 lineStart = 1;
 #endif
   s32 quote = 0;
-  u32 start = work->textBufferEnd;
+  u32 start = state->textBufferEnd;
   u32 decodedCount = 0;
 #if TLA_PATCH_2
   s32 afterItem;
@@ -409,7 +409,7 @@ s32 Message_Decode(s32 message, s32 clear) {
   s32 running = 1;
   u32 writePosition = start;
   u32 previousCode;
-  u16 *entry = work->textBuffer;
+  u16 *entry = state->textBuffer;
   s32 overflow = 0;
 #if TLA_PATCH_2
   s32 form;
@@ -444,7 +444,7 @@ s32 Message_Decode(s32 message, s32 clear) {
   afterItem = 0;
 #endif
   if (message == -1) {
-    start = work->lastMessageStart;
+    start = state->lastMessageStart;
   } else {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
@@ -520,16 +520,16 @@ s32 Message_Decode(s32 message, s32 clear) {
         }
       } else {
 #if TLA_PATCH_2
-        if (work->haltingSpeech != 0) {
+        if (state->haltingSpeech != 0) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 #else
-        if (work->haltingSpeech != 0 && lineStart == 0 &&
+        if (state->haltingSpeech != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-        if (work->spacingAfter != 0 && lineStart == 0 &&
+        if (state->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= WIDE_GAP_LAST && previousCode >= WIDE_GAP_FIRST &&
             previousCode != TEXT_MARK_VOICED &&
@@ -543,7 +543,7 @@ s32 Message_Decode(s32 message, s32 clear) {
 #endif
 
         if (code >= TEXT_SPACE && code != MESSAGE_EM_DASH) {
-          if (work->haltingSpeech != 0 &&
+          if (state->haltingSpeech != 0 &&
               (code == TEXT_SPACE || decodedCount > HALTING_SPEECH_LENGTH)) {
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
@@ -681,7 +681,7 @@ s32 Message_Decode(s32 message, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
+            nameBytes = Unit_Get(gMainRoutineState.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -892,9 +892,9 @@ s32 Message_Decode(s32 message, s32 clear) {
     TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    work->textBufferEnd = (u16)nextPosition;
+    state->textBufferEnd = (u16)nextPosition;
     HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
-    work->lastMessageStart = (u16)start;
+    state->lastMessageStart = (u16)start;
   }
 
   if (clear != 0)
@@ -946,15 +946,15 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
 /// the field, the Mystery Man and Mystery Woman are named from
 /// MYSTERY_MAN_MESSAGE and the message after it rather than their unit names.
 s32 Message_Decode(s32 message, s32 clear) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   u32 code = 0;
   s32 lineStart = 1;
-  u32 start = work->textBufferEnd;
+  u32 start = state->textBufferEnd;
   u32 decodedCount = 0;
   s32 running = 1;
   u32 writePosition = start;
-  u16 *entry = work->textBuffer;
-  u8 mode = work->battleMode & WINDOW_BATTLE_MESSAGE;
+  u16 *entry = state->textBuffer;
+  u8 mode = state->battleMode & WINDOW_BATTLE_MESSAGE;
   s32 (*decode)(struct TextReader *);
   s32 overflow = 0;
   u32 previousCode;
@@ -975,7 +975,7 @@ s32 Message_Decode(s32 message, s32 clear) {
   struct HeapSlots *heap;
 
   if (message == -1) {
-    start = work->lastMessageStart;
+    start = state->lastMessageStart;
   } else {
     RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
@@ -1032,12 +1032,12 @@ s32 Message_Decode(s32 message, s32 clear) {
           }
         }
       } else {
-        if (work->haltingSpeech != 0 && lineStart == 0 &&
+        if (state->haltingSpeech != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-        if (work->spacingAfter != 0 && lineStart == 0 &&
+        if (state->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= WIDE_GAP_LAST && previousCode >= WIDE_GAP_FIRST &&
             previousCode != TEXT_MARK_VOICED &&
@@ -1054,7 +1054,7 @@ s32 Message_Decode(s32 message, s32 clear) {
             TEXT_APPEND(entry, writePosition, (u16)code);
           }
           // The ellipsis here is three middle dots, then a full stop.
-          if (work->haltingSpeech != 0 &&
+          if (state->haltingSpeech != 0 &&
               (code == TEXT_SPACE || decodedCount > HALTING_SPEECH_LENGTH)) {
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
@@ -1120,7 +1120,7 @@ s32 Message_Decode(s32 message, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
+            nameBytes = Unit_Get(gMainRoutineState.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1135,7 +1135,7 @@ s32 Message_Decode(s32 message, s32 clear) {
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit =
                 Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
-            if (work->battleMode != WINDOW_FIELD &&
+            if (state->battleMode != WINDOW_FIELD &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
               mysteryName = MYSTERY_MAN_MESSAGE;
@@ -1204,9 +1204,9 @@ s32 Message_Decode(s32 message, s32 clear) {
     TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    work->textBufferEnd = (u16)nextPosition;
+    state->textBufferEnd = (u16)nextPosition;
     HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
-    work->lastMessageStart = (u16)start;
+    state->lastMessageStart = (u16)start;
   }
 
   if (clear != 0)

@@ -33,7 +33,7 @@
 /// not on it), and the name window.
 void MapScreen_Initialize(void) {
   u32 *markerTiles;
-  struct WorldMapWork *work = Ram_WorldMapWork;
+  struct WorldMapState *state = Ram_WorldMapState;
   u32 *oam;
   FIXED screenX;
   FIXED screenY;
@@ -46,14 +46,14 @@ void MapScreen_Initialize(void) {
   s32 left;
 
   markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
-  oam = (u32 *)work->markers;
+  oam = (u32 *)state->markers;
   // DEAD: the leader looked up and never used; the ROM keeps the calls.
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;
-  work->vramBlock = VramCache_FindFreeEntry();
-  work->searchX = 0;
-  work->searchZ = 0;
+  state->vramBlock = VramCache_FindFreeEntry();
+  state->searchX = 0;
+  state->searchZ = 0;
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   // Each marker tile holds one dot in its top-left corner, with a shadow in
   // colour 1 to its right and below (# the dot, + the shadow):
@@ -82,7 +82,7 @@ void MapScreen_Initialize(void) {
   markerTiles[MARKER_ROW_WORD(3, 2)] = MAP_SCREEN_MARKER_ROW(15, 15, 15, 15, 1);
   markerTiles[MARKER_ROW_WORD(3, 3)] = MAP_SCREEN_MARKER_ROW(0, 15, 15, 1, 1);
   markerTiles[MARKER_ROW_WORD(3, 4)] = MAP_SCREEN_MARKER_ROW(0, 0, 1, 1, 0);
-  tileAttributes = VramCache_Load(work->vramBlock, WORLD_MAP_MARKER_TILE_BYTES,
+  tileAttributes = VramCache_Load(state->vramBlock, WORLD_MAP_MARKER_TILE_BYTES,
                                   markerTiles) |
                    OBJ_PRIORITY(1);
   for (i = 0; i < MAP_SCREEN_PLACE_COUNT; i++) {
@@ -92,15 +92,15 @@ void MapScreen_Initialize(void) {
   }
   Heap_Release(markerTiles);
   if (GameFlag_Get(FLAG_WORLD_MAP_LEFT)) {
-    work->x = toFIXED(264);
-    work->z = toFIXED(16);
+    state->x = toFIXED(264);
+    state->z = toFIXED(16);
   } else {
     MapScreen_GetLeaderPoint(&screenX, &screenY);
-    work->x = toFIXED(screenX);
-    work->z = toFIXED(screenY);
+    state->x = toFIXED(screenX);
+    state->z = toFIXED(screenY);
   }
-  screenX = work->x - toFIXED(DISPLAY_WIDTH / 2);
-  screenY = work->z - toFIXED(DISPLAY_HEIGHT / 2);
+  screenX = state->x - toFIXED(DISPLAY_WIDTH / 2);
+  screenY = state->z - toFIXED(DISPLAY_HEIGHT / 2);
   left = 0;
   right = toFIXED(272);
   bottom = toFIXED(224);
@@ -112,20 +112,20 @@ void MapScreen_Initialize(void) {
     screenY = left;
   if (screenY > bottom)
     screenY = bottom;
-  Ram_WorldMapCursorStart[0] = work->x;
-  Ram_WorldMapCursorStart[1] = work->z;
-  work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
-  tile = gVramCacheEntries[work->windowSlot].offset;
-  work->window = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
-  work->shown = -1;
-  work->speed = toFIXED(1);
+  Ram_WorldMapCursorStart[0] = state->x;
+  Ram_WorldMapCursorStart[1] = state->z;
+  state->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
+  tile = gVramCacheEntries[state->windowSlot].offset;
+  state->window = Window_CreateFar(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
+  state->shown = -1;
+  state->speed = toFIXED(1);
   cursorAttributes = OBJ_SIZE_16X16;
   *oam++ = 0;
   *oam++ = cursorAttributes;
   cursorAttributes = OBJ_PRIORITY(1);
   cursorAttributes |= tile >> 5;
   *oam = cursorAttributes;
-  *Ram_WorldMapCursor = &work->x;
+  *Ram_WorldMapCursor = &state->x;
   Ram_WorldMapScroll[0] = screenX;
   Ram_WorldMapScroll[1] = screenY;
 }
@@ -133,9 +133,9 @@ void MapScreen_Initialize(void) {
 /// Closes the map screen: returns its VRAM blocks and removes the
 /// name window.
 void MapScreen_Release(void) {
-  VramCache_FreeEntry(gWorldMapWork.vramBlock);
-  VramCache_FreeEntry(gWorldMapWork.windowSlot);
-  Window_CloseFar((u32)gWorldMapWork.window, 2);
+  VramCache_FreeEntry(gWorldMapState.vramBlock);
+  VramCache_FreeEntry(gWorldMapState.windowSlot);
+  Window_CloseFar((u32)gWorldMapState.window, 2);
 }
 
 /// Unused: nothing calls it. Puts the leader at the world map position of
@@ -163,7 +163,7 @@ void MapScreen_PlaceLeaderAt(s32 x, s32 z) {
 /// map, the image's fixed point (264, 16).
 void MapScreen_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 leader = Party_GetLeaderActor();
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *actor;
   s32 x;
   s32 z;

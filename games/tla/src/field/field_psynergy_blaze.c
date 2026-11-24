@@ -36,14 +36,14 @@ enum BlazeLook { BLAZE_RED, BLAZE_VIOLET, BLAZE_YELLOW, BLAZE_BLUE };
 /// or for BLAZE_SPRAY_FRAMES at most: red, or violet, yellow or blue to match
 /// the torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs
 /// its Blaze event, and one that is lit by it ends the jet, its actor id kept
-/// in the field work. Cast at nothing, the nearest fire in reach is the target:
-/// a brazier, a lit candlestick, a lit Mars Lighthouse torch, or an actor
-/// wearing SPRITE_EXCLAMATION_BUBBLE (the Gondowan Cliffs hideout's unseen
-/// marker at its fire).
+/// in the field state. Cast at nothing, the nearest fire in reach is the
+/// target: a brazier, a lit candlestick, a lit Mars Lighthouse torch, or an
+/// actor wearing SPRITE_EXCLAMATION_BUBBLE (the Gondowan Cliffs hideout's
+/// unseen marker at its fire).
 void FieldPsynergy_Blaze(void) {
-  struct BlazeWork *work;
-  struct FieldWork *event;
-  struct FieldEffectWork *scene;
+  struct BlazeState *state;
+  struct FieldState *event;
+  struct FieldEffectState *scene;
   struct Actor *caster;
   struct Actor *actor;
   struct EffectSprite *sprite;
@@ -68,9 +68,9 @@ void FieldPsynergy_Blaze(void) {
   s32 k;
   s32 mode;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BlazeWork));
-  scene = Ram_HeapSlots->fieldEffectWork;
-  event = Ram_HeapSlots->fieldWork;
+  state = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BlazeState));
+  scene = Ram_HeapSlots->fieldEffectState;
+  event = Ram_HeapSlots->fieldState;
   caster = scene->mainActor;
   look = BLAZE_RED;
   actor = scene->child;
@@ -84,11 +84,11 @@ void FieldPsynergy_Blaze(void) {
       look = BLAZE_BLUE;
   }
   Field_StartColorTransition(8, gBlaze_TintColors[look]);
-  work->mode = BLAZE_FLICKER;
+  state->mode = BLAZE_FLICKER;
   if (scene->enabled != 0) {
-    work->origin[0] = scene->x;
-    work->origin[1] = scene->y + toFIXED(16);
-    work->origin[2] = scene->z;
+    state->origin[0] = scene->x;
+    state->origin[1] = scene->y + toFIXED(16);
+    state->origin[2] = scene->z;
     best = BEYOND_REACH;
     for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
       cursor.actor = event->actors[i];
@@ -102,10 +102,10 @@ void FieldPsynergy_Blaze(void) {
           height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
                                ACTOR_FIRST_LAYER(cursor.actor)->animationId)
                                ->boxX);
-          work->mode = BLAZE_LIGHT_TORCH;
-          work->origin[0] = cursor.actor->x.fixed;
-          work->origin[1] = cursor.actor->y.fixed + height;
-          work->origin[2] = cursor.actor->z.fixed;
+          state->mode = BLAZE_LIGHT_TORCH;
+          state->origin[0] = cursor.actor->x.fixed;
+          state->origin[1] = cursor.actor->y.fixed + height;
+          state->origin[2] = cursor.actor->z.fixed;
           scene->secondActorId = i;
           scene->child = cursor.actor;
           best = distance;
@@ -114,25 +114,25 @@ void FieldPsynergy_Blaze(void) {
     }
   } else {
     if (event->blazeLongSpray == 0)
-      work->mode = BLAZE_SPRAY;
+      state->mode = BLAZE_SPRAY;
     else
-      work->mode = BLAZE_LONG_SPRAY;
+      state->mode = BLAZE_LONG_SPRAY;
     if (scene->child != NULL)
       height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
                            ACTOR_FIRST_LAYER(scene->child)->animationId)
                            ->boxX);
     else
       height = toFIXED(20);
-    work->origin[0] = scene->x;
-    work->origin[1] = scene->y + height;
-    work->origin[2] = scene->z;
+    state->origin[0] = scene->x;
+    state->origin[1] = scene->y + height;
+    state->origin[2] = scene->z;
   }
 
-  mode = work->mode;
+  mode = state->mode;
   if (mode == BLAZE_LIGHT_TORCH) {
-    pos[0] = work->origin[0];
-    pos[1] = work->origin[1];
-    pos[2] = work->origin[2];
+    pos[0] = state->origin[0];
+    pos[1] = state->origin[1];
+    pos[2] = state->origin[2];
     actor = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
     if (actor != NULL) {
       actor->motionFlags = 0;
@@ -145,9 +145,9 @@ void FieldPsynergy_Blaze(void) {
       wait(10);
     }
   } else if (mode == BLAZE_FLICKER) {
-    pos[0] = work->origin[0];
-    pos[1] = work->origin[1];
-    pos[2] = work->origin[2];
+    pos[0] = state->origin[0];
+    pos[1] = state->origin[1];
+    pos[2] = state->origin[2];
     actor = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
     if (actor != NULL) {
       actor->motionFlags = mode;
@@ -161,8 +161,8 @@ void FieldPsynergy_Blaze(void) {
 
     Sound_PlayFar(SE_RUSH);
     BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
-    work->angle = scene->angle8;
-    work->targetAngle = scene->angle8;
+    state->angle = scene->angle8;
+    state->targetAngle = scene->angle8;
     switch (look) {
     case BLAZE_RED:
       resourceId = RESOURCE_RED_FLAME_BURST;
@@ -180,13 +180,13 @@ void FieldPsynergy_Blaze(void) {
       resourceId = RESOURCE_RED_FLAME_BURST;
       break;
     }
-    Decompress_TaggedLz(Resource_GetTableEntry(resourceId), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(resourceId), state);
     dropSlot = VramCache_FindFreeEntry();
-    tile = VramCache_Load(dropSlot, 4096, work);
-    work->dropTile = tile;
-    cursor.particle = work->dropMotion;
+    tile = VramCache_Load(dropSlot, 4096, state);
+    state->dropTile = tile;
+    cursor.particle = state->dropMotion;
     for (j = 0; j < BLAZE_DROPS; j++) {
-      sprite = &work->drops[j];
+      sprite = &state->drops[j];
 
       EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
       sprite->depth = BattleEffect_GetObjectDepth(caster) + BLAZE_DROP_DEPTH;
@@ -196,13 +196,13 @@ void FieldPsynergy_Blaze(void) {
       cursor.particle->timer = -1;
       cursor.particle++;
     }
-    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), state);
     puffSlot = VramCache_FindFreeEntry();
-    tile = VramCache_Load(puffSlot, 2048, work);
-    work->puffTile = tile;
-    cursor.particle = work->puffMotion;
+    tile = VramCache_Load(puffSlot, 2048, state);
+    state->puffTile = tile;
+    cursor.particle = state->puffMotion;
     for (j = 0; j < BLAZE_DROPS; j++) {
-      sprite = &work->puffs[j];
+      sprite = &state->puffs[j];
 
       EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
       sprite->scaleY = sprite->scaleX = FIXED_ONE * 3 / 4;
@@ -214,21 +214,22 @@ void FieldPsynergy_Blaze(void) {
       cursor.particle++;
     }
     wait(1);
-    work->emitting = 1;
+    state->emitting = 1;
     Task_Add(Blaze_UpdateSpray, TASK_PASS_FRAME);
     for (k = 0; k < BLAZE_SPRAY_FRAMES; k++) {
       wait(1);
-      if (work->hit != 0) {
+      if (state->hit != 0) {
         pending = Scene_FindPsynergyTrigger(
             PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS), scene->fieldPsynergy,
-            (s16)(work->hitObject | PSYNERGY_TARGET_ACTOR));
+            (s16)(state->hitObject | PSYNERGY_TARGET_ACTOR));
         if (pending != NULL)
-          Field_RunPsynergyEvent(pending, scene->firstActorId, work->hitObject);
+          Field_RunPsynergyEvent(pending, scene->firstActorId,
+                                 state->hitObject);
         if (Scene_FindPsynergyTrigger(
                 PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
                 scene->fieldPsynergy,
-                (s16)(work->hitObject | PSYNERGY_TARGET_ACTOR)) != NULL) {
-          event->psynergyHitObject = work->hitObject;
+                (s16)(state->hitObject | PSYNERGY_TARGET_ACTOR)) != NULL) {
+          event->psynergyHitObject = state->hitObject;
           break;
         }
       }
@@ -236,9 +237,9 @@ void FieldPsynergy_Blaze(void) {
         break;
     }
     Sound_PlayFar(SOUND_FADE_OUT_EXIT_SE);
-    work->emitting = 0;
+    state->emitting = 0;
     for (k = 0; k < 60; k++) {
-      cursor.particle = work->dropMotion;
+      cursor.particle = state->dropMotion;
       for (j = 0; j < BLAZE_DROPS && cursor.particle->timer == -1;
            j++, cursor.particle++)
         ;
@@ -265,9 +266,9 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
   struct Actor *other;
   s32 i;
 
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   result = 0;
-  if (work->mode != ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode != ACTOR_SYSTEM_WORLD_MAP) {
     if (MapGrid_CheckCollisionAtFar(actor->x.fixed, actor->z.fixed, 0,
                                     actor->groundHeight) != 0)
       result = 1;

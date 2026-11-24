@@ -1,7 +1,7 @@
 /// Shakes the camera round the leader: every third frame it moves a pixel
 /// diagonally from him, one of the four ways at random.
 void WorldMap_JitterTransitionCamera(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 x = actor->x.part[0].integer;
   s32 z = actor->z.part[0].integer;
 

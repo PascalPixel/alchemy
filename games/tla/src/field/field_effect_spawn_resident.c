@@ -8,7 +8,7 @@
 #include "fixed_math.h"
 #include "sprite_ids.h"
 #include "system/field_effect.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sprite.h"
 #include "field/objdisp.h"
 #include "field/scene_tables.h"
@@ -31,7 +31,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   // Actor_GetById returns NULL, and the sprite priority below is read through
   // it. UBFIX takes the leader's, as the overlays' copy does.
 #ifdef UBFIX
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *party = Actor_GetById(gMainRoutineState.leaderActorId);
 #else
   struct Actor *party = Actor_GetById(ACTOR_ISAAC);
 #endif

@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_BATTLE_EFFECT_WORK_H
-#define ALCHEMY_BATTLE_EFFECT_WORK_H
+#ifndef ALCHEMY_BATTLE_EFFECT_STATE_H
+#define ALCHEMY_BATTLE_EFFECT_STATE_H
 
 /// @file
-/// The Lost Age's copy of the battle effect work.
+/// The Lost Age's copy of the battle effect state.
 // The Broken Seal's block with the 64 particles in front of the sprite sheet,
 // the two affine scales after the BG2 reference point, 64 object slots and one
 // more word before the effect.
@@ -14,7 +14,7 @@
 #include "types.h"
 
 /// How the canvas transfer treats the canvas after each copy (a battle
-/// effect's BattleEffectWork.transferMode, Lucky Wheels' ReelEffectWork's);
+/// effect's BattleEffectState.transferMode, Lucky Wheels' ReelEffectState's);
 /// transferValue is its argument.
 enum CanvasTransferMode {
   CANVAS_COPY,             ///< copy as drawn
@@ -34,10 +34,10 @@ enum CanvasTransferMode {
 /// kept for the next frame.
 enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 
-/// The running battle effect's work: its canvas image, 64 particles, the
+/// The running battle effect's state: its canvas image, 64 particles, the
 /// display registers it stages and its sprites. It lives in the
 /// HEAP_SLOT_BATTLE_EFFECT heap slot.
-struct BattleEffectWork {
+struct BattleEffectState {
   struct Particle particles[64];
   u8 sheet[27008];    ///< the effect's decoded pictures, at fixed offsets
   s32 bg2xLines[160]; ///< BG2X for each scanline, for an HBlank DMA
@@ -111,19 +111,19 @@ struct BattleEffectWork {
   struct BattleEffectParams *args; ///< the command being run
 };
 
-STATIC_ASSERT(offsetof(struct BattleEffectWork, sheet) == 1792);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2xLines) == 28800);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, backdropLines) == 30272);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferMode) == 30592);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, shakeFrames) == 30632);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, fadeStep) == 30648);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, win0h) == 30652);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2x) == 30672);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, bg2pa) == 30680);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, sprites) == 30684);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 30940);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 30952);
-STATIC_ASSERT(offsetof(struct BattleEffectWork, args) == 30960);
+STATIC_ASSERT(offsetof(struct BattleEffectState, sheet) == 1792);
+STATIC_ASSERT(offsetof(struct BattleEffectState, bg2xLines) == 28800);
+STATIC_ASSERT(offsetof(struct BattleEffectState, backdropLines) == 30272);
+STATIC_ASSERT(offsetof(struct BattleEffectState, transferMode) == 30592);
+STATIC_ASSERT(offsetof(struct BattleEffectState, shakeFrames) == 30632);
+STATIC_ASSERT(offsetof(struct BattleEffectState, fadeStep) == 30648);
+STATIC_ASSERT(offsetof(struct BattleEffectState, win0h) == 30652);
+STATIC_ASSERT(offsetof(struct BattleEffectState, bg2x) == 30672);
+STATIC_ASSERT(offsetof(struct BattleEffectState, bg2pa) == 30680);
+STATIC_ASSERT(offsetof(struct BattleEffectState, sprites) == 30684);
+STATIC_ASSERT(offsetof(struct BattleEffectState, actorTimers) == 30940);
+STATIC_ASSERT(offsetof(struct BattleEffectState, transferPending) == 30952);
+STATIC_ASSERT(offsetof(struct BattleEffectState, args) == 30960);
 
 /// The battle canvas the effects draw into: 128 by 128 pixels, a byte each.
 #define CANVAS_BYTES (128 * 128)

@@ -43,7 +43,7 @@
 #include "system/field_effect.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -230,7 +230,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /// The actors of the room the party enters.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_TREASURE_ISLE_CHESTS)
     return gTreasureIsleChestsPlacements;
@@ -397,7 +397,7 @@ void TreasureIsle_RaiseLastSpikyRock(void) {
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_ENTRANCE) {
     if (id == ACTOR_ENTRANCE_PILLAR_A &&
         FIELD_CELL(actor->x.fixed) ==
             FIELD_CELL(toFIXED(ENTRANCE_PILLAR_A_MOVED_X)))
@@ -411,7 +411,7 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
             FIELD_CELL(toFIXED(ENTRANCE_PILLAR_C_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_CHESTS) {
     if (id == ACTOR_STONE_PILLAR &&
         FIELD_HALF_CELL(actor->x.fixed) ==
             FIELD_HALF_CELL(toFIXED(CHESTS_PILLAR_MOVED_X)))
@@ -423,13 +423,13 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
             FIELD_HALF_CELL(toFIXED(CHESTS_SECOND_PILLAR_MOVED_Z)))
       TreasureIsle_RaiseLastSpikyRock();
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     if (id == ACTOR_STONE_PILLAR &&
         FIELD_HALF_CELL(actor->x.fixed) ==
             FIELD_HALF_CELL(toFIXED(ARMLET_PILLAR_MOVED_X)))
       Event_SetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_GALE) {
     if (id == ACTOR_GALE_ROOM_PILLAR &&
         FIELD_HALF_CELL(actor->x.fixed) ==
             FIELD_HALF_CELL(toFIXED(GALE_ROOM_PILLAR_MOVED_X)))
@@ -546,13 +546,13 @@ void TreasureIsle_MeetStarMagician(void) {
   PaletteFade_ApplyTarget(FIXED_ONE, 0);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_STAR_MAGICIAN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
   }
   FieldEvent_Wait(20);
-  gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_STAR_MAGICIAN_BEATEN);
+  gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_STAR_MAGICIAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_TREASURE_ISLE);
@@ -562,7 +562,7 @@ extern struct Trigger gTreasureIsleEntranceTriggers[];
 
 /// The triggers of the room the party enters.
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_TREASURE_ISLE_CHESTS)
     return gTreasureIsleChestsTriggers;
@@ -582,14 +582,14 @@ extern s32 gTreasureIsle_ColorCycleFrame[];
 /// A task: cycles four colours of the two water palettes every eight frames,
 /// saving both palettes the first time.
 void TreasureIsle_CycleWaterColors(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 phase;
   s32 i;
   s32 busy;
 
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     return;
-  busy = (s8)work->revealActive;
+  busy = (s8)state->revealActive;
   if (busy != 0)
     return;
   if (gTreasureIsle_ColorCycleFrame[0] == -1) {
@@ -631,10 +631,10 @@ void TreasureIsle_CycleWaterColors(void) {
 s32 Scene_Initialize(void) {
   s32 i;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Tightrope_Initialize();
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_ENTRANCE) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_ENTRANCE) {
     Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(0));
     Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(1));
     Event_SetFlag(FLAG_TREASURE_ISLE_ENTRANCE_PILLAR_MOVED(2));
@@ -648,7 +648,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_ENTRANCE_PILLAR_C, ENTRANCE_PILLAR_C_MOVED_X,
                         ENTRANCE_PILLAR_C_MOVED_Z);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_CHESTS) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_CHESTS) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_FRAME);
     Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_PILLAR_MOVED))
@@ -665,7 +665,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4)))
       TreasureIsle_SetSpikyRock(gTreasureIsleChestsSpikyRocks, 4);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_FRAME);
     Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_PILLAR_MOVED))
@@ -678,7 +678,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2)))
       TreasureIsle_SetSpikyRock(gTreasureIsleArmletSpikyRocks, 2);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
+  if (gMainRoutineState.next == SCENE_TREASURE_ISLE_GALE) {
     if (Event_GetFlag(FLAG_TREASURE_ISLE_GALE_ROOM_PILLAR_MOVED))
       Actor_SetPosition(ACTOR_GALE_ROOM_PILLAR, GALE_ROOM_PILLAR_MOVED_X,
                         GALE_ROOM_PILLAR_MOVED_Z);

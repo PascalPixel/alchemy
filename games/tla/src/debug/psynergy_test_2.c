@@ -22,7 +22,7 @@
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sequence_event.h"
 #include "field/call.h"
 #include "window/item_icon.h"
@@ -66,8 +66,8 @@ enum PsynergyTest2ActorId {
 #define ROCK_FRAMES 20 ///< how long a rock flies
 
 /// The rocks a talk scatters, in the menu's heap slot: the scenes' struct
-/// RockWork with each rock read as a particle.
-struct RockParticleWork {
+/// RockState with each rock read as a particle.
+struct RockParticleState {
   u8 tiles[ROCK_SHEET_BYTES];
   struct Particle rocks[ROCK_COUNT];
   struct EffectSprite sprites[ROCK_COUNT];
@@ -149,12 +149,12 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Fades the room in over the backdrop, sets the fast message speed, coils the
 /// rope and shows the stake sunk flat.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->sceneAttributeHigh = 0;
-  work->sceneAttributeLow = 0;
-  gMainRoutineWork.messageSpeed = MESSAGE_SPEED_FAST;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->sceneAttributeHigh = 0;
+  state->sceneAttributeLow = 0;
+  gMainRoutineState.messageSpeed = MESSAGE_SPEED_FAST;
   Rope_Initialize();
   // Coils rope 0 between the two posts.
   Value3((s32 (*)())Rope_Coil, 0, ACTOR_FIRST_POST, ACTOR_SECOND_POST);
@@ -170,16 +170,16 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
 /// Each frame of the rocks: each rock younger than ROCK_FRAMES is drawn, its
 /// picture one of eight as it ages, and falls.
 void PsynergyTest2_UpdateRocks(void) {
-  struct RockParticleWork *work = Ram_HeapSlots->menuWork;
-  struct Particle *particle = work->rocks;
-  struct EffectSprite *sprite = work->sprites;
+  struct RockParticleState *state = Ram_HeapSlots->menuState;
+  struct Particle *particle = state->rocks;
+  struct EffectSprite *sprite = state->sprites;
   s32 i;
   s32 step = -toFIXED(1) / 2;
 
   i = ROCK_COUNT - 1;
   do {
     if ((u32)particle->variant < ROCK_FRAMES) {
-      sprite->oam.index = work->tileBase + ((particle->variant >> 2) & 7) * 8;
+      sprite->oam.index = state->tileBase + ((particle->variant >> 2) & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
       BattleEffect_StepVector3(particle, 63, step);
       particle->variant++;
@@ -236,7 +236,7 @@ struct Trigger gSceneEvents[] = {
 /// Throws `count` rocks out of (x, y, z): each starts 8 pixels or more away
 /// at a random angle and flies up and outward.
 void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
-  struct RockParticleWork *work = Ram_HeapSlots->menuWork;
+  struct RockParticleState *state = Ram_HeapSlots->menuState;
   struct Particle *rock;
   s32 angle;
   s32 i;
@@ -245,7 +245,7 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
     i = count;
     do {
       angle = Random16();
-      rock = &work->rocks[work->next];
+      rock = &state->rocks[state->next];
       rock->variant = 0;
       rock->x = x;
       rock->y = y;
@@ -257,8 +257,8 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
       rock->velocityZ = 0;
       FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
                                    &rock->velocityX);
-      work->next++;
-      work->next &= ROCK_COUNT - 1;
+      state->next++;
+      state->next &= ROCK_COUNT - 1;
       i--;
     } while (i != 0);
   }
@@ -267,22 +267,22 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
 /// Loads the rocks' tiles, hides every rock and starts
 /// PsynergyTest2_UpdateRocks.
 void PsynergyTest2_StartRocks(void) {
-  struct RockParticleWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockParticleWork));
+  struct RockParticleState *state =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockParticleState));
   s32 entry;
   s32 tile;
   s32 i;
   struct Particle *rock;
   struct EffectSprite *sprite;
 
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), state);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, ROCK_SHEET_BYTES, work);
-  work->tileBase = tile;
-  work->resource = entry;
-  rock = work->rocks;
+  tile = Vram_Load(entry, ROCK_SHEET_BYTES, state);
+  state->tileBase = tile;
+  state->resource = entry;
+  rock = state->rocks;
   for (i = 0; i < ROCK_COUNT; i++) {
-    sprite = &work->sprites[i];
+    sprite = &state->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -291,16 +291,16 @@ void PsynergyTest2_StartRocks(void) {
     rock->variant = -1;
     rock++;
   }
-  work->next = 0;
+  state->next = 0;
   FieldTask_AddFrame(PsynergyTest2_UpdateRocks, TASK_PASS_FRAME);
 }
 
-/// Stops the rocks and frees their tiles and work.
+/// Stops the rocks and frees their tiles and state.
 void PsynergyTest2_EndRocks(void) {
-  struct RockParticleWork *work = Ram_HeapSlots->menuWork;
+  struct RockParticleState *state = Ram_HeapSlots->menuState;
 
   FieldTask_Remove(PsynergyTest2_UpdateRocks);
-  VramCache_FreeEntry(work->resource);
+  VramCache_FreeEntry(state->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
@@ -383,7 +383,7 @@ UNUSED void PsynergyTest2_RaiseStatue(s32 stage, s32 x, s32 z, s32 row,
       actor->scaleX = FIXED_ONE;
       actor->scaleY = FIXED_ONE;
       actor->facing =
-          Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
+          Actor_Get(gMainRoutineState.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(row, column);
     }
   }

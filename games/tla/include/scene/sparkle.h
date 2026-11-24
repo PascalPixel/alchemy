@@ -14,7 +14,7 @@ struct Actor;
 /// The sparkle over an object: its two pairs of sprites, how far each pair has
 /// risen (from 0 to RING_CLIMB - 1; RING_NOT_STARTED before it starts) and the
 /// pair to start next.
-struct SparkleWork {
+struct SparkleState {
   struct EffectSprite sprites[4];
   s16 heights[2];
   s16 vramEntry;

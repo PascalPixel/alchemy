@@ -164,18 +164,18 @@ bottom. This one walks the leader through one of Daila's doors:
 
 ```c
 void Daila_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x8000, 0x4000);
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetSpeedParameters(gMainRoutineState.leaderActorId, 0x8000, 0x4000);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
   Sound_Play(123);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 2);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -6);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, 2);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -6);
   Event_Wait(10);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -225,7 +225,7 @@ room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
 (`pillar_place.h`, `pound_sink_target.h`), the dust a crumbling pillar
 throws up (`dust.h`), the slide over ice (`leader_slide_on_ice.h`) and
 the Mars Lighthouse flame throwers (`beam_*.h` and the `ride_*` files,
-over one `FlameHitWork` in [`ride.h`](../../include/scene/ride.h)).
+over one `FlameHitState` in [`ride.h`](../../include/scene/ride.h)).
 
 Tables the cartridge keeps in many overlays are shared files too: the
 field effects' three duration scripts

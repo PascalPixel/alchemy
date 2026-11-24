@@ -23,23 +23,23 @@ enum {
 /// starts its count again at 0 of SAVE_SECTORS_PER_PART; does nothing while
 /// no save workspace (heap slot HEAP_SLOT_SAVE) is allocated.
 void Save_SetProgressCallback(void (*progress)(s32 step)) {
-  struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
+  struct SaveWorkspace *state = Ram_HeapSlots->saveState;
 
-  if (work == 0)
+  if (state == 0)
     return;
-  work->progress = progress;
-  work->sectorCount = 0;
-  work->sectorTotal = SAVE_SECTORS_PER_PART;
+  state->progress = progress;
+  state->sectorCount = 0;
+  state->sectorTotal = SAVE_SECTORS_PER_PART;
 }
 
 /// Resets the serial port into multiplayer mode, installs the serial and timer
-/// 3 interrupt handlers, clears gSerialWork and points its packet buffers into
+/// 3 interrupt handlers, clears gSerialState and points its packet buffers into
 /// its storage, clears the bulk transfer state and sets gSerialExchangeActive,
 /// which starts the per-frame exchange.
 void Serial_Initialize(void) {
   u32 savedIme;
   s32 index;
-  struct SerialWork *state;
+  struct SerialState *state;
 
   IRQ_LOCK(savedIme);
   // Replace both interrupt handlers before configuring multiplayer transfers.
@@ -57,7 +57,7 @@ void Serial_Initialize(void) {
   REG_RCNT = RCNT_SIO_MODE;
   REG_SIOCNT = SIO_MULTI_MODE;
   REG_SIOCNT16 = REG_SIOCNT16 | SIO_INTR_ENABLE | SIO_115200_BPS;
-  state = &gSerialWork;
+  state = &gSerialState;
   REG_IME = 1;
   Dma_Fill32(0, state, sizeof(*state));
   state->sendIndex = -1;
@@ -89,18 +89,18 @@ void Serial_Initialize(void) {
 }
 
 /// Lets the timer start transfers again once a link mode is set, by setting
-/// gSerialWork.transferEnabled.
+/// gSerialState.transferEnabled.
 void Serial_EnableTransferTimer(void) {
-  struct SerialWork *state = &gSerialWork;
+  struct SerialState *state = &gSerialState;
 
   if (state->mode != 0)
     state->transferEnabled = 1;
 }
 
 /// Disables the serial and timer 3 interrupts, stops the transfer timer and
-/// clears gSerialWork.transferEnabled. Nothing in the game calls it.
+/// clears gSerialState.transferEnabled. Nothing in the game calls it.
 void Serial_DisableTransfer(void) {
-  struct SerialWork *state;
+  struct SerialState *state;
 
   REG_IME = 0;
   REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
@@ -109,7 +109,7 @@ void Serial_DisableTransfer(void) {
   // Timer 3 stopped, with its reload set
   REG_TM3CNT = SERIAL_TIMER_RELOAD;
   REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-  state = &gSerialWork;
+  state = &gSerialState;
   state->transferEnabled = 0;
 }
 
@@ -123,7 +123,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  switch (gSerialWork.phase) {
+  switch (gSerialState.phase) {
   case SERIAL_PHASE_SEARCHING: {
     u8 multiplayerId = control & SIO_ID;
     u8 mode;
@@ -134,7 +134,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
         (mode = control & (SIO_START | SIO_MULTI_SD)) == SERIAL_MODE_CLOCKING) {
       u8 serialError = control & SIO_MULTI_SI;
 
-      if (serialError == 0 && gSerialWork.sendIndex == -1) {
+      if (serialError == 0 && gSerialState.sendIndex == -1) {
 
         Io_Write16(0, &REG_IME);
         {
@@ -147,13 +147,13 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
           *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
           REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
           REG_TM3CNT = SERIAL_TIMER_RELOAD;
-          gSerialWork.mode = mode;
+          gSerialState.mode = mode;
         }
       }
     } else if (multiplayerId == 0) {
       break;
     }
-    gSerialWork.phase = SERIAL_PHASE_CONNECTED;
+    gSerialState.phase = SERIAL_PHASE_CONNECTED;
   }
     // Fall through.
   case SERIAL_PHASE_CONNECTED:
@@ -162,9 +162,9 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
     break;
   }
 
-  gSerialWork.packetNumber++;
-  status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
-  if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
+  gSerialState.packetNumber++;
+  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
+  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
   result = Serial_AddErrorFlag(status);
   if (SIO_ID_OF(control) > 1)
@@ -183,13 +183,13 @@ s32 Serial_PollStatus(void) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  if (gSerialWork.phase == SERIAL_PHASE_SEARCHING) {
+  if (gSerialState.phase == SERIAL_PHASE_SEARCHING) {
     u8 mode = control & (SIO_START | SIO_MULTI_SD);
 
     if (mode == SERIAL_MODE_CLOCKING) {
       u8 serialError = control & SIO_MULTI_SI;
 
-      if (serialError == 0 && gSerialWork.sendIndex == -1) {
+      if (serialError == 0 && gSerialState.sendIndex == -1) {
 
         Io_Write16(0, &REG_IME);
         {
@@ -202,16 +202,16 @@ s32 Serial_PollStatus(void) {
           *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
           REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
           REG_TM3CNT = SERIAL_TIMER_RELOAD;
-          gSerialWork.mode = mode;
+          gSerialState.mode = mode;
         }
       }
-      gSerialWork.phase = SERIAL_PHASE_CONNECTED;
+      gSerialState.phase = SERIAL_PHASE_CONNECTED;
     }
-    gSerialWork.packetNumber++;
+    gSerialState.packetNumber++;
   }
 
-  status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
-  if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
+  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
+  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
   result = Serial_AddErrorFlag(status);
   if (SIO_ID_OF(control) > 1)
@@ -235,13 +235,13 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
 
   siocnt = &REG_SIOCNT;
   control = *siocnt;
-  if (gSerialWork.phase == SERIAL_PHASE_CONNECTED) {
+  if (gSerialState.phase == SERIAL_PHASE_CONNECTED) {
     Serial_CollectReceivedPayloads(receive);
     Serial_PrepareSendPacket(send);
-    gSerialWork.packetNumber++;
+    gSerialState.packetNumber++;
   }
-  status = gSerialWork.currentMask | (gSerialWork.receivedMask << 8);
-  if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
+  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
+  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
   result = Serial_AddErrorFlag(status);
   // SIOCNT bits 4 and 5, the multiplayer id
@@ -254,11 +254,11 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
 /// number, the consoles not yet heard from, the checksum and the 24-byte
 /// payload.
 void Serial_PrepareSendPacket(void *payload) {
-  volatile struct SerialWork *work;
+  volatile struct SerialState *state;
   u32 i;
   u32 sum;
 
-  work = SERIAL_RUNTIME;
+  state = SERIAL_RUNTIME;
   {
     // volatile: the serial interrupt sends from this buffer. The bytes of
     // struct SerialPacket, written through a byte pointer: as the struct's
@@ -267,10 +267,10 @@ void Serial_PrepareSendPacket(void *payload) {
     u8 currentMask;
     u8 receivedMask;
 
-    packet = (volatile u8 *)work->sendBuffer[0];
-    packet[offsetof(struct SerialPacket, packetNumber)] = work->packetNumber;
-    currentMask = work->currentMask;
-    receivedMask = work->receivedMask;
+    packet = (volatile u8 *)state->sendBuffer[0];
+    packet[offsetof(struct SerialPacket, packetNumber)] = state->packetNumber;
+    currentMask = state->currentMask;
+    receivedMask = state->receivedMask;
     sum = 0;
     *(volatile u16 *)(packet + offsetof(struct SerialPacket, checksum)) = sum;
     packet[offsetof(struct SerialPacket, missingMask)] =
@@ -282,7 +282,7 @@ void Serial_PrepareSendPacket(void *payload) {
     u16 *halfword;
     u32 value;
 
-    halfword = work->sendBuffer[0];
+    halfword = state->sendBuffer[0];
     for (i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
       value = *halfword;
       halfword++;
@@ -294,15 +294,15 @@ void Serial_PrepareSendPacket(void *payload) {
     struct SerialPacket *packet;
 
     checksum = ~sum;
-    packet = (struct SerialPacket *)work->sendBuffer[0];
+    packet = (struct SerialPacket *)state->sendBuffer[0];
     packet->checksum = checksum;
   }
 
   // Stop timer 3, rewind the send position and start the timer again
-  if (work->mode != 0)
+  if (state->mode != 0)
     REG_TM3CNT_H = 0;
-  work->sendIndex = -1;
-  if (work->mode != 0 && work->transferEnabled != 0)
+  state->sendIndex = -1;
+  if (state->mode != 0 && state->transferEnabled != 0)
     REG_TM3CNT_H = TIMER_INTR_ENABLE | TIMER_ENABLE;
 }
 
@@ -321,34 +321,34 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
   // Swap completed buffers with interrupts masked, then validate outside it.
   Io_Write16(0, &REG_IME);
   for (i = 0; i <= 3; i++) {
-    swap = gSerialWork.pendingBuffer[i];
-    gSerialWork.pendingBuffer[i] = gSerialWork.readyBuffer[i];
-    gSerialWork.readyBuffer[i] = swap;
+    swap = gSerialState.pendingBuffer[i];
+    gSerialState.pendingBuffer[i] = gSerialState.readyBuffer[i];
+    gSerialState.readyBuffer[i] = swap;
   }
-  *(u32 *)flags = *(u32 *)gSerialWork.channelFlags;
-  *(u32 *)gSerialWork.channelFlags = 0;
+  *(u32 *)flags = *(u32 *)gSerialState.channelFlags;
+  *(u32 *)gSerialState.channelFlags = 0;
   Io_Write16(1, &REG_IME);
-  gSerialWork.currentMask = 0;
+  gSerialState.currentMask = 0;
   for (i = 0; i <= 1; i++) {
-    packet = gSerialWork.pendingBuffer[i];
+    packet = gSerialState.pendingBuffer[i];
     sum = 0;
     for (k = 0; k < SERIAL_PACKET_HALFWORDS; k++)
       sum += packet[k];
     // A good packet's halfwords, its complemented checksum included, sum to
     // 0xffff.
     if (flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (s16)sum == -1) {
-      Dma_Set(gSerialWork.pendingBuffer[i] + 2,
+      Dma_Set(gSerialState.pendingBuffer[i] + 2,
               (u8 *)payload + i * SERIAL_PAYLOAD_BYTES,
               DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4), REG_DMA3);
-      gSerialWork.currentMask |= 1 << i;
+      gSerialState.currentMask |= 1 << i;
     }
     // Complementing a halfword spoils the sum, so a buffer that comes round
     // again unchanged is never taken twice
     if ((s16)sum == -1)
-      gSerialWork.pendingBuffer[i][1] = ~gSerialWork.pendingBuffer[i][1];
+      gSerialState.pendingBuffer[i][1] = ~gSerialState.pendingBuffer[i][1];
   }
-  gSerialWork.receivedMask |= gSerialWork.currentMask;
-  return gSerialWork.currentMask;
+  gSerialState.receivedMask |= gSerialState.currentMask;
+  return gSerialState.currentMask;
 }
 
 /// The serial and timer 3 interrupt, installed by Serial_Initialize: each one
@@ -375,22 +375,22 @@ void Serial_HandleTransferInterrupt(void) {
   sioControl = &REG_SIOCNT;
   // SIOCNT's error bit (SIO_ERROR): a packet heard while it is set is refused
   // (SERIAL_CHANNEL_ERROR, below)
-  gSerialWork.transferError = SIO_ERROR_OF(*sioControl);
+  gSerialState.transferError = SIO_ERROR_OF(*sioControl);
 
-  if (gSerialWork.sendIndex == -1) {
+  if (gSerialState.sendIndex == -1) {
     u32 idleWord = SERIAL_IDLE_HALFWORD;
     u16 *swap;
 
     ((volatile u16 *)sioControl)[1] = idleWord;
-    swap = gSerialWork.sendBuffer[1];
-    gSerialWork.sendBuffer[1] = gSerialWork.sendBuffer[0];
-    gSerialWork.sendBuffer[0] = swap;
-  } else if (gSerialWork.sendIndex >= 0) {
+    swap = gSerialState.sendBuffer[1];
+    gSerialState.sendBuffer[1] = gSerialState.sendBuffer[0];
+    gSerialState.sendBuffer[0] = swap;
+  } else if (gSerialState.sendIndex >= 0) {
     ((volatile u16 *)sioControl)[1] =
-        gSerialWork.sendBuffer[1][gSerialWork.sendIndex];
+        gSerialState.sendBuffer[1][gSerialState.sendIndex];
   }
-  if (gSerialWork.sendIndex <= SERIAL_PACKET_HALFWORDS)
-    gSerialWork.sendIndex++;
+  if (gSerialState.sendIndex <= SERIAL_PACKET_HALFWORDS)
+    gSerialState.sendIndex++;
 
   for (channel = 0; channel <= 1; channel++) {
     s32 receiveIndex;
@@ -398,29 +398,29 @@ void Serial_HandleTransferInterrupt(void) {
 
     // Hand complete packets to the frame code without overwriting its buffers.
     if (recv[channel] == SERIAL_IDLE_HALFWORD &&
-        gSerialWork.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
-      gSerialWork.receiveIndex[channel] = -1;
+        gSerialState.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
+      gSerialState.receiveIndex[channel] = -1;
     } else {
-      receiveIndex = gSerialWork.receiveIndex[channel];
-      incoming = gSerialWork.incomingBuffer[channel];
+      receiveIndex = gSerialState.receiveIndex[channel];
+      incoming = gSerialState.incomingBuffer[channel];
       incoming[receiveIndex] = recv[channel];
       if (receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
-        u16 *swap = gSerialWork.readyBuffer[channel];
+        u16 *swap = gSerialState.readyBuffer[channel];
 
-        gSerialWork.readyBuffer[channel] = incoming;
-        gSerialWork.incomingBuffer[channel] = swap;
-        gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_PACKET_COMPLETE;
+        gSerialState.readyBuffer[channel] = incoming;
+        gSerialState.incomingBuffer[channel] = swap;
+        gSerialState.channelFlags[channel] |= SERIAL_CHANNEL_PACKET_COMPLETE;
       }
     }
-    if (gSerialWork.transferError != 0)
-      gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
-    if (gSerialWork.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
-      gSerialWork.receiveIndex[channel]++;
+    if (gSerialState.transferError != 0)
+      gSerialState.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
+    if (gSerialState.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
+      gSerialState.receiveIndex[channel]++;
   }
 
   // The console that clocks the transfers starts the next one, and restarts
   // timer 3 so its count reloads
-  if (gSerialWork.mode == SERIAL_MODE_CLOCKING) {
+  if (gSerialState.mode == SERIAL_MODE_CLOCKING) {
     REG_TM3CNT_H = 0;
     REG_SIOCNT16 |= SIO_START;
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;

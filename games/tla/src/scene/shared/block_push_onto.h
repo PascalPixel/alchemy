@@ -8,7 +8,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   u32 step;
   s32 rate;
 
-  lead = Actor_GetById(gMainRoutineWork.leaderActorId);
+  lead = Actor_GetById(gMainRoutineState.leaderActorId);
   dir = lead->facing / FACING_STEP;
   // A push step holds x pixels in its high half and z in its low (PUSH_STEP).
   step = gPushLeaderSteps[dir];

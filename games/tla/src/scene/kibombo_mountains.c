@@ -24,7 +24,7 @@
 #include "field/field.h"
 #include "types.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sequence.h"
@@ -226,7 +226,7 @@ extern struct ActorPlacement gKibomboMountains_WaftPlacements[];
 extern struct ActorPlacement gKibomboMountains_DiskAxeChestPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT)
     return gKibomboMountains_WaftPlacements;
@@ -487,7 +487,7 @@ extern struct Trigger gKibomboMountains_DiskAxeChestTriggers[];
 extern struct Trigger gKibomboMountains_CavernTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT)
     return gKibomboMountains_WaftTriggers;
@@ -512,10 +512,10 @@ s32 Scene_Initialize(void) {
   s32 flag;
   s32 height;
 
-  gFieldWork->transition = ROOM_TRANSITION;
+  gFieldState->transition = ROOM_TRANSITION;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  scene = gMainRoutineWork.next;
+  scene = gMainRoutineState.next;
   if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT) {
     Actor_SetSpritePriority(ACTOR_WAFT, 1);
     Actor_SetSpritePriority(ACTOR_UNSEEN_MARKER, 1);
@@ -592,7 +592,7 @@ s32 Scene_Initialize(void) {
     KibomboMountains_SetCrateCell(ACTOR_LOWER_WEST_CRATE, 22, 33);
     KibomboMountains_SetCrateCell(ACTOR_LOWER_EAST_CRATE, 22, 33);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance == ENTRANCE_CAUGHT)
+        gMainRoutineState.entrance == ENTRANCE_CAUGHT)
       KibomboMountains_GuardsTurnPartyBack();
   }
   return 0;
@@ -647,7 +647,7 @@ void KibomboMountains_GuardsReport(void) {
   // "Keep a good watch. Do not permit anyone to pass."
   Event_ShowMessage(ACTOR_SECOND_GUARD, 0);
   FieldActor_WatchAndSetScript(ACTOR_SECOND_GUARD,
-                               gMainRoutineWork.leaderActorId);
+                               gMainRoutineState.leaderActorId);
   System_Wait(30);
   // "If anyone interrupts Akafubu's ceremony, he will hold you responsible..."
   Event_ShowMessage(ACTOR_SECOND_GUARD, 0);
@@ -674,7 +674,7 @@ void KibomboMountains_WalkSlowly(s32 id) {
 /// permit visitors!" Two of them walk Felix down the stairs, and all of them
 /// leave.
 void KibomboMountains_GuardsTurnPartyBack(void) {
-  s32 leader = gMainRoutineWork.leaderActorId;
+  s32 leader = gMainRoutineState.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -767,7 +767,7 @@ void KibomboMountains_SendPartyBack(void) {
 /// Someone is trying to pass! To arms, Kibombo warriors! To arms!", and the
 /// party is sent back to the stairs below the second guard's gateway.
 void KibomboMountains_GuardSpotsParty(s32 id) {
-  s32 leader = gMainRoutineWork.leaderActorId;
+  s32 leader = gMainRoutineState.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -793,7 +793,7 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
 /// guard shouts "An intruder! Repel the intruder immediately!", and the party
 /// is sent back to the stairs below the second guard's gateway.
 void KibomboMountains_DogSpotsParty(s32 id) {
-  s32 leader = gMainRoutineWork.leaderActorId;
+  s32 leader = gMainRoutineState.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -819,7 +819,7 @@ void KibomboMountains_DogSpotsParty(s32 id) {
 /// (8, 18) to (10, 19): the guard sees him and the party is sent back, unless
 /// the west crate stands just east of Felix in the same row, hiding him.
 void KibomboMountains_StepWestOfFirstGuard(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *crate = Actor_Get(ACTOR_WEST_CRATE);
 
   if ((crate->z.fixed - leader->z.fixed >= 0
@@ -834,7 +834,7 @@ void KibomboMountains_StepWestOfFirstGuard(void) {
 /// (16, 18) to (19, 18): the guard sees him and the party is sent back, unless
 /// the east crate stands just west of Felix in the same row, hiding him.
 void KibomboMountains_StepEastOfFirstGuard(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   struct Actor *crate = Actor_Get(ACTOR_EAST_CRATE);
 
   if ((crate->z.fixed - leader->z.fixed >= 0
@@ -861,7 +861,7 @@ void KibomboMountains_StepSouthOfSecondGuard(void) {
 /// (26, 12) and (27, 12): walking the rope he is not seen, but anywhere else
 /// there the guard sees him and the party is sent back.
 void KibomboMountains_StepOnRopeAboveThirdGuard(void) {
-  if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_ROPE)
+  if (gMainRoutineState.movementMode != LEADER_MOVEMENT_ROPE)
     KibomboMountains_GuardSpotsParty(ACTOR_THIRD_GUARD);
 }
 

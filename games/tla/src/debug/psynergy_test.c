@@ -23,7 +23,7 @@
 #include "field/scene_tables.h"
 #include "system/input.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
 #include "scene_ids.h"
@@ -126,7 +126,7 @@ void PsynergyTest_DigCells(s32 stage, s32 sourceX, s32 sourceY, s32 width,
 void PsynergyTest_GrowActor(s32 stage, s32 id, s32 x, s32 z);
 void PsynergyTest_DropActor(s32 stage, s32 id, s32 x, s32 z);
 void PsynergyTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column);
-void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work);
+void PsynergyTest_StartRings(struct Actor *actor, struct SparkleState *state);
 void PsynergyTest_StopRings(struct Actor *actor);
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void Actor_FallOverById(u32 id, u32 angle);
@@ -141,8 +141,8 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y);
 
 extern u32 gLightRing_Tiles[];
-struct SparkleWork gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
-struct SparkleWork gPsynergyTest_TargetRings BSS_DATA ALIGNED(16);
+struct SparkleState gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
+struct SparkleState gPsynergyTest_TargetRings BSS_DATA ALIGNED(16);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -283,7 +283,7 @@ void PsynergyTest_GiveTreasureTestStock(void) {
 
   // "You got treasure!"
   Message_ShowCentered((s32)MsgYouGotTreasure, FIELD_MESSAGE_ZOOM);
-  gMainRoutineWork.coins = 777777;
+  gMainRoutineState.coins = 777777;
   for (i = 0; i < 10; i++) {
     Inventory_AddItem(FELIX, ITEM_GAME_TICKET);
     Inventory_AddItem(FELIX, ITEM_LUCKY_MEDAL);
@@ -483,7 +483,7 @@ void PsynergyTest_ArriveInRing(void) {
 /// Giant Bats.
 void PsynergyTest_FightMadPlant(void) {
   Import_DebugMadPlantLeap(SPRITE_MAD_PLANT, 40, 168);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
 }
@@ -541,11 +541,11 @@ void PsynergyTest_IgnoreGrind(void) {}
 /// frames.
 void PsynergyTest_ShowRings(s32 actor) {
   PsynergyTest_StartRings(Actor_Get(actor), &gPsynergyTest_TargetRings);
-  PsynergyTest_StartRings(Actor_Get(gMainRoutineWork.leaderActorId),
+  PsynergyTest_StartRings(Actor_Get(gMainRoutineState.leaderActorId),
                           &gPsynergyTest_LeaderRings);
   wait(100);
   PsynergyTest_StopRings(Actor_Get(actor));
-  PsynergyTest_StopRings(Actor_Get(gMainRoutineWork.leaderActorId));
+  PsynergyTest_StopRings(Actor_Get(gMainRoutineState.leaderActorId));
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -554,11 +554,11 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// puts back what the Scoop spots and the Wicked Mace have already done, and
 /// sends the leader away or brings it in by ring at the entrances for them.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->sceneAttributeHigh = 0;
-  work->sceneAttributeLow = 0;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->sceneAttributeHigh = 0;
+  state->sceneAttributeLow = 0;
   // How many of each rare item the shops may sell, as in The Broken Seal's
   // Menu test, with a Fire Brand where it had a Masamune.
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
@@ -575,7 +575,7 @@ s32 Scene_Initialize(void) {
   Item_AdjustCounter(ITEM_VAMBRACE, 1);
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
-  gMainRoutineWork.messageSpeed = MESSAGE_SPEED_FAST;
+  gMainRoutineState.messageSpeed = MESSAGE_SPEED_FAST;
   Actor_SetAnimation(ACTOR_ICE_PILLAR, 2);
   Actor_SetAnimation(ACTOR_FLAME, 2);
   Call3((void (*)())Actor_FallOverWithAnimationById, ACTOR_FALLEN_MAN,
@@ -590,10 +590,10 @@ s32 Scene_Initialize(void) {
       !Event_GetFlag(FLAG_WICKED_MACE_TAKEN))
     Actor_SetPosition(ACTOR_WICKED_MACE, 200, 200);
   Actor_SetItemIcon(Actor_Get(ACTOR_WICKED_MACE), ITEM_WICKED_MACE);
-  if (gMainRoutineWork.entrance == ENTRANCE_DEPART_IN_RING)
-    Actor_DepartInRing(gMainRoutineWork.leaderActorId);
-  if (gMainRoutineWork.entrance == ENTRANCE_ARRIVE_IN_RING)
-    Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
+  if (gMainRoutineState.entrance == ENTRANCE_DEPART_IN_RING)
+    Actor_DepartInRing(gMainRoutineState.leaderActorId);
+  if (gMainRoutineState.entrance == ENTRANCE_ARRIVE_IN_RING)
+    Actor_ArriveInRing(gMainRoutineState.leaderActorId);
   return 0;
 }
 
@@ -687,7 +687,7 @@ void PsynergyTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 row, s32 column) {
       actor->scaleX = FIXED_ONE;
       actor->scaleY = FIXED_ONE;
       actor->facing =
-          Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
+          Actor_Get(gMainRoutineState.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(row, column);
     }
   }
@@ -702,7 +702,7 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
   s32 x, z;
   FIXED sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)actor->watchedActor;
+  struct SparkleState *state = (struct SparkleState *)actor->watchedActor;
   u8 *count = &actor->riseEnabled;
   struct EffectSprite *sprite;
 
@@ -714,13 +714,13 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
   if (actor->riseCounter == 0) {
     if ((*count & (RING_INTERVAL - 1)) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
-      work->heights[work->nextPair] = 0;
-      work->nextPair ^= 1;
+      state->heights[state->nextPair] = 0;
+      state->nextPair ^= 1;
     }
   } else if (actor->riseCounter == 1) {
-    if (work->heights[0] >= RING_CLIMB && work->heights[1] >= RING_CLIMB) {
+    if (state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
       Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
-      VramCache_FreeEntry(work->vramEntry);
+      VramCache_FreeEntry(state->vramEntry);
       actor->update = NULL;
       return;
     }
@@ -728,18 +728,18 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
   (*count)++;
   for (i = 0; i < 2; i++) {
     // Its size: half a turn of sine over the climb.
-    sine = Math_Sin(work->heights[i] * (DEGtoANG(180) / RING_CLIMB));
-    if (work->heights[i] >= 0) {
-      if (work->heights[i] < RING_CLIMB) {
+    sine = Math_Sin(state->heights[i] * (DEGtoANG(180) / RING_CLIMB));
+    if (state->heights[i] >= 0) {
+      if (state->heights[i] < RING_CLIMB) {
 
         SET_POSITION(&position, actor->x.fixed,
-                     actor->y.fixed + toFIXED(work->heights[i]),
+                     actor->y.fixed + toFIXED(state->heights[i]),
                      actor->z.fixed);
         Camera_WorldToScreen(&position);
         x = position.x;
         j = 0;
         z = position.z;
-        sprite = &work->sprites[i * 2];
+        sprite = &state->sprites[i * 2];
         for (; j <= 1; j++) {
           sprite->x = x;
           sprite->y = z;
@@ -755,7 +755,7 @@ void PsynergyTest_UpdateRings(struct Actor *actor) {
           EffectSprite_Draw(sprite);
           sprite++;
         }
-        work->heights[i]++;
+        state->heights[i]++;
       }
     }
   }
@@ -963,30 +963,30 @@ struct Trigger gSceneEvents[] = {
 
 // The rings' start and stop.
 
-/// Starts an actor's rings, kept in `work`: loads their tiles and hooks
+/// Starts an actor's rings, kept in `state`: loads their tiles and hooks
 /// PsynergyTest_UpdateRings to the actor.
-void PsynergyTest_StartRings(struct Actor *actor, struct SparkleWork *work) {
+void PsynergyTest_StartRings(struct Actor *actor, struct SparkleState *state) {
   struct EffectSprite *sprite;
   s32 tile;
   s32 row;
   s32 col;
   s32 offset;
 
-  work->vramEntry = VramCache_FindFreeEntry();
-  Vram_Load(work->vramEntry, 8 * TILE_SIZE_4BPP, gLightRing_Tiles);
-  work->nextPair = 0;
-  work->heights[0] = RING_NOT_STARTED;
-  work->heights[1] = RING_NOT_STARTED;
-  work->actor = actor;
+  state->vramEntry = VramCache_FindFreeEntry();
+  Vram_Load(state->vramEntry, 8 * TILE_SIZE_4BPP, gLightRing_Tiles);
+  state->nextPair = 0;
+  state->heights[0] = RING_NOT_STARTED;
+  state->heights[1] = RING_NOT_STARTED;
+  state->actor = actor;
   actor->riseCounter = 0;
   actor->riseEnabled = 0;
   actor->update = PsynergyTest_UpdateRings;
-  tile = gVramCacheEntries[work->vramEntry].offset / TILE_SIZE_4BPP;
-  actor->watchedActor = (struct Actor *)work;
+  tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
+  actor->watchedActor = (struct Actor *)state;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct EffectSprite);
-    sprite = (struct EffectSprite *)(offset + (s32)work);
+    sprite = (struct EffectSprite *)(offset + (s32)state);
     for (; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->oam.fullColor = 0;

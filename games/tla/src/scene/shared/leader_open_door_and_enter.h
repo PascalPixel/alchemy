@@ -7,10 +7,10 @@ void Leader_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(door->steps, door->x, door->y);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(exit);
   Event_FinishScreenTransition();

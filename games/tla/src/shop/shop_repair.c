@@ -29,7 +29,7 @@ s32 Shop_SelectRepair(s32 unitId) { return Shop_SelectSell(unitId); }
 /// the item away for the smith's three hammer blows, gives it back mended,
 /// charges the price and offers to equip it.
 void Shop_RepairItem(s32 unitId, s32 slot) {
-  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  struct ShopState *shop = Ram_HeapSlots->menuState;
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
@@ -57,7 +57,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairStuckOn);
     return;
   }
-  if (repairCost > gMainRoutineWork.coins) {
+  if (repairCost > gMainRoutineState.coins) {
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotEnoughMoney);
     return;
   }

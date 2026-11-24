@@ -8,7 +8,7 @@
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"

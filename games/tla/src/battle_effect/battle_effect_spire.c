@@ -14,7 +14,7 @@
 ///
 /// Abilities: Spire, Clay Spire, Stone Spire.
 void BattleEffect_RunSpire(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle blit;
   s32 rockCount;
@@ -29,11 +29,11 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   u32 width;
   u32 height;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   blit = (DrawRectangle)Ram_HeapSlots->ramCode;
@@ -44,13 +44,13 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                                       &last);
   first.x += (last.x - first.x) / 2;
   REG_BG2X = (CANVAS_SIZE / 2 - first.x) << 8;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
   // Each boulder waits 64 pixels above the canvas; each shard sits at its
   // place in its boulder, ready to fly up at random.
   rockCount = gSpire_RockCounts[args->variant];
   for (i = 0; i != rockCount; i++) {
-    rock = &work->particles[i];
+    rock = &state->particles[i];
     rock->y = -toFIXED(64);
     rock->velocityY = 0;
   }
@@ -74,7 +74,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     for (i = 0; i != rockCount; i++) {
-      rock = &work->particles[i];
+      rock = &state->particles[i];
       // Each boulder crashes and shakes the screen; the first lets the battle
       // show the damage.
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
@@ -82,7 +82,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
       }
       // Its shards fly, each turning through its kind's three pictures, more
       // slowly every other frame.
@@ -95,13 +95,13 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           width = gSpire_ShardWidths[picture];
           height = gSpire_ShardHeights[picture];
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[picture] +
+               state->sheet + gSpire_ShardPictures[picture] +
                    BOULDER_SHARD_PICTURES,
                FIXED_INTEGER_PART(shard->x) - (width >> 1),
                FIXED_INTEGER_PART(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[picture] +
+               state->sheet + gSpire_ShardPictures[picture] +
                    BOULDER_SHARD_PICTURES,
                FIXED_INTEGER_PART(shard->x) -
                    ((width = gSpire_ShardWidths[picture]) >> 1),
@@ -120,7 +120,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       // and rests at y 50.
       if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet,
+          blit(canvas, state->sheet,
                gSpire_RockX[i] + CANVAS_SIZE / 2 - BOULDER_WIDTH / 2,
                FIXED_INTEGER_PART(rock->y), BOULDER_WIDTH, BOULDER_HEIGHT);
         rock->y += rock->velocityY;
@@ -136,7 +136,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(2, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

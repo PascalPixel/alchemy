@@ -80,12 +80,12 @@ read it ([system_flags.c](src/system/system_flags.c)).
 
 ## The same idea, reached another way
 
-Both games keep each part's [work](glossary.md#work) in a
+Both games keep each part's [state](glossary.md#state) in a
 [heap slot](glossary.md#heap-slot). The Broken Seal's code finds the slots
-through a table it links by name, `gHeapSlots`, and the field's work is
-`gFieldWork`, one of its entries. The Lost Age keeps its slots at a fixed
+through a table it links by name, `gHeapSlots`, and the field's state is
+`gFieldState`, one of its entries. The Lost Age keeps its slots at a fixed
 address and reads them as the fields of one struct,
-`Ram_HeapSlots->fieldWork`, in 384 of its source files. So a routine that
+`Ram_HeapSlots->fieldState`, in 384 of its source files. So a routine that
 does the same thing in both games is often written, and compiled,
 differently in each.
 

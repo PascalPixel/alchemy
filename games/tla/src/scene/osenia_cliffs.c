@@ -11,7 +11,7 @@
 #include "system/task.h"
 #include "sprite_ids.h"
 #include "shared/tables.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -25,7 +25,7 @@
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/frame.h"
 #include "scene/scene.h"
 #include "text/msg_ids.h"
@@ -93,10 +93,10 @@ s32 Scene_Initialize(void) {
 
   map->wading = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Add(OseniaCliffs_CyclePalette, TASK_PASS_FRAME);
   {
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+    struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
     leader->priorityFlags =
         ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;

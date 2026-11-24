@@ -2,7 +2,7 @@
 #define ALCHEMY_VIEW_MOVE_H
 
 /// @file
-/// The view's swing as Tremor and Grind shake the ground. Its work sits in
+/// The view's swing as Tremor and Grind shake the ground. Its state sits in
 /// HEAP_SLOT_BATTLE_EFFECT: ViewMove_Start opens the map's view bounds and
 /// keeps the old ones, ViewMove_Swing swings the view centre each frame, and
 /// ViewMove_End puts the bounds back. ViewMove_SaveNearbySprites gathers the
@@ -19,9 +19,9 @@ struct Actor;
 #define VIEW_MOVE_X 1
 #define VIEW_MOVE_Z 2
 
-/// A view move's work: where the view and the map's view bounds stood when
+/// A view move's state: where the view and the map's view bounds stood when
 /// the move began, which edges it lies beside, and the actors it carries.
-struct ViewMoveWork {
+struct ViewMoveState {
   s32 x; ///< the view centre's position when the move began
   s32 y;
   s32 z;
@@ -36,9 +36,9 @@ struct ViewMoveWork {
   s32 count;
 };
 
-STATIC_ASSERT(offsetof(struct ViewMoveWork, edgeX) == 28);
-STATIC_ASSERT(offsetof(struct ViewMoveWork, objects) == 32);
-STATIC_ASSERT(offsetof(struct ViewMoveWork, count) == 80);
+STATIC_ASSERT(offsetof(struct ViewMoveState, edgeX) == 28);
+STATIC_ASSERT(offsetof(struct ViewMoveState, objects) == 32);
+STATIC_ASSERT(offsetof(struct ViewMoveState, count) == 80);
 
 void ViewMove_Start(s32 direction);
 void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude);

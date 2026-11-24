@@ -64,7 +64,7 @@ enum DragonFireMode {
 #define PROCNE_SWAY 32
 #define PROCNE_BOB 16
 
-/// Procne's particles in work->particles: the sparks that gather on it, the
+/// Procne's particles in state->particles: the sparks that gather on it, the
 /// ring of light each comet leaves, then one per comet.
 #define PROCNE_GATHERING_SPARKS 32
 #define PROCNE_RING PROCNE_GATHERING_SPARKS
@@ -97,7 +97,7 @@ enum DragonFireMode {
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   void *canvas;
   struct BattleCamera *camera;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   BlitterPair draw;
   s32 frame;
   u8 *graphics;
@@ -124,8 +124,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   struct Scale scale;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
-  work = Ram_HeapSlots->battleEffect;
+  camera = Ram_HeapSlots->cameraState;
+  state = Ram_HeapSlots->battleEffect;
   graphics = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
@@ -133,9 +133,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   {
     struct Point2D wave;
     struct Point2D drift;
-    Resource_LoadAndDecompress(RESOURCE_WHIRLWIND_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_WHIRLWIND_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-    EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     wave.x = toFIXED(128);
     wave.y = toFIXED(40);
     drift.x = 0;
@@ -158,8 +158,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
     // The dust motes start at the whirlwind's foot, each after a wait of its
     // own.
-    for (index = 0; index != ARRAY_COUNT(work->particles); index++) {
-      point = &work->particles[index];
+    for (index = 0; index != ARRAY_COUNT(state->particles); index++) {
+      point = &state->particles[index];
       point->z = 120;
       point->y = 0;
       Random16(); // a number drawn and not used
@@ -243,9 +243,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         if (size > PROCNE_WHIRLWIND_FOOT_HEIGHT)
           size = PROCNE_WHIRLWIND_FOOT_HEIGHT;
         draw[0](canvas,
-                &work->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL +
-                             (PROCNE_WHIRLWIND_FOOT_HEIGHT - size) *
-                                 PROCNE_WHIRLWIND_WIDTH],
+                &state->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL +
+                              (PROCNE_WHIRLWIND_FOOT_HEIGHT - size) *
+                                  PROCNE_WHIRLWIND_WIDTH],
                 32, 112 - size, PROCNE_WHIRLWIND_WIDTH, size);
       }
       if (frame >= 48 && frame < PROCNE_ARRIVAL_FRAME) {
@@ -253,23 +253,23 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         if (size > PROCNE_WHIRLWIND_HEIGHT)
           size = PROCNE_WHIRLWIND_HEIGHT;
         draw[0](canvas,
-                &work->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL +
-                             (PROCNE_WHIRLWIND_HEIGHT - size) *
-                                 PROCNE_WHIRLWIND_WIDTH],
+                &state->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL +
+                              (PROCNE_WHIRLWIND_HEIGHT - size) *
+                                  PROCNE_WHIRLWIND_WIDTH],
                 32, 64 - size, PROCNE_WHIRLWIND_WIDTH, size);
       }
       if (frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
         draw[0](canvas,
-                &work->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL], 8,
-                0, PROCNE_WHIRLWIND_WIDTH, PROCNE_WHIRLWIND_HEIGHT);
+                &state->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL],
+                8, 0, PROCNE_WHIRLWIND_WIDTH, PROCNE_WHIRLWIND_HEIGHT);
         draw[0](canvas,
-                &work->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL], 8,
-                64, PROCNE_WHIRLWIND_WIDTH, PROCNE_WHIRLWIND_HEIGHT);
+                &state->sheet[MODULO_THREE(frame / 4) * PROCNE_WHIRLWIND_CEL],
+                8, 64, PROCNE_WHIRLWIND_WIDTH, PROCNE_WHIRLWIND_HEIGHT);
       }
 
       // The dust spirals in and up.
       if (frame < PROCNE_ARRIVAL_FRAME) {
-        point = work->particles;
+        point = state->particles;
         for (index = 0; index != PROCNE_DUST_MOTES; index++) {
           if (point[index].variant == 0) {
             world[0] = point[index].z * Trig_Sin(point[index].velocityY);
@@ -280,7 +280,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             // DEAD: always true, as a mote restarts once past 48 pixels up and
             // climbs little more than 2 pixels a frame; the ROM keeps the test.
             if (point[index].y < toFIXED(64))
-              draw[0](canvas, work->sheet + PROCNE_DUST, screen.x - 12,
+              draw[0](canvas, state->sheet + PROCNE_DUST, screen.x - 12,
                       screen.y - 12, 16, 16);
             if (point[index].z > 24)
               point[index].z -= 4;
@@ -312,10 +312,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                  RESOURCE_VIOLET_SKY_BACKDROP, 0);
         BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
                                     RESOURCE_VIOLET_SKY_BACKDROP, 8);
-        BattleEffect_SelectLivingTargets(work->args);
+        BattleEffect_SelectLivingTargets(state->args);
         BattleEffect_SpawnObjects(PROCNE_SPRITES, SPRITE_PROCNE, 2);
         Resource_LoadAndDecompress(RESOURCE_VIOLET_COMET_SHEET,
-                                   work->sheet + PROCNE_COMET_PICTURES, 1, 1);
+                                   state->sheet + PROCNE_COMET_PICTURES, 1, 1);
 
         for (index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
              index++) {
@@ -333,10 +333,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         for (index = 0; index != PROCNE_GATHERING_SPARKS; index++) {
           speed = Random16() & 127;
           angle = (Random16() & 0x7fff) + DEGtoANG(225) - 1;
-          work->particles[index].x = Trig_Sin(angle) * speed;
-          work->particles[index].y = Trig_Cos(angle) * speed;
-          work->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
-          work->particles[index].variant = 0;
+          state->particles[index].x = Trig_Sin(angle) * speed;
+          state->particles[index].y = Trig_Cos(angle) * speed;
+          state->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
+          state->particles[index].variant = 0;
         }
 
         EFFECT_FOR_EACH_TARGET(index, args) {
@@ -369,7 +369,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           place.height = toFIXED(255) + index * toFIXED(64);
           place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + wave.y;
           Render_ApplyProjectedPlacementFar(
-              (struct Sprite *)work->sprites[index], &place.x, &scale.x, 0);
+              (struct Sprite *)state->sprites[index], &place.x, &scale.x, 0);
         }
 
         if (frame > 255) {
@@ -391,7 +391,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               s32 yy;
               s32 zz;
 
-              point = &work->particles[index];
+              point = &state->particles[index];
               xx = (point->x >> 8) * (point->x >> 8);
               yy = (point->y >> 8) * (point->y >> 8);
               zz = (point->z >> 8) * (point->z >> 8);
@@ -482,7 +482,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           // The comets leave Procne one after another; each pushes it back
           // and shakes the screen.
           for (index = 0; index != PROCNE_STRIKES; index++) {
-            comet = &work->particles[index + PROCNE_COMET_PARTICLES];
+            comet = &state->particles[index + PROCNE_COMET_PARTICLES];
             launch = index * PROCNE_COMET_INTERVAL + PROCNE_COMET_FRAME;
             if (frame == launch) {
               comet->x = (FIXEDtoINT(wave.x) >> 1) + 32;
@@ -492,12 +492,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               comet->velocityY = comet->y;
 
               for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
-                work->particles[slot + PROCNE_RING].variant = 4;
+                state->particles[slot + PROCNE_RING].variant = 4;
               }
 
               drift.x = toFIXED(8);
               drift.y = -toFIXED(2);
-              work->shakeFrames = 8;
+              state->shakeFrames = 8;
             }
 
             if (frame >= launch) {
@@ -507,8 +507,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               picture = (frame - launch) / 2;
               if (picture > 2)
                 picture = 2;
-              draw[1](canvas, work->sheet + gProcne_Pictures[picture], comet->x,
-                      comet->y - gProcne_PictureBiasY[picture],
+              draw[1](canvas, state->sheet + gProcne_Pictures[picture],
+                      comet->x, comet->y - gProcne_PictureBiasY[picture],
                       gProcne_PictureWidths[picture],
                       gProcne_PictureHeights[picture]);
               comet->x -= 8;
@@ -519,7 +519,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 Matrix_RotateZ(-DEGtoANG(11.25));
                 Matrix_RotateY(-DEGtoANG(22.5));
 
-                spark = &work->particles[PROCNE_RING];
+                spark = &state->particles[PROCNE_RING];
                 for (slot = 0; slot != PROCNE_RING_MOTES; slot++) {
                   struct Particle *step;
 
@@ -531,12 +531,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                              Trig_Sin(slot * (TRIG_TURN / PROCNE_RING_MOTES));
                   step->variant += 2;
                   EffectPosition_ProjectPoint(world, &screen);
-                  screen.x =
-                      (FIXEDtoINT(screen.x) >> 1) +
-                      work->particles[index + PROCNE_COMET_PARTICLES].velocityX;
-                  screen.y =
-                      FIXEDtoINT(screen.y) +
-                      work->particles[index + PROCNE_COMET_PARTICLES].velocityY;
+                  screen.x = (FIXEDtoINT(screen.x) >> 1) +
+                             state->particles[index + PROCNE_COMET_PARTICLES]
+                                 .velocityX;
+                  screen.y = FIXEDtoINT(screen.y) +
+                             state->particles[index + PROCNE_COMET_PARTICLES]
+                                 .velocityY;
                   screen.depth = FIXEDtoINT(screen.depth);
                   CLAMP(screen.depth, PROCNE_DEPTH_NEAR, PROCNE_DEPTH_FAR);
                   moteSize = PROCNE_SPARK_SIZE(screen.depth, 3);
@@ -549,7 +549,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         }
       }
 
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
 
     EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -567,7 +567,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     BattleEffect_SetupBlendedDisplay();
 
     for (index = 0; index != PROCNE_SPRITES; index++) {
-      Sprite_DestroyFar(work->sprites[index]);
+      Sprite_DestroyFar(state->sprites[index]);
     }
 
     EFFECT_FINISH_CANVAS();
@@ -629,11 +629,11 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define DRAGON_FIRE_FLASH_END_FRAME 176
 #define DRAGON_FIRE_TIAMAT_SPRITES 8  ///< the sprites that draw Tiamat
 #define DRAGON_FIRE_FIREBALLS 16      ///< falling fireballs
-#define DRAGON_FIRE_FIRST_FIREBALL 24 ///< the first in work->particles
-#define DRAGON_FIRE_FIRST_SPARK 40    ///< the first spark in work->particles
+#define DRAGON_FIRE_FIRST_FIREBALL 24 ///< the first in state->particles
+#define DRAGON_FIRE_FIRST_SPARK 40    ///< the first spark in state->particles
 #define DRAGON_FIRE_EMBERS 512        ///< embers in PARTICLES
-#define DRAGON_FIRE_BREATH 24 ///< puffs of breath, work->particles 0 to 23
-#define DRAGON_FIRE_SPARKS 24 ///< sparks, work->particles 40 to 63
+#define DRAGON_FIRE_BREATH 24 ///< puffs of breath, state->particles 0 to 23
+#define DRAGON_FIRE_SPARKS 24 ///< sparks, state->particles 40 to 63
 /// The flames a fireball burns with where it lands, in the sprite sheet.
 #define DRAGON_FIRE_FLAME_PICTURES 12288
 /// A puff of breath shows the flash burst's six pictures, four frames each.
@@ -649,7 +649,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// two frames turn it CANVAS_LEVEL_BRIGHTEST.
 #define DRAGON_FIRE_FLASH_LEVEL 16
 
-/// Tiamat's pieces (work->sprites), each showing its own picture of the sprite
+/// Tiamat's pieces (state->sprites), each showing its own picture of the sprite
 /// sheet: piece n shows animation n. As it breathes, its head, horns, jaw and
 /// throat show the fire-lit pictures of its open mouth.
 enum TiamatPiece {
@@ -676,28 +676,29 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   BlitterPair draw;
   void *canvas;
   struct BattleCamera *camera;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   u8 *sheet;
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
-  work = Ram_HeapSlots->battleEffect;
+  camera = Ram_HeapSlots->cameraState;
+  state = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
-                             work->sheet + DRAGON_FIRE_FLAME_PICTURES, 1, 0);
+                             state->sheet + DRAGON_FIRE_FLAME_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
     LOAD_BG_PALETTE(RESOURCE_LIGHTNING_BOLT_SHEET);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     s32 dir;
@@ -733,10 +734,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       focus.x = toFIXED(212);
       focus.y = -toFIXED(60);
     }
-    EFFECT_FREE_PARTICLES(i, work->particles, 64);
+    EFFECT_FREE_PARTICLES(i, state->particles, 64);
     for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
       struct Particle *fireball =
-          &work->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
+          &state->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
 
       if (dir == 1)
         fireball->x = (Random16() & 127) + 128;
@@ -747,7 +748,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
     EFFECT_FREE_PARTICLES(i, PARTICLES, DRAGON_FIRE_EMBERS);
     if (mode == DRAGON_FIRE_TIAMAT) {
-      BattleEffect_SelectLivingTargets(work->args);
+      BattleEffect_SelectLivingTargets(state->args);
       wait(1);
       BattleEffect_SpawnObjects(DRAGON_FIRE_TIAMAT_SPRITES, SPRITE_TIAMAT, 2);
     }
@@ -759,13 +760,13 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         // What the breath would have done: Tiamat opens its jaws and the
         // targets reel.
         if (mode == DRAGON_FIRE_TIAMAT) {
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_HEAD],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_HEAD],
                                    TIAMAT_HEAD_BREATHING);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_HORNS],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_HORNS],
                                    TIAMAT_HORNS_BREATHING);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_JAW],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_JAW],
                                    TIAMAT_JAW_BREATHING);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_THROAT],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_THROAT],
                                    TIAMAT_THROAT_BREATHING);
         }
         EFFECT_FOR_EACH_TARGET(i, args) {
@@ -780,19 +781,19 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
       if (frame == DRAGON_FIRE_BREATH_FRAME)
-        work->transferValue = CANVAS_FADE_HALF;
+        state->transferValue = CANVAS_FADE_HALF;
       if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
             Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET),
             SHEET_PALETTE_BYTES);
       } else if (frame >= DRAGON_FIRE_FLASH_FRAME &&
                  frame < DRAGON_FIRE_FLASH_END_FRAME) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
                             CANVAS_FILL_WORD(DRAGON_FIRE_FLASH_LEVEL));
         if (frame > 173)
-          work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
+          state->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
         Palette_BrightenBgEntries(2, 2, 2);
       }
 
@@ -828,7 +829,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         if (frame & 1) {
           for (i = 0; i != DRAGON_FIRE_SPARKS; i++) {
             struct Particle *spark =
-                &work->particles[DRAGON_FIRE_FIRST_SPARK + i];
+                &state->particles[DRAGON_FIRE_FIRST_SPARK + i];
 
             if (spark->variant == -1) {
               s32 speed = (Random16() & 255) + 128;
@@ -867,7 +868,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         s32 spawned = 0;
 
         for (i = 0; i != DRAGON_FIRE_BREATH; i++) {
-          struct Particle *puff = &work->particles[i];
+          struct Particle *puff = &state->particles[i];
 
           if (puff->variant == -1) {
             s32 speed = (Random16() & 255) + 128;
@@ -897,11 +898,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
       if (frame < DRAGON_FIRE_FLASH_END_FRAME) {
         for (i = 0; i != DRAGON_FIRE_BREATH; i++) {
-          struct Particle *puff = &work->particles[i];
+          struct Particle *puff = &state->particles[i];
 
           if (puff->variant >= 0) {
             draw[0](canvas,
-                    work->sheet +
+                    state->sheet +
                         (puff->variant >> 2) * PICTURE_BYTES(FLASH_BURST),
                     FIXED_INTEGER_PART(puff->x) - FLASH_BURST_WIDTH / 2,
                     FIXED_INTEGER_PART(puff->y) - FLASH_BURST_HEIGHT / 2,
@@ -917,7 +918,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
 
       for (i = 0; i != DRAGON_FIRE_SPARKS; i++) {
-        struct Particle *spark = &work->particles[DRAGON_FIRE_FIRST_SPARK + i];
+        struct Particle *spark = &state->particles[DRAGON_FIRE_FIRST_SPARK + i];
         s32 size = 1;
 
         if (spark->variant >= 0) {
@@ -961,9 +962,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
 
       if (frame == DRAGON_FIRE_BREATH_FRAME)
-        work->shakeFrames = 48;
+        state->shakeFrames = 48;
       if (mode == DRAGON_FIRE_TIAMAT && frame == 48)
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
 
       // Tiamat swoops down.
       if (frame >= 40 && frame <= 47) {
@@ -972,20 +973,21 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
       if (mode == DRAGON_FIRE_TIAMAT) {
         if (frame == DRAGON_FIRE_BREATH_FRAME) {
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_HEAD],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_HEAD],
                                    TIAMAT_HEAD_BREATHING);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_HORNS],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_HORNS],
                                    TIAMAT_HORNS_BREATHING);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_JAW],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_JAW],
                                    TIAMAT_JAW_BREATHING);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_THROAT],
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_THROAT],
                                    TIAMAT_THROAT_BREATHING);
         }
         if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_HEAD], TIAMAT_HEAD);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_HORNS], TIAMAT_HORNS);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_JAW], TIAMAT_JAW);
-          Sprite_StartAnimationFar(work->sprites[TIAMAT_THROAT], TIAMAT_THROAT);
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_HEAD], TIAMAT_HEAD);
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_HORNS], TIAMAT_HORNS);
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_JAW], TIAMAT_JAW);
+          Sprite_StartAnimationFar(state->sprites[TIAMAT_THROAT],
+                                   TIAMAT_THROAT);
         }
         if (twoPartTarget == 1)
           BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT_ALTERNATE,
@@ -1005,7 +1007,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       if (frame < DRAGON_FIRE_FLASH_END_FRAME) {
         for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
           struct Particle *fireball =
-              &work->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
+              &state->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
 
           if (fireball->y > 55) {
             if (fireball->variant >= 0 &&
@@ -1014,7 +1016,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
               s32 picture = fireball->variant / DRAGON_FIRE_BURN_FRAMES;
 
               draw[0](canvas,
-                      work->sheet + gTiamat_FlamePictures[picture] +
+                      state->sheet + gTiamat_FlamePictures[picture] +
                           DRAGON_FIRE_FLAME_PICTURES,
                       fireball->x - gTiamat_FlameWidths[picture] / 2,
                       fireball->y + gTiamat_FlameDrops[picture],
@@ -1040,7 +1042,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         }
       }
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -1054,7 +1056,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
     if (mode == DRAGON_FIRE_TIAMAT) {
       for (i = 0; i != DRAGON_FIRE_TIAMAT_SPRITES; i++)
-        Sprite_DestroyFar(work->sprites[i]);
+        Sprite_DestroyFar(state->sprites[i]);
     }
   }
   BattleEffect_EndCanvasLayer();

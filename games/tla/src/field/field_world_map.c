@@ -30,7 +30,7 @@
 #define WORLD_MAP_TILES_ACROSS 32
 #define WORLD_MAP_LAYER_TILES 1024
 
-/// MapWork.wideTiles for the world map (WorldMapView.fadeStep): its tileset
+/// MapState.wideTiles for the world map (WorldMapView.fadeStep): its tileset
 /// animations copy 64-byte tiles of 256 colours, into char block 2.
 #define WORLD_MAP_WIDE_TILES 128
 
@@ -65,13 +65,13 @@ enum WorldMapGraphicsResource {
 #define STILL_IMAGE_WINDOW_BOTTOM 255
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
-/// camera work, the projection, the per-scanline ground plane routine in RAM
+/// camera state, the projection, the per-scanline ground plane routine in RAM
 /// (Matrix_UpdateVertices) and its first frame, and the per-frame view and
 /// HBlank updates.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
   struct BattleCamera *camera;
-  struct WorldMapAffineWork *affineWork;
+  struct WorldMapAffineState *affineState;
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT];
   s32 *cameraPosition;
   volatile u32 fill;
@@ -125,9 +125,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   Io_Write16(0, &REG_BG3Y);
 
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  affineWork = HeapSlot_Alloc(HEAP_SLOT_WORLD_MAP_AFFINE,
-                              sizeof(struct WorldMapAffineWork));
-  affinePages = affineWork->pages;
+  affineState = HeapSlot_Alloc(HEAP_SLOT_WORLD_MAP_AFFINE,
+                               sizeof(struct WorldMapAffineState));
+  affinePages = affineState->pages;
   farPlane = toFIXED(510);
   perspective->farPlane = farPlane;
   perspective->distance = farPlane;
@@ -158,11 +158,11 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
                      Matrix_UpdateVerticesCodeSize);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
                                                   Trig_Sin(perspective->pitch)),
-                                cameraPosition, affineWork->scanlines);
+                                cameraPosition, affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
     ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->ramCode)(
-        camera, cameraPosition, affineWork->scanlines,
+        camera, cameraPosition, affineState->scanlines,
         affinePages[gFrameCount & 1]);
     // Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an eighth
     // of a turn) and yaw 0, with the eye one pixel beyond the distance.
@@ -339,7 +339,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_5]),
                       gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[WORLD_MAP_SET_TILES_6]),
-                      &gWorldMapWork);
+                      &gWorldMapState);
   // BG1's map (screen block 5) is filled with the window tiles' black tile,
   // and screen block 6 numbers the map screen image's tiles in rows, two a
   // word: the still image's, then on round the image.
@@ -375,7 +375,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 /// BG mode from the window's top and bottom.
 void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] =
-      ((struct WorldMapAffineWork *)Ram_HeapSlots->worldMapAffine)->pages;
+      ((struct WorldMapAffineState *)Ram_HeapSlots->worldMapAffine)->pages;
   s32 displayControl = (s16)(REG_DISPCNT & ~DISPCNT_MODE_MASK);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
   struct WorldMapView *perspective =
@@ -504,13 +504,13 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
 /// ground plane for the current pitch and yaw; while the still image shows,
 /// only BG1 shakes.
 void WorldMap_UpdateView(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
+  struct WorldMapAffineState *affineState = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   s32 *cameraPosition = camera->focus;
   s32 *followedPosition = perspective->origin;
-  struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] = affineWork->pages;
+  struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] = affineState->pages;
   s32 distance = perspective->farPlane;
   s32 height = perspective->distance;
   s32 tileRow;
@@ -594,12 +594,12 @@ void WorldMap_UpdateView(void) {
     FIXED sine = Trig_Sin(perspective->pitch);
 
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
-                                affineWork->scanlines);
+                                affineState->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
   }
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->ramCode)(
-      camera, cameraPosition, affineWork->scanlines,
+      camera, cameraPosition, affineState->scanlines,
       affinePages[gFrameCount & 1]);
 }
 

@@ -2,7 +2,7 @@
 /// ACTOR_LIST_END: on a match, makes the row's statue the target and returns
 /// its value.
 s32 Statue_FindUnderBurst(u16 *table) {
-  struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *watch = Ram_HeapSlots->fieldEffectState;
   s32 result = 0;
   s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(watch->x),
                                    FIELD_CELL(watch->z)) >>

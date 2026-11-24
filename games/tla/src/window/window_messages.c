@@ -27,14 +27,14 @@ void Message_DecodeRawUnbounded(s32 message, u16 *text) {
 /// capacity entries, and returns its length. capacity counts halfwords
 /// including the terminator and must be at least 1.
 s32 Message_CopyExpanded(s32 message, u16 *destination, u32 capacity) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 count;
 
-  work = WINDOW_WORK;
-  work->textBufferEnd = 0;
+  state = WINDOW_STATE;
+  state->textBufferEnd = 0;
   Message_Decode(message, 1);
   for (count = 0; count < capacity - 1 &&
-                  (destination[count] = work->textBuffer[count]) != 0;
+                  (destination[count] = state->textBuffer[count]) != 0;
        count++) {
   }
   destination[count] = 0;
@@ -127,7 +127,7 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
 /// Closes every window: first the messages' windows, waiting until they have
 /// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(void) {
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Message *message;
   struct Window *win;
   u32 done;
@@ -135,9 +135,9 @@ void Window_CloseAll(void) {
   struct Window *pollWindow;
   s32 i;
 
-  work = WINDOW_WORK;
-  message = work->messages;
-  win = work->windows;
+  state = WINDOW_STATE;
+  message = state->messages;
+  win = state->windows;
   i = 0;
   do {
     window = message->window;
@@ -145,13 +145,13 @@ void Window_CloseAll(void) {
       Window_Close(window, 0);
     i++;
     message++;
-  } while (i != ARRAY_COUNT(work->messages));
+  } while (i != ARRAY_COUNT(state->messages));
 
   // Free each message whose window has closed; while one is still closing,
   // wait a frame. The zoom's stage and duration are read as one word.
   for (;;) {
     done = 1;
-    message = work->messages;
+    message = state->messages;
     i = 0;
     do {
       pollWindow = message->window;
@@ -167,7 +167,7 @@ void Window_CloseAll(void) {
       }
       i++;
       message++;
-    } while (i != ARRAY_COUNT(work->messages));
+    } while (i != ARRAY_COUNT(state->messages));
     if (done)
       break;
     wait(1);
@@ -237,27 +237,27 @@ void Window_StepSwellEffect(struct Message *message) {
 /// Empties the table of message arguments.
 void MessageArgument_ClearAll(void) {
   s32 no;
-  struct WindowWork *work;
+  struct WindowState *state;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 
   for (no = 0; no != MESSAGE_ARGUMENT_COUNT; no++) {
-    work->argumentValues[no] = 0;
-    work->argumentKinds[no] = MESSAGE_ARGUMENT_NONE;
+    state->argumentValues[no] = 0;
+    state->argumentKinds[no] = MESSAGE_ARGUMENT_NONE;
   }
 }
 
 /// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
 /// free place of the argument table; when all eight are in use it is dropped.
 void MessageArgument_Push(u32 value, u32 kind) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   u32 no = 0;
   u32 limit = MESSAGE_ARGUMENT_COUNT;
 
   do {
-    if (work->argumentKinds[no] == MESSAGE_ARGUMENT_NONE) {
-      work->argumentValues[no] = value;
-      work->argumentKinds[no] = kind;
+    if (state->argumentKinds[no] == MESSAGE_ARGUMENT_NONE) {
+      state->argumentValues[no] = value;
+      state->argumentKinds[no] = kind;
       break;
     }
     no++;
@@ -267,16 +267,16 @@ void MessageArgument_Push(u32 value, u32 kind) {
 /// Returns the value of the first message argument of kind (MESSAGE_ARGUMENT_),
 /// or 0 when there is none.
 u32 MessageArgument_Lookup(u32 kind, u32 clear) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   u32 i;
   u32 value = 0;
 
   for (i = 0; i < MESSAGE_ARGUMENT_COUNT; i++) {
-    if (work->argumentKinds[i] == kind) {
-      value = work->argumentValues[i];
+    if (state->argumentKinds[i] == kind) {
+      value = state->argumentValues[i];
       if (clear != 0) {
-        work->argumentValues[i] = 0;
-        work->argumentKinds[i] = MESSAGE_ARGUMENT_NONE;
+        state->argumentValues[i] = 0;
+        state->argumentKinds[i] = MESSAGE_ARGUMENT_NONE;
       }
       break;
     }
@@ -287,10 +287,10 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 /// Ends a message's pause early: when the message waits on a sound that has
 /// finished, or while A, B, L or R is held.
 s32 Text_CheckPauseSkipped(struct Message *message) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 cancelKeys = 0;
 
-  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
+  if (state->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   if (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
@@ -304,18 +304,18 @@ s32 Text_CheckPauseSkipped(struct Message *message) {
 }
 
 /// As Text_CheckPauseSkipped, but on a newly pressed button (the latched
-/// presses while WindowWork.mindRead is set). While B is held the text also
+/// presses while WindowState.mindRead is set). While B is held the text also
 /// goes on by itself once the wait's countdown runs down
 /// (gMessageSpeed_HeldPageDelays); while it is up the countdown stays at 2.
 s32 Text_CheckTextDismissed(struct Message *message) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 cancelKeys = 0;
   u32 pressedKeys;
 
-  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
+  if (state->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   pressedKeys = gInput.pressed;
-  if (work->mindRead != 0)
+  if (state->mindRead != 0)
     pressedKeys = gInput.pendingPressed;
   if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
@@ -338,7 +338,7 @@ void Message_CloseFinishedWindows(void) {
   struct Message *message;
   struct Window *window;
 
-  message = WINDOW_WORK->messages;
+  message = WINDOW_STATE->messages;
   i = 0;
   do {
     window = message->window;
@@ -349,7 +349,7 @@ void Message_CloseFinishedWindows(void) {
     }
     i++;
     message++;
-  } while (i != ARRAY_COUNT(WINDOW_WORK->messages));
+  } while (i != ARRAY_COUNT(WINDOW_STATE->messages));
   wait(10);
 }
 
@@ -357,7 +357,7 @@ void Message_CloseFinishedWindows(void) {
 /// tiles lower) and waits until it is typed out, then closes it, in the window
 /// mode (CENTERED_MESSAGE_) gives.
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *window;
   s32 x;
   s32 y;
@@ -365,12 +365,12 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   s32 height;
   s32 entryIndex;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   x = 8;
   y = 8;
   window = NULL;
   entryIndex = Message_Decode(message, 1);
-  if (work->textBuffer[entryIndex] != 0) {
+  if (state->textBuffer[entryIndex] != 0) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (DISPLAY_TILE_WIDTH - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
@@ -392,8 +392,8 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
           wait(1);
       } else
         Window_Close(window, 1);
-      work->speakerVoiceSound = 0;
-      work->speakerVoiceCountdown = 0;
+      state->speakerVoiceSound = 0;
+      state->speakerVoiceCountdown = 0;
     }
   }
 }
@@ -407,11 +407,11 @@ s32 Message_DecodeAndClearArguments(s32 message) {
 
 /// Decodes message after the text decoded last, over its terminator.
 void Message_DecodeAppend(s32 message) {
-  struct WindowWork *work = WINDOW_WORK;
-  u32 count = work->textBufferEnd;
+  struct WindowState *state = WINDOW_STATE;
+  u32 count = state->textBufferEnd;
 
   count = (u16)(count - 1) & TEXT_BUFFER_MASK;
-  work->textBufferEnd = (u16)(count - 1) & TEXT_BUFFER_MASK;
+  state->textBufferEnd = (u16)(count - 1) & TEXT_BUFFER_MASK;
   Message_Decode(message, 1);
 }
 
@@ -512,7 +512,7 @@ s32 Text_DrawGlyphToCanvas(u8 *canvas, s32 ch, s32 x, s32 row) {
 /// many dashes past the first it has (the crawl waits on it); any other line
 /// returns 0.
 s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 x = 0;
   s32 y = 0;
   s32 entry;
@@ -521,10 +521,10 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
   u16 *text;
   u32 code;
 
-  work->textBufferEnd = x;
+  state->textBufferEnd = x;
   entry = Message_Decode(message, 0);
   Text_MeasureDecoded(entry, (u32 *)&width, (u32 *)&height, 0);
-  text = &work->textBuffer[entry];
+  text = &state->textBuffer[entry];
   if (text[0] == '-') {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     if (text[1] == '-')
@@ -544,15 +544,15 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
     if (code < TEXT_COMMANDS) {
       switch (code) {
       case TEXT_COLOR:
-        work->colour = *text;
+        state->colour = *text;
         text++;
         break;
       case TEXT_OUTLINE:
-        work->outline = *text;
+        state->outline = *text;
         text++;
         break;
       case TEXT_LINE_SPACING:
-        work->lineSpacing = *text;
+        state->lineSpacing = *text;
         text++;
         break;
       case 11:
@@ -710,11 +710,11 @@ extern const s16 gPortrait_SpriteMap[];
 /// Marks both portrait slots free (PORTRAIT_SLOT_EMPTY), as the window
 /// system's field setup does.
 void Portrait_ClearSlots(void) {
-  struct WindowWork *work = WINDOW_WORK;
+  struct WindowState *state = WINDOW_STATE;
   s32 index;
 
-  for (index = 0; index != ARRAY_COUNT(work->portraitPictures); index++) {
-    work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
+  for (index = 0; index != ARRAY_COUNT(state->portraitPictures); index++) {
+    state->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
   }
 }
 
@@ -796,15 +796,15 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   struct Window *window;
   s32 portraitY;
   s32 portraitX;
-  struct WindowWork *work;
+  struct WindowState *state;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
   portraitY = -4;
   portraitX = portraitY;
-  if (work->mindRead != 0) {
+  if (state->mindRead != 0) {
     window = Window_Create(x, y, PORTRAIT_WINDOW_TILES + 1,
                            PORTRAIT_WINDOW_TILES, WINDOW_FLAG_INSTANT);
     portraitX = 0;
@@ -821,14 +821,14 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
 /// Closes at once the portrait window showing the speaker's portrait, if one is
 /// open: the window whose first sprite is that portrait slot's.
 void Portrait_CloseWindow(s32 speaker) {
-  struct WindowWork *state;
+  struct WindowState *state;
   struct Window *window;
   s32 resourceId;
   s32 portraitSlot;
   s32 windowIndex;
   struct WindowSprite *portraitSprite;
 
-  state = WINDOW_WORK;
+  state = WINDOW_STATE;
   window = state->windows;
   resourceId = Portrait_GetForSpeaker(speaker);
   if (resourceId == -1)

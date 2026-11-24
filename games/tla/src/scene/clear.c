@@ -22,7 +22,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/io_write_queue.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "system/ram_buffer.h"
 #include "graphics/resource.h"
@@ -158,9 +158,9 @@ void Clear_LoadBackground(void) {
     scroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  ((struct MapWork *)Ram_HeapSlots->mapGrid)->dispcnt =
+  ((struct MapState *)Ram_HeapSlots->mapGrid)->dispcnt =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = 0;
 }
 
 /// The task that fades BG0 and the sprites in over the logo, a step of the
@@ -228,12 +228,12 @@ void Clear_CheckButtonCodes(void) {
 /// town or on the world map: such a save cannot restart at the Sanctum, by L
 /// and Start held as it loads or as a corrupted save is recovered.
 s32 Clear_IsRetreatBlocked(void) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
   s32 mode;
 
   if (Event_GetFlag(FLAG_RETREAT_BLOCKED) == 0)
     return 0;
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
 
   if (party->sceneType == SCENE_TYPE_TOWN)
     return 0;
@@ -261,7 +261,7 @@ void StatusScreen_Run(void);
 /// start of the map cell buffer, free on this screen.
 #define TRANSFERRED_SAVE (Ram_MapCellBuffer + SAVE_IMAGE_BYTES)
 /// A save image from the game flags to the units' end: the flags, the main
-/// routine work and the party's units.
+/// routine's state and the party's units.
 #define SAVE_IMAGE_STATE_BYTES                                                 \
   (SAVE_IMAGE_UNITS + sizeof(gCharacterUnits) - SAVE_IMAGE_GAME_FLAGS)
 
@@ -306,11 +306,11 @@ s32 Scene_Initialize(void) {
 
   Clear_LoadBackground();
   Task_Add(Clear_CheckButtonCodes, TASK_PASS_FRAME);
-  gFieldWork->transition = started;
+  gFieldState->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // After the epilogue: the cleared game may be saved, then the title.
-  if (gMainRoutineWork.entrance == CLEAR_FROM_EPILOGUE) {
+  if (gMainRoutineState.entrance == CLEAR_FROM_EPILOGUE) {
     do {
       message = (s32)MsgSaveYourAdventure;
       // "Save your adventure?"
@@ -323,7 +323,7 @@ s32 Scene_Initialize(void) {
       // "You cannot resume your adventure with this data."
       FieldMessage_Show(message + 1, FIELD_MESSAGE_ZOOM);
       // Marks the file cleared (SaveFileSummary's sendFlag).
-      gMainRoutineWork.sendFlag = 1;
+      gMainRoutineState.sendFlag = 1;
       Party_AddMember(JENNA);
       Party_AddMember(SHEBA);
       Party_AddMember(PIERS);
@@ -343,7 +343,7 @@ s32 Scene_Initialize(void) {
 top:
   result = Save_ScanFileSummaries();
   if (result < 0 && gDebugMode) {
-    gMainRoutineWork.idleSleepEnabled = 1;
+    gMainRoutineState.idleSleepEnabled = 1;
     gIdleSleepEnabled = 1;
     // "Unable to detect backup memory."
     FieldMessage_ShowCentered((s32)MsgNoBackupMemory, 1, 8);
@@ -360,9 +360,9 @@ top:
     result = 0;
   if (result == SAVE_ACTION_NEW_GAME) {
     // Felix is named, and with either code Jenna, Sheba and Piers too.
-    MainRoutineWork_InitializeDefaults();
-    WindowColor_Apply(gMainRoutineWork.windowHue,
-                      gMainRoutineWork.windowBrightness);
+    MainRoutineState_InitializeDefaults();
+    WindowColor_Apply(gMainRoutineState.windowHue,
+                      gMainRoutineState.windowBrightness);
     i = FELIX;
     limit = FELIX + 1;
     for (;;) {
@@ -406,7 +406,7 @@ top:
           Call3((void (*)())DataTransfer_Apply, (s32)TRANSFERRED_SAVE, 0, 0);
         } else if (result == TRANSFER_METHOD_PASSWORD) {
           KEEP_SAVE_IMAGE();
-          MainRoutineWork_InitializeDefaults();
+          MainRoutineState_InitializeDefaults();
 #if !TLA_PATCH_2
           status = Clear_EnterPassword();
           RESTORE_SAVE_IMAGE()
@@ -461,7 +461,7 @@ top:
           if (result != 0)
             goto save;
           {
-            struct MainRoutineWork *party = &gMainRoutineWork;
+            struct MainRoutineState *party = &gMainRoutineState;
 
             WindowColor_Apply(party->windowHue, party->windowBrightness);
             RESTORE_SAVE_IMAGE()
@@ -477,7 +477,7 @@ top:
       Message_CloseFinishedWindows();
       if (i == YES) {
         Event_SetFlag(FLAG_HARD_LEVEL);
-        gMainRoutineWork.difficulty = DIFFICULTY_HARD;
+        gMainRoutineState.difficulty = DIFFICULTY_HARD;
         goto leave;
       }
       // "Play on Normal level? (Default difficulty)"
@@ -497,7 +497,7 @@ top:
       goto top;
     Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
     {
-      struct MainRoutineWork *party = &gMainRoutineWork;
+      struct MainRoutineState *party = &gMainRoutineState;
 
       WindowColor_Apply(party->windowHue, party->windowBrightness);
       if (party->buildStamp != BuildStamp_GetTime()) {
@@ -548,7 +548,7 @@ top:
     if (result == -1)
       goto top;
     {
-      struct MainRoutineWork *party = &gMainRoutineWork;
+      struct MainRoutineState *party = &gMainRoutineState;
 
       party->leaderActorId = ACTOR_FELIX;
       if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT))
@@ -568,8 +568,8 @@ link:
   result = Save_ChooseAndLoadFile(FILE_LIST_UPDATE);
   if (result == -1)
     goto top;
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   for (;;) {
     // The menu reads only its mode's lowest bit: the transfer method.
     result = IconMenu_ChooseSendOption(2);
@@ -589,7 +589,7 @@ link:
       Call3((void (*)())DataTransfer_Apply, (s32)TRANSFERRED_SAVE, 0, 1);
     } else if (result == TRANSFER_METHOD_PASSWORD) {
       KEEP_SAVE_IMAGE();
-      MainRoutineWork_InitializeDefaults();
+      MainRoutineState_InitializeDefaults();
       status = Clear_EnterPassword();
       RESTORE_SAVE_IMAGE()
       if (status == -1) {
@@ -624,7 +624,7 @@ link:
   Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
 #endif
 finish:
-  gFieldWork->exit = EXIT_KEEP_DESTINATION;
+  gFieldState->exit = EXIT_KEEP_DESTINATION;
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_FinishScreenTransition();
@@ -711,7 +711,7 @@ u8 gClear_PasswordSpare[60] BSS_DATA;
 #endif
 
 /// The password grid's glyph sprites, one for each place of a page.
-struct PasswordWork {
+struct PasswordState {
   void *glyphs[PASSWORD_SYMBOLS_PER_PAGE];
   void *cells[PASSWORD_SYMBOLS_PER_PAGE];
   u8 shown[PASSWORD_SYMBOLS_PER_PAGE]; ///< the symbol each place shows
@@ -806,11 +806,11 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 #endif
 }
 
-/// The transferred data's game flags, and its main routine work and what
+/// The transferred data's game flags, and its main routine's state and what
 /// follows (system/save.h's save image).
 #define TRANSFERRED_FLAGS (TRANSFERRED_SAVE + SAVE_IMAGE_GAME_FLAGS)
-#define TRANSFERRED_MAIN_ROUTINE_WORK                                          \
-  (TRANSFERRED_SAVE + SAVE_IMAGE_MAIN_ROUTINE_WORK)
+#define TRANSFERRED_MAIN_ROUTINE_STATE                                         \
+  (TRANSFERRED_SAVE + SAVE_IMAGE_MAIN_ROUTINE_STATE)
 
 /// The first letter of the greeting this screen answers The Broken Seal with,
 /// before V, T and S: the one its FILE_SCREEN_LINK_LANGUAGE_TAG waits for.
@@ -955,26 +955,26 @@ done:
   System_Wait(10);
   Window_Close(window, 2);
   // The flags and the fields before the Djinn recovery list come over in
-  // place, as both games keep them; then The Broken Seal's main routine work
+  // place, as both games keep them; then The Broken Seal's main routine's state
   // and units, moved on by as much as this game's list is longer, so that its
   // units land on this game's.
   flags = gGameFlagBytes;
   Iwram_CopyWords(flags, TRANSFERRED_FLAGS,
-                  SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS +
-                      offsetof(struct MainRoutineWork, djinnRecovery));
+                  SAVE_IMAGE_MAIN_ROUTINE_STATE - SAVE_IMAGE_GAME_FLAGS +
+                      offsetof(struct MainRoutineState, djinnRecovery));
   Iwram_CopyWords(flags +
-                      (SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS) +
+                      (SAVE_IMAGE_MAIN_ROUTINE_STATE - SAVE_IMAGE_GAME_FLAGS) +
                       (SAVE_IMAGE_UNITS - BROKEN_SEAL_SAVE_IMAGE_UNITS),
-                  TRANSFERRED_MAIN_ROUTINE_WORK,
+                  TRANSFERRED_MAIN_ROUTINE_STATE,
                   BROKEN_SEAL_SAVE_IMAGE_UNITS + sizeof(gCharacterUnits) -
-                      SAVE_IMAGE_MAIN_ROUTINE_WORK);
+                      SAVE_IMAGE_MAIN_ROUTINE_STATE);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(TRANSFERRED_FLAGS, flags, SAVE_IMAGE_STATE_BYTES);
-  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
-                         gMainRoutineWork.windowBrightness);
+  FieldWindowColor_Apply(gMainRoutineState.windowHue,
+                         gMainRoutineState.windowBrightness);
   return 1;
 }
 
@@ -1088,9 +1088,9 @@ enum PasswordAction {
   PASSWORD_ACTION_FINISH
 };
 
-/// The password screen's state: entering symbols; the last place just filled,
+/// The password screen's stages: entering symbols; the last place just filled,
 /// which is drawn for a frame before the password is checked; and checking.
-enum PasswordState {
+enum PasswordStage {
   PASSWORD_STATE_ENTERING,
   PASSWORD_STATE_CHECK,
   PASSWORD_STATE_LAST_ENTERED
@@ -1110,7 +1110,7 @@ s32 Clear_EnterPassword(void) {
   s32 row;
   s32 length;
   s32 pages;
-  struct PasswordWork *work;
+  struct PasswordState *passwordState;
   s32 drawColumn;
   s32 drawRow;
   s32 drawMode;
@@ -1132,8 +1132,8 @@ s32 Clear_EnterPassword(void) {
   s32 height;
 
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   // The highlight is the window palette with a grey background.
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
@@ -1146,7 +1146,7 @@ s32 Clear_EnterPassword(void) {
   cursor = 0;
   column = 0;
   row = 0;
-  work = Heap_AllocEwram(sizeof(struct PasswordWork));
+  passwordState = Heap_AllocEwram(sizeof(struct PasswordState));
   advance = 0;
   Graphics_ExpandVramTilesByColorTable(BG_CHAR_BLOCK(0) +
                                        PAGE_DIGITS_TILE * TILE_SIZE_4BPP);
@@ -1161,8 +1161,8 @@ s32 Clear_EnterPassword(void) {
   window = Window_Create(1, 13, 29, 6, WINDOW_FLAG_INSTANT);
   DRAW_KEYS(window)
   grid = Window_Create(5, 1, 20, 12, WINDOW_FLAG_INSTANT);
-  for (i = 0; i != ARRAY_COUNT(work->unused); i++)
-    work->unused[i] = 0;
+  for (i = 0; i != ARRAY_COUNT(passwordState->unused); i++)
+    passwordState->unused[i] = 0;
   for (i = 0; i != PASSWORD_GOLD_LENGTH; i++)
     gClear_PasswordText[i] = PASSWORD_SYMBOL_EMPTY;
   for (i = 0; i != PASSWORD_SYMBOLS_PER_PAGE; i++) {
@@ -1175,9 +1175,10 @@ s32 Clear_EnterPassword(void) {
     y = i / PASSWORD_SYMBOLS_PER_ROW * 16 + 2;
     if (col > 4)
       x = col * 12 + 18;
-    work->cells[i] = Glyph_AddBlankSprite(grid, work->glyphs[i], x, y);
-    work->shown[i] = PASSWORD_SYMBOL_EMPTY;
-    Iwram_ClearWordsEntry(work->cells[i], GLYPH_SPRITE_BYTES);
+    passwordState->cells[i] =
+        Glyph_AddBlankSprite(grid, passwordState->glyphs[i], x, y);
+    passwordState->shown[i] = PASSWORD_SYMBOL_EMPTY;
+    Iwram_ClearWordsEntry(passwordState->cells[i], GLYPH_SPRITE_BYTES);
   }
   entry = VramCache_FindFreeEntry();
   if (entry < VRAM_CACHE_ENTRY_COUNT) {
@@ -1341,7 +1342,7 @@ s32 Clear_EnterPassword(void) {
             state == PASSWORD_STATE_CHECK) {
           u16 check;
           struct Window *box;
-          struct MainRoutineWork *party;
+          struct MainRoutineState *party;
           s16 crc;
 
           action = Clear_DecodePassword(gClear_PasswordText, length,
@@ -1362,8 +1363,8 @@ s32 Clear_EnterPassword(void) {
               System_Wait(1);
             } while (!(gInput.pressed & KEY_A));
             Sound_Play(SE_MENU_CONFIRM);
-            MainRoutineWork_InitializeDefaults();
-            party = &gMainRoutineWork;
+            MainRoutineState_InitializeDefaults();
+            party = &gMainRoutineState;
             party->leaderActorId = ACTOR_ISAAC;
             Party_RemoveMember(FELIX);
             Party_RemoveMember(JENNA);
@@ -1449,20 +1450,20 @@ s32 Clear_EnterPassword(void) {
       s32 raw = entered[index];
       u8 code = raw;
 
-      if (code != work->shown[i]) {
-        work->shown[i] = raw;
+      if (code != passwordState->shown[i]) {
+        passwordState->shown[i] = raw;
         if (code == PASSWORD_SYMBOL_EMPTY) {
-          Iwram_ClearWordsEntry(work->cells[i], GLYPH_SPRITE_BYTES);
+          Iwram_ClearWordsEntry(passwordState->cells[i], GLYPH_SPRITE_BYTES);
         } else {
           Clear_GetPasswordCharacter(entered[index], glyph);
-          Glyph_DrawToTiles(glyph[0], work->cells[i]);
+          Glyph_DrawToTiles(glyph[0], passwordState->cells[i]);
         }
       }
     }
     for (; i != PASSWORD_SYMBOLS_PER_PAGE; i++) {
-      if (work->shown[i] != PASSWORD_SYMBOL_EMPTY) {
-        work->shown[i] = PASSWORD_SYMBOL_EMPTY;
-        Iwram_ClearWordsEntry(work->cells[i], GLYPH_SPRITE_BYTES);
+      if (passwordState->shown[i] != PASSWORD_SYMBOL_EMPTY) {
+        passwordState->shown[i] = PASSWORD_SYMBOL_EMPTY;
+        Iwram_ClearWordsEntry(passwordState->cells[i], GLYPH_SPRITE_BYTES);
       }
     }
     System_Wait(1);
@@ -1480,7 +1481,7 @@ s32 Clear_EnterPassword(void) {
 /// cell's tile the row times the window's width plus the column.
 UNUSED void Clear_FillTileGrid(struct Window *window,
                                const void *compressedTiles) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   u16 *shadow;
   u16 *vram;
   void *decodedTiles;
@@ -1492,7 +1493,7 @@ UNUSED void Clear_FillTileGrid(struct Window *window,
   Decompress_TaggedLz(compressedTiles, decodedTiles);
   cell = (s16)window->y * BG_SCREEN_WIDTH + (s16)window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
-  shadow = &work->tilemap[0][cell];
+  shadow = &state->tilemap[0][cell];
   for (row = 0; row < TILE_GRID_ROWS; row++) {
     for (col = 0; col < TILE_GRID_COLUMNS; col++) {
       s16 tile = WINDOW_TILE(window->width * row + col);
@@ -1509,7 +1510,7 @@ UNUSED void Clear_FillTileGrid(struct Window *window,
 /// Unused: fills a grid of the window tilemap with the tiles from
 /// TILE_GRID_FIRST_TILE on.
 UNUSED void Clear_FillTileGridInOrder(struct Window *window) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   u16 *shadow;
   u16 *vram;
   void *buffer;
@@ -1520,7 +1521,7 @@ UNUSED void Clear_FillTileGridInOrder(struct Window *window) {
   buffer = Heap_AllocEwram(768);
   cell = (s16)window->y * BG_SCREEN_WIDTH + (s16)window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
-  shadow = &work->tilemap[0][cell];
+  shadow = &state->tilemap[0][cell];
   for (row = 0; row < TILE_GRID_ROWS; row++) {
     for (col = 0; col < TILE_GRID_COLUMNS; col++) {
       s16 tile =
@@ -1695,9 +1696,9 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       }
     }
 
-    gMainRoutineWork.coins = in[PASSWORD_COINS_BYTE] << 16 |
-                             in[PASSWORD_COINS_BYTE + 1] << 8 |
-                             in[PASSWORD_COINS_BYTE + 2];
+    gMainRoutineState.coins = in[PASSWORD_COINS_BYTE] << 16 |
+                              in[PASSWORD_COINS_BYTE + 1] << 8 |
+                              in[PASSWORD_COINS_BYTE + 2];
   }
 
   for (i = 0; i != 4; i++) {
@@ -1869,9 +1870,9 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineWork.coins >> 16;
-    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineWork.coins >> 8;
-    out[PASSWORD_COINS_BYTE + 2] = gMainRoutineWork.coins;
+    out[PASSWORD_COINS_BYTE] = (u32)gMainRoutineState.coins >> 16;
+    out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineState.coins >> 8;
+    out[PASSWORD_COINS_BYTE + 2] = gMainRoutineState.coins;
   }
   // Silver and Gold carry the stats rows. Each packs two party members in
   // PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of its
@@ -2078,7 +2079,7 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef RESTORE_SAVE_IMAGE
 #undef RETURN_TO_SAVED
 #undef TRANSFERRED_FLAGS
-#undef TRANSFERRED_MAIN_ROUTINE_WORK
+#undef TRANSFERRED_MAIN_ROUTINE_STATE
 #undef TRANSFERRED_SAVE
 #undef LINK_LANGUAGE_TAG
 #undef RECEIVE_WINDOW_X

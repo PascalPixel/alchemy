@@ -2,15 +2,15 @@
 #define ALCHEMY_FIELD_BLEND_H
 
 /// @file
-/// The field's colour blend work.
+/// The field's colour blend state.
 
 #include "types.h"
 #include "static_assert.h"
 
-/// The storm's lightning work: the colours it flashes between and their
+/// The storm's lightning state: the colours it flashes between and their
 /// difference, the countdown to the next flash and whether the thunder is
 /// loud.
-struct FieldBlendWork {
+struct FieldBlendState {
   /// The storm's dark colours (PALETTE_TINT_WARM), as the colour buffer's
   /// B, G and R channels: each flash fades back to them.
   s16 from[1344];
@@ -25,10 +25,10 @@ struct FieldBlendWork {
   u8 unusedAfterLoud[2]; ///< no code names it
 };
 
-STATIC_ASSERT(sizeof(struct FieldBlendWork) == 8072);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, to) == 2688);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, delta) == 5376);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, timer) == 8064);
-STATIC_ASSERT(offsetof(struct FieldBlendWork, loud) == 8068);
+STATIC_ASSERT(sizeof(struct FieldBlendState) == 8072);
+STATIC_ASSERT(offsetof(struct FieldBlendState, to) == 2688);
+STATIC_ASSERT(offsetof(struct FieldBlendState, delta) == 5376);
+STATIC_ASSERT(offsetof(struct FieldBlendState, timer) == 8064);
+STATIC_ASSERT(offsetof(struct FieldBlendState, loud) == 8068);
 
 #endif

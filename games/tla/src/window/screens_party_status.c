@@ -18,13 +18,14 @@
 /// right edge.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct PartyStatusWindow *state = Ram_HeapSlots->partyStatus;
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *windowState =
+      (struct WindowState *)Ram_HeapSlots->windowState;
   s32 height = 4;
   s32 members;
   s32 width;
   s32 x;
 
-  if (work->battleMode != WINDOW_FIELD) {
+  if (windowState->battleMode != WINDOW_FIELD) {
     members = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
@@ -55,18 +56,18 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
 /// draws it, holding the tilemap upload meanwhile.
 void PartyStatus_CreateWindow(s32 flags) {
   struct PartyStatusWindow *window;
-  struct WindowWork *work;
+  struct WindowState *state;
 
   window = HeapSlot_AllocEwram(HEAP_SLOT_PARTY_STATUS,
                                sizeof(struct PartyStatusWindow));
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  work->holdTilemapUpload = 1;
+  state = (struct WindowState *)Ram_HeapSlots->windowState;
+  state->holdTilemapUpload = 1;
   PartyStatus_BuildLayoutBounds(flags);
   window->window = (struct Window *)Window_Create(
       window->x, window->y, window->width, window->height,
       WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
   PartyStatus_Draw(flags);
-  work->holdTilemapUpload = 0;
+  state->holdTilemapUpload = 0;
 }
 
 /// Draws the vertical lines between the party members' columns of the party
@@ -75,12 +76,13 @@ void PartyStatus_CreateWindow(s32 flags) {
 /// line comes first in the list). In battle it also draws the window's bottom
 /// edge.
 void Window_DrawColumnBorders(struct Window *window, u32 flags) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *windowState =
+      (struct WindowState *)Ram_HeapSlots->windowState;
   s32 first = 1;
   s32 shift = 0;
   u32 lastColumn = window->width - 1;
   s32 i;
-  u8 state = work->battleMode;
+  u8 state = windowState->battleMode;
   u32 rows = window->height;
   u32 column;
   u32 row;
@@ -106,8 +108,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       column = table[i] + shift;
       if (column < lastColumn) {
         for (row = 0; row != rows; row++) {
-          cell =
-              work->tilemap[(s16)window->y + row] + ((s16)window->x + column);
+          cell = windowState->tilemap[(s16)window->y + row] +
+                 ((s16)window->x + column);
           if (row == 0)
             *cell = WINDOW_TILE_BORDER_TOP_TEE;
           else if (row == rows - 1)
@@ -120,7 +122,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       /* FAKEMATCH(dead): table set again to the address it holds. */
       table = gWindow_PartyColumnOffsets;
     } while (gWindow_PartyColumnOffsets[i] >= 0);
-    state = work->battleMode;
+    state = windowState->battleMode;
   }
   {
     /* FAKEMATCH(temporary): shown, a copy of state for the bottom edge's
@@ -134,8 +136,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
        * to column, which the next lines set again. */
       if (shown > 255)
         column = 0;
-      cell =
-          work->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
+      cell = windowState->tilemap[(s16)window->y + window->height - 1] +
+             (s16)window->x;
       column = 1;
       *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
       while (column < lastColumn) {
@@ -145,7 +147,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       *cell = WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT;
     }
   }
-  work->dirty = 1;
+  windowState->dirty = 1;
 }
 
 /// The address of pixel row 7 - `up` of BG tile `tile` (4bpp, 32 bytes a tile,
@@ -174,7 +176,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
                                    s32 length) {
   s32 i;
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 fullLength = length;
   s32 row;
   s32 column;
@@ -184,7 +186,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   u32 pixels;
   u32 recoloured;
 
-  if (work->battleMode == WINDOW_FIELD) {
+  if (state->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -195,7 +197,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   y += (s16)window->y;
   for (i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
-    tile = work->tilemap[0][y * BG_SCREEN_WIDTH + x];
+    tile = state->tilemap[0][y * BG_SCREEN_WIDTH + x];
     bar = PIXELS_4BPP(BAR_EMPTY_COLOR);
     shadow = PIXELS_4BPP(BAR_EMPTY_SHADOW_COLOR);
     tile &= TILE_NUMBER_MASK;
@@ -240,9 +242,9 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 /// standby Djinn of each element.
 void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = Ram_HeapSlots->partyStatus;
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct Window *window = layout->window;
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 x = 0;
   u32 count;
   s32 y = 0;
@@ -250,7 +252,7 @@ void PartyStatus_Draw(s32 flags) {
   u16 members[5];
   u8 standbyDjinn[4];
 
-  if (work->battleMode != WINDOW_FIELD) {
+  if (state->battleMode != WINDOW_FIELD) {
     count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
@@ -263,7 +265,7 @@ void PartyStatus_Draw(s32 flags) {
     if (count > 4)
       count = 4;
     for (i = 0; i < count; i++)
-      members[i] = gMainRoutineWork.party[i];
+      members[i] = gMainRoutineState.party[i];
     members[i] = BATTLE_UNIT_LIST_END;
   }
   count = i;
@@ -272,7 +274,7 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->battleMode == WINDOW_FIELD ||
+  if (state->battleMode == WINDOW_FIELD ||
       BattleDjinn_CountStandbyFar(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
@@ -280,7 +282,7 @@ void PartyStatus_Draw(s32 flags) {
     return;
   }
 
-  work->holdTilemapUpload = 1;
+  state->holdTilemapUpload = 1;
   if (layout->flags == flags) {
     WindowSprite_RedrawSavedRect(window);
     Window_DrawColumnBorders(window, flags);
@@ -309,12 +311,12 @@ void PartyStatus_Draw(s32 flags) {
       Text_SetColor(TEXT_COLOR_YELLOW);
     else
       Text_SetColor(TEXT_COLOR_WHITE);
-    work->textPalette = HIGHLIGHT_PALETTE;
-    if (work->battleMode != WINDOW_FIELD)
-      work->textPalette = BASIC_COLORS_PALETTE;
+    state->textPalette = HIGHLIGHT_PALETTE;
+    if (state->battleMode != WINDOW_FIELD)
+      state->textPalette = BASIC_COLORS_PALETTE;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->textPalette = WINDOW_PALETTE;
+    state->textPalette = WINDOW_PALETTE;
     Text_DrawStringAtOffset(unit->name, (struct Window *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
@@ -328,9 +330,9 @@ void PartyStatus_Draw(s32 flags) {
                            barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->textPalette = HIGHLIGHT_PALETTE;
-      if (work->battleMode != WINDOW_FIELD)
-        work->textPalette = BASIC_COLORS_PALETTE;
+      state->textPalette = HIGHLIGHT_PALETTE;
+      if (state->battleMode != WINDOW_FIELD)
+        state->textPalette = BASIC_COLORS_PALETTE;
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
@@ -345,9 +347,9 @@ void PartyStatus_Draw(s32 flags) {
       }
     }
   }
-  work->textPalette = WINDOW_PALETTE;
+  state->textPalette = WINDOW_PALETTE;
 
-  if (work->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {
+  if (state->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
     /* FAKEMATCH(dead): i set to a 0 never read. */
@@ -376,7 +378,7 @@ void PartyStatus_Draw(s32 flags) {
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[3]), 3,
                            row + 1, 0);
   }
-  work->holdTilemapUpload = 0;
+  state->holdTilemapUpload = 0;
 }
 
 /// Closes the party status window and frees its heap block.

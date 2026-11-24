@@ -23,7 +23,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/field_sequence_event.h"
 #include "system/ram_buffer.h"
@@ -95,7 +95,7 @@ enum MikasallaActorId {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MIKASALLA_NORTH)
     return gMikasalla_TunnelRegions;
@@ -105,7 +105,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MIKASALLA)
     return gMikasalla_VillagePlacements;
@@ -131,7 +131,7 @@ extern struct MapGridCellAnimation gMikasalla_Doors[];
 /// `gMikasalla_Doors` holds its opening, drawn over its cells. The Sanctum's
 /// door is entered without the walk.
 void Mikasalla_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u32 id;
   s16 *exit;
   s32 index;
@@ -144,18 +144,18 @@ void Mikasalla_EnterDoor(void) {
     if (actor != NULL)
       actor->motionFlags = 0;
   }
-  exit = &work->stepTrigger;
+  exit = &state->stepTrigger;
   index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gMikasalla_Doors[index].steps, gMikasalla_Doors[index].x,
                        gMikasalla_Doors[index].y);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
 
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
   if (index != MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM - 1) {
-    Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
+    Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -8);
     Event_Wait(10);
   }
   Import_EventSetExitRequest(*exit);
@@ -172,7 +172,7 @@ void Mikasalla_MeetSpark(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MIKASALLA_NORTH)
     return gMikasalla_TunnelTriggers;
@@ -241,15 +241,15 @@ void Mikasalla_CastParch(void) {
 }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
 
   Actor_GetById(ACTOR_CHICKEN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (party->next == SCENE_MIKASALLA_NORTH) {
@@ -268,7 +268,7 @@ void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
-  if (gMainRoutineWork.next == SCENE_MIKASALLA) {
+  if (gMainRoutineState.next == SCENE_MIKASALLA) {
     exit = MIKASALLA_TO_MIKASALLA_NORTH_SOUTH;
     drop = 17;
   } else {

@@ -8,9 +8,9 @@
 
 // Tremor cast at a chosen object (FieldPsynergy_Dispatch):
 // FieldPsynergy_Tremor's sideways sway, stronger, with the object's picture
-// held in the work.
+// held in the state.
 
-/// The sprites of RESOURCE_SHAKE_TILES' two tiles the work sets up.
+/// The sprites of RESOURCE_SHAKE_TILES' two tiles the state sets up.
 #define SHAKE_SPRITE_COUNT 64
 /// The OBJ palette the shake sprites take.
 #define SHAKE_SPRITE_PALETTE 14
@@ -40,10 +40,10 @@ enum {
   SWAY_DONE = 999,
 };
 
-/// Tremor's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the view's sway, the
+/// Tremor's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the view's sway, the
 /// picture of the shaken actor and its falling pieces.
-struct TremorWork {
-  struct ViewMoveWork view;
+struct TremorState {
+  struct ViewMoveState view;
   u8 picture[PICTURE_SIZE];
   struct EffectSprite sprites[SHAKE_SPRITE_COUNT];
   struct FieldPsynergyParticle particles[SHAKE_SPRITE_COUNT];
@@ -57,14 +57,14 @@ void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 /// view from side to side, as FieldPsynergy_Tremor does with no object: the
 /// swing grows from SWAY_START to STRONG_SWAY_PEAK, holds
 /// STRONG_SWAY_HOLD_FRAMES, shrinks back and stops. Past SWAY_SHAKE the nearby
-/// objects' sprites shake with it. The work also takes the object's picture and
-/// SHAKE_SPRITE_COUNT sprites, which nothing here draws. An object whose
+/// objects' sprites shake with it. The state also takes the object's picture
+/// and SHAKE_SPRITE_COUNT sprites, which nothing here draws. An object whose
 /// picture is larger than PICTURE_MAX_PIXELS gets no sway.
 void FieldPsynergy_TremorOnTarget(void) {
-  struct TremorWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct TremorState *tremorState =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*tremorState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *target = scene->child;
   struct Sprite *targetSprite = target->sprite;
   s32 tiles;
@@ -84,12 +84,12 @@ void FieldPsynergy_TremorOnTarget(void) {
       targetSprite->width * targetSprite->height <= PICTURE_MAX_PIXELS) {
     FieldPsynergy_FadeToCastColor();
     Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_SHAKE_TILES),
-                        work->picture);
+                        tremorState->picture);
     tiles = VramCache_FindFreeEntry();
-    tile = VramCache_Load(tiles, 64, work->picture);
-    for (i = 0, particle = work->particles; i < SHAKE_SPRITE_COUNT;
+    tile = VramCache_Load(tiles, 64, tremorState->picture);
+    for (i = 0, particle = tremorState->particles; i < SHAKE_SPRITE_COUNT;
          i++, particle++) {
-      struct EffectSprite *sprite = &work->sprites[i];
+      struct EffectSprite *sprite = &tremorState->sprites[i];
 
       EffectSprite_Init(sprite, 4, 4, 0, tile + (i & 1));
       sprite->oam.fullColor = 0;
@@ -102,8 +102,8 @@ void FieldPsynergy_TremorOnTarget(void) {
     if (target != NULL && targetSprite != NULL) {
       Sprite_SetAnimationSpeedFar(targetSprite, 0);
       FieldPsynergy_DecodePicture(
-          (struct PictureSource *)targetSprite->entries[0], work->picture,
-          targetSprite->width * targetSprite->height);
+          (struct PictureSource *)targetSprite->entries[0],
+          tremorState->picture, targetSprite->width * targetSprite->height);
     }
     ViewMove_Start(VIEW_MOVE_X);
     ViewMove_SaveNearbySprites();
@@ -123,9 +123,9 @@ void FieldPsynergy_TremorOnTarget(void) {
 
       // Shake the gathered objects' sprites with the view.
       if (field->mode == ACTOR_SYSTEM_MAP) {
-        for (i = 0; i < work->view.count; i++) {
-          struct Sprite *sprite = work->view.objects[i]->sprite;
-          s32 rotation = work->view.spriteRotations[i];
+        for (i = 0; i < tremorState->view.count; i++) {
+          struct Sprite *sprite = tremorState->view.objects[i]->sprite;
+          s32 rotation = tremorState->view.spriteRotations[i];
 
           if (amplitude > SWAY_SHAKE)
             sprite->rotation =
@@ -213,11 +213,11 @@ void FieldPsynergy_TremorOnTarget(void) {
 /// are any, the hold lasts SWAY_SHAKE_FRAMES instead of SWAY_HOLD_FRAMES. Then
 /// the view bounds and the sprites come back.
 void FieldPsynergy_Tremor(void) {
-  // Tremor's work's size, though the sway holds only the view move.
-  struct ViewMoveWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct TremorWork));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  // Tremor's state's size, though the sway holds only the view move.
+  struct ViewMoveState *viewMoveState =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct TremorState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   s32 frameCount;
   s32 phase;
   s32 i;
@@ -242,9 +242,9 @@ void FieldPsynergy_Tremor(void) {
 
     // Shake the gathered objects' sprites with the view.
     if (field->mode == ACTOR_SYSTEM_MAP) {
-      for (i = 0; i < work->count; i++) {
-        struct Sprite *sprite = work->objects[i]->sprite;
-        s32 rotation = work->spriteRotations[i];
+      for (i = 0; i < viewMoveState->count; i++) {
+        struct Sprite *sprite = viewMoveState->objects[i]->sprite;
+        s32 rotation = viewMoveState->spriteRotations[i];
 
         if (amplitude > 0)
           sprite->rotation =
@@ -265,7 +265,7 @@ void FieldPsynergy_Tremor(void) {
       }
       break;
     case SWAY_HOLD:
-      if (work->count != 0) {
+      if (viewMoveState->count != 0) {
         if (frames == SWAY_SHAKE_FRAMES) {
           state = SWAY_SHRINK;
           frames = -1;

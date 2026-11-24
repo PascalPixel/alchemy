@@ -50,7 +50,7 @@ again:
 /// rectangle between two palettes, such as 15 and 14. Nothing calls it.
 UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
                                       s32 width, s32 height, u32 set) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
   x += (s16)window->x + 1;
   y += (s16)window->y + 1;
@@ -78,7 +78,7 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *cell = &work->tilemap[y][x];
+      u16 *cell = &state->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
         u32 entry = *cell;
@@ -91,7 +91,7 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
       height--;
       y++;
     } while (height != 0);
-    work->dirty = 1;
+    state->dirty = 1;
   }
 }
 
@@ -199,7 +199,7 @@ s32 DebugBrowser_Icons(void) {
 /// DEBUG_LARGE_STEP, each drawn with its number and its name from MsgTestName;
 /// A or B leaves.
 s32 DebugBrowser_Portraits(void) {
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *portrait;
   s32 redraw;
   struct Window *window;
@@ -214,10 +214,10 @@ s32 DebugBrowser_Portraits(void) {
   s32 cancelKey;
   s32 palette = PORTRAIT_PALETTE + 1;
   /* FAKEMATCH(temporary): slotOffset, the second portrait slot's offset held
-   * in a local and added to work through a byte pointer. */
-  u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
+   * in a local and added to state through a byte pointer. */
+  u32 slotOffset = offsetof(struct WindowState, portraitSprites[1]);
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  state = (struct WindowState *)Ram_HeapSlots->windowState;
   redraw = 1;
   portrait = Portrait_OpenWindow(0, 0, 10, 5);
   window = Window_Create(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
@@ -260,7 +260,7 @@ s32 DebugBrowser_Portraits(void) {
       else
         glyph = gPortrait_SpriteMap[(index - characterCount) * 2 + 1] +
                 PORTRAIT_FIRST_SPRITE_PORTRAIT;
-      slot = *(u16 *)((u8 *)work + slotOffset);
+      slot = *(u16 *)((u8 *)state + slotOffset);
       Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + (s32)MsgTestName, window, 24, 0);

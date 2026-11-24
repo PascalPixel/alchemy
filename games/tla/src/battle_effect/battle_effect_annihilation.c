@@ -26,7 +26,7 @@
 ///
 /// Abilities: Annihilation.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *particleSheet;
@@ -41,13 +41,13 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   s32 size;
   u8 *burstPixels;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   particleSheet = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   burstPixels = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 4, 0);
@@ -56,7 +56,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
   // Shards burst from the target.
   for (i = 0; i != SHARD_COUNT; i++) {
-    struct Particle *seed = &work->particles[i];
+    struct Particle *seed = &state->particles[i];
 
     SET_POSITION(seed, targetActor->x, targetActor->y, targetActor->z);
     seed->velocityX = (Random16() & 255) << 11;
@@ -69,7 +69,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 
   EffectPosition_ProjectScaledBattler(args->targets[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == HIT_FRAME)
@@ -89,13 +89,13 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (args->side == EFFECT_SIDE_ENEMIES)
         blitters[0](canvas,
-                    work->sheet +
+                    state->sheet +
                         (frame - STREAK_FRAME) * PICTURE_BYTES(FIRE_STREAK),
                     position.x / 2 - FIRE_STREAK_WIDTH / 2, position.y - 24,
                     FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
       else
         blitters[0](canvas,
-                    work->sheet +
+                    state->sheet +
                         (frame - STREAK_FRAME) * PICTURE_BYTES(FIRE_STREAK),
                     position.x / 2, position.y - 24, FIRE_STREAK_WIDTH,
                     FIRE_STREAK_HEIGHT);
@@ -135,7 +135,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 
-        shard = &work->particles[i];
+        shard = &state->particles[i];
         life = shard->variant;
         if (life > 0) {
           EffectPosition_ProjectPoint(shard, &out);
@@ -153,7 +153,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     // The strike throws the target back.
     if (frame == HIT_FRAME) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
@@ -162,7 +162,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
                                TINT_KEEP, TINT_KEEP, 0);
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

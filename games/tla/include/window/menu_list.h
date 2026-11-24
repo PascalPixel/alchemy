@@ -2,7 +2,7 @@
 #define ALCHEMY_MENU_LIST_H
 
 /// @file
-/// The battle menus' shared work, and the sprite shapes the menus queue.
+/// The battle menus' shared state, and the sprite shapes the menus queue.
 
 #include "types.h"
 
@@ -59,9 +59,9 @@ struct MenuSprite {
   } oam;
 };
 
-/// The battle menus' work (HEAP_SLOT_BATTLE_MENU): what the command row and
+/// The battle menus' state (HEAP_SLOT_BATTLE_MENU): what the command row and
 /// the lists remember between them while the party's commands are chosen.
-struct BattleMenuWork {
+struct BattleMenuState {
   /// The sprites BattleMenu_UpdateEachFrame draws each frame: the chosen
   /// command's icon, the chosen ability's icon and the party member's portrait.
   struct MenuSprite icons[3];
@@ -105,7 +105,7 @@ struct BattleMenuWork {
   s32 lastTarget;
 };
 
-/// BattleMenuWork.chosenDjinn of a command that has chosen no Djinni.
+/// BattleMenuState.chosenDjinn of a command that has chosen no Djinni.
 #define BATTLE_MENU_NO_DJINNI 0x80000000
 
 /// The party status window and the rectangle it last drew.
@@ -130,32 +130,32 @@ enum { BATTLE_LIST_ROWS = 5 };
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
-/// The battle menus' shared work, in its heap slot.
-#define BATTLE_MENU_WORK                                                       \
-  ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
+/// The battle menus' shared state, in its heap slot.
+#define BATTLE_MENU_STATE                                                      \
+  ((struct BattleMenuState *)Ram_HeapSlots->battleMenuState)
 
 /// Restores the previous selection: page, row and return row.
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    (page_) = BATTLE_MENU_WORK->page;                                          \
-    (row_) = BATTLE_MENU_WORK->row;                                            \
-    (preferred_) = BATTLE_MENU_WORK->preferredRow;                             \
+    (page_) = BATTLE_MENU_STATE->page;                                         \
+    (row_) = BATTLE_MENU_STATE->row;                                           \
+    (preferred_) = BATTLE_MENU_STATE->preferredRow;                            \
   } while (0)
 
 /// Saves the selection: page, row and return row.
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    BATTLE_MENU_WORK->page = (page_);                                          \
-    BATTLE_MENU_WORK->row = (row_);                                            \
-    BATTLE_MENU_WORK->preferredRow = (preferred_);                             \
+    BATTLE_MENU_STATE->page = (page_);                                         \
+    BATTLE_MENU_STATE->row = (row_);                                           \
+    BATTLE_MENU_STATE->preferredRow = (preferred_);                            \
   } while (0)
 
 /// Marks the 4-row band of the window tilemap that holds `row` for upload
-/// (WindowWork.dirty): the battle lists mark their top border's
+/// (WindowState.dirty): the battle lists mark their top border's
 /// row so, and the Djinn list its preview's.
-#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
+#define WINDOW_MARK_TILEMAP_ROW(state, row)                                    \
   do {                                                                         \
-    (work)->dirty |= 2 << ((row) >> 2);                                        \
+    (state)->dirty |= 2 << ((row) >> 2);                                       \
   } while (0)
 
 #endif

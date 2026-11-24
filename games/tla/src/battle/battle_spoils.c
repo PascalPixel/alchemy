@@ -51,12 +51,12 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 /// Empties the battle's spoils and the party's pending item. Called by
 /// Battle_Run.
 void BattleSpoils_Clear(void) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   struct BattleSpoils *spoils = &battle->spoils;
   u16 *items;
   s32 index;
 
-  gMainRoutineWork.pendingItem = 0;
+  gMainRoutineState.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;
@@ -125,7 +125,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 }
 
 /// Counts a fallen enemy and adds its spoils, The Broken Seal's
-/// BattleEnemy_RecordDefeat with the battle work from its heap slot. This game
+/// BattleEnemy_RecordDefeat with the battle state from its heap slot. This game
 /// also keeps the last two defeated enemies (their ids and
 /// String_FindFirstDigit's first digit of their names, alternating slots, with
 /// a count up to 2) and sets the defeated flag only for the enemies that have
@@ -133,7 +133,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct BattleSpoils *spoils;
   s32 itemIndex;
   s32 dropShift;
@@ -145,7 +145,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 classIndex;
 
   unit = Unit_Get(unitId);
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId <= ALLY_MAX)
     return -1;
@@ -250,7 +250,7 @@ void Battle_AwardSpoils(void) {
   s16 gains[GAIN_COUNT];
   u16 units[10];
 
-  spoils = &Ram_HeapSlots->battleWork->spoils;
+  spoils = &Ram_HeapSlots->battleState->spoils;
   if (spoils->experience != 0) {
     MessageArgument_PushFar(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
     // "You got N experience points."
@@ -342,7 +342,7 @@ void Battle_AwardSpoils(void) {
     Party_AdjustCoinsFar(spoils->coins);
     BattleMessage_WaitForAdvance();
   }
-  found = &gMainRoutineWork.pendingItem;
+  found = &gMainRoutineState.pendingItem;
   for (;;) {
     bestSlot = -1;
     best = -1;

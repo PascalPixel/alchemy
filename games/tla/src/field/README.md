@@ -51,7 +51,7 @@ task for all 64 actors.
 ### The twelve requests
 
 A request is a note that something needs an answer: a number in the
-field's work, 0 while nothing is asked. Three kinds of code set one.
+field's state, 0 while nothing is asked. Three kinds of code set one.
 
 - The leader's script. Its control order, `SC_PLAYER` on foot, which the
   actors' task runs, looks at the buttons and sets the request for A, the
@@ -319,15 +319,15 @@ those few routines into the console's fast memory and runs them there.
   plays (`event_commands_psynergy_dispatch.c`). The `actor_*.c` files hold
   the placement, its scripts and tables, and [`facing.c`](facing.c) the
   pictures a sprite shows for each facing.
-- A scene's work is one struct, `FieldWork`, in
-  [`field_work.h`](../../include/field/field_work.h): The Broken Seal's,
+- A scene's state is one struct, `FieldState`, in
+  [`field_state.h`](../../include/field/field_state.h): The Broken Seal's,
   with the Psynergy state the sequel adds at its end. The field sequence,
   the event commands and every scene read it through
-  `Ram_HeapSlots->fieldWork` or `gFieldWork`.
+  `Ram_HeapSlots->fieldState` or `gFieldState`.
 - [`field_psynergy.c`](field_psynergy.c) is most of the Psynergy the sequel
   adds, its parts `field_psynergy_*.c`. The parts share the field
-  Psynergy's work, `FieldEffectWork` in
-  [`field_psynergy_work.h`](../../include/field/field_psynergy_work.h): the
+  Psynergy's state, `FieldEffectState` in
+  [`field_psynergy_state.h`](../../include/field/field_psynergy_state.h): the
   caster, the target and where the Psynergy takes place. Each part is one
   Psynergy or one family of its helpers, named for it.
 - The `field_effect_*.c` files are the field's small effects: particles,

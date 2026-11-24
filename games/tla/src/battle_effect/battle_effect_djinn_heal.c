@@ -49,7 +49,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint pos;
   struct ModelTexture texture;
   s32 y;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   struct Particle *quad;
   s32 x;
   s32 frame;
@@ -63,7 +63,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   FIXED height;
   s32 fade;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
 
@@ -75,9 +75,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                                    DJINNI_ANCHOR_TARGET_X),
                                    anchor, size);
     Resource_LoadAndDecompress(RESOURCE_COMET_TEXTURE,
-                               work->sheet + TUMBLING_QUADS_TEXTURE, 0, 0);
+                               state->sheet + TUMBLING_QUADS_TEXTURE, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-                               work->sheet + TUMBLING_QUADS_DJINNI, 1, 0);
+                               state->sheet + TUMBLING_QUADS_DJINNI, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                     SHEET_PALETTE_BYTES);
@@ -87,16 +87,16 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    anchor, size);
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
-                               work->sheet + TUMBLING_QUADS_DJINNI, 1, 1);
+                               state->sheet + TUMBLING_QUADS_DJINNI, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_FEATHER_SHEET,
-                               work->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
+                               state->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
   } else {
     EffectPosition_ProjectBattler(args->targets[0], &pos);
     anchor[0] = pos.x;
     Resource_LoadAndDecompress(RESOURCE_FEATHER_SHEET,
-                               work->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
+                               state->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Centre the canvas on the anchor; the blitter mirrors for side 0.
   REG_BG2PA = Q_8_8(1);
@@ -119,7 +119,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     if (frame == 0) {
       height = -toFIXED(32);
       for (i = 0; i != TUMBLING_QUADS_PLACED; i++) {
-        quad = &work->particles[i];
+        quad = &state->particles[i];
         quad->x = Random16() & TRIG_ANGLE_MASK;
         Random16();
         quad->z = toFIXED(1);
@@ -154,10 +154,10 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       y = (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4)) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
-      draws[0](canvas, work->sheet + TUMBLING_QUADS_DJINNI, x, y, DJINNI_WIDTH,
+      draws[0](canvas, state->sheet + TUMBLING_QUADS_DJINNI, x, y, DJINNI_WIDTH,
                DJINNI_HEIGHT);
       if (frame <= 3)
-        draws[0](canvas, work->sheet + TUMBLING_QUADS_DJINNI, x, y,
+        draws[0](canvas, state->sheet + TUMBLING_QUADS_DJINNI, x, y,
                  DJINNI_WIDTH, DJINNI_HEIGHT);
       // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
       if (frame <= 79) {
@@ -165,7 +165,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         s32 lineX;
         s32 lineY;
 
-        Iwram_FillWordsEntry(work->sheet, TUMBLING_QUADS_LINE_HEIGHT,
+        Iwram_FillWordsEntry(state->sheet, TUMBLING_QUADS_LINE_HEIGHT,
                              CANVAS_FILL_WORD(TUMBLING_QUADS_LINE_LEVEL) -
                                  frame / 2 * CANVAS_FILL_WORD(1));
         i = 0;
@@ -173,7 +173,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         for (; i != TUMBLING_QUADS_LINES; i++) {
           lineX = (FIXEDtoINT(Trig_Sin(angle) * frame)) + CANVAS_SIZE / 2;
           lineY = (FIXEDtoINT((Trig_Cos(angle) * frame) / 8)) - 16;
-          draws[0](canvas, work->sheet, lineX, lineY, 1,
+          draws[0](canvas, state->sheet, lineX, lineY, 1,
                    TUMBLING_QUADS_LINE_HEIGHT);
           angle += TRIG_TURN / TUMBLING_QUADS_LINES;
         }
@@ -194,7 +194,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       model->shade = fade;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      texture.pixels = work->sheet + TUMBLING_QUADS_TEXTURE;
+      texture.pixels = state->sheet + TUMBLING_QUADS_TEXTURE;
       model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->mesh = gBattleEffect_SquareMesh;
@@ -204,7 +204,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         FIXED scale;
         s32 delay;
 
-        quad = &work->particles[i];
+        quad = &state->particles[i];
         delay = i * TUMBLING_QUADS_DELAY;
         scale = quad->variant;
 
@@ -241,7 +241,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     }
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -297,11 +297,11 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 ///
 /// Abilities: Zagan.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *fadedMotes;
-  struct BattleBackgroundWork *backdrop;
+  struct BattleBackgroundState *backdrop;
   s32 savedScroll;
   DrawRectangle *blit;
   struct Point2D position;
@@ -322,16 +322,16 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 j;
 
   ringPixels = Ram_MapCellBuffer + ZAGAN_FLAME_BAND;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   fadedMotes = Ram_HeapSlots->battleSheet;
   backdrop = Ram_HeapSlots->battleBackground;
   savedScroll = gBgScroll[1].x;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The battle flashes away as the summons' openings do, stopping while the
@@ -339,12 +339,12 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   for (bgX = -80, frame = 0; frame != SUMMON_OPENING_LOAD_FRAME + 1; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-      BattleEffect_SelectLivingTargets(work->args);
-      work->scrollStepX = -8;
+      BattleEffect_SelectLivingTargets(state->args);
+      state->scrollStepX = -8;
       backdrop->busy = 1;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
                            BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
-      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
+      Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, state->sheet, 0,
                                  0);
       // DEAD: ever-fainter copies of one mote, which Zagan never draws; the
       // ROM keeps the copies.
@@ -352,7 +352,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         size = 4;
         for (i = 0; i != size * size * 2; i++) {
           s32 offset = gBattleEffect_MotePictures[size - 1] + i;
-          s32 value = work->sheet[offset];
+          s32 value = state->sheet[offset];
 
           if (value != 0) {
             value -= j * 7;
@@ -363,27 +363,27 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
           fadedMotes[size * size * j * 2 + i] = value;
         }
       }
-      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, state->sheet, 1, 1);
       for (i = 0; i != ZAGAN_STREAK_WIDTH; i++) {
-        work->sheet[ZAGAN_STREAK + i] = i + ZAGAN_STREAK_LEVEL;
-        work->sheet[ZAGAN_STREAK + ZAGAN_STREAK_WIDTH + i] =
+        state->sheet[ZAGAN_STREAK + i] = i + ZAGAN_STREAK_LEVEL;
+        state->sheet[ZAGAN_STREAK + ZAGAN_STREAK_WIDTH + i] =
             i + ZAGAN_STREAK_LEVEL;
-        work->sheet[ZAGAN_STREAK + ZAGAN_STREAK_WIDTH * 2 + i] =
+        state->sheet[ZAGAN_STREAK + ZAGAN_STREAK_WIDTH * 2 + i] =
             i + ZAGAN_STREAK_LEVEL;
       }
     }
     bgX += 4;
     REG_BG2X = bgX << 8;
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   blit = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   skip = 0;
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                        SHEET_PALETTE_BYTES);
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   wait(1);
   BattleEffect_SpawnObjects(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
   REG_BG2X = skip;
@@ -424,23 +424,23 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x = -toFIXED(20);
       velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
-        Sprite_StartAnimationFar(work->sprites[i], i + ZAGAN_GALLOP_PICTURES);
+        Sprite_StartAnimationFar(state->sprites[i], i + ZAGAN_GALLOP_PICTURES);
       }
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
                            BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
-      work->scrollStepX = -8;
+      state->scrollStepX = -8;
       gProjection.centerX = -968;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       gBgScroll[1].x = savedScroll + 1128;
-      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
+      Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, state->sheet, 1, 1);
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                            SHEET_PALETTE_BYTES);
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
-    gProjection.centerX -= work->scrollStepX;
-    gBgScroll[1].x += work->scrollStepX;
+    gProjection.centerX -= state->scrollStepX;
+    gBgScroll[1].x += state->scrollStepX;
 
     // The field darkens toward the battle background's colours.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
@@ -495,21 +495,21 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == ZAGAN_BLOW_FRAME) {
-      Resource_LoadAndDecompress(RESOURCE_CRESCENT_ROW_SHEET, work->sheet, 1,
+      Resource_LoadAndDecompress(RESOURCE_CRESCENT_ROW_SHEET, state->sheet, 1,
                                  0);
-      work->shakeFrames = 16;
+      state->shakeFrames = 16;
       for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-        Sprite_StartAnimationFar(work->sprites[i], i + ZAGAN_SWING_PICTURES);
+        Sprite_StartAnimationFar(state->sprites[i], i + ZAGAN_SWING_PICTURES);
       }
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     // The crescent of light, for eight frames from the flash.
     if ((u32)(frame - (ZAGAN_BLOW_FRAME - 1)) <= 7) {
-      blitters[0](canvas, work->sheet, 12, 0, 58, 120);
+      blitters[0](canvas, state->sheet, 12, 0, 58, 120);
     }
     for (i = 0; i != 8; i++) {
       if (frame == i * 6 + 114) {
-        work->scrollStepX++;
+        state->scrollStepX++;
       }
     }
     if (frame == 163) {
@@ -526,7 +526,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (frame == 0) {
       s32 row;
 
-      for (i = 0, row = 3, p = work->particles; i != ZAGAN_STREAKS;
+      for (i = 0, row = 3, p = state->particles; i != ZAGAN_STREAKS;
            i++, p++, row += 6) {
         p->x = (Random16() & 127) - 160;
         p->y = row;
@@ -537,10 +537,10 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if ((u32)frame <= 119) {
       s32 odd;
 
-      for (i = 0, odd = frame & 1, p = work->particles; i != ZAGAN_STREAKS;
+      for (i = 0, odd = frame & 1, p = state->particles; i != ZAGAN_STREAKS;
            i++, p++) {
         if (!odd || !skip) {
-          blitters[0](canvas, work->sheet + ZAGAN_STREAK, p->x, p->y,
+          blitters[0](canvas, state->sheet + ZAGAN_STREAK, p->x, p->y,
                       ZAGAN_STREAK_WIDTH, p->variant + 1);
         }
         p->x += p->velocityX;
@@ -561,7 +561,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                            toFIXED(32);
             placement[2] = INTtoFIXED(gZagan_ChargePoints[i][1]) + position.y +
                            toFIXED(16);
-            Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
+            Render_ApplyProjectedPlacementFar(state->sprites[i], placement,
                                               (s32 *)&zaganScale, 0);
           }
         } else {
@@ -569,7 +569,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
             placement[0] = INTtoFIXED(gZagan_GallopPoints[i][0]) + position.x;
             placement[2] = INTtoFIXED(gZagan_GallopPoints[i][1]) + position.y -
                            toFIXED(16);
-            Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
+            Render_ApplyProjectedPlacementFar(state->sprites[i], placement,
                                               (s32 *)&zaganScale, 0);
           }
         }
@@ -600,7 +600,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       // The blaze, a new picture every three frames.
       if ((!(frame & 1) || !skip) && frame <= 119) {
         blit[1](canvas,
-                work->sheet + ((frame / 3) & 3) * PICTURE_BYTES(ZAGAN_BLAZE),
+                state->sheet + ((frame / 3) & 3) * PICTURE_BYTES(ZAGAN_BLAZE),
                 (FIXEDtoINT(position.x / 2)) - 12,
                 (FIXEDtoINT(position.y)) - 58, ZAGAN_BLAZE_WIDTH,
                 ZAGAN_BLAZE_HEIGHT);
@@ -659,7 +659,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       }
     }
     if (frame >= ZAGAN_BLOW_FRAME) {
-      if (work->shakeFrames > 0) {
+      if (state->shakeFrames > 0) {
         s32 offsetX = (Random16() & 3) - 8;
         s32 randomY = Random16() & 15;
         s32 offsetY = randomY - 8;
@@ -667,23 +667,23 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         gBgScroll[1].y = randomY + 24;
         gProjection.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
         gProjection.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
-        work->shakeFrames--;
+        state->shakeFrames--;
       } else {
-        gBgScroll[1].y = work->savedBg1Y;
+        gBgScroll[1].y = state->savedBg1Y;
         gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
         gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
       }
     }
     BattleEffect_CountDownBattlerTints();
     if (!(frame & 1) || !skip) {
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   backdrop->busy = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -692,18 +692,18 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 /// at least half the delta, so it keeps turning on VBlanks that end no frame
 /// of the effect.
 void BattleCamera_ApplyPhasedDelta(void) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
-  if (work->cameraPhase == CAMERA_PHASE_FRAME_DONE) {
-    camera->yaw += work->cameraDelta;
-    work->cameraPhase = CAMERA_PHASE_IDLE;
+  if (state->cameraPhase == CAMERA_PHASE_FRAME_DONE) {
+    camera->yaw += state->cameraDelta;
+    state->cameraPhase = CAMERA_PHASE_IDLE;
   } else {
-    camera->yaw += work->cameraDelta / 2;
-    if (work->cameraPhase == CAMERA_PHASE_HALF_TURNED)
-      work->cameraPhase = CAMERA_PHASE_IDLE;
+    camera->yaw += state->cameraDelta / 2;
+    if (state->cameraPhase == CAMERA_PHASE_HALF_TURNED)
+      state->cameraPhase = CAMERA_PHASE_IDLE;
     else
-      work->cameraPhase = CAMERA_PHASE_HALF_TURNED;
+      state->cameraPhase = CAMERA_PHASE_HALF_TURNED;
   }
 }
 #undef TUMBLING_QUADS_FRAMES

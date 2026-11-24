@@ -31,7 +31,7 @@ struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
 /// Shows that a Djinni joined a party member while the join jingle
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 djinniSprite;
   struct Window *window;
   s32 sprite[3];
@@ -50,7 +50,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
 
-    work->dirty = 1;
+    state->dirty = 1;
 
     id = Portrait_GetForSpeaker(djinniSprite);
     Icon_LoadWithPalette(id, cleared, &slot, &tile, PORTRAIT_PALETTE, cleared);
@@ -63,8 +63,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     *p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
     *p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
 
-    work->speakerVoiceSound = cleared;
-    work->speakerVoiceCountdown = cleared;
+    state->speakerVoiceSound = cleared;
+    state->speakerVoiceCountdown = cleared;
 
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(element * DJINN_PER_ELEMENT + djinn +
@@ -105,7 +105,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 /// Shows that a party member joined the party while the join jingle
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   struct Window *window = NULL;
   s32 sprite[3];
   s32 *entry = sprite;
@@ -115,7 +115,7 @@ void Party_ShowJoinedMessage(s32 member) {
   window = Window_Create(2, 1, 26, 5, 0);
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
-    work->dirty = 1;
+    state->dirty = 1;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0, &slot,
         &tile, PORTRAIT_PALETTE, 0);
@@ -126,8 +126,8 @@ void Party_ShowJoinedMessage(s32 member) {
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
     *p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
-    work->speakerVoiceSound = 0;
-    work->speakerVoiceCountdown = 0;
+    state->speakerVoiceSound = 0;
+    state->speakerVoiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
 #ifdef UBFIX
     Message_Start(window, Message_DecodeAndClearArguments((s32)MsgJoinedParty),
@@ -151,7 +151,7 @@ void Party_ShowJoinedMessage(s32 member) {
 /// Shows that two party members joined the party while the join jingle
 /// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   struct Window *window;
   s32 secondSprite[3];
   s32 firstSprite[3];
@@ -167,7 +167,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   if (window != NULL) {
     Window_DrawDividerLine(window, 8, 0, 4, 4);
 
-    work->dirty = 1;
+    state->dirty = 1;
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
@@ -189,8 +189,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
-    work->speakerVoiceSound = 0;
-    work->speakerVoiceCountdown = 0;
+    state->speakerVoiceSound = 0;
+    state->speakerVoiceCountdown = 0;
 
     MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);
@@ -238,7 +238,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 /// "To summon" (MsgToSummon) with its two largest Djinn counts, until a button
 /// is pressed.
 void Summon_ShowLearnedMessage(s32 summon) {
-  struct WindowWork *work = Ram_HeapSlots->windowWork;
+  struct WindowState *state = Ram_HeapSlots->windowState;
   struct Window *window;
   s32 entries;
   u32 resource;
@@ -254,9 +254,9 @@ void Summon_ShowLearnedMessage(s32 summon) {
   window = Window_Create(4, 1, 22, 5, 0);
   if (window == NULL)
     return;
-  work->dirty = 1;
-  work->speakerVoiceSound = 0;
-  work->speakerVoiceCountdown = 0;
+  state->dirty = 1;
+  state->speakerVoiceSound = 0;
+  state->speakerVoiceCountdown = 0;
   MessageArgument_Push(gSummon_Abilities[summon & (SUMMON_END - 1)],
                        MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeAndClearArguments((s32)MsgCanNowSummon);

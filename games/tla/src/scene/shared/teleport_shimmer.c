@@ -5,7 +5,7 @@
 /// it, a palette cycle, as Teleport is cast and as the party arrives on a
 /// circle.
 
-/// Teleport's steps (gMainRoutineWork.teleportState), as the field sequence
+/// Teleport's steps (gMainRoutineState.teleportState), as the field sequence
 /// names them: a place was chosen, then the party arrives in its scene.
 enum TeleportState {
   TELEPORT_NONE,
@@ -39,7 +39,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *cycleColors,
       DMA_COPY_WORDS((ARRAY_COUNT(fade->palette) - PALETTE_FADE_BG_COLORS) / 2),
       REG_DMA3);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-  if (gMainRoutineWork.teleportState == TELEPORT_ARRIVING)
+  if (gMainRoutineState.teleportState == TELEPORT_ARRIVING)
     Teleport_ArriveWhirling();
 }
 
@@ -56,7 +56,7 @@ void Teleport_StartShimmer(void) {
 
 /// Stops the shimmer, leaving the next transition a backdrop fade.
 void Teleport_StopShimmer(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
@@ -77,13 +77,13 @@ void Teleport_StartFastShimmer(void) {
 /// The party arrives by Teleport on the circle: the room fades in grey while
 /// the circle shimmers and the whirl plays, then its colours come back.
 void Teleport_ArriveWhirling(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 saved;
 
-  saved = work->transition;
+  saved = state->transition;
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Teleport_StartFastShimmer();
@@ -94,9 +94,9 @@ void Teleport_ArriveWhirling(void) {
   PaletteFade_Interpolate(16);
   System_Wait(16);
   {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
 
     party->teleportState = TELEPORT_NONE;
   }
-  work->transition = saved;
+  state->transition = saved;
 }

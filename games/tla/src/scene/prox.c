@@ -30,7 +30,7 @@
 #include "types.h"
 #include "flags.h"
 #include "djinn_ids.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "field/event_inline.h"
@@ -430,7 +430,7 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
     u32 facing = actor->facing & HEADING_SECTOR_MASK;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
-      if (gFieldWork->blockedSteps > CHASE_GIVE_WAY_FRAMES) {
+      if (gFieldState->blockedSteps > CHASE_GIVE_WAY_FRAMES) {
         actor->paused = 0;
         Actor_SelectAnimation(actor, ANIM_WALK);
       } else {
@@ -451,12 +451,12 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
 /// The children's game of chase after the ending: each runs at the child it
 /// chases, and stops when the leader comes up close (from patch 1).
 s32 Prox_PlayChase(struct Actor *actor) {
-  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct WindowState *window = (struct WindowState *)Ram_HeapSlots->windowState;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 flag = 0;
   struct Actor *target;
 
-  target = Actor_Get(gMainRoutineWork.leaderActorId);
+  target = Actor_Get(gMainRoutineState.leaderActorId);
   if (Position_Distance(&target->x.fixed, &actor->x.fixed) <=
       CHASE_STOP_RANGE) {
     actor->paused = flag;
@@ -470,8 +470,8 @@ s32 Prox_PlayChase(struct Actor *actor) {
   else
     target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
   if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
-    target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((work->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
+    target = Actor_Get(gMainRoutineState.leaderActorId);
+    if ((state->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
       flag = 1;
     Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
   }
@@ -481,8 +481,8 @@ s32 Prox_PlayChase(struct Actor *actor) {
 #else
 
 s32 Prox_PlayChase(struct Actor *actor) {
-  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct WindowState *window = (struct WindowState *)Ram_HeapSlots->windowState;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 flag = 0;
   struct Actor *target;
 
@@ -493,8 +493,8 @@ s32 Prox_PlayChase(struct Actor *actor) {
   else
     target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
   if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
-    target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((work->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
+    target = Actor_Get(gMainRoutineState.leaderActorId);
+    if ((state->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
       flag = 1;
     Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
   }
@@ -514,13 +514,13 @@ extern struct ActorPlacement gProx_HousesPlacements[];
 extern struct ActorPlacement gProx_HousesPlacementsOnceLit[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_PROX_SOUTH_GATE &&
       Event_GetFlag(FLAG_THANKED_FOR_BEACON) &&
       !Event_GetFlag(FLAG_SAID_FAREWELL))
     return gProx_SouthGateFarewellPlacements;
-  scene = gMainRoutineWork.next;
+  scene = gMainRoutineState.next;
   if (scene == SCENE_PROX)
     return gProx_TownPlacements;
   if (scene == SCENE_PROX_MOLD) {
@@ -567,7 +567,7 @@ void Prox_ScoopUpDarkMatter(s32 mode) {
 extern struct Trigger gProx_HousesTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_PROX_SOUTH_GATE)
     return gProx_SouthGateTriggers;
@@ -679,22 +679,22 @@ void Prox_TalkToHealer(void) {
 /// it is to play outside now it has stopped snowing; under Mind Read he is glad
 /// not to have to play in the igloo any more. Then he runs on.
 void Prox_TalkToPlayingChild(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_PLAYING_CHILD);
   s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->riseEnabled = 1;
-  if (work->psynergy == 0) {
-    Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineWork.leaderActorId, 0);
+  if (state->psynergy == 0) {
+    Actor_FaceActor(ACTOR_PLAYING_CHILD, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
   } else {
     FieldEvent_SetMessageId((s32)MsgProxNowThatLighthouseIsLit);
   }
   // "Now that the lighthouse is lit, we don't have to play in that stupid..."
   Event_ShowMessage(ACTOR_PLAYING_CHILD, 0);
-  if (work->psynergy == 0)
+  if (state->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
   Prox_EndEvent();
@@ -704,23 +704,23 @@ void Prox_TalkToPlayingChild(void) {
 /// Spoken to, she turns and says how she missed running around outside; under
 /// Mind Read she thinks how unreal the blizzard was. Then she runs on.
 void Prox_TalkToChildWhoMissesRunning(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
   s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->riseEnabled = 1;
-  if (work->psynergy == 0) {
+  if (state->psynergy == 0) {
     Actor_FaceActor(ACTOR_CHILD_WHO_MISSES_RUNNING,
-                    gMainRoutineWork.leaderActorId, 0);
+                    gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
   } else {
     FieldEvent_SetMessageId((s32)MsgProxThatBlizzardWasUnreal);
   }
   // "That blizzard was unreal, but it's gone now, and the weather's..."
   Event_ShowMessage(ACTOR_CHILD_WHO_MISSES_RUNNING, 0);
-  if (work->psynergy == 0)
+  if (state->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
   Prox_EndEvent();
@@ -731,22 +731,22 @@ void Prox_TalkToChildWhoMissesRunning(void) {
 /// like Felix; under Mind Read he thinks running in the snow is better
 /// exercise. Then he runs on.
 void Prox_TalkToTrainingChild(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_TRAINING_CHILD);
   s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->riseEnabled = 1;
-  if (work->psynergy == 0) {
-    Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineWork.leaderActorId, 0);
+  if (state->psynergy == 0) {
+    Actor_FaceActor(ACTOR_TRAINING_CHILD, gMainRoutineState.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
   } else {
     FieldEvent_SetMessageId((s32)MsgProxYouGetMoreExerciseRunning);
   }
   // "You get more exercise running in the snow, because it's a lot harder..."
   Event_ShowMessage(ACTOR_TRAINING_CHILD, 0);
-  if (work->psynergy == 0)
+  if (state->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
   Prox_EndEvent();
@@ -961,9 +961,9 @@ void Prox_MeetPuelle(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(160, CAMERA_KEEP, 160, 1);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 134, 156);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 134, 156);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   FieldActor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_ELDER, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgProxYouFelix);
@@ -973,10 +973,10 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirection(ACTOR_PUELLE, FACING_WEST, 40);
   // "I'd heard that you had returned to us... You look so much stronger..."
   Event_ShowMessage(ACTOR_PUELLE, 0);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 144, 154);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  Actor_PlaceOnActor(ACTOR_MOLD_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 144, 154);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
+  Actor_PlaceOnActor(ACTOR_MOLD_KRADEN, gMainRoutineState.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineState.leaderActorId);
   System_Wait(1);
   Actor_FaceDirection(ACTOR_VILLAGER_FEELING_HELPLESS, FACING_NORTH_NORTHWEST,
                       0);
@@ -1028,7 +1028,7 @@ void Prox_MeetPuelle(void) {
                       0);
   Actor_FaceDirection(ACTOR_VILLAGER_ON_THE_HOSTAGES, FACING_NORTH_NORTHEAST,
                       0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOLD_KRADEN, FACING_NORTH_NORTHWEST);
   // "Isaac, stop that..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_MOLD_KRADEN, 0);
@@ -1040,7 +1040,7 @@ void Prox_MeetPuelle(void) {
   Actor_SetAnimation(ACTOR_MOLD_KRADEN, 3);
   // "You are correct, but Isaac had reasons for fighting them."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_MOLD_KRADEN, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_ISAAC, 0.8);
   Actor_WalkToAndWait(ACTOR_ISAAC, 160, 154);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
@@ -1057,7 +1057,7 @@ void Prox_MeetPuelle(void) {
   // "We only wanted to stop them... We didn't think they'd fight us to..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
                     0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MOLD_KRADEN, FACING_WEST, 40);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
   // "They flung themselves into the opening of Venus Lighthouse's beacon..."
@@ -1104,7 +1104,7 @@ void Prox_MeetPuelle(void) {
   // "And in the end, you were stronger than they were... You should be..."
   Event_ShowMessage(ACTOR_VILLAGER_ON_THE_HOSTAGES, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 20);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MOLD_KRADEN, FACING_NORTH_NORTHWEST, 20);
   Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   // "I am sad that they lost their lives in their quest, but there was no..."
@@ -1137,19 +1137,19 @@ void Prox_MeetPuelle(void) {
   // Yes: "I agree, Felix..."; No: "Felix, what are you thinking?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
                     0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   result =
-      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  owner = gMainRoutineWork.leaderActorId;
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0);
+  owner = gMainRoutineState.leaderActorId;
   if (result == 0) {
     Actor_WaitForAnimationChange(owner);
     // "I agree, Felix..."
     Event_ShowMessage(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     FieldActor_WaitForMoveById(owner);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Felix, what are you thinking?"
     Event_ShowMessage(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
@@ -1170,10 +1170,10 @@ void Prox_MeetPuelle(void) {
   Actor_SetAnimation(ACTOR_ELDER, 3);
   // "This is an unexpected turn of events, but yes, I think you can light..."
   Event_ShowMessage(ACTOR_ELDER, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOLD_KRADEN, FACING_NORTHWEST);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MOLD_KRADEN, 3);
   Actor_FaceDirection(ACTOR_VILLAGER_GUARDING_THE_ROAD, FACING_WEST, 0);
@@ -1191,20 +1191,20 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirectionAndWait(ACTOR_MOLD_KRADEN, FACING_WEST);
   // "Off to the Mars Lighthouse! Let's go, Felix! Come on, Isaac!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_MOLD_KRADEN, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetScript(ACTOR_ISAAC, gProx_StepBackFromPuelle);
   Actor_RunScriptAndWait(ACTOR_MOLD_KRADEN, gProx_StepBackFromPuelle);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 154);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 160, 154);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   Actor_RunRepeatedMotion(ACTOR_PUELLE, 1);
   // "There is one thing that I don't want you to forget."
   Event_ShowMessage(ACTOR_PUELLE, 0);
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 20);
   Actor_SetAnimation(ACTOR_PUELLE, 4);
   // "In order to light the beacon at Mars Lighthouse, you will need to..."
   Event_ShowMessage(ACTOR_PUELLE, 0);
@@ -1217,7 +1217,7 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirectionAndWait(ACTOR_PUELLE, FACING_SOUTH_SOUTHWEST);
   // "You must find Agatio and Karst, and you must take the Mars Star from..."
   Event_ShowMessage(ACTOR_PUELLE, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_FaceDirectionAndWait(ACTOR_ELDER, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_ELDER, 3);
   // "Thanks for your help. The future of Weyard rests in your hands."
@@ -1231,18 +1231,18 @@ void Prox_MoldHidesInSnow(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 2);
   Actor_SetSpeed(ACTOR_MOLD, 2);
   actor = Actor_Get(ACTOR_MOLD);
   actor->layer = MAPGRID_LAYER_MIDDLE;
   FieldActor_SetSpritePriority(ACTOR_MOLD, 3);
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 408, 326);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 408, 326);
   FieldEvent_Wait(1);
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
   actor = FieldCamera_GetActor();
   actor->y.fixed += toFIXED(2);
@@ -1261,7 +1261,7 @@ void Prox_MoldHidesInSnow(void) {
   FieldEvent_Wait(30);
   Event_PlaySound(SE_ENEMY_CRY);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   FieldActor_SetSpritePriority(ACTOR_MOLD, 2);
   actor = Actor_Get(ACTOR_MOLD);
@@ -1283,7 +1283,7 @@ enum ProxRaisedTrigger { RAISED_MOLD_JOINS = 200 };
 void Prox_ScoopUpMold(void) {
   if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0 &&
       Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
@@ -1291,8 +1291,8 @@ void Prox_ScoopUpMold(void) {
                                FACING_SOUTH);
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
-    Actor_FaceActor(ACTOR_MOLD, gMainRoutineWork.leaderActorId, 0);
-    work->raisedTrigger = RAISED_MOLD_JOINS;
+    Actor_FaceActor(ACTOR_MOLD, gMainRoutineState.leaderActorId, 0);
+    state->raisedTrigger = RAISED_MOLD_JOINS;
     Prox_EndEvent();
   }
 }
@@ -1313,7 +1313,7 @@ void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 #include "shared/smoke_spawn.h"
 
 void Prox_SmokeFromChimneys(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
 
   if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
@@ -1341,7 +1341,7 @@ void Prox_SmokeFromChimneys(void) {
 /// on the map's upper layer, 45 columns east of the cells Felix walks on.
 void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
                     s32 height) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor;
   s32 cell;
 
@@ -1355,9 +1355,9 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
     MapGrid_CopyCellsTo(sourceX, sourceY, x, y, width, height);
     FieldEvent_Wait(20);
   }
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   if (width == 1) {
-    actor = Actor_Get(gMainRoutineWork.leaderActorId);
+    actor = Actor_Get(gMainRoutineState.leaderActorId);
     cell = FIXEDtoINT(actor->x.fixed);
     FieldActor_SetMoveTargetFX(
         actor,
@@ -1367,13 +1367,13 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
     FieldActor_WaitForMove(actor);
     actor->facing = FACING_NORTH;
   }
-  Actor_SetScript(gMainRoutineWork.leaderActorId,
+  Actor_SetScript(gMainRoutineState.leaderActorId,
                   gLeader_WalkThroughDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(work->stepTrigger);
+  FieldEvent_SetExitRequest(state->stepTrigger);
 }
 
 /// Felix walks north into the door of the inn, the house on the left just
@@ -1409,13 +1409,13 @@ void Prox_EnterShopCave(void) { Prox_EnterDoor(87, 2, 80, 7, 1, 2); }
 void Prox_EnterUpperHouse(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
 
 void Prox_ClimbStairs(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 stairsExit = work->stepTrigger;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 stairsExit = state->stepTrigger;
+  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
   s32 cell;
   s32 id;
 
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   cell = FIXEDtoINT(actor->x.fixed);
   FieldActor_SetMoveTargetFX(
       actor,
@@ -1425,8 +1425,8 @@ void Prox_ClimbStairs(void) {
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  id = gMainRoutineWork.leaderActorId;
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
+  id = gMainRoutineState.leaderActorId;
   if (stairsExit == PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH)
     Actor_SetAnimation(id, ANIM_LEADER_LEAVE_ALTERNATE);
   else
@@ -1443,17 +1443,17 @@ void Prox_ClimbStairs(void) {
 void Prox_ComeDownStairs(s32 westOrSouth) {
   struct Actor *actor;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (westOrSouth != 0) {
-    Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+    Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 0);
     FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + -toFIXED(1)),
                                          actor->y.fixed,
                                          (actor->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId,
                               ANIM_LEADER_ARRIVE_ALTERNATE);
   } else {
     FieldActor_SetPositionAndResetMotion(actor, (actor->x.fixed + toFIXED(1)),
@@ -1461,14 +1461,14 @@ void Prox_ComeDownStairs(s32 westOrSouth) {
                                          (actor->z.fixed + -toFIXED(6)));
     System_Wait(1);
     Event_StartScreenTransition();
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId,
                               ANIM_LEADER_ARRIVE);
   }
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 1);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 8);
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineState.leaderActorId), 1);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, 8);
+  FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   Prox_EndEvent();
 }
 #undef FIELD_AT
@@ -1499,7 +1499,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_Stop(ACTOR_VILLAGER_ON_THE_RESCUED);
   System_Wait(1);
-  Actor_SetPosition(gMainRoutineWork.leaderActorId, 184, 484);
+  Actor_SetPosition(gMainRoutineState.leaderActorId, 184, 484);
   Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484),
                              FACING_NORTH);
   Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, toFIXED(200), toFIXED(484),
@@ -1510,7 +1510,7 @@ void Prox_GiveThanksForBeacon(void) {
                              toFIXED(600), FACING_NORTH_NORTHWEST);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0.8);
@@ -1522,18 +1522,18 @@ void Prox_GiveThanksForBeacon(void) {
   Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimation(ACTOR_HOUSES_KRADEN, 3);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_FaceDirection(ACTOR_HOUSES_ELDER, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_ShowEmote(ACTOR_HOUSES_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   // "By igniting Mars Lighthouse, you stopped Gaia Falls from devouring..."
   Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 20);
-  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
+  FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   // "We're just glad to have helped save Weyard..."
   Event_ShowMessage(ACTOR_ISAAC, 0);
   Actor_SetAttachedEffect(ACTOR_HOUSES_PUELLE,
@@ -1611,15 +1611,15 @@ void Prox_GiveThanksForBeacon(void) {
   // Yes: "Our village will not soon forget..."; No: "You have just completed a
   // long and difficult journey..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
-  if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
+  if (!FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                              0)) {
     Actor_SetAnimationAndWait(ACTOR_HOUSES_ELDER, 3);
     // "Our village will not soon forget that you saved us from the edge of..."
     Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     Actor_SetAnimationAndWait(ACTOR_HOUSES_ELDER, 4);
     // "You have just completed a long and difficult journey. Perhaps when..."
     Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
@@ -1637,9 +1637,9 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_FaceDirectionAndWait(ACTOR_HOUSES_KRADEN, FACING_WEST);
   // "Well, I suppose we should be departing for Vale soon."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HOUSES_KRADEN, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   // "You're right, Kraden... If we don't, you-know-who might start..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
@@ -1648,7 +1648,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldEvent_Wait(20);
   // "At least some of your cares have been remedied... You must be glad..."
   Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_HOUSES_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_HOUSES_PUELLE, FACING_WEST);
@@ -1663,10 +1663,10 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_SetAnimation(ACTOR_HOUSES_KRADEN, 4);
   // "But their can be no doubt. The fire Psynergy released by the beacon..."
   Event_ShowMessage(ACTOR_HOUSES_KRADEN, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_HOUSES_PUELLE, FACING_SOUTH_SOUTHEAST, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
+  FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_HOUSES_ELDER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1675,7 +1675,7 @@ void Prox_GiveThanksForBeacon(void) {
   // "I hadn't expected so much Psynergy to be released by the..."
   Event_ShowMessage(ACTOR_HOUSES_KRADEN, 0);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_HOUSES_ELDER, 3);
   Actor_SetAnimation(ACTOR_HOUSES_PUELLE, 3);
   Actor_FaceDirection(ACTOR_HOUSES_KRADEN, FACING_WEST, 0);
@@ -1689,7 +1689,7 @@ void Prox_GiveThanksForBeacon(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAttachedEffect(ACTOR_HOUSES_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_HOUSES_KRADEN, FACING_SOUTH_SOUTHWEST);
   // "Uh-oh! It's Jenna... We're late, and she looks rather displeased..."
@@ -1699,9 +1699,9 @@ void Prox_GiveThanksForBeacon(void) {
   // Yes: "I'm sorry! We're almost done..."; No: "I'm sorry, Jenna! It sounds
   // like things are going to take just a little bit longer..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
   answer =
-      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0);
   if (answer == 0) {
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
@@ -1712,9 +1712,9 @@ void Prox_GiveThanksForBeacon(void) {
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
     // "I'm serious! If I have to wait much longer, you're not going to be..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
@@ -1734,7 +1734,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(172, CAMERA_KEEP, 520, 1);
   FieldActor_WatchAndSetScript(ACTOR_ISAAC, ACTOR_CHILD_SENT_OUTSIDE);
-  FieldActor_WatchAndSetScript(gMainRoutineWork.leaderActorId,
+  FieldActor_WatchAndSetScript(gMainRoutineState.leaderActorId,
                                ACTOR_CHILD_SENT_OUTSIDE);
   FieldActor_WatchAndSetScript(ACTOR_HOUSES_KRADEN, ACTOR_CHILD_SENT_OUTSIDE);
   Actor_SetSpeed(ACTOR_CHILD_SENT_OUTSIDE, 1.6);
@@ -1743,7 +1743,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_WalkToAndWait(ACTOR_CHILD_SENT_OUTSIDE, 160, 560);
   Actor_WalkToAndWait(ACTOR_CHILD_SENT_OUTSIDE, 190, 640);
   FieldActor_Stop(ACTOR_ISAAC);
-  FieldActor_Stop(gMainRoutineWork.leaderActorId);
+  FieldActor_Stop(gMainRoutineState.leaderActorId);
   FieldActor_Stop(ACTOR_HOUSES_KRADEN);
   System_Wait(1);
   Actor_SetPosition(ACTOR_CHILD_SENT_OUTSIDE, 0, 0);
@@ -1754,7 +1754,7 @@ void Prox_GiveThanksForBeacon(void) {
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
   // "I don't think they want to wait anymore, Felix. We're all set to..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_HOUSES_KRADEN, FACING_WEST);
   // "They have no patience whatsoever. Ah, well... I suppose it is time..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HOUSES_KRADEN, 0);
@@ -1764,17 +1764,17 @@ void Prox_GiveThanksForBeacon(void) {
   Event_ShowMessage(ACTOR_HOUSES_PUELLE, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_HOUSES_KRADEN, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   Actor_SetAnimationAndWait(ACTOR_HOUSES_ELDER, 3);
   // "We shall never forget what you have done for Prox."
   Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_HOUSES_KRADEN, 3);
   Actor_SetSpeed(ACTOR_ISAAC, 1.6);
   Actor_SetSpeed(ACTOR_HOUSES_KRADEN, 1.6);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_WALK);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_ISAAC, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1782,7 +1782,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_WaitForMoveById(ACTOR_ISAAC);
   Actor_SetPosition(ACTOR_ISAAC, 0, 0);
   Actor_SetAnimation(ACTOR_HOUSES_KRADEN, 2);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_HOUSES_KRADEN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -1790,11 +1790,11 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_WaitForMoveById(ACTOR_HOUSES_KRADEN);
   Actor_SetPosition(ACTOR_HOUSES_KRADEN, 0, 0);
   {
-    struct FieldWork *work = gFieldWork;
+    struct FieldState *state = gFieldState;
 
-    work->transition =
+    state->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    work->transitionFrames = 16;
+    state->transitionFrames = 16;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   Event_SetFlag(FLAG_THANKED_FOR_BEACON);
@@ -1814,20 +1814,20 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_CANNOT_SAVE_HERE);
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
-  scene = gMainRoutineWork.next;
+  scene = gMainRoutineState.next;
   if (scene == SCENE_PROX_HOUSES) {
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeHouses();
   } else if (scene == SCENE_PROX_CAVE_HOMES) {
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeCaveHomes();
   } else if (scene == SCENE_PROX_CAVES) {
     /* FAKEMATCH(dead): the leader's 0 derived from scene; as 0. */
     s32 object = (u32)(u16)scene >> 16;
 
-    gFieldWork->transition =
+    gFieldState->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     FieldEffect_StartBlankOverlay(object);
   } else {
@@ -1847,7 +1847,7 @@ s32 Scene_Initialize(void) {
       TilesetAnim_Resume(5);
       TilesetAnim_Resume(6);
     }
-    scene = gMainRoutineWork.next;
+    scene = gMainRoutineState.next;
     if (scene == SCENE_PROX) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
         Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
@@ -1939,7 +1939,7 @@ void Prox_InitializeMold(void) {
 void Prox_MatchHousesPriority(void) {
   struct Actor *actor;
 
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   FieldActor_SetSpritePriority(ACTOR_CHILD_HIDING_FROM_THE_WIND,
                                ((struct FieldSprite *)actor->sprite)->priority);
 }
@@ -1948,7 +1948,7 @@ void Prox_InitializeHouses(void) {
 
   FieldEffect_StartBlankOverlay(0);
   Task_AddFrame(Prox_MatchHousesPriority, TASK_PASS_FRAME);
-  if (gMainRoutineWork.entrance == PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE) {
+  if (gMainRoutineState.entrance == PROX_HOUSES_FROM_MARS_LIGHTHOUSE_AERIE) {
     if (!Event_GetFlag(FLAG_THANKED_FOR_BEACON)) {
       Prox_GiveThanksForBeacon();
     }
@@ -1959,7 +1959,7 @@ void Prox_InitializeHouses(void) {
 /// as Felix is.
 void Prox_MatchCaveHomesPriority(void) {
   s32 variant =
-      ((struct FieldSprite *)Actor_Get(gMainRoutineWork.leaderActorId)->sprite)
+      ((struct FieldSprite *)Actor_Get(gMainRoutineState.leaderActorId)->sprite)
           ->priority;
 
   FieldActor_SetSpritePriority(ACTOR_VILLAGER_ON_PROXS_PURPOSE, variant);
@@ -1969,9 +1969,9 @@ void Prox_MatchCaveHomesPriority(void) {
 void Prox_InitializeCaveHomes(void) {
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-    s32 entrance = (u16)gMainRoutineWork.entrance;
+    s32 entrance = (u16)gMainRoutineState.entrance;
 
-    if (gMainRoutineWork.entrance == PROX_CAVE_HOMES_FROM_PROX_HOUSES_NORTH)
+    if (gMainRoutineState.entrance == PROX_CAVE_HOMES_FROM_PROX_HOUSES_NORTH)
       Prox_ComeDownStairs(0);
     else if ((u16)(entrance - PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST) <=
              PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH -
@@ -2013,11 +2013,12 @@ void Prox_SayFarewell(void) {
     // "That's not true, Felix. You take as long as you need to say farewell..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNAS_MOTHER, 0);
     Event_PlaySound(MUS_SHAMAN_VILLAGE);
-    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 136, 196);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
-    Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
-    Actor_PlaceOnActor(ACTOR_SOUTH_GATE_KRADEN, gMainRoutineWork.leaderActorId);
+    Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+    Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 136, 196);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
+    Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineState.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_SOUTH_GATE_KRADEN,
+                       gMainRoutineState.leaderActorId);
     System_Wait(1);
     Actor_SetSpeed(ACTOR_ISAAC, 0.8);
     Actor_SetSpeed(ACTOR_SOUTH_GATE_KRADEN, 0.8);
@@ -2076,9 +2077,9 @@ void Prox_SayFarewell(void) {
       Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_NORTH_NORTHEAST);
       // "Don't worry, Isaac. I'm sure she's in wonderful shape. I think..."
       Event_ShowMessage(ACTOR_KYLE, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message += 2;
+      gFieldState->message += 2;
       Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_NORTH_NORTHEAST);
       // "And she wouldn't let anything happen until you came home."
       Event_ShowMessage(ACTOR_KYLE, 0);
@@ -2115,15 +2116,15 @@ void Prox_SayFarewell(void) {
     // Yes: "Wow... Setting out like this takes me back to our own..."
     // No: "I'm still worried about my mother, but I'll try to put it..."
     Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 0);
+    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
       // "Wow... Setting out like this takes me back to our own quest's..."
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
       // "I'm still worried about my mother, but I'll try to put it aside..."
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
@@ -2134,7 +2135,7 @@ void Prox_SayFarewell(void) {
     // "If you keep talking like this, we'll never go anywhere! Let's go..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2146,7 +2147,7 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Actor_SetSpeed(ACTOR_ISAAC, 0.8);
-    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
     Actor_SetSpeed(ACTOR_SOUTH_GATE_KRADEN, 0.8);
     Actor_SetSpeed(ACTOR_JENNA, 0.8);
     Actor_SetSpeed(ACTOR_SHEBA, 0.8);
@@ -2158,7 +2159,7 @@ void Prox_SayFarewell(void) {
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_SetSpeed(ACTOR_GARET, 0.8);
     FieldActor_SetSpritePriority(ACTOR_ISAAC, 2);
-    FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+    FieldActor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
     FieldActor_SetSpritePriority(ACTOR_SOUTH_GATE_KRADEN, 2);
     FieldActor_SetSpritePriority(ACTOR_JENNA, 2);
     FieldActor_SetSpritePriority(ACTOR_SHEBA, 2);
@@ -2186,7 +2187,7 @@ void Prox_SayFarewell(void) {
     Actor_SetScript(ACTOR_JENNA, gProx_JennaWalksSouth);
     FieldEvent_Wait(20);
     Actor_SetScript(ACTOR_ISAAC, gProx_IsaacWalksSouth);
-    Actor_SetScript(gMainRoutineWork.leaderActorId, gProx_LeaderWalksSouth);
+    Actor_SetScript(gMainRoutineState.leaderActorId, gProx_LeaderWalksSouth);
     FieldEvent_Wait(10);
     Actor_RunScriptAndWait(ACTOR_SOUTH_GATE_KRADEN, gProx_KradenWalksSouth);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -2205,16 +2206,16 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
       // "It's hard to believe that our quest is almost at its end. I know..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
       // "After all that we've been through, you can't possibly be nervous..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
@@ -2232,7 +2233,7 @@ void Prox_SayFarewell(void) {
     FieldActor_Jump(ACTOR_GARET, 2, 10);
     // "I can't stop thinking about how my parents are doing..."
     Event_ShowMessage(ACTOR_GARET, 0);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
@@ -2252,8 +2253,8 @@ void Prox_SayFarewell(void) {
     // "It's a possibility... One that cannot be ignored..."
     Event_ShowMessage(ACTOR_SOUTH_GATE_KRADEN, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 40);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
     // "If it's not there, then what's the point in even going back?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
@@ -2266,16 +2267,16 @@ void Prox_SayFarewell(void) {
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
-    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
       // "Have you already forgotten all that we discussed? You ought to..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
       // "You remember, don't you, Felix? Think about it for a moment, Isaac."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
@@ -2300,7 +2301,7 @@ void Prox_SayFarewell(void) {
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
@@ -2367,16 +2368,16 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+    if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
       // "I cannot speak for him, but I think he knew that they would be..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
-      gFieldWork->message++;
+      gFieldState->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
       // "Ah... You don't understand why he put you through all this if he..."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
@@ -2399,8 +2400,8 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
-    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_WEST, 40);
+    Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
     // "What do you mean, test us?"
     Event_ShowMessage(ACTOR_ISAAC, 0);
@@ -2410,21 +2411,21 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+    Actor_ShowEmote(gMainRoutineState.leaderActorId,
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     // "Will we use Alchemy to wage war, to raise armies? Or will we use..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 3);
     // "You were willing to sacrifice everything for your quest. I'd say..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
@@ -2447,16 +2448,16 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_WEST);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_NORTH_NORTHWEST);
     // "If you feel the same, then we'd better be hurrying."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
     Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
-    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
     Actor_ShowEmote(ACTOR_SOUTH_GATE_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirectionAndWait(ACTOR_SOUTH_GATE_KRADEN, FACING_SOUTH_SOUTHEAST);
     // "Isaac! Felix! We're off!"
@@ -2464,7 +2465,7 @@ void Prox_SayFarewell(void) {
                           ACTOR_SOUTH_GATE_KRADEN,
                       0);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 9);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 33);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, 33);
     Actor_SetAnimation(ACTOR_ISAAC, 40);
     TilesetAnim_Pause(2);
     TilesetAnim_Pause(3);
@@ -2546,22 +2547,22 @@ void Prox_InitRockSprite(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 /// Unused: loads the falling rocks' tiles and 64 sprites and starts their
 /// task, as Magma Rock does.
 UNUSED void Prox_StartFallingRocks(void) {
-  struct RockWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
+  struct RockState *state =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockState));
   s32 entry;
   s32 tile;
   s32 i;
   struct Rock *rock;
   struct EffectSprite *sprite;
 
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), state);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, sizeof(work->tiles), work);
-  work->tileBase = tile;
-  work->resource = entry;
-  rock = work->rocks;
-  for (i = 0; i < (s32)ARRAY_COUNT(work->rocks); i++) {
-    sprite = &work->sprites[i];
+  tile = Vram_Load(entry, sizeof(state->tiles), state);
+  state->tileBase = tile;
+  state->resource = entry;
+  rock = state->rocks;
+  for (i = 0; i < (s32)ARRAY_COUNT(state->rocks); i++) {
+    sprite = &state->sprites[i];
     Prox_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -2570,7 +2571,7 @@ UNUSED void Prox_StartFallingRocks(void) {
     rock->timer = -1;
     rock++;
   }
-  work->next = 0;
+  state->next = 0;
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

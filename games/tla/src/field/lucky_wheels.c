@@ -9,7 +9,7 @@
 #include "sounds.h"
 #include "system/task.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/system.h"
 #include "system/dma.h"
 #include "system/iwram_call.h"
@@ -30,7 +30,7 @@
 #include "field/lucky_wheels_title.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "resource_ids.h"
 #include "graphics/graphics.h"
 #include "item_ids.h"
@@ -167,8 +167,8 @@ enum LuckyWheelsPrize {
 /// again with 4 frames between each move.
 #define LUCKY_WHEELS_REPEAT_DELAY 12
 #define LUCKY_WHEELS_REPEAT_INTERVAL 4
-/// Lucky Wheels' states (LuckyWheelsWork.state).
-enum LuckyWheelsState {
+/// Lucky Wheels' stages (LuckyWheelsState.state).
+enum LuckyWheelsStage {
   LUCKY_WHEELS_BETTING = 0,  ///< Up and Down change the bet, A spins, B leaves
   LUCKY_WHEELS_SPINNING = 1, ///< the wheels spin until R or time stops each
   LUCKY_WHEELS_WON = 2,      ///< a payline won: a pause
@@ -242,7 +242,7 @@ const u8 gLuckyWheels_TitleLetterWidths[LUCKY_WHEELS_TITLE_LETTERS] = {
 /// play time and runs the game. Returns 0.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomSeed = gMainRoutineWork.playTime;
+  gRandomSeed = gMainRoutineState.playTime;
   Sound_PlayFar(MUS_TRY_YOUR_LUCK);
   LuckyWheels_Run();
   return 0;
@@ -287,21 +287,21 @@ s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
 /// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
 /// clears it or fades it into trails as transferMode says.
 void LuckyWheels_TransferCanvas(void) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *buf;
 
-  work = Ram_HeapSlots->battleEffect;
-  if (work->transferPending == 1) {
+  state = Ram_HeapSlots->battleEffect;
+  if (state->transferPending == 1) {
     buf = Ram_HeapSlots->battleCanvas;
-    switch (work->transferMode) {
+    switch (state->transferMode) {
     case CANVAS_COPY_AND_CLEAR:
       Dma_Set(buf, (void *)LUCKY_WHEELS_CANVAS_TILES,
               DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
-      Iwram_FillWords(buf, LUCKY_WHEELS_CANVAS_SIZE, work->transferValue);
+      Iwram_FillWords(buf, LUCKY_WHEELS_CANVAS_SIZE, state->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
       // Trails: nonzero colour numbers drop to 1/2 or 3/4.
-      if (work->transferValue == CANVAS_FADE_HALF)
+      if (state->transferValue == CANVAS_FADE_HALF)
         ColorBuffer_HalveNonzero(buf, (u8 *)LUCKY_WHEELS_CANVAS_TILES,
                                  LUCKY_WHEELS_CANVAS_SIZE);
       else
@@ -309,10 +309,10 @@ void LuckyWheels_TransferCanvas(void) {
                                               LUCKY_WHEELS_CANVAS_SIZE);
       break;
     }
-    work->transferPending = 0;
-    work->vblanksSinceTransfer = 1;
+    state->transferPending = 0;
+    state->vblanksSinceTransfer = 1;
   } else {
-    (work->vblanksSinceTransfer)++;
+    (state->vblanksSinceTransfer)++;
   }
 }
 
@@ -553,10 +553,10 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_TITLE_TILES 880
 #endif
 
-/// Lucky Wheels' work: the five reels, the game's state, cursor, spins and
+/// Lucky Wheels' state: the five reels, the game's stage, cursor, spins and
 /// bet, the keys read, the winning lines, the reel sprites, the windows and
 /// the scanline offsets that bend the reels.
-struct LuckyWheelsWork {
+struct LuckyWheelsState {
   struct Reel reels[LUCKY_WHEELS_REEL_COUNT];
   s32 state;
   s32 cursor;
@@ -581,7 +581,7 @@ struct LuckyWheelsWork {
 #endif
 };
 
-/// The prompt window LuckyWheelsWork.phase says is open, so that it is drawn
+/// The prompt window LuckyWheelsState.phase says is open, so that it is drawn
 /// once rather than every frame. The all-locked prompt draws its two lines on
 /// two frames; after a losing spin the first value says the "pull the lever"
 /// line is drawn.
@@ -611,7 +611,7 @@ extern char MsgSlotsCannotPull[]; ///< "you can't pull the lever!"
 /// title letters of a win, the frame, the lock lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
-  struct ReelEffectWork *fx;
+  struct ReelEffectState *fx;
   s32 objMode;
   u16 keys;
   u32 dpad;
@@ -625,58 +625,58 @@ void LuckyWheels_Update(void) {
   s32 lever;
   s32 k;
   s32 i;
-  struct LuckyWheelsWork *work;
+  struct LuckyWheelsState *state;
 
-  work = (struct LuckyWheelsWork *)Ram_HeapSlots->canvasMap;
-  fx = (struct ReelEffectWork *)Ram_HeapSlots->battleEffect;
+  state = (struct LuckyWheelsState *)Ram_HeapSlots->canvasMap;
+  fx = (struct ReelEffectState *)Ram_HeapSlots->battleEffect;
   objMode = OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-  work->spriteCount = 0;
+  state->spriteCount = 0;
 
   Random16();
 
   keys = gInput.held;
   dpad = gInput.held & KEYS_DPAD;
-  work->pressed = keys & ~work->keys;
-  work->direction = dpad;
-  if ((work->keys & KEYS_DPAD) == work->direction) {
-    if (work->repeat > LUCKY_WHEELS_REPEAT_DELAY)
-      work->repeat = LUCKY_WHEELS_REPEAT_DELAY;
-    if (work->repeat == 0) {
-      work->repeat = LUCKY_WHEELS_REPEAT_INTERVAL;
+  state->pressed = keys & ~state->keys;
+  state->direction = dpad;
+  if ((state->keys & KEYS_DPAD) == state->direction) {
+    if (state->repeat > LUCKY_WHEELS_REPEAT_DELAY)
+      state->repeat = LUCKY_WHEELS_REPEAT_DELAY;
+    if (state->repeat == 0) {
+      state->repeat = LUCKY_WHEELS_REPEAT_INTERVAL;
     } else {
-      work->repeat--;
-      work->direction = 0;
+      state->repeat--;
+      state->direction = 0;
     }
   } else {
-    work->repeat = LUCKY_WHEELS_REPEAT_DELAY;
+    state->repeat = LUCKY_WHEELS_REPEAT_DELAY;
   }
-  work->keys = keys;
+  state->keys = keys;
 
   if (gDebugPaused == 0) {
-    if (work->state == LUCKY_WHEELS_BETTING) {
+    if (state->state == LUCKY_WHEELS_BETTING) {
       tickets = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
-      Text_DrawNumberInWindowFar(tickets - work->bet, LUCKY_WHEELS_COIN_DIGITS,
-                                 work->subWindow, LUCKY_WHEELS_COIN_X, 0);
-      Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
-      if (work->pressed & KEY_B) {
+      Text_DrawNumberInWindowFar(tickets - state->bet, LUCKY_WHEELS_COIN_DIGITS,
+                                 state->subWindow, LUCKY_WHEELS_COIN_X, 0);
+      Text_DrawNumberInWindowFar(state->bet, 2, state->subWindow, 64, 8);
+      if (state->pressed & KEY_B) {
         struct ReelSave *save = (struct ReelSave *)gPartyDjinnRecovery;
 
-        work->state = LUCKY_WHEELS_DONE;
+        state->state = LUCKY_WHEELS_DONE;
         // -2: the player quit while betting.
         save->wonPrizes[0] = -2;
-        Window_CloseFar(work->window, 1);
+        Window_CloseFar(state->window, 1);
       } else {
-        if (work->pressed & KEY_UP) {
-          if (work->bet < LUCKY_WHEELS_BET_MAX && tickets > work->bet) {
-            work->bet++;
+        if (state->pressed & KEY_UP) {
+          if (state->bet < LUCKY_WHEELS_BET_MAX && tickets > state->bet) {
+            state->bet++;
             Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
             Sound_PlayFar(SE_MENU_CANCEL);
           }
         }
-        if (work->pressed & KEY_DOWN) {
-          if (work->bet > 1) {
-            work->bet--;
+        if (state->pressed & KEY_DOWN) {
+          if (state->bet > 1) {
+            state->bet--;
             Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
             Sound_PlayFar(SE_MENU_CANCEL);
@@ -684,186 +684,187 @@ void LuckyWheels_Update(void) {
         }
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 0);
-        if (work->pressed & KEY_A) {
-          work->state = LUCKY_WHEELS_SPINNING;
+        if (state->pressed & KEY_A) {
+          state->state = LUCKY_WHEELS_SPINNING;
           fx->frame = 0;
-          Window_CloseFar(work->window, 1);
-          for (k = 0; k != work->bet; k++)
+          Window_CloseFar(state->window, 1);
+          for (k = 0; k != state->bet; k++)
             PartyInventory_RemoveFar(ITEM_GAME_TICKET);
-          Window_CloseFar(work->subWindow, 1);
+          Window_CloseFar(state->subWindow, 1);
           Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
-    } else if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
+    } else if (state->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
       allLocked = 0;
-      work->timer++;
-      for (k = 0; k != LUCKY_WHEELS_REEL_COUNT && work->reels[k].held != 0; k++)
+      state->timer++;
+      for (k = 0; k != LUCKY_WHEELS_REEL_COUNT && state->reels[k].held != 0;
+           k++)
         ;
       if (k == LUCKY_WHEELS_REEL_COUNT)
         allLocked = 1;
-      if (work->pressed & KEY_A) {
-        work->timer = 0;
+      if (state->pressed & KEY_A) {
+        state->timer = 0;
         fx->frame = 0;
-        if (work->spins == LUCKY_WHEELS_RESPINS) {
-          work->spins = 0;
-          work->cursor = 0;
-          work->state = LUCKY_WHEELS_BETTING;
+        if (state->spins == LUCKY_WHEELS_RESPINS) {
+          state->spins = 0;
+          state->cursor = 0;
+          state->state = LUCKY_WHEELS_BETTING;
           for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-            work->reels[i].held = 0;
-            work->reels[i].stop = -1;
+            state->reels[i].held = 0;
+            state->reels[i].stop = -1;
           }
-        } else if (work->cursor < LUCKY_WHEELS_LEVER) {
+        } else if (state->cursor < LUCKY_WHEELS_LEVER) {
           Sound_PlayFar(SE_LUCKY_WHEELS_HOLD);
-          work->reels[work->cursor].held ^= 1;
+          state->reels[state->cursor].held ^= 1;
         } else if (allLocked == 0) {
           Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
-          work->state = LUCKY_WHEELS_SPINNING;
-          work->cursor = 0;
+          state->state = LUCKY_WHEELS_SPINNING;
+          state->cursor = 0;
           for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++)
-            work->reels[i].stop = -1;
-          work->spins++;
+            state->reels[i].stop = -1;
+          state->spins++;
         } else {
           Sound_PlayFar(SE_MENU_CANCEL);
         }
       } else {
-        if (work->direction & KEY_RIGHT) {
-          work->cursor = (work->cursor + 1) % (LUCKY_WHEELS_LEVER + 1);
+        if (state->direction & KEY_RIGHT) {
+          state->cursor = (state->cursor + 1) % (LUCKY_WHEELS_LEVER + 1);
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
-        if (work->direction & KEY_LEFT) {
-          work->cursor =
-              (work->cursor + LUCKY_WHEELS_LEVER) % (LUCKY_WHEELS_LEVER + 1);
+        if (state->direction & KEY_LEFT) {
+          state->cursor =
+              (state->cursor + LUCKY_WHEELS_LEVER) % (LUCKY_WHEELS_LEVER + 1);
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
-      if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
+      if (state->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
 #if TLA_PATCH_1
-        if (work->cursor == LUCKY_WHEELS_LEVER) {
+        if (state->cursor == LUCKY_WHEELS_LEVER) {
           if (allLocked != 0) {
-            if (work->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE &&
-                work->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED) {
-              Window_CloseFar(work->window, 1);
-              work->window =
+            if (state->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE &&
+                state->phase != LUCKY_WHEELS_PROMPT_ALL_LOCKED) {
+              Window_CloseFar(state->window, 1);
+              state->window =
                   Window_CreateFar(LUCKY_WHEELS_ALL_LOCKED_X, 0,
                                    LUCKY_WHEELS_ALL_LOCKED_WIDTH, 4, 6);
-              Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
+              Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, state->window, 0,
                                          0);
-              work->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE;
-            } else if (work->phase ==
+              state->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE;
+            } else if (state->phase ==
                        LUCKY_WHEELS_PROMPT_ALL_LOCKED_FIRST_LINE) {
-              Text_DrawMessageAsTilesFar((s32)MsgSlotsCannotPull, work->window,
+              Text_DrawMessageAsTilesFar((s32)MsgSlotsCannotPull, state->window,
                                          0, 8);
-              work->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED;
+              state->phase = LUCKY_WHEELS_PROMPT_ALL_LOCKED;
             }
           } else {
-            if (work->phase != LUCKY_WHEELS_PROMPT_START) {
-              Window_CloseFar(work->window, 1);
-              work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
-                                              LUCKY_WHEELS_START_WIDTH, 3, 6);
-              Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0,
+            if (state->phase != LUCKY_WHEELS_PROMPT_START) {
+              Window_CloseFar(state->window, 1);
+              state->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
+                                               LUCKY_WHEELS_START_WIDTH, 3, 6);
+              Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, state->window, 0,
                                          0);
             }
-            work->phase = LUCKY_WHEELS_PROMPT_START;
+            state->phase = LUCKY_WHEELS_PROMPT_START;
           }
-        } else if (work->reels[work->cursor].held == 0) {
-          if (work->phase != LUCKY_WHEELS_PROMPT_LOCK) {
-            Window_CloseFar(work->window, 1);
-            work->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
-                                            LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
-            Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
+        } else if (state->reels[state->cursor].held == 0) {
+          if (state->phase != LUCKY_WHEELS_PROMPT_LOCK) {
+            Window_CloseFar(state->window, 1);
+            state->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
+                                             LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
+            Text_DrawMessageAsTilesFar(MsgSlotsHold, state->window, 0, 0);
           }
-          work->phase = LUCKY_WHEELS_PROMPT_LOCK;
+          state->phase = LUCKY_WHEELS_PROMPT_LOCK;
         } else {
-          if (work->phase != LUCKY_WHEELS_PROMPT_SPIN) {
-            Window_CloseFar(work->window, 1);
-            work->window = Window_CreateFar(LUCKY_WHEELS_SPIN_X, 0,
-                                            LUCKY_WHEELS_SPIN_WIDTH, 3, 6);
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, work->window, 0,
+          if (state->phase != LUCKY_WHEELS_PROMPT_SPIN) {
+            Window_CloseFar(state->window, 1);
+            state->window = Window_CreateFar(LUCKY_WHEELS_SPIN_X, 0,
+                                             LUCKY_WHEELS_SPIN_WIDTH, 3, 6);
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, state->window, 0,
                                        0);
           }
-          work->phase = LUCKY_WHEELS_PROMPT_SPIN;
+          state->phase = LUCKY_WHEELS_PROMPT_SPIN;
         }
 #else
-        Window_CloseFar(work->window, 1);
-        if (work->cursor == LUCKY_WHEELS_LEVER) {
+        Window_CloseFar(state->window, 1);
+        if (state->cursor == LUCKY_WHEELS_LEVER) {
           if (allLocked != 0) {
-            work->window =
+            state->window =
                 Window_CreateFar(LUCKY_WHEELS_ALL_LOCKED_X, 0,
                                  LUCKY_WHEELS_ALL_LOCKED_WIDTH, 3, 6);
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, state->window, 0,
                                        0);
           } else {
-            work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
-                                            LUCKY_WHEELS_START_WIDTH, 3, 6);
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0, 0);
+            state->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
+                                             LUCKY_WHEELS_START_WIDTH, 3, 6);
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, state->window, 0, 0);
           }
         } else {
-          work->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
-                                          LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
-          if (work->reels[work->cursor].held == 0)
-            Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
+          state->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
+                                           LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
+          if (state->reels[state->cursor].held == 0)
+            Text_DrawMessageAsTilesFar(MsgSlotsHold, state->window, 0, 0);
           else
-            Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, work->window, 0,
+            Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, state->window, 0,
                                        0);
         }
 #endif
       } else {
-        Window_CloseFar(work->window, 1);
+        Window_CloseFar(state->window, 1);
       }
-    } else if (work->state == LUCKY_WHEELS_WON) {
-      work->timer++;
+    } else if (state->state == LUCKY_WHEELS_WON) {
+      state->timer++;
       objMode = 0;
-      if (work->timer == LUCKY_WHEELS_WIN_PAUSE) {
-        work->state = LUCKY_WHEELS_SHOWING_WIN;
+      if (state->timer == LUCKY_WHEELS_WIN_PAUSE) {
+        state->state = LUCKY_WHEELS_SHOWING_WIN;
         Sound_PlayFar(MUS_SUPER_LUCKY);
-        work->timer = 0;
+        state->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
         fx->transferMode = CANVAS_COPY_AND_FADE;
         fx->transferValue = CANVAS_FADE_THREE_QUARTERS;
       }
-    } else if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
-      work->timer++;
+    } else if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
+      state->timer++;
       objMode = 0;
-      if (work->pressed & KEY_A) {
-        work->state = LUCKY_WHEELS_DONE;
+      if (state->pressed & KEY_A) {
+        state->state = LUCKY_WHEELS_DONE;
         Sound_PlayFar(SE_MENU_CONFIRM);
       }
-    } else if (work->state == LUCKY_WHEELS_NO_WIN) {
+    } else if (state->state == LUCKY_WHEELS_NO_WIN) {
 #if TLA_PATCH_1
-      if (work->phase == LUCKY_WHEELS_PROMPT_NONE) {
-        work->phase = LUCKY_WHEELS_PROMPT_PULL_LEVER;
-        Text_DrawMessageAsTilesFar(MsgSlotsPullLever, work->window, 0, 8);
+      if (state->phase == LUCKY_WHEELS_PROMPT_NONE) {
+        state->phase = LUCKY_WHEELS_PROMPT_PULL_LEVER;
+        Text_DrawMessageAsTilesFar(MsgSlotsPullLever, state->window, 0, 8);
       }
 #endif
-      if (work->pressed & KEY_A) {
-        work->state = LUCKY_WHEELS_CHOOSING_LOCKS;
+      if (state->pressed & KEY_A) {
+        state->state = LUCKY_WHEELS_CHOOSING_LOCKS;
 #if TLA_PATCH_1
-        work->phase = LUCKY_WHEELS_PROMPT_NONE;
+        state->phase = LUCKY_WHEELS_PROMPT_NONE;
 #endif
         Sound_PlayFar(SE_MENU_CONFIRM);
-        Window_CloseFar(work->window, 1);
+        Window_CloseFar(state->window, 1);
       }
-    } else if (work->state == LUCKY_WHEELS_OUT_OF_SPINS) {
-      work->timer++;
-      if (work->timer == LUCKY_WHEELS_LOSS_PAUSE)
-        work->state = LUCKY_WHEELS_DONE;
-    } else if (work->state != LUCKY_WHEELS_DONE) {
-      if (work->timer == LUCKY_WHEELS_STOP_WINDOW_FRAME) {
-        work->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
-                                        LUCKY_WHEELS_STOP_WIDTH, 3, 6);
-        Text_DrawMessageAsTilesFar(MsgSlotsStopReels, work->window, 0, 0);
+    } else if (state->state == LUCKY_WHEELS_OUT_OF_SPINS) {
+      state->timer++;
+      if (state->timer == LUCKY_WHEELS_LOSS_PAUSE)
+        state->state = LUCKY_WHEELS_DONE;
+    } else if (state->state != LUCKY_WHEELS_DONE) {
+      if (state->timer == LUCKY_WHEELS_STOP_WINDOW_FRAME) {
+        state->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
+                                         LUCKY_WHEELS_STOP_WIDTH, 3, 6);
+        Text_DrawMessageAsTilesFar(MsgSlotsStopReels, state->window, 0, 0);
       }
-      if (work->timer == LUCKY_WHEELS_STOP_PROMPT_FRAME)
+      if (state->timer == LUCKY_WHEELS_STOP_PROMPT_FRAME)
         Sound_PlayFar(SE_LUCKY_WHEELS_STOP_PROMPT);
-      if (work->timer > LUCKY_WHEELS_LEVER_FRAMES) {
+      if (state->timer > LUCKY_WHEELS_LEVER_FRAMES) {
         if (fx->frame >= LUCKY_WHEELS_AUTO_STOP_FRAMES ||
-            (work->pressed & KEY_R)) {
+            (state->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-            if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
-              work->reels[i].stop = (Random16() & 3) + 4;
+            if (state->reels[i].held == 0 && state->reels[i].stop == -1) {
+              state->reels[i].stop = (Random16() & 3) + 4;
               Sound_PlayFar(SE_LUCKY_WHEELS_STOP);
               break;
             }
@@ -872,16 +873,17 @@ void LuckyWheels_Update(void) {
       }
 
       for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-        if (work->reels[i].stop > 0)
-          work->reels[i].stop--;
+        if (state->reels[i].stop > 0)
+          state->reels[i].stop--;
       }
 
       stoppedReels = 0;
       for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-        if (work->reels[i].held == 1)
+        if (state->reels[i].held == 1)
           stoppedReels++;
-        else if (work->reels[i].stop == 0 &&
-                 (work->reels[i].position & (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) ==
+        else if (state->reels[i].stop == 0 &&
+                 (state->reels[i].position &
+                  (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) ==
                      LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
           stoppedReels++;
       }
@@ -896,30 +898,30 @@ void LuckyWheels_Update(void) {
 
           found = -1;
           mixed = 0;
-          work->winningLines[col] = 0;
-          if (col > LUCKY_WHEELS_MIDDLE_LINE - work->bet &&
-              col < work->bet + LUCKY_WHEELS_MIDDLE_LINE) {
+          state->winningLines[col] = 0;
+          if (col > LUCKY_WHEELS_MIDDLE_LINE - state->bet &&
+              col < state->bet + LUCKY_WHEELS_MIDDLE_LINE) {
             for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
               s32 sym;
 
               if (col == 0)
-                sym = work->reels[i].symbols[(i -
-                                              work->reels[i].position /
-                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
-                                              LUCKY_WHEELS_REEL_SYMBOLS + 1) %
-                                             LUCKY_WHEELS_REEL_SYMBOLS];
+                sym = state->reels[i].symbols[(i -
+                                               state->reels[i].position /
+                                                   LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                               LUCKY_WHEELS_REEL_SYMBOLS + 1) %
+                                              LUCKY_WHEELS_REEL_SYMBOLS];
               else if (col == LUCKY_WHEELS_PAYLINES - 1)
-                sym = work->reels[i].symbols[(-i -
-                                              work->reels[i].position /
-                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
-                                              LUCKY_WHEELS_REEL_SYMBOLS + 5) %
-                                             LUCKY_WHEELS_REEL_SYMBOLS];
+                sym = state->reels[i].symbols[(-i -
+                                               state->reels[i].position /
+                                                   LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                               LUCKY_WHEELS_REEL_SYMBOLS + 5) %
+                                              LUCKY_WHEELS_REEL_SYMBOLS];
               else
-                sym = work->reels[i].symbols[(col -
-                                              work->reels[i].position /
-                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
-                                              LUCKY_WHEELS_REEL_SYMBOLS) %
-                                             LUCKY_WHEELS_REEL_SYMBOLS];
+                sym = state->reels[i].symbols[(col -
+                                               state->reels[i].position /
+                                                   LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                               LUCKY_WHEELS_REEL_SYMBOLS) %
+                                              LUCKY_WHEELS_REEL_SYMBOLS];
               if (sym != LUCKY_WHEELS_WILD_SYMBOL) {
                 if (found == -1)
                   found = sym;
@@ -928,38 +930,38 @@ void LuckyWheels_Update(void) {
               }
             }
             if (mixed == 0) {
-              work->winningLines[col] = 1;
+              state->winningLines[col] = 1;
               save->wonPrizes[hits] = gLuckyWheels_SymbolPrizes[found];
               hits++;
             }
           }
         }
-        work->timer = 0;
+        state->timer = 0;
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
-          work->state = LUCKY_WHEELS_WON;
+          state->state = LUCKY_WHEELS_WON;
           Sound_PlayFar(SE_THUNDER);
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
-          Window_CloseFar(work->window, 1);
+          Window_CloseFar(state->window, 1);
         } else {
-          work->state = LUCKY_WHEELS_NO_WIN;
+          state->state = LUCKY_WHEELS_NO_WIN;
 #if TLA_PATCH_1
-          work->phase = LUCKY_WHEELS_PROMPT_NONE;
+          state->phase = LUCKY_WHEELS_PROMPT_NONE;
 #endif
-          Window_CloseFar(work->window, 1);
-          if (work->spins < LUCKY_WHEELS_RESPINS) {
+          Window_CloseFar(state->window, 1);
+          if (state->spins < LUCKY_WHEELS_RESPINS) {
             s32 message;
 
-            work->window =
+            state->window =
                 Window_CreateFar(LUCKY_WHEELS_CHOOSE_LOCKED_X, 16,
                                  LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH, 4, 6);
             message = (s32)MsgSlotsChooseHeld;
-            Text_DrawMessageAsTilesFar(message, work->window, 0, 0);
-            Text_DrawMessageAsTilesFar(message + 1, work->window, 0, 8);
+            Text_DrawMessageAsTilesFar(message, state->window, 0, 0);
+            Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
           }
-          if (work->spins == LUCKY_WHEELS_RESPINS) {
+          if (state->spins == LUCKY_WHEELS_RESPINS) {
             s32 left = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
             struct Window *window;
             s32 message;
@@ -967,33 +969,33 @@ void LuckyWheels_Update(void) {
             // DEAD: both arms set the out-of-spins state, so the ticket count
             // cannot change it; the ROM keeps the compare and both stores.
             if (left > 0)
-              work->state = LUCKY_WHEELS_OUT_OF_SPINS;
+              state->state = LUCKY_WHEELS_OUT_OF_SPINS;
             else
-              work->state = LUCKY_WHEELS_OUT_OF_SPINS;
-            if (work->bet > left)
-              work->bet = left;
-            work->spins = 0;
-            work->cursor = 0;
+              state->state = LUCKY_WHEELS_OUT_OF_SPINS;
+            if (state->bet > left)
+              state->bet = left;
+            state->spins = 0;
+            state->cursor = 0;
             for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-              work->reels[i].held = 0;
-              work->reels[i].stop = -1;
+              state->reels[i].held = 0;
+              state->reels[i].stop = -1;
             }
             fx->transferMode = CANVAS_COPY_AND_CLEAR;
             fx->transferValue = 0;
             REG_BLDCNT = 0;
             window = Window_CreateFar(18, 0, 12, 4, 6);
-            work->subWindow = window;
+            state->subWindow = window;
             // "Game ticket" above "Bet".
             message = MsgSlotsBet;
             Text_DrawMessageAsTilesFar(message, window, 0, 8);
-            Text_DrawMessageAsTilesFar(message - 1, work->subWindow, 0, 0);
+            Text_DrawMessageAsTilesFar(message - 1, state->subWindow, 0, 0);
           }
         }
       }
 
-      if (work->state == LUCKY_WHEELS_SPINNING) {
+      if (state->state == LUCKY_WHEELS_SPINNING) {
         for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-          struct Reel *reel = &work->reels[i];
+          struct Reel *reel = &state->reels[i];
 
           if (reel->held == 0) {
             if (reel->stop != 0)
@@ -1007,51 +1009,51 @@ void LuckyWheels_Update(void) {
         }
       }
       (fx->frame)++;
-      work->timer++;
+      state->timer++;
     }
   }
 
-  if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
-    x = work->cursor * 36 + 36;
+  if (state->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
+    x = state->cursor * 36 + 36;
     y = 128;
     v = 0;
-    if ((work->timer & 15) <= 7)
+    if ((state->timer & 15) <= 7)
       v = 1;
-    if (work->cursor == LUCKY_WHEELS_LEVER) {
+    if (state->cursor == LUCKY_WHEELS_LEVER) {
       x = LUCKY_WHEELS_LEVER_X;
       y = 32;
     }
-    work->oam[work->spriteCount].attr01 =
+    state->oam[state->spriteCount].attr01 =
         OBJ_X(x - 12) | objMode | (y + 8) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
-    work->oam[work->spriteCount].attr2 =
+    state->oam[state->spriteCount].attr2 =
         v * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_ARROW_TILES;
-    work->spriteCount++;
-    work->oam[work->spriteCount].attr01 = OBJ_X(x + 12) | objMode | (y + 8) |
-                                          OBJ_SIZE_32X16 | OBJ_256_COLORS |
-                                          OBJ_HFLIP;
-    work->oam[work->spriteCount].attr2 =
+    state->spriteCount++;
+    state->oam[state->spriteCount].attr01 = OBJ_X(x + 12) | objMode | (y + 8) |
+                                            OBJ_SIZE_32X16 | OBJ_256_COLORS |
+                                            OBJ_HFLIP;
+    state->oam[state->spriteCount].attr2 =
         v * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_ARROW_TILES;
-    work->spriteCount++;
-    work->oam[work->spriteCount].attr01 =
+    state->spriteCount++;
+    state->oam[state->spriteCount].attr01 =
         OBJ_X(x) | objMode | y | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-    work->oam[work->spriteCount].attr2 = LUCKY_WHEELS_HAND_TILES;
-    work->spriteCount++;
+    state->oam[state->spriteCount].attr2 = LUCKY_WHEELS_HAND_TILES;
+    state->spriteCount++;
   }
 
-  if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
+  if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
     for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
       struct Particle *p = &fx->particles[i];
 
       if (LUCKY_WHEELS_TITLE_FIRST_TURNED && i == 0)
-        work->oam[work->spriteCount].attr01 =
+        state->oam[state->spriteCount].attr01 =
             OBJ_X((*(s16 *)((u8 *)&p->x + 2) + 512 - 16) & OBJ_X_MASK) |
             objMode | ((*(s16 *)((u8 *)&p->y + 2) + 256 + 8) & OBJ_Y_MASK) |
             OBJ_SIZE_32X32 | OBJ_HFLIP | OBJ_VFLIP;
       else
-        work->oam[work->spriteCount].attr01 =
+        state->oam[state->spriteCount].attr01 =
             OBJ_X(*(s16 *)((u8 *)&p->x + 2)) | objMode |
             ((*(s16 *)((u8 *)&p->y + 2) + 256) & OBJ_Y_MASK) | OBJ_SIZE_32X32;
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           (gLuckyWheels_TitleLetterTiles[i] * SPRITE_TILES(32, 32) +
            LUCKY_WHEELS_TITLE_TILES) |
           OBJ_PALETTE(LUCKY_WHEELS_JACKPOT_PALETTE);
@@ -1059,7 +1061,7 @@ void LuckyWheels_Update(void) {
       // The Japanese release draws the letters without moving them.
       p->y += p->velocityY;
       p->velocityY += toFIXED(1) / 4;
-      if (work->timer % 256 == i * 4 + 200) {
+      if (state->timer % 256 == i * 4 + 200) {
         p->velocityY = toFIXED(6);
         p->variant = 0;
       }
@@ -1070,146 +1072,146 @@ void LuckyWheels_Update(void) {
         p->variant++;
       }
 #endif
-      work->spriteCount++;
+      state->spriteCount++;
     }
   }
 
   for (k = 0; k != LUCKY_WHEELS_MACHINE_LIGHTS; k++) {
-    work->oam[work->spriteCount].attr01 =
+    state->oam[state->spriteCount].attr01 =
         OBJ_X(gLuckyWheels_MachineSpriteX[k]) | objMode |
         gLuckyWheels_MachineSpriteY[k] | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k < LUCKY_WHEELS_CORNER_LIGHTS)
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_CORNER_LIGHT_TILES;
     else
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_FRAME_LIGHT_TILES;
-    work->spriteCount++;
+    state->spriteCount++;
   }
 
   for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-    if (work->reels[i].held == 0) {
-      work->oam[work->spriteCount].attr01 =
+    if (state->reels[i].held == 0) {
+      state->oam[state->spriteCount].attr01 =
           objMode | OBJ_X(i * 36 + 32) | 124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LAMP_TILES;
     } else {
-      work->oam[work->spriteCount].attr01 =
+      state->oam[state->spriteCount].attr01 =
           objMode | OBJ_X(i * 36 + 32) | 124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LOCKED_LAMP_TILES;
     }
-    work->spriteCount++;
+    state->spriteCount++;
   }
 
   // One sprite for each pull of the lever, the first and its re-pulls; the
   // current pull's takes other tiles.
   for (i = 0; i != LUCKY_WHEELS_RESPINS + 1; i++) {
-    work->oam[work->spriteCount].attr01 =
+    state->oam[state->spriteCount].attr01 =
         objMode | OBJ_X(i * 16 + 32) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
-    if (i == work->spins)
-      work->oam[work->spriteCount].attr2 =
+    if (i == state->spins)
+      state->oam[state->spriteCount].attr2 =
           (i * 2 * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_PULL_TILES) |
           OBJ_PRIORITY(1);
     else
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           (i * 2 * SPRITE_TILES_8BPP(32, 16) + LUCKY_WHEELS_PULL_TILES +
            SPRITE_TILES_8BPP(32, 16)) |
           OBJ_PRIORITY(1);
-    work->spriteCount++;
+    state->spriteCount++;
   }
 
   for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
-    work->oam[work->spriteCount].attr01 =
+    state->oam[state->spriteCount].attr01 =
         OBJ_X((516 - ((col & 1) << 3)) & OBJ_X_MASK) | objMode |
         (col * LUCKY_WHEELS_SYMBOL_HEIGHT + 5) | OBJ_SIZE_32X32 |
         OBJ_256_COLORS;
-    if (col > LUCKY_WHEELS_MIDDLE_LINE - work->bet &&
-        col < work->bet + LUCKY_WHEELS_MIDDLE_LINE)
-      work->oam[work->spriteCount].attr2 =
+    if (col > LUCKY_WHEELS_MIDDLE_LINE - state->bet &&
+        col < state->bet + LUCKY_WHEELS_MIDDLE_LINE)
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LIT_LINE_TILES;
     else
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LINE_TILES;
-    work->spriteCount++;
+    state->spriteCount++;
   }
 
   for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
-    struct Reel *reel = &work->reels[i];
+    struct Reel *reel = &state->reels[i];
 
     for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
       s32 symbolY = col * LUCKY_WHEELS_SYMBOL_HEIGHT +
                     reel->position % LUCKY_WHEELS_SYMBOL_HEIGHT;
-      s32 index = work->spriteCount;
+      s32 index = state->spriteCount;
 
       symbolY += 4;
-      work->oam[index].attr01 =
+      state->oam[index].attr01 =
           symbolY | OBJ_X(i * 32 + 40) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           reel->symbols[(col - reel->position / LUCKY_WHEELS_SYMBOL_HEIGHT +
                          LUCKY_WHEELS_REEL_SYMBOLS) %
                         LUCKY_WHEELS_REEL_SYMBOLS] *
               SPRITE_TILES_8BPP(32, 16) |
           OBJ_PRIORITY(2);
-      work->spriteCount++;
+      state->spriteCount++;
     }
   }
 
   // The lever, pulled down and let back up, then bouncing as it settles.
   lever = LUCKY_WHEELS_LEVER_Y;
-  if (work->state == LUCKY_WHEELS_SPINNING) {
-    if (work->timer < LUCKY_WHEELS_LEVER_PULL_FRAMES)
+  if (state->state == LUCKY_WHEELS_SPINNING) {
+    if (state->timer < LUCKY_WHEELS_LEVER_PULL_FRAMES)
       lever =
-          FIXEDtoINT(Trig_Sin(work->timer * (DEGtoANG(180) /
-                                             LUCKY_WHEELS_LEVER_PULL_FRAMES)) *
+          FIXEDtoINT(Trig_Sin(state->timer * (DEGtoANG(180) /
+                                              LUCKY_WHEELS_LEVER_PULL_FRAMES)) *
                      LUCKY_WHEELS_LEVER_PULL) +
           LUCKY_WHEELS_LEVER_Y;
-    else if (work->timer < LUCKY_WHEELS_LEVER_FRAMES)
+    else if (state->timer < LUCKY_WHEELS_LEVER_FRAMES)
       lever =
-          FIXEDtoINT(Trig_Sin(work->timer * (TRIG_TURN / 16) - TRIG_TURN * 3) *
+          FIXEDtoINT(Trig_Sin(state->timer * (TRIG_TURN / 16) - TRIG_TURN * 3) *
                      4) +
           LUCKY_WHEELS_LEVER_Y;
   }
-  work->oam[work->spriteCount].attr01 = lever | objMode |
-                                        OBJ_X(LUCKY_WHEELS_LEVER_X) |
-                                        OBJ_SIZE_32X16 | OBJ_256_COLORS;
-  work->oam[work->spriteCount].attr2 =
+  state->oam[state->spriteCount].attr01 = lever | objMode |
+                                          OBJ_X(LUCKY_WHEELS_LEVER_X) |
+                                          OBJ_SIZE_32X16 | OBJ_256_COLORS;
+  state->oam[state->spriteCount].attr2 =
       OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_TILES;
-  work->spriteCount++;
+  state->spriteCount++;
 
   // The lever's slot, in eight pieces from its top: two of its own, four alike
   // and two for its bottom.
   for (k = 0; k != LUCKY_WHEELS_LEVER_SLOT_PIECES; k++) {
-    work->oam[work->spriteCount].attr01 =
+    state->oam[state->spriteCount].attr01 =
         objMode | (k * 16 + LUCKY_WHEELS_LEVER_SLOT_Y) |
         OBJ_X(LUCKY_WHEELS_LEVER_SLOT_X) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k == 0)
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_LEVER_SLOT_TILES;
     else if (k == 1)
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) |
           (LUCKY_WHEELS_LEVER_SLOT_TILES + SPRITE_TILES_8BPP(32, 16));
     else if (k == 6)
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) |
           (LUCKY_WHEELS_LEVER_SLOT_TILES + 3 * SPRITE_TILES_8BPP(32, 16));
     else if (k == 7)
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) |
           (LUCKY_WHEELS_LEVER_SLOT_TILES + 4 * SPRITE_TILES_8BPP(32, 16));
     else
-      work->oam[work->spriteCount].attr2 =
+      state->oam[state->spriteCount].attr2 =
           OBJ_PRIORITY(1) |
           (LUCKY_WHEELS_LEVER_SLOT_TILES + 2 * SPRITE_TILES_8BPP(32, 16));
-    work->spriteCount++;
+    state->spriteCount++;
   }
 
-  while (work->spriteCount != OAM_SIZE / sizeof(struct OamWords)) {
-    work->oam[work->spriteCount].attr01 =
+  while (state->spriteCount != OAM_SIZE / sizeof(struct OamWords)) {
+    state->oam[state->spriteCount].attr01 =
         OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-    work->oam[work->spriteCount].attr2 = 0;
-    work->spriteCount++;
+    state->oam[state->spriteCount].attr2 = 0;
+    state->spriteCount++;
   }
 }
 
@@ -1217,20 +1219,20 @@ void LuckyWheels_Update(void) {
 /// eight title letters, then restarts the HBlank DMA of the scanline offsets
 /// into BLDY and copies the frame's sprites to OAM.
 void LuckyWheels_FinishFrame(void) {
-  struct LuckyWheelsWork *work;
-  struct ReelEffectWork *fx;
+  struct LuckyWheelsState *state;
+  struct ReelEffectState *fx;
   volatile u16 *dma;
   s32 i;
 
-  work = (struct LuckyWheelsWork *)Ram_HeapSlots->canvasMap;
-  fx = (struct ReelEffectWork *)Ram_HeapSlots->battleEffect;
-  if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
+  state = (struct LuckyWheelsState *)Ram_HeapSlots->canvasMap;
+  fx = (struct ReelEffectState *)Ram_HeapSlots->battleEffect;
+  if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
     for (i = 0; i != 8; i++) {
       struct Particle *p = &fx->particles[i];
 
       p->y += p->velocityY;
       p->velocityY += toFIXED(1) / 4;
-      if (work->timer % 256 == i * 4 + 200) {
+      if (state->timer % 256 == i * 4 + 200) {
         p->velocityY = toFIXED(6);
         p->variant = 0;
       }
@@ -1248,10 +1250,10 @@ void LuckyWheels_FinishFrame(void) {
   dma[5] &= ~DMA_ENABLE;
   (void)dma[5];
   // One halfword at each HBlank (repeating, destination reloaded).
-  Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY,
+  Dma_Set(state->scanlineOffsets, (void *)&REG_BLDY,
           DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)dma);
-  if (work->spriteCount > 0)
-    Dma_Set(work->oam, OAM, DMA_COPY_WORDS(work->spriteCount * 2), REG_DMA3);
+  if (state->spriteCount > 0)
+    Dma_Set(state->oam, OAM, DMA_COPY_WORDS(state->spriteCount * 2), REG_DMA3);
 }
 
 /// The left edge of the title's first letter: the Spanish title has nine
@@ -1276,8 +1278,8 @@ void LuckyWheels_FinishFrame(void) {
 /// Sets up the bouncing title letters of a win, the brightness wave of the
 /// screen's lines and the betting window, and starts at betting.
 void LuckyWheels_InitializeTitle(void) {
-  struct LuckyWheelsWork *state;
-  struct ReelEffectWork *work;
+  struct LuckyWheelsState *state;
+  struct ReelEffectState *reelEffectState;
   struct Particle *letter;
   s32 left;
   s32 i;
@@ -1285,14 +1287,14 @@ void LuckyWheels_InitializeTitle(void) {
   struct Window *window;
   s32 message;
 
-  state = (struct LuckyWheelsWork *)Ram_HeapSlots->canvasMap;
-  work = (struct ReelEffectWork *)Ram_HeapSlots->battleEffect;
+  state = (struct LuckyWheelsState *)Ram_HeapSlots->canvasMap;
+  reelEffectState = (struct ReelEffectState *)Ram_HeapSlots->battleEffect;
   left = 0;
   // Twice the sparks the win uses are cleared.
   for (i = 0; i != 2 * LUCKY_WHEELS_SPARK_COUNT; i++)
     LUCKY_WHEELS_SPARKS[i].variant = 0;
 
-  letter = work->particles;
+  letter = reelEffectState->particles;
   for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
     letter[i].x = INTtoFIXED(left + LUCKY_WHEELS_TITLE_X);
     left += gLuckyWheels_TitleLetterWidths[i];
@@ -1318,8 +1320,8 @@ void LuckyWheels_InitializeTitle(void) {
   state->spins = 0;
   state->state = LUCKY_WHEELS_BETTING;
   state->cursor = 0;
-  work->transferMode = CANVAS_COPY_AND_CLEAR;
-  work->transferValue = 0;
+  reelEffectState->transferMode = CANVAS_COPY_AND_CLEAR;
+  reelEffectState->transferValue = 0;
   REG_BLDCNT = 0;
   window = Window_CreateFar(18, 0, 12, 4, 6);
   state->subWindow = window;
@@ -1363,8 +1365,8 @@ void LuckyWheels_Run(void) {
   DrawRectangle draw[2];
   u8 *sheet;
   void *canvas;
-  struct ReelEffectWork *work;
-  struct LuckyWheelsWork *state;
+  struct ReelEffectState *reelEffectState;
+  struct LuckyWheelsState *state;
   struct ReelSave *save;
   u8 *entry;
   u8 *tiles;
@@ -1376,9 +1378,9 @@ void LuckyWheels_Run(void) {
 
   sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
-  work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
-  state =
-      HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, sizeof(struct LuckyWheelsWork));
+  reelEffectState = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
+  state = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,
+                              sizeof(struct LuckyWheelsState));
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)gPartyDjinnRecovery;
   Resource_ReservedNoOp(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
@@ -1473,14 +1475,14 @@ void LuckyWheels_Run(void) {
   REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
   {
-    u16 *bgShade = work->bgShade;
-    u16 *shade = work->spriteShade;
+    u16 *bgShade = reelEffectState->bgShade;
+    u16 *shade = reelEffectState->spriteShade;
     s32 size = LUCKY_WHEELS_CANVAS_SIZE;
 
     state->state = LUCKY_WHEELS_BETTING;
     state->cursor = 0;
     state->spins = 0;
-    work->frame = 0;
+    reelEffectState->frame = 0;
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET),
             (void *)BG_PLTT, DMA_COPY_WORDS(LUCKY_WHEELS_SPARK_COLORS / 2),
@@ -1568,7 +1570,7 @@ void LuckyWheels_Run(void) {
       Text_DrawMessageAsTilesFar(message, window, 0, 0);
       Text_DrawMessageAsTilesFar(message + 1, state->window, 0, 8);
     }
-    work->transferPending = 0;
+    reelEffectState->transferPending = 0;
     Task_Add(LuckyWheels_Update, TASK_PASS_FRAME);
     Task_Add(LuckyWheels_FinishFrame, TASK_PASS_VBLANK);
     Task_Add(LuckyWheels_TransferCanvas, TASK_PASS_VBLANK);
@@ -1693,7 +1695,7 @@ void LuckyWheels_Run(void) {
             LuckyWheels_DrawCanvasLine(28, j + 97, 200, j + 11, color);
         }
       }
-      work->transferPending = 1;
+      reelEffectState->transferPending = 1;
       wait(1);
     }
 
@@ -1749,10 +1751,10 @@ void LzPack_ResetSlotBuckets(void) {
   struct LzPackNode **bucket;
 
   for (index = 0; index < PACK_WINDOW_SIZE; index++) {
-    gLzPackWork->nodes[index].slot = index;
-    gLzPackWork->nodes[index].previous = NULL;
+    gLzPackState->nodes[index].slot = index;
+    gLzPackState->nodes[index].previous = NULL;
   }
-  bucket = gLzPackWork->bucket;
+  bucket = gLzPackState->bucket;
   for (index = 0; index < PACK_BYTE_VALUES; index++) {
     *bucket++ = NULL;
   }
@@ -1760,23 +1762,23 @@ void LzPack_ResetSlotBuckets(void) {
 
 /// Adds window position index to the chain of the byte it holds.
 void LzPack_InsertSlotNode(s32 index) {
-  struct LzPackWork *work = gLzPackWork;
+  struct LzPackState *state = gLzPackState;
 
-  work->nodes[index].previous =
-      (struct LzPackNode *)&work->bucket[work->bucketBySlot[index]];
-  work->nodes[index].next = work->bucket[work->bucketBySlot[index]];
-  work->bucket[work->bucketBySlot[index]] = &work->nodes[index];
-  if (work->nodes[index].next != NULL)
-    work->nodes[index].next->previous = &work->nodes[index];
+  state->nodes[index].previous =
+      (struct LzPackNode *)&state->bucket[state->bucketBySlot[index]];
+  state->nodes[index].next = state->bucket[state->bucketBySlot[index]];
+  state->bucket[state->bucketBySlot[index]] = &state->nodes[index];
+  if (state->nodes[index].next != NULL)
+    state->nodes[index].next->previous = &state->nodes[index];
 }
 
 /// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
-  if (gLzPackWork->nodes[slot].previous != NULL) {
-    if (gLzPackWork->nodes[slot].next != NULL)
-      gLzPackWork->nodes[slot].next->previous =
-          gLzPackWork->nodes[slot].previous;
-    gLzPackWork->nodes[slot].previous->next = gLzPackWork->nodes[slot].next;
+  if (gLzPackState->nodes[slot].previous != NULL) {
+    if (gLzPackState->nodes[slot].next != NULL)
+      gLzPackState->nodes[slot].next->previous =
+          gLzPackState->nodes[slot].previous;
+    gLzPackState->nodes[slot].previous->next = gLzPackState->nodes[slot].next;
   }
 }
 
@@ -1794,13 +1796,13 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
     do {
       u32 slot = start + current;
-      struct LzPackWork *state;
+      struct LzPackState *state;
       u32 readOffset;
       u32 nextOffset;
       u8 value;
 
       LzPack_RemoveSlotNode(removal & mask);
-      state = gLzPackWork;
+      state = gLzPackState;
       readOffset = state->inputCursor;
       value = input[readOffset];
       nextOffset = readOffset + 1;
@@ -1823,10 +1825,10 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 
     do {
       u32 slot = (start + current) & mask;
-      struct LzPackWork *state;
+      struct LzPackState *state;
 
       LzPack_RemoveSlotNode(slot);
-      state = gLzPackWork;
+      state = gLzPackState;
       current++;
       state->bucketBySlot[slot] = -1;
     } while (current < count);
@@ -1836,12 +1838,12 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
 /// Appends the finished group (a flag byte and up to eight items) to the
 /// output.
 void LzPack_CopyBufferedBytes(u8 *destination) {
-  struct LzPackWork *work = gLzPackWork;
+  struct LzPackState *state = gLzPackState;
   s32 index;
 
-  for (index = 0; index != work->outCount; index++) {
-    destination[work->outTotal] = work->outBuffer[index];
-    work->outTotal++;
+  for (index = 0; index != state->outCount; index++) {
+    destination[state->outTotal] = state->outBuffer[index];
+    state->outTotal++;
   }
 }
 
@@ -1852,26 +1854,26 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;
 
-  gLzPackWork->matchLength = 1;
-  if (gLzPackWork->bucketBySlot[start] == -1) {
+  gLzPackState->matchLength = 1;
+  if (gLzPackState->bucketBySlot[start] == -1) {
     return;
   }
-  node = gLzPackWork->bucket[gLzPackWork->bucketBySlot[start]];
+  node = gLzPackState->bucket[gLzPackState->bucketBySlot[start]];
   if (start + PACK_MATCH_MAX > PACK_WINDOW_MASK) {
     while (node != NULL) {
       s32 dist = (start - node->slot) & PACK_WINDOW_MASK;
 
       if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
         for (len = 1; len < PACK_MATCH_MAX; len++) {
-          if (gLzPackWork->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
-              gLzPackWork
+          if (gLzPackState->bucketBySlot[(start + len) & PACK_WINDOW_MASK] !=
+              gLzPackState
                   ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
-        if (gLzPackWork->matchLength < len) {
-          gLzPackWork->matchOffset = dist;
-          gLzPackWork->matchLength = len;
+        if (gLzPackState->matchLength < len) {
+          gLzPackState->matchOffset = dist;
+          gLzPackState->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1885,15 +1887,15 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
 
       if (dist > 0 && dist <= PACK_DISTANCE_MAX) {
         for (len = 1; len < PACK_MATCH_MAX; len++) {
-          if (gLzPackWork->bucketBySlot[start + len] !=
-              gLzPackWork
+          if (gLzPackState->bucketBySlot[start + len] !=
+              gLzPackState
                   ->bucketBySlot[(node->slot + len) & PACK_WINDOW_MASK]) {
             break;
           }
         }
-        if (gLzPackWork->matchLength < len) {
-          gLzPackWork->matchOffset = dist;
-          gLzPackWork->matchLength = len;
+        if (gLzPackState->matchLength < len) {
+          gLzPackState->matchOffset = dist;
+          gLzPackState->matchLength = len;
           if (len == PACK_MATCH_MAX) {
             return;
           }
@@ -1919,79 +1921,79 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s16 code;
 
   defer = 0;
-  gLzPackWork = (struct LzPackWork *)Ram_MapCellBuffer;
+  gLzPackState = (struct LzPackState *)Ram_MapCellBuffer;
   LzPack_ResetSlotBuckets();
-  gLzPackWork->inputLimit = size;
-  gLzPackWork->position = 0;
-  gLzPackWork->inputCursor = 0;
-  gLzPackWork->outTotal = 0;
-  gLzPackWork->flagMask = PACK_FIRST_FLAG;
-  gLzPackWork->outBuffer[0] = 0;
-  gLzPackWork->outCount = 1;
+  gLzPackState->inputLimit = size;
+  gLzPackState->position = 0;
+  gLzPackState->inputCursor = 0;
+  gLzPackState->outTotal = 0;
+  gLzPackState->flagMask = PACK_FIRST_FLAG;
+  gLzPackState->outBuffer[0] = 0;
+  gLzPackState->outCount = 1;
   LzPack_ConsumeSlotBytes(0, PACK_LOOKAHEAD, input);
 
-  while (gLzPackWork->bucketBySlot[gLzPackWork->position] != -1) {
-    LzPack_FindWindowMatch(gLzPackWork->position);
+  while (gLzPackState->bucketBySlot[gLzPackState->position] != -1) {
+    LzPack_FindWindowMatch(gLzPackState->position);
     if (defer == 0) {
-      len = gLzPackWork->matchLength;
-      if (gLzPackWork->matchLength > 1) {
-        saveOffset = gLzPackWork->matchOffset;
+      len = gLzPackState->matchLength;
+      if (gLzPackState->matchLength > 1) {
+        saveOffset = gLzPackState->matchOffset;
         saveLen = len;
-        LzPack_FindWindowMatch((gLzPackWork->position + 1) & PACK_WINDOW_MASK);
-        if (gLzPackWork->matchLength > 2) {
-          reach[0] = gLzPackWork->matchLength + 1;
-          LzPack_FindWindowMatch((gLzPackWork->position + len) &
+        LzPack_FindWindowMatch((gLzPackState->position + 1) & PACK_WINDOW_MASK);
+        if (gLzPackState->matchLength > 2) {
+          reach[0] = gLzPackState->matchLength + 1;
+          LzPack_FindWindowMatch((gLzPackState->position + len) &
                                  PACK_WINDOW_MASK);
-          reach[1] = gLzPackWork->matchLength + len;
+          reach[1] = gLzPackState->matchLength + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
             defer = 1;
           }
         }
-        gLzPackWork->matchOffset = saveOffset;
-        gLzPackWork->matchLength = saveLen;
+        gLzPackState->matchOffset = saveOffset;
+        gLzPackState->matchLength = saveLen;
       }
     }
 
-    if (gLzPackWork->matchLength > 1) {
+    if (gLzPackState->matchLength > 1) {
       defer = 0;
-      gLzPackWork->outBuffer[0] |= gLzPackWork->flagMask;
-      if (gLzPackWork->matchLength <= PACK_SHORT_MATCH_MAX) {
-        code = ((gLzPackWork->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
-               (gLzPackWork->matchOffset & PACK_CODE_DISTANCE_LOW) |
-               (((gLzPackWork->matchLength - 1) << 8) & PACK_CODE_LENGTH);
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = (u16)code >> 8;
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = code;
+      gLzPackState->outBuffer[0] |= gLzPackState->flagMask;
+      if (gLzPackState->matchLength <= PACK_SHORT_MATCH_MAX) {
+        code = ((gLzPackState->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
+               (gLzPackState->matchOffset & PACK_CODE_DISTANCE_LOW) |
+               (((gLzPackState->matchLength - 1) << 8) & PACK_CODE_LENGTH);
+        gLzPackState->outBuffer[gLzPackState->outCount++] = (u16)code >> 8;
+        gLzPackState->outBuffer[gLzPackState->outCount++] = code;
       } else {
-        code = ((gLzPackWork->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
-               (gLzPackWork->matchOffset & PACK_CODE_DISTANCE_LOW);
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = (u16)code >> 8;
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] = code;
-        gLzPackWork->outBuffer[gLzPackWork->outCount++] =
-            gLzPackWork->matchLength - (PACK_SHORT_MATCH_MAX + 1);
+        code = ((gLzPackState->matchOffset << 4) & PACK_CODE_DISTANCE_HIGH) |
+               (gLzPackState->matchOffset & PACK_CODE_DISTANCE_LOW);
+        gLzPackState->outBuffer[gLzPackState->outCount++] = (u16)code >> 8;
+        gLzPackState->outBuffer[gLzPackState->outCount++] = code;
+        gLzPackState->outBuffer[gLzPackState->outCount++] =
+            gLzPackState->matchLength - (PACK_SHORT_MATCH_MAX + 1);
       }
     } else {
-      gLzPackWork->outBuffer[gLzPackWork->outCount++] =
-          gLzPackWork->bucketBySlot[gLzPackWork->position];
-      gLzPackWork->matchLength = 1;
+      gLzPackState->outBuffer[gLzPackState->outCount++] =
+          gLzPackState->bucketBySlot[gLzPackState->position];
+      gLzPackState->matchLength = 1;
     }
 
-    LzPack_ConsumeSlotBytes(gLzPackWork->position + PACK_LOOKAHEAD,
-                            gLzPackWork->matchLength, input);
-    gLzPackWork->position =
-        (gLzPackWork->position + gLzPackWork->matchLength) & PACK_WINDOW_MASK;
-    gLzPackWork->flagMask >>= 1;
-    if (gLzPackWork->flagMask == 0) {
+    LzPack_ConsumeSlotBytes(gLzPackState->position + PACK_LOOKAHEAD,
+                            gLzPackState->matchLength, input);
+    gLzPackState->position =
+        (gLzPackState->position + gLzPackState->matchLength) & PACK_WINDOW_MASK;
+    gLzPackState->flagMask >>= 1;
+    if (gLzPackState->flagMask == 0) {
       LzPack_CopyBufferedBytes(dst);
-      gLzPackWork->flagMask = PACK_FIRST_FLAG;
-      gLzPackWork->outBuffer[0] = 0;
-      gLzPackWork->outCount = 1;
+      gLzPackState->flagMask = PACK_FIRST_FLAG;
+      gLzPackState->outBuffer[0] = 0;
+      gLzPackState->outCount = 1;
     }
   }
 
-  gLzPackWork->outBuffer[0] |= gLzPackWork->flagMask;
-  gLzPackWork->outBuffer[gLzPackWork->outCount++] = 0;
-  gLzPackWork->outBuffer[gLzPackWork->outCount++] = 0;
+  gLzPackState->outBuffer[0] |= gLzPackState->flagMask;
+  gLzPackState->outBuffer[gLzPackState->outCount++] = 0;
+  gLzPackState->outBuffer[gLzPackState->outCount++] = 0;
   LzPack_CopyBufferedBytes(dst);
-  return gLzPackWork->outTotal;
+  return gLzPackState->outTotal;
 }

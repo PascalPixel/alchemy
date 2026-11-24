@@ -36,7 +36,7 @@
 #include "menu/menu.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -132,7 +132,7 @@ void SuhallaGate_FightDew(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsEntrances;
@@ -146,7 +146,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsPlacements;
@@ -156,7 +156,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsTriggers;
@@ -167,7 +167,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Back from his battle, the road's Ruffian lies beaten by it.
 void SuhallaGate_SetUpRoad(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
+  if (gMainRoutineState.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
     Event_SetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN);
   if (Event_GetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN)) {
     Actor_SetPosition(ACTOR_ROAD_RUFFIAN, 456, 312);
@@ -181,7 +181,7 @@ void SuhallaGate_SetUpRoad(void) {
 /// Back from the ambush, its three Ruffians lie beaten before the crevice.
 void SuhallaGate_SetUpCliffs(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
+  if (gMainRoutineState.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
     Event_SetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN);
   if (Event_GetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN)) {
     Actor_SetPosition(ACTOR_WEST_RUFFIAN, 590, 920);
@@ -207,19 +207,19 @@ void SuhallaGate_SetUpCliffs(void) {
 /// Back from the Punch Ant's battle, Kraden talks it over.
 void SuhallaGate_SetUpCave(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
+      gMainRoutineState.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
     SuhallaGate_AfterPunchAntBattle();
 }
 
 /// Suhalla Gate's setup for each of its rooms: the road by the house, the
 /// cliffs of the ambush, and the cave of the Psynergy Stone.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s16 scene;
 
-  work = Ram_HeapSlots->fieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  scene = gMainRoutineWork.next;
+  state = Ram_HeapSlots->fieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  scene = gMainRoutineState.next;
   if (scene == SCENE_SUHALLA_GATE_ROAD)
     SuhallaGate_SetUpRoad();
   else if (scene == SCENE_SUHALLA_GATE_AMBUSH)
@@ -244,7 +244,7 @@ UNUSED void SuhallaGate_OpenCliffsCell(void) {
 /// leader, but here Jenna leads and Isaac is not on stage, so nobody is seen to
 /// go in.
 void SuhallaGate_EnterRockDoor(void) {
-  s32 exit = gFieldWork->stepTrigger;
+  s32 exit = gFieldState->stepTrigger;
 
   Actor_GetById(ACTOR_ISAAC)->motionFlags = 0;
   Event_PlaySound(SE_DOOR_OPEN);
@@ -260,9 +260,9 @@ void SuhallaGate_EnterRockDoor(void) {
 /// Walking out of the cave's far end, cell (41, 39), Jenna and Kraden leave for
 /// Idejima, and Felix becomes the leader again.
 void SuhallaGate_LeaveForIdejima(void) {
-  s32 exit = gFieldWork->stepTrigger;
+  s32 exit = gFieldState->stepTrigger;
 
-  gMainRoutineWork.leaderActorId = ACTOR_FELIX;
+  gMainRoutineState.leaderActorId = ACTOR_FELIX;
   Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(exit);
 }
@@ -276,11 +276,11 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
-  Actor_WalkTo(gMainRoutineWork.leaderActorId, 472, 320);
+  Actor_WalkTo(gMainRoutineState.leaderActorId, 472, 320);
   FieldCamera_MoveTo(456, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
-  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
+  Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Actor_Jump(ACTOR_ROAD_RUFFIAN, 6, 20);
   Event_Wait(20);
@@ -313,14 +313,14 @@ void SuhallaGate_RuffianSpotsParty(void) {
 /// "Ha! That was a good idea, waiting here for 'em!" Then they fight her and
 /// Kraden.
 void SuhallaGate_RuffiansAmbushParty(void) {
-  struct MainRoutineWork *work;
+  struct MainRoutineState *state;
   s32 *owner;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgHaThatWas);
-  work = &gMainRoutineWork;
-  owner = &work->leaderActorId;
+  state = &gMainRoutineState;
+  owner = &state->leaderActorId;
   Actor_WalkByAndWait(*owner, 0, -4);
   FieldEvent_Wait(30);
   Actor_GetById(*owner)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -353,7 +353,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
                                        ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
-  work->battleType = BATTLE_TYPE_NO_ESCAPE;
+  state->battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 2);
   Event_End();
 }
@@ -363,7 +363,7 @@ void SuhallaGate_FightPunchAnt(void) {
   struct Actor *owner;
 
   Actor_Jump(ACTOR_PUNCH_ANT, 4, 0);
-  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  owner = Actor_GetById(gMainRoutineState.leaderActorId);
   if (owner != NULL)
     Actor_SetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].integer,
                          owner->z.part[0].integer);
@@ -385,8 +385,8 @@ void SuhallaGate_PunchAntJumpsOut(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
   Event_Wait(16);
-  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_PUNCH_ANT, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_FaceActor(gMainRoutineState.leaderActorId, ACTOR_PUNCH_ANT, 0);
+  FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_FollowActor(ACTOR_PUNCH_ANT, 1);
   FieldCamera_WaitForArrival();
@@ -414,12 +414,12 @@ void SuhallaGate_PunchAntJumpsOutAsLeaderStepsAside(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
   Event_Wait(16);
-  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_PUNCH_ANT, 0);
+  Actor_FaceActor(gMainRoutineState.leaderActorId, ACTOR_PUNCH_ANT, 0);
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   frames = 0;
-  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId, emote, frames);
+  FieldActor_ShowEmote(gMainRoutineState.leaderActorId, emote, frames);
   Event_Wait(16);
-  Actor_WalkTo(gMainRoutineWork.leaderActorId, 488, 440);
+  Actor_WalkTo(gMainRoutineState.leaderActorId, 488, 440);
   Event_Wait(16);
   FieldCamera_FollowActor(ACTOR_PUNCH_ANT, 1);
   FieldCamera_WaitForArrival();
@@ -446,23 +446,23 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(ACTOR_CAVE_KRADEN, 512, 432);
-  Actor_SetPosition(gMainRoutineWork.leaderActorId, 528, 432);
+  Actor_SetPosition(gMainRoutineState.leaderActorId, 528, 432);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // "My! That was invigorating! He wasn't too strong..."
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_CAVE_KRADEN, 2);
   Event_Wait(20);
   // "I never knew fighting could be so fun! Ah, but we'd better get on to the
   // peninsula..."
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Event_Wait(30);
   Event_SetFlag(FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN);
   Actor_SetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader)
     Actor_SetDestination(ACTOR_CAVE_KRADEN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
@@ -487,14 +487,14 @@ void SuhallaGate_PointToMeetingSpot(void) {
   // down here and go into that cave."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_CLIFFS_KRADEN, 0, 10);
   Actor_SetAnimation(ACTOR_CLIFFS_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader)
     Actor_SetDestination(ACTOR_CLIFFS_KRADEN, leader->x.part[0].integer,
                          leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_CLIFFS_KRADEN);
   Actor_SetPosition(ACTOR_CLIFFS_KRADEN, 0, 0);
   Event_Wait(10);
-  Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 16, 0);
+  Actor_WalkByAndWait(gMainRoutineState.leaderActorId, 16, 0);
   Event_End();
 }
 

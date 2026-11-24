@@ -19,7 +19,7 @@
 #include "battle/battle_effect.h"
 #include "battle_effect/battle_effect.h"
 #include "battle_effect/battle_effect_table.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "field/particle.h"
 #include "battle/battle_camera.h"
 #include "system/task.h"
@@ -31,7 +31,7 @@
 #include "graphics/resource.h"
 #include "system/heap_release.h"
 #include "system/input.h"
-#include "battle/battle_work.h"
+#include "battle/battle_state.h"
 #include "system/irq_lock.h"
 #include "battle/render_model.h"
 #include "battle/battle.h"
@@ -84,9 +84,10 @@ struct Streak {
   s32 unusedB;
 };
 
-/// The element streaks' work, which BattleEffect_StartElementStreaks allocates
-/// in the HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect work.
-struct ElementStreaksWork {
+/// The element streaks' state, which BattleEffect_StartElementStreaks allocates
+/// in the HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect
+/// state.
+struct ElementStreaksState {
   s32 frame;        ///< the streaks' frame count (BattleEffect_DrawStreaks)
   s32 halvePending; ///< the streaks are drawn: halve the canvas into VRAM
   /// Frames of the background's fade left (BattleEffect_DimBackgroundStep).
@@ -165,7 +166,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define WINDOW_EDGE_INSET_LINES 128
 #define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
-/// The battle background's id in the battle work, read through
+/// The battle background's id in the battle state, read through
 /// union BattleBackgroundId, so the stores around it to the background's view
 /// stay in source order.
 #define BATTLE_BACKGROUND_ID(battle)                                           \
@@ -176,7 +177,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The particles an effect keeps in the map cell buffer from its second 16 KB
 /// on, past PARTICLES or the pictures and meshes it keeps in the first: a
 /// second, larger table, always reached at its fixed address, where the
-/// effects that throw more sparks, motes or trails than the work's 64
+/// effects that throw more sparks, motes or trails than the state's 64
 /// particles keep them.
 #define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
@@ -273,7 +274,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /// The frames the battle background darkens behind an effect's canvas
-/// (work->fadeFrames, Palette_StepFadeTransfer).
+/// (state->fadeFrames, Palette_StepFadeTransfer).
 #define BACKGROUND_DARKEN_FRAMES 24
 /// The level BattleBackground_LoadFar darkens the battle's own background to
 /// as it comes back after an effect: as dark as the canvas's fade left it.
@@ -564,9 +565,9 @@ enum RedCrescentPicture {
 
 // The canvas life cycle, shared by every canvas effect.
 
-/// The bytes an effect's work block is lent: more than struct
-/// BattleEffectWork holds.
-#define BATTLE_EFFECT_WORK_SIZE 31612
+/// The bytes an effect's state is lent: more than struct
+/// BattleEffectState holds.
+#define BATTLE_EFFECT_STATE_SIZE 31612
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
@@ -686,27 +687,27 @@ enum TargetStrikeStyle {
        : BattleEffect_BuildBlitter(slot, 7, 7, flags, mode))
 
 /// Sets what the canvas transfer leaves in the canvas after each copy.
-#define EFFECT_SET_TRANSFER(work, mode, value)                                 \
-  ((work)->transferMode = (mode), (work)->transferValue = (value))
+#define EFFECT_SET_TRANSFER(state, mode, value)                                \
+  ((state)->transferMode = (mode), (state)->transferValue = (value))
 
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
-#define EFFECT_START_TRANSFER(work, mode, value)                               \
-  (EFFECT_SET_TRANSFER(work, mode, value),                                     \
+#define EFFECT_START_TRANSFER(state, mode, value)                              \
+  (EFFECT_SET_TRANSFER(state, mode, value),                                    \
    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK))
 
 /// Presents the canvas and waits for the next frame.
-#define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
+#define EFFECT_PRESENT_CANVAS(state) ((state)->transferPending = 1, wait(1))
 
 /// Waits until a VBlank has passed since the one that last copied the canvas.
 // DEAD: each test reads the count twice and drops the first read; the ROM
 // keeps both loads.
-#define WAIT_TRANSFER(work)                                                    \
-  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
+#define WAIT_TRANSFER(state)                                                   \
+  while ((state)->vblanksSinceTransfer, (state)->vblanksSinceTransfer <= 1)
 
 /// The usual end of an effect's frame: counts down the targets' flash timers,
 /// then presents the canvas.
-#define EFFECT_END_FRAME(work)                                                 \
-  (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(work))
+#define EFFECT_END_FRAME(state)                                                \
+  (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(state))
 
 /// Frees the two blitters, the second first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
@@ -745,10 +746,10 @@ enum TargetStrikeStyle {
    REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines, which the
-/// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
-/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
-/// pixels where the canvas is shown at twice its width.
+/// A line's 16.16 sideways sway as its BG2X value in state->bg2xLines, which
+/// the wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas
+/// pixel, so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2
+/// screen pixels where the canvas is shown at twice its width.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// Which way BattleEffect_WipeCanvas sweeps.
@@ -948,13 +949,13 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_BuildCanvasTilemap(void);
 /// The 64x64 stamp Haures draws in 256 colours: the VRAM address of its
-/// sprite's tiles, two words before the work block's end, past what struct
-/// BattleEffectWork names, and the picture drawn for them, the 4 KB before
+/// sprite's tiles, two words before the state's end, past what struct
+/// BattleEffectState names, and the picture drawn for them, the 4 KB before
 /// transferMode.
-#define STAMP_TILES(work)                                                      \
-  (*(u32 *)((u8 *)(work) + BATTLE_EFFECT_WORK_SIZE - 2 * sizeof(u32)))
-#define STAMP_CANVAS(work)                                                     \
-  ((u8 *)(work) + offsetof(struct BattleEffectWork, transferMode) -            \
+#define STAMP_TILES(state)                                                     \
+  (*(u32 *)((u8 *)(state) + BATTLE_EFFECT_STATE_SIZE - 2 * sizeof(u32)))
+#define STAMP_CANVAS(state)                                                    \
+  ((u8 *)(state) + offsetof(struct BattleEffectState, transferMode) -          \
    OBJ_64X64_8BPP_BYTES)
 void BattleEffect_ProcessPendingStampTransfer(void);
 
@@ -967,7 +968,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                      s32 bluePhase);
 
 // djinn_heal.c
-/// work->cameraPhase, which BattleCamera_ApplyPhasedDelta and the effects
+/// state->cameraPhase, which BattleCamera_ApplyPhasedDelta and the effects
 /// that turn the camera through it (Fire, Froth) pass between them.
 enum CameraPhase {
   CAMERA_PHASE_IDLE,       ///< nothing marked since the last turn
@@ -1013,7 +1014,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
 
 // hail.c
-/// Shakes the camera while work->shakeFrames lasts.
+/// Shakes the camera while state->shakeFrames lasts.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Camera_ApplyVerticalShake(s32 range);
 
@@ -1177,8 +1178,8 @@ void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleVector(FIXED *scale);
 void Matrix_Scale(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleUniform(FIXED scale);
-void Shop_InitializeWork(void);
-void Shop_ReleaseWork(void);
+void Shop_InitializeState(void);
+void Shop_ReleaseState(void);
 void Sprite_RemoveAnimationFar(void *record, s32 entry);
 void Matrix_RotateX(s32 angle);
 void Matrix_RotateZ(s32 angle);
@@ -1814,10 +1815,10 @@ extern const s8 gVoidBeam_Corners[][2]; ///< the hexagon's corners (z, y)
 
 // flora.c
 extern const struct Scale gFlora_UnitScale;
-/// Inside gEffectScratch: FloraWork from its second tile number on, read at
+/// Inside gEffectScratch: FloraState from its second tile number on, read at
 /// its fixed place.
 extern u16 gFlora_PetalTiles[];
-/// Inside gEffectScratch: FloraWork.palette, the object palette as it fades.
+/// Inside gEffectScratch: FloraState.palette, the object palette as it fades.
 extern u16 gFlora_SpritePalettes[];
 
 // daedalus.c

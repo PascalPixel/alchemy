@@ -34,7 +34,7 @@
 /// Thunderhead.
 void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 i;
   u8 *sprites;
@@ -45,7 +45,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   struct Particle *spark;
   struct Particle *sparks;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -55,7 +55,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
+  Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (args->variant != EFFECT_VARIANT_STRONGEST) {
@@ -65,12 +65,12 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   for (k = 0; k != PLASMA_SPARK_COUNT; k++)
     PARTICLES[k].variant = 0;
   sparks = PARTICLES;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   count = gPlasma_Counts[args->variant];
 
   for (frame = 0; frame != count * 8 - count + 42; frame++) {
     if (args->variant == EFFECT_VARIANT_STRONGEST && frame <= 63) {
-      struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+      struct BattleCamera *camera = Ram_HeapSlots->cameraState;
       s32 speed;
 
       // A 256th of a turn a frame, slowing from frame 56.
@@ -96,11 +96,11 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
-          draw[0](canvas, work->sheet,
+          draw[0](canvas, state->sheet,
                   PLASMA_COLUMN_X(args->side, i) - LIGHTNING_PILLAR_WIDTH / 2,
                   0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
         if (frame >= start + 2 && frame < start + 4)
-          draw[0](canvas, work->sheet + PLASMA_SECOND_PICTURE,
+          draw[0](canvas, state->sheet + PLASMA_SECOND_PICTURE,
                   PLASMA_COLUMN_X(args->side, i) - LIGHTNING_PILLAR_WIDTH / 2,
                   0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 
@@ -127,7 +127,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
                 break;
             }
           }
-          work->shakeFrames =
+          state->shakeFrames =
               gPlasma_Sparks[args->variant * 2 + PLASMA_SHAKE_FRAMES];
         }
       }
@@ -164,7 +164,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(8, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();
@@ -208,7 +208,7 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint screenPosition;
   DrawRectangle draw[2];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 i;
   s32 frame;
@@ -219,7 +219,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   s32 start;
   struct Particle *sparks;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -231,8 +231,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_StartCanvasLayer(0);
     originX = 60;
     originY = 64;
-    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-    work->fadeStep = 0;
+    state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+    state->fadeStep = 0;
   } else {
     BattleEffect_StartCanvasLayer(0);
     EffectPosition_ProjectScaledBattler(args->user, &screenPosition);
@@ -242,7 +242,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
@@ -258,7 +258,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       s32 radius;
       s32 angle;
 
-      point = &work->particles[i * SPARK_GROUPS_FLASHES + j];
+      point = &state->particles[i * SPARK_GROUPS_FLASHES + j];
       radius = j * 2;
       angle = Random16() & TRIG_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
@@ -288,13 +288,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       spark->variant = (Random16() & 7) + 32;
     }
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != gPlasma_Shapes[args->variant][SPARK_GROUPS_BURSTS] *
                                    SPARK_GROUPS_SPACING +
                                40;
        frame++) {
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
 
     // The strongest variant turns the camera.
     if (args->variant == EFFECT_VARIANT_STRONGEST && frame <= 51) {
@@ -324,18 +325,18 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != gPlasma_Shapes[args->variant][SPARK_GROUPS_BURSTS]; i++) {
       start = i * SPARK_GROUPS_SPACING;
       if (frame == start)
-        work->shakeFrames = 12;
+        state->shakeFrames = 12;
 
       if (frame >= start && frame < start + 2) {
         if (args->side == EFFECT_SIDE_PARTY)
-          draw[0](canvas, work->sheet,
+          draw[0](canvas, state->sheet,
                   originX -
                       gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] +
                       SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
                   originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
         else
-          draw[0](canvas, work->sheet,
+          draw[0](canvas, state->sheet,
                   originX +
                       gPlasma_Shapes[args->variant][SPARK_GROUPS_OFFSET + i] -
                       SPARK_GROUPS_CENTRE_SHIFT - FLASH_BURST_WIDTH / 2,
@@ -349,7 +350,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           s32 x;
           s32 y;
 
-          point = &work->particles[i * SPARK_GROUPS_FLASHES + j];
+          point = &state->particles[i * SPARK_GROUPS_FLASHES + j];
           y = FIXED_INTEGER_PART(point->y) + originY;
           if (args->side == EFFECT_SIDE_PARTY)
             x = FIXED_INTEGER_PART(point->x) + originX -
@@ -361,8 +362,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                 SPARK_GROUPS_CENTRE_SHIFT;
           if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
-                    work->sheet + gPlasma_FlashPictures[point->variant / 3] *
-                                      PICTURE_BYTES(FLASH_BURST),
+                    state->sheet + gPlasma_FlashPictures[point->variant / 3] *
+                                       PICTURE_BYTES(FLASH_BURST),
                     x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
@@ -410,7 +411,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
     }
 
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

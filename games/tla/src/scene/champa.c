@@ -28,7 +28,7 @@
 #include "flags.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
 #include "field/field_sequence_event.h"
@@ -192,10 +192,10 @@ void Champa_OpenDoorAndEnter(const struct MapGridCellAnimation *opening,
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  id = gMainRoutineWork.leaderActorId;
+  Actor_Get(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  id = gMainRoutineState.leaderActorId;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
   else
@@ -217,7 +217,7 @@ void Champa_EnterDoor(s32 door) {
   struct MapGridCellAnimation *table = gChampa_Doors;
 
   if ((u32)(door - CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A) <= 1)
-    Actor_Get(gMainRoutineWork.leaderActorId)->update =
+    Actor_Get(gMainRoutineState.leaderActorId)->update =
         (ObjectUpdate)Champa_ShrinkIntoTent;
   if (door == CHAMPA_TO_CHAMPA_SANCTUM) {
     TilesetAnim_Resume(SANCTUM_DOOR_ANIMATION);
@@ -510,9 +510,9 @@ void Champa_FeizhiArrives(void) {
       if (!FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0)) {
         // "Oh. I must have been mistaken."
         FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
-        gFieldWork->message = (gFieldWork->message + 1);
+        gFieldState->message = (gFieldState->message + 1);
       } else {
-        gFieldWork->message = (gFieldWork->message + 1);
+        gFieldState->message = (gFieldState->message + 1);
         // "No, you are not Isaac, are you?"
         FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
       }
@@ -672,7 +672,7 @@ s32 Tightrope_Initialize();
 /// story leaves them, and Feizhi's gift where she left it. Returns 0.
 s32 Scene_Initialize(void) {
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_AddFrame((s32)Champa_CycleWaterfallPalettes, TASK_PASS_VBLANK);
   TilesetAnim_Pause(SANCTUM_DOOR_ANIMATION);
   Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_WEST_FLAG), 0);
@@ -779,7 +779,7 @@ void Champa_ShowTwoMessages(s32 first, s32 firstX, s32 firstY,
                             s32 firstPortraitX, s32 firstPortraitY, s32 second,
                             s32 secondX, s32 secondY, s32 secondPortraitX,
                             s32 secondPortraitY, s32 delay) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 firstSprite = Actor_GetSpriteById(first);
   s32 secondSprite = Actor_GetSpriteById(second);
 
@@ -886,10 +886,10 @@ void Champa_MeetAlex(void) {
     FieldEvent_Wait(15);
     // "And you've found yourself a new Water Adept! Do you mean to cast me..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(35);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     // "Please... It's quite obvious that you decided to replace me with a..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   }
@@ -926,14 +926,14 @@ void Champa_MeetAlex(void) {
     FieldEvent_Wait(10);
     // "That's right, Felix! Why should we care about someone who just left..."
     Event_ShowMessage(ACTOR_SHEBA, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     FieldEvent_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     FieldEvent_Wait(10);
     Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
     FieldEvent_Wait(10);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     // "Duh! You're the one who left us. It's pretty clear who despises whom..."
     Event_ShowMessage(ACTOR_SHEBA, 0);
   }
@@ -1596,12 +1596,12 @@ void Champa_MeetAlex(void) {
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "Please, Felix... Let's not say too much about it just yet."
     Event_ShowMessage(ACTOR_KRADEN, 0);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
   } else {
     Champa_CloseTwoMessages(ACTOR_JENNA, ACTOR_SHEBA);
     FieldEvent_Wait(35);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-    gFieldWork->message = (gFieldWork->message + 1);
+    gFieldState->message = (gFieldState->message + 1);
     // "Felix is right. Now is not the time to tell you about it all..."
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
@@ -1666,22 +1666,22 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  Actor_HeadToward(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_JENNA, gMainRoutineState.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  Actor_HeadToward(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_SHEBA, gMainRoutineState.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  Actor_HeadToward(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_PIERS, gMainRoutineState.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  Actor_HeadToward(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_KRADEN, gMainRoutineState.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();

@@ -11,7 +11,7 @@ void Leader_CheckCrumblingStep(const u16 *table) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;

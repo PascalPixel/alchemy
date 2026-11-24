@@ -50,7 +50,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "scene_ids.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/io_reg.h"
 #include "text/msg_ids.h"
 
@@ -218,7 +218,7 @@ enum {
 };
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
+  if (gMainRoutineState.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
     return gSeaOfTime_ToLemuriaPlacements;
   return gSeaOfTime_SwirlsPlacements;
 }
@@ -325,7 +325,7 @@ void SeaOfTime_CircleSwirl(void) {
 /// Each ring cell's name says where it lies about the eye, so the eye is one
 /// 32-pixel square (`SWIRL_SQUARE`) the other way.
 void SeaOfTime_RideCurrent(void) {
-  struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
+  struct FieldState *state = (struct FieldState *)Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_GetById(ACTOR_SHIP);
   struct {
     s32 x, y, z;
@@ -349,7 +349,7 @@ void SeaOfTime_RideCurrent(void) {
   FIXED py;
   FIXED pz;
 
-  switch (work->stepTrigger) {
+  switch (state->stepTrigger) {
   case CELL_BEHAVIOR_SWIRL_RING_SOUTH:
     center.x = 0;
     center.z = -1;
@@ -484,7 +484,7 @@ void SeaOfTime_RideCurrent(void) {
 void SeaOfTime_FollowChannel(void) {
   FIXED pos[4];
   struct EffectOptions spark;
-  struct FieldWork *work;
+  struct FieldState *state;
   struct Actor *actor;
   s16 angle;
   s32 x, z, dx, dz;
@@ -493,9 +493,9 @@ void SeaOfTime_FollowChannel(void) {
   FIXED x0, y0, z0;
   s32 flip;
 
-  work = Ram_HeapSlots->fieldWork;
+  state = Ram_HeapSlots->fieldState;
   actor = Actor_GetById(ACTOR_SHIP);
-  angle = QUARTER_TURNS(work->stepTrigger - CELL_BEHAVIOR_CHANNEL_EAST);
+  angle = QUARTER_TURNS(state->stepTrigger - CELL_BEHAVIOR_CHANNEL_EAST);
   Event_Start();
   Event_ResolvePendingActions(0);
   x = FIELD_CELL(actor->x.fixed);
@@ -509,14 +509,14 @@ void SeaOfTime_FollowChannel(void) {
   if (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
                             z + (dx < 0 ? -dx : dx)) >>
           8 ==
-      work->stepTrigger) {
+      state->stepTrigger) {
     targetX = (dz < 0 ? -dz : dz) * toFIXED(15);
     targetZ = (dx < 0 ? -dx : dx) * toFIXED(15);
   }
   targetX += FIELD_CELL_ORIGIN(x);
   targetZ += FIELD_CELL_ORIGIN(z);
   while (MapCell_GetAttributes(MAPGRID_LAYER_MIDDLE, x, z) >> 8 ==
-         work->stepTrigger) {
+         state->stepTrigger) {
     x += dx;
     z += dz;
     targetX += FIELD_CELL_ORIGIN(dx);
@@ -604,7 +604,7 @@ extern u8 gSeaOfTime_LapsNeeded[];
 /// the ground layer, need `gSeaOfTime_LapsNeeded` steps. The trunk on cells
 /// (4, 8) to (9, 13), by the way to the last stretch, is one of them.
 void SeaOfTime_CountLaps(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_GetById(ACTOR_SHIP);
   s16 index;
   s32 now;
@@ -627,8 +627,8 @@ void SeaOfTime_CountLaps(void) {
     gSeaOfTime_LapTurn = 0;
   }
   last = gSeaOfTime_LastLapCell;
-  now = work->stepTrigger;
-  nowRaw = (u16)work->stepTrigger;
+  now = state->stepTrigger;
+  nowRaw = (u16)state->stepTrigger;
   if (last != now) {
     s16 *delta = &gSeaOfTime_LapTurn;
     s32 raw;
@@ -658,7 +658,7 @@ void SeaOfTime_CountLaps(void) {
       *delta = 0;
     }
   }
-  gSeaOfTime_LastLapCell = work->stepTrigger;
+  gSeaOfTime_LastLapCell = state->stepTrigger;
   if (gSeaOfTime_LapCount > LAP_STEPS_BEFORE_SPARKLES) {
     phase = gFrameCount & 3;
     if (phase == 0) {
@@ -683,7 +683,7 @@ void SeaOfTime_CountLaps(void) {
   }
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
 
-    work->raisedTrigger = RAISED_START_WAVES;
+    state->raisedTrigger = RAISED_START_WAVES;
     gSeaOfTime_LapCount = 0;
     gSeaOfTime_LapTurn = 0;
   }
@@ -699,7 +699,7 @@ void SeaOfTime_TimeWaves(void) {
   u32 *state = gSceneState;
 
   if (gFrameCount - gSeaOfTime_WaveStartFrame > WAVE_FRAMES)
-    gFieldWork->raisedTrigger = RAISED_STOP_WAVES;
+    gFieldState->raisedTrigger = RAISED_STOP_WAVES;
   *state++ = gSeaOfTime_WaveStartFrame;
   *state++ = gSeaOfTime_WaveState;
   *state = gFrameCount;
@@ -1084,7 +1084,7 @@ void SeaOfTime_FacePoseidon(void) {
   Event_Wait(60);
   Actor_SelectAnimation(actor, 1);
   Event_Wait(40);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_TO_LEMURIA,
                                   ENTRANCE_AFTER_POSEIDON);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT,
@@ -1164,9 +1164,9 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveForWorldMap,
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_ReturnNorth, EXIT_BACK_NORTH)
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_SWIRLS)
+  if (gMainRoutineState.next == SCENE_SEA_OF_TIME_SWIRLS)
     return gSeaOfTime_SwirlsTriggers;
-  if (gMainRoutineWork.entrance <= NORTH_PART_LAST_ENTRANCE)
+  if (gMainRoutineState.entrance <= NORTH_PART_LAST_ENTRANCE)
     return gSeaOfTime_NorthPartTriggers;
   return gSeaOfTime_SouthPartTriggers;
 }
@@ -1181,9 +1181,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer =
-      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+      &((struct MapState *)Ram_HeapSlots->mapGrid)->layers[2];
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 i;
   s16 color;
 
@@ -1237,10 +1237,10 @@ void SeaOfTime_AnimateSea(void) {
           red = RGB_LEVEL_MAX;
           gSeaOfTime_RedPulseStep[0] = -1;
         }
-      } else if (gFieldWork->raisedTrigger == RAISED_START_WAVES) {
+      } else if (gFieldState->raisedTrigger == RAISED_START_WAVES) {
         if (red != 0)
           red--;
-      } else if (gFieldWork->raisedTrigger == RAISED_STOP_WAVES) {
+      } else if (gFieldState->raisedTrigger == RAISED_STOP_WAVES) {
         if (red < RGB_LEVEL_MAX - 1)
           red++;
       }
@@ -1349,7 +1349,7 @@ void SeaOfTime_Open(void) {
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 1);
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_WAVES_RUNNING);
-  gFieldWork->raisedTrigger = RAISED_START_WAVES;
+  gFieldState->raisedTrigger = RAISED_START_WAVES;
   Event_PlaySound(SE_SEA_OF_TIME_OPENS);
   Event_Wait(40);
   for (i = 0; i != PUFF_SHOWER_FRAMES; i++) {
@@ -1453,8 +1453,8 @@ void SeaOfTime_Open(void) {
 /// the sea opens (`SeaOfTime_Open`). In its south part the south rock is placed
 /// until it is broken.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_SWIRLS) {
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == SCENE_SEA_OF_TIME_SWIRLS) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
@@ -1478,10 +1478,10 @@ s32 Scene_Initialize(void) {
       } while (i != SEA_COLORS);
       Task_Add(SeaOfTime_TimeWaves, TASK_PASS_FRAME);
     }
-  } else if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA) {
+  } else if (gMainRoutineState.next == SCENE_SEA_OF_TIME_TO_LEMURIA) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
-    if (gMainRoutineWork.entrance <= NORTH_PART_LAST_ENTRANCE) {
+    if (gMainRoutineState.entrance <= NORTH_PART_LAST_ENTRANCE) {
       if (!GameFlag_Get(FLAG_SEA_OF_TIME_OPENED)) {
         Dma_Set((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
                 gSeaOfTime_SavedColors.colors, DMA_COPY_HALFWORDS(SEA_COLORS),
@@ -1504,7 +1504,7 @@ s32 Scene_Initialize(void) {
         }
         PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       }
-      if (gMainRoutineWork.entrance == ENTRANCE_AFTER_POSEIDON &&
+      if (gMainRoutineState.entrance == ENTRANCE_AFTER_POSEIDON &&
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         SeaOfTime_Open();
     } else {

@@ -33,7 +33,7 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sequence.h"
 #include "scene/scene.h"
@@ -160,13 +160,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// 18 pixels) and then stays put, and he climbs the screen until he steps
 /// onto the gangway; walking back south, the view comes back down with him.
 void AncientLemuria_KeepCameraSouth(void) {
-  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
+  ((struct MapState *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
 }
 
 /// Nothing visible happens as Felix walks over the next row, cells (8, 53) to
 /// (12, 53); the view may scroll north over the whole shore again.
 void AncientLemuria_LetCameraNorth(void) {
-  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(352);
+  ((struct MapState *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(352);
 }
 
 /// Nothing more than the move itself happens as Felix starts casting Move on
@@ -231,8 +231,8 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_GetById(ACTOR_RIME)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkToAndWaitById(ACTOR_RIME, 136, 200);
   Event_Wait(3);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
@@ -241,7 +241,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Hop(0, -16);
   Hop(16, 0);
   Hop(16, 0);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Hop(0, 16);
   Hop(16, 0);
   Hop(16, 0);
@@ -350,7 +350,7 @@ void AncientLemuria_HeadForTheDock(void) {
     }
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor = Actor_GetById(gMainRoutineState.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
                                actor->z.part[0].integer);
@@ -399,10 +399,10 @@ s32 AncientLemuria_CycleWaterColors(void) {
 /// on coming out at the north-east gateway, the blue statue and the Lemurians
 /// are as the party left them, and Rime's statue rocks while Rime hides in it.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Task_Add(AncientLemuria_CycleWaterColors, TASK_PASS_VBLANK);
-  if (gMainRoutineWork.entrance != ANCIENT_LEMURIA_AT_NORTHEAST_GATEWAY)
+  if (gMainRoutineState.entrance != ANCIENT_LEMURIA_AT_NORTHEAST_GATEWAY)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   else
     GameFlag_Set(FLAG_SHOW_AREA_NAME);
@@ -413,7 +413,7 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_RIME_OUT_OF_THE_STATUE))
     Actor_SetPosition(ACTOR_RIME, 312, 184);
-  if (gMainRoutineWork.entrance == ANCIENT_LEMURIA_AT_NORTHEAST_GATEWAY &&
+  if (gMainRoutineState.entrance == ANCIENT_LEMURIA_AT_NORTHEAST_GATEWAY &&
       !GameFlag_Get(FLAG_RIME_OUT_OF_THE_STATUE) &&
       GameFlag_Get(FLAG_RIME_REVEALED)) {
     Actor_GetById(ACTOR_RIMES_STATUE)->update = AncientLemuria_RockTheStatue;
@@ -426,7 +426,7 @@ s32 Scene_Initialize(void) {
 /// Notes which way the party came into the shore (FLAG_LEMURIA_OTHER_WAY_IN),
 /// and come the other way, redraws the south of the shore to match.
 s32 Scene_PrepareMap(void) {
-  s32 entrance = gMainRoutineWork.entrance;
+  s32 entrance = gMainRoutineState.entrance;
 
   if (entrance == ANCIENT_LEMURIA_AT_NORTHEAST_GATEWAY)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
@@ -514,14 +514,14 @@ void AncientLemuria_MeetTheLemurians(void) {
     Event_Wait(40);
     // "That's quite something! Who are you, that you could defeat that..."
     Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(40);
     Actor_StartRepeatedMotion(ACTOR_SECOND_LEMURIAN, 3);
     FieldEffect_SetAttached(ACTOR_SECOND_LEMURIAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "But clearly, you are here, and the beast is gone..."
     Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 0);
     Actor_Jump(ACTOR_SECOND_LEMURIAN, 6, 15);
@@ -819,7 +819,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(10);
   // "Do we have your word?"
   FieldMessage_ShowAtActor(ACTOR_LEMURIAN, 0);
-  if ((s8)gMainRoutineWork.weirdAnswers <= 4) {
+  if ((s8)gMainRoutineState.weirdAnswers <= 4) {
     result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
     if (result == 0) {
       Event_Wait(25);
@@ -829,7 +829,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(10);
       // "Ooo! Ooo! Finally! What could be waiting for me in Lemuria? I..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
       Event_Wait(35);
       Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -837,13 +837,13 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "We've come a long way to see Lemuria. I won't have anything ruin..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
     }
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
   } else {
-    gFieldWork->message += 2;
+    gFieldState->message += 2;
     if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Event_Wait(25);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -854,7 +854,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(10);
       // "But thank you for speaking honestly. Sometimes, you can say the..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-      gFieldWork->message++;
+      gFieldState->message++;
     } else {
       Event_Wait(35);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -863,7 +863,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
       Actor_Jump(ACTOR_KRADEN, 6, 15);
       Actor_Jump(ACTOR_KRADEN, 6, 23);
-      gFieldWork->message++;
+      gFieldState->message++;
       // "What!? Are you INSANE!? Or maybe you think you're funny? Because..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
     }
@@ -971,7 +971,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -979,7 +979,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
                              leader->z.part[0].integer);

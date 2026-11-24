@@ -95,7 +95,7 @@ enum ActionChance {
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
   struct Unit *actor = Unit_Get(request->unitId);
-  struct BattleWork *battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
+  struct BattleState *battle = (struct BattleState *)Ram_HeapSlots->battleState;
   s32 selectedTargetId;
   s32 abilityId;
 
@@ -197,7 +197,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   // A fresh action run, and the debug defeat.
   selectedTargetId = Battle_GetUnitAtPlace(request->target);
   BattlePlayback_Reset();
-  // The word after the plan in BattleWork is skipPlayback.
+  // The word after the plan in BattleState is skipPlayback.
   *(s32 *)(plan + 1) = 0;
   plan->hauntDamage = 0;
   plan->unitId = request->unitId;
@@ -567,13 +567,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     // summoner's side; any other counts the party's.
     summon = SummonDefinition_Get(request->parameter);
     BattleDjinn_CountStandby(
-        ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink
+        ((struct BattleState *)Ram_HeapSlots->battleState)->isLink
             ? request->unitId
             : 0,
         counts);
     side = DJINN_RECOVERY_PARTY;
     if ((u16)request->unitId > ALLY_MAX &&
-        ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink)
+        ((struct BattleState *)Ram_HeapSlots->battleState)->isLink)
       side = DJINN_RECOVERY_OPPONENT;
     list = &Djinn_GetRecoveryTableFar(side)->list;
     for (index = 0;

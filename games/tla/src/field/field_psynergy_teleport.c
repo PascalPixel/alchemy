@@ -8,7 +8,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
 #include "system/bg_scroll.h"
@@ -37,7 +37,7 @@ enum SparkStage {
 
 /// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
 /// then the 100 sparks and their sprites.
-struct TeleportWhirlWork {
+struct TeleportWhirlState {
   u8 picture[1024];
   struct WhirlSpark sparks[WHIRL_COUNT];
   struct EffectSprite sprites[WHIRL_COUNT];
@@ -51,8 +51,8 @@ struct TeleportWhirlWork {
 /// Contigo).
 void Teleport_PlayWhirl(void) {
   s32 position[3];
-  struct TeleportWhirlWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
+  struct TeleportWhirlState *teleportWhirlState =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*teleportWhirlState));
   struct Actor *actor = Actor_Lookup(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
@@ -66,11 +66,13 @@ void Teleport_PlayWhirl(void) {
   s32 frame;
   FIXED radius;
 
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS),
+                      teleportWhirlState);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, 1024, work);
-  for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
-    sprite = &work->sprites[i];
+  tiles = VramCache_Load(entry, 1024, teleportWhirlState);
+  for (i = 0, spark = teleportWhirlState->sparks; i < WHIRL_COUNT;
+       i++, spark++) {
+    sprite = &teleportWhirlState->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0,
                       tiles +
                           (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
@@ -96,7 +98,7 @@ void Teleport_PlayWhirl(void) {
       i = count;
       do {
         angle = Random16();
-        spark = &work->sparks[next];
+        spark = &teleportWhirlState->sparks[next];
         spark->age = 0;
         SET_POSITION(spark, actor->x.fixed, actor->y.fixed + Random16() * 20,
                      actor->z.fixed);
@@ -109,8 +111,8 @@ void Teleport_PlayWhirl(void) {
       } while (i != 0);
     }
 
-    spark = work->sparks;
-    sprite = work->sprites;
+    spark = teleportWhirlState->sparks;
+    sprite = teleportWhirlState->sprites;
     for (i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
       if (spark->age >= 0) {
         if ((u32)spark->age < TELEPORT_SPARK_FRAMES) {
@@ -180,7 +182,7 @@ void Teleport_PlayWhirl(void) {
 
 /// Teleport's burst of sparks (heap slot battleEffect): the decoded picture,
 /// then the sparks and their sprites.
-struct SparkWork {
+struct TeleportSparksState {
   u8 picture[1024];
   struct FieldPsynergyParticle particles[TELEPORT_SPARK_COUNT];
   struct EffectSprite sprites[TELEPORT_SPARK_COUNT];
@@ -190,8 +192,8 @@ struct SparkWork {
 /// scenes: the leader raises both arms in changing colours, spins faster and
 /// faster as sparks burst from it, shrinks away and is hidden.
 void Teleport_PlaySparks(void) {
-  struct SparkWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
+  struct TeleportSparksState *teleportSparksState =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*teleportSparksState));
   s32 owner = Party_GetLeaderActor();
   struct Actor *actor = Actor_Lookup(Party_GetLeaderActor());
   struct FieldPsynergyParticle *particle;
@@ -209,12 +211,13 @@ void Teleport_PlaySparks(void) {
 
   wait(20);
   FieldPsynergy_FadeToCastColor();
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_COLOURED_ORBS),
+                      teleportSparksState);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, 1024, work);
-  for (i = 0, particle = work->particles; i < TELEPORT_SPARK_COUNT;
-       i++, particle++) {
-    sprite = &work->sprites[i];
+  tiles = VramCache_Load(entry, 1024, teleportSparksState);
+  for (i = 0, particle = teleportSparksState->particles;
+       i < TELEPORT_SPARK_COUNT; i++, particle++) {
+    sprite = &teleportSparksState->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0,
                       tiles +
                           (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
@@ -246,7 +249,7 @@ void Teleport_PlaySparks(void) {
   do {
     for (i = 0; i < count; i++) {
       angle = Random16();
-      particle = &work->particles[next];
+      particle = &teleportSparksState->particles[next];
       particle->timer = 0;
       SET_POSITION(particle, actor->x.fixed, actor->y.fixed + Random16() * 20,
                    actor->z.fixed);
@@ -256,19 +259,20 @@ void Teleport_PlaySparks(void) {
         particle->velocityY = -toFIXED(4);
         particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + toFIXED(4), angle,
-                              &work->particles[next].velocityX);
+                              &teleportSparksState->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
         particle->velocityY = toFIXED(5);
         particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + toFIXED(4), angle,
-                              &work->particles[next].velocityX);
+                              &teleportSparksState->particles[next].velocityX);
       }
       next++;
       next %= TELEPORT_SPARK_COUNT;
     }
 
-    for (i = 0, particle = work->particles, sprite = work->sprites;
+    for (i = 0, particle = teleportSparksState->particles,
+        sprite = teleportSparksState->sprites;
          i < TELEPORT_SPARK_COUNT; i++, sprite++, particle++) {
       age = particle->timer;
       if (age >= 0) {
@@ -340,7 +344,7 @@ void FieldPsynergy_TeleportOnTarget(void) {}
 void FieldPsynergy_Teleport(void) {
   // DEAD: the leader looked up and never used; the ROM keeps the calls.
   Actor_Lookup(Party_GetLeaderActor());
-  gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
+  gFieldState->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }
 #undef WHIRL_COUNT
 #undef TELEPORT_SPARK_FRAMES

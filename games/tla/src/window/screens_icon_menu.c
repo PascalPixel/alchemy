@@ -95,7 +95,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   u16 highlighted[2];
-  struct BattleMenuWork *state;
+  struct BattleMenuState *state;
   struct BattleAction *commandsOut;
   s32 forcedCount;
   struct BattleAction *command;
@@ -126,8 +126,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(COMMAND_ICON_BYTES);
   smallIconSlot = VramCache_AllocEntry(512);
-  state =
-      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU,
+                              sizeof(struct BattleMenuState));
   forcedCount = 0;
   CommandIcon_ReloadSlot(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
@@ -137,7 +137,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state->swappedUnit = -1;
   state->lastTarget = -1;
   {
-    struct BattleWork *battle = Ram_HeapSlots->battleWork;
+    struct BattleState *battle = Ram_HeapSlots->battleState;
     s32 k;
 
     for (k = 0; k < 8; k++)
@@ -221,28 +221,28 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // B on the party's row: undo the last reserve swap.
     if (choice == -1) {
       s32 swapped = state->swappedUnit;
-      struct BattleWork *battle;
+      struct BattleState *battle;
       s32 old;
       s32 shortSwapped;
       s32 k;
 
       if (swapped == -1)
         continue;
-      battle = Ram_HeapSlots->battleWork;
+      battle = Ram_HeapSlots->battleState;
       old = battle->partyUnits[state->swappedPlace];
       battle->partyUnits[state->swappedPlace] = swapped;
       shortSwapped = (s16)swapped;
       for (k = 0; k < 8; k++) {
-        if (gMainRoutineWork.party[k] == shortSwapped)
-          gMainRoutineWork.party[k] = old;
-        else if (gMainRoutineWork.party[k] == old)
-          gMainRoutineWork.party[k] = shortSwapped;
+        if (gMainRoutineState.party[k] == shortSwapped)
+          gMainRoutineState.party[k] = old;
+        else if (gMainRoutineState.party[k] == old)
+          gMainRoutineState.party[k] = shortSwapped;
       }
-      PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
+      PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
       BattleObject_PutFar();
       state->swappedUnit = -1;
       BattleSummon_UpdateAvailabilityFar();
-      BATTLE_MENU_WORK->commandSelection[0] = 1;
+      BATTLE_MENU_STATE->commandSelection[0] = 1;
       continue;
     }
     // Switch: choose a party place, then the reserve member for it.
@@ -257,7 +257,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       if (choice == -1)
         goto choose_place;
       BattleSummon_UpdateAvailabilityFar();
-      BATTLE_MENU_WORK->commandSelection[0] = 0;
+      BATTLE_MENU_STATE->commandSelection[0] = 0;
       continue;
     }
     // Status: the summary screens of the party and the reserve, or in the
@@ -321,9 +321,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       {
         struct MenuSprite *iconSprite;
 
-        BATTLE_MENU_WORK->commandActor = actorId;
-        BATTLE_MENU_WORK->commandSelection[1] = 0;
-        iconSprite = &BATTLE_MENU_WORK->icons[2];
+        BATTLE_MENU_STATE->commandActor = actorId;
+        BATTLE_MENU_STATE->commandSelection[1] = 0;
+        iconSprite = &BATTLE_MENU_STATE->icons[2];
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
@@ -338,8 +338,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Window_MarkVisibleTextTiles();
       {
         /* FAKEMATCH(temporary): navigation, a block's local holding the battle
-         * menu's work for two stores; as BATTLE_MENU_WORK at each. */
-        struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
+         * menu's state for two stores; as BATTLE_MENU_STATE at each. */
+        struct BattleMenuState *navigation = BATTLE_MENU_STATE;
 
         navigation->iconShown[0] = 0;
         navigation->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
@@ -370,9 +370,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         continue;
       }
       {
-        struct MenuSprite *iconSprite = &BATTLE_MENU_WORK->icons[0];
+        struct MenuSprite *iconSprite = &BATTLE_MENU_STATE->icons[0];
 
-        if (BATTLE_MENU_WORK->timer == 0)
+        if (BATTLE_MENU_STATE->timer == 0)
           choice = COMMAND_ICON_DEFEND;
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.word.attr01 = OBJ_SIZE_32X32 | OBJ_256_COLORS |
@@ -408,7 +408,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 k;
         struct MenuSprite *iconSprite;
         struct AbilityDefinition *ability;
-        struct WindowWork *work;
+        struct WindowState *windowState;
         u16 *list;
         u8 *pick;
         s32 cost;
@@ -446,7 +446,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        work = WINDOW_WORK;
+        windowState = WINDOW_STATE;
         commandWindow = Window_Create(8, 17, 18, 3,
                                       WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
         COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
@@ -460,7 +460,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        work->textPalette = BASIC_COLORS_PALETTE;
+        windowState->textPalette = BASIC_COLORS_PALETTE;
         if (ability->ppCost > unit->pp)
           Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
@@ -468,7 +468,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityName, commandWindow,
                                 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->textPalette = WINDOW_PALETTE;
+        windowState->textPalette = WINDOW_PALETTE;
         Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
@@ -583,14 +583,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
         COMMAND_ICON_X(state) = DJINN_MENU_ICON_X;
-        BATTLE_MENU_WORK->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
+        BATTLE_MENU_STATE->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         choice = BattleDjinnMenu_Run(actorId, 1);
         command->range = 0;
         if (choice == -1)
           goto mark_visible;
         parameter = choice;
         commandKind = COMMAND_DJINN;
-        BATTLE_MENU_WORK->chosenDjinn[commandIndex] = choice;
+        BATTLE_MENU_STATE->chosenDjinn[commandIndex] = choice;
         element = DJINN_COMMAND_ELEMENT(parameter);
         index = DJINN_COMMAND_INDEX(parameter);
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
@@ -777,7 +777,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   VramCache_FreeEntry(largeIconSlot);
   Task_Remove(BattleMenu_UpdateEachFrame);
   if (state->linkTimer != 0) {
-    struct BattleWork *link;
+    struct BattleState *link;
 
     void Link_DrawWaitingForOpponent(void) {
       u16 text[64];
@@ -791,7 +791,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // window, that is while the partner is still choosing; a timer window
     // was closed above and is only forgotten here. choice counts the frames
     // without the link, and past LINK_MAX_MISSED_FRAMES gives up (-1).
-    link = Ram_HeapSlots->battleWork;
+    link = Ram_HeapSlots->battleState;
     choice = 0;
     if (state->timerWindow == NULL && link->linkPaused == 0) {
       state->timerWindow =
@@ -859,7 +859,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 /// lines, keeping each line's right edge, and around the selected icon on the
 /// lines it overhangs, below a row at the top or above one at the bottom.
 void IconMenu_DrawIcons(void) {
-  struct IconMenuWork *work;
+  struct IconMenuState *iconMenuState;
   struct IconMenuEntry *entry;
   struct AffineTransform transform;
   s32 pulseScale;
@@ -875,8 +875,8 @@ void IconMenu_DrawIcons(void) {
   struct WindowBuffer *page;
   s32 halfWidth;
 
-  work = Ram_HeapSlots->iconMenu;
-  entry = work->entries;
+  iconMenuState = Ram_HeapSlots->iconMenu;
+  entry = iconMenuState->entries;
   pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
   state = Ram_HeapSlots->screenTransition;
   pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
@@ -885,7 +885,7 @@ void IconMenu_DrawIcons(void) {
   transform.angle = 0;
   affineIndex = OamMatrix_AllocFromTransform(&transform);
   // Pulse only the selection; the other icons keep their normal OAM shape.
-  for (index = 0; index < work->count; index++, entry++) {
+  for (index = 0; index < iconMenuState->count; index++, entry++) {
     u32 *word;
     s32 drawLayer;
     s32 x;
@@ -893,7 +893,7 @@ void IconMenu_DrawIcons(void) {
     x = entry->x;
     if (x == 0)
       continue;
-    if (index == work->selection) {
+    if (index == iconMenuState->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
 
       // The icon grows about the middle of its 64-pixel double-size box. On
@@ -924,14 +924,15 @@ void IconMenu_DrawIcons(void) {
     }
     Oam_AddSpriteAtDepth(entry, drawLayer);
   }
-  if (state == NULL || state->centreLine != 0 || work->count == 0)
+  if (state == NULL || state->centreLine != 0 || iconMenuState->count == 0)
     return;
   page = (struct WindowBuffer *)state->pages[state->page];
-  if (work->row == 0) {
-    span = work->entries[work->selection].x;
+  if (iconMenuState->row == 0) {
+    span = iconMenuState->entries[iconMenuState->selection].x;
     halfWidth = PULSE_OVERHANG_X(pulseScale);
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-    lastLine = work->entries[work->selection].y + ICON_ROW_LINES;
+    lastLine =
+        iconMenuState->entries[iconMenuState->selection].y + ICON_ROW_LINES;
     lastLine += PULSE_OVERHANG_LINES(pulseScale);
     edge = &page->lines[ICON_ROW_LINES].window1;
     index = ICON_ROW_LINES;
@@ -942,8 +943,8 @@ void IconMenu_DrawIcons(void) {
         edge += 2;
       } while (index < lastLine);
     }
-    span = work->entries[0].x;
-    if (work->selection == 0)
+    span = iconMenuState->entries[0].x;
+    if (iconMenuState->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
     edge = &page->lines[0].window1;
@@ -954,10 +955,10 @@ void IconMenu_DrawIcons(void) {
   } else {
     s32 firstLine;
 
-    span = work->entries[work->selection].x;
+    span = iconMenuState->entries[iconMenuState->selection].x;
     halfWidth = PULSE_OVERHANG_X(pulseScale);
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
-    firstLine = work->entries[work->selection].y;
+    firstLine = iconMenuState->entries[iconMenuState->selection].y;
     firstLine -= PULSE_OVERHANG_LINES(pulseScale);
     edge = &page->lines[firstLine].window1;
     index = firstLine;
@@ -968,8 +969,8 @@ void IconMenu_DrawIcons(void) {
         edge += 2;
       } while (index < ICON_MENU_BOTTOM_ROW * 8);
     }
-    span = work->entries[0].x;
-    if (work->selection == 0)
+    span = iconMenuState->entries[0].x;
+    if (iconMenuState->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
     edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].window1;
@@ -1001,34 +1002,34 @@ void IconMenu_DrawIcons(void) {
 #undef PSYNERGY_MENU_ICON_X
 #undef COMMAND_ICON_X
 
-/// Allocates and clears the icon menu's work, which lives in
+/// Allocates and clears the icon menu's state, which lives in
 /// HEAP_SLOT_ICON_MENU until IconMenu_Close frees it, and starts the task that
 /// draws its icons. Every icon menu starts here.
 void *IconMenu_Open(void) {
-  void *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
+  void *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuState));
 
-  Dma_Fill32(0, work, sizeof(struct IconMenuWork));
+  Dma_Fill32(0, state, sizeof(struct IconMenuState));
   Task_Add((TaskFunc)IconMenu_DrawIcons, TASK_PASS_FRAME - 10);
-  return work;
+  return state;
 }
 
 /// Stops drawing the icons, closes the label window and releases each loaded
-/// icon before freeing the icon menu's work (HEAP_SLOT_ICON_MENU), then waits a
-/// frame.
+/// icon before freeing the icon menu's state (HEAP_SLOT_ICON_MENU), then waits
+/// a frame.
 void IconMenu_Close(void) {
   struct Window *labelWindow;
   s32 i;
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
 
-  work = Ram_HeapSlots->iconMenu;
+  state = Ram_HeapSlots->iconMenu;
   Task_Remove(IconMenu_DrawIcons);
-  labelWindow = work->window;
+  labelWindow = state->window;
   if (labelWindow != 0) {
     Window_Close(labelWindow, 2);
   }
-  for (i = 0; i < work->count; i++) {
-    VramCache_FreeEntry(work->entries[i].slot);
+  for (i = 0; i < state->count; i++) {
+    VramCache_FreeEntry(state->entries[i].slot);
   }
   HeapSlot_Release(HEAP_SLOT_ICON_MENU);
   wait(1U);
@@ -1039,22 +1040,22 @@ void IconMenu_Close(void) {
 /// message labelBase + position when the layout set a labelBase, else the
 /// icon's command name.
 s32 IconMenu_Run(s32 initial) {
-  struct IconMenuWork *work = Ram_HeapSlots->iconMenu;
+  struct IconMenuState *state = Ram_HeapSlots->iconMenu;
   s32 resource;
 
-  work->selection = initial;
+  state->selection = initial;
 redraw:
-  WindowSprite_PrepareForRedraw(work->window);
-  if (work->labelBase != 0)
-    resource = work->labelBase + work->selection;
+  WindowSprite_PrepareForRedraw(state->window);
+  if (state->labelBase != 0)
+    resource = state->labelBase + state->selection;
   else
-    resource = work->commandIcons[work->selection] + (s32)MsgCommandName;
-  Text_DrawMessageAsTiles(resource, work->window, 0, 0);
+    resource = state->commandIcons[state->selection] + (s32)MsgCommandName;
+  Text_DrawMessageAsTiles(resource, state->window, 0, 0);
   for (;;) {
     wait(1);
     if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
-      return work->selection;
+      return state->selection;
     }
     if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
@@ -1066,14 +1067,14 @@ redraw:
     }
     if ((gInput.repeat & KEY_LEFT) || (gInput.repeat & KEY_UP)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      work->selection--;
-      if (work->selection < 0)
-        work->selection = work->count - 1;
+      state->selection--;
+      if (state->selection < 0)
+        state->selection = state->count - 1;
     } else if ((gInput.repeat & KEY_RIGHT) || (gInput.repeat & KEY_DOWN)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      work->selection++;
-      if (work->selection >= work->count)
-        work->selection = 0;
+      state->selection++;
+      if (state->selection >= state->count)
+        state->selection = 0;
     } else
       continue;
     goto redraw;
@@ -1102,7 +1103,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s32 step;
   s32 delay;
   const u8 *stepDelays;
-  struct IconMenuWork *state;
+  struct IconMenuState *state;
 
   state = Ram_HeapSlots->iconMenu;
   step = 1;
@@ -1154,28 +1155,28 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   Heap_Release(buffer);
 }
 
-/// Appends a command icon while the menu has room for one (IconMenuWork's six
+/// Appends a command icon while the menu has room for one (IconMenuState's six
 /// entries). It starts on the bottom row; IconMenu_Center or
 /// IconMenu_LayoutIcons places the row. Its VRAM cache entry is taken
 /// unchecked.
 void IconMenu_AddIcon(s32 icon) {
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
   struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
   s32 y = ICON_MENU_BOTTOM_ROW * 8;
 
-  work = Ram_HeapSlots->iconMenu;
-  index = work->count;
-  if (index < (s32)ARRAY_COUNT(work->entries)) {
-    work->count++;
-    entry = &work->entries[index];
+  state = Ram_HeapSlots->iconMenu;
+  index = state->count;
+  if (index < (s32)ARRAY_COUNT(state->entries)) {
+    state->count++;
+    entry = &state->entries[index];
     slot = VramCache_FindFreeEntry();
     CommandIcon_LoadIntoSlot(slot, icon);
     entry->x = index * 24 + 32;
     entry->y = y;
     entry->slot = slot;
-    work->commandIcons[index] = icon;
+    state->commandIcons[index] = icon;
   }
 }
 
@@ -1185,44 +1186,44 @@ void IconMenu_AddIcon(s32 icon) {
 /// label window, `width` + 2 tiles wide and 3 tall, follows them; the centring
 /// counts two thirds of the window's width.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
-  struct IconMenuWork *work = Ram_HeapSlots->iconMenu;
+  struct IconMenuState *state = Ram_HeapSlots->iconMenu;
   s32 x;
   s32 i;
   s32 count;
 
-  work->width = width + 2;
-  work->labelBase = resourceBase;
-  work->row = row;
-  count = work->count;
-  x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + work->width * 2 / 3) / 2;
-  for (i = 0; i < work->count; i++) {
-    struct IconMenuEntry *entry = &work->entries[i];
+  state->width = width + 2;
+  state->labelBase = resourceBase;
+  state->row = row;
+  count = state->count;
+  x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + state->width * 2 / 3) / 2;
+  for (i = 0; i < state->count; i++) {
+    struct IconMenuEntry *entry = &state->entries[i];
 
     entry->x = x * 8;
     entry->y = row * 8;
     x += 3;
   }
-  work->window = Window_Create(x, row, work->width, 3, WINDOW_FLAG_INSTANT);
+  state->window = Window_Create(x, row, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Places the icons three tiles apart from tile (x, y), then opens their label
 /// window, `width` + 2 tiles wide, just after them.
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
   s32 i;
   struct IconMenuEntry *entry;
 
-  work = Ram_HeapSlots->iconMenu;
-  work->width = width + 2;
-  work->labelBase = resourceBase;
-  work->row = y;
-  for (i = 0; i < work->count; i++) {
-    entry = &work->entries[i];
+  state = Ram_HeapSlots->iconMenu;
+  state->width = width + 2;
+  state->labelBase = resourceBase;
+  state->row = y;
+  for (i = 0; i < state->count; i++) {
+    entry = &state->entries[i];
     entry->y = y << 3;
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, work->width, 3, WINDOW_FLAG_INSTANT);
+  state->window = Window_Create(x, y, state->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Reads one entry of a field menu table (gMenu_TopEntryPositionByCommand).
@@ -1363,7 +1364,7 @@ s32 FileList_SelectAction(void) {
 /// (from x 8 to LABEL_RIGHT) and lists what a password of that level carries:
 /// Gold five lines, Silver three, Bronze two.
 void PasswordLevelMenu_DrawContents(void) {
-  struct IconMenuWork *state = Ram_HeapSlots->iconMenu;
+  struct IconMenuState *state = Ram_HeapSlots->iconMenu;
 
   if (state->drawnSelection != state->selection) {
     state->drawnSelection = state->selection;
@@ -1415,7 +1416,7 @@ void PasswordLevelMenu_DrawContents(void) {
 /// as the cable; French clears the window with WindowSprite_ClearList and
 /// redraws only when the description changes.
 void TransferMethodMenu_DrawHelp(void) {
-  struct IconMenuWork *state = Ram_HeapSlots->iconMenu;
+  struct IconMenuState *state = Ram_HeapSlots->iconMenu;
   s16 *shown = &state->drawnSelection;
   s16 *current = &state->selection;
 
@@ -1567,7 +1568,7 @@ void TransferMethodMenu_DrawHelp(void) {
 /// selected icon below, redrawn by a task while the menu runs. Returns the
 /// place chosen, or -1 when cancelled.
 s32 IconMenu_ChooseSendOption(s32 mode) {
-  struct IconMenuWork *work;
+  struct IconMenuState *state;
   struct Window *window;
   s32 msg;
   struct Window **upper;
@@ -1575,7 +1576,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
 
   mode &= 1;
   IconMenu_Open();
-  work = Ram_HeapSlots->iconMenu;
+  state = Ram_HeapSlots->iconMenu;
   if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
     IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
     IconMenu_AddIcon(COMMAND_ICON_LINK);
@@ -1587,39 +1588,39 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   IconMenu_Center(ICON_MENU_BOTTOM_ROW, ENTRY_WIDTH, 0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(PasswordLevelMenu_DrawContents, TASK_PASS_FRAME - 10);
-    work->drawnSelection = -1;
+    state->drawnSelection = -1;
     window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
                            WINDOW_FLAG_INSTANT);
     msg = (s32)MsgPasswordEntry;
-    upper = &work->upperWindow;
+    upper = &state->upperWindow;
     *upper = window;
     Text_DrawMessage(msg, window, 0, 4);
     window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12,
                            WINDOW_FLAG_INSTANT);
-    work->lowerWindow = window;
+    state->lowerWindow = window;
     Text_DrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
     // French writes a third line: "Niveaux" (MsgPasswordLevel).
-    Text_DrawMessage(msg + 2, work->lowerWindow, PASSWORD_TEXT_X,
+    Text_DrawMessage(msg + 2, state->lowerWindow, PASSWORD_TEXT_X,
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
     msg += 3;
-    Text_DrawMessage(msg, work->lowerWindow, PASSWORD_TEXT_X,
+    Text_DrawMessage(msg, state->lowerWindow, PASSWORD_TEXT_X,
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT * 2);
 #else
     msg += 2;
-    Text_DrawMessage(msg, work->lowerWindow, PASSWORD_TEXT_X,
+    Text_DrawMessage(msg, state->lowerWindow, PASSWORD_TEXT_X,
                      PASSWORD_TEXT_Y + PASSWORD_LINE_HEIGHT);
 #endif
   } else {
     Task_Add(TransferMethodMenu_DrawHelp, TASK_PASS_FRAME - 10);
-    work->drawnSelection = -1;
+    state->drawnSelection = -1;
     window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4,
                            WINDOW_FLAG_INSTANT);
-    upper = &work->upperWindow;
+    upper = &state->upperWindow;
     *upper = window;
     Text_DrawMessage((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
-    work->lowerWindow = Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH,
-                                      7, WINDOW_FLAG_INSTANT);
+    state->lowerWindow = Window_Create(
+        TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
@@ -1627,9 +1628,9 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   else
     Task_Remove(TransferMethodMenu_DrawHelp);
   WindowSprite_PrepareForRedraw(*upper);
-  WindowSprite_PrepareForRedraw(work->lowerWindow);
+  WindowSprite_PrepareForRedraw(state->lowerWindow);
   Window_Close(*upper, 2);
-  Window_Close(work->lowerWindow, 2);
+  Window_Close(state->lowerWindow, 2);
   wait(1);
   IconMenu_Close();
   return result;

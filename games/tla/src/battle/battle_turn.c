@@ -30,8 +30,8 @@ enum FleeChance {
 /// Sets the camera up for the fixed view the battle shows while commands are
 /// chosen, raised by verticalOffset pixels.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
+  struct BattleBackgroundState *view = Ram_HeapSlots->battleBackground;
   struct Point eyeOffset;
   u32 result;
 
@@ -96,10 +96,10 @@ s32 BattleFlee_CheckSuccess(void) {
   s32 levelTotal;
   s32 unitIndex;
   s32 chance;
-  struct BattleWork *battle;
+  struct BattleState *battle;
 
   escaped = 0;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     escaped = 1;
   } else {
@@ -123,7 +123,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     battle->fleeFailures++;
   }
-  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
+  if (gMainRoutineState.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
   }
   return escaped;
@@ -147,7 +147,7 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
 s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 unitCount;
   s32 i;
 
@@ -296,7 +296,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
 /// the opponent's, their units and targets seen from this side. Returns how
 /// many were received, or -1 when the exchange fails.
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
@@ -491,13 +491,13 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 /// failure.
 s32 Battle_GatherActions(struct BattleActionRecord *actions) {
   struct Unit *unit;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   u8 *firstStrike;
   s32 count;
   s32 received;
   s32 i;
 
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
   {
     struct BattleActionRecord *records = battle->actions;
     u32 n;
@@ -529,7 +529,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *actions) {
   }
 
   // Link opponent or enemy actions.
-  if (Ram_HeapSlots->battleWork->isLink != 0) {
+  if (Ram_HeapSlots->battleState->isLink != 0) {
     received = Battle_AppendLinkedActions(actions, count);
     if (LinkBattle_WaitSync() < 0) {
       count = -1;
@@ -572,7 +572,7 @@ finish:
 /// Returns the unit id at a list place, PLACE_ENEMY_SIDE set for the enemies'
 /// list.
 s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
 
   if ((taggedPlace & PLACE_ENEMY_SIDE) != 0)
     return battle->enemyIds[taggedPlace & PLACE_INDEX_MASK];
@@ -582,7 +582,7 @@ s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
 /// Returns the list place of a unit, PLACE_PARTY or PLACE_ENEMY with its place,
 /// or -1 when it is in neither list.
 s32 Battle_FindUnitPlace(u32 unitId) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   s32 placeIndex;
   s16 listedUnit;
 

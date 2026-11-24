@@ -311,17 +311,17 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
 /// which is returned.
 struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
   struct Unit *unit;
-  struct LevelUpWork *work;
+  struct LevelUpState *state;
   u32 requiredExperience;
   s16 growthBand;
   s32 growthDifference;
   s32 level;
 
   unit = Unit_Get(unitId);
-  work = Heap_AllocEwram(sizeof(struct LevelUpWork));
-  work->classIndex = unit->classId;
+  state = Heap_AllocEwram(sizeof(struct LevelUpState));
+  state->classIndex = unit->classId;
   level = unit->level;
-  work->level = level;
+  state->level = level;
   gains->level = level;
   gains->ability = -1;
   gains->hp = 0;
@@ -336,15 +336,15 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     requiredExperience = Unit_GetExperienceForLevel(unitId, unit->level);
     if (requiredExperience != (u32)-1 && unit->experience < requiredExperience)
       unit->experience = requiredExperience;
-    work->growth = Character_GetDefinition(unitId);
+    state->growth = Character_GetDefinition(unitId);
     // Level 1 starts from the curve's first point.
     if (gains->level == 1) {
-      gains->hp += work->growth->hp[0];
-      gains->pp += work->growth->pp[0];
-      gains->atk += work->growth->atk[0];
-      gains->def += work->growth->def[0];
-      gains->agi += work->growth->agi[0];
-      gains->luck += work->growth->luck[0];
+      gains->hp += state->growth->hp[0];
+      gains->pp += state->growth->pp[0];
+      gains->atk += state->growth->atk[0];
+      gains->def += state->growth->def[0];
+      gains->agi += state->growth->agi[0];
+      gains->luck += state->growth->luck[0];
     }
     // Each twenty-level band grows by the step between its growth points, a
     // twentieth a level with a random part; one roll per stat, in order.
@@ -354,27 +354,27 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     if (growthBand > GROWTH_POINTS - 2)
       growthBand = GROWTH_POINTS - 2;
     growthDifference =
-        work->growth->hp[growthBand + 1] - work->growth->hp[growthBand];
+        state->growth->hp[growthBand + 1] - state->growth->hp[growthBand];
     gains->hp += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                  GROWTH_BAND_LEVELS;
     growthDifference =
-        work->growth->pp[growthBand + 1] - work->growth->pp[growthBand];
+        state->growth->pp[growthBand + 1] - state->growth->pp[growthBand];
     gains->pp += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                  GROWTH_BAND_LEVELS;
     growthDifference =
-        work->growth->atk[growthBand + 1] - work->growth->atk[growthBand];
+        state->growth->atk[growthBand + 1] - state->growth->atk[growthBand];
     gains->atk += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                   GROWTH_BAND_LEVELS;
     growthDifference =
-        work->growth->def[growthBand + 1] - work->growth->def[growthBand];
+        state->growth->def[growthBand + 1] - state->growth->def[growthBand];
     gains->def += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                   GROWTH_BAND_LEVELS;
     growthDifference =
-        work->growth->agi[growthBand + 1] - work->growth->agi[growthBand];
+        state->growth->agi[growthBand + 1] - state->growth->agi[growthBand];
     gains->agi += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                   GROWTH_BAND_LEVELS;
     growthDifference =
-        work->growth->luck[growthBand + 1] - work->growth->luck[growthBand];
+        state->growth->luck[growthBand + 1] - state->growth->luck[growthBand];
     gains->luck += ((Random_Below(GROWTH_BAND_LEVELS)) + growthDifference) /
                    GROWTH_BAND_LEVELS;
     // Commit the six gains before rebuilding Psynergy and derived stats.
@@ -391,7 +391,7 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     ((s32 (*)(s32))Unit_RefreshPsynergy)(unitId);
     Unit_Calculate(unitId);
   }
-  Heap_Release(work);
+  Heap_Release(state);
   return gains;
 }
 

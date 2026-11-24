@@ -32,7 +32,7 @@
 /// Abilities: Prism, Hail Prism, Freeze Prism.
 void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   BlitterPair draw;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   struct Particle *seed;
@@ -46,21 +46,21 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   s32 k;
 
   shards = PARTICLES;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   // The boulder sprite sheet is unpacked first and the crystal sprite sheet
   // over it; Prism draws only the crystal's pictures.
-  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, work->sheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, state->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(args->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
   for (k = 0; k != PRISM_COUNT(args->variant, PRISM_CRYSTAL_COUNT); k++) {
-    seed = &work->particles[k];
+    seed = &state->particles[k];
     // A first roll, never read.
     x = Random16() & 31;
     seed->y = -toFIXED(64);
@@ -81,7 +81,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     // The strongest variant turns the camera.
     if (args->variant == EFFECT_VARIANT_STRONGEST &&
         frame < PRISM_CAMERA_STOP) {
-      struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+      struct BattleCamera *camera = Ram_HeapSlots->cameraState;
       s32 speed;
 
       if (frame < PRISM_CAMERA_SLOWING)
@@ -96,11 +96,11 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     if (frame == PRISM_COUNT(args->variant, PRISM_DAMAGE_FRAME))
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == PRISM_COUNT(args->variant, PRISM_FRAMES) - 8) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
     if (frame <= PRISM_COUNT(args->variant, PRISM_FRAMES) - 8) {
       for (i = 0; i != PRISM_COUNT(args->variant, PRISM_CRYSTAL_COUNT); i++) {
-        crystal = &work->particles[i];
+        crystal = &state->particles[i];
         if (crystal->z == PRISM_SHATTERED) {
           // A shattered crystal's shards fly and spin, slowing down.
           for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
@@ -116,7 +116,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             if (picture < PRISM_SHARD_PICTURE_COUNT)
 #endif
               draw[j <= 2](canvas,
-                           work->sheet + gPrism_ShardPictures[picture] +
+                           state->sheet + gPrism_ShardPictures[picture] +
                                PRISM_SHARD_PICTURES,
                            FIXED_INTEGER_PART(shard->x) -
                                gPrism_ShardWidths[picture] / 2,
@@ -131,7 +131,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
               shard->z--;
           }
         } else if (frame >= crystal->variant) {
-          draw[i & 1](canvas, work->sheet,
+          draw[i & 1](canvas, state->sheet,
                       FIXED_INTEGER_PART(crystal->x) - CRYSTAL_WIDTH / 2,
                       FIXED_INTEGER_PART(crystal->y), CRYSTAL_WIDTH,
                       CRYSTAL_HEIGHT);
@@ -155,7 +155,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
               shard->z = 32;
               shard->variant = 0;
             }
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
             Sound_PlayFar(SE_CLATTER);
             EFFECT_FOR_EACH_TARGET(j, args)
               BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
@@ -165,7 +165,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(args->variant * 2 + 4, args->variant * 4 + 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

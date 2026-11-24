@@ -26,7 +26,7 @@ happens inside it, which is why a window keeps typing while the code that
 opened it stands still (`WindowSystem_Update`).
 
 A battle can start a second form of it, `WindowSystem_UpdateBattle`, which
-does all three only while a switch in the battle's work is on, and
+does all three only while a switch in the battle's state is on, and
 otherwise only types.
 
 ## Decoding a message

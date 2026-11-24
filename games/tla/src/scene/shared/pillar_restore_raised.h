@@ -4,7 +4,7 @@
 /// first flag is set, as the first step on one leaves it. Then a leader left
 /// below the ground is lifted onto it.
 void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor;
   s32 id;
   s32 flag;
@@ -46,7 +46,7 @@ void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
         Actor_SelectAnimation(actor, 0);
     }
   }
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   ground =
       Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
   if (leader->y.fixed < ground) {

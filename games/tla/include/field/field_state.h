@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_FIELD_WORK_H
-#define ALCHEMY_FIELD_WORK_H
+#ifndef ALCHEMY_FIELD_STATE_H
+#define ALCHEMY_FIELD_STATE_H
 
 /// @file
-/// FieldWork, the running scene's work, with the field Psynergy's state at its
-/// end.
+/// FieldState, the running scene's state, with the field Psynergy's state at
+/// its end.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -18,30 +18,31 @@ struct MapCell;
 struct TriggerView;
 struct Window;
 
-/// The actor ids FieldWork.actors maps: the party's eight characters, the
+/// The actor ids FieldState.actors maps: the party's eight characters, the
 /// actors a scene places, and from FIELD_TREASURE_ACTOR on the map's treasure
 /// spots.
 #define FIELD_ACTOR_COUNT 80
 
-/// FieldWork.scoopedItem: coins rather than an item, their count in the low
+/// FieldState.scoopedItem: coins rather than an item, their count in the low
 /// bits.
 #define SCOOPED_COINS 0x8000
 /// The actor that shows what Scoop dug up.
 #define SCOOPED_ITEM_ACTOR 79
 /// The first actor id of a treasure spot (Field_PlaceTreasureSpots).
 #define FIELD_TREASURE_ACTOR 64
-/// FieldWork.talk and Scene_TalkToActor: with this bit a container is opened
+/// FieldState.talk and Scene_TalkToActor: with this bit a container is opened
 /// without its "checked the ..." message, as Scoop opens what it digs up; the
 /// actor id is in the bits under it.
 #define FIELD_TALK_SILENT 0x1000
 /// Scene_TalkToActor's id: the actor id, under FIELD_TALK_SILENT.
 #define FIELD_TALK_ACTOR_MASK 0xfff
-/// FieldWork.talk: set with the actor id under it to ask for that actor's talk.
+/// FieldState.talk: set with the actor id under it to ask for that actor's
+/// talk.
 #define FIELD_TALK_REQUEST 0x4000
 /// The frames of a scene's default fade in, from the backdrop colour.
 #define MAP_TRANSITION_FRAMES 16
 
-/// The values of FieldWork.raisedTrigger that the field sequence handles
+/// The values of FieldState.raisedTrigger that the field sequence handles
 /// itself, rather than passing them to the scene (Scene_RunRaisedTrigger).
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
@@ -79,7 +80,8 @@ enum WorldMapRaisedTrigger {
   WORLD_MAP_RAISED_LAND = 254
 };
 
-/// How the actors are moved and drawn (FieldWork.mode, ActorSystem_Initialize).
+/// How the actors are moved and drawn (FieldState.mode,
+/// ActorSystem_Initialize).
 enum ActorSystemMode {
   /// A town, a dungeon or the sprite viewer: the scrolling camera.
   ACTOR_SYSTEM_MAP = 2,
@@ -92,14 +94,14 @@ enum ActorSystemMode {
 };
 
 /// The frames the leader pushes against a step trigger, a ledge, a gap or a
-/// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
+/// wall before it runs, jumps or climbs (FieldState.blockedSteps).
 #define FIELD_PUSH_FRAMES 12
 
-/// A field scene's work: FieldSequence_Run allocates it in HEAP_SLOT_FIELD,
+/// A field scene's state: FieldSequence_Run allocates it in HEAP_SLOT_FIELD,
 /// zeroes it and frees it on the way out, and the field sequence, the event
 /// commands and the scene overlays all reach it through
-/// Ram_HeapSlots->fieldWork.
-struct FieldWork {
+/// Ram_HeapSlots->fieldState.
+struct FieldState {
   /// The actor placement tables placed so far, recorded by
   /// Event_SpawnActorPlacements.
   const struct ActorPlacement *tables[4];
@@ -234,38 +236,38 @@ struct FieldWork {
   u8 padding[2];
 };
 
-STATIC_ASSERT(sizeof(struct FieldWork) == 3408);
-STATIC_ASSERT(offsetof(struct FieldWork, triggers) == 16);
-STATIC_ASSERT(offsetof(struct FieldWork, actors) == 20);
-STATIC_ASSERT(offsetof(struct FieldWork, stepTrigger) == 340);
-STATIC_ASSERT(offsetof(struct FieldWork, exit) == 344);
-STATIC_ASSERT(offsetof(struct FieldWork, encounter) == 356);
-STATIC_ASSERT(offsetof(struct FieldWork, raisedTrigger) == 362);
-STATIC_ASSERT(offsetof(struct FieldWork, blockedSteps) == 388);
-STATIC_ASSERT(offsetof(struct FieldWork, mode) == 394);
-STATIC_ASSERT(offsetof(struct FieldWork, encounterZones) == 396);
-STATIC_ASSERT(offsetof(struct FieldWork, transition) == 428);
-STATIC_ASSERT(offsetof(struct FieldWork, transitionFrames) == 436);
-STATIC_ASSERT(offsetof(struct FieldWork, message) == 452);
-STATIC_ASSERT(offsetof(struct FieldWork, camera) == 460);
-STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 480);
-STATIC_ASSERT(offsetof(struct FieldWork, leaderPlacements) == 492);
-STATIC_ASSERT(offsetof(struct FieldWork, noticeWindow) == 540);
-STATIC_ASSERT(offsetof(struct FieldWork, savedFadeTarget) == 546);
-STATIC_ASSERT(offsetof(struct FieldWork, busy) == 3234);
-STATIC_ASSERT(offsetof(struct FieldWork, revealActive) == 3236);
-STATIC_ASSERT(offsetof(struct FieldWork, choiceMessage) == 3248);
-STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 3254);
-STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 3256);
-STATIC_ASSERT(offsetof(struct FieldWork, psynergyCells) == 3264);
-STATIC_ASSERT(offsetof(struct FieldWork, targetX) == 3377);
-STATIC_ASSERT(offsetof(struct FieldWork, sceneAttributeLow) == 3382);
-STATIC_ASSERT(offsetof(struct FieldWork, hoverReady) == 3385);
-STATIC_ASSERT(offsetof(struct FieldWork, glow) == 3396);
-STATIC_ASSERT(offsetof(struct FieldWork, psynergyDrawFlags) == 3404);
+STATIC_ASSERT(sizeof(struct FieldState) == 3408);
+STATIC_ASSERT(offsetof(struct FieldState, triggers) == 16);
+STATIC_ASSERT(offsetof(struct FieldState, actors) == 20);
+STATIC_ASSERT(offsetof(struct FieldState, stepTrigger) == 340);
+STATIC_ASSERT(offsetof(struct FieldState, exit) == 344);
+STATIC_ASSERT(offsetof(struct FieldState, encounter) == 356);
+STATIC_ASSERT(offsetof(struct FieldState, raisedTrigger) == 362);
+STATIC_ASSERT(offsetof(struct FieldState, blockedSteps) == 388);
+STATIC_ASSERT(offsetof(struct FieldState, mode) == 394);
+STATIC_ASSERT(offsetof(struct FieldState, encounterZones) == 396);
+STATIC_ASSERT(offsetof(struct FieldState, transition) == 428);
+STATIC_ASSERT(offsetof(struct FieldState, transitionFrames) == 436);
+STATIC_ASSERT(offsetof(struct FieldState, message) == 452);
+STATIC_ASSERT(offsetof(struct FieldState, camera) == 460);
+STATIC_ASSERT(offsetof(struct FieldState, speaker) == 480);
+STATIC_ASSERT(offsetof(struct FieldState, leaderPlacements) == 492);
+STATIC_ASSERT(offsetof(struct FieldState, noticeWindow) == 540);
+STATIC_ASSERT(offsetof(struct FieldState, savedFadeTarget) == 546);
+STATIC_ASSERT(offsetof(struct FieldState, busy) == 3234);
+STATIC_ASSERT(offsetof(struct FieldState, revealActive) == 3236);
+STATIC_ASSERT(offsetof(struct FieldState, choiceMessage) == 3248);
+STATIC_ASSERT(offsetof(struct FieldState, psynergyActing) == 3254);
+STATIC_ASSERT(offsetof(struct FieldState, queuedSound) == 3256);
+STATIC_ASSERT(offsetof(struct FieldState, psynergyCells) == 3264);
+STATIC_ASSERT(offsetof(struct FieldState, targetX) == 3377);
+STATIC_ASSERT(offsetof(struct FieldState, sceneAttributeLow) == 3382);
+STATIC_ASSERT(offsetof(struct FieldState, hoverReady) == 3385);
+STATIC_ASSERT(offsetof(struct FieldState, glow) == 3396);
+STATIC_ASSERT(offsetof(struct FieldState, psynergyDrawFlags) == 3404);
 
-/// The running field scene's work, in HEAP_SLOT_FIELD; FieldSequence_Run takes
+/// The running field scene's state, in HEAP_SLOT_FIELD; FieldSequence_Run takes
 /// it and frees it.
-#define gFieldWork ((struct FieldWork *)Ram_HeapSlots->fieldWork)
+#define gFieldState ((struct FieldState *)Ram_HeapSlots->fieldState)
 
 #endif

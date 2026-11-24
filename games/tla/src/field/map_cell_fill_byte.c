@@ -11,7 +11,7 @@ extern struct MapCell gMapGridCellBuffer[];
 /// Layers 3 and above use the shared buffer.
 s32 Map_FillLayerRectCollision(u32 layer, u32 x, u32 y, u32 width, u32 height,
                                s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cells;
 
   if (map == NULL)

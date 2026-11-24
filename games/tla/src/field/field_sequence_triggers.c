@@ -36,7 +36,7 @@ struct ActionDescriptor *Scene_FindActorPlacement(s32 id) {
   s32 group = ACTOR_FIRST_PLACED;
 
   for (i = 0; i < 4; i++) {
-    entry = gFieldWork->tables[i];
+    entry = gFieldState->tables[i];
     if (entry == NULL)
       continue;
     if (id < ACTOR_FIRST_PLACED) {
@@ -81,16 +81,16 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// (TRIGGER_FLAG_FACING) requirements are met, or NULL. TRIGGER_PUSH and
 /// TRIGGER_PUSHED, the triggers Field_RunPushCell runs for an actor pushed and
 /// for the cell pushed against, answer any target; the facing test alone is
-/// skipped while gMainRoutineWork.movementMode is LEADER_MOVEMENT_KEYS.
+/// skipped while gMainRoutineState.movementMode is LEADER_MOVEMENT_KEYS.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TriggerView *trigger = work->triggers;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct TriggerView *trigger = state->triggers;
   s32 flags;
-  u32 facing = Actor_Lookup(gMainRoutineWork.leaderActorId)->facing;
+  u32 facing = Actor_Lookup(gMainRoutineState.leaderActorId)->facing;
 
   flags = trigger->flags;
   while (flags != -1) {
-    u8 *mode = &gMainRoutineWork.movementMode;
+    u8 *mode = &gMainRoutineState.movementMode;
 
     if ((flags & TRIGGER_KIND_MASK) == kind &&
         (trigger->value == target || kind == TRIGGER_PUSH ||
@@ -111,7 +111,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
         matches = 1;
         break;
       case STEP_TRIGGER_FLAG_WALKING:
-        if (work->blockedSteps > minimumPushFrames)
+        if (state->blockedSteps > minimumPushFrames)
           matches = 1;
         break;
       case TRIGGER_FLAG_FACING:
@@ -124,7 +124,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
         }
         break;
       case STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING:
-        if (work->blockedSteps > minimumPushFrames) {
+        if (state->blockedSteps > minimumPushFrames) {
           flags &= TRIGGER_FACING_MASK;
           matches = (u16)((flags - facing) + (TRIG_TURN / 8 - 1)) <=
                     TRIG_TURN / 4 - 2;
@@ -146,11 +146,11 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
 UNUSED void Overlay_CallInitialize(void) { SCENE_ENTRIES->initialize(); }
 
 /// Returns the talk trigger of actor id, or NULL: for the actor Halt has
-/// stopped (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED trigger if
+/// stopped (gMainRoutineState.haltedActor), its TRIGGER_TALK_HALTED trigger if
 /// it has one, the event for talking to it while it is stopped.
 void *Scene_FindActorTalkTrigger(s32 id) {
   void *found = Scene_FindTrigger(TRIGGER_TALK, id);
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
   void *event;
   s32 stopped;
 
@@ -183,7 +183,7 @@ s32 Scene_TalkToActor(s32 id) {
   s32 paused;
   s32 decodeFlags;
   s32 silent;
-  struct FieldWork *field;
+  struct FieldState *field;
   struct Actor *leader;
   struct Actor *shown;
   struct ContainerRow *row;
@@ -196,7 +196,7 @@ s32 Scene_TalkToActor(s32 id) {
   s32 contents;
   s32 index;
   s32 slot;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   placement = Scene_FindActorPlacement(id);
   result = -1;
@@ -204,7 +204,7 @@ s32 Scene_TalkToActor(s32 id) {
   paused = 0;
   decodeFlags = 0;
   silent = id & FIELD_TALK_SILENT;
-  field = Ram_HeapSlots->fieldWork;
+  field = Ram_HeapSlots->fieldState;
   id &= FIELD_TALK_ACTOR_MASK;
   found = 0;
   talker = Actor_GetById(id);
@@ -252,7 +252,7 @@ s32 Scene_TalkToActor(s32 id) {
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
-      if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && point == 0 &&
+      if (gMainRoutineState.next == SCENE_VENUS_LIGHTHOUSE && point == 0 &&
           !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgChestAlreadyOpen, FIELD_MESSAGE_ZOOM);
@@ -309,19 +309,19 @@ s32 Scene_TalkToActor(s32 id) {
           GameFlag_Set(flag);
         Event_End();
       } else if (type == CONTAINER_MIMIC) {
-        work = Ram_HeapSlots->fieldWork;
+        state = Ram_HeapSlots->fieldState;
         TreasureSpot_LaunchMimic(index);
         if (flag != -1)
-          gMainRoutineWork.pendingDjinni = flag | CONDITION_FLAG_SET;
+          gMainRoutineState.pendingDjinni = flag | CONDITION_FLAG_SET;
         if (contents > ENCOUNTER_ZONE_SLOTS - 1)
-          work->encounter = Encounter_GetFormationAtSlot(
+          state->encounter = Encounter_GetFormationAtSlot(
               ENCOUNTER_ZONE_MIMIC + 1, contents - ENCOUNTER_ZONE_SLOTS);
         else
-          work->encounter =
+          state->encounter =
               Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC, contents);
-        gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+        gMainRoutineState.battleType = BATTLE_TYPE_NO_ESCAPE;
         Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC, contents);
-        Sound_PlayFar(gMainRoutineWork.battleMusic);
+        Sound_PlayFar(gMainRoutineState.battleMusic);
         FieldMessage_ShowFar((s32)&MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
       } else {
         if (type == CONTAINER_POND)
@@ -331,7 +331,7 @@ s32 Scene_TalkToActor(s32 id) {
           FieldMessage_ShowFar((s32)&MsgSomethingBuriedHere,
                                FIELD_MESSAGE_ZOOM);
           if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
-            gFieldWork->fieldMenu = 1;
+            gFieldState->fieldMenu = 1;
         } else if (contents & CONTAINER_COINS) {
           if (type == CONTAINER_GROUND) {
             shown = TreasureSpot_GetActor(index);
@@ -387,7 +387,7 @@ s32 Scene_TalkToActor(s32 id) {
             ItemDisplay_RaiseAboveLeader(shown);
             Sound_PlayFar(MUS_TREASURE_FOUND);
             MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
-            if (slot == gMainRoutineWork.leaderActorId) {
+            if (slot == gMainRoutineState.leaderActorId) {
               FieldMessage_ShowFar((s32)&MsgItemReceived,
                                    FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_WAITING_FOR_SOUND);
@@ -422,7 +422,7 @@ s32 Scene_TalkToActor(s32 id) {
     }
   }
 
-  if (gMainRoutineWork.haltedActor == id) {
+  if (gMainRoutineState.haltedActor == id) {
     paused = 1;
     talk = Scene_FindTrigger(TRIGGER_TALK_HALTED, id);
     if (talk == NULL) {
@@ -449,10 +449,10 @@ s32 Scene_TalkToActor(s32 id) {
       savedAngle = talker->facing;
       if ((u8)placement->talkFacing <= TALK_FACING_PARTY_AND_BACK ||
           (s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
-        leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+        leader = Actor_GetById(gMainRoutineState.leaderActorId);
         Actor_SetPositionAndResetMotionFar(leader, leader->x.fixed,
                                            leader->y.fixed, leader->z.fixed);
-        Actor_TurnToFaceEachOther(id, gMainRoutineWork.leaderActorId, 0);
+        Actor_TurnToFaceEachOther(id, gMainRoutineState.leaderActorId, 0);
       }
     }
     if (talk->result < TRIGGER_RESULT_MESSAGE_END) {
@@ -465,7 +465,7 @@ s32 Scene_TalkToActor(s32 id) {
     if (!paused) {
       if (talker->script[talker->scriptCursor] == SCRIPT_COMMAND_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
-          talker->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+          talker->watchedActor = Actor_GetById(gMainRoutineState.leaderActorId);
           talker->steeringFlags |= ACTOR_FACES_MOTION;
           Actor_SetMovementType(talker, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
@@ -480,8 +480,8 @@ s32 Scene_TalkToActor(s32 id) {
   }
 resume:
   if (paused) {
-    FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
-    gMainRoutineWork.haltedActor = -1;
+    FieldPsynergy_ResumeHaltedActor(gMainRoutineState.haltedActor);
+    gMainRoutineState.haltedActor = -1;
   }
   return result;
 }
@@ -512,14 +512,14 @@ s32 Scene_RunRaisedTrigger(s32 id) {
 s32 Scene_RunStepTriggerOrExit(s32 value) {
   struct TriggerView *event;
   s32 handled;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   event = Scene_FindTrigger(TRIGGER_STEP, value);
   handled = -1;
-  work = gFieldWork;
+  state = gFieldState;
   if (event != NULL && event->result != 0) {
     if (event->flags & STEP_TRIGGER_FLAG_WALKING)
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
     if (event->result < TRIGGER_RESULT_MESSAGE_END) {
       Event_RunMessage(handled, event->result);
       handled = 0;
@@ -547,7 +547,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Exit_AddHiddenLeaderLayer();
         break;
       }
-      work->exit = event->result;
+      state->exit = event->result;
       handled = 0;
     }
   }
@@ -556,31 +556,31 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 
 /// Runs the push cell the leader pushes against (attributes, its cell's
 /// attribute bits) once it has pushed for more than FIELD_PUSH_FRAMES, idle
-/// while gMainRoutineWork.sandActive is set: a MAP_CELL_LEDGE with KEY_DOWN
+/// while gMainRoutineState.sandActive is set: a MAP_CELL_LEDGE with KEY_DOWN
 /// held jumps down it, a MAP_CELL_JUMP jumps forward, a MAP_CELL_CLIMBABLE
 /// climbs down or up by the key held, and a MAP_CELL_PUSH pushes the actor
 /// ahead, running the scene's TRIGGER_PUSH trigger for it and TRIGGER_PUSHED
 /// for the cell. Always returns 0.
 s32 Field_RunPushCell(s32 attributes) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 owner = gMainRoutineWork.leaderActorId;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 owner = gMainRoutineState.leaderActorId;
   struct TriggerView *event;
   s32 target;
   s32 result;
 
-  if (gMainRoutineWork.sandActive != 0)
+  if (gMainRoutineState.sandActive != 0)
     return 0;
-  if ((attributes & MAP_CELL_LEDGE) && work->blockedSteps > FIELD_PUSH_FRAMES &&
-      (work->heldKeys & KEY_DOWN)) {
+  if ((attributes & MAP_CELL_LEDGE) &&
+      state->blockedSteps > FIELD_PUSH_FRAMES && (state->heldKeys & KEY_DOWN)) {
     Actor_JumpDownLedge(owner, ANIM_LEADER_SPRING, 0);
-    work->blockedSteps = 0;
+    state->blockedSteps = 0;
   }
-  if ((attributes & MAP_CELL_JUMP) && work->blockedSteps > FIELD_PUSH_FRAMES &&
+  if ((attributes & MAP_CELL_JUMP) && state->blockedSteps > FIELD_PUSH_FRAMES &&
       !Field_TryJumpForward())
-    work->blockedSteps = 0;
+    state->blockedSteps = 0;
   if ((attributes & MAP_CELL_CLIMBABLE) &&
-      work->blockedSteps > FIELD_PUSH_FRAMES) {
-    s32 kind = work->heldKeys & (KEY_RIGHT | KEY_LEFT | KEY_UP | KEY_DOWN);
+      state->blockedSteps > FIELD_PUSH_FRAMES) {
+    s32 kind = state->heldKeys & (KEY_RIGHT | KEY_LEFT | KEY_UP | KEY_DOWN);
     s32 done = -1;
 
     if (kind == KEY_DOWN)
@@ -588,17 +588,17 @@ s32 Field_RunPushCell(s32 attributes) {
     else if (kind == KEY_UP)
       done = Field_ClimbUp();
     if (done == 0) {
-      work->blockedSteps = 0;
-      work->fieldMenu = 0;
-      work->pauseMenu = 0;
-      work->aButton = 0;
-      work->encounter = 0;
-      work->psynergy = 0;
+      state->blockedSteps = 0;
+      state->fieldMenu = 0;
+      state->pauseMenu = 0;
+      state->aButton = 0;
+      state->encounter = 0;
+      state->psynergy = 0;
     }
   }
-  if ((attributes & MAP_CELL_PUSH) && work->blockedSteps > FIELD_PUSH_FRAMES &&
+  if ((attributes & MAP_CELL_PUSH) && state->blockedSteps > FIELD_PUSH_FRAMES &&
       Leader_CanPushObjectAhead()) {
-    target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+    target = Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId);
     if (target != -1) {
       event = Scene_FindTrigger(TRIGGER_PUSH, target);
       if (event != NULL && (result = event->result) != 0) {
@@ -615,7 +615,7 @@ s32 Field_RunPushCell(s32 attributes) {
         else
           ((void (*)(s32, s32))result)(attributes, target);
       }
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
     }
   }
   return 0;
@@ -665,7 +665,7 @@ s32 Field_ExamineCell(s32 id) {
         (result & FIND_TYPE_MASK) == FIND_MESSAGE(0)) {
       if ((result & FIND_FUNCTION_BITS) != 0) {
         if (GameFlag_IsConditionActive(condition))
-          ((void (*)(s32))event->value)(gMainRoutineWork.leaderActorId);
+          ((void (*)(s32))event->value)(gMainRoutineState.leaderActorId);
         if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
           FieldMessage_ShowFar(kind + (s32)&MsgTileResult, FIELD_MESSAGE_ZOOM);
       } else {

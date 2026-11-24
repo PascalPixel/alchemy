@@ -17,7 +17,7 @@
 #include "types.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -34,7 +34,7 @@
 #include "graphics/text_render.h"
 #include "graphics/uiflow.h"
 #include "fixed_math.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/sprite.h"
 
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
@@ -88,13 +88,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// The scene's actor placements: a room of names for its entrance, else the
 /// debug room's.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
+  if (gMainRoutineState.entrance == ENTRANCE_NAMES_FIRST)
     return gIncreaseItemAndLevel_FirstNamePlacements;
-  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
+  if (gMainRoutineState.entrance == ENTRANCE_NAMES_SECOND)
     return gIncreaseItemAndLevel_SecondNamePlacements;
-  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_THIRD)
+  if (gMainRoutineState.entrance == ENTRANCE_NAMES_THIRD)
     return gIncreaseItemAndLevel_ThirdNamePlacements;
-  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FOURTH)
+  if (gMainRoutineState.entrance == ENTRANCE_NAMES_FOURTH)
     return gIncreaseItemAndLevel_FourthNamePlacements;
   return gIncreaseItemAndLevel_ActorPlacements;
 }
@@ -110,11 +110,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void IncreaseItemAndLevel_ShowName(s32 actorId) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
+  if (gMainRoutineState.entrance == ENTRANCE_NAMES_FIRST)
     Event_SetMessageId(actorId + (s32)MsgFixingThisWill);
-  else if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
+  else if (gMainRoutineState.entrance == ENTRANCE_NAMES_SECOND)
     Event_SetMessageId(actorId + (s32)MsgNamesFortuneTeller);
-  else if (gMainRoutineWork.entrance == ENTRANCE_NAMES_THIRD)
+  else if (gMainRoutineState.entrance == ENTRANCE_NAMES_THIRD)
     Event_SetMessageId(actorId + (s32)MsgNamesConfirmGraphic);
   else
     Event_SetMessageId(actorId + (s32)MsgNamesPiers);
@@ -144,7 +144,7 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
 /// The scene's triggers: the rooms of names' for any entrance above
 /// ENTRANCE_NAMES_ABOVE, else the debug room's.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.entrance > ENTRANCE_NAMES_ABOVE)
+  if (gMainRoutineState.entrance > ENTRANCE_NAMES_ABOVE)
     return gIncreaseItemAndLevel_NameTriggers;
   return gIncreaseItemAndLevel_Triggers;
 }
@@ -177,7 +177,7 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gMainRoutineWork.leaderActorId);
+  unit = Unit_Get(gMainRoutineState.leaderActorId);
   window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
   messageId = (s32)MsgRaiseEveryoneS;
@@ -662,7 +662,7 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
 /// Unused: requests an exit through a window transition over 24 frames; no
 /// trigger row names it.
 void IncreaseItemAndLevel_RequestExit(s32 countdown) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   event->transitionFrames = 24;
@@ -673,11 +673,11 @@ void IncreaseItemAndLevel_RequestExit(s32 countdown) {
 /// ACTOR_LEVEL_EDITOR 1.7 times its size, as The Broken Seal's Japanese
 /// edition does.
 s32 Scene_Initialize(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
 
   event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   event->transitionFrames = 24;
-  if (gMainRoutineWork.entrance <= ENTRANCE_DEBUG_ROOM_LAST) {
+  if (gMainRoutineState.entrance <= ENTRANCE_DEBUG_ROOM_LAST) {
     Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
     Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
   }
@@ -703,9 +703,9 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is.
 void IncreaseItemAndLevel_EnableEffectChildMode(void) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
 
-  work->childMode = 1;
+  state->childMode = 1;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }

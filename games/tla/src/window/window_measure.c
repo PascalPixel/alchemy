@@ -29,7 +29,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
 #if !TLA_PATCH_1
-  struct WindowWork *work;
+  struct WindowState *state;
 #endif
   s32 x;
   s32 y;
@@ -40,7 +40,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   s32 fittedPosition;
 
 #if !TLA_PATCH_1
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 #endif
   x = *windowX;
   y = *windowY;
@@ -61,7 +61,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     *windowWidth = (*windowWidth + WINDOW_PAD_X) >> 3;
     *windowHeight = (*windowHeight + WINDOW_PAD_Y) >> 3;
 #if !TLA_PATCH_1
-    if (work->mindRead != 0) {
+    if (state->mindRead != 0) {
       *windowWidth += 2;
       rightLimit = DISPLAY_TILE_WIDTH - 1;
     }
@@ -110,12 +110,12 @@ void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
 /// returns 0 when the message is empty.
 #define DEFINE_MESSAGE_SIZE(name, flags)                                       \
   s32 name(s32 message, s32 *x, s32 *y, u32 *width, u32 *height) {             \
-    struct WindowWork *work;                                                   \
+    struct WindowState *state;                                                 \
     s32 entry;                                                                 \
                                                                                \
-    work = WINDOW_WORK;                                                        \
+    state = WINDOW_STATE;                                                      \
     entry = Message_Decode(message, 0);                                        \
-    if (work->textBuffer[entry] == 0) {                                        \
+    if (state->textBuffer[entry] == 0) {                                       \
       return 0;                                                                \
     }                                                                          \
     Window_FitOnScreen(entry, x, y, width, height, 0, flags);                  \
@@ -132,10 +132,10 @@ DEFINE_MESSAGE_SIZE(Text_GetMessageSizeAllPages, WINDOW_FIT_ALL_PAGES)
 /// pixels. With spacing set, fills one entry per line, MESSAGE_LINE_COUNT at
 /// most, with the
 /// extra gap between characters, in 1/256 pixel, that spreads the line across
-/// the window. It leaves WindowWork.outline at the last style it passed.
+/// the window. It leaves WindowState.outline at the last style it passed.
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing) {
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 height;
   u32 lines;
   u32 width;
@@ -150,14 +150,14 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 step;
   u32 style;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
   width = 0;
   height = TEXT_LINE_HEIGHT;
   lines = 0;
   lineWidth = 0;
   count = 0;
   for (;;) {
-    code = work->textBuffer[entryIndex];
+    code = state->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code >= TEXT_SPACE && code != TEXT_EM_DASH) {
@@ -166,7 +166,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         count++;
       } else {
         glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-        style = work->outline;
+        style = state->outline;
         if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
         lineWidth += glyph;
@@ -189,7 +189,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         glyph = KANJI_WIDTH;
         if (code <= TEXT_LAST_FONT_CODE)
           glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-        style = work->outline;
+        style = state->outline;
         if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
         lineWidth += glyph;
@@ -240,7 +240,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
-      work->outline = work->textBuffer[entryIndex];
+      state->outline = state->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
@@ -256,12 +256,12 @@ done:
   // While a mind-read window is open the text is 2 pixels wider, except in the
   // German release and the French and Italian after it (Spanish keeps them).
 #if !TLA_PATCH_2 || LANGUAGE == LANGUAGE_SPANISH
-  if (work->mindRead)
+  if (state->mindRead)
     width = width + 2;
 #endif
   // In textMode a message of three lines or more is squeezed into 32 pixels,
   // and spacing's last entry tells Message_Start so (Message.compressLines).
-  if (work->textMode != 0) {
+  if (state->textMode != 0) {
     if (height > 44) {
       spacing[3] = 1;
       height = 32;
@@ -318,7 +318,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 pageHeights[16];
   u16 lineSpacingCounts[MESSAGE_LINE_COUNT];
   u16 lineWidths[MESSAGE_LINE_COUNT];
-  struct WindowWork *work;
+  struct WindowState *state;
   u32 maxWidth;
   u32 line;
   u32 width;
@@ -332,7 +332,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   s32 gap;
   u32 step;
 
-  work = WINDOW_WORK;
+  state = WINDOW_STATE;
 #if TLA_PATCH_1 && !TLA_PATCH_2
   maxWidth = 0;
 #endif
@@ -360,7 +360,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   count = 0;
   page = 0;
   for (;;) {
-    code = work->textBuffer[entryIndex];
+    code = state->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code >= TEXT_SPACE && code != TEXT_EM_DASH) {
@@ -369,7 +369,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         count++;
       } else {
         glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-        outline = work->outline;
+        outline = state->outline;
         if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
         width += glyph;
@@ -392,7 +392,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         glyph = KANJI_WIDTH;
         if (code <= TEXT_LAST_FONT_CODE)
           glyph = gFont_Glyphs[code - TEXT_SPACE].width;
-        outline = work->outline;
+        outline = state->outline;
         if (outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
           glyph++;
         width += glyph;
@@ -448,7 +448,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
-      work->outline = work->textBuffer[entryIndex];
+      state->outline = state->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     }
@@ -457,7 +457,7 @@ done:
   // From the German release on, a mind-read window is no longer 2 pixels
   // wider.
 #if !TLA_PATCH_2
-  if (work->mindRead != 0)
+  if (state->mindRead != 0)
     maxWidth += 2;
 #endif
   for (pageIndex = 0; pageIndex < page; pageIndex++) {

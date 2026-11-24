@@ -17,14 +17,14 @@
 #define DJINN_FIGURE_Y 54
 #define DJINN_FIGURE_CHOOSING_Y 62
 
-/// DjinnMenuWork.pairEntries before a Djinni is chosen: every element and
+/// DjinnMenuState.pairEntries before a Djinni is chosen: every element and
 /// number bit set, which no list entry has.
 #define DJINN_ENTRY_NONE (DJINN_ENTRY_ELEMENT | DJINN_ENTRY_INDEX)
 
 /// The tile of BG character block 1 the backdrop's digits are copied to.
 #define DJINN_BACKDROP_DIGIT_TILE 128
 
-/// The cursor packed in DjinnMenuWork.selection: column + row * 10.
+/// The cursor packed in DjinnMenuState.selection: column + row * 10.
 #define DJINN_CURSOR_ROW_STRIDE 10
 
 /// Wraps a cursor index that has stepped one past either end of modulus
@@ -36,10 +36,10 @@ s32 Menu_GetModuloOfSum(s32 value, s32 modulus) {
 /// Places the four party figures over their Djinn columns, 56 pixels apart
 /// from x 32, at screen y 61 plus yOffset. Returns that y.
 s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   s32 memberX;
   s32 memberIndex;
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   yOffset += 61;
   memberX = 32;
   for (memberIndex = 0; memberIndex < 4; memberIndex++) {
@@ -66,23 +66,23 @@ s32 DjinnMenu_RunScreen(void);
 /// (FieldMenu_Run, FIELD_MENU_DJINN), and the Djinn tutorial. Types messages at
 /// MESSAGE_SPEED_FAST while it runs (the tutorial's steps set
 /// MESSAGE_SPEED_NORMAL for their messages, which stays until the menu closes)
-/// and puts the player's speed back. Takes the menu work (HEAP_SLOT_MENU) and
+/// and puts the player's speed back. Takes the menu state (HEAP_SLOT_MENU) and
 /// the backdrop (struct DjinnMenuBackdrop, from the EWRAM pool), and frees
 /// both before returning, after putting back the field tiles and palettes the
 /// backdrop saved. Returns 1, which makes the field menu open again.
 s32 DjinnMenu_Run(void) {
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   u32 savedMessageSpeed;
   s32 enabled;
   struct DjinnMenuBackdrop *backdrop;
 
-  menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  savedMessageSpeed = gMainRoutineWork.messageSpeed;
-  gMainRoutineWork.messageSpeed = MESSAGE_SPEED_FAST;
+  menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_STATE_SIZE);
+  savedMessageSpeed = gMainRoutineState.messageSpeed;
+  gMainRoutineState.messageSpeed = MESSAGE_SPEED_FAST;
   enabled = Ram_HeapSlots->actorSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
-  Window_InitializeWork(0);
+  Window_InitializeState(0);
   backdrop = Heap_AllocEwram(sizeof(*backdrop));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
@@ -135,7 +135,7 @@ s32 DjinnMenu_Run(void) {
   Heap_Release(menu->backdrop);
   HeapSlot_Release(HEAP_SLOT_MENU);
   Party_ClearUnusableShortcutsFar();
-  gMainRoutineWork.messageSpeed = savedMessageSpeed;
+  gMainRoutineState.messageSpeed = savedMessageSpeed;
   return 1;
 }
 
@@ -200,7 +200,7 @@ enum DjinnMenuStep {
 /// Returns -1 once the player leaves the menu.
 s32 DjinnMenu_RunScreen(void) {
   // icon holds the cursor, then each arrow in turn.
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
   struct WindowSprite *icon;
   s32 result;
   s32 step;
@@ -211,7 +211,7 @@ s32 DjinnMenu_RunScreen(void) {
   done = 0;
   result = 0;
   menuResult = 0;
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   icon = menu->cursor;
   icon->motion = ICON_HIDDEN;
   icon->animationStep = 0;
@@ -487,7 +487,7 @@ s32 Palette_GetBasicSpriteColors(void);
 /// makes the list's cursor and the two page arrows and places the arrows at the
 /// list window's corners.
 void Menu_OpenBackdropScreen(void) {
-  struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
+  struct DjinnMenuState *menu = Ram_HeapSlots->menuState;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
   struct Window *window;
   struct WindowSprite *icon;
@@ -614,7 +614,7 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 /// Lists each party member's Djinn of every element (Djinn_ListUnitEntries)
 /// into the backdrop's lists, with their counts.
 void DjinnMenu_BuildLists(struct DjinnMenuBackdrop *backdrop) {
-  struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
+  struct ItemMenuState *menu = (struct ItemMenuState *)Ram_HeapSlots->menuState;
   s32 i;
 
   for (i = 0; i < menu->partyCount; i++) {
@@ -666,8 +666,8 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
 /// standby in red, set in white and the rest in yellow. Over the list it
 /// labels the unleash effects when the party has few enough Djinn to show them.
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
-  struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
-  struct WindowWork *work = Ram_HeapSlots->windowWork;
+  struct DjinnMenuState *menu = Ram_HeapSlots->menuState;
+  struct WindowState *state = Ram_HeapSlots->windowState;
   s32 window = menu->listWindow;
   s32 owners;
   s32 column;
@@ -677,7 +677,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   s32 y;
   s32 djinn;
 
-  work->holdTilemapUpload = 1;
+  state->holdTilemapUpload = 1;
   WindowSprite_RedrawSavedRectFar(window);
   owners = Party_CountMembersFar();
   djinn = Party_SumDjinnCountsFar(-1);
@@ -719,12 +719,12 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   // The Japanese release reads the window tiles again for the first store
   // and does not wait; from patch 1 the page waits three frames.
 #if TLA_PATCH_1
-  work->dirty = 1;
-  work->holdTilemapUpload = 0;
+  state->dirty = 1;
+  state->holdTilemapUpload = 0;
   wait(3);
 #else
-  ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
-  work->holdTilemapUpload = 0;
+  ((struct WindowState *)Ram_HeapSlots->windowState)->dirty = 1;
+  state->holdTilemapUpload = 0;
 #endif
 }
 
@@ -764,7 +764,7 @@ void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
 /// Gives every cell of a tile rectangle that uses WINDOW_PALETTE the palette
 /// given instead, clipped to the screen, and marks its rows for upload.
 void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
-  struct WindowWork *tiles = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *tiles = (struct WindowState *)Ram_HeapSlots->windowState;
 
   palette = BG_TILE_PALETTE(palette);
 
@@ -837,8 +837,8 @@ struct Message *Message_OpenDecodedFar(void *window, s32 message);
 s32 DjinnMenu_ShowHelp(void) {
   struct Window *helpWindow;
   struct Window *statusWindow;
-  struct DjinnMenuWork *menu;
-  struct WindowWork *render;
+  struct DjinnMenuState *menu;
+  struct WindowState *render;
   s32 result;
   s32 previous;
   s32 selection;
@@ -848,9 +848,9 @@ s32 DjinnMenu_ShowHelp(void) {
   s32 helpIndex;
   s32 listMessage;
 
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   selection = 0;
-  render = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  render = (struct WindowState *)Ram_HeapSlots->windowState;
   result = 0;
   previous = 0;
   WindowSprite_ClearListFar(menu->listWindow);
@@ -919,7 +919,7 @@ s32 DjinnMenu_ShowHelp(void) {
       VramCache_FreeEntry(render->glyphResource);
       render->glyphResource = NO_GLYPH_RESOURCE;
     }
-    ((struct WindowWork *)Ram_HeapSlots->windowWork)->pageArrowShown = 0;
+    ((struct WindowState *)Ram_HeapSlots->windowState)->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
     {
       struct Window *window = channel->window;
@@ -930,7 +930,7 @@ s32 DjinnMenu_ShowHelp(void) {
     }
     channel->window = 0;
   } while (result == 0);
-  ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
+  ((struct WindowState *)Ram_HeapSlots->windowState)->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);
   WindowSprite_ClearListFar(helpWindow);
   wait(1);
@@ -942,7 +942,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->helpWindow);
     WindowSprite_PrepareForRedrawFar(menu->listWindow);
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
-    ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 0;
+    ((struct WindowState *)Ram_HeapSlots->windowState)->holdTilemapUpload = 0;
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_FRAME);
   return result;
@@ -981,7 +981,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
   do {                                                                         \
     (window) =                                                                 \
         Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + (offset), 9, 9, 1); \
-    gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;                      \
+    gMainRoutineState.messageSpeed = MESSAGE_SPEED_NORMAL;                     \
     while (Message_AllTypedFar() == 0)                                         \
       wait(1);                                                                 \
   } while (0)
@@ -1010,7 +1010,7 @@ enum DjinnRedraw {
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];
-  struct DjinnMenuWork *menu = Ram_HeapSlots->menuWork;
+  struct DjinnMenuState *menu = Ram_HeapSlots->menuState;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
   s32 helpWindow = menu->helpWindow;
   s32 listWindow = menu->listWindow;
@@ -1256,7 +1256,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
 #endif
       }
-      ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
+      ((struct WindowState *)Ram_HeapSlots->windowState)->dirty = 1;
       redraw = 0;
     }
     wait(1);
@@ -1359,7 +1359,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case DJINN_TUTORIAL_POWERS_TALK:
         if (backdrop->tutorialTimer == 60) {
-          gMainRoutineWork.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gMainRoutineState.messageSpeed = MESSAGE_SPEED_NORMAL;
           messageWindow = Message_OpenWindowFar(
               Menu_GetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_POWERS, 9, 9, 1);
           MenuCursor_Slide(2, 146);
@@ -1700,9 +1700,9 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   s32 savedMode;
   u8 first;
   u8 owner;
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
 
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   if (mode == DJINN_COMPARE_TRADE) {
     savedMode = mode;
     first = menu->pairMember[1];
@@ -1795,10 +1795,10 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
   s32 lost;
   s32 gained;
   u16 actions[48];
-  struct DjinnMenuWork *menu;
+  struct DjinnMenuState *menu;
 
   unit = Unit_Get(ownerId);
-  menu = Ram_HeapSlots->menuWork;
+  menu = Ram_HeapSlots->menuState;
   giveElement = menu->pairElement[removePairSlot];
   giveIndex = menu->pairIndex[removePairSlot];
   giveSet = menu->pairEntries[removePairSlot] & DJINN_ENTRY_IS_SET;
@@ -2069,7 +2069,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
       Text_SetColorFar(TEXT_COLOR_NORMAL);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
-    ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
+    ((struct WindowState *)Ram_HeapSlots->windowState)->dirty = 1;
   }
 
   size = sizeof(struct Unit);

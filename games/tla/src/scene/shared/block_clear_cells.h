@@ -1,7 +1,7 @@
 /// Opens again the overhead cells a marked pillar walled off (Blocks_MarkCells)
 /// and clears its mark.
 void MagmaRockInside_ClearBlockCells(struct Actor *actor) {
-  struct MapWork *map;
+  struct MapState *map;
   struct MapCell **cells;
   struct MapCell *cell;
   s32 x;

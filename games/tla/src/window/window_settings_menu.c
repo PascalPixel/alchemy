@@ -11,7 +11,7 @@
 #include "window/screens.h"
 
 /// The settings menu's rows, in the order of their help messages
-/// (MsgWindowColorHelp on) and of OptionMenuWork.option.
+/// (MsgWindowColorHelp on) and of OptionMenuState.option.
 enum SettingsMenuRow {
   SETTINGS_ROW_WINDOW_COLOR = 0,
   SETTINGS_ROW_WINDOW_BRIGHTNESS = 1,
@@ -107,65 +107,65 @@ void SettingsMenu_AnimateCursors(void) {
   s32 firstMarkerPicture;
   s32 secondMarkerPicture;
   s32 selectedOption;
-  struct OptionMenuWork *work;
+  struct OptionMenuState *state;
 
-  work = Ram_HeapSlots->settingsMenu;
-  selectedOption = work->page;
-  MenuCursor_AdvanceFar(&work->cursor.cursor);
-  MenuCursor_MoveTowardTargetFar(&work->marker[0].cursor);
-  MenuCursor_MoveTowardTargetFar(&work->marker[1].cursor);
+  state = Ram_HeapSlots->settingsMenu;
+  selectedOption = state->page;
+  MenuCursor_AdvanceFar(&state->cursor.cursor);
+  MenuCursor_MoveTowardTargetFar(&state->marker[0].cursor);
+  MenuCursor_MoveTowardTargetFar(&state->marker[1].cursor);
 
   if (selectedOption == SETTINGS_ROW_WINDOW_COLOR) {
     firstMarkerPicture =
-        (work->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
+        (state->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
   } else {
     firstMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
-  VramCache_Load((u8)work->marker[0].sprite->index, 256,
+  VramCache_Load((u8)state->marker[0].sprite->index, 256,
                  Resource_GetTableEntry(firstMarkerPicture));
 
   if (selectedOption == SETTINGS_ROW_WINDOW_BRIGHTNESS) {
     secondMarkerPicture =
-        (work->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
+        (state->cursorFrame & 7) + RESOURCE_SHOP_CURSOR_PICTURES;
   } else {
     secondMarkerPicture = RESOURCE_SHOP_CURSOR_PICTURES;
   }
-  VramCache_Load((u8)work->marker[1].sprite->index, 256,
+  VramCache_Load((u8)state->marker[1].sprite->index, 256,
                  Resource_GetTableEntry(secondMarkerPicture));
 
   if (selectedOption > SETTINGS_ROW_WINDOW_BRIGHTNESS)
     WindowSprite_Pulse(
-        work->choiceIcons[selectedOption - SETTINGS_ROW_MESSAGE_SPEED]
-                         [work->option[selectedOption]]);
-  work->cursorFrame++;
+        state->choiceIcons[selectedOption - SETTINGS_ROW_MESSAGE_SPEED]
+                          [state->option[selectedOption]]);
+  state->cursorFrame++;
 }
 
-/// Allocates the settings menu's work block, copies the settings into it with
+/// Allocates the settings menu's state, copies the settings into it with
 /// how many values each takes, and starts its per-frame task.
-void SettingsMenu_InitializeWork(void) {
-  struct OptionMenuWork *work;
+void SettingsMenu_InitializeState(void) {
+  struct OptionMenuState *state;
   volatile u32 zero;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                             sizeof(struct OptionMenuWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                              sizeof(struct OptionMenuState));
   zero = 0;
-  Dma_Set((const void *)&zero, work,
-          DMA_FILL_WORDS(sizeof(struct OptionMenuWork) / 4), REG_DMA3);
-  work->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineWork.windowHue;
-  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
-  work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
-      gMainRoutineWork.windowBrightness;
-  work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS] = WINDOW_BRIGHTNESS_COUNT;
-  work->option[SETTINGS_ROW_MESSAGE_SPEED] = gMainRoutineWork.messageSpeed;
-  work->optionCount[SETTINGS_ROW_MESSAGE_SPEED] = MESSAGE_SPEED_FAST + 1;
-  work->option[SETTINGS_ROW_SPEECH] = gMainRoutineWork.speech;
-  work->optionCount[SETTINGS_ROW_SPEECH] = 2;
-  work->option[SETTINGS_ROW_AUTO_SLEEP] = gMainRoutineWork.idleSleepEnabled;
-  work->optionCount[SETTINGS_ROW_AUTO_SLEEP] = 2;
+  Dma_Set((const void *)&zero, state,
+          DMA_FILL_WORDS(sizeof(struct OptionMenuState) / 4), REG_DMA3);
+  state->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineState.windowHue;
+  state->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
+  state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
+      gMainRoutineState.windowBrightness;
+  state->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS] = WINDOW_BRIGHTNESS_COUNT;
+  state->option[SETTINGS_ROW_MESSAGE_SPEED] = gMainRoutineState.messageSpeed;
+  state->optionCount[SETTINGS_ROW_MESSAGE_SPEED] = MESSAGE_SPEED_FAST + 1;
+  state->option[SETTINGS_ROW_SPEECH] = gMainRoutineState.speech;
+  state->optionCount[SETTINGS_ROW_SPEECH] = 2;
+  state->option[SETTINGS_ROW_AUTO_SLEEP] = gMainRoutineState.idleSleepEnabled;
+  state->optionCount[SETTINGS_ROW_AUTO_SLEEP] = 2;
   Task_Add(SettingsMenu_AnimateCursors, TASK_PASS_FRAME);
 }
 
-/// Stops the settings menu's per-frame task and frees its work block.
+/// Stops the settings menu's per-frame task and frees its state.
 void SettingsMenu_Release(void) {
   Task_Remove(SettingsMenu_AnimateCursors);
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
@@ -220,14 +220,14 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 /// slider's marker stands option * OPTION_SLIDER_WIDTH / count pixels right of
 /// OPTION_SLIDER_X.
 struct Window *SettingsMenu_Open(void) {
-  struct OptionMenuWork *work;
+  struct OptionMenuState *state;
   struct Window *win;
   struct WindowSprite *out;
   s32 x;
   s32 y;
   s32 msg;
 
-  work = Ram_HeapSlots->settingsMenu;
+  state = Ram_HeapSlots->settingsMenu;
   win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
                       WINDOW_FLAG_INSTANT);
   Window_DrawDividerLine(win, 0, 2, OPTION_DIVIDER_END, 2);
@@ -251,10 +251,10 @@ struct Window *SettingsMenu_Open(void) {
 
   out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
                             OUTPUT_SIZE_16X16, win, 0, 0);
-  work->cursor.sprite = out;
+  state->cursor.sprite = out;
   x = (s16)win->x * 8;
   y = (s16)win->y * 8 + 12;
-  MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
+  MenuCursor_SetPositionImmediateFar(&state->cursor.cursor, x, y);
 
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
@@ -283,12 +283,12 @@ struct Window *SettingsMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
-    work->marker[0].sprite = out;
+    state->marker[0].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
-    x += work->option[SETTINGS_ROW_WINDOW_COLOR] * OPTION_SLIDER_WIDTH /
-         work->optionCount[SETTINGS_ROW_WINDOW_COLOR];
+    x += state->option[SETTINGS_ROW_WINDOW_COLOR] * OPTION_SLIDER_WIDTH /
+         state->optionCount[SETTINGS_ROW_WINDOW_COLOR];
     y = (s16)win->y * 8 + 4;
-    MenuCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
+    MenuCursor_SetPositionImmediateFar(&state->marker[0].cursor, x, y);
   }
 
   x = VramCache_FindFreeEntry();
@@ -296,30 +296,30 @@ struct Window *SettingsMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
     out->sprite.oam.fullColor = 1;
-    work->marker[1].sprite = out;
+    state->marker[1].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
-    x += work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] * OPTION_SLIDER_WIDTH /
-         work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
+    x += state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] * OPTION_SLIDER_WIDTH /
+         state->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
     y = (s16)win->y * 8 + 20;
-    MenuCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
+    MenuCursor_SetPositionImmediateFar(&state->marker[1].cursor, x, y);
   }
 
   y = 28;
-  work->choiceIcons[0][0] = CommandIcon_Create(gSettingsMenu_SpeedIcons[0], 0,
-                                               win, OPTION_CHOICE_X, y);
-  work->choiceIcons[0][1] = CommandIcon_Create(gSettingsMenu_SpeedIcons[1], 0,
-                                               win, OPTION_CHOICE_X + 24, y);
-  work->choiceIcons[0][2] = CommandIcon_Create(gSettingsMenu_SpeedIcons[2], 0,
-                                               win, OPTION_CHOICE_X + 48, y);
+  state->choiceIcons[0][0] = CommandIcon_Create(gSettingsMenu_SpeedIcons[0], 0,
+                                                win, OPTION_CHOICE_X, y);
+  state->choiceIcons[0][1] = CommandIcon_Create(gSettingsMenu_SpeedIcons[1], 0,
+                                                win, OPTION_CHOICE_X + 24, y);
+  state->choiceIcons[0][2] = CommandIcon_Create(gSettingsMenu_SpeedIcons[2], 0,
+                                                win, OPTION_CHOICE_X + 48, y);
   y = 52;
-  work->choiceIcons[1][0] =
+  state->choiceIcons[1][0] =
       CommandIcon_Create(gSettingsMenu_SpeechIcons[0], 0, win, 100, y);
-  work->choiceIcons[1][1] =
+  state->choiceIcons[1][1] =
       CommandIcon_Create(gSettingsMenu_SpeechIcons[1], 0, win, 124, y);
   y = 76;
-  work->choiceIcons[2][0] =
+  state->choiceIcons[2][0] =
       CommandIcon_Create(gSettingsMenu_SleepIcons[0], 0, win, 100, y);
-  work->choiceIcons[2][1] =
+  state->choiceIcons[2][1] =
       CommandIcon_Create(gSettingsMenu_SleepIcons[1], 0, win, 124, y);
   return win;
 }
@@ -370,7 +370,7 @@ void FieldMessage_Show(s32 message, s32 mode);
 /// auto-sleep) until A or START keeps the settings (returns 0) or B drops them
 /// (returns -1).
 s32 SettingsMenu_Run(void) {
-  struct OptionMenuWork *work;
+  struct OptionMenuState *state;
   struct Window *settingsWindow;
   struct Window *helpWindow;
   struct WindowSprite *pair;
@@ -388,82 +388,82 @@ s32 SettingsMenu_Run(void) {
 
   redraw = 1;
   selectedOption = 0;
-  SettingsMenu_InitializeWork();
-  work = Ram_HeapSlots->settingsMenu;
+  SettingsMenu_InitializeState();
+  state = Ram_HeapSlots->settingsMenu;
   helpWindow =
       Window_Create(SETTINGS_HELP_WINDOW_X, 2, SETTINGS_HELP_WINDOW_WIDTH, 3,
                     WINDOW_FLAG_INSTANT);
   settingsWindow = SettingsMenu_Open();
   pair = MenuTitle_Create(SETTINGS_HEADING, settingsWindow, 64, -48);
   wait(1);
-  windowColor = &work->option[SETTINGS_ROW_WINDOW_COLOR];
-  brightness = &work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
+  windowColor = &state->option[SETTINGS_ROW_WINDOW_COLOR];
+  brightness = &state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
 
   for (;;) {
     if (redraw != 0) {
       redraw = 0;
       selectedOption =
           (selectedOption + SETTINGS_ROW_COUNT) % SETTINGS_ROW_COUNT;
-      work->option[selectedOption] =
-          (work->option[selectedOption] + work->optionCount[selectedOption]) %
-          work->optionCount[selectedOption];
-      work->page = selectedOption;
+      state->option[selectedOption] =
+          (state->option[selectedOption] + state->optionCount[selectedOption]) %
+          state->optionCount[selectedOption];
+      state->page = selectedOption;
       if (gSleepDisabled != 0)
-        work->option[SETTINGS_ROW_AUTO_SLEEP] = 0;
+        state->option[SETTINGS_ROW_AUTO_SLEEP] = 0;
 
       // Redraw each choice's icon at OAM_DEPTH_FRONT - 4, dimmed unless it is
       // the row's setting.
 
       for (i = 0; i <= 2; i++) {
-        icon = work->choiceIcons[0][i];
+        icon = state->choiceIcons[0][i];
         icon->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
-        resourceIndex = (u8)work->choiceIcons[0][i]->index;
+        resourceIndex = (u8)state->choiceIcons[0][i]->index;
         dimmed = 0;
-        if (i != work->option[SETTINGS_ROW_MESSAGE_SPEED])
+        if (i != state->option[SETTINGS_ROW_MESSAGE_SPEED])
           dimmed = 1;
         CommandIcon_Load(gSettingsMenu_SpeedIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        icon = work->choiceIcons[1][i];
+        icon = state->choiceIcons[1][i];
         icon->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
-        resourceIndex = (u8)work->choiceIcons[1][i]->index;
+        resourceIndex = (u8)state->choiceIcons[1][i]->index;
         dimmed = 0;
-        if (i != work->option[SETTINGS_ROW_SPEECH])
+        if (i != state->option[SETTINGS_ROW_SPEECH])
           dimmed = 1;
         CommandIcon_Load(gSettingsMenu_SpeechIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
-        icon = work->choiceIcons[2][i];
+        icon = state->choiceIcons[2][i];
         icon->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
-        resourceIndex = (u8)work->choiceIcons[2][i]->index;
+        resourceIndex = (u8)state->choiceIcons[2][i]->index;
         dimmed = 0;
-        if (i != work->option[SETTINGS_ROW_AUTO_SLEEP])
+        if (i != state->option[SETTINGS_ROW_AUTO_SLEEP])
           dimmed = 1;
         CommandIcon_Load(gSettingsMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
       x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*windowColor * OPTION_SLIDER_WIDTH) /
-           work->optionCount[SETTINGS_ROW_WINDOW_COLOR];
+           state->optionCount[SETTINGS_ROW_WINDOW_COLOR];
       y = (s16)settingsWindow->y * 8 + 4;
-      MenuCursor_SetFar(&work->marker[0].cursor, x, y, 1);
+      MenuCursor_SetFar(&state->marker[0].cursor, x, y, 1);
       x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
       x += (*brightness * OPTION_SLIDER_WIDTH) /
-           work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
+           state->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS];
       y = (s16)settingsWindow->y * 8 + 20;
-      MenuCursor_SetFar(&work->marker[1].cursor, x, y, 1);
+      MenuCursor_SetFar(&state->marker[1].cursor, x, y, 1);
 
-      x = work->option[SETTINGS_ROW_MESSAGE_SPEED] + (s32)MsgMessageSpeedSlow;
+      x = state->option[SETTINGS_ROW_MESSAGE_SPEED] + (s32)MsgMessageSpeedSlow;
       Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 40,
                                 FIRST_CHOICE_RIGHT, 48);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 40);
-      x = work->option[SETTINGS_ROW_SPEECH] + (s32)MsgSpeechOff;
+      x = state->option[SETTINGS_ROW_SPEECH] + (s32)MsgSpeechOff;
       Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 64, CHOICE_RIGHT, 72);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 64);
-      x = work->option[SETTINGS_ROW_AUTO_SLEEP] + (s32)MsgAutoSleepOff;
+      x = state->option[SETTINGS_ROW_AUTO_SLEEP] + (s32)MsgAutoSleepOff;
       Window_ClearInteriorTiles(settingsWindow, CHOICE_X, 88, CHOICE_RIGHT, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
       // The windows show the edited colours at once.
@@ -479,7 +479,7 @@ s32 SettingsMenu_Run(void) {
       }
       if (selectedOption == SETTINGS_ROW_WINDOW_COLOR)
         y += 8;
-      MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
+      MenuCursor_SetFar(&state->cursor.cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
       Text_DrawMessage(selectedOption + (s32)MsgWindowColorHelp,
                        (s32)helpWindow, 0, 0);
@@ -490,12 +490,12 @@ s32 SettingsMenu_Run(void) {
     // SELECT steps through the colour presets (window/scales.c).
     if (gInput.pressed & KEY_SELECT) {
       Sound_PlayFar(SE_MENU_CONFIRM);
-      work->preset++;
+      state->preset++;
       redraw = 1;
-      if (work->preset > SETTINGS_PRESET_COUNT - 1)
-        work->preset = 0;
-      *windowColor = gSettingsMenu_HuePresets[work->preset];
-      *brightness = gSettingsMenu_BrightnessPresets[work->preset];
+      if (state->preset > SETTINGS_PRESET_COUNT - 1)
+        state->preset = 0;
+      *windowColor = gSettingsMenu_HuePresets[state->preset];
+      *brightness = gSettingsMenu_BrightnessPresets[state->preset];
       continue;
     }
     if (gInput.pressed & (KEY_A | KEY_START)) {
@@ -519,12 +519,12 @@ s32 SettingsMenu_Run(void) {
     } else {
       if (gInput.repeat & KEY_LEFT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        work->option[selectedOption]--;
+        state->option[selectedOption]--;
         redraw = 1;
       }
       if (gInput.repeat & KEY_RIGHT) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        work->option[selectedOption]++;
+        state->option[selectedOption]++;
         redraw = 1;
       }
     }
@@ -535,23 +535,23 @@ s32 SettingsMenu_Run(void) {
   if (result == 0) {
     // "In Sleep Mode, press Select and the L and R Buttons to return to the
     // game."
-    if (gMainRoutineWork.idleSleepEnabled == 0 &&
-        work->option[SETTINGS_ROW_AUTO_SLEEP] == 1)
+    if (gMainRoutineState.idleSleepEnabled == 0 &&
+        state->option[SETTINGS_ROW_AUTO_SLEEP] == 1)
       FieldMessage_Show((s32)MsgSleepModeHelp, 1);
   }
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gMainRoutineWork.windowHue = work->option[SETTINGS_ROW_WINDOW_COLOR];
-    gMainRoutineWork.windowBrightness =
-        work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
-    gMainRoutineWork.messageSpeed = work->option[SETTINGS_ROW_MESSAGE_SPEED];
-    gMainRoutineWork.speech = work->option[SETTINGS_ROW_SPEECH];
-    gMainRoutineWork.idleSleepEnabled = work->option[SETTINGS_ROW_AUTO_SLEEP];
-    gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
+    gMainRoutineState.windowHue = state->option[SETTINGS_ROW_WINDOW_COLOR];
+    gMainRoutineState.windowBrightness =
+        state->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
+    gMainRoutineState.messageSpeed = state->option[SETTINGS_ROW_MESSAGE_SPEED];
+    gMainRoutineState.speech = state->option[SETTINGS_ROW_SPEECH];
+    gMainRoutineState.idleSleepEnabled = state->option[SETTINGS_ROW_AUTO_SLEEP];
+    gIdleSleepEnabled = gMainRoutineState.idleSleepEnabled;
   } else {
-    WindowColor_Apply(gMainRoutineWork.windowHue,
-                      gMainRoutineWork.windowBrightness);
+    WindowColor_Apply(gMainRoutineState.windowHue,
+                      gMainRoutineState.windowBrightness);
   }
   SettingsMenu_Release();
   wait(1);
@@ -561,24 +561,24 @@ s32 SettingsMenu_Run(void) {
 /// The Pause menu's per-frame task: moves the cursor and pulses the
 /// chosen entry's icon.
 void PauseMenu_AnimateCursor(void) {
-  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuState *state = Ram_HeapSlots->settingsMenu;
 
-  MenuCursor_AdvanceFar(&work->cursor.cursor);
-  WindowSprite_Pulse(work->icon[work->page]);
+  MenuCursor_AdvanceFar(&state->cursor.cursor);
+  WindowSprite_Pulse(state->icon[state->page]);
 }
 
-/// Allocates the Pause menu's work block and starts its per-frame task.
+/// Allocates the Pause menu's state and starts its per-frame task.
 /// The Pause menu shares the settings menu's heap slot: PauseMenu_Choose frees
 /// it before PauseMenu_Run opens the settings menu.
 void PauseMenu_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
-                                   sizeof(struct OptionMenuWork));
+  void *state = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                                    sizeof(struct OptionMenuState));
 
-  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
+  Dma_Fill32(0, state, sizeof(struct OptionMenuState));
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_FRAME);
 }
 
-/// Stops the Pause menu's per-frame task and frees its work block.
+/// Stops the Pause menu's per-frame task and frees its state.
 void PauseMenu_Release(void) {
   Task_Remove(PauseMenu_AnimateCursor);
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
@@ -598,7 +598,7 @@ extern const s8 gMenu_WorkspaceIcons[];
 /// Change settings, and the debug entries in debug mode; only Change settings
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
 struct Window *PauseMenu_Open(void) {
-  struct OptionMenuWork *work;
+  struct OptionMenuState *state;
   s32 rows;
   s32 first;
   s32 settingsOnly;
@@ -610,7 +610,7 @@ struct Window *PauseMenu_Open(void) {
   s32 i;
 
   rows = PAUSE_MENU_ROWS;
-  work = Ram_HeapSlots->settingsMenu;
+  state = Ram_HeapSlots->settingsMenu;
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
@@ -648,11 +648,11 @@ struct Window *PauseMenu_Open(void) {
     msg += 2;
     Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, y);
   }
-  work->cursor.sprite = WindowSprite_Create(
+  state->cursor.sprite = WindowSprite_Create(
       Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {
-    work->icon[i] =
+    state->icon[i] =
         CommandIcon_Create(gMenu_WorkspaceIcons[first + i], 0, win, 12, y);
     y += PAUSE_MENU_ROW_HEIGHT;
   }
@@ -670,7 +670,7 @@ struct Window *PauseMenu_Open(void) {
 /// Runs the Pause menu until the player picks an entry (enum
 /// PauseMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
-/// shown. The menu's window and work block are freed before it returns;
+/// shown. The menu's window and state are freed before it returns;
 /// PauseMenu_Run (screens_pause_menu.c) acts on the result.
 s32 PauseMenu_Choose(s32 initial) {
   struct Window *window;
@@ -690,7 +690,7 @@ s32 PauseMenu_Choose(s32 initial) {
   s32 top;
   const s8 *pauseIcons;
   struct WindowSprite *icon;
-  struct OptionMenuWork *work;
+  struct OptionMenuState *state;
 
   redraw = -1;
   selected = initial;
@@ -698,7 +698,7 @@ s32 PauseMenu_Choose(s32 initial) {
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
-  work = Ram_HeapSlots->settingsMenu;
+  state = Ram_HeapSlots->settingsMenu;
   wait(1);
   window = PauseMenu_Open();
   pair = MenuTitle_Create(MENU_TITLE_PAUSE, window, 40, HEADING_Y);
@@ -711,18 +711,18 @@ s32 PauseMenu_Choose(s32 initial) {
   for (;;) {
     if (redraw != 0) {
       selected = (selected + rows) % rows;
-      work->page = selected;
+      state->page = selected;
       i = 0;
       if (i < rows) {
         j = first;
         pauseIcons = gMenu_WorkspaceIcons;
         do {
-          icon = work->icon[i];
+          icon = state->icon[i];
           icon->depth = OAM_DEPTH_FRONT - 4;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
-          if (i != work->page)
+          if (i != state->page)
             dimmed = 1;
           CommandIcon_Load(*(s8 *)(j + (s32)pauseIcons), resourceIndex, dimmed);
           i++;
@@ -734,9 +734,9 @@ s32 PauseMenu_Choose(s32 initial) {
       y = (s16)top;
       y = (selected * 3 + y) * 8 + 16;
       if (-1 == redraw)
-        MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
+        MenuCursor_SetPositionImmediateFar(&state->cursor.cursor, x, y);
       else
-        MenuCursor_SetFar(&work->cursor.cursor, x, y, 3);
+        MenuCursor_SetFar(&state->cursor.cursor, x, y, 3);
       redraw = 0;
     }
     MenuTitle_Bob(pair);

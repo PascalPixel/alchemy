@@ -19,7 +19,7 @@
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "field/field_event.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
@@ -33,7 +33,7 @@
 #include "sound/sound.h"
 #include "system/field_effect.h"
 #include "system/frame.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/scene.h"
@@ -174,7 +174,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId);
+      (struct FieldEffect *)Actor_GetById(gMainRoutineState.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -265,7 +265,7 @@ UNUSED void PushedActor_AdvancePair(void) {
   FIXED moveRate;
   s32 transitionBusy;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   directionIndex = FACING_INDEX(leader->facing);
   step = gPushLeaderSteps[directionIndex];
   targetPosition.x = leader->x.fixed + (step & FIELD_PIXEL_MASK);
@@ -397,7 +397,7 @@ s32 VenusLighthouse_ClearScriptedSpriteFlags(void *actor) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == VENUS_LIGHTHOUSE_FROM_TITLE)
+  if (gMainRoutineState.entrance == VENUS_LIGHTHOUSE_FROM_TITLE)
     return gVenusLighthouseOpeningActorPlacements;
   return gActorPlacements;
 }
@@ -594,7 +594,7 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 void VenusLighthouse_FelixMovesStatue(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(ACTOR_FELIX, ACTOR_FLOOR_SWITCH_STATUE);
-  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->finishCallback =
+  ((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->finishCallback =
       (void (*)(void))VenusLighthouse_Idle;
   FieldPsynergy_StartCast();
   FieldEvent_Wait(10);
@@ -607,9 +607,9 @@ void VenusLighthouse_FelixMovesStatue(void) {
 // VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS as where the game restarts.
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gMainRoutineWork.entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
+  if (gMainRoutineState.entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
@@ -646,14 +646,14 @@ void VenusLighthouse_DoubtLeaving(void);
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
 s32 Scene_Initialize(void) {
-  struct MainRoutineWork *work;
+  struct MainRoutineState *state;
 
-  work = &gMainRoutineWork;
-  gFieldWork->transition =
+  state = &gMainRoutineState;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (work->entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
-    work->restartScene = SCENE_VENUS_LIGHTHOUSE;
-    work->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
+  if (state->entrance == VENUS_LIGHTHOUSE_FROM_TITLE) {
+    state->restartScene = SCENE_VENUS_LIGHTHOUSE;
+    state->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
@@ -695,7 +695,7 @@ static inline void VenusLighthouse_GoDownStairs(s32 actor, s32 side) {
 /// The prologue's opening: Felix moves the statue aside with Psynergy and
 /// climbs off alone, leaving Jenna and Kraden.
 void VenusLighthouse_FelixLeaves(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Actor_SetPosition(ACTOR_FELIX, 712, 816);
   Actor_SetPosition(ACTOR_JENNA, 696, 840);
@@ -708,9 +708,9 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_SetSpeed(ACTOR_ALEX, 1);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
-  work = Ram_HeapSlots->fieldWork;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 60;
+  state = Ram_HeapSlots->fieldState;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -755,7 +755,7 @@ void VenusLighthouse_FelixLeaves(void) {
 /// after him, and the three go down the stairs to leave the lighthouse.
 void VenusLighthouse_DoubtLeaving(void) {
   struct Actor *actor;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
   EventCamera_FollowActor(ACTOR_KRADEN, 1);
@@ -1235,12 +1235,12 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
   Actor_SetPosition(ACTOR_FLOOR_SWITCH_STATUE, 664, 792);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  gMainRoutineWork.leaderActorId = ACTOR_JENNA;
+  gMainRoutineState.leaderActorId = ACTOR_JENNA;
   Party_RemoveMember(FELIX);
   FieldEvent_Wait(50);
-  work = Ram_HeapSlots->fieldWork;
-  work->transitionFrames = 60;
-  work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state = Ram_HeapSlots->fieldState;
+  state->transitionFrames = 60;
+  state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(VENUS_LIGHTHOUSE_FLOOR_SWITCH_TO_PILLARS);

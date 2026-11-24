@@ -15,7 +15,7 @@ enum BattleSide {
   BATTLE_SIDE_PARTY = 2
 };
 
-/// Marks in a list of unit ids, such as BattleWork.partyUnits and enemyIds.
+/// Marks in a list of unit ids, such as BattleState.partyUnits and enemyIds.
 enum BattleUnitListMark {
   BATTLE_UNIT_REMOVED = 254, ///< a place whose unit has left the battle
   BATTLE_UNIT_LIST_END = 255 ///< ends the list
@@ -65,13 +65,13 @@ struct DjinnRecoveryList {
 };
 
 /// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
-/// party's inside gMainRoutineWork from summonMask on, the link opponent's in
+/// party's inside gMainRoutineState from summonMask on, the link opponent's in
 /// the fourth enemy unit (FIRST_ENEMY_UNIT + 3), which an opponent of three
 /// never fills.
 struct DjinnRecoveryTable {
   /// The summons the side can call, bit n for summon n (summon_table.c).
   u32 summonMask;
-  u32 partyCoins; ///< in the party's table, gMainRoutineWork.coins
+  u32 partyCoins; ///< in the party's table, gMainRoutineState.coins
   struct DjinnRecoveryList list;
 };
 

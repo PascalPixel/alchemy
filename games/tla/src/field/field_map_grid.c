@@ -176,7 +176,7 @@ void Map_CopyPalette(s32 map, void *destination) {
 /// (MapGrid_UpdateLayerScroll).
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *sceneResources;
-  struct MapWork *map;
+  struct MapState *map;
   struct MapHeader *sceneHeader;
   struct MapLayer *layer;
   struct MapHeaderLayer *layerSource;
@@ -192,9 +192,9 @@ s32 MapGrid_LoadMap(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
   sceneResources = (struct MapResources *)&gMaps[index];
-  // A field map's work ends after its three layers; the world map's goes on.
-  map = HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, MAPGRID_FIELD_WORK_SIZE);
-  Iwram_ClearWordsEntry(map, MAPGRID_FIELD_WORK_SIZE);
+  // A field map's state ends after its three layers; the world map's goes on.
+  map = HeapSlot_AllocEwram(HEAP_SLOT_MAP_GRID, MAPGRID_FIELD_STATE_SIZE);
+  Iwram_ClearWordsEntry(map, MAPGRID_FIELD_STATE_SIZE);
   sceneHeader = (struct MapHeader *)MAPGRID_RESOURCE(sceneResources->header);
   encodedData = (u8 *)sceneHeader + sceneHeader->cellPictures;
   TileMap_DecodeStagedBuffer(
@@ -324,7 +324,7 @@ s32 MapGrid_LoadMap(s32 index) {
 /// Centres the camera on the point the map follows (origin: x, height, z), or
 /// on (0, 0) when there is none, and scrolls the layers there.
 void MapGrid_CenterOnFollowedPoint(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 x = 0;
   s32 height = 0;
   s32 z = 0;
@@ -377,7 +377,7 @@ void MapGrid_CenterOnFollowedPoint(void) {
 /// pictures.
 void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *window = &map->layers[layer];
   u32 originY = window->originY;
   u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
@@ -454,7 +454,7 @@ static __inline__ void CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap,
 /// same name; tileX's low bit picks the picture's left or right half.
 void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *window = &map->layers[layer];
   u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 maskY = window->maskY;
@@ -499,7 +499,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
 /// automatic scroll (wrapping at its period), draws the cell picture column or
 /// row that scrolls into view, and sets its BG scroll.
 void MapGrid_UpdateLayerScroll(void) {
-  struct MapWork *map;
+  struct MapState *map;
   struct MapLayer *layer;
   s32 *origin;
   s32 x, y;
@@ -619,7 +619,7 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
   u32 layerIndex;
   u8 *screenMap;
   u32 *cells;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer = map->layers;
   u32 originX;
 
@@ -701,7 +701,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                         u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * MAPGRID_SIZE + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * MAPGRID_SIZE + dstX);
-  struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
+  struct MapLayer *layer = ((struct MapState *)Ram_HeapSlots->mapGrid)->layers;
   struct MapGridTilePosition tile[3];
   s32 i;
   struct MapGridTilePosition *pos = tile;
@@ -877,7 +877,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   s32 y;
   u32 *src = (u32 *)gMapGridCellBuffer + (srcY * MAPGRID_SIZE + srcX);
   u32 *dst = &((u32 *)gMapGridCellBuffer)[dstY * MAPGRID_SIZE + dstX];
-  struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
+  struct MapLayer *layer = ((struct MapState *)Ram_HeapSlots->mapGrid)->layers;
   struct MapGridTilePosition views[3];
   s32 i;
   struct MapGridTilePosition *view = views;
@@ -981,7 +981,7 @@ void Map_CopyRawCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
 /// REG_DISPCNT) from layerFlags, keeping its other flags.
 void MapGrid_SetShownLayers(u32 layerFlags) {
-  struct MapWork *state = Ram_HeapSlots->mapGrid;
+  struct MapState *state = Ram_HeapSlots->mapGrid;
   u32 shown = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
   u32 dispcnt = state->dispcnt;
 
@@ -1112,7 +1112,7 @@ void Map_LoadCellsAndShapes(void) {
   u8 *source;
   // gMaps through a pointer to its rows.
   struct MapHeader *header = MAPGRID_RESOURCE(
-      ((const struct MapResources *)gMaps)[gMainRoutineWork.mapId].header);
+      ((const struct MapResources *)gMaps)[gMainRoutineState.mapId].header);
 
   source = (u8 *)header + header->cells;
   Decompress_TaggedLz(source, Ram_MapCellBuffer);

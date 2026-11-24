@@ -3,8 +3,8 @@
 /// the sparkling sound of a hidden way: Aqua Rock's and the Apojii Islands'
 /// passages through water. Leader_RiseFromWater is the arrival.
 void Leader_SinkAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 *owner = &gMainRoutineWork.leaderActorId;
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
+  s32 *owner = &gMainRoutineState.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

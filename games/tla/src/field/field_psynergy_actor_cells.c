@@ -19,7 +19,7 @@
 /// leader below the new ground is lifted onto it. Scenes call it as they
 /// start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapCell *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
@@ -55,7 +55,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     cell = &blocks[slot];
     cell->collisionCode = CELL_BEHAVIOR_WALL;
   }
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
                                        leader->z.fixed);
   if (leader->y.fixed < height)
@@ -67,21 +67,21 @@ struct Actor *Leader_FindActorAhead(void);
 /// Takes the block about to move out of the map: the field effect's target
 /// while one runs, else the actor ahead of the leader, if it is one of the
 /// listed actors. Its cell goes back to the ground and its old mark, and the
-/// event work remembers it for Actor_PlaceMovedBlock.
+/// event state remembers it for Actor_PlaceMovedBlock.
 void Actor_LiftTargetBlock(u16 *actors) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
   struct Actor *target;
 
-  if (work != NULL && event->psynergy != 0)
-    target = work->child;
+  if (state != NULL && event->psynergy != 0)
+    target = state->child;
   else
     target = Leader_FindActorAhead();
   event->movedBlock = NULL;
 
   for (; *actors != ACTOR_LIST_END; actors++) {
     if (target == Actor_GetById(*actors)) {
-      struct MapWork *map = Ram_HeapSlots->mapGrid;
+      struct MapState *map = Ram_HeapSlots->mapGrid;
       u8 *grid = gMapShapeGrid;
       struct MapCell *cells = map->layers[target->layer].cells;
       struct MapCell *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
@@ -109,10 +109,10 @@ void Actor_LiftTargetBlock(u16 *actors) {
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the
 /// cell it has moved to, as Actor_PlaceBlocks places each.
 void Actor_PlaceMovedBlock(void) {
-  struct Actor *target = gFieldWork->movedBlock;
+  struct Actor *target = gFieldState->movedBlock;
 
   if (target != NULL) {
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
+    struct MapState *map = Ram_HeapSlots->mapGrid;
     u8 *grid = Ram_MapShapeGrid;
     struct MapCell *cells = map->layers[target->layer].cells;
     struct MapCell *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
@@ -141,7 +141,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY);
 /// Returns the actor one cell, or failing that two cells, ahead of the leader
 /// at the leader's height, or NULL.
 struct Actor *Leader_FindActorAhead(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   FIXED position[3];
   // The leader's facing rounded to the nearest quarter turn, in sixteenths.
   s32 angle = (leader->facing / FACING_STEP + 2) & 0xc;
@@ -170,7 +170,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
   u32 i;
 
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-    struct FieldWork *event = Ram_HeapSlots->fieldWork;
+    struct FieldState *event = Ram_HeapSlots->fieldState;
     struct Actor *actor = event->actors[i];
 
     if (checkY) {

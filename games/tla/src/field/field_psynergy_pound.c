@@ -22,7 +22,7 @@
 /// The glow under the fist, 64 pixels square in 16 colours.
 #define POUND_GLOW_SIZE 64
 
-/// The stages of the fist's fall (PoundWork.state).
+/// The stages of the fist's fall (PoundState.state).
 enum PoundStage {
   POUND_FALLS = 0,       ///< the fist comes down; it lands on the eighth frame
   POUND_SHINE_GROWS = 1, ///< the shine spreads, its colours cycling
@@ -31,10 +31,10 @@ enum PoundStage {
   POUND_LIFTS = 4    ///< the fist rises off the ground
 };
 
-/// Pound's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
+/// Pound's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
 /// shine's 32 sparks, the glow under the fist, the fist itself and the stage of
 /// its fall.
-struct PoundWork {
+struct PoundState {
   u8 tiles[4096];
   struct FieldPsynergyParticle particles[POUND_SPARK_COUNT];
   struct EffectSprite sprites[POUND_SPARK_COUNT];
@@ -49,16 +49,16 @@ struct PoundWork {
 /// Task of a Pound that comes down: the fist falls and lands with a shake,
 /// the shine spreads round it with its sparks, then the fist lifts again.
 void FieldPsynergy_UpdatePound(void) {
-  struct PoundWork *work = Ram_HeapSlots->battleEffect;
-  struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
+  struct PoundState *state = Ram_HeapSlots->battleEffect;
+  struct CanvasSpriteState *canvas = Ram_HeapSlots->canvasSprite;
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   s32 i;
   s32 red, green;
   s32 *frames;
 
-  work->landed = 0;
-  if (work->state == POUND_SHINE_GROWS) {
+  state->landed = 0;
+  if (state->state == POUND_SHINE_GROWS) {
     // Each colour is a 32nd of a turn further along the cycle, which moves on
     // every other frame.
     /* FAKEMATCH(temporary): the frame count read through a pointer kept across
@@ -77,9 +77,9 @@ void FieldPsynergy_UpdatePound(void) {
                  &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
     }
   }
-  if (work->sparkles) {
-    particle = work->particles;
-    sprite = work->sprites;
+  if (state->sparkles) {
+    particle = state->particles;
+    sprite = state->sprites;
     for (i = 0; i < POUND_DRAWN_SPARKS; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 16) {
         sprite->x = particle->x;
@@ -90,20 +90,20 @@ void FieldPsynergy_UpdatePound(void) {
       particle->timer++;
     }
   }
-  switch (work->state) {
+  switch (state->state) {
   case POUND_FALLS:
-    work->actor->y.fixed -= toFIXED(7) / 2;
-    if (work->timer == 8) {
+    state->actor->y.fixed -= toFIXED(7) / 2;
+    if (state->timer == 8) {
       canvas->scaleX = FIXED_ONE / 8;
       canvas->scaleY = FIXED_ONE / 8;
       MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
       Sound_PlayFar(SE_POUND);
-      work->sparkles = 1;
-      work->landed = 1;
+      state->sparkles = 1;
+      state->landed = 1;
     }
-    if (work->timer == 8) {
-      work->state++;
-      work->timer = -1;
+    if (state->timer == 8) {
+      state->state++;
+      state->timer = -1;
     }
     break;
   case POUND_SHINE_GROWS:
@@ -112,49 +112,49 @@ void FieldPsynergy_UpdatePound(void) {
     if (canvas->scaleX > toFIXED(4) / 5 - 1) {
       canvas->scaleX = toFIXED(4) / 5;
       canvas->scaleY = toFIXED(4) / 5;
-      work->state++;
-      work->timer = -1;
+      state->state++;
+      state->timer = -1;
     }
     break;
   case POUND_SHINE_HOLDS:
     canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
-    if (work->timer == 32) {
-      work->state++;
-      work->timer = -1;
+    if (state->timer == 32) {
+      state->state++;
+      state->timer = -1;
     }
     break;
   case POUND_SETTLES:
-    if (work->timer == 0)
+    if (state->timer == 0)
       MapGrid_SetScreenShakeFar(1, 1, 1);
-    if (work->timer == 10) {
-      work->state++;
-      work->timer = -1;
+    if (state->timer == 10) {
+      state->state++;
+      state->timer = -1;
     }
     break;
   case POUND_LIFTS:
-    work->actor->y.fixed += toFIXED(3) / 2;
-    if (work->timer == 13)
-      work->state = FIELD_PSYNERGY_FINISHED;
+    state->actor->y.fixed += toFIXED(3) / 2;
+    if (state->timer == 13)
+      state->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
-  work->timer++;
+  state->timer++;
 }
 
 /// Task of a Pound that cannot come down: the fist sinks 2.5 pixels and
 /// shrinks by 1/64 a frame for 8 frames, before it shatters.
 void Pound_SinkFist(void) {
-  struct PoundWork *work = Ram_HeapSlots->battleEffect;
+  struct PoundState *state = Ram_HeapSlots->battleEffect;
 
-  if (work->state == POUND_FALLS) {
-    struct Actor *actor = work->actor;
+  if (state->state == POUND_FALLS) {
+    struct Actor *actor = state->actor;
 
     actor->y.fixed += -(toFIXED(5) / 2);
     actor->scaleX += -(FIXED_ONE / 64);
     actor->scaleY += -(FIXED_ONE / 64);
-    if (work->timer == 8)
-      work->state = FIELD_PSYNERGY_FINISHED;
+    if (state->timer == 8)
+      state->state = FIELD_PSYNERGY_FINISHED;
   }
-  work->timer++;
+  state->timer++;
 }
 
 /// Pound cast on a target: runs FieldPsynergy_Pound.
@@ -168,15 +168,15 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z);
 /// of reach, or with a solid actor in the way, it shatters with the error
 /// sound; else the place's Pound event runs.
 void FieldPsynergy_Pound(void) {
-  struct PoundWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct PoundWork));
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct FieldWork *field = Ram_HeapSlots->fieldWork;
+  struct PoundState *state =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct PoundState));
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct FieldState *field = Ram_HeapSlots->fieldState;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainActor;
   struct Actor *actor;
   struct Actor *fist;
-  struct CanvasSpriteWork *canvas;
+  struct CanvasSpriteState *canvas;
   struct EffectSprite *sprite;
   struct EffectSprite *glow;
   void *pending;
@@ -233,7 +233,7 @@ void FieldPsynergy_Pound(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   fist = Actor_Spawn(SPRITE_POUND_FIST, 0, 0, 0);
-  work->actor = fist;
+  state->actor = fist;
   if (fist != NULL) {
     fist->motionFlags = 0;
     if (field->psynergyDrawFlags & PSYNERGY_DRAW_FIXED_PRIORITY) {
@@ -267,10 +267,10 @@ void FieldPsynergy_Pound(void) {
                         Ram_HeapSlots->battleCanvas);
     canvas->command = CANVAS_UPLOAD;
 
-    IWRAM_FILL_WORDS(work, size, 0);
+    IWRAM_FILL_WORDS(state, size, 0);
     glowEntry = VramCache_FindFreeEntry();
-    glowTile = VramCache_Load(glowEntry, size, work);
-    glow = &work->glow;
+    glowTile = VramCache_Load(glowEntry, size, state);
+    glow = &state->glow;
     EffectSprite_Init(glow, 32, 32, OBJ_SIZE_64X64, glowTile);
     glow->oam.priority = 0;
     glow->oam.fullColor = 0;
@@ -284,12 +284,12 @@ void FieldPsynergy_Pound(void) {
     glow->x = pos[0];
     glow->y = pos[2];
 
-    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLD_STAR), work);
+    Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLD_STAR), state);
     starEntry = VramCache_FindFreeEntry();
-    starTile = VramCache_Load(starEntry, 256, work);
-    for (j = 0, particle = work->particles; j < POUND_SPARK_COUNT;
+    starTile = VramCache_Load(starEntry, 256, state);
+    for (j = 0, particle = state->particles; j < POUND_SPARK_COUNT;
          j++, particle++) {
-      sprite = &work->sprites[j];
+      sprite = &state->sprites[j];
       speed = Random16() * 18 / 10;
       speed += toFIXED(5) / 2;
       angle = j * (DEGtoANG(30)) + (Random16() >> 5);
@@ -321,12 +321,12 @@ void FieldPsynergy_Pound(void) {
       wait(1);
     } while (riseFrames >= 0);
     wait(15);
-    work->state = POUND_FALLS;
-    work->timer = 0;
-    work->sparkles = 0;
+    state->state = POUND_FALLS;
+    state->timer = 0;
+    state->sparkles = 0;
     if (!inReach) {
       Task_Add(Pound_SinkFist, TASK_PASS_FRAME);
-      while (work->state != FIELD_PSYNERGY_FINISHED)
+      while (state->state != FIELD_PSYNERGY_FINISHED)
         wait(1);
       Task_Remove(Pound_SinkFist);
       for (j = 0; j < POUND_SHATTER_PIECES; j++)
@@ -340,16 +340,16 @@ void FieldPsynergy_Pound(void) {
           Scene_SelectPsynergyTarget(scene->fieldPsynergy));
       Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_FRAME);
       frame = 0;
-      while (work->state != FIELD_PSYNERGY_FINISHED) {
+      while (state->state != FIELD_PSYNERGY_FINISHED) {
         wait(1);
-        scene->stage = work->landed;
+        scene->stage = state->landed;
         scene->frame = frame;
         if (field->mode != ACTOR_SYSTEM_WORLD_MAP &&
             !(field->psynergyDrawFlags & PSYNERGY_DRAW_NO_SCENE_SPRITE)) {
-          glow = &work->glow;
+          glow = &state->glow;
           EffectSprite_Draw(glow);
         }
-        Field_RunPsynergyEvent(pending, work->landed, frame++);
+        Field_RunPsynergyEvent(pending, state->landed, frame++);
       }
       Task_Remove(FieldPsynergy_UpdatePound);
       wait(10);

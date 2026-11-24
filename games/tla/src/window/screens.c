@@ -12,7 +12,7 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 #include "system/system.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "flags.h"
 #include "sounds.h"
 #include "field/particle.h"
@@ -39,9 +39,9 @@ extern const s16 gPortrait_SpriteMap[];
 #include "graphics/output.h"
 #endif
 
-/// One icon of the command row (struct BattleCommandRowWork): its sprite, where
-/// it stands and the command it stands for. screens_menu_titles.c loads it,
-/// screens_battle_command_row.c runs the row.
+/// One icon of the command row (struct BattleCommandRowState): its sprite,
+/// where it stands and the command it stands for. screens_menu_titles.c loads
+/// it, screens_battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
   /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
   /// the others show as tiles of BG1.
@@ -62,9 +62,9 @@ struct CommandRowAffine {
   u16 angle;
 };
 
-/// The command row's work block: the icons' shared palette, up to six icons,
+/// The command row's state: the icons' shared palette, up to six icons,
 /// the label window, the pulsing icon's transform and the selection.
-struct BattleCommandRowWork {
+struct BattleCommandRowState {
   /// BG palette slots for the icons' 256-colour pixels, filled as each icon
   /// is loaded (BattleCommandRow_LoadIconTiles).
   struct GlyphPalette palette;
@@ -126,10 +126,10 @@ union NameCursor {
   struct MenuCursor cursor;
 };
 
-/// The menus' work (heap slot HEAP_SLOT_MENU) as the file list reads it: the
-/// party row of the shop's ShopWork (shop/shop_internal.h), holding the party
+/// The menus' state (heap slot HEAP_SLOT_MENU) as the file list reads it: the
+/// party row of the shop's ShopState (shop/shop_internal.h), holding the party
 /// sprites of the file under the cursor, where each stands and its scale.
-struct FileListWork {
+struct FileListState {
   u8 menuScreens[248]; ///< the windows and lists before the party row
   /// Up to four party sprites, null for none; the row has room for eight.
   void *partyMemberIcons[8];

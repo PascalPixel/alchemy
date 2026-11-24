@@ -44,7 +44,7 @@
 /// target is hurled away, and Thunder Mine's ball bursts into sparks that
 /// bounce.
 void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
@@ -69,7 +69,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   s32 k;
   u8 *buffer;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
@@ -83,7 +83,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   ballSize = 0;
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET,
-                             work->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1,
+                             state->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, buffer, 1, 1);
@@ -93,7 +93,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
                     SHEET_PALETTE_BYTES);
   }
 
-  Iwram_ClearWordsEntry(work->sheet + BALL_LIGHTNING_BOLT_CELS,
+  Iwram_ClearWordsEntry(state->sheet + BALL_LIGHTNING_BOLT_CELS,
                         BALL_LIGHTNING_BOLT_PICTURE_COUNT *
                             PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL));
   for (i = 0; i != BALL_LIGHTNING_BOLT_PICTURE_COUNT; i++) {
@@ -101,18 +101,18 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       s32 j;
 
       for (j = 0; j != LIGHTNING_BOLT_WIDTH; j++) {
-        work->sheet[BALL_LIGHTNING_BOLT_CELS + BALL_LIGHTNING_BOLT_CEL_INSET +
-                    i * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL) +
-                    k * BALL_LIGHTNING_BOLT_CEL_WIDTH + j] =
+        state->sheet[BALL_LIGHTNING_BOLT_CELS + BALL_LIGHTNING_BOLT_CEL_INSET +
+                     i * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL) +
+                     k * BALL_LIGHTNING_BOLT_CEL_WIDTH + j] =
             buffer[i * LIGHTNING_BOLT_PICTURE_BYTES + k * LIGHTNING_BOLT_WIDTH +
                    j];
       }
     }
   }
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (mode == BOLT_TRAIL_THUNDER_MINE) {
@@ -125,7 +125,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   }
 
   for (frame = 0; frame != BALL_LIGHTNING_FRAMES; frame++) {
-    ball = work->particles;
+    ball = state->particles;
     if (frame == 0) {
       EffectPosition_ProjectBattler(args->user, &source);
       EffectPosition_ProjectBattler(args->targets[0], &target);
@@ -145,7 +145,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       ball->velocityY = (INTtoFIXED(target.y - 32) - ball->y) / frames;
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
       // Each bolt turns its own way at its own speed, on a picture of its own.
-      for (i = 0, bolt = &work->particles[1]; i != BALL_LIGHTNING_BOLTS_SET_UP;
+      for (i = 0, bolt = &state->particles[1]; i != BALL_LIGHTNING_BOLTS_SET_UP;
            i++, bolt++) {
         bolt->z = Random16();
         bolt->velocityZ = (Random16() & 255) + 128;
@@ -189,7 +189,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       }
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      work->shakeFrames = 16;
+      state->shakeFrames = 16;
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
@@ -244,7 +244,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas,
-            work->sheet + BALL_LIGHTNING_TORNADO_PICTURES +
+            state->sheet + BALL_LIGHTNING_TORNADO_PICTURES +
                 gBattleEffect_GlintPictures[picture],
             glintX, glintY, gBattleEffect_GlintPictureWidths[picture],
             gBattleEffect_GlintPictureHeights[picture]);
@@ -294,7 +294,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       model->texture = &texture;
       model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = vertices;
-      for (i = 0, bolt = &work->particles[1]; i != BALL_LIGHTNING_BOLTS;
+      for (i = 0, bolt = &state->particles[1]; i != BALL_LIGHTNING_BOLTS;
            i++, bolt++) {
         s32 shade;
 
@@ -309,7 +309,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
           shade = -fade;
         }
-        texture.pixels = work->sheet + BALL_LIGHTNING_BOLT_CELS +
+        texture.pixels = state->sheet + BALL_LIGHTNING_BOLT_CELS +
                          bolt->variant * PICTURE_BYTES(BALL_LIGHTNING_BOLT_CEL);
         model->shade = shade;
         Matrix_Initialize();
@@ -330,7 +330,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       Heap_Release(vertices);
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
@@ -387,7 +387,7 @@ extern const struct Scale gMegaera_UnitScale;
 /// them. Holding A or B after frame 10 skips to the swoop.
 void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   u8 *sprites;
   DrawRectangle *rects;
@@ -402,7 +402,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   s32 j;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   pictures = MEGAERA_PICTURES;
   BattleEffect_ConfigureEffectDisplay();
@@ -411,27 +411,28 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1, 1);
+                             state->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, pictures, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              pictures + MEGAERA_LIGHTNING_BOLT_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS,
                              pictures + MEGAERA_SPARKLE_DOTS_PICTURES, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-    work->particles[i].variant = -1;
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
+  for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+    state->particles[i].variant = -1;
   }
   // DEAD: particles laid along canvas rows 56 to 63, which nothing in Megaera
   // reads; the ROM keeps the loop.
-  for (i = 0, p = &work->particles[MEGAERA_UNREAD_FIRST];
+  for (i = 0, p = &state->particles[MEGAERA_UNREAD_FIRST];
        i != MEGAERA_UNREAD_COUNT; i++, p++) {
     p->x = Random16() & 127;
     p->y = (Random16() & 7) + 56;
     p->variant = -(Random16() & 15);
   }
-  for (i = 0, p = work->particles; i != MEGAERA_BILLOWS_SET_UP; i++, p++) {
+  for (i = 0, p = state->particles; i != MEGAERA_BILLOWS_SET_UP; i++, p++) {
     p->x = INTtoFIXED((Random16() & 31) + 28);
     p->y = INTtoFIXED((Random16() % 48) + 56);
     p->velocityX = ((Random16() & 255) - 128) << 12;
@@ -444,7 +445,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
                        SHEET_PALETTE_BYTES);
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   wait(1);
 
   for (frame = 0; frame != MEGAERA_FRAMES; frame++) {
@@ -467,8 +468,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       BattleEffect_SpawnObjects(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
     }
     if (frame == MEGAERA_SWOOP_FRAME) {
-      Sprite_DestroyFar(work->sprites[0]);
-      Sprite_DestroyFar(work->sprites[1]);
+      Sprite_DestroyFar(state->sprites[0]);
+      Sprite_DestroyFar(state->sprites[1]);
       BattleEffect_SpawnObjects(MEGAERA_OBJECTS, SPRITE_MEGAERA, 2);
     }
 
@@ -533,7 +534,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
         s32 swayX = (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) << 3)) - 16;
         s32 which = frame == MEGAERA_SWOOP_FRAME;
         DrawRectangle *draw = &blitters[which];
-        u8 *cells = work->sheet + picture * PICTURE_BYTES(WHIRL_BEAM);
+        u8 *cells = state->sheet + picture * PICTURE_BYTES(WHIRL_BEAM);
 
         (*draw)(canvas, cells, swayX, 0, WHIRL_BEAM_WIDTH, WHIRL_BEAM_HEIGHT);
         (*draw)(canvas, cells, swayX, WHIRL_BEAM_HEIGHT, WHIRL_BEAM_WIDTH, 52);
@@ -544,18 +545,18 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           swayX = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 16) + DEGtoANG(180))
                              << 3);
           flickerPixels =
-              work->sheet + flickerFrame * PICTURE_BYTES(WHIRL_BEAM);
+              state->sheet + flickerFrame * PICTURE_BYTES(WHIRL_BEAM);
           (*draw)(canvas, flickerPixels, swayX, 0, WHIRL_BEAM_WIDTH,
                   WHIRL_BEAM_HEIGHT);
           (*draw)(canvas, flickerPixels, swayX, WHIRL_BEAM_HEIGHT,
                   WHIRL_BEAM_WIDTH, 52);
         }
       }
-      for (i = 0, p = work->particles; i != MEGAERA_BILLOWS; i++, p++) {
+      for (i = 0, p = state->particles; i != MEGAERA_BILLOWS; i++, p++) {
         if ((u32)p->variant < MEGAERA_BILLOW_FRAMES) {
           s32 row = p->variant / 4;
           s32 which = i & 1;
-          u8 *smoke = work->sheet + MEGAERA_BILLOW_PICTURES +
+          u8 *smoke = state->sheet + MEGAERA_BILLOW_PICTURES +
                       row * PICTURE_BYTES(FLASH_BURST);
 
           rects[which](canvas, smoke,
@@ -601,7 +602,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     }
     // As the first sword lands the foes flash white.
     if (frame == 10) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
@@ -648,7 +649,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           Sound_PlayFar(SE_POWER_UP);
         }
         if (frame == fallFrame + 9) {
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                                CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           Sound_PlayFar(SE_CLATTER);
@@ -665,7 +666,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           placement[1] = 0;
           placement[0] = INTtoFIXED(column * 2);
           placement[2] = INTtoFIXED(fallY);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], placement,
                                             &scale.x, 0);
           // The sword's bottom row of tiles; a sprite's tile number counts
           // tiles of 16 colours, even in 256.
@@ -673,7 +674,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
             Iwram_ClearWordsEntry(
                 (u8 *)OBJ_VRAM0 +
                     (OBJ_64X64_8BPP_BYTES - MEGAERA_SWORD_POINT_BYTES) +
-                    ((struct Sprite *)work->sprites[i])->image.tile *
+                    ((struct Sprite *)state->sprites[i])->image.tile *
                         TILE_SIZE_4BPP,
                 MEGAERA_SWORD_POINT_BYTES);
           }
@@ -745,13 +746,13 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_MEGAERA, position.x, position.y);
   for (i = 0; i != MEGAERA_OBJECTS; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -785,7 +786,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 ///
 /// Abilities: Void Beam.
 void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
@@ -803,15 +804,15 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   u8 *buffer;
   s32 size;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   sprites = Ram_HeapSlots->battleSheet;
   buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_COMET_SHEET_B,
-                             work->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
+                             state->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   // The motes, one shade dimmer.
@@ -847,7 +848,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
                   SHEET_PALETTE_BYTES);
 
   // The beam's body: a 32-line gradient, rising over a quarter turn of a sine.
-  row = work->sheet + VOID_BEAM_BODY;
+  row = state->sheet + VOID_BEAM_BODY;
   for (i = 0; i != VOID_BEAM_BODY_SIZE; i++) {
     s32 shade = FIXEDtoINT(Trig_Sin(i * (DEGtoANG(90) / VOID_BEAM_BODY_SIZE)) *
                            CANVAS_LEVEL_BRIGHTEST);
@@ -871,10 +872,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
                       BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  work->cameraDelta = 0;
-  work->cameraPhase = 0;
+  state->cameraDelta = 0;
+  state->cameraPhase = 0;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_FRAME);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SPIN);
   size = 4;
 
@@ -882,14 +883,14 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
     // The camera turns a 256th of a turn a frame from frame 9, and eases to a
     // stop from 64 to 79; the other way round over the party.
     if ((u32)(frame - 9) <= 54) {
-      work->cameraDelta = -(TRIG_TURN / 256);
+      state->cameraDelta = -(TRIG_TURN / 256);
     } else if ((u32)(frame - 64) <= 15) {
-      work->cameraDelta = frame * 16 - 1280;
+      state->cameraDelta = frame * 16 - 1280;
     } else {
-      work->cameraDelta = 0;
+      state->cameraDelta = 0;
     }
     if (args->side == EFFECT_SIDE_PARTY) {
-      work->cameraDelta = -work->cameraDelta;
+      state->cameraDelta = -state->cameraDelta;
     }
     if (frame > 79) {
       s32 fade = frame * 2 - 160;
@@ -967,24 +968,24 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         s32 fade;
 
         if (frame == VOID_BEAM_FIRE_FRAME) {
-          work->particles[0].x = point[0];
-          if (work->particles[0].x > 0) {
-            work->particles[0].velocityX = -toFIXED(32);
+          state->particles[0].x = point[0];
+          if (state->particles[0].x > 0) {
+            state->particles[0].velocityX = -toFIXED(32);
           } else {
-            work->particles[0].velocityX = toFIXED(32);
+            state->particles[0].velocityX = toFIXED(32);
           }
           REG_BG2CNT =
               BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         }
         if (frame == VOID_BEAM_FIRE_FRAME) {
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           EFFECT_SHOW_DAMAGE(SE_CRASH);
           BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 8);
         }
         for (i = 0; i != VOID_BEAM_SEGMENTS; i++) {
-          point[0] = work->particles[0].x + work->particles[0].velocityX * i;
+          point[0] = state->particles[0].x + state->particles[0].velocityX * i;
           point[1] = toFIXED(30);
           point[2] = caster->z;
           EffectPosition_ProjectPoint(point, &segment);
@@ -993,21 +994,22 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
             segment.x -= 32;
           }
           if (i > 0) {
-            draw[0](canvas, work->sheet + VOID_BEAM_BODY, segment.x,
+            draw[0](canvas, state->sheet + VOID_BEAM_BODY, segment.x,
                     segment.y - VOID_BEAM_BODY_SIZE, VOID_BEAM_BODY_SIZE,
                     VOID_BEAM_BODY_SIZE);
-            draw[1](canvas, work->sheet + VOID_BEAM_BODY, segment.x, segment.y,
+            draw[1](canvas, state->sheet + VOID_BEAM_BODY, segment.x, segment.y,
                     VOID_BEAM_BODY_SIZE, VOID_BEAM_BODY_SIZE);
           } else if (frame <= 81) {
-            draw[0](canvas, work->sheet + VOID_BEAM_COMET_B_PICTURES, segment.x,
-                    segment.y - VOID_BEAM_COMET_HEIGHT, VOID_BEAM_COMET_WIDTH,
+            draw[0](canvas, state->sheet + VOID_BEAM_COMET_B_PICTURES,
+                    segment.x, segment.y - VOID_BEAM_COMET_HEIGHT,
+                    VOID_BEAM_COMET_WIDTH, VOID_BEAM_COMET_HEIGHT);
+            draw[1](canvas, state->sheet + VOID_BEAM_COMET_B_PICTURES,
+                    segment.x, segment.y, VOID_BEAM_COMET_WIDTH,
                     VOID_BEAM_COMET_HEIGHT);
-            draw[1](canvas, work->sheet + VOID_BEAM_COMET_B_PICTURES, segment.x,
-                    segment.y, VOID_BEAM_COMET_WIDTH, VOID_BEAM_COMET_HEIGHT);
           }
         }
         // The body fades from VOID_BEAM_FADE_FRAME.
-        row = work->sheet + VOID_BEAM_BODY;
+        row = state->sheet + VOID_BEAM_BODY;
         fade = 0;
         if (frame >= VOID_BEAM_FADE_FRAME) {
           fade = frame * 8 - 640;
@@ -1028,11 +1030,11 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         }
       }
     }
-    if (work->cameraPhase == 0) {
-      work->cameraPhase = 1;
+    if (state->cameraPhase == 0) {
+      state->cameraPhase = 1;
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

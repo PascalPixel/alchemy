@@ -30,7 +30,7 @@ extern const struct Scale gTrident_UnitScale;
 /// The sparks the strike throws, in the map cell buffer.
 #define TRIDENT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 10596))
 #define TRIDENT_SPARK_COUNT 128
-/// The work's particles: the discs thrown up, the first one growing on the
+/// The state's particles: the discs thrown up, the first one growing on the
 /// ground, then the strike's flashes, which live six pictures of four frames.
 #define TRIDENT_PARTICLES 32
 #define TRIDENT_DISCS 14
@@ -78,7 +78,7 @@ extern const struct Scale gTrident_UnitScale;
 ///
 /// Abilities: Trident.
 void BattleEffect_RunTrident(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
@@ -105,12 +105,12 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   s32 orangeBase;
   DrawRectangle draw;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   BattleEffect_SpawnObjects(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -119,18 +119,18 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   blit[0] = draw;
   /* FAKEMATCH(temporary): the orange palette's id in a local. */
   orangeBase = RESOURCE_ORANGE_PALETTE_B - 4;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  circles = (s16 *)(work->sheet + TRIDENT_DISC_TABLE);
-  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
+  circles = (s16 *)(state->sheet + TRIDENT_DISC_TABLE);
+  Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
   /* FAKEMATCH(dead): offset set to the cell buffer's address, which the disc
    * loop below sets again before any read. */
   offset = (s32)gMapGridCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
-                             work->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
+                             state->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
   orange = orangeBase + 4;
   size = 2;
   /* FAKEMATCH(dead): a test on the blitter. */
@@ -161,7 +161,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
-  for (i = 0, p = work->particles; i != TRIDENT_PARTICLES; i++, p++) {
+  for (i = 0, p = state->particles; i != TRIDENT_PARTICLES; i++, p++) {
     s32 radius = i * 2;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -190,17 +190,17 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       BattleEffect_StepPaletteToResource(orange);
     }
     if (frame == 8) {
-      work->shakeFrames = frame;
+      state->shakeFrames = frame;
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
       }
     }
     if (frame == 48) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     if (frame == TRIDENT_STRIKE_FRAME) {
-      work->shakeFrames = 16;
+      state->shakeFrames = 16;
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(2),
@@ -243,7 +243,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         for (i = 0; i != TRIDENT_SPRITES; i++) {
           placement[0] = INTtoFIXED(left * 2) + toFIXED(16);
           placement[2] = INTtoFIXED(rise + 40 + i * TRIDENT_SPRITE_HEIGHT);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], placement,
                                             (s32 *)&source, 0);
         }
       }
@@ -254,15 +254,15 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     if ((u32)(frame - 12) <= 52) {
       if (frame == 12) {
         for (i = 0; i != TRIDENT_PARTICLES; i++) {
-          work->particles[i].variant = -2 * i;
+          state->particles[i].variant = -2 * i;
         }
       }
-      for (i = 0, p = work->particles, grow = frame * 4 - 156;
+      for (i = 0, p = state->particles, grow = frame * 4 - 156;
            i != TRIDENT_DISCS; i++, p++) {
         p->variant++;
         if (i == 0) {
           if (frame > 39) {
-            u8 *disc = work->sheet + TRIDENT_GROUND_DISC;
+            u8 *disc = state->sheet + TRIDENT_GROUND_DISC;
 
             BattleEffect_DrawShadedCircles(disc, grow, FIXED_ONE);
             Canvas_BlitAtFoot(disc, centerX, 100, grow);
@@ -365,7 +365,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         model->scrollU = 0;
         model->scrollV = 0;
         if (frame == 8) {
-          for (i = 0, t = &work->particles[TRIDENT_PARTICLES],
+          for (i = 0, t = &state->particles[TRIDENT_PARTICLES],
               spin = gTrident_Spins;
                i != TRIDENT_BOLT_SPINS; i++, t++, spin += 2) {
             t->z = spin[0];
@@ -374,7 +374,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           }
         }
         for (i = 0, grow = TRIDENT_FIRST_BOLT_FRAME,
-            spinner = &work->particles[TRIDENT_PARTICLES];
+            spinner = &state->particles[TRIDENT_PARTICLES];
              i != TRIDENT_BOLTS; grow += 4, i++, spinner++) {
 
           scale = i * 4;
@@ -388,7 +388,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           } else {
             model->shade = TRIDENT_BOLT_SHADE;
           }
-          texture.pixels = work->sheet + x * PICTURE_BYTES(JAGGED_STREAK) +
+          texture.pixels = state->sheet + x * PICTURE_BYTES(JAGGED_STREAK) +
                            TRIDENT_JAGGED_STREAKS;
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(centerX - 64), toFIXED(32), 0);
@@ -413,7 +413,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       const u8 *cellTable;
 
       if (frame == TRIDENT_STRIKE_FRAME) {
-        for (i = 0, p = work->particles, x = INTtoFIXED(centerX);
+        for (i = 0, p = state->particles, x = INTtoFIXED(centerX);
              i != TRIDENT_PARTICLES; i++, p++) {
           s32 angle = Random16();
           s32 speed = (Random16() & 511) + 512;
@@ -443,7 +443,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           p->variant = (Random16() & 15) + 16;
         }
       }
-      for (i = 0, drawn = work->particles; i != TRIDENT_PARTICLES;
+      for (i = 0, drawn = state->particles; i != TRIDENT_PARTICLES;
            i++, drawn++) {
         if ((u32)drawn->variant < TRIDENT_FLASH_FRAMES) {
           blit[0](canvas,
@@ -491,19 +491,19 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                             gTrident_GlintFlips[flip & 3] | EFFECT_CLIP_BOUNDS,
                             BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-            canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
+            canvas, state->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],
             gBattleEffect_GlintPictureHeights[k]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != TRIDENT_SPRITES; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -588,7 +588,7 @@ void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
 void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint pos;
   struct ModelTexture texture;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
@@ -605,24 +605,24 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
   if (mode == LEAPING_STRIKE_PLANET_DIVER) {
     Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,
-                               work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
+                               state->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
   } else {
     Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
-                               work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
+                               state->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
-                               work->sheet + LEAPING_STRIKE_BILLOW, 0, 0);
+                               state->sheet + LEAPING_STRIKE_BILLOW, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
-                               work->sheet + LEAPING_STRIKE_FLAME_BAND, 0, 0);
+                               state->sheet + LEAPING_STRIKE_FLAME_BAND, 0, 0);
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
@@ -634,11 +634,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  work->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == LEAPING_STRIKE_PLANET_DIVER)
-    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+    state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = CANVAS_FADE_HALF;
+    state->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   for (i = 0; i != LEAPING_STRIKE_SPARK_COUNT; i++)
     LEAPING_STRIKE_SPARKS[i].variant = 0;
@@ -663,7 +663,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
     // Frames 2-15: a flash, then a ring of flames spreading round the caster.
     if ((u32)(frame - 2) <= 1)
-      draw[0](canvas, work->sheet, pos.x - FLASH_BURST_WIDTH / 2,
+      draw[0](canvas, state->sheet, pos.x - FLASH_BURST_WIDTH / 2,
               pos.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
               FLASH_BURST_HEIGHT);
     if ((u32)(frame - 4) <= 11) {
@@ -678,7 +678,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             frame;
 
         draw[0](canvas,
-                work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
+                state->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
                 x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
                 FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
@@ -696,7 +696,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       if (mode == LEAPING_STRIKE_PLANETARY)
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, POSE_LEAP);
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
       Sound_PlayFar(SE_WHOOSH);
     }
 
@@ -747,7 +747,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             spark->variant = (Random16() & 7) + 32;
             spark++;
           }
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           if (mode == LEAPING_STRIKE_PLANET_DIVER) {
             EFFECT_SHOW_DAMAGE(SE_CRASH);
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
@@ -768,7 +768,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       if (mode == LEAPING_STRIKE_PLANET_DIVER) {
         // The fireball over the caster while it is in the air.
         if (caster->y > 0)
-          draw[0](canvas, work->sheet + LEAPING_STRIKE_PICTURES, pos.x - 20,
+          draw[0](canvas, state->sheet + LEAPING_STRIKE_PICTURES, pos.x - 20,
                   pos.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
       } else {
         struct RenderModel *model;
@@ -779,12 +779,12 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         model = Render_AllocateModelList(1);
         shade = 0;
         if (frame == LEAPING_STRIKE_WAVE_FRAME)
-          work->shakeFrames = 14;
+          state->shakeFrames = 14;
 
         // The claw, slashing until frame 45.
         texture.logWidth = 6;
         texture.logHeight = 6;
-        texture.pixels = work->sheet + LEAPING_STRIKE_PICTURES;
+        texture.pixels = state->sheet + LEAPING_STRIKE_PICTURES;
         model->mesh = gBattleEffect_SquareMesh;
         model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
@@ -808,7 +808,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         // Three rings, each from its own frame, spinning as they spread.
         texture.logWidth = 6;
         texture.logHeight = 6;
-        texture.pixels = work->sheet + LEAPING_STRIKE_BILLOW;
+        texture.pixels = state->sheet + LEAPING_STRIKE_BILLOW;
         model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 3; i++) {
@@ -848,13 +848,13 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         // Two pillars where the caster landed, from their own frames.
         model->scrollV = 0;
         model->mesh = gBattleEffect_CylinderMesh;
-        texture.pixels = work->sheet + LEAPING_STRIKE_FLAME_BAND;
+        texture.pixels = state->sheet + LEAPING_STRIKE_FLAME_BAND;
         texture.logWidth = 7;
         texture.logHeight = 7;
         for (i = 0; i != 2; i++) {
           s32 start =
               gLeapingStrike_RingStarts[i] + LEAPING_STRIKE_PILLAR_FRAME;
-          struct Particle *base = &work->particles[i];
+          struct Particle *base = &state->particles[i];
 
           if (frame == start) {
             base->x = pos.x;
@@ -922,7 +922,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     }
 
     BattleCamera_Shake(12, 12);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -931,15 +931,15 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 /// Meteor Blow's horizontal-blank callback, the same routine as
 /// battle_effect_particle_streams.c's BattleEffect_ArmPaletteHBlankDma: stops
 /// DMA 0, then arms it to copy one BG palette word per scanline from the line
-/// table in the effect work, so the backdrop's colour changes down the screen.
+/// table in the effect state, so the backdrop's colour changes down the screen.
 void BattleEffect_ArmMeteorBlowPaletteDma(void) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
 
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   (void)channel[DMA_CONTROL_HALF];
-  Dma_Set(work->backdropLines, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(state->backdropLines, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
 

@@ -49,7 +49,7 @@ enum FallingSwordMode {
 ///
 /// Abilities: Ragnarok.
 void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 col;
   u8 *cells;
@@ -60,7 +60,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
 
@@ -77,16 +77,16 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   else
     baseX = target.x / 2 - 92;
 
-  Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
+                             state->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
 
   // Each column's flashes (a ring, 2 pixels apart, living 25 to 32 frames)
   // and sparks (from y = 88, at random speeds and angles, living 32 to 39).
   for (col = 0; col != RAGNAROK_SEEDED; col++) {
     for (i = 0; i != RAGNAROK_FLASHES; i++) {
-      struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
+      struct Particle *flash = &state->particles[col * RAGNAROK_FLASHES + i];
       s32 radius = i * 2;
       s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -111,13 +111,14 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     }
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != RAGNAROK_FRAMES; frame++) {
     if (frame == 4)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 8)
-      work->shakeFrames = frame;
+      state->shakeFrames = frame;
     if (frame == 18)
       Sound_PlayFar(SE_CRASH);
     if (frame == RESULT_FRAME)
@@ -157,7 +158,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       if (top + RAGNAROK_BLADE_HEIGHT > RAGNAROK_BLADE_FLOOR)
         height = height - top - (RAGNAROK_BLADE_HEIGHT - RAGNAROK_BLADE_FLOOR);
       if (height > 0)
-        draw[0](canvas, work->sheet, x + baseX - RAGNAROK_BLADE_WIDTH / 2, top,
+        draw[0](canvas, state->sheet, x + baseX - RAGNAROK_BLADE_WIDTH / 2, top,
                 RAGNAROK_BLADE_WIDTH, height);
     }
 
@@ -169,15 +170,16 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       // The strike: a shake, two frames of the big flash, then the ring.
       if (frame == start)
-        work->shakeFrames = 12;
+        state->shakeFrames = 12;
       if (frame >= start) {
         if (frame < start + 2)
-          draw[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
+          draw[0](canvas, state->sheet + RAGNAROK_FLASH_PICTURES,
                   gRagnarok_StrikeColumns[col + args->side * 3] + baseX -
                       FLASH_BURST_WIDTH / 2,
                   56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         for (i = 0; i != RAGNAROK_RING; i++) {
-          struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
+          struct Particle *flash =
+              &state->particles[col * RAGNAROK_FLASHES + i];
           s32 x;
           s32 life;
           s32 y;
@@ -188,7 +190,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           life = flash->variant;
           if (life >= 0 && life < FLASH_BURN_FRAMES)
             draw[0](canvas,
-                    work->sheet +
+                    state->sheet +
                         gRagnarok_FlashPictures[life / 3] *
                             PICTURE_BYTES(FLASH_BURST) +
                         RAGNAROK_FLASH_PICTURES,
@@ -248,7 +250,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     }
 
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Actor_SetAnimationSpeedFar(user, ANIM_STEP_NORMAL);
@@ -324,7 +326,7 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
 /// strikes, and every target is struck a little after. Acheron's Grief shows
 /// the same sword in other colours.
 void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
@@ -335,7 +337,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   FIXED origin;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   cells = Ram_HeapSlots->battleSheet;
 
@@ -354,10 +356,10 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   // No caller passes a third mode: both abilities draw the sword.
   if (mode != 2)
     Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET,
-                               work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, work->sheet, 1, 0);
+                               state->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_A, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
+                             state->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
 
   // Acheron's Grief turns the canvas's colours: red to blue, blue to green,
@@ -374,11 +376,12 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     }
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // 32 flashes on rings, two pixels apart.
   for (i = 0; i != TITAN_BLADE_FLASHES; i++) {
-    struct Particle *flash = &work->particles[i];
+    struct Particle *flash = &state->particles[i];
     s32 scale = i * 2;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -423,11 +426,11 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     }
 
     if (frame == 8)
-      work->shakeFrames = frame;
+      state->shakeFrames = frame;
     if (frame == 48)
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     if (frame == TITAN_BLADE_STRIKE_FRAME)
-      work->shakeFrames = 16;
+      state->shakeFrames = 16;
 
     if (frame == 4)
       Sound_PlayFar(SE_POWER_UP);
@@ -443,7 +446,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     // The flashes, from frame 56.
     if (frame > 55) {
       for (i = 0; i != TITAN_BLADE_RING; i++) {
-        struct Particle *flash = &work->particles[i];
+        struct Particle *flash = &state->particles[i];
         s32 x;
         s32 life;
         s32 y;
@@ -453,7 +456,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
         life = flash->variant;
         if (life >= 0 && life < FLASH_BURN_FRAMES)
           draw[0](canvas,
-                  work->sheet +
+                  state->sheet +
                       gTitanBlade_FlashPictures[life / 3] *
                           PICTURE_BYTES(FLASH_BURST) +
                       TITAN_BLADE_FLASH_PICTURES,
@@ -515,7 +518,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     if (step >= 0 && step < TITAN_BLADE_PILLAR_FRAMES) {
       s32 rise = frame * 16;
       s32 height = FIRE_PILLAR_HEIGHT;
-      u8 *src = work->sheet;
+      u8 *src = state->sheet;
       s32 x = centerX - FIRE_PILLAR_WIDTH / 2;
       DrawRectangle blit = draw[0];
       s32 scroll = (rise - TITAN_BLADE_PILLAR_PHASE) % height;
@@ -588,7 +591,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       if (top + TITAN_BLADE_SWORD_HEIGHT > SWORD_GROUND_Y)
         high = high - top - (TITAN_BLADE_SWORD_HEIGHT - SWORD_GROUND_Y);
       if (high > 0)
-        draw[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top,
+        draw[1](canvas, state->sheet + TITAN_BLADE_SWORD_PICTURE, x, top,
                 TITAN_BLADE_SWORD_WIDTH, high);
     }
 
@@ -645,7 +648,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS();

@@ -3,14 +3,14 @@
 /// A whirlwind's update: it travels forward, catches the leader it reaches and
 /// ends off screen or at a wall.
 void Whirlwind_Update(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   FIXED position[3];
   FIXED distance;
   s32 near;
 
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
+  if (state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
+      state->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -42,8 +42,8 @@ void Whirlwind_Update(struct Actor *self) {
             leader->facing = self->facing;
             leader->watchedActor = self;
             leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-            work->raisedTrigger = RAISED_RIDE_WHIRLWIND;
-            gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
+            state->raisedTrigger = RAISED_RIDE_WHIRLWIND;
+            gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
             self->riseCounter = 1;
             self->riseEnabled = 1;
           }

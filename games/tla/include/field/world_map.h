@@ -2,16 +2,16 @@
 #define ALCHEMY_WORLD_MAP_H
 
 /// @file
-/// The map screen's work and the destinations it marks.
+/// The map screen's state and the destinations it marks.
 
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
 #include "field/world_map_marker.h"
 
-/// gWorldMapWork, the map screen's state while it is open: its
+/// gWorldMapState, the map screen's state while it is open: its
 /// resources, the cursor and the marker sprites.
-struct WorldMapWork {
+struct WorldMapState {
   u16 vramBlock;          ///< owns the marker tiles
   u16 windowSlot;         ///< the resource slot of the name window's tiles
   FIXED x;                ///< the cursor's screen column, 16.16 pixels
@@ -42,10 +42,10 @@ struct WorldMapWork {
   FIXED searchZ;
 };
 
-STATIC_ASSERT(offsetof(struct WorldMapWork, window) == 28);
-STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 1580);
-STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 1602);
-STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 1608);
+STATIC_ASSERT(offsetof(struct WorldMapState, window) == 28);
+STATIC_ASSERT(offsetof(struct WorldMapState, cursor) == 1580);
+STATIC_ASSERT(offsetof(struct WorldMapState, mode) == 1602);
+STATIC_ASSERT(offsetof(struct WorldMapState, searchZ) == 1608);
 
 /// The game flag that marks a World Map place visited, from its FlagEntry.flag.
 /// The first of those flags, a place's FlagEntry.flag being added to it.
@@ -88,14 +88,14 @@ STATIC_ASSERT(offsetof(struct FlagEntry, visitScene) == 12);
 STATIC_ASSERT(offsetof(struct FlagEntry, scene) == 16);
 STATIC_ASSERT(sizeof(struct FlagEntry) == 20);
 
-/// gMainRoutineWork.mapScreenFlag under a label of its own,
+/// gMainRoutineState.mapScreenFlag under a label of its own,
 /// gMapScreenChoice: the destination last chosen on the map screen. Written
 /// through the member, MapScreen_Show compiles otherwise.
 struct WorldMapChoice {
   s16 flag; ///< the chosen FlagEntry's flag; -1 when cancelled
 };
 
-extern struct WorldMapWork gWorldMapWork;
+extern struct WorldMapState gWorldMapState;
 /// The destination last chosen on the world map (struct WorldMapChoice).
 extern struct WorldMapChoice gMapScreenChoice;
 const struct FlagEntry *FlagEntries_GetTable(void);

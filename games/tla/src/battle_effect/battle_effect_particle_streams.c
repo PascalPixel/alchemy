@@ -49,12 +49,12 @@ UNUSED void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *cells;
   u8 *palette;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   cells = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -65,13 +65,14 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
   Dma_Set(palette, (void *)BG_PLTT, DMA_COPY_WORDS(SHEET_PALETTE_BYTES / 4),
           REG_DMA3);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet);
+  Decompress_TaggedLz(palette, state->sheet);
   palette = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);
   palette += SHEET_PALETTE_BYTES;
-  Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_PICTURE);
+  Decompress_TaggedLz(palette, state->sheet + NEREID_COLUMN_PICTURE);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       cells);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -89,11 +90,11 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     focus.y = toFIXED(88);
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
-    EFFECT_FREE_PARTICLES(k, work->particles, 64);
+    EFFECT_FREE_PARTICLES(k, state->particles, 64);
     // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
     // reads; the ROM keeps the stores.
     for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
-      point = &work->particles[NEREID_UNREAD_FIRST + k];
+      point = &state->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
@@ -105,7 +106,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       life += sizeof(struct Particle) / sizeof(s32);
     }
     drops = PARTICLES;
-    BattleEffect_SelectLivingTargets(work->args);
+    BattleEffect_SelectLivingTargets(state->args);
     wait(1);
     BattleEffect_SpawnObjects(NEREID_OBJECTS, SPRITE_NEREID, 2);
 
@@ -179,11 +180,11 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
-          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
+          draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
                   gNereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
                   gNereidCopy_Columns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
                   FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
-          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
+          draw[0](canvas, state->sheet + NEREID_COLUMN_PICTURE,
                   gNereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
                   gNereidCopy_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
                   span);
@@ -193,7 +194,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       // The waves along the bottom.
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
-          draw[0](canvas, work->sheet,
+          draw[0](canvas, state->sheet,
                   k * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH,
                   120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
@@ -256,7 +257,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           }
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     }
 
     // She bursts away.
@@ -264,7 +265,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
-      Sprite_DestroyFar(work->sprites[k]);
+      Sprite_DestroyFar(state->sprites[k]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -275,10 +276,10 @@ extern const struct Scale gFormationObjects_LargeScale;
 /// The grid formations' sprites stand this many pixels apart.
 #define FORMATION_SPACING 32
 
-/// Arranges work->sprites in a formation (enum SummonFormation); x and z are
+/// Arranges state->sprites in a formation (enum SummonFormation); x and z are
 /// its origin in 16.16 pixels.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   struct Scale normal = gFormationObjects_Scale;
   struct Scale big = gFormationObjects_LargeScale;
   FIXED pos[4];
@@ -289,7 +290,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   pos[1] = toFIXED(255);
   switch (formation) {
   case SUMMON_FORMATION_THOR:
-    objects = work->sprites;
+    objects = state->sprites;
     for (i = 0; i != 3 * 3; i++) {
       pos[0] = INTtoFIXED((i % 3) * FORMATION_SPACING) + x;
       pos[2] = INTtoFIXED((i / 3) * FORMATION_SPACING) + z;
@@ -300,42 +301,42 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     for (i = 0; i != 4 * 3; i++) {
       pos[0] = INTtoFIXED((i % 4) * FORMATION_SPACING) + x;
       pos[2] = INTtoFIXED((i / 4) * FORMATION_SPACING) + z;
-      Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != NEREID_OBJECTS; i++) {
       pos[0] = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
       pos[2] = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
-      Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
       pos[0] = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
       pos[2] = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
-      Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT_ALTERNATE:
     for (i = 0; i != 8; i++) {
       pos[0] = INTtoFIXED(gFormationObjects_X[i]) + x;
       pos[2] = INTtoFIXED(gFormationObjects_Z[i]) + z;
-      Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
       pos[0] = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
       pos[2] = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
-      Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &big.x, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &big.x, 0);
     }
     break;
   case SUMMON_FORMATION_MEGAERA:
     for (i = 0; i != MEGAERA_OBJECTS; i++) {
       pos[0] = INTtoFIXED(gFormationObjects_WideX[i]) + x;
       pos[2] = INTtoFIXED(gFormationObjects_WideZ[i]) + z;
-      Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[i], pos, &normal.x, 0);
     }
     break;
   }
@@ -347,12 +348,12 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_BURST_FRAGMENT_HEIGHT 24
 
 #define IMPACT_BURST_FRAMES 72
-#define IMPACT_BURST_FRAGMENTS 3     ///< fragments, work->particles 61 to 63
+#define IMPACT_BURST_FRAGMENTS 3     ///< fragments, state->particles 61 to 63
 #define IMPACT_BURST_DRAWN_LARGE 30  ///< large sparks drawn
 #define IMPACT_BURST_DRAWN_SMALL 60  ///< small sparks drawn
 #define IMPACT_BURST_LARGE_SPARKS 64 ///< large sparks thrown
 #define IMPACT_BURST_SMALL_SPARKS 64 ///< small sparks thrown
-/// the first fragment in work->particles
+/// the first fragment in state->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 #define IMPACT_BURST_FRAGMENT_SPEED 32 ///< in the units of a spark's speed
 /// A spark shrinks a size each time this many frames of its life run out.
@@ -361,7 +362,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle additive;
   DrawRectangle maxBlend;
@@ -371,7 +372,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   orgX = x;
@@ -387,30 +388,30 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
                       BLITTER_ADDITIVE);
   additive = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
-                             work->sheet + IMPACT_BURST_SHARD_PICTURES, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+                             state->sheet + IMPACT_BURST_SHARD_PICTURES, 0, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Large sparks fly.
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-    work->particles[i].x = x;
-    work->particles[i].y = y;
-    work->particles[i].velocityX = (Trig_Sin(angle) * speed) >> 7;
-    work->particles[i].velocityY = -((Trig_Cos(angle) * speed) >> 6);
-    work->particles[i].variant = (Random16() & 15) + 16;
+    state->particles[i].x = x;
+    state->particles[i].y = y;
+    state->particles[i].velocityX = (Trig_Sin(angle) * speed) >> 7;
+    state->particles[i].velocityY = -((Trig_Cos(angle) * speed) >> 6);
+    state->particles[i].variant = (Random16() & 15) + 16;
   }
 
   // Three fragments fly apart.
   for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
         (Trig_Sin(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 6;
-    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
+    state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
         -((Trig_Cos(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 5);
   }
 
@@ -444,12 +445,13 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 #ifdef UBFIX
       width = gHelmSplitter_ImpactBurstPictureWidths[picture];
       height = gHelmSplitter_ImpactBurstPictureHeights[picture];
-      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
+      maxBlend(canvas,
+               state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
                FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
                width, height);
 #else
       maxBlend(
-          canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
+          canvas, state->sheet + gHelmSplitter_ImpactBurstPictures[picture],
           (FIXEDtoINT(x)) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
           (FIXEDtoINT(y)) -
@@ -459,7 +461,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 #endif
     }
 
-    for (i = 0, p = work->particles; i != IMPACT_BURST_DRAWN_LARGE; i++, p++) {
+    for (i = 0, p = state->particles; i != IMPACT_BURST_DRAWN_LARGE; i++, p++) {
       if (frame > i / 2 && p->variant > 0) {
         s32 size;
         s32 px;
@@ -491,7 +493,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
     for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
       struct Particle *shard =
-          &work->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
+          &state->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
       if (frame >= 36 && frame <= 63) {
         s32 picture;
@@ -503,7 +505,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
         px = FIXED_INTEGER_PART(shard->x);
         py = FIXED_INTEGER_PART(shard->y);
         maxBlend(canvas,
-                 work->sheet + picture * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
+                 state->sheet + picture * PICTURE_BYTES(IMPACT_BURST_FRAGMENT) +
                      IMPACT_BURST_SHARD_PICTURES,
                  px - IMPACT_BURST_FRAGMENT_WIDTH / 2,
                  py - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
@@ -513,7 +515,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y) {
 
     if (frame <= 35)
       BattleEffect_PlaceFormationObjects(formation, orgX, y);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -586,7 +588,7 @@ void Palette_BrightenBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta) {
 void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
                                    s32 blueDelta) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(6, 0);
-  u16 *source = Ram_HeapSlots->battleWork->palette;
+  u16 *source = Ram_HeapSlots->battleState->palette;
   s32 i;
 
   for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
@@ -616,13 +618,13 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
 
 /// Streams the fall's backdrop colours into colour 0, one each line.
 void BattleEffect_ArmPaletteHBlankDma(void) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   volatile u16 *channel = REG_DMA0;
 
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
   (void)channel[DMA_CONTROL_HALF];
-  Dma_Set(work->backdropLines, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
+  Dma_Set(state->backdropLines, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
 
@@ -677,7 +679,7 @@ enum ParticleStreamsSheetPicture {
 #define PARTICLE_STREAMS_EMBERS (&PARTICLES[PARTICLE_STREAMS_FLASHES])
 #define PARTICLE_STREAMS_FLASHES_DRAWN 64
 #define PARTICLE_STREAMS_EMBERS_DRAWN 64
-/// The fall's flames, from work->particles[0], and its landings after them.
+/// The fall's flames, from state->particles[0], and its landings after them.
 #define PARTICLE_STREAMS_FLAME_COUNT 32
 #define PARTICLE_STREAMS_LANDINGS 16
 /// The starfield's stars.
@@ -712,7 +714,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   void *canvas;
   DrawRectangle draw;
   s32 direction;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
 
   // Starts a landing where a fireball reaches the ground; it is never drawn.
   void ParticleStreams_SpawnLanding(s32 x, s32 y, s32 velocityX) {
@@ -720,7 +722,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     for (i = 0; i != PARTICLE_STREAMS_LANDINGS; i++) {
       struct Particle *landing =
-          &work->particles[PARTICLE_STREAMS_FLAME_COUNT + i];
+          &state->particles[PARTICLE_STREAMS_FLAME_COUNT + i];
 
       if (landing->variant == -1) {
         landing->variant = 0;
@@ -737,7 +739,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 i;
 
     for (i = 0; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
-      struct Particle *flame = &work->particles[i];
+      struct Particle *flame = &state->particles[i];
 
       if (flame->variant == -1) {
         flame->variant = 0;
@@ -758,7 +760,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 
   // In Outer Space the Fusion Dragon leaps out of sight. The stream then runs
@@ -780,7 +782,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -791,18 +793,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_FUSION_DRAGON +
                                                i * SPRITE_SECOND_PART);
 
-      work->sprites[i] = sprite;
+      state->sprites[i] = sprite;
       if (sprite != 0) {
         sprite->flags = 0;
         Sprite_StartAnimationFar(sprite, 2);
-        ((struct Sprite *)work->sprites[i])->image.priority = 3;
+        ((struct Sprite *)state->sprites[i])->image.priority = 3;
       }
     }
   } else {
     BattleEffect_SpawnObjects(1, SPRITE_METEOR, 3);
   }
   // The starfield.
-  Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_SHEET_B, state->sheet, 1, 1);
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
@@ -839,15 +841,15 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // The dissolve: the map is erased from the top in ragged columns.
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
 
-  work->bg2x = 0;
-  work->bg2y = 0;
-  work->scrollTimer = 0;
-  work->scrollInterval = 2;
+  state->bg2x = 0;
+  state->bg2y = 0;
+  state->scrollTimer = 0;
+  state->scrollInterval = 2;
   // Half a pixel a step with the stream and a pixel down, in 20.8.
-  work->scrollStepX = direction << 7;
-  work->scrollStepY = 1 << 8;
+  state->scrollStepX = direction << 7;
+  state->scrollStepY = 1 << 8;
   Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 127);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
@@ -875,7 +877,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                 (x & 7)] = 0;
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     } while (limit < CANVAS_SIZE + PARTICLE_STREAMS_RAGGED_EDGE);
   }
   // The fall.
@@ -884,7 +886,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
+    struct BattleBackgroundState *transition = Ram_HeapSlots->battleBackground;
     s32 transferMode = CANVAS_COPY_AND_DARKEN;
 
     gBgScroll[1].x = 0;
@@ -892,15 +894,15 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7,
                               COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-    EFFECT_SET_TRANSFER(work, transferMode, CANVAS_FILL_WORD(2));
+    EFFECT_SET_TRANSFER(state, transferMode, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
-    EFFECT_FREE_PARTICLES(i, work->particles, 64);
+    EFFECT_FREE_PARTICLES(i, state->particles, 64);
     transition->busy = 1;
-    work->frame = 0;
+    state->frame = 0;
     frame = 0;
     do {
       s32 growth = frame << 8;
-      s32 count = work->frame;
+      s32 count = state->frame;
       s32 dividend;
       s32 glow;
       u16 *line;
@@ -912,7 +914,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       /* FAKEMATCH(temporary): the division written out on a copy of count. */
       dividend = count;
       /* FAKEMATCH(dead): updates of count that cancel out. */
-      if (work) {
+      if (state) {
         count++;
         count--;
       }
@@ -922,7 +924,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       /* FAKEMATCH(barrier): hold set by an empty asm that reads count and
        * clobbers r1, r3 and r6. */
       asm("" : "=r"(hold) : "r"(count) : "r1", "r3", "r6");
-      line = work->backdropLines;
+      line = state->backdropLines;
 
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
@@ -979,9 +981,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         scale.y = spriteScale;
         position[0] = INTtoFIXED(x) + toFIXED(80);
         position[2] = INTtoFIXED(64 - y);
-        Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
+        Render_ApplyProjectedPlacementFar(state->sprites[0], position, &scale,
                                           0);
-        Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale,
+        Render_ApplyProjectedPlacementFar(state->sprites[1], position, &scale,
                                           0);
       } else {
         spriteScale = growth + FIXED_ONE;
@@ -989,13 +991,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         scale.y = spriteScale;
         position[0] = INTtoFIXED(x) + toFIXED(96);
         position[2] = INTtoFIXED(96 - y);
-        Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
+        Render_ApplyProjectedPlacementFar(state->sprites[0], position, &scale,
                                           0);
       }
 
       // A new flame below the falling sprite.
       for (i = 0, y = 32 - y; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
-        struct Particle *flame = &work->particles[i];
+        struct Particle *flame = &state->particles[i];
 
         if (flame->variant == -1) {
           s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
@@ -1024,7 +1026,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = FIXED_INTEGER_PART(pos->x) + 128;
         pos->y = FIXED_INTEGER_PART(pos->y) + 60;
-        draw(Ram_MapCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
+        draw(Ram_MapCellBuffer, state->sheet + PARTICLE_STREAMS_SMALL_GLOW,
              pos->x - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
              pos->y - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
              PARTICLE_STREAMS_SMALL_GLOW_SIZE,
@@ -1041,7 +1043,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 fireballY = gParticleStreams_FireballPoints[i][1] + y;
 
         if (fireballY <= 93)
-          draw(Ram_MapCellBuffer, work->sheet + PARTICLE_STREAMS_LARGE_GLOW,
+          draw(Ram_MapCellBuffer, state->sheet + PARTICLE_STREAMS_LARGE_GLOW,
                gParticleStreams_FireballPoints[i][0] + x -
                    PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
                fireballY - PARTICLE_STREAMS_LARGE_GLOW_SIZE / 2,
@@ -1054,12 +1056,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       }
 
       for (i = 0; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
-        struct Particle *flame = &work->particles[i];
+        struct Particle *flame = &state->particles[i];
 
         // A flame rises against the stream through its six pictures.
         if (flame->variant >= 0) {
           draw(Ram_MapCellBuffer,
-               work->sheet + PARTICLE_STREAMS_FLAMES +
+               state->sheet + PARTICLE_STREAMS_FLAMES +
                    flame->variant * (PARTICLE_STREAMS_FLAME_SIZE *
                                      PARTICLE_STREAMS_FLAME_SIZE),
                FIXED_INTEGER_PART(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
@@ -1072,9 +1074,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
             flame->variant = -1;
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
       frame++;
-      work->frame++;
+      state->frame++;
     } while (frame != PARTICLE_STREAMS_FALL_FRAMES);
     wait(1);
     transition->busy = 0;
@@ -1096,9 +1098,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 0);
   for (i = 0; i != PARTICLE_STREAMS_FLAME_COUNT; i++) {
-    struct Particle *mote = &work->particles[i];
+    struct Particle *mote = &state->particles[i];
 
     mote->x = Random16() & 127;
     mote->y = (Random16() & 127) + 127;
@@ -1119,11 +1121,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                  (Random16() & 255) << 11, ((Random16() & 255) - 128) << 13);
     ember->variant = 0;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
     s32 dragonScale = (frame + 464) << 8;
-    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraState;
     s32 elapsed = frame - PARTICLE_STREAMS_FLASH_FRAME;
     struct Scale scale;
     s32 x;
@@ -1138,8 +1140,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       Sound_PlayFar(SE_CRASH);
     if (frame == PARTICLE_STREAMS_DAMAGE_FRAME) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        Sprite_DestroyFar(work->sprites[0]);
-        Sprite_DestroyFar(work->sprites[1]);
+        Sprite_DestroyFar(state->sprites[0]);
+        Sprite_DestroyFar(state->sprites[1]);
         BattleObject_PutFar();
       }
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -1169,7 +1171,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           size = 1;
 #endif
         draw(canvas,
-             work->sheet +
+             state->sheet +
                  (gBattleEffect_MotePictures[size - 1] +
                   (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_PICTURES,
@@ -1186,14 +1188,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       }
     }
 
-    for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-      struct Particle *mote = &work->particles[i];
+    for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+      struct Particle *mote = &state->particles[i];
       // Motes rise up the screen and wrap round.
       u32 rise = i & 7;
       s32 size = rise + 3;
 
       draw(canvas,
-           work->sheet +
+           state->sheet +
                (gBattleEffect_MotePictures[size - 1] +
                 (i & 1) * MOTE_SET_BYTES) +
                PARTICLE_STREAMS_MOTE_PICTURES,
@@ -1213,7 +1215,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if ((u32)flash->variant < 2 * PARTICLE_STREAMS_FLASH_PICTURES) {
           s32 picture = flash->variant / 2;
 
-          draw(canvas, work->sheet + gParticleStreams_FlashPictures[picture],
+          draw(canvas, state->sheet + gParticleStreams_FlashPictures[picture],
                screen.x - gParticleStreams_FlashSizes[picture] / 2,
                screen.y - gParticleStreams_FlashSizes[picture] / 2,
                gParticleStreams_FlashSizes[picture],
@@ -1246,24 +1248,24 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       scale.y = dragonScale;
       position[0] = INTtoFIXED(x) + toFIXED(96);
       position[2] = INTtoFIXED(96 - y);
-      Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
-      Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[0], position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[1], position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
       position[0] = INTtoFIXED(x) + toFIXED(96);
       position[2] = INTtoFIXED(96 - y);
-      Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
+      Render_ApplyProjectedPlacementFar(state->sprites[0], position, &scale, 0);
     }
-    work->shakeFrames = 1;
+    state->shakeFrames = 1;
     BattleCamera_Shake(8, 8);
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == PARTICLE_STREAMS_METEOR)
-    Sprite_DestroyFar(work->sprites[0]);
+    Sprite_DestroyFar(state->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
 

@@ -11,13 +11,13 @@ void Leader_FlowWithStream(void) {
   s32 hit;
 
   {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    struct FieldState *state = Ram_HeapSlots->fieldState;
 
-    id = gMainRoutineWork.leaderActorId;
-    camera = work->camera;
+    id = gMainRoutineState.leaderActorId;
+    camera = state->camera;
   }
   leader = Actor_Get(id);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_MOAI &&
+  if (gMainRoutineState.next == SCENE_AQUA_ROCK_MOAI &&
       leader->groundHeight == 0)
     return;
   position[0] = leader->x.fixed;

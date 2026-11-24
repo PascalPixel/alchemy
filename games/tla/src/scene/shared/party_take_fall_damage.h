@@ -7,7 +7,7 @@
 /// down is listed, loses their poison and raises
 /// FIELD_RAISED_TRIGGER_PARTY_FELL, as a hazard's damage does.
 void Party_TakeFallDamage(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 leader = FieldParty_GetLeaderActor();
   s32 count;
   s32 i;
@@ -18,21 +18,21 @@ void Party_TakeFallDamage(void) {
   (void)Actor_Get(leader);
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
-    hp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
+    hp[i] = Unit_Get(gMainRoutineState.party[i])->hp;
   Party_AddHp(-FALL_DAMAGE, 0);
-  work->fallenCount = 0;
-  work->survivorCount = 0;
+  state->fallenCount = 0;
+  state->survivorCount = 0;
   Actor_SetAttachedEffect(leader,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   for (i = 0; i < count; i++) {
-    struct MainRoutineWork *main = &gMainRoutineWork;
+    struct MainRoutineState *main = &gMainRoutineState;
     struct Unit *unit = Unit_Get(main->party[i]);
 
     if (unit->hp > 0) {
-      work->survivorCount++;
+      state->survivorCount++;
     } else if (hp[i] != 0) {
-      work->fallenOwners[(s16)work->fallenCount++] = main->party[i];
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
+      state->fallenOwners[(s16)state->fallenCount++] = main->party[i];
+      state->raisedTrigger = FIELD_RAISED_TRIGGER_PARTY_FELL;
       unit->poison = 0;
     }
   }

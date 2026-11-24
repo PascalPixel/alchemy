@@ -134,7 +134,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 vector[3];
   struct ScreenPoint screen;
   s32 scale[3];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -150,10 +150,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, the
@@ -165,13 +165,13 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         DJINNI_ENTRANCE(ELEMENT_JUPITER, args->side, DJINNI_ANCHOR_OVER_TARGET),
         origin, originWorld);
   REG_BG2PA = Q_8_8(1);
-  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
-                             work->sheet + BIND_FLARE_PICTURES, 0, 0);
+                             state->sheet + BIND_FLARE_PICTURES, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
-                             work->sheet + BIND_DJINNI_PICTURE, 1, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+                             state->sheet + BIND_DJINNI_PICTURE, 1, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // The canvas is scrolled so that the target stands at its middle.
   EffectPosition_ProjectScaledBattler(args->targets[0], &anchor);
@@ -197,10 +197,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       BattleEffect_FetchRectangleBlitters(args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
+      draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
               DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
+        draw[1](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
                 DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
@@ -212,7 +212,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += CANVAS_FILL_WORD(1);
+      state->transferValue += CANVAS_FILL_WORD(1);
 
     // Only the first target gets a triangle.
     for (member = 0; member != 1; member++) {
@@ -232,7 +232,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         // shows, then hold; flares are stamped along the edges between them.
         if (memberFrame <= 67) {
           for (j = 0; j != BIND_CORNERS; j++) {
-            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
+            point = &state->particles[member * BIND_SLOTS_PER_TARGET + j];
             Matrix_Initialize();
             if (memberFrame < BIND_RUNE_FRAME) {
               scale[0] = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
@@ -250,10 +250,10 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
           }
           for (j = 0; j != BIND_CORNERS; j++) {
             struct Particle *from =
-                &work->particles[j + member * BIND_SLOTS_PER_TARGET];
+                &state->particles[j + member * BIND_SLOTS_PER_TARGET];
             struct Particle *to =
-                &work->particles[(j + 1) % BIND_CORNERS +
-                                 member * BIND_SLOTS_PER_TARGET];
+                &state->particles[(j + 1) % BIND_CORNERS +
+                                  member * BIND_SLOTS_PER_TARGET];
 
             size = 5 - memberFrame / 16;
             for (k = 0; k != BIND_EDGE_FLARES; k++) {
@@ -263,24 +263,24 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                       k * (to->velocityY - from->velocityY) / BIND_EDGE_FLARES;
 
               EFFECT_DRAW_FLARE(draw[0], canvas,
-                                work->sheet + BIND_FLARE_PICTURES, x, y, size);
+                                state->sheet + BIND_FLARE_PICTURES, x, y, size);
             }
           }
         }
 
         // Then the rune, its right half mirrored from the left.
         if (memberFrame >= BIND_RUNE_FRAME) {
-          draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
+          draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
-          draw[1](canvas, work->sheet, screen.x,
+          draw[1](canvas, state->sheet, screen.x,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
         }
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -297,7 +297,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 vector[3];
   struct ScreenPoint screen;
   s32 scale[3];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -313,20 +313,20 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 k;
   struct HeapSlots *heap;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, and a
   // transfer that darkens the canvas a little each frame.
   EFFECT_START_NARROW_CANVAS(0);
-  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, state->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
-                             work->sheet + BIND_FLARE_PICTURES, 0, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
+                             state->sheet + BIND_FLARE_PICTURES, 0, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // The canvas is scrolled so that the target stands at its middle.
   EffectPosition_ProjectScaledBattler(args->targets[0], &anchor);
@@ -350,7 +350,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->ramCodePaired;
     if (frame > 16 && (frame & 15) == 0)
-      work->transferValue += CANVAS_FILL_WORD(1);
+      state->transferValue += CANVAS_FILL_WORD(1);
 
     // Only the first target gets a triangle.
     for (member = 0; member != 1; member++) {
@@ -370,7 +370,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         // shows, then hold; flares are stamped along the edges between them.
         if (memberFrame <= 67) {
           for (j = 0; j != BIND_CORNERS; j++) {
-            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
+            point = &state->particles[member * BIND_SLOTS_PER_TARGET + j];
             Matrix_Initialize();
             if (memberFrame < BIND_RUNE_FRAME) {
               scale[0] = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
@@ -388,10 +388,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
           }
           for (j = 0; j != BIND_CORNERS; j++) {
             struct Particle *from =
-                &work->particles[j + member * BIND_SLOTS_PER_TARGET];
+                &state->particles[j + member * BIND_SLOTS_PER_TARGET];
             struct Particle *to =
-                &work->particles[(j + 1) % BIND_CORNERS +
-                                 member * BIND_SLOTS_PER_TARGET];
+                &state->particles[(j + 1) % BIND_CORNERS +
+                                  member * BIND_SLOTS_PER_TARGET];
 
             size = 5 - memberFrame / 16;
             for (k = 0; k != BIND_EDGE_FLARES; k++) {
@@ -401,24 +401,24 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                       k * (to->velocityY - from->velocityY) / BIND_EDGE_FLARES;
 
               EFFECT_DRAW_FLARE(draw[0], canvas,
-                                work->sheet + BIND_FLARE_PICTURES, x, y, size);
+                                state->sheet + BIND_FLARE_PICTURES, x, y, size);
             }
           }
         }
 
         // Then the rune, its right half mirrored from the left.
         if (memberFrame >= BIND_RUNE_FRAME) {
-          draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
+          draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
-          draw[1](canvas, work->sheet, screen.x,
+          draw[1](canvas, state->sheet, screen.x,
                   screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
         }
       }
     }
     EFFECT_RELEASE_BLITTERS();
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

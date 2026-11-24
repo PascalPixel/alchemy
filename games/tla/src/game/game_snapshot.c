@@ -49,8 +49,8 @@ void InventorySnapshot_Save(void) {
   save = (u16 *)gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    firstShortcut = gMainRoutineWork.firstShortcut;
-    secondShortcut = gMainRoutineWork.secondShortcut;
+    firstShortcut = gMainRoutineState.firstShortcut;
+    secondShortcut = gMainRoutineState.secondShortcut;
     // Save each inventory before dropping what the Trial Road takes away.
     for (unitId = FELIX; unitId <= PIERS; unitId++) {
       unit = Unit_Get(unitId);
@@ -79,7 +79,7 @@ void InventorySnapshot_Save(void) {
     // Keep shortcuts and party order with the inventory snapshot.
     *save++ = firstShortcut;
     *save++ = secondShortcut;
-    inventory = (s16 *)gMainRoutineWork.party;
+    inventory = (s16 *)gMainRoutineState.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
   }
@@ -108,17 +108,17 @@ void InventorySnapshot_Restore(void) {
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);
     }
-    gMainRoutineWork.firstShortcut = *src++;
-    gMainRoutineWork.secondShortcut = *src++;
+    gMainRoutineState.firstShortcut = *src++;
+    gMainRoutineState.secondShortcut = *src++;
 #ifdef UBFIX
-    gMainRoutineWork.party[0] = src[0];
-    gMainRoutineWork.party[1] = src[0] >> 8;
-    gMainRoutineWork.party[2] = src[1];
-    gMainRoutineWork.party[3] = src[1] >> 8;
+    gMainRoutineState.party[0] = src[0];
+    gMainRoutineState.party[1] = src[0] >> 8;
+    gMainRoutineState.party[2] = src[1];
+    gMainRoutineState.party[3] = src[1] >> 8;
 #else
     {
       // UB: the party order's four bytes are stored as two halfwords.
-      u16 *owners = (u16 *)gMainRoutineWork.party;
+      u16 *owners = (u16 *)gMainRoutineState.party;
 
       *owners++ = *src++;
       *owners = *src;

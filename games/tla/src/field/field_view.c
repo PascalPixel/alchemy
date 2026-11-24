@@ -88,7 +88,7 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
 void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay) {
-  struct MapWork *grid;
+  struct MapState *grid;
 
   // A negative argument leaves that value alone, so an event can change the
   // decay without restarting the shake, or start one axis only.
@@ -107,7 +107,7 @@ void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay) {
 /// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
 /// limit for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {
-  struct MapWork *grid;
+  struct MapState *grid;
   s32 waitedFrames;
 
   grid = Ram_HeapSlots->mapGrid;

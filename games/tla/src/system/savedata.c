@@ -4,7 +4,7 @@
 #include "system/savedata.h"
 #include "types.h"
 
-/// The signature that marks a save part: Save_InitializeWork counts a sector
+/// The signature that marks a save part: Save_InitializeState counts a sector
 /// as a save only when its first seven bytes match it.
 const u8 gSave_Signature[] = "CAMELOT";
 /// The sector header's first eight bytes, with no terminator: the signature,

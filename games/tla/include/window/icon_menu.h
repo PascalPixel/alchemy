@@ -2,7 +2,7 @@
 #define ALCHEMY_ICON_MENU_H
 
 /// @file
-/// The icon menu's work: the row of command icons the field menu, the File
+/// The icon menu's state: the row of command icons the field menu, the File
 /// Screen, the shops and the Yes/No menu are chosen from.
 
 #include "types.h"
@@ -24,7 +24,7 @@ struct IconMenuEntry {
 
 /// The icon menu: up to six command icons in a row, the windows of their
 /// labels, the icons' resource ids, the selection and the layout.
-struct IconMenuWork {
+struct IconMenuState {
   struct IconMenuEntry entries[6];
   struct Window *window; ///< the label window naming the selected icon
   /// The password level and transfer menus' explanation window, below the
@@ -47,10 +47,10 @@ struct IconMenuWork {
 
 STATIC_ASSERT(sizeof(struct IconMenuEntry) == 20);
 STATIC_ASSERT(offsetof(struct IconMenuEntry, slot) == 18);
-STATIC_ASSERT(sizeof(struct IconMenuWork) == 152);
-STATIC_ASSERT(offsetof(struct IconMenuWork, window) == 120);
-STATIC_ASSERT(offsetof(struct IconMenuWork, selection) == 140);
-STATIC_ASSERT(offsetof(struct IconMenuWork, labelBase) == 146);
-STATIC_ASSERT(offsetof(struct IconMenuWork, drawnSelection) == 150);
+STATIC_ASSERT(sizeof(struct IconMenuState) == 152);
+STATIC_ASSERT(offsetof(struct IconMenuState, window) == 120);
+STATIC_ASSERT(offsetof(struct IconMenuState, selection) == 140);
+STATIC_ASSERT(offsetof(struct IconMenuState, labelBase) == 146);
+STATIC_ASSERT(offsetof(struct IconMenuState, drawnSelection) == 150);
 
 #endif

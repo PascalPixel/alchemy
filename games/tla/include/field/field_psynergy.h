@@ -2,13 +2,13 @@
 #define ALCHEMY_FIELD_FIELD_PSYNERGY_H
 
 /// @file
-/// The works of the field Psynergy's effects: the scatter, Whirlwind's orb,
+/// The states of the field Psynergy's effects: the scatter, Whirlwind's orb,
 /// the Arrow's bow, and Avoid's falling arcs.
 
 #include "types.h"
 #include "field/effect_sprite.h"
 #include "field/field_particle.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/sprite.h"
 
 struct Actor;
@@ -17,9 +17,9 @@ struct SpriteAnimation;
 /// The particles of a scatter, a power of two: the next one wraps by a mask.
 #define SCATTER_PARTICLE_COUNT 64
 
-/// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
+/// The scatter's state (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
 /// sprites and particles, the actor it scatters from, and its stage.
-struct ScatterWork {
+struct ScatterState {
   u8 tiles[4096];
   struct EffectSprite sprites[SCATTER_PARTICLE_COUNT];
   struct FieldPsynergyParticle particles[SCATTER_PARTICLE_COUNT];
@@ -56,7 +56,7 @@ struct BowMotion {
 };
 
 /// Tiles in one of the bow's drawing poses, which follow each other from
-/// BowWork.bowTile.
+/// BowState.bowTile.
 #define BOW_POSE_TILES 32
 
 /// The glints the Arrow throws off the bow while it draws.
@@ -65,13 +65,13 @@ struct BowMotion {
 /// The bow's six drawing poses, 32 by 32 pixels in 256 colours.
 #define BOW_TILE_BYTES (6 * 32 * 32)
 
-/// BowWork.frame while the bow holds its pose and is not drawing.
+/// BowState.frame while the bow holds its pose and is not drawing.
 #define BOW_FRAME_IDLE 999
 
-/// The Arrow's work (FieldPsynergy_Arrow, in heap slot
+/// The Arrow's state (FieldPsynergy_Arrow, in heap slot
 /// HEAP_SLOT_BATTLE_EFFECT): its 32 sparks, the arrow and the bow with their
 /// motions, the points the arrow flies between, and the phase of its task.
-struct BowWork {
+struct BowState {
   u8 *tiles;
   struct BowMotion sparks[BOW_SPARK_COUNT];
   struct BowMotion arrowMotion;
@@ -93,9 +93,9 @@ struct BowWork {
   s8 arrowMoving;
 };
 
-/// FieldWork as FieldPsynergy_GatherNearbyCells writes it: the cells a Psynergy
-/// touches and the Cyclone's two spots, here unsigned.
-struct PointWork {
+/// FieldState as FieldPsynergy_GatherNearbyCells writes it: the cells a
+/// Psynergy touches and the Cyclone's two spots, here unsigned.
+struct PointState {
   u8 unused[3264]; ///< no code names it
   s16 points[62];
   u16 cycloneCarryX;

@@ -8,8 +8,8 @@
 #define RAMSES_FRAMES 320
 #define RAMSES_STRIKE_FRAME 260   ///< the fist strikes the targets
 #define RAMSES_ROCKS 6            ///< rocks that fall and bounce
-#define RAMSES_FIRST_PUFF 6       ///< the first puff in work->particles
-#define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
+#define RAMSES_FIRST_PUFF 6       ///< the first puff in state->particles
+#define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in state->particles
 #define RAMSES_SPARKS 512         ///< sparks of the strike
 /// The statue's own sprites, its fist's two after them, and the rocks' after
 /// those.
@@ -38,7 +38,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct SpriteScale scale;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   s32 frame;
   u8 *sheet;
   struct Point2D base;
@@ -47,26 +47,26 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   s32 k;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
-  work->transferMode = CANVAS_COPY;
+  state->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SelectLivingTargets(work->args);
+  BattleEffect_SelectLivingTargets(state->args);
   // The statue, its fist and wrist, then six rocks.
   BattleEffect_SpawnObjects(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
-    work->sprites[RAMSES_FIRST_ROCK_SPRITE + i] = sprite;
+    state->sprites[RAMSES_FIRST_ROCK_SPRITE + i] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, i % 3);
-      ((struct Sprite *)work->sprites[RAMSES_FIRST_ROCK_SPRITE + i])
+      ((struct Sprite *)state->sprites[RAMSES_FIRST_ROCK_SPRITE + i])
           ->image.priority = 1;
     }
   }
@@ -84,15 +84,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
                            0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   base.x = toFIXED(188);
   base.y = toFIXED(92);
   fist.x = toFIXED(160);
   fist.y = toFIXED(92);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct Particle *rock = &work->particles[i];
+    struct Particle *rock = &state->particles[i];
 
     rock->x = INTtoFIXED(Random16() & 127);
     rock->y = i * -toFIXED(16);
@@ -100,11 +100,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     rock->velocityY = 0;
     rock->variant = 0;
   }
-  for (i = 0; i != ARRAY_COUNT(work->particles) - RAMSES_FIRST_PUFF; i++)
-    work->particles[RAMSES_FIRST_PUFF + i].variant = RAMSES_PUFF_FRAMES;
+  for (i = 0; i != ARRAY_COUNT(state->particles) - RAMSES_FIRST_PUFF; i++)
+    state->particles[RAMSES_FIRST_PUFF + i].variant = RAMSES_PUFF_FRAMES;
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-  work->fadeStep = 0;
+  state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
+  state->fadeStep = 0;
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
        frame++) {
@@ -118,15 +118,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CRASH);
     scale = gRamses_UnitScale;
     if (frame >= 96 && frame <= 251)
-      work->shakeFrames = 1;
+      state->shakeFrames = 1;
     else if (frame >= RAMSES_STRIKE_FRAME && frame <= 263)
-      work->shakeFrames = 1;
+      state->shakeFrames = 1;
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != RAMSES_STATUE_SPRITES; i++) {
       position.x = INTtoFIXED(gRamses_StatueColumns[i]) + base.x - toFIXED(32);
       position.y = INTtoFIXED(gRamses_StatueRows[i]) + base.y - toFIXED(32);
-      Render_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale.x,
+      Render_ApplyProjectedPlacementFar(state->sprites[i], &position, &scale.x,
                                         0);
     }
     // The fist circles.
@@ -145,7 +145,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
             struct Particle *puff =
-                &work->particles[RAMSES_FIRST_PUFF + i * 8 + k];
+                &state->particles[RAMSES_FIRST_PUFF + i * 8 + k];
 
             puff->x = toFIXED(64);
             puff->y = toFIXED(96);
@@ -169,22 +169,22 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       position.x = fist.x;
       position.height = -toFIXED(256);
       position.y = fist.y - toFIXED(256);
-      Render_ApplyProjectedPlacementFar(work->sprites[RAMSES_FIST_SPRITE],
+      Render_ApplyProjectedPlacementFar(state->sprites[RAMSES_FIST_SPRITE],
                                         &position, &scale.x, 0);
       position.x = fist.x + toFIXED(32);
-      Render_ApplyProjectedPlacementFar(work->sprites[RAMSES_FIST_SPRITE + 1],
+      Render_ApplyProjectedPlacementFar(state->sprites[RAMSES_FIST_SPRITE + 1],
                                         &position, &scale.x, 0);
     }
     position.height = 0;
     // The rocks fall.
     for (i = 0; i != RAMSES_ROCKS; i++) {
-      struct Particle *rock = &work->particles[i];
+      struct Particle *rock = &state->particles[i];
 
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
         Render_ApplyProjectedPlacementFar(
-            work->sprites[RAMSES_FIRST_ROCK_SPRITE + i], &position, &scale.x,
+            state->sprites[RAMSES_FIRST_ROCK_SPRITE + i], &position, &scale.x,
             0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
@@ -196,7 +196,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
             rock->velocityY = -rock->velocityY / 2;
             for (k = 0; k != 2; k++) {
               struct Particle *puff =
-                  &work->particles[RAMSES_FIRST_ROCK_PUFF + i * 2 + k];
+                  &state->particles[RAMSES_FIRST_ROCK_PUFF + i * 2 + k];
 
               puff->x = rock->x / 2;
               puff->y = rock->y - toFIXED(32);
@@ -214,13 +214,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     }
     // Puffs of dust drift upwards.
     for (i = 0; i != RAMSES_PUFFS; i++) {
-      struct Particle *puff = &work->particles[RAMSES_FIRST_PUFF + i];
+      struct Particle *puff = &state->particles[RAMSES_FIRST_PUFF + i];
 
       if (puff->variant >= 0) {
         if (puff->variant >= 0 && puff->variant < RAMSES_PUFF_FRAMES) {
           s32 picture = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gRamses_PuffPictures[picture],
+          draw[0](canvas, state->sheet + gRamses_PuffPictures[picture],
                   FIXED_INTEGER_PART(puff->x) - gRamses_PuffSizes[picture] / 2,
                   FIXED_INTEGER_PART(puff->y) - gRamses_PuffSizes[picture] / 2,
                   gRamses_PuffSizes[picture], gRamses_PuffSizes[picture]);
@@ -236,7 +236,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
       }
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
     }
     // DEAD: the strike frame tested a second time; the ROM keeps the second
     // compare.
@@ -271,13 +271,13 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != RAMSES_FIRST_ROCK_SPRITE + RAMSES_ROCKS; i++)
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   EFFECT_FINISH_CANVAS();
 }
 

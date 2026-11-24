@@ -9,7 +9,7 @@
 /// creates the actor as an event does (FieldActor_Create) and gives the sprite
 /// the requested priority itself before Scene_SetActorSpritePriority.
 #include "types.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "fixed_math.h"
@@ -23,7 +23,7 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *party = Actor_GetById(gMainRoutineState.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

@@ -9,7 +9,7 @@
 
 /// Loads the world map's palette and tiles for the area at (x, z).
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
-/// Sets up the actor system: its 64 actors, its work and its per-frame updates
+/// Sets up the actor system: its 64 actors, its state and its per-frame updates
 /// (mode is an enum ActorSystemMode).
 void ActorSystem_InitializeFar(s32 mode);
 /// Starts an animation on a sprite, unless the sprite plays it already.
@@ -42,7 +42,7 @@ void WorldMap_UpdateCurrentTileBlockFar(void);
 /// Plays every edit of the map whose flag is set.
 void Map_ApplySetFlagEditsFar(void);
 /// Gives the leader the control script of the party's movement mode
-/// (gMainRoutineWork.movementMode). Declared without the actor the routine
+/// (gMainRoutineState.movementMode). Declared without the actor the routine
 /// starts the script on: its callers call it just after finding the leader.
 void Actor_StartRenderModeScriptFar(void);
 /// Freezes the world map's perspective view as a still image on BG1.

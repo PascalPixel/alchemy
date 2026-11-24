@@ -1,6 +1,6 @@
 /// @file
 /// The message speed tables, indexed by the player's message speed setting
-/// (gMainRoutineWork.messageSpeed, enum MessageSpeed).
+/// (gMainRoutineState.messageSpeed, enum MessageSpeed).
 
 #include "window/message_speed.h"
 #include "types.h"

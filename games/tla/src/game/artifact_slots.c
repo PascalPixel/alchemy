@@ -5,7 +5,7 @@
 
 #include "game_internal.h"
 
-/// Four rows of five numbers that MainRoutineWork_InitializeDefaults copies
+/// Four rows of five numbers that MainRoutineState_InitializeDefaults copies
 /// after gRareItemStock. Every value is below 18, the Djinn of one element, and
 /// there are four rows, as there are elements.
 /// XXX (no evidence): what reads the copy, and so what the numbers are; no

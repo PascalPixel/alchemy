@@ -38,7 +38,7 @@
 #include "sound/sound.h"
 #include "system/heap_release.h"
 #include "system/iwram_call.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -117,7 +117,7 @@ struct Actor;
 void VenusLighthouseEntrance_EmitDust(struct Actor *actor, s32 x, s32 y, s32 z);
 /// Loads the dust puffs' pictures and starts drawing them each frame.
 void VenusLighthouseEntrance_StartDust(void);
-/// Stops the dust puffs and frees their pictures and work.
+/// Stops the dust puffs and frees their pictures and state.
 void VenusLighthouseEntrance_StopDust(void);
 extern u32 gVenusLighthouseEntrance_BirdLands[];
 
@@ -144,10 +144,10 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void);
 #define DUST_PUFFS 96
 #define DUST_PUFF_FRAMES 16
 
-/// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play:
+/// The dust puffs' state, kept in Ram_HeapSlots' menu runtime while they play:
 /// their pictures, the puffs each with its place and sprite, and the next to
 /// emit.
-struct DustPuffWork {
+struct DustPuffState {
   u8 pictures[2048]; ///< decompressed, then loaded into the VRAM cache
   struct SparkState states[DUST_PUFFS];
   struct EffectSprite sprites[DUST_PUFFS];
@@ -225,8 +225,8 @@ s32 Scene_Initialize(void) {
   struct Actor *ruffian;
   struct Actor *leader;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetAnimation(ACTOR_WEST_BIRD, 5);
   FieldActor_SetSpritePriority(ACTOR_WEST_BIRD, 1);
@@ -250,7 +250,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WORKMAN_BOSS, 0, 0);
     Actor_SetPosition(ACTOR_WORKMAN_SENT_TO_CAVES, 0, 0);
   }
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE) {
     if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED)) {
       Event_Start();
@@ -259,17 +259,17 @@ s32 Scene_Initialize(void) {
       Event_End();
     }
   }
-  if (gMainRoutineWork.entrance == VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT) {
-    gMainRoutineWork.returnEntrance = 1;
-    gMainRoutineWork.entrance = 1;
+  if (gMainRoutineState.entrance == VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT) {
+    gMainRoutineState.returnEntrance = 1;
+    gMainRoutineState.entrance = 1;
     Party_RestoreHpPp(1);
     VenusLighthouseEntrance_WakeUp();
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_RUFFIAN_BATTLE) {
+  if (gMainRoutineState.entrance == ENTRANCE_AFTER_RUFFIAN_BATTLE) {
     Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN);
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_JENNA_TAKES_OVER) {
-    gMainRoutineWork.leaderActorId = ACTOR_JENNA;
+  if (gMainRoutineState.entrance == ENTRANCE_JENNA_TAKES_OVER) {
+    gMainRoutineState.leaderActorId = ACTOR_JENNA;
     Party_RemoveMember(ACTOR_FELIX);
     Party_RemoveMember(ACTOR_SHEBA);
     Party_RemoveMember(ACTOR_PIERS);
@@ -550,13 +550,13 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
     FieldEvent_Wait(20);
     // "You don't need to remind us, Alex. We know the place."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     FieldEvent_Wait(30);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
     FieldEvent_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "It's quite simple, Jenna. The meeting place is in the direction..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
@@ -1014,10 +1014,10 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
     FieldEvent_Wait(20);
     // "Well, just try to hold back when you're fighting."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     FieldEvent_Wait(40);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "Oh. You must be concerned about Felix. We can't do anything to..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
@@ -1145,7 +1145,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_SetSpriteRotationById(ACTOR_JENNA, DEGtoANG(90));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
   FieldCamera_MoveToActorById(ACTOR_JENNA, 0);
-  gFieldWork->transitionFrames = 60;
+  gFieldState->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -1245,7 +1245,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  gFieldWork->transitionFrames = 8;
+  gFieldState->transitionFrames = 8;
   Event_End();
 }
 
@@ -1258,10 +1258,10 @@ void VenusLighthouseEntrance_WakeUp(void) {
 #define BLAST_COLUMN_FRAMES 4
 #define BLAST_PICTURE_TILES SPRITE_TILES_8BPP(16, 16)
 
-/// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
+/// The rising column's state, kept in Ram_HeapSlots' menu runtime while it
 /// plays: its pictures, its pieces of water, the soldier it lifts and the
 /// puddle left under him.
-struct BlastColumnWork {
+struct BlastColumnState {
   u8 pictures[1024]; ///< decompressed, then loaded into the VRAM cache
   struct EffectSprite sprites[BLAST_COLUMN_PIECES];
   struct SparkState states[BLAST_COLUMN_PIECES];
@@ -1279,9 +1279,9 @@ struct BlastColumnWork {
 };
 
 void VenusLighthouseEntrance_UpdateBlastColumn(void) {
-  struct BlastColumnWork *work = Ram_HeapSlots->menuWork;
-  struct Actor *actor = work->soldier;
-  struct Actor *puddle = work->puddle;
+  struct BlastColumnState *blastColumnState = Ram_HeapSlots->menuState;
+  struct Actor *actor = blastColumnState->soldier;
+  struct Actor *puddle = blastColumnState->puddle;
   s32 i, y;
   FIXED scale;
   s32 frameStep;
@@ -1289,57 +1289,57 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   struct SparkState *state;
   struct EffectSprite *sprite;
 
-  switch (work->stage) {
+  switch (blastColumnState->stage) {
   case 0: // the first frame
-    if (work->timer == 0) {
-      work->stage++;
-      work->timer = -1;
+    if (blastColumnState->timer == 0) {
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   case 1: // the column rises under the soldier, 4 pixels a frame
-    work->height += 4;
-    if (work->height > 31) {
-      work->stage++;
-      work->timer = -1;
+    blastColumnState->height += 4;
+    if (blastColumnState->height > 31) {
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   case 2: // it holds him up for a second and a half
-    if (work->timer == 90) {
-      work->stage++;
-      work->timer = -1;
+    if (blastColumnState->timer == 90) {
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   case 3: // it shoots up and hurls him off the top of the screen
-    if (work->timer == 0) {
+    if (blastColumnState->timer == 0) {
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       actor->velocityY = toFIXED(24);
-      work->carrying = 0;
+      blastColumnState->carrying = 0;
       Sound_Play(SE_HEAVY_IMPACT);
     }
-    work->height += 8;
-    if (work->height > 79) {
-      work->stage++;
-      work->timer = -1;
+    blastColumnState->height += 8;
+    if (blastColumnState->height > 79) {
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   case 4: { // out of sight, he is taken off the stage
-    s16 *timer = &work->timer;
+    s16 *timer = &blastColumnState->timer;
 
-    if (work->timer == 10) {
+    if (blastColumnState->timer == 10) {
       actor->z.fixed = 0;
       actor->x.fixed = 0;
     }
     if (*timer == 30) {
-      work->stage++;
-      work->timer = -1;
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   }
   case 5: // the column sinks
-    work->height -= 8;
-    if (work->height <= 0) {
-      work->stage++;
-      work->timer = -1;
+    blastColumnState->height -= 8;
+    if (blastColumnState->height <= 0) {
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   case 6: { // the puddle dries away, with the sound of a fall
@@ -1354,66 +1354,67 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       puddle->scaleX = 0;
       puddle->scaleY = 0;
     }
-    timer = &work->timer;
-    if (work->timer == 10)
+    timer = &blastColumnState->timer;
+    if (blastColumnState->timer == 10)
       Sound_Play(SE_FALL);
     if (*timer == 90) {
-      work->stage++;
-      work->timer = -1;
+      blastColumnState->stage++;
+      blastColumnState->timer = -1;
     }
     break;
   }
   case 7: { // a clatter, and the ground shakes for half a second
-    s16 *timer = &work->timer;
+    s16 *timer = &blastColumnState->timer;
 
-    if (work->timer == 0) {
+    if (blastColumnState->timer == 0) {
       Sound_Play(SE_CLATTER);
       MapGrid_SetShake(3, 3, 1);
     }
     if (*timer == 30) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      if (work->timer == 30) {
-        work->stage = BLAST_FINISHED;
-        work->timer = -1;
+      if (blastColumnState->timer == 30) {
+        blastColumnState->stage = BLAST_FINISHED;
+        blastColumnState->timer = -1;
       }
     }
     break;
   }
   }
   actor->facing += TRIG_TURN / 16;
-  if (work->height > 0) {
-    for (i = 0, y = 0; i < BLAST_COLUMN_PIECES && y < work->height - 8;
+  if (blastColumnState->height > 0) {
+    for (i = 0, y = 0;
+         i < BLAST_COLUMN_PIECES && y < blastColumnState->height - 8;
          i++, y += 16) {
-      state = &work->states[i];
-      state->x = work->x;
-      state->y = work->y + toFIXED(y) + toFIXED(8);
-      state->z = work->z;
-      sprite = &work->sprites[i];
+      state = &blastColumnState->states[i];
+      state->x = blastColumnState->x;
+      state->y = blastColumnState->y + toFIXED(y) + toFIXED(8);
+      state->z = blastColumnState->z;
+      sprite = &blastColumnState->sprites[i];
       state->frame++;
       frameStep = state->frame >> 2;
       mask = 3;
-      sprite->oam.index =
-          work->columnTile + (frameStep & mask) * BLAST_PICTURE_TILES;
+      sprite->oam.index = blastColumnState->columnTile +
+                          (frameStep & mask) * BLAST_PICTURE_TILES;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
     }
     if (i < BLAST_COLUMN_PIECES) {
-      state = &work->states[i];
-      state->x = work->x;
-      state->y = work->y + toFIXED(work->height);
-      state->z = work->z;
+      state = &blastColumnState->states[i];
+      state->x = blastColumnState->x;
+      state->y = blastColumnState->y + toFIXED(blastColumnState->height);
+      state->z = blastColumnState->z;
       state->frame++;
       state->y +=
           Math_MulFX(-toFIXED(2), Math_Sin(state->frame * (TRIG_TURN / 16))) -
           toFIXED(2);
-      sprite = &work->sprites[i];
-      sprite->oam.index =
-          work->topTile + ((state->frame >> 2) & 3) * BLAST_PICTURE_TILES;
+      sprite = &blastColumnState->sprites[i];
+      sprite->oam.index = blastColumnState->topTile +
+                          ((state->frame >> 2) & 3) * BLAST_PICTURE_TILES;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
-      if (work->carrying != 0)
+      if (blastColumnState->carrying != 0)
         actor->y.fixed = state->y;
     }
   }
-  work->timer++;
+  blastColumnState->timer++;
 }
 
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
@@ -1421,8 +1422,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 /// A column of water rises under a soldier, holds him up, then hurls him off
 /// the top of the screen, and the ground shakes as the column sinks.
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
-  struct BlastColumnWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BlastColumnWork));
+  struct BlastColumnState *blastColumnState =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BlastColumnState));
   struct Actor *actor = Actor_Get(id);
   struct Actor *puddle;
   struct EffectSprite *sprite;
@@ -1431,17 +1432,18 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   u8 unpaused = 0;
 
   actor->paused = unpaused;
-  work->soldier = actor;
-  work->x = actor->x.fixed;
-  work->y = actor->y.fixed;
-  work->z = actor->z.fixed + toFIXED(2);
-  Decompress_TaggedLz(gField_GeyserTiles, work);
+  blastColumnState->soldier = actor;
+  blastColumnState->x = actor->x.fixed;
+  blastColumnState->y = actor->y.fixed;
+  blastColumnState->z = actor->z.fixed + toFIXED(2);
+  Decompress_TaggedLz(gField_GeyserTiles, blastColumnState);
   resource = VramCache_FindFreeEntry();
-  tile = Vram_Load(resource, 2048, work);
-  work->topTile = tile;
-  work->columnTile = tile + BLAST_COLUMN_FRAMES * BLAST_PICTURE_TILES;
-  state = work->states;
-  sprite = work->sprites;
+  tile = Vram_Load(resource, 2048, blastColumnState);
+  blastColumnState->topTile = tile;
+  blastColumnState->columnTile =
+      tile + BLAST_COLUMN_FRAMES * BLAST_PICTURE_TILES;
+  state = blastColumnState->states;
+  sprite = blastColumnState->sprites;
   for (i = BLAST_COLUMN_PIECES - 1; i >= 0;) {
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->depth = BattleEffect_GetObjectDepth(actor) - 2;
@@ -1455,7 +1457,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   }
   puddle = (FieldActor_Create(SPRITE_PUDDLE, actor->x.fixed, actor->y.fixed,
                               actor->z.fixed));
-  work->puddle = puddle;
+  blastColumnState->puddle = puddle;
   Actor_SelectAnimation(puddle, 1);
   Actor_SetSpriteFlags(puddle, 0);
   puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -1463,13 +1465,13 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   ((struct Sprite *)actor->sprite)->rotation = DEGtoANG(90);
   actor->x.fixed += -toFIXED(12);
   actor->motionFlags = 0;
-  work->stage = 0;
-  work->timer = 0;
-  work->height = 0;
-  work->carrying = 1;
+  blastColumnState->stage = 0;
+  blastColumnState->timer = 0;
+  blastColumnState->height = 0;
+  blastColumnState->carrying = 1;
   Event_PlaySound(SE_RISE_WITH_SPARKS);
   Task_AddFrame(VenusLighthouseEntrance_UpdateBlastColumn, TASK_PASS_FRAME);
-  while (work->stage != BLAST_FINISHED)
+  while (blastColumnState->stage != BLAST_FINISHED)
     System_Wait(1);
   FieldTask_Remove(VenusLighthouseEntrance_UpdateBlastColumn);
   Actor_Release(puddle);
@@ -1481,17 +1483,17 @@ void BattleEffect_StepVector3(struct SparkState *state, s32 damping,
                               s32 gravity);
 
 void VenusLighthouseEntrance_UpdateDust(void) {
-  struct DustPuffWork *work = Ram_HeapSlots->menuWork;
-  struct SparkState *state = work->states;
-  struct EffectSprite *sprite = work->sprites;
+  struct DustPuffState *dustPuffState = Ram_HeapSlots->menuState;
+  struct SparkState *state = dustPuffState->states;
+  struct EffectSprite *sprite = dustPuffState->sprites;
   s32 frame;
   s32 i;
 
   for (i = 0; i < DUST_PUFFS; i++, sprite++, state++) {
     frame = state->frame;
     if ((u32)frame < DUST_PUFF_FRAMES) {
-      sprite->oam.index =
-          work->tileBase + ((frame >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
+      sprite->oam.index = dustPuffState->tileBase +
+                          ((frame >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       BattleEffect_StepVector3(state, 64, 0);
       state->frame++;
@@ -1501,11 +1503,11 @@ void VenusLighthouseEntrance_UpdateDust(void) {
 
 void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
                                       s32 z) {
-  struct DustPuffWork *work = Ram_HeapSlots->menuWork;
+  struct DustPuffState *dustPuffState = Ram_HeapSlots->menuState;
   s32 angle = Random16();
-  s16 *next = &work->next;
-  struct EffectSprite *sprite = &work->sprites[*next];
-  struct SparkState *state = &work->states[*next];
+  s16 *next = &dustPuffState->next;
+  struct EffectSprite *sprite = &dustPuffState->sprites[*next];
+  struct SparkState *state = &dustPuffState->states[*next];
 
   sprite->oam.priority = BattleEffect_GetObjectPriority(source);
   sprite->depth = BattleEffect_GetObjectDepth(source);
@@ -1523,22 +1525,23 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
 }
 
 void VenusLighthouseEntrance_StartDust(void) {
-  struct DustPuffWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct DustPuffWork));
+  struct DustPuffState *dustPuffState =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct DustPuffState));
   s32 resource;
   s32 tileBase;
   s32 i;
   struct SparkState *state;
   struct EffectSprite *sprite;
 
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A),
+                      dustPuffState);
   resource = VramCache_FindFreeEntry();
-  tileBase = Vram_Load(resource, 2048, work);
-  work->tileBase = tileBase;
-  work->resource = resource;
-  state = work->states;
+  tileBase = Vram_Load(resource, 2048, dustPuffState);
+  dustPuffState->tileBase = tileBase;
+  dustPuffState->resource = resource;
+  state = dustPuffState->states;
   for (i = 0; i < DUST_PUFFS; i++) {
-    sprite = &work->sprites[i];
+    sprite = &dustPuffState->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -1547,15 +1550,15 @@ void VenusLighthouseEntrance_StartDust(void) {
     state->frame = -1;
     state++;
   }
-  work->next = 0;
+  dustPuffState->next = 0;
   Task_AddFrame(VenusLighthouseEntrance_UpdateDust, TASK_PASS_FRAME);
 }
 
 void VenusLighthouseEntrance_StopDust(void) {
-  struct DustPuffWork *work = Ram_HeapSlots->menuWork;
+  struct DustPuffState *state = Ram_HeapSlots->menuState;
 
   FieldTask_Remove(VenusLighthouseEntrance_UpdateDust);
-  VramCache_FreeEntry(work->resource);
+  VramCache_FreeEntry(state->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 

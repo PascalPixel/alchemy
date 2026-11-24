@@ -26,7 +26,7 @@
 #include "field/scene_tables.h"
 #include "field/actor.h"
 #include "field/actor_view.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/event_inline.h"
@@ -123,9 +123,9 @@ struct ExplosionSpark {
 /// The buffer a sprite sheet is unpacked into.
 #define SHEET_BUFFER_SIZE 4096
 
-/// The shattering's work: the shards' sprite sheet, and each shard's sprite and
-/// motion.
-struct IceWallWork {
+/// The shattering's state: the shards' sprite sheet, and each shard's sprite
+/// and motion.
+struct IceWallState {
   u8 sheet[SHEET_BUFFER_SIZE];
   struct EffectSprite sprites[ICE_SHARD_COUNT];
   struct IceShard shards[ICE_SHARD_COUNT];
@@ -279,7 +279,7 @@ void NorthernReaches_FireMagmaBall(void) {
     FieldActor_WaitForMove(ship);
     FieldEvent_Wait(5);
   } else {
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Fire the Magma Ball!"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     Actor_SetSpeed(ACTOR_SHIP, 3);
@@ -316,11 +316,11 @@ void NorthernReaches_FireMagmaBall(void) {
     FieldEvent_Wait(20);
     Actor_SetPosition(ACTOR_CANNON_SMOKE, 0, 0);
     Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 0, 0);
-    gFieldWork->transitionFrames = 100;
+    gFieldState->transitionFrames = 100;
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gFieldWork->transitionFrames = 8;
+    gFieldState->transitionFrames = 8;
     // "Great! We did it! We can keep going now!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 5);
     // "All right, let's head for the Northern Seas."
@@ -369,10 +369,10 @@ void NorthernReaches_FireMagmaBall(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  struct MainRoutineWork *state;
+  struct MainRoutineState *state;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  state = &gMainRoutineWork;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  state = &gMainRoutineState;
   Actor_Get(state->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (state->entrance == ENTRANCE_ABOARD_SHIP_WITH_CANNON) {
@@ -387,7 +387,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_ICE_WALL_GONE)
+  if (gMainRoutineState.entrance == ENTRANCE_ICE_WALL_GONE)
     NorthernReaches_ClearIceWall();
   if (Event_GetFlag(FLAG_ICE_WALL_SHATTERED))
     NorthernReaches_ClearIceWall();
@@ -401,7 +401,7 @@ void BattleEffect_StepVector3(s32 *vector, s32 damping, s32 gravity);
 /// `position`.
 void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
                                     void (*callback)(void)) {
-  struct IceWallWork *work;
+  struct IceWallState *state;
   struct IceShard *shard;
   struct EffectSprite *sprite;
   struct EffectSprite *flySprite;
@@ -415,15 +415,15 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   s32 i, frame, column, entry, sparkEntry, tiles, flying, sparkTiles;
   s32 size;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct IceWallWork));
+  state = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct IceWallState));
   flying = 0;
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_ICE_SHARD),
-                      work);
+                      state);
   entry = VramCache_FindFreeEntry();
-  tiles = VramCache_Load(entry, 1280, work);
+  tiles = VramCache_Load(entry, 1280, state);
   i = 0;
-  shard = work->shards;
-  sprite = work->sprites;
+  shard = state->shards;
+  sprite = state->sprites;
   for (; i < ICE_SHARD_COUNT; i++) {
     EffectSprite_Init(sprite, 0, 0, OBJ_SIZE_16X16, (i & 3) * 8 + tiles);
     sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
@@ -482,8 +482,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
       flying = 1;
     }
     if (flying != 0) {
-      shard = work->shards;
-      flySprite = work->sprites;
+      shard = state->shards;
+      flySprite = state->sprites;
       for (i = ICE_SHARD_COUNT - 1; i >= 0; i--) {
         if (shard->age < ICE_SHARD_FRAMES) {
           EffectSprite_DrawAtWorldPosition(flySprite, &shard->x);

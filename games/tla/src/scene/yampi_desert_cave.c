@@ -20,7 +20,7 @@
 #include "field/field.h"
 #include "field/field_coordinate.h"
 #include "field/field_event.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/map_grid.h"
@@ -33,7 +33,7 @@
 #include "sound/sound.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -187,7 +187,7 @@ extern s8 gPushRectangles[][4];
 /// raised layers' attributes and block the ground; returns 0 for an actor that
 /// is no log.
 s32 YampiDesertCave_SetLogCells(s32 id) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
   s16 sprite = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i;
@@ -309,8 +309,8 @@ s32 YampiDesertCave_FindLogRoll(struct LogRoll *roll) {
 
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor **entry;
   struct Actor *actor;
   u32 i, k;
@@ -318,7 +318,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
 
   *direction = FACING_INDEX(leader->facing);
   i = ACTOR_FIRST_PLACED;
-  entry = &work->actors[ACTOR_FIRST_PLACED];
+  entry = &state->actors[ACTOR_FIRST_PLACED];
   for (; i < FIELD_TREASURE_ACTOR; i++) {
     actor = *entry;
     for (k = 0; k < PUSH_KINDS; k++) {
@@ -375,9 +375,9 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Teleport_PlaySparks(void);
 
 void YampiDesertCave_PushLog(struct LogRoll roll) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 w, h;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *actor = Actor_GetById(roll.slot);
   // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
   // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
@@ -403,14 +403,14 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
   h = (ABS(gPushRectangles[kind][1]) + ABS(gPushRectangles[kind][3])) >> 4;
   PushedActor_FillGridAttributeRectangle(MAPGRID_LAYER_GROUND, cell[0], cell[2],
                                          w, h, CELL_BEHAVIOR_NORMAL);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
+  Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_PUSH);
   wait(15);
   // The leader follows the log half its way.
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+  Actor_SetDestinationOffset(gMainRoutineState.leaderActorId,
                              FIXEDtoINT(roll.x - from[0]) >> 1,
                              FIXEDtoINT(roll.z - from[2]) >> 1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->update =
+  Actor_GetById(gMainRoutineState.leaderActorId)->update =
       YampiDesertCave_StopLeaderAtLog;
   wait(4);
   if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
@@ -421,9 +421,9 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(roll.slot, 0.5, 0.1);
   Actor_SetMoveTarget(actor, roll.x, roll.y, roll.z);
-  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeedAndAcceleration(gMainRoutineState.leaderActorId, 0.3, 0.1);
   // BUG: the leader's step after the push reads both halves from the step's
   // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
   // meant). With direction 0 both are 0.
@@ -431,18 +431,18 @@ void YampiDesertCave_PushLog(struct LogRoll roll) {
     s32 step = gPushLeaderSteps[direction];
 
 #ifdef BUGFIX
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+    Actor_SetDestinationOffset(gMainRoutineState.leaderActorId,
                                PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
 #else
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+    Actor_SetDestinationOffset(gMainRoutineState.leaderActorId,
                                toFIXED(step) >> 31,
                                FIXEDtoINT(toFIXED(step)) >> 1);
 #endif
   }
   if (roll.onPushed != NULL)
     ((void (*)(void))roll.onPushed)();
-  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
@@ -529,7 +529,7 @@ void YampiDesertCave_FightCrystal(void) {
 void YampiDesertCave_WonderAtRipple(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
+  FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_QUESTION, 32);
   Event_End();
   return;
@@ -542,9 +542,9 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return NULL; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN)
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN)
     return gYampiDesertCaveGuardianPlacements;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
     return gYampiDesertCaveCrystalPlacements;
   return gYampiDesertCave_Placements;
 }
@@ -562,7 +562,7 @@ void YampiDesertCave_TryPushLog(void) {
   void name(void) {                                                            \
     Teleport_StartShimmer();                                                   \
     Teleport_PlaySparks();                                                     \
-    gMainRoutineWork.teleportState = 2;                                        \
+    gMainRoutineState.teleportState = 2;                                       \
     Event_SetDestination(SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST,          \
                          entrance);                                            \
     Event_Wait(40);                                                            \
@@ -605,13 +605,13 @@ DEFINE_BURST_PILLAR(YampiDesertCave_BurstCrystalRoomPillar,
 /// Move takes a pillar: the cells it stood on open, as the room has them
 /// without it.
 void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
     s32 row = 12;
 
     MapGrid_CopyCellAttributes(98, 3, 3, 3, 97, row);
     MapGrid_CopyCellAttributes(33, 12, 1, 1, 34, row);
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if (id == ACTOR_EAST_PILLAR) {
       MapGrid_CopyCellAttributes(102, 15, 1, 1, 103, 15);
       MapGrid_CopyCellAttributes(43, 14, 1, 1, 39, 16);
@@ -632,7 +632,7 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
 void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
     s32 row = FIELD_CELL(actor->z.fixed);
 
     if (row == 13) {
@@ -646,7 +646,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
     }
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if (id == ACTOR_EAST_PILLAR) {
       s32 column;
 
@@ -671,12 +671,13 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 /// As Sand melts Felix into the sand, the ways only a sunk Felix can take open
 /// in the Water of Life chest's room and in Crystal's room.
 void YampiDesertCave_CastSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
+  Actor_GetById(gMainRoutineState.leaderActorId)->layer =
+      MAPGRID_LAYER_OVERHEAD;
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
     MapGrid_CopyCellAttributes(55, 71, 4, 1, 43, 70);
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     MapGrid_CopyCellAttributes(110, 45, 5, 2, 90, 50);
     MapGrid_CopyCellAttributes(113, 47, 2, 1, 90, 52);
     MapGrid_CopyCellAttributes(107, 48, 3, 2, 90, 53);
@@ -688,10 +689,10 @@ void YampiDesertCave_CastSand(void) {
 
 /// As Sand fades and Felix rises out of the sand, those ways close again.
 void YampiDesertCave_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST)
+  Actor_GetById(gMainRoutineState.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST)
     MapGrid_CopyCellAttributes(43, 70, 4, 1, 55, 71);
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     MapGrid_CopyCellAttributes(90, 50, 5, 2, 110, 45);
     MapGrid_CopyCellAttributes(90, 52, 2, 1, 113, 47);
     MapGrid_CopyCellAttributes(90, 53, 3, 2, 107, 48);
@@ -739,10 +740,10 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 px = column * (MAPGRID_CELL_PIXELS / 2);
   s16 row = gYampiDesertCave_RipplePath[index + 1];
   s32 pz = row * (MAPGRID_CELL_PIXELS / 2);
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   // The Scoop's hand, where it digs.
   struct Actor *scoopHand =
-      ((struct ScoopWork *)Ram_HeapSlots->battleEffect)->actor;
+      ((struct ScoopState *)Ram_HeapSlots->battleEffect)->actor;
   s32 x = 0, z = 0;
 
   if (scoopHand != NULL) {
@@ -767,7 +768,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     // Felix speaks to Crystal at once, which starts its battle
     // (YampiDesertCave_FightCrystal).
     {
-      s16 *talk = &work->talk;
+      s16 *talk = &state->talk;
       s32 value = ACTOR_CRYSTAL;
 
       *talk = value;
@@ -799,14 +800,14 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_VALUKAR, leader->x.part[0].integer,
                          leader->z.part[0].integer);
   Event_Wait(20);
-  gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
+  gMainRoutineState.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  gMainRoutineWork.battleBackground = (s32)&ResourceId_LavaCaveBackdrop;
+  gMainRoutineState.battleBackground = (s32)&ResourceId_LavaCaveBackdrop;
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
                                         HIDDEN_BOSS_VALUKAR);
 }
@@ -820,9 +821,9 @@ void YampiDesertCave_DigUpMythrilSilver(s32 mode) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN)
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN)
     return gYampiDesertCaveGuardianTriggers;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
     return gYampiDesertCaveCrystalTriggers;
   return gYampiDesertCave_Triggers;
 }
@@ -837,10 +838,10 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 /// palette cycle and Retreat destination, the third room's background
 /// priorities, and in each room the objects its flags place.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
     Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
                           gTeleportCircle_ShimmerColors,
                           gTeleportCircle_ShimmerSlots);
@@ -854,27 +855,27 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_CHEST_ROOM_BURST_PILLAR, 0, 0);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
     }
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST) {
       if (Event_GetFlag(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST)) {
-        gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST;
-        gMainRoutineWork.retreatEntrance =
+        gMainRoutineState.retreatScene = SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST;
+        gMainRoutineState.retreatEntrance =
             YAMPI_DESERT_GUARDIAN_RING_CHEST_FROM_WORLD_MAP;
       } else if (Event_GetFlag(
                      FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST)) {
-        gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
-        gMainRoutineWork.retreatEntrance =
+        gMainRoutineState.retreatScene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
+        gMainRoutineState.retreatEntrance =
             YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_WORLD_MAP;
       } else if (Event_GetFlag(
                      FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE)) {
-        gMainRoutineWork.retreatScene =
+        gMainRoutineState.retreatScene =
             SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE;
-        gMainRoutineWork.retreatEntrance =
+        gMainRoutineState.retreatEntrance =
             YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_FROM_WORLD_MAP;
       }
     }
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
     if (Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED)) {
       Actor_SetPosition(ACTOR_GUARDIAN_ROOM_PILLAR, 552, 216);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
@@ -885,8 +886,8 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP))
       Actor_SetWideSprite(ACTOR_MYTHRIL_SILVER, 1);
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
-    if ((u16)(gMainRoutineWork.entrance - 3) <= 2) {
+  if (gMainRoutineState.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
+    if ((u16)(gMainRoutineState.entrance - 3) <= 2) {
       REG_BG1CNT &= ~BGCNT_PRIORITY(3);
       REG_BG1CNT |= BGCNT_PRIORITY(1);
       REG_BG2CNT &= ~BGCNT_PRIORITY(3);

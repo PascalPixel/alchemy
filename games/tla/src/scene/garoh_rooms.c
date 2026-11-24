@@ -29,7 +29,7 @@
 #include "field/scene_tables.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "text/msg_ids.h"
@@ -128,7 +128,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GAROH_ROOMS_HOUSES)
     return gGarohRooms_HousesActorPlacements;
@@ -150,7 +150,7 @@ enum { GAROH_INN = 3 };
 /// opens; at night he is sorry, but on nights of the full moon they only sell
 /// claws and fangs.
 void GarohRooms_TalkToWeaponsVendor(s32 actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -173,7 +173,7 @@ void GarohRooms_TalkToWeaponsVendor(s32 actor) {
 /// Weapons Vendor. By day, from in front of the counter, his shop opens; at
 /// night he only says it is unfortunate they came on a night of the full moon.
 void GarohRooms_TalkToArmorVendor(s32 actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -194,7 +194,7 @@ void GarohRooms_TalkToArmorVendor(s32 actor) {
 /// from in front of the counter her shop opens, night or day. From anywhere
 /// else she talks; at night she asks whether the party came from Alhafra.
 void GarohRooms_TalkToItemShopkeeper(s32 actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -226,7 +226,7 @@ void GarohRooms_TalkToItemShopkeeper(s32 actor) {
 /// Talking to the innkeeper behind the inn's counter: from in front of it he
 /// offers a night's stay, and from elsewhere he only chats.
 void GarohRooms_TalkToInnkeeper(s32 actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -250,8 +250,8 @@ void GarohRooms_TalkToPriest(void) {
   s16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
-  Actor_FaceActorById(ACTOR_PRIEST, gMainRoutineWork.leaderActorId, 0);
+      Actor_GetById(gMainRoutineState.leaderActorId)->facing);
+  Actor_FaceActorById(ACTOR_PRIEST, gMainRoutineState.leaderActorId, 0);
   if ((u16)facing == FACING_NORTH) {
     Sanctum_Run(ACTOR_PRIEST);
   } else {
@@ -279,18 +279,18 @@ void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
   Event_SetMessageId(message);
   // "Good evening, wanderers! Are you looking for something?"
   FieldMessage_ShowAtActor(actor, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     Event_SetMessageId(message + 2);
     // "Searching for werewolves, eh?"
     FieldMessage_ShowAtActor(actor, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
         0) {
       // "You don't really believe they exist, do you? If so, you'd best..."
       Event_ShowMessageAndWait(actor, 0);
     } else {
       // Past "You don't really believe they exist, do you?" to the next line.
-      gFieldWork->message++;
+      gFieldState->message++;
       // "Hehrrr... Sorry. Just thought I'd ask. We get some crazy folk..."
       Event_ShowMessageAndWait(actor, 0);
     }
@@ -390,7 +390,7 @@ void GarohRooms_AskAboutReveal(void) {
 /// morning's after, and the inn's morning ones as the party wakes there.
 const struct Trigger *Scene_GetTriggers(void) {
   s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
   s32 houses = SCENE_GAROH_ROOMS_HOUSES;
   s32 scene;
 
@@ -424,13 +424,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s32 turn;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_GAROH_ROOMS_HOUSES) {
+  if (gMainRoutineState.next == SCENE_GAROH_ROOMS_HOUSES) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
-        gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN) {
+        gMainRoutineState.entrance == ENTRANCE_WAKE_AT_INN) {
       Actor_SetPosition(ACTOR_DISAPPOINTED_TRAVELERS_BED, 0, 0);
       Actor_SetPosition(ACTOR_STUBBORN_TRAVELERS_BED, 0, 0);
       Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER,
@@ -461,7 +461,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELER), 0);
     }
-    if (gMainRoutineWork.entrance == ENTRANCE_WAKE_AT_INN &&
+    if (gMainRoutineState.entrance == ENTRANCE_WAKE_AT_INN &&
         !GameFlag_Get(FLAG_GAROH_SECRET_SHARED))
       GarohRooms_WakeAtInn();
   }

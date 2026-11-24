@@ -17,14 +17,14 @@
 #define CANVAS_WIPE_NONE 3
 
 /// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
-/// 23 frames across, 15 down. Each frame sets work->transferPending, so the
+/// 23 frames across, 15 down. Each frame sets state->transferPending, so the
 /// caller's transfer task must already be running.
 ///
 /// direction: CANVAS_WIPE_ACROSS sweeps left to right, CANVAS_WIPE_NONE does
 ///            nothing, anything else sweeps top to bottom.
 /// fill: what the wipe leaves (enum CanvasWipeFill).
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   u8 delay[CANVAS_SIZE];
   s32 x;
@@ -32,7 +32,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   s32 wipePosition;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   for (x = 0; x != CANVAS_SIZE; x++)
     delay[x] = Random16() & WIPE_LAG_MAX;
 
@@ -54,7 +54,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
               canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     } while (front <= WIPE_ACROSS_END);
   } else if (direction != CANVAS_WIPE_NONE) {
     s32 front;
@@ -74,7 +74,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
               canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
         }
       }
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
   }
 }

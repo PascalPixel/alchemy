@@ -6,7 +6,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The Djinni's picture, after the sign's pictures in the work sprite sheet.
+/// The Djinni's picture, after the sign's pictures in the state's sprite sheet.
 #define DJINNI_SIGN_DJINNI_PICTURE 26048
 /// How far the Djinni sways either side as it rises, in pixels.
 #define DJINNI_SIGN_DJINNI_SWAY 32
@@ -31,7 +31,7 @@
 void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   s32 center[3];
   s32 base[3];
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
    * frame reserves and never touches; as one DrawRectangle. */
@@ -42,7 +42,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   if (mode == DJINNI_SIGN_RIME) {
@@ -55,23 +55,23 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    center, base);
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-                               work->sheet + DJINNI_SIGN_DJINNI_PICTURE, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, work->sheet, 1, 0);
+                               state->sheet + DJINNI_SIGN_DJINNI_PICTURE, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, state->sheet, 1, 0);
 
     // The rune's half and its mirror make the seal.
-    Iwram_ClearWordsEntry(work->sheet + RIME_SEAL_TEXTURE,
+    Iwram_ClearWordsEntry(state->sheet + RIME_SEAL_TEXTURE,
                           RIME_SEAL_CLEARED_BYTES);
     for (row = 0; row != RUNE_HALF_HEIGHT; row++) {
       for (column = 0; column != RUNE_HALF_WIDTH; column++) {
-        work->sheet[RIME_SEAL_TEXTURE + RUNE_TEXTURE_RUNE +
-                    row * RUNE_TEXTURE_SIZE + column] =
-            work->sheet[row * RUNE_HALF_WIDTH + column];
-        work->sheet[RIME_SEAL_TEXTURE + RUNE_TEXTURE_RUNE +
-                    row * RUNE_TEXTURE_SIZE + 2 * RUNE_HALF_WIDTH - 1 -
-                    column] = work->sheet[row * RUNE_HALF_WIDTH + column];
+        state->sheet[RIME_SEAL_TEXTURE + RUNE_TEXTURE_RUNE +
+                     row * RUNE_TEXTURE_SIZE + column] =
+            state->sheet[row * RUNE_HALF_WIDTH + column];
+        state->sheet[RIME_SEAL_TEXTURE + RUNE_TEXTURE_RUNE +
+                     row * RUNE_TEXTURE_SIZE + 2 * RUNE_HALF_WIDTH - 1 -
+                     column] = state->sheet[row * RUNE_HALF_WIDTH + column];
       }
     }
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     s32 haze[3];
 
@@ -81,9 +81,10 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    center, haze);
     Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SHEET,
-                               work->sheet + DJINNI_SIGN_DJINNI_PICTURE, 1, 1);
-    Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET, work->sheet, 1, 0);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+                               state->sheet + DJINNI_SIGN_DJINNI_PICTURE, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET, state->sheet, 1, 0);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_BG2PA = Q_8_8(1);
@@ -102,7 +103,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     // blooming every two frames.
     if (frame == 0) {
       for (i = 0; i != HAZE_PLACED_STARS; i++) {
-        struct Particle *star = &work->particles[i];
+        struct Particle *star = &state->particles[i];
 
         SET_POSITION(star, INTtoFIXED((Random16() & 31) - 16),
                      INTtoFIXED((Random16() & 63) - 16),
@@ -130,7 +131,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
 
       if (height > DJINNI_HEIGHT - 1)
         height = DJINNI_HEIGHT;
-      blit[0](canvas, work->sheet + DJINNI_SIGN_DJINNI_PICTURE,
+      blit[0](canvas, state->sheet + DJINNI_SIGN_DJINNI_PICTURE,
               FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 64)) *
                          DJINNI_SIGN_DJINNI_SWAY) +
                   CANVAS_SIZE / 2 - DJINNI_WIDTH / 2,
@@ -161,7 +162,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       if (frame > 55)
         brightness = (56 - frame) * 8;
       model->shade = brightness;
-      texture.pixels = work->sheet + RIME_SEAL_TEXTURE;
+      texture.pixels = state->sheet + RIME_SEAL_TEXTURE;
       for (i = 0; i != 2; i++) {
         FIXED scale = FIXED_ONE * 2 - frame * (FIXED_ONE / 32);
 
@@ -188,8 +189,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       struct Particle *star;
 
       model->shade = 0;
-      texture.pixels = work->sheet;
-      for (i = 0, star = work->particles; i != HAZE_STARS; i++, star++) {
+      texture.pixels = state->sheet;
+      for (i = 0, star = state->particles; i != HAZE_STARS; i++, star++) {
         if (star->variant == 4 && (i & 3) == 0)
           Sound_PlayFar(SE_PSYNERGY_START);
         if (star->variant >= 0 && star->variant < HAZE_STAR_FRAMES) {
@@ -215,7 +216,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
     gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);

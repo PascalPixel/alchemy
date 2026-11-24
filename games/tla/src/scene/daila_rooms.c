@@ -35,7 +35,7 @@
 #include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "field/field_event.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/scene_call.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -185,7 +185,7 @@ const void *Scene_GetExits(void) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_ROOMS_SANCTUM)
+  if (gMainRoutineState.next == SCENE_DAILA_ROOMS_SANCTUM)
     return gDailaRooms_SanctumPlacements;
   if (GameFlag_Get(FLAG_TAVI_RESCUED))
     return gDailaRooms_HousesPlacementsOnceTaviIsRescued;
@@ -261,22 +261,22 @@ s32 DailaRooms_ReadArmorMerchantsMindAfterRescue(void) {
 UNUSED void DailaRooms_StartLeaderEvent(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
 }
 
 extern struct Trigger gDailaRooms_HousesEvents[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s32 taviRescued = GameFlag_Get(FLAG_TAVI_RESCUED);
-  struct MainRoutineWork *work = &gMainRoutineWork;
+  struct MainRoutineState *state = &gMainRoutineState;
   s32 sanctum = SCENE_DAILA_ROOMS_SANCTUM;
 
   if (taviRescued) {
-    if (work->next == sanctum)
+    if (state->next == sanctum)
       return gDailaRooms_SanctumEventsOnceTaviIsRescued;
     return gDailaRooms_HousesEventsOnceTaviIsRescued;
   }
-  if (work->next == sanctum)
+  if (state->next == sanctum)
     return gDailaRooms_SanctumEvents;
   return gDailaRooms_HousesEvents;
 }
@@ -287,7 +287,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId);
 /// when he talks to him from in front of it, facing north; from any other side
 /// he warns of the roads south.
 void DailaRooms_TalkToWeaponMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_DAILA_WEAPONS, actor);
@@ -305,7 +305,7 @@ void DailaRooms_TalkToWeaponMerchant(s32 actor) {
 /// he talks to him from in front of it, facing north; from any other side he
 /// asks what brings the party to Daila.
 void DailaRooms_TalkToArmorMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_DAILA_ARMOR, actor);
@@ -322,7 +322,7 @@ void DailaRooms_TalkToArmorMerchant(s32 actor) {
 /// The innkeeper offers a room when Felix talks to him across the counter at
 /// his east side, facing west; from any other side he wonders what to cook.
 void DailaRooms_TalkToInnkeeper(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(DAILA_INN, actor);
@@ -342,7 +342,7 @@ void DailaRooms_TalkToInnkeeper(s32 actor) {
 /// counter, facing north, and from any other side asks again.
 void DailaRooms_TalkToHealer(s32 actor) {
   s32 msg;
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
@@ -389,7 +389,7 @@ void DailaRooms_TalkToHealer(s32 actor) {
 /// from in front of his counter, facing north, and from any other side tells
 /// the party there is nothing left for them in Daila.
 void DailaRooms_TalkToHealerOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -406,7 +406,7 @@ void DailaRooms_TalkToHealerOnceTaviIsRescued(s32 actor) {
 /// Once Tavi is rescued, the weapon merchant still sells from in front of his
 /// counter, and from any other side tells of Daila's pirate past.
 void DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_DAILA_WEAPONS, actor);
@@ -423,7 +423,7 @@ void DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
 /// Once Tavi is rescued, the armor merchant still sells from in front of his
 /// counter, and from any other side talks of how spacious the village is.
 void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_DAILA_ARMOR, actor);
@@ -441,7 +441,7 @@ void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
 /// at his east side, and from any other side wonders when the fishermen can
 /// put to sea again.
 void DailaRooms_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(DAILA_INN, actor);
@@ -578,7 +578,7 @@ void DailaRooms_TakeSeaGodsTear(void) {
 /// it; returns who took it, or -1. The overlay's own copy of the field's
 /// PartyInventory_GiveItem.
 s32 DailaRooms_GiveItem(s32 item, s32 unused) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 saved;
   s32 owner;
   s32 result;
@@ -587,8 +587,8 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
   s32 member;
   s32 slot;
 
-  work = Ram_HeapSlots->fieldWork;
-  saved = work->message;
+  state = Ram_HeapSlots->fieldState;
+  saved = state->message;
   owner = PartyInventory_Add(item);
   if (owner == -1) {
     MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
@@ -618,7 +618,7 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
         MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
         // "Felix drops the ...."
         FieldMessage_Show((s32)MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
-        work->message = saved;
+        state->message = saved;
         return owner;
       }
       Unit_Get(member);
@@ -639,7 +639,7 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
     Unit_Calculate(member);
     owner = PartyInventory_Add(item);
     Sound_Play(MUS_TREASURE_FOUND);
-    if (owner == gMainRoutineWork.leaderActorId) {
+    if (owner == gMainRoutineState.leaderActorId) {
       MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
       // "Felix got ...."
       FieldMessage_Show((s32)MsgItemReceived,
@@ -651,7 +651,7 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
       FieldMessage_Show((s32)MsgItemGiven,
                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
     }
-    work->message = saved;
+    state->message = saved;
     return owner;
   } else {
     Sound_Play(MUS_TREASURE_FOUND);
@@ -659,13 +659,13 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
     // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
-    if (owner != gMainRoutineWork.leaderActorId) {
+    if (owner != gMainRoutineState.leaderActorId) {
       MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_Push(owner, MESSAGE_ARGUMENT_ACTOR);
       // "Felix gave ... to ...."
       FieldMessage_Show((s32)MsgItemReceived + 1, FIELD_MESSAGE_ZOOM);
     }
-    work->message = saved;
+    state->message = saved;
   }
   return owner;
 }
@@ -678,13 +678,13 @@ void FlagBlock_PlaceAll(const s16 *flags);
 /// behind his counter) or the sanctuary (the Tear on the pillars' top until it
 /// is taken, the puddles until Tavi is rescued, the frozen pillars after).
 s32 Scene_Initialize(void) {
-  struct MapWorkGroundEffects *map;
-  s32 *effect = &gFieldWork->transition;
+  struct MapStateGroundEffects *map;
+  s32 *effect = &gFieldState->transition;
   s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   *effect = value;
-  if (gMainRoutineWork.next == SCENE_DAILA_ROOMS_HOUSES) {
-    if (gMainRoutineWork.entrance == ENTRANCE_COW_ISLET_HOUSE) {
+  if (gMainRoutineState.next == SCENE_DAILA_ROOMS_HOUSES) {
+    if (gMainRoutineState.entrance == ENTRANCE_COW_ISLET_HOUSE) {
       Scene_FadeInAndClearFlag();
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
@@ -693,7 +693,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimationById(ACTOR_TAVI, ANIM_EATING);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
       }
-      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
       Actor_GetById(ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
@@ -702,8 +702,8 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
       Actor_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
     }
-  } else if (gMainRoutineWork.next == SCENE_DAILA_ROOMS_SANCTUM) {
-    map = (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
+  } else if (gMainRoutineState.next == SCENE_DAILA_ROOMS_SANCTUM) {
+    map = (struct MapStateGroundEffects *)Ram_HeapSlots->mapGrid;
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);
@@ -736,7 +736,7 @@ s32 Scene_Initialize(void) {
 /// Once Tavi is rescued, draws the sanctuary's pool drained down to its three
 /// puddles, from the map's spare copy of it.
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_ROOMS_SANCTUM &&
+  if (gMainRoutineState.next == SCENE_DAILA_ROOMS_SANCTUM &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
     TilesetAnim_Pause(0);
     MapGrid_CopyCells(29, 33, 10, 6, 10, 12);

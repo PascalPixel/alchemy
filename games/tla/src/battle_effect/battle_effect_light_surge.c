@@ -13,7 +13,7 @@
 /// one step every fourth frame.
 #define LIGHT_SURGE_RECOLOR_FRAME 32
 
-/// The work's particles: each bolt's flash from the first, its glow from
+/// The state's particles: each bolt's flash from the first, its glow from
 /// SURGE_FIRST_GLOW and the bolt itself from SURGE_FIRST_BOLT. The first frame
 /// sets out a bolt in every particle from SURGE_FIRST_BOLT on, each starting
 /// SURGE_BOLT_INTERVAL frames after the last; the first SURGE_BOLTS fall.
@@ -76,7 +76,7 @@
 ///
 /// Abilities: Light Surge.
 void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   s32 i;
@@ -116,27 +116,27 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   u8 *sprites;
   u8 *cells;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_TEXTURE,
-                             work->sheet + LIGHT_SURGE_GLOW_ORB, 0, 0);
+                             state->sheet + LIGHT_SURGE_GLOW_ORB, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
-                             work->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
+                             state->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  camera = Ram_HeapSlots->cameraWork;
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  camera = Ram_HeapSlots->cameraState;
   savedYaw = camera->yaw;
   target = BattleObject_GetFar(args->targets[0])->object;
 
   // The discs' quarters, packed in the map cell buffer; the sheet's start
   // keeps where each lies.
   cells = gMapGridCellBuffer;
-  circles = (s16 *)work->sheet;
+  circles = (s16 *)state->sheet;
   offset = 0;
   size = 2;
   for (i = 0; i != SURGE_CIRCLES; i++) {
@@ -164,12 +164,12 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     }
     if (frame == 0) {
       camera->yaw = savedYaw;
-      EFFECT_FREE_PARTICLES(i, work->particles, SURGE_FIRST_BOLT);
+      EFFECT_FREE_PARTICLES(i, state->particles, SURGE_FIRST_BOLT);
       // Each bolt falls from 110 pixels up, 32 to 95 pixels out from the
       // middle of the battlefield, to the ground 4 to 35 pixels out from the
       // target in the same direction.
-      for (i = 0; i != ARRAY_COUNT(work->particles) - SURGE_FIRST_BOLT; i++) {
-        fall = &work->particles[SURGE_FIRST_BOLT + i];
+      for (i = 0; i != ARRAY_COUNT(state->particles) - SURGE_FIRST_BOLT; i++) {
+        fall = &state->particles[SURGE_FIRST_BOLT + i];
         radius = (Random16() & 63) + 32;
         angle = Random16() & TRIG_ANGLE_MASK;
 
@@ -209,7 +209,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
     // The flashes and glows, each a shaded disc of four quarters: a flash shows
     // only its upper half.
-    for (i = 0, disc = work->particles; i != SURGE_DISCS; disc++, i++) {
+    for (i = 0, disc = state->particles; i != SURGE_DISCS; disc++, i++) {
       s32 size;
 
       if ((u32)disc->variant >= SURGE_DISC_FRAMES) {
@@ -269,10 +269,10 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     model->vertices = (s16 *)vertices;
     model->shade = shade;
     model->kind = MODEL_SHADED_ADDITIVE;
-    texture.pixels = work->sheet + LIGHT_SURGE_GLOW_BAND;
-    for (i = 0, flash = work->particles,
-        glow = &work->particles[SURGE_FIRST_GLOW],
-        bolt = &work->particles[SURGE_FIRST_BOLT];
+    texture.pixels = state->sheet + LIGHT_SURGE_GLOW_BAND;
+    for (i = 0, flash = state->particles,
+        glow = &state->particles[SURGE_FIRST_GLOW],
+        bolt = &state->particles[SURGE_FIRST_BOLT];
          i != SURGE_BOLTS; flash++, glow++, bolt++, i++) {
       s32 t = ++bolt->variant;
 
@@ -313,7 +313,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         SET_POSITION(flash, point[0], point[1], point[2]);
         flash->velocityX = (Random16() & 7) + 24;
         flash->variant = 0;
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
@@ -334,7 +334,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       EffectPosition_ProjectBattler(args->targets[0], &center);
       texture.logWidth = 5;
       texture.logHeight = 5;
-      texture.pixels = work->sheet + LIGHT_SURGE_GLOW_ORB;
+      texture.pixels = state->sheet + LIGHT_SURGE_GLOW_ORB;
       model->kind = MODEL_SHADED_MAX;
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != SURGE_RINGS; i++) {
@@ -378,7 +378,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     Heap_Release(vertices);
     /* FAKEMATCH(dead): a read of shade that does nothing. */
     BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

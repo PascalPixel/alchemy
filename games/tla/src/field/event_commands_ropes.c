@@ -52,13 +52,13 @@ enum PostAnimation {
 // frames, the swing losing a twentieth a frame.
 
 /// RopeSlot.state.
-enum RopeState {
+enum RopeSlotState {
   ROPE_COILED, ///< at its first post, or pulled back there
   ROPE_THROWN  ///< thrown or laid tied from post to post
 };
 
 /// The leader steps onto a rope or tightrope once it has pushed against its
-/// post (FieldWork.blockedSteps) for more than this many frames.
+/// post (FieldState.blockedSteps) for more than this many frames.
 #define ROPE_PUSH_STEPS 12
 
 /// A post whose riseEnabled byte holds this keeps in watchedActor a hook giving
@@ -70,17 +70,17 @@ enum RopeState {
 #define DEBUG_FIRST_POST (ACTOR_FIRST_PLACED + 4)
 #define DEBUG_SECOND_POST (ACTOR_FIRST_PLACED + 5)
 
-/// Allocates the ropes' work, loads their node picture and starts Rope_Draw
+/// Allocates the ropes' state, loads their node picture and starts Rope_Draw
 /// and Rope_Update. A scene with ropes to lash calls it first.
 void Rope_Initialize(void) {
-  struct RopeWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_ROPE, sizeof(struct RopeWork));
+  struct RopeState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_ROPE, sizeof(struct RopeState));
   void *buffer = Heap_Alloc(256);
 
-  Dma_Fill32(0, work, sizeof(struct RopeWork));
-  work->vramEntry = VramCache_FindFreeEntry();
+  Dma_Fill32(0, state, sizeof(struct RopeState));
+  state->vramEntry = VramCache_FindFreeEntry();
   Decompress_TaggedLz(gRope_Tiles, buffer);
-  VramCache_Load(work->vramEntry, 256, buffer);
+  VramCache_Load(state->vramEntry, 256, buffer);
   Task_Add(Rope_Draw, TASK_PASS_FRAME);
   Task_Add(Rope_Update, TASK_PASS_FRAME + 15);
   Heap_Release(buffer);
@@ -90,15 +90,15 @@ void Rope_Initialize(void) {
 /// neighbouring nodes, 4 pixels up, turned along the pair and given its rope's
 /// priority, for the pairs on screen; a rope's first node keeps the last turn.
 void Rope_Draw(void) {
-  struct RopeWork *work = ROPE_WORK;
-  struct RopeSlot *slot = work->slots;
+  struct RopeState *state = ROPE_STATE;
+  struct RopeSlot *slot = state->slots;
   s32 i;
   s32 prevX = 0;
   s32 prevY = 0;
-  u32 tile = gVramCacheEntries[work->vramEntry].offset / TILE_SIZE_4BPP;
+  u32 tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
   s32 prevZ = 0;
   s32 started = 0;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -172,29 +172,30 @@ void Rope_Draw(void) {
 /// swinging rope, its swing losing a twentieth a frame until under a tenth of a
 /// pixel.
 void Rope_Update(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct RopeWork *work = ROPE_WORK;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct RopeState *state = ROPE_STATE;
   struct RopeSlot *slot;
   s32 i = 0;
 
   if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) &&
       event->blockedSteps > ROPE_PUSH_STEPS) {
-    if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
-      s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+    if (gMainRoutineState.movementMode == LEADER_MOVEMENT_WALK) {
+      s32 target = Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId);
 
       if (target != -1) {
         for (i = 0; i < ROPE_SLOT_COUNT; i++)
-          if (work->slots[i].first == target || work->slots[i].second == target)
+          if (state->slots[i].first == target ||
+              state->slots[i].second == target)
             break;
         if (i < ROPE_SLOT_COUNT &&
-            Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
+            Rope_IsLeaderAtEnd(state->slots[i].first, state->slots[i].second))
           event->raisedTrigger = FIELD_RAISED_TRIGGER_ROPE_ON;
       }
-    } else if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE) {
+    } else if (gMainRoutineState.movementMode == LEADER_MOVEMENT_ROPE) {
       event->raisedTrigger = FIELD_RAISED_TRIGGER_ROPE_OFF;
     }
   }
-  slot = work->slots;
+  slot = state->slots;
   for (i = 0; i < ROPE_SLOT_COUNT; i++, slot++) {
     if (slot->swinging != 0) {
       FIXED swing = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
@@ -212,8 +213,8 @@ void Rope_Update(void) {
 
 /// Returns the first unused of the ropes' 128 nodes, or NULL.
 struct RopeNode *Rope_AllocNode(void) {
-  struct RopeWork *work = ROPE_WORK;
-  struct RopeNode *node = work->nodes;
+  struct RopeState *state = ROPE_STATE;
+  struct RopeNode *node = state->nodes;
   s32 index;
 
   for (index = 0; index < ROPE_NODE_COUNT; index++) {
@@ -227,7 +228,7 @@ struct RopeNode *Rope_AllocNode(void) {
 /// Lays rope index tied between posts id and other, and shows both posts with
 /// the rope wound round them.
 void Rope_Tie(s32 index, s32 id, s32 other) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   s32 priority = 2;
   struct Actor *first = Actor_Lookup(id);
   struct Actor *second = Actor_Lookup(other);
@@ -237,7 +238,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
 
     if (first->spriteStorageKind == ACTOR_SPRITE_ONE)
       priority = ((struct Sprite *)first->sprite)->image.priority;
-    slot = &work->slots[index];
+    slot = &state->slots[index];
     slot->first = id;
     slot->second = other;
     slot->priority = priority;
@@ -253,7 +254,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
 /// pixels, waved a pixel either way by one whole sine; marks it tied and
 /// swinging and sets its flag.
 s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   s32 result = 0;
   s32 dx = x2 - x1;
   s32 sx = dx >> 8;
@@ -274,7 +275,7 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
                      Iwram_MulFX(sz, sz)) /
               6 +
           1;
-  slot = &work->slots[index];
+  slot = &state->slots[index];
   link = &slot->head;
   angle = Trig_Atan(sx, sy);
   sin = Trig_Sin(angle);
@@ -329,11 +330,11 @@ extern s16 Trig_AtanHalfword(s32 x, s32 y) __asm__("Trig_Atan");
 /// sine height pixels (16.16) high.
 s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   FIXED height) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   s32 dx = toX - x;
   s32 ax = dx >> 8;
   s32 dy = toY - y;
-  struct RopeSlot *slot = &work->slots[index];
+  struct RopeSlot *slot = &state->slots[index];
   struct RopeNode *node = slot->head;
   u16 angle = Trig_AtanHalfword(ax, dy >> 8);
   FIXED sin = Trig_Sin(angle);
@@ -357,7 +358,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
 /// Coils rope index at post firstId, its length reaching post secondId: the
 /// rope as it waits to be lashed.
 void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   s32 priority = 2;
   struct Actor *first = Actor_Lookup(firstId);
   struct Actor *second = Actor_Lookup(secondId);
@@ -367,7 +368,7 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
 
     if (first->spriteStorageKind == ACTOR_SPRITE_ONE)
       priority = ((struct Sprite *)first->sprite)->image.priority;
-    slot = &work->slots[index];
+    slot = &state->slots[index];
     slot->first = firstId;
     slot->second = secondId;
     slot->priority = priority;
@@ -380,7 +381,7 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
 /// Builds rope index's nodes, one for each 6 pixels between two points, as a
 /// flat spiral around the first point: the rope coiled at its post.
 s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
@@ -388,7 +389,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 length = Iwram_SqrtEntry(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
                                Iwram_MulFX(dz, dz));
   s32 segments = length / 6 + 1;
-  struct RopeSlot *slot = &work->slots[index];
+  struct RopeSlot *slot = &state->slots[index];
   struct RopeNode **link = &slot->head;
   s32 angle = 0;
   FIXED radius = toFIXED(4);
@@ -419,8 +420,8 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
 /// Writes where rope index's last node is, its far end, into position.
 void Rope_GetEndNodePosition(s32 index, s32 *position) {
-  struct RopeWork *work = ROPE_WORK;
-  struct RopeSlot *slot = &work->slots[index];
+  struct RopeState *state = ROPE_STATE;
+  struct RopeSlot *slot = &state->slots[index];
   struct RopeNode *node = slot->head;
   s32 remaining;
 
@@ -439,7 +440,7 @@ extern s32 gRope_LashPhase;
 /// Lash: throws rope index from post fromId to post toId and winds it round
 /// both. A rope coiled too short to reach falls back to its post.
 void Rope_Lash(s32 index, s32 fromId, s32 toId) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   struct Actor *from = Actor_Lookup(fromId);
   struct Actor *to = Actor_Lookup(toId);
 
@@ -447,7 +448,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     FIXED toX = to->x.fixed;
     FIXED toY = to->y.fixed;
     FIXED toZ = to->z.fixed;
-    struct RopeSlot *slot = &work->slots[index];
+    struct RopeSlot *slot = &state->slots[index];
     s32 x, y = 0, z; // Default: y.
     s32 xx, yy, length, segments, count;
     s32 (*mul)(s32, s32);
@@ -494,7 +495,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
 /// pixels; then the rope swings and its flag is set. Does nothing to a rope
 /// already thrown.
 s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   s32 dx = toX - x;
   s32 ex = dx >> 8;
   s32 dy = toY - y;
@@ -507,7 +508,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 lastX;
   s32 lastY;
   s32 lastZ;
-  struct RopeSlot *slot = &work->slots[index];
+  struct RopeSlot *slot = &state->slots[index];
   struct RopeNode *node = slot->head;
   void **cursor;
   s32 i;
@@ -561,7 +562,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     }
     wait(1);
   }
-  slot = &work->slots[index];
+  slot = &state->slots[index];
   slot->swinging = 1;
   slot->amplitude = toFIXED(4);
   slot->phase = DEGtoANG(90);
@@ -575,17 +576,17 @@ extern s32 gRope_UntiePhase;
 
 /// Unties rope index between posts fromId and toId (Rope_Recoil).
 void Rope_Untie(s32 index, s32 fromId, s32 toId) {
-  struct RopeWork *work;
+  struct RopeState *state;
   struct Actor *from;
   struct Actor *to;
 
-  work = ROPE_WORK;
+  state = ROPE_STATE;
   from = Actor_Lookup(fromId);
   to = Actor_Lookup(toId);
 
   if (from != NULL && to != NULL) {
-    work->recoilFrom = from;
-    work->recoilTo = to;
+    state->recoilFrom = from;
+    state->recoilTo = to;
     Rope_Recoil(index, from->x.fixed, from->y.fixed + toFIXED(8), from->z.fixed,
                 to->x.fixed, to->y.fixed + toFIXED(8), to->z.fixed,
                 Trig_Sin(gRope_UntiePhase) * 4);
@@ -596,10 +597,10 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
 /// Pulls a thrown rope back into its coil at the first point, one node a frame,
 /// clearing its flag, starting four frames after both posts start to unwind.
 s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   // Default: each count below sets it again.
   s32 i = 0;
-  struct RopeSlot *slot = &work->slots[index];
+  struct RopeSlot *slot = &state->slots[index];
   struct RopeNode *node = slot->head;
   void **cursor;
   s32 angle;
@@ -627,8 +628,8 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
       node = node->next;
     } while (i != 0);
   }
-  Actor_SelectAnimationFar(work->recoilFrom, ANIM_POST_UNTIE);
-  Actor_SelectAnimationFar(work->recoilTo, ANIM_POST_UNTIE);
+  Actor_SelectAnimationFar(state->recoilFrom, ANIM_POST_UNTIE);
+  Actor_SelectAnimationFar(state->recoilTo, ANIM_POST_UNTIE);
   wait(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame * (TRIG_TURN / 16);
@@ -695,7 +696,7 @@ UNUSED void Rope_DebugSwing(struct Actor *actor) {
 /// Returns 1 when the leader stands on the cell of post firstId or secondId, or
 /// a cell beside it along an axis, at the same height.
 s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
   s32 x = FIELD_CELL(leader->x.fixed);
@@ -732,8 +733,8 @@ s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
 /// Finds the rope whose first post is id: writes its other post and its index
 /// and returns 0, or returns -1.
 s32 Rope_FindById(s32 id, s32 *value, s32 *index) {
-  struct RopeWork *work = ROPE_WORK;
-  struct RopeSlot *slot = work->slots;
+  struct RopeState *state = ROPE_STATE;
+  struct RopeSlot *slot = state->slots;
   s32 i;
 
   for (i = 0; i < ROPE_SLOT_COUNT; i++) {
@@ -747,15 +748,15 @@ s32 Rope_FindById(s32 id, s32 *value, s32 *index) {
   return -1;
 }
 
-/// Returns rope index's enum RopeState, or -1 while the ropes have no
-/// work.
+/// Returns rope index's enum RopeSlotState, or -1 while the ropes have no
+/// state.
 s32 Rope_GetState(s32 index) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   struct RopeSlot *slot;
 
-  if (work == NULL)
+  if (state == NULL)
     return -1;
-  slot = &work->slots[index];
+  slot = &state->slots[index];
   return slot->state;
 }
 
@@ -763,10 +764,10 @@ s32 Rope_GetState(s32 index) {
 /// secondId: tied when the flag is set, else coiled at the first. A scene
 /// places each of its ropes with it.
 void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId) {
-  struct RopeWork *work = ROPE_WORK;
+  struct RopeState *state = ROPE_STATE;
   struct RopeSlot *slot;
 
-  slot = &work->slots[index];
+  slot = &state->slots[index];
   slot->flag = flag;
   if (!GameFlag_Get(flag))
     Rope_Coil(index, firstId, secondId);
@@ -779,17 +780,17 @@ void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId) {
 // (LEADER_MOVEMENT_TIGHTROPE) and that wobble underfoot. The family copies the
 // ropes' routines.
 
-/// Allocates the tightropes' work, loads their node picture and starts
+/// Allocates the tightropes' state, loads their node picture and starts
 /// Tightrope_Draw and Tightrope_Update.
 void Tightrope_Initialize(void) {
-  struct TightropeWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_TIGHTROPE, sizeof(struct TightropeWork));
+  struct TightropeState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_TIGHTROPE, sizeof(struct TightropeState));
   void *buffer = Heap_Alloc(2304);
 
-  Dma_Fill32(0, work, sizeof(struct TightropeWork));
-  work->vramEntry = VramCache_FindFreeEntry();
+  Dma_Fill32(0, state, sizeof(struct TightropeState));
+  state->vramEntry = VramCache_FindFreeEntry();
   Decompress_TaggedLz(gRope_Tiles, buffer);
-  VramCache_Load(work->vramEntry, 64, buffer);
+  VramCache_Load(state->vramEntry, 64, buffer);
   Task_Add(Tightrope_Draw, TASK_PASS_FRAME);
   Task_Add(Tightrope_Update, TASK_PASS_FRAME + 15);
   Heap_Release(buffer);
@@ -799,14 +800,14 @@ void Tightrope_Initialize(void) {
 /// pair of neighbouring nodes, 4 pixels up, for the pairs on screen, all of a
 /// tightrope turned along it.
 void Tightrope_Draw(void) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   s32 i;
   s32 prevX = 0;
   FIXED prevY = 0;
   s32 prevZ = 0;
   s32 started = 0;
-  u32 tile = gVramCacheEntries[work->vramEntry].offset / TILE_SIZE_4BPP;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  u32 tile = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -814,8 +815,8 @@ void Tightrope_Draw(void) {
   struct AffineTransform transform;
 
   for (i = 0; i < ROPE_SLOT_COUNT; i++) {
-    u32 angle = work->slots[i].direction;
-    struct TightropeNode *node = work->slots[i].head;
+    u32 angle = state->slots[i].direction;
+    struct TightropeNode *node = state->slots[i].head;
     s32 affine;
     s32 matrix;
 
@@ -874,25 +875,26 @@ void Tightrope_Draw(void) {
 /// FIELD_RAISED_TRIGGER_TIGHTROPE_ON and FIELD_RAISED_TRIGGER_TIGHTROPE_OFF;
 /// the middle of a wobbling tightrope bobs up and down.
 void Tightrope_Update(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
+  struct TightropeState *state = TIGHTROPE_STATE;
   struct TightropeSlot *slot;
   s32 i = 0;
 
   if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) &&
       event->blockedSteps > ROPE_PUSH_STEPS) {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
 
     if (party->movementMode == LEADER_MOVEMENT_WALK) {
       s32 target = Field_FindNearbyTalkTarget(party->leaderActorId);
 
       if (target != -1) {
         for (i = 0; i < ROPE_SLOT_COUNT; i++) {
-          if (work->slots[i].first == target || work->slots[i].second == target)
+          if (state->slots[i].first == target ||
+              state->slots[i].second == target)
             break;
         }
         if (i < ROPE_SLOT_COUNT &&
-            Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
+            Rope_IsLeaderAtEnd(state->slots[i].first, state->slots[i].second))
           event->raisedTrigger = FIELD_RAISED_TRIGGER_TIGHTROPE_ON;
       }
     } else if (party->movementMode == LEADER_MOVEMENT_TIGHTROPE) {
@@ -900,7 +902,7 @@ void Tightrope_Update(void) {
     }
   }
 
-  slot = work->slots;
+  slot = state->slots;
   for (i = 0; i < ROPE_SLOT_COUNT; i++, slot++) {
     if (slot->wobbling != 0) {
       FIXED wobble = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
@@ -918,8 +920,8 @@ void Tightrope_Update(void) {
 
 /// Returns the first unused of the tightropes' 128 nodes, or NULL.
 struct TightropeNode *Tightrope_AllocNode(void) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
-  struct TightropeNode *node = work->nodes;
+  struct TightropeState *state = TIGHTROPE_STATE;
+  struct TightropeNode *node = state->nodes;
   s32 index;
 
   for (index = 0; index < ROPE_NODE_COUNT; index++) {
@@ -933,12 +935,12 @@ struct TightropeNode *Tightrope_AllocNode(void) {
 /// Lays tightrope slotNo straight between posts firstId and secondId, and
 /// shows the rope wound round both.
 void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   struct Actor *first = Actor_Lookup(firstId);
   struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
-    struct TightropeSlot *slot = &work->slots[slotNo];
+    struct TightropeSlot *slot = &state->slots[slotNo];
 
     slot->first = firstId;
     slot->second = secondId;
@@ -953,7 +955,7 @@ void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
 /// Builds tightrope index's nodes on the straight line between two points,
 /// one for each 6 pixels.
 s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   s32 result = 0;
   s32 dx = toX - x;
   s32 sx = dx >> 8;
@@ -965,10 +967,10 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
                                  Iwram_MulFX(sz, sz)) /
                      6 +
                  1;
-  struct TightropeNode **link = &work->slots[index].head;
+  struct TightropeNode **link = &state->slots[index].head;
   s32 i;
 
-  work->slots[index].direction = (u16)Trig_Atan(sz, sx);
+  state->slots[index].direction = (u16)Trig_Atan(sz, sx);
   for (i = 0; i <= segments; i++) {
     struct TightropeNode *node = Tightrope_AllocNode();
 
@@ -987,7 +989,7 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     link = &node->next;
   }
   *link = NULL;
-  work->slots[index].wobbling = 1;
+  state->slots[index].wobbling = 1;
   return result;
 }
 
@@ -1008,7 +1010,7 @@ FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 /// points again, raised by half a sine height pixels (16.16) high.
 s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                        s32 toZ, FIXED height) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   s32 dx = toX - x;
   s32 sx = dx >> 8;
   s32 dy = toY - y;
@@ -1019,7 +1021,7 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                                  IwramMulFX(sz, sz)) /
                      6 +
                  1;
-  struct TightropeNode *node = work->slots[index].head;
+  struct TightropeNode *node = state->slots[index].head;
   s32 i;
   s32 kind = ROPE_NODE_CROSSABLE;
 
@@ -1036,12 +1038,12 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
 
 /// Unused: nothing refers to it. Rope_Coil for a tightrope.
 UNUSED void Tightrope_Coil(s32 index, s32 from, s32 to) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   struct Actor *a = Actor_Lookup(from);
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL) {
-    struct TightropeSlot *slot = &work->slots[index];
+    struct TightropeSlot *slot = &state->slots[index];
 
     slot->first = from;
     slot->second = to;
@@ -1054,7 +1056,7 @@ UNUSED void Tightrope_Coil(s32 index, s32 from, s32 to) {
 /// it takes its nodes from the ropes' pool.
 s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                       s32 toZ) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
@@ -1062,7 +1064,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 length = Iwram_SqrtEntry(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
                                Iwram_MulFX(dz, dz));
   s32 segments = length / 6 + 1;
-  struct TightropeNode **link = &work->slots[index].head;
+  struct TightropeNode **link = &state->slots[index].head;
   s32 angle = 0;
   FIXED radius = toFIXED(4);
   s32 i;
@@ -1111,7 +1113,7 @@ UNUSED void Tightrope_Lash(s32 index, s32 firstId, s32 secondId) {
 
 /// Rope_Throw for a tightrope.
 s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   s32 dx = toX - x;
   s32 ex = dx >> 8;
   s32 dy = toY - y;
@@ -1123,7 +1125,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
                      6 +
                  1;
   s32 frame;
-  struct TightropeNode *node = work->slots[index].head;
+  struct TightropeNode *node = state->slots[index].head;
   FIXED sine;
   s32 height;
   FIXED cosine;
@@ -1177,7 +1179,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     }
     wait(1);
   }
-  slot = &work->slots[index];
+  slot = &state->slots[index];
   slot->wobbling = 1;
   slot->amplitude = toFIXED(4);
   slot->phase = DEGtoANG(90);
@@ -1189,17 +1191,17 @@ extern s32 gTightrope_UntiePhase;
 
 /// Unused: nothing refers to it. Rope_Untie for a tightrope.
 UNUSED void Tightrope_Untie(s32 index, s32 firstId, s32 secondId) {
-  struct TightropeWork *work;
+  struct TightropeState *state;
   struct Actor *first;
   struct Actor *second;
 
-  work = TIGHTROPE_WORK;
+  state = TIGHTROPE_STATE;
   first = Actor_Lookup(firstId);
   second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
-    work->recoilFrom = first;
-    work->recoilTo = second;
+    state->recoilFrom = first;
+    state->recoilTo = second;
     Tightrope_Recoil(index, first->x.fixed, first->y.fixed + toFIXED(8),
                      first->z.fixed, second->x.fixed,
                      second->y.fixed + toFIXED(8), second->z.fixed,
@@ -1211,7 +1213,7 @@ UNUSED void Tightrope_Untie(s32 index, s32 firstId, s32 secondId) {
 /// Rope_Recoil for a tightrope.
 s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
                      s32 wave) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   s32 wobbling = 0;
   struct TightropeNode *node;
   s32 dx, dy, dz;
@@ -1229,9 +1231,9 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   dz = (z2 - z1) >> 8;
   dist = Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
   count = Iwram_Sqrt(dist) / 6 + 1;
-  node = work->slots[slot].head;
+  node = state->slots[slot].head;
   entry = nodes = Heap_Alloc(512);
-  work->slots[slot].wobbling = wobbling;
+  state->slots[slot].wobbling = wobbling;
   if (count >= 0) {
     i = count + 1;
     do {
@@ -1240,8 +1242,8 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
       node = node->next;
     } while (i != 0);
   }
-  Actor_SelectAnimationFar(work->recoilFrom, ANIM_POST_UNTIE);
-  Actor_SelectAnimationFar(work->recoilTo, ANIM_POST_UNTIE);
+  Actor_SelectAnimationFar(state->recoilFrom, ANIM_POST_UNTIE);
+  Actor_SelectAnimationFar(state->recoilTo, ANIM_POST_UNTIE);
   wait(4);
   for (frame = 0; frame <= count; frame++) {
     angle = frame * (TRIG_TURN / 16);
@@ -1285,22 +1287,22 @@ extern s32 gTightrope_DebugSwinging;
 
 /// Frees tightrope index's nodes; it is no longer drawn.
 void Tightrope_Release(s32 index) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   struct TightropeNode *node;
 
-  for (node = work->slots[index].head; node != NULL; node = node->next)
+  for (node = state->slots[index].head; node != NULL; node = node->next)
     node->kind = ROPE_NODE_FREE;
-  work->slots[index].head = NULL;
+  state->slots[index].head = NULL;
 }
 
 /// Stops tightrope index's wobble and marks its nodes not to be walked.
 void Tightrope_Settle(s32 index) {
-  struct TightropeWork *work = TIGHTROPE_WORK;
+  struct TightropeState *state = TIGHTROPE_STATE;
   struct TightropeNode *node;
 
-  for (node = work->slots[index].head; node != NULL; node = node->next)
+  for (node = state->slots[index].head; node != NULL; node = node->next)
     node->kind = ROPE_NODE_UNCROSSABLE;
-  work->slots[index].wobbling = 0;
+  state->slots[index].wobbling = 0;
 }
 
 /// Unused: nothing refers to it. Rope_DebugSwing for a tightrope.
@@ -1356,20 +1358,20 @@ enum HangingVineLinkKind {
 // across (HangingVine_Swing, which FieldPsynergy_Whirlwind calls on its
 // target).
 
-/// Starts the hanging vines: takes and clears their work, loads the vine's
+/// Starts the hanging vines: takes and clears their state, loads the vine's
 /// pictures for an anchor of SPRITE_SPROUTING_LEAVES, else the chain's, and
 /// adds the tasks HangingVine_Draw and HangingVine_Update.
-struct HangingVineWork *HangingVine_Initialize(s32 spriteId) {
-  struct HangingVineWork *work;
+struct HangingVineState *HangingVine_Initialize(s32 spriteId) {
+  struct HangingVineState *state;
   u8 *pictures;
   s32 size;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_HANGING_VINE,
-                             sizeof(struct HangingVineWork));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_HANGING_VINE,
+                              sizeof(struct HangingVineState));
   size = 4 * VINE_LINK_PICTURE_SIZE;
   pictures = Heap_Alloc(size);
-  Dma_Fill32(0, work, sizeof(struct HangingVineWork));
-  work->vramEntry = VramCache_FindFreeEntry();
+  Dma_Fill32(0, state, sizeof(struct HangingVineState));
+  state->vramEntry = VramCache_FindFreeEntry();
   if (spriteId == SPRITE_SPROUTING_LEAVES) {
     Decompress_TaggedLz(gHangingVine_VineTopPicture, pictures);
     Decompress_TaggedLz(gHangingVine_VineUpperPicture,
@@ -1378,7 +1380,7 @@ struct HangingVineWork *HangingVine_Initialize(s32 spriteId) {
                         pictures + 2 * VINE_LINK_PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_VineBottomPicture,
                         pictures + 3 * VINE_LINK_PICTURE_SIZE);
-    VramCache_Load(work->vramEntry, size, pictures);
+    VramCache_Load(state->vramEntry, size, pictures);
   } else {
     Decompress_TaggedLz(gHangingVine_ChainTopPicture, pictures);
     Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
@@ -1387,25 +1389,25 @@ struct HangingVineWork *HangingVine_Initialize(s32 spriteId) {
                         pictures + 2 * VINE_LINK_PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_ChainBottomPicture,
                         pictures + 3 * VINE_LINK_PICTURE_SIZE);
-    VramCache_Load(work->vramEntry, size, pictures);
+    VramCache_Load(state->vramEntry, size, pictures);
   }
   Task_Add(HangingVine_Draw, TASK_PASS_FRAME);
   Task_Add(HangingVine_Update, TASK_PASS_FRAME + 15);
   Heap_Release(pictures);
-  return work;
+  return state;
 }
 
 /// The vines' drawing task: each link's picture at the midpoint between it and
 /// the link above, turned along the vine, for the links on screen.
 void HangingVine_Draw(void) {
-  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineState *state = HANGING_VINE_STATE;
   s32 i;
   u32 angle;
   s32 prevX = 0;
   s32 prevY = 0;
-  u32 tiles = gVramCacheEntries[work->vramEntry].offset / TILE_SIZE_4BPP;
+  u32 tiles = gVramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
   s32 prevZ = 0;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -1414,7 +1416,7 @@ void HangingVine_Draw(void) {
   struct HangingVineLink *link;
 
   for (i = 0; i < ROPE_SLOT_COUNT; i++) {
-    for (link = work->slots[i].root; link != NULL; link = link->next) {
+    for (link = state->slots[i].root; link != NULL; link = link->next) {
       s32 x = link->x;
       s32 y = link->y;
       s32 z = link->z;
@@ -1464,7 +1466,7 @@ void HangingVine_Draw(void) {
     }
     prevX = 0;
     prevY = 0;
-    link = work->slots[i].root;
+    link = state->slots[i].root;
     prevZ = 0;
     if (link != NULL)
       link->angle = angle;
@@ -1476,7 +1478,7 @@ void HangingVine_Draw(void) {
 /// easing towards VINE_SWING_BESIDE while the leader stands beside the vine,
 /// else towards VINE_SWING_ALONE.
 void HangingVine_Update(void) {
-  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineState *state = HANGING_VINE_STATE;
   struct HangingVineSlot *slot;
   struct Actor *leader;
   s32 x, y, z;
@@ -1494,7 +1496,7 @@ void HangingVine_Update(void) {
   i = 0;
   leader = Actor_GetById(Party_GetLeaderActor());
   target = VINE_SWING_ALONE;
-  for (slot = work->slots; i < ROPE_SLOT_COUNT; i++, slot++) {
+  for (slot = state->slots; i < ROPE_SLOT_COUNT; i++, slot++) {
     if (slot->root == 0 || slot->active == 0)
       continue;
 
@@ -1543,31 +1545,32 @@ void HangingVine_Update(void) {
   }
 }
 
-/// Returns the first of HANGING_VINE_WORK's eight slots with no chain, or NULL.
+/// Returns the first of HANGING_VINE_STATE's eight slots with no chain, or
+/// NULL.
 struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
-  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineState *state = HANGING_VINE_STATE;
   struct HangingVineSlot *found = NULL;
   s32 index = 0;
 
   for (index = 0; index < ROPE_SLOT_COUNT; index++) {
-    if (work->slots[index].root == NULL) {
-      found = &work->slots[index];
+    if (state->slots[index].root == NULL) {
+      found = &state->slots[index];
       break;
     }
   }
   return found;
 }
 
-/// Returns the vine slot among HANGING_VINE_WORK's eight that holds actor id,
+/// Returns the vine slot among HANGING_VINE_STATE's eight that holds actor id,
 /// or NULL.
 struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
-  struct HangingVineWork *work = HANGING_VINE_WORK;
+  struct HangingVineState *state = HANGING_VINE_STATE;
   struct HangingVineSlot *found = NULL;
   s32 index = 0;
 
   for (index = 0; index < ROPE_SLOT_COUNT; index++) {
-    if (work->slots[index].id == id) {
-      found = &work->slots[index];
+    if (state->slots[index].id == id) {
+      found = &state->slots[index];
       break;
     }
   }
@@ -1576,8 +1579,8 @@ struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
 
 /// Returns the first unused of the vines' 128 links, or NULL.
 struct HangingVineLink *HangingVine_AllocLink(void) {
-  struct HangingVineWork *work = HANGING_VINE_WORK;
-  struct HangingVineLink *link = work->links;
+  struct HangingVineState *state = HANGING_VINE_STATE;
+  struct HangingVineLink *link = state->links;
   s32 index;
 
   for (index = 0; index < ROPE_NODE_COUNT; index++) {
@@ -1593,7 +1596,7 @@ struct HangingVineLink *HangingVine_AllocLink(void) {
 /// with grow set, the vine drops into place over 28 frames.
 void HangingVine_Hang(s32 objectId, s32 grow) {
   struct Actor *actor;
-  struct MapWork *map;
+  struct MapState *map;
   struct HangingVineSlot *slot;
   struct HangingVineLink *link;
   struct HangingVineLink **tail;

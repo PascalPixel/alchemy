@@ -5,7 +5,7 @@
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
 #include "types.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "field/event_inline.h"
@@ -337,10 +337,10 @@ s32 Scene_Initialize(void) {
 
   buffer = Heap_AllocEwram(BG_PLTT_SIZE);
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.windowHue,
-                    gMainRoutineWork.windowBrightness);
+  WindowColor_Apply(gMainRoutineState.windowHue,
+                    gMainRoutineState.windowBrightness);
   Actor_SetPosition(ACTOR_FELIX, 0, 0);
-  mode = gMainRoutineWork.entrance;
+  mode = gMainRoutineState.entrance;
   if (mode == ENTRANCE_SKIP_TO_CREDITS) {
     Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_FROM_MT_ALEPH_SUMMIT);
   } else if (mode == ENTRANCE_GOLDEN_SUN_FORMS) {
@@ -349,7 +349,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
     Actor_SetAnimation(ACTOR_ALEX, 12);
     Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIM_STEP_NORMAL / 2);
-    gFieldWork->transition = 0;
+    gFieldState->transition = 0;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     REG_BG1CNT &= ~BGCNT_PRIORITY(3);
     REG_BG1CNT |= BGCNT_PRIORITY(3);
@@ -446,7 +446,7 @@ s32 Scene_Initialize(void) {
     REG_BG3CNT &= ~BGCNT_PRIORITY(3);
     REG_BG3CNT |= BGCNT_PRIORITY(2);
     System_Wait(1);
-    ((struct FieldWork *)heap->fieldWork)->transition = scale;
+    ((struct FieldState *)heap->fieldState)->transition = scale;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -756,7 +756,7 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
         PaletteFade_Interpolate(64);
       }
-      ((struct MapWork *)heap)->layers[1].offsetY -= toFIXED(1);
+      ((struct MapState *)heap)->layers[1].offsetY -= toFIXED(1);
       Actor_Get(ACTOR_ALEX)->z.fixed += toFIXED(1);
       System_Wait(1);
     }
@@ -774,7 +774,7 @@ s32 Scene_Initialize(void) {
     System_Wait(300);
     Event_SetDestination(SCENE_EPILOGUE, 1);
   } else {
-    gFieldWork->transition = 0;
+    gFieldState->transition = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     for (j = 0; j != SUMMIT_HOLD_PASSES; j++) {

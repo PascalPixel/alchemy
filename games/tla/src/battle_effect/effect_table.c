@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "fixed_math.h"
-#include "battle/battle_effect_work.h"
+#include "battle/battle_effect_state.h"
 #include "battle/render_model.h"
 #include "battle_effect/battle_effect.h"
 #include "battle_effect/battle_effect_table.h"

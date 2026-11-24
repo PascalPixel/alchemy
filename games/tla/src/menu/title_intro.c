@@ -131,8 +131,8 @@ struct IntroSprite {
   s32 tile;
 };
 
-/// The title screen's work (HEAP_SLOT_TITLE_INTRO): the prompt's sprites.
-struct TitleScreenWork {
+/// The title screen's state (HEAP_SLOT_TITLE_INTRO): the prompt's sprites.
+struct TitleScreenState {
   u8 unused[16]; ///< no code names it
   struct IntroSprite sprites[8];
 };
@@ -987,8 +987,8 @@ s32 TitleIntro_Run(void) {
 s32 Title_ShowIntro(s32 prompt) {
   s32 blankTile = OFFSCREEN_TILE;
   s32 result = 0;
-  struct TitleScreenWork *work = HeapSlot_AllocEwram(
-      HEAP_SLOT_TITLE_INTRO, sizeof(struct TitleScreenWork));
+  struct TitleScreenState *state = HeapSlot_AllocEwram(
+      HEAP_SLOT_TITLE_INTRO, sizeof(struct TitleScreenState));
   u8 *data;
   u16 *tilemap;
   u16 tile;
@@ -1025,7 +1025,7 @@ s32 Title_ShowIntro(s32 prompt) {
   DebugText_Clear();
   if (prompt != 0) {
     u8 *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
-    struct IntroSprite *sprite = work->sprites;
+    struct IntroSprite *sprite = state->sprites;
 
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
@@ -1051,7 +1051,7 @@ s32 Title_ShowIntro(s32 prompt) {
   for (i = 0; i < holdFrames; i++) {
     if (!TLA_PATCH_1 || i > PROMPT_DELAY_FRAMES) {
       if (prompt != 0) {
-        struct IntroSprite *sprite = work->sprites;
+        struct IntroSprite *sprite = state->sprites;
         s32 x;
         u32 level;
 #ifdef PROMPT_ROWS
@@ -1291,30 +1291,30 @@ void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
 /// packs the components into the spare RGB555 copy of the palettes and queues
 /// both palettes for VBlank.
 void TitlePaletteFade_Update(void) {
-  struct TitlePaletteFade *work = Ram_HeapSlots->paletteFade;
-  u16 *delta = work->delta;
+  struct TitlePaletteFade *state = Ram_HeapSlots->paletteFade;
+  u16 *delta = state->delta;
   u16 *current;
   u16 *packed;
   s32 i;
   u16 *bank;
   s32 blueMask;
 
-  if (work->duration == 0)
+  if (state->duration == 0)
     return;
-  if ((s8)++work->step < work->duration) {
-    current = work->current;
+  if ((s8)++state->step < state->duration) {
+    current = state->current;
     for (i = 0; i <= TITLE_PALETTE_FADE_CHANNELS - 1; i++)
       *current++ += *delta++;
   } else {
-    Dma_Set(work->target, work->current,
-            DMA_COPY_WORDS(sizeof(work->current) / 4), REG_DMA3);
-    work->duration = 0;
+    Dma_Set(state->target, state->current,
+            DMA_COPY_WORDS(sizeof(state->current) / 4), REG_DMA3);
+    state->duration = 0;
   }
   // The queued DMA keeps a pointer until VBlank.
-  packed = work->packed[work->page ^ 1];
+  packed = state->packed[state->page ^ 1];
   blueMask = BLUE_BITS;
   i = PLTT_COLORS;
-  current = work->current;
+  current = state->current;
   for (; i != 0; i--) {
     *packed++ = (current[0] & blueMask) |
                 (((s16)current[1] >> (COMPONENT_SHIFT - RGB_GREEN_SHIFT)) &
@@ -1322,8 +1322,8 @@ void TitlePaletteFade_Update(void) {
                 (((s16)current[2] >> COMPONENT_SHIFT) & RED_BITS);
     current += 3;
   }
-  work->page ^= 1;
-  bank = work->packed[work->page];
+  state->page ^= 1;
+  bank = state->packed[state->page];
   IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)bank,
                       DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
   IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + BG_PLTT_COLORS),

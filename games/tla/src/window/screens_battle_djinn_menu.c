@@ -34,7 +34,7 @@
 s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct QueuedSprite cursorSprite;
   u16 messageText[64];
-  struct WindowWork *work;
+  struct WindowState *state;
   struct Window *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
@@ -51,7 +51,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 #if TLA_PATCH_1
   s32 redrawList;
 #endif
-  struct BattleMenuWork *navigation;
+  struct BattleMenuState *navigation;
   struct Unit *unit;
   struct DjinnRecoveryList *list;
   struct Window *listWindow;
@@ -75,7 +75,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   s32 i;
   s32 j;
 
-  work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  state = (struct WindowState *)Ram_HeapSlots->windowState;
   previewWindow = NULL;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(128);
@@ -135,7 +135,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     }
   }
   djinnEntries[djinnCount] = BATTLE_DJINN_END;
-  work->dirty = 1;
+  state->dirty = 1;
 
   for (;;) {
     /* LEFTOVER(template): sprite holds &cursorSprite, as
@@ -147,7 +147,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
       standbyElements = 0;
-      work->holdTilemapUpload = 1;
+      state->holdTilemapUpload = 1;
       Window_HighlightRect((s16)listWindow->x + 1,
                            (s16)listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, WINDOW_PALETTE);
@@ -166,7 +166,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         MessageArgument_ClearAll();
         alreadySelected = 0;
         for (k = 0; k <= 7; k++) {
-          if (BATTLE_MENU_WORK->chosenDjinn[k] == selectedDjinn) {
+          if (BATTLE_MENU_STATE->chosenDjinn[k] == selectedDjinn) {
             alreadySelected = 1;
             break;
           }
@@ -219,15 +219,15 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         BATTLE_MENU_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
                                  BATTLE_MENU_MESSAGE_CAPACITY);
       }
-      work->holdTilemapUpload = 0;
+      state->holdTilemapUpload = 0;
       if (previewPage == 0) {
-        work->holdTilemapUpload = 1;
+        state->holdTilemapUpload = 1;
         Window_Close(messageWindow, 1);
         messageWindow =
             Window_Create(0, 4, 30, 4,
                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                               WINDOW_FLAG_BORDERED_CANVAS);
-        work->holdTilemapUpload = previewPage;
+        state->holdTilemapUpload = previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -283,8 +283,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       Window_HighlightRect((s16)listWindow->x + 1,
                            (s16)listWindow->y + selectedRow * 2 + 1,
                            listWindow->width - 2, 1, HIGHLIGHT_PALETTE);
-      work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      state->dirty = 1;
+      state->holdTilemapUpload = 0;
     }
 
     if (djinnCount > BATTLE_LIST_ROWS) {
@@ -312,13 +312,13 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
                                listWindow->width - 2, -1, 0);
       }
-      WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)listWindow->y - 1));
+      WINDOW_MARK_TILEMAP_ROW(state, (u32)((s16)listWindow->y - 1));
     }
 
     pressed = gInput.pressed;
     repeated = gInput.repeat;
     held = gInput.held;
-    navigation = BATTLE_MENU_WORK;
+    navigation = BATTLE_MENU_STATE;
     if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
@@ -331,7 +331,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
         navigation->tutorialDelay--;
       }
     }
-    navigation = BATTLE_MENU_WORK;
+    navigation = BATTLE_MENU_STATE;
     if (navigation->timer == 0 || (pressed & KEY_B)) {
       Sound_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
@@ -401,7 +401,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                  0);
           Window_SetTilemapEntry(previewWindow, LIST_TILE_PAGES_RIGHT,
                                  previewWindow->width - 2, -1, 0);
-          WINDOW_MARK_TILEMAP_ROW(work, (s16)previewWindow->y);
+          WINDOW_MARK_TILEMAP_ROW(state, (s16)previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
           if (previewWindow != NULL)

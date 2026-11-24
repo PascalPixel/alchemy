@@ -18,14 +18,14 @@
 /// What a shortcut key's assignment requests, bits 15..14
 /// (Field_RequestShortcut), as The Broken Seal's.
 enum FieldShortcutKind {
-  FIELD_SHORTCUT_PSYNERGY = 0, ///< FieldWork.psynergy, an ability
-  FIELD_SHORTCUT_ITEM = 1      ///< FieldWork.item
+  FIELD_SHORTCUT_PSYNERGY = 0, ///< FieldState.psynergy, an ability
+  FIELD_SHORTCUT_ITEM = 1      ///< FieldState.item
 };
 
 /// A shortcut assignment's request, bits 13..0, and its kind above them.
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
 #define FIELD_SHORTCUT_KIND_SHIFT 14
-/// MapWork.groundEffects' footprints, its bits 1..0: whether the leader leaves
+/// MapState.groundEffects' footprints, its bits 1..0: whether the leader leaves
 /// them.
 #define GROUND_EFFECTS_FOOTPRINTS_MASK 0x03
 
@@ -73,13 +73,13 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   s32 headingCount;
   s32 onPlatform;
   struct Actor *other;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   movementAnimation = ANIM_WALK;
   collision = 0;
   pushed = 0;
   headingCount = 0;
-  if (gInput.held & gMainRoutineWork.dashKeys) {
+  if (gInput.held & gMainRoutineState.dashKeys) {
     actor->speedLimit = toFIXED(1);
     actor->acceleration = toFIXED(1) / 20;
     movementAnimation = ANIM_LEADER_RUN;
@@ -263,12 +263,12 @@ push_objects:
   }
 
 counted:
-  work = Ram_HeapSlots->fieldWork;
-  if (work != NULL) {
+  state = Ram_HeapSlots->fieldState;
+  if (state != NULL) {
     if (collision & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
+      state->blockedSteps = 0;
   }
   if (pushed != 0) {
     Actor_SelectAnimation(actor, ANIM_PUSH);
@@ -276,7 +276,7 @@ counted:
     s32 action;
 
     action = ANIM_LEADER_LOOK_AROUND;
-    if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
+    if (Unit_Get(gMainRoutineState.leaderActorId)->hp == 0)
       action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -315,24 +315,24 @@ counted:
 /// FLAG_MENUS_RAISE_TRIGGER is set the scene's raised trigger. Returns the
 /// request.
 s32 Field_RequestShortcut(u32 assignment) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u32 kind = assignment >> FIELD_SHORTCUT_KIND_SHIFT;
   s32 request = assignment & FIELD_SHORTCUT_ID_MASK;
 
   if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER) != 0) {
-    work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
-  } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    state->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
+  } else if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gInput.held & KEY_R)
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_MAP_SCREEN;
+      state->raisedTrigger = FIELD_RAISED_TRIGGER_MAP_SCREEN;
     else if (gInput.held & KEY_L)
-      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
+      state->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
   } else {
     switch (kind) {
     case FIELD_SHORTCUT_PSYNERGY:
-      work->psynergy = request;
+      state->psynergy = request;
       break;
     case FIELD_SHORTCUT_ITEM:
-      work->item = request;
+      state->item = request;
       break;
     }
   }
@@ -345,35 +345,35 @@ s32 Field_RequestShortcut(u32 assignment) {
 /// asks for the Ring again (ABILITY_MAGNET, packed), which ends it. Returns 0
 /// when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   s32 result = 0;
 
-  if (work == NULL)
+  if (state == NULL)
     return 0;
-  if (work->ringActive != 0) {
-    if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
-        (gInput.pressed & gMainRoutineWork.aKeys) ||
-        (gInput.pressed & gMainRoutineWork.startKeys) ||
-        (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
-        (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
-      work->psynergy = ABILITY_MAGNET | ACT_PACKED;
+  if (state->ringActive != 0) {
+    if ((gInput.pressed & gMainRoutineState.selectKeys) ||
+        (gInput.pressed & gMainRoutineState.aKeys) ||
+        (gInput.pressed & gMainRoutineState.startKeys) ||
+        (gInput.pressed & gMainRoutineState.firstShortcutKeys) ||
+        (gInput.pressed & gMainRoutineState.secondShortcutKeys)) {
+      state->psynergy = ABILITY_MAGNET | ACT_PACKED;
       return 1;
     }
     return 0;
   } else {
-    if (gInput.pressed & gMainRoutineWork.selectKeys) {
-      work->fieldMenu = 1;
+    if (gInput.pressed & gMainRoutineState.selectKeys) {
+      state->fieldMenu = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.aKeys) {
-      work->aButton = 1;
+    } else if (gInput.pressed & gMainRoutineState.aKeys) {
+      state->aButton = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.startKeys) {
-      work->pauseMenu = 1;
+    } else if (gInput.pressed & gMainRoutineState.startKeys) {
+      state->pauseMenu = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.firstShortcutKeys) {
-      result = Field_RequestShortcut(gMainRoutineWork.firstShortcut);
-    } else if (gInput.pressed & gMainRoutineWork.secondShortcutKeys) {
-      result = Field_RequestShortcut(gMainRoutineWork.secondShortcut);
+    } else if (gInput.pressed & gMainRoutineState.firstShortcutKeys) {
+      result = Field_RequestShortcut(gMainRoutineState.firstShortcut);
+    } else if (gInput.pressed & gMainRoutineState.secondShortcutKeys) {
+      result = Field_RequestShortcut(gMainRoutineState.secondShortcut);
     }
   }
   return result;
@@ -453,8 +453,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   s32 headingCount;
   s32 footprintAngle;
   s32 onPlatform;
-  struct FieldWork *work;
-  struct MapWork *map;
+  struct FieldState *state;
+  struct MapState *map;
   u16 angle;
   u16 direction;
   struct Actor *other;
@@ -464,11 +464,11 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   sprite = actor->sprite;
   movementAnimation = ANIM_WALK;
   onPlatform = 0;
-  work = Ram_HeapSlots->fieldWork;
+  state = Ram_HeapSlots->fieldState;
   map = Ram_HeapSlots->mapGrid;
   collision = 0;
   pushed = 0;
-  if (gInput.held & gMainRoutineWork.dashKeys) {
+  if (gInput.held & gMainRoutineState.dashKeys) {
     actor->speedLimit = FIELD_RUN_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
     movementAnimation = ANIM_LEADER_RUN;
@@ -668,12 +668,12 @@ push_objects:
   }
 
 counted:
-  if (work != NULL) {
+  if (state != NULL) {
     if (collision & PLAYER_STEP_BLOCKED)
-      work->blockedSteps++;
+      state->blockedSteps++;
     else
-      work->blockedSteps = 0;
-    work->heldKeys = gInput.held;
+      state->blockedSteps = 0;
+    state->heldKeys = gInput.held;
   }
   if (pushed != 0) {
     Actor_SelectAnimation(actor, ANIM_PUSH);
@@ -681,7 +681,7 @@ counted:
     s32 action;
 
     action = ANIM_LEADER_LOOK_AROUND;
-    if (Unit_Get(gMainRoutineWork.leaderActorId)->hp == 0)
+    if (Unit_Get(gMainRoutineState.leaderActorId)->hp == 0)
       action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(actor, action);
   } else {
@@ -726,7 +726,7 @@ counted:
     struct MapCell *cells;
 
     if (actor->layer <= 2)
-      cells = ((struct MapWork *)map)->layers[actor->layer].cells;
+      cells = ((struct MapState *)map)->layers[actor->layer].cells;
     else
       cells = gMapGridCellBuffer;
     cells += actor->x.fixed / toFIXED(16) +

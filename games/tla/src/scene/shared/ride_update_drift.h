@@ -1,7 +1,7 @@
 /// A flame thrower's spark in flight: it drifts on, slowing, growing and
 /// spinning; just over the leader's head it stops going on and rises away.
 void Ride_UpdateDrift(struct Actor *actor) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   FIXED dx = actor->bounce;
   FIXED dz;
   struct FieldSprite *sprite;

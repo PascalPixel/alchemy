@@ -19,7 +19,7 @@
 ///
 /// Abilities: Flare, Flare Wall, Flare Storm.
 void BattleEffect_RunFlare(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   DrawRectangle draw;
@@ -31,13 +31,13 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct Particle *arcFlame;
   struct Particle *flame;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
@@ -54,7 +54,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   for (i = 0; i != FLARE_ARC_COUNT; i++) {
     s32 angle = i * (TRIG_TURN / 16) - DEGtoANG(90);
 
-    arcFlame = &work->particles[i];
+    arcFlame = &state->particles[i];
     arcFlame->x =
         ((direction * FIXEDtoINT(Trig_Sin(angle) * FLARE_ARC_RADIUS_X)) +
          originX) +
@@ -63,11 +63,11 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     arcFlame->variant = -i * 4;
   }
 
-  work->transferMode = CANVAS_COPY_AND_FADE;
+  state->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGEST)
-    work->transferValue = CANVAS_FADE_THREE_QUARTERS;
+    state->transferValue = CANVAS_FADE_THREE_QUARTERS;
   else
-    work->transferValue = CANVAS_FADE_HALF;
+    state->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_WHOOSH);
   for (frame = 0; frame != FLARE_FRAMES; frame++) {
@@ -77,19 +77,19 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     // Each flame plays its pictures and goes out; Flare Wall's and Flare
     // Storm's stack a second and a third above it.
     for (i = 0; i != FLARE_ARC_COUNT; i++) {
-      flame = &work->particles[i];
+      flame = &state->particles[i];
       if (flame->variant >= 0 &&
           flame->variant < FLARE_FLAME_PICTURES * FLARE_PICTURE_FRAMES) {
         picture = flame->variant / FLARE_PICTURE_FRAMES;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gBattleEffect_PuffArcPictureWidths[picture];
-        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+        draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
              flame->x - (width >> 1),
              flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
              gBattleEffect_PuffArcPictureHeights[picture]);
 #else
-        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+        draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
              flame->x -
                  ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
              flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
@@ -98,12 +98,12 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
         if (args->variant != EFFECT_VARIANT_BASIC) {
 #ifdef UBFIX
           width = gBattleEffect_PuffArcPictureWidths[picture];
-          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
                flame->x - (width >> 1),
                (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 16,
                width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
-          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
                flame->x -
                    ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
                (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 16,
@@ -113,12 +113,12 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
         if (args->variant == EFFECT_VARIANT_STRONGEST) {
 #ifdef UBFIX
           width = gBattleEffect_PuffArcPictureWidths[picture];
-          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
                flame->x - (width >> 1),
                (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 32,
                width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
-          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+          draw(canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
                flame->x -
                    ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
                (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 32,
@@ -135,7 +135,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                  POSE_DAMAGE, i, 12);
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

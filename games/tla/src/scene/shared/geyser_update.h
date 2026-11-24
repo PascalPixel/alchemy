@@ -1,10 +1,10 @@
 /// Each frame, raises or lowers each geyser on its timer, writes its height to
 /// the collision and cell maps, and carries its platform with a bob.
 void Geyser_Update(void) {
-  struct GeyserWork *work = GEYSER_WORK;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct Geyser *entry = work->entries;
-  s32 firstTerrain = work->firstTerrain;
+  struct GeyserState *state = GEYSER_STATE;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
+  struct Geyser *entry = state->entries;
+  s32 firstTerrain = state->firstTerrain;
   u8 *terrain = map->layers[0].terrainIds;
   struct MapCell *cells = map->layers[0].cells;
   s32 i = 0;
@@ -49,7 +49,7 @@ void Geyser_Update(void) {
     }
     index =
         FIELD_CELL(actor->x.fixed) + FIELD_CELL(actor->z.fixed) * MAPGRID_SIZE;
-    terrain[index] = (u8)work->firstTerrain + i;
+    terrain[index] = (u8)state->firstTerrain + i;
     *collision = ((actor->y.part[0].integer + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)

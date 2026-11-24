@@ -2,14 +2,14 @@
 /// unless the party comes back to the room as it left it, and starts the
 /// routine that times their gusts; their puffs are drawn half seen through.
 void Vents_Start(u16 *points, u16 *ids, void (*cycle)(void)) {
-  struct VentWork *work = VENT_WORK;
-  struct VentEntry *point = work->entries;
+  struct VentState *state = VENT_STATE;
+  struct VentEntry *point = state->entries;
 
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 x;
     s32 i;
 
-    Iwram_ClearWordsEntry(work, sizeof(struct VentWork));
+    Iwram_ClearWordsEntry(state, sizeof(struct VentState));
     x = *points++;
     i = 0;
     while (x > 0) {
@@ -33,7 +33,7 @@ void Vents_Start(u16 *points, u16 *ids, void (*cycle)(void)) {
       i = 0;
       if (x > 0) {
         do {
-          work->ids[i++] = x;
+          state->ids[i++] = x;
           if (i > VENT_IDS_MAX - 1)
             break;
           x = *ids++;
@@ -41,7 +41,7 @@ void Vents_Start(u16 *points, u16 *ids, void (*cycle)(void)) {
       }
     }
   }
-  work->hook = (s32 (*)(void))cycle;
+  state->hook = (s32 (*)(void))cycle;
   if (REG_BLDCNT == 0) {
     {
       s32 alpha = BLEND_ALPHA(8, 12);

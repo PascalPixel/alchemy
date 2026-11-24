@@ -110,12 +110,12 @@ struct AzulFace {
 /// Abilities: Azul.
 void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *sprites;
   DrawRectangle alternateBlit;
   DrawRectangle blit;
   s32 frame;
-  struct BattleWork *battle;
+  struct BattleState *battle;
   struct Point2D base;
   struct Point2D pos;
   struct Point2D vel;
@@ -142,7 +142,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   s32 stripEnd;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(3));
@@ -150,15 +150,15 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  BattleEffect_SelectLivingTargets(work->args);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  BattleEffect_SelectLivingTargets(state->args);
+  EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_VBLANK + 126);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  battle = Ram_HeapSlots->battleWork;
-  verts = (struct ModelVertex *)work->sheet;
-  faces = (struct AzulFace *)(work->sheet + AZUL_FACES);
-  sphere = work->sheet + AZUL_SPHERE;
-  grid = work->sheet + AZUL_GRID;
+  battle = Ram_HeapSlots->battleState;
+  verts = (struct ModelVertex *)state->sheet;
+  faces = (struct AzulFace *)(state->sheet + AZUL_FACES);
+  sphere = state->sheet + AZUL_SPHERE;
+  grid = state->sheet + AZUL_GRID;
   {
     u8 *cells = gMapGridCellBuffer;
 
@@ -176,14 +176,14 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
   }
   {
-    u8 *cells = work->sheet + AZUL_BLUE_BEAM;
+    u8 *cells = state->sheet + AZUL_BLUE_BEAM;
     u8 *dst;
     s32 count;
 
     Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, cells, 1, 1);
     i = 0;
     count = PICTURE_BYTES(AZUL_BUBBLE);
-    dst = work->sheet + AZUL_BUBBLE;
+    dst = state->sheet + AZUL_BUBBLE;
     for (; i != count; i++) {
       *dst++ = *cells;
       cells += 2;
@@ -193,14 +193,14 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(AZUL_SERPENT_OBJECTS, SPRITE_AZUL, 1);
   for (i = 0; i != AZUL_BODY_COPIES; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-    work->sprites[i + AZUL_SERPENT_OBJECTS] = obj;
-    Iwram_CopyWordsEntry(obj, work->sprites[AZUL_BODY_SEGMENT + (i & 3)],
+    state->sprites[i + AZUL_SERPENT_OBJECTS] = obj;
+    Iwram_CopyWordsEntry(obj, state->sprites[AZUL_BODY_SEGMENT + (i & 3)],
                          offsetof(struct Sprite, lastNo));
-    ((struct Sprite *)work->sprites[i])->image.priority = 1;
+    ((struct Sprite *)state->sprites[i])->image.priority = 1;
   }
   mapCells = gMapGridCellBuffer;
   planes = Ram_MapCellBuffer + AZUL_TEXTURES;
-  stripEnd = offsetof(struct BattleEffectWork, sheet) + AZUL_WISPS +
+  stripEnd = offsetof(struct BattleEffectState, sheet) + AZUL_WISPS +
              (AZUL_WISP_HEIGHT - 1) * AZUL_WISP_WIDTH;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
     // A or B skips to the burst in a white flash.
@@ -208,11 +208,11 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         frame < AZUL_BURST_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
       frame = AZUL_BURST_FRAME;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       for (i = 0; i != AZUL_OBJECTS; i++) {
-        ((struct Sprite *)work->sprites[i])->rotation = DEGtoANG(90);
+        ((struct Sprite *)state->sprites[i])->rotation = DEGtoANG(90);
       }
     }
     // The battlefield's colours come up from dark over the first frames.
@@ -231,9 +231,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     if (frame == 0) {
       REG_BLDALPHA = BLEND_ALPHA(16, 0);
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, frame);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, frame);
       for (i = 0; i != AZUL_OBJECTS; i++) {
-        ((struct Sprite *)work->sprites[i])->rotation = TRIG_TURN * 3 / 4;
+        ((struct Sprite *)state->sprites[i])->rotation = TRIG_TURN * 3 / 4;
       }
       base.x = toFIXED(120);
       base.y = -toFIXED(120);
@@ -292,7 +292,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
         i = 0;
         mask = 31;
-        p = &work->particles[AZUL_PARTS];
+        p = &state->particles[AZUL_PARTS];
         for (; i != AZUL_BUBBLE_COUNT; i++, p++) {
           p->x = INTtoFIXED((Random16() & 63) + 32);
           p->y = INTtoFIXED((Random16() & 15) + 120);
@@ -304,13 +304,13 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       i = 0;
-      p = &work->particles[AZUL_PARTS];
+      p = &state->particles[AZUL_PARTS];
       for (; i != AZUL_BUBBLE_COUNT; i++, p++) {
         if (p->variant >= 0) {
           FIXED s =
               Trig_Sin(frame * (TRIG_TURN / 64) + i * AZUL_BUBBLE_PHASE_STEP);
 
-          blit(canvas, work->sheet + AZUL_BUBBLE,
+          blit(canvas, state->sheet + AZUL_BUBBLE,
                (FIXEDtoINT(p->x + (s << 4))) - AZUL_BUBBLE_WIDTH / 2,
                FIXED_INTEGER_PART(p->y) - AZUL_BUBBLE_HEIGHT / 2,
                AZUL_BUBBLE_WIDTH, AZUL_BUBBLE_HEIGHT);
@@ -321,7 +321,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     // The water behind the foes deepens.
     if (frame <= 95 || (u32)(frame - AZUL_DEEPEN_FRAME) <= 31) {
-      u16 *c = work->backdropLines;
+      u16 *c = state->backdropLines;
       s32 level = frame / 8;
 
       if (frame >= AZUL_DEEPEN_FRAME) {
@@ -377,7 +377,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       vel.x = 0;
       vel.y = -toFIXED(6);
       for (i = 0; i != AZUL_OBJECTS; i++) {
-        ((struct Sprite *)work->sprites[i])->rotation = DEGtoANG(90);
+        ((struct Sprite *)state->sprites[i])->rotation = DEGtoANG(90);
       }
       for (i = 0; i != args->targetCount; i++) {
         struct MotionObject *actor =
@@ -407,7 +407,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
             place[2] += -toFIXED(240);
           }
           CLAMP_Y(place);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], place,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], place,
                                             (s32 *)&gAzul_UnitScale, 0);
         }
         for (i = 0; i != AZUL_BODY_COPIES; i++) {
@@ -419,9 +419,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                 i / 4 * 60) +
                      base.y + toFIXED(66);
           CLAMP_Y(place);
-          obj = work->sprites[i + AZUL_SERPENT_OBJECTS];
+          obj = state->sprites[i + AZUL_SERPENT_OBJECTS];
           obj->image.tile =
-              ((struct Sprite *)work->sprites[(i & 3) + AZUL_BODY_SEGMENT])
+              ((struct Sprite *)state->sprites[(i & 3) + AZUL_BODY_SEGMENT])
                   ->image.tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
@@ -434,7 +434,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
             place[2] += toFIXED(256);
           }
           CLAMP_Y(place);
-          Render_ApplyProjectedPlacementFar(work->sprites[i], place,
+          Render_ApplyProjectedPlacementFar(state->sprites[i], place,
                                             (s32 *)&gAzul_UnitScale, 0);
         }
         i = 0;
@@ -447,9 +447,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           place[2] = INTtoFIXED(gAzul_ObjectZ[row] + i / 4 * 64) + base.y +
                      toFIXED(64);
           CLAMP_Y(place);
-          obj = work->sprites[i + AZUL_SERPENT_OBJECTS];
+          obj = state->sprites[i + AZUL_SERPENT_OBJECTS];
           obj->image.tile =
-              ((struct Sprite *)work->sprites[m + AZUL_BODY_SEGMENT])
+              ((struct Sprite *)state->sprites[m + AZUL_BODY_SEGMENT])
                   ->image.tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)&gAzul_UnitScale,
                                             0);
@@ -462,7 +462,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
       if (frame == AZUL_SWIM_FRAME) {
         for (i = 0; i != AZUL_OBJECTS; i++) {
-          ((struct Sprite *)work->sprites[i])->rotation = 0;
+          ((struct Sprite *)state->sprites[i])->rotation = 0;
         }
         base.x = toFIXED(256);
         base.y = toFIXED(72);
@@ -488,7 +488,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != 8; i++) {
         place[0] = INTtoFIXED(gAzul_LateObjectX[i]) + x;
         place[2] = INTtoFIXED(gAzul_LateObjectZ[i]) + y;
-        Render_ApplyProjectedPlacementFar(work->sprites[i], place,
+        Render_ApplyProjectedPlacementFar(state->sprites[i], place,
                                           (s32 *)&gAzul_LateUnitScale, 0);
       }
     }
@@ -519,7 +519,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
 
       Sound_PlayFar(SE_CLATTER);
       i = 0;
-      p = work->particles;
+      p = state->particles;
       piece = gAzul_PartPoints[0];
       for (; i != AZUL_PARTS; i++, piece += AZUL_PART_POINTS * 2, p++) {
         s32 cx = piece[0] >> 1;
@@ -593,7 +593,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       model->vertices = vertices;
       model->scrollU = gBgScroll[1].x;
       for (i = 0; i != AZUL_PARTS; i++) {
-        p = &work->particles[i];
+        p = &state->particles[i];
         model->mesh = &faces[i * 3];
         Matrix_Initialize();
         Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
@@ -661,8 +661,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (i = 0; i != AZUL_WISP_PICTURES; i++) {
         for (k = 0; k != AZUL_WISP_WIDTH; k++) {
           for (j = 0; j != AZUL_WISP_HEIGHT; j++) {
-            ((u8 *)work)[stripEnd +
-                         (i * AZUL_WISP_HEIGHT - j) * AZUL_WISP_WIDTH + k] =
+            ((u8 *)state)[stripEnd +
+                          (i * AZUL_WISP_HEIGHT - j) * AZUL_WISP_WIDTH + k] =
                 (planes + i * PICTURE_BYTES(WISP) + k * (WISP_WIDTH * 2))[j];
           }
         }
@@ -673,7 +673,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                   gMapGridCellBuffer, 64, 64);
       Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == AZUL_SWIRL_FRAME) {
       Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
@@ -704,7 +704,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         height = AZUL_WISP_HEIGHT;
         f = frame;
         for (; i != 2; i++, f += 3) {
-          u8 *cells = work->sheet + AZUL_WISPS +
+          u8 *cells = state->sheet + AZUL_WISPS +
                       f % AZUL_WISP_PICTURES * PICTURE_BYTES(AZUL_WISP);
 
           blit(canvas, cells, 30, y, width, height);
@@ -759,7 +759,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           }
         }
         if (frame >= AZUL_SWIRL_FRAME) {
-          work->shakeFrames = 2;
+          state->shakeFrames = 2;
           shade = 0;
           size = frame * (FIXED_ONE / 8) + -toFIXED(19);
           scratchTexture.logWidth = 6;
@@ -798,7 +798,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       p = (struct Particle *)gMapGridCellBuffer;
       for (i = 0; i != AZUL_DROPS; i++, p++) {
         if (p->variant >= 0) {
-          blit(canvas, work->sheet + AZUL_BUBBLE,
+          blit(canvas, state->sheet + AZUL_BUBBLE,
                FIXED_INTEGER_PART(p->x) - AZUL_BUBBLE_WIDTH / 2,
                FIXED_INTEGER_PART(p->y) - AZUL_BUBBLE_HEIGHT / 2,
                AZUL_BUBBLE_WIDTH, AZUL_BUBBLE_HEIGHT);
@@ -822,7 +822,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);
       }
       Sound_PlayFar(SE_CRASH);
-      work->shakeFrames = 16;
+      state->shakeFrames = 16;
     }
     if (frame == AZUL_DAMAGE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -835,13 +835,13 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     if (frame >= AZUL_BURST_FRAME) {
       BattleEffect_CountDownBattlerTints();
     }
-    EFFECT_PRESENT_CANVAS(work);
+    EFFECT_PRESENT_CANVAS(state);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != AZUL_OBJECTS; i++) {
-    Sprite_DestroyFar(work->sprites[i]);
+    Sprite_DestroyFar(state->sprites[i]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -907,14 +907,14 @@ void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position) {
 
 /// Midpoint between the first and last targets.
 void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   struct ScreenPoint first;
   struct ScreenPoint last;
 
-  work = Ram_HeapSlots->battleEffect;
-  EffectPosition_ProjectBattler(work->args->targets[0], &first);
+  state = Ram_HeapSlots->battleEffect;
+  EffectPosition_ProjectBattler(state->args->targets[0], &first);
   EffectPosition_ProjectBattler(
-      work->args->targets[work->args->targetCount - 1], &last);
+      state->args->targets[state->args->targetCount - 1], &last);
   position->x = first.x + (last.x - first.x) / 2;
   position->y = first.y;
   position->depth = first.depth;

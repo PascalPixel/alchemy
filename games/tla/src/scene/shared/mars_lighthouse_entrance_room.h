@@ -10,7 +10,7 @@
 #include "flags.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "field/flag_call.h"
 #include "field/event_inline.h"

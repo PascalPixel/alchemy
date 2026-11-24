@@ -2,7 +2,7 @@
 #define ALCHEMY_WINDOW_H
 
 /// @file
-/// Windows, the messages that type into them, and the window system's work,
+/// Windows, the messages that type into them, and the window system's state,
 /// as window.c declares them for the files that use them.
 
 #include "types.h"
@@ -19,19 +19,19 @@
 #include "graphics/uiflow.h"
 #include "static_assert.h"
 
-/// The window sprites WindowWork keeps, free or in a window.
+/// The window sprites WindowState keeps, free or in a window.
 enum { WINDOW_SPRITE_COUNT = 64 };
 
 /// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
-/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+/// with WindowState.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
 #define TEXT_TILE_FIRST 128
 #define TEXT_TILES 128
 #define TEXT_EXTRA_TILE_FIRST 512
 
-/// The window system's work: its text tile and upload state, the windows'
+/// The window system's state: its text tile and upload state, the windows'
 /// tilemap, the windows, the three text messages, the 64 window sprites, and
 /// the decoded message and its arguments.
-struct WindowWork {
+struct WindowState {
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use the second range of tiles
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
@@ -76,42 +76,42 @@ struct WindowWork {
   s8 textMode;
 };
 
-STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);
-STATIC_ASSERT(offsetof(struct WindowWork, windows) == 1288);
-STATIC_ASSERT(offsetof(struct WindowWork, messages) == 1720);
-STATIC_ASSERT(offsetof(struct WindowWork, sprites) == 1840);
-STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) == 3632);
-STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.tailLink) == 3636);
+STATIC_ASSERT(offsetof(struct WindowState, tilemap) == 8);
+STATIC_ASSERT(offsetof(struct WindowState, windows) == 1288);
+STATIC_ASSERT(offsetof(struct WindowState, messages) == 1720);
+STATIC_ASSERT(offsetof(struct WindowState, sprites) == 1840);
+STATIC_ASSERT(offsetof(struct WindowState, freeSprites.head) == 3632);
+STATIC_ASSERT(offsetof(struct WindowState, freeSprites.tailLink) == 3636);
 
-STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 3896);
-STATIC_ASSERT(offsetof(struct WindowWork, colour) == 3902);
-STATIC_ASSERT(offsetof(struct WindowWork, textBuffer) == 3904);
-STATIC_ASSERT(offsetof(struct WindowWork, battleMode) == 5);
-STATIC_ASSERT(offsetof(struct WindowWork, textPalette) == 7);
-STATIC_ASSERT(offsetof(struct WindowWork, textTileState) == 3640);
+STATIC_ASSERT(offsetof(struct WindowState, lineSpacing) == 3896);
+STATIC_ASSERT(offsetof(struct WindowState, colour) == 3902);
+STATIC_ASSERT(offsetof(struct WindowState, textBuffer) == 3904);
+STATIC_ASSERT(offsetof(struct WindowState, battleMode) == 5);
+STATIC_ASSERT(offsetof(struct WindowState, textPalette) == 7);
+STATIC_ASSERT(offsetof(struct WindowState, textTileState) == 3640);
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 4930);
-STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 4934);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 4940);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 4972);
-STATIC_ASSERT(sizeof(struct WindowWork) == 5008);
+STATIC_ASSERT(offsetof(struct WindowState, textBufferEnd) == 4930);
+STATIC_ASSERT(offsetof(struct WindowState, glyphResource) == 4934);
+STATIC_ASSERT(offsetof(struct WindowState, argumentValues) == 4940);
+STATIC_ASSERT(offsetof(struct WindowState, argumentKinds) == 4972);
+STATIC_ASSERT(sizeof(struct WindowState) == 5008);
 #else
-STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 4418);
-STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 4422);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 4428);
-STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 4460);
-STATIC_ASSERT(sizeof(struct WindowWork) == 4496);
+STATIC_ASSERT(offsetof(struct WindowState, textBufferEnd) == 4418);
+STATIC_ASSERT(offsetof(struct WindowState, glyphResource) == 4422);
+STATIC_ASSERT(offsetof(struct WindowState, argumentValues) == 4428);
+STATIC_ASSERT(offsetof(struct WindowState, argumentKinds) == 4460);
+STATIC_ASSERT(sizeof(struct WindowState) == 4496);
 #endif
 
-/// Message_SetDecodeFlags' flags, which set WindowWork.haltingSpeech and
+/// Message_SetDecodeFlags' flags, which set WindowState.haltingSpeech and
 /// spacingAfter for the messages decoded next.
 enum MessageDecodeFlag {
   MESSAGE_DECODE_HALTING_SPEECH = 1, ///< a pause before each character
   MESSAGE_DECODE_SPACING_AFTER = 2   ///< a wide gap after some characters
 };
 
-/// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
+/// WindowState.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
 
 /// The last character code the window's text tiles cover.
@@ -154,7 +154,7 @@ void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 #define TEXT_CANVAS_FIRST_TILE 296
 
 /// The UI tilemap in VRAM (BG screen block 4), which WindowSystem_UploadTilemap
-/// copies the work block's tilemap to.
+/// copies the state's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
 /// The sprite palette of portrait slot 0; slot 1 uses the next.
@@ -499,14 +499,14 @@ enum PartyStatusFlag {
   PARTY_STATUS_SHOW_DJINN = 2,  ///< add the Djinn column (needs the PP row)
   PARTY_STATUS_CLOSED = 9,      ///< erase the window
   PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
-  /// BattleWork.partyStatus while the party cannot summon.
+  /// BattleState.partyStatus while the party cannot summon.
   PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
-  /// BattleWork.partyStatus while it can, drawn only while a Djinni is on
+  /// BattleState.partyStatus while it can, drawn only while a Djinni is on
   /// standby.
   PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 };
 
-/// Where the windows are drawn (WindowWork.battleMode).
+/// Where the windows are drawn (WindowState.battleMode).
 enum WindowBattleMode {
   WINDOW_FIELD = 0,  ///< on the field; the field setup clears the block
   WINDOW_BATTLE = 1, ///< in battle, from WindowSystem_InitBattle
@@ -518,7 +518,7 @@ enum WindowBattleMode {
   WINDOW_GLYPHS_BLENDED = 4,
 };
 
-/// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
+/// WindowState.portraitPictures of a free portrait slot, as Portrait_ClearSlots
 /// writes it.
 #define PORTRAIT_SLOT_EMPTY 999
 
@@ -537,7 +537,7 @@ enum CenteredMessageMode {
 /// The flags FieldMessage_Show takes.
 enum FieldMessageFlag {
   FIELD_MESSAGE_ZOOM = 0x01, ///< the window zooms open and shut
-  /// The window work is busy while it shows.
+  /// The window state is busy while it shows.
   FIELD_MESSAGE_WAITING_FOR_SOUND = 0x02,
   FIELD_MESSAGE_KEEP_OPEN = 0x04,   ///< the window is left open
   FIELD_MESSAGE_LOWER = 0x08,       ///< 4 tiles below the top rows' centre

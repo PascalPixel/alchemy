@@ -19,7 +19,7 @@
 #include "system/iwram_call.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "types.h"
 #include "field/event_inline.h"
@@ -229,7 +229,7 @@ void IzumoRuins_PlaceStakes(u16 *list) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     return gIzumoRuins_FirstRoomRegions;
@@ -241,7 +241,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     return gIzumoRuins_FirstRoomActorPlacements;
@@ -259,8 +259,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Pound_SinkTarget animates the blow from the scene's list of stakes; as the
 /// stake lands (mode 1) IzumoRuins_ShowStakeState makes its cell floor.
 void IzumoRuins_PoundStake(s32 mode, s32 frame) {
-  struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct FieldEffectState *state = Ram_HeapSlots->fieldEffectState;
+  struct MainRoutineState *party = &gMainRoutineState;
   s16 scene;
 
   scene = party->next;
@@ -269,20 +269,20 @@ void IzumoRuins_PoundStake(s32 mode, s32 frame) {
   else
     Pound_SinkTarget(gIzumoRuins_SecondRoomStakes, mode, frame);
   if (mode == 1)
-    IzumoRuins_ShowStakeState(Actor_Get(work->secondActorId));
+    IzumoRuins_ShowStakeState(Actor_Get(state->secondActorId));
 }
 
 /// Frost on one of the two puddles either side of the stakes where the ladder
 /// comes down (cells (8, 51) and (14, 51)) freezes it into a pillar of ice
 /// that Felix can jump onto.
 void IzumoRuins_FreezePuddle(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FlagBlock_ApplyFlags(gIzumoRuins_Puddles);
-  actor = work->movedBlock;
+  actor = state->movedBlock;
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Event_End();
@@ -293,7 +293,7 @@ void IzumoRuins_FreezePuddle(void) {
 /// mark the sand, and can travel only through sand, under the stakes and past
 /// what blocks the floor above. Cast off the sand, nothing changes.
 void IzumoRuins_SinkIntoSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   s32 cell =
       MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(leader->x.fixed),
                             FIELD_CELL(leader->z.fixed));
@@ -305,7 +305,7 @@ void IzumoRuins_SinkIntoSand(void) {
 /// As Sand wears off, Felix comes up out of the sand onto the ruins' floor,
 /// the cells of the map's ground layer.
 void IzumoRuins_RiseOutOfSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   leader->layer = MAPGRID_LAYER_GROUND;
 }
@@ -315,7 +315,7 @@ void IzumoRuins_RiseOutOfSand(void) {
 /// tablet, the cell south of it between the ring's two south pillars is first
 /// closed, so that no pillar can be set down in the way to it.
 void IzumoRuins_StartMovingPillar(void) {
-  if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
+  if (gMainRoutineState.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomPillars);
   } else {
     s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD,
@@ -334,7 +334,7 @@ void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_SECOND_ROOM)
+  if (gMainRoutineState.next == SCENE_IZUMO_RUINS_SECOND_ROOM)
     MapCell_SetAttributes(
         MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW,
         MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
@@ -354,7 +354,7 @@ void IzumoRuins_ParchThePool(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     return gIzumoRuins_FirstRoomTriggers;
@@ -365,16 +365,16 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// stakes, the first scene's puddles, and the second scene's pool dried if
 /// Parch has dried it. Returns 0.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor;
   s32 height;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
+  if (gMainRoutineState.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_PlaceBlocks(gIzumoRuins_FirstRoomPillars);
     IzumoRuins_PlaceStakes((u16 *)gIzumoRuins_FirstRoomStakes);
     FlagBlock_PlaceAll(gIzumoRuins_Puddles);
@@ -390,12 +390,12 @@ s32 Scene_Initialize(void) {
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-        actor = Actor_Get(gMainRoutineWork.leaderActorId);
+        actor = Actor_Get(gMainRoutineState.leaderActorId);
         height = Map_GetTerrainHeight(actor->layer, actor->x.fixed,
                                       actor->z.fixed - actor->y.fixed);
         actor->groundHeight = height;
         actor->y.fixed = height;
-        EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
+        EventCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
       }
     }
   }

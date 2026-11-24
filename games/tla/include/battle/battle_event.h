@@ -8,11 +8,11 @@
 #include "edition.h"
 #include "static_assert.h"
 
-/// The most events a playback queues (BattlePlaybackWork's opcodes and
+/// The most events a playback queues (BattlePlaybackState's opcodes and
 /// operands).
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
-/// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
+/// BattlePlaybackState.phase: how far BattlePlayback_Run has got through the
 /// plan's targets.
 enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the effect resumes it
@@ -47,7 +47,7 @@ enum BattlePlaybackCommand {
   PLAYBACK_ABILITY_NAME = 3,    ///< an ability's name for the next message
   PLAYBACK_MESSAGE = 4,         ///< a message, waiting for the player
   PLAYBACK_MESSAGE_NO_WAIT = 5, ///< a message, going straight on
-  PLAYBACK_MARK = 6,            ///< sets gBattleDisplayWork->marked
+  PLAYBACK_MARK = 6,            ///< sets gBattleDisplayState->marked
   PLAYBACK_CLEAR_ARGUMENTS = 7, ///< forgets the names and numbers pushed
   PLAYBACK_HIT = 8,             ///< the unit flinches and flashes
   PLAYBACK_DEFEAT = 9,          ///< the unit falls; an enemy fades out

@@ -23,7 +23,7 @@
 #include "djinn_ids.h"
 #include "field/field.h"
 #include "graphics/palette_buffers.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "types.h"
 #include "macros.h"
 #include "system/ram_buffer.h"
@@ -198,7 +198,7 @@ extern struct Trigger gIsletCave_CorridorsTriggers[];
 extern struct Trigger gIsletCave_SentinelRoomTriggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ISLET_CAVE_HALLS)
     return gIsletCave_HallsPlacements;
@@ -208,7 +208,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ISLET_CAVE_CORRIDORS)
     return gIsletCave_CorridorsTriggers;
@@ -221,8 +221,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// the sparks whirl in, then the cave's colours come back and Felix is shown
 /// on it.
 void IsletCave_FinishTeleport(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 effect = work->transition;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 effect = state->transition;
 
   Teleport_StartFastShimmer();
   Teleport_PlayWhirl();
@@ -232,9 +232,9 @@ void IsletCave_FinishTeleport(void) {
   PaletteFade_StartInterpolation(16);
   wait(16);
 
-  gMainRoutineWork.teleportState = 0;
-  Actor_ConfigureSpriteColor(gMainRoutineWork.leaderActorId, 0);
-  work->transition = effect;
+  gMainRoutineState.teleportState = 0;
+  Actor_ConfigureSpriteColor(gMainRoutineState.leaderActorId, 0);
+  state->transition = effect;
 }
 
 /// Teleport cast on a circle: the cave turns grey, the circle shimmers and
@@ -244,9 +244,9 @@ void IsletCave_FinishTeleport(void) {
     Teleport_StartShimmer();                                                   \
     Teleport_PlaySparks();                                                     \
                                                                                \
-    gMainRoutineWork.teleportState = 1;                                        \
+    gMainRoutineState.teleportState = 1;                                       \
     Event_Wait(40);                                                            \
-    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,     \
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineState.leaderActorId,    \
                                            toFIXED(x), toFIXED(z));            \
     IsletCave_FinishTeleport();                                                \
   }
@@ -322,7 +322,7 @@ extern struct MapGridCellAnimation gIsletCave_Doors[];
 /// cells (8, 6), (20, 6), (32, 6), (43, 6) and (54, 6), each cell's behaviour
 /// the exit it leaves by.
 void IsletCave_OpenDoorAndEnter(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   u32 i;
   u32 index;
 
@@ -334,7 +334,7 @@ void IsletCave_OpenDoorAndEnter(void) {
     if (actor != 0)
       actor->motionFlags = 0;
   }
-  index = work->stepTrigger - 1;
+  index = state->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
@@ -343,11 +343,11 @@ void IsletCave_OpenDoorAndEnter(void) {
 
     MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, y);
   }
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -4);
   Event_Wait(6);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -367,20 +367,20 @@ extern s32 gIsletCave_TremorTargetScript[];
 s32 Scene_Initialize(void) {
   s32 dim;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_HALLS) {
+  if (gMainRoutineState.next == SCENE_ISLET_CAVE_HALLS) {
     IsletCave_PlaceLogs();
     Palette_SetColorsFade(gTeleportCircle_PaletteSlots, gTeleportCircle_Colors,
                           gTeleportCircle_ShimmerColors,
                           gTeleportCircle_ShimmerSlots);
-  } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
+  } else if (gMainRoutineState.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
-    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
+    if (gMainRoutineState.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
       Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
       GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
-  } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_CORRIDORS) {
+  } else if (gMainRoutineState.next == SCENE_ISLET_CAVE_CORRIDORS) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SERAC_REVEALED);
@@ -390,10 +390,10 @@ s32 Scene_Initialize(void) {
                                 gIsletCave_TremorTargetScript);
     }
   }
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_CORRIDORS ||
-      gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
-    if (gMainRoutineWork.next == SCENE_ISLET_CAVE_CORRIDORS)
-      dim = (gMainRoutineWork.entrance - 3) / 2;
+  if (gMainRoutineState.next == SCENE_ISLET_CAVE_CORRIDORS ||
+      gMainRoutineState.next == SCENE_ISLET_CAVE_SENTINEL) {
+    if (gMainRoutineState.next == SCENE_ISLET_CAVE_CORRIDORS)
+      dim = (gMainRoutineState.entrance - 3) / 2;
     else
       dim = 3;
     IsletCave_DarkenPalette(FADE_CHANNEL_LEVEL -
@@ -565,7 +565,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   FIXED x;
   FIXED z;
 
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   actor = Actor_GetById(actorId);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -791,7 +791,7 @@ void IsletCave_SentinelAwaits(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  actor = Actor_GetById(gMainRoutineState.leaderActorId);
   if (actor != 0) {
     Actor_SetDestinationById(ACTOR_SENTINEL, actor->x.part[0].integer,
                              actor->z.part[0].integer);
@@ -812,7 +812,7 @@ void IsletCave_SentinelAwaits(void) {
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SERAC_REVEALED)) {
     struct Actor *actor = Actor_GetById(ACTOR_SERAC);
-    struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+    struct Actor *owner = Actor_GetById(gMainRoutineState.leaderActorId);
 
     Event_SetFlag(FLAG_SERAC_REVEALED);
     Actor_SetPosition(ACTOR_SERAC, 296, 160);
@@ -822,7 +822,7 @@ void IsletCave_TremorRevealsSerac(void) {
                         FIELD_HALF_CELL(owner->z.fixed) * 8 + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
     actor->speedLimit = toFIXED(1);
-    Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SERAC, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineState.leaderActorId, ACTOR_SERAC, 0);
   }
 }
 

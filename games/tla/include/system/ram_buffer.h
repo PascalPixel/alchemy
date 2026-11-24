@@ -40,12 +40,12 @@
 #define Ram_WorldMapScroll                                                     \
   FIXED_ADDRESS((s32 *), 0x0202a630, gMapScreen_ScrollX)
 
-/// The map screen's work, as its setup (MapScreen_Initialize) reaches
+/// The map screen's state, as its setup (MapScreen_Initialize) reaches
 /// it.
-#define Ram_WorldMapWork                                                       \
-  FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
+#define Ram_WorldMapState                                                      \
+  FIXED_ADDRESS((struct WorldMapState *), 0x0202a000, gWorldMapState)
 /// Where MapScreen_UpdateScroll reads the cursor from (x, then y, 16.16
-/// pixels): the setup points it at the work's cursor.
+/// pixels): the setup points it at the state's cursor.
 #define Ram_WorldMapCursor                                                     \
   FIXED_ADDRESS((s32 **), 0x0202a62c, gMapScreen_Cursor)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).

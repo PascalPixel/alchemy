@@ -54,7 +54,7 @@
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   u8 *spraySheet = OCEAN_FIST_SPRAY_SHEET;
   void *canvas;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *sprites;
   BlitterPair blitters;
   struct ScreenPoint target;
@@ -68,17 +68,17 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   s32 i;
 
   canvas = Ram_HeapSlots->battleCanvas;
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, spraySheet, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &target);
 
   {
@@ -89,10 +89,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         EFFECT_FREE_PARTICLES(i, PARTICLES, OCEAN_FIST_DROPS);
         // DEAD: the column's pictures are already decoded; the ROM keeps the
         // second load.
-        Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1,
+        Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1,
                                    0);
         Sound_PlayFar(SE_CRASH);
-        work->shakeFrames = 4;
+        state->shakeFrames = 4;
         halfWidth = OCEAN_FIST_COLUMN_WIDTH / 2;
         width = OCEAN_FIST_COLUMN_WIDTH;
         sheet = OCEAN_FIST_SPRAY_SHEET;
@@ -105,15 +105,15 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
       }
       if (frame == OCEAN_FIST_DAMAGE_FRAME) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-        work->shakeFrames = 16;
+        state->shakeFrames = 16;
       }
 
       // From the strike, each frame halves the brightness of the canvas
       // shown, so each of the three fades to a sixteenth.
       if (frame >= OCEAN_FIST_STRIKE_FRAME &&
           frame < OCEAN_FIST_STRIKE_FRAME + OCEAN_FIST_FADE_FRAMES) {
-        u8 *pixel = work->sheet + (frame % OCEAN_FIST_COLUMN_PICTURES) *
-                                      PICTURE_BYTES(OCEAN_FIST_COLUMN);
+        u8 *pixel = state->sheet + (frame % OCEAN_FIST_COLUMN_PICTURES) *
+                                       PICTURE_BYTES(OCEAN_FIST_COLUMN);
 
         for (i = 0; i != PICTURE_BYTES(OCEAN_FIST_COLUMN); i++) {
           s32 value = *pixel;
@@ -146,7 +146,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
               y = top;
             }
             blitters[1](canvas,
-                        work->sheet +
+                        state->sheet +
                             picture * PICTURE_BYTES(OCEAN_FIST_COLUMN),
                         x - halfWidth, y, width, height);
           }
@@ -157,10 +157,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
       // rises as it burns out.
       if (frame == 0) {
         for (i = 0; i != OCEAN_FIST_SPRAY_SLOTS; i++) {
-          work->particles[i].variant = -i - 4;
+          state->particles[i].variant = -i - 4;
         }
       }
-      for (i = 0, spray = work->particles; i != OCEAN_FIST_SPRAYS;
+      for (i = 0, spray = state->particles; i != OCEAN_FIST_SPRAYS;
            i++, spray++) {
         if ((u32)spray->variant < OCEAN_FIST_SPRAY_FRAMES) {
           blitters[0](canvas,
@@ -248,7 +248,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         }
       }
       if (frame < OCEAN_FIST_DAMAGE_FRAME) {
-        work->shakeFrames = 16;
+        state->shakeFrames = 16;
       }
       if (frame <= 7) {
         BattleCamera_Shake(8, 8);
@@ -257,7 +257,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
       } else {
         BattleCamera_Shake(8, 8);
       }
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
   EFFECT_FINISH_CANVAS();

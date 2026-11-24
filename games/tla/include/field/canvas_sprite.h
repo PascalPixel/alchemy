@@ -36,7 +36,7 @@
 /// A field Psynergy's canvas sprite: its effect sprite, the frame it is on and
 /// how long it has drawn, and where, how large, at what angle and depth it is
 /// drawn.
-struct CanvasSpriteWork {
+struct CanvasSpriteState {
   struct EffectSprite sprite;
   u8 unusedAfterSprite[120]; ///< no code names it
   s32 drawnFrames;
@@ -54,9 +54,9 @@ struct CanvasSpriteWork {
   u8 unusedAfterCommand[2]; ///< no code names it
 };
 
-STATIC_ASSERT(sizeof(struct CanvasSpriteWork) == 196);
-STATIC_ASSERT(offsetof(struct CanvasSpriteWork, frame) == 164);
-STATIC_ASSERT(offsetof(struct CanvasSpriteWork, tile) == 188);
+STATIC_ASSERT(sizeof(struct CanvasSpriteState) == 196);
+STATIC_ASSERT(offsetof(struct CanvasSpriteState, frame) == 164);
+STATIC_ASSERT(offsetof(struct CanvasSpriteState, tile) == 188);
 
 void BattleEffect_UploadCanvas(void);
 void BattleEffect_DrawCanvasSprite(void);

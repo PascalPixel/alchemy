@@ -23,7 +23,7 @@
 #include "field/field.h"
 #include "field/field_sequence.h"
 #include "field/field_sprite.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "game/inventory.h"
@@ -32,7 +32,7 @@
 #include "scene/scene.h"
 #include "sound/sound.h"
 #include "system/frame.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -116,7 +116,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_YALLAM_ROOMS_INN)
     return gYallamRoomsInnPlacements;
@@ -229,7 +229,7 @@ s32 YallamRooms_MindReadItemMerchant(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_YALLAM_ROOMS_INN)
     return gYallamRoomsInnTriggers;
@@ -275,7 +275,7 @@ enum { YALLAM_INN = 7 };
 /// Yallam's weapon merchant sells across the counter, and otherwise wishes
 /// Sunshine would work.
 void YallamRooms_TalkToWeaponMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_YALLAM_WEAPONS, actor);
@@ -292,7 +292,7 @@ void YallamRooms_TalkToWeaponMerchant(s32 actor) {
 /// Yallam's armor merchant sells across the counter, and otherwise sends the
 /// party to Sunshine for something special.
 void YallamRooms_TalkToArmorMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_YALLAM_ARMOR, actor);
@@ -309,7 +309,7 @@ void YallamRooms_TalkToArmorMerchant(s32 actor) {
 /// Yallam's item merchant sells across the counter, and otherwise points the
 /// way to Taopo Swamp.
 void YallamRooms_TalkToItemMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_YALLAM_ITEMS, actor);
@@ -326,7 +326,7 @@ void YallamRooms_TalkToItemMerchant(s32 actor) {
 /// Yallam's innkeeper takes the party in across the counter, and otherwise
 /// talks of the town that never gets tourists.
 void YallamRooms_TalkToInnkeeper(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(YALLAM_INN, actor);
@@ -346,7 +346,7 @@ void YallamRooms_TalkToInnkeeper(s32 actor) {
 /// calls this copy. The healer tends the party across the counter, and
 /// otherwise speaks of the hope a Sanctum brings to far-off shores.
 UNUSED void YallamRooms_TalkToHealer(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -452,12 +452,12 @@ void YallamRooms_TalkToSunshine(void) {
       Event_ShowMessage(ACTOR_SUNSHINE, 0);
       Actor_FallOverById(ACTOR_SUNSHINE, DEGtoANG(270));
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINE), SPRITE_FLAG_SHADOW);
-      Actor_SetDestination(gMainRoutineWork.leaderActorId, 488, 408);
-      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+      Actor_SetDestination(gMainRoutineState.leaderActorId, 488, 408);
+      Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+      Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_EAST, 0);
       Actor_SetDestination(ACTOR_SUNSHINE, 504, 408);
       Actor_WaitForMoveById(ACTOR_SUNSHINE);
-      Actor_FaceActor(ACTOR_SUNSHINE, gMainRoutineWork.leaderActorId, 0);
+      Actor_FaceActor(ACTOR_SUNSHINE, gMainRoutineState.leaderActorId, 0);
       Forge_Run(ACTOR_SUNSHINE);
       if (Forge_GetItem()) {
         Actor_SetSpeed(ACTOR_SUNSHINE, 0.4);
@@ -529,7 +529,7 @@ void YallamRooms_TalkToSunshinesWife(s32 actor) {
       Event_SetMessageId(message + 2);
       // "Whoops! Looks like you've got a full load there! This'll have to..."
       Event_ShowMessage(actor, 0);
-    } else if ((u32)gMainRoutineWork.coins < price) {
+    } else if ((u32)gMainRoutineState.coins < price) {
       Event_SetMessageId(message + 3);
       // "You don't enough money! What are you trying to pull? I can't give..."
       Event_ShowMessage(actor, 0);
@@ -555,10 +555,10 @@ void YallamRooms_TalkToSunshinesWife(s32 actor) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
 
     scene = party->next;
   }
@@ -576,7 +576,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINES_BED), 0);
     Actor_SetSpritePriority(ACTOR_RAINY_SEASON_VILLAGER, 2);
   }
-  if (gMainRoutineWork.next == SCENE_YALLAM_ROOMS_SHOPS) {
+  if (gMainRoutineState.next == SCENE_YALLAM_ROOMS_SHOPS) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
     Actor_GetById(ACTOR_ITEM_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;

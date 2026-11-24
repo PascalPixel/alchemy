@@ -1,9 +1,9 @@
 /// @file
 /// The Mars Lighthouse flame throwers' puffs, which four of its rooms keep a
-/// copy of, with the views of the ride work and heap slots the routine reads
+/// copy of, with the views of the ride state and heap slots the routine reads
 /// them through.
 
-/// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
+/// A flame thrower of the ride state, as FlameThrowers_Puff reads it.
 typedef struct Entry {
   s16 active;
   s16 timer; ///< frames to its next puff
@@ -14,7 +14,7 @@ typedef struct Entry {
   FIXED reach; ///< 16.16 pixels, from the flags' low four bits
 } Entry;
 
-/// The ride work as FlameThrowers_Puff reads it: a flame reaching its stop
+/// The ride state as FlameThrowers_Puff reads it: a flame reaching its stop
 /// sets stopped, which calls back once.
 typedef struct State {
   u8 unusedBeforeStopped[6];
@@ -26,33 +26,33 @@ typedef struct State {
   Entry entries[4];
 } State;
 
-/// The heap slots as FlameThrowers_Puff reads them: the field work through a
+/// The heap slots as FlameThrowers_Puff reads them: the field state through a
 /// union, which keeps its read after the stores before it.
 typedef struct HeapSlotsView {
   u8 unusedBeforeMapGrid[32];
-  struct MapWork *mapGrid;
-  u8 unusedBeforeFieldWork[108 - 36];
+  struct MapState *mapGrid;
+  u8 unusedBeforeFieldState[108 - 36];
   union {
     s32 word;
     void *pointer;
-  } fieldWork;
+  } fieldState;
 } HeapSlotsView;
 
 /// Each frame, every flame thrower in view sends its flame: forward, landing
 /// forward or back, back, or a spark, by its flags, every ninth frame. They
-/// pause while a menu is open, or a Psynergy is used unless the ride work runs
+/// pause while a menu is open, or a Psynergy is used unless the ride state runs
 /// them through it; reaching a stop calls the stop's callback once.
 void FlameThrowers_Puff(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
-  struct MapWork *map;
+  struct MapState *map;
   s32 *view;
   s32 cameraX, cameraZ;
   s32 v;
   s32 i;
 
-  state = (State *)RIDE_WORK;
+  state = (State *)RIDE_STATE;
   map = ((HeapSlotsView *)Ram_HeapSlots)->mapGrid;
   entry = state->entries;
   view = &map->viewX;
@@ -60,7 +60,7 @@ void FlameThrowers_Puff(void) {
   cameraX &= FIELD_PIXEL_MASK;
   cameraZ = view[1] & FIELD_PIXEL_MASK;
   saved[1] = map->origin[1];
-  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldWork.word;
+  saved[0] = ((HeapSlotsView *)Ram_HeapSlots)->fieldState.word;
   if (state->stopped != 0 && state->wasStopped == 0 && state->onStopped != 0)
     state->onStopped();
   v = (u16)state->stopped;
@@ -78,7 +78,7 @@ void FlameThrowers_Puff(void) {
     if (actor == 0)
       continue;
     flag = GameFlag_Get(FLAG_MENU_OPEN);
-    if (((struct FieldWork *)saved[0])->psynergy != 0)
+    if (((struct FieldState *)saved[0])->psynergy != 0)
       flag |= 1;
     mark = &actor->paused;
     *mark = flag;

@@ -39,7 +39,7 @@
 /// equip it. An artifact bought takes its stock counter down, and the list is
 /// rebuilt. Holding Select shows the item's details. Repeats until B.
 s32 Shop_SelectBuy(void) {
-  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  struct ShopState *shop = Ram_HeapSlots->menuState;
   struct Window *priceWindow = 0;
   struct Window *stockWindow;
   struct Window *descriptionWindow;
@@ -205,7 +205,7 @@ next_page:
         continue;
       }
       Inventory_RemoveFar(unitId, capacitySlot);
-      if ((u16)selectedDefinition->price > (u32)gMainRoutineWork.coins) {
+      if ((u16)selectedDefinition->price > (u32)gMainRoutineState.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         Shop_ShowKeeperMessageHidingCursor((s32)MsgBuyNotEnoughMoney);
         purchaseResult = -1;
@@ -270,7 +270,7 @@ close:
 /// Draws a page of seven stock items with their prices, the page arrows, and
 /// the chosen item lifted and pulsing.
 void Shop_DrawStock(struct Window *window, s32 selected) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   s16 *itemIds;
   s16 *stockCursor;
   s32 itemCount;
@@ -283,7 +283,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   struct ItemDefinition *item;
   struct WindowSprite *icon;
 
-  shop = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuState;
   itemIds = shop->stockItemIds;
   itemCount = shop->stockCount;
   stockIndex = selected / SHOP_STOCK_PAGE_ITEMS * SHOP_STOCK_PAGE_ITEMS;
@@ -333,7 +333,7 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
 /// Draws the party's coins in the coins window, in the edition's layout.
 void Shop_DrawMoney(void) {
   struct Window *window =
-      ((struct ShopWork *)Ram_HeapSlots->menuWork)->moneyWindow;
+      ((struct ShopState *)Ram_HeapSlots->menuState)->moneyWindow;
 #if LANGUAGE == LANGUAGE_JAPANESE
   s32 message;
 #endif
@@ -345,11 +345,11 @@ void Shop_DrawMoney(void) {
     message = (s32)MsgYourCoins;
     Text_DrawMessageAsTilesFar(message, window, 0, 0);
     message -= 2;
-    Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)window, 0, 8);
+    Text_DrawNumberInWindowFar(gMainRoutineState.coins, 6, (s32)window, 0, 8);
     Text_DrawMessageAsTilesFar(message, window, 48, 8);
 #else
     Text_DrawMessageAsTilesFar((s32)MsgYourCoins, window, 0, 0);
-    Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, (s32)window, 32, 8);
+    Text_DrawNumberInWindowFar(gMainRoutineState.coins, 6, (s32)window, 32, 8);
 #endif
   }
 }
@@ -446,7 +446,7 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
 /// four a page with its arrows, and draws at four fifths of their size the
 /// party members who cannot equip `itemId`.
 void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
-  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  struct ShopState *shop = Ram_HeapSlots->menuState;
   s32 page = selected / SHOP_PARTY_PAGE_MEMBERS;
   s32 first = page * SHOP_PARTY_PAGE_MEMBERS;
   s32 count = shop->partyMemberCount;
@@ -492,7 +492,7 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
 /// the name of the item it would replace. Called by Shop_SelectBuy for
 /// weapons and armor.
 void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
-  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  struct ShopState *shop = Ram_HeapSlots->menuState;
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedItemId = -1;
@@ -591,7 +591,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
 /// the artifact's stock and a stack of 30 less what the party member carries.
 /// Returns the count (1 for other items), or -1 when cancelled.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
-  struct ShopWork *shop;
+  struct ShopState *shop;
   struct Unit *unit;
   struct ItemDefinition *item;
   s32 carriedQuantity;
@@ -600,7 +600,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   s32 artifactsInStock;
   s32 result;
 
-  shop = Ram_HeapSlots->menuWork;
+  shop = Ram_HeapSlots->menuState;
   unit = Unit_Get(unitId);
   item = Item_GetDirectFar(itemId);
   result = 1;
@@ -614,7 +614,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
     quantityLimit = SHOP_STACK_LIMIT;
     if ((u16)item->price != 0)
-      quantityLimit = (u32)gMainRoutineWork.coins / (u16)item->price;
+      quantityLimit = (u32)gMainRoutineState.coins / (u16)item->price;
 
     if (shop->action == SHOP_ACTION_ARTIFACTS) {
       artifactsInStock = Item_AdjustCounterFar(itemId, 0);
@@ -802,7 +802,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// Offers to equip the item just bought, and warns of a curse. Returns 1 when
 /// it was equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
-  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  struct ShopState *shop = Ram_HeapSlots->menuState;
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);

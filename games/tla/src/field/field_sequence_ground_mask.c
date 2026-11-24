@@ -17,12 +17,12 @@
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
 /// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
+  struct FadeOverlayState *state = Ram_HeapSlots->fadeOverlay;
   s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapGrid)->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
-  struct AnimationSpritePart *mark = work->marks;
-  struct FadeActor *actor = work->actor;
+  struct AnimationSpritePart *mark = state->marks;
+  struct FadeActor *actor = state->actor;
   FIXED x;
   FIXED z;
   s32 terrainFloor;
@@ -72,7 +72,7 @@ void FadeOverlay_DrawMarks(void) {
   x += toFIXED(16);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
-  mark = &work->marks[1];
+  mark = &state->marks[1];
   secondHeight = FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x,
                                                         z + toFIXED(32))) -
                  16;
@@ -94,11 +94,11 @@ void FadeOverlay_DrawMarks(void) {
 /// Starts the fade overlay on an actor (the party leader when NULL): loads its
 /// solid tiles, sets the blending and draws it each frame.
 void FieldEffect_StartFadeOverlay(void *actor) {
-  struct FadeOverlayWork *work;
+  struct FadeOverlayState *state;
   u8 *tiles;
   volatile u32 fill;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  state = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
   tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
   Dma_Fill32Cell(fill, PIXELS_4BPP(1), tiles, 512);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
@@ -110,13 +110,13 @@ void FieldEffect_StartFadeOverlay(void *actor) {
   Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
   // 31 is above the register's useful maximum, BLEND_FADE_MAX, and acts as it.
   Io_Write16(31, &REG_BLDY);
-  Dma_Fill32Cell(fill, 0, work, sizeof(*work));
+  Dma_Fill32Cell(fill, 0, state, sizeof(*state));
   if (actor == NULL)
-    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  work->actor = actor;
+    actor = Actor_Lookup(gMainRoutineState.leaderActorId);
+  state->actor = actor;
 }
 
-/// Stops drawing the fade overlay, keeping its work.
+/// Stops drawing the fade overlay, keeping its state.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend.
@@ -128,11 +128,11 @@ void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
 /// row one up.
 void BlankOverlay_DrawMarks(void) {
   struct AnimationSpritePart *mark = Ram_HeapSlots->fadeOverlay;
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   s16 *camera = (s16 *)&map->viewX;
   s16 cameraX = camera[1];
   s16 cameraZ = camera[3];
-  struct FadeActor *actor = ((struct FadeOverlayWork *)mark)->actor;
+  struct FadeActor *actor = ((struct FadeOverlayState *)mark)->actor;
   s32 x;
   s32 row;
   u32 tile;
@@ -183,8 +183,8 @@ void BlankOverlay_DrawMarks(void) {
 /// loads 512 bytes of blank tiles into VRAM_CACHE_ENTRY_FADE_OVERLAY and starts
 /// BlankOverlay_DrawMarks on an actor (the party leader when 0).
 void FieldEffect_StartBlankOverlay(s32 actor) {
-  struct FadeOverlayWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  struct FadeOverlayState *state =
+      HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*state));
   void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
 
   Dma_Fill32(0, buffer, 512);
@@ -192,8 +192,8 @@ void FieldEffect_StartBlankOverlay(s32 actor) {
   Task_Add(BlankOverlay_DrawMarks, TASK_PASS_FRAME);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   if (actor == 0)
-    actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  work->actor = (struct FadeActor *)actor;
+    actor = Actor_Lookup(gMainRoutineState.leaderActorId);
+  state->actor = (struct FadeActor *)actor;
 }
 
 /// Suspends the BlankOverlay_DrawMarks overlay task.

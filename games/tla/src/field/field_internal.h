@@ -30,7 +30,7 @@
 #include "field/actor_view.h"
 #include "battle/battle.h"
 #include "field/field.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -75,7 +75,7 @@ struct ActorCameraPoint {
   FIXED z; ///< 16.16 fixed-point pixels
 };
 
-/// The start of the 3D camera's work (heap slot cameraWork), as the fixed
+/// The start of the 3D camera's state (heap slot cameraState), as the fixed
 /// camera reads it: the eye and target it looks from and at, or the points
 /// that stand in for them.
 struct ActorCameraFixed {
@@ -149,12 +149,12 @@ struct MapHeader {
   s32 script;
 };
 
-/// FieldWork as the sand trail reads its priority
-/// (FieldWork.sandTrailPriority).
-struct SandTrailWork {
+/// FieldState as the sand trail reads its priority
+/// (FieldState.sandTrailPriority).
+struct SandTrailState {
   u8 unused[3402]; ///< no code names it
   u16 trailPriority
-      : 8;            ///< read as the low byte of FieldWork.sandTrailPriority
+      : 8;            ///< read as the low byte of FieldState.sandTrailPriority
   u16 unusedHigh : 8; ///< no code names it
 };
 
@@ -237,7 +237,7 @@ enum AnimationFacingKind {
 
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
-  SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemWork.pictureCaches
+  SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemState.pictureCaches
   ANIM_LAYER_COUNT = 4,           ///< Sprite.entries
   RUNNING_LIST_SLOTS = 14,        ///< the actor slots Actor_ListRunning reads
   /// Sixteenths of a frame taken off a sprite animation's timer each frame: one

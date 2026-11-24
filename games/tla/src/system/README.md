@@ -30,9 +30,9 @@ of them.
 Before every sequence the task list is emptied, the whole heap is taken
 back, looping sounds are cut off and any line-by-line screen effect is
 switched off. This is what makes each sequence start cold. Only what lies
-outside the heap crosses from one to the next: the main routine's work, the
+outside the heap crosses from one to the next: the main routine's state, the
 game flags, the characters' units and the actor snapshot, each a fixed
-block of memory (`gMainRoutineWork`, `gCharacterUnits` and
+block of memory (`gMainRoutineState`, `gCharacterUnits` and
 `gSnapshotObjects` are declared in `ewram.s`).
 
 A scene's overlay is loaded here too, just before the field sequence is
@@ -154,7 +154,7 @@ it needs when it starts, and a scene adds its own on top.
 
 An entry of the list is the function, the rank and that one flag. A task
 gets no arguments and no memory of its own, so what it has to remember is
-in its owner's [work](../../glossary.md#work). No task adds a task, and no
+in its owner's [state](../../glossary.md#state). No task adds a task, and no
 task calls `wait()` ([Who may wait](../../system.md#who-may-wait)).
 
 ## The frame's sprites
@@ -181,9 +181,9 @@ routine empties the lot between sequences.
 
 A block that other code has to find again is kept in a numbered
 [heap slot](../../glossary.md#heap-slot). The game calls such a block a
-[work](../../glossary.md#work): the menu's work, the battle's work. Asking
+[state](../../glossary.md#state): the menu's state, the battle's state. Asking
 for a slot that is already filled just returns it, so the code that sets a
-work up and the code that reads it make the same call (`HeapSlot_Alloc`).
+state up and the code that reads it make the same call (`HeapSlot_Alloc`).
 
 ## Memory map
 
@@ -204,7 +204,7 @@ count, is read back, and only then is the old copy retired. Every part
 carries a label and a checksum, so a half-written one is recognised and
 ignored.
 
-A part holds the game flags, the main routine's work, every character's
+A part holds the game flags, the main routine's state, every character's
 stats and where the scene's actors stand. It is `Save_WritePart` and its
 neighbours, and the Save command that uses them is in
 [Windows](../window/README.md#saving).

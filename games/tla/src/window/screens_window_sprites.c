@@ -102,7 +102,7 @@ WindowSprite_CreateCommandIcon(s32 icon, struct Window *window, s32 x, s32 y) {
 /// is tried first), in PORTRAIT_PALETTE + side.
 struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
                                      struct Window *window, s32 x, s32 y) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   struct WindowSprite *portrait = 0;
   s32 slot;
   s32 tile;
@@ -117,11 +117,11 @@ struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
   if ((u32)side > 1) {
     u32 current;
 
-    current = work->portraitPictures[1];
+    current = state->portraitPictures[1];
     side = 1;
     if (current != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (work->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
+      if (state->portraitPictures[0] != PORTRAIT_SLOT_EMPTY)
         return portrait;
     }
   }
@@ -137,8 +137,8 @@ struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
 
   // Recorded even when no sprite was free and WindowSprite_Create released
   // the VRAM slot.
-  work->portraitPictures[side] = icon;
-  work->portraitSprites[side] = slot;
+  state->portraitPictures[side] = icon;
+  state->portraitSprites[side] = slot;
   return portrait;
 }
 
@@ -147,7 +147,7 @@ struct WindowSprite *Portrait_Create(s32 character, s32 position, s32 side,
 /// entry. A slot of 2 or more means whichever slot already shows the picture,
 /// the second first; when neither does, nothing is loaded.
 void Portrait_Reload(u32 slot, s32 key, s32 unused) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
   s32 id = Portrait_GetForSpeaker(key);
   s32 tile;
   s32 entry;
@@ -155,14 +155,14 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
   if (id == -1)
     return;
   if (slot > 1) {
-    if (work->portraitPictures[1] == id)
+    if (state->portraitPictures[1] == id)
       slot = 1;
-    else if (work->portraitPictures[0] == id)
+    else if (state->portraitPictures[0] == id)
       slot = 0;
     else
       return;
   }
-  entry = work->portraitSprites[slot];
+  entry = state->portraitSprites[slot];
   Icon_LoadWithPalette(id, unused, &entry, &tile, PORTRAIT_PALETTE + slot, 1);
 }
 
@@ -194,12 +194,12 @@ typedef u16 *(*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// and WINOUT, with the windows' horizontal extent on each of the 160 scan
 /// lines: (left << 8) | right in the second halfword (WIN1H) of each line's
 /// pair, read from the UI tilemap by the ARM routine Tile_BuildCellPictures
-/// (cell_picture.c), copied into RAM for the call. With no window work, every
+/// (cell_picture.c), copied into RAM for the call. With no window state, every
 /// line gets an empty span.
 void ScanlineWindow_FillSpans(void *spans) {
-  struct WindowWork *work = Ram_HeapSlots->windowWork;
+  struct WindowState *state = Ram_HeapSlots->windowState;
 
-  if (work == NULL) {
+  if (state == NULL) {
     // BUG: the fill is one halfword for each of the DISPLAY_HEIGHT lines, but
     // each line takes two, so the lower 80 lines keep the window 1 edges
     // this page held when it was last built.
@@ -213,7 +213,7 @@ void ScanlineWindow_FillSpans(void *spans) {
 
     RamCode_Load(routine, Tile_BuildCellPicturesCode,
                  Tile_BuildCellPicturesCodeSize);
-    routine(spans, work->tilemap);
+    routine(spans, state->tilemap);
     Heap_Release(routine);
   }
 }

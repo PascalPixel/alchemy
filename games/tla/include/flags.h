@@ -118,7 +118,7 @@
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// The next field scene starts where the party was, as after a battle: the
 /// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gMainRoutineWork.returnMusic resumes if there is
+/// and the music saved in gMainRoutineState.returnMusic resumes if there is
 /// one (a random battle clears it, so the scene's own music plays).
 /// FieldSequence_Run clears it once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
@@ -235,7 +235,7 @@
 #define FLAG_ALREADY_KNOWS_DJINN 0x175
 /// Set while the party sails the ship on the World Map: world_map.c sets it as
 /// the party boards, and the main routine keeps it while an actor other than
-/// the leader is the one events control (MainRoutineWork.ownerOverride). The
+/// the leader is the one events control (MainRoutineState.ownerOverride). The
 /// World Map takes MUS_TO_THE_OPEN_SEA while it is set.
 #define FLAG_SAILING 0x176
 /// With FLAG_DJINN_LESSON set, this and FLAG_DJINN_LESSON_PART_B choose the

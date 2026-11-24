@@ -16,7 +16,7 @@
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
 #ifdef UBFIX
-  struct MapWork *map;
+  struct MapState *map;
 #else
   s32 *camera; // the view's top left, x then z
 #endif
@@ -33,7 +33,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   cameraX = map->viewX & FIELD_PIXEL_MASK;
   cameraZ = map->viewZ & FIELD_PIXEL_MASK;
 #else
-  camera = &((struct MapWork *)Ram_HeapSlots->mapGrid)->viewX;
+  camera = &((struct MapState *)Ram_HeapSlots->mapGrid)->viewX;
   cameraX = camera[0] & FIELD_PIXEL_MASK;
   cameraZ = camera[1] & FIELD_PIXEL_MASK;
 #endif
@@ -59,15 +59,15 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
 /// fading it to black.
 void Field_StartEncounterTransition(s32 unused) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s32 i;
   s32 level;
 
-  work = Ram_HeapSlots->fieldWork;
-  Sound_PlayFar(gMainRoutineWork.battleMusic);
+  state = Ram_HeapSlots->fieldState;
+  Sound_PlayFar(gMainRoutineState.battleMusic);
   Sound_PlayFar(SE_STOP_EXIT_SE);
   Sound_PlayFar(SE_BEAST_CRY);
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // On the World Map the flash colours the window palette's black instead,
     // and the screen closes toward the centre line from its middle; a field
     // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
@@ -75,7 +75,7 @@ void Field_StartEncounterTransition(s32 unused) {
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK));
     ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1),
                             ENCOUNTER_CLOSE_FRAMES);
-    work->transitionActive = 0;
+    state->transitionActive = 0;
     wait(ENCOUNTER_CLOSE_FRAMES);
     for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
       level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
@@ -88,7 +88,7 @@ void Field_StartEncounterTransition(s32 unused) {
     ScreenTransition_Finish(
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         ENCOUNTER_CLOSE_FRAMES);
-    work->transitionActive = 0;
+    state->transitionActive = 0;
     wait(ENCOUNTER_CLOSE_FRAMES);
     for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
       level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
@@ -141,7 +141,7 @@ void Exit_PrepareAnimation(s32 animation) {
   struct Sprite *sprite;
   struct SpriteAnimation *doorway;
 
-  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   sprite = actor->sprite;
   doorway =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
@@ -183,7 +183,7 @@ void Exit_StartStairsDown(void) {
 /// the cell's north edge, the leader plays animation for 30 frames, loses the
 /// doorway (SPRITE_DOORWAY) and walks 8 pixels south.
 void Entrance_EndArrivalAnimation(s32 animation) {
-  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct Sprite *sprite = leader->sprite;
   struct SpriteAnimation *doorway =
       (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
@@ -231,7 +231,7 @@ s32 Entrance_PlayArrival(void) {
         struct Actor *actor;
 
         GameFlag_Clear(flag);
-        id = gMainRoutineWork.leaderActorId;
+        id = gMainRoutineState.leaderActorId;
         actor = Actor_Lookup(id);
         actor->y.fixed += toFIXED(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
@@ -254,7 +254,7 @@ s32 Entrance_PlayArrival(void) {
 /// SPRITE_HIDDEN_LAYER, a band over the top 8 rows of its 32 by 32 picture,
 /// drawn in SPRITE_COLOR_HIDDEN.
 void Exit_AddHiddenLeaderLayer(void) {
-  struct Actor *actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Actor *actor = Actor_Lookup(gMainRoutineState.leaderActorId);
   struct SpriteAnimation *layer =
       Sprite_AddAnimationFar(actor->sprite, SPRITE_HIDDEN_LAYER);
 

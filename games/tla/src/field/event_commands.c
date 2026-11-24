@@ -29,7 +29,7 @@
 #undef PaletteFade_SetTarget
 #undef Actor_ReleaseFar
 
-#include "event_commands_field_psynergy_work.c"
+#include "event_commands_field_psynergy_state.c"
 #include "event_commands_mind_read.c"
 
 #include "event_commands_cloak.c"

@@ -11,7 +11,7 @@
 #include "system/ram_buffer.h"
 #include "system/frame.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/field_sequence_event.h"
 #include "graphics/resource.h"

@@ -8,7 +8,7 @@
 /// and HIGHLIGHT_PALETTE differ.
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
 
   x += (s16)window->x + 1;
   y += (s16)window->y + 1;
@@ -35,7 +35,7 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
   }
   if (width > 0 && height > 0) {
     do {
-      u16 *cell = &work->tilemap[y][x];
+      u16 *cell = &state->tilemap[y][x];
       s32 remaining = width;
       while (remaining != 0) {
         u32 entry = *cell;
@@ -48,6 +48,6 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
       height--;
       y++;
     } while (height != 0);
-    work->dirty = 1;
+    state->dirty = 1;
   }
 }

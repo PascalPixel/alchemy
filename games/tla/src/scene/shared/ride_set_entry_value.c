@@ -1,6 +1,6 @@
 /// Turns flame thrower `index` on or off.
 UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
-  struct FlameHitWork *work = RIDE_WORK;
+  struct FlameHitState *state = RIDE_STATE;
 
-  (work->entries + index)->active = value;
+  (state->entries + index)->active = value;
 }

@@ -24,7 +24,7 @@
 #include "field/scene_tables.h"
 #include "scene/scene.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
@@ -185,9 +185,9 @@ void Inn_CheckIn(s32 slot, s32 actor);
 void MadraRooms_ShinAngersPiers(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
+  if (gMainRoutineState.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
     return gMadraRooms_SecondRoomsPlacements;
-  if (gMainRoutineWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
+  if (gMainRoutineState.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
     return gMadraRooms_JailPlacements;
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadraRooms_PlacementsOnReturn;
@@ -225,7 +225,7 @@ void MadraRooms_AskWillWeBeSafe(void) {
 /// Piers home of the dead fish on the shore, which the later editions ask as a
 /// question.
 void MadraRooms_TalkToInnkeeper(void) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(MADRA_INN, ACTOR_INNKEEPER);
@@ -273,7 +273,7 @@ void MadraRooms_TalkToInnkeeper(void) {
 /// sanctum's services; from any other side he talks of the town's trials, then
 /// of the Kibombo, and later of the warming sea.
 void MadraRooms_TalkToHealer(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_Get(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -332,7 +332,7 @@ void MadraRooms_TalkToMushroomLover(void) {
       // "How are we to climb the cliffs between here and Gondowan? If..."
       Event_ShowMessage(ACTOR_MUSHROOM_LOVER, 0);
     }
-    gFieldWork->fieldMenu = 1;
+    gFieldState->fieldMenu = 1;
   }
 }
 
@@ -447,9 +447,9 @@ void MadraRooms_TalkToManFocusingOnIce(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
+  if (gMainRoutineState.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
     return gMadraRooms_SecondRoomsTriggers;
-  if (gMainRoutineWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
+  if (gMainRoutineState.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
     return gMadraRooms_JailTriggers;
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadraRooms_TriggersOnReturn;
@@ -481,7 +481,7 @@ static inline void MadraRooms_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// the Kibombo's raid, when they are back in the jail.
 void MadraRooms_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    gFieldWork->psynergyDrawFlags = 3;
+    gFieldState->psynergyDrawFlags = 3;
     if (!Event_GetFlag(FLAG_PIERS_INTERROGATED)) {
       MadraRooms_ShinAngersPiers();
     } else {
@@ -515,14 +515,14 @@ void BattleEffect_StopMainActor();
 /// Black Crystal.
 s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
-  struct FieldWork *event;
+  struct FieldState *event;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_HOUSES) {
-    event = Ram_HeapSlots->fieldWork;
+  if (gMainRoutineState.next == SCENE_MADRA_ROOMS_HOUSES) {
+    event = Ram_HeapSlots->fieldState;
     event->psynergyDrawFlags = 3;
     if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
@@ -536,9 +536,9 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(2, 46, 16, 10, 16, 0);
     }
   }
-  if (gMainRoutineWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
+  if (gMainRoutineState.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
     MadraRooms_SetUpJail();
-  if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES) {
+  if (gMainRoutineState.next == SCENE_MADRA_ROOMS_CAVERN_HOMES) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(ACTOR_SISTER_IN_BED, 0, 0);
     } else {
@@ -794,10 +794,10 @@ void MadraRooms_ShinAngersPiers(void) {
     Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
     // "Of course! That was clearly Psynergy he just used..."
     FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
     Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_SHAKE_HEAD);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "You're right... We only know what we just saw."
     FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   }
@@ -966,7 +966,7 @@ void MadraRooms_GiveHealingFungus(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_MUSHROOM_COOK, 0, 10);
   Djinn_JoinParty(ACTOR_CHAR, DJINNI_CHAR / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_CHAR));
-  gFieldWork->message += 1;
+  gFieldState->message += 1;
   Actor_SetAnimation(ACTOR_FELIX, ANIM_STAND);
   Actor_FaceDirection(ACTOR_MUSHROOM_LOVER, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
@@ -1120,11 +1120,11 @@ void MadraRooms_WelcomePiersHome(void) {
     Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "That's wonderful! I'm so relieved! I was worried that you might..."
     FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_DAUGHTER, 0, 10);
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
   } else {
     Actor_ShowEmote(ACTOR_ELDERS_DAUGHTER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     MadraRooms_CountAnswer();
-    gFieldWork->message += 3;
+    gFieldState->message += 3;
     // "You didn't recover it from the Kibombo?"
     FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);

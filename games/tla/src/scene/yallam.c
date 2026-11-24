@@ -31,7 +31,7 @@
 #include "scene/event_layer.h"
 #include "scene/scene.h"
 #include "sound/sound.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/math_table.h"
 #include "system/ram_buffer.h"
 #include "system/system.h"
@@ -255,14 +255,14 @@ s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
 /// up behind the other, and otherwise when the leader is in its way; from patch
 /// 1 it walks on while the leader is right beside it.
 s32 Yallam_UpdateRunningChild(struct Actor *actor) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   struct Actor *leader;
   struct Actor *target;
   u16 *flags;
   s32 force = 0;
 
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   if (Position_Distance(&leader->x.fixed, &actor->x.fixed) <=
       LEADER_WALK_ON_RANGE) {
@@ -276,8 +276,8 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
   if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((event->talk != 0 || work->mindRead != 0) && (*flags & CHILD_TALKING))
+    leader = Actor_Get(gMainRoutineState.leaderActorId);
+    if ((event->talk != 0 || state->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
     Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
@@ -285,8 +285,8 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
 }
 #else
 s32 Yallam_UpdateRunningChild(struct Actor *actor) {
-  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct WindowState *state = (struct WindowState *)Ram_HeapSlots->windowState;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   s32 force = 0;
   struct Actor *target;
   u16 *flags = (u16 *)&actor->timer;
@@ -296,9 +296,9 @@ s32 Yallam_UpdateRunningChild(struct Actor *actor) {
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
   if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
-    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
-    if ((event->talk != 0 || work->mindRead != 0) && (*flags & CHILD_TALKING))
+    if ((event->talk != 0 || state->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
     Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
@@ -327,10 +327,10 @@ extern struct ActorPlacement gYallam_CavePlacements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM &&
-      gMainRoutineWork.entrance == YALLAM_SONG_GAME)
+  if (gMainRoutineState.next == SCENE_YALLAM &&
+      gMainRoutineState.entrance == YALLAM_SONG_GAME)
     return gYallam_SongGamePlacements;
-  if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
+  if (gMainRoutineState.next == SCENE_YALLAM_CAVE)
     return gYallam_CavePlacements;
   return gYallam_Placements;
 }
@@ -343,7 +343,7 @@ const u8 *Scene_GetActorPlacements(void) {
 /// Each door's cells carry its exit's number, which also picks its picture
 /// as it opens from `gYallam_Doors`.
 void Yallam_EnterDoor(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldState *event = Ram_HeapSlots->fieldState;
   u32 i;
   s32 index;
 
@@ -360,10 +360,10 @@ void Yallam_EnterDoor(void) {
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
                        gYallam_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
   {
-    s32 owner = gMainRoutineWork.leaderActorId;
+    s32 owner = gMainRoutineState.leaderActorId;
 
     // The sanctum's door is two cells wide: the leader walks straight in.
     if (index == YALLAM_TO_MIKASALLA_ROOMS_SANCTUM - 1)
@@ -410,7 +410,7 @@ void Yallam_ScatterWeedsBelowShops(void) {
 /// Until the Antidote is taken, its hidden item (`ACTOR_HIDDEN_ANTIDOTE`) is
 /// set at the spot, and if Felix is standing on it he hops a cell east, off it.
 void Yallam_UncoverAntidote(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(FLAG_YALLAM_ANTIDOTE) == 0) {
@@ -419,11 +419,11 @@ void Yallam_UncoverAntidote(void) {
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(ANTIDOTE_SPOT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+      Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
+      Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 16, 0);
       leader->velocityY = toFIXED(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -442,7 +442,7 @@ void Yallam_ScatterWeedsInCorner(void) {
 /// Until the Nut is taken, its hidden item is set at the spot, and if Felix is
 /// standing on it he hops a cell north, off it.
 void Yallam_UncoverNut(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(FLAG_YALLAM_NUT) == 0) {
@@ -451,11 +451,11 @@ void Yallam_UncoverNut(void) {
         FIELD_CELL(leader->z.fixed) == FIELD_CELL(toFIXED(NUT_SPOT_Z))) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+      Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
+      Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
       leader->velocityY = toFIXED(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      FieldActor_WaitForMoveById(gMainRoutineState.leaderActorId);
       Event_End();
     }
   }
@@ -472,10 +472,10 @@ extern struct Trigger gYallam_CaveTriggers[];
 extern struct Trigger gYallam_SongGameTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM &&
-      gMainRoutineWork.entrance == YALLAM_SONG_GAME)
+  if (gMainRoutineState.next == SCENE_YALLAM &&
+      gMainRoutineState.entrance == YALLAM_SONG_GAME)
     return gYallam_SongGameTriggers;
-  if (gMainRoutineWork.next == SCENE_YALLAM_CAVE)
+  if (gMainRoutineState.next == SCENE_YALLAM_CAVE)
     return gYallam_CaveTriggers;
   return gYallam_Triggers;
 }
@@ -504,15 +504,15 @@ void Yallam_OfferYeppSong(void) {
 /// The boy keeps his heading through the talk, so he runs on the way he was
 /// going; Mind Read stops him without turning him.
 void Yallam_TalkAboutSongCircles(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->riseEnabled = 1;
-  if (work->psynergy == 0) {
-    Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineWork.leaderActorId, 0);
+  if (state->psynergy == 0) {
+    Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineState.leaderActorId, 0);
     // "Running around in circles here while singing one of Yepp's songs is
     // pretty tough."
     FieldEvent_SetMessageId(MsgRunningAroundIn);
@@ -522,7 +522,7 @@ void Yallam_TalkAboutSongCircles(void) {
     FieldEvent_SetMessageId(MsgThereSALot);
   }
   Event_ShowMessage(ACTOR_CIRCLES_CHILD, 0);
-  if (work->psynergy == 0)
+  if (state->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
   Event_End();
@@ -533,15 +533,15 @@ void Yallam_TalkAboutSongCircles(void) {
 /// she wants to play something else, then runs on; Mind Read hears she once
 /// heard that children's songs and stories have hidden meanings.
 void Yallam_TalkAboutSongGame(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor = Actor_Get(ACTOR_GAME_CHILD);
   s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->riseEnabled = 1;
-  if (work->psynergy == 0) {
-    Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineWork.leaderActorId, 0);
+  if (state->psynergy == 0) {
+    Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineState.leaderActorId, 0);
     // "There's a game that goes along with the song, but it's tough. I want to
     // play something else."
     FieldEvent_SetMessageId(MsgThereSAGame);
@@ -550,7 +550,7 @@ void Yallam_TalkAboutSongGame(void) {
     FieldEvent_SetMessageId(MsgIOnceHeard);
   }
   Event_ShowMessage(ACTOR_GAME_CHILD, 0);
-  if (work->psynergy == 0)
+  if (state->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
   Event_End();
@@ -1434,7 +1434,7 @@ void Yallam_UpdateSongGame(void) {
   struct Actor *gameChild = Actor_Get(ACTOR_GAME_CHILD);
   struct Actor *circlesChild = Actor_Get(ACTOR_CIRCLES_CHILD);
   struct Actor *storyChild = Actor_Get(ACTOR_STORY_CHILD);
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Get(gMainRoutineState.leaderActorId);
   s32 command = (s16)songLeader->userValue;
 
   switch (command) {
@@ -1465,7 +1465,7 @@ void Yallam_UpdateSongGame(void) {
   Yallam_RunSongPath(ACTOR_GAME_CHILD);
   Yallam_RunSongPath(ACTOR_CIRCLES_CHILD);
   Yallam_RunSongPath(ACTOR_STORY_CHILD);
-  Yallam_RunSongPath(gMainRoutineWork.leaderActorId);
+  Yallam_RunSongPath(gMainRoutineState.leaderActorId);
 }
 
 /// Saves every runner's state and stops the game's task.
@@ -1492,7 +1492,7 @@ void Yallam_PauseSongGame(void) {
   gYallam_SavedSongGame[3].userValue = (s16)actor->userValue;
   gYallam_SavedSongGame[3].riseCounter = actor->riseCounter;
   gYallam_SavedSongGame[3].riseEnabled = actor->riseEnabled;
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   gYallam_SavedSongGame[4].timer = actor->timer;
   gYallam_SavedSongGame[4].userValue = (s16)actor->userValue;
   gYallam_SavedSongGame[4].riseCounter = actor->riseCounter;
@@ -1524,7 +1524,7 @@ void Yallam_ResumeSongGame(void) {
   actor->userValue = gYallam_SavedSongGame[3].userValue;
   actor->riseCounter = gYallam_SavedSongGame[3].riseCounter;
   actor->riseEnabled = gYallam_SavedSongGame[3].riseEnabled;
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  actor = Actor_Get(gMainRoutineState.leaderActorId);
   actor->timer = gYallam_SavedSongGame[4].timer;
   actor->userValue = gYallam_SavedSongGame[4].userValue;
   actor->riseCounter = gYallam_SavedSongGame[4].riseCounter;
@@ -1575,9 +1575,9 @@ void Yallam_ShowSongGame(void) {
   (FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(304, CAMERA_KEEP, 878, 1);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 872);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 296, 872);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_FaceDirection(ACTOR_SONG_LEADER, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH_NORTHEAST);
@@ -1592,24 +1592,24 @@ void Yallam_ShowSongGame(void) {
   Actor_RunScriptAndWait(ACTOR_STORY_CHILD, gYallam_StoryChildForms);
   Actor_SetPosition(ACTOR_JENNA, 296, 872);
   System_Wait(1);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_WalkToAndWait(ACTOR_JENNA, 312, 854);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].integer,
                          leader->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 316, 896);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 344, 912);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 1.6);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 316, 896);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 344, 912);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_NORTH);
   Event_PlaySound(MUS_CHILDRENS_SONG);
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH);
   // "If you want to go to the stars, if you want to go to the stars."
@@ -1624,7 +1624,7 @@ void Yallam_ShowSongGame(void) {
   Yallam_StartRunner(ACTOR_GAME_CHILD);
   Yallam_StartRunner(ACTOR_CIRCLES_CHILD);
   Yallam_StartRunner(ACTOR_STORY_CHILD);
-  Yallam_StartRunner(gMainRoutineWork.leaderActorId);
+  Yallam_StartRunner(gMainRoutineState.leaderActorId);
   Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_FRAME);
   // "Go north past the twins, passing two swirls, run deasil twice 'round the
   // trunk."
@@ -1660,14 +1660,14 @@ void Yallam_ShowSongGame(void) {
   FieldActor_Jump(ACTOR_GAME_CHILD, 4, 0);
   FieldActor_Jump(ACTOR_CIRCLES_CHILD, 4, 0);
   FieldActor_Jump(ACTOR_STORY_CHILD, 4, 40);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_WEST);
   // "Do you wanna hear the second children's song Yepp wrote?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                             0) == 0) {
     Yallam_SingMoonSong();
   } else {
@@ -1693,7 +1693,7 @@ void Yallam_SingMoonSong(void) {
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWant);
   // "If you want to go to the moon, if you want to go to the moon."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
@@ -1738,14 +1738,14 @@ void Yallam_SingMoonSong(void) {
   FieldActor_Jump(ACTOR_GAME_CHILD, 4, 0);
   FieldActor_Jump(ACTOR_CIRCLES_CHILD, 4, 0);
   FieldActor_Jump(ACTOR_STORY_CHILD, 4, 40);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SONG_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHEAST);
   // "OK, so, now do you want to hear the third children's song?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                             0) == 0) {
     Yallam_SingSunSong();
   } else {
@@ -1773,7 +1773,7 @@ void Yallam_SingSunSong(void) {
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_STORY_CHILD, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST);
+  Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTHWEST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWantTo);
   // "If you want to go to the sun, if you want to go to the sun."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
@@ -1858,10 +1858,10 @@ void Yallam_SingSunSong(void) {
   FieldActor_Jump(ACTOR_STORY_CHILD, 4, 0);
   FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldActor_WaitForMoveById(ACTOR_STORY_CHILD);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 184, 686);
-  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 186, 674);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 184, 686);
+  Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 186, 674);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_Get(ACTOR_SONG_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GAME_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_CIRCLES_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1889,8 +1889,8 @@ void Yallam_PlaceFallenLog(void) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM) {
-    if (gMainRoutineWork.entrance == YALLAM_SONG_GAME)
+  if (gMainRoutineState.next == SCENE_YALLAM) {
+    if (gMainRoutineState.entrance == YALLAM_SONG_GAME)
       Yallam_StartRunningChildren();
     else
       Yallam_PlaceFallenLog();
@@ -1899,7 +1899,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM &&
+  if (gMainRoutineState.next == SCENE_YALLAM &&
       Event_GetFlag(FLAG_YALLAM_LOG_FALLEN))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;

@@ -5,8 +5,8 @@
 /// starts their puffs.
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
                          s32 hitTrigger) {
-  struct FlameHitWork *work = RIDE_WORK;
-  struct RideEntry *entry = work->entries;
+  struct FlameHitState *state = RIDE_STATE;
+  struct RideEntry *entry = state->entries;
   s32 id;
   s32 i;
   s32 value;
@@ -40,15 +40,15 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
     if (stops != NULL) {
       for (i = 0; i < 4; i++) {
         value = *stops++;
-        work->slots[i].id = value;
+        state->slots[i].id = value;
         if (value <= 0)
           break;
-        work->slots[i].blocked = *stops++;
+        state->slots[i].blocked = *stops++;
       }
     }
   }
-  work->onBlocked = (void (*)(void))onBlocked;
-  work->hitTrigger = hitTrigger;
+  state->onBlocked = (void (*)(void))onBlocked;
+  state->hitTrigger = hitTrigger;
   if (REG_BLDCNT == 0) {
     alpha = BLEND_ALPHA(8, 12);
     REG_BLDALPHA = alpha;

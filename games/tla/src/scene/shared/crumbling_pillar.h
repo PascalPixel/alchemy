@@ -19,7 +19,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 /// cracked one shows its cracks. A leader below the ground where he stands is
 /// raised onto it.
 void CrumblingPillar_Place(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader;
   s32 height;
 
@@ -55,7 +55,7 @@ void CrumblingPillar_Place(u16 *list) {
     }
     list += 2;
   }
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineState.leaderActorId);
   height =
       Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
   if (leader->y.fixed < height) {
@@ -73,7 +73,7 @@ void CrumblingPillar_Step(u16 *list) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -188,13 +188,14 @@ void Actor_PlaceOnActor(s32 id, s32 target);
 /// cracked one showing its cracks, then puts them out of sight; a cracked
 /// pillar takes the cracked picture.
 void CrumblingPillar_PlaceWithStandIn(u16 *list) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
-  Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineState.leaderActorId);
   Actor_PlaceOnActor(ACTOR_CRACKED_PILLAR_SPRITE,
-                     gMainRoutineWork.leaderActorId);
-  Actor_PlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
+                     gMainRoutineState.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE,
+                     gMainRoutineState.leaderActorId);
   System_Wait(1);
   CrumblingPillar_Prepare(ACTOR_PILLAR_STAND_IN);
   CrumblingPillar_Prepare(ACTOR_CRACKED_PILLAR_SPRITE);
@@ -253,7 +254,7 @@ void CrumblingPillar_StepWithStandIn(u16 *list) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   standIn = Actor_GetById(ACTOR_PILLAR_STAND_IN);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;

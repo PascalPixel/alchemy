@@ -31,7 +31,7 @@
 #include "system/input.h"
 #include "debug/debug.h"
 #include "macros.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "window/window.h"
 #include "field/map_grid.h"
 #include "system/iwram_call.h"
@@ -55,7 +55,7 @@
 #include "field/field_particle.h"
 #include "graphics/vram_tab.h"
 #include "system/affine.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/scene_tables.h"
 
 /// The sparkles Lift's and Carry's hands scatter as they meet, as The Broken
@@ -120,7 +120,7 @@ enum MarsSparkState {
 /// smaller than what they follow.
 #define AFTERIMAGE_SCALE (FIXED_ONE * 15 / 16)
 
-/// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
+/// gMainRoutineState.pendingDjinni's parts, as Djinn_ResolvePending reads them.
 /// bits: 15..12 kind | 11..0 event or flag.
 #define DJINN_PENDING_KIND_MASK 0xf000
 #define DJINN_PENDING_EVENT_MASK 0xfff

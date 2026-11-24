@@ -1,8 +1,9 @@
-/// Ends the falling rocks: removes their task and frees their picture and work.
+/// Ends the falling rocks: removes their task and frees their picture and
+/// state.
 void Rock_EndFalling(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
+  struct RockState *state = Ram_HeapSlots->menuState;
 
   FieldTask_Remove(Particle_UpdateFalling);
-  VramCache_FreeEntry(work->resource);
+  VramCache_FreeEntry(state->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }

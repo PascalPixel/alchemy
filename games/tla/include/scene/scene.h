@@ -2,7 +2,7 @@
 #define ALCHEMY_SCENE_SCENE_H
 
 /// @file
-/// What the scenes share: the views of actors, sprites and work they read in
+/// What the scenes share: the views of actors, sprites and state they read in
 /// their own way, and the constants of the mechanisms several scenes keep
 /// copies of (geysers, vents, smoke, sparks, cracked tiles).
 
@@ -11,7 +11,7 @@
 #include "resource_ids.h"
 #include "field/field_coordinate.h"
 #include "field/sprite.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/map_grid.h"
 #include "graphics/render_input.h"
 #include "scene/mars_lighthouse_aerie.h"
@@ -199,7 +199,7 @@ struct AnkohlRuinsSprite {
 
 /// Ankohl Ruins' sand (gAnkohlRuins_Sand): its sprites' VRAM cache entry, its
 /// level, map layer 1's offset before it rose, and its eight sprites.
-struct AnkohlRuinsSpriteWork {
+struct AnkohlRuinsSpriteState {
   /// No code names it as the sand's; the entrance tests read through the type
   /// so that their load stays behind a store to the sand.
   s16 unused;
@@ -224,7 +224,7 @@ struct AnkohlRuinsSandRow {
   u8 unused[3];
 };
 
-/// The map work (struct MapWork) with its ground marks as bit-fields, for
+/// The map state (struct MapState) with its ground marks as bit-fields, for
 /// rooms that set the kind of wading.
 struct MapBits {
   FIXED *origin;
@@ -252,7 +252,7 @@ struct PuzzleCell {
   u8 occupied;
 };
 
-/// The palette fade's work (heap slot paletteFade) as 256 colours.
+/// The palette fade's state (heap slot paletteFade) as 256 colours.
 struct FadePalette {
   u16 colors[256];
 };
@@ -381,9 +381,9 @@ struct SavedColors {
   u16 colors[14];
 };
 
-/// The field effect work as the Golden Rings read it: the VRAM cache entry
-/// their sprites share, in bytes struct FieldEffectWork leaves unnamed.
-struct LinkedEffectWork {
+/// The field effect state as the Golden Rings read it: the VRAM cache entry
+/// their sprites share, in bytes struct FieldEffectState leaves unnamed.
+struct LinkedEffectState {
   u8 beforeVramBlock[1984];
   u16 vramBlock;
 };
@@ -514,8 +514,8 @@ void EasternAlhafraShip_CountAnswer();
 extern const u8 gField_GeyserTiles[];
 
 /// The geysers Scoop digs up in Gondowan Cliffs and in Yampi Desert's scorpion
-/// pit (each scene's struct GeyserWork): the most sprites Geyser_Draw queues in
-/// a frame, and the geysers a room can have.
+/// pit (each scene's struct GeyserState): the most sprites Geyser_Draw queues
+/// in a frame, and the geysers a room can have.
 #define GEYSER_SPRITES 80
 #define GEYSER_ENTRIES 16
 /// A geyser's six-second round, and the frames of it at which it starts to rise
@@ -528,10 +528,10 @@ extern const u8 gField_GeyserTiles[];
 /// The terrain id and collision slot of the first geyser: the geysers take the
 /// last GEYSER_ENTRIES of the 256 terrain ids.
 #define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
-/// The geysers' work (each scene's struct GeyserWork), kept in the inventory
+/// The geysers' state (each scene's struct GeyserState), kept in the inventory
 /// snapshot's spare space.
-#define GEYSER_WORK                                                            \
-  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
+#define GEYSER_STATE                                                           \
+  ((struct GeyserState *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 /// See gField_CachedTilesA (graphics/field/cached_b.png).
 extern u8 gField_CachedTilesB[];
@@ -627,7 +627,7 @@ enum {
   CHILD_WALKS_ON_RANGE = 11
 };
 
-/// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
+/// The vents of Aqua Rock and Taopo Swamp (struct VentState, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their
 /// puffs land on.
 #define VENT_MAX 16
@@ -644,19 +644,19 @@ struct VentEntry {
   FIXED value;
 };
 
-/// The vents of the room, in the inventory snapshot's spare space (VENT_WORK):
+/// The vents of the room, in the inventory snapshot's spare space (VENT_STATE):
 /// their frame counter, the room's hook run each frame, its vents and the
 /// actors their puffs land on, besides the leader.
-struct VentWork {
+struct VentState {
   s32 counter;
   s32 (*hook)(void);
   struct VentEntry entries[VENT_MAX];
   u16 ids[VENT_IDS_MAX];
 };
 
-/// The vents' work, kept in the inventory snapshot's spare space.
-#define VENT_WORK                                                              \
-  ((struct VentWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
+/// The vents' state, kept in the inventory snapshot's spare space.
+#define VENT_STATE                                                             \
+  ((struct VentState *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 /// How far apart a and b are, never negative, as a vent's thrown object tests
 /// whether it rests on another in x and z (field/actor_vent_bounce.c). Each is
 /// read twice.
@@ -665,9 +665,9 @@ struct VentWork {
 /// copies: whether a thrown object rests on another, and its motion.
 #define VENT_TOUCHING Vent_IsTouching
 #define VENT_BOUNCE Vent_Bounce
-/// Vent index's entry, reached as the first entry of the work index entries
-/// on, as the vents' accessors (Vent_SetBlowing, Vent_SetGust) read it.
-#define VENT_AT(work, index)                                                   \
-  ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
+/// Vent index's entry: `state` moved on by index entries and read as the first,
+/// as the vents' accessors (Vent_SetBlowing, Vent_SetGust) read it.
+#define VENT_AT(state, index)                                                  \
+  ((struct VentState *)((u8 *)(state) + (index) * sizeof(struct VentEntry)))
 
 #endif

@@ -21,7 +21,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/actor.h"
 #include "system/ram_buffer.h"
@@ -105,7 +105,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
+  if (gMainRoutineState.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
     return gMikasallaRooms_SanctumPlacements;
   return gMikasallaRooms_HousesPlacements;
 }
@@ -138,7 +138,7 @@ s32 MikasallaRooms_ReadApojiiHealersMind(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
+  if (gMainRoutineState.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
     return gMikasallaRooms_SanctumTriggers;
   return gMikasallaRooms_HousesTriggers;
 }
@@ -176,7 +176,7 @@ void MikasallaRooms_TalkToGeneralStorekeeper(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_MIKASALLA, speaker);
   } else {
@@ -193,7 +193,7 @@ void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
     Inn_CheckIn(MIKASALLA_INN, speaker);
   } else {
@@ -213,7 +213,7 @@ void MikasallaRooms_TalkToHealer(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
@@ -242,7 +242,7 @@ void MikasallaRooms_TalkToApojiiHealer(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
@@ -261,7 +261,7 @@ void MikasallaRooms_TalkToYallamHealer(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
-      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+      Actor_Get(gMainRoutineState.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
@@ -281,12 +281,12 @@ void MikasallaRooms_TalkToYallamHealer(s32 speaker) {
 /// across their counters, and the Apojii and Yallam sanctums, which this
 /// scene holds, show no area name.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_HOUSES) {
-    if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.next == SCENE_MIKASALLA_ROOMS_HOUSES) {
+    if (gMainRoutineState.entrance ==
         MIKASALLA_ROOMS_HOUSES_FROM_EAST_TUNDARIA_ISLET)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
@@ -298,8 +298,8 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_GALAHAD), SPRITE_COLOR_GBR);
     return 0;
   }
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM) {
-    s32 entrance = gMainRoutineWork.entrance;
+  if (gMainRoutineState.next == SCENE_MIKASALLA_ROOMS_SANCTUM) {
+    s32 entrance = gMainRoutineState.entrance;
 
     if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_MIKASALLA) {
       Actor_Get(ACTOR_MIKASALLA_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
@@ -361,10 +361,10 @@ void MikasallaRooms_MeetGalahad(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsForgiveMyManners);
   Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_FaceActor(ACTOR_GALAHAD, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_GALAHAD, gMainRoutineState.leaderActorId, 0);
   // "Forgive my manners..."
   Event_ShowMessage(ACTOR_GALAHAD, 0);
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetAnimation(ACTOR_GALAHAD, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(15);
@@ -373,13 +373,13 @@ void MikasallaRooms_MeetGalahad(void) {
   Actor_ShowEmote(ACTOR_GALAHAD, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   // "I am the warrior Galahad. I am looking for someone, and I need your..."
   Event_OpenMessage(ACTOR_GALAHAD, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId,
                                             0) == 0) {
     // "You do? I must warn Sir Isaac that he is in danger most grievous......"
     Event_ShowMessage(ACTOR_GALAHAD, 0);
     Event_SetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC);
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "A pity... The one I seek won a battle at Colosso, in Tolbi. He..."
     Event_ShowMessage(ACTOR_GALAHAD, 0);
   }

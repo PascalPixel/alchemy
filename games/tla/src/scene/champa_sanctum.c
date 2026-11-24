@@ -42,9 +42,9 @@ void ChampaSanctum_ServeAcrossTheCounter(s32 keeper) { Sanctum_Run(keeper); }
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  work->transition =
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Actor_SetSpritePriority(ACTOR_HEALER, 2);
   Actor_GetById(ACTOR_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;

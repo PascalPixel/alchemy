@@ -24,7 +24,7 @@
 #include "system/system_call.h"
 #include "system/dma.h"
 #include "system/input.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/bg_scroll.h"
 #include "field/actor.h"
 #include "fixed_math.h"
@@ -108,7 +108,7 @@ s32 LuckyDice_Start(void) {
 /// Puts the 3D camera back at its starting view: at the origin, unturned,
 /// pitched to 152/256 of a turn and 510 pixels away, following nothing.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleCamera *camera = Ram_HeapSlots->cameraState;
   s32 offset[3];
   u32 nearPlane;
 
@@ -352,7 +352,7 @@ void LuckyDice_Run(void) {
   UNUSED s32 matchedNumbers[2]; // written, never read
 #endif
   u16 *spritePalette;
-  struct DiceWork *diceWork;
+  struct DiceState *diceState;
   struct LuckyDiceSprites *sprites;
   struct BattleCamera *camera;
   s32 frame;
@@ -393,7 +393,7 @@ void LuckyDice_Run(void) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS,
                                  DICE_SPRITES_PALETTE_COLORS * sizeof(u16));
-  diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
+  diceState = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 1556);
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   Resource_ReservedNoOp(RESOURCE_BATTLE_EFFECT_FAR_CALLS);
@@ -467,13 +467,13 @@ void LuckyDice_Run(void) {
   // A random place and speed for each die: the throwing line below takes the
   // places, and a throw the speeds.
   for (index = 0; index != DICE_COUNT; index++) {
-    diceWork->particles[index].x = ((Random16() & 127) - 64) << 16;
-    diceWork->particles[index].y = (Random16() & 31) << 16;
-    diceWork->particles[index].z = ((Random16() & 127) - 64) << 16;
-    diceWork->particles[index].velocityX = ((Random16() & 127) - 64) << 14;
-    diceWork->particles[index].velocityY = ((Random16() & 31) + 32) << 12;
-    diceWork->particles[index].velocityZ = ((Random16() & 127) - 64) << 14;
-    diceWork->particles[index].variant = 0;
+    diceState->particles[index].x = ((Random16() & 127) - 64) << 16;
+    diceState->particles[index].y = (Random16() & 31) << 16;
+    diceState->particles[index].z = ((Random16() & 127) - 64) << 16;
+    diceState->particles[index].velocityX = ((Random16() & 127) - 64) << 14;
+    diceState->particles[index].velocityY = ((Random16() & 31) + 32) << 12;
+    diceState->particles[index].velocityZ = ((Random16() & 127) - 64) << 14;
+    diceState->particles[index].variant = 0;
     spinRate[index] = DICE_THROW_SPIN;
   }
   numbers[0] = numbers[1] = numbers[2] = numbers[3] = 0;
@@ -482,12 +482,12 @@ void LuckyDice_Run(void) {
   do {
     luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
   } while (luckyNumbers[0] == luckyNumbers[1]);
-  diceWork->particles[0].x = toFIXED(40);
-  diceWork->particles[0].y = toFIXED(96);
-  diceWork->particles[0].z = -toFIXED(160);
-  diceWork->particles[1].x = -toFIXED(40);
-  diceWork->particles[1].y = toFIXED(96);
-  diceWork->particles[1].z = -toFIXED(160);
+  diceState->particles[0].x = toFIXED(40);
+  diceState->particles[0].y = toFIXED(96);
+  diceState->particles[0].z = -toFIXED(160);
+  diceState->particles[1].x = -toFIXED(40);
+  diceState->particles[1].y = toFIXED(96);
+  diceState->particles[1].z = -toFIXED(160);
 
   // Open the coins window and the Throw / Quit help.
   WindowSystem_InitFieldFar();
@@ -496,7 +496,7 @@ void LuckyDice_Run(void) {
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins, window,
                              DICE_COINS_LABEL_X, 0);
-  Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+  Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                              (s32)sprites->coinsWindow, 0, 0);
   window =
       Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
@@ -633,7 +633,7 @@ void LuckyDice_Run(void) {
         winnings = 0;
         Text_DrawNumberInWindowFar(0, digits, (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
-        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+        Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                                    (s32)sprites->coinsWindow, 0, 0);
       }
       if (payoutTimer == DICE_PAYOUT_FRAMES) {
@@ -658,26 +658,26 @@ void LuckyDice_Run(void) {
       (void)gInput.repeat;
       (void)gInput.repeat;
       if (gInput.held & KEY_UP) {
-        diceWork->particles[0].y += toFIXED(4);
-        diceWork->particles[1].y += toFIXED(4);
+        diceState->particles[0].y += toFIXED(4);
+        diceState->particles[1].y += toFIXED(4);
       }
       if (gInput.held & KEY_DOWN) {
-        diceWork->particles[0].y += -toFIXED(4);
-        diceWork->particles[1].y += -toFIXED(4);
+        diceState->particles[0].y += -toFIXED(4);
+        diceState->particles[1].y += -toFIXED(4);
       }
-      if (diceWork->particles[0].y < toFIXED(32)) {
-        diceWork->particles[0].y = toFIXED(32);
+      if (diceState->particles[0].y < toFIXED(32)) {
+        diceState->particles[0].y = toFIXED(32);
       }
-      if (diceWork->particles[0].y > toFIXED(160)) {
-        diceWork->particles[0].y = toFIXED(160);
+      if (diceState->particles[0].y > toFIXED(160)) {
+        diceState->particles[0].y = toFIXED(160);
       }
-      if (diceWork->particles[1].y < toFIXED(32)) {
-        diceWork->particles[1].y = toFIXED(32);
+      if (diceState->particles[1].y < toFIXED(32)) {
+        diceState->particles[1].y = toFIXED(32);
       }
-      if (diceWork->particles[1].y > toFIXED(160)) {
-        diceWork->particles[1].y = toFIXED(160);
+      if (diceState->particles[1].y > toFIXED(160)) {
+        diceState->particles[1].y = toFIXED(160);
       }
-      if (gMainRoutineWork.coins <
+      if (gMainRoutineState.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
@@ -692,14 +692,14 @@ void LuckyDice_Run(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-        if ((u32)bet > gMainRoutineWork.coins) {
-          bet = gMainRoutineWork.coins;
+        if ((u32)bet > gMainRoutineState.coins) {
+          bet = gMainRoutineState.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+        Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                                    (s32)sprites->coinsWindow, 0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
-          rollingDie = &diceWork->particles[index];
+          rollingDie = &diceState->particles[index];
           // DEAD: never true with DICE_COUNT 2 (a third die would start
           // further back and higher up); the ROM keeps the test and its stores.
           if (index > 1) {
@@ -718,12 +718,12 @@ void LuckyDice_Run(void) {
 
     // Back to the throwing line, with two new lucky numbers.
     if (resetDice == 1) {
-      diceWork->particles[0].x = toFIXED(40);
-      diceWork->particles[0].y = toFIXED(96);
-      diceWork->particles[0].z = -toFIXED(160);
-      diceWork->particles[1].x = -toFIXED(40);
-      diceWork->particles[1].y = toFIXED(96);
-      diceWork->particles[1].z = -toFIXED(160);
+      diceState->particles[0].x = toFIXED(40);
+      diceState->particles[0].y = toFIXED(96);
+      diceState->particles[0].z = -toFIXED(160);
+      diceState->particles[1].x = -toFIXED(40);
+      diceState->particles[1].y = toFIXED(96);
+      diceState->particles[1].z = -toFIXED(160);
       luckyNumbers[0] = Random16() % DICE_FACE_COUNT;
       do {
         luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
@@ -738,8 +738,8 @@ void LuckyDice_Run(void) {
     for (index = 1; index != DICE_COUNT; index++) {
       sortedDie = drawOrder[index];
       for (otherIndex = index - 1;
-           otherIndex >= 0 && diceWork->particles[drawOrder[otherIndex]].z >
-                                  diceWork->particles[sortedDie].z;
+           otherIndex >= 0 && diceState->particles[drawOrder[otherIndex]].z >
+                                  diceState->particles[sortedDie].z;
            otherIndex--) {
         drawOrder[otherIndex + 1] = drawOrder[otherIndex];
       }
@@ -750,7 +750,7 @@ void LuckyDice_Run(void) {
       s32 dieX;
       s32 dieY;
 
-      rollingDie = &diceWork->particles[drawOrder[index]];
+      rollingDie = &diceState->particles[drawOrder[index]];
       Matrix_ProjectPoint(rollingDie, screen);
       if (screen[2] < DICE_NEAREST_DEPTH) {
         screen[2] = DICE_NEAREST_DEPTH;
@@ -782,7 +782,7 @@ void LuckyDice_Run(void) {
     // While aiming, a marker under each die.
     if (state == LUCKY_DICE_AIM) {
       for (index = 0; index != DICE_COUNT; index++) {
-        Matrix_ProjectPoint(&diceWork->particles[index], screen);
+        Matrix_ProjectPoint(&diceState->particles[index], screen);
         x = screen[0] -
             8 * AFFINE_SCALE_ONE /
                 (spriteDepth[drawOrder[index]] / 2 + DICE_NEAREST_SCALE);
@@ -806,7 +806,7 @@ void LuckyDice_Run(void) {
       s32 depth;
 
       // Each die's shadow on the board below it.
-      rollingDie = &diceWork->particles[index];
+      rollingDie = &diceState->particles[index];
       groundPoint[0] = rollingDie->x;
       groundPoint[1] = 0;
       groundPoint[2] = rollingDie->z;
@@ -821,7 +821,7 @@ void LuckyDice_Run(void) {
         depth = screen[2];
       }
       spriteDepth[2 + index] = depth - DICE_NEAREST_DEPTH;
-      spriteDepth[2 + index] += FIXEDtoINT(diceWork->particles[index].y);
+      spriteDepth[2 + index] += FIXEDtoINT(diceState->particles[index].y);
       shadowX = screen[0];
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
@@ -843,12 +843,12 @@ void LuckyDice_Run(void) {
       for (index = 0; index != DICE_COUNT; index++) {
         // Move, and push the dice apart when they touch (closer than
         // DICE_TOUCH_DISTANCE).
-        rollingDie = &diceWork->particles[index];
+        rollingDie = &diceState->particles[index];
         rollingDie->x += rollingDie->velocityX;
         rollingDie->y += rollingDie->velocityY;
         rollingDie->z += rollingDie->velocityZ;
         for (otherIndex = 0; otherIndex != DICE_COUNT; otherIndex++) {
-          otherDie = &diceWork->particles[otherIndex];
+          otherDie = &diceState->particles[otherIndex];
           if (index != otherIndex) {
             separationX = FIXEDtoINT(rollingDie->x - otherDie->x);
             separationY = FIXEDtoINT(rollingDie->y - otherDie->y);
@@ -983,7 +983,7 @@ void LuckyDice_Run(void) {
           } else {
             winnings = bet * DICE_PERFECT_PAYOUT;
           }
-          Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+          Text_DrawNumberInWindowFar(gMainRoutineState.coins, DICE_COIN_DIGITS,
                                      (s32)sprites->coinsWindow, 0, 0);
           Sound_PlayFar(MUS_SUPER_LUCKY);
         } else {
@@ -999,13 +999,15 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 1) {
             winnings = bet;
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+            Text_DrawNumberInWindowFar(gMainRoutineState.coins,
+                                       DICE_COIN_DIGITS,
                                        (s32)sprites->coinsWindow, 0, 0);
             resultKind = DICE_RESULT_ONE_PAIR;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+            Text_DrawNumberInWindowFar(gMainRoutineState.coins,
+                                       DICE_COIN_DIGITS,
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = DICE_RESULT_TWO_PAIR;
@@ -1013,7 +1015,8 @@ void LuckyDice_Run(void) {
           }
           if (pairCount == 3) {
             winnings = bet * 3;
-            Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
+            Text_DrawNumberInWindowFar(gMainRoutineState.coins,
+                                       DICE_COIN_DIGITS,
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = DICE_RESULT_TRIPLE;
@@ -1055,7 +1058,7 @@ void LuckyDice_Run(void) {
     frame++;
   }
 
-  // Fade out and free the work blocks.
+  // Fade out and free the game's state.
   for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
     scale = FIXED_ONE - index * (FIXED_ONE / DICE_FADE_FRAMES);
     LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale,

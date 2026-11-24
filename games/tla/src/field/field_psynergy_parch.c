@@ -7,7 +7,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
 #include "graphics/palette_buffers.h"
@@ -44,9 +44,9 @@ enum ParchResult {
   PARCH_DRIES = 2
 };
 
-/// Parch's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc over the
+/// Parch's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc over the
 /// target and the 64 puffs of steam that rise as it dries.
-struct ParchWork {
+struct ParchState {
   u8 tiles[4096];
   struct EffectSprite disc;
   u8 unusedAfterDisc[40]; ///< no code names it
@@ -64,12 +64,13 @@ void BattleEffect_FadeToSavedPalettes(s32 frames);
 /// the caster and white puffs rise from it. On a puddle (SPRITE_PUDDLE), or on
 /// water with a Parch event, the water there dries up and the event runs.
 void FieldPsynergy_Parch(void) {
-  struct ParchWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ParchWork));
+  struct ParchState *state =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct ParchState));
   struct HeapSlots *heap;
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
-  struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  s32 offset; // into the field work's actor list
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+  struct WindowState *windowState =
+      (struct WindowState *)Ram_HeapSlots->windowState;
+  s32 offset; // into the field state's actor list
   struct Actor *caster;
   struct Actor *actor;
   struct Sprite *actorSprite;
@@ -115,9 +116,9 @@ void FieldPsynergy_Parch(void) {
   i = 0;
   kind = SPRITE_PUDDLE;
   heap = Ram_HeapSlots;
-  for (offset = offsetof(struct FieldWork, actors); i < FIELD_ACTOR_COUNT;
+  for (offset = offsetof(struct FieldState, actors); i < FIELD_ACTOR_COUNT;
        i++, offset += sizeof(struct Actor *)) {
-    actor = *(struct Actor **)((u8 *)heap->fieldWork + offset);
+    actor = *(struct Actor **)((u8 *)heap->fieldState + offset);
     actorSprite = actor->sprite;
     if (actor->script != NULL && actorSprite->entries[0]->animationId == kind &&
         actorSprite->lastNo == PUDDLE_ANIMATION_PUDDLE &&
@@ -147,24 +148,24 @@ loaded:
   {
     void *source = Resource_GetTableEntry(RESOURCE_GLOW_DISC);
     dst = (u8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
-          vramWork->glyphTiles * TILE_SIZE_4BPP;
-    Decompress_TaggedLz(source, work);
+          windowState->glyphTiles * TILE_SIZE_4BPP;
+    Decompress_TaggedLz(source, state);
   }
-  Dma_Set(work, dst, DMA_COPY_WORDS(1024), REG_DMA3);
+  Dma_Set(state, dst, DMA_COPY_WORDS(1024), REG_DMA3);
   screen[0] = pos[0];
   screen[1] = pos[1];
   screen[2] = pos[2];
   Camera_WorldToScreen(screen);
-  work->discX = screen[0];
-  work->discY = screen[2];
-  work->discScaleX = 0;
-  work->discScaleY = 0;
-  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_PUFF), work);
+  state->discX = screen[0];
+  state->discY = screen[2];
+  state->discScaleX = 0;
+  state->discScaleY = 0;
+  Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHITE_PUFF), state);
   entry = VramCache_FindFreeEntry();
-  tile = VramCache_Load(entry, 2048, work);
-  particle = work->particles;
+  tile = VramCache_Load(entry, 2048, state);
+  particle = state->particles;
   for (i = 0; i < PARCH_PUFF_COUNT; i++) {
-    fresh = &work->sprites[i];
+    fresh = &state->sprites[i];
     EffectSprite_Init(fresh, 8, 15, OBJ_SIZE_16X16, tile);
     fresh->depth = EFFECT_SPRITE_FRONT_DEPTH;
     fresh->oam.priority = 0;
@@ -183,10 +184,10 @@ loaded:
   do {
     for (i = spawn; i != 0; i--) {
       s32 slot = next & (PARCH_PUFF_COUNT - 1);
-      sprite = &work->sprites[slot];
+      sprite = &state->sprites[slot];
       sprite->scaleX = FIXED_ONE / 5;
       sprite->scaleY = FIXED_ONE / 5;
-      particle = &work->particles[slot];
+      particle = &state->particles[slot];
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
       Vector_AddPolarOffset(Random16() * 12 + toFIXED(9), Random16(),
                             &particle->x);
@@ -196,12 +197,12 @@ loaded:
       particle->timer = 0;
       next = (next + 1) & (PARCH_PUFF_COUNT - 1);
     }
-    for (i = 0, particle = work->particles; i < PARCH_PUFF_COUNT;
+    for (i = 0, particle = state->particles; i < PARCH_PUFF_COUNT;
          i++, particle++) {
       if (particle->timer >= 0) {
         s32 grown;
 
-        sprite = &work->sprites[i];
+        sprite = &state->sprites[i];
         sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
         grown = sprite->scaleX + FIXED_ONE / 10;
         // DEAD: stored again after the clamp; the ROM keeps both stores.
@@ -248,12 +249,12 @@ loaded:
     if (fade != -1 && fade <= 126)
       fade++;
 
-    x = work->discX;
-    y = work->discY;
-    scaleX = work->discScaleX;
-    scaleY = work->discScaleY;
-    packed = vramWork->glyphTiles + PARCH_DISC_TILE_OFFSET;
-    sprite = &work->disc;
+    x = state->discX;
+    y = state->discY;
+    scaleX = state->discScaleX;
+    scaleY = state->discScaleY;
+    packed = windowState->glyphTiles + PARCH_DISC_TILE_OFFSET;
+    sprite = &state->disc;
     EffectSprite_Init(sprite, 31, 31, OBJ_SIZE_64X64, packed);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -271,9 +272,9 @@ loaded:
       case 0:
         if (timer == 10)
           Sound_PlayFar(SE_PARCH);
-        work->discScaleX += FIXED_ONE * 3 / 256;
-        work->discScaleY = work->discScaleX;
-        if (work->discScaleX > toFIXED(0.25) - 1) {
+        state->discScaleX += FIXED_ONE * 3 / 256;
+        state->discScaleY = state->discScaleX;
+        if (state->discScaleX > toFIXED(0.25) - 1) {
           phase = 1;
           timer = -1;
         }
@@ -286,9 +287,9 @@ loaded:
         break;
       case 2:
         spawn = 0;
-        work->discScaleX += -(FIXED_ONE * 3 / 256);
-        work->discScaleY = work->discScaleX;
-        if (work->discScaleX <= 0)
+        state->discScaleX += -(FIXED_ONE * 3 / 256);
+        state->discScaleY = state->discScaleX;
+        if (state->discScaleX <= 0)
           phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
@@ -298,9 +299,9 @@ loaded:
       case 0:
         if (timer == 30)
           Sound_PlayFar(SE_SPIN);
-        work->discScaleX += FIXED_ONE * 3 / 256;
-        work->discScaleY = work->discScaleX;
-        if (work->discScaleX > toFIXED(0.75) - 1) {
+        state->discScaleX += FIXED_ONE * 3 / 256;
+        state->discScaleY = state->discScaleX;
+        if (state->discScaleX > toFIXED(0.75) - 1) {
           phase = 1;
           timer = -1;
         }
@@ -321,9 +322,9 @@ loaded:
         break;
       case 3:
         spawn = 0;
-        work->discScaleX += -(FIXED_ONE / 64);
-        work->discScaleY = work->discScaleX;
-        if (work->discScaleX <= 0)
+        state->discScaleX += -(FIXED_ONE / 64);
+        state->discScaleY = state->discScaleX;
+        if (state->discScaleX <= 0)
           phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
@@ -333,9 +334,9 @@ loaded:
       case 0:
         if (timer == 40)
           Sound_PlayFar(SE_SPIN);
-        work->discScaleX += FIXED_ONE * 3 / 256;
-        work->discScaleY = work->discScaleX;
-        if (work->discScaleX > toFIXED(0.75) - 1) {
+        state->discScaleX += FIXED_ONE * 3 / 256;
+        state->discScaleY = state->discScaleX;
+        if (state->discScaleX > toFIXED(0.75) - 1) {
           phase = 1;
           timer = -1;
         }

@@ -4,27 +4,27 @@
 // Part of window.c.
 
 #include "window_internal.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 
-#define FIELD_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
+#define FIELD_STATE ((struct FieldState *)Ram_HeapSlots->fieldState)
 
 void AreaNameWindow_Update(void);
 
 /// Shows the area's name in a window near the top of the screen for
-/// AREA_NAME_WINDOW_FRAMES, kept in the field work until AreaNameWindow_Update
+/// AREA_NAME_WINDOW_FRAMES, kept in the field state until AreaNameWindow_Update
 /// closes it.
 void AreaNameWindow_Show(void) {
-  struct FieldWork *work;
+  struct FieldState *fieldState;
   s32 height;
   s32 width;
   s32 y;
   s32 x;
   s32 areaMessage;
   struct Window *nameWindow;
-  struct MainRoutineWork *state;
+  struct MainRoutineState *state;
 
-  work = FIELD_WORK;
-  state = &gMainRoutineWork;
+  fieldState = FIELD_STATE;
+  state = &gMainRoutineState;
   x = 8;
   y = 8;
   areaMessage = Area_GetNameIndexFar(state->next, state->entrance) +
@@ -33,21 +33,21 @@ void AreaNameWindow_Show(void) {
   x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (10 - height) >> 1;
   nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
-  work->noticeWindow = nameWindow;
+  fieldState->noticeWindow = nameWindow;
   Text_DrawMessage(areaMessage, (s32)nameWindow, 0, 0);
-  work->noticeFrames = AREA_NAME_WINDOW_FRAMES;
+  fieldState->noticeFrames = AREA_NAME_WINDOW_FRAMES;
   Task_Add(AreaNameWindow_Update, TASK_PASS_FRAME);
 }
 
 /// Counts the area name down, and closes it at 0.
 void AreaNameWindow_Update(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   u16 framesLeft;
 
-  work = FIELD_WORK;
-  work->noticeFrames = framesLeft = work->noticeFrames - 1;
+  state = FIELD_STATE;
+  state->noticeFrames = framesLeft = state->noticeFrames - 1;
   if (framesLeft == 0) {
-    Window_Close(work->noticeWindow, WINDOW_FLAG_INSTANT);
+    Window_Close(state->noticeWindow, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
   }
 }
@@ -56,7 +56,7 @@ void AreaNameWindow_Update(void) {
 void AreaNameWindow_Hide(void) {
   struct Window *window;
 
-  window = FIELD_WORK->noticeWindow;
+  window = FIELD_STATE->noticeWindow;
   if (window != NULL && window->flags != 0) {
     Window_Close(window, WINDOW_FLAG_INSTANT);
     Task_Remove(AreaNameWindow_Update);
@@ -71,4 +71,4 @@ s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   return 0;
 }
 
-#undef FIELD_WORK
+#undef FIELD_STATE

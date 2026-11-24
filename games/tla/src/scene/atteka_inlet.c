@@ -32,7 +32,7 @@
 #include "types.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -170,7 +170,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ATTEKA_INLET) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
@@ -190,7 +190,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 extern struct Trigger gAttekaInlet_HarborTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ATTEKA_INLET)
     return gAttekaInlet_HarborTriggers;
@@ -216,24 +216,24 @@ void AttekaInlet_AskKradenToSetSail(void) {
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-    gMainRoutineWork.ownerOverride = 1;
+    gMainRoutineState.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNION_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
       GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
     Import_EventSetExitRequest(ATTEKA_INLET_TO_WORLD_MAP_WEST);
   } else {
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor = Actor_GetById(gMainRoutineState.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
                                actor->z.part[0].integer);
@@ -360,7 +360,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
     // "At first, you may not want to move your ship too high or too far..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-    Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+    Actor_ShowEmoteById(gMainRoutineState.leaderActorId,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_ShowEmoteById(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "It will be difficult at first, but that is to be expected... After..."
@@ -397,9 +397,9 @@ void AttekaInlet_KradenAsksToSetSail(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineState.leaderActorId);
   wait(1);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWaitById(ACTOR_KRADEN, 532, 248);
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
@@ -407,31 +407,31 @@ void AttekaInlet_KradenAsksToSetSail(void) {
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-    gMainRoutineWork.ownerOverride = 1;
+    gMainRoutineState.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNION_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
       GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
     Import_EventSetExitRequest(ATTEKA_INLET_TO_WORLD_MAP_WEST);
   } else {
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor = Actor_GetById(gMainRoutineState.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
                                actor->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 528, 276);
+    Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+    Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 528, 276);
     Event_End();
   }
 }
@@ -456,13 +456,13 @@ void AttekaInlet_CycloneUncoversGeode(void) {
 
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_GEODE))) {
-    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor = Actor_GetById(gMainRoutineState.leaderActorId);
     Event_Start();
     Event_ResolvePendingActions(0);
     moved = 0;
     if (FIELD_CELL(actor->x.fixed) == 7 && FIELD_CELL(actor->z.fixed) == 23) {
-      Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
-      Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
+      Actor_Jump(gMainRoutineState.leaderActorId, 6, 0);
+      Actor_SetDestination(gMainRoutineState.leaderActorId, 104, 376);
       moved = 1;
     }
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
@@ -470,7 +470,7 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Actor_Jump(ACTOR_GEODE, 4, 10);
     GameFlag_Set(FLAG_GEODE_UNCOVERED);
     if (moved)
-      Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+      Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                         FACING_EAST);
     Event_End();
   }
@@ -549,7 +549,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_SetMessageId((s32)MsgAttekaInletHeyWait);
   // "Hey, wait!"
   Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -610,7 +610,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
 /// leader's sprite priority.
 void AttekaInlet_ShareLeadersPriority(void) {
   s32 variant =
-      ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.leaderActorId)
+      ((struct FieldSprite *)Actor_GetById(gMainRoutineState.leaderActorId)
            ->sprite)
           ->priority;
 
@@ -625,7 +625,7 @@ void AttekaInlet_ShareLeadersPriority(void) {
 void AttekaInlet_ShareLeadersPriorityWithBoulder(void) {
   Actor_SetSpritePriority(
       ACTOR_ROUND_BOULDER,
-      ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.leaderActorId)
+      ((struct FieldSprite *)Actor_GetById(gMainRoutineState.leaderActorId)
            ->sprite)
           ->priority);
 }
@@ -659,23 +659,23 @@ void AttekaInlet_RotateHullBandAndSurfColors(void) {
 /// (27, 18)) opens it; Felix walks in and the screen fades out to the cabins
 /// below. The exit taken is the one the door's cell names.
 void AttekaInlet_OpenDoorAndEnter(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -4);
   Event_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 s32 Scene_Initialize(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ATTEKA_INLET)
     AttekaInlet_SetUpTheHarbor();
@@ -685,7 +685,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_ATTEKA_INLET && GameFlag_Get(FLAG_REUNION_AT_CONTIGO)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
@@ -702,15 +702,15 @@ s32 Scene_PrepareMap(void) {
 /// brings it, and once the ship has its wings the four robed men and Hamma
 /// stand watching the party until it has set out.
 void AttekaInlet_SetUpTheHarbor(void) {
-  struct MapWorkGroundEffects *map =
-      (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
-  struct MainRoutineWork *party;
+  struct MapStateGroundEffects *map =
+      (struct MapStateGroundEffects *)Ram_HeapSlots->mapGrid;
+  struct MainRoutineState *party;
 
   GameFlag_Set(FLAG_SHIP_AT_ATTEKA_INLET);
   if (!GameFlag_Get(FLAG_HAMMETS_GIFT_DELIVERED))
     Actor_SetPosition(ACTOR_HAMMETS_GIFT_CHEST, 0, 0);
   map->wading = MAP_WADING_UPPER_LEVEL;
-  party = &gMainRoutineWork;
+  party = &gMainRoutineState;
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldTask_AddFrame(AttekaInlet_RotateHullBandAndSurfColors, TASK_PASS_FRAME);
@@ -741,7 +741,7 @@ void AttekaInlet_SetUpTheHarbor(void) {
 /// shipwrights stand blocking the way west; Geode stands by the round boulder
 /// once uncovered, until he joins.
 void AttekaInlet_SetUpTheHeights(void) {
-  if (gMainRoutineWork.entrance == ATTEKA_INLET_GEODE_FROM_CONTIGO_SHOPS)
+  if (gMainRoutineState.entrance == ATTEKA_INLET_GEODE_FROM_CONTIGO_SHOPS)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Actor_SetPosition(ACTOR_SHIPWRIGHT, 0, 0);

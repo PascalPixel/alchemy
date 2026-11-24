@@ -7,7 +7,7 @@ enum StakeKind { STAKE_WOOD, STAKE_STONE, STAKE_MOSSY_STONE };
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer) {
   struct Actor *actor = Actor_GetById(id);
   struct MapCell *cell =
-      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells;
+      ((struct MapState *)Ram_HeapSlots->mapGrid)->layers[layer].cells;
 
   cell += Actor_GetCellIndex(actor);
   if (GameFlag_Get(flag)) {

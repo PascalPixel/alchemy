@@ -3,8 +3,8 @@
 
 /// @file
 /// The kinds of message argument (MessageArgument_Push), which the message
-/// codes such as {argument_item_name} read; the window work keeps each kind
-/// beside its value (WindowWork.argumentKinds).
+/// codes such as {argument_item_name} read; the window state keeps each kind
+/// beside its value (WindowState.argumentKinds).
 
 enum {
   MESSAGE_ARGUMENT_NONE = 0, ///< an empty place in the argument table

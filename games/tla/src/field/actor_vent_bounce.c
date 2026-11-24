@@ -1,7 +1,7 @@
 /// @file
 /// The motion of a thing a vent throws out, which Aqua Rock's inside and Taopo
 /// Swamp each keep a copy of. scene/scene.h, which the including scene reads
-/// first, gives it struct VentWork, VENT_WORK, DIFF and the two routines'
+/// first, gives it struct VentState, VENT_STATE, DIFF and the two routines'
 /// names, VENT_TOUCHING and VENT_BOUNCE.
 
 /// Whether actor a rests on actor b: within 12 pixels of it in x and 8 in z,
@@ -18,10 +18,10 @@ s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
 
 /// Moves the thing by its velocities, slows it in x and z, grows and spins its
 /// sprite, and stops its fall in z when it lands on the leader or on one of
-/// the actors the vent work lists.
+/// the actors the vent state lists.
 void VENT_BOUNCE(struct Actor *actor) {
-  struct VentWork *work = VENT_WORK;
-  struct Actor *other = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct VentState *state = VENT_STATE;
+  struct Actor *other = Actor_GetById(gMainRoutineState.leaderActorId);
   FIXED dx = actor->bounce;
   FIXED dz;
   struct Sprite *sprite;
@@ -47,7 +47,7 @@ void VENT_BOUNCE(struct Actor *actor) {
     actor->riseBaseY = 0;
   }
   for (i = 0; i < 4; i++) {
-    s32 id = work->ids[i];
+    s32 id = state->ids[i];
 
     if (id == 0)
       break;

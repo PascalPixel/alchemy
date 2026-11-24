@@ -8,7 +8,7 @@
 /// the Shrine of the Sea God the village is SCENE_DAILA: the water has drained
 /// to six small puddles, and walking up to the mayor's door on his rise in the
 /// east brings Alex out of it, off to Madra to find a boat (Daila_MeetAlex).
-/// The getters pick each scene's tables by gMainRoutineWork.next.
+/// The getters pick each scene's tables by gMainRoutineState.next.
 ///
 /// In both, six doors lead into the houses (Daila_EnterDoor), the sanctuary
 /// stands at the top of the steps in the north, and the village is left by
@@ -30,7 +30,7 @@
 #include "field/field_event.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "field/actor.h"
@@ -156,14 +156,14 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 s32 *Scene_GetExits(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA)
+  if (gMainRoutineState.next == SCENE_DAILA)
     return gDailaExits;
   else
     return gDailaFloodedExits;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA)
+  if (gMainRoutineState.next == SCENE_DAILA)
     return gDailaActorPlacements;
   else
     return gDailaFloodedActorPlacements;
@@ -176,18 +176,18 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// on into the dark doorway, and the screen closes in a circle on him before
 /// he appears inside. The door's cell is the number of the exit taken.
 void Daila_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -6);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -6);
   Event_Wait(10);
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -201,7 +201,7 @@ void Daila_DigUpPsyCrystal(s32 mode) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA)
+  if (gMainRoutineState.next == SCENE_DAILA)
     return gDailaTriggers;
   else
     return gDailaFloodedTriggers;
@@ -300,7 +300,7 @@ void Daila_TalkBoat(void) {
 /// to her from in front of the counter, facing north; from any other side she
 /// worries that Tavi and Riki have not been seen lately.
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_DAILA_ITEMS, keeper);
@@ -344,7 +344,7 @@ void Daila_TalkHip(void) {
 /// from in front of the counter, as before, and from any other side tells of
 /// their return.
 void Daila_TaviAndRikiAreHome(s32 keeper) {
-  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+  u16 facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(SHOP_DAILA_ITEMS, keeper);
@@ -364,7 +364,7 @@ static inline void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
   Actor_SetAnimationById(actor, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(actor, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -403,8 +403,8 @@ void Daila_MeetAlex(void) {
   Event_SetMessageId(msg);
   Actor_SetPosition(ACTOR_ALEX, 472, 264);
   Event_Wait(30);
-  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 504, 296);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 504, 296);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHWEST, 0);
   Actor_MoveToAndWait(ACTOR_ALEX, 472, 280);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   Event_Wait(30);
@@ -442,10 +442,10 @@ void Daila_MeetAlex(void) {
   // "That's what Kraden said..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Event_Wait(30);
-  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_KRADEN, 0);
+  Actor_TurnToFaceEachOther(gMainRoutineState.leaderActorId, ACTOR_KRADEN, 0);
   Event_Wait(30);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_ALEX, 0);
-  Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_ALEX, 0);
+  Actor_FaceActorById(gMainRoutineState.leaderActorId, ACTOR_ALEX, 0);
   Event_Wait(60);
   // "And did you find one?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
@@ -460,7 +460,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   // "I spoke to the mayor, and he suggested that we try the large town..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
-  Actor_FaceActorById(ACTOR_ALEX, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_ALEX, gMainRoutineState.leaderActorId, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 1);
   Event_Wait(60);
@@ -472,7 +472,7 @@ void Daila_MeetAlex(void) {
   // "Yes. Madra may have boats available. That would be the most logical..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Event_Wait(30);
-  Actor_FaceActorById(ACTOR_JENNA, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_JENNA, gMainRoutineState.leaderActorId, 0);
   // "So what do yout think? Should we go to Madra with Alex?"
   FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
@@ -522,17 +522,17 @@ void Daila_MeetAlex(void) {
   // "Perhaps you will see me in Madra..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Actor_WalkToAndWait(ACTOR_ALEX, 504, 328);
-  Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_ALEX, 0);
+  Actor_FaceActorById(gMainRoutineState.leaderActorId, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_ALEX, 0);
   Actor_WalkToAndWait(ACTOR_ALEX, 456, 328);
-  Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_ALEX, 0);
+  Actor_FaceActorById(gMainRoutineState.leaderActorId, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_ALEX, 0);
   Actor_WalkToAndWait(ACTOR_ALEX, 424, 472);
-  Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_ALEX, 0);
+  Actor_FaceActorById(gMainRoutineState.leaderActorId, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_ALEX, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_ALEX, 0);
@@ -552,14 +552,14 @@ void Daila_MeetAlex(void) {
   // "Yeah, I know... Now, I just want to find a boat before he does!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Event_Wait(60);
-  Actor_FaceActorById(ACTOR_KRADEN, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_KRADEN, gMainRoutineState.leaderActorId, 0);
   Event_Wait(60);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH, 0);
   Event_Wait(30);
   // "Let's be on our way."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(120);
@@ -632,20 +632,20 @@ void Actor_SetWideSprite(s32 actor, s32 flag);
 #include "shared/scene_freeze_puddle_into_pillar.h"
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == SCENE_DAILA_FLOODED)
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  if (gMainRoutineState.next == SCENE_DAILA_FLOODED)
     Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
-  else if (gMainRoutineWork.next == SCENE_DAILA)
+  else if (gMainRoutineState.next == SCENE_DAILA)
     FlagBlock_PlaceAll(gDailaRooms_PillarFrozenFlags);
   Actor_SetSpritePriority(ACTOR_ITEM_SHOPKEEPER, 1);
-  if (gMainRoutineWork.next == SCENE_DAILA &&
+  if (gMainRoutineState.next == SCENE_DAILA &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
     Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA) {
+  if (gMainRoutineState.next == SCENE_DAILA) {
     if (GameFlag_Get(FLAG_DAILA_FIRST_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);
     if (GameFlag_Get(FLAG_DAILA_SECOND_PUDDLE_PARCHED))

@@ -53,7 +53,7 @@ enum MercurySheetPicture {
 /// Abilities: Mercury.
 void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *sheet;
@@ -65,7 +65,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   s32 j;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleEffect;
+  state = (struct BattleEffectState *)heap->battleEffect;
   canvas = heap->battleCanvas;
   sheet = heap->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -73,18 +73,19 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
   cells = Ram_MapCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
-                             0);
+  Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet,
+                             1, 0);
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, cells, 1, 1);
-  BattleEffect_TransposeCopy(cells, work->sheet + MERCURY_TURNED_SHAFT,
+  BattleEffect_TransposeCopy(cells, state->sheet + MERCURY_TURNED_SHAFT,
                              BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
   BattleEffect_TransposeCopy(cells + BLUE_FLAME_SHEET_FLAME,
-                             work->sheet + MERCURY_TURNED_FLAME,
+                             state->sheet + MERCURY_TURNED_FLAME,
                              BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
   // The canvas fades by a quarter each frame, so each flame trails like a
   // comet.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-  EFFECT_FREE_PARTICLES(i, work->particles, 8);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_FREE_PARTICLES(i, state->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_WAVE);
   for (frame = 0; frame != MERCURY_FRAMES; frame++) {
@@ -93,16 +94,16 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
     // Flames fly left and burst on their 5th frame.
     for (i = 0; i != MERCURY_FLAMES; i++) {
-      flame = &work->particles[i];
+      flame = &state->particles[i];
       if (flame->variant != -1) {
-        blit[0](canvas, work->sheet + MERCURY_TURNED_FLAME, flame->x - 16,
+        blit[0](canvas, state->sheet + MERCURY_TURNED_FLAME, flame->x - 16,
                 flame->y - BLUE_FLAME_SPLASH_WIDTH / 2,
                 BLUE_FLAME_SPLASH_HEIGHT, BLUE_FLAME_SPLASH_WIDTH);
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
           Sound_PlayFar(SE_IMPACT);
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
             s32 angle;
             s32 speed;
@@ -131,12 +132,12 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
           FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * (64 - frame * 2)) +
           60;
 
-      blit[1](canvas, work->sheet, x - SMALL_DJINNI_WIDTH / 2,
+      blit[1](canvas, state->sheet, x - SMALL_DJINNI_WIDTH / 2,
               y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
               MERCURY_SMALL_DJINNI_HEIGHT);
       for (i = 0; i != MERCURY_FLAMES; i++) {
         if (frame == gDjinnAttacks_LaunchFrames[i]) {
-          struct Particle *shot = &work->particles[i];
+          struct Particle *shot = &state->particles[i];
 
           if (shot->variant == -1) {
             shot->x = x - 8;
@@ -168,7 +169,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -187,7 +188,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 ///
 /// Abilities: Jupiter.
 void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *sheet;
@@ -197,21 +198,22 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, blit);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, work->sheet, 1,
-                             1);
+  Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, state->sheet,
+                             1, 1);
   Resource_LoadAndDecompress(RESOURCE_FLAMEBALL_SHEET,
-                             work->sheet + JUPITER_FLAMEBALL, 1, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+                             state->sheet + JUPITER_FLAMEBALL, 1, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   for (i = 0; i != JUPITER_FLAMEBALL_SLOTS; i++) {
-    ball = &work->particles[i];
+    ball = &state->particles[i];
     ball->x = (Random16() & 63) + 64;
     ball->y = (Random16() & 63) - 80;
   }
@@ -231,15 +233,15 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         s32 x = FIXEDtoINT(Trig_Sin(angle) * (64 - frame * 2)) >> 1;
         s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
-        blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
+        blit[0](canvas, state->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
       }
 
       // Flameballs fall from the top right, one every 4 frames.
       for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
-        ball = &work->particles[i];
+        ball = &state->particles[i];
         if (frame >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
-          blit[0](canvas, work->sheet + JUPITER_FLAMEBALL,
+          blit[0](canvas, state->sheet + JUPITER_FLAMEBALL,
                   ball->x - FLAMEBALL_WIDTH / 2, ball->y - FLAMEBALL_HEIGHT / 2,
                   FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           ball->x -= 6;
@@ -259,7 +261,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
               mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
             }
             Sound_PlayFar(SE_IMPACT);
-            work->shakeFrames = 4;
+            state->shakeFrames = 4;
             EFFECT_FOR_EACH_TARGET(j, args) {
               EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
             }
@@ -279,7 +281,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         }
       }
       BattleCamera_Shake(4, 4);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
       angle -= TRIG_TURN / 32;
     }
   }
@@ -321,7 +323,7 @@ enum VenusSheetPicture {
 /// Abilities: Venus.
 void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   BlitterPair draw;
@@ -334,7 +336,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   s32 angle;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleEffect;
+  state = (struct BattleEffectState *)heap->battleEffect;
   canvas = heap->battleCanvas;
   sheet = heap->battleSheet;
   BattleEffect_StartCanvasLayer(0);
@@ -346,13 +348,14 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)heap->ramCode;
   draw[1] = (DrawRectangle)heap->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, work->sheet, 1,
+  Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET, state->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET,
-                             work->sheet + VENUS_BLUE_FLAME_SHEET, 1, 0);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+                             state->sheet + VENUS_BLUE_FLAME_SHEET, 1, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != VENUS_COLUMN_SLOTS; i++) {
-    column = &work->particles[i];
+    column = &state->particles[i];
     column->x = Random16() & 63;
     column->y = 104;
   }
@@ -366,7 +369,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
       s32 x = FIXEDtoINT(Trig_Sin(angle) * VENUS_DJINNI_SWAY);
       s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
-      draw[1](canvas, work->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
+      draw[1](canvas, state->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
               VENUS_SMALL_DJINNI_HEIGHT);
     }
     if (frame == DJINN_ATTACK_DAMAGE_FRAME)
@@ -374,9 +377,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     // Ten flame columns rise, one every 4 frames.
     for (i = 0, start = VENUS_FIRST_COLUMN_FRAME; i != VENUS_COLUMNS;
          start += 4, i++) {
-      column = &work->particles[i];
+      column = &state->particles[i];
       if (frame >= start) {
-        draw[0](canvas, work->sheet + VENUS_COLUMN,
+        draw[0](canvas, state->sheet + VENUS_COLUMN,
                 column->x - BLUE_FLAME_SPLASH_WIDTH / 2,
                 column->y - BLUE_FLAME_SPLASH_HEIGHT / 2,
                 BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
@@ -396,7 +399,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
           }
           if (i & 1)
             Sound_PlayFar(SE_IMPACT);
-          work->shakeFrames = 4;
+          state->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, args) {
             EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
           }
@@ -416,7 +419,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
     angle -= TRIG_TURN / 32;
   }
   EFFECT_FINISH_CANVAS();
@@ -442,7 +445,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 ///
 /// Abilities: Mars.
 void BattleEffect_RunMars(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   u8 *sheet;
   BlitterPair blitters;
@@ -452,21 +455,22 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_FetchRectangleBlitters(0, blitters);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, work->sheet, 1,
+  Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET, state->sheet, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
-                             work->sheet + MARS_GLOW_ORB, 1, 1);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+                             state->sheet + MARS_GLOW_ORB, 1, 1);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // Nine flames spread out along the ground, alternately left and right.
   index = 0;
-  particle = work->particles;
+  particle = state->particles;
   for (; index != MARS_FLAMES; index++) {
     s32 angle = index * (TRIG_TURN / 32);
 
@@ -498,7 +502,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     // left.
     if (frame <= 23)
       blitters[0](canvas,
-                  work->sheet + MARS_GLOW_ORB +
+                  state->sheet + MARS_GLOW_ORB +
                       (frame / 4) * PICTURE_BYTES(GLOW_ORB),
                   40, 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
     if (frame == 20)
@@ -507,22 +511,22 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
                       SHEET_PALETTE_BYTES);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        blitters[1](canvas, work->sheet, 146 - frame * 4, frame * 8 - 172,
+        blitters[1](canvas, state->sheet, 146 - frame * 4, frame * 8 - 172,
                     SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       else
-        blitters[0](canvas, work->sheet, 50, 20, SMALL_DJINNI_WIDTH,
+        blitters[0](canvas, state->sheet, 50, 20, SMALL_DJINNI_WIDTH,
                     SMALL_DJINNI_HEIGHT);
     }
     // It strikes: the screen shakes and the flames erupt.
     if (frame == 32) {
       Sound_PlayFar(SE_CRASH);
-      work->shakeFrames = 8;
-      Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1,
+      state->shakeFrames = 8;
+      Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1,
                                  1);
     }
     if (frame > 31) {
       for (index = 0; index != MARS_FLAMES; index++) {
-        particle = &work->particles[index];
+        particle = &state->particles[index];
         if (particle->variant >= 0 && particle->variant < MARS_FLAME_LIFE) {
           s32 picture = particle->variant / 8;
           u32 width;
@@ -531,13 +535,13 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 #ifdef UBFIX
           width = gBattleEffect_PuffArcPictureWidths[picture];
           blitters[0](canvas,
-                      work->sheet + gBattleEffect_PuffArcPictures[picture],
+                      state->sheet + gBattleEffect_PuffArcPictures[picture],
                       particle->x - (width >> 1),
                       particle->y + gBattleEffect_PuffArcPictureBiasY[picture],
                       width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
           blitters[0](
-              canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+              canvas, state->sheet + gBattleEffect_PuffArcPictures[picture],
               particle->x -
                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
               particle->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
@@ -573,7 +577,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       }
     }
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
   EFFECT_FINISH_CANVAS();
 }

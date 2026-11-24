@@ -59,7 +59,7 @@ void ApojiiIslandsCave_ScatterWeeds(s32 unused, s32 weeds) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   return 0;
 }

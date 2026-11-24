@@ -1,8 +1,8 @@
 /// Stops the leader while an action waits.
 void Leader_StopIfPending(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  if (work->busy != 0) {
+  if (state->busy != 0) {
     Event_SetFlag(FLAG_MENU_OPEN);
     Leader_StopMoving();
     Event_ResolveAllPendingActions();

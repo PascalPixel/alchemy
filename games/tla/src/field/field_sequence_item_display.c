@@ -36,7 +36,7 @@
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"
 #include "system/io_write.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "macros.h"
 #include "field/field_sequence_event.h"
 #include "system/input.h"
@@ -118,11 +118,11 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
 
 /// Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct Actor *interpreter) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
 
-  if (work == NULL)
+  if (state == NULL)
     return 0;
-  if (work->revealActive != 0)
+  if (state->revealActive != 0)
     return 1;
   else
     return 0;
@@ -135,8 +135,8 @@ void Reveal_EmitSparkles(struct Actor *source);
 /// hangs there, sparkling. While Reveal is active it first releases Reveal's
 /// sparkles, and then its mark on the picture's cell.
 struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *picture = work->actors[actorId];
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *picture = state->actors[actorId];
   struct Actor *actor;
   struct Sprite *sprite;
   FIXED position[3];
@@ -154,7 +154,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     position[0] = (position[0] & FIELD_CELL_MASK) + toFIXED(8);
     position[2] = (position[2] & FIELD_CELL_MASK) + toFIXED(8);
   }
-  if (work->revealActive != 0) {
+  if (state->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
     actor = Ram_HeapSlots->actors;
     i = ACTOR_COUNT - 1;
@@ -193,7 +193,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   sprite->image.tile = tile;
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   picture->update = ItemDisplay_EmitSparkles;
-  if (work->revealActive != 0) {
+  if (state->revealActive != 0) {
     struct Actor *marker = Ram_HeapSlots->actors;
     s32 j;
 
@@ -333,7 +333,7 @@ void Reveal_EmitSparkles(struct Actor *actor) {
 void FieldEffect_SpawnRevealMarkers(void) {
   s16 *entry = SceneItem_GetRows();
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *origin = &((struct MapWork *)map)->viewX;
+  s32 *origin = &((struct MapState *)map)->viewX;
   s32 originX = origin[0] & FIELD_PIXEL_MASK;
   s32 originZ = origin[1] & FIELD_PIXEL_MASK;
   // A word of the map header, then the point SceneItem_FindPosition fills for

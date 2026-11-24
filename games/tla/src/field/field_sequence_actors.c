@@ -43,7 +43,7 @@ s32 Party_GetCharacterSprite(s32 character) {
   if (sprite <= PLACEMENT_SHIP) {
     if (sprite == PLACEMENT_SHIP) {
       sprite = SPRITE_WINGED_SHIP_SMALL;
-      if (gMainRoutineWork.mapId != SCENE_CLEAR)
+      if (gMainRoutineState.mapId != SCENE_CLEAR)
         sprite = SPRITE_WINGED_SHIP;
       if (GameFlag_Get(FLAG_SHIP_FLIES))
         sprite++;
@@ -58,17 +58,17 @@ UNUSED void Actor_ReservedNoOp(void) {}
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 actorIndex = 0;
   s32 i;
   u16 placementSprite;
 
   // Remember the table once, before consuming slots for its actor placements.
   for (i = 0; i < 4; i++) {
-    if (work->tables[i] == entry)
+    if (state->tables[i] == entry)
       break;
-    if (work->tables[i] == NULL) {
-      work->tables[i] = entry;
+    if (state->tables[i] == NULL) {
+      state->tables[i] = entry;
       break;
     }
   }
@@ -103,7 +103,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
           continue;
       }
       // Djinn_ResolvePending hides a Djinni after the party loses or flees.
-      if (work->mode != ACTOR_SYSTEM_WORLD_MAP &&
+      if (state->mode != ACTOR_SYSTEM_WORLD_MAP &&
           !GameFlag_IsConditionActive(condition + FLAG_DJINN_HIDING_FIRST -
                                       FLAG_DJINN_FIRST))
         continue;
@@ -143,7 +143,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         }
       }
     } else {
-      if (entry->sprite == gMainRoutineWork.leaderActorId)
+      if (entry->sprite == gMainRoutineState.leaderActorId)
         continue;
       Actor_SetPositionAndResetMotionFar(actor, entry->x, entry->y, entry->z);
     }
@@ -172,7 +172,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         actor->motionFlags = ACTOR_FLOATS;
         actor->y.fixed += toFIXED(1) / 2;
       }
-      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+      if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
         actor->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
         if (!GameFlag_Get(FLAG_ISAAC_WEARS_TUNIC))
           sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
@@ -183,7 +183,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       }
       actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     }
-    work->actors[actorIndex] = actor;
+    state->actors[actorIndex] = actor;
   }
 }
 
@@ -207,26 +207,26 @@ s32 ScenePoint_GetPosition(s32 id, FIXED *position) {
   return -1;
 }
 
-/// Releases the actor in slot actorIndex of the field work's table, if there
+/// Releases the actor in slot actorIndex of the field state's table, if there
 /// is one, and empties the slot.
 void Actor_ReleaseAtIndex(u32 actorIndex) {
-  struct FieldWork *work = gFieldWork;
+  struct FieldState *state = gFieldState;
   struct Actor *actor = Actor_Lookup(actorIndex);
 
   if (actor != NULL) {
     Actor_ReleaseFar(actor);
-    work->actors[actorIndex] = NULL;
+    state->actors[actorIndex] = NULL;
   }
 }
 
 u8 *Sprite_AddAnimationFar(void *resource, s32 id);
 
 /// Creates a scene's actors on entering it, as The Broken Seal's
-/// Actor_ResetForLeader does: the party leader where the main routine's work
+/// Actor_ResetForLeader does: the party leader where the main routine's state
 /// puts it, the scene's placement table from actor slot 8, and the camera
 /// that follows the leader; it also chooses the leader's control mode.
 void Actor_ResetForLeader(s32 table) {
-  struct FieldWork *work;
+  struct FieldState *state;
   struct ActorPlacement *entry;
   struct Actor *actor;
   struct Actor *camera;
@@ -236,51 +236,52 @@ void Actor_ResetForLeader(s32 table) {
   s32 i;
   s32 height;
 
-  work = gFieldWork;
-  leader = gMainRoutineWork.leaderActorId;
-  entry = work->leaderPlacements;
+  state = gFieldState;
+  leader = gMainRoutineState.leaderActorId;
+  entry = state->leaderPlacements;
   entry[0] = gField_DefaultPlacements[0];
   entry[1] = gField_DefaultPlacements[1];
   for (i = 0; i < 4; i++)
-    work->tables[i] = 0;
+    state->tables[i] = 0;
   ObjectTable_Clear();
   entry->condition = -1;
   entry->sprite = leader;
-  SET_POSITION(entry, gMainRoutineWork.x, 0, gMainRoutineWork.z);
-  entry->facing = gMainRoutineWork.heading;
+  SET_POSITION(entry, gMainRoutineState.x, 0, gMainRoutineState.z);
+  entry->facing = gMainRoutineState.heading;
   Event_SpawnObjectTable(entry, leader);
   {
-    FIXED y = gMainRoutineWork.y;
+    FIXED y = gMainRoutineState.y;
 
     if (y != 0) {
-      actor = work->actors[leader];
+      actor = state->actors[leader];
       actor->y.fixed = y;
       actor->groundHeight = y;
     }
   }
   Event_SpawnObjectTable((struct ActorPlacement *)table, ACTOR_FIRST_PLACED);
 
-  actor = work->actors[leader];
-  actor->layer = gMainRoutineWork.layer;
+  actor = state->actors[leader];
+  actor->layer = gMainRoutineState.layer;
   actor->timer = 0;
   actor->userValue = 0;
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    if (gMainRoutineWork.ownerOverride != 0)
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    if (gMainRoutineState.ownerOverride != 0)
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_SHIP;
     else
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
-  } else if (gMainRoutineWork.ownerOverride != 0) {
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_WORLD_MAP;
+  } else if (gMainRoutineState.ownerOverride != 0) {
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
   } else {
-    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-    cell =
-        ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[actor->layer].cells +
-        ((actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS)) +
-         ((actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE));
+    gMainRoutineState.movementMode = LEADER_MOVEMENT_WALK;
+    cell = ((struct MapState *)Ram_HeapSlots->mapGrid)
+               ->layers[actor->layer]
+               .cells +
+           ((actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS)) +
+            ((actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE));
     above = cell - MAPGRID_SIZE;
-    if (gMainRoutineWork.y != 0 && (cell->attributeB & MAP_CELL_CLIMBABLE) &&
+    if (gMainRoutineState.y != 0 && (cell->attributeB & MAP_CELL_CLIMBABLE) &&
         (above->attributeB & MAP_CELL_CLIMBABLE)) {
-      gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
+      gMainRoutineState.movementMode = LEADER_MOVEMENT_KEYS;
       height = MapGrid_GetTerrainHeightFar(0, actor->x.fixed,
                                            actor->z.fixed - toFIXED(16)) -
                toFIXED(32);
@@ -292,8 +293,8 @@ void Actor_ResetForLeader(s32 table) {
     }
   }
 
-  if (gMainRoutineWork.ownerOverride != 0) {
-    struct Actor *stand = work->actors[ACTOR_FIRST_PLACED];
+  if (gMainRoutineState.ownerOverride != 0) {
+    struct Actor *stand = state->actors[ACTOR_FIRST_PLACED];
 
     SET_ACTOR_POSITION(stand, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     stand->groundHeight = actor->groundHeight;
@@ -307,7 +308,7 @@ void Actor_ResetForLeader(s32 table) {
                            actor->x.fixed, actor->y.fixed, actor->z.fixed);
   camera->groundHeight = actor->groundHeight;
   Actor_StartCameraFar(camera, actor);
-  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     struct SpriteAnimation *meta =
         (struct SpriteAnimation *)Sprite_AddAnimationFar(actor->sprite,
                                                          SPRITE_BLANK_32);
@@ -315,19 +316,19 @@ void Actor_ResetForLeader(s32 table) {
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
-  ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin = &camera->x.fixed;
-  work->camera = camera;
+  ((struct MapState *)Ram_HeapSlots->mapGrid)->origin = &camera->x.fixed;
+  state->camera = camera;
 }
 
 /// Returns the slot after the last placed actor (8 when there is none), or -1
 /// when the last slot is occupied.
 s32 Actor_FindLastActiveId(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 last = ACTOR_FIRST_PLACED - 1;
   s32 i;
 
   for (i = ACTOR_FIRST_PLACED; i <= FIELD_TREASURE_ACTOR - 1; i++) {
-    if (work->actors[i] != NULL)
+    if (state->actors[i] != NULL)
       last = i;
   }
   last++;
@@ -342,7 +343,7 @@ s32 Actor_FindLastActiveId(void) {
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 void Scene_AssignViewFlags(struct ViewedPlacement *entry) {
-  struct MapWork *view = Ram_HeapSlots->mapGrid;
+  struct MapState *view = Ram_HeapSlots->mapGrid;
 
   GameFlag_Clear(FLAG_IN_VIEW);
   GameFlag_Set(FLAG_OUT_OF_VIEW);
@@ -368,26 +369,26 @@ void Scene_AssignViewFlags(struct ViewedPlacement *entry) {
 
 /// Empties all the actor slots, without releasing the actors.
 void ObjectTable_Clear(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 i;
 
   for (i = 0; i < FIELD_ACTOR_COUNT; i++)
-    work->actors[i] = NULL;
+    state->actors[i] = NULL;
 }
 
 /// Returns the actor in slot actorId (below LOOKUP_ID_COUNT), or NULL.
 struct Actor *Actor_Lookup(u32 actorId) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   if (actorId > LOOKUP_ID_COUNT - 1)
     return NULL;
   // UB: ids from FIELD_ACTOR_COUNT to LOOKUP_ID_COUNT - 1 read past actors[],
-  // into the field work's requests; UBFIX returns NULL for them.
+  // into the field state's requests; UBFIX returns NULL for them.
 #ifdef UBFIX
   if (actorId > FIELD_ACTOR_COUNT - 1)
     return NULL;
 #endif
-  return work->actors[actorId];
+  return state->actors[actorId];
 }
 
 /// Saves up to 32 actors into gSnapshotObjects, with each one's slot,
@@ -466,8 +467,8 @@ void Actor_Restore(void) {
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
       if (index == Party_GetLeaderActor()) {
-        camera = gFieldWork->camera;
-        view = ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin;
+        camera = gFieldState->camera;
+        view = ((struct MapState *)Ram_HeapSlots->mapGrid)->origin;
         y = actor->y.fixed;
         camera->x.fixed = actor->x.fixed;
         camera->groundHeight = y;

@@ -23,7 +23,7 @@
 #include "system/input.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 
 #include "game/inventory.h"
 #include "item_ids.h"
@@ -291,7 +291,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
       Event_SetMessageId(message + 2);
       // "Whoops! Looks like you've got a full load there! This'll have to..."
       Event_ShowMessageAndWait(actor, 0);
-    } else if ((u32)gMainRoutineWork.coins < price) {
+    } else if ((u32)gMainRoutineState.coins < price) {
       Event_SetMessageId(message + 3);
       // "You don't enough money! What are you trying to pull? I can't give..."
       Event_ShowMessageAndWait(actor, 0);
@@ -340,7 +340,7 @@ void ShopTest_GiveEquipmentTestStock(void) {
 
   // "You got treasure!"
   FieldMessage_Show((s32)MsgYouGotTreasure, FIELD_MESSAGE_ZOOM);
-  gMainRoutineWork.coins = 777777;
+  gMainRoutineState.coins = 777777;
   for (i = 0; i < 10; i++) {
     Event_GiveItemTo(ITEM_GAME_TICKET, FELIX);
     Event_GiveItemTo(ITEM_LUCKY_MEDAL, FELIX);
@@ -652,12 +652,12 @@ void Party_AddIsaacsParty(void);
 /// ACTOR_LIGHT_BULB_D, and brings Isaac's party in when the party came in by
 /// ENTRANCE_WITH_ISAACS_PARTY.
 s32 Scene_Initialize(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 *transition = &work->transition;
-  struct MainRoutineWork *mainWork = &gMainRoutineWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  s32 *transition = &state->transition;
+  struct MainRoutineState *mainState = &gMainRoutineState;
 
   *transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  mainWork->messageSpeed = MESSAGE_SPEED_FAST;
+  mainState->messageSpeed = MESSAGE_SPEED_FAST;
   Actor_SetAnimationById(ACTOR_SANCTUM_MESSAGES, EMOTE_ELLIPSIS);
   Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, EMOTE_ELLIPSIS);
   Actor_SetAnimationById(ACTOR_ARMOR_SHOP_MESSAGES, EMOTE_ELLIPSIS);
@@ -666,7 +666,7 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimationById(ACTOR_LIGHT_BULB_B, EMOTE_LIGHT_BULB);
   Actor_SetAnimationById(ACTOR_LIGHT_BULB_C, EMOTE_LIGHT_BULB);
   Actor_SetAnimationById(ACTOR_LIGHT_BULB_D, EMOTE_LIGHT_BULB);
-  if (mainWork->entrance == ENTRANCE_WITH_ISAACS_PARTY)
+  if (mainState->entrance == ENTRANCE_WITH_ISAACS_PARTY)
     Party_AddIsaacsParty();
   return 0;
 }
@@ -697,7 +697,7 @@ void Text_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
 /// raises every party member 5 levels on Start or Select and 1 on A, and
 /// closes on B. Talking to ACTOR_LEVEL_EDITOR.
 void ShopTest_RunLevelEditor(void) {
-  struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
+  struct Unit *unit = Unit_Get(gMainRoutineState.leaderActorId);
   void *window = Window_Create(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
   const u8 *message = MsgRaiseEveryoneS;
   s32 redraw;
@@ -934,8 +934,8 @@ UNUSED void ShopTest_RaiseStatue(s32 stage, s32 x, s32 z, s32 zone, s32 slot) {
       }
       actor->scaleX = FIXED_ONE;
       actor->scaleY = FIXED_ONE;
-      actor->facing =
-          Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
+      actor->facing = Actor_GetById(gMainRoutineState.leaderActorId)->facing +
+                      DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(zone, slot);
     }
   }

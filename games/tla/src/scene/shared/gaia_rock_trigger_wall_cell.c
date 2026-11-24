@@ -7,10 +7,10 @@
 /// cell where he is drawn, if one that raises a step trigger, is his step
 /// trigger.
 void GaiaRock_TriggerWallCell(void) {
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    struct MapWork *map = Ram_HeapSlots->mapGrid;
-    struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
+  if (gMainRoutineState.movementMode == LEADER_MOVEMENT_KEYS) {
+    struct FieldState *state = Ram_HeapSlots->fieldState;
+    struct MapState *map = Ram_HeapSlots->mapGrid;
+    struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
     s32 x = actor->x.fixed / toFIXED(16);
     s32 z =
         (actor->z.fixed - actor->y.fixed + (toFIXED(0.5) - 1)) / toFIXED(16);
@@ -20,6 +20,6 @@ void GaiaRock_TriggerWallCell(void) {
 
     if (behavior >= CELL_BEHAVIOR_EVENT_FIRST &&
         behavior <= CELL_BEHAVIOR_EVENT_LAST)
-      work->stepTrigger = behavior;
+      state->stepTrigger = behavior;
   }
 }

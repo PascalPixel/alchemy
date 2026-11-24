@@ -91,7 +91,7 @@ s32 Inventory_CountFar(s32 unitId);
 /// passes nothing.
 u32 BuildStamp_GetTimeFar();
 /// Starts a new game's state.
-void MainRoutineWork_InitializeDefaultsFar(void);
+void MainRoutineState_InitializeDefaultsFar(void);
 /// Returns the ability the Djinni performs when it is unleashed.
 s32 Djinn_GetAbilityIdFar(s32 element, s32 index);
 /// Returns how many of the item in `slot` the unit carries (0 for an empty

@@ -9,13 +9,13 @@
 /// when party is set, otherwise the enemies (PLACE_ENEMY | slot); 0 when none
 /// lives.
 s32 BattleAI_ChooseRandomTarget(s32 party) {
-  struct BattleWork *battle;
+  struct BattleState *battle;
   u16 targets[6];
   s32 count;
   s32 i;
 
   count = 0;
-  battle = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleState;
 
   if (party != 0) {
     for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -39,7 +39,7 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 /// for ids up to ALLY_MAX, else the enemies), other than unitId itself; unitId
 /// when no other lives.
 s32 BattleUnit_FindStrongestAlly(u32 unitId) {
-  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleState *battle = Ram_HeapSlots->battleState;
   u32 best = unitId;
   s32 bestAttack = Unit_Get(unitId)->atk;
   s32 i;

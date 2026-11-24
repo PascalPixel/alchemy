@@ -3,7 +3,7 @@
 
 /// @file
 /// What the event commands share with the field and the scenes: the field
-/// Psynergy's casts and their works, the Djinn's join effects, the map
+/// Psynergy's casts and their states, the Djinn's join effects, the map
 /// screen's state, and the encounter zones of the story's battles.
 
 #include "types.h"
@@ -24,7 +24,7 @@ struct Vector3;
 /// Mind Read's wave (heap slot HEAP_SLOT_MIND_READ): each scanline's BG0
 /// scroll on two pages, the hue it tints the screen with, its caster and
 /// target, and its delay and particle cycle.
-struct MindReadWork {
+struct MindReadState {
   u16 lines[2][162];
   u16 phase;
   u8 page;
@@ -38,11 +38,11 @@ struct MindReadWork {
   u8 counter;
 };
 
-/// MindReadWork.counter held still: the wave sends no particles and plays no
+/// MindReadState.counter held still: the wave sends no particles and plays no
 /// sound, as while Lonesome George carries the party.
 #define MIND_READ_QUIET 99
 
-/// A cell a Psynergy touched, in cells, as FieldWork.psynergyCells lists them
+/// A cell a Psynergy touched, in cells, as FieldState.psynergyCells lists them
 /// (x of -1 ends the list).
 struct TouchCell {
   s16 x;
@@ -87,9 +87,9 @@ struct BurstParticle {
 /// The particles of the particle burst.
 #define PARTICLE_BURST_COUNT 96
 
-/// The particle burst's work (ParticleBurst_Start): its tiles, 96 sprites and
+/// The particle burst's state (ParticleBurst_Start): its tiles, 96 sprites and
 /// particles, its VRAM cache entry, a flash on frame 30 and its frame count.
-struct ParticleBurstWork {
+struct ParticleBurstState {
   u8 tiles[384];
   struct EffectSprite sprites[PARTICLE_BURST_COUNT];
   struct BurstParticle particles[PARTICLE_BURST_COUNT];
@@ -170,7 +170,7 @@ void FieldPsynergy_Blaze(void);
 void FieldPsynergy_Sand(void);
 
 void FieldPsynergy_Burst(void);
-/// The stage Burst passes its target's event each frame (BurstWork.shake).
+/// The stage Burst passes its target's event each frame (BurstState.shake).
 enum BurstStage {
   BURST_STAGE_QUIET,       ///< no explosion this frame
   BURST_STAGE_DYING_DOWN,  ///< the great blast dying down

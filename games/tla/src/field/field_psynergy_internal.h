@@ -6,7 +6,7 @@
 /// field_psynergy.c includes it before the parts, and each part includes it
 /// too.
 
-// world_map.h first: battle.h names struct WorldMapWork, and a struct declared
+// world_map.h first: battle.h names struct WorldMapState, and a struct declared
 // before its definition keeps a smaller alignment, which
 // field_psynergy_map_screen.c's copies of it show.
 #include "field/world_map.h"
@@ -31,13 +31,13 @@
 #include "sound/sound.h"
 #include "field/actor.h"
 #include "system/ram_buffer.h"
-#include "field/field_psynergy_work.h"
+#include "field/field_psynergy_state.h"
 #include "field/sprite.h"
 #include "field/field_event.h"
 #include "field/field_particle.h"
 #include "field/actor_view.h"
 #include "system/object_lookup.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/effect_sprite.h"
 #include "system/vector3.h"
 #include "graphics/resource.h"
@@ -92,9 +92,9 @@ enum RetreatParticleState {
 #define SWAY_RAMP (toFIXED(3) / 20) ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 
-/// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
-/// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
-struct CycloneWork {
+/// Cyclone's state (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
+/// (ParticleBurstState) at its start, then the leader's ride on the whirlwind.
+struct CycloneState {
   u8 particleBurst[6920];
   s16 count;
   u8 unusedAfterCount[2]; ///< no code names it
@@ -128,7 +128,7 @@ struct CycloneWork {
 #define PUDDLE_ANIMATION_FROZEN 0
 #define PUDDLE_ANIMATION_PUDDLE 1
 
-/// FieldWork.psynergyDrawFlags, which a scene sets for Pound and Scoop to
+/// FieldState.psynergyDrawFlags, which a scene sets for Pound and Scoop to
 /// draw in its room.
 #define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 ///< nor Pound's glow on the ground
 /// The fist or hand at priority 1, not sorted by depth.

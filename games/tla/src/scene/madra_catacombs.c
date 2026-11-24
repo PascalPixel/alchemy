@@ -20,7 +20,7 @@
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/map_grid.h"
 #include "system/iwram_call.h"
 #include "field/event_inline.h"
@@ -210,15 +210,15 @@ extern struct Trigger gMadraCatacombs_Triggers[];
 void MadraCatacombs_SetUpStoneDoorRoom(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     return gMadraCatacombs_StoneDoorEntrances;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_BookshelfEntrances;
   return gSceneEntrances;
 }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_MADRA_CATACOMBS_LADDERS)
     return gMadraCatacombs_LadderRoomRegions;
@@ -228,29 +228,29 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     return gMadraCatacombs_EntrancePlacements;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     return gMadraCatacombs_ChampaTunnelPlacements;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_BookshelfPlacements;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_TABLET)
     return gMadraCatacombs_TabletPlacements;
   return gMadraCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     return gMadraCatacombs_EntranceTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_LADDERS)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_LADDERS)
     return gMadraCatacombs_LaddersTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     return gMadraCatacombs_ChampaTunnelTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     return gMadraCatacombs_StoneDoorTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_BookshelfTriggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_TABLET)
     return gMadraCatacombs_TabletTriggers;
   return gMadraCatacombs_Triggers;
 }
@@ -262,13 +262,13 @@ void FlagBlock_ApplyFlags(const void *data);
 /// (cells (9, 22) and (10, 22)) before the Ruin Key has opened it: "The door
 /// won't budge. ...Must be locked."
 void MadraCatacombs_TryLockedDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   // "The door won't budge. ...Must be locked."
   FieldMessage_Show((s32)&MsgFieldDoorWontBudge, 1);
-  work->fieldMenu = 1;
+  state->fieldMenu = 1;
   Event_End();
 }
 
@@ -480,7 +480,7 @@ void MadraCatacombs_PushVinePillar(void) {
 
   if (Leader_CanPushObjectAhead() != 0) {
     actor = Actor_GetById(
-        Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
+        Field_FindNearbyTalkTarget(gMainRoutineState.leaderActorId));
     Pillar_LowerHeldCells(gMadraCatacombs_VinePillar);
     Leader_PushObjectAhead();
     MadraCatacombs_SettleVinePillar(actor);
@@ -501,10 +501,10 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
 /// comes to rest becomes ground to stand on, so he can climb its vines to the
 /// upper level, and one cell east, on cell (35, 17), it stays on later visits.
 void MadraCatacombs_FinishMovingVinePillar(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  if (work->movedBlock != 0)
-    MadraCatacombs_SettleVinePillar(work->movedBlock);
+  if (state->movedBlock != 0)
+    MadraCatacombs_SettleVinePillar(state->movedBlock);
 }
 
 /// The braziers down the hall before Moloch's tablet burn: each flame stands
@@ -562,8 +562,8 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
 /// opens into the east room with the stairs down to the red double door, and
 /// the opening at (54, 18) leads into the Champa tunnel.
 void MadraCatacombs_EnterDoor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct MainRoutineState *party = &gMainRoutineState;
   struct Actor *actor;
   s32 cell;
 
@@ -584,7 +584,7 @@ void MadraCatacombs_EnterDoor(void) {
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 /// A door opens, its open picture copied over it from (sourceX, sourceZ), and
@@ -592,7 +592,7 @@ void MadraCatacombs_EnterDoor(void) {
 /// one cell wide opens as he steps to its middle.
 void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
                                      s32 width, s32 height) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   struct Actor *actor;
   s32 cell;
 
@@ -604,9 +604,9 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
     Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(sourceX, sourceZ, x, z, width, height);
   Event_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
   if (width == 1) {
-    actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+    actor = Actor_GetById(gMainRoutineState.leaderActorId);
     cell = FIXEDtoINT(actor->x.fixed);
     Actor_SetMoveTarget(
         actor, toFIXED(8 - cell % MAPGRID_CELL_PIXELS) + actor->x.fixed,
@@ -614,13 +614,13 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
     FieldActor_WaitForMove(actor);
     actor->facing = FACING_NORTH;
   }
-  Actor_SetScript(gMainRoutineWork.leaderActorId,
+  Actor_SetScript(gMainRoutineState.leaderActorId,
                   gLeader_WalkThroughDoorScript);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 /// Felix walks north up the purple carpet of the broken building's main hall
@@ -659,8 +659,8 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);    \
-    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId),        \
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);   \
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineState.leaderActorId),       \
                          SPRITE_COLOR_HIDDEN);                                 \
     wait(1);                                                                   \
     Event_StartScreenTransition();                                             \
@@ -677,16 +677,16 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel,
                          CHAMPA_TUNNEL_UPPER_PATH_END)
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     MadraCatacombs_SetUpVillage();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
+  else if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     MadraCatacombs_SetUpChampaTunnel();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
+  else if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     MadraCatacombs_SetUpStoneDoorRoom();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
+  else if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     MadraCatacombs_SetUpBookshelfRoom();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
+  else if (gMainRoutineState.next == SCENE_MADRA_CATACOMBS_TABLET)
     MadraCatacombs_SetUpTabletRoom();
   return 0;
 }
@@ -724,7 +724,7 @@ void MadraCatacombs_SetUpVillage(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
     MapGrid_CopyCellsTo(82, 74, 116, 16, 5, 3);
     MapGrid_CopyCellAttributes(52, 11, 5, 1, 52, 18);
-    if (gMainRoutineWork.entrance ==
+    if (gMainRoutineState.entrance ==
         MADRA_CATACOMBS_ENTRANCE_FROM_MADRA_CATACOMBS_CHAMPA_TUNNEL_WEST)
       MadraCatacombs_LeaveBlockedVillage();
     else
@@ -743,7 +743,7 @@ void MadraCatacombs_SetUpChampaTunnel(void) {
     MapGrid_CopyCellsTo(68, 70, 113, 11, 5, 3);
     MapGrid_CopyCellsTo(50, 74, 50, 75, 2, 1);
     MapGrid_CopyCellAttributes(49, 9, 5, 1, 49, 13);
-    if (gMainRoutineWork.entrance == CHAMPA_TUNNEL_UPPER_PATH_END)
+    if (gMainRoutineState.entrance == CHAMPA_TUNNEL_UPPER_PATH_END)
       MadraCatacombs_LeaveBlockedTunnel();
     else
       wait(1);

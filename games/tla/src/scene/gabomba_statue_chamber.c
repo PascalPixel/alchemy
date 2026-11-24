@@ -43,7 +43,7 @@
 #include "field/scene_tables.h"
 #include "gamepak/far_call/system.h"
 #include "scene/scene.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
@@ -164,7 +164,7 @@ void ActorSystem_SuspendProjectionAndShowSprites(void);
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     return gGabombaStatueChamber_IdolExitRegions;
@@ -174,7 +174,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     return gGabombaStatueChamber_IdolActorPlacements;
@@ -184,7 +184,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s16 scene = gMainRoutineWork.next;
+  s16 scene = gMainRoutineState.next;
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     return gGabombaStatueChamber_IdolTriggers;
@@ -200,7 +200,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// no window.
 void GabombaStatueChamber_StatueSpeaks(void) {
   volatile u16 *color = (volatile u16 *)&CENTERED_TEXT_COLOR;
-  struct FieldWork *work;
+  struct FieldState *state;
 
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
@@ -209,8 +209,8 @@ void GabombaStatueChamber_StatueSpeaks(void) {
   wait(20);
   *color = RGB_WHITE;
   wait(1);
-  work = Ram_HeapSlots->fieldWork;
-  FieldMessage_ShowCentered((s16)work->message++, 0, 2);
+  state = Ram_HeapSlots->fieldState;
+  FieldMessage_ShowCentered((s16)state->message++, 0, 2);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -268,10 +268,10 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
     gGabombaStatueChamber_ShownItem->motionFlags = ACTOR_FLOATS;
   }
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 358, 108);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_PlaceOnActor(ACTOR_CHAMBER_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+  Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 358, 108);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_PlaceOnActor(ACTOR_CHAMBER_KRADEN, gMainRoutineState.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_CHAMBER_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_CHAMBER_KRADEN, 364, 124);
@@ -294,14 +294,14 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_CHAMBER_AKAFUBU, 0);
   // "Akafubu! Your magic has grown strong! At last, you are worthy of the..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHWEST, 40);
   // "I give you the feathers and gown that are the badges of your office!"
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_CHAMBER_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   Actor_FaceDirectionById(ACTOR_CHAMBER_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
@@ -344,7 +344,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_WITCH_DOCTOR, 0);
   Actor_WalkToAndWait(ACTOR_WITCH_DOCTOR, 392, 220);
   Actor_SetPosition(ACTOR_WITCH_DOCTOR, 0, 0);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_CHAMBER_KRADEN, FACING_EAST, 0);
   Actor_Get(ACTOR_CHAMBER_CHEST)->motionFlags = 0;
   Actor_SetMovementTypeAndWaitById(ACTOR_CHAMBER_CHEST,
@@ -352,19 +352,19 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_Wait(20);
   // "And there is one thing that remains for me to give you..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_CHAMBER_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST, 80);
   // "Akafubu... You hasty fool... I had something else to give you, and..."
   GabombaStatueChamber_StatueSpeaks();
   Event_Wait(20);
   // "Say, you there..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 20);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 20);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTHEAST, 20);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_WEST, 40);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTHEAST, 20);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 2);
@@ -377,49 +377,49 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
     wait(1);
   }
   // "Yes! You! You, looking around there!"
-  FieldMessage_ShowCentered((s16)(gFieldWork->message)++, 0, 2);
+  FieldMessage_ShowCentered((s16)(gFieldState->message)++, 0, 2);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_ShowEmoteById(gMainRoutineState.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHWEST, 20);
   // "I have magic for Akafubu, magic that he will soon need, ...but he is..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST, 0);
   // "As a result, I have decided that I shall not pass this magic on to..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
+  Actor_ShowEmote(gMainRoutineState.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_CHAMBER_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "Tell this to Akafubu: If he desires this new magic, then he must earn..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_CHAMBER_KRADEN, FACING_EAST, 0);
   Actor_SetMovementTypeAndWaitById(ACTOR_CHAMBER_CHEST,
                                    gGabombaStatueChamber_ChestRisesScript);
   // "If Akafubu does not refine his magical arts, then he will never earn..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
+  Actor_SetAttachedEffect(gMainRoutineState.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_CHAMBER_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST, 20);
   // "This power shall not be realized until he ceases living only for..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHWEST, 20);
   // "Tell him so!"
   GabombaStatueChamber_StatueSpeaks();
   Actor_FaceDirectionAndWait(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST);
   // "I don't suppose you could just...give that magic to us?"
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_ShowEmoteById(ACTOR_HOLE_COVER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "What do you mean?"
   GabombaStatueChamber_StatueSpeaks();
@@ -432,12 +432,12 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
   // "Perhaps if he must compete for his power, he will focus and take his..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHWEST);
   Actor_SetAnimationAndWait(ACTOR_CHAMBER_KRADEN, ANIM_NOD);
   // "But before you do this thing, you must convey to Akafubu all that I..."
   GabombaStatueChamber_StatueSpeaks();
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST);
   Actor_SetAnimationById(ACTOR_CHAMBER_KRADEN, ANIM_SHAKE_HEAD);
   // "Oh, of course! We wouldn't dream of cheating him... We will tell him..."
@@ -472,19 +472,19 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_Wait(40);
   Sound_Play(MUS_INSIDE_THE_GABOMBA_STATUE);
   Event_Wait(40);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHWEST);
   // "Felix... Go get Piers's precious orb."
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST, 0);
-  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 392, 104);
-  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+  Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 392, 104);
+  Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                     FACING_NORTH);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId,
                          ANIM_LEADER_ARMS_RAISED);
   if (gGabombaStatueChamber_ShownItem != 0) {
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    leader = Actor_Get(gMainRoutineState.leaderActorId);
     actor = gGabombaStatueChamber_ShownItem;
     actor->motionFlags = 0;
     Actor_SetMoveTarget((s32)actor, leader->x.fixed,
@@ -494,21 +494,21 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   PartyInventory_GiveItem(ITEM_BLACK_CRYSTAL, 0);
   if (gGabombaStatueChamber_ShownItem != 0)
     Actor_Release((s32)gGabombaStatueChamber_ShownItem);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 0);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_STAND);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST, 40);
   // "Felix... Do you have any idea exactly what this \"Great Gabomba\" really
   // is?" Yes: "If you have unraveled that which I cannot, then perhaps..." No:
   // "You do not understand either? Then I do not feel quite so foolish..."
   FieldMessage_ShowAtActor(ACTOR_CHAMBER_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     Actor_SetAnimationById(ACTOR_CHAMBER_KRADEN, ANIM_SHAKE_HEAD);
     // "If you have unraveled that which I cannot, then perhaps you are the..."
     Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     Actor_SetAnimationById(ACTOR_CHAMBER_KRADEN, ANIM_NOD);
     // "You do not understand either? Then I do not feel quite so foolish..."
     Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
@@ -522,20 +522,20 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   // power ourselves?" Yes: "Oh! You didn't need much convincing at all, did
   // you, Felix?" No: "Hrmm... You would feel guilty about taking it, eh,..."
   FieldMessage_ShowAtActor(ACTOR_CHAMBER_KRADEN, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     // "Oh! You didn't need much convincing at all, did you, Felix?"
     Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     // "Hrmm... You would feel guilty about taking it, eh, Felix?"
     Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
   }
   Actor_SetAnimationById(ACTOR_CHAMBER_KRADEN, ANIM_SHAKE_HEAD);
   // "I needn't remind you, but... We're going to need every kind of..."
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   // "Either way, Felix, we are, at the very least, obligated to deliver..."
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_CHAMBER_KRADEN, ANIM_NOD);
@@ -543,23 +543,23 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
   // "Then, maybe we can come back inside this Gabomba statue some other..."
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetMovementTypeById(ACTOR_CHAMBER_KRADEN,
                             gGabombaStatueChamber_PartyLeavesScript);
   Event_Wait(20);
-  Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,
+  Actor_SetMovementTypeById(gMainRoutineState.leaderActorId,
                             gGabombaStatueChamber_PartyLeavesScript);
   Event_Wait(40);
   PaletteFade_SetTarget(0, 0);
   PaletteFade_StartInterpolation(60);
   wait(64);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = 10;
+  gFieldState->transitionFrames = 10;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
-  gFieldWork->transitionFrames = 1;
+  gFieldState->transitionFrames = 1;
   PaletteFade_StartInterpolation(1);
   ActorSystem_SuspendProjectionAndShowSprites();
   FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
@@ -567,10 +567,10 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   GameFlag_Set(FLAG_GABOMBA_MESSAGE_CARRIED);
   GameFlag_Clear(FLAG_KIBOMBO_AT_CEREMONY);
   GameFlag_Clear(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
-  gMainRoutineWork.retreatScene = SCENE_KIBOMBO;
-  gMainRoutineWork.retreatEntrance = KIBOMBO_FROM_WORLD_MAP;
-  gMainRoutineWork.restartScene = SCENE_KIBOMBO_HOUSES;
-  gMainRoutineWork.restartEntrance = KIBOMBO_HOUSES_FROM_KIBOMBO_NORTHEAST;
+  gMainRoutineState.retreatScene = SCENE_KIBOMBO;
+  gMainRoutineState.retreatEntrance = KIBOMBO_FROM_WORLD_MAP;
+  gMainRoutineState.restartScene = SCENE_KIBOMBO_HOUSES;
+  gMainRoutineState.restartEntrance = KIBOMBO_HOUSES_FROM_KIBOMBO_NORTHEAST;
   Import_EventSetExitRequest(
       GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_TO_KIBOMBO_HOUSES);
 }
@@ -579,26 +579,26 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
 /// its ladder out of sight, and the screen goes dark. He leaves by the exit
 /// whose number the hole's cells hold.
 void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct FieldState *state = Ram_HeapSlots->fieldState;
+  struct Actor *actor = Actor_GetById(gMainRoutineState.leaderActorId);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   actor->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
-  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, x, z);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId,
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 1);
+  Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, x, z);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_NORTH, 0);
+  Actor_WaitForScriptEndById(gMainRoutineState.leaderActorId);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineState.leaderActorId), 0);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId,
                          ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
   FieldActor_SetMoveTarget(actor, x, -12, z);
   Actor_WaitForMove(actor);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_CLIMB);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_LEADER_CLIMB);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(work->stepTrigger);
+  Import_EventSetExitRequest(state->stepTrigger);
 }
 
 /// Felix walks north into the hole in the small idol's chamber, in the narrow
@@ -613,7 +613,7 @@ void GabombaStatueChamber_StepIntoFirstHole(void) {
 /// Catacombs. The four cells beside the hole answer only while he presses
 /// toward it, so that he can walk round it without falling in.
 void GabombaStatueChamber_StepIntoSecondHole(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
 
@@ -642,7 +642,7 @@ void BlendScript_Suspend(void);
 /// The ride is the descent played backwards: the map's layers start
 /// `LIFT_TRAVEL` pixels on and come back a pixel a frame.
 void GabombaStatueChamber_RideLiftBackUp(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *lower = &map->layers[0];
   struct MapLayer *upper = &map->layers[2];
   s32 i, step;
@@ -667,11 +667,11 @@ void GabombaStatueChamber_RideLiftBackUp(void) {
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 328, 184);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+  Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 328, 184);
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
   for (; i != 0; i--) {
     if (i >= LIFT_ASCENT_BLEND_END &&
         i < LIFT_ASCENT_BLEND_END + LIFT_BLEND_FRAMES) {
@@ -685,7 +685,7 @@ void GabombaStatueChamber_RideLiftBackUp(void) {
     upper->offsetY += -toFIXED(1);
     wait(1);
   }
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   Sound_Play(SE_STOP_EXIT_SE);
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
@@ -703,7 +703,7 @@ void GabombaStatueChamber_RideLiftBackUp(void) {
 /// The lift never moves on screen; both map layers scroll `LIFT_TRAVEL`
 /// pixels, and Felix is put on the lower floor's layer at the end.
 void GabombaStatueChamber_RideLiftDown(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *lower = &map->layers[0];
   struct MapLayer *upper = &map->layers[2];
   s32 i, step;
@@ -711,14 +711,14 @@ void GabombaStatueChamber_RideLiftDown(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   BlendScript_Suspend();
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 0, -8);
-  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.8);
+  Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, 0, -8);
+  Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
+  Actor_FaceDirectionAndRefreshById(gMainRoutineState.leaderActorId,
                                     FACING_SOUTH);
   Sound_Play(SE_MATERIALIZE);
   step = 1;
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
   for (i = 0; i <= LIFT_TRAVEL - 1; i++) {
     if ((u32)(i - LIFT_DESCENT_BLEND_START) <= LIFT_BLEND_FRAMES - 1) {
       s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
@@ -731,12 +731,12 @@ void GabombaStatueChamber_RideLiftDown(void) {
     upper->offsetY += toFIXED(1);
     wait(1);
   }
-  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 1);
   Sound_Play(SE_STOP_EXIT_SE);
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
+  Actor_GetById(gMainRoutineState.leaderActorId)->layer = 1;
   GameFlag_Set(FLAG_LEADER_ON_LIFT);
   GameFlag_Set(FLAG_LIFT_DOWN);
   Event_End();
@@ -899,7 +899,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   FieldActor_SetPositionAndResetMotion(
       ((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL)), toFIXED(392), 0, toFIXED(268));
   wait(1);
-  leader = gMainRoutineWork.leaderActorId;
+  leader = gMainRoutineState.leaderActorId;
   Actor_SetPositionAndFacing(leader, toFIXED(360), toFIXED(184),
                              westSideFacing = FACING_NORTHEAST);
   Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(184),
@@ -926,7 +926,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
   GabombaStatueChamber_UnrollTongue();
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -950,7 +950,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   wait(40);
   Actor_SetAnimationById(ACTOR_LEFT_DRUM, 2);
   Actor_SetAnimationById(ACTOR_RIGHT_DRUM, 2);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_BLACK_CRYSTAL);
+  Actor_WatchAndSetScript(gMainRoutineState.leaderActorId, ACTOR_BLACK_CRYSTAL);
   Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_BLACK_CRYSTAL);
   Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_BLACK_CRYSTAL);
   Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_BLACK_CRYSTAL);
@@ -970,7 +970,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   FieldCamera_MoveTo(392, CAMERA_KEEP, 168, 1);
   Actor_SetSpeed(ACTOR_BLACK_CRYSTAL, 0.8);
   Actor_MoveToAndWaitById(ACTOR_BLACK_CRYSTAL, 392, 160);
-  Actor_Stop(gMainRoutineWork.leaderActorId);
+  Actor_Stop(gMainRoutineState.leaderActorId);
   Actor_Stop(ACTOR_JENNA);
   Actor_Stop(ACTOR_SHEBA);
   Actor_Stop(ACTOR_PIERS);
@@ -1009,7 +1009,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   // "There must be a room on the other side of this statue..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineState.leaderActorId, ANIM_NOD);
   Sound_Play(MUS_SILENCE);
   {
     s32 turn = FACING_NORTH_NORTHEAST;
@@ -1021,7 +1021,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_STAND);
   wait(1);
-  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
@@ -1034,16 +1034,16 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   // "What are you doing here? Are you Kibombo!?" Yes: "What? Do you take me for
   // a naive fool!?" No: "Then what are you doing inside the Great..."
   FieldMessage_ShowAtActor(ACTOR_AKAFUBU, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     FieldEffect_SetAttached(ACTOR_AKAFUBU,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
     // "What? Do you take me for a naive fool!?"
     Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
   } else {
-    gFieldWork->message += 1;
+    gFieldState->message += 1;
     Actor_ShowEmote(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     // "Then what are you doing inside the Great Gabomba!?"
     Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
@@ -1062,7 +1062,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Wait(20);
   // "What is that supposed to mean?"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1083,7 +1083,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Wait(10);
   Actor_SetMovementTypeById(ACTOR_AKAFUBU, gGabombaStatueChamber_WalkOffScript);
   Event_Wait(60);
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1111,7 +1111,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   GabombaStatueChamber_UnrollTongue();
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(360),
+  Actor_SetPositionAndFacing(gMainRoutineState.leaderActorId, toFIXED(360),
                              toFIXED(216), FACING_NORTHEAST);
   Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(216),
                              FACING_NORTHEAST);
@@ -1124,7 +1124,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
                              FACING_NORTH_NORTHWEST);
   heap = Ram_HeapSlots;
   System_Wait(1);
-  ((struct FieldWork *)heap->fieldWork)->transition =
+  ((struct FieldState *)heap->fieldState)->transition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1160,15 +1160,15 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   // "Do you think Akafubu will really return the orb to us?" Yes: "Maybe we had
   // him all wrong..." No: "I think Jenna is right. It sounds like he's..."
   FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineState.leaderActorId, 0) ==
       0) {
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
     // "Maybe we had him all wrong..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
-    ((struct FieldWork *)heap->fieldWork)->message++;
+    ((struct FieldState *)heap->fieldState)->message++;
   } else {
-    ((struct FieldWork *)heap->fieldWork)->message++;
+    ((struct FieldState *)heap->fieldState)->message++;
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
     // "I think Jenna is right. It sounds like he's going to return what he..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
@@ -1193,7 +1193,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 20);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -1214,15 +1214,15 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct FieldWork *work;
+  struct FieldState *state;
   s16 scene;
 
-  work = Ram_HeapSlots->fieldWork;
-  work->transition =
+  state = Ram_HeapSlots->fieldState;
+  state->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   ((struct Actor *)Actor_GetById(Party_GetLeaderActor()))->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  scene = gMainRoutineWork.next;
+  scene = gMainRoutineState.next;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
     GabombaStatueChamber_InitializeIdol();
   else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
@@ -1253,7 +1253,7 @@ void GabombaStatueChamber_InitializeIdol(void) {
   } else {
     s32 entrance;
 
-    entrance = gMainRoutineWork.entrance;
+    entrance = gMainRoutineState.entrance;
     if (entrance ==
         GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH) {
       GabombaStatueChamber_WhereIsTheOrb();
@@ -1266,7 +1266,7 @@ void GabombaStatueChamber_InitializeIdol(void) {
     }
   }
   {
-    struct MainRoutineWork *routine = &gMainRoutineWork;
+    struct MainRoutineState *routine = &gMainRoutineState;
 
     if (routine->entrance ==
         GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS) {
@@ -1282,7 +1282,7 @@ void GabombaStatueChamber_InitializeIdol(void) {
 void GabombaStatueChamber_InitializeLift(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     if (GameFlag_Get(FLAG_LIFT_DOWN)) {
-      struct MapWork *map = Ram_HeapSlots->mapGrid;
+      struct MapState *map = Ram_HeapSlots->mapGrid;
       struct MapLayer *front = &map->layers[0];
       struct MapLayer *back = &map->layers[2];
       s32 step = 1;
@@ -1305,7 +1305,7 @@ void GabombaStatueChamber_InitializeLift(void) {
       wait(1);
     }
   } else if (
-      gMainRoutineWork.entrance ==
+      gMainRoutineState.entrance ==
       GABOMBA_STATUE_CHAMBER_LIFT_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR) {
     GabombaStatueChamber_RideLiftBackUp();
   }
@@ -1329,15 +1329,15 @@ void GabombaStatueChamber_InitializeWitchDoctor(void) {
     GabombaStatueChamber_ShowBlackCrystal();
   }
 #if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
-  if (gMainRoutineWork.entrance ==
+  if (gMainRoutineState.entrance ==
       GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_FROM_GABOMBA_CATACOMBS_TELEPORTERS) {
     if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_PINION)) {
-      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
-      gMainRoutineWork.retreatEntrance =
+      gMainRoutineState.retreatScene = SCENE_GABOMBA_STATUE_PINION;
+      gMainRoutineState.retreatEntrance =
           GABOMBA_STATUE_PINION_FROM_KIBOMBO_STATUE_GROUNDS;
     } else if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_IDOL)) {
-      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
-      gMainRoutineWork.retreatEntrance =
+      gMainRoutineState.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
+      gMainRoutineState.retreatEntrance =
           GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS;
     }
   }

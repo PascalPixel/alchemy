@@ -23,7 +23,7 @@ void Actor_SnapToTerrain(void *actorPointer) {
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
 s16 *SceneItem_GetRows(void) {
-  s32 scene = gMainRoutineWork.next;
+  s32 scene = gMainRoutineState.next;
   s16 *p = gSceneItems;
   s16 *found = NULL;
   s32 header;
@@ -71,7 +71,7 @@ enum {
 /// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   s16 *rows = SceneItem_GetRows();
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
   s32 i;
   s16 type;
   s32 id;
@@ -110,7 +110,7 @@ void Field_PlaceTreasureSpots(void) {
       }
       actor = Actor_CreateFar(kind, position[0], position[1], position[2]);
       if (actor != NULL) {
-        if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+        if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
           actor->motionFlags = ACTOR_FALLS;
           actor->groundHeight = 0;
           actor->y.fixed = 0;
@@ -120,7 +120,7 @@ void Field_PlaceTreasureSpots(void) {
           actor->y.fixed += actor->groundHeight;
           if (buried) {
             u8 *motionFlags = &actor->motionFlags;
-            struct MapWork *map;
+            struct MapState *map;
             struct MapCell *cells;
             s32 x;
             s32 z;
@@ -149,7 +149,7 @@ void Field_PlaceTreasureSpots(void) {
         actor->homeZ = actor->z.fixed / FIXED_ONE;
         actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
         actor->collisionFlags = ACTOR_SOLID;
-        work->actors[FIELD_TREASURE_ACTOR + i] = actor;
+        state->actors[FIELD_TREASURE_ACTOR + i] = actor;
         if (type == CONTAINER_GROUND)
           Actor_ShowItemIconById(FIELD_TREASURE_ACTOR + i, item);
         if (type == CONTAINER_POND)

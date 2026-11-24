@@ -93,7 +93,7 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 k;
   DrawRectangle drawLower;
@@ -110,9 +110,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   /* FAKEMATCH(dead): heap set through its own address; as heap = Ram_HeapSlots.
    */
   *&heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleEffect;
+  state = (struct BattleEffectState *)heap->battleEffect;
   canvas = heap->battleCanvas;
-  camera = heap->cameraWork;
+  camera = heap->cameraState;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
   // The upper half draws mirrored top to bottom; the far side mirrors
@@ -134,7 +134,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The streak pictures, and the mode's colours.
-  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, work->sheet, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, state->sheet, 0, 0);
   switch (mode) {
   case STREAK_STYLE_EMBER:
     resource = RESOURCE_EMBER_STREAK_SHEET;
@@ -156,7 +156,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
   // Each transfer halves the canvas, leaving a trail.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = BattleObject_GetFar(args->user)->object;
   {
@@ -169,7 +169,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     EFFECT_FOR_EACH_TARGET(k, args) {
       target = BattleObject_GetFar(args->targets[k])->object;
       for (j = 0; j != streaks; j++) {
-        struct Particle *streak = &work->particles[k * streaks + j];
+        struct Particle *streak = &state->particles[k * streaks + j];
 
         SET_POSITION(streak, source->x, source->y + lift, source->z);
         SET_VELOCITY(streak, (target->x - streak->x) / STREAK_FLIGHT,
@@ -180,7 +180,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     }
 
     for (frame = 0; frame != totalFrames; frame++) {
-      s32 *row = work->bg2xLines;
+      s32 *row = state->bg2xLines;
 
       // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
       // here, so the canvas does not ripple. The last 16 frames fade out.
@@ -208,7 +208,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             // From here lift holds the streak's start frame.
             lift = k * STREAK_TARGET_DELAY + j * STREAK_SPACING;
             if (frame >= lift) {
-              struct Particle *streak = &work->particles[k * streaks + j];
+              struct Particle *streak = &state->particles[k * streaks + j];
               s32 step;
 
               // The picture changes every 8 frames, stopping at the sixth.
@@ -218,8 +218,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (STREAK_VALUE(mode, STREAK_ANIMATE)) {
-                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
-                                           frame / 2 % 3 * STREAK_FRAME_BYTES];
+                u8 *picture = &state->sheet[step * PICTURE_BYTES(STREAK) +
+                                            frame / 2 % 3 * STREAK_FRAME_BYTES];
 
                 drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y - STREAK_HEIGHT, STREAK_WIDTH,
@@ -227,8 +227,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                 drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y, STREAK_WIDTH, STREAK_HEIGHT);
               } else {
-                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
-                                           2 * STREAK_FRAME_BYTES];
+                u8 *picture = &state->sheet[step * PICTURE_BYTES(STREAK) +
+                                            2 * STREAK_FRAME_BYTES];
 
                 drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y - STREAK_HEIGHT, STREAK_WIDTH,
@@ -275,14 +275,14 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           }
           if (STREAK_VALUE(mode, STREAK_MOTION) != -1 &&
               frame == k * STREAK_TARGET_DELAY + 24) {
-            work->shakeFrames = 4;
+            state->shakeFrames = 4;
             BattleMotion_ApplyKnockbackFar(args->targets[k],
                                            STREAK_VALUE(mode, STREAK_MOTION));
           }
         }
       }
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
 
@@ -340,7 +340,7 @@ void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
 void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   FIXED point[3];
   struct ScreenPoint position;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   BlitterPair draw;
   struct BattleCamera *camera;
@@ -353,9 +353,9 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 group = MOTE_VISIBLE_COUNT / 4; // four groups set out, 8 frames apart
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   sheet = Ram_HeapSlots->battleSheet;
   if (mode == MOTE_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
@@ -378,7 +378,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_GREEN_PALETTE;
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
 
   // Launch every mote from the user, with a speed and a direction of its
   // own. Slaver throws them up, faster, in a half-circle
@@ -484,7 +485,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         }
       }
     }
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

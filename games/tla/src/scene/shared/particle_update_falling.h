@@ -6,16 +6,16 @@
 /// each frame, and shows the five pictures of falling_rock.png in turn, four
 /// frames apiece, shrinking as it goes.
 void Particle_UpdateFalling(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuWork;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
+  struct ParticleState *state = Ram_HeapSlots->menuState;
+  struct Particle *particle = state->particles;
+  struct ParticleSprite *sprite = state->sprites;
   s32 i;
   FIXED step = -(toFIXED(1) / 2);
 
-  for (i = ARRAY_COUNT(work->particles) - 1; i >= 0;
+  for (i = ARRAY_COUNT(state->particles) - 1; i >= 0;
        i--, sprite++, particle++) {
     if ((u32)particle->variant <= FALLING_ROCK_FRAMES - 1) {
-      u16 *base = &work->tile;
+      u16 *base = &state->tile;
       s32 mask = 7;
       s32 tile = (u16)((*base + ((particle->variant >> 2) & mask) *
                                     SPRITE_TILES_8BPP(16, 16)) &

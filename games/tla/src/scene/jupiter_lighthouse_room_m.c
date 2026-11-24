@@ -31,7 +31,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/field_event.h"
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
@@ -258,7 +258,7 @@ void JupiterLighthouse_RideUpperWhirlwind(void) {
 /// movement ends as he is caught. Walking there without Hover does nothing.
 void JupiterLighthouse_RideWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
-    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct MainRoutineState *party = &gMainRoutineState;
 
     if (party->movementMode == LEADER_MOVEMENT_HOVER) {
       struct Actor *actor = Actor_Get(party->leaderActorId);
@@ -326,7 +326,7 @@ void JupiterLighthouse_FlashSky(void) {
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 2);
   FieldActor_Jump(ACTOR_FELIX, 6, 0);
   Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_FELIX, -16, 0);
@@ -342,8 +342,8 @@ void JupiterLighthouse_FlashSky(void) {
   PaletteFade_Interpolate(60);
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
-                         gMainRoutineWork.windowBrightness);
+  FieldWindowColor_Apply(gMainRoutineState.windowHue,
+                         gMainRoutineState.windowBrightness);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -382,7 +382,7 @@ static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 layer,
 /// follows the lit path to the Hover pad as the puzzle-solved jingle plays.
 /// Anywhere else, the block simply stands where it is put.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_GetById(gMainRoutineState.leaderActorId);
   struct Actor *actor = Actor_GetById(id);
   s32 x;
   s32 frames;
@@ -407,44 +407,44 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     FieldEvent_ResolvePendingActions(0);
     FieldCamera_MoveTo(1016, CAMERA_KEEP, 232, 1);
     FieldCamera_WaitForArrival();
-    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
+    Actor_SetSpeed(gMainRoutineState.leaderActorId, 1);
     x = FIELD_CELL(leader->x.fixed);
     if (x == ENERGY_BLOCK_GAP_CELL_X + 1) {
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1032, 232);
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 232);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 1032, 232);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 1000, 232);
     } else if (x == ENERGY_BLOCK_GAP_CELL_X) {
-      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 232);
+      Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 1000, 232);
     }
-    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 248);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
+    Actor_WalkToAndWait(gMainRoutineState.leaderActorId, 1000, 248);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 0);
     PaletteFade_Interpolate(60);
     FieldEvent_Wait(50);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
                                FACING_SOUTHWEST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
                                FACING_SOUTHEAST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
                                FACING_SOUTHWEST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId,
                                FACING_SOUTHEAST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_SOUTH);
     FieldEvent_Wait(20);
-    FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
+    FieldActor_ShowEmote(gMainRoutineState.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
+    Actor_FaceDirectionAndWait(gMainRoutineState.leaderActorId, FACING_EAST);
     FieldEvent_Wait(20);
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_LEADER_LEAN_BACK);
     FieldEvent_Wait(40);
     PaletteCycle_SetPausesInEvents(0);
     JupiterLighthouse_FlashSky();
-    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+    Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_STAND);
+    Actor_GetById(gMainRoutineState.leaderActorId)->steeringFlags |=
         ACTOR_FACES_MOTION;
     FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
     Actor_SetAttachedEffect(ACTOR_FELIX,
@@ -566,7 +566,7 @@ void JupiterLighthouse_OpenFloor(void) {
     Event_Wait(10);
   }
   Event_Wait(20);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -589,7 +589,7 @@ void JupiterLighthouse_CloseFloor(void) {
   Event_PlaySound(SE_IMPACT);
   MapGrid_CopyCellsLayered(49, 100, 4, 3, 49, 76);
   FieldEvent_Wait(20);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  EventCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -822,11 +822,11 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 west) {
     FieldEvent_Wait(10);
     // "They both come from Vale, and regardless of what Isaac believes..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
   } else {
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     FieldEvent_Wait(33);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     // "Don't be that way! You two have much in common, even if you are at..."
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
   }
@@ -1316,7 +1316,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   FieldUnit_AddHp(ISAAC, ISAAC_HP_IN_THE_FIGHT);
   FieldUnit_AddPp(IVAN, -ALL_HP_OR_PP);
   Unit_AddPp(ISAAC, -ALL_HP_OR_PP);
-  gMainRoutineWork.leaderActorId = ACTOR_ISAAC;
+  gMainRoutineState.leaderActorId = ACTOR_ISAAC;
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
 }
 
@@ -1348,7 +1348,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(737, 0, 209, 0);
-  gMainRoutineWork.leaderActorId = ACTOR_FELIX;
+  gMainRoutineState.leaderActorId = ACTOR_FELIX;
   Party_RemoveMember(ISAAC);
   Party_RemoveMember(IVAN);
   Party_RemoveMember(JENNA);
@@ -1507,10 +1507,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
     Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "Typical. And you're going to try to stop us from finishing them off..."
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Don't lie... We can see it in your eyes. We can see what you truly..."
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   }
@@ -1598,10 +1598,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
     Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
     // "I don't care if you want to help Garet or not! The lighthouse comes..."
     FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "We do not have time to wait for you to save Garet!"
     FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
   }
@@ -1694,7 +1694,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   PartyInventory_Remove(ITEM_MYTHRIL_BAG_JUPITER_STAR);
   PartyInventory_Add(ITEM_MYTHRIL_BAG_B);
   // "Felix took the Mars Star."
-  Message_ShowCentered((s16)gFieldWork->message++, 5);
+  Message_ShowCentered((s16)gFieldState->message++, 5);
   index = 0;
   for (index = 0; index <= INVENTORY_SLOTS - 1; index++) {
     if ((Unit_Get(FELIX)->inventory[index] & INVENTORY_ITEM_ID_MASK) ==
@@ -1781,7 +1781,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   HangingVine_Place(ACTOR_FIRST_PLACED, 1);
   HangingVine_Place(ACTOR_FIRST_PLACED + 1, 1);
@@ -1815,20 +1815,20 @@ s32 Scene_Initialize(void) {
         JupiterLighthouse_PlaceTheHurt();
       }
     } else if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED)) {
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST) {
         JupiterLighthouse_PlaceForTheFight();
         Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED);
         JupiterLighthouse_PartyArrivesAtTheFight(
-            gMainRoutineWork.entrance ==
+            gMainRoutineState.entrance ==
             JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST);
       }
     } else {
       JupiterLighthouse_PlaceForTheFight();
-      if (gMainRoutineWork.entrance ==
+      if (gMainRoutineState.entrance ==
           JUPITER_LIGHTHOUSE_ROOM_M_FROM_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_WEST) {
         JupiterLighthouse_IsaacAndIvanAreHurt();
-      } else if (gMainRoutineWork.entrance == ENTRANCE_AFTER_THE_FIGHT) {
+      } else if (gMainRoutineState.entrance == ENTRANCE_AFTER_THE_FIGHT) {
         JupiterLighthouse_IsaacAndIvanFall();
         Event_SetFlag(FLAG_ISAAC_AND_IVAN_FELL);
         Event_ClearFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED);
@@ -1840,7 +1840,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_GRAY_BLOCK)->motionFlags = 0;
   if (Event_GetFlag(FLAG_GRAY_BLOCK_DROPPED))
     Actor_SetPosition(ACTOR_GRAY_BLOCK, 0, 0);
-  if (gMainRoutineWork.entrance == ENTRANCE_ISAAC_AND_IVAN_FALL)
+  if (gMainRoutineState.entrance == ENTRANCE_ISAAC_AND_IVAN_FALL)
     JupiterLighthouse_IsaacAndIvanFall();
   return 0;
 }

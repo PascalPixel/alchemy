@@ -272,10 +272,10 @@ void DebugBattle_RunMenu(void) {
   s32 set;
   s32 loadedSet;
   struct InputState *input;
-  struct MainRoutineWork *mainWork;
+  struct MainRoutineState *mainState;
   u16 *backdropId;
 
-  MainRoutineWork_InitializeDefaultsFar();
+  MainRoutineState_InitializeDefaultsFar();
 restart:
   Window_LoadGraphics();
   DebugText_Clear();
@@ -289,7 +289,7 @@ restart:
     loadedSet = -1;
     GameFlag_Clear(FLAG_AUTO_BATTLE);
     input = &gInput;
-    backdropId = (u16 *)&gMainRoutineWork.battleBackground;
+    backdropId = (u16 *)&gMainRoutineState.battleBackground;
     for (;;) {
       GameFlag_Clear(FLAG_CHILDHOOD);
       wait(1);
@@ -317,7 +317,7 @@ restart:
         wait(1);
       }
       if (set != loadedSet) {
-        MainRoutineWork_InitializeDefaultsFar();
+        MainRoutineState_InitializeDefaultsFar();
         DebugParameterSet_Load(set);
         loadedSet = set;
       }
@@ -326,12 +326,12 @@ restart:
         GameFlag_Set(FLAG_LINK_BATTLE);
       Unit_CalculateFar(ISAAC);
       *backdropId = RESOURCE_COLOSSO_BACKDROP;
-      mainWork = &gMainRoutineWork;
+      mainState = &gMainRoutineState;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_Set(FLAG_DJINN_LESSON);
       GameFlag_Set(FLAG_DEBUG_BATTLE);
       if (startModeSet)
-        mainWork->battleType = BATTLE_TYPE_DEBUG;
+        mainState->battleType = BATTLE_TYPE_DEBUG;
       Battle_Run(encounter);
       // Rebuild what the battle replaced, then return to the chooser.
       gDebugTextEnabled = 1;

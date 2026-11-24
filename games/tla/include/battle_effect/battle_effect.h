@@ -293,7 +293,7 @@ enum {
 /// A row of gEruption_Counts, one for each variant.
 enum { FIELD_MOTES, FIELD_PUFFS, FIELD_FRAMES };
 
-/// A growing column, laid over struct Particle in work->particles.
+/// A growing column, laid over struct Particle in state->particles.
 struct DualColumn {
   s32 x;                   ///< the root on the canvas
   s32 y;                   ///< the root on the canvas

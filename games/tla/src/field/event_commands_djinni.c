@@ -85,7 +85,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   UNUSED struct Actor *copies[DJINNI_AFTERIMAGES];
 
   djinni = Actor_GetById(djinniId);
-  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  leader = Actor_GetById(gMainRoutineState.leaderActorId);
   dir = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   Event_Start();
   wait(10);
@@ -204,7 +204,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
     djinni = recorded - 1;
   }
   if (GameFlag_Get(FLAG_DJINN_LESSON)) {
-    owner = gMainRoutineWork.leaderActorId;
+    owner = gMainRoutineState.leaderActorId;
     GameFlag_Set(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinni));
   } else {
     owner = Djinn_GiveToPartyFar(element, djinni);
@@ -226,7 +226,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   Djinn_ShowJoinedMessageFar(owner, element, djinni);
   WorldMap_ReloadPendingAreaGraphics();
 #if TLA_PATCH_1
-  gFieldWork->actors[actor] = NULL;
+  gFieldState->actors[actor] = NULL;
 #endif
   Event_End();
 }
@@ -241,7 +241,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
 /// that is after a won battle; the second call then makes this actor join the
 /// party.
 void Djinn_RestoreActorAfterBattle(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
   u32 raw = (u16)party->pendingDjinni;
   s32 flags = party->pendingDjinni & DJINN_PENDING_KIND_MASK;
   u32 scene = DJINN_PENDING_EVENT_MASK;
@@ -291,8 +291,8 @@ void Djinn_RestoreActorAfterBattle(void) {
 /// fled, -1 when it lost), as The Broken Seal's; a mimic chest's event
 /// (CONDITION_FLAG_SET) falls through to the clear.
 void Djinn_ResolvePending(s32 shown) {
-  struct MainRoutineWork *work = &gMainRoutineWork;
-  s16 *pending = &work->pendingDjinni;
+  struct MainRoutineState *state = &gMainRoutineState;
+  s16 *pending = &state->pendingDjinni;
   s32 kind = *pending & DJINN_PENDING_KIND_MASK;
   s32 flag = *pending & DJINN_PENDING_EVENT_MASK;
 
@@ -302,16 +302,16 @@ void Djinn_ResolvePending(s32 shown) {
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
           flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
-      if (work->sequenceResult > 0 &&
-          work->sequenceResult != BATTLE_OUTCOME_FLED)
+      if (state->sequenceResult > 0 &&
+          state->sequenceResult != BATTLE_OUTCOME_FLED)
         return;
       GameFlag_Set(flag -
                    (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
       *pending = kind;
       return;
     } else if (kind == CONDITION_FLAG_SET) {
-      if (work->sequenceResult > 0 &&
-          work->sequenceResult != BATTLE_OUTCOME_FLED)
+      if (state->sequenceResult > 0 &&
+          state->sequenceResult != BATTLE_OUTCOME_FLED)
         GameFlag_Set(flag);
     } else
       return;
@@ -320,7 +320,7 @@ void Djinn_ResolvePending(s32 shown) {
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
         flag <= DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT) {
       flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
-      if (work->sequenceResult > 0) {
+      if (state->sequenceResult > 0) {
         s32 djinn = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinn / DJINN_PER_ELEMENT;
         s32 index = djinn % DJINN_PER_ELEMENT;
@@ -340,16 +340,16 @@ void Djinn_ResolvePending(s32 shown) {
       }
     }
   }
-  gMainRoutineWork.pendingDjinni = 0;
+  gMainRoutineState.pendingDjinni = 0;
 }
 
 /// Task: updates the field effect sprites.
 void FieldEffect_UpdateAllSlots(void) {
-  struct FieldEffectWork *scene;
+  struct FieldEffectState *scene;
   struct FieldParticle *slot;
   s32 remainingSlots;
 
-  scene = Ram_HeapSlots->fieldEffectWork;
+  scene = Ram_HeapSlots->fieldEffectState;
   remainingSlots = ARRAY_COUNT(scene->particles) - 1;
   slot = scene->particles;
   do {
@@ -362,17 +362,18 @@ void FieldEffect_UpdateAllSlots(void) {
 /// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
 /// starts their update task.
 void FieldEffect_InitializeSlots(void) {
-  void *work;
+  void *state;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
-  Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
+  state =
+      HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectState));
+  Dma_Fill32(0, state, sizeof(struct FieldEffectState));
   Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
 }
 
 /// Stops the field effect sprites: removes their task, frees every slot still
-/// in use and releases their heap block, the field Psynergy's work with it.
+/// in use and releases their heap block, the field Psynergy's state with it.
 void FieldEffect_ReleaseSlots(void) {
-  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
   struct FieldParticle *slot;
   s32 i;
 
@@ -401,7 +402,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *target;
   struct Vector3 position;
 
-  target = Actor_GetById(gMainRoutineWork.leaderActorId);
+  target = Actor_GetById(gMainRoutineState.leaderActorId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

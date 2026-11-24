@@ -20,7 +20,7 @@ enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 #define BEAM_RING_BYTES (BEAM_RING_SIZE * BEAM_RING_SIZE)
 #define BREATH_GLOW 16384
 /// The motes that gather at the mouth, after the rolling ball.
-#define BREATH_MOTES (work->particles + 32)
+#define BREATH_MOTES (state->particles + 32)
 #define BREATH_MOTE_COUNT 32
 /// DustCloudSheet's ball.
 #define DUST_BALL_WIDTH 32
@@ -51,7 +51,7 @@ enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 /// another in front of the user. Each breath hits every target at its frame
 /// (Blast Breath strikes them in turn, four frames apart).
 void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   s32 frame;
   u8 *graphics;
@@ -63,7 +63,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   s32 i;
   s32 j;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
 
@@ -87,7 +87,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                              0);
   if (mode == BREATH_BEAM) {
     for (i = 0; i != BEAM_RING_COUNT; i++) {
-      u8 *pixel = work->sheet + i * BEAM_RING_BYTES;
+      u8 *pixel = state->sheet + i * BEAM_RING_BYTES;
 
       for (j = 0; j != BEAM_RING_SIZE; j++) {
         s32 shade;
@@ -111,9 +111,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       }
     }
   } else if (mode == BREATH_BLAST) {
-    Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A, work->sheet, 0, 0);
+    Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A, state->sheet, 0,
+                               0);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_DUST_CLOUD_SHEET, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_DUST_CLOUD_SHEET, state->sheet, 1, 0);
   }
 
   // A blitter that keeps the brighter pixel, facing the targets, and an
@@ -128,7 +129,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // The pikes lunge; Blast Breath comes from 32 pixels in front of the user.
   if (mode == BREATH_PIKE)
@@ -153,7 +154,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         step->x = Random16();
         step->y = (Random16() & 31) + 32;
       }
-      step = &work->particles[0];
+      step = &state->particles[0];
       step->x = INTtoFIXED(user.x / 2);
       step->y = INTtoFIXED(user.y - 32);
       step->velocityX = 0;
@@ -182,9 +183,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (size > gBreath_MaxSizes[args->variant])
           size = gBreath_MaxSizes[args->variant];
         if (size > 0) {
-          BattleEffect_DrawShadedCirclesMirrored(work->sheet + BREATH_GLOW,
+          BattleEffect_DrawShadedCirclesMirrored(state->sheet + BREATH_GLOW,
                                                  size, FIXED_ONE);
-          draw[1](canvas, work->sheet + BREATH_GLOW, mouthX - size / 2,
+          draw[1](canvas, state->sheet + BREATH_GLOW, mouthX - size / 2,
                   mouthY - size, size, size * 2);
         }
       }
@@ -198,9 +199,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           size = 104 - frame * 2;
         half = size >> 1;
         size = half * 2;
-        BattleEffect_DrawShadedCirclesMirrored(work->sheet + BREATH_GLOW, size,
+        BattleEffect_DrawShadedCirclesMirrored(state->sheet + BREATH_GLOW, size,
                                                FIXED_ONE);
-        draw[1](canvas, work->sheet + BREATH_GLOW, mouthX - (size >> 1),
+        draw[1](canvas, state->sheet + BREATH_GLOW, mouthX - (size >> 1),
                 mouthY - size, size, half * 4);
       }
 
@@ -267,11 +268,11 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             ring = BEAM_RING_COUNT - 1;
           for (i = 0; i != 4; i++) {
             if (args->side == EFFECT_SIDE_ENEMIES) {
-              draw[0](canvas, work->sheet + ring * BEAM_RING_BYTES, x - 40,
+              draw[0](canvas, state->sheet + ring * BEAM_RING_BYTES, x - 40,
                       y - 48, BEAM_RING_SIZE, BEAM_RING_SIZE);
               x -= BEAM_RING_SIZE;
             } else {
-              draw[0](canvas, work->sheet + ring * BEAM_RING_BYTES, x + 8,
+              draw[0](canvas, state->sheet + ring * BEAM_RING_BYTES, x + 8,
                       y - 48, BEAM_RING_SIZE, BEAM_RING_SIZE);
               x += BEAM_RING_SIZE;
             }
@@ -280,8 +281,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       } else if (mode == BREATH_ROLLING_FLAME &&
                  frame >= gBreath_BurstFrames[mode]) {
         // The ball of dust rolls to the target.
-        step = &work->particles[0];
-        draw[0](canvas, work->sheet,
+        step = &state->particles[0];
+        draw[0](canvas, state->sheet,
                 FIXED_INTEGER_PART(step->x) - DUST_BALL_WIDTH / 2,
                 FIXED_INTEGER_PART(step->y) - DUST_BALL_HEIGHT / 2,
                 DUST_BALL_WIDTH, DUST_BALL_HEIGHT);
@@ -415,7 +416,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           texture.logHeight = 2;
           model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_SmallSquareMesh;
-          texture.pixels = work->sheet;
+          texture.pixels = state->sheet;
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(mouthX - 64), INTtoFIXED(mouthY - 64), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
@@ -443,7 +444,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       if (mode == BREATH_BLAST) {
         // Blast Breath strikes each target in turn, every fourth frame.
         if (frame == 0) {
-          work->shakeFrames = 8;
+          state->shakeFrames = 8;
           Sound_PlayFar(SE_RISE_WITH_SPARKS);
         }
         if (frame == 16) {
@@ -453,7 +454,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != args->targetCount; i++) {
           if (frame >= i * 4 + gBreath_BurstFrames[mode] &&
               frame < gBreath_Frames[mode] - 8 && (frame & 3) == i) {
-            work->shakeFrames = 8;
+            state->shakeFrames = 8;
             // DEAD: the burst shower's test for BURST_SHOWER_MODE_GREY,
             // copied into these hits; no breath's mode has that value, and
             // the ROM keeps the compare and the black tint's call.
@@ -474,13 +475,13 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       BattleCamera_Shake(8, 8);
-      EFFECT_END_FRAME(work);
+      EFFECT_END_FRAME(state);
     }
   }
 
@@ -524,7 +525,7 @@ enum CrescentSlashStep {
 /// Human Hunt takes the Mars Djinn's colours, red, and blends its slash more
 /// faintly.
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectState *state = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   u8 *cells = Ram_MapCellBuffer;
   DrawRectangle draw[2];
@@ -549,16 +550,17 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
 
   // Load both crescents and set the blend.
   Resource_LoadAndDecompress(RESOURCE_GREY_CRESCENT_SHEET, cells, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_STAR_CRESCENT_SHEET, work->sheet, 1, 0);
+  Resource_LoadAndDecompress(RESOURCE_STAR_CRESCENT_SHEET, state->sheet, 1, 0);
   if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET),
                          SHEET_PALETTE_BYTES);
     REG_BLDALPHA = BLEND_ALPHA(16, 8);
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
     REG_BLDALPHA = EFFECT_BLEND_ADD;
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
+    EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE,
+                        CANVAS_FADE_THREE_QUARTERS);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
@@ -579,7 +581,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(4),
                                     toFIXED(16), toFIXED(4), 250);
-      work->shakeFrames = 4;
+      state->shakeFrames = 4;
     }
 
     // From frame 8: the slash, one step every three frames.
@@ -595,7 +597,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
       if (mode == CRESCENT_SLASH_HUMAN_HUNT) {
         switch (step) {
         case CRESCENT_SLASH_STAR:
-          draw[0](canvas, work->sheet, x, y, SLASH_PICTURE_SIZE,
+          draw[0](canvas, state->sheet, x, y, SLASH_PICTURE_SIZE,
                   SLASH_PICTURE_SIZE);
           break;
         case CRESCENT_SLASH_FLASH:
@@ -611,8 +613,9 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
                   x - 4, y, GREY_CRESCENT_SIZE, GREY_CRESCENT_SIZE);
           break;
         case CRESCENT_SLASH_STAR_LAST:
-          draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
-                  x, y, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
+          draw[0](canvas,
+                  state->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE, x, y,
+                  SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
           break;
         }
       } else {
@@ -622,7 +625,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           break;
         case CRESCENT_SLASH_STAR:
-          draw[0](canvas, work->sheet, x, y, SLASH_PICTURE_SIZE,
+          draw[0](canvas, state->sheet, x, y, SLASH_PICTURE_SIZE,
                   SLASH_PICTURE_SIZE);
           break;
         case CRESCENT_SLASH_GREY_A:
@@ -634,15 +637,16 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
                   x - 4, y - 8, GREY_CRESCENT_SIZE, GREY_CRESCENT_SIZE);
           break;
         case CRESCENT_SLASH_STAR_LAST:
-          draw[0](canvas, work->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
-                  x, y, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
+          draw[0](canvas,
+                  state->sheet + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE, x, y,
+                  SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
           break;
         }
       }
     }
 
     BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

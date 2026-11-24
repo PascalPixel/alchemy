@@ -3,7 +3,7 @@
 
 /// @file
 /// Animated sprites: their layers, the sprite picture caches and the actor
-/// system's work.
+/// system's state.
 
 #include "edition.h"
 #include "fixed_math.h"
@@ -84,10 +84,10 @@ struct SpritePictureCache {
 /// SpritePictureCache's tag holds them.
 #define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
 
-/// The actor system's work: the flag that suspends sprite projection, the
+/// The actor system's state: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite picture caches
 /// (HEAP_SLOT_ACTOR_SYSTEM).
-struct ActorSystemWork {
+struct ActorSystemState {
   u16 used; ///< sprite pixel bytes composed since the camera reset it
   u8 unusedAfterUsed[2]; ///< no code names it
   u16 suspended;       ///< nonzero while a menu has suspended sprite projection
@@ -99,10 +99,10 @@ struct ActorSystemWork {
       pictureCaches[8]; ///< found by tag (SpritePictureCache_FindByTag)
 };
 
-STATIC_ASSERT(offsetof(struct ActorSystemWork, suspended) == 4);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, count) == 24);
-STATIC_ASSERT(offsetof(struct ActorSystemWork, pictureCaches) == 28);
-STATIC_ASSERT(sizeof(struct ActorSystemWork) == 92);
+STATIC_ASSERT(offsetof(struct ActorSystemState, suspended) == 4);
+STATIC_ASSERT(offsetof(struct ActorSystemState, count) == 24);
+STATIC_ASSERT(offsetof(struct ActorSystemState, pictureCaches) == 28);
+STATIC_ASSERT(sizeof(struct ActorSystemState) == 92);
 
 /// The hardware sprite attributes one part of an animated sprite (its image or
 /// its shadow) is drawn with: the link to the next part queued at its depth,

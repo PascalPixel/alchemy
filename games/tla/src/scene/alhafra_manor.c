@@ -20,7 +20,7 @@
 #include "field/field_sequence_event.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "system/input.h"
@@ -145,11 +145,11 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(20);
-    Actor_WatchAndSetScript(actor, gMainRoutineWork.leaderActorId);
-    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 760, 320);
+    Actor_WatchAndSetScript(actor, gMainRoutineState.leaderActorId);
+    Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 760, 320);
     Actor_FaceDirection(ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST,
                         0);
-    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
+    Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
     Event_Wait(10);
     Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_ALHAFRA_MANOR_VIEW);
   } else {
@@ -185,15 +185,15 @@ void AlhafraManor_AskIfTheHeroes(s32 actor) {
 /// Talking to the mayor of Madra, or reading his mind, once: he complains that
 /// Alhafra's mayor never meant to fix the mast.
 void AlhafraManor_ComplainAboutTheMayor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   GameFlag_Set(FLAG_COMPLAINED_ABOUT_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManorDarnThatMayor);
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_FaceActorById(ACTOR_MADRAS_MAYOR, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_MADRAS_MAYOR, gMainRoutineState.leaderActorId, 0);
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   // "Darn that mayor..."
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
@@ -210,18 +210,18 @@ void AlhafraManor_ComplainAboutTheMayor(void) {
 /// Talking to Jiya, or reading his mind, once: he explains why the mayor keeps
 /// the pirates' money for Alhafra's own repairs.
 void AlhafraManor_DefendTheMayor(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   GameFlag_Set(FLAG_DEFENDED_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManorImSureTheMayorHas);
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_WatchAndSetScript(ACTOR_JIYA, gMainRoutineWork.leaderActorId);
-  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 304, 152);
+  Actor_WatchAndSetScript(ACTOR_JIYA, gMainRoutineState.leaderActorId);
+  Actor_WalkToAndWaitById(gMainRoutineState.leaderActorId, 304, 152);
   Actor_FaceDirectionById(ACTOR_JIYA, FACING_EAST, 0);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_WEST, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   Event_Wait(10);
@@ -254,10 +254,10 @@ void AlhafraManor_DefendTheMayor(void) {
 /// Talking to Alhafra's mayor, or reading his mind, once: he tells of the towns
 /// Briggs speaks of across the eastern sea.
 void AlhafraManor_TellOfTheEasternSea(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
-  if (work->psynergy != 0) {
-    Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineWork.leaderActorId, 0);
+  if (state->psynergy != 0) {
+    Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineState.leaderActorId, 0);
     Event_Wait(10);
   }
   GameFlag_Set(FLAG_TOLD_OF_THE_EASTERN_SEA);
@@ -277,7 +277,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   Event_Wait(30);
   // "I've made a decision... If Alhafra is to prosper, then we must..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
-  Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineState.leaderActorId, 0);
   Event_Wait(20);
   // "I'm going to build an entire trade fleet and make lots of money!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
@@ -304,15 +304,15 @@ void AlhafraManor_TellOfTheEasternSea(void) {
     Event_Wait(20);
     // "Great! Why don't you just stay here in Alhafra until we're ready for..."
     Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
-    gFieldWork->message++;
+    gFieldState->message++;
   } else {
     Event_Wait(30);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Ah, such a pity that you don't see the potential of this..."
     Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
   }
   Event_End();
-  if (work->psynergy != 0)
+  if (state->psynergy != 0)
     Actor_FaceDirection(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
 }
 
@@ -323,12 +323,12 @@ s32 Scene_Initialize(void) {
   FIXED cameraZ = toFIXED(320);
   s16 *entrance;
 
-  gFieldWork->transition =
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
       AlhafraManor_KeepToTheLeadersLayer;
-  if (gMainRoutineWork.entrance == ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW) {
-    gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance =
+  if (gMainRoutineState.entrance == ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW) {
+    gMainRoutineState.entrance = gMainRoutineState.returnEntrance =
         ENTRANCE_WATCHTOWER;
     Actor_FaceDirectionById(ACTOR_MAN_GAZING_AT_AIRS_ROCK,
                             FACING_SOUTH_SOUTHWEST, 0);
@@ -340,9 +340,9 @@ s32 Scene_Initialize(void) {
     Event_ShowMessageAndWait(ACTOR_MAN_GAZING_AT_AIRS_ROCK, 0);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
-  entrance = &gMainRoutineWork.entrance;
+  entrance = &gMainRoutineState.entrance;
   if (*entrance == ENTRANCE_BRIGGS_ESCAPES) {
-    gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance =
+    gMainRoutineState.entrance = gMainRoutineState.returnEntrance =
         ENTRANCE_MAYORS_ROOM;
     AlhafraManor_BriggsEscapes();
   }
@@ -351,9 +351,9 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_MADRAS_MAYOR, 0, 0);
     Actor_SetPosition(ACTOR_MADRAS_ELDER, 0, 0);
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_PAN_WEST) {
+  if (gMainRoutineState.entrance == ENTRANCE_PAN_WEST) {
     FieldCamera_MoveWithinMapBounds(toFIXED(304), cameraY, cameraZ, 0);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
@@ -379,7 +379,7 @@ void AlhafraManor_CountAnswer(void);
     struct Actor *leader_;                                                     \
     Actor_SetSpeed((id), 1.2);                                                 \
     Actor_SetAnimationById((id), 2);                                           \
-    leader_ = Actor_GetById(gMainRoutineWork.leaderActorId);                   \
+    leader_ = Actor_GetById(gMainRoutineState.leaderActorId);                  \
     if (leader_ != 0)                                                          \
       Actor_SetDestinationById((id), leader_->x.part[0].integer,               \
                                leader_->z.part[0].integer);                    \
@@ -405,8 +405,8 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(30);
   FieldCamera_MoveTo(344, CAMERA_KEEP, 120, 0);
-  gFieldWork->transitionFrames = 60;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transitionFrames = 60;
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -456,7 +456,7 @@ void AlhafraManor_BriggsEscapes(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_WEST, 0);
   Event_Wait(40);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
@@ -754,12 +754,12 @@ void AlhafraManor_BriggsEscapes(void) {
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     // "Don't feel like you have to do them any favors!"
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
   } else {
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(10);
-    (gFieldWork->message)++;
+    (gFieldState->message)++;
     // "That's right! Why should we help the mayor, after the way he treated..."
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   }
@@ -786,10 +786,10 @@ void AlhafraManor_BriggsEscapes(void) {
   WALK_TO_LEADER(ACTOR_JENNA);
   WALK_TO_LEADER(ACTOR_SHEBA);
   WALK_TO_LEADER(ACTOR_KRADEN);
-  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
+  FieldCamera_FollowActor(gMainRoutineState.leaderActorId, 1);
   Event_End();
-  gFieldWork->transitionFrames = 16;
-  gFieldWork->transition =
+  gFieldState->transitionFrames = 16;
+  gFieldState->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }

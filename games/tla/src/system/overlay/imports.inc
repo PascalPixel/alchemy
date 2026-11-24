@@ -190,7 +190,7 @@
 	export Inventory_AddItem, Inventory_AddItemFar
 	export PartyInventory_Add, PartyInventory_AddFar
 	export PartyInventory_Remove, PartyInventory_RemoveFar
-	export MainRoutineWork_InitializeDefaults, MainRoutineWork_InitializeDefaultsFar
+	export MainRoutineState_InitializeDefaults, MainRoutineState_InitializeDefaultsFar
 	export Inventory_Equip, Inventory_EquipFar
 	export Inventory_Discard, Inventory_DiscardFar
 	export Inventory_Break, Inventory_BreakFar

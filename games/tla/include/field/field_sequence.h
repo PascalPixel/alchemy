@@ -12,7 +12,7 @@
 
 struct Actor;
 
-/// How the leader moves (MainRoutineWork.movementMode): which actor script
+/// How the leader moves (MainRoutineState.movementMode): which actor script
 /// Actor_StartRenderModeScript runs for it.
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader on a layered map.
@@ -121,8 +121,8 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 s32 Speaker_GetVoice(s32 id);
 
-/// A field Psynergy or item use, packed into one value, as FieldWork.psynergy
-/// and FieldWork.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
+/// A field Psynergy or item use, packed into one value, as FieldState.psynergy
+/// and FieldState.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
 /// the Psynergy or item.
 #define ACT_ID_MASK 0x3ff                 ///< bits 9..0
 #define ACT_UNIT_SHIFT 10                 ///< bits 13..10

@@ -284,7 +284,7 @@ AlchemyUncreditedEnd_081380ae:
 	bx	lr
 	.global Render_FillMeshKernelCodeSize
 	.set Render_FillMeshKernelCodeSize, . - Render_FillMeshKernel
-	.4byte	gModelTransformWork
+	.4byte	gModelTransformState
 	.global Data_0813847c
 Data_0813847c:
 	push	{r5, r6, r7, r8, r9, sl, lr}

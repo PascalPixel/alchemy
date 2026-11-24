@@ -49,7 +49,7 @@ enum {
 /// variant's conversion table; a variant above 5 uses variant 1's.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
-  struct ActorSystemWork *system;
+  struct ActorSystemState *system;
   struct SpritePictureCache *cache;
   struct SpritePictureCacheSource *entry;
   u32 *offset;
@@ -113,7 +113,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 /// Returns the pictures loaded into the sprite picture cache with this tag, or
 /// 0.
 s32 SpritePictureCache_FindByTag(s32 tag) {
-  struct ActorSystemWork *system = Ram_HeapSlots->actorSystem;
+  struct ActorSystemState *system = Ram_HeapSlots->actorSystem;
   u32 i;
   struct SpritePictureCache *cache;
 

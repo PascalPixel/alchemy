@@ -109,12 +109,12 @@ void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
 
 /// Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle draw[2];
   s32 frame;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
   // Lunar Slash, Boost Hack and Twin Shear add the canvas to the battle; the
@@ -126,15 +126,15 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   // The pictures: 1 and 2 in the sprite sheet, 3 and 4 in the map cell
   // buffer (Twin Shear's four half pictures all there).
   if (mode == FLASHING_STRIKE_UNUSED) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, state->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapCellBuffer, 1, 1);
   } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, state->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
   } else if (mode == FLASHING_STRIKE_BOOST_HACK) {
     s32 i;
 
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, state->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
     // Turn the canvas's colours: red to blue, blue to green, green to red.
     for (i = 0; i != SHEET_PALETTE_COLORS; i++) {
@@ -145,16 +145,16 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
       ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
   } else if (mode == FLASHING_STRIKE_LUNAR_SLASH) {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, state->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
   } else if (mode == FLASHING_STRIKE_TWIN_SHEAR) {
     Resource_LoadAndDecompress(RESOURCE_ARC_FRAGMENTS_SHEET, Ram_MapCellBuffer,
                                1, 1);
   } else {
-    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, state->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
   // The user closes on the target in 16 frames (Lunar Slash jumps in place,
   // Boost Hack strikes a pose instead and waits 8).
@@ -225,10 +225,10 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
       }
     } else {
       if (frame <= 3)
-        draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE,
+        draw[0](canvas, state->sheet, 0, 0, SLASH_PICTURE_SIZE,
                 SLASH_PICTURE_SIZE);
       else if (frame <= 7)
-        draw[0](canvas, work->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+        draw[0](canvas, state->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
                 SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
       else if (frame <= 11)
         draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
@@ -246,11 +246,11 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame == FLASHING_STRIKE_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == FLASHING_STRIKE_HIT_FRAME) {
-      work->shakeFrames = 8;
+      state->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
     BattleCamera_Shake(16, 16);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);

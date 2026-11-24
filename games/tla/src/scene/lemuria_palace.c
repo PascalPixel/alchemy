@@ -11,7 +11,7 @@
 #include "flags.h"
 #include "shared/tables.h"
 #include "sprite_ids.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -22,7 +22,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "system/io_reg.h"
@@ -193,11 +193,11 @@ void LemuriaPalace_CycleGlowColors(void) {
 /// The room's setup: it schedules the palette cycle
 /// LemuriaPalace_CycleGlowColors.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_VBLANK);
   FieldActor_SetSpritePriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
-  if (gMainRoutineWork.entrance == WAY_DRESSER_ROOM_DOOR)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  if (gMainRoutineState.entrance == WAY_DRESSER_ROOM_DOOR)
+    Actor_Get(gMainRoutineState.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag(FLAG_MET_KING_HYDROS)) {
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
@@ -395,7 +395,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Actor_SetSpeed(ACTOR_PALACE_GUARD, 1.2);
   Actor_WalkByAndWait(ACTOR_PALACE_GUARD, -24, 0);
   Actor_FaceDirectionAndWait(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST);
-  Actor_FaceActor(ACTOR_PALACE_GUARD, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActor(ACTOR_PALACE_GUARD, gMainRoutineState.leaderActorId, 0);
   // "You are Lord Felix, correct?"
   Event_OpenMessage(ACTOR_PALACE_GUARD, 0);
   answer = Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
@@ -404,7 +404,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
     Actor_SetAnimationAndWait(ACTOR_PALACE_GUARD, 4);
     // No: "Then you have no business here! His Majesty is involved in a..."
     Event_ShowMessageThenWait(ACTOR_PALACE_GUARD, 0, 5);
-    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
+    Actor_WalkByAndWait(gMainRoutineState.leaderActorId, 0, 16);
     Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
     Actor_FaceDirectionAndWait(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST);
     return Event_End();
@@ -413,7 +413,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Event_Wait(10);
   Actor_WalkByAndWait(ACTOR_PALACE_GUARD, 24, 0);
   Actor_FaceDirection(ACTOR_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_WatchAndSetScript(ACTOR_PALACE_GUARD, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_PALACE_GUARD, gMainRoutineState.leaderActorId);
   Event_SetFlag(FLAG_MET_KING_HYDROS);
   Event_SetFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE);
   Party_AddMember(PIERS);
@@ -434,7 +434,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Actor_SetAnimationAndWait(ACTOR_HYDROS, 3);
   Event_Wait(10);
   // Yes: past the guard's "Then you have no business here!"
-  gFieldWork->message = (gFieldWork->message) + 1;
+  gFieldState->message = (gFieldState->message) + 1;
   // "It would seem the warriors of which you spoke have arrived."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HYDROS, 0, 5);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
@@ -856,10 +856,10 @@ s32 LemuriaPalace_MeetKingHydros(void) {
     Event_Wait(15);
     // Yes: "You know that it could bring about the destruction of the..."
     Event_ShowMessageThenWait(ACTOR_CONSERVATO, 0, 5);
-    gFieldWork->message = (gFieldWork->message) + 1;
+    gFieldState->message = (gFieldState->message) + 1;
   } else {
     Event_Wait(35);
-    gFieldWork->message = (gFieldWork->message) + 1;
+    gFieldState->message = (gFieldState->message) + 1;
     // No: "When the four beacons are fired, Alchemy will be released, and
     // our..."
     Event_ShowMessageThenWait(ACTOR_CONSERVATO, 0, 5);
@@ -1162,7 +1162,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  target = Actor_GetById(gMainRoutineWork.leaderActorId);
+  target = Actor_GetById(gMainRoutineState.leaderActorId);
   if (target != 0) {
     Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].integer,
                          target->z.part[0].integer);
@@ -1171,7 +1171,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  target = Actor_GetById(gMainRoutineWork.leaderActorId);
+  target = Actor_GetById(gMainRoutineState.leaderActorId);
   if (target != 0) {
     Actor_SetDestination(ACTOR_JENNA, target->x.part[0].integer,
                          target->z.part[0].integer);
@@ -1180,7 +1180,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  target = Actor_GetById(gMainRoutineWork.leaderActorId);
+  target = Actor_GetById(gMainRoutineState.leaderActorId);
   if (target != 0) {
     Actor_SetDestination(ACTOR_SHEBA, target->x.part[0].integer,
                          target->z.part[0].integer);
@@ -1199,7 +1199,7 @@ s32 LemuriaPalace_MeetKingHydros(void) {
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  target = Actor_GetById(gMainRoutineWork.leaderActorId);
+  target = Actor_GetById(gMainRoutineState.leaderActorId);
   if (target != 0) {
     Actor_SetDestination(ACTOR_PIERS, target->x.part[0].integer,
                          target->z.part[0].integer);

@@ -53,7 +53,7 @@ struct StripVertex {
 ///
 /// Abilities: Rising Dragon (the Masamune's unleash).
 void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   void *canvas;
   DrawRectangle blit[2];
   s32 frame;
@@ -71,9 +71,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  work = Ram_HeapSlots->battleEffect;
+  state = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  camera = Ram_HeapSlots->cameraWork;
+  camera = Ram_HeapSlots->cameraState;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -84,7 +84,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
@@ -93,11 +93,11 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     Actor_SelectAnimationFar(caster, POSE_LEAP);
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
-    Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
     Resource_LoadAndDecompress(
         RESOURCE_CLAW_SLASH_SHEET,
-        work->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES, 1, 1);
+        state->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES, 1, 1);
     Iwram_CopyWordsEntry((void *)BG_PLTT,
                          Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                          SHEET_PALETTE_BYTES);
@@ -112,7 +112,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         arcs[1] = 0;
         arcs[2] = 0;
         arcs[3] = 0;
-        EFFECT_FREE_PARTICLES(i, work->particles, ARRAY_COUNT(work->particles));
+        EFFECT_FREE_PARTICLES(i, state->particles,
+                              ARRAY_COUNT(state->particles));
       }
 
       // Each dragon's strike.
@@ -125,7 +126,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           s32 angle;
           s32 speed;
 
-          spark = &work->particles[i * DRAGON_SPARKS + j];
+          spark = &state->particles[i * DRAGON_SPARKS + j];
 
           spark->x = INTtoFIXED(hit.x / 2);
           spark->y = INTtoFIXED(hit.y - 16);
@@ -137,7 +138,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         }
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        work->shakeFrames = 8;
+        state->shakeFrames = 8;
         if (frame == 28) {
           if (args->variant == EFFECT_VARIANT_BASIC) {
             EFFECT_SHOW_DAMAGE(SE_CLATTER);
@@ -155,8 +156,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
       }
-      for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        spark = &work->particles[i];
+      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
+        spark = &state->particles[i];
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 3) + 2;
 
@@ -279,7 +280,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           }
           texture.logWidth = 6;
           texture.logHeight = 5;
-          texture.pixels = work->sheet;
+          texture.pixels = state->sheet;
           model->mesh = stripMesh;
           model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
           Matrix_Initialize();
@@ -305,7 +306,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
             model->scrollU = 0;
             model->mesh = gBattleEffect_SquareMesh;
             texture.pixels =
-                work->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES;
+                state->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES;
             Matrix_Translate(INTtoFIXED(endX[i]), INTtoFIXED(endY[i]), 0);
             Matrix_RotateZ(DRAGON_HEAD_TURN - (arcs[i * 2] << 5));
             Matrix_ScaleUniform(DRAGON_SCALE);
@@ -317,7 +318,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       }
       BattleEffect_CountDownBattlerTints();
       BattleCamera_Shake(2, 2);
-      EFFECT_PRESENT_CANVAS(work);
+      EFFECT_PRESENT_CANVAS(state);
     }
     Actor_SetAnimationSpeedFar(caster, ANIM_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -365,7 +366,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 /// Abilities: Heartbreak (the Thanatos Mace's unleash).
 void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
-  struct BattleEffectWork *work;
+  struct BattleEffectState *state;
   u8 *canvas;
   u8 *parts;
   DrawRectangle draw[2];
@@ -375,7 +376,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   s32 y;
 
   heap = Ram_HeapSlots;
-  work = (struct BattleEffectWork *)heap->battleEffect;
+  state = (struct BattleEffectState *)heap->battleEffect;
   canvas = heap->battleCanvas;
   parts = Ram_MapCellBuffer;
   BattleEffect_StartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
@@ -388,7 +389,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)heap->ramCodePaired;
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
   EffectPosition_ProjectScaledBattler(args->targets[0], &target);
 
   for (frame = 0; frame != FIGURE_FRAMES; frame++) {
@@ -396,19 +397,19 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     // and comes down at it for 32 frames.
     if (frame == 0) {
       if (args->side == EFFECT_SIDE_ENEMIES)
-        work->particles[0].x = INTtoFIXED(target.x + 40);
+        state->particles[0].x = INTtoFIXED(target.x + 40);
       else
-        work->particles[0].x = INTtoFIXED(target.x - 168);
-      work->particles[0].y = -toFIXED(100);
+        state->particles[0].x = INTtoFIXED(target.x - 168);
+      state->particles[0].y = -toFIXED(100);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        work->particles[0].velocityX = -toFIXED(6);
+        state->particles[0].velocityX = -toFIXED(6);
       else
-        work->particles[0].velocityX = toFIXED(6);
-      work->particles[0].velocityY = toFIXED(8);
+        state->particles[0].velocityX = toFIXED(6);
+      state->particles[0].velocityY = toFIXED(8);
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
     }
     if (frame < 32)
-      Particle_AdvanceWithGravity2D(&work->particles[0], 60, 0);
+      Particle_AdvanceWithGravity2D(&state->particles[0], 60, 0);
 
     // In over 32 frames, out over the last 16, rising away.
     if (frame <= 32) {
@@ -420,13 +421,13 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       s32 level = FIGURE_FRAMES - frame;
 
       REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level / 2) << 8) | level;
-      Particle_AdvanceWithGravity2D(&work->particles[0], 60, -toFIXED(1) / 2);
+      Particle_AdvanceWithGravity2D(&state->particles[0], 60, -toFIXED(1) / 2);
     }
 
     // The sway, and the canvas moved with the figure.
-    x = FIXED_INTEGER_PART(work->particles[0].x) +
+    x = FIXED_INTEGER_PART(state->particles[0].x) +
         (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
-    y = FIXED_INTEGER_PART(work->particles[0].y) +
+    y = FIXED_INTEGER_PART(state->particles[0].y) +
         (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
     REG_BG2X = -x << 8;
 
@@ -512,7 +513,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     }
 
     if (frame == FIGURE_HIT_FRAME) {
-      work->shakeFrames = 6;
+      state->shakeFrames = 6;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
@@ -520,19 +521,19 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     if (frame == FIGURE_SPARK_BURST_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      work->shakeFrames = 3;
+      state->shakeFrames = 3;
       Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
     }
 
     BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
+    EFFECT_END_FRAME(state);
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           Ram_HeapSlots->battleWork->background,
+                           Ram_HeapSlots->battleState->background,
                            BACKGROUND_DARKEN_FRAMES);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

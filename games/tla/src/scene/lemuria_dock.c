@@ -6,7 +6,7 @@
 #include "system/task.h"
 #include "sprite_ids.h"
 #include "battle/battle.h"
-#include "field/field_work.h"
+#include "field/field_state.h"
 #include "flags.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -19,7 +19,7 @@
 #include "field/scene_tables.h"
 #include "scene/scene.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
+#include "system/main_routine_state.h"
 #include "field/actor.h"
 #include "field/flag_call.h"
 #include "field/event_inline.h"
@@ -71,7 +71,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// already on the dock he steps out from the leader and walks to his place by
 /// the ship; where he is, he walks back into the leader.
 void LemuriaDock_MoveKraden(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct MainRoutineState *party = &gMainRoutineState;
 
   if (party->entrance == LEMURIA_DOCK_FROM_ANCIENT_LEMURIA_EAST_A) {
     Event_Start();
@@ -104,13 +104,13 @@ void LemuriaDock_MoveKraden(void) {
 
 /// Kraden asks whether the party is ready to sail; yes sets sail.
 void LemuriaDock_AskSettingOff(void) {
-  struct MainRoutineWork *party;
+  struct MainRoutineState *party;
   s32 id;
   s32 limit;
   FIXED z;
 
-  if (gFieldWork->psynergy != 0) {
-    Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId, 0);
+  if (gFieldState->psynergy != 0) {
+    Actor_FaceActor(ACTOR_KRADEN, gMainRoutineState.leaderActorId, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
@@ -125,7 +125,7 @@ void LemuriaDock_AskSettingOff(void) {
     Actor_Jump(ACTOR_KRADEN, 4, 0);
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
     Event_Wait(5);
-    party = &gMainRoutineWork;
+    party = &gMainRoutineState;
     z = Actor_GetById(party->leaderActorId)->z.fixed;
     limit = toFIXED(392);
     id = party->leaderActorId;
@@ -137,11 +137,11 @@ void LemuriaDock_AskSettingOff(void) {
     Actor_FaceDirectionAndWait(id, FACING_EAST);
     Event_Wait(10);
 
-    gMainRoutineWork.ownerOverride = 1;
+    gMainRoutineState.ownerOverride = 1;
     Import_EventSetExitRequest(LEMURIA_DOCK_TO_LEMURIA_ENTRANCE_NORTH);
   } else {
     Event_Wait(20);
-    gFieldWork->message++;
+    gFieldState->message++;
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessage(ACTOR_KRADEN, 0);
   }
@@ -157,10 +157,10 @@ void LemuriaDock_EnterDoor(const struct MapGridCellAnimation *door, s32 exit,
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(door->steps, door->x, door->y);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  id = gMainRoutineWork.leaderActorId;
+  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = ACTOR_FALLS;
+  Actor_SetSpeed(gMainRoutineState.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineState.leaderActorId, ANIM_WALK);
+  id = gMainRoutineState.leaderActorId;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
   else
@@ -204,8 +204,8 @@ void LemuriaDock_CyclePalette(void) {
 /// Sets up the dock: the ship's colours cycling, no area name, and from patch 1
 /// Loho's cannon on deck once the ship carries it.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+  gFieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Actor_GetById(gMainRoutineState.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Task_Add(LemuriaDock_CyclePalette, TASK_PASS_FRAME);
   Flag_Clear(FLAG_SHOW_AREA_NAME);

@@ -8,7 +8,7 @@
 
 /// Returns a cell's collision code and attributes as a halfword.
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapState *map = Ram_HeapSlots->mapGrid;
   u8 *cell;
 
   if (map == NULL)

@@ -234,7 +234,7 @@ void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
 
   if (actor != NULL) {
     Actor_SetSpeedParameters(actorId, toFIXED(4) / 5, toFIXED(2) / 5);
-    Actor_PlaceOnActor(actorId, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(actorId, gMainRoutineState.leaderActorId);
     Actor_SetPositionAndResetMotionFar(actor, actor->x.fixed, actor->y.fixed,
                                        actor->z.fixed - toFIXED(1));
     actor->paused = 0;
@@ -628,14 +628,14 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
 }
 
 /// The event command "release actor": releases the actor and empties its slot
-/// in the field work's actor table.
+/// in the field state's actor table.
 void Actor_ReleaseById(s32 actorId) {
   void *released = Actor_Lookup(actorId);
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldState *state = Ram_HeapSlots->fieldState;
 
   if (released != NULL) {
     Actor_ReleaseFar(released);
-    work->actors[actorId] = NULL;
+    state->actors[actorId] = NULL;
   }
 }
 

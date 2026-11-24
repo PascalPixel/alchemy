@@ -110,10 +110,9 @@ static inline void Actor_FaceDirectionAndWait(s32 actorId, s32 facing) {
 
 /// Places an actor at a point at once, as Actor_SetPosition does, facing a
 /// direction.
-static inline void Actor_SetPositionAndFacing(s32 actorId, s32 fixed_x,
-                                              s32 fixed_z, u16 facing) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, fixed_x, fixed_z,
-                                                 facing);
+static inline void Actor_SetPositionAndFacing(s32 actorId, FIXED x, FIXED z,
+                                              u16 facing) {
+  Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, facing);
 }
 
 /// Actor_SetAnimationAndWait as the events that take
@@ -128,38 +127,40 @@ static inline void FieldActor_SetAnimationAndWait(s32 actorId, s32 animation) {
 #endif
 }
 
-/// Actor_Jump, from an event.
+/// Throws an actor upward at speed pixels a frame, then holds the event for
+/// frames.
 static inline void FieldActor_Jump(s32 actorId, s32 speed, s32 frames) {
   Actor_Jump(actorId, speed, frames);
 }
 
-/// Actor_SetSpritePriority, from an event.
+/// Fixes the priority of an actor's sprite, which then no longer follows its
+/// depth.
 static inline void FieldActor_SetSpritePriority(s32 actorId, s32 priority) {
   Actor_SetSpritePriority(actorId, priority);
 }
 
-/// Actor_StartRepeatedMotion, from an event.
+/// Squashes an actor and springs it back count times.
 static inline void FieldActor_StartRepeatedMotion(s32 actorId, s32 count) {
   Actor_StartRepeatedMotion(actorId, count);
 }
 
-/// Actor_WatchAndSetScript, from an event.
+/// Makes an actor follow another.
 static inline void FieldActor_WatchAndSetScript(s32 actorId,
                                                 s32 watchedActorId) {
   Actor_WatchAndSetScript(actorId, watchedActorId);
 }
 
-/// Actor_WaitForMoveById, from an event.
+/// Holds the event until an actor arrives, 600 frames at most.
 static inline void FieldActor_WaitForMoveById(s32 actorId) {
   Actor_WaitForMoveById(actorId);
 }
 
-/// Event_EndLastingPsynergy, from an event.
+/// Ends Reveal, the ring of light and Sand, each unless skip holds its bit.
 static inline void FieldEvent_EndLastingPsynergy(s32 skip) {
   Event_EndLastingPsynergy(skip);
 }
 
-/// Event_SetMessageId, from an event.
+/// Makes message the event's next line.
 static inline void FieldEvent_SetMessageId(s32 message) {
   Event_SetMessageId(message);
 }
@@ -169,28 +170,28 @@ static inline void EventCamera_FollowActor(s32 actorId, s32 keepPosition) {
   FieldCamera_FollowActor(actorId, keepPosition);
 }
 
-/// Actor_SetPositionAndResetMotion, from an event.
+/// Places an actor at (x, y, z), 16.16 pixels, and stops it.
 static inline void FieldActor_SetPositionAndResetMotion(struct Actor *actor,
-                                                        FIXED fixed_x,
-                                                        FIXED fixed_y,
-                                                        FIXED fixed_z) {
-  Actor_SetPositionAndResetMotion(actor, fixed_x, fixed_y, fixed_z);
+                                                        FIXED x, FIXED y,
+                                                        FIXED z) {
+  Actor_SetPositionAndResetMotion(actor, x, y, z);
 }
 
-/// Actor_WaitForScriptEndById, from an event.
+/// Holds the event until an actor's script ends, 300 frames at most.
 static inline void FieldActor_WaitForScriptEndById(s32 actorId) {
   Actor_WaitForScriptEndById(actorId);
 }
 
 /// Sets the colour mode of an actor's sprite (Actor_SetSpriteColor).
-static inline void FieldActor_SetSpriteColor(struct Actor *actor, s32 param) {
-  Actor_SetSpriteColor(actor, param);
+static inline void FieldActor_SetSpriteColor(struct Actor *actor,
+                                             s32 colorMode) {
+  Actor_SetSpriteColor(actor, colorMode);
 }
 
-/// Actor_Stop, from an event.
+/// Stops an actor's movement type and stands it on the idle script.
 static inline void FieldActor_Stop(s32 actorId) { Actor_Stop(actorId); }
 
-/// Event_SetExitRequest, from an event.
+/// Requests the exit the field leaves the scene by.
 static inline void FieldEvent_SetExitRequest(s32 exit) {
   Import_EventSetExitRequest(exit);
 }
@@ -201,7 +202,7 @@ static inline void FieldActor_WaitForMove(void *actor) {
   Actor_WaitForMove(actor);
 }
 
-/// PartyInventory_FindMember, from an event.
+/// Who carries an item, asking the leader first, or -1.
 static inline s32 FieldPartyInventory_FindMember(s32 item) {
   return PartyInventory_FindMember(item);
 }
@@ -213,12 +214,12 @@ static inline void EventMessage_ShowCentered(s32 message, s32 mode,
   FieldMessage_ShowCentered(message, mode, yOffset);
 }
 
-/// Party_GetLeaderActor, from an event.
+/// The leader's actor id.
 static inline s32 FieldParty_GetLeaderActor(void) {
   return Party_GetLeaderActor();
 }
 
-/// Event_AskYesNoWithActorAnimation, from an event.
+/// Asks yes or no as the speaker nods or shakes its head; returns 0 for yes.
 static inline s32 FieldEvent_AskYesNoWithActorAnimation(s32 actorId,
                                                         s32 flags) {
   return Event_AskYesNoWithActorAnimation(actorId, flags);
@@ -246,7 +247,7 @@ static inline s32 EventYesNo_Ask(s32 atBottom) {
   return FieldYesNo_Ask(atBottom);
 }
 
-/// Schedules a zoom of the field (WorldMap_StartZoom).
+/// Zooms the World Map's view to zoom, 16.16, over frames.
 static inline void FieldWorldMap_StartZoom(FIXED zoom, s32 frames) {
   WorldMap_StartZoom(zoom, frames);
 }
@@ -261,7 +262,7 @@ static inline void Event_RequestDjinnBattle(s32 actorId, s32 djinni) {
   Field_RequestDjinnBattle(actorId, djinni);
 }
 
-/// Event_AddPartyMember, from an event.
+/// Adds unit to the party, announcing it when announce is nonzero.
 static inline void FieldEvent_AddPartyMember(s32 unit, s32 announce) {
   Event_AddPartyMember(unit, announce);
 }

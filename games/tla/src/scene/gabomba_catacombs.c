@@ -90,12 +90,9 @@ void Actor_DepartInRing(s32 id);
 
 /// Takes control from the player and starts Felix's hop off a square.
 #define LEADER_HOP()                                                           \
-  do {                                                                         \
-    Event_Start();                                                             \
-    Event_EndLastingPsynergy(0);                                               \
-    FieldEffect_SetAttached(gMainRoutineState.leaderActorId,                   \
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
-  } while (0)
+  (Event_Start(), Event_EndLastingPsynergy(0),                                 \
+   FieldEffect_SetAttached(gMainRoutineState.leaderActorId,                    \
+                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE))
 
 /// Mud, the Djinni waiting in the cave below the teleport stones.
 enum { ACTOR_MUD = ACTOR_FIRST_PLACED };
@@ -118,6 +115,10 @@ enum {
 enum { ACTOR_STREAM_PUDDLE = ACTOR_FIRST_PLACED };
 /// The last cave's seated idol, and Kraden.
 enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
+
+/// The seated idol's own animations (SPRITE_SEATED_IDOL): its head glowing and
+/// pulsing as it speaks, and the glow dying away.
+enum { ANIM_SEATED_IDOL_GLOW = 2, ANIM_SEATED_IDOL_GLOW_FADE = 4 };
 
 /// Each puddle Frost has frozen into a pillar, by the puddles above.
 #define FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
@@ -300,10 +301,7 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
   FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_THIRD_PUDDLE, 152, 264);
   if (LEADER_ON_CELL(leader, 9, 16)) {
-    Event_Start();
-    Event_EndLastingPsynergy(0);
-    FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    LEADER_HOP();
     Actor_SetDestinationOffsetById(gMainRoutineState.leaderActorId, -16, 0);
     leader->velocityY = toFIXED(6);
     Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
@@ -388,10 +386,7 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
   FieldCyclone_CopyTouchedCells(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(ACTOR_STREAM_PUDDLE, 280, 296);
   if (LEADER_ON_CELL(leader, 17, 18)) {
-    Event_Start();
-    Event_EndLastingPsynergy(0);
-    FieldEffect_SetAttached(gMainRoutineState.leaderActorId,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    LEADER_HOP();
     Actor_SetDestinationOffset(gMainRoutineState.leaderActorId, 0, -16);
     leader->velocityY = toFIXED(6);
     Actor_WaitForMoveById(gMainRoutineState.leaderActorId);
@@ -619,7 +614,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Event_Wait(60);
-  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, ANIM_SEATED_IDOL_GLOW);
   Sound_Play(SE_STATUE_STIRS);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
@@ -692,10 +687,10 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   // "Of course!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, ANIM_SEATED_IDOL_GLOW);
   TALK();
   Event_Wait(30);
-  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 4);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, ANIM_SEATED_IDOL_GLOW_FADE);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineState.leaderActorId);
   if (leader != 0)

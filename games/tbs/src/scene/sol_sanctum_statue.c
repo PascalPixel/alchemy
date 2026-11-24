@@ -87,9 +87,29 @@ extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
 extern struct Trigger gSolSanctumStatue_Triggers[];
 extern s32 gSolSanctumStatue_ScrollOffset;
 
+/// Where the Luna and Sol rooms' event exits arrive, at (576, 136) facing
+/// south, once more. No exit leads to it: only the debug scene selector, which
+/// exits to any entrance from 0 to 99, reaches it.
+enum { SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS = 99 };
+
 /// Both beams have opened the hole in the floor before the center statue.
 /// Until then, Move on the center statue first walks the leader clear of it.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
+
+// The west hall's beams and hole, drawn from spare cells the map keeps: on map
+// layer 1 (the map's cells from (0, 32)) the beams, from its row 27 on, and on
+// the ground the open hole, from cell (0, 28).
+/// The left beam statue's blue beam, from the statue beside the sun-disc
+/// statue to the floor before it: layer 1's cells (15, 6) to (18, 8).
+#define DRAW_LEFT_BEAM() MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3)
+/// The right beam statue's beam: layer 1's cells (17, 6) to (20, 8).
+#define DRAW_RIGHT_BEAM() MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3)
+/// Both beams, where they cross over the floor before the sun-disc statue:
+/// layer 1's cells (17, 7) to (18, 8).
+#define DRAW_CROSSED_BEAMS() MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2)
+/// The hole open in the floor before the sun-disc statue: cells (17, 8) and
+/// (18, 8).
+#define DRAW_CENTER_HOLE() MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1)
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -111,6 +131,13 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 /// 240-pixel screen as the row scrolls.
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
+/// The basic sprite palettes (Palette_LoadBasicSpriteColors) the three rows of
+/// clouds are drawn in, back to front.
+enum {
+  BACK_CLOUD_ROW_PALETTE = 10,
+  MIDDLE_CLOUD_ROW_PALETTE = 13,
+  FRONT_CLOUD_ROW_PALETTE = 0
+};
 
 /// The cell behaviors the step triggers answer.
 ///
@@ -294,17 +321,18 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
 static void SolSanctumStatue_OpenCenterHole(void) {
   s32 flash;
 
-  MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
+  DRAW_CENTER_HOLE();
   Sound_Play(SE_SPARKLE_FALL);
   for (flash = 0; flash != CENTER_HOLE_FLASHES; flash++) {
+    // The crossed beams' lower cells flash as the floor opens.
     MapGrid_CopyCellsTo(10, 61, 17, 40, 2, 1);
     Event_Wait(4);
     MapGrid_CopyCellsTo(8, 61, 17, 40, 2, 1);
     Event_Wait(4);
   }
-  MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
-  MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
-  MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
+  DRAW_LEFT_BEAM();
+  DRAW_RIGHT_BEAM();
+  DRAW_CROSSED_BEAMS();
   MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   GameFlag_Set(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN);
   SolSanctumStatue_CenterStatueMoved();
@@ -835,36 +863,37 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
     Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
     Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
-    MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
+    DRAW_LEFT_BEAM();
     Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
-    MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
-    MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
+    DRAW_RIGHT_BEAM();
+    DRAW_CROSSED_BEAMS();
     MapGrid_CopyCellAttributes(0, 1, 2, 1, 17, 7);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
              GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
     Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
     Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
-    MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
+    DRAW_CENTER_HOLE();
     Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
-    MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
+    DRAW_LEFT_BEAM();
     Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
-    MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
-    MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
+    DRAW_RIGHT_BEAM();
+    DRAW_CROSSED_BEAMS();
     MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   } else {
-    // The cells SolSanctumStatue_ShineLeftBeam copies as it sets the flag,
-    // redrawn on arrival.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
       Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
-      MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
+      DRAW_LEFT_BEAM();
     }
-    // The cells SolSanctumStatue_ShineRightBeam copies as it sets the flag,
-    // redrawn on arrival.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
       Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
-      MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
+      DRAW_RIGHT_BEAM();
     }
   }
+  // Each open seal has its statue on it, and swaps its quarter of the two
+  // halls' floor pictures: the east hall's moon (cells (34, 10) to (37, 11))
+  // lit as the sun, and the west hall's sun ((16, 10) to (19, 11)) darkened to
+  // the moon, from the spare sun and moon at cells (2, 28) and (2, 30). Its
+  // statue's beam is drawn over the east picture on map layer 1.
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
     Actor_SetPosition(ACTOR_NORTHWEST_STATUE, 504, 152);
     MapGrid_CopyCellsTo(2, 28, 34, 10, 2, 1);
@@ -937,7 +966,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     *attributeWords++ = 0;
     *attributeWords++ = OBJ_SIZE_32X8;
     spriteWords += 3;
-    *attributeWords = tile | OBJ_PRIORITY(3) | OBJ_PALETTE(10);
+    *attributeWords =
+        tile | OBJ_PRIORITY(3) | OBJ_PALETTE(BACK_CLOUD_ROW_PALETTE);
   }
   tile = VramCache_Load(VramCache_FindFreeEntry(), ROW_SPRITE_BYTES,
                         pixels + ROW_SPRITE_BYTES);
@@ -947,7 +977,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     *attributeWords++ = 0;
     *attributeWords++ = OBJ_SIZE_32X8;
     spriteWords += 3;
-    *attributeWords = tile | OBJ_PRIORITY(3) | OBJ_PALETTE(13);
+    *attributeWords =
+        tile | OBJ_PRIORITY(3) | OBJ_PALETTE(MIDDLE_CLOUD_ROW_PALETTE);
   }
   tile = VramCache_Load(VramCache_FindFreeEntry(), ROW_SPRITE_BYTES,
                         pixels + 2 * ROW_SPRITE_BYTES);
@@ -957,7 +988,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     *attributeWords++ = 0;
     *attributeWords++ = OBJ_SIZE_32X8;
     spriteWords += 3;
-    *attributeWords = tile | OBJ_PRIORITY(3);
+    *attributeWords =
+        tile | OBJ_PRIORITY(3) | OBJ_PALETTE(FRONT_CLOUD_ROW_PALETTE);
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_AddFrame(SolSanctumStatue_UpdateScrollingSprites, TASK_PASS_FRAME);
@@ -998,7 +1030,8 @@ static void SolSanctumStatue_SoutheastStatueMoved(void) {
 /// Isaac moves the left beam statue with Move; once it stands beside the
 /// sun-disc statue (cell (14, 7)), it shines its beam on it.
 static void SolSanctumStatue_LeftBeamStatueMoved(void) {
-  Field_SetCellBehaviorAt(2, 208, 112, 0);
+  Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 208, 112,
+                          CELL_BEHAVIOR_NORMAL);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
     SolSanctumStatue_ShineLeftBeam();
   }
@@ -1007,11 +1040,17 @@ static void SolSanctumStatue_LeftBeamStatueMoved(void) {
 /// Isaac moves the right beam statue with Move; once it stands beside the
 /// sun-disc statue (cell (21, 7)), it shines its beam on it.
 static void SolSanctumStatue_RightBeamStatueMoved(void) {
-  Field_SetCellBehaviorAt(2, 352, 112, 0);
+  Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 352, 112,
+                          CELL_BEHAVIOR_NORMAL);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
     SolSanctumStatue_ShineRightBeam();
   }
 }
+
+// A statue Move carries is put on map layer 2 (MAPGRID_LAYER_OVERHEAD,
+// event_commands_move.c), and a wall among that layer's cell behaviors stops
+// it: the casts below wall off cells there for the statue alone, and its
+// landing opens them again.
 
 /// Nothing visible happens as Isaac starts to cast Move on the sun-disc statue
 /// while standing right below it (cells (17, 8) and (18, 8)). The game makes
@@ -1024,8 +1063,10 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) == 8) {
     if (column >= 17 && column <= 18) {
-      Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
-      Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
+      Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 272, 128,
+                              CELL_BEHAVIOR_WALL);
+      Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 288, 128,
+                              CELL_BEHAVIOR_WALL);
     }
   }
 }
@@ -1040,7 +1081,8 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
   if (row == 7 && (column >= 13 && column <= 14)) {
-    Field_SetCellBehaviorAt(2, 208, 112, CELL_BEHAVIOR_WALL);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 208, 112,
+                            CELL_BEHAVIOR_WALL);
   }
 }
 
@@ -1054,7 +1096,8 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
   if (row == 7 && (column >= 21 && column <= 22)) {
-    Field_SetCellBehaviorAt(2, 352, 112, CELL_BEHAVIOR_WALL);
+    Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 352, 112,
+                            CELL_BEHAVIOR_WALL);
   }
 }
 
@@ -1064,8 +1107,10 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   FIXED statueZ;
 
   statue = Actor_Get(ACTOR_CENTER_STATUE);
-  Field_SetCellBehaviorAt(2, 272, 128, 0);
-  Field_SetCellBehaviorAt(2, 288, 128, 0);
+  Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 272, 128,
+                          CELL_BEHAVIOR_NORMAL);
+  Field_SetCellBehaviorAt(MAPGRID_LAYER_OVERHEAD, 288, 128,
+                          CELL_BEHAVIOR_NORMAL);
   if (statue != NULL) {
     statueZ = statue->z.fixed;
     Event_Start();
@@ -1451,11 +1496,10 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
       FieldCamera_MoveTo(286, CAMERA_KEEP, 146, 1);
       FieldCamera_WaitForMove();
       Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-      MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
-      // The cells SolSanctumStatue_ShineRightBeam copies as it sets the flag,
-      // redrawn on arrival.
+      DRAW_LEFT_BEAM();
+      // With the other beam already shining, the two now cross.
       if (Event_GetFlag(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-        MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
+        DRAW_CROSSED_BEAMS();
       }
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
       Event_Wait(30);
@@ -1477,11 +1521,10 @@ static void SolSanctumStatue_ShineRightBeam(void) {
       FieldCamera_MoveTo(286, CAMERA_KEEP, 146, 1);
       FieldCamera_WaitForMove();
       Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-      MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
-      // The cells SolSanctumStatue_ShineLeftBeam copies as it sets the flag,
-      // redrawn on arrival.
+      DRAW_RIGHT_BEAM();
+      // With the other beam already shining, the two now cross.
       if (Event_GetFlag(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
-        MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
+        DRAW_CROSSED_BEAMS();
       }
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
       Event_Wait(30);
@@ -1515,7 +1558,8 @@ struct SceneEntrance gSolSanctumStatue_Entrances[] = {
      CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_UNUSED,
      CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SOL_SANCTUM_STATUE_DEBUG_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS,
+     576, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 

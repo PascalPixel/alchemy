@@ -64,7 +64,7 @@ void MapGrid_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dstX, s32 dstY);
 void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
                                   s32 height, s32 dstX, s32 dstY);
-void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 cellX, s32 cellY);
+void WorldMap_SetGridTileFar(s32 x, s32 y, s32 cellX, s32 cellY);
 s32 MapGrid_CheckCollisionFar(struct Actor *actor,
                               struct FieldPosition *position);
 void Actor_SetSpriteFlagsFar(struct Actor *actor, u32 flags);

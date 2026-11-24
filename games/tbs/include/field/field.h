@@ -594,7 +594,7 @@ void MapGrid_SetShownLayers(u32 layerFlags);
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 UNREAD_RESULT WorldMap_InitializePerspective(void);
-void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY);
+void WorldMap_SetGridTile(s32 x, s32 y, s32 cellX, s32 cellY);
 void WorldMap_LoadGraphics(s32 x, s32 z);
 void WorldMap_ApplyAffinePage(void);
 void WorldMap_DrawCellRow(u32 tileRow);

@@ -829,7 +829,7 @@ s32 Scene_Initialize(void) {
     // The bridge south of Vault, which the quake broke as Hammet's caravan
     // left, lies broken until the Manticore of the Lamakan Desert is beaten.
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-      Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
+      Field_SetWorldMapGridTile(128, 256, 176, 56);
     }
     // Each special entrance resumes its journey or story event.
     switch (routine->entrance) {

@@ -88,7 +88,7 @@
 	export MapGrid_CopyCellTilesCellsRect, MapGrid_CopyCellTilesCellsRectFar
 	export MapGrid_CopyCellAttributeRect, MapGrid_CopyCellAttributeRectFar
 	export MapGrid_CopyCellIndexRect, MapGrid_CopyCellIndexRectFar
-	export WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar
+	export WorldMap_SetGridTile, WorldMap_SetGridTileFar
 	export MapGrid_CheckCollision, MapGrid_CheckCollisionFar
 	export Actor_SetSpriteFlags, Actor_SetSpriteFlagsFar
 	export Actor_SetBlendMode, Actor_SetBlendModeFar

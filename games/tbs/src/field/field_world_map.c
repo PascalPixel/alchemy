@@ -285,7 +285,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
 /// cellY count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it
 /// is next to the view when cellX / 8 and cellY / 8, in 256-pixel steps, are
 /// within one step of the followed point's.
-void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
+void WorldMap_SetGridTile(s32 x, s32 y, s32 cellX, s32 cellY) {
   struct WorldMapView *perspective;
   s32 *followedPosition;
   s32 originX;

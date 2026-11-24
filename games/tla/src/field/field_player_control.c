@@ -13,6 +13,7 @@
 #include "field/resource_slot.h"
 #include "macros.h"
 #include "version.h"
+#include "scene/ground_effects.h"
 
 /// What a shortcut key's assignment requests, bits 15..14
 /// (Field_RequestShortcut), as The Broken Seal's.
@@ -64,9 +65,6 @@ enum FieldShortcutKind {
 /// The world map camera turns toward the pad's yaw by at most about 2.8
 /// degrees a frame.
 #define WORLD_MAP_YAW_STEP_MAX (TRIG_TURN / 128)
-/// The map's kind of wading (GROUND_EFFECTS_WADING) in Taopo Swamp, where the
-/// leader sinks into the mud.
-enum { MAP_WADING_MUD = 2 };
 
 /// SC_WALK (LEADER_MOVEMENT_WALKING): the leader's control at one pace, a
 /// pixel a frame whatever the keys. Unused: nothing sets

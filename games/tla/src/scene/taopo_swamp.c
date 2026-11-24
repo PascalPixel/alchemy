@@ -40,6 +40,7 @@
 #include "graphics/graphics.h"
 #include "scene/lemurian_ship.h"
 #include "scene/scene.h"
+#include "scene/ground_effects.h"
 #include "system/frame.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
@@ -289,18 +290,6 @@ struct SceneState {
 };
 
 extern struct SceneState gSceneState;
-
-/// MapState as far as groundEffects, read through its bits, the footprints and
-/// the kind of wading, as Shrine of the Sea God reads it.
-struct MapStateGroundEffects {
-  u8 before[offsetof(struct MapState, groundEffects)];
-  u8 footprints : 2;
-  u8 wading : 2;
-  u8 unused : 4;
-};
-
-/// The swamp's kind of wading: the leader sinks into the mud.
-enum { MAP_WADING_MUD = 2 };
 
 /// The colour of the sprite palette the mud's splashes are drawn in
 /// (SPRITE_COLOR_FILL reads it from gDecodeFillByte).

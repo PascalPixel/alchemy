@@ -499,7 +499,7 @@ static s32 BattleArena_ReportLinkDisconnected(void) {
 /// Receives the opponent's three party member records into units
 /// FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 2 (the battle's enemies, by Unit_Get)
 /// and its Djinn recovery table into the enemy side's
-/// (Djinn_GetRecoveryTable(1)).
+/// (Djinn_GetRecoveryTable(DJINN_RECOVERY_OPPONENT)).
 ///
 /// Returns how many records hold a party member, or -1 when a transfer fails,
 /// overruns or runs out of time.
@@ -615,7 +615,8 @@ recovery:
   size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
   tries = 0;
-  if ((started = Serial_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
+  if ((started = Serial_StartReceive(
+           Djinn_GetRecoveryTable(DJINN_RECOVERY_OPPONENT))) != -1) {
     goto recoveryTest;
   }
 failed:
@@ -744,7 +745,8 @@ static s32 BattleArena_SendPartyRecords(void) {
     // Then the recovery table.
     size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
     buffer = Heap_AllocEwram(size);
-    IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTable(0), size);
+    IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY),
+                     size);
     {
       s32 timeout;
       s32 tries;

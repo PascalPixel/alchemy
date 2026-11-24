@@ -868,10 +868,11 @@ enum RushingStrikeMode {
 /// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
-  MIRRORED_WALL_SPASM,    ///< actual size, a gentle shake for 32 frames
-  MIRRORED_WALL_BERSERK,  ///< 1.25 times as wide, a hard shake for 8 frames
-  MIRRORED_WALL_RECOVERY, ///< 1.25 times as wide, no shake, in the Fireball
-                          ///< colours
+  MIRRORED_WALL_SPASM, ///< actual size, a gentle shake for 32 frames
+  /// A ninth wider than Spasm's, a hard shake for 8 frames.
+  MIRRORED_WALL_BERSERK,
+  /// A ninth wider than Spasm's, no shake, in the Fireball colours.
+  MIRRORED_WALL_RECOVERY,
   MIRRORED_WALL_SACK
 };
 

@@ -25,8 +25,10 @@ static UNREAD_RESULT Actor_UpdateBlockDrawOrder(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// Swaps the places of two actors and waits a frame, unless the first already
-/// stands south of the second.
+/// After Move, puts a pair of pillars back in order, the first south of the
+/// second: unless it already is, the two trade places and the game waits a
+/// frame. Nothing visible changes, since the pillars of a pair look alike, and
+/// the scenes that call it treat the two alike afterwards.
 static void Actor_SwapPositionsByDepth(s32 first, s32 second) {
   struct Actor *a = Actor_GetById(first);
   struct Actor *b = Actor_GetById(second);

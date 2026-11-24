@@ -81,6 +81,7 @@
 #include "menu/menu.h"
 #include "scene/colosso_gauge.h"
 #include "scene/colosso_guide.h"
+#include "scene/colosso_lettering.h"
 #include "scene/colosso_push.h"
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
@@ -100,7 +101,7 @@
 
 /// The match held here, as the lettering `The 2nd Match` reads; the friends'
 /// turns open with `Lend a Hand!` instead (Colosso_ShowOpeningLettering).
-enum { LETTERING_LEND_A_HAND = 0, FINALS_MATCH = 2 };
+enum { FINALS_MATCH = 2 };
 
 /// The stages, as their attendants number them: "This is stage 1 of the second
 /// finals".

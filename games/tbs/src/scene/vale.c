@@ -1702,7 +1702,8 @@ s32 Scene_Initialize(void) {
         Scene_FloatNut(ACTOR_NUT_AFTER_KALAY);
       }
     }
-    // The hole Garet left in the roof when he jumped onto it.
+    // The hole Garet left in the roof when he jumped onto it, on map layer 2
+    // (Vale_MendingTheRoof).
     MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
     MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
     actor = Actor_Get((GameFlag_Get(FLAG_KALAY_REACHED) != 0) + ACTOR_PILLAR);
@@ -1790,6 +1791,8 @@ s32 Scene_Initialize(void) {
       {
         s32 priority;
 
+        // DEAD: a byte shifted down 8 places is 0, so Dora's priority is 2;
+        // the ROM keeps the byte's mask and shift.
         priority = ((u32)(u8)set >> 8) + 2;
         Actor_SetSpritePriority(ACTOR_DORA, priority);
       }
@@ -2163,7 +2166,9 @@ static void Vale_MendingTheRoof(void) {
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   // The hole in the roof, three cells of its picture, which the boards mend
   // one by one at the roof's end from the whole pictures at (5, 102) to
-  // (7, 102).
+  // (7, 102). The roof is on map layer 2, the roofs over the actors, whose
+  // cells begin at the map's column 60: its cells (22, 41) to (24, 42) are the
+  // map's (82, 41) to (84, 42).
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
@@ -2289,6 +2294,7 @@ static void Vale_MendingTheRoof(void) {
   // sparkles.
   Scene_StartEventPsynergy();
   Actor_SetAnimation(ACTOR_GARET, ANIM_CAST_PSYNERGY);
+  // "Hyaaaa!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 20);
   Sound_Play(SE_PSYNERGY_SPARKLE);
   for (i = 0; i < 60; i++) {
@@ -2316,6 +2322,7 @@ static void Vale_MendingTheRoof(void) {
   FieldActor_SetMoveTarget(moveHand, 392, 208, 584);
   Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, PILLAR_MIDDLE_X, PILLAR_Z);
   Event_Wait(20);
+  // "You sure do put your heart into it, Garet!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
   moveHand->update = NULL;
   Actor_SetSpritePriority(ACTOR_GARET, 2);
@@ -2335,22 +2342,29 @@ static void Vale_MendingTheRoof(void) {
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_JENNA, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(10);
+  // "Oh, I'm just finishing up."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
+  // "That's good. It's time to go, and I was about to leave you behind."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
+  // "Say, what exactly happened to you two?"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Event_Wait(10);
+  // "The accident three years ago... Is that why you've been studying
+  // Psynergy?"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
+  // "I appreciate your concern, but...my family's never coming back, and
+  // neither is Isaac's father"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(10);
@@ -2358,6 +2372,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
+  // "I just want to forget that day. I wish everyone would..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
@@ -2366,6 +2381,9 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 40);
+  // Garet: "That awful day... We went to get help, but they found us
+  // unconscious..." and at once Jenna: "Well, let's get Isaac and go to
+  // Kraden's..."
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_GARET, 1, 2, 25, 2, ACTOR_JENNA, 10,
                                     14, 4, 14, 0);
   Event_Wait(40);
@@ -2375,6 +2393,7 @@ static void Vale_MendingTheRoof(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(80);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "What, Garet?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2382,6 +2401,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Huh? You were about to say something, weren't you?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(40);
@@ -2390,6 +2410,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
+  // "Don't be weird, Garet!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_SOUTHEAST, 40);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_GARET, 40);
@@ -2397,6 +2418,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_JENNA, 380, 620);
   Event_Wait(10);
+  // "Whatever..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -2404,6 +2426,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(10);
+  // "Jenna, are you mad at me?"
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
@@ -2416,17 +2439,21 @@ static void Vale_MendingTheRoof(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Event_Wait(10);
+  // "I don't want to talk about it."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_Jump(ACTOR_JENNA, 4, 30);
+  // "Come on!!!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
+  // "Huh?"
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 20);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  // "Isaac's waiting for us."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -2435,6 +2462,7 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WaitForMoveById(ACTOR_JENNA);
+  // "But, Jenna...!"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | ACTOR_GARET,
                     0);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
@@ -2447,10 +2475,12 @@ static void Vale_MendingTheRoof(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
+  // "I'll leave you behind if you're too slow."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 20);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
+  // "Jenna..."
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | ACTOR_GARET, 0, 20);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -2668,6 +2698,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  // "You patched it nicely."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
   Event_Wait(20);
@@ -2675,13 +2706,16 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  // "All right. You're all done."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  // "You're very reliable, Isaac...just like your father was."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  // "What is it, Isaac? Do you still think about the accident?"
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
@@ -2689,6 +2723,7 @@ static void Vale_RoofMended(void) {
   } else {
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   }
+  // Yes: "I thought so... Isaac..." No: "I don't believe you..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Event_SetMessageId(MsgValeWorkingYourselvesBone);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
@@ -2703,6 +2738,7 @@ static void Vale_RoofMended(void) {
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldState->message++;
   }
+  // Yes: "That's what I thought." No: "Hmmm... I wonder..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -2744,6 +2780,7 @@ static void Vale_RoofMended(void) {
   Vale_ClimbUpRoofLadder(ACTOR_JENNA, ANIM_LEADER_CLIMB,
                          ANIM_LEADER_CLIMB_OVER_TOP, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  // "MA'AAAAM!!!"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(10);
@@ -2755,11 +2792,14 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  // "Hello, Jenna."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  // "Good morning."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  // "Yes, yes... Good morning."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Vale_ClimbUpRoofLadder(ACTOR_GARET, ANIM_LEADER_CLIMB,
                          ANIM_LEADER_CLIMB_OVER_TOP, 0);
@@ -2775,10 +2815,12 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 30);
   Actor_Jump(ACTOR_DORA, 4, 30);
+  // "Well, if it isn't Garet, too!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
+  // "Where do you all plan to go today?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 30);
@@ -2787,12 +2829,14 @@ static void Vale_RoofMended(void) {
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "We're going to Mt. Aleph with Kraden."
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 30);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
+  // "Mountain climbing with Kraden, eh?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(80);
@@ -2801,34 +2845,41 @@ static void Vale_RoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  // "Kids and their games..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
+  // "No! It's part of our studies..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
+  // "Ah, yes... Alchemy."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  // "Alchemy is the foundation of all Psynergy..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  // "And you all know Mt. Aleph is the greatest source of Alchemy."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
+  // "They say Kraden is the best teacher around."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(373, 160, 837, 1);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 10);
+  // "Alchemy... I wonder what use it all is?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_GARET, 30);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -2837,14 +2888,18 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHWEST, 20);
+  // "Your mother would rather see you grow up to be a happy, ordinary man."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
+  // "But I suppose you still want to go..."
   Event_OpenMessage(ACTOR_DORA, 0);
 
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     gFieldState->message++;
   }
+  // Yes: "Well, if that won't persuade you, I guess nothing will!" No: "It's
+  // nice of you to humor me, but I know you don't mean it."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Event_SetMessageId(MsgValeAsStubbornAsYourFather);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -2878,6 +2933,7 @@ static void Vale_RoofMended(void) {
 #if TBS_PATCH_2
   Actor_SetPosition(ACTOR_GARET, 374, VALE_GARET_REUNION_Z);
 #endif
+  // "Garet, don't!"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2909,6 +2965,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(20);
+  // "Oh! That was exciting!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(372, 160, 859, 1);
@@ -2919,10 +2976,12 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 20);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  // "I'm sorry I scared you like that."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 80);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
+  // "Well!"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_DORA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2930,6 +2989,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
+  // "I... I'm sorry, ma'am. I'll get out of your way right away!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
@@ -2945,9 +3005,11 @@ static void Vale_RoofMended(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 20);
+  // "Wait! Not there!"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 1);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
+  // "Huh? What's wrong with—"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
@@ -2975,6 +3037,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_Wait(10);
+  // "Oh, never mind..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -2984,6 +3047,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 80);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  // "But you'd better get going..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2991,29 +3055,35 @@ static void Vale_RoofMended(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(30);
+  // "This old house will fall apart if you stay much longer."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
+  // "I'll get this fixed up. You don't have to hang around here."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 30);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
+  // "Thank you, ma'am."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 30);
   Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
+  // "Please, call me Dora."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Event_Wait(10);
+  // "We'll get going right away!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
   Event_Wait(30);
+  // "Wait, Garet... Just watch your step."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
   Actor_SetSpeed(ACTOR_GARET, 1);

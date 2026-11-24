@@ -1,0 +1,14 @@
+name: build
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - run: sudo apt-get update -q && sudo apt-get install -yq binutils-arm-none-eabi libpng-dev
+      - run: make -j"$(nproc)" compare-editions
+      - run: make test

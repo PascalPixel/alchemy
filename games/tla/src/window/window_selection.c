@@ -104,11 +104,11 @@ void SelectionMenu_Create(void) {
   visual = &screen->records[SELECTION_RECORD_HAND].sprite;
   visual->mode = OBJ_MODE_NORMAL;
   visual->mosaic = 0;
-  visual->colors = 1;
-  visual->affine = 0;
+  visual->colors = OBJ_COLORS_256;
+  visual->affine = OAM_AFFINE_OFF;
   visual->matrix = 0;
   visual->size = 1;
-  visual->shape = 0;
+  visual->shape = OBJ_SHAPE_SQUARE;
   visual->priority = 0;
 }
 
@@ -260,7 +260,7 @@ void SelectionMenu_Draw(void) {
   node = state->head;
   while (node != 0) {
     sprite = &node->sprite;
-    sprite->affine = 0;
+    sprite->affine = OAM_AFFINE_OFF;
     sprite->matrix = 0;
     sprite->x = node->x;
     sprite->y = node->y;
@@ -317,12 +317,12 @@ void SelectionMenu_Draw(void) {
     node = SelectionMenu_GetCursorNode(state);
     largeSprite = &largeIcon->sprite;
     largeSprite->mode = OBJ_MODE_NORMAL;
-    largeSprite->affine = 0;
+    largeSprite->affine = OAM_AFFINE_OFF;
     largeSprite->matrix = 0;
     largeSprite->mosaic = 0;
-    largeSprite->colors = 1;
+    largeSprite->colors = OBJ_COLORS_256;
     largeSprite->size = 2;
-    largeSprite->shape = 0;
+    largeSprite->shape = OBJ_SHAPE_SQUARE;
     largeSprite->priority = 0;
     largeSprite->tile = largeIcon->tile;
     // A 32x32 sprite over the icon, bobbing by half the hand's bob; while it
@@ -335,7 +335,7 @@ void SelectionMenu_Draw(void) {
       state->transform.scaleY = largeIcon->scale;
       state->transform.angle = 0;
       largeSprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
-      largeSprite->affine = 3;
+      largeSprite->affine = OAM_AFFINE_DOUBLE_SIZE;
       largeSprite->x += (u16)-16;
       largeSprite->y += (u8)-16;
       largeIcon->scale = largeIcon->scale + largeIcon->scaleStep;
@@ -364,11 +364,11 @@ void SelectionMenu_Draw(void) {
       state->transform.scaleY = node->scale;
       state->transform.angle = 0;
       sprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
-      sprite->affine = 3;
+      sprite->affine = OAM_AFFINE_DOUBLE_SIZE;
       sprite->x += (u16)-8;
       sprite->y += (u8)-8;
     } else {
-      sprite->affine = 0;
+      sprite->affine = OAM_AFFINE_OFF;
       sprite->matrix = 0;
     }
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
@@ -624,11 +624,11 @@ void SelectionMenu_SetupArrow(struct SelectionMenuState *state, s32 side) {
     state->records[side].base = 0;
     arrow->mode = OBJ_MODE_NORMAL;
     arrow->mosaic = 0;
-    arrow->colors = 1;
-    arrow->affine = 0;
+    arrow->colors = OBJ_COLORS_256;
+    arrow->affine = OAM_AFFINE_OFF;
     arrow->matrix = 0;
     arrow->size = 0;
-    arrow->shape = 2;
+    arrow->shape = OBJ_SHAPE_VERTICAL;
     arrow->priority = 0;
   }
 }
@@ -1182,11 +1182,11 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
 
   sprite = &node->sprite;
   sprite->mode = OBJ_MODE_NORMAL;
-  sprite->colors = 0;
+  sprite->colors = OBJ_COLORS_16;
   sprite->mosaic = 0;
 
   sprite->size = 1;
-  sprite->shape = 0;
+  sprite->shape = OBJ_SHAPE_SQUARE;
   sprite->palette = 0;
   sprite->tile = tile;
   sprite->priority = 0;
@@ -1263,10 +1263,10 @@ u32 Menu_ConfirmSelection(struct SelectionMenuState *screen) {
   other->scaleEnd = Q_8_8(1);
   sprite = &other->sprite;
   sprite->mode = OBJ_MODE_NORMAL;
-  sprite->colors = 0;
+  sprite->colors = OBJ_COLORS_16;
   sprite->mosaic = 0;
   sprite->size = 1;
-  sprite->shape = 0;
+  sprite->shape = OBJ_SHAPE_SQUARE;
   sprite->palette = 0;
   sprite->tile = other->tile;
   node->kind = ICON_KIND_NONE;
@@ -1318,11 +1318,11 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
   sprite->oam.f.tile = VramCache_Load(cacheSlot, ARROW_FRAME_BYTES, data);
   sprite->oam.f.mode = OBJ_MODE_NORMAL;
   sprite->oam.f.mosaic = 0;
-  sprite->oam.f.colors = 1;
-  sprite->oam.f.affine = 0;
+  sprite->oam.f.colors = OBJ_COLORS_256;
+  sprite->oam.f.affine = OAM_AFFINE_OFF;
   sprite->oam.f.affineIndex = 0;
   sprite->oam.f.size = 0;
-  sprite->oam.f.shape = 2;
+  sprite->oam.f.shape = OBJ_SHAPE_VERTICAL;
   sprite->oam.f.priority = 0;
 }
 

@@ -510,7 +510,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   }
   if (scale == Q_8_8(1)) {
     sprite->affineIndex = 0;
-    sprite->affine = 0;
+    sprite->affine = OAM_AFFINE_OFF;
     sprite->x = (u16)windowSprite->x;
     sprite->y = (u16)windowSprite->y;
   } else {
@@ -519,13 +519,13 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     effect.angle = 0;
     sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
     if (scale > Q_8_8(1)) {
-      sprite->affine = 3;
+      sprite->affine = OAM_AFFINE_DOUBLE_SIZE;
       // Drawn at double size, so set 8 pixels up and left.
       /* FAKEMATCH(dead): x read through its taken address. */
       sprite->x = *(u16 *)&windowSprite->x - 8;
       sprite->y = (u16)windowSprite->y - 8;
     } else {
-      sprite->affine = 1;
+      sprite->affine = OAM_AFFINE_ON;
       sprite->x = (u16)windowSprite->x;
       sprite->y = (u16)windowSprite->y;
     }
@@ -620,12 +620,12 @@ void WindowSprite_UpdateAll(void) {
           output->index = sprite->tile;
           sprite->mode = OBJ_MODE_NORMAL;
           sprite->mosaic = 0;
-          sprite->colors = 1;
+          sprite->colors = OBJ_COLORS_256;
           sprite->size = 0;
-          sprite->shape = 2;
+          sprite->shape = OBJ_SHAPE_VERTICAL;
           sprite->y =
               output->y + gWindowSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
-          sprite->affine = 0;
+          sprite->affine = OAM_AFFINE_OFF;
           sprite->affineIndex = 0;
         }
         break;
@@ -643,13 +643,13 @@ void WindowSprite_UpdateAll(void) {
           effect.packed.scaleY = Q_8_8(2);
           effect.packed.angle = 0;
           sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
-          sprite->affine = 3;
+          sprite->affine = OAM_AFFINE_DOUBLE_SIZE;
           sprite->x = output->x - 5;
           sprite->y = output->y - 5;
           output->animationStep--;
         } else {
           sprite->affineIndex = 0;
-          sprite->affine = 0;
+          sprite->affine = OAM_AFFINE_OFF;
           sprite->x = output->x;
           sprite->y = output->y;
         }
@@ -663,7 +663,7 @@ void WindowSprite_UpdateAll(void) {
         output->animationStep += TRIG_TURN * 3 / 256;
         effect.plain.angle = output->animationStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
-        sprite->affine = 1;
+        sprite->affine = OAM_AFFINE_ON;
         sprite->x = output->x -
                     FIXEDtoINT_FOUR_TIMES(
                         Trig_Sin(effect.plain.angle + TRIG_TURN * 29 / 32)) -

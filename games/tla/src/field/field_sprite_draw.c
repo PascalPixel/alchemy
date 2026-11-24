@@ -21,15 +21,6 @@ enum SpritePictureCodec {
   SPRITE_PICTURE_LZ = 3         ///< LZ-compressed
 };
 
-/// An OAM entry's affine mode (AnimationSpritePart.affine): a plain sprite, a
-/// scaled or turned one, or one drawn in a box twice its size so that a scale
-/// above 1 is not cut off.
-enum OamAffineMode {
-  OAM_AFFINE_OFF = 0,
-  OAM_AFFINE_ON = 1,
-  OAM_AFFINE_DOUBLE_SIZE = 3,
-};
-
 /// Facing table `table`'s entry for facing angle `dir`, the turn cut into as
 /// many sectors as the table has entries.
 #define FACING_TABLE_ENTRY(table, dir)                                         \

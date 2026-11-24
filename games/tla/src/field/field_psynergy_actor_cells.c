@@ -225,13 +225,6 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 #include "system/affine.h"
 
-/// An OAM entry's affine mode (attribute 0's two bits).
-enum OamAffineMode {
-  OAM_AFFINE_OFF = 0,    ///< drawn as it is
-  OAM_AFFINE_NORMAL = 1, ///< through its matrix
-  OAM_AFFINE_DOUBLE = 3  ///< through its matrix, in a box twice the size
-};
-
 /// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 /// affine matrix; any other takes one, and one scaled past 1 is drawn in a
 /// double-size box. The picture's pivot is turned and scaled with it, so the
@@ -265,7 +258,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     transform.scaleX = scaleX >> 8;
     transform.scaleY = scaleY >> 8;
     matrix = OamMatrix_AllocFromTransform(&transform);
-    affineMode = OAM_AFFINE_NORMAL;
+    affineMode = OAM_AFFINE_ON;
   }
 
   // Grown past its own size, it needs the double-size box.
@@ -274,7 +267,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     magnitude = -magnitude;
   if (magnitude > FIXED_ONE ||
       (magnitude = scaleY < 0 ? -scaleY : scaleY, magnitude > FIXED_ONE)) {
-    affineMode = OAM_AFFINE_DOUBLE;
+    affineMode = OAM_AFFINE_DOUBLE_SIZE;
     width *= 2;
     height *= 2;
   }

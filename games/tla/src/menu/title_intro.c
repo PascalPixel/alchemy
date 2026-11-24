@@ -87,9 +87,6 @@ struct OamEntry {
   u16 unused;
 };
 
-/// OamEntry.affine for a sprite drawn through its matrix in a box twice its
-/// size, so that scaling it up never clips it.
-#define OAM_AFFINE_DOUBLE_SIZE 3
 /// OamEntry.size for a 64 by 64 OBJ_SHAPE_SQUARE sprite.
 #define OAM_SIZE_64 3
 

@@ -88,6 +88,10 @@ void SpriteViewer_Run(void) {
   layers[0].enabled = 1;
   // Any nonzero value turns the debug mode on.
   gDebugMode = 2;
+  // Nothing visible comes of this blend: BG1 is never turned on below, and
+  // the viewer's sprites are all in normal mode (Sprite_Create); only a
+  // semi-transparent sprite blends whatever BLDCNT's first target is (GBATEK,
+  // "Semi-Transparent OBJs").
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   // A green backdrop behind BG0 and the sprites, the only layers shown.
   PLTT_BACKDROP = RGB(0, 15, 0);
@@ -400,9 +404,9 @@ s32 SpriteViewer_StepSpriteId(s32 spriteId, s32 direction) {
 }
 
 /// Lays out the sprite viewer's ring around (centerX, centerY), in pixels: one
-/// position per
-/// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite).
+/// position per facing of the first sprite's facing kind (6, 8, 10 or 4, or
+/// two opposite pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a
+/// two-part sprite).
 void SpriteViewer_LayOutRing(s32 centerX, s32 centerY,
                              struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;

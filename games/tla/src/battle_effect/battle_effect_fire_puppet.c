@@ -117,6 +117,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
     if (frame == 8) {
       Sound_PlayFar(SE_CURSE);
     }
+    // The caster takes its own colours and its first animation, a party
+    // member's stance between turns: it stands again.
     if (frame == PUPPET_CASTER_RISE_FRAME) {
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, POSE_ENEMY_HELD,
                                0, -1);

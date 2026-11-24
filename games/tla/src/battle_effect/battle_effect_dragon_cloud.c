@@ -135,6 +135,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       particle->velocityX = ((Random16() & 63) - 32) << 14;
       particle->velocityY = (Random16() & 63) << 13;
     }
+    /* FAKEMATCH(temporary): the depth speed stored through a local of its
+     * own. */
     Io_Write32(((Random16() & 63) - 32) << 14, &particle->velocityZ);
     particle->variant = 1;
   }
@@ -148,7 +150,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     SET_POSITION(particle, actor->x.fixed, 0, actor->z.fixed);
     particle->velocityX = ((Random16() & 63) - 32) << 14;
     particle->velocityY = (Random16() & 63) << 12;
-    Io_Write32(((Random16() & 63) - 32) << 14, &particle->velocityZ);
+    particle->velocityZ = ((Random16() & 63) - 32) << 14;
     particle->variant = (Random16() & 15) + 24;
   }
 
@@ -162,6 +164,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     else
       particle->x =
           FIXEDtoINT(-(Trig_Sin(angle) * DRAGON_CLOUD_PUFF_RADIUS_X)) + 16;
+    /* FAKEMATCH(temporary): the puff's y stored through a local of its own. */
     Io_Write32(FIXEDtoINT(Trig_Cos(angle) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40,
                &particle->y);
     particle->variant = -(i * 2);

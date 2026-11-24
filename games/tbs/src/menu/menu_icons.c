@@ -1,5 +1,6 @@
 /// @file
-/// The stat arrows and the other icons the menus load into VRAM blocks.
+/// The stat and Djinn arrows and the Psynergy icons the menus load into VRAM
+/// blocks.
 // Part of menu.c.
 
 #include "menu_internal.h"
@@ -19,12 +20,12 @@ void Menu_LoadDjinnArrows(void) {
   firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = firstSlot;
   if (firstSlot != -1) {
-    VramCache_Load(firstSlot, 128, gMenu_DjinnArrowUpTiles);
+    VramCache_Load(firstSlot, ICON_TILE_BYTES, gMenu_DjinnArrowUpTiles);
   }
   secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = secondSlot;
   if (secondSlot != -1) {
-    VramCache_Load(secondSlot, 128, gMenu_DjinnArrowDownTiles);
+    VramCache_Load(secondSlot, ICON_TILE_BYTES, gMenu_DjinnArrowDownTiles);
   }
 }
 
@@ -76,7 +77,7 @@ s32 Icon_CreatePsynergyIcon(struct Window *window, s32 x, s32 y,
 }
 
 /// Creates a stat-change arrow from one of the two loaded resources: the up
-/// arrow (variant 0, STAT_ARROW_UP) or the down arrow at (x, y) of window, for
+/// arrow (STAT_ARROW_UP) or the down arrow at (x, y) of window, for
 /// the equipment preview (Text_DrawStatComparison).
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
@@ -84,7 +85,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
   u32 resource;
   struct ItemMenuState *menu = gMenuState;
 
-  if (variant == 0)
+  if (variant == STAT_ARROW_UP)
     resource = menu->resourceSlots[0];
   else
     resource = menu->resourceSlots[1];

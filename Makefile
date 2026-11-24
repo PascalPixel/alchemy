@@ -49,7 +49,7 @@ help:
 # busy-waits when a parallel make waits for a job, so there each edition
 # builds serially while the editions still build side by side.
 SERIAL := $(if $(filter 3.%,$(MAKE_VERSION)),-j1)
-$(EDITIONS): bootstrap
+$(EDITIONS): bootstrap lists
 	@$(MAKE) $(SERIAL) -f Makefile EDITION=$@ rom
 
 $(addprefix compare-,$(EDITIONS)): compare-%: %
@@ -480,6 +480,15 @@ $(LIBGCC_WORK)/_lshrdi3.o: alchemy-gcc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 	@mkdir -p $(@D)
 	cp alchemy-gcc/config/arm/tconfig.h alchemy-gcc/config/arm/tm.h $(@D)/
 	cd $(@D) && $(LIBGCC_CC) -I. $(LIBGCC_INCLUDES) -DL_lshrdi3 $(CURDIR)/$< -c -o $(@F)
+
+# --- Lists -----------------------------------------------------------------
+# A folder of pictures placed in order has a list.tsv beside them; ags-list
+# writes its list.s, in every edition the same, before an edition is built.
+LISTS := $(patsubst %.tsv,%.s,$(wildcard games/*/src/*/*/list.tsv games/*/src/*/*/*/list.tsv))
+.PHONY: lists
+lists: $(LISTS)
+$(LISTS): %.s: %.tsv | tools
+	tools/out/ags-list $< $@
 
 # --- Tools and tests -------------------------------------------------------
 

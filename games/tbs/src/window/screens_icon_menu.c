@@ -41,19 +41,6 @@
 #define PULSE_OVERHANG_LINES(scale)                                            \
   ((((scale) - Q_8_8(1)) * 32 + 255) / 512 + 1)
 
-/// One line's horizontal window edges, each a WIN_RANGE value.
-struct WindowLine {
-  u16 window0; ///< for WIN0H
-  u16 window1; ///< for WIN1H
-};
-
-/// A page of the screen transition's window edges: WININ and WINOUT, then
-/// each line's edges.
-struct WindowBuffer {
-  u8 winInOut[4]; ///< WININ and WINOUT, not touched here
-  struct WindowLine lines[DISPLAY_HEIGHT];
-};
-
 /// Draws the icon menu's icons, a task of the icon menus (IconMenu_Open). Each
 /// icon is a 32x32, 256-colour sprite, and one at x 0 is not drawn; the
 /// selected one pulses, double-size, in front of the others. While a screen

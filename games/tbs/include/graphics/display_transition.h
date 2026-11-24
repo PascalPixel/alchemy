@@ -72,6 +72,19 @@ struct ScreenTransitionDisplay {
   u16 irqPhase;
 };
 
+/// One line's horizontal window edges, each a WIN_RANGE value.
+struct WindowLine {
+  u16 window0; ///< for WIN0H
+  u16 window1; ///< for WIN1H
+};
+
+/// A page of the screen transition's window edges
+/// (ScreenTransitionState.pages): WININ and WINOUT, then each line's edges.
+struct WindowBuffer {
+  u8 winInOut[4]; ///< WININ and WINOUT, not touched here
+  struct WindowLine lines[DISPLAY_HEIGHT];
+};
+
 /// The screen transition state (HEAP_SLOT_SCREEN_TRANSITION): two pages of
 /// window edges for every line, the dissolve's solid tile, and the
 /// transition's shape and progress.

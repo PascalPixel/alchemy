@@ -39,28 +39,33 @@ RESOURCE_DEFINE_DECODE(Decompress_MoveToFrontLz,
 RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
                        Decompress_ByteLzCodeSize)
 
-/// Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
-/// ramp.
+/// The canvas fades of battle effects, the element glow and the Lucky Wheels. A
+/// canvas is a buffer of 8-bit pixels, each a step 0 to 63 of a colour ramp.
+/// Each routine copies the canvas to `destination`, the tiles on screen, 16
+/// bytes at a time, and shades each group in the canvas as it goes, so what is
+/// drawn next lands on a dimmer copy of this frame. `amount` holds the step in
+/// each of its four bytes (CANVAS_FILL_WORD).
 #define PALETTE_FADE_DEFINE_SHADE_BY(name, kernel, size)                       \
-  void name(u8 *buffer, u32 amount, u8 *backup, u32 bytes) {                   \
+  void name(u8 *buffer, u32 amount, u8 *destination, u32 bytes) {              \
     u32 words = (u32)size >> 2;                                                \
     u32 routine[words];                                                        \
     Dma_Set(kernel, routine, DMA_COPY_WORDS(words), REG_DMA3);                 \
-    ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);  \
+    ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, destination,     \
+                                              bytes);                          \
   }
 #define PALETTE_FADE_DEFINE_SHADE(name, kernel, size)                          \
-  void name(u8 *buffer, u8 *backup, u32 bytes) {                               \
+  void name(u8 *buffer, u8 *destination, u32 bytes) {                          \
     u32 words = (u32)size >> 2;                                                \
     u32 routine[words];                                                        \
     Dma_Set(kernel, routine, DMA_COPY_WORDS(words), REG_DMA3);                 \
-    ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);               \
+    ((void (*)(u8 *, u8 *, u32))routine)(buffer, destination, bytes);          \
   }
 
-/// Raises every pixel by `amount`, stopping at 63.
+/// Raises every pixel in the canvas by `amount`, stopping at 63.
 PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndBrighten,
                              PaletteFade_BrightenKernel,
                              PaletteFade_BackupAndBrightenCodeSize)
-/// Lowers every pixel by `amount`, stopping at 0.
+/// Lowers every pixel in the canvas by `amount`, stopping at 0.
 PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndDarken,
                              PaletteFade_DarkenKernel,
                              PaletteFade_BackupAndDarkenCodeSize)
